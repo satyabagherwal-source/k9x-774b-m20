@@ -7947,3 +7947,7 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `ad62c570` | Multi-dimensional audit evidence | 2026-11-06T22:28:46.944Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `c9a4996a` | Multi-dimensional audit evidence | 2026-11-06T22:36:11.866Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd9f64d7` | Multi-dimensional audit evidence | 2026-11-06T22:36:17.971Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `5ca8c863` | Multi-dimensional audit evidence | 2026-11-06T22:56:03.418Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `28ed047e` | Multi-dimensional audit evidence | 2026-11-06T22:56:05.349Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `c500baff` | Multi-dimensional audit evidence | 2026-11-06T22:56:06.065Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `30d662db` | Multi-dimensional audit evidence | 2026-11-06T22:56:09.114Z |

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-UW18",
-    "timestamp": "2026-11-05T00:48:47.276Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UW2Q",
-    "timestamp": "2026-11-05T00:48:47.330Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "c851d753c3e082f69725fc54a32b157af62f5ecd7fe8037777d9ea5692f96446",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UZC4",
-    "timestamp": "2026-11-05T00:48:51.556Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UZPB",
-    "timestamp": "2026-11-05T00:48:52.031Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "78bde52778507c8fba79bf40448e69148335294090c1516136e6262735e39523",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-V7PE",
     "timestamp": "2026-11-05T00:49:02.402Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-PMC5",
+    "timestamp": "2026-11-06T22:56:03.413Z",
+    "repository": "i18next/react-i18next",
+    "learningId": "learn-github-i18next-react-i18next",
+    "contentHash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-PNTT",
+    "timestamp": "2026-11-06T22:56:05.345Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-PODP",
+    "timestamp": "2026-11-06T22:56:06.061Z",
+    "repository": "bee-san/Ciphey",
+    "learningId": "learn-github-bee-san-ciphey",
+    "contentHash": "a06e39b2747175a596c29e450dfaf97b432d7d9a225652bc81f8b926b7e16983",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-PQQE",
+    "timestamp": "2026-11-06T22:56:09.110Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

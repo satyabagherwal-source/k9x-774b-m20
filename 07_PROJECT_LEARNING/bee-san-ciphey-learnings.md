@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source**: github ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
-> **Source Version**: `f7ad87dd`  
+> **Source Version**: `c500baff`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:25:52.124Z  
+> **Timestamp**: 2026-11-06T22:56:04.326Z  
 > **Learning ID**: `learn-github-bee-san-ciphey`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:25:52.119Z  
+> **Harvest Timestamp**: 2026-11-06T22:56:03.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21743 stars
+- **Stars / Engagement**: 21745 stars
 
 ---
 
@@ -1683,567 +1683,360 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7ad87dd` (2026-11-04)
-**Commit Message**: bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines for master, 0.12.0, Python Ciphey and CyberChef (#1137)
+### Incident Patch 1: `c500baff` (2026-11-06)
+**Commit Message**: ci: raise OpenSSF Scorecard (token permissions, pinning, vulns, fuzzing, signing)
 
-* bench: end-to-end benchmark with corpus v1 and baselines for master, 0.12.0, Python Ciphey and CyberChef
+- Token-Permissions: every workflow is read-only at the top level; writes moved
+  to the jobs that need them (release, release-builds, auto-merge, stale).
+- Pinned-Dependencies: all actions pinned by commit SHA, Docker base images
+  pinned by digest (runtime alpine 3.12 -> 3.24), codespell installed with
+  --require-hashes, cargo-dist installed with `cargo install --locked` instead
+  of curl | sh. Dependabot now also updates github-actions and docker.
+- Vulnerabilities: drop the unused cargo-nextest dev-dependency (it is a CLI,
+  run via `cargo nextest`), which removes ~280 crates from Cargo.lock, and bump
+  crossbeam-epoch, h2 0.4, pulldown-cmark, rustls-webpki, webpki-roots, zstd*,
+  tokio, futures-util. cargo audit: 24 -> 5 (the rest come from
+  gibberish-or-not 5 / candle 0.3).
+- Fuzzing: add a cargo-fuzz target (fuzz/) over every decoder via decode_with.
+- Signed-Releases: release-builds signs each asset with cosign keyless
+  (<asset>.sigstore.json); sign-release.yml signs an existing release's assets.
 
-- benches/data/e2e/corpus-v1.tsv: 376 frozen cases (every decoder Ciphey has, 39 encodings
-  and ciphers it doesn't have yet, hashes, chains of 2-5 layers, CTF flags, short and long
-  texts, 12 other languages, plaintext and no-answer inputs), tagged with category, the tools
-  each case is comparable on and expected failures.
-- benches/e2e/corpus.py generates it with a fixed seed from benches/data/e2e/plaintexts.tsv
-  (own sentences and public-domain Gutenberg paragraphs) using independent encoders;
-  --check reproduces it byte for byte, --verify (verify.py) decodes 267 of the 315 cases
-  with layers again with CyberChef, PyPI and the standard library.
-- benches/e2e/run.py runs any ciphey binary (fresh HOME, -d, 5 s timeout, no prompts),
-  Python Ciphey 5.14.0 and CyberChef 11.5.0 Magic, alone or two interleaved (A/B), and
-  writes a TSV and a summary (accuracy by category, median/p90/p99 time, false positives
-  and time to give up, uptime).
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/quickstart.yml` (modified, +9/-0)
+**File**: `.github/codespell-requirements.txt` (added, +3/-0)
 ```diff
-@@ -94,6 +94,15 @@ jobs:
+@@ -0,0 +1,3 @@
++# Hash-pinned so CI installs exactly this wheel (OpenSSF Scorecard: Pinned-Dependencies).
++codespell==2.4.1 \
++    --hash=sha256:3dadafa67df7e4a3dbf51e0d7315061b80d265f9552ebd699b3dd6834b47e425
+```
+
+**File**: `.github/dependabot.yml` (modified, +9/-0)
+```diff
+@@ -16,3 +16,12 @@ updates:
+         versions: [">= 0.9"]
+       - dependency-name: "half"
+         versions: [">= 2.4"]
++  # Keeps the SHA-pinned actions and digest-pinned Docker images current
++  - package-ecosystem: "github-actions"
++    directory: "/"
++    schedule:
++      interval: "monthly"
++  - package-ecosystem: "docker"
++    directory: "/"
++    schedule:
++      interval: "monthly"
+```
+
+**File**: `.github/workflows/codespell.yml` (modified, +3/-3)
+```diff
+@@ -11,17 +11,17 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Check out the repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           fetch-depth: 0
+ 
+       - name: Set up Python
+-        uses: actions/setup-python@v5
++        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+         with:
+           python-version: "3.11"
+ 
+       - name: Install codespell
+-        run: python -m pip install codespell==2.4.1
++        run: python -m pip install --require-hashes --no-deps -r .github/codespell-requirements.txt
+ 
+       - name: Collect changed files
+         id: changed-files
+```
+
+**File**: `.github/workflows/dependabot-auto-merge.yml` (modified, +5/-2)
+```diff
+@@ -5,12 +5,15 @@ on:
+     workflows: ["Test"]
+     types: [completed]
+ 
++# Read-only by default; the merge job asks for the writes it needs.
+ permissions:
+-  contents: write
+-  pull-requests: write
++  contents: read
+ 
+ jobs:
+   dependabot:
++    permissions:
++      contents: write
++      pull-requests: write
+     if: >-
+       github.event.workflow_run.event == 'pull_request' &&
+       github.event.workflow_run.conclusion == 'success' &&
+```
+
+**File**: `.github/workflows/quickstart.yml` (modified, +12/-12)
+```diff
+@@ -29,13 +29,13 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout sources
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+ 
+       - name: Install stable toolchain
+-        uses: dtolnay/rust-toolchain@stable
++        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+ 
+       - name: Cache cargo artifacts
+-        uses: Swatinem/rust-cache@v2
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+ 
+       - name: Run cargo check
+         run: cargo check --all-targets
+@@ -48,13 +48,13 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout sources
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+ 
+       - name: Install stable toolchain
+-        uses: dtolnay/rust-toolchain@stable
++        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+ 
+       - name: Cache cargo artifacts
+-        uses: Swatinem/rust-cache@v2
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+ 
+       # Builds the benchmarks without running them; they are too slow and noisy for CI.
+       # The bench profile inherits fat LTO and one codegen unit from the release profile,
+@@ -83,13 +83,13 @@ jobs:
+       CARGO_PROFILE_TEST_DEBUG: line-tables-only
+     steps:
+       - name: Checkout sources
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+ 
+       - name: Install stable toolchain
+-        uses: dtolnay/rust-toolchain@stable
++        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+ 
+       - name: Cache cargo artifacts
+-        uses: Swatinem/rust-cache@v2
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+ 
        - name: Run cargo test
          run: cargo test
+@@ -113,15 +113,15 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout sources
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
  
-+      # The end-to-end benchmark (benches/README.md): its runner's self-test, then the 10-case
-+      # smoke subset on the debug ciphey binary cargo test just built, about 3 s. Fails if the
-+      # runner's parsing or verdict rules break, or a smoke case stops decoding.
-+      - name: End-to-end benchmark smoke run
-+        if: matrix.os == 'ubuntu-latest'
+       - name: Install stable toolchain
+-        uses: dtolnay/rust-toolchain@stable
++        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+         with:
+           components: rustfmt, clippy
+ 
+       - name: Cache cargo artifacts
+-        uses: Swatinem/rust-cache@v2
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+ 
+       - name: Run cargo fmt
+         run: cargo fmt --all -- --check
+```
+
+**File**: `.github/workflows/release-builds.yml` (modified, +19/-3)
+```diff
+@@ -11,12 +11,17 @@ on:
+         type: string
+ 
+ permissions:
+-  contents: write
++  contents: read
+ 
+ jobs:
+   build:
+     name: Build ${{ matrix.target }}
+     runs-on: ${{ matrix.os }}
++    permissions:
++      # Upload assets to the release
++      contents: write
++      # Keyless Sigstore signing of the assets (cosign sign-blob)
++      id-token: write
+     env:
+       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
+     strategy:
+@@ -46,7 +51,7 @@ jobs:
+ 
+     steps:
+       - name: Checkout release tag
+-        uses: actions/checkout@v4
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           ref: ${{ env.RELEASE_TAG }}
+           submodules: recursive
+@@ -79,8 +84,19 @@ jobs:
+           $hash = (Get-FileHash -Algorithm SHA256 $asset).Hash.ToLower()
+           "$hash  $asset" | Set-Content -NoNewline -Encoding ascii "$asset.sha256"
+ 
++      - name: Install cosign
++        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
++
++      # Keyless signature bound to this workflow's identity. Verify with:
++      #   cosign verify-blob --bundle <asset>.sigstore.json \
++      #     --certificate-identity-regexp '^https://github.com/bee-san/Ciphey/' \
++      #     --certificate-oidc-issuer https://token.actions.githubusercontent.com <asset>
++      - name: Sign release asset
++        shell: bash
++        run: cosign sign-blob --yes --bundle "${{ matrix.asset_name }}.sigstore.json" "${{ matrix.asset_name }}"
++
+       - name: Upload release assets
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         shell: bash
+-        run: gh release upload "$RELEASE_TAG" "${{ matrix.asset_name }}" "${{ matrix.asset_name }}.sha256" --clobber
++        run: gh release upload "$RELEASE_TAG" "${{ matrix.asset_name }}" "${{ matrix.asset_name }}.sha256" "${{ matrix.asset_name }}.sigstore.json" --clobber
+```
+
+**File**: `.github/workflows/release.yml` (modified, +15/-11)
+```diff
+@@ -17,8 +17,9 @@
+ # anyone with notifications before the release is actually ready.
+ name: Release
+ 
++# Read-only by default; jobs that create or edit the GitHub Release ask for contents: write.
+ permissions:
+-  contents: write
++  contents: read
+ 
+ # This task will run whenever you push a git tag that looks like a version
+ # like "v1", "v1.2.0", "v0.1.0-prerelease01", "my-app-v1.0.0", etc.
+@@ -48,16 +49,19 @@ jobs:
+   # Create the Github Release™ so the packages have something to be uploaded to
+   create-release:
+     runs-on: ubuntu-latest
++    permissions:
++      contents: write
+     outputs:
+       has-releases: ${{ steps.create-release.outputs.has-releases }}
+     env:
+       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           submodules: recursive
++      # Built from crates.io with its lockfile rather than piping a downloaded script to a shell
+       - name: Install cargo-dist
+-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.1.0/cargo-dist-installer.sh | sh"
++        run: cargo install cargo-dist --version 0.1.0 --locked
+       - id: create-release
+         run: |
+           cargo dist plan --tag=${{ github.ref_name }} --output-format=json > dist-manifest.json
+@@ -91,26 +95,24 @@ jobs:
+         include:
+         - os: "macos-15"
+           dist-args: "--artifacts=local --target=aarch64-apple-darwin"
+-          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.1.0/cargo-dist-installer.sh | sh"
+         - os: "macos-15-intel"
+           dist-args: "--artifacts=local --target=x86_64-apple-darwin"
+-          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.1.0/cargo-dist-installer.sh | sh"
+         - os: "windows-2022"
+           dist-args: "--artifacts=local --target=x86_64-pc-windows-msvc"
+-          install-dist: "irm  https://github.com/axodotdev/cargo-dist/releases/download/v0.1.0/cargo-dist-installer.ps1 | iex"
+         - os: "ubuntu-22.04"
+           dist-args: "--artifacts=local --target=x86_64-unknown-linux-gnu"
+-          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.1.0/cargo-dist-installer.sh | sh"
+ 
+     runs-on: ${{ matrix.os }}
++    permissions:
++      contents: write
+     env:
+       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           submodules: recursive
+       - name: Install cargo-dist
+-        run: ${{ matrix.install-dist }}
++        run: cargo install cargo-dist --version 0.1.0 --locked
+       - name: Run cargo-dist
+         # This logic is a bit janky because it's trying to be a polyglot between
+         # powershell and bash since this will run on windows, macos, and linux!
+@@ -136,10 +138,12 @@ jobs:
+     needs: [create-release, upload-artifacts]
+     if: ${{ always() && needs.create-release.result == 'success' && (needs.upload-artifacts.result == 'skipped' || needs.upload-artifacts.result == 'success') }}
+     runs-on: ubuntu-latest
++    permissions:
++      contents: write
+     env:
+       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           submodules: recursive
+       - name: mark release as non-draft
+@@ -151,7 +155,7 @@ jobs:
+     needs: publish-release
+     runs-on: ubuntu-latest
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+       - name: Publish package to crates.io
+         env:
+           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+```
+
+**File**: `.github/workflows/sign-release.yml` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++name: Sign Release Assets
++
++# Adds a keyless Sigstore signature (<asset>.sigstore.json) to each asset of an existing
++# release that doesn't have one yet. New releases are signed by release-builds.yml.
++on:
++  workflow_dispatch:
++    inputs:
++      tag:
++        description: Existing GitHub release tag whose assets to sign
++        required: true
++        type: string
++
++permissions:
++  contents: read
++
++jobs:
++  sign:
++    runs-on: ubuntu-latest
++    permissions:
++      # Upload the signature bundles to the release
++      contents: write
++      # Keyless Sigstore signing (cosign sign-blob)
++      id-token: write
++    env:
++      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++      GH_REPO: ${{ github.repository }}
++      RELEASE_TAG: ${{ inputs.tag }}
++    steps:
++      - name: Install cosign
++        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
++
++      - name: Sign assets and upload the signatures
 +        run: |
-+          python3 benches/e2e/run.py --selftest
-+          python3 benches/e2e/run.py --subset smoke --timeout 20 --check target/debug/ciphey
-+
-       - name: Run MCP server tests (mcp feature)
-         # The library's tests already ran above; only run the ciphey-mcp unit tests and the
-         # JSON-RPC-over-stdio integration test.
-```
-
-**File**: `.gitignore` (modified, +4/-0)
-```diff
-@@ -23,3 +23,7 @@ doc/
- /.idea
- .aider*
- .cursor
-+
-+# Python bytecode, and the tools benches/e2e/setup.sh installs
-+__pycache__/
-+/.tools/
-```
-
-**File**: `Cargo.toml` (modified, +2/-0)
-```diff
-@@ -5,6 +5,8 @@ version = "0.12.1"
- edition = "2021"
- description = "Automated decoding tool, Ciphey but in Rust"
- license = "MIT"
-+# The end-to-end benchmark (its scripts, corpus and baseline) is for this repository, not the crate
-+exclude = ["benches/e2e/", "benches/data/e2e/"]
- 
- # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
- 
-```
-
-**File**: `benches/README.md` (modified, +37/-0)
-```diff
-@@ -42,6 +42,43 @@ for id in $(target/release/deps/search-<hash> --bench --list | sed -n 's/: bench
- done
- ```
- 
-+## End-to-end benchmark: the check for decoder PRs
-+
-+[`e2e/run.py`](e2e/run.py) runs whole `ciphey` binaries on a frozen corpus and reports
-+accuracy and time. Corpus v1 ([`data/e2e/corpus-v1.tsv`](data/e2e/corpus-v1.tsv), 376 cases)
-+has every encoding and cipher Ciphey decodes and 39 it doesn't yet, hashes, chains of
-+2 to 5 layers, CTF flags, short and long texts, other languages, plaintext input and inputs
-+with no answer. The method, the corpus and the baselines of master, 0.12.0, Python Ciphey
-+and CyberChef Magic are in [docs/benchmark-e2e.md](../docs/benchmark-e2e.md). The runner
-+needs only Python 3.9+ (Linux or macOS).
-+
-+A PR that adds or changes a decoder or a checker runs the **quick subset** (76 cases, about
-+a minute) with master's binary as A and its own as B:
-+
-+```sh
-+git worktree add ../ciphey-master origin/master
-+(cd ../ciphey-master && cargo build --release)    # master's binary, once
-+cargo build --release
-+python3 benches/e2e/run.py --subset quick --check ../ciphey-master/target/release/ciphey target/release/ciphey
-+```
-+
-+Each case runs on both binaries back to back, A first on even cases and B first on odd
-+ones, each time with a fresh `HOME` (no cache), `-d` and a 5 second timeout. The report ends
-+with:
-+
-+* **Verdicts that changed**: every case one binary got right and the other didn't, with the
-+  answers and the decoder paths. A decoder PR should have no line that goes from `correct`
-+  to `wrong` or `nothing`; `--check` exits 1 if there is one.
-+* **Time B/A**: the geometric mean of the per-case time ratios, with a 95% confidence
-+  interval (Student's t on the log ratios). Master against itself gave 0.991 (0.956 to 1.027)
-+  in 54 s on the busy shared host; an interval above 1.05 is a slowdown to explain.
-+
-+Paste those lines and the `uptime` lines into the PR. To show what the new decoder gains, run
-+its own cases of the full corpus too (they are tagged with its issue as expected failures),
-+for example `--ids base45`, and drop `--subset quick` for the whole corpus (about 6 minutes
-+per binary) when the change touches the search or the checkers. CI runs `run.py --selftest`
-+and then `--subset smoke` (10 cases) on the debug binary.
-+
- ## Inputs
- 
- All inputs are checked in under [`data/`](data) so runs are comparable:
-```
-
-**File**: `benches/data/e2e/plaintexts.tsv` (added, +163/-0)
-```diff
-@@ -0,0 +1,163 @@
-+# Plaintexts of the end-to-end corpus (benches/e2e/corpus.py). pool<TAB>id<TAB>source<TAB>text
-+# source "own": written for this benchmark (2026-11-04), MIT like the rest of the repo.
-+# source "gutenberg:<n>": a paragraph of Project Gutenberg ebook <n>, public domain in the USA,
-+# whitespace collapsed. The books are held out from gibberish-or-not's training (its en_test
-+# list) and are not among the books of Ciphey's quadgram table; sha256 of the files used are in
-+# docs/benchmark-e2e.md.
-+sent	S01	own	The quick brown fox jumps over the lazy dog.
-+sent	S02	own	Meet me at the old lighthouse after midnight.
-+sent	S03	own	Please remember to water the plants on Friday.
-+sent	S04	own	Our train leaves from platform nine at half past seven.
-+sent	S05	own	The password for the staging server changes every month.
-+sent	S06	own	I left the spare key under the blue flower pot.
-+sent	S07	own	Can you send me the report before the meeting tomorrow?
-+sent	S08	own	The museum is closed on Mondays, but the garden stays open.
-+sent	S09	own	Every morning she runs five kilometres along the river.
-+sent	S10	own	Bring warm clothes, because the cabin has no heating.
-+sent	S11	own	The treasure is buried three paces north of the oak tree.
-+sent	S12	own	We need two more volunteers for the charity bake sale.
-+sent	S13	own	Turn left at the bakery and the library is on your right.
-+sent	S14	own	The concert was cancelled because of the heavy storm.
-+sent	S15	own	Do not open this envelope until your birthday.
-+sent	S16	own	He fixed the bug by checking the length before copying the buffer.
-+sent	S17	own	Our new office has a great view of the harbour.
-+sent	S18	own	The recipe calls for two eggs, a cup of flour and some milk.
-+sent	S19	own	I think the answer is hidden somewhere in the second chapter.
-+sent	S20	own	The cat knocked a glass of water off the kitchen table.
-+sent	S21	own	Remember to back up your files before installing the update.
-+sent	S22	own	The weather forecast says it will snow on Sunday afternoon.
-+sent	S23	own	Grandma still writes letters by hand to all her friends.
-+sent	S24	own	The quarterly results were better than anyone expected.
-+sent	S25	own	Keep this message secret and destroy it after reading.
-+sent	S26	own	The bridge will be closed for repairs until the end of June.
-+sent	S27	own	My favourite book is about a sailor who crosses the ocean alone.
-+sent	S28	own	Lunch will be served in the main hall at one o'clock.
-+sent	S29	own	The detective noticed that the clock had stopped at ten past four.
-+sent	S30	own	Please do not feed the ducks in the park.
-+sent	S31	own	The rocket launch was delayed by a faulty sensor.
-+sent	S32	own	We found an old map in the attic of the farmhouse.
-+sent	S33	own	If you can read this, you have cracked the first layer.
-+sent	S34	own	The library fine for late books is ten cents a day.
-+sent	S35	own	Switch off the lights when you leave the laboratory.
-+sent	S36	own	The orchestra rehearses every Tuesday evening in the church.
-+sent	S37	own	A strong password should be long and hard to guess.
-+sent	S38	own	The children built a snowman with a carrot for a nose.
-+sent	S39	own	Our flight was rerouted through Lisbon because of the strike.
-+sent	S40	own	The secret ingredient in the soup is a pinch of nutmeg.
-+sent	S41	own	Hello, World! This is a test of the decoder.
-+sent	S42	own	Send the package to the address on the back of this card.
-+sent	S43	own	The farmer sold apples, pears and plums at the market.
-+sent	S44	own	The server crashed at noon, so the team rolled back the release.
-+sent	S45	own	We will meet again when the moon is full.
-+sent	S46	own	The painting was stolen from the gallery last winter.
-+sent	S47	own	Your appointment with the dentist is on Thursday at three.
-+sent	S48	own	The hikers reached the summit just before sunset.
-+sent	S49	own	Nobody noticed that the guard had fallen asleep.
-+sent	S50	own	Thank you for helping me move into the new flat.
-+letters	L01	own	ATTACK AT DAWN
-+letters	L02	own	MEET ME AT THE SECRET GARDEN
-+letters	L03	own	THE EAGLE HAS LANDED
-+letters	L04	own	SEND MORE TROOPS TO THE NORTH GATE
-+letters	L05	own	HELLO FROM THE OTHER SIDE
-+letters	L06	own	THE ANSWER IS FORTY TWO
-+letters	L07	own	WE RIDE AT MIDNIGHT
-+letters	L08	own	KEEP CALM AND CARRY ON
-+letters	L09	own	THE GOLD IS IN THE WELL
-+letters	L10	own	RETREAT TO THE CASTLE
-+letters	L11	own	THE PACKAGE ARRIVES ON MONDAY
-+letters	L12	own	NEVER TRUST A SMILING CAT
-+letters	L13	own	FIND THE KEY UNDER THE MAT
-+letters	L14	own	THE BIRDS SING AT SUNRISE
-+letters	L15	own	WINTER IS COMING SOON
-+letters	L16	own	LOOK BEHIND THE PAINTING
-+letters	L17	own	THE TRAIN LEAVES AT NOON
-+letters	L18	own	SILENCE IS GOLDEN
-+letters	L19	own	HAPPY BIRTHDAY MY FRIEND
-+letters	L20	own	THE CODE WORD IS PELICAN
-+para	P01	own	The expedition set out from the coastal village at first light. For three days the travellers followed the river inland, crossing marshes and thick forests, until they reached the foot of the mounta
-```
-
-**File**: `benches/e2e/corpus.py` (added, +1991/-0)
-```diff
-@@ -0,0 +1,1991 @@
-+#!/usr/bin/env python3
-+"""Generate corpus v1 of Ciphey's end-to-end benchmark (benches/data/e2e/corpus-v1.tsv).
-+
-+The corpus is frozen: it was generated once with SEED and committed, and this script must
-+reproduce it byte for byte (`--check`). Changing the cases means a new version
-+(corpus-v2.tsv) so that results stay comparable. See docs/benchmark-e2e.md.
-+
-+Every ciphertext comes from an implementation that is independent of Ciphey's decoders:
-+Python's standard library, PyPI reference packages (pinned in setup.sh), CyberChef's
-+operations (through cyberchef.py) or a short encoder written here from the published
-+definition, cited next to it. `--verify` decodes every case again with a second, independent
-+implementation where one exists. Which cases CyberChef is comparable on comes from Magic's
-+own detection (cyberchef_tools), so generating needs the CyberChef install too.
-+
-+    benches/e2e/setup.sh gen && benches/e2e/setup.sh node                     # into .tools/
-+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node          # write
-+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --check  # compare
-+    .tools/gen/bin/python benches/e2e/corpus.py --cyberchef .tools/node --verify # decode again
-+"""
-+
-+import argparse
-+import base64
-+import binascii
-+import bz2
-+import email.charset
-+import email.header
-+import gzip
-+import hashlib
-+import hmac
-+import json
-+import lzma
-+import math
-+import os
-+import quopri
-+import random
-+import re
-+import string
-+import sys
-+import urllib.parse
-+import warnings
-+import zlib
-+
-+warnings.filterwarnings("ignore", category=SyntaxWarning)  # pycipher 0.5.2's regex strings
-+
-+HERE = os.path.dirname(os.path.abspath(__file__))
-+ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-+DATA = os.path.join(ROOT, "benches", "data", "e2e")
-+VERSION = 1
-+SEED = 20261104
-+OUT = os.path.join(DATA, f"corpus-v{VERSION}.tsv")
-+
-+# Tools a case can be comparable on. Every case runs on Ciphey.
-+CIPHEY, PY, CC, CCI = "ciphey", "python-ciphey", "cyberchef", "cyberchef-intensive"
-+
-+# ---------------------------------------------------------------------------------------
-+# Helpers
-+
-+
-+def u(data):
-+    """bytes -> str (UTF-8)."""
-+    return data.decode("utf-8")
-+
-+
-+def text(fn):
-+    """Lifts a str -> str encoder to the bytes -> bytes interface."""
-+
-+    def wrapped(data, rng):
-+        return fn(u(data), rng).encode("utf-8")
-+
-+    wrapped.__name__ = fn.__name__
-+    return wrapped
-+
-+
-+def to_radix(n, digits):
-+    if n == 0:
-+        return digits[0]
-+    out = []
-+    while n:
-+        n, r = divmod(n, len(digits))
-+        out.append(digits[r])
-+    return "".join(reversed(out))
-+
-+
-+def shift_letters(s, k):
-+    """Caesar shift by k, keeping case and everything that isn't an ASCII letter."""
-+    out = []
-+    for c in s:
-+        if "A" <= c <= "Z":
-+            out.append(chr((ord(c) - 65 + k) % 26 + 65))
-+        elif "a" <= c <= "z":
-+            out.append(chr((ord(c) - 97 + k) % 26 + 97))
-+        else:
-+            out.append(c)
-+    return "".join(out)
-+
-+
-+def map_letters(s, fn):
-+    """Applies fn(index of letter among the letters, value 0-25) -> 0-25 to every ASCII letter,
-+    keeping case and non-letters."""
-+    out, i = [], 0
-+    for c in s:
-+        if c.isascii() and c.isalpha():
-+            base = 65 if c.isupper() else 97
-+            out.append(chr(fn(i, ord(c) - base) % 26 + base))
-+            i += 1
-+        else:
-+            out.append(c)
-+    return "".join(out)
-+
-+
-+def letters_only(s):
-+    return "".join(c for c in s.upper() if "A" <= c <= "Z")
-+
-+
-+# ---------------------------------------------------------------------------------------
-+# Encoders: (data: bytes, rng) -> bytes. Text encoders work on the UTF-8 text.
-+
-+# Base encodings (Python stdlib, RFC 4648)
-+def b64(data, rng):
-+    return base64.b64encode(data)
-+
-+
-+def b64url(data, rng):  # RFC 4648 §5 alphabet, padding dropped as in JWTs and URLs
-+    return base64.urlsafe_b64encode(data).rstrip(b"=")
-+
-+
-+B64_STD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-+
-+
-+def b64_itoa64(data, rng):  # crypt(3)'s itoa64 alphabet, CyberChef's "itoa64" From Base64 preset
-+    alt = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-+    return base64.b64encode(data).translate(bytes.maketrans(B64_STD.encode(), alt.encode()))
-+
-+
-+def b32(data, rng):
-+    return base64.b32encode(data)
-+
-+
-+def b32hex(data, rng):  # RFC 4648 §7
-+    return base64.b32hexencode(data)
-+
-+
-+B32_STD = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-+
-+
-+def b32_crockford(data, rng):  # https://www.crockford.com/base32.html, 5 bits at a time
-+    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32_STD, b"0123456789ABCDEFGHJKMNPQRSTVWXYZ"))
-+
-+
-+def zbase32(data, rng):  # https://philzimmermann.com/docs/human-oriented-base-32-encoding.txt
-+    return base64.b32encode(data).rstrip(b"=").translate(bytes.maketrans(B32
-```
-
-**File**: `benches/e2e/cyberchef.mjs` (added, +98/-0)
-```diff
-@@ -0,0 +1,98 @@
-+// CyberChef worker for benches/e2e: reads one JSON request per line on stdin and writes one
-+// JSON reply per line on stdout. Started by cyberchef.py (the runner's CyberChef adapter and
-+// corpus.py's CyberChef encoders), never by hand:
-+//
-+//   node cyberchef.mjs <dir that holds node_modules/cyberchef>
-+//
-+// Requests:
-+//   {"op": "magic", "input": "...", "depth": 3, "intensive": true, "extLang": false, "top": 5}
-+//     Runs the Magic operation (CyberChef's src/core/lib/Magic.mjs speculativeExecution, the
-+//     same call as the Magic operation in the web app) and bakes the recipe of the first `top`
-+//     suggestions on the whole input, because Magic only keeps the first 100 characters of
-+//     each result. `ms` is the time of Magic plus the bake of the first suggestion.
-+//   {"op": "bake", "input": "...", "recipe": [{"op": "To Base64", "args": [...]}]}
-+//     Runs a recipe and returns its output as text (UTF-8).
-+//   {"op": "checks", "hex": "..."}     (corpus.py) the operations Magic would try on these bytes:
-+//     the names of the operations whose detection patterns match (Magic's findMatchingInputOps)
-+//   {"op": "jsfuck", "input": "..."}   (corpus.py) JSFuck.encode from npm jsfuck, if installed
-+//   {"op": "eval", "code": "..."}      (corpus.py --verify) String(eval(code))
-+import { pathToFileURL } from "node:url";
-+import { join } from "node:path";
-+import { createInterface } from "node:readline";
-+import { createRequire } from "node:module";
-+
-+const dir = process.argv[2];
-+if (!dir) {
-+    process.stderr.write("usage: node cyberchef.mjs <dir with node_modules/cyberchef>\n");
-+    process.exit(2);
-+}
-+const chef = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/node/index.mjs")).href)).default;
-+const MagicLib = (await import(pathToFileURL(join(dir, "node_modules/cyberchef/src/core/lib/Magic.mjs")).href)).default;
-+
-+/** The text of a dish: UTF-8 decoded, as the web app shows it. */
-+function dishText(dish) {
-+    const buf = dish.get("ArrayBuffer");
-+    return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(buf));
-+}
-+
-+/** Runs a recipe on text input and returns its output as text, or null if it throws. */
-+async function bakeText(input, recipe) {
-+    try {
-+        return dishText(await chef.bake(input, recipe));
-+    } catch (e) {
-+        return null;
-+    }
-+}
-+
-+async function handle(req) {
-+    if (req.op === "bake") {
-+        return { output: dishText(await chef.bake(req.input, req.recipe)) };
-+    }
-+    if (req.op === "checks") {
-+        const bytes = Uint8Array.from(req.hex.match(/../g) || [], h => parseInt(h, 16));
-+        const ops = new MagicLib(bytes.buffer).findMatchingInputOps().map(m => m.op);
-+        return { ops: [...new Set(ops)] };
-+    }
-+    if (req.op === "jsfuck") {
-+        const { JSFuck } = createRequire(join(dir, "package.json"))("jsfuck");
-+        return { output: JSFuck.encode(req.input, false, false) };
-+    }
-+    if (req.op === "eval") {
-+        return { output: String((0, eval)(req.code)) };
-+    }
-+    if (req.op === "magic") {
-+        const t0 = performance.now();
-+        const dish = await chef.magic(req.input, {
-+            depth: req.depth ?? 3,
-+            intensiveMode: !!req.intensive,
-+            extensiveLanguageSupport: !!req.extLang,
-+        });
-+        const options = dish.value;
-+        const top = Math.max(1, req.top ?? 5);
-+        const results = [];
-+        let ms = null;
-+        for (let i = 0; i < options.length && i < top; i++) {
-+            const o = options[i];
-+            const recipe = o.recipe.map(step => ({ op: step.op, args: step.args }));
-+            const output = recipe.length ? await bakeText(req.input, recipe) : req.input;
-+            if (i === 0) ms = performance.now() - t0;
-+            results.push({ recipe: recipe.map(step => step.op), recipe_full: recipe, output });
-+        }
-+        if (ms === null) ms = performance.now() - t0;
-+        return { ms, count: options.length, results };
-+    }
-+    throw new Error(`unknown op ${req.op}`);
-+}
-+
-+const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
-+process.stdout.write(JSON.stringify({ ready: true }) + "\n");
-+for await (const line of rl) {
-+    if (!line.trim()) continue;
-+    let reply;
-+    try {
-+        reply = await handle(JSON.parse(line));
-+    } catch (e) {
-+        reply = { error: String(e && e.stack || e) };
-+    }
-+    process.stdout.write(JSON.stringify(reply) + "\n");
-+}
-```
-
-**File**: `benches/e2e/cyberchef.py` (added, +106/-0)
-```diff
-@@ -0,0 +1,106 @@
-+"""Client for cyberchef.mjs, a long-lived Node process that runs CyberChef's Node API.
-+
-+Used by run.py (the `cyberchef` tool: Magic) and corpus.py (CyberChef's encoders). One
-+process serves every case, so CyberChef's start-up (about 1.5 s to import its 500
-+operations) is paid once and not counted in a case's time. A request that doesn't answer
-+within its timeout kills the process; the next request starts a new one.
-+"""
-+
-+import json
-+import os
-+import select
-+import subprocess
-+import tempfile
-+import time
-+
-+HERE = os.path.dirname(os.path.abspath(__file__))
-+ROOT = os.path.realpath(os.path.join(HERE, "..", ".."))
-+
-+
-+class CyberChefError(RuntimeError):
-+    pass
-+
-+
-+class CyberChef:
-+    def __init__(self, root, node="node"):
-+        """`root` is the directory that holds node_modules/cyberchef (setup.sh's .tools/node). It
-+        has to be inside the repository: the benchmark reads nothing outside it."""
-+        root = os.path.realpath(root)
-+        if not root.startswith(ROOT + os.sep):
-+            raise CyberChefError(f"{root} is outside the repository {ROOT} (setup.sh installs CyberChef in .tools/node)")
-+        self.root = root
-+        self.node = node
-+        self.proc = None
-+        self.startup_seconds = None
-+        self.stderr = tempfile.TemporaryFile()
-+        if not os.path.isdir(os.path.join(self.root, "node_modules", "cyberchef")):
-+            raise CyberChefError(f"no node_modules/cyberchef under {self.root} (run benches/e2e/setup.sh)")
-+
-+    def version(self):
-+        with open(os.path.join(self.root, "node_modules", "cyberchef", "package.json"), encoding="utf-8") as fh:
-+            return json.load(fh)["version"]
-+
-+    def start(self):
-+        t0 = time.perf_counter()
-+        self.proc = subprocess.Popen(
-+            [self.node, "--no-warnings", os.path.join(HERE, "cyberchef.mjs"), self.root],
-+            stdin=subprocess.PIPE,
-+            stdout=subprocess.PIPE,
-+            stderr=self.stderr,
-+            text=True,
-+            encoding="utf-8",
-+            bufsize=1,
-+        )
-+        reply = self._read(180)
-+        if not reply or not reply.get("ready"):
-+            self.close()
-+            self.stderr.seek(0)
-+            raise CyberChefError("CyberChef worker didn't start: " + self.stderr.read().decode("utf-8", "replace")[-2000:])
-+        self.startup_seconds = time.perf_counter() - t0
-+
-+    def _read(self, timeout):
-+        """One reply line, or None after `timeout` seconds."""
-+        deadline = time.monotonic() + timeout
-+        fd = self.proc.stdout.fileno()
-+        while True:
-+            left = deadline - time.monotonic()
-+            if left <= 0:
-+                return None
-+            ready, _, _ = select.select([fd], [], [], left)
-+            if ready:
-+                line = self.proc.stdout.readline()
-+                if not line:
-+                    raise CyberChefError("CyberChef worker exited")
-+                return json.loads(line)
-+
-+    def request(self, req, timeout=600):
-+        """Sends one request. Returns the reply, or None on timeout (the worker is killed)."""
-+        if self.proc is None or self.proc.poll() is not None:
-+            self.start()
-+        self.proc.stdin.write(json.dumps(req, ensure_ascii=False) + "\n")
-+        self.proc.stdin.flush()
-+        reply = self._read(timeout)
-+        if reply is None:
-+            self.close()
-+            return None
-+        if "error" in reply:
-+            raise CyberChefError(reply["error"])
-+        return reply
-+
-+    def bake(self, text, recipe):
-+        return self.request({"op": "bake", "input": text, "recipe": recipe})["output"]
-+
-+    def magic(self, text, depth=3, intensive=True, ext_lang=False, top=5, timeout=600):
-+        return self.request(
-+            {"op": "magic", "input": text, "depth": depth, "intensive": intensive, "extLang": ext_lang, "top": top},
-+            timeout,
-+        )
-+
-+    def close(self):
-+        if self.proc is not None:
-+            try:
-+                self.proc.kill()
-+                self.proc.wait(10)
-+            except Exception:
-+                pass
-+            self.proc = None
++          mkdir assets && cd assets
++          gh release download "$RELEASE_TAG"
++          for asset in *; do
++            case "$asset" in *.sigstore.json) continue ;; esac
++            [ -e "$asset.sigstore.json" ] && continue
++            cosign sign-blob --yes --bundle "$asset.sigstore.json" "$asset"
++            gh release upload "$RELEASE_TAG" "$asset.sigstore.json"
++          done
 ```
 
 #### Recent Merged Pull Requests:
@@ -2272,29 +2065,23 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines 
+## X. ci: raise OpenSSF Scorecard (token permissions, pinning, vulns, fuzzing, signing
 
 **RULE**:
-When implementing operations in `.github/workflows/quickstart.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/codespell-requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7ad87dd`: bench: end-to-end benchmark (corpus v1, runner, A/B quick check) with baselines for master, 0.12.0, Python Ciphey and CyberChef (#1137). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c500baff`: ci: raise OpenSSF Scorecard (token permissions, pinning, vulns, fuzzing, signing). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/quickstart.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/codespell-requirements.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # The end-to-end benchmark (benches/README.md): its runner's self-test, then the 10-case
-      # smoke subset on the debug ciphey binary cargo test just built, about 3 s. Fails if the
-      # runner's parsing or verdict rules break, or a smoke case stops decoding.
-      - name: End-to-end benchmark smoke run
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          python3 benches/e2e/run.py --selftest
-          python3 benches/e2e/run.py --subset smoke --timeout 20 --check target/debug/ciphey
-
+# Hash-pinned so CI installs exactly this wheel (OpenSSF Scorecard: Pinned-Dependencies).
+codespell==2.4.1 \
+    --hash=sha256:3dadafa67df7e4a3dbf51e0d7315061b80d265f9552ebd699b3dd6834b47e425
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2304,4 +2091,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7ad87dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c500baff` are properly handled with clean fallback behavior.

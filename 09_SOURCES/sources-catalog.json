@@ -2633,10 +2633,10 @@
     "repository": "bee-san/Ciphey",
     "platform": "github",
     "sourceUrl": "https://github.com/bee-san/Ciphey",
-    "sourceVersion": "f7ad87dd",
+    "sourceVersion": "c500baff",
     "license": "MIT",
-    "contentHash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
-    "lastHarvestedAt": "2026-11-05T02:25:52.660Z",
+    "contentHash": "a06e39b2747175a596c29e450dfaf97b432d7d9a225652bc81f8b926b7e16983",
+    "lastHarvestedAt": "2026-11-06T22:56:06.065Z",
     "learningId": "learn-github-bee-san-ciphey"
   },
   "pingcap-autoflow": {
@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "cbac86f3",
+    "sourceVersion": "5ca8c863",
     "license": "MIT",
-    "contentHash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
-    "lastHarvestedAt": "2026-11-04T07:49:07.276Z",
+    "contentHash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
+    "lastHarvestedAt": "2026-11-06T22:56:03.418Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "a6d5147c",
+    "sourceVersion": "28ed047e",
     "license": "Apache-2.0",
-    "contentHash": "40bba3632f8f59c3c649d38e4c831a92c16cf3afef5ce60cb38588102fe55021",
-    "lastHarvestedAt": "2026-11-05T13:47:52.503Z",
+    "contentHash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
+    "lastHarvestedAt": "2026-11-06T22:56:05.349Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "b1670ff1",
+    "sourceVersion": "30d662db",
     "license": "Apache-2.0",
-    "contentHash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
-    "lastHarvestedAt": "2026-11-05T12:58:36.615Z",
+    "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
+    "lastHarvestedAt": "2026-11-06T22:56:09.114Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

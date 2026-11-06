@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T22:36:17.989Z",
+  "last_updated": "2026-11-06T22:56:09.134Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4086,14 +4086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bee-san-ciphey",
-      "content_hash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
-      "verified_at": "2026-11-05T02:25:52.673Z",
+      "content_hash": "a06e39b2747175a596c29e450dfaf97b432d7d9a225652bc81f8b926b7e16983",
+      "verified_at": "2026-11-06T22:56:06.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T02:25:52.673Z"
+      "last_updated": "2026-11-06T22:56:06.078Z"
     },
     "pingcap/autoflow": {
       "repository": "pingcap/autoflow",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
-      "verified_at": "2026-11-04T07:49:07.285Z",
+      "content_hash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
+      "verified_at": "2026-11-06T22:56:03.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:49:07.285Z"
+      "last_updated": "2026-11-06T22:56:03.431Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "40bba3632f8f59c3c649d38e4c831a92c16cf3afef5ce60cb38588102fe55021",
-      "verified_at": "2026-11-05T13:47:52.523Z",
+      "content_hash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
+      "verified_at": "2026-11-06T22:56:05.359Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:47:52.523Z"
+      "last_updated": "2026-11-06T22:56:05.359Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
-      "verified_at": "2026-11-05T12:58:36.630Z",
+      "content_hash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
+      "verified_at": "2026-11-06T22:56:09.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:58:36.630Z"
+      "last_updated": "2026-11-06T22:56:09.133Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

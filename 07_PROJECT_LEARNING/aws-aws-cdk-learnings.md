@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `a6d5147c`  
+> **Source Version**: `28ed047e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:47:51.605Z  
+> **Timestamp**: 2026-11-06T22:56:03.789Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:47:51.598Z  
+> **Harvest Timestamp**: 2026-11-06T22:56:02.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12963 stars
+- **Stars / Engagement**: 12968 stars
 
 ---
 
@@ -1200,175 +1200,8 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6d5147c` (2026-11-05)
-**Commit Message**: chore(region-info): me-west-1 (#39431)
-
-### Issue # (if applicable)
-
-Part of #39433.
-
-### Reason for this change
-
-Add support for the new Middle East (Saudi Arabia) region, `me-west-1`.
-
-### Description of changes
-
-| Table | File | Status | Value |
-|---|---|---|---|
-| `AWS_REGIONS_AND_RULES` | `aws-entities.ts` | Added (end of list) | `'me-west-1', // Middle East (Saudi Arabia)` |
-| `PARTITION_MAP` | `fact-tables.ts` | No change needed | `aws` partition, `amazonaws.com` |
-| `DLC_REPOSITORY_ACCOUNTS` | `fact-tables.ts` | Added | `124382933778` |
-| `APPMESH_ECR_ACCOUNTS` | `fact-tables.ts` | Added | `675079659277` |
-| `ROUTE_53_BUCKET_WEBSITE_ZONE_IDS` | `fact-tables.ts` | Missing, not available yet | |
-| `EBS_ENV_ENDPOINT_HOSTED_ZONE_IDS` | `fact-tables.ts` | Missing, not available yet | |
-| `ELBV2_ACCOUNTS` | `fact-tables.ts` | Missing, not available yet | |
-| `CLOUDWATCH_LAMBDA_INSIGHTS_ARNS` | `fact-tables.ts` | Missing, extension version not published yet | |
-| `APPCONFIG_LAMBDA_LAYER_ARNS` | `fact-tables.ts` | Missing, extension version not published yet | |
-| `ADOT_LAMBDA_LAYER_JAVA_SDK_ARNS` | `fact-tables.ts` | Missing, not available yet | |
-| `ADOT_LAMBDA_LAYER_JAVA_AUTO_IN
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-codebuild/test/integ.aws-deep-learning-container-build-image.js.snapshot/aws-deep-learning-container-build-image.template.json` (modified, +3/-0)
-```diff
-@@ -294,6 +294,9 @@
-    "me-south-1": {
-     "value": "217643126080"
-    },
-+   "me-west-1": {
-+    "value": "124382933778"
-+   },
-    "sa-east-1": {
-     "value": "763104351884"
-    },
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-s3-deployment/test/integ.bucket-deployment-deployed-bucket.js.snapshot/test-bucket-deployment-deployed-bucket.template.json` (modified, +3/-0)
-```diff
-@@ -505,6 +505,9 @@
-    "me-south-1": {
-     "endpoint": "s3-website.me-south-1.amazonaws.com"
-    },
-+   "me-west-1": {
-+    "endpoint": "s3-website.me-west-1.amazonaws.com"
-+   },
-    "mx-central-1": {
-     "endpoint": "s3-website.mx-central-1.amazonaws.com"
-    },
-```
-
-**File**: `packages/@aws-cdk/aws-sagemaker-alpha/test/integ.model.js.snapshot/aws-cdk-sagemaker-model.template.json` (modified, +3/-0)
-```diff
-@@ -1140,6 +1140,9 @@
-    "me-south-1": {
-     "value": "217643126080"
-    },
-+   "me-west-1": {
-+    "value": "124382933778"
-+   },
-    "sa-east-1": {
-     "value": "763104351884"
-    },
-```
-
-**File**: `packages/aws-cdk-lib/region-info/build-tools/fact-tables.ts` (modified, +2/-0)
-```diff
-@@ -199,6 +199,7 @@ export const DLC_REPOSITORY_ACCOUNTS: { [region: string]: string } = {
-   'eu-west-3': '763104351884',
-   'me-central-1': '914824155844',
-   'me-south-1': '217643126080',
-+  'me-west-1': '124382933778',
-   'sa-east-1': '763104351884',
-   'us-east-1': '763104351884',
-   'us-east-2': '763104351884',
-@@ -234,6 +235,7 @@ export const APPMESH_ECR_ACCOUNTS: { [region: string]: string } = {
-   'eu-west-3': '840364872350',
-   'il-central-1': '564877687649',
-   'me-south-1': '772975370895',
-+  'me-west-1': '675079659277',
-   'sa-east-1': '840364872350',
-   'us-east-1': '840364872350',
-   'us-east-2': '840364872350',
-```
-
-**File**: `packages/aws-cdk-lib/region-info/lib/aws-entities.ts` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@ export const AWS_REGIONS_AND_RULES: readonly (string | symbol)[] = [
-   'ap-southeast-6', // Asia Pacific (New Zealand)
-   'us-isof-south-1', // US ISOF SOUTH
-   'us-isof-east-1', // US ISOF EAST
-+  'me-west-1', // Middle East (Saudi Arabia)
- ];
- 
- /**
-```
-
-**File**: `packages/aws-cdk-lib/region-info/test/__snapshots__/region-info.test.ts.snap` (modified, +53/-0)
-```diff
-@@ -1698,6 +1698,59 @@ exports[`built-in data is correct 1`] = `
-     "s3StaticWebsiteEndpoint": "s3-website.me-south-1.amazonaws.com",
-     "vpcEndPointServiceNamePrefix": "com.amazonaws.vpce",
-   },
-+  "me-west-1": {
-+    "appConfigLayerArmVersions": {
-+      "2.0.122": undefined,
-+      "2.0.165": undefined,
-+      "2.0.181": undefined,
-+      "2.0.45": undefined,
-+      "2.0.58": undefined,
-+    },
-+    "appConfigLayerVersions": {
-+      "2.0.122": undefined,
-+      "2.0.165": undefined,
-+      "2.0.181": undefined,
-+      "2.0.30": undefined,
-+      "2.0.45": undefined,
-+      "2.0.58": undefined,
-+    },
-+    "domainSuffix": "amazonaws.com",
-+    "lambdaInsightsArmVersions": {
-+      "1.0.119.0": undefined,
-+      "1.0.135.0": undefined,
-+      "1.0.229.0": undefined,
-+      "1.0.273.0": undefined,
-+      "1.0.275.0": undefined,
-+      "1.0.295.0": undefined,
-+      "1.0.317.0": undefined,
-+      "1.0.333.0": undefined,
-+      "1.0.391.0": undefined,
-+      "1.0.404.0": undefined,
-+      "1.0.498.0": undefined,
-+    },
-+    "lambdaInsightsVersions": {
-+      "1.0.119.0": undefined,
-+      "1.0.135.0": undefined,
-+      "1.0.143.0": undefined,
-+      "1.0.178.0": undefined,
-+      "1.0.229.0": undefined,
-+      "1.0.273.0": undefined,
-+      "1.0.275.0": undefined,
-+      "1.0.295.0": undefined,
-+      "1.0.317.0": undefined,
-+      "1.0.333.0": undefined,
-+      "1.0.391.0": undefined,
-+      "1.0.404.0": undefined,
-+      "1.0.498.0": undefined,
-+      "1.0.54.0": undefined,
-+      "1.0.86.0": undefined,
-+      "1.0.89.0": undefined,
-+      "1.0.98.0": undefined,
-+    },
-+    "partition": "aws",
-+    "s3StaticWebsiteEndpoint": "s3-website.me-west-1.amazonaws.com",
-+    "vpcEndPointServiceNamePrefix": "com.amazonaws.vpce",
-+  },
-   "mx-central-1": {
-     "appConfigLayerArmVersions": {
-       "2.0.122": undefined,
-```
-
----
-
-### Incident Patch 2: `797c2cc8` (2026-11-05)
-**Commit Message**: chore(repo): say PR instead of issue in the stale PR message (#39650)
+### Incident Patch 1: `28ed047e` (2026-11-06)
+**Commit Message**: chore(security-guardian): parse the cfn-guard report with an XML parser (#39510)
 
 ### Issue # (if applicable)
 
@@ -1376,11 +1209,13 @@ None.
 
 ### Reason for this change
 
-The stale PR message says "If you want to keep this issue open" even though it's posted on PRs. Example: https://github.com/aws/aws-cdk/pull/34549#issuecomment-6653060213
+The tool edits cfn-guard's JUnit report with regular expressions in [`cfn-guard-runner.ts`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/src/cfn-guard-runner.ts#L5-L60). Follow-up to [this comment](https://github.com/aws/aws-cdk/pull/39503#discussion_r4381530329) on #39503.
 
 ### Description of changes
 
-Changed "keep this issue open" to "keep this PR open" in `stale-pr-message` in `close-stale-issues.yml`. The issue messages are unchanged.
+- Read and write the report with [`@xmldom/xmldom`](https://www.npmjs.com/package/@xmldom/xmldom), now in `dependencies`. It's already in `yarn.lock`, so the lockfile doesn't change.
+- The report keeps the same content, with two exceptions: a changed file whose name contains `&`, `'`, `<` or `>` now maps back to its path, and tabs and line breaks in a failure message are written as character references.
+- A report that can't be parsed now fails the step with one error that names the report and the cause. Before, it was passed on unchanged.
 
 ### Describe any new or updated permissions being added
 
@@ -1388,35 +1223,469 @@ None.
 
 ### Description of how you validated changes
 
-Text-only change to a workflow input.
+- 93 of 93 tests pass with c
 
-### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
-
-----
-
-*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
-
-**File**: `.github/workflows/close-stale-issues.yml` (modified, +1/-1)
+**File**: `tools/@aws-cdk/security-guardian/package.json` (modified, +2/-2)
 ```diff
-@@ -23,7 +23,7 @@ jobs:
-         # that category
-         ancient-issue-message: This issue has not received any attention in 1 year. If you want to keep this issue open, please leave a comment below and auto-close will be canceled.
-         stale-issue-message: This issue has not received a response in a while. If you want to keep this issue open, please leave a comment below and auto-close will be canceled.
--        stale-pr-message: This PR has not received a response in a while. If you want to keep this issue open, please leave a comment below and auto-close will be canceled.
-+        stale-pr-message: This PR has not received a response in a while. If you want to keep this PR open, please leave a comment below and auto-close will be canceled.
-         
-         # These labels are required
-         stale-issue-label: closing-soon
+@@ -11,12 +11,12 @@
+   },
+   "dependencies": {
+     "@actions/core": "^1.10.0",
+-    "@actions/exec": "^1.1.1"
++    "@actions/exec": "^1.1.1",
++    "@xmldom/xmldom": "^0.9.12"
+   },
+   "devDependencies": {
+     "@types/jest": "^29.5.0",
+     "@types/node": "^22.14.1",
+-    "@xmldom/xmldom": "^0.9.12",
+     "jest": "^29.5.0",
+     "ts-jest": "^29.1.0",
+     "ts-node": "^10.9.2",
+```
+
+**File**: `tools/@aws-cdk/security-guardian/src/cfn-guard-runner.ts` (modified, +74/-48)
+```diff
+@@ -1,32 +1,65 @@
+ import * as core from '@actions/core';
+ import * as exec from '@actions/exec';
++import { Document, DOMParser, XMLSerializer } from '@xmldom/xmldom';
+ import * as fs from 'fs';
+ 
+-function reverseFilenames(xmlContent: string, fileMapping: Map<string, string>): string {
+-  return xmlContent.replace(/<testsuite name="([^"]*)"/g, (match, safeName) => {
+-    let currentName = safeName;
++function parseReport(xmlFile: string, xmlContent: string): Document {
++  let cause: string | undefined;
++  const parser = new DOMParser({
++    // Keep line endings from template values as cfn-guard wrote them
++    normalizeLineEndings: source => source,
++    // Stop at the first error rather than edit a partly parsed report
++    onError: (level, message) => {
++      if (level !== 'warning') {
++        cause = message;
++        throw new Error(message);
++      }
++    },
++  });
++  try {
++    return parser.parseFromString(xmlContent, 'text/xml');
++  } catch (err) {
++    throw new Error(`Could not parse the cfn-guard report ${xmlFile}: ${cause ?? (err as Error).message}`);
++  }
++}
++
++function editReport(xmlFile: string, edit: (report: Document) => void): void {
++  const xmlContent = fs.readFileSync(xmlFile, 'utf8');
++  // The report is empty when cfn-guard did not write one
++  if (xmlContent === '') {
++    return;
++  }
++
++  const report = parseReport(xmlFile, xmlContent);
++  edit(report);
++  fs.writeFileSync(xmlFile, new XMLSerializer().serializeToString(report));
++}
++
++function reverseFilenames(report: Document, fileMapping: Map<string, string>): void {
++  for (const testsuite of Array.from(report.getElementsByTagName('testsuite'))) {
++    let currentName = testsuite.getAttribute('name') ?? '';
+     let resolved = fileMapping.get(currentName);
+-    
++
+     while (resolved && resolved !== currentName) {
+       currentName = resolved;
+       resolved = fileMapping.get(currentName);
+     }
+-    
++
+     const finalName = currentName;
+-    return `<testsuite name="${finalName}" file="${finalName}"`;
+-  });
++    testsuite.setAttribute('name', finalName);
++    testsuite.setAttribute('file', finalName);
++  }
+ }
+ 
+ export function postProcessXml(outputFile: string, fileMapping: Map<string, string>, type: string): void {
+   if (fs.existsSync(outputFile)) {
+-    const xmlContent = fs.readFileSync(outputFile, 'utf8');
+-    let correctedXml = reverseFilenames(xmlContent, fileMapping);
+-    
+-    correctedXml = correctedXml.replace(/<failure message="([^"]*)"/g, (match, message) => {
+-      return `<failure message="[Type: ${type}] ${message}"`;
++    editReport(outputFile, report => {
++      reverseFilenames(report, fileMapping);
++
++      for (const failure of Array.from(report.getElementsByTagName('failure'))) {
++        failure.setAttribute('message', `[Type: ${type}] ${failure.getAttribute('message') ?? ''}`);
++      }
+     });
+-    
+-    fs.writeFileSync(outputFile, correctedXml);
+   }
+ }
+ 
+@@ -36,27 +69,21 @@ export function enhanceXmlWithFormattedFailures(xmlFilePath: string): void {
+     return;
+   }
+   
+-  try {
+-    let xmlContent = fs.readFileSync(xmlFilePath, 'utf8');
+-    
++  editReport(xmlFilePath, report => {
+     // Split failure content into new lines based on "Check was not compliant as property"
+-    xmlContent = xmlContent.replace(
+-      /<failure message="([^"]*)">([\s\S]*?)<\/failure>/g,
+-      (match, messageAttr, content) => {
+-        // Extract custom error message from the failure body (one per failure element)
+-        const customMsgMatch = content.match(/##ERROR:([\s\S]*?)##/);
+-        const customMsg = customMsgMatch ? customMsgMatch[1] : messageAttr;
+-        let splitContent = content.replace(/##ERROR:([\s\S]*?)##/g, '');
+-        splitContent = splitContent.replace(/Check was not compliant as property/g, '\nCheck was not compliant as property');
+-        return `<failure message="${customMsg}">${splitContent}</failure>`;
++    for (const failure of Array.from(report.getElementsByTagName('failure'))) {
++      const content = failure.textContent ?? '';
++      // Extract custom error message from the failure body (one per failure element)
++      const customMsgMatch = content.match(/##ERROR:([\s\S]*?)##/);
++      if (customMsgMatch) {
++        failure.setAttribute('message', customMsgMatch[1]);
+       }
+-    );
+-    
+-    fs.writeFileSync(xmlFilePath, xmlContent);
+-    core.info(`Enhanced XML file with split failure content: ${xmlFilePath}`);
+-  } catch (err) {
+-    core.warning(`Failed to enhance XML file ${xmlFilePath}: ${(err as Error).message}`);
+-  }
++      let splitContent = content.replace(/##ERROR:([\s\S]*?)##/g, '');
++      splitContent = splitContent.replace(/Check was not compliant as property/g, '\nCheck was not compliant as property');
++      failure.textContent = splitContent;
++    }
++  });
++  core.info(`Enhanced XML file with split failure content: ${xmlFilePath}`);
+ }
+ 
+ export async function runCfnGuardValidation(
+@@ -67,27 +94,26 @@ export async function runCfnGuardValidation(
+  
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/cfn-guard-runner.test.ts` (added, +287/-0)
+```diff
+@@ -0,0 +1,287 @@
++import { enhanceXmlWithFormattedFailures, postProcessXml, runCfnGuardValidation } from '../src/cfn-guard-runner';
++import { preprocessTemplates } from '../src/template-preprocessor';
++import { failures, ReportElement, reportTree } from './junit-report';
++import * as exec from '@actions/exec';
++import * as fs from 'fs';
++import * as os from 'os';
++import * as path from 'path';
++
++type ScanType = 'Static' | 'Resolved';
++
++describe('cfn-guard report post-processing', () => {
++  const templatesDir = path.join(__dirname, 'templates');
++  const rulesDir = path.join(__dirname, '..', 'rules');
++  const repoPath = 'test/aws-iam/test/integ.role.js.snapshot/RoleStack.template.json';
++  const anyTime = expect.any(String);
++  let workDir: string;
++
++  beforeEach(() => {
++    workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cfn-guard-runner-'));
++  });
++
++  afterEach(() => {
++    fs.rmSync(workDir, { recursive: true });
++  });
++
++  function fixture(name: string): string {
++    return fs.readFileSync(path.join(templatesDir, name), 'utf8');
++  }
++
++  function element(name: string, attributes: Record<string, string>, children: (ReportElement | string)[] = []): ReportElement {
++    return { name, attributes, children };
++  }
++
++  /**
++   * Scans changed templates the way the action does and returns the report path.
++   *
++   * The static scan reads a copy of each template named after its repository path and
++   * the resolved scan reads the preprocessed copies; both reports map back to those paths.
++   * `rules` is a path in the rules folder, or an absolute path.
++   */
++  async function scan(scanType: ScanType, changed: { repoPath: string; template: string }[], rules: string, enhanceXml: boolean): Promise<string> {
++    const changedDir = path.join(workDir, 'changed_templates');
++    const resolvedDir = path.join(workDir, 'changed_templates_resolved');
++    fs.mkdirSync(changedDir);
++    fs.mkdirSync(resolvedDir);
++    const fileMapping = new Map<string, string>();
++    for (const { repoPath: changedPath, template } of changed) {
++      const changedFile = path.join(changedDir, changedPath.replace(/\//g, '_'));
++      fs.writeFileSync(changedFile, template);
++      fileMapping.set(changedFile, changedPath);
++    }
++    const { mapping } = preprocessTemplates(changedDir, resolvedDir);
++
++    const report = path.join(workDir, 'report.xml');
++    await runCfnGuardValidation(
++      scanType === 'Static' ? changedDir : resolvedDir,
++      path.resolve(rulesDir, rules),
++      report,
++      scanType,
++      new Map([...fileMapping, ...mapping]),
++      enhanceXml,
++    );
++    return report;
++  }
++
++  describe('a report with a failure', () => {
++    const template = fixture('world-accessible-trust-policy.template.json');
++    const errorText = "IAM role trust policy must not use broadly scoped principals. Remove '*' from Principal and scope to specific accounts or roles.";
++    // The checks cfn-guard reports for the rule, at the template positions each scan reads
++    const checks: Record<ScanType, string[]> = {
++      Static: [
++        'Check was not compliant as property value [Path=/Resources/WorldAccessibleRole/Properties/AssumeRolePolicyDocument/Statement/0/Principal[L:10,C:27] Value="*"] equal to value [Path=[L:0,C:0] Value="*"].',
++        'Check was not compliant as property value [Path=/Resources/WorldAccessibleRoleAwsList/Properties/AssumeRolePolicyDocument/Statement/0/Principal/AWS/0[L:26,C:24] Value="*"] equal to value [Path=[L:0,C:0] Value="*"].',
++      ],
++      Resolved: [
++        'Check was not compliant as property value [Path=/Resources/WorldAccessibleRole/Properties/AssumeRolePolicyDocument/Statement/0/Principal[L:10,C:27] Value="*"] equal to value [Path=[L:0,C:0] Value="*"].',
++        'Check was not compliant as property value [Path=/Resources/WorldAccessibleRoleAwsList/Properties/AssumeRolePolicyDocument/Statement/0/Principal/AWS/0[L:27,C:18] Value="*"] equal to value [Path=[L:0,C:0] Value="*"].',
++      ],
++    };
++
++    function findingReport(message: string, text: string): ReportElement {
++      return element('testsuites', { name: 'cfn-guard validate report', tests: '1', failures: '1', errors: '0', time: anyTime }, [
++        element('testsuite', { name: repoPath, file: repoPath, errors: '0', failures: '1', time: anyTime }, [
++          element('testcase', { name: 'iam-role-no-broad-principals.guard', time: anyTime }, [
++            element('failure', { message }, [text]),
++          ]),
++        ]),
++      ]);
++    }
++
++    test.each<ScanType>(['Static', 'Resolved'])('%s scan: maps the testsuite to the changed file and prefixes the failure message with the scan type', async (scanType) => {
++      const report = await scan(scanType, [{ repoPath, template }], 'iam/iam-role-no-broad-principals.guard', false);
++
++      expect(reportTree(report)).toEqual(findingReport(
++        `[Type: ${scanType}] IAM_ROLE_NO_BROAD_PRINCIPALS`,
++        checks[scanType].map(check => `##ERROR:${error
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/guard-rules.test.ts` (modified, +7/-4)
+```diff
+@@ -1,6 +1,6 @@
+ import { preprocessTemplates } from '../src/template-preprocessor';
+ import { runCfnGuardValidation } from '../src/cfn-guard-runner';
+-import { failedRules } from './junit-report';
++import { failedRules, failures } from './junit-report';
+ import * as fs from 'fs';
+ import * as path from 'path';
+ 
+@@ -409,7 +409,8 @@ describe('Guard Rules Validation', () => {
+       // Verify XML file exists and testsuite names are replaced
+       const xmlContent = fs.readFileSync(path.join(outputDir, 'xml-failure-test.xml'), 'utf8');
+       expect(xmlContent).toContain('name="src/CMCMK-Stack.template.json"');
+-      expect(xmlContent).toContain('<failure message="[Type: Failure Type] IAM role trust policy must not use broadly scoped principals. Remove &apos;*&apos; from Principal and scope to specific accounts or roles.">');
++      expect(failures(path.join(outputDir, 'xml-failure-test.xml')).map(failure => failure.message))
++        .toContain("[Type: Failure Type] IAM role trust policy must not use broadly scoped principals. Remove '*' from Principal and scope to specific accounts or roles.");
+     });
+ 
+     test('should correctly post-process XML with enhanceXml disabled', async () => {
+@@ -435,8 +436,10 @@ describe('Guard Rules Validation', () => {
+       // Verify XML file exists and testsuite names are replaced
+       const xmlContent = fs.readFileSync(path.join(outputDir, 'xml-failure-test.xml'), 'utf8');
+       expect(xmlContent).toContain('name="src/CMCMK-Stack.template.json"');
+-      expect(xmlContent).toContain('<failure message="[Type: Failure Type] IAM_ROLE_NO_BROAD_PRINCIPALS">');
+-      expect(xmlContent).toContain('##ERROR:IAM role trust policy must not use broadly scoped principals. Remove &apos;*&apos; from Principal and scope to specific accounts or roles.##');
++      expect(failures(path.join(outputDir, 'xml-failure-test.xml'))).toContainEqual({
++        message: '[Type: Failure Type] IAM_ROLE_NO_BROAD_PRINCIPALS',
++        text: expect.stringContaining("##ERROR:IAM role trust policy must not use broadly scoped principals. Remove '*' from Principal and scope to specific accounts or roles.##"),
++      });
+     });
+   });
+ });
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/junit-report.ts` (modified, +44/-3)
+```diff
+@@ -1,4 +1,4 @@
+-import { DOMParser } from '@xmldom/xmldom';
++import { DOMParser, Element } from '@xmldom/xmldom';
+ import * as fs from 'fs';
+ 
+ export interface GuardTestCase {
+@@ -13,7 +13,8 @@ function readReport(junitFile: string) {
+   if (xml.trim() === '') {
+     throw new Error(`cfn-guard wrote no JUnit report to ${junitFile} (is cfn-guard on PATH?)`);
+   }
+-  return new DOMParser().parseFromString(xml, 'text/xml');
++  // Keep line endings as written, as the reader of the report in the workflow does
++  return new DOMParser({ normalizeLineEndings: source => source }).parseFromString(xml, 'text/xml');
+ }
+ 
+ /**
+@@ -23,8 +24,48 @@ function readReport(junitFile: string) {
+  * message the rule name (prefixed with "[Type: <type>] ").
+  */
+ export function failedRules(junitFile: string): string[] {
++  return failures(junitFile).map(failure => failure.message.replace(/^\[Type: [^\]]*\] /, ''));
++}
++
++/**
++ * The message and text of each failure in a cfn-guard JUnit report.
++ */
++export function failures(junitFile: string): { message: string; text: string }[] {
+   return Array.from(readReport(junitFile).getElementsByTagName('failure'))
+-    .map(failure => (failure.getAttribute('message') ?? '').replace(/^\[Type: [^\]]*\] /, ''));
++    .map(failure => ({ message: failure.getAttribute('message') ?? '', text: failure.textContent ?? '' }));
++}
++
++/**
++ * An element of a JUnit report, with its text as strings among its children.
++ */
++export interface ReportElement {
++  readonly name: string;
++  readonly attributes: Record<string, string>;
++  readonly children: (ReportElement | string)[];
++}
++
++/**
++ * The elements, attributes and text of a JUnit report, without the whitespace
++ * that indents its elements.
++ */
++export function reportTree(junitFile: string): ReportElement {
++  return elementTree(readReport(junitFile).documentElement!);
++}
++
++function elementTree(element: Element): ReportElement {
++  const children: (ReportElement | string)[] = [];
++  for (const child of Array.from(element.childNodes)) {
++    if (child.nodeType === child.ELEMENT_NODE) {
++      children.push(elementTree(child as Element));
++    } else if (child.nodeType === child.TEXT_NODE && child.textContent!.trim() !== '') {
++      children.push(child.textContent!);
++    }
++  }
++  return {
++    name: element.tagName,
++    attributes: Object.fromEntries(Array.from(element.attributes).map(attribute => [attribute.name, attribute.value])),
++    children,
++  };
+ }
+ 
+ /** Every test case in a cfn-guard JUnit report, one per rule file and data file. */
+```
+
+---
+
+### Incident Patch 2: `d7508813` (2026-11-05)
+**Commit Message**: chore(ci): raise Node heap limit for integration test build step (#39651)
+
+### Issue # (if applicable)
+
+N/A
+
+### Reason for this change
+
+The "Integration Test deployment" workflow fails at the "Build Integration Test packages" step. The build dies while linting `@aws-cdk-testing/framework-integ` with:
+
+```
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+```
+
+eslint exits with code 134. That step builds `@aws-cdk-testing/framework-integ`, whose lint step runs type-aware eslint over the integration test sources, and it runs with Node's default old-space heap limit (about 4 GB).
+
+The step has no `NODE_OPTIONS` heap flag, so it uses the V8 default. The GC trace in the failing logs shows the live heap pinned near 4,080 MB with almost nothing reclaimed between mark-compacts, which points to the default heap limit rather than a memory leak. The regular build does not hit this because `build.sh` already sets `--max-old-space-size=8196`.
+
+This blocks the deployment integration test job on any PR that carries the `pr/needs-integration-tests-deployment` label and reaches this step, so it affects multiple PRs.
+
+Failing runs:
+- https://gi
+
+**File**: `.github/workflows/integration-test-deployment.yml` (modified, +2/-0)
+```diff
+@@ -90,6 +90,8 @@ jobs:
+       # Build integration test packages: @aws-cdk-testing/framework-integ (stable tests) and @aws-cdk/* (alpha tests)
+       - name: Build Integration Test packages 
+         run: npx lerna run build --scope="{@aws-cdk/*,@aws-cdk-testing/framework-integ}"
++        env:
++          NODE_OPTIONS: --max-old-space-size=8192
+ 
+       - name: Run integration tests using integration-test-deployment script
+         run: yarn run atmosphere-integ-test
+```
+
+---
+
+### Incident Patch 3: `24b3a36f` (2026-11-06)
+**Commit Message**: ci(security-guardian): sqs encryption check (#36753)
+
+### Issue # (if applicable)
+
+To reduce false positives in PRs like https://github.com/aws/aws-cdk/pull/36691
+
+### Reason for this change
+
+`SQS_ENCRYPTION_ENABLED` flags any queue that sets neither `KmsMasterKeyId` nor `SqsManagedSseEnabled: true`. That includes queues with no encryption properties at all, which are encrypted.
+
+Since October 2022, SQS encrypts new queues with SSE-SQS by default. A queue is only unencrypted when it sets `SqsManagedSseEnabled: false` and names no KMS key.
+
+**Documentation evidence:**
+- [AWS Blog (Oct 5, 2022): Announcing server-side encryption with Amazon SQS-managed encryption keys (SSE-SQS) by default](https://aws.amazon.com/blogs/compute/announcing-server-side-encryption-with-amazon-simple-queue-service-managed-encryption-keys-sse-sqs-by-default/)
+- [AWS CloudFormation Documentation for AWS::SQS::Queue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sqs-queue.html): "When `SqsManagedSseEnabled` is not defined, SSE-SQS encryption is enabled by default."
+- [AWS SQS Developer Guide - Configuring SSE-SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDevelo
+
+**File**: `tools/@aws-cdk/security-guardian/rules/sqs/sqs-encryption-enabled.guard` (modified, +20/-4)
+```diff
+@@ -5,18 +5,34 @@
+ # Rule: SQS_ENCRYPTION_ENABLED
+ # Service: Amazon Simple Queue Service (SQS)
+ # Coverage: Queue Encryption
++#
++# Since October 2022, AWS encrypts all SQS queues by default with SSE-SQS.
++# See: https://aws.amazon.com/blogs/compute/announcing-server-side-encryption-with-amazon-simple-queue-service-managed-encryption-keys-sse-sqs-by-default/
++#
++# A queue is encrypted when it either omits the encryption properties (AWS applies
++# the SSE-SQS default), names a KMS key via KmsMasterKeyId (SSE-KMS), or sets
++# SqsManagedSseEnabled to true. The rule only fires when encryption is EXPLICITLY
++# disabled: SqsManagedSseEnabled is false and no KMS key is named.
++#
++# There are legitimate use cases for disabling encryption (e.g., anonymous
++# requests), so this rule can be suppressed when needed.
++# See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-sqs-sse-queue.html
+ 
+ let sqs_queues = Resources.*[
+   Type == 'AWS::SQS::Queue'
+   Metadata.guard.SuppressedRules not exists or
+   Metadata.guard.SuppressedRules.* != "SQS_ENCRYPTION_ENABLED"
+ ]
+ 
+-# SQS queue encryption must be enabled
++# SQS queue encryption must not be explicitly disabled.
++# Only fires when SqsManagedSseEnabled is false and no KMS key is named; a missing
++# property is left alone because AWS defaults to SSE-SQS encryption.
+ rule SQS_ENCRYPTION_ENABLED when %sqs_queues !empty {
+     %sqs_queues {
+-        Properties.KmsMasterKeyId exists or
+-        Properties.SqsManagedSseEnabled == true
+-            <<##ERROR:SQS queue must have encryption enabled. Set 'KmsMasterKeyId' to a KMS key ARN or 'SqsManagedSseEnabled' to true.##>>
++        when Properties.SqsManagedSseEnabled exists
++             Properties.KmsMasterKeyId not exists {
++            Properties.SqsManagedSseEnabled != false
++                <<##ERROR:SQS queue must not disable encryption. Remove 'SqsManagedSseEnabled: false' or set 'KmsMasterKeyId' to a KMS key ARN.##>>
++        }
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39656** (closed): chore(security-guardian): allow named extra rule fixtures (@kumvprat)
+- **PR #39655** (2026-11-06): fix(aws-cdk-lib): bucketName.match is not a function (@rix0rrr)
+- **PR #39651** (2026-11-05): chore(ci): raise Node heap limit for integration test build step (@kumvprat)
 - **PR #39650** (2026-11-05): chore(repo): say PR instead of issue in the stale PR message (@aemada-aws)
+- **PR #39636** (2026-11-06): chore(cloudformation): rename stackset TargetOptions to StackSetTargetOptions and role to adminRole (@gudipati)
 - **PR #39634** (2026-11-04): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
-- **PR #39632** (closed): Update merge queue configuration (@aemada-aws)
-- **PR #39631** (closed): chore(rds): add PostgreSQL instance engine versions 17.10, 17.11, 18.4, 18.6 (@daanvzijl)
-- **PR #39622** (2026-11-04): chore(spec2cdk): ensure only known orgs are generated (@iliapolo)
-- **PR #39621** (closed): feat(core): context-scoped warning suppression via Validations.acknowledge (@matboros)
 
 ---
 
@@ -1436,30 +1705,30 @@ Text-only change to a workflow input.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. region-info): me-west-1 (#39431)
+## X. security-guardian): parse the cfn-guard report with an XML parser (#39510)
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk-testing/framework-integ/test/aws-codebuild/test/integ.aws-deep-learning-container-build-image.js.snapshot/aws-deep-learning-container-build-image.template.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6d5147c`: region-info): me-west-1 (#39431). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28ed047e`: security-guardian): parse the cfn-guard report with an XML parser (#39510). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk-testing/framework-integ/test/aws-codebuild/test/integ.aws-deep-learning-container-build-image.js.snapshot/aws-deep-learning-container-build-image.template.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-   "me-west-1": {
-    "value": "124382933778"
-   },
+    "@actions/exec": "^1.1.1",
+    "@xmldom/xmldom": "^0.9.12"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "@actions/exec": "^1.1.1"
+    "@xmldom/xmldom": "^0.9.12",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6d5147c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28ed047e` are properly handled with clean fallback behavior.

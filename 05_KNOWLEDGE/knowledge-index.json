@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:36:17.879Z",
+  "last_updated": "2026-11-06T22:56:09.016Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1681,11 +1681,16 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "b1670ff1",
-      "content_hash": "78a8f10f27921dd6db8bcdc30c2310c1e433c704ca3c3f61fc8b4a5036c60659",
+      "source_version": "30d662db",
+      "content_hash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build): add OSS fallbacks for Thrift and Boost downloads (#882)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2404,
           "title": "In-Lock Iterator De-referencing (Iterator Read-Before-Unlock)",
@@ -1752,7 +1757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:58:36.524Z",
+      "verified_at": "2026-11-06T22:56:08.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4510,11 +4515,16 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "a6d5147c",
-      "content_hash": "40bba3632f8f59c3c649d38e4c831a92c16cf3afef5ce60cb38588102fe55021",
+      "source_version": "28ed047e",
+      "content_hash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "security-guardian): parse the cfn-guard report with an XML parser (#39510)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2010,
           "title": "check skills in the build (#39029)",
@@ -4591,7 +4601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:47:52.363Z",
+      "verified_at": "2026-11-06T22:56:05.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4877,11 +4887,16 @@
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "f7ad87dd",
-      "content_hash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
+      "source_version": "c500baff",
+      "content_hash": "a06e39b2747175a596c29e450dfaf97b432d7d9a225652bc81f8b926b7e16983",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci: raise OpenSSF Scorecard (token permissions, pinning, vulns, fuzzing, signing",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1750,
           "title": "search): accept answers longer than 820 characters (#1067)",
@@ -4918,7 +4933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T02:25:52.579Z",
+      "verified_at": "2026-11-06T22:56:05.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33981,8 +33996,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "cbac86f3",
-      "content_hash": "8c12a99332e3ad110beaf881cda048362f3fd808edc8682cd7b00b966977176d",
+      "source_version": "5ca8c863",
+      "content_hash": "990f328c5a265d522b291e447a38a63d95dda981ac6559f116d92f83c08d1ec5",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [],
@@ -33991,7 +34006,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:49:07.113Z",
+      "verified_at": "2026-11-06T22:56:03.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

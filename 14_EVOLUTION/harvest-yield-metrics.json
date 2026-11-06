@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T22:36:17.985Z",
-  "total_cycles_completed": 7903,
-  "total_learnings_persisted": 7903,
-  "total_rules_promoted": 7549,
+  "last_updated": "2026-11-06T22:56:09.129Z",
+  "total_cycles_completed": 7907,
+  "total_learnings_persisted": 7907,
+  "total_rules_promoted": 7552,
   "history": [
-    {
-      "timestamp": "2026-11-05T17:22:01.254Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:28:54.889Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:28:57.936Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:29:05.995Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T17:29:11.408Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-06T22:36:17.985Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:56:03.427Z",
+      "repository": "i18next/react-i18next",
+      "learningId": "learn-github-i18next-react-i18next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:56:05.355Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:56:06.072Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:56:09.129Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

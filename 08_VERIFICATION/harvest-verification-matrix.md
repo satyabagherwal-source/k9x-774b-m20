@@ -7938,3 +7938,7 @@
 | `CYCLE-20261106-QJMD` | `2026-11-06T22:28:46.933Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de697b0e...`) |
 | `CYCLE-20261106-02XI` | `2026-11-06T22:36:11.862Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2098655...`) |
 | `CYCLE-20261106-07N4` | `2026-11-06T22:36:17.968Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da79e202...`) |
+| `CYCLE-20261106-PMC5` | `2026-11-06T22:56:03.413Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | Yes (`990f328c...`) |
+| `CYCLE-20261106-PNTT` | `2026-11-06T22:56:05.345Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d2cc3a7b...`) |
+| `CYCLE-20261106-PODP` | `2026-11-06T22:56:06.061Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a06e39b2...`) |
+| `CYCLE-20261106-PQQE` | `2026-11-06T22:56:09.110Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9125e00e...`) |
