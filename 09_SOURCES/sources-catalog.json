@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "0c9feb49",
+    "sourceVersion": "d140e69f",
     "license": "MIT",
-    "contentHash": "85e2e9572c19dfb509cb6111690f2db3bff6d263b56edb4935117677c3de1380",
-    "lastHarvestedAt": "2026-11-05T07:51:59.987Z",
+    "contentHash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
+    "lastHarvestedAt": "2026-11-06T22:06:25.247Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {

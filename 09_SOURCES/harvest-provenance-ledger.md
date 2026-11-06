@@ -7938,3 +7938,4 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `291031b4` | Multi-dimensional audit evidence | 2026-11-06T21:52:09.629Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `ea12300d` | Multi-dimensional audit evidence | 2026-11-06T21:59:28.883Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `65a31536` | Multi-dimensional audit evidence | 2026-11-06T21:59:35.999Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `d140e69f` | Multi-dimensional audit evidence | 2026-11-06T22:06:25.247Z |

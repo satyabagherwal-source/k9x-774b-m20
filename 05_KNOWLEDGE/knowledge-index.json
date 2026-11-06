@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:59:35.896Z",
+  "last_updated": "2026-11-06T22:06:25.163Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17229,11 +17229,16 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "0c9feb49",
-      "content_hash": "85e2e9572c19dfb509cb6111690f2db3bff6d263b56edb4935117677c3de1380",
+      "source_version": "d140e69f",
+      "content_hash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "interop: update client.rs to run in interop test harness (#2993)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2081,
           "title": "codec): eliminate uninitialized memory in encode_item on unwind (#2847)",
@@ -17325,7 +17330,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:51:59.873Z",
+      "verified_at": "2026-11-06T22:06:25.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

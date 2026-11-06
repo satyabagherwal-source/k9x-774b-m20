@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:59:36.008Z",
+  "last_updated": "2026-11-06T22:06:25.256Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "85e2e9572c19dfb509cb6111690f2db3bff6d263b56edb4935117677c3de1380",
-      "verified_at": "2026-11-05T07:52:00.004Z",
+      "content_hash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
+      "verified_at": "2026-11-06T22:06:25.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:52:00.004Z"
+      "last_updated": "2026-11-06T22:06:25.255Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",

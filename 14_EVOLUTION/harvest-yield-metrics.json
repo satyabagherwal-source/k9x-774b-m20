@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T21:59:36.004Z",
-  "total_cycles_completed": 7894,
-  "total_learnings_persisted": 7894,
-  "total_rules_promoted": 7540,
+  "last_updated": "2026-11-06T22:06:25.252Z",
+  "total_cycles_completed": 7895,
+  "total_learnings_persisted": 7895,
+  "total_rules_promoted": 7541,
   "history": [
-    {
-      "timestamp": "2026-11-05T16:52:51.338Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T16:59:50.175Z",
       "repository": "zed-industries/zed",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-06T21:59:36.004Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:06:25.252Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-X38G",
-    "timestamp": "2026-11-05T00:22:30.304Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "336fa1b7da96a441a1581b2d34d5cb7ece5847d816b450217ae3fbe3d423ea39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-X40E",
     "timestamp": "2026-11-05T00:22:31.310Z",
     "repository": "max-sixty/worktrunk",
@@ -7490,6 +7475,21 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "a8e6a7b8d0c33428a3a7b0500a285516f4b2c327599c6ed409a4e8a1aff04956",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-XSD7",
+    "timestamp": "2026-11-06T22:06:25.243Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

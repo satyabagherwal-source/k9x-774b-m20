@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `0c9feb49`  
+> **Source Version**: `d140e69f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T07:51:59.213Z  
+> **Timestamp**: 2026-11-06T22:06:24.081Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T07:51:54.736Z  
+> **Harvest Timestamp**: 2026-11-06T22:06:24.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12527 stars
+- **Stars / Engagement**: 12529 stars
 
 ---
 
@@ -1909,13 +1909,11 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2998** (2026-11-04): **Move grpc-proto files to third_party dirs**
-  *Symptoms*: grpc-proto is licensed Apache 2, not MIT, so let's put it in a third_party directory to keep the licensing clear.
-  **Post-Mortem & Fix Analysis**:
-  > As discussed offline, we also need to fix the `license` field in Cargo.toml. I'll do that as a follow-up.
+- **Issue #3004** (2026-11-05): **tonic-prost-build: Propagate with_extended_rust_types via ServiceGenerator**
+  *Symptoms*: ## Motivation  When `Builder::with_extended_rust_types` was added in #2544, the `NON_PATH_TYPE_ALLOWLIST` update and its reset drop guard were placed in `Builder::compile_with_config` rather than in `ServiceGenerator`. As a result, `Builder::compile_fds`, `Builder::compile_fds_with_config`, and `Builder::service_generator` did not respect `with_extended_rust_types`.  ## Solution  Pass `with_extended_rust_types` into `ServiceGenerator` from `compile_with_config`, `compile_fds_with_config`, and `service_generator`, and manage the `NON_PATH_TYPE_ALLOWLIST` setting and drop guard inside `ServiceGenerator::generate`.
 
-- **Issue #2997** (2026-11-03): **xds-client: drop stale `.await` on now-synchronous `watch` in retry test**
-  *Symptoms*: ## Motivation  CI is blocked because #2995's added tests is still using `.await` on the  now-sync `watch` API after #2945   ## Solution  Removing the `.await`.   
+- **Issue #3003** (2026-11-05): **gprx-xds/load_balancing: Make test utilities available to grpc-xds crate.**
+  *Symptoms*:  ## Motivation  Make the load balancer test utilities available to the `grpc-xds` crate.  ## Solution  There are a number of ways to solve this, but the feature flag path allows us to most cleanly get access to the same functionality without copy-pasting or suffering dead code annotations, externs and/or other nonsense.  ## Notes  In a follow up we will be replacing the queuing/failing pickers with a fixed picker, similar to Java's.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1932,533 +1930,523 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c309835f` (2026-11-04)
-**Commit Message**: Wire A32 circuit breaking into xDS channels (#2712)
+### Incident Patch 1: `d140e69f` (2026-11-05)
+**Commit Message**: interop: update client.rs to run in interop test harness (#2993)
 
-## Summary
+## Motivation
 
-This PR connects gRFC A32 circuit breaking to the xDS request path in
-`tonic-xds`, for both load-balancer backends (`LbBackend::TowerP2c` and
-`LbBackend::XdsLb`). The circuit breaker works like a shared pool of
-slots: when an endpoint attempt starts, the channel reserves one slot
-for the cluster's `{cluster, EDS service}`. The CDS `max_requests` value
-sets the pool size, with the A32 default of 1024 when the field is
-omitted. If no slot is available, the client returns a local,
-non-retryable gRPC `UNAVAILABLE` response without contacting an
-endpoint.
+`grpc-rust` clients should support vanilla interop tests.
 
-- Both backends connect endpoints through `ClusterConnector`, so gRPC
-channels wrap the connector factory (`CircuitBreakingMakeConnector`) and
-every endpoint shares its cluster's breaker.
-- Limits follow live CDS updates; already-connected endpoints see the
-new limit. A permit stays reserved until the response body completes,
-errors, or is dropped.
-- Local circuit-breaker responses are not retried, and `XdsLb` outlier
-detection does not count them as endpoint failures.
-- Only gRPC channels are limited; `build_transport_channel` documents
-that transport-generic channels a
+## Solution
 
-**File**: `tonic-xds/src/client/channel.rs` (modified, +128/-5)
+This PR is all the plumbing required to get the `client.rs` able to run
+in the interop test harness. This is primarily plumbing through various
+command flags and fixing credentials.
+
+Note that previously a locally generated set of credentials existed.
+This PR changes this pattern to utilize the credentials in the grpc
+repo, per the instructions there around interop tests. The old
+generation code has been yanked.
+
+Also, this PR is not including any of the tests that need to be
+implemented for test parity with other clients - that will be in a
+separate follow up that can come after the harness is working.
+
+**File**: `interop/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,9 @@
-  *
-  */
- 
-+use crate::client::circuit_breaking::{
-+    CircuitBreakingMakeConnector, ClusterCircuitBreakerRegistry,
-+};
- use crate::client::cluster::{ClusterChannelFactory, ClusterClientRegistry};
- use crate::client::deadline::{DeadlinePolicy, set_grpc_timeout_header};
- use crate::client::endpoint::{EndpointAddress, MakeConnector};
-@@ -605,10 +608,13 @@ impl XdsChannelBuilder {
-     /// feature) and reconstructs each endpoint request body as [`TonicBody`].
-     /// Separated so tests can inject a disconnected `XdsClient` and a
-     /// pre-populated cache via [`XdsRuntimeParts`].
-+    ///
-+    /// Only this path enforces gRFC A32 circuit breaking (see
-+    /// [`grpc_make_connector`]); transport-generic channels are not limited.
-     fn build_grpc_channel_from_runtime(&self, parts: XdsRuntimeParts) -> XdsChannelGrpc {
--        self.build_channel::<GrpcMakeConnector, TonicBody, TonicBody, TonicBody, _>(
-+        self.build_channel::<_, TonicBody, TonicBody, TonicBody, _>(
-             parts,
--            GrpcMakeConnector::new(),
-+            grpc_make_connector(ClusterCircuitBreakerRegistry::new()),
-             grpc_endpoint_request,
-             Arc::new(RetrySharedConfig::grpc_default()),
-             DeadlinePolicy::grpc(),
-@@ -718,6 +724,12 @@ impl XdsChannelBuilder {
-     /// bounded, and a `grpc-timeout` request header is neither honored nor
-     /// rewritten. An expired call fails with a `DEADLINE_EXCEEDED`
-     /// [`tonic::Status`] error.
-+    ///
-+    /// # Circuit breaking
-+    ///
-+    /// CDS `max_requests` limits (gRFC A32) are enforced only by
-+    /// [`build_grpc_channel`](Self::build_grpc_channel); a transport-generic
-+    /// channel does not limit in-flight requests.
-     pub fn build_transport_channel<MC, B, ResBody>(
-         &self,
-         make_connector: MC,
-@@ -753,6 +765,15 @@ impl XdsChannelBuilder {
-     }
- }
- 
-+/// The connector factory behind gRPC channels: [`GrpcMakeConnector`] with
-+/// gRFC A32 circuit breaking on every endpoint, for either load-balancer
-+/// backend.
-+fn grpc_make_connector(
-+    circuit_breakers: ClusterCircuitBreakerRegistry,
-+) -> CircuitBreakingMakeConnector<GrpcMakeConnector> {
-+    CircuitBreakingMakeConnector::new(GrpcMakeConnector::new(), circuit_breakers)
-+}
-+
- /// The per-cluster load-balancer implementations.
- ///
- /// Select one with
-@@ -847,15 +868,17 @@ mod test_backends {
-     pub(crate) const LB_BACKENDS: [LbBackend; 2] = [LbBackend::TowerP2c, LbBackend::XdsLb];
- 
-     impl LbBackend {
--        /// This backend's gRPC cluster-channel factory over `cache`.
-+        /// This backend's gRPC cluster-channel factory over `cache`, wired as
-+        /// production wires it. Circuit-breaker counters are private to the
-+        /// factory so concurrent tests cannot exhaust each other's limits.
-         pub(crate) fn grpc_factory(
-             self,
-             cache: Arc<XdsCache>,
-             #[cfg(feature = "_tls-any")] cert_registry: Arc<CertProviderRegistry>,
-         ) -> GrpcClusterChannelFactory {
--            self.cluster_factory::<GrpcMakeConnector, TonicBody, TonicBody>(
-+            self.cluster_factory::<_, TonicBody, TonicBody>(
-                 cache,
--                GrpcMakeConnector::new(),
-+                grpc_make_connector(ClusterCircuitBreakerRegistry::new_for_test()),
-                 #[cfg(feature = "_tls-any")]
-                 cert_registry,
-                 Arc::new(GrpcOutcomeClassifier),
-@@ -899,6 +922,7 @@ mod tests {
-     use crate::testutil::grpc::TestServer;
-     use crate::xds::cache::XdsCache;
-     use crate::xds::resource::EndpointsResource;
-+    use crate::xds::resource::circuit_breaking::CircuitBreakingConfig;
-     use crate::xds::resource::route_config::RouteConfigResource;
-     use std::sync::Arc;
-     use std::task::{Context, Poll};
-@@ -1202,12 +1226,20 @@ mod tests {
-     /// drive `XdsClusterDiscovery`. The cluster watch in `discover_cluster`
-     /// blocks until a cluster is in the cache.
-     fn make_test_cluster(cluster_name: &str) -> Arc<crate::xds::resource::ClusterResource> {
-+        make_test_cluster_with_circuit_breaking(cluster_name, CircuitBreakingConfig::default())
-+    }
-+
-+    fn make_test_cluster_with_circuit_breaking(
-+        cluster_name: &str,
-+        circuit_breaking: CircuitBreakingConfig,
-+    ) -> Arc<crate::xds::resource::ClusterResource> {
-         use crate::xds::resource::cluster::{ClusterResource, LbPolicy};
-         Arc::new(ClusterResource {
-             name: cluster_name.to_string(),
-             eds_service_name: None,
-             lb_policy: LbPolicy::RoundRobin,
-             security: None,
-+            circuit_breaking,
-         })
-     }
- 
-@@ -1374,6 +1406,97 @@ mod tests {
-         }
-     }
- 
-+    fn assert_circuit_breaker_drop(status: &tonic::Status, max_requests: u32) {
-+        assert_eq!(status.code(), tonic::Code::Unavailable, "{status:?}");
-+        assert!(
-+            status
-+                .message()
-+                .contains(&forma
+@@ -23,7 +23,7 @@ http-body-util = "0.1"
+ prost = "0.14"
+ tokio = {version = "1.0", features = ["rt-multi-thread", "time", "macros"]}
+ tokio-stream = "0.1"
+-tonic = {path = "../tonic", features = ["tls-ring"]}
++tonic = {path = "../tonic", features = ["tls-ring", "tls-native-roots"]}
+ tonic-prost = {path = "../tonic-prost"}
+ tower = "0.5"
+ tracing-subscriber = {version = "0.3"}
 ```
 
-**File**: `tonic-xds/src/client/circuit_breaking.rs` (modified, +314/-187)
+**File**: `interop/data/README.md` (modified, +13/-14)
 ```diff
-@@ -22,14 +22,28 @@
-  *
-  */
+@@ -1,17 +1,16 @@
+-# Tonic Testing Certificates
++# Interop Testing Certificates
  
--#![cfg_attr(not(test), allow(dead_code))]
-+//! [gRFC A32] circuit breaking for xDS clusters.
-+//!
-+//! Every endpoint attempt reserves a slot from an in-flight counter shared
-+//! process-wide by `{cluster, EDS service name}` and sized by the cluster's
-+//! CDS `max_requests`. When no slot is free the attempt fails locally with
-+//! `UNAVAILABLE` without reaching the endpoint; such drops are neither retried
-+//! nor counted by outlier detection. The slot is held until the response body
-+//! finishes, errors, or is dropped.
-+//!
-+//! [`CircuitBreakingMakeConnector`] applies this to gRPC channels at the
-+//! per-cluster connector, so both load-balancer backends enforce it.
-+//!
-+//! [gRFC A32]: https://github.com/grpc/proposal/blob/master/A32-xds-circuit-breaking.md
+-This directory contains certificates used for testing interop between Tonic's
+-implementation of gRPC and the Go implementation. Certificates are generated
+-using [`terraform`][tf].
++These files are copies of gRPC's shared interop test credentials, from
++[`src/core/tsi/test_creds`](https://github.com/grpc/grpc/tree/master/src/core/tsi/test_creds)
++in the grpc/grpc repository. Every gRPC implementation ships the same set, which
++lets grpc-rust run TLS interop tests against any other implementation.
  
- use std::fmt;
-+use std::future::Future;
-+use std::pin::Pin;
- use std::sync::{
-     Arc, Mutex, OnceLock,
-     atomic::{AtomicU32, AtomicU64, AtomicUsize, Ordering},
- };
--use std::task::{Context, Poll};
-+use std::task::{Context, Poll, ready};
+-To regenerate certificates for some reason, do the following:
++| File | Used by |
++|---|---|
++| `ca.pem` | The interop client trusts this CA when run with `--use_test_ca` (default `--ca_file`). |
++| `server1.pem`, `server1.key` | Interop servers present this certificate when run with `--use_tls`. It is valid for `*.test.google.fr`, `waterzooi.test.google.be`, `*.test.youtube.com` and `192.168.1.3`, so clients pass e.g. `--server_host_override=foo.test.google.fr`. |
  
- use arc_swap::ArcSwapOption;
- use bytes::Bytes;
-@@ -38,9 +52,10 @@ use http::{Request, Response};
- use http_body::{Body, Frame};
- use pin_project_lite::pin_project;
- use tonic::body::Body as TonicBody;
--use tower::{BoxError, Layer, Service};
-+use tower::load::Load;
-+use tower::{BoxError, Service};
- 
--use crate::client::route::RouteDecision;
-+use crate::client::endpoint::{ClusterConfig, Connector, EndpointAddress, MakeConnector};
- use crate::common::async_util::BoxFuture;
- use crate::xds::resource::circuit_breaking::CircuitBreakingConfig;
- 
-@@ -87,15 +102,13 @@ impl ClusterCircuitBreakerRegistry {
- 
-     pub(crate) fn set_cluster_config(
-         &self,
--        cluster: impl Into<String>,
--        eds_service_name: impl Into<String>,
-+        cluster: &str,
-+        eds_service_name: &str,
-         config: CircuitBreakingConfig,
-     ) {
--        let cluster = cluster.into();
--        let eds_service_name = eds_service_name.into();
--        let counter_key = CounterKey::new(cluster.as_str(), eds_service_name.as_str());
-+        let counter_key = CounterKey::new(cluster, eds_service_name);
-         let counter = self.inner.counters.counter(&counter_key);
--        let state = self.ensure_state(&cluster);
-+        let state = self.ensure_state(cluster);
-         self.update_state_config(
-             &state,
-             CircuitBreakerRuntimeConfig {
-@@ -155,6 +168,7 @@ impl ClusterCircuitBreakerRegistry {
-         }
-     }
- 
-+    #[cfg(test)]
-     fn clear_state(&self, state: &ClusterCircuitBreakerState) {
-         let _update_guard = state
-             .update_lock
-@@ -172,6 +186,7 @@ impl ClusterCircuitBreakerRegistry {
-         self.inner.counters.cleanup_if_unused(&counter_key);
-     }
- 
-+    #[cfg(test)]
-     fn acquire(&self, cluster: &str) -> Result<Option<CircuitBreakerPermit>, CircuitBreakerLimit> {
-         self.cluster_breaker(cluster).acquire()
-     }
-@@ -305,28 +320,18 @@ impl ClusterCircuitBreaker {
-             return Ok(None);
-         };
- 
--        self.acquire_with_config(
--            config.counter_key.clone(),
--            config.counter.clone(),
--            config.max_requests,
--        )
--        .map(Some)
--    }
+-1. Install Terraform 0.12 (or higher)
+-1. From the `cert-generator` directory, run:
+-    1. `terraform init`
+-    1. `terraform apply`
 -
--    fn acquire_with_config(
--        &self,
--        counter_key: CounterKey,
--        counter: Arc<InFlightCounter>,
--        max_requests: u32,
--    ) -> Result<CircuitBreakerPermit, CircuitBreakerLimit> {
--        let limit = CircuitBreakerLimit { max_requests };
--        match self.counters.acquire(counter_key, counter, max_requests) {
--            Some(permit) => Ok(permit),
--            None => {
--                self.state.record_drop();
--                Err(limit)
--            }
-+        if config.counter.try_acquire(config.max_requests) {
-+            return Ok(Some(CircuitBreakerPermit {
-+                config: Some(config),
-+                counters: self.counters.clone(),
-+            }));
-         }
-+        let limit = CircuitBreakerLimit {
-+            max_requests: config.max_requests,
-+        };
-+        self.counters.drop_config(config);
-+        self.state.record_drop();
-+        Err(limit)
-     }
+-This will generate certificates and write them to the filesystem. The effective
+-version should be committed to git.
+-
+-[tf]: https://terraform.io
++Do not regenerate these files: a locally generated CA is not trusted by the
++other implementations' interop clients and servers. Keep them byte-identical to
++the grpc/grpc copies. The current set expires in March 2030; when gRPC rotates
++it, copy the new files here.
+```
+
+**File**: `interop/data/ca.pem` (modified, +18/-18)
+```diff
+@@ -1,20 +1,20 @@
+ -----BEGIN CERTIFICATE-----
+-MIIDRjCCAi6gAwIBAgIQd5pnuFdwgGxb4RiClYEPMTANBgkqhkiG9w0BAQsFADA9
+-MQ4wDAYDVQQKEwVUb2tpbzEQMA4GA1UECxMHVGVzdGluZzEZMBcGA1UEAxMQVG9u
+-aWMgVGVzdGluZyBDQTAeFw0yNTA1MDExNzQyNThaFw0zNTA0MjkxNzQyNThaMD0x
+-DjAMBgNVBAoTBVRva2lvMRAwDgYDVQQLEwdUZXN0aW5nMRkwFwYDVQQDExBUb25p
+-YyBUZXN0aW5nIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2C37
+-LVCs4RfNdwv8NMZfIdFNqrUdwzXZ+a5B7Pee1nOL+JD9feOGn1qGZI1ZgFMqVygN
+-ejSkzlbouN9RAGgyBmOFFo3oEc+nz7kPrezBLoM3oVgNzhEixz2IQoafoZX3j48Y
+-fpGYmrTHUp4MAwUAt6Zb+kD7YGqD8//I5OMM4Y5R8yuYGsJHUUSZqYfgXCk0ZvVG
+-EX7zyr31cVLqto1vpuv5Uvp6WX5oGgbZVB0wvlqs9Ak+dblWBZQIsrUPU8kn/6kx
+-HilF8Lw24dRXr5oveFDMdD/n4sIh7Gr/O+VGH83gP/PawXy0WWn5qGAhdx+P99jI
+-UGAWNetu4vGgASLFkwIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAgQwDwYDVR0TAQH/
+-BAUwAwEB/zAdBgNVHQ4EFgQU4AI0rUoGKFxe0gXIYujrhnuNsocwDQYJKoZIhvcN
+-AQELBQADggEBAEtSrTgz+suVMDRsdvxG7+BAcXfVc8pmou3KIFbDtIyog2BEU5nU
+-Z+zBqrVgbGv9B4D7XLcZgTShY17cvJP8QpUwT/gzI9uR8Lig9JGF7n1K43+aiAk9
+-s7H8e74rwyPX6mRmuznd1sJdDsc5lohUPpZVI+7pRywedQw+QG6/n2cVvR0k0Txh
+-pF1XBpzuFA5t5uqW/v/QFqfGEuIDDMdW2JQSEB7UyH4V2yWswoYb/uf/xoNXWWqs
+-Y6RVSp6qVW8748rPPwmLaN8hHGIUNUnilQIXr67bX8i3FjoLHhQvKqUEKciXJWj9
+-ssGOvq0QoVZNPltcZp9yID3W2kyxv6Hq8VA=
++MIIDWjCCAkKgAwIBAgIUWrP0VvHcy+LP6UuYNtiL9gBhD5owDQYJKoZIhvcNAQEL
++BQAwVjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
++GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEPMA0GA1UEAwwGdGVzdGNhMB4XDTIw
++MDMxNzE4NTk1MVoXDTMwMDMxNTE4NTk1MVowVjELMAkGA1UEBhMCQVUxEzARBgNV
++BAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0
++ZDEPMA0GA1UEAwwGdGVzdGNhMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
++AQEAsGL0oXflF0LzoM+Bh+qUU9yhqzw2w8OOX5mu/iNCyUOBrqaHi7mGHx73GD01
++diNzCzvlcQqdNIH6NQSL7DTpBjca66jYT9u73vZe2MDrr1nVbuLvfu9850cdxiUO
++Inv5xf8+sTHG0C+a+VAvMhsLiRjsq+lXKRJyk5zkbbsETybqpxoJ+K7CoSy3yc/k
++QIY3TipwEtwkKP4hzyo6KiGd/DPexie4nBUInN3bS1BUeNZ5zeaIC2eg3bkeeW7c
++qT55b+Yen6CxY0TEkzBK6AKt/WUialKMgT0wbTxRZO7kUCH3Sq6e/wXeFdJ+HvdV
++LPlAg5TnMaNpRdQih/8nRFpsdwIDAQABoyAwHjAMBgNVHRMEBTADAQH/MA4GA1Ud
++DwEB/wQEAwICBDANBgkqhkiG9w0BAQsFAAOCAQEAkTrKZjBrJXHps/HrjNCFPb5a
++THuGPCSsepe1wkKdSp1h4HGRpLoCgcLysCJ5hZhRpHkRihhef+rFHEe60UePQO3S
++CVTtdJB4CYWpcNyXOdqefrbJW5QNljxgi6Fhvs7JJkBqdXIkWXtFk2eRgOIP2Eo9
++/OHQHlYnwZFrk6sp4wPyR+A95S0toZBcyDVz7u+hOW0pGK3wviOe9lvRgj/H3Pwt
++bewb0l+MhRig0/DVHamyVxrDRbqInU1/GTNCwcZkXKYFWSf92U+kIcTth24Q1gcw
++eZiLl5FfrWokUNytFElXob0V0a5/kbhiLc3yWmvWqHTpqCALbVyF+rKJo2f5Kw==
+ -----END CERTIFICATE-----
+```
+
+**File**: `interop/data/cert-generator/.gitignore` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-.terraform/
+-*.tfstate
+-*.tfstate.backup
+```
+
+**File**: `interop/data/cert-generator/ca.tf` (removed, +0/-26)
+```diff
+@@ -1,26 +0,0 @@
+-resource "tls_private_key" "root" {
+-  algorithm = "RSA"
+-  rsa_bits = "2048"
+-}
+-
+-resource "tls_self_signed_cert" "root" {
+-  private_key_pem = tls_private_key.root.private_key_pem
+-
+-  validity_period_hours = 87600
+-  early_renewal_hours = 8760
+-
+-  is_ca_certificate = true
+-
+-  allowed_uses = ["cert_signing"]
+-
+-  subject {
+-    common_name = "Tonic Testing CA"
+-    organization = "Tokio"
+-    organizational_unit = "Testing"
+-  }
+-}
+-
+-resource "local_file" "ca_cert" {
+-  filename = "../ca.pem"
+-  content = tls_self_signed_cert.root.cert_pem
+-}
+```
+
+**File**: `interop/data/cert-generator/server_certs.tf` (removed, +0/-38)
+```diff
+@@ -1,38 +0,0 @@
+-resource "tls_private_key" "server" {
+-  algorithm = "RSA"
+-  rsa_bits = "2048"
+-}
+-
+-resource "tls_cert_request" "server" {
+-  private_key_pem = tls_private_key.server.private_key_pem
+-
+-  subject {
+-    common_name = "Tonic Test Server Cert"
+-  }
+-
+-  dns_names = [
+-    "*.test.google.fr",
+-  ]
+-}
+-
+-resource "tls_locally_signed_cert" "server" {
+-  cert_request_pem = tls_cert_request.server.cert_request_pem
+-
+-  ca_private_key_pem = tls_private_key.root.private_key_pem
+-  ca_cert_pem = tls_self_signed_cert.root.cert_pem
+-
+-  validity_period_hours = 43800
+-  early_renewal_hours = 8760
+-
+-  allowed_uses = ["server_auth"]
+-}
+-
+-resource "local_file" "server_cert" {
+-  filename = "../server1.pem"
+-  content = tls_locally_signed_cert.server.cert_pem
+-}
+-
+-resource "local_file" "server_key" {
+-  filename = "../server1.key"
+-  content = tls_private_key.server.private_key_pem
+-}
+```
+
+**File**: `interop/data/server1.key` (modified, +28/-27)
+```diff
+@@ -1,27 +1,28 @@
+------BEGIN RSA PRIVATE KEY-----
+-MIIEpAIBAAKCAQEA7iJJ8gLlKsp+r15CR15Iz2rmi3f3OZmA8FZ0hpB5hNkQHfVA
+-RlC2yawIfHiLO4tpUmjtX8iq3RXPkKPYP5Zfd1BDLdR/2qhd3vFJnRVfoiqTMNOV
+-3R3+tIm04gDbtGxIDuWL+No/r/KldFxwbLqYTXDOaa145YI2aZ3GZ3P6GFYls6h7
+-PeUqlXv7yWx1jfcMIZPeupHwWESYCCLkpvBHFZftWhc/FChUmgr417vmQC2eGwuX
+-LyRdu+Lv9NmSzsO6A+w8ss62ewC02LXkXAG2Prd1GYuScsq94GcE5lguC5TVkdTm
+-tQMDmET/KvitG3vLB9AIkKnjZdi1Ml7Ow6dByQIDAQABAoIBAFo7ketrH2z8d855
+-mAG0/z/hEOSuG3au7MWk7NiEbBdjrJC9epJqSSjX0AtiHdf9NnZsne2aeuv1NMZo
+-3ysRDrGGLz5xc9Tl0VQF98/W5nrrSQTKV9IGaJn+SBUPIDEYiqFiZ4xvHozME9eo
+-o0z/03Acm4o9mj7U/Us95o0SzCRl3QKgAWeSS36Ks0OmDJfNuYBWf+WA7Fte9NUp
+-yOOm2fGejoge9eMcJY3/7HckrESscMECZMUL1hBbVD939d4S4AvM6YWTErAa9uq9
+-APsXdu5IYglonqw6oc4TtN9bI9gbHKTyiFgi42gM6qcN2ixpQ78ufktLcJLBTLzi
+-jP5f5cUCgYEA7whtTRG+KN3nAaRy5gU3JDdOIM1tlAVjwtvUIre3sf6p6Bzs0+RL
+-DVdOidJB+8wnV6hF64+juHS27Y7t4ONt2VRFNmY3yRlb9MwqOYlqGaOOewgY+Gab
+-ZC4GBKmMRKW0LpeRHghpCeyeRRKr5tkYalyU9/C+mxIFpb0/NZZXh6sCgYEA/wmG
+-s+npJH2Xs17Yd3wwroZpFAlG2wRCd0IS14brKr+w5czbGis8Pz/LCVrNH+6ZkvoI
+-gUpTDwY7egt9O2iCIeSeq82Ov+g9WiDa150YTq8av09N7AZ13Na+SU5aNpPwIOEZ
+-WX8dygNloSh4JDjOhrwigRtcMmYCtpKVS792GFsCgYEA6QEB6rp870E/ya4QAoDa
+-+4adtgQJ6NxIHs5Cv4Tun6dq4EQx52sGbf7JJDe88kJTp3L0lWbzZP8AwhktcKbB
+-kbQ/s4N4paL+rGXIU0XMEyoH3Y5LKPh8SO9EFo9fmBsexLwiTXBNU8s/jH1i7Ch7
+-UFLnM7mNU4QB1Ungr8/ZivkCgYA6sA2ATz5oOEJ1c0jqzfhB4QpDIxNcCPHmkZzW
+-XeS11KC3cNmmfvaBM4PcZjm3tGdArCrS3bCZT3zWS9iImDcB56Mfs9C6lo2vtMnH
+-Pg4+5QqJpY0v2Bi9NelZ4x7dWlOyrTnxH1BSkU+Ms0xaQXw9AwQJo6smqdTMAJU8
+-dhWN6wKBgQDRAjpfV77FE32XsBkHyGlaIanxu+gSJVLaHStZLV8qTvn//lnmr5Be
+-abK4smlwHp5ZnTwqP3gMh/b8vfyPYHdK/2rCKSCEPf/JHtoABsw9Hvkr/N99MZQd
+-S2l3PYQoQ8smUVYNWhdYvdRER8WFTk5rPX6fEoVne/sArxlwk8+8nw==
+------END RSA PRIVATE KEY-----
++-----BEGIN PRIVATE KEY-----
++MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDnE443EknxvxBq
++6+hvn/t09hl8hx366EBYvZmVM/NC+7igXRAjiJiA/mIaCvL3MS0Iz5hBLxSGICU+
++WproA3GCIFITIwcf/ETyWj/5xpgZ4AKrLrjQmmX8mhwUajfF3UvwMJrCOVqPp67t
++PtP+2kBXaqrXdvnvXR41FsIB8V7zIAuIZB6bHQhiGVlc1sgZYsE2EGG9WMmHtS86
++qkAOTjG2XyjmPTGAwhGDpYkYrpzp99IiDh4/Veai81hn0ssQkbry0XRD/Ig3jcHh
++23WiriPNJ0JsbgXUSLKRPZObA9VgOLy2aXoN84IMaeK3yy+cwSYG/99w93fUZJte
++MXwz4oYZAgMBAAECggEBAIVn2Ncai+4xbH0OLWckabwgyJ4IM9rDc0LIU368O1kU
++koais8qP9dujAWgfoh3sGh/YGgKn96VnsZjKHlyMgF+r4TaDJn3k2rlAOWcurGlj
++1qaVlsV4HiEzp7pxiDmHhWvp4672Bb6iBG+bsjCUOEk/n9o9KhZzIBluRhtxCmw5
++nw4Do7z00PTvN81260uPWSc04IrytvZUiAIx/5qxD72bij2xJ8t/I9GI8g4FtoVB
++8pB6S/hJX1PZhh9VlU6Yk+TOfOVnbebG4W5138LkB835eqk3Zz0qsbc2euoi8Hxi
++y1VGwQEmMQ63jXz4c6g+X55ifvUK9Jpn5E8pq+pMd7ECgYEA93lYq+Cr54K4ey5t
++sWMa+ye5RqxjzgXj2Kqr55jb54VWG7wp2iGbg8FMlkQwzTJwebzDyCSatguEZLuB
++gRGroRnsUOy9vBvhKPOch9bfKIl6qOgzMJB267fBVWx5ybnRbWN/I7RvMQf3k+9y
++biCIVnxDLEEYyx7z85/5qxsXg/MCgYEA7wmWKtCTn032Hy9P8OL49T0X6Z8FlkDC
++Rk42ygrc/MUbugq9RGUxcCxoImOG9JXUpEtUe31YDm2j+/nbvrjl6/bP2qWs0V7l
++dTJl6dABP51pCw8+l4cWgBBX08Lkeen812AAFNrjmDCjX6rHjWHLJcpS18fnRRkP
++V1d/AHWX7MMCgYEA6Gsw2guhp0Zf2GCcaNK5DlQab8OL4Hwrpttzo4kuTlwtqNKp
++Q9H4al9qfF4Cr1TFya98+EVYf8yFRM3NLNjZpe3gwYf2EerlJj7VLcahw0KKzoN1
++QBENfwgPLRk5sDkx9VhSmcfl/diLroZdpAwtv3vo4nEoxeuGFbKTGx3Qkf0CgYEA
++xyR+dcb05Ygm3w4klHQTowQ10s1H80iaUcZBgQuR1ghEtDbUPZHsoR5t1xCB02ys
++DgAwLv1bChIvxvH/L6KM8ovZ2LekBX4AviWxoBxJnfz/EVau98B0b1auRN6eSC83
++FRuGldlSOW1z/nSh8ViizSYE5H5HX1qkXEippvFRE88CgYB3Bfu3YQY60ITWIShv
++nNkdcbTT9eoP9suaRJjw92Ln+7ZpALYlQMKUZmJ/5uBmLs4RFwUTQruLOPL4yLTH
++awADWUzs3IRr1fwn9E+zM8JVyKCnUEM3w4N5UZskGO2klashAd30hWO+knRv/y0r
++uGIYs9Ek7YXlXIRVrzMwcsrt1w==
++-----END PRIVATE KEY-----
+```
+
+**File**: `interop/data/server1.pem` (modified, +20/-18)
+```diff
+@@ -1,20 +1,22 @@
+ -----BEGIN CERTIFICATE-----
+-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
+ -----END CERTIFICATE-----
+```
+
+---
+
+### Incident Patch 2: `ddb478d7` (2026-11-05)
+**Commit Message**: gprx-xds/load_balancing: Make test utilities available to grpc-xds crate. (#3003)
+
+## Motivation
+
+Make the load balancer test utilities available to the `grpc-xds` crate.
+
+## Solution
+
+There are a number of ways to solve this, but the feature flag path
+allows us to most cleanly get access to the same functionality without
+copy-pasting or suffering dead code annotations, externs and/or other
+nonsense.
+
+## Notes
+
+In a follow up we will be replacing the queuing/failing pickers with a
+fixed picker, similar to Java's.
+
+**File**: `grpc-xds/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ regex = "1"
+ rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
+ 
+ [dev-dependencies]
+-grpc = { version = "0.10.0", path = "../grpc" }
++grpc = { version = "0.10.0", path = "../grpc", features = ["__internal-test-utils"] }
+ rustls = { version = "0.23", default-features = false, features = ["ring"] }
+ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+ xds-client = { version = "0.1.0-alpha.4", path = "../xds-client", default-features = false, features = ["rt-tokio", "codegen-prost"] }
+```
+
+**File**: `grpc/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -47,6 +47,7 @@ _runtime-tokio = [
+ tower = ["_runtime-tokio"]
+ __unstable = []
+ __internal = []
++__internal-test-utils = []
+ gzip = ["dep:flate2"]
+ 
+ [dependencies]
+```
+
+**File**: `grpc/src/client/load_balancing/mod.rs` (modified, +7/-7)
+```diff
+@@ -58,8 +58,8 @@ pub mod round_robin;
+ pub mod subchannel;
+ pub use registry::GLOBAL_LB_REGISTRY;
+ 
+-#[cfg(test)]
+-pub(crate) mod test_utils;
++#[cfg(any(test, feature = "__internal-test-utils"))]
++pub mod test_utils;
+ 
+ static START: Once = Once::new();
+ 
+@@ -524,7 +524,7 @@ impl Debug for Pick {
+ /// QueuingPicker always returns Queue.  LB policies that are not actively
+ /// Connecting should not use this picker.
+ #[derive(Debug)]
+-pub(crate) struct QueuingPicker;
++pub struct QueuingPicker;
+ 
+ impl Picker for QueuingPicker {
+     fn pick(&self, _options: PickOptions<'_>) -> PickResult {
+@@ -533,7 +533,7 @@ impl Picker for QueuingPicker {
  }
  
-@@ -356,25 +361,21 @@ impl ClusterRequestCounters {
-         }
-     }
- 
--    fn acquire(
--        &self,
--        counter_key: CounterKey,
--        counter: Arc<InFlightCounter>,
--        limit: u32,
--    ) -> Option<CircuitBreakerPermit> {
--        if counter.try_acquire(limit) {
--            Some(CircuitBreakerPermit {
--                counter: Some(counter),
--                counter_key,
--                counters: self.clone(),
--            })
--        } else {
--            let should_cleanup = counter.is_unused();
--            drop(counter);
--            if should_cleanup {
--                self.cleanup_if_unused(&counter_key);
--            }
--            None
-+    /// Drops a reference to `config`. Dropping the last one also removes its
-+    /// counter if no request or other config still uses it.
-+    fn drop_conf
-```
-
-**File**: `tonic-xds/src/client/endpoint.rs` (modified, +11/-1)
-```diff
-@@ -25,6 +25,7 @@
- use crate::common::async_util::BoxFuture;
- #[cfg(feature = "_tls-any")]
- use crate::xds::cert_provider::{CertProviderRegistry, CertificateProvider};
-+use crate::xds::resource::circuit_breaking::CircuitBreakingConfig;
- use crate::xds::resource::cluster::ClusterResource;
- use crate::xds::resource::security::ClusterSecurityConfig;
- use std::net::{IpAddr, SocketAddr};
-@@ -226,6 +227,11 @@ pub struct ClusterConfig<'a> {
-     /// Parsed TLS config for the cluster (`None` = plaintext). Crate-internal;
-     /// read publicly through `ClusterConfig::tls`.
-     pub(crate) security: Option<&'a ClusterSecurityConfig>,
-+    /// EDS service name of the cluster's endpoints. Crate-internal; keys the
-+    /// cluster's A32 request counter together with the cluster name.
-+    pub(crate) eds_service_name: &'a str,
-+    /// A32 circuit-breaking thresholds. Crate-internal.
-+    pub(crate) circuit_breaking: CircuitBreakingConfig,
-     /// Cert-provider registry. Ambient here so [`ClusterTlsConfig`] can resolve
-     /// provider instance names without the caller handling the registry.
-     #[cfg(feature = "_tls-any")]
-@@ -243,6 +249,8 @@ impl<'a> ClusterConfig<'a> {
-         Self {
-             name: &cluster.name,
-             security: cluster.security.as_ref(),
-+            eds_service_name: cluster.eds_service_name(),
-+            circuit_breaking: cluster.circuit_breaking,
-             registry,
-         }
-     }
-@@ -253,11 +261,13 @@ impl<'a> ClusterConfig<'a> {
-         Self {
-             name: &cluster.name,
-             security: cluster.security.as_ref(),
-+            eds_service_name: cluster.eds_service_name(),
-+            circuit_breaking: cluster.circuit_breaking,
-         }
-     }
- 
-     /// The cluster name.
--    pub fn name(&self) -> &str {
-+    pub fn name(&self) -> &'a str {
-         self.name
-     }
- 
-```
-
-**File**: `tonic-xds/src/client/loadbalance/cluster_factory.rs` (modified, +1/-0)
-```diff
-@@ -171,6 +171,7 @@ mod tests {
-             eds_service_name: None,
-             lb_policy: LbPolicy::RoundRobin,
-             security: None,
-+            circuit_breaking: Default::default(),
-         })
-     }
- 
-```
-
-**File**: `tonic-xds/src/client/loadbalance/loadbalancer.rs` (modified, +47/-10)
-```diff
-@@ -75,6 +75,29 @@ use crate::client::loadbalance::outlier_detection::{OutlierDetector, OutlierStat
- use crate::client::loadbalance::pickers::ChannelPicker;
- use crate::xds::resource::outlier_detection::OutlierDetectionConfig;
- 
-+/// Maps a completed call to an outlier-detection sample: `Some(true)` records
-+/// endpoint success, `Some(false)` records endpoint failure, and `None` records
-+/// nothing. A response produced locally before the endpoint was called (an A32
-+/// circuit-breaker drop) never reaches the classifier, because it says nothing
-+/// about the endpoint's health on any transport.
-+fn outlier_outcome<Resp: OutcomeSource, Error>(
-+    result: &Result<Resp, Error>,
-+    classifier: &dyn OutcomeClassifier,
-+) -> Option<bool> {
-+    let outcome = match result {
-+        Ok(response) if response.is_local_pre_endpoint_response() => return None,
-+        Ok(response) => response.call_outcome(),
-+        Err(_) => CallOutcome::Error,
-+    };
-+    // The transport-specific classifier decides what this outcome means
-+    // for outlier detection; `Ignore` records nothing (e.g. HTTP 4xx).
-+    match classifier.classify(outcome) {
-+        HealthOutcome::Success => Some(true),
-+        HealthOutcome::Failure => Some(false),
-+        HealthOutcome::Ignore => None,
-+    }
-+}
-+
- /// Future returned by [`LoadBalancer::call`]. Either resolves
- /// immediately with an [`LbError`] or drives the selected channel.
- pub(crate) enum LbFuture<Resp> {
-@@ -404,16 +427,8 @@ where
-                 .await
-                 .map_err(|e| LbError::LbChannelPollReadyError(e.into()))?;
-             let result = svc.call(req).await;
--            // The transport-specific classifier decides what this outcome means
--            // for outlier detection; `Ignore` records nothing (e.g. HTTP 4xx).
--            let outcome = match &result {
--                Ok(response) => response.call_outcome(),
--                Err(_) => CallOutcome::Error,
--            };
--            match classifier.classify(outcome) {
--                HealthOutcome::Success => svc.record_outcome(true),
--                HealthOutcome::Failure => svc.record_outcome(false),
--                HealthOutcome::Ignore => {}
-+            if let Some(success) = outlier_outcome(&result, classifier.as_ref()) {
-+                svc.record_outcome(success);
-             }
-             result.map_err(|e| LbError::LbChannelCallError(e.into()))
-         }))
-@@ -423,6 +438,7 @@ where
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::client::circuit_breaking::LocalCircuitBreakerDrop;
-     use crate::client::endpoint::Connector;
-     use crate::client::loadbalance::pickers::p2c::P2cPicker;
-     use crate::common::async_util::BoxFuture;
-@@ -679,6 +695,27 @@ mod tests {
-         Ok(Change::Remove(addr(port)))
-     }
- 
-+    #[test]
-+    fn circuit_breaker_drops_are_not_endpoint_outlier_outcomes() {
-+        let grpc = GrpcOutcomeClassifier;
-+        let normal: Result<http::Response<()>, tower::BoxError> = Ok(http::Response::new(()));
-+        assert_eq!(outlier_outcome(&normal, &grpc), Some(true));
-+
-+        let mut dropped_response = http::Response::new(());
-+        dropped_response
-+            .extensions_mut()
-+            .insert(LocalCircuitBreakerDrop);
-+        let dropped: Result<http::Response<()>, tower::BoxError> = Ok(dropped_response);
-+        assert_eq!(outlier_outcome(&dropped, &grpc), None);
-+        // The drop is skipped before classification, so even a classifier that
-+        // would count every call as a failure records nothing for it.
-+        let always_failure = FixedClassifier(HealthOutcome::Failure);
-+        assert_eq!(outlier_outcome(&dropped, &always_failure), None);
-+
-+        let error: Result<http::Response<()>, tower::BoxError> = Err("endpoint error".into());
-+        assert_eq!(outlier_outcome(&error, &grpc), Some(false));
-+    }
-+
-     /// A burst of inserts drained in one poll rebuilds the ring exactly once,
-     /// with the full member set (gRFC A42 ring-hash relies on this). A later
-     /// drain (the remove) is a distinct, single rebuild.
-```
-
-**File**: `tonic-xds/src/client/loadbalance/outcome.rs` (modified, +11/-0)
-```diff
-@@ -138,6 +138,13 @@ impl OutcomeClassifier for HttpOutcomeClassifier {
- pub(crate) trait OutcomeSource {
-     /// Borrow this response as a [`CallOutcome`].
-     fn call_outcome(&self) -> CallOutcome<'_>;
-+
-+    /// Whether this response was produced locally before the endpoint was
-+    /// called, such as an A32 circuit-breaker drop. The load balancer records
-+    /// no outlier-detection outcome for these responses.
-+    fn is_local_pre_endpoint_response(&self) -> bool {
-+        false
-+    }
+ #[derive(Debug)]
+-pub(crate) struct FailingPicker {
++pub struct FailingPicker {
+     pub error: String,
  }
  
- impl<B> OutcomeSource for http::Response<B> {
-@@ -147,6 +154,10 @@ impl<B> OutcomeSource for http::Response<B> {
-             headers: self.headers(),
-         }
-     }
-+
-+    fn is_local_pre_endpoint_response(&self) -> bool {
-+        crate::client::circuit_breaking::is_local_circuit_breaker_drop(self)
-+    }
+@@ -548,13 +548,13 @@ impl Picker for FailingPicker {
+ 
+ /// A dynamic LB policy config implementation that can be downcast to a specific
+ /// config as needed.
+-pub(crate) type DynLbConfig = Arc<dyn Any + Send + Sync>;
++pub type DynLbConfig = Arc<dyn Any + Send + Sync>;
+ 
+ /// A builder of dynamic LB policies.
+-pub(crate) type DynLbPolicyBuilder = dyn LbPolicyBuilder<LbPolicy = Box<DynLbPolicy>>;
++pub type DynLbPolicyBuilder = dyn LbPolicyBuilder<LbPolicy = Box<DynLbPolicy>>;
+ 
+ /// An LB policy that accepts dynamic configs.
+-pub(crate) type DynLbPolicy = dyn LbPolicy<LbConfig = DynLbConfig>;
++pub type DynLbPolicy = dyn LbPolicy<LbConfig = DynLbConfig>;
+ 
+ impl<T: LbPolicy + ?Sized> LbPolicy for Box<T> {
+     type LbConfig = T::LbConfig;
+```
+
+**File**: `grpc/src/client/load_balancing/test_utils.rs` (modified, +37/-40)
+```diff
+@@ -56,13 +56,13 @@ use crate::client::name_resolution::ResolverUpdate;
+ use crate::core::Address;
+ use crate::status::StatusCodeError;
+ 
+-pub(crate) fn new_request_headers() -> RequestHeaders {
++pub fn new_request_headers() -> RequestHeaders {
+     RequestHeaders::default()
  }
  
- #[cfg(test)]
-```
-
-**File**: `tonic-xds/src/xds/cache.rs` (modified, +3/-0)
-```diff
-@@ -217,11 +217,14 @@ mod tests {
+ // A test subchannel that forwards connect calls to a channel.
+ // This allows tests to verify when a subchannel is asked to connect.
+-pub(crate) struct TestSubchannel {
++pub struct TestSubchannel {
+     address: Address,
+     tx_connect: mpsc::Sender<TestEvent>,
+     // The work scheduler provided by the policy that created this subchannel,
+@@ -100,7 +100,7 @@ impl TestSubchannel {
+ /// `subchannel` must have been created by a [`TestChannelController`].  The
+ /// resulting work is observable via [`TestEnv::expect_schedule_work`], and
+ /// the data it contains should be passed to the policy's `work` method.
+-pub(crate) fn schedule_subchannel_update(subchannel: &Arc<dyn Subchannel>, state: SubchannelState) {
++pub fn schedule_subchannel_update(subchannel: &Arc<dyn Subchannel>, state: SubchannelState) {
+     let sc = subchannel
+         .downcast_ref::<TestSubchannel>()
+         .expect("subchannel was not created by a TestChannelController");
+@@ -145,7 +145,7 @@ impl PartialEq for TestSubchannel {
+ impl Eq for TestSubchannel {}
+ 
+ /// Events created by LB policies by calling the channel controller.
+-pub(crate) enum TestEvent {
++pub enum TestEvent {
+     NewSubchannel(Arc<dyn Subchannel>),
+     UpdatePicker(LbState),
+     RequestResolution,
+@@ -167,8 +167,8 @@ impl Debug for TestEvent {
+ /// A test channel controller that forwards calls to a channel.  This allows
+ /// tests to verify when a channel controller is asked to create subchannels or
+ /// update the picker.
+-pub(crate) struct TestChannelController {
+-    pub(crate) tx_events: mpsc::Sender<TestEvent>,
++pub struct TestChannelController {
++    pub tx_events: mpsc::Sender<TestEvent>,
+ }
+ 
+ impl ChannelController for TestChannelController {
+@@ -200,8 +200,8 @@ impl ChannelController for TestChannelController {
+ }
+ 
+ #[derive(Debug)]
+-pub(crate) struct TestWorkScheduler {
+-    pub(crate) tx_work: mpsc::Sender<Option<WorkData>>,
++pub struct TestWorkScheduler {
++    pub tx_work: mpsc::Sender<Option<WorkData>>,
+ }
+ 
+ impl WorkScheduler for TestWorkScheduler {
+@@ -219,7 +219,7 @@ impl WorkScheduler for TestWorkScheduler {
+ /// Prefer [`TestEnv::run_work`].  This is for tests that use a channel
+ /// controller other than [`TestChannelController`] and so cannot use
+ /// [`TestEnv`].
+-pub(crate) fn run_pending_work<P: LbPolicy + ?Sized>(
++pub fn run_pending_work<P: LbPolicy + ?Sized>(
+     policy: &mut P,
+     rx_work: &mpsc::Receiver<Option<WorkData>>,
+     channel_controller: &mut dyn ChannelController,
+@@ -237,17 +237,17 @@ pub(crate) fn run_pending_work<P: LbPolicy + ?Sized>(
+ /// `expect_*` methods consume events from the appropriate source.  Methods to
+ /// actually control the policy are available if `P` implements [`LbPolicy`].
+ /// Others can still use this type for assertions, but call the policy manually.
+-pub(crate) struct TestEnv<P> {
+-    pub(crate) policy: P,
+-    pub(crate) tcc: TestChannelController,
+-    pub(crate) rx_events: mpsc::Receiver<TestEvent>,
+-    pub(crate) rx_work: mpsc::Receiver<Option<WorkData>>,
++pub struct TestEnv<P> {
++    pub policy: P,
++    pub tcc: TestChannelController,
++    pub rx_events: mpsc::Receiver<TestEvent>,
++    pub rx_work: mpsc::Receiver<Option<WorkData>>,
+ }
+ 
+ impl<P> TestEnv<P> {
+     /// Creates the test environment using a LbPolicyBuilder-like closure for
+     /// policies that don't implement LbPolicyBuilder.
+-    pub(crate) fn new(build_policy: impl FnOnce(Arc<dyn WorkScheduler>) -> P) -> Self {
++    pub fn new(build_policy: impl FnOnce(Arc<dyn WorkScheduler>) -> P) -> Self {
+         let (tx_events, rx_events) = mpsc::channel::<TestEvent>();
+         let (tx_work, rx_work) = mpsc::channel::<Option<WorkData>>();
+         let work_scheduler = Arc::new(TestWorkScheduler { tx_work });
+@@ -268,7 +268,7 @@ impl<P> TestEnv<P> {
      }
  
-     fn make_cluster(name: &str, lb: LbPolicy) -> Arc<ClusterResource> {
-+        use crate::xds::resource::circuit_breaking::CircuitBreakingConfig;
-+
-         Arc::new(ClusterResource {
-             name: name.to_string(),
-             eds_service_name: None,
-             lb_policy: lb,
-             security: None,
-+            circuit_breaking: CircuitBreakingConfig::default(),
-         })
+     /// Verifies that the policy created a subchannel, and returns it.
+-    pub(crate) fn expect_new_subchannel(&mut self) -> Arc<dyn Subchannel> {
++    pub fn expect_new_subchannel(&mut self) -> Arc<dyn Subchannel> {
+         match self.next_event() {
+             TestEvent::NewSubchannel(sc) => sc,
+             other => panic!("expected NewSubchannel event, got {other:?}"),
+@@ -277,15 +277,15 @@ impl<P> TestEnv<P> {
+ 
+     /// Calls [`Self::expect_new_subchannel`], verifies that the created
+     /// subchannel's address equals `addr`, and returns the subchannel.
+-    pub(crate) fn expect_new_subchannel_for(&mut self, addr: &str) -> Arc<dyn Subchannel> {
++    pub fn expect_new_subchannel_for(&mut self, addr: &str) -> Arc<dyn Subchannel> {
+         let sc = self.expect_new_subchannel();
+         assert_eq!(&*sc.address().address, addr);
+         sc
      }
  
-```
-
-**File**: `tonic-xds/src/xds/cluster_discovery.rs` (modified, +3/-0)
-```diff
-@@ -300,6 +300,7 @@ impl Connector for TlsConnector {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::xds::resource::circuit_breaking::CircuitBreakingConfig;
-     use crate::xds::resource::cluster::{ClusterResource, LbPolicy};
- 
-     #[cfg(feature = "_tls-any")]
-@@ -315,6 +316,7 @@ mod tests {
-             eds_service_name: None,
-             lb_policy: LbPolicy::RoundRobin,
-             security: None,
-+            circuit_breaking: CircuitBreakingConfig::default(),
-         }
-     }
- 
-@@ -325,6 +327,7 @@ mod tests {
-             eds_service_name: None,
-             lb_policy: LbPolicy::RoundRobin,
-             security: Some(security),
-+            circuit_breaking: CircuitBreakingConfig::default(),
-         }
-     }
- 
+     /// Verifies that the policy asked a subch
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3004** (closed): tonic-prost-build: Propagate with_extended_rust_types via ServiceGenerator (@nathanielford)
+- **PR #3003** (2026-11-05): gprx-xds/load_balancing: Make test utilities available to grpc-xds crate. (@nathanielford)
 - **PR #2998** (2026-11-04): Move grpc-proto files to third_party dirs (@ejona86)
 - **PR #2997** (2026-11-03): xds-client: drop stale `.await` on now-synchronous `watch` in retry test (@YutaoMa)
 - **PR #2996** (closed): fix(transport): start graceful shutdown at max_connection_age when a grace is set (@lukekim)
 - **PR #2995** (2026-11-03): xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (@arjan-bal)
-- **PR #2990** (2026-11-04): grpc: Expose unstable functions in __unstable (@ejona86)
-- **PR #2989** (2026-11-02): protoc-gen-grpc-rust: include absl version in CMAKE_BINDARY_DIR (@dfawley)
 
 ---
 
@@ -2478,57 +2466,28 @@ that transport-generic channels a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Wire A32 circuit breaking into xDS channels (#2712)
+## X. interop: update client.rs to run in interop test harness (#2993)
 
 **RULE**:
-When implementing operations in `tonic-xds/src/client/channel.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `interop/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c309835f`: Wire A32 circuit breaking into xDS channels (#2712). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d140e69f`: interop: update client.rs to run in interop test harness (#2993). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic-xds/src/client/channel.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `interop/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::client::circuit_breaking::{
-    CircuitBreakingMakeConnector, ClusterCircuitBreakerRegistry,
-};
-    ///
-    /// Only this path enforces gRFC A32 circuit breaking (see
-    /// [`grpc_make_connector`]); transport-generic channels are not limited.
-        self.build_channel::<_, TonicBody, TonicBody, TonicBody, _>(
-            grpc_make_connector(ClusterCircuitBreakerRegistry::new()),
-    ///
-    /// # Circuit breaking
-    ///
-    /// CDS `max_requests` limits (gRFC A32) are enforced only by
-    /// [`build_grpc_channel`](Self::build_grpc_channel); a transport-generic
-    /// channel does not limit in-flight requests.
-/// The connector factory behind gRPC channels: [`GrpcMakeConnector`] with
-/// gRFC A32 circuit breaking on every endpoint, for either load-balancer
-/// backend.
-fn grpc_make_connector(
-    circuit_breakers: ClusterCircuitBreakerRegistry,
-) -> CircuitBreakingMakeConnector<GrpcMakeConnector> {
-    CircuitBreakingMakeConnector::new(GrpcMakeConnector::new(), circuit_breakers)
-}
-
-        /// This backend's gRPC cluster-channel factory over `cache`, wired as
-        /// production wires it. Circuit-breaker counters are private to the
-        /// factory so concurre
+tonic = {path = "../tonic", features = ["tls-ring", "tls-native-roots"]}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        self.build_channel::<GrpcMakeConnector, TonicBody, TonicBody, TonicBody, _>(
-            GrpcMakeConnector::new(),
-        /// This backend's gRPC cluster-channel factory over `cache`.
-            self.cluster_factory::<GrpcMakeConnector, TonicBody, TonicBody>(
-                GrpcMakeConnector::new(),
+tonic = {path = "../tonic", features = ["tls-ring"]}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c309835f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d140e69f` are properly handled with clean fallback behavior.
