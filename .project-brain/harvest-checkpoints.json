@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T22:28:46.953Z",
+  "last_updated": "2026-11-06T22:36:17.989Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
-      "verified_at": "2026-11-06T19:02:20.493Z",
+      "content_hash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
+      "verified_at": "2026-11-06T22:36:17.988Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:02:20.493Z"
+      "last_updated": "2026-11-06T22:36:17.988Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
-      "verified_at": "2026-11-04T01:27:48.529Z",
+      "content_hash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
+      "verified_at": "2026-11-06T22:36:11.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:27:48.529Z"
+      "last_updated": "2026-11-06T22:36:11.885Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",

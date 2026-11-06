@@ -7945,3 +7945,5 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `c22582a1` | Multi-dimensional audit evidence | 2026-11-06T22:21:16.977Z |
 | `learn-github-runanywhereai-runanywhere-sdks` | `https://github.com/RunanywhereAI/runanywhere-sdks` | `87865ea8` | Multi-dimensional audit evidence | 2026-11-06T22:28:43.449Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `ad62c570` | Multi-dimensional audit evidence | 2026-11-06T22:28:46.944Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `c9a4996a` | Multi-dimensional audit evidence | 2026-11-06T22:36:11.866Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd9f64d7` | Multi-dimensional audit evidence | 2026-11-06T22:36:17.971Z |

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "d3413e65",
+    "sourceVersion": "bd9f64d7",
     "license": "Apache-2.0",
-    "contentHash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
-    "lastHarvestedAt": "2026-11-06T19:02:20.483Z",
+    "contentHash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
+    "lastHarvestedAt": "2026-11-06T22:36:17.971Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "4840c2be",
+    "sourceVersion": "c9a4996a",
     "license": "Apache-2.0",
-    "contentHash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
-    "lastHarvestedAt": "2026-11-04T01:27:48.519Z",
+    "contentHash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
+    "lastHarvestedAt": "2026-11-06T22:36:11.866Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {

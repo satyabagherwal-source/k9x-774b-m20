@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T22:28:46.950Z",
-  "total_cycles_completed": 7901,
-  "total_learnings_persisted": 7901,
-  "total_rules_promoted": 7547,
+  "last_updated": "2026-11-06T22:36:17.985Z",
+  "total_cycles_completed": 7903,
+  "total_learnings_persisted": 7903,
+  "total_rules_promoted": 7549,
   "history": [
-    {
-      "timestamp": "2026-11-05T17:21:50.892Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:21:54.651Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T17:22:01.254Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T22:28:46.950Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:36:11.872Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:36:17.985Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `d3413e65`  
+> **Source Version**: `bd9f64d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:02:19.113Z  
+> **Timestamp**: 2026-11-06T22:36:16.199Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:02:18.115Z  
+> **Harvest Timestamp**: 2026-11-06T22:36:15.875Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1089,246 +1089,629 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d3413e65` (2026-11-06)
-**Commit Message**: Remove output matrices from analyzer prompts
+### Incident Patch 1: `bd9f64d7` (2026-11-06)
+**Commit Message**: Label orientation by shape in all ARC datasets
 
-Exclude output instance matrices from both shared instance context and individual instance prompts.
+Give every state of every object in the 29 ARC instruction datasets the
+direction its own shape points, at the user's request to make
+`orientation` consistent, with their reference of directed 3-cell lines
+that point toward their heads:
 
-**File**: `arc/src/analyzer.ts` (modified, +1/-9)
+- a straight line points toward its head, an end cell of its own color,
+  or takes its axis without one: vertical 0, horizontal 90, and the
+  diagonals 45 and 135
+- a corner or chevron points toward its vertex, and a marker keeps that
+- anything else is 0, and a turn adds its angle
+
+Relabelled datasets:
+
+- 25d8a9c8, 25ff71a9, 9565186b, c9e6f938, 6150a2bd and ed36ccf7: their
+  rules already carry the new values into the outputs
+- 44f52bb0, 9af7a82c and e9afcf9a gain `$Obj.orientation = 0`, and
+  a85d4709 gains `$Obj.orientation = 90`
+- 794b24be and d631b094 set each output bar's orientation from its own
+  box
+- the genesis puzzle 3aa6fb7a, which the user chose to include: line
+  drops `endpoint_position` and points toward its color-8 endpoint (270,
+  90, 0 or 180), and curve's points are 0 while the color-4 rim makes a
+  V at 180
+
+The other 13 puzzle datasets, core and extension already followed the
+co
+
+**File**: `arc/README.md` (modified, +226/-107)
 ```diff
-@@ -104,15 +104,9 @@ export async function value({
-           input_instances:
-           ${JSON.stringify(
-             input_instances.map(
--              ({
--                instance_name,
--                input_instance_matrix,
--                output_instance_matrix,
--                implementation,
--              }) => ({
-+              ({ instance_name, input_instance_matrix, implementation }) => ({
-                 instance_name,
-                 input_instance_matrix: Matrix.crop(input_instance_matrix),
--                output_instance_matrix: Matrix.crop(output_instance_matrix),
-                 implementation,
-               })
-             )
-@@ -126,8 +120,6 @@ export async function value({
-           ${instance_name}
-           input_instance_matrix:
-           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
--          output_instance_matrix:
--          ${JSON.stringify(Matrix.crop(output_instance_matrix))}
-           input_x: ${x}
-           input_y: ${y}
-           json_format:
+@@ -288,16 +288,17 @@ one column wider when horizontal and one row taller when vertical. An
+ extension corner keeps its 3 by 3 size, because its inside marker fills a
+ cell of its own box. Every native output snapshot therefore carries its
+ shape's output bounding box, so `output_value.x` and `output_value.y` equal
+-`output_x` and `output_y`. The genesis rules match categorical colors,
+-orientations, and endpoint sides with `is`, the spelling of `==` that
+-[NUC 86](../docs/nuc-0086.md) adds, as in the line header
+-`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
+-such as `left` compares with its own text while nothing defines that name,
+-and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
+-and implementations keep their quoted strings, as in
+-`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
+-right operand of `is` reads as a word, and a bare name elsewhere would be
+-undefined.
++`output_x` and `output_y`. A line points toward its color-8 endpoint: its
++orientation is 270, 90, 0, or 180 when the endpoint is on the left, on the
++right, at the top, or at the bottom, and it keeps that orientation as it grows
++away from the endpoint. A curve point, a single cell, is at orientation 0, and
++its rim makes a V that points toward the point, its vertex: the color-4 rule
++sets `$Obj.orientation = 180`, because its color-8 arms go up and the V points
++down, while a color-9 point keeps 0, because its color-2 arms go down and the
++V points up. The genesis rules match categorical colors and orientations with
++`is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
++line header `if $Obj.orientation is 270:`, and the line rules assign quoted
++strings, as in `$Obj.extension_direction = 'right'`.
+ 
+ Instance `implementation` snippets use named constructor arguments whose names
+ match the parameters in their class declarations. The canvas size is not one
+@@ -496,10 +497,17 @@ row's unchanged origin, as an erased output object keeps one in
+ [composition](#8-visualize-output-instance). `output_canvas` is `EXACT`
+ because each output keeps its input's canvas, including the cleared top or
+ bottom rows that `FIT` would crop from every training output. Orientation is
+-0 in both states because the rows are not turned and the bar is a distinct
+-horizontal geometry. The declarations hold executable code only, without the
+-`#` comments of the other datasets. The test pair follows the training pairs
+-at the same level and is annotated by the same rules.
++the direction each row points as a straight line of 3 cells. A row of exactly
++two colors in which one end cell alone has its color has that cell as its head
++and points toward it: 270 for the left end cells of `[2, 3, 3]`, `[7, 3, 3]`,
++and `[3, 7, 7]`, and 90 for the right end cell of `[2, 2, 4]`. Every other
++row, of one color or with its lone color in the middle cell, has no head and
++takes the horizontal axis, 90. The rules leave `orientation` unchanged: each
++bar keeps 90, and each cleared row, which has no output cell, keeps its input
++orientation, 270 for three of the cleared rows and 90 for the other five. The
++declarations hold executable code and one `#` comment, the orientation line
++that every dataset places above its class. The test pair follows the training
++pairs at the same level and is annotated by the same rules.
+ 
+ `dataset.25ff71a9.json` annotates the four original training pairs from
+ `data\training\25ff71a9.json`, in order, followed by its two test pairs, six
+@@ -542,10 +550,15 @@ The `output_x`/`output_y` fields record the moved figure's nonzero
+ bounding-box origin, equal to `output_value.x`/`output_value.y`.
+ `output_canvas` is `EXACT` because each training output keeps its input's
+ 3 by 3 canvas, including the empty top row that `FIT` would crop from every
+-one of them. Orientation is 0 in both states of the training pairs because no
+-training figure is turned. The declarations hold executable code only,
+-without `#` comments. The test pairs follow the training pairs at the same
+-level and are annotated by the same rules.
++one of them. Orientation is the direction each figure points, the same in
++both states because the figure moves without turning: 90 for the bars,
++horizontal lines without a head; 135 and 45 for the trominoes, corners that
++point toward their vertex, the bottom-right cell of the third figure's box and
++the top-right cell of the fourth's; and 0 for the test pairs' vertical 2-cell
++bar and single cell. The declarations hold executable code and one `#` comment,
++the orientation line that every dataset places above its class. The test pairs
++follow the training pairs at the same level and are annotated by the same
++rules.
+ 
+ `dataset.27a28665.json` annotates the seven original training pairs from
+ `data\training\27a28665.json`, in order, followed by its three test pairs,
+@@ -680,9 +693,10 @@ bounding-box origin, 0 and 0, equal to `output_value.x`/
 ```
 
----
-
-### Incident Patch 2: `9920531e` (2026-11-06)
-**Commit Message**: Improve ARC visualization milestones
-
-Show input crops and oriented state panels during visualization, and remove dimensions from grid headers. Clarify few-shot dataset cropping behavior in the README.
-
-**File**: `arc/README.md` (modified, +26/-6)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +41/-2)
 ```diff
-@@ -160,11 +160,25 @@ panels keep the same full number. The declarations header includes the
- output canvas instead of adding a separate milestone. Segmented-object panels
- use `Input` and `Output` without object-number labels. Model token usage remains
- attached to its active milestone. Instance-specific steps, crop and
--implementation headers, and input-state headers include the instance name.
-+implementation headers, and input- and output-state headers include the
-+instance name. In the visualization, each test object's synthesis shows its
-+`Input crop` right before its `Implementation`, as in
-+`2.6.1 Input crop · <instance>` and
-+`2.7.1 Implementation · <instance>`. Its composition shows the same
-+`Input crop` again before its `Output crop`, under its own number, such as
-+`2.12.1`, rather than continuing the synthesis count, and an `Output state`
-+panel right after the `Output crop`: the object's row of the
-+`Visualization · State` table, before its `Placed output`.
- The visualization's output-crop header also shows the object's output
- orientation as an arrow emoji and its degrees, such as
--`2.11.1 Output crop · <instance> · ➡️ 90° · 6 × 3`; an orientation that is
--not a multiple of 45 degrees shows `🧭` instead of an arrow.
-+`2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
-+output-state header, in both stages, shows the orientation of the state it
-+displays the same way, such as `2.9.1 Input state · <instance> · ⬆️ 0°`. An
-+orientation that is not a multiple of 45 degrees shows `🧭` instead of an
-+arrow, and an object without a numeric `orientation` adds nothing to the
-+header.
-+Grid headers and the preview's matrix labels omit the grid's dimensions; its
-+row and column coordinates show its size.
- Wide grids split into column panels rather than dropping cells. The final
- comparison keeps **Expected** before **Result**, followed by an
- exact-match badge in green or a mismatch badge in red, the unchanged difference
-@@ -219,9 +233,15 @@ numbers, and key order stay exactly as written. The return value is one JSON
- array, with a separate entry per file. New JSON files need no additional
- imports or registration in the loader. An unreadable directory or file fails
- explicitly. `document()` does not parse the files, so it passes malformed JSON
--through; `llm.generate` parses the combined array when it builds the few-shot
--message, so a malformed dataset fails there, with a JSON syntax error that does
--not name the file.
-+through. By default `llm.generate` sends that array as it is in its
-+`few_shot_examples` message, so a malformed dataset reaches the model
-+unchanged. Its `crop_instances` option, off by default, parses the array
-+instead, so a malformed dataset fails there with a JSON syntax error that does
-+not name the file. It then replaces each instance's `input_instance_matrix`
-+and `output_instance_matrix` with its crop to the nonzero bounding box, from
-+`Matrix.crop`, or an empty list for an all-zero mask, and keeps every other
-+field, so `input_x`, `input_y`, `output_x`, and `output_y` still give each
-+crop's position. The dataset files keep their full-canvas matrices.
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
+-| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c` |
++| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+ | Solver changes | None; one suggested change awaits review, not applied |
+-| Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run |
++| Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run; none of the current version |
+ | Updated | 6-Nov-2026 |
  
- Each non-genesis puzzle has exactly one `dataset.<puzzle_id>.json`, containing
- all its original `train` pairs from `data\training\<puzzle_id>.json` in source
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +2/-1)
-```diff
-@@ -165,7 +165,8 @@ export async function value({
- }
+ ## Puzzle
+@@ -178,6 +178,38 @@ with the accepted runtime at `491512d`, and the caller replayed every pair
+ offline against the unchanged grids, masks, positions and instance names. No
+ solver run has measured this version yet.
  
- export async function state(train_dataset) {
--  const objects: Record<string, unknown>[] = [];
-+  const objects = [];
++### Orientation convention
 +
-   for (const dataset of train_dataset.dataset) {
-     const implementations = dataset.instances.map(
-       ({ implementation }) => implementation
-```
-
-**File**: `arc/src/lib/milestone.ts` (modified, +42/-18)
-```diff
-@@ -1,6 +1,11 @@
- import * as Matrix from "./Matrix.ts";
- import * as terminal from "./terminal.ts";
- 
-+function oriented(title: string, orientation: unknown): string {
-+  const direction: string | undefined = terminal.orientation(orientation);
-+  return direction ? `${title} · ${direction}` : title;
-+}
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
 +
- export function start({
-   version,
-   puzzle_id,
-@@ -83,10 +88,11 @@ export function instance_constructed({
-     key: "implementation",
-     loop: true,
-   });
--  terminal.value(`Input state · ${instance_name}`, input_value, {
--    key: "input_state",
--    loop: true,
--  });
-+  terminal.value(
-+    oriented(`Input state · ${instance_name}`, input_value?.orientation),
-+    input_value,
-+    { key: "input_state", loop: true }
-+  );
- }
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++This dataset's labels already followed the convention, as the labeller
++confirmed: the pattern and its continuation have no direction, so both states
++are 0. Only the comment line changed, so the class, the rules, the grids,
++masks, positions, instance names, implementations, and snapshots are as
++before, and the gestalt overview above still holds.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Runs
  
- export function state({
-@@ -138,7 +144,16 @@ export function synthesizing_instance({ instance_name }) {
-   });
- }
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -200,6 +232,10 @@ invocations and the dataset. It is not recorded here: its command, runtime,
+ and result are unknown, so the difference before this dataset is unknown, not
+ zero. The puzzle has not been in an **ARC puzzle report** workflow run.
  
--export function instance_synthesized({ instance_name, implementation }) {
-+export function instance_synthesized({
-+  instance_name,
-+  input_instance_matrix,
-+  implementation,
-+}) {
-+  terminal.grid(
-+    `Input crop · ${instance_name}`,
-+    Matrix.crop(input_instance_matrix),
-+    { key: "input_crop", loop: true }
-+  );
-   terminal.code(`Implementation · ${instance_name}`, implementation, {
-     key: "implementation",
-     loop: true,
-@@ -153,10 +168,11 @@ export function executing_transformation({ instance_name }) {
- }
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
  
- export function transformation_executed({ instance_name, input_value }) {
--  terminal.value(`Input state · ${instance_name}`, input_value, {
--    key: "input_state",
--    loop: true,
--  });
-+  terminal.value(
-+    oriented(`Input state · ${instance_name}`, input_value?.orientation),
-+    input_value,
-+    { key: "input_state", loop: true }
-+  );
- }
- 
- export function composing_output({ instance_name }) {
-@@ -168,17 +184,25 @@ export function composing_output({ instance_name }) {
- 
- export function output_composed({
-   instance_name,
--  orientation,
-+  input_instance_matrix,
-   output_instance_matrix,
-+  output_value,
- }) {
--  const direction: string | undefined = terminal.orientation(orientation);
--  const title: string = direction
--    ? `Output crop · ${instance_name} · ${direction}`
--    : `Output crop · ${instance_name}`;
--  terminal.grid(title, output_instance_matrix, {
--    key: "output_crop",
--    loop: true,
--  });
-+  terminal.grid(
-+    `Input crop · ${instance_name}`,
-+    Matrix.crop(input_instance_matrix),
-+    { key: "composition_input_crop", loop: true }
-+  );
-+  terminal.grid(
-+    oriented(`Output crop · ${instance_name}`, output_value.orientation),
-+    output_instance_matrix,
-+    { key: "output_crop", loop: true }
-+  );
-+  terminal.value(
-+    oriented(`Output state · ${instance_name}`, output_value.orientation),
-+    output_value,
-+    { key: "output_state", loop: true }
-+  );
- }
- 
- export function output_placed({
+ - **The runs saw the answer.** Resolved on 6-Nov-2026: the user decided this
+@@ -259,3 +295,6 @@ zero. The puzzle has not been in an **ARC puzzle report** workflow run.
+   `src/app.ts` is no longer this puzzle: commit `bca5ff6`, made after both
+   runs, set it to `44f52bb0`, and the pull that brought it in kept that later
+   value.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
 ```
 
-**File**: `arc/src/lib/terminal.ts` (modified, +3/-4)
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +40/-1)
 ```diff
-@@ -393,9 +393,8 @@ export function grid(title: string, matrix, milestone?: Milestone) {
-   const heading: string = numbered(title, milestone);
-   const rows: number = matrix.length;
-   const columns: number = Math.max(0, ...matrix.map((row) => row.length));
--  const dimensions: string = `${columns} × ${rows}`;
-   if (rows === 0 || columns === 0) {
--    block(`${heading} · ${dimensions}`, [styleText("gray", "(empty)")]);
-+    block(heading, [styleText("gray", "(empty)")]);
-     return;
-   }
+@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
+-| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026 |
++| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
+ | Solver changes | None specific to this puzzle |
+@@ -153,6 +153,38 @@ instance names stay unique across all datasets. `document()` loads it with
+ the other 28 datasets. At the user's choice, no solver run has measured this
+ version.
  
-@@ -404,7 +403,7 @@ export function grid(title: string, matrix, milestone?: Milestone) {
-   const colored: boolean = colors();
-   for (let start: number = 0; start < columns; start += chunk) {
-     const end: number = Math.min(columns, start + chunk);
--    block(`${heading} · ${dimensions}`, [
-+    block(heading, [
-       ...(columns > chunk
-         ? [styleText("gray", `Columns ${start}–${end - 1}`), ""]
-         : []),
-@@ -428,7 +427,7 @@ function sideBySide(panels) {
- function previewMatrix(title: string, matrix, colored: boolean) {
-   const columns: number = Math.max(0, ...matrix.map((row) => row.length));
-   return [
--    styleText("gray", `${title} · ${columns} × ${matrix.length}`),
-+    styleText("gray", title),
-     ...matrixLines(matrix, 0, columns, colored),
-   ];
- }
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++This dataset's labels already followed the convention, as the labeller
++confirmed: each point is 0, and so is its output, the point with its ring of
++markers. Only the comment line changed, so the class, the rules, the grids,
++masks, positions, instance names, implementations, and snapshots are as
++before, and the gestalt overview above still holds.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Decision: locate the delta from the initial position (NUC 53 and NUC 55)
+ 
+ ### Why the world model has to move the object
+@@ -239,6 +271,10 @@ None of these runs measured the current version: the standard entries of
+ chose offline verification for the respelling. Its difference is unknown, not
+ zero.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **Runs from `c2fff09` on saw the answer.** Resolved on 6-Nov-2026: the user
+@@ -263,3 +299,6 @@ zero.
+   applied, because it is a redesign rather than the respelling the user asked
+   for: both branches repeat the four lines that shift the origin and grow the
+   point to 3 by 3, which a later model could state once.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +40/-1)
+```diff
+@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
+-| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026 |
++| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
+ | Solver changes | None; suggested changes await review, not applied |
+@@ -147,6 +147,38 @@ instance names stay unique across all datasets. `document()` loads it with
+ the other 28 datasets. At the user's choice, no solver run has measured this
+ version.
+ 
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++This dataset's labels already followed the convention, as the labeller
++confirmed: each vertical stripe is a line without a head along the vertical
++axis, 0 in both states. Only the comment line changed, so the class, the
++rules, the grids, masks, positions, instance names, implementations, and
++snapshots are as before, and the gestalt overview above still holds.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -175,6 +207,10 @@ version with standard entries or the version with `is not` of 6-Nov-2026,
+ which the user chose to verify offline, so their difference is unknown, not
+ zero.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **The run saw the answer.** Resolved on 6-Nov-2026: the user decided this is
+@@ -212,3 +248,6 @@ zero.
+   assignment value, such as `$Obj.flag = $Obj.color is 5`, gets `is` read as
+   a name and a `ReferenceError`. A dispatched **ARC Benchmark** run would
+   measure the effect.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +46/-1)
+```diff
+@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
+-| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026 |
++| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
+ | Solver changes | None; suggested changes await review, not applied |
+@@ -160,6 +160,44 @@ declarations, every snapshot replays on that runtime, and the instance names
+ stay unique across all datasets. `document()` loads it with the other 28
+ datasets. At the user's choice, no solver run has measured this version.
+ 
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++Each object is a row of three cells, a straight line. A row of one color, or
++with its lone color in the middle cell, has no head and takes the horizontal
++axis, 90; a row of exactly two colors whose one end cell alone has its color
++points toward that head, 270 on the left and 90 on the right. All 15 rows
++moved from 0, 12 to 90 and 3 to 270. The rules leave `orientation` unchanged,
++so a row that becomes a gray bar keeps 90 and a cleared row, which has no
++output cell, keeps its input orientation. No rule changed.
++
++The grids, masks, positions, instance names, tags, and every other property
++are as before; only the orientation values changed, so the world model keeps
++its level.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -183,6 +221,10 @@ No solver run has measured any version of this dataset: the one run stopped
+ before its first model request, and the user chose offline verification for
+ the `is` version of 6-Nov-2026. The difference is unknown, not zero.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **No model credential.** The run's process had no `OPENROUTER_API_KEY` in
+@@ -224,3 +266,6 @@ the `is` version of 6-Nov-2026. The difference is unknown, not zero.
+   model that copies it straight into an assignment value, as above, gets `is`
+   read as a name and a `ReferenceError`. A dispatched **ARC Benchmark** run
+   would measure the effect.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
+```
+
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +45/-2)
+```diff
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
+-| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record |
++| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
+ | Solver changes | None; suggested changes await review, not applied |
+-| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
++| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version |
+ | Updated | 6-Nov-2026 |
+ 
+ ## Puzzle
+@@ -113,6 +113,42 @@ regenerated every snapshot with the accepted runtime at `491512d`, and the
+ caller replayed every pair offline against the unchanged grids, masks,
+ positions and instance names. No solver run has measured this version yet.
+ 
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++Four of the six figures changed: the two horizontal bars are lines without a
++head, 90, and the two three-cell corners point toward their vertices, 135 at
++the bottom right and 45 at the top right. The vertical bar and the single cell
++of the test pairs stay 0. A figure moves down without turning, so each output
++keeps its input orientation, and no rule changed.
++
++The grids, masks, positions, instance names, tags, and every other property
++are as before; only the orientation values changed, so the world model keeps
++its level.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -134,6 +170,10 @@ runtime, the dataset, and `src/app.ts` were the same before and after the run.
+ The invocation authorizes one run, so none was repeated. The puzzle has not
+ been in an **ARC puzzle report** workflow run.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **No model credential.** As in the run of [25d8a9c8](ARC-NUC-25d8a9c8.md),
+@@ -164,3 +204,6 @@ been in an **ARC puzzle report** workflow run.
+   `ceil(listed puzzles / ARC_CONCURRENCY) * 30 + 20` minutes, within GitHub
+   Actions' 360-minute job limit. The workflow's 150-minute timeout covers its
+   20 listed puzzles.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
+```
+
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +41/-2)
+```diff
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
+-| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run |
++| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `FIT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
+ | Solver changes | None; two suggested changes await review, not applied |
+-| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run |
++| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run; none of the current version |
+ | Updated | 6-Nov-2026 |
+ 
+ ## Puzzle
+@@ -144,6 +144,38 @@ runtime at `491512d`, and the caller replayed every pair offline against the
+ unchanged grids, masks, positions and instance names. No solver run has
+ measured this version yet.
+ 
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++This dataset's labels already followed the convention, as the labeller
++confirmed: each block has no direction, 0, and neither has its output point.
++Only the comment line changed, so the class, the rules, the grids, masks,
++positions, instance names, implementations, and snapshots are as before, and
++the gestalt overview above still holds.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -163,6 +195,10 @@ report** workflow run.
+ 
+ Version 3 has not been run, so its difference is unknown, not zero.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **The run saw the answer.** Resolved on 6-Nov-2026: the user decided this is
+@@ -214,3 +250,6 @@ Version 3 has not been run, so its difference is unknown, not zero.
+ - **Version 3 has no run.** `/arc-purposal 27a28665` stops without a run
+   while the dataset exists, so a run of version 3 needs the user's own
+   authorization, such as `bun start 27a28665` from `arc/`.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
+```
+
+**File**: `arc/docs/ARC-NUC-28bf18c6.md` (modified, +41/-2)
+```diff
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/28bf18c6.json`](../data/training/28bf18c6.json) |
+-| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances |
++| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances; shared orientation comment added on 6-Nov-2026 |
+ | Output canvas | `FIT` |
+ | Nucleoid enhancements | None; the dataset uses accepted features only |
+ | Solver changes | `output_canvas`, applied by `Matrix.canvas` |
+-| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0 |
++| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version |
+ | Updated | 6-Nov-2026 |
+ 
+ ## Puzzle
+@@ -93,6 +93,38 @@ regenerated every snapshot with the accepted runtime at `491512d`, and the
+ caller replayed every pair offline against the unchanged grids, masks,
+ positions and instance names. No solver run has measured this version yet.
+ 
++### Orientation convention
++
++On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
++across all 29 instruction datasets, with a reference of eight directed 3-cell
++lines, each of which points toward its head. Every state now takes the
++direction its own shape points, by the convention in the
++[README](../README.md#3-extract-instances): a line toward its head or along
++its axis, a corner or chevron toward its vertex, and anything else 0, while a
++turn adds its angle. Every dataset's first declaration also carries one shared
++comment line, directly above its class, that states the convention for the
++model:
++
++```nuc
++# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
++```
++
++This dataset's labels already followed the convention, as the labeller
++confirmed: each shape has no direction, so both states are 0. Only the comment
++line changed, so the class, the rules, the grids, masks, positions, instance
++names, implementations, and snapshots are as before, and the gestalt overview
++above still holds.
++
++The arc-dataset worker made the change in an external staging directory with
++the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
++snapshot reruns byte for byte on it. The caller's own offline check passed on
++the staged file and again after integration: the pairs, grids, masks,
++positions, and instance names are as before, every state's orientation matches
++the convention's labeller, every snapshot replays on that runtime, and
++`document()` loads the dataset with the other 28. No NUC was requested, so no
++proposal strategy was selected and strategy learning did not apply. At the
++user's choice, no solver run has measured this version.
++
+ ## Decision: `output_canvas` trims the composed matrix
+ 
+ ### Problem
+@@ -183,6 +215,10 @@ debug runtime and a 30-minute limit. The exit status is the difference score;
+ seconds are the workflow's wall time for the puzzle, from each run's
+ `arc-puzzle-report` artifact. No local `bun start 28bf18c6` run is recorded.
+ 
++None of these runs measured the orientation version of 6-Nov-2026: the user
++chose offline verification for the batch, so its difference is unknown, not
++zero.
++
+ ## Open items
+ 
+ - **Runs from `c2fff09` on saw the answer.** Resolved on 6-Nov-2026: the user
+@@ -195,3 +231,6 @@ seconds are the workflow's wall time for the puzzle, from each run's
+   expected output. The exact matches at `c2fff09`, `b90a525`, and `ed49ce3`
+   therefore do not show that the rule was inferred from the training pairs;
+   the runs at `3cca0aa` and `3f734a8`, which predate it, also matched exactly.
++- **Orientation version unmeasured.** No solver run has measured the
++  6-Nov-2026 orientation version, so whether consistent orientation labels
++  change this puzzle's result is unknown.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1357,36 +1740,60 @@ Show input crops and oriented state panels during visualization, and remove dime
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove output matrices from analyzer prompts
+## X. Label orientation by shape in all ARC datasets
 
 **RULE**:
-When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d3413e65`: Remove output matrices from analyzer prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd9f64d7`: Label orientation by shape in all ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-              ({ instance_name, input_instance_matrix, implementation }) => ({
+`output_x` and `output_y`. A line points toward its color-8 endpoint: its
+orientation is 270, 90, 0, or 180 when the endpoint is on the left, on the
+right, at the top, or at the bottom, and it keeps that orientation as it grows
+away from the endpoint. A curve point, a single cell, is at orientation 0, and
+its rim makes a V that points toward the point, its vertex: the color-4 rule
+sets `$Obj.orientation = 180`, because its color-8 arms go up and the V points
+down, while a color-9 point keeps 0, because its color-2 arms go down and the
+V points up. The genesis rules match categorical colors and orientations with
+`is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
+line header `if $Obj.orientation is 270:`, and the line rules assign quoted
+strings, as in `$Obj.extension_direction = 'right'`.
+the direction each row points as a straight line of 3 cells. A row of exactly
+two colors in which one end cell alone has its color has that cell as its head
+and points toward it: 270 for the left end cells of `[2, 3, 3]`, `[7, 3, 3]`,
+and `[3, 7, 7]`, and 90 for the right end cell of `[2, 2, 4]`. Every other
+row, of one color or with its lone color in the middle cell, has
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-              ({
-                instance_name,
-                input_instance_matrix,
-                output_instance_matrix,
-                implementation,
-              }) => ({
-                output_instance_matrix: Matrix.crop(output_instance_matrix),
-          output_instance_matrix:
-          ${JSON.stringify(Matrix.crop(output_instance_matrix))}
+`output_x` and `output_y`. The genesis rules match categorical colors,
+orientations, and endpoint sides with `is`, the spelling of `==` that
+[NUC 86](../docs/nuc-0086.md) adds, as in the line header
+`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
+such as `left` compares with its own text while nothing defines that name,
+and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
+and implementations keep their quoted strings, as in
+`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
+right operand of `is` reads as a word, and a bare name elsewhere would be
+undefined.
+0 in both states because the rows are not turned and the bar is a distinct
+horizontal geometry. The declarations hold executable code only, without the
+`#` comments of the other datasets. The test pair follows the training pairs
+at the same level and is annotated by the same rules.
+one of them. Orientation is 0 in both states of the training pairs because no
+training figure is turned. The declarations hold executable code only,
+without `#` comments. The test pairs follow the training pairs at the same
+level and are annotated by the same rules.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d3413e65` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd9f64d7` are properly handled with clean fallback behavior.

@@ -7936,3 +7936,5 @@
 | `CYCLE-20261106-GWFH` | `2026-11-06T22:21:16.973Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`35762a72...`) |
 | `CYCLE-20261106-QGXH` | `2026-11-06T22:28:43.445Z` | `RunanywhereAI/runanywhere-sdks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`75b2d479...`) |
 | `CYCLE-20261106-QJMD` | `2026-11-06T22:28:46.933Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de697b0e...`) |
+| `CYCLE-20261106-02XI` | `2026-11-06T22:36:11.862Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2098655...`) |
+| `CYCLE-20261106-07N4` | `2026-11-06T22:36:17.968Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da79e202...`) |

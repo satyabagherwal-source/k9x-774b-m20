@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:28:46.824Z",
+  "last_updated": "2026-11-06T22:36:17.879Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45623,8 +45623,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "d3413e65",
-      "content_hash": "fa53543840f6c8e6299035d59d276ec147c4397dfad7693a8127bf0ea3548988",
+      "source_version": "bd9f64d7",
+      "content_hash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45651,6 +45651,11 @@
         {
           "number": null,
           "title": "Remove output matrices from analyzer prompts",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Label orientation by shape in all ARC datasets",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45944,7 +45949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:02:20.364Z",
+      "verified_at": "2026-11-06T22:36:17.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53174,11 +53179,16 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "4840c2be",
-      "content_hash": "30d7c7b379cf1b94eb34dbb582e1d5ac5dedd321ce703b77a971f106a1d05768",
+      "source_version": "c9a4996a",
+      "content_hash": "f209865572d4a1ea29b29526825d3190668fbe41e51d1580f28ce45979e14535",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add a workflow that posts failed nightly runs to Google Chat (#70679)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2003,
           "title": "build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY",
@@ -53230,7 +53240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:27:48.405Z",
+      "verified_at": "2026-11-06T22:36:11.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
