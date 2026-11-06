@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T23:27:17.122Z",
+  "last_updated": "2026-11-06T23:44:54.513Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36640,11 +36640,26 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "22f55f55",
-      "content_hash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
+      "source_version": "08454975",
+      "content_hash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Linear-Scan Boundary Pairing for Nested In-Band Encodings",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Mandatory Memory Cache Invalidation Hooks on Session State Transitions",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Seek-Reset Stream Contract for Multi-Try Encrypted Uploads",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1959,
           "title": "modals): uniform small/medium/large desktop modals on Kb.ModalScreen, and broken",
@@ -36676,7 +36691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:28:35.056Z",
+      "verified_at": "2026-11-06T23:44:54.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

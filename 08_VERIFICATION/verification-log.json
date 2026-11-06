@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-PT59",
-    "timestamp": "2026-11-05T01:40:49.485Z",
-    "repository": "prithivMLmods/Gender-Classifier-Mini",
-    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "8c916d7f4fb2604db35025b27fc485450576c7cc61c38c6531dbd396e0826ad7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-YH6R",
     "timestamp": "2026-11-05T01:47:33.891Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "1fb7a634997e4c7b173b19f88a186a2c7c8ac5af27e0c786f21dd341c02618f1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-GG25",
+    "timestamp": "2026-11-06T23:44:54.605Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

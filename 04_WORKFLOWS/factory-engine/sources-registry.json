@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T23:27:19.801Z",
-    "lastVerified": "2026-11-06T23:27:19.801Z",
+    "lastChecked": "2026-11-06T23:44:57.233Z",
+    "lastVerified": "2026-11-06T23:44:57.233Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T23:02:45.636Z",
-    "lastVerified": "2026-11-06T23:02:45.636Z",
+    "lastChecked": "2026-11-06T23:40:15.138Z",
+    "lastVerified": "2026-11-06T23:40:15.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1447,9 +1447,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-06T18:54:38.398Z",
+    "lastChecked": "2026-11-06T23:40:10.110Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-06T18:54:38.398Z"
+    "lastVerified": "2026-11-06T23:40:10.110Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2334,9 +2334,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-05T13:33:46.238Z",
+    "lastChecked": "2026-11-06T23:40:12.591Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-11-05T13:33:46.238Z"
+    "lastVerified": "2026-11-06T23:40:12.591Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -3837,14 +3837,14 @@
     "officialUrl": "https://github.com/keybase/client",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-04T08:28:32.414Z",
-    "lastVerified": "2026-11-04T08:28:32.414Z",
+    "lastChecked": "2026-11-06T23:40:08.813Z",
+    "lastVerified": "2026-11-06T23:40:08.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keybase-client",
-    "contentHash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "contentHash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5487,9 +5487,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-05T09:35:11.459Z",
+    "lastChecked": "2026-11-06T23:40:00.088Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-05T09:35:11.459Z"
+    "lastVerified": "2026-11-06T23:40:00.088Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -5682,8 +5682,8 @@
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T14:30:03.978Z",
-    "lastVerified": "2026-11-05T14:30:03.978Z",
+    "lastChecked": "2026-11-06T23:40:07.633Z",
+    "lastVerified": "2026-11-06T23:40:07.633Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
@@ -10760,9 +10760,9 @@
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
-    "lastChecked": "2026-11-03T19:52:13.170Z",
+    "lastChecked": "2026-11-06T23:40:02.614Z",
     "revisionIdentifier": "72a87882",
-    "lastVerified": "2026-11-03T19:52:13.170Z"
+    "lastVerified": "2026-11-06T23:40:02.614Z"
   },
   "oblador-hush": {
     "name": "hush",

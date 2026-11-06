@@ -7965,3 +7965,4 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `e2501b0d` | Multi-dimensional audit evidence | 2026-11-06T23:20:02.704Z |
 | `learn-github-berty-berty` | `https://github.com/berty/berty` | `de4ae482` | Multi-dimensional audit evidence | 2026-11-06T23:27:15.511Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `cbccb455` | Multi-dimensional audit evidence | 2026-11-06T23:27:17.215Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `08454975` | Multi-dimensional audit evidence | 2026-11-06T23:44:54.609Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T23:27:17.225Z",
+  "last_updated": "2026-11-06T23:44:54.627Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
-      "verified_at": "2026-11-04T08:28:35.124Z",
+      "content_hash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
+      "verified_at": "2026-11-06T23:44:54.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:28:35.124Z"
+      "last_updated": "2026-11-06T23:44:54.626Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",

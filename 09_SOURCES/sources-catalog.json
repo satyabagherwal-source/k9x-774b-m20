@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "22f55f55",
+    "sourceVersion": "08454975",
     "license": "BSD-3-Clause",
-    "contentHash": "9e13bbe9252061427a8abf0c4a333f6c93c257b0df3260af278442aa408492de",
-    "lastHarvestedAt": "2026-11-04T08:28:35.118Z",
+    "contentHash": "da970569aefa9942e8ecb1f51c32d349f05a541467866734d28c7cf64a7147e5",
+    "lastHarvestedAt": "2026-11-06T23:44:54.609Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
