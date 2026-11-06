@@ -7891,3 +7891,7 @@
 | `CYCLE-20261106-6HGK` | `2026-11-06T15:13:16.772Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ce35c358...`) |
 | `CYCLE-20261106-6KIC` | `2026-11-06T15:13:20.724Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2909e8b0...`) |
 | `CYCLE-20261106-6KOX` | `2026-11-06T15:13:20.961Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a91bd596...`) |
+| `CYCLE-20261106-G2XO` | `2026-11-06T15:20:44.508Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`34e04889...`) |
+| `CYCLE-20261106-G4UG` | `2026-11-06T15:20:46.984Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8e516164...`) |
+| `CYCLE-20261106-G6KU` | `2026-11-06T15:20:49.230Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fadbdc5c...`) |
+| `CYCLE-20261106-GA0A` | `2026-11-06T15:20:53.674Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5631f6df...`) |

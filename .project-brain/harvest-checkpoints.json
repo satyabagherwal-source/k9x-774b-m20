@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T15:13:20.987Z",
+  "last_updated": "2026-11-06T15:20:53.697Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
-      "verified_at": "2026-11-06T00:02:58.342Z",
+      "content_hash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
+      "verified_at": "2026-11-06T15:20:53.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T00:02:58.342Z"
+      "last_updated": "2026-11-06T15:20:53.696Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4236,14 +4236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-navigation-react-navigation",
-      "content_hash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
-      "verified_at": "2026-10-27T13:35:11.684Z",
+      "content_hash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
+      "verified_at": "2026-11-06T15:20:44.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:35:11.684Z"
+      "last_updated": "2026-11-06T15:20:44.522Z"
     },
     "easegress-io/easegress": {
       "repository": "easegress-io/easegress",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
-      "verified_at": "2026-11-05T22:31:52.098Z",
+      "content_hash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
+      "verified_at": "2026-11-06T15:20:49.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:31:52.098Z"
+      "last_updated": "2026-11-06T15:20:49.252Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
-      "verified_at": "2026-11-05T10:50:45.433Z",
+      "content_hash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
+      "verified_at": "2026-11-06T15:20:46.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:50:45.433Z"
+      "last_updated": "2026-11-06T15:20:46.997Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",

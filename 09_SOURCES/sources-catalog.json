@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "f10139f8",
+    "sourceVersion": "a41e019a",
     "license": "MIT",
-    "contentHash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
-    "lastHarvestedAt": "2026-11-06T00:02:58.327Z",
+    "contentHash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
+    "lastHarvestedAt": "2026-11-06T15:20:53.687Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "641efd1e",
+    "sourceVersion": "8a2721cc",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
-    "lastHarvestedAt": "2026-10-27T13:35:11.675Z",
+    "contentHash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
+    "lastHarvestedAt": "2026-11-06T15:20:44.512Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "196263ba",
+    "sourceVersion": "eb7d93e0",
     "license": "NOASSERTION",
-    "contentHash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
-    "lastHarvestedAt": "2026-11-05T22:31:52.092Z",
+    "contentHash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
+    "lastHarvestedAt": "2026-11-06T15:20:49.234Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "47243e2f",
+    "sourceVersion": "2a25eecd",
     "license": "NOASSERTION",
-    "contentHash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
-    "lastHarvestedAt": "2026-11-05T10:50:45.418Z",
+    "contentHash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
+    "lastHarvestedAt": "2026-11-06T15:20:46.988Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {

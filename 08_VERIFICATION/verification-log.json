@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GF8M",
-    "timestamp": "2026-11-04T22:45:33.862Z",
-    "repository": "arkivanov/Decompose",
-    "learningId": "learn-github-arkivanov-decompose",
-    "contentHash": "ac2dad4c6b634b7aafbbc3af1e8ab829972f21b2025eb91e8c53afa93ae47115",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-GJ66",
-    "timestamp": "2026-11-04T22:45:38.958Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "05e0d2528d3d20fd16a6f39d3f86453dfc3d1b451b1edf9ab9063e8fdb90603c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-P7G9",
-    "timestamp": "2026-11-04T22:52:23.673Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "376117dbcd9953dd34298f8f9535a7f9f568ab7f3c6c733306a35413fbb224f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-P9BJ",
-    "timestamp": "2026-11-04T22:52:26.095Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "1ff86133e3db6812f42e757cfeadd219229b6c8ba0a01b5508fbfd4cbcf0433a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-PBL0",
     "timestamp": "2026-11-04T22:52:29.028Z",
     "repository": "tw93/Mole",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "a91bd596c9a0b1fb6fb3d919270d58450dfce99e7b8817b4e5c9611ca6a15199",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-G2XO",
+    "timestamp": "2026-11-06T15:20:44.508Z",
+    "repository": "react-navigation/react-navigation",
+    "learningId": "learn-github-react-navigation-react-navigation",
+    "contentHash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-G4UG",
+    "timestamp": "2026-11-06T15:20:46.984Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-G6KU",
+    "timestamp": "2026-11-06T15:20:49.230Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-GA0A",
+    "timestamp": "2026-11-06T15:20:53.674Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

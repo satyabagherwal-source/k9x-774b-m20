@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T15:13:20.866Z",
+  "last_updated": "2026-11-06T15:20:53.578Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5300,8 +5300,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "f10139f8",
-      "content_hash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
+      "source_version": "a41e019a",
+      "content_hash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5318,6 +5318,11 @@
         {
           "number": null,
           "title": "memory): run gated failure experiments from idle dreams (#365)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gateway): correct WSL logon task XML schema (#367)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5526,7 +5531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T00:02:58.227Z",
+      "verified_at": "2026-11-06T15:20:53.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14758,8 +14763,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "196263ba",
-      "content_hash": "3ae4a90aa8746205694295e91f7d2ff4a248a6c7ba1a5eda89298ba512612111",
+      "source_version": "eb7d93e0",
+      "content_hash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14771,6 +14776,11 @@
         {
           "number": null,
           "title": "transport): export QUIC data path telemetry (#6118)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): stop sending on a QUIC path that has gone dark (#6122)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14989,7 +14999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:31:52.017Z",
+      "verified_at": "2026-11-06T15:20:49.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36943,11 +36953,16 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "47243e2f",
-      "content_hash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
+      "source_version": "2a25eecd",
+      "content_hash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "preserve runtime environment selection in restart jobs (#5058)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1862,
           "title": "Merge pull request #5027 from PetrusZ/fix/security",
@@ -37004,7 +37019,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:50:45.324Z",
+      "verified_at": "2026-11-06T15:20:46.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51262,11 +51277,16 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "641efd1e",
-      "content_hash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
+      "source_version": "8a2721cc",
+      "content_hash": "34e04889e1234b92cad34c74277de93868d7f44720f049930025a19045101184",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "don't show header background if header is hidden (#13330)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1759,
           "title": "restart card animation when StrictMode re-runs effects",
@@ -51288,7 +51308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:35:11.593Z",
+      "verified_at": "2026-11-06T15:20:44.391Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

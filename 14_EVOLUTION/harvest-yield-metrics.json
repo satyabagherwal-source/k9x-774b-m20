@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T15:13:20.983Z",
-  "total_cycles_completed": 7856,
-  "total_learnings_persisted": 7856,
-  "total_rules_promoted": 7505,
+  "last_updated": "2026-11-06T15:20:53.693Z",
+  "total_cycles_completed": 7860,
+  "total_learnings_persisted": 7860,
+  "total_rules_promoted": 7509,
   "history": [
-    {
-      "timestamp": "2026-11-05T13:47:56.937Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:54:52.366Z",
-      "repository": "feder-cr/Jobs_Applier_AI_Agent",
-      "learningId": "learn-github-feder-cr-jobs_applier_ai_agent",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:54:54.451Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T14:02:36.867Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:02:42.600Z",
       "repository": "infiniflow/infinity",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-06T15:13:20.983Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:20:44.518Z",
+      "repository": "react-navigation/react-navigation",
+      "learningId": "learn-github-react-navigation-react-navigation",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:20:46.993Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:20:49.249Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:20:53.693Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `196263ba`  
+> **Source Version**: `eb7d93e0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:31:50.880Z  
+> **Timestamp**: 2026-11-06T15:20:47.249Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:31:50.647Z  
+> **Harvest Timestamp**: 2026-11-06T15:20:47.022Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3111 stars
+- **Stars / Engagement**: 3113 stars
 
 ---
 
@@ -1738,11 +1738,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6119** (2026-11-05): **fix(test): advance VirtualTime in controlled simulations**
-  *Symptoms*: ## Problem  The turmoil-based simulation runners never moved the network's `VirtualTime`. After a 700 s `run_controlled_simulation` it still read 0 ns. Those runners are `run_simulation` (behind `TestConfig`), `run_controlled_simulation`, `run_fdev_test` and `turmoil_runner::run_turmoil_simulation`.  The node tasks run on turmoil's clock, so most of a node is unaffected. Two things read `VirtualTime` instead, and none of their timers fired in these runners:  - **Each QUIC endpoint and path.** This covers quinn's timers (loss detection, idle, keepalive, pacing), the path's send deadlines, and the 2 s acknowledgement watch, all through `get_socket_virtual_time`. A QUIC scenario under these runners ran with every QUIC timer frozen. Data still moved, because quinn is driven by packets, so a passing test could not show it. - **The fault injector's time-based rules**, such as partitions with heal times and QUIC datagram drops with a start time. A rule starting after zero never applied.  The direct runner (`run_simulation_direct`) already follows tokio's clock with a time driver, so it was not affected.  Found while writing the QUIC data scenarios for #5940 (step e5b-9). `fail_endpoint_at` never fired in a controlled run, even at 1 s.  ## Approach  The runners now step turmoil themselves and move `VirtualTime` to `sim.elapsed()` after each step, through `run_turmoil_on_virtual_time` in `testing_impl.rs`. This mirrors what the direct runner's time driver does with tokio's clock. The 
+- **Issue #6125** (2026-11-06): **feat: skip payloads already merged into the local state**
+  *Symptoms*: ## Problem  A contract whose merge does not converge can keep a set of peers replaying a small fixed set of payloads to each other indefinitely. Field telemetry shows a few such contracts carrying whole-state payloads thousands of times per day, and the existing 60 s `BroadcastDedupCache` does not stop it, because the replay period is close to its TTL. None of the existing limits bind (cost floors, per-pair rate limits, merge backoff all sit well above or outside this traffic).  The direction for RFC #5320 (tracked in #5906) is that nodes do not remove contracts for breaking a merge law: any removal rule can be triggered by crafted inputs, including against contracts whose honest use never breaks the laws. Instead a node declines work that a lawful contract never needs.  ## Solution  A lawful merge is idempotent, and a payload a replica has already merged lies below its current state, so merging it again changes nothing. A node therefore records a keyed 64-bit hash of each payload it merges (per contract, 1024 newest, `ahash::RandomState` with per-process random keys) and skips a payload from a peer whose hash was recorded within the last 15 minutes.  - Check: before the WASM merge, after the 60 s dedup cache, in `drive_relay_broadcast_to` and `apply_streaming_broadcast`. Anti-entropy heals pushed by peers arrive through the same drivers. A `ResyncResponse` is never skipped: this node requested it because the states differ. - Record: only in the executor, after a merge that c
 
-- **Issue #6118** (2026-11-05): **feat(transport): export QUIC data path telemetry**
-  *Symptoms*: ## Problem  #6114 put QUIC data on the path, but what the sends and receives did was counted only per path, inside `QuicPathStats`, so none of it reached telemetry. The step-3 rollout gates (#5940) cannot be read without these counts, and neither can how far paths lag the data ramp. The gates are stream-limit waits below 0.5% of sends, `ge_48` below 0.2% of path-windows, data refusals at 0, and memory read against QUIC bytes.  ## Approach  - One node-wide `QuicDataCounters` in `TRANSPORT_METRICS` (`transport/metrics/quic_data.rs`). Each count is recorded where the path decides it, into the path's own counters and the node's in the same step, so it is counted once, at the decision. A path holds a reference to its node counters (`QuicPathLimits::counters`), which tests replace with their own, since every test in a process writes the global one. - The snapshot is one nested field, `TransportSnapshot::quic_data`, uploaded flat with a key per non-zero count. `QuicUpgradeOutcome` is already at 32, the most serde and `Default` take for an array, so this is a set of its own:   - `quic_data_send_<kind>_<result>`: short, large short, stream and pipe, by sent, maybe delivered, not opened then UDP, failed then UDP, dropped.   - `quic_data_event_<event>`: short overflow to UDP, data refused, stall closes, UDP sends that failed.   - `quic_data_stop_<code>`: stops the peer sent to data sends, by code.   - `quic_inbound_<outcome>`: every receive outcome, including `refused_not_accepting_data
+- **Issue #6122** (2026-11-06): **fix(transport): stop sending on a QUIC path that has gone dark**
+  *Symptoms*: ## Problem  A QUIC data path can go dark: its datagrams stop arriving while the UDP session between the same two peers is fine. Before this change, a path in that state kept taking new data. Each short ended `MaybeDelivered(TimedOut)`, was never resent and was lost, and an operation's retry was routed back onto the same path. The path recovered only through the stall close or quinn's idle timeout.  A second case: a peer that advertised its data bit but refuses data (a gating bug on its side) left the path up. The sender saw a refusal per send and moved each to UDP, and nothing ever ended the path.  ## Approach  - **Suspect path.** When a send times out and nothing has been acknowledged for the stall window (`route::StallCount`, now returning a `StallVerdict`), the path becomes suspect (`QuicPath::become_suspect`). While it is suspect, `Session::data_route` returns `None` and the route worker sends queued shorts on UDP. It stops being suspect the first time it is asked after the connection acknowledges something new. Sends already on the path stay there, since resending them could deliver a message twice. A path that stays dark still ends on the stall close or the idle timeout, which then falls back as before. - **Refusal close.** A receiver that refuses data on a path that accepts none closes the path with DOWNGRADE after its first refusal, once, after `REFUSAL_CLOSE_DELAY` (2 s), so the stops it sent reach the sender first. It is counted as `ClosedRefusingData`. - New counts
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/42143906636) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
+  > ## ⚠️ Performance Benchmark Regressions Detected  Found 3 benchmark(s) with performance regressions:  - **`level0/crypto/nonce/counter_with_connid`**: +197.61% - **`level0/crypto/nonce/counter`**: +184.69% - **`level0/crypto/nonce/random`**: +15.660%  ### ⚠️ Important: This may be a false positive!  **Common causes of false positives:** 1. **Stale baseline**: If recent PRs improved performance on `main`, this PR (which doesn't include those changes) will show as "regressed" when compared to the new baseline 2. **GitHub runner variance**: Benchmarks run on shared `ubuntu-latest` runners with variable CPU contention 3. **Old baseline**: The baseline might be from an older `main` commit if the cache restore used `restore-keys` fallback  **To verify if this is a real regression:** 1. Check if recent commits on `main` touched transport or benchmark code 2. Merge `main` into your branch and re-run benchmarks 3. Review the baseline age in the "Download main branch baseline" step  > This is in
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1209 +1762,525 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `196263ba` (2026-11-05)
-**Commit Message**: feat(transport): export QUIC data path telemetry (#6118)
+### Incident Patch 1: `8029535e` (2026-11-06)
+**Commit Message**: fix(transport): stop sending on a QUIC path that has gone dark (#6122)
 
-**File**: `.claude/rules/transport.md` (modified, +41/-5)
+**File**: `.claude/rules/transport.md` (modified, +27/-3)
 ```diff
-@@ -1180,10 +1180,46 @@ snapshot except the two gauges.
-   connections (per connection and direction), set when the endpoint is built,
-   0 without one; a state, not reset and not activity. Throughput by window
-   size shows whether nodes at the 128 KiB floor are slower on QUIC than on UDP.
--  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
--  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
--  read zero in shadow; the `transport=legacy|quic` connection attribute; a
--  per-path memory estimate.
-+  Not built: the `transport=legacy|quic` attribute on connection, transfer and
-+  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
-+  events (those fields are None today); the per-peer byte counters and the
-+  dashboard for QUIC traffic; a per-path memory estimate.
-+
-+QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
-+counts of what paths' data sends and receives did, in one nested
-+`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
-+gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
-+recorded where the path decides it, into the path's `QuicPathStats` and the node's
-+`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
-+a test passes its own; tests read their own, never the global).
-+  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-+  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-+  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
-+  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-+  outcome, refusals by frame kind as short_refused_budget and
-+  stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
-+  paths with a route the peer has not refused data on, not reset, not activity;
-+  lowered once, at the refusal or when the attempt goes); quic_sends and quic_open_uni_waited (opens a
-+  path tried, data and control, and those that waited for stream credit);
-+  quic_streamed_sends and quic_stream_permit_waited; quic_bytes_sent and
-+  quic_bytes_received (quinn's UDP payload counts, reported by change at each 2 s
-+  tick of the acknowledgement watch, so a path's last tick before it closes is
-+  lost); quic_session_ended_with_data_path_<age> (sessions that ended while their
-+  path's route still carried data); quic_streams_sampled_paths,
-+  quic_streams_open_ge_<8|16|32|48> and quic_streams_peak_max (per path and period,
-+  the peak of inbound streams read at once, counted as inbound_concurrency counts
-+  connections).
-+  A family is the keys of one label list under one prefix
-+  (`QuicDataSnapshot::keys_by_family`). No other key starts with a family's
-+  prefix or with the prefix sibling families share (`quic_data_` for the send,
-+  event and stop families, `quic_streams_open_` for the levels), and no key starts
-+  with a prefix two of the snapshot's other keys share (`quic_send_`,
-+  `quic_paths_` and the rest), so a prefix sum never adds two kinds of count. The
-+  tests read the families from the keys and the other keys from the snapshot's
-+  serde fields, not from a list (`no_key_is_under_another_family`). The step-3
-+  stream-limit bars read quic_open_uni_waited over quic_sends,
-+  quic_stream_permit_waited over quic_streamed_sends (both counts of attempts),
-+  and quic_streams_open_ge_48 over quic_streams_sampled_paths.
- 
- Upgrade driver (`quic/upgrade/driver.rs`, #5940 step e5a-5b): QuicUpgrades is
- per node (endpoint, policy, routes by address, live sessions by peer key, backoff
-@@ -1841,7 +1877,7 @@ Control payload (quic/control.rs), the body of a Control frame, one per
-   QuicInbound::controls and counts refusals per path
-   (control_unknown_version, control_unknown_type, control_malformed); they
-   are counted only through it, not by QuicControl::decode.
--Not here: export of the QUIC-only counters (per path, QuicPath::stats).
-+Counts: per path (QuicPath::stats) and node-wide ("QUIC data telemetry" above).
- QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
-   peer_connection/quic_send.rs, quic/path/route.rs):
-   A message has one route, chosen when it is sent, from
+@@ -1944,9 +1944,33 @@ QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
+   route, so a connection with no route (shadow, the default on Linux and macOS)
+   sends without taking the session's lock. enable_data runs once per activation
+   (debug assertion); a second route would orphan the first one's worker.
+-  NOT_ACCEPTING_DATA: this node's gating or the peer's is wrong. Logged once per
+-  path, counted (data_refused, and every time), new sends go on UDP and the path
+-  stays up. send_data has three states so a send racing the refusal does not trip
++  A path gone dark: the first send timeout that counts toward the stall close
++  (nothing acknowledged for the window, no cap hold) makes the path suspect
++  (QuicPath::is_suspect, suspect_entered). data_route() then gives no route and
++  the worker sends what it takes on UDP, so new data goes on UDP while sends
++  already on the path stay there (a resend could deliver twice). The first time
++  it is asked after the acknowledgement count moved (quinn's keepalive brings one
++  within 15 s on a live path), the path takes data again (suspect_left). Without
++  it every short into a dark path ends MaybeDelivered(TimedOut), is never resent
++  and is lost, and an operation's retry lands in the same place until quinn's
++  idle timeout. A path that stays dark ends on quinn's idle timeout (120 s in
++  production, Fallback(Idle)), not on the stall close: once suspect no new send
++  reaches it, so the stall close fires only when STALLED_SENDS_LIMIT sends were
++  already on it. New data goes on UDP meanwhile, so nothing is lost. Entering
++  and leaving are under one lock. Fallback is a testing-period crutch: this
++  routing goes with it when the legacy transport is removed.
++  Receiver side: a path whose own data bit is 0 stops the first data frame with
++  NOT_ACCEPTING_DATA and closes the path with DOWNGRADE REFUSAL_CLOSE_DELAY (2 s)
++  later (closed_refusing_data, a WARN once per path). The delay lets the stops
++  reach the sender first: a sender that sees the close before a stream's stop
++  drops the stream, where the stop sends it on UDP. Without the close, a Short of
++  one packet is acknowledged before its stop arrives, so its sender reads Sent,
++  never clears send_data and loses every short on the path. The pair then
++  negotiates again after the normal backoff. Residual: a one-packet short sent
++  in the 2 s window is acknowledged before its stop is seen and is lost.
++  NOT_ACCEPTING_DATA at the sender: this node's gating or the peer's is wrong.
++  Logged once per path, counted (data_refused, and every time), and new sends go
++  on UDP; the receiver closes the path. send_data has three states so a send racing the refusal does not trip
+   debug_assert_carries_data. A small send acked before the stop is lost, and that
+   count is the only sign of it.
+   Telemetry: a transfer on a path emits transfer_started, _completed and _failed
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +64/-1)
+**File**: `crates/core/src/lib.rs` (modified, +2/-2)
 ```diff
-@@ -3136,6 +3136,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "quic_flow_control_window_bytes".into(),
-                 serde_json::json!(snapshot.quic_flow_control_window_bytes),
-             );
-+            // Flat, a key per non-zero count, as the upload carries them.
-+            for (key, count) in snapshot.quic_data.upload_keys() {
-+                m.insert(key, count.into());
-+            }
-             m.insert(
-                 "nat_fail_samples".into(),
-                 serde_json::json!(snapshot.nat_fail_samples),
-@@ -7607,11 +7611,15 @@ mod tests {
-             .unwrap()
-             .keys()
-             .filter(|key| {
--                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
-+                !key.starts_with("conn_identity_")
-+                    && !key.starts_with("inbound_concurrency_")
-+                    && *key != "quic_data"
-             })
-             .cloned()
-             .collect();
-         expected.insert("type".to_string());
-+        // The QUIC data gauge goes out in every snapshot, 0 included.
-+        expected.insert("quic_live_data_paths".to_string());
-         // The QUIC families are arrays in the snapshot and one key per label in
-         // the event.
-         use crate::transport::metrics::{
-@@ -7664,6 +7672,61 @@ mod tests {
-         assert_eq!(actual, expected);
-     }
+@@ -239,8 +239,8 @@ pub mod dev_tool {
  
-+    /// The QUIC data counts go out flat, one key per non-zero count with its own
-+    /// value, in the event log and in the upload alike, and the nested field
-+    /// does not.
-+    #[test]
-+    fn transport_snapshot_json_carries_quic_data_values() {
-+        use crate::transport::metrics::{QuicDataCounters, TransportSnapshot};
-+        let mut snapshot = TransportSnapshot {
-+            quic_data: QuicDataCounters::new().snapshot(false),
-+            ..Default::default()
-+        };
-+        let mut next = 0u64;
-+        let mut fill = |values: &mut Vec<u64>| {
-+            for value in values.iter_mut() {
-+                next += 1;
-+                *value = next;
-+            }
-+        };
-+        let data = &mut snapshot.quic_data;
-+        fill(&mut data.sends);
-+        fill(&mut data.events);
-+        fill(&mut data.stops);
-+        fill(&mut data.inbound);
-+        fill(&mut data.session_ended_with_data_path);
-+        data.data_enabled = 1001;
-+        data.data_paths = 1002;
-+        data.sends_opened = 1003;
-+        data.open_uni_waited = 1004;
-+        data.permit_takes = 1005;
-+        data.permit_waited = 1006;
-+        data.bytes_sent = 1007;
-+        data.bytes_received = 1008;
-+        data.streams_open_paths_sampled = 1009;
-+        data.streams_open_ge = vec![1010, 1011, 1012, 1013];
-+        data.streams_open_max = 1014;
-+        let want: std::collections::BTreeMap<String, u64> =
-+            snapshot.quic_data.keys().into_iter().collect();
-+        assert!(want.values().all(|value| *value != 0));
-+        let distinct: std::collections::BTreeSet<_> = want.values().collect();
-+        assert_eq!(distinct.len(), want.len(), "each value tells its key apart");
-+
-+        let event = event_kind_to_json(&super::super::EventKind::TransportSnapshot(Box::new(
-+            snapshot.clone(),
-+        )));
-+        let upload = snapshot.upload_json().expect("serializes");
-+        for json in [event, upload] {
-+            let map = json.as_object().unwrap();
-+            assert!(!map.contains_key("quic_data"));
-+            for (key, value) in &want {
-+                assert_eq!(map.get(key), Some(&serde_json::json!(value)), "{key}");
-+            }
-+            let sent = map.keys().filter(|key| want.contains_key(*key)).count();
-+            assert_eq!(sent, want.len());
-+        }
-+    }
-+
-     /// As below, for the NAT-origin, stray-intro and dial-queue counts:
-     /// each is distinct and non-zero, so a swapped or mis-keyed one is caught.
-     #[test]
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +57/-1)
-```diff
-@@ -29,6 +29,10 @@ use tokio::sync::mpsc;
- 
- use crate::tracing::{TransferDirection, TransferEvent};
- 
-+mod quic_data;
-+pub use quic_data::QuicDataSnapshot;
-+pub(crate) use quic_data::{QuicDataCounters, StreamsOpenPeak};
-+
- /// Global transport metrics instance.
- ///
- /// All peer connections report to this single instance, which aggregates
-@@ -870,6 +874,8 @@ pub struct TransportMetrics {
-     /// connection and direction (`quic::config::connection_window_bytes`):
-     /// a state set when the endpoint is built, 0 without one.
-     quic_flow_control_window_bytes: AtomicU64,
-+    /// What QUIC paths' data sends and receives did (`quic_data`).
-+    pub(crate) quic_data: QuicDataCounters,
- 
-     /// The current snapshot period, starting at 1 and advanced by each
-     /// `take_snapshot`. A connection's [`InboundConcurrencyPeak`] from an
-@@ -1280,6 +1286,7 @@ impl TransportMetrics {
-             quic_paths_offered_or_dialing: AtomicU64::new(0),
-             quic_paths_active: AtomicU64::new(0),
-             quic_flow_control_window_bytes: AtomicU64::new(0),
-+            quic_data: QuicDataCounters::new(),
-             inbound_concurrency_epoch: AtomicU64::new(1),
-             inbound_concurrency: Default::default(),
-             inbound_stream_outcomes: Default::default(),
-@@ -2582,6 +2589,7 @@ impl TransportMetrics {
-             quic_flow_control_window_bytes: self
-                 .quic_flow_control_window_bytes
-                 .load(Ordering::Relaxed),
-+            quic_data: self.quic_data.snapshot(reset),
-             quic_close_sent_peer_not_acknowledging: get64(
-                 &self.quic_close_sent[QuicCloseCode::PeerNotAcknowledging as usize],
-             ),
-@@ -3183,6 +3191,9 @@ pub struct TransportSnapshot {
-     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
-     /// than on UDP over long paths.
-     pub quic_flow_control_window_bytes: u64,
-+    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
-+    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
-+    pub quic_data: QuicDataSnapshot,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -3461,8 +3472,13 @@ impl TransportSnapshot {
-         let mut json = serde_json::to_value(self)?;
-         if let Some(map) = json.as_object_mut() {
-             map.retain(|key, _| {
--                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
-+                !key.starts_with("conn_identity_")
-+                    && !key.starts_with("inbound_concurrency_")
-+                    && key != "quic_data"
-             });
-+            for (key, count) in self.quic_data.upload_keys() {
-+                map.insert(key, serde_json::json!(count));
-+            }
-             for (key, count) in self.nonzero_conn_identity() {
-                 map.insert(key, serde_json::json!(count));
-             }
-@@ -3533,6 +3549,7 @@ impl TransportSnapshot {
-             quic_paths_offered_or_dialing,
-             quic_paths_active,
-             quic_flow_control_window_bytes,
-+            quic_data,
-             nat_fail_samples,
-             nat_fail_samples_dropped,
-             inbound_stream_refused_invalid_length,
-@@ -3674,6 +3691,7 @@ impl TransportSnapshot {
-         self.quic_paths_offered_or_dialing = quic_paths_offered_or_dialing;
-         self.quic_paths_active = quic_paths_active;
-         self.quic_flow_control_window_bytes = quic_flow_control_window_bytes;
-+        self.quic_data = quic_data;
-         self.nat_fail_samples = nat_fail_samples;
-         self.nat_fail_samples_dropped = nat_fail_samples_dropped;
-         self.inbound_stream_refused_invalid_length = inbound_stream_refused_invalid_length;
-@@ -3897,6 +3915,9 @@ struct SnapshotExtras {
-     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
-     /// than on UDP over long paths.
-     pub quic_flow_control_window_bytes: u64,
-+    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
-+    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
-+    pub quic_data: QuicDataSnapshot,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -4075,6 +4096,7 @@ impl SnapshotExtras {
-             || self.quic_establish_samples != 0
-             || self.quic_paths_offered_or_dialing != 0
-             || self.quic_paths_active != 0
-+            || self.quic_data.has_activity()
-             || !self.nat_fail_samples.is_empty()
-             || self.inbound_stream_refused_invalid_length != 0
-             || self.inbound_stream_refused_connection_bytes != 0
-@@ -5029,6 +5051,40 @@ mod tests {
-         assert_eq!(snap.quic_flow_con
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (added, +678/-0)
-```diff
-@@ -0,0 +1,678 @@
-+//! Telemetry of QUIC data paths (#5940, e5b-8).
-+//!
-+//! Node-wide counts of what the paths' data sends and receives did, gathered from
-+//! the per-path counters (`QuicPathStats`) where each is recorded, so a count is
-+//! made once, at the decision. Exported per period in `transport_snapshot`, each
-+//! count only when non-zero and the gauge always. A family is the keys of one
-+//! label list under one prefix; no other key starts with a family's prefix, or
-+//! with the prefix its sibling families share (`quic_data_`), so summing either
-+//! never adds two kinds of count:
-+//!
-+//! | Key | What |
-+//! |---|---|
-+//! | `quic_data_send_<kind>_<result>` | data sends by kind and how they ended |
-+//! | `quic_data_event_<event>` | short overflow to UDP, refusals, stall closes, lost UDP sends |
-+//! | `quic_data_stop_<code>` | stops the peer sent to data sends, by code |
-+//! | `quic_inbound_<outcome>` | every `QuicInboundOutcome`, node-wide |
-+//! | `quic_enabled_data_paths` | paths where both sides set the data bit |
-+//! | `quic_live_data_paths` | paths carrying data now (a gauge, not reset, sent every period, 0 included); a path the peer refused data on is not one |
-+//! | `quic_sends`, `quic_open_uni_waited` | streams a path tried to open (data and control), and those whose open had to wait for a stream credit |
-+//! | `quic_streamed_sends`, `quic_stream_permit_waited` | streamed-send permits taken, and those that waited |
-+//! | `quic_bytes_sent`, `quic_bytes_received` | UDP payload bytes of QUIC paths, from quinn's counts |
-+//! | `quic_session_ended_with_data_path_<age>` | sessions that ended under a data path, by the path's age |
-+//! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
-+//!
-+//! The waits are the step-3 stream-limit bars: `quic_open_uni_waited` over
-+//! `quic_sends` and `quic_stream_permit_waited` over `quic_streamed_sends` below 0.5%, and
-+//! `quic_streams_open_ge_48` below 0.2% of `quic_streams_sampled_paths`. Both
-+//! wait counts are of attempts: a send that waits and then times out is counted.
-+
-+use std::sync::atomic::{AtomicU64, Ordering};
-+
-+use parking_lot::Mutex;
-+
-+use super::QuicPathAge;
-+use crate::transport::quic::path::{
-+    QuicInboundOutcome, QuicSendEvent, QuicSendResult, SendKind, stop_code,
-+};
-+
-+/// The gauge's key, uploaded in every snapshot ([`QuicDataSnapshot::upload_keys`]).
-+const LIVE_DATA_PATHS: &str = "quic_live_data_paths";
-+
-+/// The levels `quic_streams_open_ge_<n>` reports, up to the streamed-send limit
-+/// (`quic::config::STREAMED_SEND_LIMIT`), which is the bar.
-+pub(crate) const QUIC_STREAMS_OPEN_THRESHOLDS: [u32; 4] = [8, 16, 32, 48];
-+
-+/// The streams-open counts of one period, under one lock with its period, as the
-+/// connection-level inbound concurrency counts are.
-+#[derive(Debug, Default, Clone, Copy)]
-+struct StreamsOpenCounts {
-+    paths_sampled: u32,
-+    ge: [u32; QUIC_STREAMS_OPEN_THRESHOLDS.len()],
-+    max: u32,
-+}
-+
-+/// One path's peak of inbound streams read at once in the current period. Owned
-+/// by the path's receive task.
-+#[derive(Debug, Default)]
-+pub(crate) struct StreamsOpenPeak {
-+    /// The period the peak belongs to; 0 before the first sample.
-+    epoch: u64,
-+    peak: u32,
-+}
-+
-+/// The node-wide counts. A field of `TransportMetrics`.
-+#[derive(Debug)]
-+pub(crate) struct QuicDataCounters {
-+    sends: [[AtomicU64; QuicSendResult::COUNT]; SendKind::ALL.len()],
-+    events: [AtomicU64; QuicSendEvent::COUNT],
-+    stops: [AtomicU64; stop_code::ALL.len()],
-+    inbound: [AtomicU64; QuicInboundOutcome::COUNT],
-+    data_enabled: AtomicU64,
-+    /// A gauge: paths with a data route now.
-+    data_paths: AtomicU64,
-+    sends_opened: AtomicU64,
-+    open_uni_waited: AtomicU64,
-+    permit_takes: AtomicU64,
-+    permit_waited: AtomicU64,
-+    bytes_sent: AtomicU64,
-+    bytes_received: AtomicU64,
-+    session_ended: [AtomicU64; QuicPathAge::COUNT],
-+    streams_epoch: AtomicU64,
-+    streams: Mutex<StreamsOpenCounts>,
-+}
-+
-+impl QuicDataCounters {
-+    pub(crate) fn new() -> Self {
-+        let zero = || AtomicU64::new(0);
-+        Self {
-+            sends: std::array::from_fn(|_| std::array::from_fn(|_| zero())),
-+            events: std::array::from_fn(|_| zero()),
-+            stops: std::array::from_fn(|_| zero()),
-+            inbound: std::array::from_fn(|_| zero()),
-+            data_enabled: zero(),
-+            data_paths: zero(),
-+            sends_opened: zero(),
-+            open_uni_waited: zero(),
-+            permit_takes: zero(),
-+            permit_waited: zero(),
-+            bytes_sent: zero(),
-+            bytes_received: zero(),
-+            session_ended: std::array::from_fn(|_| zero()),
-+            streams_epoch: AtomicU64::new(1),
-+            streams: Mutex::new(StreamsOpenCounts::default()),
-+     
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +98/-8)
-```diff
-@@ -121,10 +121,11 @@
- //! - Dedup. A message goes on UDP only when the outcome proves the receiver
- //!   cannot deliver it ([`route`]), so a Short needs none. A stream id on both
- //!   paths is refused where both transports meet (`completed_inbound_streams`).
--//! - Exporting the QUIC-specific counters. They are per path
--//!   ([`QuicPath::stats`]); the refusals and evictions the UDP transport also
--//!   has are counted in `TRANSPORT_METRICS` as well, under the same
--//!   `InboundStreamOutcome` labels. Telemetry for the rest is e2/e5.
-+//!
-+//! Counts: per path ([`QuicPath::stats`]), and node-wide in the same step, in
-+//! `metrics::quic_data` (exported as `quic_data_*`, `quic_inbound_*` and the
-+//! rest listed there). The refusals and evictions the UDP transport also has are
-+//! also counted under the shared `InboundStreamOutcome` labels.
- //!
- //! [`MAX_UNI_STREAMS`]: super::config::MAX_UNI_STREAMS
- //! [`StreamHandle`]: crate::transport::peer_connection::streaming::StreamHandle
-@@ -152,7 +153,7 @@ use crate::config::GlobalExecutor;
- use crate::simulation::TimeSource;
- use crate::transport::StreamId;
- use crate::transport::boundary::StreamProgressObserver;
--use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode};
-+use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode, QuicDataCounters};
- use crate::transport::peer_connection::inbound_budget::SharedInboundBudget;
- use crate::transport::peer_connection::streaming::StreamError;
- #[cfg(test)]
-@@ -202,6 +203,23 @@ pub(crate) mod stop_code {
-     /// it and sends on the UDP session, since a retry on the same path fails
-     /// the same way.
-     pub(crate) const NOT_ACCEPTING_DATA: u32 = 0x19;
-+    /// A code's name in telemetry (`quic_data_stop_<label>`); `unknown` for a
-+    /// code not in [`ALL`].
-+    pub(crate) fn label(code: u32) -> &'static str {
-+        match code {
-+            HEADER_REFUSED => "header_refused",
-+            BUDGET_REFUSED => "budget_refused",
-+            STREAM_ID_IN_USE => "stream_id_in_use",
-+            CHANNEL_FULL => "channel_full",
-+            OVERLONG => "overlong",
-+            EVICTED => "evicted",
-+            CANCELLED => "cancelled",
-+            FRAGMENT_REFUSED => "fragment_refused",
-+            NOT_ACCEPTING_DATA => "not_accepting_data",
-+            _ => "unknown",
-+        }
-+    }
-+
-     /// Every stop code, for the range and duplicate checks in
-     /// `super::error`. A source-scrape test checks that each `const` in this
-     /// module is listed.
-@@ -273,6 +291,10 @@ pub(crate) struct QuicPathLimits {
-     /// refuses data with [`stop_code::NOT_ACCEPTING_DATA`] right after the
-     /// header, before anything is charged to the inbound budget.
-     pub(crate) accept_data: bool,
-+    /// Where the path's counts are also kept node-wide; `None` is
-+    /// `TRANSPORT_METRICS`. A test passes its own, since every test in a process
-+    /// writes the global one.
-+    pub(crate) counters: Option<&'static QuicDataCounters>,
-     /// The receive task panics on its first stream (supervisor test).
-     #[cfg(test)]
-     pub(crate) panic_in_receive: bool,
-@@ -297,6 +319,7 @@ impl QuicPathLimits {
-         control_capacity: CONTROL_CHANNEL_CAPACITY,
-         max_send_aborts: recycle::SEND_ABORT_LIMIT,
-         accept_data: true,
-+        counters: None,
-         #[cfg(test)]
-         panic_in_receive: false,
+     // Re-export simulation types for test infrastructure
+     pub use crate::simulation::{
+-        FaultConfig, FaultConfigBuilder, Partition, QuicDatagramDrop, SimulationRng, TimeSource,
+-        VirtualTime, WakeupId,
++        FaultConfig, FaultConfigBuilder, Partition, QuicDatagramCut, QuicDatagramDrop,
++        SimulationRng, TimeSource, VirtualTime, WakeupId,
      };
-@@ -401,6 +424,11 @@ quic_outcomes! {
-         ControlUnknownType => "control_unknown_type",
-         /// A control payload that is empty or of the wrong length.
-         ControlMalformed => "control_malformed",
-+        /// A Short past one packet did not fit the inbound budget
-+        /// (`stop_code::BUDGET_REFUSED`; also counted under the shared refusal).
-+        ShortRefusedBudget => "short_refused_budget",
-+        /// A Stream did not fit the inbound budget (as above).
-+        StreamRefusedBudget => "stream_refused_budget",
-     }
+ 
+     // Re-export fault injector for mid-simulation fault injection in Turmoil tests
+```
+
+**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +5/-0)
+```diff
+@@ -111,6 +111,10 @@ pub struct FaultInjectorState {
+     /// and `SimNetwork::run_simulation_direct` (churn driver crashes, #4694) set it
+     /// so their injected faults are real packet drops rather than silent no-ops.
+     pub enforce_fault_drops: bool,
++    /// QUIC datagram cuts (`SimNetwork::drop_quic_datagrams_between_after`),
++    /// each with the bytes it has let through so far. Kept here rather than in
++    /// [`FaultConfig`], whose rules are values.
++    pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
  }
  
-@@ -436,6 +464,9 @@ impl QuicInboundOutcome {
- /// Per-path counters. Tests read these, never the process-wide ones, which
- /// every test in the process writes.
- pub(crate) struct QuicPathStats {
-+    /// Where the counts are also kept node-wide: `TRANSPORT_METRICS`, or a
-+    /// test's own ([`QuicPathLimits::counters`]).
-+    node: &'static QuicDataCounters,
-     quic: [AtomicU64; QuicInboundOutcome::COUNT],
-     shared: [AtomicU64; InboundStreamOutcome::COUNT],
-     /// Data sends by [`SendKind`] and [`QuicSendResult`].
-@@ -446,8 +477,9 @@ pub(crate) struct QuicPathStats {
- }
- 
- impl QuicPathStats {
--    fn new() -> Self {
-+    fn new(node: &'static QuicDataCounters) -> Self {
-         Self {
-+            node,
-             quic: std::array::from_fn(|_| AtomicU64::new(0)),
-             shared: std::array::from_fn(|_| AtomicU64::new(0)),
-             sends: std::array::from_fn(|_| std::array::from_fn(|_| AtomicU64::new(0))),
-@@ -456,7 +488,9 @@ impl QuicPathStats {
+ impl FaultInjectorState {
+@@ -124,6 +128,7 @@ impl FaultInjectorState {
+             stats: NetworkStats::default(),
+             network_name: None,
+             enforce_fault_drops: false,
++            quic_datagram_cuts: Vec::new(),
          }
      }
  
-+    /// Count an outcome here and node-wide 
 ```
 
-**File**: `crates/core/src/transport/quic/path/inbound.rs` (modified, +28/-4)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +144/-17)
 ```diff
-@@ -212,11 +212,17 @@ pub(in crate::transport::quic) async fn receive<T: TimeSource>(
-     let mut readers = FuturesUnordered::new();
-     // Kept across iterations, so a pending accept is never dropped.
-     let mut accept = std::pin::pin!(connection.accept_uni());
-+    // This path's peak of streams read at once (`quic_streams_open_*`).
-+    let mut peak = crate::transport::metrics::StreamsOpenPeak::default();
-     loop {
-         tokio::select! {
-             accepted = &mut accept => match accepted {
-                 Ok(recv) => {
-                     readers.push(read_one(recv, receiver.clone()));
-+                    receiver.stats.node().record_streams_open(
-+                        &mut peak,
-+                        u32::try_from(readers.len()).unwrap_or(u32::MAX),
-+                    );
-                     accept.set(connection.accept_uni());
+@@ -505,7 +505,7 @@ fn fault_injection_delivery_decision(
                  }
-                 Err(error) => {
-@@ -721,13 +727,21 @@ impl<T: TimeSource> Receiver<T> {
-         tracing::debug!(?failure, "QUIC path: inbound stream failed");
+             }
+         }
+-        if !inj.config.quic_datagram_drops.is_empty() {
++        if !inj.config.quic_datagram_drops.is_empty() || !inj.quic_datagram_cuts.is_empty() {
+             use crate::simulation::TimeSource;
+             // `drop_quic_datagrams_between` and `with_fault_injection` give
+             // an injector with rules a VirtualTime. One replaced by hand
+@@ -523,11 +523,18 @@ fn fault_injection_delivery_decision(
+                     );
+                 }
+             }
+-            if let Some(now) = now
+-                && inj.config.drops_quic_datagram(&from, &to, datagram, now)
+-            {
+-                inj.stats.messages_dropped_quic_datagram += 1;
+-                return PacketDeliveryDecision::Drop;
++            if let Some(now) = now {
++                // Every cut sees the datagram, so each one's count stays true.
++                let cut = inj
++                    .quic_datagram_cuts
++                    .iter_mut()
++                    .fold(false, |dropped, (cut, seen)| {
++                        cut.drops(seen, &from, &to, datagram, now) | dropped
++                    });
++                if cut || inj.config.drops_quic_datagram(&from, &to, datagram, now) {
++                    inj.stats.messages_dropped_quic_datagram += 1;
++                    return PacketDeliveryDecision::Drop;
++                }
+             }
+         }
      }
- 
--    /// Count a budget refusal as the UDP transport does, and stop the stream.
--    fn refuse(&self, reader: &mut BodyReader<T>, rejection: BudgetRejection, total: u64) {
-+    /// Count a budget refusal as the UDP transport does, and by frame kind
-+    /// (`kind`), and stop the stream.
-+    fn refuse(
-+        &self,
-+        reader: &mut BodyReader<T>,
-+        rejection: BudgetRejection,
-+        total: u64,
-+        kind: QuicInboundOutcome,
-+    ) {
-         let outcome = match rejection {
-             BudgetRejection::Bytes { .. } => InboundStreamOutcome::RefusedConnectionBytes,
-             BudgetRejection::Streams { .. } => InboundStreamOutcome::RefusedConnectionStreams,
+@@ -1696,6 +1703,10 @@ pub struct SimNetwork {
+     /// here so replacing the fault injector (`with_fault_injection`,
+     /// `clear_fault_injection`) carries them over.
+     quic_datagram_drops: Vec<crate::simulation::QuicDatagramDrop>,
++    /// QUIC datagram cuts added by `drop_quic_datagrams_between_after`. Their
++    /// byte counts live in the fault injector; a replaced injector takes them
++    /// over ([`Self::carry_quic_datagram_cuts`]).
++    quic_datagram_cuts: Vec<crate::simulation::QuicDatagramCut>,
+     /// When `probe_quic_endpoints_at` asked for it: the virtual time at which
+     /// `run_simulation_direct` sends each node a stranger's QUIC datagram,
+     /// with the node and stranger addresses.
+@@ -1879,6 +1890,7 @@ impl SimNetwork {
+             shared_rings: HashMap::new(),
+             node_port_override,
+             quic_datagram_drops: Vec::new(),
++            quic_datagram_cuts: Vec::new(),
+             quic_endpoint_probe: None,
          };
-         self.stats.record_shared(outcome);
-+        self.stats.record(kind);
-         tracing::debug!(?rejection, total, "QUIC path: refusing an inbound stream");
-         reader.stop(stop_code::BUDGET_REFUSED);
+         net.config_gateways(
+@@ -1906,6 +1918,7 @@ impl SimNetwork {
+             fault_seed,
+         )
+         .with_virtual_time(self.virtual_time.clone());
++        let state = self.carry_quic_datagram_cuts(state);
+         set_fault_injector(
+             &self.name,
+             Some(std::sync::Arc::new(std::sync::Mutex::new(state))),
+@@ -2152,17 +2165,7 @@ impl SimNetwork {
+         b: &NodeLabel,
+         from: Duration,
+     ) -> &mut Self {
+-        let address = |label: &NodeLabel| {
+-            *self
+-                .node_addresses
+-                .get(label)
+-                .unwrap_or_else(|| panic!("no node {label}"))
+-        };
+-        let rule = crate::simulation::QuicDatagramDrop::new(
+-            address(a),
+-            address(b),
+-            u64::try_from(from.as_nanos()).unwrap_or(u64::MAX),
+-        );
++        let rule = self.quic_datagram_rule(a, b, from);
+         let injector = crate::node::network_bridge::get_fault_injector(&self.name)
+             .expect("SimNetwork::new registers a fault injector");
+         let has_clock = {
+@@ -2186,6 +2189,89 @@ impl SimNetwork {
+         self
      }
-@@ -759,7 +773,12 @@ impl<T: TimeSource> Receiver<T> {
-                 let mut budget = self.budget.lock();
-                 if let Err(rejection) = budget.check(total, Releaser::Quic) {
-                     drop(budget);
--                    self.refuse(&mut reader, rejection, total);
-+                    self.refuse(
-+                        &mut reader,
-+                        rejection,
-+                        total,
-+                        QuicInboundOutcome::ShortRefusedBudget,
-+                    );
-                     return;
-                 }
-                 let key = self.short_key(&budget);
-@@ -879,7 +898,12 @@ impl<T: TimeSource> Receiver<T> {
-             }
-             if let Err(rejection) = budget.check(total, Releaser::Quic) {
-                 drop(budget);
--                self.refuse(&mut reader, rejection, total);
-+                self.refuse(
-+                    &mut reader,
-+                    rejection,
-+                    total,
-+                    QuicInboundOutcome::StreamRefusedBudget,
-+                );
-                 return;
-             }
-             // Allocates only the buffer's chunk table (see
+ 
++    /// As [`Self::drop_quic_datagrams_between`], but the rule first lets
++    /// `after_bytes` of the pair's QUIC datagrams through from `from`, so a
++    /// test can cut the pair in the middle of a transfer
++    /// ([`crate::simulation::QuicDatagramCut`]). The count lives in the fault
++    /// injector and survives its replacement.
++    #[cfg(any(test, feature = "testing"))]
++    pub fn drop_quic_datagrams_between_after(
++        &mut self,
++        a: &NodeLabel,
++        b: &NodeLabel,
++        from: Duration,
++        after_bytes: u64,
++    ) -> &mut Self {
++        let cut = crate::simulation::QuicDatagramCut {
++            rule: self.quic_datagram_rule(a, b, from),
++            after_bytes,
++        };
++        let injector = crate::node::network_bridge::get_fault_injector(&self.name)
++            .expect("SimNetwork::new registers a fault injector");
++        let has_clock = {
++            let mut state = injector.lock().unwrap();
++            let has_clock = state.virtual_time.is_some();
++            if has_clock && !self.quic_datagram_cuts.contains(&cut) {
++                state.quic_datagram_cuts.push((cut.clone(), 0));
++            }
++            has_clock
++        };
++        assert!(
++            has_clock,
++            "a QUIC datagram cut needs the fault injector's VirtualTime"
++        );
++        if !self.quic_datagram_cuts.contains(&cut) {
++            sel
 ```
 
-**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +10/-0)
+**File**: `crates/core/src/simulation.rs` (modified, +1/-1)
 ```diff
-@@ -61,6 +61,16 @@ pub(crate) enum SendKind {
- impl SendKind {
-     pub(crate) const ALL: [Self; 4] = [Self::Short, Self::LargeShort, Self::Stream, Self::Pipe];
+@@ -55,7 +55,7 @@ mod fault;
+ mod rng;
+ mod time;
  
-+    /// Its name in telemetry (`quic_data_send_<kind>_<result>`).
-+    pub(crate) fn label(self) -> &'static str {
-+        match self {
-+            Self::Short => "short",
-+            Self::LargeShort => "large_short",
-+            Self::Stream => "stream",
-+            Self::Pipe => "pipe",
-+        }
-+    }
-+
-     fn is_short(self) -> bool {
-         match self {
-             Self::Short | Self::LargeShort => true,
+-pub use fault::{FaultConfig, FaultConfigBuilder, Partition, QuicDatagramDrop};
++pub use fault::{FaultConfig, FaultConfigBuilder, Partition, QuicDatagramCut, QuicDatagramDrop};
+ pub use rng::SimulationRng;
+ pub use time::Wakeup;
+ pub use time::{BoxedSleep, RealTime, TimeSource, TimeSourceInterval, VirtualTime, WakeupId};
 ```
 
-**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +7/-1)
+**File**: `crates/core/src/simulation/fault.rs` (modified, +69/-0)
 ```diff
-@@ -23,6 +23,7 @@ use crate::transport::peer_connection::streaming::{
- use crate::transport::peer_connection::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
- use crate::transport::peer_connection::streaming_handle_idle_timeout;
- 
-+mod node_counts;
- mod route;
- 
- /// How long, in virtual time, a test's traffic may take.
-@@ -114,7 +115,12 @@ async fn paths_built(
-     })
-     .await;
-     drop(permit);
--    let (a, a_in) = QuicPath::new(client, pair.time.clone());
-+    // `a` keeps its node-wide counts where `b` does.
-+    let a_limits = QuicPathLimits {
-+        counters: b_limits.counters,
-+        ..QuicPathLimits::DEFAULT
-+    };
-+    let (a, a_in) = QuicPath::with_limits(client, pair.time.clone(), a_limits);
-     let (b, b_in) = match b_budget {
-         Some(budget) => {
-             let (b, b_in) =
-```
-
----
-
-### Incident Patch 2: `86a4034e` (2026-11-05)
-**Commit Message**: fix(test): advance VirtualTime in controlled simulations (#6119)
-
-**File**: `.claude/rules/testing.md` (modified, +1/-0)
-```diff
-@@ -339,6 +339,7 @@ Scale > 50 nodes or virtual time > 5 minutes?
- 
- - **Direct runner** (`run_simulation_direct`): Single `current_thread` + `start_paused(true)` tokio runtime. 100% deterministic. Scales to 500+ nodes. Supports `ChurnConfig` for automated crash/recover cycles via fault injection. Used by fdev CLI and nightly tests.
- - **Turmoil runner** (`run_simulation`): Turmoil scheduler. ~99% deterministic. Supports mid-simulation fault injection via closures (partitions, targeted crashes). Better for fine-grained fault tolerance tests.
-+- Both kinds move the network's `VirtualTime`, which QUIC endpoints and paths and the fault injector's time-based rules run on: the direct runner from tokio's clock, the turmoil runners (`run_simulation`, `run_controlled_simulation`, `run_fdev_test`, `run_turmoil_simulation`) through `run_turmoil_on_virtual_time` after each step. A test that drives turmoil itself with `sim.run()` leaves VirtualTime at 0, so no timer on it fires.
- 
- ## Fault Injection in Turmoil Tests
- 
-```
-
-**File**: `.claude/rules/transport.md` (modified, +6/-2)
-```diff
-@@ -1386,7 +1386,11 @@ once connections open, quinn's connection-ID draws
- inside quinn's tasks. With endpoints idle, the one difference from QUIC off
- is scheduling (one endpoint driver task per node), which changes some
- connection choices, so a QUIC-on run is compared with QUIC off by the peers
--that join, not by the exact edge set. `probe_quic_endpoints_at` sends each
-+that join, not by the exact edge set. Every runner moves that VirtualTime: the
-+direct runner from tokio's clock, the turmoil runners after each step
-+(`run_turmoil_on_virtual_time`); before that the turmoil runners left it at 0, so
-+no QUIC timer fired there. A record's `at` is on its host's own clock; under
-+turmoil each host's starts when its runtime is built. `probe_quic_endpoints_at` sends each
- node a stranger's QUIC datagram during a direct-runner run, so a test can
- check every endpoint was live (`not_allowed`) rather than failed to bind.
- `SimNetwork::quic_upgrade_trace` returns a handle (`quic/upgrade/sim_trace.rs`,
-@@ -1399,7 +1403,7 @@ peer's address as its source each time it allows that address, and records
- `injected an Initial`), `make_record_wrong` (the key compared after the
- handshake disagrees, so the path closes with IDENTITY_MISMATCH),
- `fail_endpoint_at` (the endpoint
--driver dies) and `run_as_release` (a peer reporting the crate's version reads
-+driver dies, recorded as `failed the endpoint at <ms> ms` on VirtualTime) and `run_as_release` (a peer reporting the crate's version reads
- as a given release, since this tree reports a version below the negotiation
- floor until the release bump). The first offer is 2-10 s after promotion, so give a run tens of
- virtual seconds.
-```
-
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +121/-5)
-```diff
-@@ -433,6 +433,34 @@ impl ScheduledOperation {
+@@ -110,6 +110,43 @@ impl QuicDatagramDrop {
      }
  }
  
-+/// Steps turmoil to the end of the run, as `turmoil::Sim::run` does, and moves
-+/// the network's `VirtualTime` to turmoil's elapsed time after every step, the way
-+/// the direct runner's time driver follows tokio's clock.
-+///
-+/// Two differences from `Sim::run`: it steps once even with no client registered
-+/// (`run` returns at once then, and `step` reports the run finished after one
-+/// tick), and VirtualTime trails each host's tokio clock by up to one tick, since
-+/// it moves after the step (1 ms at turmoil's default tick; deterministic).
-+///
-+/// The node tasks run on turmoil's clock, but some parts of a node read the
-+/// network's `VirtualTime` instead: each QUIC endpoint and path (quinn's timers,
-+/// the path's send deadlines and ack watch, `get_socket_virtual_time`), and the
-+/// fault injector's time-based rules. Without this the clock stayed at zero for
-+/// the whole run, so none of those timers ever fired and a rule starting after
-+/// zero never applied.
-+pub(crate) fn run_turmoil_on_virtual_time(
-+    sim: &mut turmoil::Sim<'_>,
-+    time: &VirtualTime,
-+) -> turmoil::Result {
-+    loop {
-+        let finished = sim.step()?;
-+        time.advance_to(u64::try_from(sim.elapsed().as_nanos()).unwrap_or(u64::MAX));
-+        if finished {
-+            return Ok(());
++/// A [`QuicDatagramDrop`] that first lets `after_bytes` of the pair's
++/// QUIC-class datagrams through from the rule's start, both directions counted
++/// together, and drops from the next datagram on. A test cuts a pair in the
++/// middle of a transfer this way, by how much has moved rather than by a time
++/// that depends on when the transfer started. Its count is kept by whoever
++/// applies it (the network's fault injector), so the rule itself stays a value.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct QuicDatagramCut {
++    /// Which datagrams the cut governs, and from when.
++    pub rule: QuicDatagramDrop,
++    /// Bytes delivered from the rule's start before it drops.
++    pub after_bytes: u64,
++}
++
++impl QuicDatagramCut {
++    /// Whether the cut drops `datagram` sent from `from` to `to` at virtual
++    /// time `now`, with `seen` the bytes it has let through so far, which a
++    /// datagram it lets through adds to.
++    pub fn drops(
++        &self,
++        seen: &mut u64,
++        from: &SocketAddr,
++        to: &SocketAddr,
++        datagram: &[u8],
++        now: u64,
++    ) -> bool {
++        if !self.rule.drops(from, to, datagram, now) {
++            return false;
 +        }
++        if *seen >= self.after_bytes {
++            return true;
++        }
++        *seen += datagram.len() as u64;
++        false
 +    }
 +}
 +
- /// Packet-delivery decision consulted by every `SimulationSocket` (via the
- /// per-network delivery callback installed by `run_controlled_simulation` and
- /// `run_simulation_direct`) so an injected node crash or partition actually
-@@ -5275,7 +5303,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        sim.run()
-+        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
+ /// Configuration for fault injection during simulation.
+ #[derive(Debug, Clone)]
+ pub struct FaultConfig {
+@@ -377,6 +414,38 @@ mod tests {
+         assert!(!FaultConfig::new().drops_quic_datagram(&addr(1), &addr(2), &quic_long, T));
      }
  
-     /// Run a deterministic simulation with controlled events using Turmoil.
-@@ -5540,7 +5568,7 @@ impl SimNetwork {
-             HashMap::new();
-         // Pre-seeded contract stores for nodes with SeedContract operations.
-         // Wrapped in Arc<Mutex> so closures can look up their store at
--        // startup (after seed_ops populates the map, before sim.run()).
-+        // startup (after seed_ops populates the map, before the run).
-         let contract_stores: Arc<
-             Mutex<HashMap<NodeLabel, crate::wasm_runtime::InMemoryContractStore>>,
-         > = Arc::new(Mutex::new(HashMap::new()));
-@@ -5776,7 +5804,7 @@ impl SimNetwork {
-         let label_to_key: HashMap<NodeLabel, _> = labels.into_iter().collect();
- 
-         // Clone the network name for the client closure (the outer
--        // `network_name` is still needed after `sim.run()` for topology capture).
-+        // `network_name` is still needed after the run for topology capture).
-         let network_name_for_client = network_name.clone();
- 
-         // Optional pre-operation join-convergence barrier (see
-@@ -5964,7 +5992,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        let turmoil_result = sim.run();
-+        let turmoil_result = run_turmoil_on_virtual_time(&mut sim, &self.virtual_time);
- 
-         // Capture topology snapshots BEFORE self is dropped (which clears them)
-         let topology_snapshots = get_all_topology_snapshots(&network_name);
-@@ -6262,7 +6290,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        sim.run()
-+        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
-             .map_err(|e| anyhow::anyhow!("Turmoil simulation failed: {:?}", e))
-     }
- 
-@@ -7441,6 +7469,94 @@ use crate::contract::OperationMode;
- mod tests {
-     use super::*;
- 
-+    /// The helper moves VirtualTime with turmoil's clock: after a run whose client
-+    /// sleeps 5 s, VirtualTime reads 5 s, within a tick or two.
++    /// A cut lets `after_bytes` of the pair's QUIC datagrams through from its
++    /// start, both directions together, and drops every one after. Datagrams
++    /// before the start, of another class or of another pair are neither
++    /// dropped nor counted.
 +    #[test]
-+    fn run_turmoil_on_virtual_time_moves_the_clock_with_the_run() {
-+        use crate::simulation::TimeSource;
-+        let time = VirtualTime::new();
-+        let mut sim = turmoil::Builder::new()
-+            .simulation_duration(Duration::from_secs(60))
-+            .build();
-+        sim.client("sleeper", async {
-+            tokio::time::sleep(Duration::from_secs(5)).await;
-+            Ok(())
-+        });
-+        run_turmoil_on_virtual_time(&mut sim, &time).expect("the run succeeds");
-+        let now = Duration::from_nanos(time.now_nanos());
-+        assert!(
-+            now >= Duration::from_secs(5)
-+                && now <= Duration::from_secs(5) + Duration::from_millis(10),
-+            "VirtualTime followed the run: {now:?}"
-+        );
++    fn a_quic_datagram_cut_counts_only_what_it_governs() {
++        const T: u64 = 5_000;
++        let cut = QuicDatagramCut {
++            rule: QuicDatagramDrop::new(addr(1), addr(2), T),
++            after_bytes: 250,
++        };
++        let mut seen = 0;
++        let quic = [0x40u8; 100];
++        let legacy = [0x02u8; 100];
++        let mut drops = |from, to, datagram: &[u8], now| {
++            cut.drops(&mut seen, &addr(from), &addr(to), datagram, now)
++        };
++        // Not counted: too early, not QUIC, not the pair.
++        assert!(!drops(1, 2, &quic, T - 1));
++        assert!(!drops(1, 2, &legacy, T));
++        assert!(!drops(1, 3, &quic, T));
++        // 100, 200, then 300: the third crosses 250 and is still delivered.
++        assert!(!drops(1, 2, &quic, T));
++        assert!(!drops(2, 1, &quic, T));
++        assert!(!drops(1, 2, &quic, T));
++        for _ in 0..3 {
++            assert!(drops(2, 1, &quic, T + 1));
++            assert!(!drops(2, 1, &legacy, T + 1));
++        }
++        assert_eq!(seen, 300);
 +    }
 +
-+    /// Every turmoil runner goes through `run_turmoil_on_virtual_time`, checked in
-+    /// each runner's own body. A runner that stepped turmoil any other way
-+    /// (`sim.run()`, `turmoil::Sim::run(&mut sim)`) would leave the network's
-+    /// VirtualTime at 0, and no QUIC timer or time-based fault rule would fire in
-+    /// its runs.
-+    #[test]
-+    fn turmoil_runners_move_virtual_time() {
-+        /// The body of t
+     #[test]
+     fn test_no_faults_by_default() {
+         let config = FaultConfig::new();
 ```
 
-**File**: `crates/core/src/node/testing_impl/turmoil_runner.rs` (modified, +1/-1)
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +95/-8)
 ```diff
-@@ -274,7 +274,7 @@ where
-     }
- 
-     // Run the simulation
--    let result = sim.run();
-+    let result = super::run_turmoil_on_virtual_time(&mut sim, &virtual_time);
- 
-     // Cleanup
-     unregister_network_time_source(&network_name);
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +8/-0)
-```diff
-@@ -369,10 +369,18 @@ fn build_quic_upgrades(
-     if let Some(at) = trace.as_ref().and_then(|trace| trace.down_at()) {
-         let failing = endpoint.clone();
-         let clock = path_clock.clone();
-+        let noted = trace.clone();
-         // Bounded by `at`, and holds an endpoint share only until then.
-         drop(GlobalExecutor::spawn(async move {
-             clock.sleep(at).await;
-             failing.fail_driver();
-+            // Recorded so a test can check the fault ran rather than infer it,
-+            // with the time on the clock the fault was set on: a record's `at`
-+            // is on the recording host's own clock.
-+            if let Some(trace) = noted {
-+                let ms = clock.now_nanos() / 1_000_000;
-+                trace.record(trace.addr(), 0, format!("failed the endpoint at {ms} ms"));
-+            }
-         }));
-     }
-     Some(QuicUpgrades::new(
-```
-
-**File**: `crates/core/src/transport/quic/upgrade/sim_trace.rs` (modified, +11/-4)
-```diff
-@@ -20,14 +20,19 @@ type Version = (u8, u8, u16);
- /// One thing a node's upgrades did.
- #[derive(Debug, Clone, PartialEq, Eq)]
- pub struct QuicUpgradeRecord {
--    /// On the runtime's clock, which every node shares.
-+    /// Since the first record, on the clock of the runtime that recorded it. The
-+    /// direct runner has one runtime, so times compare across nodes. Under turmoil
-+    /// each host's clock starts when its runtime is built, so compare times only
-+    /// within one node.
-     pub at: Duration,
-     pub node: SocketAddr,
-     pub peer: SocketAddr,
--    /// The session's number in its node; 0 for a node with QUIC off.
-+    /// The session's number in its node; 0 for a node with QUIC off, and for a
-+    /// record about no session (an injected fault, with the node as `peer`).
-     pub session: u64,
-     /// An `Outcome` in its `Debug` form, or `received ...`, `sent ...`,
--    /// `closed path with ...`, `stale connection ...`, `session ended`.
-+    /// `closed path with ...`, `stale connection ...`, `session ended`,
-+    /// `injected an Initial`, `failed the endpoint at <ms> ms`.
-     pub what: String,
-     /// The path permits the node held just after this.
-     pub permits: usize,
-@@ -124,7 +129,9 @@ impl QuicUpgradeTrace {
-         *self.data.release.lock() = Some((real, release));
-     }
- 
--    /// `node`'s QUIC endpoint driver fails `at` after its transport opens.
-+    /// `node`'s QUIC endpoint driver fails `at` after its transport opens, on the
-+    /// path clock (the network's VirtualTime in simulation). The node records
-+    /// `failed the endpoint at <ms> ms` with that clock's time.
-     pub fn fail_endpoint_at(&self, node: SocketAddr, at: Duration) {
-         self.data.down_at.lock().insert(node, at);
-     }
-```
-
-**File**: `crates/core/tests/simulation_integration.rs` (modified, +64/-0)
-```diff
-@@ -1688,6 +1688,8 @@ fn test_high_latency_timeout_regression() {
- 
- /// Test: Use actual SimulationSocket inside Turmoil.
- /// This verifies that the real in-memory socket works with Turmoil's deterministic scheduler.
-+/// It drives turmoil itself with `sim.run()`, so the VirtualTime it registers stays
-+/// at 0: nothing here (no QUIC endpoint, no time-based fault rule) runs on it.
- #[test]
- fn test_turmoil_with_real_simulation_socket() -> turmoil::Result {
-     let network_name = "turmoil-test";
-@@ -21472,6 +21474,68 @@ fn test_quic_endpoint_down_closes_every_path() {
+@@ -569,10 +569,11 @@ fn a_large_short_that_never_opened_goes_on_udp_as_a_stream() {
      );
  }
  
-+/// The controlled (turmoil) runner moves the network's VirtualTime with its own
-+/// clock, so a timer on that clock fires: the gateway's endpoint failure, set for
-+/// 5 s on the path clock, happens at 5 s, and VirtualTime ends near the run's
-+/// length. Before the runner moved it, VirtualTime read 0 for the whole run and
-+/// the failure never happened.
-+#[test_log::test]
-+fn test_controlled_simulation_advances_virtual_time() {
-+    use freenet::dev_tool::NodeLabel;
-+    const NETWORK: &str = "controlled-virtual-time";
-+    const SEED: u64 = 0x5940_7117_0001;
-+    const FAIL_AT: Duration = Duration::from_secs(5);
-+    const WAIT: Duration = Duration::from_secs(20);
-+    setup_deterministic_state(SEED);
-+    let rt = create_runtime();
-+    let gateway = NodeLabel::gateway(NETWORK, 0);
-+    let (sim, trace, time, gateway_addr) = rt.block_on(async {
-+        let mut sim = SimNetwork::new(NETWORK, 1, 1, 7, 3, 10, 2, SEED).await;
-+        sim.with_transport_quic("shadow");
-+        let trace = sim.quic_upgrade_trace();
-+        let gateway_addr = sim.all_node_addresses()[&gateway];
-+        trace.fail_endpoint_at(gateway_addr, FAIL_AT);
-+        let time = sim.virtual_time().clone();
-+        (sim, trace, time, gateway_addr)
-+    });
-+    drop(rt);
-+    let (no_operations, max_duration) = (Vec::new(), Duration::from_secs(60));
-+    let result = sim.run_controlled_simulation(SEED, no_operations, max_duration, WAIT);
-+    assert!(
-+        result.turmoil_result.is_ok(),
-+        "simulation failed: {:?}",
-+        result.turmoil_result.err()
-+    );
-+    // The client sleeps 3 s, fires no operation and waits `WAIT`, so the run
-+    // lasts at least that long, and VirtualTime with it.
-+    let now = Duration::from_nanos(time.now_nanos());
-+    assert!(
-+        now >= WAIT + Duration::from_secs(3),
-+        "VirtualTime followed the run: {now:?}"
-+    );
-+    let failed = trace.matching(gateway_addr, "failed the endpoint at ");
-+    assert_eq!(
-+        failed.len(),
-+        1,
-+        "the 5 s timer fired once: {:#?}",
-+        trace.records()
-+    );
-+    // The time the record carries is on the path clock, VirtualTime itself; a
-+    // record's `at` is on its host's own clock, which under turmoil does not
-+    // start at the run's start.
-+    let fired_ms: u64 = failed[0]
-+        .what
-+        .trim_start_matches("failed the endpoint at ")
-+        .trim_end_matches(" ms")
-+        .parse()
-+        .expect("the record carries its time");
-+    let fired = Duration::from_millis(fired_ms);
-+    assert!(
-+        fired >= FAIL_AT && fired <= FAIL_AT + Duration::from_secs(1),
-+        "it fired at 5 s on VirtualTime: {fired:?}"
-+    );
-+}
-+
- /// The same run with the same seed gives the same upgrades at the same times.
- #[test_log::test]
- fn test_quic_shadow_upgrade_is_deterministic() {
+-/// The peer refuses data on a path both sides set up for it: the message goes on
+-/// UDP under its id, it is counted, and new sends stay off a path that stays up.
++/// The peer refuses data on a path this node set up for it: the message goes on
++/// UDP under its id, it is counted, and the peer closes the path, so new sends go
++/// on UDP.
+ #[test]
+-fn data_the_peer_refuses_goes_on_udp_and_the_path_stays() {
++fn data_the_peer_refuses_goes_on_udp_and_the_peer_closes_the_path() {
+     run(
+         "quic-send-refused",
+         60,
+@@ -596,14 +597,15 @@ fn data_the_peer_refuses_goes_on_udp_and_the_path_stays() {
+             assert_eq!(rig.stats().send_event_count(E::DataRefused), 1);
+             assert_eq!(rig.stats().stop_count(stop_code::NOT_ACCEPTING_DATA), 1);
+             assert!(!rig.route.path().sends_data());
++            // The receiver closed the path on its refusal, so the queue goes to
++            // UDP too, and no send reaches the path again.
+             assert!(
+-                rig.route.path().quinn_connection().close_reason().is_none(),
+-                "the path stays up"
++                rig.route.path().quinn_connection().close_reason().is_some(),
++                "the receiver closed the path"
+             );
+-
+-            // The queue goes straight to UDP, and no send reaches the path again.
+-            rig.route.queue_short(message(1)).ok();
++            assert_eq!(rig.path.peer().stats().count(Q::ClosedRefusingData), 1);
+             rig.path.settle(Duration::from_millis(50)).await;
++            rig.e.conn.send_serialized(message(1)).await.unwrap();
+             assert_eq!(rig.udp_data().shorts, vec![message(1)]);
+             assert_eq!(rig.path.peer().stats().count(Q::RefusedNotAcceptingData), 1);
+         },
+@@ -798,6 +800,11 @@ fn shorts_held_back_by_a_slow_consumer_do_not_close_the_path() {
+                 "many sends could not open"
+             );
+             assert_eq!(rig.stats().send_event_count(E::StalledClosed), 0);
++            assert_eq!(
++                rig.stats().send_event_count(E::SuspectEntered),
++                0,
++                "an acknowledged path is never suspect"
++            );
+             assert!(rig.route.path().quinn_connection().close_reason().is_none());
+ 
+             // The consumer catches up. The channel holds one, so each turn lets
+@@ -874,6 +881,11 @@ fn a_busy_relay_whose_transfers_are_acknowledged_keeps_its_path() {
+                 "enough timed out to close it if they counted"
+             );
+             assert_eq!(rig.stats().send_event_count(E::StalledClosed), 0);
++            assert_eq!(
++                rig.stats().send_event_count(E::SuspectEntered),
++                0,
++                "an acknowledged path is never suspect"
++            );
+             assert!(rig.route.path().quinn_connection().close_reason().is_none());
+         },
+     );
+@@ -1098,6 +1110,81 @@ fn a_pipe_that_stalls_after_opening_gives_up() {
+     );
+ }
+ 
++/// A path whose sends time out with nothing acknowledged takes no new data: a
++/// short queued to it then goes on UDP, though the path is up. Once the peer
++/// acknowledges again, data goes on the path again. Across
++/// the switch no message is lost or sent twice: the short already on the path
++/// stays there (delivered or counted `MaybeDelivered`, never resent on UDP), and
++/// each later one goes exactly once.
++#[test]
++fn a_suspect_path_sends_new_shorts_on_udp_until_it_is_acknowledged() {
++    run(
++        "quic-send-suspect",
++        75,
++        QuicPathLimits::DEFAULT,
++        |mut rig| async move {
++            let silenced = DropFrom::new("quic-send-suspect", &[rig.path.peer_addr()]);
++            let mut on_udp: Vec<Vec<u8>> = Vec::new();
++            let mut on_path: Vec<Vec<u8>> = Vec::new();
++            rig.path.settle(Duration::from_secs(9)).await;
++            rig.e.conn.send_serialized(message(1)).await.unwrap();
++            // Its 1 s open passes with nothing acknowledged since the path was
++            // built 10 s before: a short that opens is held for its 5 s total.
++            rig.path.settle(Duration::from_secs(6)).await;
++            assert_eq!(rig.stats().send_event_count(E::SuspectEntered), 1);
++            assert!(rig.route.path().is_suspect());
++            on_udp.extend(rig.udp_data().shorts);
++            rig.e.conn.send_serialized(message(2)).await.unwrap();
++            rig.path.settle(Duration::from_millis(50)).await;
++            let udp = rig.udp_data().shorts;
++            assert_eq!(udp, vec![message(2)], "on UDP at once");
++            on_udp.extend(udp);
++            // A short the worker takes while the path is suspect goes on UDP too.
++            rig.route
++                .queue_short(message(4))
++                .expect("the queue is open");
++            rig.path.settle(Duration::from_millis(50)).await;
++            let udp = rig.udp_data().shorts;
+
 ```
 
----
-
-### Incident Patch 3: `e65f5d59` (2026-11-05)
-**Commit Message**: fix(hosted): orient cold visitors and point them at the installer (#6117)
-
-**File**: `crates/core/src/server/path_handlers.rs` (modified, +96/-6)
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +70/-4)
 ```diff
-@@ -2236,7 +2236,7 @@ fn shell_page(
-     // the sandboxed app iframe. It is the only place a per-user-data action
-     // (export to your own peer) can live — the durable user token is held by
-     // the shell and must never reach the sandbox — and the only place the
--    // "this is a hosted proxy, not private" disclosure cannot be hidden or
-+    // "stored encrypted on this server" privacy disclosure cannot be hidden or
-     // spoofed by the contract app. Empty (and the layout unchanged) when hosted
-     // mode is off. The export control is a placeholder until the node-side
-     // export endpoint lands (P3 `secrets export` over HTTP, scoped to the
-@@ -2478,7 +2478,7 @@ const SHELL_USER_TOKEN_JS: &str = include_str!("path_handlers/assets/shell_user_
- /// only when hosted mode is on; the bar lives OUTSIDE the sandboxed app iframe.
- const HOSTED_BAR_STYLES: &str = include_str!("path_handlers/assets/hosted_bar.css");
- 
--/// Markup for the hosted-mode bar: the always-visible "not private" disclosure
-+/// Markup for the hosted-mode bar: the always-visible privacy disclosure (with an inline install link)
- /// plus an Account popover with the access-key backup/restore, a "New ID"
- /// control to start over with a fresh identity, and the export-to-your-own-peer
- /// action. The access key is the per-user token, read from the shell-only
-@@ -6769,7 +6769,7 @@ mod tests {
-     #[tokio::test]
-     async fn shell_page_hosted_mode_renders_proxy_chrome_bar() {
-         // The hosted-mode "shell chrome" bar lives OUTSIDE the sandboxed iframe
--        // and carries the "not private" disclosure plus the Account popover
-+        // and carries the privacy disclosure plus the Account popover
-         // (access-key backup/restore + export-to-your-own-peer). It must render
-         // in hosted mode and be ABSENT in non-hosted mode so a normal
-         // single-user node is unaffected.
-@@ -6782,9 +6782,24 @@ mod tests {
-             hosted.contains(r#"id="fnbar""#),
-             "hosted bar missing: {hosted}"
+@@ -418,6 +418,9 @@ quic_outcomes! {
+         /// A Short or Stream frame on a path that accepts no data (shadow
+         /// mode); stopped before anything was charged.
+         RefusedNotAcceptingData => "refused_not_accepting_data",
++        /// The first refused data frame closed the path with DOWNGRADE (once
++        /// per path).
++        ClosedRefusingData => "closed_refusing_data",
+         /// A control payload of a version this node does not read.
+         ControlUnknownVersion => "control_unknown_version",
+         /// A control payload of a type this node does not know.
+@@ -671,6 +674,14 @@ pub(crate) struct QuicPath {
+     /// The connection's count of acknowledged packets, `None` if its controller
+     /// does not keep one.
+     ack_progress: Option<recycle::AckProgress>,
++    /// A send timed out with nothing acknowledged for the window: the path may
++    /// have gone dark, and new sends go on UDP until the connection's count of
++    /// acknowledged packets moves from the one held here ([`Self::is_suspect`]).
++    /// Under one lock, so entering and leaving cannot interleave.
++    suspect_since_acked: parking_lot::Mutex<Option<u64>>,
++    /// Whether `suspect_since_acked` is set, so a path that is not suspect is
++    /// told so without the lock.
++    suspect: std::sync::atomic::AtomicBool,
+     /// Where the path's watch reports that the peer was heard from.
+     heard: Arc<recycle::PeerHeard>,
+     #[cfg(test)]
+@@ -804,10 +815,10 @@ impl QuicPath {
+             time.clone(),
+             budget.clone(),
+             stats.clone(),
+-            data.shorts,
+-            data.streams,
++            data,
+             controls_tx,
+             limits.accept_data,
++            connection.closer(),
          );
-+        // The always-visible disclosure must say both halves: the data is held
-+        // (encrypted) by this server, and full privacy needs your own peer.
-+        // Located via the bar's own `.nt` span, so the text cannot pass by
-+        // appearing somewhere else (the popover, a script) instead.
-+        let disclosure = hosted
-+            .split_once(r#"class="nt""#)
-+            .and_then(|(_, rest)| rest.split_once('>'))
-+            .and_then(|(_, rest)| rest.split_once("for full privacy."))
-+            .map(|(d, _)| d.trim())
-+            .expect("the bar's .nt disclosure must end 'for full privacy.'");
-         assert!(
--            hosted.contains("not private"),
--            "always-visible disclosure missing"
-+            disclosure.starts_with("Stored encrypted on this server."),
-+            "disclosure must lead with where the data lives: {disclosure}"
-+        );
-+        assert!(
-+            disclosure.contains("https://freenet.org/quickstart/"),
-+            "the install link must sit inside the disclosure, before \
-+             'for full privacy.': {disclosure}"
-         );
-         assert!(
-             hosted.contains("Access key") && hosted.contains("Restore from key"),
-@@ -8484,6 +8499,77 @@ mod tests {
-         assert!(clear < reload, "must clear the token before reloading");
+         #[cfg(test)]
+         {
+@@ -850,6 +861,8 @@ impl QuicPath {
+                 counted_as_data_path: std::sync::atomic::AtomicBool::new(false),
+                 stall: parking_lot::Mutex::new(stall),
+                 ack_progress,
++                suspect_since_acked: parking_lot::Mutex::new(None),
++                suspect: std::sync::atomic::AtomicBool::new(false),
+                 heard,
+                 #[cfg(test)]
+                 budget,
+@@ -942,8 +955,10 @@ impl QuicPath {
      }
  
-+    /// A hosted visitor who has no peer must be told how to get one. Before
-+    /// this, the bar never said what Freenet is or how to install it, and the
-+    /// popover offered "Move to my peer" and a loopback import link with no
-+    /// install pointer, so a try.freenet.org visitor (typically arriving cold
-+    /// from a shared link) had no way forward.
-+    #[test]
-+    fn hosted_bar_points_visitors_without_a_peer_at_the_installer() {
-+        const QUICKSTART: &str = "href=\"https://freenet.org/quickstart/\"";
-+        let section = HOSTED_BAR_HTML
-+            .find("<h4>Your own peer</h4>")
-+            .expect("hosted bar must have a 'Your own peer' section");
-+        let migrate = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrate\"")
-+            .expect("Move-to-my-peer button present");
-+        let reveal = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrateout\"")
-+            .expect("migration hint block present");
-+        let open = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrateopen\"")
-+            .expect("primary open control present");
-+        let acct = HOSTED_BAR_HTML
-+            .find("id=\"fnacct\"")
-+            .expect("Account control present");
-+
-+        // (0) The always-visible bar itself, before the Account popover: the
-+        // brand links to what Freenet is, and an install pointer is one click
-+        // away without opening any menu.
-+        let bar = &HOSTED_BAR_HTML[..acct];
-+        assert!(
-+            bar.contains("href=\"https://freenet.org/\""),
-+            "the bar's Freenet brand must link to what Freenet is"
-+        );
-+   
-```
-
-**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.css` (modified, +57/-1)
-```diff
-@@ -27,10 +27,24 @@ iframe {
-   font-weight: 600;
-   color: #222;
-   letter-spacing: 0.02em;
-+  text-decoration: none;
-+}
-+#fnbar .fn:hover {
-+  text-decoration: underline;
-+}
-+/* The bar's own "Install Freenet" pointer, inline in the disclosure: the next
-+   step for a visitor who arrived from a shared link, always visible rather than
-+   buried in the popover. */
-+#fnbar a.fnbarinstall {
-+  color: #222;
-+  text-decoration: underline;
- }
- #fnbar .nt {
-   flex: 1 1 auto;
-   min-width: 0;
-+  /* Not the bar's line-height 1: the inline install link's underline and focus
-+     ring would be clipped by this span's overflow:hidden. */
-+  line-height: 1.4;
-   color: #777;
-   overflow: hidden;
-   text-overflow: ellipsis;
-@@ -83,6 +97,14 @@ iframe {
-   cursor: auto;
-   display: none;
-   z-index: 10;
-+  /* The shell body is overflow:hidden, so a popover taller than a short
-+     (landscape phone) viewport would be clipped with no way to reach its
-+     lower sections. */
-+  max-height: calc(100vh - 50px);
-+  /* dvh excludes a mobile browser's dynamic URL bar; 100vh is the fallback. */
-+  max-height: calc(100dvh - 50px);
-+  overflow-y: auto;
-+  box-sizing: border-box;
- }
- #fnpop.open {
-   display: block;
-@@ -102,6 +124,13 @@ iframe {
- #fnpop .sec {
-   margin-bottom: 14px;
- }
-+/* Inline "Install Freenet" pointer for visitors who have no peer yet. A plain
-+   underlined link in the text colour, so it stays inside the popover's
-+   near-monochrome palette rather than shouting in default link blue. */
-+#fnpop a.fninstall {
-+  color: #222;
-+  text-decoration: underline;
-+}
- #fnpop .sec:last-child {
-   margin-bottom: 0;
- }
-@@ -143,6 +172,28 @@ iframe {
-   font-size: 12px;
- }
+     /// The peer said it accepts no data on this path, so this node's gating or
+-    /// the peer's is wrong. Logged once per path. The path stays up: it costs
+-    /// nothing, and the same send would fail the same way on a new one.
++    /// the peer's is wrong. Logged once per path. New sends go on UDP from now
++    /// on. This side does not close the path: the refusing receiver does, with
++    /// DOWNGRADE, [`inbound::REFUSAL_CLOSE_DELAY`] after its first refusal, and
++    /// this side falls back on that close.
+     fn stop_sending_data(&self) {
+         self.stats.record_send_event(QuicSendEvent::DataRefused);
+         // No longer a path that carries data.
+@@ -988,6 +1003,57 @@ impl QuicPath {
+         self.heard.report_to(report);
+     }
  
-+/* Phone width: let the disclosure wrap instead of truncating, so the whole
-+   sentence survives, including its inline install link ("on this server" is
-+   also the answer to "how is this peer-to-peer with nothing installed?").
-+   Three lines covers a 320px screen. */
-+@media (max-width: 560px) {
-+  #fnbar {
-+    height: auto;
-+    min-height: 34px;
-+    padding-top: 4px;
-+    padding-bottom: 4px;
-+  }
-+  #fnbar .nt {
-+    white-space: normal;
-+    line-height: 1.25;
-+    font-size: 12px;
-+    display: -webkit-box;
-+    -webkit-box-orient: vertical;
-+    -webkit-line-clamp: 3;
-+    line-clamp: 3;
-+  }
-+}
++    /// A send timed out on this path with nothing acknowledged for the window
++    /// (`route::StallCount`), when the count read `acked`. A path that went dark
++    /// would otherwise take every new send until it is recycled: each short ends
++    /// `MaybeDelivered(TimedOut)`, is never resent and is lost, and an operation's
++    /// retry lands in the same place. Sends already on the path stay there, since
++    /// resending them could deliver a message twice.
++    pub(in crate::transport) fn become_suspect(&self, acked: u64) {
++        let mut since = self.suspect_since_acked.lock();
++        let entered = since.replace(acked).is_none();
++        self.suspect.store(true, Ordering::Release);
++        drop(since);
++        if entered {
++            self.stats.record_send_event(QuicSendEvent::SuspectEntered);
++            tracing::debug!(
++                remote = %self.connection.inner().remote_address(),
++                "QUIC path: sends time out and nothing is acknowledged; new data \
++                 goes on UDP until the peer acknowledges again"
++            );
++        }
++    }
 +
- /* Respect the OS dark-mode preference. Same restrained, near-monochrome
-    character as the light theme: charcoal bar, light-grey text, hairline
-    borders. */
-@@ -152,7 +203,8 @@ iframe {
-     border-bottom-color: #303032;
-     color: #98989c;
-   }
--  #fnbar .fn {
-+  #fnbar .fn,
-+  #fnbar a.fnbarinstall {
-     color: #ececee;
-   }
-   #fnbar .nt {
-@@ -182,13 +234,17 @@ iframe {
-     border-color: #3a3a3e;
-     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-     color: #c2c2c6;
-+    color-scheme: dark;
-   }
-   #fnpop h4 {
-     color: #88888c;
-   }
-   #fnpop p {
-     color: #a0a0a4;
-   }
-+  #fnpop a.fninstall {
-+    color: #e6e6e8;
-+  }
-   #fnok {
-     color: #5cbd83;
-   }
-```
-
-**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.html` (modified, +34/-5)
-```diff
-@@ -1,7 +1,21 @@
--<div id="fnbar" role="region" aria-label="Hosted proxy notice">
--  <span class="fn">Freenet</span
-+<div id="fnbar" role="region" aria-label="Hosted privacy notice">
-+  <a
-+    class="fn"
-+    href="https://freenet.org/"
-+    target="_blank"
-+    rel="noopener"
-+    title="What is Freenet?"
-+    >Freenet</a
-   ><span class="nt"
--    >Hosted proxy, not private. Your data is stored on this server.</span
-+    >Stored encrypted on this server.
-+    <a
-+      class="fninstall fnbarinstall"
-+      href="https://freenet.org/quickstart/"
-+      target="_blank"
-+      rel="noopener"
-+      >Install Freenet</a
-+    >
-+    for full privacy.</span
-   ><span id="fnacct"
-     ><button id="fnacctbtn" type="button">Account</button>
-     <div id="fnpop">
-@@ -23,7 +37,14 @@ <h4>Access key</h4>
-         <h4>Your own peer</h4>
-         <p>
-           Move your data to a Freenet peer you run yourself, fully
--          decentralized.
-+          decentralized. Don't have one yet?
-+          <a
-+            class="fninstall"
-+            href="https://freenet.org/quickstart/"
-+            target="_blank"
-+            rel="noopener"
-+            >Install Freenet</a
-+          >, then come back here.
-         </p>
-         <div class="row">
-           <button class="act" id="fnmigrate">Move to my peer</button
-@@ -32,7 +53,15 @@ <h4>Your own peer</h4>
-         <div id="fnmigrateout" hidden>
-           <p class="mhint">
-             This opens a one-time confirmation page on the Freenet peer running
--            on this computer. It expires in a few minutes.
-+            on this computer. It expires in a few minutes. If that page can't
-+            connect, your peer isn't running, or Freenet isn't installed yet:
-+            <a
-+              class="fninstall"
-+              href="https://freenet.org/quickstart/"
-+              target="_blank"
-+              rel="noopener"
-+              >install Freenet</a
-+            >, then try again.
-           </p>
-           <div class="row">
-             <a
++    /// Whether the path is suspect: new data goes on UDP. It stops being suspect
++    /// the first time this is asked after the connection acknowledged something
++    /// new, which quinn's keepalive brings within its interval on a live path.
++    ///
++    /// A path that stays dark ends on quinn's idle timeout (120 s in
++    /// production), not on the stall close: once it is suspect no new send
++    /// reaches it, so `route::STALLED_SENDS_LIMIT` timeouts in a row happen only
++    /// if that many sends were already on it. Nothing is lost meanwhile, since
++    /// new data goes on UDP.
++    pub(in crate::transport) fn is_suspect(&self) -> bool {
++        if !self.suspect.load(Ordering::Acquire) {
++            return false;
++        }
++        let Some(progress) = &self.ack_progress else {
++            return false;
++        };
++        let mut since = self.su
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6125** (2026-11-06): feat: skip payloads already merged into the local state (@sanity)
+- **PR #6122** (2026-11-06): fix(transport): stop sending on a QUIC path that has gone dark (@sanity)
 - **PR #6119** (2026-11-05): fix(test): advance VirtualTime in controlled simulations (@sanity)
 - **PR #6118** (2026-11-05): feat(transport): export QUIC data path telemetry (@sanity)
 - **PR #6117** (2026-11-05): fix(hosted): orient cold visitors and point them at the installer (@sanity)
 - **PR #6114** (2026-11-05): feat(transport): send QUIC data on the path with fallback to UDP (@sanity)
-- **PR #6113** (2026-11-05): test(transport): pin the QUIC fair share where it holds and record the default-minimum case (@sanity)
-- **PR #6111** (2026-11-05): feat(transport): cap the QUIC window to the configured bandwidth (@sanity)
 
 ---
 
@@ -2981,13 +2300,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): export QUIC data path telemetry (#6118)
+## X. transport): stop sending on a QUIC path that has gone dark (#6122)
 
 **RULE**:
 When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `196263ba`: transport): export QUIC data path telemetry (#6118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8029535e`: transport): stop sending on a QUIC path that has gone dark (#6122). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
@@ -2995,35 +2314,31 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  Not built: the `transport=legacy|quic` attribute on connection, transfer and
-  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
-  events (those fields are None today); the per-peer byte counters and the
-  dashboard for QUIC traffic; a per-path memory estimate.
-
-QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
-counts of what paths' data sends and receives did, in one nested
-`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
-gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
-recorded where the path decides it, into the path's `QuicPathStats` and the node's
-`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
-a test passes its own; tests read their own, never the global).
-  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
-  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-  outcome, refusals by frame kind as short_refused_budget and
-  stream_ref
+  A path gone dark: the first send timeout that counts toward the stall close
+  (nothing acknowledged for the window, no cap hold) makes the path suspect
+  (QuicPath::is_suspect, suspect_entered). data_route() then gives no route and
+  the worker sends what it takes on UDP, so new data goes on UDP while sends
+  already on the path stay there (a resend could deliver twice). The first time
+  it is asked after the acknowledgement count moved (quinn's keepalive brings one
+  within 15 s on a live path), the path takes data again (suspect_left). Without
+  it every short into a dark path ends MaybeDelivered(TimedOut), is never resent
+  and is lost, and an operation's retry lands in the same place until quinn's
+  idle timeout. A path that stays dark ends on quinn's idle timeout (120 s in
+  production, Fallback(Idle)), not on the stall close: once suspect no new send
+  reaches it, so the stall close fires only when STALLED_SENDS_LIMIT sends were
+  already on it. New data goes on UDP meanwhile, so nothing is lost. Entering
+  and leaving are under one lock. Fallback is a testing-period crutch: this
+  routing goes with it when the legacy transport is removed.
+  Receiver side: a path whose own 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
-  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
-  read zero in shadow; the `transport=legacy|quic` connection attribute; a
-  per-path memory estimate.
-Not here: export of the QUIC-only counters (per path, QuicPath::stats).
+  NOT_ACCEPTING_DATA: this node's gating or the peer's is wrong. Logged once per
+  path, counted (data_refused, and every time), new sends go on UDP and the path
+  stays up. send_data has three states so a send racing the refusal does not trip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `196263ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8029535e` are properly handled with clean fallback behavior.

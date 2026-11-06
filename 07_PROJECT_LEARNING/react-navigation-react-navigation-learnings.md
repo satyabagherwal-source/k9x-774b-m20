@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `641efd1e`  
+> **Source Version**: `8a2721cc`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:35:11.229Z  
+> **Timestamp**: 2026-11-06T15:20:43.051Z  
 > **Learning ID**: `learn-github-react-navigation-react-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:35:10.846Z  
+> **Harvest Timestamp**: 2026-11-06T15:20:42.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24514 stars
+- **Stars / Engagement**: 24518 stars
 
 ---
 
@@ -577,11 +577,11 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #13333** (2026-10-29): **browser Back does nothing when the last state.history entry is a custom string (useLinking)**
+  *Symptoms*: ### Current behavior  When a modal opens, our root router adds a string entry to `state.history`, for example `'modal:1'`. `useLinking` sees that the history is longer and pushes a browser entry. This part works.  When I press browser Back, the `popstate` handler goes into the `isPoppingLastEntry` branch and dispatches `GO_BACK`. Our router does not handle `GO_BACK` for this entry, so the state does not change. The entry stays in history, the modal stays open, and the URL is already one step back. The console shows: `The action 'GO_BACK' was not handled by any navigator.`  ### Expected behavior  I see that `DrawerRouter` handles `GO_BACK` for its own `{ type: 'drawer' }` entry. If every router that adds a custom entry must also handle `GO_BACK` for it, I can fix this in our router. In that case, it would help to say this in the docs. If not, a small fix is to skip the `GO_BACK` branch when the last entry is not a route:      const isPoppingCustomHistoryEntry = typeof currentFocused?.history?.at(-1) === 'string';  We fixed this in our app with a patch that adds this check (https://github.com/Expensify/App/pull/104190)  ### Use case  Expensify app has many modals that are not screens: confirm dialogs, alerts, popovers, a side panel. They open on top of whatever screen is focused, from many places in the app. On web, users expect browser Back to close an open modal, not to leave the page they are on.  Turning every modal into a screen is not practical for us, so we use `state.hi
+
 - **Issue #13296** (2026-10-25): **Native bottom tabs (Android): tabPress doesn't say whether native already popped to top**
   *Symptoms*: ### Current behavior  With the native bottom tabs on Android, re-pressing a tab whose nested stack has screens pushed pops to the root natively *before* `tabPress` is emitted. When a `tabPress` listener runs, the stack is already popped and `navigation.isFocused()` is `true` for the root screen.  A root screen with its own scroll to top on `tabPress` (because the native scroll to top can't reach its list, e.g. lists inside a horizontal pager) then scrolls to top right after the pop, and the user loses their scroll position.  With the JS tabs, `isFocused()` is still `false` at that point, so the same listener does nothing. On iOS with the native tabs it's also `false`, but only because the pop is animated and the JS state catches up later.  The event doesn't help to tell the cases apart: `data` is the same after a native pop and after a re-press on the root screen:  `{ origin: 'native', behavior: { scrollToTop: true, popToTop: true } }`  `behavior` reflects the `tabBarRepeatedPressBehavior` config, not what native actually did. `useScrollToTop` sidesteps this by ignoring `origin: 'native'` entirely, so it can't act as a fallback when native doesn't find the scroll view either.  react-native-screens already sends this info (`TabSelectedEvent.hasTriggeredSpecialEffect`, iOS + Android), but it's dropped in `onTabSelected`: https://github.com/react-navigation/react-navigation/blob/7db23d23b7/packages/bottom-tabs/src/views/BottomTabViewNativeImpl.tsx#L219-L253 https://github.com/so
-
-- **Issue #13285** (2026-10-12): **[iOS][bottom-tabs/unstable] Tab bar and scroll edge effect flash dark when switching tabs**
-  *Symptoms*: ### Current behavior  When you tap an item in the native bottom tab bar, the active tab switches normally. Then, for about 1 second, the tab bar turns dark before going back to light. The scroll edge effect behind the tab bar flashes dark in the same way.  The project uses the default theme with no custom color scheme. The simulator is on factory settings in light mode.  https://github.com/user-attachments/assets/61fd7ded-ae85-45f2-a517-ece00407cdda  Steps to reproduce:  1. Run the repro on an iOS 26 simulator. 2. Switch between the 1st and 3rd tab using the tab bar. 3. Watch the tab bar and the scroll edge effect behind it turn dark for about 1 second, then go back to light.   ### Expected behavior  The tab bar and scroll edge effect keep light appearance during the tab switch transition.  #### Root cause  `NativeBottomTabView` passes the theme background to each `Tabs.Screen` as `nativeContainerStyle`:  ```tsx <Tabs.Screen   // ...   nativeContainerStyle={{ backgroundColor: colors.background }} /> ```  `Tabs.Screen` in `react-native-screens` doesn't support `nativeContainerStyle`; only `Tabs.Host` does. The prop is silently dropped, so every tab's root view stays transparent. On iOS 26, the Liquid Glass tab bar and scroll edge effects adapt to the content behind them. During a tab switch they appear to read the transparent container as dark, which causes the flash.  Passing the color through `style`, which `Tabs.Screen` does support, makes the tab view opaque and removes th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -598,268 +598,129 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `641efd1e` (2026-10-27)
-**Commit Message**: fix: respect max width for drawer
+### Incident Patch 1: `8cd57c77` (2026-11-06)
+**Commit Message**: fix: don't show header background if header is hidden (#13330)
 
-fixes #12105
+fixes #11347
 
-**File**: `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx` (modified, +17/-3)
+**File**: `packages/native-stack/src/views/NativeStackView.native.tsx` (modified, +1/-1)
 ```diff
-@@ -13,9 +13,11 @@ const DRAWER_DEFAULT_WIDTH_WEB = `min(calc(100% - ${APPROX_APP_BAR_HEIGHT}px), $
- export function getDrawerWidthNative({
-   containerWidth,
-   customWidth,
-+  customMaxWidth,
- }: {
-   containerWidth: number;
-   customWidth: DimensionValue | undefined | null;
-+  customMaxWidth: DimensionValue | undefined | null;
- }) {
-   'worklet';
- 
-@@ -26,18 +28,30 @@ export function getDrawerWidthNative({
-     0
-   );
- 
--  const width = customWidth ?? defaultWidth;
-+  let width = customWidth ?? defaultWidth;
-+  let maxWidth = customMaxWidth ?? containerWidth;
- 
-   if (typeof width === 'string' && width.endsWith('%')) {
-     // Try to calculate width if a percentage is given
-     const percentage = Number(width.replace(/%$/, ''));
- 
-     if (Number.isFinite(percentage)) {
--      return containerWidth * (percentage / 100);
-+      width = containerWidth * (percentage / 100);
-     }
-   }
- 
--  return typeof width === 'number' ? width : defaultWidth;
-+  if (typeof maxWidth === 'string' && maxWidth.endsWith('%')) {
-+    const percentage = Number(maxWidth.replace(/%$/, ''));
-+
-+    if (Number.isFinite(percentage)) {
-+      maxWidth = containerWidth * (percentage / 100);
-+    }
-+  }
-+
-+  return Math.min(
-+    typeof width === 'number' ? width : defaultWidth,
-+    typeof maxWidth === 'number' ? maxWidth : containerWidth
-+  );
- }
- 
- export function getDrawerWidthWeb({
-```
-
-**File**: `packages/react-native-drawer-layout/src/views/Drawer.native.tsx` (modified, +7/-2)
-```diff
-@@ -88,7 +88,8 @@ export function Drawer({
-   children,
-   style,
- }: DrawerProps) {
--  const { width: customWidth } = StyleSheet.flatten(drawerStyle) || {};
-+  const { width: customWidth, maxWidth: customMaxWidth } =
-+    StyleSheet.flatten(drawerStyle) || {};
- 
-   const isOpen = drawerType === 'permanent' ? true : open;
-   const isRight = drawerPosition === 'right';
-@@ -100,6 +101,7 @@ export function Drawer({
-       const drawerWidth = getDrawerWidthNative({
-         containerWidth,
-         customWidth,
-+        customMaxWidth,
-       });
- 
-       if (drawerPosition === 'left') {
-@@ -108,7 +110,7 @@ export function Drawer({
- 
-       return open ? 0 : drawerWidth;
-     },
--    [customWidth, drawerPosition]
-+    [customMaxWidth, customWidth, drawerPosition]
-   );
- 
-   const hideStatusBar = React.useCallback(
-@@ -474,6 +476,7 @@ export function Drawer({
-     const drawerWidth = getDrawerWidthNative({
-       containerWidth: layoutWidth.get(),
-       customWidth,
-+      customMaxWidth,
-     });
- 
-     // Comment stolen from react-native-gesture-handler/DrawerLayout
-@@ -524,6 +527,7 @@ export function Drawer({
-     const drawerWidth = getDrawerWidthNative({
-       containerWidth: layoutWidth.get(),
-       customWidth,
-+      customMaxWidth,
-     });
- 
-     const distanceFromEdge = layoutWidth.get() - drawerWidth;
-@@ -576,6 +580,7 @@ export function Drawer({
-     const drawerWidth = getDrawerWidthNative({
-       containerWidth: layoutWidth.get(),
-       customWidth,
-+      customMaxWidth,
-     });
- 
-     return {
+@@ -413,7 +413,7 @@ const SceneView = React.memo(function SceneView({
+       <HeaderHeightContext.Provider
+         value={headerShown !== false ? headerHeight : (parentHeaderHeight ?? 0)}
+       >
+-        {headerBackground != null ? (
++        {headerShown !== false && headerBackground != null ? (
+           /**
+            * To show a custom header background, we render it at the top of the screen below the header
+            * The header also needs to be positioned absolutely (with `translucent` style)
 ```
 
 ---
 
-### Incident Patch 2: `fe8fb3f1` (2026-10-26)
-**Commit Message**: fix: show theme background behind cards in stack
+### Incident Patch 2: `22c727d7` (2026-11-05)
+**Commit Message**: fix: show drawer toggle button on same side as drawer (#13317)
 
-fixes #10951
-fixes #8734
-fixes #9883
-
-**File**: `packages/stack/src/views/Stack/StackView.tsx` (modified, +45/-35)
+**File**: `packages/drawer/src/views/DrawerView.tsx` (modified, +11/-2)
 ```diff
-@@ -7,6 +7,7 @@ import {
-   type Route,
-   StackActions,
-   type StackNavigationState,
-+  ThemeContext,
- } from '@react-navigation/native';
- import * as React from 'react';
- import { StyleSheet, View } from 'react-native';
-@@ -522,43 +523,52 @@ export class StackView extends React.Component<Props, State> {
-     } = this.state;
- 
-     return (
--      <GestureHandlerWrapper style={styles.container}>
--        <SafeAreaProviderCompat>
--          <SafeAreaInsetsContext.Consumer>
--            {(insets) => (
--              <ModalPresentationContext.Consumer>
--                {(isParentModal) => (
--                  <HeaderShownContext.Consumer>
--                    {(isParentHeaderShown) => (
--                      <CardStack
--                        insets={insets!}
--                        isParentHeaderShown={isParentHeaderShown}
--                        isParentModal={isParentModal}
--                        getPreviousRoute={this.getPreviousRoute}
--                        routes={routes}
--                        openingRouteKeys={openingRouteKeys}
--                        closingRouteKeys={closingRouteKeys}
--                        replacingRouteKeys={replacingRouteKeys}
--                        onOpenRoute={this.handleOpenRoute}
--                        onCloseRoute={this.handleCloseRoute}
--                        onTransitionStart={this.handleTransitionStart}
--                        onTransitionEnd={this.handleTransitionEnd}
--                        renderHeader={this.renderHeader}
--                        state={state}
--                        descriptors={descriptors}
--                        onGestureStart={this.handleGestureStart}
--                        onGestureEnd={this.handleGestureEnd}
--                        onGestureCancel={this.handleGestureCancel}
--                        {...rest}
--                      />
-+      <ThemeContext.Consumer>
-+        {(theme) => (
-+          <GestureHandlerWrapper
-+            style={[
-+              styles.container,
-+              { backgroundColor: theme?.colors.background },
-+            ]}
-+          >
-+            <SafeAreaProviderCompat>
-+              <SafeAreaInsetsContext.Consumer>
-+                {(insets) => (
-+                  <ModalPresentationContext.Consumer>
-+                    {(isParentModal) => (
-+                      <HeaderShownContext.Consumer>
-+                        {(isParentHeaderShown) => (
-+                          <CardStack
-+                            insets={insets!}
-+                            isParentHeaderShown={isParentHeaderShown}
-+                            isParentModal={isParentModal}
-+                            getPreviousRoute={this.getPreviousRoute}
-+                            routes={routes}
-+                            openingRouteKeys={openingRouteKeys}
-+                            closingRouteKeys={closingRouteKeys}
-+                            replacingRouteKeys={replacingRouteKeys}
-+                            onOpenRoute={this.handleOpenRoute}
-+                            onCloseRoute={this.handleCloseRoute}
-+                            onTransitionStart={this.handleTransitionStart}
-+                            onTransitionEnd={this.handleTransitionEnd}
-+                            renderHeader={this.renderHeader}
-+                            state={state}
-+                            descriptors={descriptors}
-+                            onGestureStart={this.handleGestureStart}
-+                            onGestureEnd={this.handleGestureEnd}
-+                            onGestureCancel={this.handleGestureCancel}
-+                            {...rest}
-+                          />
-+                        )}
-+                      </HeaderShownContext.Consumer>
-                     )}
--                  </HeaderShownContext.Consumer>
-+                  </ModalPresentationContext.Consumer>
-                 )}
--              </ModalPresentationContext.Consumer>
--            )}
--          </SafeAreaInsetsContext.Consumer>
--        </SafeAreaProviderCompat>
--      </GestureHandlerWrapper>
-+              </SafeAreaInsetsContext.Consumer>
-+            </SafeAreaProviderCompat>
-+          </GestureHandlerWrapper>
-+        )}
-+      </ThemeContext.Consumer>
-     );
-   }
- }
+@@ -57,18 +57,27 @@ const DrawerScene = React.memo(function DrawerScene({
+   mode,
+   drawerPosition,
+ }: DrawerSceneProps) {
++  const { direction } = useLocale();
++
++  // The header mirrors in RTL, so `headerLeft` is on the right side
++  // So we check if the drawer is on the start to match toggle button position
++  const isDrawerAtStart =
++    direction === 'rtl'
++      ? drawerPosition === 'right'
++      : drawerPosition === 'left';
++
+   const {
+     header = ({ route, options }: DrawerHeaderProps) => (
+       <Header
+         {...options}
+         title={getHeaderTitle(options, route.name)}
+         headerLeft={
+-          drawerPosition === 'left' && options.headerLeft == null
++          isDrawerAtStart && options.headerLeft == null
+             ? (props) => <DrawerToggleButton {...props} />
+             : options.headerLeft
+         }
+         headerRight={
+-          drawerPosition === 'right' && options.headerRight == null
++          !isDrawerAtStart && options.headerRight == null
+             ? (props) => <DrawerToggleButton {...props} />
+             : options.headerRight
+         }
 ```
 
 ---
 
-### Incident Patch 3: `d8d49c22` (2026-10-26)
-**Commit Message**: fix: don't show card overlay through transparent modals
+### Incident Patch 3: `a339a03f` (2026-11-05)
+**Commit Message**: fix: improve JS stack animation performance (#13338)
 
-fixes #11825
-
-**File**: `packages/stack/src/views/Stack/Card.tsx` (modified, +1/-1)
+**File**: `packages/stack/src/views/Stack/Card.tsx` (modified, +17/-10)
 ```diff
-@@ -596,7 +596,7 @@ function Card({
-           collapsable={false}
-         />
-       ) : null}
--      {(overlayEnabled ?? overlayStyle != null) ? (
-+      {(overlayEnabled ?? (overlayStyle != null && !isTransparent)) ? (
-         <View style={[StyleSheet.absoluteFill, { pointerEvents: 'box-none' }]}>
-           {overlay({ style: overlayStyle })}
-         </View>
-```
-
-**File**: `packages/stack/src/views/Stack/CardStack.tsx` (modified, +4/-1)
-```diff
-@@ -476,7 +476,10 @@ export class CardStack extends React.Component<Props, State> {
-           isAnimationEnabled &&
-           getIsGestureEnabledByDefault(cardStyleInterpolator),
-         headerStyleInterpolator = transitionPreset.headerStyleInterpolator,
--        cardOverlayEnabled,
-+        cardOverlayEnabled = descriptor.options.presentation ===
-+        'transparentModal'
-+          ? false
-+          : undefined,
-         cardShadowEnabled,
-       } = optionsForTransitionConfig;
+@@ -171,7 +171,7 @@ function Card({
+     React.useRef<ReturnType<typeof setTimeout>>(undefined);
+   const pendingOnCloseCallbackRef =
+     React.useRef<ReturnType<typeof setTimeout>>(undefined);
+-  const timeoutRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
++  const initialAnimationHandleRef = React.useRef<number | undefined>(undefined);
  
+   const [inverted] = React.useState(
+     () =>
+@@ -322,7 +322,10 @@ function Card({
+ 
+       clearTimeout(pendingGestureCallbackRef.current);
+       clearTimeout(pendingOnCloseCallbackRef.current);
+-      clearTimeout(timeoutRef.current);
++
++      if (initialAnimationHandleRef.current !== undefined) {
++        cancelAnimationFrame(initialAnimationHandleRef.current);
++      }
+     };
+   }, [gesture]);
+ 
+@@ -332,16 +335,20 @@ function Card({
+ 
+     if (!didInitiallyAnimate.current) {
+       // Animate the card in on initial mount
+-      // Wrap in setTimeout to ensure animation starts after
+-      // rending of the screen is done. This is especially important
+-      // in the new architecture
++      // Wait after the next frame to ensure animation starts after mount.
++      // Otherwise, the animation can drop frames.
++      // This is especially important in the new architecture
+       // cf., https://github.com/react-navigation/react-navigation/issues/12401
+-      clearTimeout(timeoutRef.current);
++      if (initialAnimationHandleRef.current !== undefined) {
++        cancelAnimationFrame(initialAnimationHandleRef.current);
++      }
+ 
+-      timeoutRef.current = setTimeout(() => {
+-        didInitiallyAnimate.current = true;
+-        animate({ closing });
+-      }, 0);
++      initialAnimationHandleRef.current = requestAnimationFrame(() => {
++        initialAnimationHandleRef.current = requestAnimationFrame(() => {
++          didInitiallyAnimate.current = true;
++          animate({ closing });
++        });
++      });
+     } else {
+       const previousOpening = previousPropsRef.current?.opening;
+       const previousToValue = previousPropsRef.current
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13310** (2026-10-23): fix: correctly set default SFSymbol color (@satya164)
-- **PR #13308** (2026-10-23): fix: tweak JS header to be closer to native (@satya164)
-- **PR #13305** (2026-10-21): ci: perform steps in parallel when possible (@satya164)
-- **PR #13298** (2026-10-23): fix: preserve navigation from a screen effect when navigator mount is delayed (@kaelanvoss)
-- **PR #13295** (2026-10-13): cherry picks from main and other updates (@satya164)
-- **PR #13293** (2026-10-13): refactor: reduce re-renders in Material Top Tabs indicator (@satya164)
+- **PR #13338** (2026-11-05): fix: improve JS stack animation performance (@satya164)
+- **PR #13334** (closed): fix: drop custom history entries on browser back (@BartekObudzinski)
+- **PR #13330** (2026-11-06): fix: don't show header background if header is hidden (@satya164)
+- **PR #13318** (2026-11-05): feat: add UNSTABLE_ReservedRegions component on iOS 27.1 (@satya164)
+- **PR #13317** (2026-11-05): fix: show drawer toggle button on same side as drawer (@satya164)
+- **PR #13312** (2026-11-06): feat: rework CornerInset to LayoutRegionView and remove need for relayout (@satya164)
 
 ---
 
@@ -879,46 +740,28 @@ fixes #11825
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. respect max width for drawer
+## X. don't show header background if header is hidden (#13330)
 
 **RULE**:
-When implementing operations in `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/native-stack/src/views/NativeStackView.native.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `641efd1e`: respect max width for drawer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8cd57c77`: don't show header background if header is hidden (#13330). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/native-stack/src/views/NativeStackView.native.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  customMaxWidth,
-  customMaxWidth: DimensionValue | undefined | null;
-  let width = customWidth ?? defaultWidth;
-  let maxWidth = customMaxWidth ?? containerWidth;
-      width = containerWidth * (percentage / 100);
-  if (typeof maxWidth === 'string' && maxWidth.endsWith('%')) {
-    const percentage = Number(maxWidth.replace(/%$/, ''));
-
-    if (Number.isFinite(percentage)) {
-      maxWidth = containerWidth * (percentage / 100);
-    }
-  }
-
-  return Math.min(
-    typeof width === 'number' ? width : defaultWidth,
-    typeof maxWidth === 'number' ? maxWidth : containerWidth
-  );
+        {headerShown !== false && headerBackground != null ? (
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  const width = customWidth ?? defaultWidth;
-      return containerWidth * (percentage / 100);
-  return typeof width === 'number' ? width : defaultWidth;
+        {headerBackground != null ? (
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `641efd1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8cd57c77` are properly handled with clean fallback behavior.

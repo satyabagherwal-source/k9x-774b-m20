@@ -7900,3 +7900,7 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `84ccee7a` | Multi-dimensional audit evidence | 2026-11-06T15:13:16.776Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `2709799d` | Multi-dimensional audit evidence | 2026-11-06T15:13:20.728Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9771c244` | Multi-dimensional audit evidence | 2026-11-06T15:13:20.965Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `8a2721cc` | Multi-dimensional audit evidence | 2026-11-06T15:20:44.512Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2a25eecd` | Multi-dimensional audit evidence | 2026-11-06T15:20:46.988Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `eb7d93e0` | Multi-dimensional audit evidence | 2026-11-06T15:20:49.234Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a41e019a` | Multi-dimensional audit evidence | 2026-11-06T15:20:53.687Z |
