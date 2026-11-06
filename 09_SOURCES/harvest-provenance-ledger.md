@@ -7958,3 +7958,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-06T23:12:02.563Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `12053961` | Multi-dimensional audit evidence | 2026-11-06T23:12:03.080Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6f0ab313` | Multi-dimensional audit evidence | 2026-11-06T23:12:07.121Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `1bc04739` | Multi-dimensional audit evidence | 2026-11-06T23:19:54.865Z |
+| `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `3a9b151d` | Multi-dimensional audit evidence | 2026-11-06T23:19:55.035Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `d03290ee` | Multi-dimensional audit evidence | 2026-11-06T23:19:57.994Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `49808ff5` | Multi-dimensional audit evidence | 2026-11-06T23:20:00.235Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `e2501b0d` | Multi-dimensional audit evidence | 2026-11-06T23:20:02.704Z |

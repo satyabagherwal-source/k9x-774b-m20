@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T23:12:07.139Z",
+  "last_updated": "2026-11-06T23:20:02.723Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
-      "verified_at": "2026-11-06T15:20:49.252Z",
+      "content_hash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
+      "verified_at": "2026-11-06T23:20:00.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:20:49.252Z"
+      "last_updated": "2026-11-06T23:20:00.253Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6501,14 +6501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-amplify-amplify-js",
-      "content_hash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
-      "verified_at": "2026-10-25T02:18:52.279Z",
+      "content_hash": "e42f9f6df4bd28d58015ebc0d659de71305179034dad2094e8932fa185c371fa",
+      "verified_at": "2026-11-06T23:19:55.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:18:52.279Z"
+      "last_updated": "2026-11-06T23:19:55.045Z"
     },
     "go-eagle/eagle": {
       "repository": "go-eagle/eagle",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
-      "verified_at": "2026-11-05T00:14:59.336Z",
+      "content_hash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
+      "verified_at": "2026-11-06T23:19:58.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:14:59.336Z"
+      "last_updated": "2026-11-06T23:19:58.012Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
-      "verified_at": "2026-11-05T13:20:32.633Z",
+      "content_hash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
+      "verified_at": "2026-11-06T23:20:02.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:20:32.633Z"
+      "last_updated": "2026-11-06T23:20:02.722Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -13671,14 +13671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-scrapy",
-      "content_hash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
-      "verified_at": "2026-11-03T19:24:15.016Z",
+      "content_hash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
+      "verified_at": "2026-11-06T23:19:54.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:24:15.016Z"
+      "last_updated": "2026-11-06T23:19:54.889Z"
     },
     "krzysztofzablocki/Inject": {
       "repository": "krzysztofzablocki/Inject",

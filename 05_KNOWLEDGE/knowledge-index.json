@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T23:12:07.029Z",
+  "last_updated": "2026-11-06T23:20:02.609Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4477,11 +4477,16 @@
       "slug": "aws-amplify-amplify-js",
       "platform": "github",
       "source_url": "https://github.com/aws-amplify/amplify-js",
-      "source_version": "6334056c",
-      "content_hash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
+      "source_version": "3a9b151d",
+      "content_hash": "e42f9f6df4bd28d58015ebc0d659de71305179034dad2094e8932fa185c371fa",
       "dossier_path": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "auth): revoke refresh token when global sign out fails (#15009)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1942,
           "title": "auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)",
@@ -4498,7 +4503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:18:52.198Z",
+      "verified_at": "2026-11-06T23:19:54.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9087,11 +9092,16 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6e727661",
-      "content_hash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
+      "source_version": "d03290ee",
+      "content_hash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci: Fix repository for free-disk-space action",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2030,
           "title": "deps): update vulnerable dependencies [security]",
@@ -9128,7 +9138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:14:59.201Z",
+      "verified_at": "2026-11-06T23:19:57.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14828,8 +14838,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "eb7d93e0",
-      "content_hash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
+      "source_version": "49808ff5",
+      "content_hash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14846,6 +14856,11 @@
         {
           "number": null,
           "title": "transport): stop sending on a QUIC path that has gone dark (#6122)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): export quinn's per-path QUIC loss (#6124)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15064,7 +15079,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:20:49.113Z",
+      "verified_at": "2026-11-06T23:20:00.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38209,11 +38224,16 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "5def2611",
-      "content_hash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
+      "source_version": "e2501b0d",
+      "content_hash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "bump dependencies with critical security advisories (#4883)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2448,
           "title": "require a primary key to enable MemWAL (#4561)",
@@ -38300,7 +38320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:20:32.539Z",
+      "verified_at": "2026-11-06T23:20:02.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76790,12 +76810,17 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "2d22bf9a",
-      "content_hash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
+      "source_version": "1bc04739",
+      "content_hash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
         "Rule 1629",
+        {
+          "number": null,
+          "title": "Limit memory used by media pipeline and other download_async() requests (#8417)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2816,
           "title": "Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)",
@@ -76837,7 +76862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:24:14.868Z",
+      "verified_at": "2026-11-06T23:19:54.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

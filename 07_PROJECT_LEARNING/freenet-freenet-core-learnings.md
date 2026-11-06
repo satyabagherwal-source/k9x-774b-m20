@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `eb7d93e0`  
+> **Source Version**: `49808ff5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:20:47.249Z  
+> **Timestamp**: 2026-11-06T23:19:58.287Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:20:47.022Z  
+> **Harvest Timestamp**: 2026-11-06T23:19:57.465Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6131** (2026-11-06): **test(util): count the summary thread's allows in the rate-limit stress test**
+  *Symptoms*: ## Problem  `util::rate_limit_layer::tests::per_callsite_concurrent_writers_and_summary_no_deadlock` failed once under a loaded `cargo test` run on nova, with `allowed=22 suspiciously low — fewer than CAP/2=25`, and passed 40 of 40 runs alone.  The test runs eight writers and a summary thread on one callsite with a cap of 50 per one-second window. The summary thread calls `should_allow_inner` on the same callsite in a loop, so it draws on the same cap, but only the writers' allows were counted. When the summary thread ran first, it could take most of the first window's 50, and the writers finish all 8000 calls inside that window. That left the writers' count under the `CAP / 2` floor. The limiter is correct; the test's accounting was not.  ## Approach  Count every caller's allows and calls, writers and summary thread alike. The floor then holds by construction (the first window admits the first `CAP` calls, whoever makes them), so it is raised from `CAP / 2` to `CAP`. The upper bound (`CAP * 10`) and the "cap enforced" check (`allowed < calls`) are unchanged in meaning. The test body moves into a shared helper so the bad schedule can be forced.  ## Testing  - New `per_callsite_summary_thread_ahead_of_the_writers` forces the schedule that failed: the writers start only after the summary thread has made `CAP` calls. Counting only the writers' allows (the old accounting) fails it 3 of 3 runs. With this change it passes. - Both tests passed 200 of 200 repeated runs (`--test-threa
+
 - **Issue #6125** (2026-11-06): **feat: skip payloads already merged into the local state**
   *Symptoms*: ## Problem  A contract whose merge does not converge can keep a set of peers replaying a small fixed set of payloads to each other indefinitely. Field telemetry shows a few such contracts carrying whole-state payloads thousands of times per day, and the existing 60 s `BroadcastDedupCache` does not stop it, because the replay period is close to its TTL. None of the existing limits bind (cost floors, per-pair rate limits, merge backoff all sit well above or outside this traffic).  The direction for RFC #5320 (tracked in #5906) is that nodes do not remove contracts for breaking a merge law: any removal rule can be triggered by crafted inputs, including against contracts whose honest use never breaks the laws. Instead a node declines work that a lawful contract never needs.  ## Solution  A lawful merge is idempotent, and a payload a replica has already merged lies below its current state, so merging it again changes nothing. A node therefore records a keyed 64-bit hash of each payload it merges (per contract, 1024 newest, `ahash::RandomState` with per-process random keys) and skips a payload from a peer whose hash was recorded within the last 15 minutes.  - Check: before the WASM merge, after the 60 s dedup cache, in `drive_relay_broadcast_to` and `apply_streaming_broadcast`. Anti-entropy heals pushed by peers arrive through the same drivers. A `ResyncResponse` is never skipped: this node requested it because the states differ. - Record: only in the executor, after a merge that c
-
-- **Issue #6122** (2026-11-06): **fix(transport): stop sending on a QUIC path that has gone dark**
-  *Symptoms*: ## Problem  A QUIC data path can go dark: its datagrams stop arriving while the UDP session between the same two peers is fine. Before this change, a path in that state kept taking new data. Each short ended `MaybeDelivered(TimedOut)`, was never resent and was lost, and an operation's retry was routed back onto the same path. The path recovered only through the stall close or quinn's idle timeout.  A second case: a peer that advertised its data bit but refuses data (a gating bug on its side) left the path up. The sender saw a refusal per send and moved each to UDP, and nothing ever ended the path.  ## Approach  - **Suspect path.** When a send times out and nothing has been acknowledged for the stall window (`route::StallCount`, now returning a `StallVerdict`), the path becomes suspect (`QuicPath::become_suspect`). While it is suspect, `Session::data_route` returns `None` and the route worker sends queued shorts on UDP. It stops being suspect the first time it is asked after the connection acknowledges something new. Sends already on the path stay there, since resending them could deliver a message twice. A path that stays dark still ends on the stall close or the idle timeout, which then falls back as before. - **Refusal close.** A receiver that refuses data on a path that accepts none closes the path with DOWNGRADE after its first refusal, once, after `REFUSAL_CLOSE_DELAY` (2 s), so the stops it sent reach the sender first. It is counted as `ClosedRefusingData`. - New counts
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/42143906636) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Performance Benchmark Regressions Detected  Found 3 benchmark(s) with performance regressions:  - **`level0/crypto/nonce/counter_with_connid`**: +197.61% - **`level0/crypto/nonce/counter`**: +184.69% - **`level0/crypto/nonce/random`**: +15.660%  ### ⚠️ Important: This may be a false positive!  **Common causes of false positives:** 1. **Stale baseline**: If recent PRs improved performance on `main`, this PR (which doesn't include those changes) will show as "regressed" when compared to the new baseline 2. **GitHub runner variance**: Benchmarks run on shared `ubuntu-latest` runners with variable CPU contention 3. **Old baseline**: The baseline might be from an older `main` commit if the cache restore used `restore-keys` fallback  **To verify if this is a real regression:** 1. Check if recent commits on `main` touched transport or benchmark code 2. Merge `main` into your branch and re-run benchmarks 3. Review the baseline age in the "Download main branch baseline" step  > This is in
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,525 +1759,1304 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8029535e` (2026-11-06)
-**Commit Message**: fix(transport): stop sending on a QUIC path that has gone dark (#6122)
+### Incident Patch 1: `49808ff5` (2026-11-06)
+**Commit Message**: feat(transport): export quinn's per-path QUIC loss (#6124)
 
-**File**: `.claude/rules/transport.md` (modified, +27/-3)
+**File**: `.claude/rules/transport.md` (modified, +26/-2)
 ```diff
-@@ -1944,9 +1944,33 @@ QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
-   route, so a connection with no route (shadow, the default on Linux and macOS)
-   sends without taking the session's lock. enable_data runs once per activation
-   (debug assertion); a second route would orphan the first one's worker.
--  NOT_ACCEPTING_DATA: this node's gating or the peer's is wrong. Logged once per
--  path, counted (data_refused, and every time), new sends go on UDP and the path
--  stays up. send_data has three states so a send racing the refusal does not trip
-+  A path gone dark: the first send timeout that counts toward the stall close
-+  (nothing acknowledged for the window, no cap hold) makes the path suspect
-+  (QuicPath::is_suspect, suspect_entered). data_route() then gives no route and
-+  the worker sends what it takes on UDP, so new data goes on UDP while sends
-+  already on the path stay there (a resend could deliver twice). The first time
-+  it is asked after the acknowledgement count moved (quinn's keepalive brings one
-+  within 15 s on a live path), the path takes data again (suspect_left). Without
-+  it every short into a dark path ends MaybeDelivered(TimedOut), is never resent
-+  and is lost, and an operation's retry lands in the same place until quinn's
-+  idle timeout. A path that stays dark ends on quinn's idle timeout (120 s in
-+  production, Fallback(Idle)), not on the stall close: once suspect no new send
-+  reaches it, so the stall close fires only when STALLED_SENDS_LIMIT sends were
-+  already on it. New data goes on UDP meanwhile, so nothing is lost. Entering
-+  and leaving are under one lock. Fallback is a testing-period crutch: this
-+  routing goes with it when the legacy transport is removed.
-+  Receiver side: a path whose own data bit is 0 stops the first data frame with
-+  NOT_ACCEPTING_DATA and closes the path with DOWNGRADE REFUSAL_CLOSE_DELAY (2 s)
-+  later (closed_refusing_data, a WARN once per path). The delay lets the stops
-+  reach the sender first: a sender that sees the close before a stream's stop
-+  drops the stream, where the stop sends it on UDP. Without the close, a Short of
-+  one packet is acknowledged before its stop arrives, so its sender reads Sent,
-+  never clears send_data and loses every short on the path. The pair then
-+  negotiates again after the normal backoff. Residual: a one-packet short sent
-+  in the 2 s window is acknowledged before its stop is seen and is lost.
-+  NOT_ACCEPTING_DATA at the sender: this node's gating or the peer's is wrong.
-+  Logged once per path, counted (data_refused, and every time), and new sends go
-+  on UDP; the receiver closes the path. send_data has three states so a send racing the refusal does not trip
-   debug_assert_carries_data. A small send acked before the stop is lost, and that
-   count is the only sign of it.
-   Telemetry: a transfer on a path emits transfer_started, _completed and _failed
+@@ -1292,8 +1292,32 @@ a test passes its own; tests read their own, never the global).
+   path tried, data and control, and those that waited for stream credit);
+   quic_streamed_sends and quic_stream_permit_waited; quic_bytes_sent and
+   quic_bytes_received (quinn's UDP payload counts, reported by change at each 2 s
+-  tick of the acknowledgement watch, so a path's last tick before it closes is
+-  lost); quic_session_ended_with_data_path_<age> (sessions that ended while their
++  tick of the acknowledgement watch and once more when the path's task ends);
++  quic_sent_packets, quic_lost_packets, quic_lost_bytes and
++  quic_congestion_events (quinn's PathStats, every path including shadow ones, by
++  the same tick and once more when the path's task ends, so a path's last tick
++  before it closes is counted, sums of the period). A CONNECTION_CLOSE quinn sends
++  again after that report is in neither the byte nor the packet counts. A panic
++  in the watch, which the path survives, ends nothing: the report is the
++  receive supervisor's (recycle::PathReport); quic_loss_rate_<zero|lt_0_5pct|lt_1pct|
++  lt_2pct|lt_5pct|lt_10pct|lt_20pct|ge_20pct> (a gauge of live paths that have sent
++  at least 200 packets since they started, each in the one bucket of its own
++  lost/sent over its life, moved as it changes, out when the path ends; every
++  bucket uploaded every period, 0 included; no per-path values) and
++  quic_ended_loss_rate_<bucket> (paths that ended in the period, by their final
++  bucket, so paths that fail lossy still show) and quic_ended_paths_below_floor
++  (paths that ended in the period before 200 packets). Packets in flight at close
++  are dropped by quinn, not declared lost, so a final bucket can understate the
++  loss at the end. The rate is quinn's lost over
++  sent (quinn-proto 0.11.19), not a measurement of the link: sent counts every
++  packet quinn built, acknowledgement-only ones included; lost counts quinn's
++  loss declarations, and a packet declared lost and later acknowledged is not
++  taken back; lost PLPMTUD probes are left out of lost while sent ones are in
++  sent, and MTU discovery is off, so no path sends any. A shadow path's packets
++  are mostly keepalives and acknowledgements, so its rate may not hold for
++  data-sized packets. The sums and the buckets are updated and reset under one
++  lock;
++  quic_session_ended_with_data_path_<age> (sessions that ended while their
+   path's route still carried data); quic_streams_sampled_paths,
+   quic_streams_open_ge_<8|16|32|48> and quic_streams_peak_max (per path and period,
+   the peak of inbound streams read at once, counted as inbound_concurrency counts
 ```
 
-**File**: `crates/core/src/lib.rs` (modified, +2/-2)
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +7/-0)
 ```diff
-@@ -239,8 +239,8 @@ pub mod dev_tool {
+@@ -7708,6 +7708,13 @@ mod tests {
+         data.streams_open_paths_sampled = 1009;
+         data.streams_open_ge = vec![1010, 1011, 1012, 1013];
+         data.streams_open_max = 1014;
++        data.sent_packets = 1015;
++        data.lost_packets = 1016;
++        data.lost_bytes = 1017;
++        data.congestion_events = 1018;
++        data.loss_rate = (1019..1027).collect();
++        data.ended_loss_rate = (1027..1035).collect();
++        data.ended_below_floor = 1035;
+         let want: std::collections::BTreeMap<String, u64> =
+             snapshot.quic_data.keys().into_iter().collect();
+         assert!(want.values().all(|value| *value != 0));
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +48/-1)
+```diff
+@@ -31,7 +31,7 @@ use crate::tracing::{TransferDirection, TransferEvent};
  
-     // Re-export simulation types for test infrastructure
-     pub use crate::simulation::{
--        FaultConfig, FaultConfigBuilder, Partition, QuicDatagramDrop, SimulationRng, TimeSource,
--        VirtualTime, WakeupId,
-+        FaultConfig, FaultConfigBuilder, Partition, QuicDatagramCut, QuicDatagramDrop,
-+        SimulationRng, TimeSource, VirtualTime, WakeupId,
+ mod quic_data;
+ pub use quic_data::QuicDataSnapshot;
+-pub(crate) use quic_data::{QuicDataCounters, StreamsOpenPeak};
++pub(crate) use quic_data::{PathLossWindow, QuicDataCounters, StreamsOpenPeak};
+ 
+ /// Global transport metrics instance.
+ ///
+@@ -5085,6 +5085,53 @@ mod tests {
+         assert_eq!(json["quic_sends"], 1);
+     }
+ 
++    /// quinn's per-path loss counts go through `take_snapshot` end to end: a
++    /// report makes the period active and reaches the upload under its keys with
++    /// its own values, the loss-rate bucket included, a read that does not reset
++    /// leaves them, and the next period is empty.
++    #[test]
++    fn quic_path_loss_goes_through_take_snapshot() {
++        let metrics: &'static TransportMetrics = Box::leak(Box::new(TransportMetrics::new()));
++        let mut window = PathLossWindow::new(&metrics.quic_data);
++        metrics.quic_data.record_path_loss(
++            &mut window,
++            crate::transport::quic::recycle::PathLoss {
++                sent_packets: 1000,
++                lost_packets: 7,
++                lost_bytes: 8400,
++                congestion_events: 3,
++            },
++        );
++        let peek = metrics.read_snapshot();
++        assert_eq!(peek.quic_data.lost_packets, 7);
++        let snap = metrics.take_snapshot().expect("a report is activity");
++        let json = snap.upload_json().unwrap();
++        assert_eq!(json["quic_sent_packets"], 1000, "the peek did not reset");
++        assert_eq!(json["quic_lost_packets"], 7);
++        assert_eq!(json["quic_lost_bytes"], 8400);
++        assert_eq!(json["quic_congestion_events"], 3);
++        assert_eq!(json["quic_loss_rate_lt_1pct"], 1);
++        assert_eq!(json["quic_loss_rate_zero"], 0, "a gauge of 0 is sent");
++        assert!(
++            json.get("quic_ended_loss_rate_zero").is_none(),
++            "a count of 0 is not"
++        );
++        assert!(json.get("quic_ended_paths_below_floor").is_none());
++        assert!(
++            metrics.take_snapshot().is_none(),
++            "the sums were reset, and the bucket alone is not activity"
++        );
++        assert_eq!(metrics.read_snapshot().quic_data.loss_rate[2], 1, "a gauge");
++        // A path that ends below the floor reaches the JSON by its own key.
++        drop(PathLossWindow::new(&metrics.quic_data));
++        let json = metrics
++            .take_snapshot()
++            .expect("an ended path is activity")
++            .upload_json()
++            .unwrap();
++        assert_eq!(json["quic_ended_paths_below_floor"], 1);
++    }
++
+     /// A breaker trip reaches the snapshot and its JSON, counts as activity
+     /// on its own, and resets; the suppressed state is carried while it
+     /// holds and is not activity by itself.
+```
+
+**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +393/-12)
+```diff
+@@ -20,8 +20,27 @@
+ //! | `quic_streamed_sends`, `quic_stream_permit_waited` | streamed-send permits taken, and those that waited |
+ //! | `quic_bytes_sent`, `quic_bytes_received` | UDP payload bytes of QUIC paths, from quinn's counts |
+ //! | `quic_session_ended_with_data_path_<age>` | sessions that ended under a data path, by the path's age |
++//! | `quic_sent_packets`, `quic_lost_packets`, `quic_lost_bytes`, `quic_congestion_events` | quinn's per-path counts (`PathStats`), shadow paths included, summed over the node's paths up to each path's last tick |
++//! | `quic_loss_rate_<bucket>` | live paths that have sent at least 200 packets since they started, by their own lost/sent over that time (a gauge, not reset, every bucket sent every period, 0 included): `zero`, `lt_0_5pct`, `lt_1pct`, `lt_2pct`, `lt_5pct`, `lt_10pct`, `lt_20pct`, `ge_20pct` |
++//! | `quic_ended_loss_rate_<bucket>` | paths that ended in the period, by the bucket they were in at the end (same buckets) |
++//! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
+ //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
+ //!
++//! What the loss rate is: quinn's lost over sent (quinn-proto 0.11.19). `sent`
++//! counts every packet quinn built, acknowledgement-only ones included. `lost`
++//! counts quinn's loss declarations (packet or time threshold), and a packet
++//! declared lost that is later acknowledged is not taken back, so spurious
++//! declarations count as losses. Lost PLPMTUD probes are left out of `lost` while
++//! sent probes are in `sent`; MTU discovery is off (`quic::config`), so no path
++//! sends any. Packets still in flight when a connection closes are dropped
++//! by quinn, not declared lost, so a path's final bucket can understate its
++//! loss at the moment it ended. It is quinn's view of loss, not a measurement
++//! of the link. A shadow path's packets are mostly keepalives and
++//! acknowledgements, so its rate is of small packets and may not hold for
++//! data-sized ones. After a contained panic in a path's acknowledgement
++//! watch the path stops ticking, so its counts from then on arrive in one
++//! report when it ends.
++//!
+ //! The waits are the step-3 stream-limit bars: `quic_open_uni_waited` over
+ //! `quic_sends` and `quic_stream_permit_waited` over `quic_streamed_sends` below 0.5%, and
+ //! `quic_streams_open_ge_48` below 0.2% of `quic_streams_sampled_paths`. Both
+@@ -39,6 +58,110 @@ use crate::transport::quic::path::{
+ /// The gauge's key, uploaded in every snapshot ([`QuicDataSnapshot::upload_keys`]).
+ const LIVE_DATA_PATHS: &str = "quic_live_data_paths";
+ 
++/// The loss-rate gauges' prefix; every bucket is uploaded in every snapshot.
++const LOSS_RATE_PREFIX: &str = "quic_loss_rate_";
++
++/// A path's loss rate is bucketed once it has sent this many packets since it
++/// started; below it the rate says too little.
++pub(crate) const LOSS_RATE_MIN_SENT: u64 = 200;
++
++/// The upper bounds of the loss-rate buckets after `zero`, in lost packets per
++/// 1000 sent; the last bucket is `ge_20pct`.
++const LOSS_RATE_BOUNDS_PER_MILLE: [u64; 6] = [5, 10, 20, 50, 100, 200];
++
++/// The loss-rate buckets' labels (`quic_loss_rate_<label>`), in order.
++pub(crate) const LOSS_RATE_LABELS: [&str; 8] = [
++    "zero",
++    "lt_0_5pct",
++    "lt_1pct",
++    "lt_2pct",
++    "lt_5pct",
++    "lt_10pct",
++    "lt_20pct",
++    "ge_20pct",
++];
++
++/// The bucket of `lost` packets out of `sent`. Losses found in a window can
++/// be of packets sent before it, so `lost` may pass `sent`: `ge_20pct`.
++fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
++    if lost == 0 {
++        return 0;
++    }
++    let per_mille_times_sent = lost.saturating_mul(1000);
++    1 + LOSS_RATE_BOUNDS_PER_MILLE
++        .iter()
++        .take_while(|bound| per_mille_times_sent >= sent.saturating_mul(**bound))
++        .count()
++}
++
++/// One path's packets since it started, and the loss-rate bucket it is counted
++/// in. Owned by the path's acknowledgement watch; dropping it, however the watch
++/// ends, takes the path out of its bucket.
++#[derive(Debug)]
++pub(crate) struct PathLossWindow {
++    node: &'static QuicDataCounters,
++    sent: u64,
++    lost: u64,
++    bucket: Option<usize>,
++}
++
++impl PathLossWindow {
++    /// A window for a new path, counted in `node`.
++    pub(crate) fn new(node: &'static QuicDataCounters) -> Self {
++        Self {
++            node,
++            sent: 0,
++            lost: 0,
++            bucket: None,
++        }
++    }
++}
++
++impl PathLossWindow {
++    /// Whether the path is in a loss-rate bucket. Tests only.
++    #[cfg(test)]
++    pub(crate) fn is_bucketed(&self) -> bool {
++        self.bucket.is_some()
++    }
++}
++
++impl Drop for PathLossWindow {
++    /// The path ended: out of its bucket, and counted
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +26/-6)
+```diff
+@@ -298,6 +298,10 @@ pub(crate) struct QuicPathLimits {
+     /// The receive task panics on its first stream (supervisor test).
+     #[cfg(test)]
+     pub(crate) panic_in_receive: bool,
++    /// The acknowledgement watch panics once the path is in a loss-rate bucket
++    /// (supervisor test).
++    #[cfg(test)]
++    pub(crate) panic_in_watch: bool,
+ }
+ 
+ impl QuicPathLimits {
+@@ -322,6 +326,8 @@ impl QuicPathLimits {
+         counters: None,
+         #[cfg(test)]
+         panic_in_receive: false,
++        #[cfg(test)]
++        panic_in_watch: false,
      };
  
-     // Re-export fault injector for mid-simulation fault injection in Turmoil tests
-```
-
-**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +5/-0)
-```diff
-@@ -111,6 +111,10 @@ pub struct FaultInjectorState {
-     /// and `SimNetwork::run_simulation_direct` (churn driver crashes, #4694) set it
-     /// so their injected faults are real packet drops rather than silent no-ops.
-     pub enforce_fault_drops: bool,
-+    /// QUIC datagram cuts (`SimNetwork::drop_quic_datagrams_between_after`),
-+    /// each with the bytes it has let through so far. Kept here rather than in
-+    /// [`FaultConfig`], whose rules are values.
-+    pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
- }
- 
- impl FaultInjectorState {
-@@ -124,6 +128,7 @@ impl FaultInjectorState {
-             stats: NetworkStats::default(),
-             network_name: None,
-             enforce_fault_drops: false,
-+            quic_datagram_cuts: Vec::new(),
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +144/-17)
-```diff
-@@ -505,7 +505,7 @@ fn fault_injection_delivery_decision(
-                 }
-             }
-         }
--        if !inj.config.quic_datagram_drops.is_empty() {
-+        if !inj.config.quic_datagram_drops.is_empty() || !inj.quic_datagram_cuts.is_empty() {
-             use crate::simulation::TimeSource;
-             // `drop_quic_datagrams_between` and `with_fault_injection` give
-             // an injector with rules a VirtualTime. One replaced by hand
-@@ -523,11 +523,18 @@ fn fault_injection_delivery_decision(
-                     );
-                 }
-             }
--            if let Some(now) = now
--                && inj.config.drops_quic_datagram(&from, &to, datagram, now)
--            {
--                inj.stats.messages_dropped_quic_datagram += 1;
--                return PacketDeliveryDecision::Drop;
-+            if let Some(now) = now {
-+                // Every cut sees the datagram, so each one's count stays true.
-+                let cut = inj
-+                    .quic_datagram_cuts
-+                    .iter_mut()
-+                    .fold(false, |dropped, (cut, seen)| {
-+                        cut.drops(seen, &from, &to, datagram, now) | dropped
-+                    });
-+                if cut || inj.config.drops_quic_datagram(&from, &to, datagram, now) {
-+                    inj.stats.messages_dropped_quic_datagram += 1;
-+                    return PacketDeliveryDecision::Drop;
-+                }
-             }
-         }
-     }
-@@ -1696,6 +1703,10 @@ pub struct SimNetwork {
-     /// here so replacing the fault injector (`with_fault_injection`,
-     /// `clear_fault_injection`) carries them over.
-     quic_datagram_drops: Vec<crate::simulation::QuicDatagramDrop>,
-+    /// QUIC datagram cuts added by `drop_quic_datagrams_between_after`. Their
-+    /// byte counts live in the fault injector; a replaced injector takes them
-+    /// over ([`Self::carry_quic_datagram_cuts`]).
-+    quic_datagram_cuts: Vec<crate::simulation::QuicDatagramCut>,
-     /// When `probe_quic_endpoints_at` asked for it: the virtual time at which
-     /// `run_simulation_direct` sends each node a stranger's QUIC datagram,
-     /// with the node and stranger addresses.
-@@ -1879,6 +1890,7 @@ impl SimNetwork {
-             shared_rings: HashMap::new(),
-             node_port_override,
-             quic_datagram_drops: Vec::new(),
-+            quic_datagram_cuts: Vec::new(),
-             quic_endpoint_probe: None,
-         };
-         net.config_gateways(
-@@ -1906,6 +1918,7 @@ impl SimNetwork {
-             fault_seed,
-         )
-         .with_virtual_time(self.virtual_time.clone());
-+        let state = self.carry_quic_datagram_cuts(state);
-         set_fault_injector(
-             &self.name,
-             Some(std::sync::Arc::new(std::sync::Mutex::new(state))),
-@@ -2152,17 +2165,7 @@ impl SimNetwork {
-         b: &NodeLabel,
-         from: Duration,
-     ) -> &mut Self {
--        let address = |label: &NodeLabel| {
--            *self
--                .node_addresses
--                .get(label)
--                .unwrap_or_else(|| panic!("no node {label}"))
--        };
--        let rule = crate::simulation::QuicDatagramDrop::new(
--            address(a),
--            address(b),
--            u64::try_from(from.as_nanos()).unwrap_or(u64::MAX),
--        );
-+        let rule = self.quic_datagram_rule(a, b, from);
-         let injector = crate::node::network_bridge::get_fault_injector(&self.name)
-             .expect("SimNetwork::new registers a fault injector");
-         let has_clock = {
-@@ -2186,6 +2189,89 @@ impl SimNetwork {
-         self
-     }
- 
-+    /// As [`Self::drop_quic_datagrams_between`], but the rule first lets
-+    /// `after_bytes` of the pair's QUIC datagrams through from `from`, so a
-+    /// test can cut the pair in the middle of a transfer
-+    /// ([`crate::simulation::QuicDatagramCut`]). The count lives in the fault
-+    /// injector and survives its replacement.
-+    #[cfg(any(test, feature = "testing"))]
-+    pub fn drop_quic_datagrams_between_after(
-+        &mut self,
-+        a: &NodeLabel,
-+        b: &NodeLabel,
-+        from: Duration,
-+        after_bytes: u64,
-+    ) -> &mut Self {
-+        let cut = crate::simulation::QuicDatagramCut {
-+            rule: self.quic_datagram_rule(a, b, from),
-+            after_bytes,
-+        };
-+        let injector = crate::node::network_bridge::get_fault_injector(&self.name)
-+            .expect("SimNetwork::new registers a fault injector");
-+        let has_clock = {
-+            let mut state = injector.lock().unwrap();
-+            let has_clock = state.virtual_time.is_some();
-+            if has_clock && !self.quic_datagram_cuts.contains(&cut) {
-+                state.quic_datagram_cuts.push((cut.clone(), 0));
-+            }
-+            has_clock
-+        };
-+        assert!(
-+            has_clock,
-+            "a QUIC datagram cut needs the fault injector's VirtualTime"
-+        );
-+        if !self.quic_datagram_cuts.contains(&cut) {
-+            sel
-```
-
-**File**: `crates/core/src/simulation.rs` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@ mod fault;
- mod rng;
- mod time;
- 
--pub use fault::{FaultConfig, FaultConfigBuilder, Partition, QuicDatagramDrop};
-+pub use fault::{FaultConfig, FaultConfigBuilder, Partition, QuicDatagramCut, QuicDatagramDrop};
- pub use rng::SimulationRng;
- pub use time::Wakeup;
- pub use time::{BoxedSleep, RealTime, TimeSource, TimeSourceInterval, VirtualTime, WakeupId};
-```
-
-**File**: `crates/core/src/simulation/fault.rs` (modified, +69/-0)
-```diff
-@@ -110,6 +110,43 @@ impl QuicDatagramDrop {
-     }
- }
- 
-+/// A [`QuicDatagramDrop`] that first lets `after_bytes` of the pair's
-+/// QUIC-class datagrams through from the rule's start, both directions counted
-+/// together, and drops from the next datagram on. A test cuts a pair in the
-+/// middle of a transfer this way, by how much has moved rather than by a time
-+/// that depends on when the transfer started. Its count is kept by whoever
-+/// applies it (the network's fault injector), so the rule itself stays a value.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct QuicDatagramCut {
-+    /// Which datagrams the cut governs, and from when.
-+    pub rule: QuicDatagramDrop,
-+    /// Bytes delivered from the rule's start before it drops.
-+    pub after_bytes: u64,
-+}
-+
-+impl QuicDatagramCut {
-+    /// Whether the cut drops `datagram` sent from `from` to `to` at virtual
-+    /// time `now`, with `seen` the bytes it has let through so far, which a
-+    /// datagram it lets through adds to.
-+    pub fn drops(
-+        &self,
-+        seen: &mut u64,
-+        from: &SocketAddr,
-+        to: &SocketAddr,
-+        datagram: &[u8],
-+        now: u64,
-+    ) -> bool {
-+        if !self.rule.drops(from, to, datagram, now) {
-+            return false;
-+        }
-+        if *seen >= self.after_bytes {
-+            return true;
-+        }
-+        *seen += datagram.len() as u64;
-+        false
-+    }
-+}
-+
- /// Configuration for fault injection during simulation.
- #[derive(Debug, Clone)]
- pub struct FaultConfig {
-@@ -377,6 +414,38 @@ mod tests {
-         assert!(!FaultConfig::new().drops_quic_datagram(&addr(1), &addr(2), &quic_long, T));
-     }
- 
-+    /// A cut lets `after_bytes` of the pair's QUIC datagrams through from its
-+    /// start, both directions together, and drops every one after. Datagrams
-+    /// before the start, of another class or of another pair are neither
-+    /// dropped nor counted.
-+    #[test]
-+    fn a_quic_datagram_cut_counts_only_what_it_governs() {
-+        const T: u64 = 5_000;
-+        let cut = QuicDatagramCut {
-+            rule: QuicDatagramDrop::new(addr(1), addr(2), T),
-+            after_bytes: 250,
-+        };
-+        let mut seen = 0;
-+        let quic = [0x40u8; 100];
-+        let legacy = [0x02u8; 100];
-+        let mut drops = |from, to, datagram: &[u8], now| {
-+            cut.drops(&mut seen, &addr(from), &addr(to), datagram, now)
-+        };
-+        // Not counted: too early, not QUIC, not the pair.
-+        assert!(!drops(1, 2, &quic, T - 1));
-+        assert!(!drops(1, 2, &legacy, T));
-+        assert!(!drops(1, 3, &quic, T));
-+        // 100, 200, then 300: the third crosses 250 and is still delivered.
-+        assert!(!drops(1, 2, &quic, T));
-+        assert!(!drops(2, 1, &quic, T));
-+        assert!(!drops(1, 2, &quic, T));
-+        for _ in 0..3 {
-+            assert!(drops(2, 1, &quic, T + 1));
-+            assert!(!drops(2, 1, &legacy, T + 1));
-+        }
-+        assert_eq!(seen, 300);
-+    }
-+
-     #[test]
-     fn test_no_faults_by_default() {
-         let config = FaultConfig::new();
-```
-
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +95/-8)
-```diff
-@@ -569,10 +569,11 @@ fn a_large_short_that_never_opened_goes_on_udp_as_a_stream() {
-     );
- }
- 
--/// The peer refuses data on a path both sides set up for it: the message goes on
--/// UDP under its id, it is counted, and new sends stay off a path that stays up.
-+/// The peer refuses data on a path this node set up for it: the message goes on
-+/// UDP under its id, it is counted, and the peer closes the path, so new sends go
-+/// on UDP.
- #[test]
--fn data_the_peer_refuses_goes_on_udp_and_the_path_stays() {
-+fn data_the_peer_refuses_goes_on_udp_and_the_peer_closes_the_path() {
-     run(
-         "quic-send-refused",
-         60,
-@@ -596,14 +597,15 @@ fn data_the_peer_refuses_goes_on_udp_and_the_path_stays() {
-             assert_eq!(rig.stats().send_event_count(E::DataRefused), 1);
-             assert_eq!(rig.stats().stop_count(stop_code::NOT_ACCEPTING_DATA), 1);
-             assert!(!rig.route.path().sends_data());
-+            // The receiver closed the path on its refusal, so the queue goes to
-+            // UDP too, and no send reaches the path again.
-             assert!(
--                rig.route.path().quinn_connection().close_reason().is_none(),
--                "the path stays up"
-+                rig.route.path().quinn_connection().close_reason().is_some(),
-+                "the receiver closed the path"
-             );
--
--            // The queue goes straight to UDP, and no send reaches the path again.
--            rig.route.queue_short(message(1)).ok();
-+            assert_eq!(rig.path.peer().stats().count(Q::ClosedRefusingData), 1);
-             rig.path.settle(Duration::from_millis(50)).await;
-+            rig.e.conn.send_serialized(message(1)).await.unwrap();
-             assert_eq!(rig.udp_data().shorts, vec![message(1)]);
-             assert_eq!(rig.path.peer().stats().count(Q::RefusedNotAcceptingData), 1);
-         },
-@@ -798,6 +800,11 @@ fn shorts_held_back_by_a_slow_consumer_do_not_close_the_path() {
-                 "many sends could not open"
-             );
-             assert_eq!(rig.stats().send_event_count(E::StalledClosed), 0);
-+            assert_eq!(
-+                rig.stats().send_event_count(E::SuspectEntered),
-+                0,
-+                "an acknowledged path is never suspect"
-+            );
-             assert!(rig.route.path().quinn_connection().close_reason().is_none());
- 
-             // The consumer catches up. The channel holds one, so each turn lets
-@@ -874,6 +881,11 @@ fn a_busy_relay_whose_transfers_are_acknowledged_keeps_its_path() {
-                 "enough timed out to close it if they counted"
-             );
-             assert_eq!(rig.stats().send_event_count(E::StalledClosed), 0);
-+            assert_eq!(
-+                rig.stats().send_event_count(E::SuspectEntered),
-+                0,
-+                "an acknowledged path is never suspect"
-+            );
-             assert!(rig.route.path().quinn_connection().close_reason().is_none());
-         },
-     );
-@@ -1098,6 +1110,81 @@ fn a_pipe_that_stalls_after_opening_gives_up() {
-     );
- }
- 
-+/// A path whose sends time out with nothing acknowledged takes no new data: a
-+/// short queued to it then goes on UDP, though the path is up. Once the peer
-+/// acknowledges again, data goes on the path again. Across
-+/// the switch no message is lost or sent twice: the short already on the path
-+/// stays there (delivered or counted `MaybeDelivered`, never resent on UDP), and
-+/// each later one goes exactly once.
-+#[test]
-+fn a_suspect_path_sends_new_shorts_on_udp_until_it_is_acknowledged() {
-+    run(
-+        "quic-send-suspect",
-+        75,
-+        QuicPathLimits::DEFAULT,
-+        |mut rig| async move {
-+            let silenced = DropFrom::new("quic-send-suspect", &[rig.path.peer_addr()]);
-+            let mut on_udp: Vec<Vec<u8>> = Vec::new();
-+            let mut on_path: Vec<Vec<u8>> = Vec::new();
-+            rig.path.settle(Duration::from_secs(9)).await;
-+            rig.e.conn.send_serialized(message(1)).await.unwrap();
-+            // Its 1 s open passes with nothing acknowledged since the path was
-+            // built 10 s before: a short that opens is held for its 5 s total.
-+            rig.path.settle(Duration::from_secs(6)).await;
-+            assert_eq!(rig.stats().send_event_count(E::SuspectEntered), 1);
-+            assert!(rig.route.path().is_suspect());
-+            on_udp.extend(rig.udp_data().shorts);
-+            rig.e.conn.send_serialized(message(2)).await.unwrap();
-+            rig.path.settle(Duration::from_millis(50)).await;
-+            let udp = rig.udp_data().shorts;
-+            assert_eq!(udp, vec![message(2)], "on UDP at once");
-+            on_udp.extend(udp);
-+            // A short the worker takes while the path is suspect goes on UDP too.
-+            rig.route
-+                .queue_short(message(4))
-+                .expect("the queue is open");
-+            rig.path.settle(Duration::from_millis(50)).await;
-+            let udp = rig.udp_data().shorts;
-
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +70/-4)
-```diff
-@@ -418,6 +418,9 @@ quic_outcomes! {
-         /// A Short or Stream frame on a path that accepts no data (shadow
-         /// mode); stopped before anything was charged.
-         RefusedNotAcceptingData => "refused_not_accepting_data",
-+        /// The first refused data frame closed the path with DOWNGRADE (once
-+        /// per path).
-+        ClosedRefusingData => "closed_refusing_data",
-         /// A control payload of a version this node does not read.
-         ControlUnknownVersion => "control_unknown_version",
-         /// A control payload of a type this node does not know.
-@@ -671,6 +674,14 @@ pub(crate) struct QuicPath {
-     /// The connection's count of acknowledged packets, `None` if its controller
-     /// does not keep one.
-     ack_progress: Option<recycle::AckProgress>,
-+    /// A send timed out with nothing acknowledged for the window: the path may
-+    /// have gone dark, and new sends go on UDP until the connection's count of
-+    /// acknowledged packets moves from the one held here ([`Self::is_suspect`]).
-+    /// Under one lock, so entering and leaving cannot interleave.
-+    suspect_since_acked: parking_lot::Mutex<Option<u64>>,
-+    /// Whether `suspect_since_acked` is set, so a path that is not suspect is
-+    /// told so without the lock.
-+    suspect: std::sync::atomic::AtomicBool,
-     /// Where the path's watch reports that the peer was heard from.
-     heard: Arc<recycle::PeerHeard>,
-     #[cfg(test)]
-@@ -804,10 +815,10 @@ impl QuicPath {
-             time.clone(),
-             budget.clone(),
-             stats.clone(),
--            data.shorts,
--            data.streams,
-+            data,
-             controls_tx,
-             limits.accept_data,
-+            connection.closer(),
+     /// [`Self::DEFAULT`] for a path in shadow mode: control frames only.
+@@ -841,14 +847,23 @@ impl QuicPath {
+             time.now_nanos(),
          );
-         #[cfg(test)]
-         {
-@@ -850,6 +861,8 @@ impl QuicPath {
-                 counted_as_data_path: std::sync::atomic::AtomicBool::new(false),
-                 stall: parking_lot::Mutex::new(stall),
-                 ack_progress,
-+                suspect_since_acked: parking_lot::Mutex::new(None),
-+                suspect: std::sync::atomic::AtomicBool::new(false),
-                 heard,
-                 #[cfg(test)]
-                 budget,
-@@ -942,8 +955,10 @@ impl QuicPath {
-     }
+         let heard = Arc::new(recycle::PeerHeard::default());
++        #[cfg_attr(not(test), allow(unused_mut))]
++        let mut report = recycle::PathReport::new(connection.inner().clone(), stats.node());
++        #[cfg(test)]
++        {
++            report.panic_once_bucketed = limits.panic_in_watch;
++        }
+         let receive = GlobalExecutor::spawn(supervise_receive(
+             connection.inner().clone(),
+             connection.closer(),
+             Arc::new(receiver),
+             stats.clone(),
+             time,
+-            connection.cap_holds(),
+-            heard.clone(),
++            recycle::AckWatchParts {
++                cap_holds: connection.cap_holds(),
++                heard: heard.clone(),
++                report,
++            },
+         ));
+         (
+             Self {
+@@ -1473,21 +1488,26 @@ async fn supervise_receive<T: TimeSource>(
+     receiver: Arc<inbound::Receiver<T>>,
+     stats: Arc<QuicPathStats>,
+     time: T,
+-    cap_holds: Arc<super::socket::CapHolds>,
+-    heard: Arc<recycle::PeerHeard>,
++    watch: recycle::AckWatchParts,
+ ) {
+     use futures::FutureExt;
+     let mut receive = std::pin::pin!(
+         std::panic::AssertUnwindSafe(inbound::receive(connection.clone(), receiver)).catch_unwind()
+     );
+-    let node = stats.node();
++    // Outside the watch, so a panic the watch contains does not end the path's
++    // report: it ends with this task ([`recycle::PathReport`]).
++    let recycle::AckWatchParts {
++        cap_holds,
++        heard,
++        mut report,
++    } = watch;
+     let watch = std::panic::AssertUnwindSafe(recycle::watch_acknowledgements(
+         connection.clone(),
+         closer.clone(),
+         time,
+         cap_holds,
+         heard,
+-        node,
++        &mut report,
+     ))
+     .catch_unwind();
+     let ended = tokio::select! {
+```
+
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +116/-0)
+```diff
+@@ -2589,6 +2589,122 @@ fn seeded_loss(network: &str, percent: u64) -> Arc<LossCount> {
+     count
+ }
  
-     /// The peer said it accepts no data on this path, so this node's gating or
--    /// the peer's is wrong. Logged once per path. The path stays up: it costs
--    /// nothing, and the same send would fail the same way on a new one.
-+    /// the peer's is wrong. Logged once per path. New sends go on UDP from now
-+    /// on. This side does not close the path: the refusing receiver does, with
-+    /// DOWNGRADE, [`inbound::REFUSAL_CLOSE_DELAY`] after its first refusal, and
-+    /// this side falls back on that close.
-     fn stop_sending_data(&self) {
-         self.stats.record_send_event(QuicSendEvent::DataRefused);
-         // No longer a path that carries data.
-@@ -988,6 +1003,57 @@ impl QuicPath {
-         self.heard.report_to(report);
-     }
- 
-+    /// A send timed out on this path with nothing acknowledged for the window
-+    /// (`route::StallCount`), when the count read `acked`. A path that went dark
-+    /// would otherwise take every new send until it is recycled: each short ends
-+    /// `MaybeDelivered(TimedOut)`, is never resent and is lost, and an operation's
-+    /// retry lands in the same place. Sends already on the path stay there, since
-+    /// resending them could deliver a message twice.
-+    pub(in crate::transport) fn become_suspect(&self, acked: u64) {
-+        let mut since = self.suspect_since_acked.lock();
-+        let entered = since.replace(acked).is_none();
-+        self.suspect.store(true, Ordering::Release);
-+        drop(since);
-+        if entered {
-+            self.stats.record_send_event(QuicSendEvent::SuspectEntered);
-+            tracing::debug!(
-+                remote = %self.connection.inner().remote_address(),
-+                "QUIC path: sends time out and nothing is acknowledged; new data \
-+                 goes on UDP until the peer acknowledges again"
++/// A path's watch reports its last counts when it ends, here dropped because
++/// the receive task ended with the connection, so the node's packet sums end at
++/// quinn's final counts. The short
++/// is sent and the path closed between two ticks (2 s and 4 s), so without that
++/// last report what they sent is missing.
++#[test]
++fn a_closed_path_reports_its_last_tick() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let counters: &'static crate::transport::metrics::QuicDataCounters =
++            Box::leak(Box::new(crate::transport::metrics::QuicDataCounters::new()));
++        let limits = QuicPathLimits {
++            counters: Some(counters),
++            ..QuicPathLimits::DEFAULT
++        };
++        let p = paths("quic-path-last-tick", 75, limits).await;
++        let (a, b, time) = (p.a.clone(), p.b.clone(), p.time());
++        let totals = |a: &QuicPath, b: &QuicPath| {
++            let (a, b) = (
++                a.connection().inner().stats(),
++                b.connection().inner().stats(),
 +            );
++            (
++                a.path.sent_packets + b.path.sent_packets,
++                a.udp_tx.bytes + b.udp_tx.bytes,
++            )
++        };
++        // The watches count from when the paths were built, before the drive.
++        let before = totals(&a, &b);
++        let (at_short, after) = p
++            .drive(async move {
++                time.sleep(Duration::from_millis(2500)).await;
++                a.send_short(&[7u8; 600]).await.expect("sent");
++                let at_short = totals(&a, &b);
++                a.connection().close(QuicCloseCode::Downgrade);
++                time.sleep(Duration::from_secs(5)).await;
++                (at_short, totals(&a, &b))
++            })
++            .await;
++        let snap = counters.snapshot(false);
++        // Every packet up to the short, which went after the 2 s tick, is in
++        // the report. A close quinn sends again after a watch has ended is in
++        // quinn's counts and in no report, so the report can be below them.
++        let (up_to_short, sent) = (at_short.0 - before.0, after.0 - before.0);
++        assert!(
++            snap.sent_packets >= up_to_short && snap.sent_packets <= sent,
++            "{} reported, {up_to_short} up to the short, {sent} in all",
++            snap.sent_packets
++        );
++        let (up_to_short, udp_sent) = (at_short.1 - before.1, after.1 - before.1);
++        assert!(
++            snap.bytes_sent >= up_to_short && snap.bytes_sent <= udp_sent,
++            "{} reported, {up_to_short} up to the short, {udp_sent} in all",
++            snap.bytes_sent
++        );
++        // Both paths ended, each counted once, here below the floor.
++        let ended = snap.ended_loss_rate.iter().sum::<u64>() + snap.ended_below_floor;
++        assert_eq!(ended, 2);
++        assert_eq!(snap.loss_rate.iter().sum::<u32>(), 0);
++    })
++}
++
++/// A panic in the acknowledgement watch, which the receive supervisor
++/// contains while the path stays up, leaves the path in its live loss-rate
++/// bucket; it is counted as ended only when the path really ends.
++#[test]
++fn a_watch_panic_does_not_end_the_path_in_the_loss_counts() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let counters: &'static crate::transport::metrics::QuicDataCounters =
++            Box::leak(Box::new(crate::transport::metrics::QuicDataCounters::new()));
++        let limits = QuicPathLimits {
++            counters: Some(counters),
++            panic_in_watch: true,
++            ..QuicPathLimits::DEFAULT
++        };
++        // Only `b` panics: `paths` gives `a` the default limits.
++        let p = paths("quic-path-watch-panic", 78, limits).await;
++        let panics = recycle::TEST_WATCH_PANICS.load(std::sync::atomic::Ordering::Relaxed);
++        // `b` sends, so its own packet count passes the floor.
++        let (b, time) = (p.b.clone(), p.time());
++        let (live, ended) = p
++            .drive(async move {
++                b.send_stream(StreamId::next(), None, payload(2 * MIB).into())
++                    .await
++                    .expect("sent");
++                time.sleep(Duration::from_secs(5)).await;
++                let snap = counters.snapshot(false);
++                (
++                    snap.loss_rate.iter().sum::<u32>(),
++                    snap.ended_loss_rate.iter().sum::<u64>() + snap.ended_below_floor,
++                )
++            })
++            .await;
++        assert!(
++            recycle::TEST_WATCH_PANICS.load(std::sync::atomic::Ordering::Relaxed) > panics,
++            "b's watch panicked"
++        );
++        assert!(p.b.connection().inner().close_reason().is_none(), "b is up");
++        // `a` only acknowledged, below the floor; `b` is in a bucket.
++        assert_eq!(live, 1, "b is still in its live bucket");
++        asser
+```
+
+**File**: `crates/core/src/transport/quic/path/tests/node_counts.rs` (modified, +4/-0)
+```diff
+@@ -74,6 +74,10 @@ fn a_paths_sends_and_receives_reach_the_node() {
+         assert_eq!(keys["quic_open_uni_waited"], 0);
+         assert!(keys["quic_bytes_sent"] > 0);
+         assert!(keys["quic_bytes_received"] > 0);
++        assert!(
++            keys["quic_sent_packets"] > 0,
++            "quinn's path counts reach the node"
++        );
+         assert_eq!(keys["quic_streams_sampled_paths"], 1, "only b read streams");
+     });
+ }
+```
+
+**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +126/-10)
+```diff
+@@ -789,7 +789,7 @@ pub(crate) async fn watch_acknowledgements<T: TimeSource>(
+     time: T,
+     cap_holds: Arc<CapHolds>,
+     heard: Arc<PeerHeard>,
+-    node: &'static crate::transport::metrics::QuicDataCounters,
++    report: &mut PathReport,
+ ) {
+     let Some(first) = AckSample::of(&connection, &cap_holds) else {
+         tracing::warn!(
+@@ -801,15 +801,15 @@ pub(crate) async fn watch_acknowledgements<T: TimeSource>(
+     };
+     let mut received = first.received;
+     let mut watch = AckWatch::new(ACK_WATCH_WINDOW, first);
+-    let mut bytes = UdpBytes::of(&connection);
+     loop {
+         time.sleep(ACK_WATCH_TICK).await;
+-        if connection.close_reason().is_some() {
++        // Read before the counts, so a closed connection's counts are its
++        // final ones.
++        let closed = connection.close_reason().is_some();
++        report.report();
++        if closed {
+             return;
+         }
+-        let (next, sent, got) = bytes.step(UdpBytes::of(&connection));
+-        node.record_bytes(sent, got);
+-        bytes = next;
+         let Some(sample) = AckSample::of(&connection, &cap_holds) else {
+             return;
+         };
+@@ -833,18 +833,97 @@ pub(crate) async fn watch_acknowledgements<T: TimeSource>(
+ 
+ #[cfg(test)]
+ mod cap_tests;
++
++/// What a path's receive supervisor keeps for its acknowledgement watch.
++pub(crate) struct AckWatchParts {
++    pub(crate) cap_holds: Arc<CapHolds>,
++    pub(crate) heard: Arc<PeerHeard>,
++    pub(crate) report: PathReport,
++}
++
++/// Watch panics `PathReport::panic_once_bucketed` raised. Tests only; only
++/// the one test that sets it raises any.
++#[cfg(test)]
++pub(crate) static TEST_WATCH_PANICS: std::sync::atomic::AtomicU64 =
++    std::sync::atomic::AtomicU64::new(0);
++
++/// A path's byte and loss counts, reported node-wide by their change at each
++/// tick of the watch, and once more when the report is dropped. It is owned
++/// by the path's receive supervisor and lent to the watch, so it is dropped
++/// when the path's task ends (the connection closed and the receive task
++/// returned, or the task was aborted with the path), and the counts up to
++/// then, often the losses that ended the path, are still reported. Then the
++/// window is dropped, which counts the path among the ended ones. A panic in
++/// the watch, which the supervisor contains while the path stays up, does
++/// not drop it: the path stays in its live bucket until it really ends.
++/// After a contained watch panic nothing ticks it any more, so the path's
++/// bytes and packets from then on arrive as one report when the path ends.
++pub(crate) struct PathReport {
++    connection: quinn::Connection,
++    node: &'static crate::transport::metrics::QuicDataCounters,
++    bytes: UdpBytes,
++    loss: PathLoss,
++    window: crate::transport::metrics::PathLossWindow,
++    /// The next report that finds the path in a bucket panics, once
++    /// (supervisor test).
++    #[cfg(test)]
++    pub(crate) panic_once_bucketed: bool,
++}
++
++impl PathReport {
++    pub(crate) fn new(
++        connection: quinn::Connection,
++        node: &'static crate::transport::metrics::QuicDataCounters,
++    ) -> Self {
++        let stats = connection.stats();
++        Self {
++            bytes: UdpBytes::of(&stats),
++            loss: PathLoss::of(&stats),
++            window: crate::transport::metrics::PathLossWindow::new(node),
++            connection,
++            node,
++            #[cfg(test)]
++            panic_once_bucketed: false,
 +        }
 +    }
 +
-+    /// Whether the path is suspect: new data goes on UDP. It stops being suspect
-+    /// the first time this is asked after the connection acknowledged something
-+    /// new, which quinn's keepalive brings within its interval on a live path.
-+    ///
-+    /// A path that stays dark ends on quinn's idle timeout (120 s in
-+    /// production), not on the stall close: once it is suspect no new send
-+    /// reaches it, so `route::STALLED_SENDS_LIMIT` timeouts in a row happen only
-+    /// if that many sends were already on it. Nothing is lost meanwhile, since
-+    /// new data goes on UDP.
-+    pub(in crate::transport) fn is_suspect(&self) -> bool {
-+        if !self.suspect.load(Ordering::Acquire) {
-+            return false;
++    /// Report the change since the last report, from one read of the stats.
++    fn report(&mut self) {
++        let stats = self.connection.stats();
++        let (next, sent, got) = self.bytes.step(UdpBytes::of(&stats));
++        self.node.record_bytes(sent, got);
++        self.bytes = next;
++        let (next, delta) = self.loss.step(PathLoss::of(&stats));
++        self.node.record_path_loss(&mut self.window, delta);
++        self.loss = next;
++        #[cfg(test)]
++        if self.panic_once_bucketed && self.window.is_bucketed() {
++            self.panic_once_bucketed = false;
++            TEST_WATCH_PANICS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++            panic!("test: the acknowledgement watch panics");
 +        }
-+        let Some(progress) = &self.ack_progress else {
-+            return false;
-+        };
-+        let mut since = self.su
++    }
++}
++
++impl Drop for PathReport {
++    fn drop(&mut self) {
++        // Not while unwinding: quinn's state lock may be what panicked.
++        if !std::thread::panicking() {
++            self.report();
++        }
++    }
++}
+ /// A path's UDP payload bytes as quinn counts them, reported node-wide by their
+-/// change at each tick of the watch (`quic_bytes_sent`, `quic_bytes_received`).
+-/// What a path moves in its last tick before it closes is not reported.
++/// change at each tick of the watch (`quic_bytes_sent`, `quic_bytes_received`)
++/// and when the path's task ends ([`PathReport`]).
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ struct UdpBytes {
+     sent: u64,
+     received: u64,
+ }
+ 
+ impl UdpBytes {
+-    fn of
+```
+
+---
+
+### Incident Patch 2: `e5694dff` (2026-11-06)
+**Commit Message**: fix(transport): queue UDP stream fragments for the egress cap (#6116)
+
+**File**: `.claude/rules/transport.md` (modified, +111/-22)
+```diff
+@@ -111,13 +111,75 @@ refill also covered: capacity moves between connections, the node cap
+ holds; so no timer-slack margin is needed), and a send error after the
+ take does not refund it (as uncapped). Rate updates every RTT can
+ reorder waiters slightly, as on the uncapped reserve path; order is not
+-a correctness property of the cap. Then each attempt is:
+-cwnd check, node-wide egress_cap::try_take, back to back with no await
+-before the send; if the cap is short, sleep through StreamPacing (deficit x
+-U[1.0, 1.4) + U[0, 2 ms)) and start again from the cwnd check. NODE-CAP
+-ADMISSION IS A RACE: nothing is held on the cap while waiting, the order
+-among waiters is random, so connections share the cap by their number of
+-waiting streams (no isolation between connections). The kept connection
++a correctness property of the cap. Then each attempt is: wait in the
++node-wide cap's admission queue (StreamPacing::wait_for_admission over
++EgressCap::poll_admit, the SAME queue the QUIC endpoint waits in); if it had
++to wait, start again from the cwnd check, which the queue then admits at
++once; then cwnd check and egress_cap::try_take back to back with no await
++before the send (a take that still fails, because another sender took the
++refill first, queues again). NODE-CAP ADMISSION IS IN ORDER: each waiting
++stream and each waiting QUIC connection is one entry, and poll_admit admits
++a waiter only when the bucket holds its datagram PLUS one for every waiter
++queued ahead of it (counted up to MAX_ADMISSION_WAKERS), so a waiter that
++polls first cannot take another's turn. Nothing is set aside: a waiter
++ahead that has not polled yet takes its datagram from the same level when
++it does. Timers (staggered by place) decide only when a waiter looks; a late
++timer delays that waiter, never reorders. Without the level check, waiters
++due on one tick were admitted in poll order and a re-armed waiter lost every
++tie (one stream in three sent nothing in 2 s at 1524 streams). After
++Admission::Waited the stream re-checks cwnd and calls again; that call
++takes its turn without queueing within ADMISSION_PASS (1 ms). Without the
++pass it re-queued at the back on every turn and never sent. A stream held
++by cwnd past the pass, or whose take failed (an unpaced send took the
++datagram first), queues again AT ITS PLACE (AdmissionWaiter::held_place, the
++ticket it was admitted from, kept until a take succeeds), so neither costs
++it a turn of the queue (streams_sharing_a_window_keep_their_turn_under_a_binding_cap:
++worst gap one turn, 0.86 s, against two turns, 1.61 s, when it went to the
++back). At most MAX_ADMISSION_WAKERS admissions are live at once; the next
++waiter waits, and no live one is dropped. Every admission has a number its
++waiter keeps; a waiter that polls again (a QUIC poller whose take failed, a
++stream past the pass) withdraws its own, and a take never withdraws one it
++did not use, so a failed send on quinn's respond path (no poll_writable)
++leaves every live admission alone. A named waiter admitted on its first poll
++keeps a place too (its admission's number). A withdrawn admission wakes the
++next held waker, and a waiter's timer is set no later than the oldest
++outstanding admission lapses, so a datagram counted for an admission that
++goes unused does not leave the bucket idle. An admission stays on the queue
++(QueuedWaiters::admitted) until its take or for ADMISSION_PASS, whichever
++comes first: it counts ahead of every waiter that polls, and every take
++leaves one datagram per outstanding admission but its own, so on a
++multi-thread runtime nobody can use a datagram admitted to another sender
++between its Ready and its take. Admission times are read under the queue
++lock. A stream's admission is NAMED (AdmissionWaiter::named, taken with
++try_take_admitted through StreamPacing::take): its take finds its own
++admission or, once that lapsed, takes as a newcomer that leaves the
++datagrams owed to the rest. Without names, a stream descheduled past the
++pass took the datagram of a newer admission and cleared that admission as
++its own (2 to 37 of 3200 takes lost in
++an_admitted_take_is_not_lost_to_another_thread). A QUIC take is named too:
++QuicPoller::poll_ready hands its admission number to QuicSocket::try_send
++through a thread-local (quic/socket.rs HANDED_ADMISSION), relying on quinn
++0.11.12 calling poll_writable then try_send back to back on one thread
++(connection.rs:1048-1057; a quinn bump must re-check it,
++a_poller_hands_its_admission_to_the_transmit_that_follows). quinn's
++endpoint respond (endpoint.rs:584) sends with no poll, finds no handoff and
++leaves every admission alone. No take ever uses an admission it does not
++name. The queue holds a waker
++and a place, never bytes. So connections share the cap by their number of
++waiting senders (no isolation between connections). The wait races the
++stream's deadline (cut at LONG_WAIT and at PACED_WAIT_DEADLINE, check()
++after each cut), so abandonment and i
+```
+
+**File**: `crates/core/src/transport/egress_cap.rs` (modified, +721/-171)
+```diff
+@@ -29,17 +29,29 @@
+ //! only at the connection wait: a fragment
+ //! can still fail on the node cap at the deadline. Otherwise the fragment
+ //! keeps its payment until it is sent, through its waits on cwnd and on the
+-//! cap. Then, right after a cwnd check, it calls [`try_take`]: if the
+-//! node-wide bucket holds a datagram's worth, the bytes are taken and the
+-//! fragment is sent at once; otherwise the task sleeps for the deficit at
+-//! the cap rate (see [`jittered`]) and starts again from the cwnd check,
+-//! keeping its connection payment and so its place on the connection.
+-//! Nothing is reserved on the node-wide bucket while it sleeps, so a
+-//! waiting stream holds no node-wide capacity. Node-wide admission is a
+-//! race: whichever waiter wakes when the bucket has enough takes it. So
++//! cap. Then it waits in the node-wide cap's admission queue
++//! ([`StreamPacing::wait_for_admission`], over [`EgressCap::poll_admit`]),
++//! the same queue the QUIC endpoint waits in. If it had to wait it starts
++//! again from the cwnd check, keeping its connection payment and so its
++//! place on the connection, and the queue then admits it at once; right
++//! after the cwnd check it calls [`EgressCap::try_take_admitted`] and sends at once. The queue
++//! holds the stream's waker and its place, never bytes, so a waiting stream
++//! holds no node-wide capacity. An admitted sender holds one datagram from
++//! its admission to its take, at most [`ADMISSION_PASS`] (1 ms): every other
++//! take leaves it in the bucket meanwhile. A sender that was admitted and has
++//! not sent (its take failed, or its congestion window held it past the pass)
++//! keeps its place: it queues again where it was admitted from. Waiters are admitted in the order they
++//! queued (QUIC connections and UDP streams alike, one entry each), so
+ //! connections share the cap in proportion to their number of waiting
+-//! streams; there is no isolation between connections, and a peer driving
+-//! many streams gets a proportional share.
++//! streams and QUIC connections; there is no isolation between connections,
++//! and a peer driving many streams gets a proportional share.
++//!
++//! Until #6112 a stream did not queue: it took with `try_take` and, when
++//! refused, slept the deficit with jitter and tried again, a race among the
++//! waiting streams. The QUIC endpoint queued, so it won contended refills:
++//! measured on a 500 kB/s cap with one QUIC path and one UDP stream at equal
++//! shares, about 462 kB/s against 38 kB/s, and 249 against 251 kB/s with
++//! both queued.
+ //!
+ //! The connection payment kept across a wait on cwnd or on the cap can be
+ //! stale: the connection's bucket refills meanwhile, so after such a wait a
+@@ -75,10 +87,19 @@
+ //! not yet paid off, at most [`DEBT_LIMIT`] of the rate; an unpaced send
+ //! beyond that is sent but not charged (forgiven, and counted).
+ //!
+-//! When the cap binds, a waiting stream gets a datagram when it wakes and
+-//! finds enough in the bucket, with probability about `1/n` among `n`
+-//! waiting streams, so each gets one every `n * 1200 / r` seconds on average
+-//! at a cap of `r` bytes per second, and longer gaps have a geometric tail.
++//! When the cap binds, the `n` waiters are served in turn, so each gets a
++//! datagram about every `n * 1200 / r` seconds at a cap of `r` bytes per
++//! second, without the geometric tail of the earlier race. The order does
++//! not depend on which waiter polls first: [`EgressCap::poll_admit`] admits
++//! a waiter only when the bucket also holds a datagram for every waiter
++//! queued ahead of it and every admission whose take has not happened yet,
++//! and every take leaves the datagrams owed to the other admissions, so on
++//! a multi-thread runtime a sender cannot use another's turn between its
++//! admission and its take. Timers decide only when a waiter looks, so a late
++//! timer (tokio's are 1 ms) delays that waiter, never reorders. Two limits:
++//! the queue counts at most [`MAX_ADMISSION_WAKERS`] ahead, and a stream the
++//! queue admitted keeps its turn for [`ADMISSION_PASS`] while it re-checks
++//! its congestion window.
+ //! (When only a connection's own bucket binds, its streams are served in
+ //! order and a stream's gap is about one round of that connection's
+ //! waiting streams.) A stream whose next fragment has not been sent
+@@ -123,7 +144,6 @@ use super::Socket;
+ use super::metrics::{EgressDecision, TRANSPORT_METRICS, WaitCause};
+ use super::packet_data::MAX_PACKET_SIZE;
+ use super::peer_connection::streaming::STREAM_INACTIVITY_TIMEOUT;
+-use crate::config::GlobalRng;
+ use crate::simulation::TimeSource;
+ 
+ /// The bucket holds at most this much time at the cap rate, so after an idle
+@@ -180,12 +200,25 @@ pub(crate) const PACED_TAKE_BYTES: usize = MAX_PACKET_SIZE;
+ 
+ const NANOS_PER_SEC: u128 = 1_000_000_000;
+ 
+-/// The most [`EgressCap::poll_admit`] wakers the cap holds. A waiter's entry
+-/// is removed when it is woken, next admitted,
+```
+
+**File**: `crates/core/src/transport/egress_cap/tests.rs` (modified, +936/-228)
+```diff
+@@ -1,4 +1,5 @@
+ use super::*;
++use crate::config::GlobalRng;
+ use crate::simulation::VirtualTime;
+ use crate::transport::metrics::WaitCause;
+ 
+@@ -183,7 +184,6 @@ fn extreme_values_never_panic() {
+             cap.give_back(u64::MAX);
+             time.advance(Duration::from_secs(1));
+             let _ = cap.level_bytes();
+-            let _ = jittered(Duration::MAX / 2);
+         }
+     }
+ }
+@@ -216,9 +216,9 @@ where
+ 
+ /// A fragment that cannot be admitted fails its stream once the gap since
+ /// the stream's previous fragment reaches `PACED_WAIT_DEADLINE`, no later
+-/// (the last sleep is cut to the deadline), and the gap is reported once at
+-/// `LONG_WAIT` on the way, from the waiting loop, although nothing was sent.
+-/// Both are blamed on the cap, which took all the time.
++/// (the wait in the admission queue races the deadline), and the gap is
++/// reported once at `LONG_WAIT` on the way, although nothing was sent. Both
++/// are blamed on the cap, which took all the time.
+ #[tokio::test(flavor = "current_thread")]
+ async fn a_fragment_fails_its_stream_at_the_wait_deadline() {
+     let time = VirtualTime::new();
+@@ -229,22 +229,12 @@ async fn a_fragment_fails_its_stream_at_the_wait_deadline() {
+         let (cap, time) = (cap.clone(), time.clone());
+         drive_virtual(&time.clone(), async move {
+             let mut pacing = StreamPacing::new(&time);
+-            loop {
+-                assert!(
+-                    time.now_nanos() < 2 * PACED_WAIT_DEADLINE.as_nanos() as u64,
+-                    "no deadline"
+-                );
+-                if let Err(gap) = pacing.check(&time, &cap) {
+-                    break gap;
+-                }
+-                match cap.try_take(PACKET, pacing.slept()) {
+-                    Ok(_) => panic!("admitted"),
+-                    Err(deficit) => {
+-                        if let Err(gap) = pacing.sleep(&time, &cap, deficit).await {
+-                            break gap;
+-                        }
+-                    }
+-                }
++            assert_eq!(pacing.check(&time, &cap), Ok(()));
++            // The wait itself runs to the deadline: it returns only on
++            // admission or at the deadline, never in between.
++            match pacing.wait_for_admission(&time, &cap, PACKET).await {
++                Err(gap) => gap,
++                Ok(admission) => panic!("admitted: {admission:?}"),
+             }
+         })
+         .await
+@@ -394,26 +384,6 @@ fn the_warnings_are_rate_limited_separately() {
+     assert_eq!(cap.abandoned_since_warn.pending(WaitCause::Cap).0, 0);
+ }
+ 
+-#[test]
+-fn jitter_is_never_shorter_than_the_deficit() {
+-    GlobalRng::scoped_seed(11, || {
+-        let wait = Duration::from_millis(100);
+-        for _ in 0..1_000 {
+-            let j = jittered(wait);
+-            assert!(
+-                j >= Duration::from_millis(100) && j < Duration::from_millis(142),
+-                "{j:?}"
+-            );
+-        }
+-        // At a tiny deficit the additive part still spreads wakeups over
+-        // more than one 1 ms timer tick.
+-        let spread: std::collections::BTreeSet<u128> = (0..100)
+-            .map(|_| jittered(Duration::from_micros(10)).as_millis())
+-            .collect();
+-        assert!(spread.len() >= 2, "{spread:?}");
+-    });
+-}
+-
+ struct Sink {
+     fail: std::sync::atomic::AtomicBool,
+ }
+@@ -457,7 +427,10 @@ fn target() -> std::net::SocketAddr {
+ #[test]
+ fn try_take_without_a_cap_admits_at_once() {
+     assert!(matches!(
+-        try_take(&Sink::new(false), Duration::ZERO),
++        try_take(
++            &Sink::new(false),
++            &mut StreamPacing::new(&VirtualTime::new())
++        ),
+         Ok(None)
+     ));
+ }
+@@ -471,7 +444,9 @@ async fn the_socket_charges_every_datagram_once() {
+     let socket = DemuxSocket::wrap(Sink::new(false), Some(EgressCap::new(RATE, time.clone())));
+     socket.send_to(&[1; 100], target()).await.unwrap();
+     socket.send_to_blocking(&[1; 50], target()).unwrap();
+-    let take = try_take(&socket, Duration::ZERO).unwrap().expect("take");
++    let take = try_take(&socket, &mut StreamPacing::new(&time))
++        .unwrap()
++        .expect("take");
+     socket
+         .send_to_paced(&[2; 700], target(), take)
+         .await
+@@ -492,7 +467,9 @@ async fn failed_sends_are_not_charged() {
+     let socket = DemuxSocket::wrap(Sink::new(true), Some(EgressCap::new(RATE, time.clone())));
+     assert!(socket.send_to(&[1; 900], target()).await.is_err());
+     assert!(socket.send_to_blocking(&[1; 900], target()).is_err());
+-    let take = try_take(&socket, Duration::ZERO).unwrap().expect("take");
++    let take = try_take(&socket, &mut StreamPacing::new(&time))
++        .unwrap()
++        .expect("take");
+     assert!(
+         socket
+             .send_to_paced(&[2; 700], target(), take)
+@@ -508,95 +485,146 @@ async fn failed_sends_are_not_charged() {
+ /// with `None` for an unpaced send.
+ type Sends = Vec<(u64, u64, Option<usize>)>;
+ 
+-/// Simulate `streams` paced s
+```
+
+**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +336/-17)
+```diff
+@@ -185,9 +185,15 @@ enum CappedAttempt<'a> {
+ /// wait is checked: a fragment can still fail on the node cap at the
+ /// deadline. If it had to sleep, the attempt ends (`Retry`),
+ /// so the cwnd check and the node-wide take of the next attempt are back to
+-/// back. Then it takes from the node-wide cap with `try_take`: on a refusal
+-/// it sleeps for the jittered deficit and retries, keeping the connection
+-/// payment. Nothing is reserved on the node-wide cap.
++/// back. Then it waits in the node-wide cap's admission queue, the one the
++/// QUIC endpoint waits in (`StreamPacing::wait_for_admission`), racing the
++/// stream's deadline; if it had to wait the attempt ends (`Retry`) so the
++/// cwnd check comes again right before the take. Then it takes with
++/// `try_take`; a take that still fails (another sender took the refill
++/// first) retries, keeping the connection payment and its place in the
++/// queue. Nothing is reserved on the node-wide cap while the fragment waits:
++/// the queue holds a waker and a place, not bytes. Once admitted, the fragment
++/// holds one datagram until its take, at most `ADMISSION_PASS` (1 ms).
+ async fn capped_attempt<'a, S: super::super::Socket, T: TimeSource>(
+     socket: &'a S,
+     cap: &'a super::super::egress_cap::EgressCap,
+@@ -227,20 +233,28 @@ async fn capped_attempt<'a, S: super::super::Socket, T: TimeSource>(
+             };
+         }
+     }
+-    match super::super::egress_cap::try_take(socket, pacing.slept()) {
++    match pacing
++        .wait_for_admission(time_source, cap, super::super::egress_cap::PACED_TAKE_BYTES)
++        .await
++    {
++        Ok(super::super::egress_cap::Admission::Now) => {}
++        Ok(super::super::egress_cap::Admission::Waited) => return CappedAttempt::Retry,
++        Err(gap) => {
++            return CappedAttempt::Abandon {
++                gap,
++                refused: false,
++            };
++        }
++    }
++    match super::super::egress_cap::try_take(socket, pacing) {
+         Ok(take) => {
+             if let Some(payment) = payment.take() {
+                 payment.spent();
+             }
+             CappedAttempt::Send(take)
+         }
+-        Err(deficit) => match pacing.sleep(time_source, cap, deficit).await {
+-            Ok(()) => CappedAttempt::Retry,
+-            Err(gap) => CappedAttempt::Abandon {
+-                gap,
+-                refused: false,
+-            },
+-        },
++        // Another sender took the refill first: queue again.
++        Err(_) => CappedAttempt::Retry,
+     }
+ }
+ 
+@@ -430,9 +444,11 @@ pub(super) async fn send_stream<S: super::super::Socket, T: TimeSource>(
+         // `capped_attempt`: the fragment pays the per-connection bucket once,
+         // in order (reserve and sleep), and keeps that payment; then each
+         // attempt checks cwnd and takes from the node-wide bucket back to
+-        // back, with no await between them and the send. A refused node-wide
+-        // take sleeps for the deficit with jitter and starts again from the
+-        // cwnd check. Nothing is held on the node-wide bucket while waiting.
++        // back, with no await between them and the send. Before each take the
++        // fragment waits its turn in the node-wide admission queue
++        // (`StreamPacing::wait_for_admission`), and a take that fails queues
++        // again at its place. Nothing is held on the node-wide bucket while
++        // waiting; an admitted fragment holds its datagram for at most 1 ms.
+         // `CWND_WAIT_TIMEOUT` counts only time spent waiting for cwnd, summed
+         // over the attempts.
+         let mut cwnd_waited = Duration::ZERO;
+@@ -4656,9 +4672,9 @@ mod egress_cap_tests {
+         // A round holds ROUND_LIMIT reservations, so at most about
+         // ROUND_LIMIT streams can keep a reservation within the deadline at
+         // once; streams admitted past that are refused at a later fragment.
+-        // Measured: 20 of 30, send and pipe. The run draws no randomness
+-        // (the node cap never refuses, so no jittered sleep happens; checked
+-        // below), so the count does not vary with the seed. The floor leaves
++        // Measured: 20 of 30, send and pipe. The node cap never binds here
++        // (checked below), so the count does not vary with the seed. The
++        // floor leaves
+         // 4 streams for rounding at the round boundary.
+         const MIN_SURVIVORS: usize = ROUND_LIMIT - 4;
+         const FRAGMENTS: usize = 8;
+@@ -5195,6 +5211,309 @@ mod egress_cap_tests {
+         }
+     }
+ 
++    /// Several streams sharing one connection's window under a binding cap,
++    /// beside many streams on other connections. The window holds one fragment
++    /// and an ACK takes 30 ms, so a stream the queue admits usually finds the
++    /// window full and waits past `ADMISSION_PASS` before its take. It keeps
++    /// its place in the queue meanwhile, so its worst gap between fragments is
++    /// about one turn of the queue (34 senders at 50 kB/s: 0.8
+```
+
+**File**: `crates/core/src/transport/quic/recycle/cap_tests.rs` (modified, +165/-94)
+```diff
+@@ -477,7 +477,7 @@ fn the_floor_keeps_two_datagrams_in_flight_both_ways() {
+ /// `a_quic_path_and_udp_streams_each_get_their_fair_share_under_a_saturated_egress_cap`.
+ #[test]
+ fn a_quic_path_and_udp_streams_both_progress_under_an_egress_cap() {
+-    use crate::transport::egress_cap::{PACED_WAIT_DEADLINE, try_take};
++    use crate::transport::egress_cap::{PACED_WAIT_DEADLINE, StreamPacing, try_take};
+     bounded(|| async move {
+         const CAP: u64 = 500_000;
+         const QUIC_LEN: usize = 1_000_000;
+@@ -504,8 +504,10 @@ fn a_quic_path_and_udp_streams_both_progress_under_an_egress_cap() {
+                 // the cap, send at once, or sleep the deficit and try again.
+                 let fragment = [0x02u8; 1200];
+                 let (mut sent, mut last, mut longest) = (0, link.time.now_nanos(), 0u64);
++                // Never admitted: each take is a newcomer's.
++                let mut pacing = StreamPacing::new(&link.time);
+                 while sent < UDP_LEN {
+-                    match try_take(link.a_socket.as_ref(), Duration::ZERO) {
++                    match try_take(link.a_socket.as_ref(), &mut pacing) {
+                         Ok(Some(take)) => {
+                             let n = link
+                                 .a_socket
+@@ -563,107 +565,176 @@ fn a_quic_path_and_udp_streams_both_progress_under_an_egress_cap() {
+     })
+ }
+ 
+-/// Under a saturated egress cap shared by two connections, with the minimum
+-/// per connection set below the share, a QUIC path and a UDP stream sender on
+-/// the other connection each get their fair share, half the cap, within 15%.
+-/// The UDP sender is paced as the UDP transport paces a stream fragment: it
+-/// reserves from its own connection's token bucket at the share
+-/// (`TokenBucket::reserve`), then takes from the egress cap. Each side's rate
+-/// is the bytes it put on the wire while the QUIC transfer ran, from when its
+-/// connection was up.
+-///
+-/// What it covers is narrow: two connections, the same RTT, one flow each,
+-/// and a minimum below the share. With the default minimum the share is the
+-/// whole cap and the window cap does not apportion it (see `transport.md`).
+-/// Seeded; over 40 seeds the rates ranged 239354 to 239658 B/s for QUIC and
+-/// 249990 to 250105 B/s for UDP.
++/// A paced UDP stream on `a`, sending 1200-byte fragments to `b` as
++/// `outbound_stream::capped_attempt` sends a stream fragment under a cap:
++/// reserve it on its connection's `bucket` (`TokenBucket::reserve`), wait in
++/// the cap's admission queue (`StreamPacing::wait_for_admission`), the one
++/// the QUIC endpoint waits in, then take and send at once. There is no
++/// congestion window here, so a fragment that had to wait goes straight back
++/// to the queue, which admits it at once. Records each send's time in
++/// `sends`. A fragment that reaches the stream deadline is counted in
++/// `abandoned`, and the stream carries on with a fresh gap.
++async fn paced_udp_stream(
++    link: Arc<Link>,
++    bucket: Arc<crate::transport::token_bucket::TokenBucket<VirtualTime>>,
++    sends: Arc<Mutex<Vec<u64>>>,
++    abandoned: Arc<AtomicU64>,
++) {
++    use crate::transport::egress_cap::{PACED_TAKE_BYTES, StreamPacing, try_take};
++    let fragment = [0x02u8; 1200];
++    let cap = link.a_socket.egress_cap().expect("a cap");
++    let mut pacing = StreamPacing::new(&link.time);
++    loop {
++        let wait = bucket.reserve(fragment.len());
++        if !wait.is_zero() {
++            link.time.sleep(wait).await;
++        }
++        loop {
++            if pacing
++                .wait_for_admission(&link.time, cap, PACED_TAKE_BYTES)
++                .await
++                .is_err()
++            {
++                abandoned.fetch_add(1, Ordering::Relaxed);
++                pacing = StreamPacing::new(&link.time);
++                continue;
++            }
++            match try_take(link.a_socket.as_ref(), &mut pacing) {
++                Ok(Some(take)) => {
++                    link.a_socket
++                        .try_send_to_paced(&fragment, link.b_addr, take)
++                        .expect("sent");
++                    sends.lock().unwrap().push(link.time.now_nanos());
++                    pacing.sent(&link.time);
++                    break;
++                }
++                Ok(None) => unreachable!("the socket has a cap"),
++                // Another sender took the refill first: queue again.
++                Err(_) => {}
++            }
++        }
++    }
++}
++
++/// A QUIC path and `streams` paced UDP streams on another connection share
++/// a saturated 500 kB/s egress cap; `minimum` is the minimum per connection
++/// (`None` for the default). Returns the QUIC and UDP rates in B/s, from the
++/// bytes each put on the wire while a 2 MB QUIC transfer ran (from when its
++/// connection was up), and the fragments abandoned at the stream deadline.
++async fn quic_and_udp_rates(
++    network: &str,
++    subnet: u8,
++    seed: u64,
++    minimum: Option<usize>,
++    str
+```
+
+**File**: `crates/core/src/transport/quic/socket.rs` (modified, +49/-4)
+```diff
+@@ -95,8 +95,9 @@ pub(crate) const CAP_HOLD_VALIDITY_MARGIN: u32 = 2;
+ /// `rate_bytes_per_sec`: [`CAP_HOLD_VALIDITY_MARGIN`] times the longest the
+ /// cap makes one waiting transmit wait before its poller is polled again.
+ /// That is the cap's debt limit (unpaced sends may run the bucket that far
+-/// into debt) plus one datagram's refill for every waiter that can be queued
+-/// ahead of it (`MAX_ADMISSION_WAKERS`) and for its own. A held poller of a
++/// into debt) plus one datagram's refill for every waiter its timer counts
++/// ahead of it (at most `MAX_ADMISSION_WAKERS`, however long the queue: the
++/// stagger is clamped there) and for its own. A held poller of a
+ /// live connection is polled again within that, at its timer; one that is
+ /// not was left behind by a connection that ended.
+ ///
+@@ -515,13 +516,19 @@ impl<S: Socket> QuicSocket<S> {
+             Some(cap) => {
+                 // One datagram per transmit keeps every take within the
+                 // burst (at least 4 datagrams), so the bucket's bound holds
+-                // exactly and the take can always be admitted eventually.
++                // exactly. The take also leaves one datagram per other
++                // outstanding admission, each lasting at most
++                // `ADMISSION_PASS`, so it is admitted eventually.
+                 debug_assert!(
+                     transmit.contents.len() as u64 <= cap.burst_bytes(),
+                     "a {} byte transmit is larger than the egress burst",
+                     transmit.contents.len()
+                 );
+-                match cap.try_take(transmit.contents.len(), Duration::ZERO) {
++                // The admission the poller handed over, if this transmit
++                // follows one; none for an endpoint response, which must
++                // leave every connection's admission alone.
++                let handed = take_handed_admission(cap);
++                match cap.try_take_handed(transmit.contents.len(), Duration::ZERO, handed) {
+                     Ok(take) => self
+                         .socket
+                         .try_send_to_paced(transmit.contents, target, take),
+@@ -597,6 +604,35 @@ impl<S: Socket> QuicSocket<S> {
+     }
+ }
+ 
++thread_local! {
++    /// The admission a [`QuicPoller`] was just given, for the transmit that
++    /// follows it: `(cap, admission number)`. quinn 0.11.12 calls
++    /// `poll_writable` and, when it is `Ready`, `try_send` for the same
++    /// transmit back to back on one thread with nothing in between
++    /// (`quinn/src/connection.rs:1048-1057`), so the next `try_send` on this
++    /// thread is that connection's, and its take uses exactly that admission.
++    /// quinn's endpoint `respond` (`endpoint.rs:584`) sends with no poll, finds
++    /// nothing here, and leaves every admission alone. quinn is pinned; a
++    /// quinn bump must re-check this call order
++    /// (`a_poller_hands_its_admission_to_the_transmit_that_follows`).
++    static HANDED_ADMISSION: std::cell::Cell<Option<(usize, u64)>> =
++        const { std::cell::Cell::new(None) };
++}
++
++/// Which cap a handed admission belongs to: several nodes (and caps) can
++/// share a thread in a simulation.
++fn cap_key(cap: &crate::transport::egress_cap::EgressCap) -> usize {
++    std::ptr::from_ref(cap) as usize
++}
++
++/// Take the admission handed over on this thread for `cap`, if any.
++fn take_handed_admission(cap: &crate::transport::egress_cap::EgressCap) -> Option<u64> {
++    HANDED_ADMISSION
++        .take()
++        .filter(|(key, _)| *key == cap_key(cap))
++        .map(|(_, id)| id)
++}
++
+ /// quinn's write-readiness check for one connection: ready when the socket
+ /// can take a send and the egress cap holds a full datagram.
+ struct QuicPoller<S> {
+@@ -683,6 +719,10 @@ impl<S: Socket> QuicPoller<S> {
+                 panic!("injected panic in the QUIC socket adapter (write readiness)");
+             }
+         }
++        // A handoff a poll left unused (its transmit never reached the cap)
++        // is stale: the admission it names is withdrawn below if this poller
++        // owns it, and must not go to another's transmit.
++        HANDED_ADMISSION.set(None);
+         let this = self;
+         let demux = &this.socket.socket;
+         match demux.poll_send_ready(cx) {
+@@ -701,6 +741,11 @@ impl<S: Socket> QuicPoller<S> {
+             Err(poisoned) => poisoned.into_inner(),
+         };
+         let admitted = cap.poll_admit(usize::from(MAX_UDP_PAYLOAD), waiter, cx);
++        if admitted.is_ready() {
++            if let Some(id) = waiter.admission() {
++                HANDED_ADMISSION.set(Some((cap_key(cap), id)));
++            }
++        }
+         this.record_admission(admitted.is_pending());
+         admitted.map(Ok)
+     }
+```
+
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +131/-4)
+```diff
+@@ -2168,9 +2168,9 @@ fn a_hold_left_by_an_ended_connection_stops_pausing_the_ack_watch() {
+ 
+ /// #5940 step M6: `socket::cap_hold_validity`, without its margin, bounds
+ /// the longest wait the real cap gives a QUIC transmit before its poller is
+-/// polled again: with the cap at its deepest debt (`DEBT_LIMIT`) and the
+-/// most waiters it queues (`MAX_ADMISSION_WAKERS`), the last waiter's timer
+-/// is no later than that.
++/// polled again: with the cap at its deepest debt (`DEBT_LIMIT`) and 500
++/// more waiters queued than it holds wakers for (`MAX_ADMISSION_WAKERS`),
++/// the last waiter's timer is no later than that.
+ #[test]
+ fn cap_hold_validity_bounds_the_longest_admission_wait() {
+     use super::socket::{CAP_HOLD_VALIDITY_MARGIN, cap_hold_validity};
+@@ -2184,7 +2184,9 @@ fn cap_hold_validity_bounds_the_longest_admission_wait() {
+         // Past the debt limit: the rest is forgiven.
+         let deepest = cap.burst_bytes() + 2 * rate * DEBT_LIMIT.as_secs();
+         cap.charge_unpaced(deepest as usize);
+-        let mut waiters: Vec<AdmissionWaiter> = (0..MAX_ADMISSION_WAKERS)
++        // More than the queue holds wakers for: the queue keeps every place,
++        // and the stagger counts at most `MAX_ADMISSION_WAKERS` ahead.
++        let mut waiters: Vec<AdmissionWaiter> = (0..MAX_ADMISSION_WAKERS + 500)
+             .map(|_| AdmissionWaiter::default())
+             .collect();
+         for waiter in &mut waiters {
+@@ -4530,3 +4532,128 @@ fn a_retry_token_is_honoured_for_its_lifetime_on_the_endpoint_clock() {
+         "past its lifetime the token is answered with a close"
+     );
+ }
++
++/// The QUIC poller hands its admission to the transmit that follows it on the
++/// same thread, as quinn 0.11.12 calls them (`poll_writable`, then `try_send`,
++/// back to back): that transmit's take uses exactly that admission, and other
++/// senders' admissions, made before the poll and between the poll and the
++/// send, stay outstanding. A send on another thread (quinn's endpoint
++/// `respond`, which never polls) finds no handoff and uses no admission. Pins
++/// the call order this relies on: a quinn bump must keep it.
++#[test]
++fn a_poller_hands_its_admission_to_the_transmit_that_follows() {
++    use crate::transport::egress_cap::AdmissionWaiter;
++    use quinn::AsyncUdpSocket;
++    use std::task::Context;
++    let time = VirtualTime::new();
++    let local: SocketAddr = "10.201.9.1:5000".parse().unwrap();
++    let target: SocketAddr = "10.201.9.2:5000".parse().unwrap();
++    let (socket, demux) = scripted(local, SendMode::Send, Vec::new(), Some((1_000_000, &time)));
++    let cap = demux.egress_cap().unwrap();
++    let waker = futures::task::noop_waker();
++    let mut cx = Context::from_waker(&waker);
++    let mut before = AdmissionWaiter::default();
++    assert!(cap.poll_admit(1200, &mut before, &mut cx).is_ready());
++    let mut poller = socket.clone().create_io_poller();
++    assert!(poller.as_mut().poll_writable(&mut cx).is_ready());
++    let mut between = AdmissionWaiter::default();
++    assert!(cap.poll_admit(1200, &mut between, &mut cx).is_ready());
++    let (before_id, between_id) = (before.admission().unwrap(), between.admission().unwrap());
++
++    // quinn's endpoint response, on another thread: no handoff there.
++    std::thread::scope(|scope| {
++        scope
++            .spawn(|| socket.try_send(&transmit(&[0xC0; 1200], target)))
++            .join()
++            .unwrap()
++            .expect("the bucket has room for a response beside three admissions");
++    });
++    assert_eq!(
++        cap.admissions_outstanding(),
++        3,
++        "the response used no admission"
++    );
++
++    socket.try_send(&transmit(&[0xC0; 1200], target)).unwrap();
++    assert_eq!(
++        cap.admissions_outstanding(),
++        2,
++        "the transmit used one admission"
++    );
++    assert!(
++        cap.admission_outstanding(before_id),
++        "not the older sender's"
++    );
++    assert!(cap.admission_outstanding(between_id), "nor the newer one's");
++}
++
++/// A handoff whose transmit never reached the cap (the send returned first)
++/// goes to no other transmit: the poller's next poll clears it, and a send
++/// with no poll then uses no admission.
++#[test]
++fn an_unused_handoff_goes_to_no_other_transmit() {
++    use quinn::AsyncUdpSocket;
++    use std::task::Context;
++    let time = VirtualTime::new();
++    let local: SocketAddr = "10.201.9.1:5000".parse().unwrap();
++    let target: SocketAddr = "10.201.9.2:5000".parse().unwrap();
++    let (socket, demux) = scripted(local, SendMode::Send, Vec::new(), Some((1_000_000, &time)));
++    let cap = demux.egress_cap().unwrap();
++    // Room for one datagram and a bit.
++    cap.charge_unpaced(cap.burst_bytes() as usize - 1300);
++    let waker = futures::task::noop_waker();
++    let mut cx = Context::from_waker(&waker);
++    let mut admitted = socket.clone().create_io_poller();
++    assert!(admitted.as_mut().poll_writable(&mut cx).is_ready());
++    // Another conne
+```
+
+**File**: `docs/architecture/transport/configuration/bandwidth-configuration.md` (modified, +7/-5)
+```diff
+@@ -191,7 +191,7 @@ Only one kind of send waits for the bucket:
+ 
+ | Send | Behaviour when the bucket is empty |
+ |------|------------------------------------|
+-| Stream fragments (`send_stream`, `pipe_stream`) | First reserve the datagram on the per-connection bucket and sleep until it is due, so a connection serves its streams in order; a reservation whose wait would reach the stream's 5 s deadline is not made, so it takes no place in the connection's order, and the stream fails at once (counted as refused, `egress_streams_refused_*`). A reservation that was made and is later given back (the stream is cancelled or fails on a later wait) does not move the fragments behind it up; their waits are not recomputed. An admitted new stream can still delay streams already in progress on the connection, as without a cap; a per-connection scheduler is future work. This looks only at the connection's wait, so a fragment can still fail on the node-wide bucket at the deadline. The fragment keeps that reservation through later waits. Then, right after a cwnd check, take the datagram from the node-wide bucket and send at once. If it is short, take nothing from it, sleep for the deficit times 1.0 to 1.4 plus 0 to 2 ms (random), and start again from the cwnd check. Nothing is held on the node-wide bucket while waiting, and the order among streams waiting for it is random. A stream whose next fragment has not been sent 5 s after its previous one (or after the stream started; the gap the receiver times, whatever the wait was for) fails. |
++| Stream fragments (`send_stream`, `pipe_stream`) | First reserve the datagram on the per-connection bucket and sleep until it is due, so a connection serves its streams in order; a reservation whose wait would reach the stream's 5 s deadline is not made, so it takes no place in the connection's order, and the stream fails at once (counted as refused, `egress_streams_refused_*`). A reservation that was made and is later given back (the stream is cancelled or fails on a later wait) does not move the fragments behind it up; their waits are not recomputed. An admitted new stream can still delay streams already in progress on the connection, as without a cap; a per-connection scheduler is future work. This looks only at the connection's wait, so a fragment can still fail on the node-wide bucket at the deadline. The fragment keeps that reservation through later waits. Then wait in the node-wide bucket's admission queue, the same queue the QUIC endpoint waits in, until the bucket holds the datagram; after any wait, check cwnd again; then take the datagram from the node-wide bucket and send at once. Nothing is held on the node-wide bucket while waiting: the queue holds the stream's place, not bytes. Once admitted, the stream holds one datagram until it takes it, for at most 1 ms. If its take fails (an ACK or another unpaced send took the datagram first), or its congestion window holds it longer than that, it waits again at the same place in the queue, not at the back. A stream whose next fragment has not been sent 5 s after its previous one (or after the stream started; the gap the receiver times, whatever the wait was for) fails. |
+ | Everything else (handshakes, short messages, ACKs, receipts, keepalives, Pongs, retransmissions) | Sent at once and charged once sent. The bucket goes into debt, and the next stream fragments wait longer to pay it. |
+ 
+ The sends that never wait are sent from places that must not block: the receive path
+@@ -210,10 +210,12 @@ What this guarantees:
+   it is still sent but not charged ("forgiven", counted as
+   `egress_debt_forgiven_bytes`). So the cap holds on average, and forgiven bytes mean
+   control traffic alone exceeded the cap for over a second.
+-- The order among waiting streams is random: a stream that wakes when the bucket has
+-  room takes it. Each of `N` concurrent streams gets a fragment about every
+-  `N * 1200 / C` seconds on average at a cap of `C` bytes/s, and the gaps have a
+-  geometric tail (see the troubleshooting section). Connections share the cap in
++- Waiting streams and QUIC connections are served approximately in the order they
++  queued, each with a turn (a QUIC transmit delayed by the operating system between
++  its admission and its send can take another QUIC connection's turn), so each of `N` waiting senders gets a datagram about every
++  `N * 1200 / C` seconds at a cap of `C` bytes/s. Until #6112 the order was random
++  and the gaps had a geometric tail, and a QUIC path, which already queued, won most
++  refills. Connections share the cap in
+   proportion to their number of waiting streams.
+ - Known limitation: there is no isolation between connections inside the cap. A peer
+   that drives many streams through this node gets a proportional share of it.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6131** (2026-11-06): test(util): count the summary thread's allows in the rate-limit stress test (@sanity)
 - **PR #6125** (2026-11-06): feat: skip payloads already merged into the local state (@sanity)
+- **PR #6124** (2026-11-06): feat(transport): export quinn's per-path QUIC loss (@sanity)
 - **PR #6122** (2026-11-06): fix(transport): stop sending on a QUIC path that has gone dark (@sanity)
 - **PR #6119** (2026-11-05): fix(test): advance VirtualTime in controlled simulations (@sanity)
 - **PR #6118** (2026-11-05): feat(transport): export QUIC data path telemetry (@sanity)
-- **PR #6117** (2026-11-05): fix(hosted): orient cold visitors and point them at the installer (@sanity)
-- **PR #6114** (2026-11-05): feat(transport): send QUIC data on the path with fallback to UDP (@sanity)
 
 ---
 
@@ -2300,13 +3076,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): stop sending on a QUIC path that has gone dark (#6122)
+## X. transport): export quinn's per-path QUIC loss (#6124)
 
 **RULE**:
 When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8029535e`: transport): stop sending on a QUIC path that has gone dark (#6122). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49808ff5`: transport): export quinn's per-path QUIC loss (#6124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
@@ -2314,31 +3090,30 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  A path gone dark: the first send timeout that counts toward the stall close
-  (nothing acknowledged for the window, no cap hold) makes the path suspect
-  (QuicPath::is_suspect, suspect_entered). data_route() then gives no route and
-  the worker sends what it takes on UDP, so new data goes on UDP while sends
-  already on the path stay there (a resend could deliver twice). The first time
-  it is asked after the acknowledgement count moved (quinn's keepalive brings one
-  within 15 s on a live path), the path takes data again (suspect_left). Without
-  it every short into a dark path ends MaybeDelivered(TimedOut), is never resent
-  and is lost, and an operation's retry lands in the same place until quinn's
-  idle timeout. A path that stays dark ends on quinn's idle timeout (120 s in
-  production, Fallback(Idle)), not on the stall close: once suspect no new send
-  reaches it, so the stall close fires only when STALLED_SENDS_LIMIT sends were
-  already on it. New data goes on UDP meanwhile, so nothing is lost. Entering
-  and leaving are under one lock. Fallback is a testing-period crutch: this
-  routing goes with it when the legacy transport is removed.
-  Receiver side: a path whose own 
+  tick of the acknowledgement watch and once more when the path's task ends);
+  quic_sent_packets, quic_lost_packets, quic_lost_bytes and
+  quic_congestion_events (quinn's PathStats, every path including shadow ones, by
+  the same tick and once more when the path's task ends, so a path's last tick
+  before it closes is counted, sums of the period). A CONNECTION_CLOSE quinn sends
+  again after that report is in neither the byte nor the packet counts. A panic
+  in the watch, which the path survives, ends nothing: the report is the
+  receive supervisor's (recycle::PathReport); quic_loss_rate_<zero|lt_0_5pct|lt_1pct|
+  lt_2pct|lt_5pct|lt_10pct|lt_20pct|ge_20pct> (a gauge of live paths that have sent
+  at least 200 packets since they started, each in the one bucket of its own
+  lost/sent over its life, moved as it changes, out when the path ends; every
+  bucket uploaded every period, 0 included; no per-path values) and
+  quic_ended_loss_rate_<bucket> (paths that ended in the period, by their final
+  bucket, so paths that fail lossy still show) and quic_ended_paths_below_floor
+  (paths that ended in the period before 200 packets). Packets in flight at close
+  are dropped by quinn, not de
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  NOT_ACCEPTING_DATA: this node's gating or the peer's is wrong. Logged once per
-  path, counted (data_refused, and every time), new sends go on UDP and the path
-  stays up. send_data has three states so a send racing the refusal does not trip
+  tick of the acknowledgement watch, so a path's last tick before it closes is
+  lost); quic_session_ended_with_data_path_<age> (sessions that ended while their
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8029535e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49808ff5` are properly handled with clean fallback behavior.

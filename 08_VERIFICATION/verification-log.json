@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-SQUV",
-    "timestamp": "2026-11-05T01:15:06.871Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "93693f56429feec3b8fdd59a2d503b68873692dd707144c90d527463dc8d3b18",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-SV6U",
-    "timestamp": "2026-11-05T01:15:12.486Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "07cf412cad3ed68770b99ed88368ac06b10f93931e713c5d278297c6ff3cb1de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-1XY2",
-    "timestamp": "2026-11-05T01:22:15.962Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "3c44c7f4ef93c8a593bbd51abe33294d656746b74dbef267d2830bb6cf093b5c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-28SA",
-    "timestamp": "2026-11-05T01:22:30.010Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "6a41203745c1766a9c1e5de4831b5edb359d3bd07fea5fed6a83af5b73d4ea23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-G3A6",
-    "timestamp": "2026-11-05T01:33:16.062Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "ca795f8d17adf41b09e377904cba46dcf018e360ca8578761355a86806907a33",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-G93D",
     "timestamp": "2026-11-05T01:33:23.593Z",
     "repository": "DNSControl/dnscontrol",
@@ -7490,6 +7415,81 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-KAUL",
+    "timestamp": "2026-11-06T23:19:54.861Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-KAZB",
+    "timestamp": "2026-11-06T23:19:55.031Z",
+    "repository": "aws-amplify/amplify-js",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "e42f9f6df4bd28d58015ebc0d659de71305179034dad2094e8932fa185c371fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-KD9I",
+    "timestamp": "2026-11-06T23:19:57.990Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-KEZQ",
+    "timestamp": "2026-11-06T23:20:00.230Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-KGWC",
+    "timestamp": "2026-11-06T23:20:02.700Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

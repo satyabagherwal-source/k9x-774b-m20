@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "eb7d93e0",
+    "sourceVersion": "49808ff5",
     "license": "NOASSERTION",
-    "contentHash": "fadbdc5ca5cdde26d53f8008bce3426adea234dade208e0f3d191a2bc502576e",
-    "lastHarvestedAt": "2026-11-06T15:20:49.234Z",
+    "contentHash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
+    "lastHarvestedAt": "2026-11-06T23:20:00.235Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4253,10 +4253,10 @@
     "repository": "aws-amplify/amplify-js",
     "platform": "github",
     "sourceUrl": "https://github.com/aws-amplify/amplify-js",
-    "sourceVersion": "6334056c",
+    "sourceVersion": "3a9b151d",
     "license": "Apache-2.0",
-    "contentHash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
-    "lastHarvestedAt": "2026-10-25T02:18:52.267Z",
+    "contentHash": "e42f9f6df4bd28d58015ebc0d659de71305179034dad2094e8932fa185c371fa",
+    "lastHarvestedAt": "2026-11-06T23:19:55.035Z",
     "learningId": "learn-github-aws-amplify-amplify-js"
   },
   "go-eagle-eagle": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "6e727661",
+    "sourceVersion": "d03290ee",
     "license": "Apache-2.0",
-    "contentHash": "1ecaf6101f90fb960f51e81e12a1e5adc4848360d7fa71d9097a0485b2de0b19",
-    "lastHarvestedAt": "2026-11-05T00:14:59.320Z",
+    "contentHash": "cca585a7908bdb18e09f316947372007b7c6b3b52b926638cfe4c10855e63f1e",
+    "lastHarvestedAt": "2026-11-06T23:19:57.994Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "5def2611",
+    "sourceVersion": "e2501b0d",
     "license": "Apache-2.0",
-    "contentHash": "b0deb395e97788e210cc2cbb51943a783270fbc49da49694d1b6933e8d7af7e7",
-    "lastHarvestedAt": "2026-11-05T13:20:32.619Z",
+    "contentHash": "7fbe356eb930f6703e6cab8946cc3f1d4a0539e225600ddbd24510f0f24951e9",
+    "lastHarvestedAt": "2026-11-06T23:20:02.704Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "2d22bf9a",
+    "sourceVersion": "1bc04739",
     "license": "BSD-3-Clause",
-    "contentHash": "b8106753dfeb986186cb89de074a783d1628e2c95f5c6479f9d0de911a129d04",
-    "lastHarvestedAt": "2026-11-03T19:24:15.008Z",
+    "contentHash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
+    "lastHarvestedAt": "2026-11-06T23:19:54.865Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

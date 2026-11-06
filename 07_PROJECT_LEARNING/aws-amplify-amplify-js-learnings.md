@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source**: github ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
-> **Source Version**: `6334056c`  
+> **Source Version**: `3a9b151d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:18:51.912Z  
+> **Timestamp**: 2026-11-06T23:19:53.393Z  
 > **Learning ID**: `learn-github-aws-amplify-amplify-js`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:18:50.710Z  
+> **Harvest Timestamp**: 2026-11-06T23:19:52.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A declarative JavaScript library for application development using cloud services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9552 stars
+- **Stars / Engagement**: 9554 stars
 
 ---
 
@@ -446,11 +446,11 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15005** (2026-11-05): **`signOut({ global: true })` silently fails to revoke tokens for federated (hosted-UI) users.**
+  *Symptoms*: ### Before opening, please confirm:   - [x] I have [searched for duplicate or closed issues](https://github.com/aws-amplify/amplify-js/issues?q=is%3Aissue+) and [discussions](https://github.com/aws-amplify/amplify-js/discussions). - [x] I have read the guide for [submitting bug reports](https://github.com/aws-amplify/amplify-js/blob/main/CONTRIBUTING.md#bug-reports). - [x] I have done my best to include a minimal, self-contained set of instructions for consistently reproducing the issue.  ### JavaScript Framework  React  ### Amplify APIs  Authentication  ### Amplify Version  v6  ### Amplify Categories  auth  ### Backend  None  ### Environment information  @aws-amplify/auth (v6)  ### Describe the bug  `signOut({ global: true })` relies on the Cognito `GlobalSignOut` API, which requires the access token to carry the `aws.cognito.signin.user.admin` scope. Access tokens issued through federated / hosted-UI sign-in (SAML, social) do not carry that scope, so the call fails with NotAuthorizedException. The error is swallowed, local tokens are cleared, and the app appears logged out, but the refresh token is never revoked and stays valid for its full lifetime. Native (SRP / USER_PASSWORD) users are unaffected because their tokens carry the scope, which masks the problem in testing.  ### Expected behavior  When `global: true` cannot invoke `GlobalSignOut` for a federated user, Amplify should fall back to the token-revocation endpoint (`/oauth2/revoke`, which needs only the client id a
+
 - **Issue #14978** (2026-10-06): **[Auth] fetchAuthSession throws "Access to Identity is forbidden" after a failed token refresh because the signed-in user's identityId is reused for guest access**
   *Symptoms*: ### Describe the bug  After a token refresh fails with an authentication error (for example, a revoked or expired refresh token, or an admin global sign-out), `fetchAuthSession()` throws on every call for the rest of the page's lifetime:  ``` NotAuthorizedException: Access to Identity 'us-west-2:…' is forbidden. ```  This happens with an identity pool that allows guest access.  Cause: 1. While the user is signed in, `DefaultIdentityIdStore` keeps the user's authenticated identityId in memory (`_primaryIdentityId`). 2. When the refresh fails, `TokenOrchestrator.handleErrors` clears the tokens and returns `null`. Nothing clears `_primaryIdentityId`; only `signOut()` calls `clearCredentialsAndIdentityId()`. 3. `fetchAuthSession()` now has no tokens, so it calls the credentials provider with `authenticated: false`. `cognitoIdentityIdProvider` calls `loadIdentityId()`, which returns the in-memory primary identityId first (`IdentityIdStore.ts`). 4. `getGuestCredentials` sends that authenticated identityId to `GetCredentialsForIdentity` without `Logins`. Cognito rejects it as forbidden, and the same identityId is used again on every call.  The app can only recover by reloading the page or calling `signOut()`.  This was found while investigating #14975 (listed there under "A leftover primary ID in the guest branch"). It is reported separately because the library gets into this state on its own.  ### Expected behavior  With no tokens, `fetchAuthSession()` does not use the signed-in us
-
-- **Issue #14974** (2026-10-06): **[adapter-nextjs] Server-side cookie deletion omits `Path`, so auth cookies are not removed on `_next/data`, nested-route and API-route requests**
-  *Symptoms*: ### Before opening, please confirm:   - [x] I have [searched for duplicate or closed issues](https://github.com/aws-amplify/amplify-js/issues?q=is%3Aissue+) and [discussions](https://github.com/aws-amplify/amplify-js/discussions). - [x] I have read the guide for [submitting bug reports](https://github.com/aws-amplify/amplify-js/blob/main/CONTRIBUTING.md#bug-reports). - [x] I have done my best to include a minimal, self-contained set of instructions for consistently reproducing the issue.  ### JavaScript Framework  Next.js  ### Amplify APIs  Authentication  ### Amplify Version  v6  ### Amplify Categories  storage, auth  ### Backend  Other  ### Environment information  <details>  ```   System:     OS: Windows 11 10.0.26200   Binaries:     Node: 26.7.0     npm: 11.19.0   Browsers:     Chrome: 154.0.8037.97   npmPackages:     @aws-amplify/adapter-nextjs: 1.8.0 => 1.8.0     aws-amplify: 6.22.1 => 6.22.1 (@aws-amplify/auth 6.21.1, @aws-amplify/core 6.19.2)     next: 16.3.8 => 16.3.8     react: 19.3.0 => 19.3.0     react-dom: 19.3.0 => 19.3.0     playwright: 1.62.0 => 1.62.0     typescript: 6.0.3 => 6.0.3 ``` (trimmed `npx envinfo` output; the full output only adds unresolved sub-paths)  </details>  ### Describe the bug  Cookies written through `createKeyValueStorageFromCookieStorageAdapter` get `Path=/` ([L13-L17](https://github.com/aws-amplify/amplify-js/blob/88f2d79878df66754caf85b7c409df912739f53d/packages/aws-amplify/src/adapter-core/storageFactories/createKeyValueStorageFromCo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -467,413 +467,501 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6334056c` (2026-10-22)
-**Commit Message**: chore(deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)
+### Incident Patch 1: `2d7d7cb0` (2026-11-05)
+**Commit Message**: fix(auth): revoke refresh token when global sign out fails (#15009)
 
-Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 14.3.2 to 14.3.3.
-- [Changelog](https://github.com/markdown-it/markdown-it/blob/14.3.3/CHANGELOG.md)
-- [Commits](https://github.com/markdown-it/markdown-it/compare/14.3.2...14.3.3)
-
----
-updated-dependencies:
-- dependency-name: markdown-it
-  dependency-version: 14.3.3
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `yarn.lock` (modified, +3/-3)
+**File**: `.changeset/auth-global-signout-revoke-fallback.md` (added, +5/-0)
 ```diff
-@@ -9743,9 +9743,9 @@ map-obj@^4.0.0:
-   integrity sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==
+@@ -0,0 +1,5 @@
++---
++'@aws-amplify/auth': patch
++---
++
++fix(auth): revoke the refresh token when global sign out cannot complete
+```
+
+**File**: `packages/auth/__tests__/providers/cognito/signOut.test.ts` (modified, +37/-2)
+```diff
+@@ -254,15 +254,50 @@ describe('signOut', () => {
+ 			expectSignOut().toComplete();
+ 		});
  
- markdown-it@^14.1.0:
--  version "14.3.2"
--  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.2.tgz#eb41b5855120836603c33c1be4c92f58001f8a26"
--  integrity sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==
-+  version "14.3.3"
-+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.3.tgz#15e6e145d20b1499a7b323bb14e21062690132d8"
-+  integrity sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==
-   dependencies:
-     argparse "^2.0.1"
-     entities "^4.5.0"
+-		it('should still perform global sign out if token revoke fails', async () => {
++		it('should complete sign out when global sign out fails', async () => {
+ 			mockGlobalSignOut.mockRejectedValue(new Error());
+ 
+ 			await signOut(mockCtx, { global: true });
+ 
+ 			expect(loggerDebugSpy).toHaveBeenCalledWith(
+ 				expect.stringContaining('Global signOut error caught'),
+ 			);
+-			expect(mockGetRegionFromUserPoolId).toHaveBeenCalledTimes(1);
++			// once for GlobalSignOut, once for the RevokeToken fallback
++			expect(mockGetRegionFromUserPoolId).toHaveBeenCalledTimes(2);
++			expectSignOut().toComplete();
++		});
++
++		it('should fall back to revoking the refresh token when global sign out is rejected', async () => {
++			const notAuthorized = new Error(
++				'Access Token does not have required scopes',
++			);
++			notAuthorized.name = 'NotAuthorizedException';
++			mockGlobalSignOut.mockRejectedValue(notAuthorized);
++
++			await signOut(mockCtx, { global: true });
++
++			expect(mockGlobalSignOut).toHaveBeenCalledTimes(1);
++			expect(mockRevokeToken).toHaveBeenCalledWith(
++				{ region },
++				{ ClientId: cognitoConfig.userPoolClientId, Token: refreshToken },
++			);
++			expect(loggerDebugSpy).not.toHaveBeenCalledWith(
++				expect.stringContaining('Client signOut error caught'),
++			);
++			expectSignOut().toComplete();
++		});
++
++		it('should not revoke the refresh token when global sign out is rejected on an irrevocable session', async () => {
++			mockLoadTokens.mockResolvedValue({
++				...cognitoAuthTokens,
++				accessToken: {},
++			});
++			mockGlobalSignOut.mockRejectedValue(new Error());
++
++			await signOut(mockCtx, { global: true });
++
++			expect(mockGlobalSignOut).toHaveBeenCalledTimes(1);
++			expect(mockRevokeToken).not.toHaveBeenCalled();
+ 			expectSignOut().toComplete();
+ 		});
+ 	});
+```
+
+**File**: `packages/auth/src/providers/cognito/apis/signOut.ts` (modified, +6/-0)
+```diff
+@@ -158,6 +158,12 @@ async function globalSignOut(
+ 		logger.debug(
+ 			'Global signOut error caught but will proceed with token removal',
+ 		);
++		// GlobalSignOut requires the access token to carry the
++		// `aws.cognito.signin.user.admin` scope, which tokens issued through the
++		// hosted UI or federated sign-in often lack. Fall back to revoking the
++		// current refresh token (when the session is revocable) so it can no
++		// longer be used to refresh the session.
++		await clientSignOut(cognitoConfig, tokenOrchestrator);
+ 	}
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `88e53adb` (2026-10-21)
-**Commit Message**: ci(release): publish to npm via trusted publishing (#14995)
+### Incident Patch 2: `7829a19c` (2026-11-05)
+**Commit Message**: fix(auth): get a new guest identityId when the stored one can't be used for guest access (#14999)
 
-ci(release): publish to npm via trusted publishing from a single workflow
+* fix(auth): get a new guest identityId when the stored one can't be used for guest access
 
-**File**: `.github/actions/ensure-npm-trusted-publishing/action.yml` (added, +16/-0)
+* fix(auth): share one guest identityId recovery between concurrent calls
+
+* fix(auth): only reuse cached guest credentials for the requested identityId
+
+getGuestCredentials returned the in-memory guest credentials whenever they
+were unexpired, without checking that they belong to the identityId it was
+asked for. During a guest identityId recovery, another call that starts after
+the store is cleared can get its own identityId and cache its credentials, so
+the recovery stored one identityId and returned the other's credentials.
+
+**File**: `.changeset/guest-unusable-identity-id.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+name: Ensure npm supports trusted publishing
-+description: Upgrades npm to a version that supports trusted publishing (OIDC) if the installed version is too old.
+@@ -0,0 +1,5 @@
++---
++'@aws-amplify/auth': patch
++---
 +
-+runs:
-+  using: 'composite'
-+  steps:
-+    - name: Ensure npm supports trusted publishing
-+      shell: bash
-+      run: |
-+        # npm trusted publishing (OIDC) requires npm >= 11.5.1
-+        NPM_VERSION=$(npm --version)
-+        echo "npm version: $NPM_VERSION"
-+        if ! node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$NPM_VERSION"; then
-+          npm install -g npm@^11.5.1
-+          npm --version
-+        fi
++fix(auth): get a new guest identityId when the stored one can't be used for guest access (deleted, linked to a login, or malformed), instead of failing on every `fetchAuthSession()` call
 ```
 
-**File**: `.github/actions/npm-publish/action.yml` (removed, +0/-47)
+**File**: `packages/auth/__tests__/providers/cognito/credentialsProvider/credentialsProvider.test.ts` (modified, +8/-0)
 ```diff
-@@ -1,47 +0,0 @@
--name: Publish to NPM
--description: Publish changes from the current commit to npm using the target release process.
--
--inputs:
--  github_user:
--    description: The git user to make commits with
--    required: true
--  github_email:
--    description: The git email to make commits with
--    required: true
--  target:
--    description: The release process target (either release or preid)
--    required: true
--  preid:
--    description: The preid to release to when the target is preid. The preid process will fail if this isn't provided.
--    required: false
--  npm_token:
--    description: The npm token that gives the job npm permissions
--    required: true
--
--runs:
--  using: 'composite'
--  steps:
--    - name: Set github commit user
--      shell: bash
--      env:
--        GITHUB_EMAIL: ${{ inputs.github_email }}
--        GITHUB_USER: ${{ inputs.github_user }}
--      run: |
--        git config --global user.email $GITHUB_EMAIL
--        git config --global user.name $GITHUB_USER
--
--    - name: Run npm publish
--      if: github.repository_owner == 'aws-amplify'
--      shell: bash
--      working-directory: ./amplify-js
--      env:
--        NPM_TOKEN: ${{ inputs.npm_token }}
--        GH_SHA: ${{ github.sha }}
--        TARGET: ${{ inputs.target }}
--        PREID_PREFIX: ${{ inputs.preid || '' }}
--      run: |
--        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
--        export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
--        git status
--        git --no-pager diff
--        yarn publish:$TARGET
+@@ -121,6 +121,14 @@ describe('credentialsProvider', () => {
+ 			});
+ 
+ 			test('in-memory guest creds are returned if not expired and not past TTL', async () => {
++				// Cognito returns the requested identityId, which the cache is keyed on
++				mockGetCredentialsForIdentity.mockReset();
++				mockGetCredentialsForIdentity.mockImplementation(
++					async (_config, { IdentityId }) => ({
++						...authAPITestParams.CredentialsForIdentityIdResult,
++						IdentityId,
++					}),
++				);
+ 				await cognitoCredentialsProvider.getCredentialsAndIdentityId({
+ 					authenticated: false,
+ 					authConfig: validAuthConfig.Auth!,
 ```
 
-**File**: `.github/workflows/release-hotfix.yml` (modified, +11/-5)
+**File**: `packages/auth/__tests__/providers/cognito/credentialsProvider/unusableGuestIdentityId.test.ts` (added, +434/-0)
 ```diff
-@@ -5,10 +5,9 @@ permissions:
-   contents: write
-   pull-requests: write
- 
-+# Called from release.yml on pushes to hotfix
- on:
--  push:
--    branches:
--      - hotfix
-+  workflow_call:
- 
- jobs:
-   # Job 1: Check if there are unconsumed changesets
-@@ -50,6 +49,11 @@ jobs:
-     runs-on: ubuntu-latest
-     needs: release-verification
-     if: github.repository_owner == 'aws-amplify'
-+    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
-+    permissions:
-+      contents: write
-+      pull-requests: write
-+      id-token: write
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-@@ -61,14 +65,16 @@ jobs:
-       - name: Setup node and build the repository
-         uses: ./amplify-js/.github/actions/node-and-build
- 
-+      - name: Ensure npm supports trusted publishing
-+        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
+@@ -0,0 +1,434 @@
++// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
++// SPDX-License-Identifier: Apache-2.0
 +
-       - name: Publish to @latest
--        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
-+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
-         with:
-           cwd: ./amplify-js
-           publish: yarn publish:latest
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
- 
-   # Job 4: Create PR to merge hotfix back into main
-   create-pr-to-main:
++import {
++	KeyValueStorageInterface,
++	ResourcesConfig,
++	createGetCredentialsForIdentityClient,
++	createGetIdClient,
++} from '@aws-amplify/core';
++
++import {
++	CognitoAWSCredentialsAndIdentityIdProvider,
++	DefaultIdentityIdStore,
++} from '../../../../src/providers/cognito';
++import { AuthError } from '../../../../src/errors/AuthError';
++import { authAPITestParams } from '../testUtils/authApiTestParams';
++
++jest.mock('@aws-amplify/core', () => ({
++	...jest.requireActual('@aws-amplify/core'),
++	createGetCredentialsForIdentityClient: jest.fn(),
++	createGetIdClient: jest.fn(),
++}));
++
++const identityPoolId = 'us-east-1:test-id';
++const identityIdKey = `com.amplify.Cognito.${identityPoolId}.identityId`;
++const storedIdentityId = 'us-east-1:00000000-0000-0000-0000-000000000001';
++const newIdentityId = 'us-east-1:00000000-0000-0000-0000-000000000002';
++
++const authConfig: ResourcesConfig['Auth'] = {
++	Cognito: {
++		userPoolId: 'us-east-1_test-id',
++		identityPoolId,
++		userPoolClientId: 'test-id',
++		allowGuestAccess: true,
++	},
++};
++
++const serviceError = (name: string, message: string) =>
++	Object.assign(new Error(message), { name, $metadata: {} });
++
++const resourceNotFound = () =>
++	serviceError(
++		'ResourceNotFoundException',
++		`Identity '${storedIdentityId}' not found.`,
++	);
++const accessForbidden = () =>
++	serviceError(
++		'NotAuthorizedException',
++		`Access to Identity '${storedIdentityId}' is forbidden.`,
++	);
++const malformedIdentityId = () =>
++	serviceError(
++		'ValidationException',
++		"1 validation error detected: Value 'not-an-identity-id' at 'identityId' failed to satisfy constraint: Member must satisfy regular expression pattern: [\\w-]+:[0-9a-f-]+",
++	);
++
++/**
++ * Browser-like storage: reads see earlier writes.
++ */
++const createBrowserStorage = (initial: Record<string, string>) => {
++	const items = new Map(Object.entries(initial));
++	const storage: KeyValueStorageInterface = {
++		setItem: jest.fn(async (key: string, value: string) => {
++			items.set(key, value);
++		}),
++		getItem: jest.fn(async (key: string) => items.get(key) ?? null),
++		removeItem: jest.fn(async (key: string) => {
++			items.delete(key);
++		}),
++		clear: jest.fn(async () => {
++			items.clear();
++		}),
++	};
++
++	return { storage, items };
++};
++
++/**
++ * Server-like storage, like the cookie storage on the server: reads come from
++ * the request's cookies, and writes are only recorded for the response.
++ */
++const createServerStorage = (requestCookies: Record<string, string>) => {
++	const responseCookies: string[] = [];
++	const storage: KeyValueStorageInterface = {
++		setItem: jest.fn(async (key: string, value: string) => {
++			responseCookies.push(`${key}=${value}`);
++		}),
++		getItem: jest.fn(async (key: string) => requestCookies[key] ?? null),
++		removeItem: jest.fn(async (key: string) => {
++			responseCookies.push(`${key}=`);
++		}),
++		clear: jest.fn(),
++	};
++
++	return { storage, responseCookies };
++};
++
++const mockCreateGetCredentialsForIdentityClient = jest.mocked(
++	createGetCredentialsForIdentityClient,
++);
++const mockCreateGetIdClient = jest.mocked(createGetIdClient);
++const mockGetCredentialsForIdentity = jest.fn();
++const mockGetId = jest.fn();
++
++const credentialsFor = (identityId: string) => ({
++	...authAPITestParams.CredentialsForIdentityIdResult,
++	IdentityId: identityId,
++});
++
++const createProvider = (storage: KeyValueStorageInterface) =>
++	new CognitoAWSCredentialsAndIdentityIdProvider(
++		new DefaultIdentityIdStore(storage),
++	);
++
++const fetchGuestCredentials = (
++	provider: CognitoAWSCredentialsAndIdentityIdProvider,
++) =>
++	provider.getCredentialsAndIdentityId({
++		authenticated: false,
++		authConfig: authConfig!,
++	});
++
++describe('guest credentials with an unusable stored identityId', () => {
++	beforeAll(() => {
++		mockCreateGetCredentialsForIdentityClient.mockReturnValue(
++			mockGetCredentialsForIdentity,
++		);
++		mockCreateGetIdClient.mockReturnValue(mockGetId);
++	});
++
++	beforeEach(() => {
++		mockGetCredentialsForIdentity.mockReset();
++		mockGetId.mockReset();
++		mockGetId.mockResolvedValue({ IdentityId: newIdentityId });
++		mockGetCredentialsForIdentity.mockImplementation(
++			async (_config, { IdentityId }) => {
++				if (IdentityId === storedIdentityId) {
++					throw resourceNotFound();
++				}
++
++				return credentialsFor(IdentityId);
++			},
++		);
++	});
++
++	describe.each([
++		['ResourceNotFoundException (deleted identity)', resourceNotFound],
++		['NotAuthorizedException (identity linked to a login)', accessForbidden],
++		['ValidationException (malformed identityId)', malformedIdentityId],
++	])('when the stored identityId fails with %s', (_, createError) => {
++		beforeEach(() => {
++			mockGetCredentialsForIdentity.mockImplementation(
++				async (_config, { IdentityId }) => {
++					if (IdentityId === storedIdentityId) {
++						throw createError();
++					}
++
++					return
 ```
 
-**File**: `.github/workflows/release-latest.yml` (modified, +11/-10)
+**File**: `packages/auth/src/providers/cognito/credentialsProvider/IdentityIdProvider.ts` (modified, +7/-1)
 ```diff
-@@ -5,15 +5,9 @@ permissions:
-   contents: write
-   pull-requests: write
+@@ -17,6 +17,8 @@ import { formLoginsMap } from './utils';
+  * Provides a Cognito identityId
+  *
+  * @param tokens - The AuthTokens received after SignIn
++ * @param forceNewIdentityId - Skip the stored identityId and get one from
++ *  Cognito's GetId API. The stored identityId is replaced with the result.
+  * @returns string
+  * @throws configuration exceptions: `InvalidIdentityPoolIdException`
+  *  - Auth errors that may arise from misconfiguration.
+@@ -26,15 +28,19 @@ export async function cognitoIdentityIdProvider({
+ 	tokens,
+ 	authConfig,
+ 	identityIdStore,
++	forceNewIdentityId = false,
+ }: {
+ 	tokens?: AuthTokens;
+ 	authConfig: CognitoIdentityPoolConfig;
+ 	identityIdStore: IdentityIdStore;
++	forceNewIdentityId?: boolean;
+ }): Promise<string> {
+ 	identityIdStore.setAuthConfig({ Cognito: authConfig });
  
--# Prevent concurrent releases to avoid race conditions
--concurrency:
--  group: ${{ github.workflow }}-${{ github.ref }}
--  cancel-in-progress: false
--
-+# Called from release.yml on pushes to main
- on:
--  push:
--    branches:
--      - main
-+  workflow_call:
+ 	// will return null only if there is no identityId cached or if there is an error retrieving it
+-	let identityId: Identity | null = await identityIdStore.loadIdentityId();
++	let identityId: Identity | null = forceNewIdentityId
++		? null
++		: await identityIdStore.loadIdentityId();
  
- jobs:
-   # Job 1: Check if there are unconsumed changesets
-@@ -51,6 +45,11 @@ jobs:
-     runs-on: ubuntu-latest
-     needs: [setup, release-verification]
-     if: github.repository_owner == 'aws-amplify' && needs.setup.outputs.has-changesets != 'true'
-+    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
-+    permissions:
-+      contents: write
-+      pull-requests: write
-+      id-token: write
-     outputs:
-       published: ${{ steps.changesets.outputs.published }}
-     steps:
-@@ -64,15 +63,17 @@ jobs:
-       - name: Setup node and build the repository
-         uses: ./amplify-js/.github/actions/node-and-build
- 
-+      - name: Ensure npm supports trusted publishing
-+        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
-+
-       - name: Publish to @latest
-         id: changesets
--        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
-+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
-         with:
-           cwd: ./amplify-js
-           publish: yarn publish:latest
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
- 
-   # Job 4: Update local API documentation after successful publish
-   update-local-docs:
+ 	// A primary identityId belongs to a signed-in user and cannot be used for
+ 	// guest access. It can be left in memory when the tokens are cleared without
 ```
 
-**File**: `.github/workflows/release-preid.yml` (modified, +12/-13)
+**File**: `packages/auth/src/providers/cognito/credentialsProvider/credentialsProvider.ts` (modified, +77/-4)
 ```diff
-@@ -1,21 +1,14 @@
- name: Release Preid
+@@ -22,7 +22,7 @@ import { createCognitoIdentityPoolEndpointResolver } from '../factories';
  
--# Concurrency control to prevent multiple preid releases running simultaneously
--# Cancels in-progress releases when new commits are pushed
--concurrency:
--  group: push-release-${{ github.ref }}
--  cancel-in-progress: true
--
- # Permissions required for publishing packages
- permissions:
-   contents: write
+ import { IdentityIdStore } from './types';
+ import { cognitoIdentityIdProvider } from './IdentityIdProvider';
+-import { formLoginsMap } from './utils';
++import { formLoginsMap, isUnusableGuestIdentityIdError } from './utils';
  
-+# Called from release.yml on pushes to feat/{PREID}/whatever branches
-+# Branch naming pattern: feat/{PREID}/whatever
-+# Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
- on:
--  push:
--    branches:
--      # Branch naming pattern: feat/{PREID}/whatever
--      # Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
--      - feat/preid/whatever
-+  workflow_call:
+ const logger = new ConsoleLogger('CognitoCredentialsProvider');
+ const CREDENTIALS_TTL = 50 * 60 * 1000; // 50 min, can be modified on config if required in the future
+@@ -42,6 +42,11 @@ export class CognitoAWSCredentialsAndIdentityIdProvider
  
- jobs:
-   # Job 1: Parse preid from branch name
-@@ -59,6 +52,10 @@ jobs:
-       - parse-preid
-       - validate-preid
-     if: github.repository_owner == 'aws-amplify'
-+    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
-+    permissions:
-+      contents: write
-+      id-token: write
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-@@ -68,13 +65,15 @@ jobs:
-       - name: Setup node and build the repository
-         uses: ./amplify-js/.github/actions/node-and-build
+ 	private _nextCredentialsRefresh = 0;
  
-+      - name: Ensure npm supports trusted publishing
-+        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
++	private _guestRecovery?: {
++		failedIdentityId: string;
++		promise: Promise<CredentialsAndIdentityId>;
++	};
 +
-       - name: Publish to @preid
--        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
-+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
-         with:
-           cwd: ./amplify-js
-           publish: yarn publish:preid
-           createGithubReleases: false
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-           PREID: ${{ needs.parse-preid.outputs.preid }}
+ 	async clearCredentialsAndIdentityId(): Promise<void> {
+ 		logger.debug('Clearing out credentials and identityId');
+ 		this._credentialsAndIdentityId = undefined;
+@@ -84,23 +89,91 @@ export class CognitoAWSCredentialsAndIdentityIdProvider
+ 			this.clearCredentials();
+ 		}
+ 		if (!isAuthenticated) {
+-			return this.getGuestCredentials(identityId, authConfig.Cognito);
++			return this.getGuestCredentialsWithRecovery(
++				identityId,
++				authConfig.Cognito,
++			);
+ 		} else {
+ 			assertIdTokenInAuthTokens(tokens);
+ 
+ 			return this.credsForOIDCTokens(authConfig.Cognito, tokens, identityId);
+ 		}
+ 	}
+ 
++	/**
++	 * Gets guest credentials. If Cognito rejects the stored identityId because
++	 * the identityId itself can't be used (for example, it was deleted or it is
++	 * linked to a login), clears it, gets a new guest identityId from GetId and
++	 * tries once more. A second failure is thrown.
++	 *
++	 * Concurrent calls that fail with the same identityId share one recovery,
++	 * and a call that fails after another call has already recovered returns
++	 * the new credentials, so only one new identityId is created.
++	 */
++	private async getGuestCredentialsWithRecovery(
++		identityId: string,
++		authConfig: CognitoIdentityPoolConfig,
++	): Promise<CredentialsAndIdentityId> {
++		try {
++			return await this.getGuestCredentials(identityId, authConfig);
++		} catch (error) {
++			if (!isUnusableGuestIdentityIdError(error)) {
++				throw error;
++			}
++			if (
++				this._credentialsAndIdentityId &&
++				!this.isPastTTL() &&
++				this._credentialsAndIdentityId.isAuthenticatedCreds === false &&
++				this._credentialsAndIdentityId.identityId !== identityId
++			) {
++				return this._credentialsAndIdentityId;
++			}
++			if (this._guestRecovery?.failedIdentityId !== identityId) {
++				const promise = this.recoverGuestCredentials(
++					authConfig,
++					error as AuthError,
++				).finally(() => {
++					if (this._guestRecovery?.promise === promise) {
++						this._guestRecovery = undefined;
++					}
++				});
++				this._guestRecovery = { failedIdentityId: identityId, promise };
++			}
++
++			return this._guestRecovery.promise;
++		}
++	}
++
++	private async recoverGuestCredentials(
++		authConfig: CognitoIdentityPoolConfig,
++		error: AuthError,
++	): Promise<CredentialsAndIdentityId> {
++		logger.warn(
++			`The stored identityId can't be used for guest access (${error.name}). Getting a new guest identityId.`,
++		);
++		await this.clearCredentialsAndIdentityId();
++		// Don't load the identityId from the store again: on the server, the
++		// cookie storage keeps returning the request's cookie after it's removed.
++		const newIdentityId = await cognitoIdentityIdProvider({
++			authConfig,
++			identityIdStore: this._identityIdStore,
++			forceNewIdentityId: true,
++		});
++
++		return this.getGuestCredentials(newIdentityId, authConfig);
++	}
++
+ 	private async getGuestCredentials(
+ 		identityId: string,
+ 		authConfig: CognitoIdentityPoolConfig,
+ 	): Promise<CredentialsAndIdentityId> {
+-		// Return existing in-memory cached credentials only if it exists, is not past it's lifetime and is unauthenticated credentials
++		// Return existing in-memory cached credentials only if it exists, is not past it's lifetime, is unauthenticated credentials
++		// and belongs to the requested identityId
+ 		if (
+ 			this._credentialsAndIdentityId &&
+ 			!this.isPastTTL() &&
+-			this._credentialsAndIdentityId.isAuthenticatedCreds === false
++			this._credentialsAndIdentityId.isAuthenticatedCreds === false &&
++			this._credentialsAndIdentityId.identityId === identityId
+ 		) {
+ 			logger.info(
+ 				'returning stored credentials as they neither past TTL nor expired.',
 ```
 
-**File**: `.github/workflows/release-unstable.yml` (modified, +8/-13)
+**File**: `packages/auth/src/providers/cognito/credentialsProvider/utils.ts` (modified, +30/-0)
 ```diff
-@@ -1,25 +1,22 @@
- name: Release Unstable
+@@ -20,3 +20,33 @@ export function formLoginsMap(idToken: string) {
  
--# Concurrency control to prevent multiple unstable releases running simultaneously
--# Cancels in-progress releases when new commits are pushed
--concurrency:
--  group: push-release-${{ github.ref }}
--  cancel-in-progress: true
--
- # Permissions required for publishing packages
- permissions:
-   contents: write
- 
-+# Called from release.yml on pushes to main
- on:
--  push:
--    branches:
--      - main
-+  workflow_call:
- 
- jobs:
-   # Job 1: Publish unstable packages
-   unstable-release:
-     runs-on: ubuntu-latest
-     if: github.repository_owner == 'aws-amplify'
-+    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
-+    permissions:
-+      contents: write
-+      id-token: write
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-@@ -29,10 +26,8 @@ jobs:
-       - name: Setup node and build the repository
-         uses: ./amplify-js/.github/actions/node-and-build
- 
--      - name: Configure npm authentication
--        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
--        env:
--          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-+      - name: Ensure npm supports trusted publishing
-+        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
- 
-       - name: Publish to @unstable
-         working-directory: ./amplify-js
-```
-
-**File**: `.github/workflows/release.yml` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+name: Release
+ 	return res;
+ }
 +
-+# Single entry point for all npm publishes.
-+#
-+# npm trusted publishing (OIDC) validates the filename of the top-level (caller) workflow, not the
-+# reusable workflow that runs `npm publish`. All npm publishes must therefore originate from this file,
-+# which dispatches to the release-* reusable workflows based on the pushed branch.
++/**
++ * Returns true when Cognito rejected an identityId used for guest access
++ * because the identityId itself can't be used: it was deleted or never
++ * existed, it is linked to a login, or it is malformed.
++ *
++ * Other errors, such as throttling, network errors or an identity pool that
++ * doesn't allow guest access, return false: getting a new identityId would
++ * not help with them.
++ */
++export function isUnusableGuestIdentityIdError(error: unknown): boolean {
++	if (!(error instanceof AuthError)) {
++		return false;
++	}
++	const message = error.message ?? '';
 +
-+# Permissions required for creating git tags, pushing changes, creating PRs, and requesting an OIDC
-+# token for npm trusted publishing. Called workflows can only use permissions granted here.
-+permissions:
-+  contents: write
-+  pull-requests: write
-+  id-token: write
-+
-+on:
-+  push:
-+    branches:
-+      - main
-+      - hotfix
-+      # Branch naming pattern: feat/{PREID}/whatever
-+      # Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
-+      - feat/preid/whatever
-+
-+jobs:
-+  latest:
-+    if: github.ref_name == 'main'
-+    # Prevent concurrent releases to avoid race conditions
-+    concurrency:
-+      group: release-latest-${{ github.ref }}
-+      cancel-in-progress: false
-+    uses: ./.github/workflows/release-latest.yml
-+    secrets: inherit
-+
-+  unstable:
-+    if: github.ref_name == 'main'
-+    # Concurrency control to prevent multiple unstable releases running simultaneously
-+    # Cancels in-progress releases when new commits are pushed
-+    concurrency:
-+      group: release-unstable-${{ github.ref }}
-+      cancel-in-progress: true
-+    uses: ./.github/workflows/release-unstable.yml
-+    secrets: inherit
-+
-+  hotfix:
-+    if: github.ref_name == 'hotfix'
-+    uses: ./.github/workflows/release-hotfix.yml
-+    secrets: inherit
-+
-+  preid:
-+    if: startsWith(github.ref_name, 'feat/')
-+    # Concurrency control to prevent multiple preid releases running simultaneously
-+    # Cancels in-progress releases when new commits are pushed
-+    concurrency:
-+      group: release-preid-${{ github.ref }}
-+      cancel-in-progress: true
-+    uses: ./.github/workflows/release-preid.yml
-+    secrets: inherit
-```
-
-**File**: `.github/workflows/version-packages.yml` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ jobs:
- 
-       - name: Create Version Packages PR
-         if: steps.has-changesets.outputs.has-changesets == 'true'
--        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
-+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
-         with:
-           version: yarn changeset version
-           commit: "chore(release): Version packages"
++	switch (error.name) {
++		case 'ResourceNotFoundException':
++			// "Identity '<identityId>' not found."
++			return true;
++		case 'NotAuthorizedException':
++			// "Access to Identity '<identityId>' is forbidden."
++			return /^Access to Identity '[^']*' is forbidden/.test(message);
++		case 'ValidationException':
++			// "... Value '<identityId>' at 'identityId' failed to satisfy constraint ..."
++			return /at 'identityId'/i.test(message);
++		default:
++			return false;
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14998** (2026-10-23): ci(release): upgrade lerna to v9 for trusted publishing on v5 (@soberm)
-- **PR #14997** (closed): ci(release): publish v5 to npm via trusted publishing (@soberm)
-- **PR #14996** (2026-10-22): chore(deps): bump markdown-it from 14.3.2 to 14.3.3 (@dependabot[bot])
-- **PR #14995** (2026-10-21): ci(release): publish to npm via trusted publishing (@soberm)
-- **PR #14994** (2026-10-16): chore(deps): bump brace-expansion to 1.1.21, 2.1.7, 5.0.12 (@pranavosu)
-- **PR #14993** (closed): chore(deps): bump brace-expansion to 1.1.21, 2.1.7, 5.0.12 (@pranavosu)
+- **PR #15010** (2026-11-05): chore(deps): update glob and minimatch transitive dependencies (@soberm)
+- **PR #15009** (2026-11-05): fix(auth): revoke refresh token when global sign out fails (@soberm)
+- **PR #15008** (2026-11-05): chore(deps): bump joi from 18.2.9 to 18.3.2 (@dependabot[bot])
+- **PR #15007** (2026-11-05): chore(deps-dev): bump glob from 10.5.0 to 14.0.2 (@dependabot[bot])
+- **PR #15006** (2026-11-05): chore(deps): bump qs from 6.16.0 to 6.17.1 (@dependabot[bot])
+- **PR #15003** (2026-11-05): chore(deps): bump zod from 4.6.5 to 4.6.7 (@dependabot[bot])
 
 ---
 
@@ -893,32 +981,32 @@ ci(release): publish to npm via trusted publishing from a single workflow
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)
+## X. auth): revoke refresh token when global sign out fails (#15009)
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/auth-global-signout-revoke-fallback.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6334056c`: deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d7d7cb0`: auth): revoke refresh token when global sign out fails (#15009). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/auth-global-signout-revoke-fallback.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  version "14.3.3"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.3.tgz#15e6e145d20b1499a7b323bb14e21062690132d8"
-  integrity sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==
+---
+'@aws-amplify/auth': patch
+---
+
+fix(auth): revoke the refresh token when global sign out cannot complete
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  version "14.3.2"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.2.tgz#eb41b5855120836603c33c1be4c92f58001f8a26"
-  integrity sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6334056c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d7d7cb0` are properly handled with clean fallback behavior.
