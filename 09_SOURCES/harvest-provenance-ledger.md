@@ -7932,3 +7932,4 @@ Every entry in this ledger must capture:
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `2927a473` | Multi-dimensional audit evidence | 2026-11-06T21:21:06.564Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `6c2e879e` | Multi-dimensional audit evidence | 2026-11-06T21:21:09.782Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `85bd085e` | Multi-dimensional audit evidence | 2026-11-06T21:21:14.480Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `e42aa54a` | Multi-dimensional audit evidence | 2026-11-06T21:34:04.819Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:21:14.384Z",
+  "last_updated": "2026-11-06T21:34:04.729Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37877,11 +37877,16 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "cbd54239",
-      "content_hash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
+      "source_version": "e42aa54a",
+      "content_hash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1287 from kucherenko/docs/readme-who-uses",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2032,
           "title": "deps): ignore three zip advisories about extracting an archive",
@@ -37958,7 +37963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:33:59.888Z",
+      "verified_at": "2026-11-06T21:34:04.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

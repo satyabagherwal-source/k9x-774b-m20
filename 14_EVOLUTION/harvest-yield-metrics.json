@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T21:21:14.494Z",
-  "total_cycles_completed": 7888,
-  "total_learnings_persisted": 7888,
-  "total_rules_promoted": 7536,
+  "last_updated": "2026-11-06T21:34:04.825Z",
+  "total_cycles_completed": 7889,
+  "total_learnings_persisted": 7889,
+  "total_rules_promoted": 7537,
   "history": [
-    {
-      "timestamp": "2026-11-05T15:59:19.322Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T15:59:21.643Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-06T21:21:14.494Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:34:04.825Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

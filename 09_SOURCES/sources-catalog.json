@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "cbd54239",
+    "sourceVersion": "e42aa54a",
     "license": "MIT",
-    "contentHash": "8712973b520a508b3ce60339c1c3dadcae8cd255f16dc87c3b9f361a6dee23f6",
-    "lastHarvestedAt": "2026-11-04T07:34:00.027Z",
+    "contentHash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
+    "lastHarvestedAt": "2026-11-06T21:34:04.819Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
