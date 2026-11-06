@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `3396bd83`  
+> **Source Version**: `9fb59640`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T07:27:40.020Z  
+> **Timestamp**: 2026-11-06T21:44:58.750Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T07:27:40.012Z  
+> **Harvest Timestamp**: 2026-11-06T21:44:57.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24911 stars
+- **Stars / Engagement**: 24922 stars
 
 ---
 
@@ -73,12 +73,12 @@ use super::{BodySize, MessageBody};
 pub async fn to_bytes<B: MessageBody>(body: B) -> Result<Bytes, B::Error> {
     to_bytes_limited(body, usize::MAX)
         .await
-        .expect("body should never yield more than usize::MAX bytes")
+        .expect("Body should never yield more than usize::MAX bytes")
 }
 
 /// Error type returned from [`to_bytes_limited`] when body produced exceeds limit.
 #[derive(Debug, Display, Error)]
-#[display("limit exceeded while collecting body bytes")]
+#[display("Limit exceeded while collecting body bytes")]
 #[non_exhaustive]
 pub struct BodyLimitExceeded;
 
@@ -947,11 +947,11 @@ use derive_more::Display;
 pub enum FilesError {
     /// Path is not a directory.
     #[allow(dead_code)]
-    #[display("path is not a directory. Unable to serve static files")]
+    #[display("Path is not a directory. Unable to serve static files")]
     IsNotDirectory,
 
     /// Cannot render directory.
-    #[display("unable to render directory without index file")]
+    #[display("Unable to render directory without index file")]
     IsDirectory,
 }
 
@@ -967,19 +967,19 @@ impl ResponseError for FilesError {
 #[non_exhaustive]
 pub enum UriSegmentError {
     /// Segment started with the wrapped invalid character.
-    #[display("segment started with invalid character: ('{_0}')")]
+    #[display("Segment started with invalid character: ('{_0}')")]
     BadStart(char),
 
     /// Segment contained the wrapped invalid character.
-    #[display("segment contained invalid character ('{_0}')")]
+    #[display("Segment contained invalid character ('{_0}')")]
     BadChar(char),
 
     /// Segment ended with the wrapped invalid character.
-    #[display("segment ended with invalid character: ('{_0}')")]
+    #[display("Segment ended with invalid character: ('{_0}')")]
     BadEnd(char),
 
     /// Path is not a valid UTF-8 string after percent-decoding.
-    #[display("path is not a valid UTF-8 string after percent-decoding")]
+    #[display("Path is not a valid UTF-8 string after percent-decoding")]
     NotValidUtf8,
 }
 
@@ -1332,11 +1332,14 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4387** (2026-11-04): **build(deps): bump encoding_rs from 0.8.42 to 0.8.44**
-  *Symptoms*: Bumps [encoding_rs](https://github.com/hsivonen/encoding_rs) from 0.8.42 to 0.8.44. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hsivonen/encoding_rs/commit/8e8556af3cf976392b993a9dbe07456a5ef58469"><code>8e8556a</code></a> Increment the version number to 0.8.44</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/084bb9b18fac2607b9a0df622a17316e82614890"><code>084bb9b</code></a> Update release notes</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/7f91341d4bcf3fcceabcdeaf2aa29d4fa1649f65"><code>7f91341</code></a> Make convert_latin1_to_utf8_partial not write trailing garbage</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/4a7b5151586236bd5e03bd42abc662e8dacc4685"><code>4a7b515</code></a> Increment the version number to 0.8.43</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/c9e3a85663b17c263fe8637c37edbdebde287a62"><code>c9e3a85</code></a> Add defense-in-depth guard to convert_latin1_to_str_partial</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/73ddf1374f3e09d46f8bf852c948660650d5cc2e"><code>73ddf13</code></a> Fix wrong function name in doc</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/aaa3056e62e0387617615989e8d8a75af1fe1f33"><code>aaa3056</code></a> Relocate a misplaced doc remark</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/bdb16ccb8d0b069b674a6eeef9c7d094e41c2b24"><code>bdb16cc</code></a> Make it possible to enable serde witho
+- **Issue #4391** (2026-11-06): **fix(errors): normalize error and panic messages**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. (No documentation changes needed.) - [ ] A changelog entry has been made for the appropriate packages. (No changelog entry added.) - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Normalize error display strings, `panic!` messages, and `.expect()` messages to start with a capital letter and omit trailing periods. Apply the same convention to source and test code across the workspace, and update error response assertions to match.  Preserve the exact casing of function names and other code identifiers in diagnostic messages. Status codes and error propagation are unchanged.  Validation: `just test` passed, including the HTTP/1, OpenSSL HTTP/2, and Rustls HTTP/2 error response integration tests.   After the identifier corrections, the range tests and all 10 introspection unit and integration tests passed.   MSRV validation: `cargo +1.89.0 test -p actix-web-codegen --test trybuild --all-features --offline` passed all 17 compile-pass and compile-fail cases after updating the malformed-path diagnostic snapshot. 
 
-- **Issue #4386** (2026-11-04): **build(deps): bump brotli from 9.0.0 to 9.1.1**
-  *Symptoms*: Bumps [brotli](https://github.com/dropbox/rust-brotli) from 9.0.0 to 9.1.1. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/dropbox/rust-brotli/commit/a3cb9311ac6874a379c56b62b61885cc09a5c0d1"><code>a3cb931</code></a> release 9.1.1</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/b47cb223fba21bf7ef201858b3f3d70c0f211b20"><code>b47cb22</code></a> Refactor into a more legible reader</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/e0efe1c557f211a8a03be371e988d02aab94455a"><code>e0efe1c</code></a> BroCatli: hold back trailing header bytes and handle short and chunked streams</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/afa85858854e2b324d880a6610a04e5079033493"><code>afa8585</code></a> BroCatli: keep both header bytes when an empty stream straddles a byte boundary</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/e951e7eb9f757aeb8732662d2c9fc8b7ac5fc706"><code>e951e7e</code></a> brotli CLI: accept -bare and -bytealign with -catable, exit 1 when rejected</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/c550341819cc0f1811ee5d08dd8b9d482500f845"><code>c550341</code></a> Fix index out of bounds under the disallow_large_window_size feature</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/73e6947c2937be7b694ce284d4384388fbe763c2"><code>73e6947</code></a> Release 9.1.0</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/73766fce9859be7e0cd3c1a6d4e49be7c5230e
+- **Issue #4390** (2026-11-06): **docs(web): hyphenate URL-encoded terminology**
+  *Symptoms*: ## PR Type  Documentation  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Standardize prose to use “URL-encoded” across actix-web and awc documentation and error text. Update the matching assertion. Identifiers and MIME types are unchanged.  Validation: `cargo test -p actix-web --lib test_with_config_in_data_wrapper --offline` passed (2 tests).
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codesmith:proof --> **Proof** · no evidence (stopped early by robjtede at 0:24) <img src="https://backend.blacksmith.sh/api/proof-report-pixel.gif?installation_model_id=430666&amp;pr_number=4390&amp;published_at=1793939680&amp;repository=actix%2Factix-web&amp;run_id=01a1af22-cafa-7196-8dfe-a1d8575ab4be&amp;signature=921cefdb8e007f432160cac39d6f51b8f796c2af4eb87644d2071d866b95605e" width="1" height="1" alt="">  head f4a82ee5 · stopped early by robjtede at 0:24  [View full Proof report](https://backend.blacksmith.sh/track/proof-report?proof_session_id=01a1af22-ca69-738b-a18e-7165ad0fd3c9&signature=97e30c369a4614dd8de2a735d8ba4b02a7088aa07716ac6f2fc892e2024b80f4)
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/036c0f4398a2d8316266da7b4cac5e3c700982c5">036c0f4</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/url-encoded-hyphenation">t3/url-encoded-hyphe...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/f4a82ee57d5aaeccc24ecebd525e1fd565dcb21a">f4a82ee</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1353,444 +1356,593 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41687b5e` (2026-11-04)
-**Commit Message**: build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)
+### Incident Patch 1: `9fb59640` (2026-11-06)
+**Commit Message**: fix(errors): normalize error and panic messages (#4391)
 
-Bumps [useblacksmith/checkout](https://github.com/useblacksmith/checkout) from 1.8.1 to 1.8.2.
-- [Changelog](https://github.com/useblacksmith/checkout/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/useblacksmith/checkout/compare/v1.8.1...v1.8.2)
-
----
-updated-dependencies:
-- dependency-name: useblacksmith/checkout
-  dependency-version: 1.8.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +10/-10)
+**File**: `actix-files/src/error.rs` (modified, +6/-6)
 ```diff
-@@ -4,39 +4,39 @@
- version: 'v0.0.3'
- workflows:
-     '.github/workflows/bench.yml':
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/ci-post-merge.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/lint.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-         - 'zizmorcore/zizmor-action@v0.8.0'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-         ref: 'v2.0.0'
-@@ -102,9 +102,9 @@ dependencies:
-         commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
-         owner_id: 43724913
-         repo_id: 442947557
--    'useblacksmith/checkout@v1.8.1':
--        ref: 'v1.8.1'
--        commit: 'sha1-25227e61ff9dafe400e22fa487b673eac4e4409a'
-+    'useblacksmith/checkout@v1.8.2':
-+        ref: 'v1.8.2'
-+        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
-         owner_id: 156274793
-         repo_id: 1107788336
-     'zizmorcore/zizmor-action@v0.8.0':
-```
-
-**File**: `.github/workflows/bench.yml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
+@@ -6,11 +6,11 @@ use derive_more::Display;
+ pub enum FilesError {
+     /// Path is not a directory.
+     #[allow(dead_code)]
+-    #[display("path is not a directory. Unable to serve static files")]
++    #[display("Path is not a directory. Unable to serve static files")]
+     IsNotDirectory,
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+     /// Cannot render directory.
+-    #[display("unable to render directory without index file")]
++    #[display("Unable to render directory without index file")]
+     IsDirectory,
+ }
+ 
+@@ -26,19 +26,19 @@ impl ResponseError for FilesError {
+ #[non_exhaustive]
+ pub enum UriSegmentError {
+     /// Segment started with the wrapped invalid character.
+-    #[display("segment started with invalid character: ('{_0}')")]
++    #[display("Segment started with invalid character: ('{_0}')")]
+     BadStart(char),
+ 
+     /// Segment contained the wrapped invalid character.
+-    #[display("segment contained invalid character ('{_0}')")]
++    #[display("Segment contained invalid character ('{_0}')")]
+     BadChar(char),
+ 
+     /// Segment ended with the wrapped invalid character.
+-    #[display("segment ended with invalid character: ('{_0}')")]
++    #[display("Segment ended with invalid character: ('{_0}')")]
+     BadEnd(char),
+ 
+     /// Path is not a valid UTF-8 string after percent-decoding.
+-    #[display("path is not a valid UTF-8 string after percent-decoding")]
++    #[display("Path is not a valid UTF-8 string after percent-decoding")]
+     NotValidUtf8,
+ }
  
 ```
 
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
+**File**: `actix-files/src/range.rs` (modified, +1/-1)
 ```diff
-@@ -30,7 +30,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
+@@ -24,7 +24,7 @@ pub struct ParseRangeErr(#[error(not(source))] HttpRangeParseError);
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+ impl fmt::Display for ParseRangeErr {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        f.write_str("invalid Range header: ")?;
++        f.write_str("Invalid Range header: ")?;
+         f.write_str(match self.0 {
+             HttpRangeParseError::InvalidRange => "invalid syntax",
+             HttpRangeParseError::NoOverlap => "range starts after end of content",
+```
+
+**File**: `actix-http-test/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ pub async fn test_server_with_addr<F: ServerServiceFactory<TcpStream>>(
+                 .disable_signals()
+                 .system_exit()
+                 .listen("test", tcp, factory)
+-                .expect("test server could not be created");
++                .expect("Test server could not be created");
  
-@@ -84,7 +84,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
+             let srv = srv.run();
+             started_tx
+```
+
+**File**: `actix-http/src/body/body_stream.rs` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ mod tests {
+         assert_eq!(to_bytes(body).await.ok(), Some(Bytes::from("12")));
+     }
+     #[derive(Debug, Display, Error)]
+-    #[display("stream error")]
++    #[display("Stream error")]
+     struct StreamErr;
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+     #[actix_rt::test]
+```
+
+**File**: `actix-http/src/body/utils.rs` (modified, +2/-2)
+```diff
+@@ -32,12 +32,12 @@ use super::{BodySize, MessageBody};
+ pub async fn to_bytes<B: MessageBody>(body: B) -> Result<Bytes, B::Error> {
+     to_bytes_limited(body, usize::MAX)
+         .await
+-        .expect("body should never yield more than usize::MAX bytes")
++        .expect("Body should never yield more than usize::MAX bytes")
+ }
+ 
+ /// Error type returned from [`to_bytes_limited`] when body produced exceeds limit.
+ #[derive(Debug, Display, Error)]
+-#[display("limit exceeded while collecting body bytes")]
++#[display("Limit exceeded while collecting body bytes")]
+ #[non_exhaustive]
+ pub struct BodyLimitExceeded;
  
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `actix-http/src/encoding/encoder.rs` (modified, +2/-2)
 ```diff
-@@ -41,7 +41,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
+@@ -480,11 +480,11 @@ fn new_brotli_compressor() -> Box<brotli::CompressorWriter<Writer>> {
+ #[non_exhaustive]
+ pub enum EncoderError {
+     /// Wrapped body stream error.
+-    #[display("body")]
++    #[display("Body")]
+     Body(Box<dyn StdError>),
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -97,7 +97,7 @@ jobs:
-     name: doc tests
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+     /// Generic I/O error.
+-    #[display("io")]
++    #[display("Io")]
+     Io(io::Error),
+ }
  
 ```
 
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
+**File**: `actix-http/src/error.rs` (modified, +32/-32)
 ```diff
-@@ -21,7 +21,7 @@ jobs:
-   coverage:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+@@ -80,28 +80,28 @@ impl From<Error> for Response<BoxBody> {
  
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Display)]
+ pub(crate) enum Kind {
+-    #[display("error processing HTTP")]
++    #[display("Error processing HTTP")]
+     Http,
+ 
+-    #[display("error parsing HTTP message")]
++    #[display("Error parsing HTTP message")]
+     Parse,
+ 
+-    #[display("request payload read error")]
++    #[display("Request payload read error")]
+     Payload,
+ 
+-    #[display("response body write error")]
++    #[display("Response body write error")]
+     Body,
+ 
+-    #[display("send response error")]
++    #[display("Send response error")]
+     SendResponse,
+ 
+-    #[display("error in WebSocket process")]
++    #[display("Error in WebSocket process")]
+     Ws,
+ 
+-    #[display("connection error")]
++    #[display("Connection error")]
+     Io,
+ 
+-    #[display("encoder error")]
++    #[display("Encoder error")]
+     Encoder,
+ }
+ 
+@@ -160,36 +160,36 @@ impl From<crate::ws::ProtocolError> for Error {
+ #[non_exhaustive]
+ pub enum ParseError {
+     /// An invalid `Method`, such as `GE.T`.
+-    #[display("invalid method specified")]
++    #[display("Invalid method specified")]
+     Method,
+ 
+     /// An invalid `Uri`, such as `exam ple.domain`.
+     #[display("URI error: {}", _0)]
+     Uri(InvalidUri),
+ 
+     /// An invalid `HttpVersion`, such as `HTP/1.1`
+-    #[display("invalid HTTP version specified")]
++    #[display("Invalid HTTP version specified")]
+     Version,
+ 
+     /// An invalid `Header`.
+-    #[display("invalid Header provided")]
++    #[display("Invalid Header provided")]
+     Header,
+ 
+     /// A message head is too large to be reasonable.
+-    #[display("message head is too large")]
++    #[display("Message head is too large")]
+     TooLarge,
+ 
+     /// A message reached EOF, but is not complete.
+-    #[display("message is incomplete")]
++    #[display("Message is incomplete")]
+     Incomplete,
+ 
+     /// An invalid `Status`, such as `1337 ELITE`.
+-    #[display("invalid status provided")]
++    #[display("Invalid status provided")]
+     Status,
+ 
+     /// A timeout occurred waiting for an IO event.
+     #[allow(dead_code)]
+-    #[display("timeout")]
++    #[display("Timeout")]
+     Timeout,
+ 
+     /// An I/O error that occurred while trying to read or write to a network stream.
+@@ -256,19 +256,19 @@ impl From<ParseError> for Response<BoxBody> {
+ #[non_exhaustive]
+ pub enum PayloadError {
+     /// A payload reached EOF, but is not complete.
+-    #[display("payload reached EOF before completing: {:?}", _0)]
++    #[display("Payload reached EOF before completing: {:?}", _0)]
+     Incomplete(Option<io::Error>),
+ 
+     /// Content encoding stream corruption.
+-    #[display("can not decode content-encoding")]
++    #[display("Can not decode content-encoding")]
+     EncodingCorrupted,
+ 
+     /// Payload reached size limit.
+-    #[display("payload reached size limit")]
++    #[display("Payload reached size limit")]
+     Overflow,
+ 
+     /// Payload length is unknown.
+-    #[display("payload length is unknown")]
++    #[display("Payload length is unknown")]
+     UnknownLength,
+ 
+     /// HTTP/2 payload error.
+@@ -326,23 +326,23 @@ impl From<PayloadError> for Error {
+ #[non_exhaustive]
+ pub enum DispatchError {
+     /// Service error.
+-    #[display("service error")]
++    #[display("Service error")]
+     Service(Response<BoxBody>),
+ 
+     /// Body streaming error.
+-    #[display("body error: {}", _0)]
++    #[display("Body error: {}", _0)]
+     Body(Box<dyn StdError>),
+ 
+     /// Upgrade service error.
+-    #[display("upgrade error")]
++    #[display("Upgrade error")]
+     Upgrade,
+ 
+     /// An `io::Error` that occurred while trying to read or write to a network stream.
+     #[display("I/O error: {}", _0)]
+     Io(io::Error),
+ 
+     /// Request parse error.
+-    #[display("request parse error: {}", _0)]
++    #[display("Request parse error: {}", _0)]
+     Parse(ParseError),
+ 
+     /// HTTP/2 error.
+@@ -351,19 +351,19 @@ pub enum DispatchError {
+     H2(h2::Error),
+ 
+     /// The first request did not complete within the specified timeout.
+-    #[display("request did not complete within the specified timeout")]
++    #[display("Request did not complete within the specified timeout")]
+     SlowRequestTimeout,
+ 
+     /// Disconnect timeout. Makes sense for TLS streams.
+-    #[display("connection shutdown timeout")]
++    #[display("Connection shutdown timeout")]
+     DisconnectTimeout,
+ 
+     /// Handler dropped payload before reading EOF.
+-    #[display("handler dropped payload before reading EOF")]
++    #[display("Handler dropped payload before reading EOF")]
+     HandlerDroppedPayload,
+ 
+     /// Internal error.
+-    #[display("internal error")]
++    #[display("Internal error")]
+     InternalError,
+ }
+ 
+@@ -389,11 +389,11 @@ impl StdError for DispatchError {
+ #[non_exhaustive]
+ pub enum ContentTypeError {
+     /// Can not parse content type.
+-    #[display("could not parse content type")]
++    #[display("Could not parse content type")]
+   
 ```
 
-**File**: `.github/workflows/labeler.yml` (modified, +1/-1)
+**File**: `actix-http/src/extensions.rs` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@ jobs:
-   labeler:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
-       - uses: actions/labeler@v7.0.0
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +6/-6)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-     runs-on: ubuntu-slim
+@@ -141,7 +141,7 @@ impl Extensions {
+             .entry(TypeId::of::<T>())
+             .or_insert_with(|| Box::new(default()))
+             .downcast_mut()
+-            .expect("extensions map should now contain a T value")
++            .expect("Extensions map should now contain a T value")
+     }
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -44,7 +44,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -54,7 +54,7 @@ jobs:
-   fmt:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -74,7 +74,7 @@ jobs:
- 
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -95,7 +95,7 @@ jobs:
-   lint-docs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -114,7 +114,7 @@ jobs:
-     if: false # rustdoc mismatch currently
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-     permissions:
-       contents: read
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           fetch-depth: 0
-           persist-credentials: false
-```
-
----
-
-### Incident Patch 2: `45d98582` (2026-11-04)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.31 to 2.89.0 (#4383)
-
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.31 to 2.89.0.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.31...v2.89.0)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.89.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
-```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,12 +30,12 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-         - 'zizmorcore/zizmor-action@v0.8.0'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-@@ -97,9 +97,9 @@ dependencies:
-         repo_id: 588643148
-         uses:
-             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
--    'taiki-e/install-action@v2.87.31':
--        ref: 'v2.87.31'
--        commit: 'sha1-1e29709c0ec63babbe8f266397a465f29a825f91'
-+    'taiki-e/install-action@v2.89.0':
-+        ref: 'v2.89.0'
-+        commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.1':
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack
- 
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
- 
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: cargo-semver-checks
- 
+     /// Remove an item from the map of a given type.
 ```
 
 ---
 
-### Incident Patch 3: `0e930681` (2026-11-04)
-**Commit Message**: build(deps): bump log from 0.4.34 to 0.4.35 (#4385)
+### Incident Patch 2: `61c6a15c` (2026-11-06)
+**Commit Message**: fix(http): disable large-window Brotli decompression
 
-Bumps [log](https://github.com/rust-lang/log) from 0.4.34 to 0.4.35.
-- [Release notes](https://github.com/rust-lang/log/releases)
-- [Changelog](https://github.com/rust-lang/log/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/log/compare/0.4.34...v0.4.35)
+fixes GHSA-7p9w-p5qm-5gc5
 
----
-updated-dependencies:
-- dependency-name: log
-  dependency-version: 0.4.35
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +2/-1)
 ```diff
-@@ -2152,9 +2152,9 @@ dependencies = [
+@@ -48,7 +48,7 @@ dependencies = [
  
  [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+ name = "actix-http"
+-version = "3.20.2"
++version = "3.20.3"
+ dependencies = [
+  "actix-codec",
+  "actix-http-test",
+@@ -63,6 +63,7 @@ dependencies = [
+  "base64 0.23.1",
+  "bitflags 2.13.2",
+  "brotli",
++ "brotli-decompressor",
+  "bytes",
+  "bytestring",
+  "criterion",
+```
+
+**File**: `actix-http/CHANGES.md` (modified, +4/-0)
+```diff
+@@ -2,6 +2,10 @@
  
- [[package]]
- name = "memchr"
+ ## Unreleased
+ 
++## 3.20.3
++
++- Disable large-window Brotli decompression. [GHSA-7p9w-p5qm-5gc5](https://github.com/actix/actix-web/security/advisories/GHSA-7p9w-p5qm-5gc5)
++
+ ## 3.20.2
+ 
+ - Reject bare LF as last chunk terminator in chunked encodings. [GHSA-2q7f-mf9f-5qhr](https://github.com/actix/actix-web/security/advisories/GHSA-2q7f-mf9f-5qhr)
+```
+
+**File**: `actix-http/Cargo.toml` (modified, +3/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "actix-http"
+-version = "3.20.2"
++version = "3.20.3"
+ authors = ["Nikolay Kim <fafhrd91@gmail.com>", "Rob Ede <robjtede@icloud.com>"]
+ description = "HTTP types and services for the Actix ecosystem"
+ keywords = ["actix", "http", "framework", "async", "futures"]
+@@ -79,7 +79,7 @@ rustls-0_22 = ["__tls", "actix-tls/accept", "actix-tls/rustls-0_22"]
+ rustls-0_23 = ["__tls", "actix-tls/accept", "actix-tls/rustls-0_23"]
+ 
+ # Compression codecs
+-compress-brotli = ["__compress", "dep:brotli"]
++compress-brotli = ["__compress", "dep:brotli", "dep:brotli-decompressor"]
+ compress-gzip = ["__compress", "dep:flate2"]
+ compress-zstd = ["__compress", "dep:zstd"]
+ 
+@@ -130,6 +130,7 @@ actix-tls = { version = "3.4", default-features = false, optional = true }
+ 
+ # compress-*
+ brotli = { version = "9", optional = true }
++brotli-decompressor = { version = "6.2", optional = true }
+ flate2 = { version = "1.0.13", optional = true }
+ zstd = { version = "0.14", optional = true }
+ 
+```
+
+**File**: `actix-http/README.md` (modified, +2/-2)
+```diff
+@@ -5,11 +5,11 @@
+ <!-- prettier-ignore-start -->
+ 
+ [![crates.io](https://img.shields.io/crates/v/actix-http?label=latest)](https://crates.io/crates/actix-http)
+-[![Documentation](https://docs.rs/actix-http/badge.svg?version=3.20.2)](https://docs.rs/actix-http/3.20.2)
++[![Documentation](https://docs.rs/actix-http/badge.svg?version=3.20.3)](https://docs.rs/actix-http/3.20.3)
+ ![Version](https://img.shields.io/badge/rustc-1.89+-ab6000.svg)
+ ![MIT or Apache 2.0 licensed](https://img.shields.io/crates/l/actix-http.svg)
+ <br />
+-[![dependency status](https://deps.rs/crate/actix-http/3.20.2/status.svg)](https://deps.rs/crate/actix-http/3.20.2)
++[![dependency status](https://deps.rs/crate/actix-http/3.20.3/status.svg)](https://deps.rs/crate/actix-http/3.20.3)
+ [![Download](https://img.shields.io/crates/d/actix-http.svg)](https://crates.io/crates/actix-http)
+ [![Chat on Discord](https://img.shields.io/discord/771444961383153695?label=chat&logo=discord)](https://discord.gg/NWpN5mmg3x)
+ 
+```
+
+**File**: `actix-http/src/encoding/decoder.rs` (modified, +38/-3)
+```diff
+@@ -57,9 +57,16 @@ where
+ 
+         let decoder = match encoding {
+             #[cfg(feature = "compress-brotli")]
+-            ContentEncoding::Brotli => Some(ContentDecoder::Brotli(Box::new(
+-                brotli::DecompressorWriter::new(Writer::new(), DEFAULT_DECODER_CAPACITY),
+-            ))),
++            ContentEncoding::Brotli => {
++                let mut br =
++                    brotli::DecompressorWriter::new(Writer::new(), DEFAULT_DECODER_CAPACITY);
++                br.set_parameter(
++                    brotli_decompressor::BrotliDecoderParameter::BROTLI_DECODER_PARAM_LARGE_WINDOW,
++                    0,
++                );
++
++                Some(ContentDecoder::Brotli(Box::new(br)))
++            }
+ 
+             #[cfg(feature = "compress-gzip")]
+             ContentEncoding::Deflate => Some(ContentDecoder::Deflate(Box::new(ZlibDecoder::new(
+@@ -400,6 +407,34 @@ mod tests {
+         ContentEncoding::Zstd,
+     ];
+ 
++    #[cfg(feature = "compress-brotli")]
++    #[actix_rt::test]
++    async fn brotli_large_window_is_rejected() {
++        let data = vec![b'a'; 4096];
++        let params = brotli::enc::BrotliEncoderParams {
++            large_window: true,
++            lgwin: 25,
++            ..Default::default()
++        };
++        let mut compressed = Vec::new();
++        brotli::BrotliCompress(&mut &data[..], &mut compressed, &params).unwrap();
++
++        assert_eq!(compressed[0], 0x11);
++
++        let mut decoded = Vec::new();
++        brotli::BrotliDecompress(&mut &compressed[..], &mut decoded).unwrap();
++        assert_eq!(decoded, data);
++
++        let stream = stream::iter([Ok(Bytes::from(compressed))]);
++        let mut decoder = Decoder::new(stream, ContentEncoding::Brotli);
++
++        assert!(matches!(
++            decoder.next().await,
++            Some(Err(PayloadError::Incomplete(Some(_))))
++        ));
++        assert!(decoder.next().await.is_none());
++    }
++
+     fn encode(data: &[u8], encoding: ContentEncoding) -> Bytes {
+         match encoding {
+             #[cfg(feature = "compress-brotli")]
+```
+
+---
+
+### Incident Patch 3: `9194fa90` (2026-11-06)
+**Commit Message**: fix(files): merge Windows short-name protection
+
+**File**: `actix-files/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Fix hidden-file protection bypass through Windows short filename aliases. [GHSA-8hcm-m7r7-frwc](https://github.com/actix/actix-web/security/advisories/GHSA-8hcm-m7r7-frwc)
++
+ ## 0.7.3
+ 
+ - Fix stored XSS vulnerability when `Files::show_files_listing()` is explicitly enabled. [GHSA-5rrw-whjq-pmhh](https://github.com/actix/actix-web/security/advisories/GHSA-5rrw-whjq-pmhh)
+```
+
+**File**: `actix-files/src/service.rs` (modified, +168/-6)
+```diff
+@@ -51,11 +51,58 @@ pub struct FilesServiceInner {
+ 
+ impl fmt::Debug for FilesServiceInner {
+     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        f.write_str("FilesServiceInner")
++        f.debug_struct("FilesServiceInner").finish_non_exhaustive()
+     }
+ }
+ 
+ impl FilesService {
++    /// Opens a file after checking its resolved path on Windows.
++    ///
++    /// `directory` is the canonical path of the configured serving root. On Windows, returns
++    /// errors from [`Self::canonicalize_path`]. On all platforms, returns file-open errors.
++    fn open_named_file(&self, directory: &Path, path: &Path) -> io::Result<NamedFile> {
++        #[cfg(windows)]
++        self.canonicalize_path(directory, path)?;
++
++        #[cfg(not(windows))]
++        let _ = directory;
++
++        NamedFile::open(path)
++    }
++
++    /// Resolves a path and applies the hidden-file policy to the resolved names on Windows.
++    ///
++    /// `directory` must be the canonical path of the configured serving root. When hidden files
++    /// are disabled, checks components below that root for a leading dot. If the resolved path
++    /// is outside the root, checks all of its components instead.
++    ///
++    /// Returns [`io::ErrorKind::NotFound`] for a hidden path on Windows, or an error from
++    /// [`Path::canonicalize`] if the path cannot be resolved.
++    fn canonicalize_path(&self, directory: &Path, path: &Path) -> io::Result<PathBuf> {
++        let resolved = path.canonicalize()?;
++
++        #[cfg(windows)]
++        if !self.hidden_files {
++            // Windows short names can hide a leading dot. Check the resolved names, excluding
++            // the configured root. For symlinks outside the root, check the full target path.
++            let relative = resolved.strip_prefix(directory).unwrap_or(&resolved);
++
++            if relative.components().any(|component| {
++                matches!(
++                    component,
++                    std::path::Component::Normal(name) if name.as_encoded_bytes().starts_with(b".")
++                )
++            }) {
++                return Err(io::Error::new(io::ErrorKind::NotFound, "hidden file"));
++            }
++        }
++
++        #[cfg(not(windows))]
++        let _ = directory;
++
++        Ok(resolved)
++    }
++
+     async fn handle_err(
+         &self,
+         err: io::Error,
+@@ -182,12 +229,14 @@ impl Service<ServiceRequest> for FilesService {
+                 // Try serving pre-compressed file even if the uncompressed file doesn't exist yet.
+                 // Still handle directories (index/listing) through the normal branch below.
+                 if this.try_compressed && !path.is_dir() {
+-                    if let Some((named_file, encoding)) = find_compressed(&req, &path).await {
++                    if let Some((named_file, encoding)) =
++                        find_compressed(&req, &path, &this, directory).await
++                    {
+                         return Ok(this.serve_named_file_with_encoding(req, named_file, encoding));
+                     }
+                 }
+ 
+-                if let Err(err) = path.canonicalize() {
++                if let Err(err) = this.canonicalize_path(directory, &path) {
+                     if matches!(
+                         err.kind(),
+                         io::ErrorKind::NotFound | io::ErrorKind::NotADirectory
+@@ -222,15 +271,15 @@ impl Service<ServiceRequest> for FilesService {
+                             let named_path = path.join(index);
+                             if this.try_compressed {
+                                 if let Some((named_file, encoding)) =
+-                                    find_compressed(&req, &named_path).await
++                                    find_compressed(&req, &named_path, &this, directory).await
+                                 {
+                                     return Ok(this.serve_named_file_with_encoding(
+                                         req, named_file, encoding,
+                                     ));
+                                 }
+                             }
+                             // fallback to the uncompressed version
+-                            match NamedFile::open(named_path) {
++                            match this.open_named_file(directory, &named_path) {
+                                 Ok(named_file) => return Ok(this.serve_named_file(req, named_file)),
+                                 Err(err)
+                                     if matches!(
+@@ -307,6 +356,8 @@ const SUPPORTED_PRECOMPRESSION_ENCODINGS: &[header::ContentEncoding] = &[
+ async fn find_compressed(
+     req: &ServiceRequest,
+     original_path: &Path,
++    service: &FilesService,
++    directory: &Path,
+ ) -> Option<(NamedFile, header::ContentEncoding)> {
+     use actix_web::HttpMessage;
+     use header::{AcceptEncoding, ContentEncoding, Encoding};
+@@ -360,7 +411,7 @@ async fn find_compressed(
+         filename.push(extension);
+         compressed_path.set_file_n
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4391** (2026-11-06): fix(errors): normalize error and panic messages (@robjtede)
+- **PR #4390** (2026-11-06): docs(web): hyphenate URL-encoded terminology (@robjtede)
+- **PR #4389** (2026-11-06): chore: import pin_project macro consistently (@robjtede)
 - **PR #4387** (2026-11-04): build(deps): bump encoding_rs from 0.8.42 to 0.8.44 (@dependabot[bot])
 - **PR #4386** (2026-11-04): build(deps): bump brotli from 9.0.0 to 9.1.1 (@dependabot[bot])
 - **PR #4385** (2026-11-04): build(deps): bump log from 0.4.34 to 0.4.35 (@dependabot[bot])
-- **PR #4384** (2026-11-04): build(deps): bump local-waker from 0.1.4 to 0.1.5 (@dependabot[bot])
-- **PR #4383** (2026-11-04): build(deps): bump taiki-e/install-action from 2.87.31 to 2.89.0 (@dependabot[bot])
-- **PR #4382** (2026-11-04): build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (@dependabot[bot])
 
 ---
 
@@ -1810,46 +1962,38 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)
+## X. errors): normalize error and panic messages (#4391)
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-files/src/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41687b5e`: build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fb59640`: errors): normalize error and panic messages (#4391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-files/src/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-    'useblacksmith/checkout@v1.8.2':
-        ref: 'v1.8.2'
-        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
+    #[display("Path is not a directory. Unable to serve static files")]
+    #[display("Unable to render directory without index file")]
+    #[display("Segment started with invalid character: ('{_0}')")]
+    #[display("Segment contained invalid character ('{_0}')")]
+    #[display("Segment ended with invalid character: ('{_0}')")]
+    #[display("Path is not a valid UTF-8 string after percent-decoding")]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-    'useblacksmith/checkout@v1.8.1':
-        ref: 'v1.8.1'
-        commit: 'sha1-25227e61ff9dafe400e22fa487b673eac4e4409a'
+    #[display("path is not a directory. Unable to serve static files")]
+    #[display("unable to render directory without index file")]
+    #[display("segment started with invalid character: ('{_0}')")]
+    #[display("segment contained invalid character ('{_0}')")]
+    #[display("segment ended with invalid character: ('{_0}')")]
+    #[display("path is not a valid UTF-8 string after percent-decoding")]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41687b5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fb59640` are properly handled with clean fallback behavior.

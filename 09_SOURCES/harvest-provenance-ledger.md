@@ -7933,3 +7933,5 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `6c2e879e` | Multi-dimensional audit evidence | 2026-11-06T21:21:09.782Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `85bd085e` | Multi-dimensional audit evidence | 2026-11-06T21:21:14.480Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `e42aa54a` | Multi-dimensional audit evidence | 2026-11-06T21:34:04.819Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `9fb59640` | Multi-dimensional audit evidence | 2026-11-06T21:45:00.172Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `c24c2e37` | Multi-dimensional audit evidence | 2026-11-06T21:45:06.672Z |

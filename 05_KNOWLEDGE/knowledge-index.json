@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:34:04.729Z",
+  "last_updated": "2026-11-06T21:45:06.566Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -522,11 +522,16 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "3396bd83",
-      "content_hash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
+      "source_version": "9fb59640",
+      "content_hash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "errors): normalize error and panic messages (#4391)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2059,
           "title": "build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)",
@@ -578,7 +583,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T07:27:40.675Z",
+      "verified_at": "2026-11-06T21:45:00.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7710,11 +7715,16 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "31fed7a6",
-      "content_hash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
+      "source_version": "c24c2e37",
+      "content_hash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "konnectivity): keep additional Service ports (#1407)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1924,
           "title": "kubeadm): let kubelet configuration JSON patches remove fields (#1347)",
@@ -7761,7 +7771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T12:29:46.389Z",
+      "verified_at": "2026-11-06T21:45:06.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T21:34:04.825Z",
-  "total_cycles_completed": 7889,
-  "total_learnings_persisted": 7889,
-  "total_rules_promoted": 7537,
+  "last_updated": "2026-11-06T21:45:06.678Z",
+  "total_cycles_completed": 7891,
+  "total_learnings_persisted": 7891,
+  "total_rules_promoted": 7539,
   "history": [
-    {
-      "timestamp": "2026-11-05T15:59:21.643Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T16:06:02.215Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T16:06:05.791Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T21:34:04.825Z",
       "repository": "kucherenko/jscpd",
       "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:45:00.179Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:45:06.678Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

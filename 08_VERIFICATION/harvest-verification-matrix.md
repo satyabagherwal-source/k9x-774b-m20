@@ -7924,3 +7924,5 @@
 | `CYCLE-20261106-BL3M` | `2026-11-06T21:21:09.778Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83a1c8a9...`) |
 | `CYCLE-20261106-BOQ5` | `2026-11-06T21:21:14.477Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ed9dff2...`) |
 | `CYCLE-20261106-S74F` | `2026-11-06T21:34:04.815Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31d90de1...`) |
+| `CYCLE-20261106-68SN` | `2026-11-06T21:45:00.167Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d89e08ae...`) |
+| `CYCLE-20261106-6DT1` | `2026-11-06T21:45:06.661Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f422a81...`) |

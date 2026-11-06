@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "31fed7a6",
+    "sourceVersion": "c24c2e37",
     "license": "Apache-2.0",
-    "contentHash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
-    "lastHarvestedAt": "2026-10-31T12:29:46.496Z",
+    "contentHash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
+    "lastHarvestedAt": "2026-11-06T21:45:06.672Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "3396bd83",
+    "sourceVersion": "9fb59640",
     "license": "Apache-2.0",
-    "contentHash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
-    "lastHarvestedAt": "2026-11-05T07:27:40.786Z",
+    "contentHash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
+    "lastHarvestedAt": "2026-11-06T21:45:00.172Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

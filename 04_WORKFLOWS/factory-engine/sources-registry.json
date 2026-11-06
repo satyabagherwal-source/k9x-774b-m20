@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T21:34:07.402Z",
-    "lastVerified": "2026-11-06T21:34:07.402Z",
+    "lastChecked": "2026-11-06T21:45:09.282Z",
+    "lastVerified": "2026-11-06T21:45:09.282Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T21:06:49.120Z",
-    "lastVerified": "2026-11-06T21:06:49.120Z",
+    "lastChecked": "2026-11-06T21:45:08.107Z",
+    "lastVerified": "2026-11-06T21:45:08.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-06T13:41:50.469Z",
+    "lastChecked": "2026-11-06T21:45:02.992Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-06T13:41:50.469Z"
+    "lastVerified": "2026-11-06T21:45:02.992Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -1184,9 +1184,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-05T12:00:14.257Z",
+    "lastChecked": "2026-11-06T21:45:05.695Z",
     "revisionIdentifier": "52ce8448",
-    "lastVerified": "2026-11-05T12:00:14.257Z"
+    "lastVerified": "2026-11-06T21:45:05.695Z"
   },
   "sharkdp-bat": {
     "name": "sharkdp/bat",
@@ -2992,9 +2992,9 @@
   "nozbe-watermelondb": {
     "name": "WatermelonDB",
     "officialUrl": "https://github.com/Nozbe/WatermelonDB",
-    "lastChecked": "2026-11-04T03:44:06.036Z",
+    "lastChecked": "2026-11-06T21:44:58.109Z",
     "revisionIdentifier": "5c463222",
-    "lastVerified": "2026-11-04T03:44:06.036Z"
+    "lastVerified": "2026-11-06T21:44:58.109Z"
   },
   "kgateway-dev-kgateway": {
     "name": "kgateway-dev/kgateway",
@@ -4689,14 +4689,14 @@
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T07:27:40.012Z",
-    "lastVerified": "2026-11-05T07:27:40.012Z",
+    "lastChecked": "2026-11-06T21:44:57.999Z",
+    "lastVerified": "2026-11-06T21:44:57.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
+    "contentHash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4781,22 +4781,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clastix-kamaji": {
-    "name": "kamaji",
+    "name": "clastix/kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T12:50:43.998Z",
-    "lastVerified": "2026-11-05T12:50:43.998Z",
+    "lastChecked": "2026-11-06T21:45:04.759Z",
+    "lastVerified": "2026-11-06T21:45:04.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
+    "contentHash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "31fed7a6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "typedb-typedb": {
     "name": "typedb/typedb",
@@ -10467,9 +10466,9 @@
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",
     "officialUrl": "https://github.com/sundios/SEO-Dashboard",
-    "lastChecked": "2026-11-03T17:45:39.325Z",
+    "lastChecked": "2026-11-06T21:44:55.532Z",
     "revisionIdentifier": "8ca76eb6",
-    "lastVerified": "2026-11-03T17:45:39.325Z"
+    "lastVerified": "2026-11-06T21:44:55.532Z"
   },
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "mikepenz/multiplatform-markdown-renderer",

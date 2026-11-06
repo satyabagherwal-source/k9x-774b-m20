@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `31fed7a6`  
+> **Source Version**: `c24c2e37`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:29:45.769Z  
+> **Timestamp**: 2026-11-06T21:45:04.766Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:29:45.617Z  
+> **Harvest Timestamp**: 2026-11-06T21:45:04.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2072 stars
+- **Stars / Engagement**: 2076 stars
 
 ---
 
@@ -743,300 +743,298 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f068d4c7` (2026-10-30)
-**Commit Message**: fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397)
+### Incident Patch 1: `c24c2e37` (2026-11-06)
+**Commit Message**: fix(konnectivity): keep additional Service ports (#1407)
 
-GetRESTClientConfig always overrode the kubeconfig server with the
-in-cluster Service DNS address (<name>.<namespace>.svc:<port>). On
-platforms where the in-cluster Service path is unreachable for the
-management components, the soot manager and the kubeadm phases can
-never reach the TenantControlPlane API server, leaving the kubeadm
-bootstrap RBAC unfinished.
+The konnectivity Service builder always wrote its port into index 1.
+When a TenantControlPlane declares spec.controlPlane.service
+.additionalPorts, the Service builder puts the first additional port
+there before Konnectivity has a port of its own: on the reconcile that
+creates the Service, or the one that enables Konnectivity. That port
+was overwritten and the konnectivity port inherited its fields, such
+as appProtocol and the allocated NodePort.
 
-When the kamaji.clastix.io/kubeconfig-secret-key annotation is set,
-use the server address of the selected kubeconfig (e.g. the
-LoadBalancer endpoint) as the client Host instead. The behavior is
-unchanged when the annotation is not set.
+Look the konnectivity port up by name in both builders, insert a fresh
+entry after the kube-apiserver port when there is none, and read the
+status port by name instead of from index 1.
 
-**File**: `internal/utilities/tenant_client.go` (modified, +8/-1)
+Upstream issue: clastix/kamaji 1227
+
+Assisted-by: LLM
+
+Signed-off-by: Marian Koreniuk <[REDACTED_EMAIL]>
+
+**File**: `internal/resources/k8s_service_resource.go` (modified, +1/-1)
 ```diff
-@@ -63,8 +63,15 @@ func GetRESTClientConfig(ctx context.Context, client client.Client, tenantContro
- 		return nil, fmt.Errorf("kubeconfig is missing cluster or user entries")
+@@ -115,7 +115,7 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
+ 				port.TargetPort = intstr.FromInt32(tenantControlPlane.Spec.NetworkProfile.Port)
+ 
+ 				ports = append(ports, port)
+-			case i == 1 && port.Name == "konnectivity-server":
++			case port.Name == "konnectivity-server":
+ 				ports = append(ports, port)
+ 			}
+ 		}
+```
+
+**File**: `internal/resources/konnectivity/service_resource.go` (modified, +37/-13)
+```diff
+@@ -6,6 +6,7 @@ package konnectivity
+ import (
+ 	"context"
+ 	"fmt"
++	"slices"
+ 
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	corev1 "k8s.io/api/core/v1"
+@@ -20,6 +21,8 @@ import (
+ 	"github.com/clastix/kamaji/internal/utilities"
+ )
+ 
++const servicePortName = "konnectivity-server"
++
+ type ServiceResource struct {
+ 	resource *corev1.Service
+ 	Client   client.Client
+@@ -41,10 +44,14 @@ func (r *ServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControl
+ 		return false
  	}
  
-+	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
-+	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
-+		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
-+			host = server
++	var port int32
++	if servicePort := r.servicePort(); servicePort != nil {
++		port = servicePort.Port
++	}
++
+ 	if tenantControlPlane.Status.Addons.Konnectivity.Service.Name != r.resource.GetName() ||
+ 		tenantControlPlane.Status.Addons.Konnectivity.Service.Namespace != r.resource.GetNamespace() ||
+-		len(r.resource.Spec.Ports) > 0 && tenantControlPlane.Status.Addons.Konnectivity.Service.Port != r.resource.Spec.Ports[1].Port ||
+-		len(r.resource.Spec.Ports) == 0 && tenantControlPlane.Status.Addons.Konnectivity.Service.Port > 0 ||
++		tenantControlPlane.Status.Addons.Konnectivity.Service.Port != port ||
+ 		len(r.resource.Status.Conditions) != len(tenantControlPlane.Status.Addons.Konnectivity.Service.Conditions) {
+ 		return true
+ 	}
+@@ -83,7 +90,7 @@ func (r *ServiceResource) CleanUp(ctx context.Context, _ *kamajiv1alpha1.TenantC
+ 
+ 	res, err := utilities.CreateOrUpdateWithConflict(ctx, r.Client, r.resource, func() error {
+ 		for index, port := range r.resource.Spec.Ports {
+-			if port.Name == "konnectivity-server" {
++			if port.Name == servicePortName {
+ 				ports := make([]corev1.ServicePort, 0, len(r.resource.Spec.Ports)-1)
+ 
+ 				ports = append(ports, r.resource.Spec.Ports[:index]...)
+@@ -112,7 +119,9 @@ func (r *ServiceResource) UpdateTenantControlPlaneStatus(_ context.Context, tena
+ 	if tenantControlPlane.Spec.Addons.Konnectivity != nil {
+ 		tenantControlPlane.Status.Addons.Konnectivity.Service.Name = r.resource.GetName()
+ 		tenantControlPlane.Status.Addons.Konnectivity.Service.Namespace = r.resource.GetNamespace()
+-		tenantControlPlane.Status.Addons.Konnectivity.Service.Port = r.resource.Spec.Ports[1].Port
++		if servicePort := r.servicePort(); servicePort != nil {
++			tenantControlPlane.Status.Addons.Konnectivity.Service.Port = servicePort.Port
++		}
+ 		tenantControlPlane.Status.Addons.Konnectivity.Service.ServiceStatus = resources.StripLoadBalancerPortsFromServiceStatus(r.resource.Status)
+ 	}
+ 
+@@ -140,25 +149,40 @@ func (r *ServiceResource) CreateOrUpdate(ctx context.Context, tenantControlPlane
+ 
+ func (r *ServiceResource) mutate(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) func() error {
+ 	return func() error {
+-		switch len(r.resource.Spec.Ports) {
+-		case 0:
++		if len(r.resource.Spec.Ports) == 0 {
+ 			return fmt.Errorf("current state of the Service is not ready to be mangled for Konnectivity")
+-		case 1:
+-			r.resource.Spec.Ports = append(r.resource.Spec.Ports, corev1.ServicePort{})
+ 		}
+ 
+-		r.resource.Spec.Ports[1].Name = "konnectivity-server"
+-		r.resource.Spec.Ports[1].Protocol = corev1.ProtocolTCP
+-		r.resource.Spec.Ports[1].Port = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
+-		r.resource.Spec.Ports[1].TargetPort = intstr.FromInt32(tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port)
++		port := r.servicePort()
++		if port == nil {
++			// A new entry right after the kube-apiserver port: overwriting index 1 would drop
++			// the additional port sitting there, and the konnectivity port would inherit its fields.
++			r.resource.Spec.Ports = slices.Insert(r.resource.Spec.Ports, 1, corev1.ServicePort{Name: servicePortName})
++			port = &r.resource.Spec.Ports[1]
++		}
++
++		port.Protocol = corev1.ProtocolTCP
++		port.Port = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
++		port.TargetPort = intstr.FromInt32(tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port)
+ 		if tenantControlPlane.Spec.ControlPlane.Service.ServiceType == kamajiv1alpha1.ServiceTypeNodePort {
+-			r.resource.Spec.Ports[1].NodePort = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
++			port.NodePort = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
+ 		}
+ 
+ 		return controllerutil.SetControllerReference(tenantControlPlane, r.resource, r.Client.Scheme())
+ 	}
+ }
+ 
++// servicePort returns the konnectivity port of the Service, or nil when it has none.
++func (r *ServiceResource) servicePort() *corev1.ServicePort {
++	for i := range r.resource.Spec.Ports {
++		if r.resource.Spec.Ports[i].Name == servicePortName {
++			return &r.resource.Spec.Ports[i]
 +		}
 +	}
 +
- 	config := &restclient.Config{
--		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
-+		Host: host,
- 		TLSClientConfig: restclient.TLSClientConfig{
- 			CAData:   kubeconfig.Clusters[0].Cluster.CertificateAuthorityData,
- 			CertData: kubeconfig.AuthInfos[0].AuthInfo.ClientCertificateData,
-```
-
-**File**: `internal/utilities/tenant_client_test.go` (modified, +185/-0)
-```diff
-@@ -5,6 +5,8 @@ package utilities
- 
- import (
- 	"context"
-+	"encoding/base64"
-+	"fmt"
- 	"testing"
- 
- 	corev1 "k8s.io/api/core/v1"
-@@ -16,6 +18,67 @@ import (
- 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
- )
- 
-+const testKubeconfigSecretName = "admin-kubeconfig"
-+
-+func testScheme(t *testing.T) *runtime.Scheme {
-+	t.Helper()
-+
-+	scheme := runtime.NewScheme()
-+	if err := corev1.AddToScheme(scheme); err != nil {
-+		t.Fatalf("failed adding corev1 scheme: %v", err)
-+	}
-+
-+	return scheme
++	return nil
 +}
 +
-+func testKubeconfigYAML(server string) []byte {
-+	return []byte(fmt.Sprintf(`apiVersion: v1
-+kind: Config
-+clusters:
-+- cluster:
-+    server: %q
-+    certificate-authority-data: %s
-+  name: tenant
-+contexts:
-+- context:
-+    cluster: tenant
-+    user: kubernetes-super-admin
-+  name: kubernetes-super-admin@tenant
-+current-context: kubernetes-super-admin@tenant
-+users:
-+- name: kubernetes-super-admin
-+  user:
-+    client-certificate-data: %s
-+    client-key-data: %s
-+`,
-+		server,
-+		base64.StdEncoding.EncodeToString([]byte("fake-ca")),
-+		base64.StdEncoding.EncodeToString([]byte("fake-certificate")),
-+		base64.StdEncoding.EncodeToString([]byte("fake-key")),
-+	))
-+}
-+
-+func testTenantControlPlane(t *testing.T, secret *corev1.Secret, annotations map[string]string) *kamajiv1alpha1.TenantControlPlane {
-+	t.Helper()
-+
-+	port := int32(6443)
-+	tcp := &kamajiv1alpha1.TenantControlPlane{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:        "tcp",
-+			Namespace:   "default",
-+			Annotations: annotations,
-+		},
-+		Spec: kamajiv1alpha1.TenantControlPlaneSpec{
-+			NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{
-+				Port: port,
-+			},
-+		},
-+	}
-+	tcp.Status.KubeConfig.Admin.SecretName = secret.Name
-+
-+	return tcp
-+}
-+
- func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
- 	t.Parallel()
- 
-@@ -42,3 +105,125 @@ func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
- 		t.Fatal("expected an error for a kubeconfig without cluster or user entries, got nil")
- 	}
+ func (r *ServiceResource) GetName() string {
+ 	return "konnectivity-service"
  }
+```
+
+**File**: `internal/resources/konnectivity/service_resource_test.go` (added, +160/-0)
+```diff
+@@ -0,0 +1,160 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
 +
-+func TestGetRESTClientConfigServiceHostWithoutAnnotation(t *testing.T) {
-+	t.Parallel()
++package konnectivity_test
 +
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
-+		Data: map[string][]byte{
-+			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
-+		},
++import (
++	"context"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/util/intstr"
++	"k8s.io/utils/ptr"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/resources"
++	"github.com/clastix/kamaji/internal/resources/konnectivity"
++)
++
++var _ = Describe("Konnectivity ServiceResource", func() {
++	const (
++		tcpName            = "test-tcp"
++		konnectivityPort   = int32(8132)
++		additionalPort     = int32(50001)
++		additionalNodePort = int32(32542)
++	)
++
++	var (
++		ctx        context.Context
++		tcp        *kamajiv1alpha1.TenantControlPlane
++		fakeClient client.Client
++	)
++
++	newClient := func(objs ...client.Object) client.Client {
++		return fake.NewClientBuilder().WithScheme(runtimeScheme).WithObjects(objs...).Build()
 +	}
 +
-+	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++	// reconcile runs the two Service builders in the order the TenantControlPlane controller does.
++	reconcile := func() (controllerutil.OperationResult, controllerutil.OperationResult) {
++		svc := &resources.KubernetesServiceResource{Client: fakeClient}
++		Expect(svc.Define(ctx, tcp)).To(Succeed())
++		svcResult, err := svc.CreateOrUpdate(ctx, tcp)
++		Expect(err).NotTo(HaveOccurred())
 +
-+	config, err := GetRESTClientConfig(context.Background(), c, testTenantControlPlane(t, secret, nil))
-+	if err != nil {
-+		t.Fatalf("unexpected error: %v", err)
++		konn := &konnectivity.ServiceResource{Client: fakeClient}
++		Expect(konn.Define(ctx, tcp)).To(Succeed())
++		konnResult, err := konn.CreateOrUpdate(ctx, tcp)
++		Expect(err).NotTo(HaveOccurred())
++
++		return svcResult, konnResult
 +	}
 +
-+	if expected := "https://tcp.default.svc:6443"; config.Host != expected {
-+		t.Errorf("expected Host %q, got %q", expected, config.Host)
-+	}
-+}
++	getService := func() *corev1.Service {
++		svc := &corev1.Service{}
++		Expect(fakeClient.Get(ctx, client.ObjectKey{Name: tcpName, Namespace: "default"}, svc)).To(Succeed())
 +
-+func TestGetRESTClientConfigKubeconfigServerWithAnnotation(t *testing.T) {
-+	t.Parallel()
-+
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
-+		Data: map[string][]byte{
-+			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
-+		},
++		return svc
 +	}
 +
-+	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++	portNames := func(svc *corev1.Service) []string {
++		names := make([]string, 0, len(svc.Spec.Ports))
++		for _, port := range svc.Spec.Ports {
++			names = append(names, port.Name)
++		}
 +
-+	tcp := testTenantControlPlane(t, secret, map[string]string{
-+		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.SuperAdminKubeConfigFileName,
++		return names
++	}
++
++	BeforeEach(func() {
++		ctx = context.Background()
++		tcp = &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
++			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++				ControlPlane: kamajiv1alpha1.ControlPlane{
++					Service: kamajiv1alpha1.ServiceSpec{
++						ServiceType: kamajiv1alpha1.ServiceTypeLoadBalancer,
++						AdditionalPorts: []kamajiv1alpha1.AdditionalPort{{
++							Name:       "talos-trustd",
++							Protocol:   corev1.ProtocolTCP,
++							Port:       additionalPort,
++							TargetPort: intstr.FromInt32(additionalPort),
++						}},
++					},
++				},
++				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443},
++				Addons: kamajiv1alpha1.AddonsSpec{
++					Konnectivity: &kamajiv1alpha1.KonnectivitySpec{
++						KonnectivityServerSpec: kamajiv1alpha1.KonnectivityServerSpec{Port: konnectivityPort},
++					},
++				},
++			},
++		}
 +	})
 +
-+	config, err := GetRESTClientConfig(context.Background(), c, tcp)
-+	if err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
++	It("keeps the additional ports on the reconcile that creates the Service", func() {
++		fakeClient = newClient()
 +
-+	if expected := "https://100.64.0.22:6443"; config.Host != expected {
-+		t.Errorf("expected Host %q, got %q", expected, config.Host)
-+	}
-+}
++		reconcile()
 +
-+func TestGetRESTClientConfigKubeconfigServerWithCustomKeyAnnotation(t *testing.T) {
-+	t.Parallel()
++		Expect(portNames(getService())).To(Equal([]string{"kube-apiserver", "konnectivity-server", "talos-trustd"}))
 +
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
-+		Data: map[string][]byte{
-+			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
-+			kubeadmconstants.AdminKubeConfigFileName:      testKubeconfigYAML("https://100.64.0.23:6443"),
-+		},
-+	}
-+
-+	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
-+
-+	tcp := testTenantControlPlane(t, secret, map[string]string{
-+		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.AdminKubeConfigFileName,
++		svcResult, konnResult := reconcile()
++		Expect(svcResult).To(Equal(controllerutil.OperationResultNone))
++		Expect(konnResult).To(Equal(controllerutil.OperationResultNone))
 +	})
 +
-+	config, err := GetRESTClientConfig(context.Background(), c, tcp)
-+	if err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
++	It("keeps an additional port and its fields when Konnectivity is enabled on an existing Service", func() {
++		fakeClient = newClient(&corev1.Service{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
++			Spec: corev1.ServiceSpec{
++				Type: corev1.ServiceTypeLoadBalancer,
++				Ports: []corev1.ServicePort{
++					{Name: "kube-apiserver", Protocol: corev1.ProtocolTCP, Port: 6443, TargetPort: intstr.FromInt32(6443), NodePort: 30147},
++					{Name: "talos-trustd", Protocol: corev1.ProtocolTCP, AppProtocol: ptr.To("grpc"), Port: additionalPort, TargetPort: intstr.FromInt32(additionalPort), NodePort: additionalNodePort},
++				},
++			},
++		})
++		tcp.Spec.ControlPlane.Service.AdditionalPorts[0].AppProtocol = ptr.To("grpc")
 +
-+	if expected := "https://100.64.0.23:6443"; config.Host != expected {
-+		t.Errorf("expected Host %q, got %q", expected, config.Host)
-+	}
-+}
++		reconcile()
 +
-+func TestGetRESTClientConfigServiceHostWhenKubeconfigServerIsEmpty(t *testing.T) {
-+	t.Parallel()
++		svc := getService()
++		Expect(portNames(svc)).To(Equal([]string{"kube-apiserver", "konnectivity-server", "talos-trustd"}))
++		Expect(svc.Spec.Ports[1].Port).To(Equal(konnectivityPort))
++		Expect(svc.Spec.Ports[1].AppProtocol).To(BeNil(), "the konnectivity port must not inherit fields of the additional port")
++		Expect(svc.Spec.Ports[1].NodePort).To(BeZero())
++		Expect(svc.Spec.Ports[2].AppProtocol).To(Equal(ptr.To("grpc")))
++	})
 +
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
-+		Data: map[string][]byte{
-+			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML(""),
-+		},
-+	}
-+
-+	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Bui
-```
-
----
-
-### Incident Patch 2: `31fed7a6` (2026-10-30)
-**Commit Message**: docs: fix kamaji-etcd.deploy key and dead links (#1402)
-
-The chart README told users to pass `--set etcd.deploy=false` to use
-an external etcd, but the bundled subchart is gated on
-`kamaji-etcd.deploy` (Chart.yaml condition), so the documented flag
-still deployed the kamaji-etcd StatefulSet. Use the real key, as the
-alternative-datastore guide already does.
-
-Also point the multi-tenant etcd link at clastix/kamaji-etcd instead
-of the private kamaji-internal repo (404), and the ServiceMonitor link
-in the benchmark page at prometheus-operator's current getting
-started guide.
-
-Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
-
-**File**: `charts/kamaji/README.md` (modified, +3/-3)
-```diff
-@@ -24,8 +24,8 @@ Kubernetes: `>=1.21.0-0`
- |------------|------|---------|
- | https://clastix.github.io/charts | kamaji-etcd | >=0.15.0 |
- 
--[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
--This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
-+[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
-+This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
- 
- > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
- 
-@@ -65,7 +65,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
- 
- If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
- 
--        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
-+        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
- 
- Here the values you can override:
- 
-```
-
-**File**: `charts/kamaji/README.md.gotmpl` (modified, +3/-3)
-```diff
-@@ -11,8 +11,8 @@
- 
- {{ template "chart.requirementsSection" . }}
- 
--[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
--This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
-+[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
-+This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
- 
- > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
- 
-@@ -54,7 +54,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
- 
- If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
- 
--        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
-+        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
- 
- Here the values you can override:
- 
-```
-
-**File**: `docs/content/reference/benchmark.md` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ With that said, a main manager is responsible to reconcile the admin resources (
- These Tenant Control Plane managers, named in the code base as soot managers, in turn, start and run controllers to ensure the desired state of the underlying add-ons, and required resources such as kubeadm ones.
- 
- With that said, monitoring the Kamaji stack is essential to understand any anomaly in memory consumption, or CPU usage.
--The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) that can be used to extract all the required metrics of the Kamaji operator.
-+The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/developer/getting-started.md#using-servicemonitors) that can be used to extract all the required metrics of the Kamaji operator.
- 
- # Running 100 Tenant Control Planes using a single DataStore
- 
++	It("updates the konnectivity port by name and reports it in the status", func() {
++		fakeClient = newClient(&corev1.Service{
++			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
++			Spec: corev1.ServiceSpec{
++				Type: core
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1407** (2026-11-06): fix(konnectivity): keep additional Service ports (@themoriarti)
 - **PR #1402** (2026-10-30): docs: fix kamaji-etcd.deploy key and dead links (@sarankumar1325)
 - **PR #1401** (2026-10-30): feat(deps): bump k8s.io/kubernetes from 1.37.1 to 1.37.2 in the k8s group (@dependabot[bot])
 - **PR #1399** (closed): fix(kubeadm): use advertiseAddress for kubeadm's LocalAPIEndpoint (@Kellen275)
 - **PR #1397** (2026-10-30): fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (@alistarle)
 - **PR #1395** (2026-10-30): feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
-- **PR #1394** (2026-10-30): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1056,35 +1054,28 @@ Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set
+## X. konnectivity): keep additional Service ports (#1407)
 
 **RULE**:
-When implementing operations in `internal/utilities/tenant_client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f068d4c7`: utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c24c2e37`: konnectivity): keep additional Service ports (#1407). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/utilities/tenant_client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
-	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
-		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
-			host = server
-		}
-	}
-
-		Host: host,
+			case port.Name == "konnectivity-server":
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
+			case i == 1 && port.Name == "konnectivity-server":
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f068d4c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c24c2e37` are properly handled with clean fallback behavior.

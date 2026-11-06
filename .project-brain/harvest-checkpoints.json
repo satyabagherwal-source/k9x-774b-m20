@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:34:04.829Z",
+  "last_updated": "2026-11-06T21:45:06.682Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "5e32eee53ecd1101d73f4d349eb271a731141b887d93967eadaa5638aa728d44",
-      "verified_at": "2026-10-31T12:29:46.506Z",
+      "content_hash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
+      "verified_at": "2026-11-06T21:45:06.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:29:46.506Z"
+      "last_updated": "2026-11-06T21:45:06.681Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "64ba778a933e282e0c08debedef40656840faea5ec892f585cca68405fd05bba",
-      "verified_at": "2026-11-05T07:27:40.803Z",
+      "content_hash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
+      "verified_at": "2026-11-06T21:45:00.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T07:27:40.803Z"
+      "last_updated": "2026-11-06T21:45:00.183Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

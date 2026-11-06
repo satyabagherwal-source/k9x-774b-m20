@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-E0H0",
-    "timestamp": "2026-11-05T00:07:40.260Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "92f99417b0fdbf9a21024d896e0586b081a43981219973bb845d558a12ce3430",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-N9YR",
-    "timestamp": "2026-11-05T00:14:52.467Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "9d8704a7db8f0ec12d796b97908693a3002764e2b7432739300b5c1383b5fed5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-NE0E",
     "timestamp": "2026-11-05T00:14:57.710Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7460,36 @@
     "repository": "kucherenko/jscpd",
     "learningId": "learn-github-kucherenko-jscpd",
     "contentHash": "31d90de1970346c45573ddc1d5f3a4b7613d3c73ff784c3cde83fe03476f9112",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-68SN",
+    "timestamp": "2026-11-06T21:45:00.167Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "d89e08ae2269a2aee132ee51dcd03f4fe29280a289a8642e8c97bd9a9b0bb7f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-6DT1",
+    "timestamp": "2026-11-06T21:45:06.661Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
