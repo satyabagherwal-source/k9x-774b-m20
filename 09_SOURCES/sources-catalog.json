@@ -4843,10 +4843,10 @@
     "repository": "aome510/spotify-player",
     "platform": "github",
     "sourceUrl": "https://github.com/aome510/spotify-player",
-    "sourceVersion": "7dc9d17a",
+    "sourceVersion": "966d84a6",
     "license": "MIT",
-    "contentHash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
-    "lastHarvestedAt": "2026-10-19T02:18:19.992Z",
+    "contentHash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
+    "lastHarvestedAt": "2026-11-06T21:06:39.893Z",
     "learningId": "learn-github-aome510-spotify-player"
   },
   "react-native-device-info-react-native-device-info": {
@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "525b1d11",
+    "sourceVersion": "8853378e",
     "license": "Apache-2.0",
-    "contentHash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
-    "lastHarvestedAt": "2026-10-30T13:28:46.726Z",
+    "contentHash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
+    "lastHarvestedAt": "2026-11-06T21:06:52.953Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {

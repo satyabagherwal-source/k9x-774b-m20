@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aome510-spotify-player-learnings.md`  
 > **Source**: github ([https://github.com/aome510/spotify-player](https://github.com/aome510/spotify-player))  
-> **Source Version**: `7dc9d17a`  
+> **Source Version**: `966d84a6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:18:19.863Z  
+> **Timestamp**: 2026-11-06T21:06:38.453Z  
 > **Learning ID**: `learn-github-aome510-spotify-player`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aome510-spotify-player-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aome510/spotify-player](https://github.com/aome510/spotify-player))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:18:19.859Z  
+> **Harvest Timestamp**: 2026-11-06T21:06:37.054Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Spotify player in the terminal with full feature parity
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 7280 stars
+- **Stars / Engagement**: 7305 stars
 
 ---
 
@@ -2096,14 +2096,11 @@ pub fn format_genres(genres: &[String], genre_num: u8) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1107** (2026-11-05): **spotify_player authenticate gives browser error "redirect_uri: Not matching configuration"**
+  *Symptoms*: **Describe the bug** A clear and concise description of what the bug is. - An error is encountered after running the spotify_player authenticate command. The URL redirect that is supposed to lead to the Spotify login webpage where I enter my credentials shows a blank page with the following error: "redirect_uri: Not matching configuration"  **To Reproduce** Steps to reproduce the bug. - updated from version 0.23.0 by running "cargo install spotify_player --locked" - verified successful cargo update from version 0.23.0 to version 0.25.1 - ran spotify_player command - browser page opens with error "redirect_uri: Not matching configuration" displayed  **Expected behaviour** A clear and concise description of what you expected to happen. - I expected a Spotify login web page to appear in my browser window  **Log and backtrace** Log and backtrace of a run reproducing the bug to help debug the issue, which are usually located in `$HOME/.cache/spotify-player/`.  [spotify-player-26-10-25-11-16.log](https://github.com/user-attachments/files/33934809/spotify-player-26-10-25-11-16.log)  Please refer to [this URL](https://github.com/aome510/spotify-player?tab=readme-ov-file#logging) for more details.  **Screenshots** If applicable, add screenshots to help explain your problem.  <img width="3200" height="1800" alt="Image" src="https://github.com/user-attachments/assets/359fba39-814f-4606-9f9b-306f33fbb002" />  **Environment**  - OS: Linux Mint 22.3 x86_64 - Application version: 0.25.1 - A
+
 - **Issue #1075** (2026-09-07): **cli commands not working**
   *Symptoms*: First, the client ID was receiving errors which has recently been reported. To resolve this i change to a spotify app client ID i made manually, this resolved that issue. However, when testing I realised these commands dont appear to function anymore:  arch-dell% spotify_player get key user-playlists Bad request: missing field `tracks` at line 1 column 1544 arch-dell% spotify_player get key user-followed-artists Bad request: json parse error: missing field `followers` at line 1 column 726: missing field `followers` at line 1 column 726 arch-dell% cargo install --list | grep -A2 spotify spotify_player v0.24.1:     spotify_player
-
-- **Issue #1073** (2026-09-07): **429 API rate limit exceeded**
-  *Symptoms*: **Log and backtrace** ``` } 2026-09-03T08:50:06.632707Z ERROR spotify_player::client::handlers: Failed to handle client request: failed to send a Spotify API request https://api.spotify.com/v1/me/albums: {   "error": {     "status": 429,     "message": "API rate limit exceeded"   } } ```   **Environment**  - OS: Macos  - Application version: spotify_player 0.24.1 - Application features: --features image,daemon,rodio-backend,streaming,fzf,notify  
-  **Post-Mortem & Fix Analysis**:
-  > I think I have the same errors after upgrading to version `0.24.1` on ArchLinux. This is the relevant section of the log obtained at startup  ``` log 11:38:50  INFO spotify_player::auth: Using cached credentials 11:38:50  INFO spotify_player::streaming: Application's connect configurations: ConnectConfig { name: "spotify-player", device_type: Speaker, is_group: false, initial_volume: 45875, disable_volume: false, volume_steps: 64 11:38:50  INFO log: Mixing with softvol and volume control: Log(60.0) 11:38:50  INFO spotify_player::streaming: Initializing a new integrated player with device_id=be3d1316-3db1-47de-88f3-142e068c5d69 11:38:50  INFO spotify_player::streaming: Starting an integrated Spotify player using librespot's spirc protocol 11:38:50  INFO log: Converting with ditherer: tpdf 11:38:50  INFO log: Using PulseAudioSink with format: S16 11:38:50  INFO log: Connecting to AP "ap-gew4.spotify.com:4070" 11:38:51  INFO spotify_player::streaming: New streaming connection has been est
-  > Same here: ``` 2026-09-03T11:40:06.020343Z  INFO spotify_player::streaming: New streaming connection has been established! 2026-09-03T11:40:06.020381Z  INFO spotify_player::client: Used a new session for Spotify client. 2026-09-03T11:40:06.216807Z  INFO spotify_player::cli::client: Starting a client socket at 127.0.0.1:8080 2026-09-03T11:40:06.220787Z  INFO spotify_player::media_control: Initializing application's media control event watcher... 2026-09-03T11:40:06.342443Z  INFO librespot_core::spclient: Resolved "gue1-spclient.spotify.com:443" as spclient access point 2026-09-03T11:40:06.491250Z ERROR client_request{request=GetUserSavedAlbums}: spotify_player::client::handlers: Failed to handle client request: failed to send a Spotify API request https://api.spotify.com/v1/me/albums: {   "error": {     "status": 429,     "message": "API rate limit exceeded"   } } 2026-09-03T11:40:06.494420Z ERROR client_request{request=GetUserSavedShows}: spotify_player::client::handlers: Failed to han
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2120,622 +2117,29 @@ pub fn format_genres(genres: &[String], genre_num: u8) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dc9d17a` (2026-09-19)
-**Commit Message**: Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux (#1060)
+### Incident Patch 1: `6ef4304b` (2026-11-05)
+**Commit Message**: fix: use `/nscpot_login` redirect URI for ncspot client (#1108)
 
-* Add TLS backend features (rustls-tls / native-tls) to fix auth on Termux
-
-reqwest 0.13's default TLS backend (rustls + rustls-platform-verifier) panics
-on aarch64-linux-android targets without a JVM context, which makes every
-authentication attempt in Termux die in the token-exchange thread
-(rustls/rustls-platform-verifier#219). Gate the backend behind two features:
-rustls-tls (in the default set — default builds unchanged) and native-tls
-(system TLS via openssl, resolves CAs through standard paths including
-Termux's $PREFIX/etc/tls/cert.pem).
-
-Also documents the Termux build (native-tls + pulseaudio backend, since
-rodio/cpal's AAudio host hits the same no-JVM panic) in the README.
-
-**File**: `README.md` (modified, +19/-0)
+**File**: `spotify_player/src/auth.rs` (modified, +1/-1)
 ```diff
-@@ -88,6 +88,25 @@ A Spotify Premium account is **required**.
-     sudo yum install openssl-devel alsa-lib-devel dbus-devel
-     ```
+@@ -13,7 +13,7 @@ use sha2::{Digest as _, Sha256};
  
-+##### Termux (Android)
-+
-+- Two default components require a JVM context that Termux processes don't have:
-+  the default TLS backend (`rustls-platform-verifier`, panics during the auth
-+  token exchange) and the rodio audio backend (cpal's AAudio host, panics when
-+  streaming starts). Build with the `native-tls` feature and the pulseaudio
-+  backend instead:
-+
-+  ```shell
-+  pkg install rust openssl pulseaudio
-+  cargo install spotify_player --no-default-features --features pulseaudio-backend,media-control,native-tls
-+  ```
-+
-+  This makes authentication, the Web API, and remote device control work. Integrated
-+  streaming additionally requires patching librespot's compile-time OS identity
-+  (`librespot-core`'s `config::OS`) to `"linux"` via `[patch.crates-io]`, because
-+  librespot built for `target_os = "android"` presents the Android-app identity, which
-+  Spotify rejects for keymaster-minted credentials.
-+
- ### Binaries
+ pub const SPOTIFY_CLIENT_ID: &str = "65b708073fc0480ea92a077233ca87bd";
+ pub const NCSPOT_CLIENT_ID: &str = "d420a117a32841c2b3474932e49fb54b";
+-pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/login";
++pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/ncspot_login";
  
- Application's prebuilt binaries can be found in the [Releases Page](https://github.com/aome510/spotify-player/releases).
-```
-
-**File**: `spotify_player/Cargo.toml` (modified, +10/-2)
-```diff
-@@ -22,7 +22,7 @@ librespot-metadata = { version = "0.8.0" }
- log = "0.4.34"
- chrono = "0.4.45"
- chrono-humanize = "0.2.3"
--reqwest = { version = "0.12.28", features = ["json", "blocking"] }
-+reqwest = { version = "0.12.28", default-features = false, features = ["charset", "http2", "system-proxy", "json", "blocking"] }
- reqwest-middleware = "0.4.2"
- rspotify = {version = "0.16.1", features = ["cli", "reqwest-middleware"] }
- http = "1.5.0"
-@@ -107,7 +107,15 @@ notify = ["notify-rust"]
- daemon = ["daemonize", "streaming"]
- fzf = ["fuzzy-matcher"]
- 
--default = ["rodio-backend", "media-control"]
-+# TLS backend used by the application's HTTP client (auth/token exchange).
-+# `rustls-tls` keeps reqwest's default backend (rustls + rustls-platform-verifier).
-+# `native-tls` uses the system TLS library (e.g. openssl) instead — needed on
-+# platforms where rustls-platform-verifier cannot run, such as Termux (Android
-+# target without a JVM, see rustls/rustls-platform-verifier#219).
-+rustls-tls = ["reqwest/default-tls"]
-+native-tls = ["reqwest/native-tls"]
-+
-+default = ["rodio-backend", "media-control", "rustls-tls"]
- 
- [package.metadata.binstall]
- pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ target }{ archive-suffix }"
-```
-
----
-
-### Incident Patch 2: `ef525dad` (2026-07-20)
-**Commit Message**: fix invalid token with Spotify's new token expiration policy (#1041)
-
-### Summary
-
-Resolves #1040
-
-As of 2026-07-20 Spotify [stopped rotating and now expires refresh tokens](https://developer.spotify.com/blog/2026-06-18-refresh-token-expiration), so the Authorization-Code-with-PKCE refresh grant no longer returns a `refresh_token`. The Web API client is a stock `rspotify::AuthCodePkceSpotify`, whose `refetch_token` stores the refresh response verbatim — so `refresh_token` got nulled in `user_client_token.json`, and the next forced refresh then had nothing to refresh with and wiped the token entirely, leaving every request failing with `Token is not valid` / `get token: no access token`. This change wraps the Web API client so refreshes preserve the existing refresh token, and re-authenticates instead of crashing (or serving a dead-end token) when a refresh token is missing or expired.
-
-### Changes
-
-- **Preserve the refresh token across refreshes** (`client/spotify.rs`): add `WebApiClient`, a thin wrapper over `rspotify::AuthCodePkceSpotify` that overrides `refetch_token` to carry the previously stored refresh token forward when Spotify's refresh response omits one. All other behavi
-
-**File**: `spotify_player/src/auth.rs` (modified, +33/-13)
-```diff
-@@ -133,30 +133,50 @@ pub fn get_creds(auth_config: &AuthConfig, reauth: bool, use_cached: bool) -> Re
- /// When `force` is set, any cached token is ignored and a fresh interactive authorization flow is
- /// always run. This is used by the `authenticate` CLI command to re-authenticate on demand.
- pub async fn prompt_for_user_token(
--    client: &mut rspotify::AuthCodePkceSpotify,
-+    client: &mut crate::client::WebApiClient,
-     force: bool,
- ) -> Result<()> {
-     // Reuse a cached token when possible, refreshing it if it has expired.
-     if !force {
-         if let Ok(Some(token)) = client.read_token_cache(true).await {
-             let expired = token.is_expired();
-+            // A token without a refresh token cannot be renewed once it expires and
-+            // gets wiped by the next refresh (e.g. caches nulled by Spotify's
-+            // refresh-token change). Treat it as unusable so we re-authenticate and
-+            // obtain a fresh refresh token instead of serving a dead-end token.
-+            let renewable = token.refresh_token.is_some();
-             *client.get_token().lock().await.unwrap() = Some(token);
- 
--            if !expired {
-+            if !expired && renewable {
-                 return Ok(());
-             }
- 
--            if let Some(refreshed) = client
--                .refetch_token()
--                .await
--                .context("refresh expired token from cache")?
--            {
--                *client.get_token().lock().await.unwrap() = Some(refreshed);
--                client
--                    .write_token_cache()
--                    .await
--                    .context("write refreshed token to cache")?;
--                return Ok(());
-+            // A refresh may fail because the refresh token expired (Spotify expires
-+            // refresh tokens 6 months after the original authorization, returning
-+            // `invalid_grant`) or because no refresh token is available. In either
-+            // case, fall through to the interactive flow below rather than failing.
-+            match client.refetch_token().await {
-+                Ok(Some(refreshed)) => {
-+                    *client.get_token().lock().await.unwrap() = Some(refreshed);
-+                    client
-+                        .write_token_cache()
-+                        .await
-+                        .context("write refreshed token to cache")?;
-+                    return Ok(());
-+                }
-+                Ok(None) => {
-+                    tracing::warn!(
-+                        "Cached token could not be refreshed (no refresh token available); \
-+                         falling back to interactive re-authentication."
-+                    );
-+                }
-+                Err(err) => {
-+                    tracing::warn!(
-+                        "Failed to refresh the cached token (the refresh token may have expired \
-+                         per Spotify's 6-month refresh-token expiration policy); \
-+                         falling back to interactive re-authentication: {err:#}"
-+                    );
-+                }
-             }
-         }
-     }
-```
-
-**File**: `spotify_player/src/client/mod.rs` (modified, +6/-5)
-```diff
-@@ -34,6 +34,7 @@ mod spotify;
- pub use handlers::*;
- pub use request::*;
- use serde::Deserialize;
-+pub(crate) use spotify::WebApiClient;
- 
- const SPOTIFY_API_ENDPOINT: &str = "https://api.spotify.com/v1";
- const PLAYBACK_TYPES: [&rspotify::model::AdditionalType; 2] = [
-@@ -49,13 +50,13 @@ pub struct AppClient {
-     spotify: Arc<spotify::Spotify>,
-     auth_config: AuthConfig,
-     /// The Spotify Web API client, used for interacting with Spotify Web APIs
--    api_client: rspotify::AuthCodePkceSpotify,
-+    api_client: WebApiClient,
-     #[cfg(feature = "streaming")]
-     stream_conn: Arc<Mutex<Option<librespot_connect::Spirc>>>,
- }
- 
- impl Deref for AppClient {
--    type Target = rspotify::AuthCodePkceSpotify;
-+    type Target = WebApiClient;
-     fn deref(&self) -> &Self::Target {
-         &self.api_client
-     }
-@@ -65,7 +66,7 @@ impl Deref for AppClient {
- ///
- /// The returned client is unauthenticated; call [`auth::prompt_for_user_token`] to obtain an
- /// access token.
--pub fn new_api_client() -> Result<rspotify::AuthCodePkceSpotify> {
-+pub fn new_api_client() -> Result<WebApiClient> {
-     let configs = config::get_config();
- 
-     let id = configs.app_config.get_client_id()?;
-@@ -102,8 +103,8 @@ pub fn new_api_client() -> Result<rspotify::AuthCodePkceSpotify> {
-         cache_path: configs.cache_folder.join("user_client_token.json"),
-         ..Default::default()
-     };
--    Ok(rspotify::AuthCodePkceSpotify::with_config(
--        creds, oauth, config,
-+    Ok(WebApiClient::new(
-+        rspotify::AuthCodePkceSpotify::with_config(creds, oauth, config),
-     ))
- }
- 
-```
-
-**File**: `spotify_player/src/client/spotify.rs` (modified, +77/-1)
-```diff
-@@ -4,7 +4,7 @@ use rspotify::{
-     clients::{BaseClient, OAuthClient},
-     http::HttpClient,
-     sync::Mutex,
--    ClientResult, Config, Credentials, OAuth, Token,
-+    AuthCodePkceSpotify, ClientResult, Config, Credentials, OAuth, Token,
- };
- use std::{fmt, sync::Arc};
- 
-@@ -120,3 +120,79 @@ impl OAuthClient for Spotify {
-         panic!("`OAuthClient::request_token` should never be called!")
-     }
- }
-+
-+/// Thin wrapper over [`rspotify::AuthCodePkceSpotify`] for the Spotify Web API.
-+///
-+/// It exists solely to override `refetch_token` so that a refresh grant which
-+/// omits `refresh_token` preserves the previously stored refresh token instead
-+/// of overwriting it with `None`. Spotify stopped rotating (and now expires)
-+/// refresh tokens, so the refresh response no longer echoes one back.
-+///
-+/// See:
-+/// - <https://developer.spotify.com/blog/2026-06-18-refresh-token-expiration>
-+/// - <https://github.com/aome510/spotify-player/issues/1040>
-+#[derive(Clone, Debug, Default)]
-+pub struct WebApiClient(AuthCodePkceSpotify);
-+
-+impl WebApiClient {
-+    pub fn new(inner: AuthCodePkceSpotify) -> Self {
-+        Self(inner)
-+    }
-+
-+    pub fn get_authorize_url(&mut self, verifier_bytes: Option<usize>) -> ClientResult<String> {
-+        self.0.get_authorize_url(verifier_bytes)
-+    }
-+}
-+
-+#[maybe_async]
-+impl BaseClient for WebApiClient {
-+    fn get_http(&self) -> &HttpClient {
-+        self.0.get_http()
-+    }
-+
-+    fn get_token(&self) -> Arc<Mutex<Option<Token>>> {
-+        self.0.get_token()
-+    }
-+
-+    fn get_creds(&self) -> &Credentials {
-+        self.0.get_creds()
-+    }
-+
-+    fn get_config(&self) -> &Config {
-+        self.0.get_config()
-+    }
-+
-+    async fn refetch_token(&self) -> ClientResult<Option<Token>> {
-+        // Capture the current refresh token before refreshing
-+        let previous_refresh_token = self
-+            .0
-+            .get_token()
-+            .lock()
-+            .await
-+            .unwrap()
-+            .as_ref()
-+            .and_then(|token| token.refresh_token.clone());
-+
-+        // Spotify's refresh response no longer includes `refresh_token`; carry the
-+        // previous one forward so it is not lost on the round-trip and nulled in the
-+        // token cache.
-+        let refreshed = self.0.refetch_token().await?;
-+        Ok(refreshed.map(|mut token| {
-+            if token.refresh_token.is_none() {
-+                token.refresh_token = previous_refresh_token;
-+            }
-+            token
-+        }))
-+    }
-+}
-+
-+#[maybe_async]
-+impl OAuthClient for WebApiClient {
-+    fn get_oauth(&self) -> &OAuth {
-+        self.0.get_oauth()
-+    }
-+
-+    async fn request_token(&self, code: &str) -> ClientResult<()> {
-+        self.0.request_token(code).await
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `04684303` (2026-06-30)
-**Commit Message**: Workaround a black screen issue when rendering `iTerm2` inline images with `ratatui-image` (#1017)
-
-## Summary
-
-Workaround for https://github.com/ratatui/ratatui-image/issues/184
-
-## Changes
-
-- **iTerm2 cover-image workaround** (`ui/cover_image.rs`, new): add a `CoverImage` abstraction over the terminal's image protocol — kitty/sixel/halfblocks render as a `ratatui-image` widget, iTerm2 gets a cursor-anchored inline-image escape written to stdout with its cells reserved via `CellDiffOption::Skip`.
-- **Render path** (`ui/playback.rs`, `state/ui/mod.rs`, `ui/mod.rs`): `ImageRenderInfo.state` holds a `CoverImage` instead of a raw `Protocol`; the playback window builds it once per `(url, area)` and calls `cover.render(frame, area)`.
-- **Auto-derived cover width** (`ui/playback.rs`, `config/mod.rs`): `cover_img_length` now defaults to `0` ("auto"), deriving the column count from the terminal's cell aspect ratio; a non-zero value still sizes the box manually.
-
-**File**: `CLAUDE.md` (modified, +2/-3)
-```diff
-@@ -104,10 +104,9 @@ tracing::debug!("{value:?}");
- 
- ### Comments and doc comments
- 
--- Comment the _why_, not the _what_ — skip comments that restate the code.
- - Reserve comments for non-obvious intent: invariants, ordering constraints, workarounds, edge cases.
--- Keep comments concise and clear; avoid long paragraphs.
--- Try to keep comments up to date with code changes.
-+- Do not narrate the implementation. A doc comment states a type/function's purpose and contract (what callers need to know); leave the mechanics — which branch does what, field-by-field behaviour, control flow — to the code itself. Implementation rationale belongs in a focused inline comment at the relevant line, not in the doc comment.
-+- Keep comments concise and clear, avoid long paragraphs and try to keep comments up to date with code changes.
- 
- ## Keeping docs up to date
- 
-```
-
-**File**: `docs/config.md` (modified, +3/-2)
-```diff
-@@ -64,8 +64,8 @@ spotify_player -o device.volume=80 -o theme=dracula
- | `progress_bar_position`           | Progress bar position: `Bottom` or `Right`.                                                          | `Bottom`                                                               |
- | `layout`                          | Layout configuration (see below).                                                                    | See below                                                              |
- | `genre_num`                       | Max number of genres to display in playback text.                                                    | `2`                                                                    |
--| `cover_img_length`                | Cover image length (requires `image` feature).                                                       | `9`                                                                    |
--| `cover_img_width`                 | Cover image width (requires `image` feature).                                                        | `5`                                                                    |
-+| `cover_img_length`                | Cover image length in terminal columns (requires `image` feature).                                   | `0` (auto, see notes)                                                  |
-+| `cover_img_width`                 | Cover image width in terminal rows (requires `image` feature).                                       | `5`                                                                    |
- | `cover_img_pixels`                | Pixels per side for cover image (requires `pixelate` feature).                                       | `16`                                                                   |
- | `seek_duration_secs`              | Seek duration in seconds for seek commands.                                                          | `5`                                                                    |
- | `sort_artist_albums_by_type`      | Sort albums by type on artist pages.                                                                 | `false`                                                                |
-@@ -84,6 +84,7 @@ spotify_player -o device.volume=80 -o theme=dracula
- - `enable_streaming` accepts `Always`, `Never`, or `DaemonOnly`. For backward compatibility, `true`/`false` are also accepted.
- - `border_type`, `progress_bar_type`, and `progress_bar_position` accept only the values listed in the table above.
- - `explicit_icon` can be set to any Unicode character or an empty string to disable explicit markers.
-+- `cover_img_length = 0` (the default) auto-derives the cover's column count from the terminal's cell aspect ratio. Set a non-zero `cover_img_length` to size the box manually.
- 
- #### Media control
- 
-```
-
-**File**: `examples/app.toml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ play_icon = "▶"
- pause_icon = "▌▌"
- liked_icon = "♥"
- genre_num = 2
--cover_img_length = 9
-+cover_img_length = 0
- cover_img_width = 5
- cover_img_pixels = 16
- seek_duration_secs = 5
-```
-
-**File**: `spotify_player/src/config/mod.rs` (modified, +2/-1)
-```diff
-@@ -354,8 +354,9 @@ impl Default for AppConfig {
- 
-             genre_num: 2,
- 
-+            // `0` means "auto": derive the cover's column count from the terminal's cell aspect ratio
-             #[cfg(feature = "image")]
--            cover_img_length: 9,
-+            cover_img_length: 0,
-             #[cfg(feature = "image")]
-             cover_img_width: 5,
-             #[cfg(feature = "pixelate")]
-```
-
-**File**: `spotify_player/src/state/ui/mod.rs` (modified, +4/-2)
-```diff
-@@ -6,7 +6,9 @@ use crate::{
- };
- 
- #[cfg(feature = "image")]
--use ratatui_image::{picker::Picker, protocol::Protocol};
-+use crate::ui::cover_image::CoverImage;
-+#[cfg(feature = "image")]
-+use ratatui_image::picker::Picker;
- 
- pub type UIStateGuard<'a> = parking_lot::MutexGuard<'a, UIState>;
- 
-@@ -21,7 +23,7 @@ pub use popup::*;
- pub struct ImageRenderInfo {
-     pub url: String,
-     pub render_area: ratatui::layout::Rect,
--    pub state: Option<Protocol>,
-+    pub state: Option<CoverImage>,
- }
- 
- #[cfg(feature = "image")]
-```
-
-**File**: `spotify_player/src/ui/cover_image.rs` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+use std::io::Write;
-+
-+use anyhow::{Context, Result};
-+use base64::Engine;
-+use image::DynamicImage;
-+use ratatui::{buffer::CellDiffOption, layout::Rect, Frame};
-+use ratatui_image::{
-+    picker::{Picker, ProtocolType},
-+    protocol::Protocol,
-+    Image, Resize,
-+};
-+
-+/// A cover image prepared for a fixed render area. Construct it once per `(url, area)` and reuse
-+/// it across frames.
-+pub enum CoverImage {
-+    /// Rendered through `ratatui-image` as a widget (kitty / sixel / halfblocks).
-+    Widget(Box<Protocol>),
-+    /// A cursor-anchored iTerm2 inline-image escape, written directly to the terminal.
-+    /// `drawn` tracks whether it has been emitted yet — being grid-anchored, it only needs
-+    /// to be emitted once.
-+    Iterm2 { escape: String, drawn: bool },
-+}
-+
-+impl CoverImage {
-+    /// Prepare `img` for rendering into `area` using the protocol selected by `picker`.
-+    pub fn new(picker: &Picker, img: &DynamicImage, area: Rect) -> Result<Self> {
-+        if picker.protocol_type() == ProtocolType::Iterm2 {
-+            Ok(Self::Iterm2 {
-+                escape: encode_iterm2(img, area)?,
-+                drawn: false,
-+            })
-+        } else {
-+            let protocol = picker
-+                .new_protocol(img.clone(), area.into(), Resize::Fit(None))
-+                .context("encode cover image protocol")?;
-+            Ok(Self::Widget(Box::new(protocol)))
-+        }
-+    }
-+
-+    /// Render the cover image into `area`.
-+    pub fn render(&mut self, frame: &mut Frame, area: Rect) {
-+        match self {
-+            Self::Widget(protocol) => frame.render_widget(Image::new(protocol.as_ref()), area),
-+            Self::Iterm2 { escape, drawn } => {
-+                reserve_area(frame, area);
-+                if !*drawn {
-+                    if let Err(err) = write_iterm2(escape, area) {
-+                        tracing::error!("Failed to draw iTerm2 cover image: {err:#}");
-+                    } else {
-+                        *drawn = true;
-+                    }
-+                }
-+            }
-+        }
-+    }
-+}
-+
-+/// Mark every cell in `area` as skipped so `ratatui`'s renderer leaves it untouched.
-+fn reserve_area(frame: &mut Frame, area: Rect) {
-+    for y in area.top()..area.bottom() {
-+        for x in area.left()..area.right() {
-+            if let Some(cell) = frame.buffer_mut().cell_mut((x, y)) {
-+                cell.set_diff_option(CellDiffOption::Skip);
-+            }
-+        }
-+    }
-+}
-+
-+/// Encode `img` as a cursor-anchored, cell-sized iTerm2 inline-image escape sequence.
-+fn encode_iterm2(img: &DynamicImage, area: Rect) -> Result<String> {
-+    let mut png = Vec::new();
-+    img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)
-+        .context("encode cover image to PNG")?;
-+    let data = base64::engine::general_purpose::STANDARD.encode(&png);
-+    Ok(format!(
-+        "\x1b]1337;File=inline=1;preserveAspectRatio=1;size={};width={};height={}:{data}\x07",
-+        png.len(),
-+        area.width,
-+        area.height,
-+    ))
-+}
-+
-+/// Write a prepared iTerm2 image escape at `area`'s top-left, erasing the cell box first (so
-+/// letterboxing doesn't reveal stale content) and restoring the cursor afterwards so
-+/// `ratatui`'s own rendering is unaffected.
-+fn write_iterm2(escape: &str, area: Rect) -> std::io::Result<()> {
-+    // `area` is always a sub-rectangle of the screen, so the cursor-anchored image fits and
-+    // does not scroll the alternate screen.
-+    let mut out = std::io::stdout().lock();
-+    out.write_all(b"\x1b7")?; // DEC save cursor
-+    for row in area.top()..area.bottom() {
-+        // move to the start of the row (1-based) and erase `width` cells
-+        write!(out, "\x1b[{};{}H\x1b[{}X", row + 1, area.x + 1, area.width)?;
-+    }
-+    // position at the image origin and draw it
-+    write!(out, "\x1b[{};{}H{escape}", area.y + 1, area.x + 1)?;
-+    out.write_all(b"\x1b8")?; // DEC restore cursor
-+    out.flush()
-+}
-```
-
-**File**: `spotify_player/src/ui/mod.rs` (modified, +2/-0)
-```diff
-@@ -24,6 +24,8 @@ use crate::state::ImageRenderInfo;
- 
- type Terminal = ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>;
- 
-+#[cfg(feature = "image")]
-+pub mod cover_image;
- mod page;
- mod playback;
- mod popup;
-```
-
-**File**: `spotify_player/src/ui/playback.rs` (modified, +26/-14)
-```diff
-@@ -57,11 +57,11 @@ pub fn render_playback_window(
-                         match configs.app_config.progress_bar_position {
-                             config::ProgressBarPosition::Bottom => {
-                                 let ver_chunks = split_rect_for_progress_bar(rect); // rect, progress_bar_rect
--                                let hor_chunks = split_rect_for_cover_img(ver_chunks.0); // cover_img_rect, metadata_rect
-+                                let hor_chunks = split_rect_for_cover_img(ver_chunks.0, &ui.picker); // cover_img_rect, metadata_rect
-                                 (hor_chunks.1, hor_chunks.0, ver_chunks.1)
-                             }
-                             config::ProgressBarPosition::Right => {
--                                let hor_chunks = split_rect_for_cover_img(rect); // cover_img_rect, rect
-+                                let hor_chunks = split_rect_for_cover_img(rect, &ui.picker); // cover_img_rect, rect
-                                 let ver_chunks = split_rect_for_progress_bar(hor_chunks.1); // metadata_rect, progress_bar_rect
-                                 (ver_chunks.0, hor_chunks.0, ver_chunks.1)
-                             }
-@@ -82,12 +82,12 @@ pub fn render_playback_window(
-                             if ui.last_cover_image_render_info.url != url
-                                 || ui.last_cover_image_render_info.render_area != cover_img_rect
-                             {
--                                let state = match ui.picker.new_protocol(
--                                    img.clone(),
--                                    cover_img_rect.into(),
--                                    ratatui_image::Resize::Fit(None),
-+                                let state = match crate::ui::cover_image::CoverImage::new(
-+                                    &ui.picker,
-+                                    img,
-+                                    cover_img_rect,
-                                 ) {
--                                    Ok(protocol) => Some(protocol),
-+                                    Ok(cover) => Some(cover),
-                                     Err(err) => {
-                                         tracing::error!("Failed to encode cover image: {err:#}");
-                                         None
-@@ -99,11 +99,9 @@ pub fn render_playback_window(
-                                     state,
-                                 };
-                             }
--                            if let Some(ref protocol) = ui.last_cover_image_render_info.state {
--                                frame.render_widget(
--                                    ratatui_image::Image::new(protocol),
--                                    ui.last_cover_image_render_info.render_area,
--                                );
-+                            let area = ui.last_cover_image_render_info.render_area;
-+                            if let Some(cover) = ui.last_cover_image_render_info.state.as_mut() {
-+                                cover.render(frame, area);
-                             }
-                         }
-                     }
-@@ -193,10 +191,10 @@ fn split_rect_for_progress_bar(rect: Rect) -> (Rect, Rect) {
- }
- 
- #[cfg(feature = "image")]
--fn split_rect_for_cover_img(rect: Rect) -> (Rect, Rect) {
-+fn split_rect_for_cover_img(rect: Rect, picker: &ratatui_image::picker::Picker) -> (Rect, Rect) {
-     let configs = config::get_config();
-     let hor_chunks = Layout::horizontal([
--        Constraint::Length(configs.app_config.cover_img_length as u16),
-+        Constraint::Length(cover_img_length(configs, picker)),
-         Constraint::Fill(0), // metadata_rect
-     ])
-     .spacing(1)
-@@ -209,6 +207,20 @@ fn split_rect_for_cover_img(rect: Rect) -> (Rect, Rect) {
-     (ver_chunks[0], hor_chunks[1])
- }
- 
-+/// Determine the cover image box's width in columns.
-+#[cfg(feature = "image")]
-+fn cover_img_length(configs: &config::Configs, picker: &ratatui_image::picker::Picker) -> u16 {
-+    match configs.app_config.cover_img_length {
-+        // When `cover_img_length` is `0` (the default), derive it from the terminal's cell aspect ratio
-+        0 => {
-+            let font_size = picker.font_size();
-+            let rows = configs.app_config.cover_img_width as u16;
-+            rows * font_size.height / font_size.width
-+        }
-+        length => length as u16,
-+    }
-+}
-+
- fn construct_playback_text(
-     ui: &UIStateGuard,
-     state: &SharedState,
+ const SPOTIFY_AUTHORIZE_URL: &str = "https://accounts.spotify.com/authorize";
+ const SPOTIFY_TOKEN_URL: &str = "https://accounts.spotify.com/api/token";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1108** (2026-11-05): fix: use /nscpot_login redirect URI for ncspot client (@geetarOS)
+- **PR #1106** (closed): Visualizer: caption the cover with the track, artists and album (@nelsong6)
 - **PR #1094** (closed): cli: add --offset to 'playback start context' and image URLs to albums, artists and playlists (@Phyro-bit)
 - **PR #1088** (closed): Add offline downloads with artwork and fallback playback (@CormAlan)
 - **PR #1084** (2026-09-12): fix selected item handling in filtered lists (@aome510)
 - **PR #1082** (2026-09-09): render loading UI for search page (@aome510)
-- **PR #1081** (2026-09-09): update audio vis default to use theme palette's color instead of hard-coded rgb (@aome510)
-- **PR #1080** (2026-09-09): Update `get-playlist-items` and `get-user-top-tracks` API handling (@aome510)
 
 ---
 
@@ -2755,46 +2159,28 @@ Workaround for https://github.com/ratatui/ratatui-image/issues/184
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux 
+## X. use `/nscpot_login` redirect URI for ncspot client (#1108)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aome510/spotify-player. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `spotify_player/src/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aome510/spotify-player. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7dc9d17a`: Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux (#1060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ef4304b`: use `/nscpot_login` redirect URI for ncspot client (#1108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `spotify_player/src/auth.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-##### Termux (Android)
-
-- Two default components require a JVM context that Termux processes don't have:
-  the default TLS backend (`rustls-platform-verifier`, panics during the auth
-  token exchange) and the rodio audio backend (cpal's AAudio host, panics when
-  streaming starts). Build with the `native-tls` feature and the pulseaudio
-  backend instead:
-
-  ```shell
-  pkg install rust openssl pulseaudio
-  cargo install spotify_player --no-default-features --features pulseaudio-backend,media-control,native-tls
-  ```
-
-  This makes authentication, the Web API, and remote device control work. Integrated
-  streaming additionally requires patching librespot's compile-time OS identity
-  (`librespot-core`'s `config::OS`) to `"linux"` via `[patch.crates-io]`, because
-  librespot built for `target_os = "android"` presents the Android-app identity, which
-  Spotify rejects for keymaster-minted credentials.
-
+pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/ncspot_login";
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/login";
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dc9d17a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ef4304b` are properly handled with clean fallback behavior.

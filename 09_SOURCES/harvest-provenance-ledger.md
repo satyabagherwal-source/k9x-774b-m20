@@ -7926,3 +7926,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `c4813968` | Multi-dimensional audit evidence | 2026-11-06T20:52:15.577Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `2ac8694b` | Multi-dimensional audit evidence | 2026-11-06T20:52:21.430Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3dbb215e` | Multi-dimensional audit evidence | 2026-11-06T20:59:28.286Z |
+| `learn-github-aome510-spotify-player` | `https://github.com/aome510/spotify-player` | `966d84a6` | Multi-dimensional audit evidence | 2026-11-06T21:06:39.893Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `8853378e` | Multi-dimensional audit evidence | 2026-11-06T21:06:52.953Z |

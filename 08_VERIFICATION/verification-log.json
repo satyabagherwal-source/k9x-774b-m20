@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GP8H",
-    "timestamp": "2026-11-04T23:41:46.049Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "d14b7a00955919b2027322f013cdae13a52b5c295c0c1ce0372e988740113b55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-PBU1",
-    "timestamp": "2026-11-04T23:48:28.585Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "2c6365fc1c10c4de05b95412fffe03993de1d89ab1527ce619aca602e05fbffd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-PDRH",
     "timestamp": "2026-11-04T23:48:31.085Z",
     "repository": "giancarloerra/SocratiCode",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "55cf761bf6e106bd5b612b8f50a445ead5d3e591259f7fd59bf48c01d88ba5b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-SXW1",
+    "timestamp": "2026-11-06T21:06:39.889Z",
+    "repository": "aome510/spotify-player",
+    "learningId": "learn-github-aome510-spotify-player",
+    "contentHash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-T7YU",
+    "timestamp": "2026-11-06T21:06:52.950Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T20:59:28.210Z",
+  "last_updated": "2026-11-06T21:06:52.858Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2314,11 +2314,16 @@
       "slug": "aome510-spotify-player",
       "platform": "github",
       "source_url": "https://github.com/aome510/spotify-player",
-      "source_version": "7dc9d17a",
-      "content_hash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
+      "source_version": "966d84a6",
+      "content_hash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
       "dossier_path": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "use `/nscpot_login` redirect URI for ncspot client (#1108)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2015,
           "title": "Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux",
@@ -2330,7 +2335,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:18:19.963Z",
+      "verified_at": "2026-11-06T21:06:39.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59409,11 +59414,16 @@
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "525b1d11",
-      "content_hash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
+      "source_version": "8853378e",
+      "content_hash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Gate database connection-string ingestion (SDK-1443) (#6588)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2255,
           "title": "Curate every new entry per distill run by default (SDK-1140) (#5935)",
@@ -59430,7 +59440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:28:46.659Z",
+      "verified_at": "2026-11-06T21:06:52.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
