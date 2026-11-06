@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:34:55.944Z",
+  "last_updated": "2026-11-06T13:42:07.691Z",
   "total_verified_learnings": 1224,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10795,11 +10795,26 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "4fcd74ac",
-      "content_hash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
+      "source_version": "d9f7beef",
+      "content_hash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "**Rule #1 – “Single‑Source‑of‑Truth JSON Must Drive All Generated Artefacts”**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Rule #2 – “All External Network Calls Must Be Idempotent, Cached, and Retries‑Wrapped”**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Rule #3 – “Generated Markdown Must Contain a Machine‑Readable Anchor Block for Every Entry”**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1691,
           "title": "Add 'Sbu Subscriptions' (#2443)",
@@ -10871,7 +10886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:32:08.378Z",
+      "verified_at": "2026-11-06T13:42:07.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

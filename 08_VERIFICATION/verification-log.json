@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-V4HZ",
-    "timestamp": "2026-11-04T21:33:00.935Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "8df5b79c288876f5b706a95219794f14ca664eb67ba3c531eb857d51b470606e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-V588",
     "timestamp": "2026-11-04T21:33:01.880Z",
     "repository": "apollographql/apollo-kotlin",
@@ -7492,6 +7477,21 @@
     "contentHash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-X9KD",
+    "timestamp": "2026-11-06T13:42:07.789Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

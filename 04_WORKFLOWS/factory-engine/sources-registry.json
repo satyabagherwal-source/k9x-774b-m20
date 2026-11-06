@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T13:34:58.655Z",
-    "lastVerified": "2026-11-06T13:34:58.655Z",
+    "lastChecked": "2026-11-06T13:42:10.368Z",
+    "lastVerified": "2026-11-06T13:42:10.368Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -217,9 +217,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-05T20:00:07.619Z",
+    "lastChecked": "2026-11-06T13:41:50.469Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-05T20:00:07.619Z"
+    "lastVerified": "2026-11-06T13:41:50.469Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -240,12 +240,12 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T13:07:59.377Z",
-    "lastVerified": "2026-11-06T13:07:59.377Z",
+    "lastChecked": "2026-11-06T13:41:55.514Z",
+    "lastVerified": "2026-11-06T13:41:55.514Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -254,7 +254,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "155fa931"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -762,12 +763,12 @@
     "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
     "sourceType": "github",
     "technology": "Multi-language",
-    "lastChecked": "2026-11-04T00:31:58.163Z",
-    "lastVerified": "2026-11-04T00:31:58.163Z",
+    "lastChecked": "2026-11-06T13:41:49.986Z",
+    "lastVerified": "2026-11-06T13:41:49.986Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
+    "contentHash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3090,12 +3091,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openkruise-kruise": {
-    "name": "openkruise/kruise",
+    "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T09:12:28.059Z",
-    "lastVerified": "2026-11-05T09:12:28.059Z",
+    "lastChecked": "2026-11-06T13:41:48.010Z",
+    "lastVerified": "2026-11-06T13:41:48.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -3104,7 +3105,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c6d10667"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -3133,9 +3135,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-05T04:14:24.363Z",
+    "lastChecked": "2026-11-06T13:41:40.509Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-05T04:14:24.363Z"
+    "lastVerified": "2026-11-06T13:41:40.509Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -6993,9 +6995,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-05T07:52:03.720Z",
+    "lastChecked": "2026-11-06T13:41:53.180Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-05T07:52:03.720Z"
+    "lastVerified": "2026-11-06T13:41:53.180Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -9933,9 +9935,9 @@
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
     "officialUrl": "https://github.com/searchsolved/search-solved-public-seo",
-    "lastChecked": "2026-11-03T11:14:52.351Z",
+    "lastChecked": "2026-11-06T13:41:42.980Z",
     "revisionIdentifier": "f1108d97e7",
-    "lastVerified": "2026-11-03T11:14:52.351Z"
+    "lastVerified": "2026-11-06T13:41:42.980Z"
   },
   "exyte-popupview": {
     "name": "exyte/PopupView",

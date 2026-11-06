@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "4fcd74ac",
+    "sourceVersion": "d9f7beef",
     "license": "CC0-1.0",
-    "contentHash": "3c15c5d5938a79143d27758b07166868cc52a8d58acaf95309b345fca0f5d4cd",
-    "lastHarvestedAt": "2026-11-04T00:32:08.487Z",
+    "contentHash": "6009dc64c6cea9fb0a3637397f3a96ee6eb392ad3f9b15b2d49af1170f68c049",
+    "lastHarvestedAt": "2026-11-06T13:42:07.793Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {

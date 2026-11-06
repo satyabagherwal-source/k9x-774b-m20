@@ -7869,3 +7869,4 @@ Every entry in this ledger must capture:
 | `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `f0775199` | Multi-dimensional audit evidence | 2026-11-06T13:34:46.652Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `e81a7d08` | Multi-dimensional audit evidence | 2026-11-06T13:34:51.817Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `51c1838b` | Multi-dimensional audit evidence | 2026-11-06T13:34:56.039Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `d9f7beef` | Multi-dimensional audit evidence | 2026-11-06T13:42:07.793Z |
