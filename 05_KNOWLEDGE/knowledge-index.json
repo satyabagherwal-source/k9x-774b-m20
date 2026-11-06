@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T20:38:20.614Z",
+  "last_updated": "2026-11-06T20:45:40.091Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9757,8 +9757,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "4194a203",
-      "content_hash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
+      "source_version": "5b908ef4",
+      "content_hash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10133,7 +10133,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:27:39.516Z",
+      "verified_at": "2026-11-06T20:45:40.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49853,14 +49853,19 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "bb2da9bb",
-      "content_hash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
+      "source_version": "bbebeba8",
+      "content_hash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "http): read annotations only before the request line (#8062)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "js): make SSHClient.Close a no-op without a connection",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49999,7 +50004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:49:01.713Z",
+      "verified_at": "2026-11-06T20:45:38.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119994,13 +119999,13 @@
       "rule_number": 3143,
       "title": "deps: update lock file",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e38898bf",
+      "source_version": "5b908ef4",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T10:59:55.180Z"
+      "verified_at": "2026-11-06T20:45:40.067Z"
     },
     "rule-3144": {
       "learning_id": "rule-3144",

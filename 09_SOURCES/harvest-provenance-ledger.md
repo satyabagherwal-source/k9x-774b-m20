@@ -7919,3 +7919,5 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b5f748ab` | Multi-dimensional audit evidence | 2026-11-06T20:38:17.008Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `1a23cb72` | Multi-dimensional audit evidence | 2026-11-06T20:38:18.891Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `41584c75` | Multi-dimensional audit evidence | 2026-11-06T20:38:20.713Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `bbebeba8` | Multi-dimensional audit evidence | 2026-11-06T20:45:38.224Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5b908ef4` | Multi-dimensional audit evidence | 2026-11-06T20:45:40.194Z |

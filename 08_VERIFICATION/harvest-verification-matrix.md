@@ -7910,3 +7910,5 @@
 | `CYCLE-20261106-SFXO` | `2026-11-06T20:38:17.004Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f11f1d5...`) |
 | `CYCLE-20261106-SHDZ` | `2026-11-06T20:38:18.887Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`0becd247...`) |
 | `CYCLE-20261106-SISK` | `2026-11-06T20:38:20.708Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b1ec118...`) |
+| `CYCLE-20261106-1WDP` | `2026-11-06T20:45:38.221Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f4cfd87c...`) |
+| `CYCLE-20261106-1XWF` | `2026-11-06T20:45:40.191Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`038b235d...`) |

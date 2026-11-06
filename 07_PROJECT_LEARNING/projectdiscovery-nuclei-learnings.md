@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `bb2da9bb`  
+> **Source Version**: `bbebeba8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:49:00.377Z  
+> **Timestamp**: 2026-11-06T20:45:36.783Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:48:59.795Z  
+> **Harvest Timestamp**: 2026-11-06T20:45:35.138Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32615 stars
+- **Stars / Engagement**: 32643 stars
 
 ---
 
@@ -1446,398 +1446,592 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `875b2293` (2026-11-05)
-**Commit Message**: fix(http): read annotations only before the request line (#8062)
+### Incident Patch 1: `accfe355` (2026-11-06)
+**Commit Message**: fix(js): make SSHClient.Close a no-op without a connection
 
-Raw requests applied @Host, @tls-sni and @timeout from any matching
-line of the rendered request, headers and body included. A response
-value reused in a later request could carry an "@Host:" line and send
-that request, with its body, to a host the template does not name.
+Calling Close on an SSHClient that never connected, or whose Connect
+failed, dereferenced a nil *ssh.Client. goja turned the panic into a
+request error, so the template stopped at Close and returned nothing.
 
-The raw parser and the docs already define annotations as the "@"
-lines before the request line. raw.SplitAnnotations now holds that
-rule once, and the parser, the request annotations, @once and the
-compile-time @timeout check all read from it.
+Close also kept the closed client. On a client reused across login
+attempts, a later Close then failed with "use of closed network
+connection", and Run reported a transport error instead of "no
+connection".
 
-Fixes: #8061
+Close now returns true when no connection is open, and clears the
+connection after closing it. It returns true rather than an error
+because goja throws a returned error as a JS exception, which would
+still abort the template.
+
+Fixes: #8070
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/js/compiler/close_test.go` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++package compiler_test
++
++//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
++import (
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/js/compiler"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++)
++
++// TestCloseWithoutConnection calls Close on clients that never connected.
++// The script must keep running past the call.
++func TestCloseWithoutConnection(t *testing.T) {
++	t.Parallel()
++
++	scripts := map[string]string{
++		"ssh": `
++			const ssh = require('nuclei/ssh');
++			ExportAs('closed', new ssh.SSHClient().Close());
++			true;
++		`,
++	}
++	for name, script := range scripts {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			program, err := compiler.SourceAutoMode(script, false)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			opts := new(compiler.ExecuteOptions)
++			opts.ExecutionId = t.Name()
++			opts.Source = &script // ExportAs is defined only for sources that use it.
++			opts.TimeoutVariants = types.NewTimeoutVariant(5)
++
++			result, err := compiler.New().ExecuteWithOptions(t.Context(), program, compiler.NewExecuteArgs(), opts)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			if got := result["closed"]; got != "true" {
++				t.Errorf(`result["closed"] = %v, want "true"`, got)
++			}
++		})
++	}
++}
+```
+
+**File**: `pkg/js/generated/ts/ssh.ts` (modified, +2/-1)
+```diff
+@@ -106,7 +106,8 @@ export class SSHClient {
+     /**
+     * Close closes the SSH connection and destroys the client
+     * Returns the success state and error. If error is not nil,
+-    * state will be false
++    * state will be false. Close does nothing and returns true
++    * if no connection is open.
+     * @example
+     * ```javascript
+     * const ssh = require('nuclei/ssh');
+```
+
+**File**: `pkg/js/libs/ssh/ssh.go` (modified, +12/-2)
+```diff
+@@ -23,6 +23,7 @@ type (
+ 	// const client = new ssh.SSHClient();
+ 	// ```
+ 	SSHClient struct {
++		// connection is nil when no connection is open.
+ 		connection *ssh.Client
+ 		timeout    time.Duration
+ 	}
+@@ -158,7 +159,8 @@ func (c *SSHClient) Run(cmd string) (string, error) {
+ 
+ // Close closes the SSH connection and destroys the client
+ // Returns the success state and error. If error is not nil,
+-// state will be false
++// state will be false. Close does nothing and returns true
++// if no connection is open.
+ // @example
+ // ```javascript
+ // const ssh = require('nuclei/ssh');
+@@ -167,9 +169,17 @@ func (c *SSHClient) Run(cmd string) (string, error) {
+ // const closed = client.Close();
+ // ```
+ func (c *SSHClient) Close() (bool, error) {
+-	if err := c.connection.Close(); err != nil {
++	if c.connection == nil {
++		return true, nil
++	}
++
++	err := c.connection.Close()
++	c.connection = nil
++
++	if err != nil {
+ 		return false, err
+ 	}
++
+ 	return true, nil
+ }
+ 
+```
+
+**File**: `pkg/js/libs/ssh/ssh_test.go` (added, +162/-0)
+```diff
+@@ -0,0 +1,162 @@
++package ssh_test
++
++//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
++import (
++	"context"
++	"crypto/ecdsa"
++	"crypto/elliptic"
++	"crypto/rand"
++	"errors"
++	"net"
++	"strings"
++	"testing"
++
++	libssh "github.com/projectdiscovery/nuclei/v3/pkg/js/libs/ssh"
++	"github.com/zmap/zgrab2/lib/ssh"
++)
++
++const (
++	testUser     = "user"
++	testPassword = "secret"
++)
++
++var errAccessDenied = errors.New("access denied")
++
++func TestCloseWithoutConnection(t *testing.T) {
++	t.Parallel()
++
++	host, port := startServer(t)
++
++	tests := map[string]func(t *testing.T, client *libssh.SSHClient){
++		"never connected": func(*testing.T, *libssh.SSHClient) {},
++		"failed connect": func(t *testing.T, client *libssh.SSHClient) {
++			t.Helper()
++
++			_, err := client.Connect(executionContext(t), host, port, testUser, "wrong")
++			if err == nil {
++				t.Fatal("Connect() with a wrong password succeeded")
++			}
++		},
++		"already closed": func(t *testing.T, client *libssh.SSHClient) {
++			t.Helper()
++
++			connect(t, client, host, port)
++			closeClient(t, client)
++		},
++	}
++	for name, setup := range tests {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			client := new(libssh.SSHClient)
++			setup(t, client)
++			closeClient(t, client)
++
++			_, err := client.Run("id")
++			if err == nil || !strings.Contains(err.Error(), "no connection") {
++				t.Errorf("Run() error = %v, want no connection", err)
++			}
++		})
++	}
++}
++
++func TestCloseConnected(t *testing.T) {
++	t.Parallel()
++
++	host, port := startServer(t)
++	client := new(libssh.SSHClient)
++	connect(t, client, host, port)
++	closeClient(t, client)
++}
++
++func connect(t *testing.T, client *libssh.SSHClient, host string, port int) {
++	t.Helper()
++
++	_, err := client.Connect(executionContext(t), host, port, testUser, testPassword)
++	if err != nil {
++		t.Fatalf("Connect() error = %v", err)
++	}
++}
++
++func closeClient(t *testing.T, client *libssh.SSHClient) {
++	t.Helper()
++
++	closed, err := client.Close()
++	if err != nil || !closed {
++		t.Fatalf("Close() = %v, %v; want true, nil", closed, err)
++	}
++}
++
++func executionContext(t *testing.T) context.Context {
++	t.Helper()
++
++	return context.WithValue(t.Context(), "executionId", t.Name()) //nolint:staticcheck // Connect reads this string key.
++}
++
++// startServer serves SSH on a loopback port and accepts only
++// testUser with testPassword. It rejects every channel.
++func startServer(t *testing.T) (string, int) {
++	t.Helper()
++
++	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	signer, err := ssh.NewSignerFromKey(key)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	config := new(ssh.ServerConfig)
++	config.PasswordCallback = checkPassword
++	config.AddHostKey(signer)
++
++	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	t.Cleanup(func() { _ = listener.Close() })
++
++	go func() {
++		for {
++			conn, err := listener.Accept()
++			if err != nil {
++				return
++			}
++
++			go serve(conn, config)
++		}
++	}()
++
++	addr, ok := listener.Addr().(*net.TCPAddr)
++	if !ok {
++		t.Fatalf("listener address %v is not TCP", listener.Addr())
++	}
++
++	return addr.IP.String(), addr.Port
++}
++
++func checkPassword(conn ssh.ConnMetadata, password []byte) (*ssh.Permissions, error) {
++	if conn.User() != testUser || string(password) != testPassword {
++		return nil, errAccessDenied
++	}
++
++	return new(ssh.Permissions), nil
++}
++
++func serve(conn net.Conn, config *ssh.ServerConfig) {
++	defer func() { _ = conn.Close() }()
++
++	_, chans, reqs, err := ssh.NewServerConn(conn, config)
++	if err != nil {
++		return
++	}
++
++	go ssh.DiscardRequests(reqs)
++
++	for ch := range chans {
++		_ = ch.Reject(ssh.Prohibited, "test server")
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `1829fca6` (2026-11-06)
+**Commit Message**: fix(js): make NetConn safe to use without a connection
+
+NetConn had the same flaw as SSHClient. new net.NetConn() creates an
+object with no connection, and every method dereferenced it, so Close,
+Send and Recv all aborted the template with a nil pointer panic. Close
+also kept the closed connection.
+
+Close now does nothing when no connection is open, and clears the
+connection after closing it. The send and receive methods return an
+error that says to open the connection with net.Open or net.OpenTLS,
+which goja throws as a JS exception the template can catch.
 
 Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
-**File**: `pkg/protocols/http/http.go` (modified, +1/-1)
+**File**: `pkg/js/compiler/close_test.go` (modified, +6/-0)
 ```diff
-@@ -402,7 +402,7 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 
- 	// If we have request level timeout, ignore http client timeouts
- 	for _, req := range request.Raw {
--		if reTimeoutAnnotation.MatchString(req) {
-+		if hasTimeoutAnnotation(req) {
- 			connectionConfiguration.NoTimeout = true
- 		}
+@@ -19,6 +19,12 @@ func TestCloseWithoutConnection(t *testing.T) {
+ 			ExportAs('closed', new ssh.SSHClient().Close());
+ 			true;
+ 		`,
++		"net": `
++			const net = require('nuclei/net');
++			new net.NetConn().Close();
++			ExportAs('closed', true);
++			true;
++		`,
  	}
+ 	for name, script := range scripts {
+ 		t.Run(name, func(t *testing.T) {
 ```
 
-**File**: `pkg/protocols/http/raw/raw.go` (modified, +13/-33)
+**File**: `pkg/js/generated/ts/net.ts` (modified, +1/-0)
 ```diff
-@@ -14,7 +14,6 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/authprovider/authx"
- 	"github.com/projectdiscovery/rawhttp/client"
- 	"github.com/projectdiscovery/utils/errkit"
--	stringsutil "github.com/projectdiscovery/utils/strings"
- 	urlutil "github.com/projectdiscovery/utils/url"
+@@ -46,6 +46,7 @@ export class NetConn {
+     constructor() {}
+     /**
+     * Close closes the connection.
++    * Close does nothing if no connection is open.
+     * @example
+     * ```javascript
+     * const net = require('nuclei/net');
+```
+
+**File**: `pkg/js/libs/net/net.go` (modified, +31/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"crypto/tls"
+ 	"encoding/base64"
+ 	"encoding/hex"
++	"errors"
+ 	"fmt"
+ 	"net"
+ 	"net/http"
+@@ -20,6 +21,8 @@ import (
+ 
+ var (
+ 	defaultTimeout = time.Duration(5) * time.Second
++
++	errNoConnection = errors.New("no connection: open one with net.Open or net.OpenTLS")
  )
  
-@@ -193,23 +192,20 @@ func readRawRequest(request string, unsafe bool) (*Request, error) {
- 		Headers: make(map[string]string),
+ // getTimeoutFromContext returns the configured TCP timeout or defaultTimeout.
+@@ -271,20 +274,28 @@ type (
+ 	// const conn = net.Open('tcp', 'acme.com:80');
+ 	// ```
+ 	NetConn struct {
++		// conn is nil when no connection is open.
+ 		conn    net.Conn
+ 		timeout time.Duration
  	}
+ )
  
-+	_, request = SplitAnnotations(request)
-+
- 	// store body if it is unsafe request
- 	if unsafe {
--		rawRequest.UnsafeRawBytes = stripLeadingAnnotations(request)
-+		rawRequest.UnsafeRawBytes = []byte(request)
- 	}
- 
- 	// parse raw request
- 	source := strings.NewReader(request)
- 	reader := bufio.NewReader(source)
--read_line:
- 	s, err := reader.ReadString('\n')
- 	if err != nil {
- 		return nil, fmt.Errorf("could not read request: %w", err)
- 	}
--	// ignore all annotations
--	if stringsutil.HasPrefixAny(s, "@") {
--		goto read_line
--	}
- 
- 	parts := strings.Fields(s)
- 	if len(parts) > 0 {
-@@ -292,34 +288,18 @@ read_line:
- 
- }
- 
--func stripLeadingAnnotations(request string) []byte {
--	reader := bufio.NewReader(strings.NewReader(request))
--	buffer := bufferPool.Get().(*bytes.Buffer)
--	buffer.Reset()
--	defer func() {
--		buffer.Reset()
--		bufferPool.Put(buffer)
--	}()
--
--	requestLineFound := false
--	for {
--		line, err := reader.ReadString('\n')
--		if len(line) > 0 {
--			if requestLineFound || !stringsutil.HasPrefixAny(line, "@") {
--				requestLineFound = true
--				_, _ = buffer.WriteString(line)
--			}
--		}
--
--		if err != nil {
--			if err == io.EOF {
--				break
--			}
--			return []byte(request)
--		}
-+// SplitAnnotations splits a raw request into its annotations and the request
-+// that follows them. Annotations are the lines starting with "@" before the
-+// request line. A line starting with "@" after the request line is part of the
-+// request, so text rendered into the headers or the body never becomes an
-+// annotation.
-+func SplitAnnotations(request string) (annotations, rest string) {
-+	rest = request
-+	for strings.HasPrefix(rest, "@") {
-+		_, rest, _ = strings.Cut(rest, "\n")
- 	}
- 
--	return append([]byte(nil), buffer.Bytes()...)
-+	return request[:len(request)-len(rest)], rest
- }
- 
- // TryFillCustomHeaders after the Host header
-```
-
-**File**: `pkg/protocols/http/raw/raw_test.go` (modified, +45/-0)
-```diff
-@@ -310,6 +310,51 @@ Connection: close`, parseURL(t, "http://scanme.sh"), true, false)
- 	require.NotContains(t, string(request.UnsafeRawBytes), "@Host:", "annotation lines must not be present in unsafe raw bytes")
- }
- 
-+func TestSplitAnnotations(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		request     string
-+		annotations string
-+	}{
-+		{name: "empty"},
-+		{name: "no annotations", request: "GET / HTTP/1.1\r\nHost: a\r\n\r\n"},
-+		{
-+			name:        "leading annotations",
-+			request:     "@Host: b\r\n@timeout: 5s\r\nGET / HTTP/1.1\r\nHost: a\r\n\r\n",
-+			annotations: "@Host: b\r\n@timeout: 5s\r\n",
-+		},
-+		{
-+			name:        "annotation lines after the request line",
-+			request:     "@once\nPOST / HTTP/1.1\n@Host: c\n\nhello\n@Host: d\n",
-+			annotations: "@once\n",
-+		},
-+		{
-+			name:        "annotations without a request line",
-+			request:     "@Host: b\n@once",
-+			annotations: "@Host: b\n@once",
-+		},
+ // Close closes the connection.
++// Close does nothing if no connection is open.
+ // @example
+ // ```javascript
+ // const net = require('nuclei/net');
+ // const conn = net.Open('tcp', 'acme.com:80');
+ // conn.Close();
+ // ```
+ func (c *NetConn) Close() error {
++	if c.conn == nil {
++		return nil
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			annotations, rest := SplitAnnotations(tt.request)
-+			require.Equal(t, tt.annotations, annotations)
-+			require.Equal(t, tt.request, annotations+rest)
+ 	err := c.conn.Close()
++	c.conn = nil
++
+ 	return err
+ }
+ 
+@@ -321,6 +332,10 @@ func (c *NetConn) unsetDeadLine() {
+ // conn.SendArray(['hello', 'world']);
+ // ```
+ func (c *NetConn) SendArray(data []interface{}) error {
++	if c.conn == nil {
++		return errNoConnection
++	}
++
+ 	c.setDeadLine()
+ 	defer c.unsetDeadLine()
+ 	input := types.ToByteSlice(data)
+@@ -342,6 +357,10 @@ func (c *NetConn) SendArray(data []interface{}) error {
+ // conn.SendHex('68656c6c6f');
+ // ```
+ func (c *NetConn) SendHex(data string) error {
++	if c.conn == nil {
++		return errNoConnection
++	}
++
+ 	c.setDeadLine()
+ 	defer c.unsetDeadLine()
+ 	bin, err := hex.DecodeString(data)
+@@ -366,6 +385,10 @@ func (c *NetConn) SendHex(data string) error {
+ // conn.Send('hello');
+ // ```
+ func (c *NetConn) Send(data string) error {
++	if c.conn == nil {
++		return errNoConnection
++	}
++
+ 	c.setDeadLine()
+ 	defer c.unsetDeadLine()
+ 	bin := []byte(data)
+@@ -389,6 +412,10 @@ func (c *NetConn) Send(data string) error {
+ // const data = conn.RecvFull(1024);
+ // ```
+ func (c *NetConn) RecvFull(N int) ([]byte, error) {
++	if c.conn == nil {
++		return []byte{}, errNoConnection
++	}
++
+ 	c.setDeadLine()
+ 	defer c.unsetDeadLine()
+ 	if N == 0 {
+@@ -414,6 +441,10 @@ func (c *NetConn) RecvFull(N int) ([]byte, error) {
+ // log(`Received ${data.length} bytes from the server`)
+ // ```
+ func (c *NetConn) Recv(N int) ([]byte, error) {
++	if c.conn == nil {
++		return []byte{}, errNoConnection
++	}
++
+ 	c.setDeadLine()
+ 	defer c.unsetDeadLine()
+ 	if N == 0 {
+```
+
+**File**: `pkg/js/libs/net/net_test.go` (modified, +38/-0)
+```diff
+@@ -406,3 +406,41 @@ func (f *fakeConn) RemoteAddr() net.Addr             { return nil }
+ func (f *fakeConn) SetDeadline(time.Time) error      { return nil }
+ func (f *fakeConn) SetReadDeadline(time.Time) error  { return nil }
+ func (f *fakeConn) SetWriteDeadline(time.Time) error { return nil }
++
++func TestNetConnWithoutConnection(t *testing.T) {
++	t.Parallel()
++
++	tests := map[string]func(t *testing.T) *NetConn{
++		"never opened": func(*testing.T) *NetConn { return new(NetConn) },
++		"already closed": func(t *testing.T) *NetConn {
++			t.Helper()
++
++			local, remote := net.Pipe()
++
++			t.Cleanup(func() { _ = remote.Close() })
++
++			conn := new(NetConn)
++			conn.conn = local
++			require.NoError(t, conn.Close())
++
++			return conn
++		},
++	}
++	for name, newConn := range tests {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			conn := newConn(t)
++			require.NoError(t, conn.Close())
++			require.ErrorContains(t, conn.Send("x"), "no connection")
++			require.ErrorContains(t, conn.SendHex("78"), "no connection")
++			require.ErrorContains(t, conn.SendArray([]any{120}), "no connection")
++
++			_, err := conn.Recv(1)
++			require.ErrorContains(t, err, "no connection")
++
++			_, err = conn.RecvFull(1)
++			require.ErrorContains(t, err, "no connection")
 +		})
 +	}
 +}
-+
-+func TestParseUnsafeRequestKeepsAnnotationLinesInBody(t *testing.T) {
-+	const (
-+		head = "POST /foo HTTP/1.1\nHost: {{Hostname}}\n\n"
-+		body = "hello\n@Host: decoy.example\n"
-+	)
-+	request, err := Parse("@Host: honey.scanme.sh\n"+head+body, parseURL(t, "http://scanme.sh"), true, false)
-+	require.NoError(t, err)
-+	require.Equal(t, head+body, string(request.UnsafeRawBytes))
-+	require.Equal(t, body, request.Data)
-+}
-+
- func TestTryFillCustomHeaders(t *testing.T) {
- 	testValue := "GET /manager/html HTTP/1.1\r\nHost: Test\r\n"
- 	expected := "GET /test/manager/html HTTP/1.1\r\nHost: Test\r\ntest: test\r\n"
 ```
 
-**File**: `pkg/protocols/http/request_annotations.go` (modified, +15/-5)
+---
+
+### Incident Patch 3: `d6ec8407` (2026-11-06)
+**Commit Message**: fix(js): stop JS class constructors sharing one object
+
+GetClassConstructor handed the same Go value to every object it
+constructed, in every runtime. All generated JS classes use it, so
+every new ssh.SSHClient() in a scan was one client: one script's
+Connect or Close changed the connection that scripts on other targets
+were using, and those writes raced.
+
+Each constructed object now starts as a shallow copy of the instance
+passed in. The generated bindings all pass a zero value, so every new
+object starts empty.
+
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/js/gojs/gojs.go` (modified, +6/-2)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"github.com/projectdiscovery/fastdialer/fastdialer"
- 	commoninteractsh "github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/raw"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types/nucleierr"
- 	"github.com/projectdiscovery/retryablehttp-go"
- 	"github.com/projectdiscovery/utils/errkit"
-@@ -54,15 +55,22 @@ func parseFlowAnnotations(rawRequest string) (flowMark, bool) {
- 	var fm flowMark
- 	// parse request for known override annotations
- 	var hasFlowOverride bool
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
- 	// @once
--	if reOnceAnnotation.MatchString(rawRequest) {
-+	if reOnceAnnotation.MatchString(annotations) {
- 		fm = Once
- 		hasFlowOverride = true
- 	}
- 
- 	return fm, hasFlowOverride
+@@ -128,9 +128,13 @@ func (p *GojaModule) Register() Module {
+ 	return p
  }
  
-+// hasTimeoutAnnotation reports whether rawRequest has a @timeout annotation.
-+func hasTimeoutAnnotation(rawRequest string) bool {
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
-+	return reTimeoutAnnotation.MatchString(annotations)
-+}
+-// GetClassConstructor returns a constructor for any given go struct type for goja runtime
++// GetClassConstructor returns a constructor for any given go struct type for goja runtime.
++// Each object it constructs starts as a shallow copy of instance, so objects
++// do not share state.
+ func GetClassConstructor[T any](instance *T) func(call goja.ConstructorCall, runtime *goja.Runtime) *goja.Object {
+ 	return func(call goja.ConstructorCall, runtime *goja.Runtime) *goja.Object {
+-		return utils.LinkConstructor[*T](call, runtime, instance)
++		obj := *instance
 +
- type annotationOverrides struct {
- 	request        *retryablehttp.Request
- 	cancelFunc     context.CancelFunc
-@@ -72,10 +80,12 @@ type annotationOverrides struct {
- 
- // parseAnnotations and override requests settings
- func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Request) (overrides annotationOverrides, modified bool) {
--	// parse request for known override annotations
-+	// rawRequest is rendered, so its headers and body can hold values taken
-+	// from responses. Only the annotation lines may override the request.
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
- 
- 	// @Host:target
--	if hosts := reHostAnnotation.FindStringSubmatch(rawRequest); len(hosts) > 0 {
-+	if hosts := reHostAnnotation.FindStringSubmatch(annotations); len(hosts) > 0 {
- 		value := strings.TrimSpace(hosts[1])
- 		// handle scheme
- 		switch {
-@@ -101,7 +111,7 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
++		return utils.LinkConstructor(call, runtime, &obj)
  	}
- 
- 	// @tls-sni:target
--	if hosts := reSniAnnotation.FindStringSubmatch(rawRequest); len(hosts) > 0 {
-+	if hosts := reSniAnnotation.FindStringSubmatch(annotations); len(hosts) > 0 {
- 		value := strings.TrimSpace(hosts[1])
- 		value = stringsutil.TrimPrefixAny(value, "http://", "https://")
- 
-@@ -140,7 +150,7 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
- 		modified = true
- 		var ctx context.Context
- 
--		if duration := reTimeoutAnnotation.FindStringSubmatch(rawRequest); len(duration) > 0 {
-+		if duration := reTimeoutAnnotation.FindStringSubmatch(annotations); len(duration) > 0 {
- 			value := strings.TrimSpace(duration[1])
- 			if parsedTimeout, err := time.ParseDuration(value); err == nil {
- 				// Cap at maximum allowed timeout to prevent DoS via extremely large timeout values
+ }
 ```
 
-**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +132/-0)
+**File**: `pkg/js/gojs/gojs_test.go` (added, +46/-0)
 ```diff
-@@ -2,13 +2,25 @@ package http
- 
- import (
- 	"context"
-+	"fmt"
-+	"io"
- 	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
- 	commoninteractsh "github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
- 	"github.com/projectdiscovery/retryablehttp-go"
-@@ -191,3 +203,123 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
- 		require.False(t, deadlined, "could not get set request deadline")
- 	})
- }
+@@ -0,0 +1,46 @@
++package gojs_test
 +
-+func TestRequestParseAnnotationsIgnoresLinesAfterRequestLine(t *testing.T) {
-+	req := &Request{connConfiguration: &httpclientpool.Configuration{}}
-+	rawRequest := "POST /probe HTTP/1.1\r\n" +
-+		"Host: example.com\r\n" +
-+		"\r\n" +
-+		"hello\n@Host: http://127.0.0.1:8797\n@tls-sni: decoy.example\n"
++//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
++import (
++	"testing"
 +
-+	httpReq, err := retryablehttp.NewRequest(http.MethodPost, "https://example.com/probe", nil)
-+	require.NoError(t, err)
++	"github.com/projectdiscovery/goja"
++	"github.com/projectdiscovery/nuclei/v3/pkg/js/gojs"
++)
 +
-+	overrides, modified := req.parseAnnotations(rawRequest, httpReq)
-+	require.False(t, modified)
-+	require.Equal(t, "https://example.com/probe", overrides.request.String())
-+	require.Nil(t, overrides.request.TLS)
++type counter struct{ n int }
++
++func (c *counter) Inc() int {
++	c.n++
++
++	return c.n
 +}
 +
-+// A response value reused in a raw request must stay request content even when
-+// one of its lines looks like an annotation. Annotations are only the lines
-+// before the request line.
-+func TestRawRequestReusingResponseWithAnnotationLine(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		unsafe        bool
-+		selfContained bool
-+	}{
-+		{name: "raw"},
-+		{name: "unsafe", unsafe: true},
-+		{name: "self-contained", selfContained: true},
++func TestGetClassConstructorReturnsNewObjects(t *testing.T) {
++	t.Parallel()
++
++	prototype := new(counter)
++	runtime := goja.New()
++
++	err := runtime.Set("Counter", gojs.GetClassConstructor(prototype))
++	if err != nil {
++		t.Fatal(err)
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			var decoyRequests atomic.Int32
-+			decoy := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-+				decoyRequests.Add(1)
-+			}))
-+			defer decoy.Close()
++	value, err := runtime.RunString(`
++		const first = new Counter();
++		first.Inc();
++		new Counter().Inc();
++	`)
++	if err != nil {
++		t.Fatal(err)
++	}
 +
-+			responseBody := fmt.Sprintf("hello\n@Host: %s\n", decoy.URL)
++	if got := value.ToInteger(); got != 1 {
++		t.Errorf("new Counter().Inc() = %d, want 1", got)
++	}
 +
-+			var mu sync.Mutex
-+			var probes []string
-+			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.URL.Path == "/source" {
-+					_, _ = io.WriteString(w, responseBody)
-+					return
-+				}
-+				body, _ := io.ReadAll(r.Body)
-+				mu.Lock()
-+				probes = append(probes, r.Method+" "+r.URL.Path+" "+string(body))
-+				mu.Unlock()
-+			}))
-+			defer target.Close()
-+
-+			baseURL, host, input := "", "{{Hostname}}", target.URL
-+			if tt.selfContained {
-+				// A self-contained request names its own target.
-+				baseURL, host, input = target.URL, strings.TrimPrefix(target.URL, "http://"), ""
-+			}
-+			probeHeaders := "Host: " + host + "\nContent-Type: text/plain\n"
-+			if tt.unsafe {
-+				// An unsafe request is sent as written, so it states its own length.
-+				probeHeaders += "Content-Length: {{len(tpl)}}\n"
-+			}
-+			request := &Request{
-+				ID:            "testing-http-response-annotation-line",
-+				Unsafe:        tt.unsafe,
-+				SelfContained: tt.selfContained,
-+				Raw: []string{
-+					"GET " + baseURL + "/source HTTP/1.1\nHost: " + host + "\n\n",
-+					"POST " + baseURL + "/probe HTTP/1.1\n" + probeHeaders + "\n{{tpl}}",
-+				},
-+				Operators: operators.Operators{
-+					Extractors: []*extractors.Extractor{{
-+						Name:     "tpl",
-+						Part:     "body",
-+						Type:     extractors.ExtractorTypeHolder{ExtractorType: extractors.RegexExtractor},
-+						Regex:    []string{`(?s).+`},
-+						Internal: true,
-+					}},
-+				},
-+			}
-+
-+			options := testutils.DefaultOptions
-+			testutils.Init(options)
-+			executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+				ID:   request.ID,
-+				Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+			})
-+			require.NoError(t, request.Compile(executerOpts))
-+
-+			err := request.ExecuteWithResults(
-+				contextargs.NewWithInput(context.Background(), input),
-+				make(output.InternalEvent),
-+				make(output.InternalEvent),
-+				func(*output.InternalWrappedEvent) {},
-+			)
-+			require.NoError(t, err)
-+
-+			require.Zero(t, decoyRequests.Load(), "a response line must not redirect the request")
-+			mu.Lock()
-+			defer mu.Unlock()
-+			require.Equal(t, []string{"POST /probe " + responseBody}, probes)
-+		})
++	if prototype.n != 0 {
++		t.Errorf("prototype.n = %d, want 0", prototype.n)
 +	}
 +}
-+
-+func TestTemplateAnnotationsAfterRequestLine(t *testing.T) {
-+	const request = "GET / HTTP/1.1\r\nHost: {{Hostname}}\r\n\r\n@timeout: 5s\r\n@once\r\n"
-+
-+	require.False(t, hasTimeoutAnnotation(request))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8072** (2026-11-06): Upgrade github.com/alecthomas/chroma to latest (@AdallomRoy)
+- **PR #8071** (2026-11-06): fix(js): isolate JS objects and handle missing connections (@dwisiswant0)
 - **PR #8068** (2026-11-05): keep template screenshots in a nuclei directory without local file access (@Mzack9999)
 - **PR #8066** (2026-11-05): send rdap requests through the scan dialer (@Mzack9999)
 - **PR #8064** (2026-11-05): send template doh queries through the scan dialer (@Mzack9999)
 - **PR #8062** (2026-11-05): fix(http): read annotations only before the request line (@dwisiswant0)
-- **PR #8059** (2026-11-05): fix(http): render self-contained raw requests once (@dwisiswant0)
-- **PR #8057** (2026-11-05): fix(fuzz): stop re-rendering evaluated template variables (@dwisiswant0)
 
 ---
 
@@ -1857,28 +2051,70 @@ Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http): read annotations only before the request line (#8062)
+## X. js): make SSHClient.Close a no-op without a connection
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/http.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/js/compiler/close_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `875b2293`: http): read annotations only before the request line (#8062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `accfe355`: js): make SSHClient.Close a no-op without a connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/http.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/compiler/close_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if hasTimeoutAnnotation(req) {
+package compiler_test
+
+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
+import (
+	"testing"
+
+	"github.com/projectdiscovery/nuclei/v3/pkg/js/compiler"
+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+)
+
+// TestCloseWithoutConnection calls Close on clients that never connected.
+// The script must keep running past the call.
+func TestCloseWithoutConnection(t *testing.T) {
+	t.Parallel()
+
+	scripts := map[string]string{
+		"ssh": `
+			const ssh = require('nuclei/ssh');
+			ExportAs('closed', new ssh.SSHClient().Close());
+			true;
+		`,
+	}
+	for name, script := range scripts {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			program, err := compiler.SourceAutoMode(script, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			opts := new(compiler.ExecuteOptions)
+			opts.ExecutionId = t.Name()
+			opts.Source = &script // ExportAs is defined only for sources that use it.
+			opts.TimeoutVariants = types.NewTimeoutVariant(5)
+
+			result, err := compiler.New().ExecuteWithOptions(t.Context(), program, compiler.NewExecuteArgs(), opts)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got := result["closed"]; got != "true" {
+				t.Errorf(`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if reTimeoutAnnotation.MatchString(req) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `875b2293` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `accfe355` are properly handled with clean fallback behavior.

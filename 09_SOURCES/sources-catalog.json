@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "4194a203",
+    "sourceVersion": "5b908ef4",
     "license": "NOASSERTION",
-    "contentHash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
-    "lastHarvestedAt": "2026-11-06T15:27:39.593Z",
+    "contentHash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
+    "lastHarvestedAt": "2026-11-06T20:45:40.194Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "bb2da9bb",
+    "sourceVersion": "bbebeba8",
     "license": "MIT",
-    "contentHash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
-    "lastHarvestedAt": "2026-11-05T23:49:01.834Z",
+    "contentHash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
+    "lastHarvestedAt": "2026-11-06T20:45:38.224Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

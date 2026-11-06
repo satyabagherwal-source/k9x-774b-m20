@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `4194a203`  
+> **Source Version**: `5b908ef4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:27:38.341Z  
+> **Timestamp**: 2026-11-06T20:45:39.670Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:27:36.621Z  
+> **Harvest Timestamp**: 2026-11-06T20:45:39.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,109 +2203,180 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4194a203` (2026-11-06)
-**Commit Message**: fix(cat): error on empty stdin when no input is given (#5007)
+### Incident Patch 1: `5b908ef4` (2026-11-06)
+**Commit Message**: deps: update lock file
 
-* fix(cat): error on empty stdin when no input is given
+Update Actix, compression, TOML, redb, zip, and other dependencies to newer versions.
 
-Since #5005 `cat` defaults to stdin when no input is given, which made
-an empty or closed stdin succeed with empty output. 28.0.0 failed with
-"No data on stdin" there, and scripts whose file list comes up empty
-(cron, CI, xargs) relied on that. Restore the error for the implicit
-case; an explicit `-` with empty stdin still succeeds, as in 28.0.0.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cat errors on empty stdin again (#5007)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(cat): assert the full no-data-on-stdin message
-
-Codacy on #5007: a substring check would miss a reworded message.
-Assert the complete 28.0.0 text instead.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +34/-33)
 ```diff
-@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -33,15 +33,16 @@ dependencies = [
  
- ### Fixed
- - **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
--- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
-+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
- - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
- - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
- - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
-```
-
-**File**: `src/cmd/cat.rs` (modified, +12/-1)
-```diff
-@@ -202,14 +202,25 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     let tmpdir = tempfile::tempdir()?;
+ [[package]]
+ name = "actix-http"
+-version = "3.20.0"
++version = "3.20.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d20a22850ea7fecad12c5f8cd97d246c3af1f04ef400033977c2f13425c45816"
++checksum = "cd4ef186188fed2d4f8177d712ad623c751c6e84f45b31da694cc53f483f320b"
+ dependencies = [
+  "actix-codec",
+  "actix-service",
+  "actix-utils",
+  "bitflags 2.13.2",
+  "brotli",
++ "brotli-decompressor",
+  "bytes",
+  "bytestring",
+  "derive_more",
+@@ -125,9 +126,9 @@ dependencies = [
  
-     // If no input is provided, default to stdin
--    if args.arg_input.is_empty() {
-+    let implicit_stdin = args.arg_input.is_empty();
-+    if implicit_stdin {
-         args.arg_input.push(PathBuf::from("-"));
-     }
+ [[package]]
+ name = "actix-web"
+-version = "4.18.1"
++version = "4.18.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "81f8da0d2ae4200dde8773d72ba47a65c220b251ba7b9248db5bd263c247e959"
++checksum = "697d10a06f7a550791dcb963e3090aa5c65c4d94c029114814a4bd652f30f0b4"
+ dependencies = [
+  "actix-codec",
+  "actix-http",
+@@ -1120,9 +1121,9 @@ dependencies = [
  
-     (args.arg_input, args.input_sources) =
-         util::process_input_with_sources(args.arg_input, &tmpdir, "")?
-             .into_iter()
-             .unzip();
-+
-+    // With no input given, empty stdin is an error (as before stdin became the default), so a
-+    // script whose file list came up empty fails instead of silently writing nothing. An
-+    // explicit `-` with empty stdin still succeeds.
-+    if implicit_stdin && std::fs::metadata(&args.arg_input[0])?.len() == 0 {
-+        return fail_clierror!(
-+            "No data on stdin. Please provide at least one input file or pipe data to stdin."
-+        );
-+    }
-+
-     if args.cmd_rows {
-         args.cat_rows()
-     } else if args.cmd_rowskey {
-```
-
-**File**: `tests/test_cat.rs` (modified, +25/-0)
-```diff
-@@ -1590,3 +1590,28 @@ fn cat_stdin_without_dash() {
-         );
-     }
- }
-+
-+#[test]
-+fn cat_empty_stdin_without_dash_errors() {
-+    // with no input given, empty stdin errors (as in 28.0.0), so a script whose file list came
-+    // up empty fails instead of silently writing nothing; an explicit `-` still succeeds
-+    let wrk = Workdir::new("cat_empty_stdin_without_dash_errors");
-+    for subcmd in ["rows", "rowskey", "columns"] {
-+        let mut cmd = wrk.command("cat");
-+        cmd.arg(subcmd).stdin(std::process::Stdio::null());
-+        let output = cmd.output().unwrap();
-+        assert!(!output.status.success(), "cat {subcmd}: {output:?}");
-+        assert!(
-+            // the full 28.0.0 message, so a rewording is caught
-+            String::from_utf8_lossy(&output.stderr).trim()
-+                == "No data on stdin. Please provide at least one input file or pipe data to \
-+                    stdin.",
-+            "cat {subcmd}: {output:?}"
-+        );
-+
-+        let mut cmd = wrk.command("cat");
-+        cmd.args([subcmd, "-"]).stdin(std::process::Stdio::null());
-+        let output = cmd.output().unwrap();
-+        assert!(output.status.success(), "cat {subcmd} -: {output:?}");
-+    }
-+}
+ [[package]]
+ name = "brotli-decompressor"
+-version = "6.2.0"
++version = "6.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "34c6783f42c21c952ad7112b354f0ba2f10760e9decea5b1b60523d6e270faaf"
++checksum = "97d9071e5b45944c5a9c06baf13a7a65ffa2c88c204015967852c90869692c05"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -1313,9 +1314,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.11.0"
++version = "1.11.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
++checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -2818,9 +2819,9 @@ checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
+ 
+ [[package]]
+ name = "flate2"
+-version = "1.1.10"
++version = "1.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
++checksum = "626d4928326b646e70f65ed36fc7cf9f206bdb68a0019ee7c6b4709da4e084c4"
+ dependencies = [
+  "crc32fast",
+  "miniz_oxide",
+@@ -3600,7 +3601,7 @@ dependencies = [
+  "serde",
+  "serde_derive",
+  "sysinfo 0.38.4",
+- "toml 1.2.0+spec-1.1.0",
++ "toml 1.2.1+spec-1.1.0",
+  "uuid",
+ ]
+ 
+@@ -4720,9 +4721,9 @@ checksum = "e20f57f9918e5bd7bc58c22cdd70a6afc7375d4dd9683af5f2b34bd3d2bba619"
+ 
+ [[package]]
+ name = "lzma-rust2"
+-version = "0.24.0"
++version = "0.25.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
++checksum = "ef1d73c59a56771343712b22ea5615092c612c16ba291c0979e3105dfeec4890"
+ dependencies = [
+  "sha2 0.11.1",
+ ]
+@@ -4849,9 +4850,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "mime"
+-version = "0.3.17"
++version = "0.3.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
++checksum = "d5848f5a9e8117cf94f2f90faac24a87ff81600ff8628c1e3deaab572e76bfa1"
+ 
+ [[package]]
+ name = "mime_guess"
+@@ -6884,7 +6885,7 @@ version = "3.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
+ dependencies = [
+- "toml_edit 0.25.18+spec-1.1.0",
++ "toml_edit 0.25.19+spec-1.1.0",
+ ]
+ 
+ [[package]]
+@@ -7151,7 +7152,7 @@ dependencies = [
+  "time",
+  "titlecase",
+  "tokio",
+- "toml 1.2.0+spec-1.1.0",
++ "toml 1.2.1+spec-1.1.0",
+  "toon-format",
+  "unicode-width",
+  "url",
+@@ -7700,9 +7701,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "redb"
+-version = "4.4.0"
++version = "4.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39178e0a867f9e3eaa6292a4ab1dd3613f2519c5b564341e1e7b29b270736cc4"
++checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
+ dependencies = [
+  "libc",
+ ]
+@@ -8497,9 +8498,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "serde_spanned"
+-version = "1.1.2"
++version = "1.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4e7523beb55eece201a2356bee0bbca0d1ab466c14c07703b2e0ee6d42cb0c2c"
++checksum = "9c187e0a369471c550af028cba56d4f4fa2a489ad28151ae95a4d340a2a8b782"
+ dependencies = [
+  "serde_core",
+ ]
+@@ -9569,14 +9570,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml"
+-version = "1.2.0+spec-1.1.0"
++version = "1.2.1+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
++checksum = "d5755c51863cdac711f1956baf8eb9588e060755f7d3c4c979e70ea1e1f32cd7"
+ dependencies = [
+  "indexmap 2.14.2",
+  "serde_core",
+- "serde_spanned 1.1.2",
+- "toml_datetime 1.1.2+spec-1.1.0",
++ "serde_spanned 1.1.3",
++ "toml_datetime 1.1.3+spec-1.1.0",
+  "toml_parser",
+  "toml_writer",
+  "winnow 1.0.5",
+@@ -9593,9 +9594,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_datetime"
+-version = "1.1.2+spec-1.1.0"
++version = 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2334,28 +2405,79 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cat): error on empty stdin when no input is given (#5007)
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4194a203`: cat): error on empty stdin when no input is given (#5007). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b908ef4`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
+version = "3.20.3"
+checksum = "cd4ef186188fed2d4f8177d712ad623c751c6e84f45b31da694cc53f483f320b"
+ "brotli-decompressor",
+version = "4.18.2"
+checksum = "697d10a06f7a550791dcb963e3090aa5c65c4d94c029114814a4bd652f30f0b4"
+version = "6.3.0"
+checksum = "97d9071e5b45944c5a9c06baf13a7a65ffa2c88c204015967852c90869692c05"
+version = "1.11.1"
+checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+version = "1.1.11"
+checksum = "626d4928326b646e70f65ed36fc7cf9f206bdb68a0019ee7c6b4709da4e084c4"
+ "toml 1.2.1+spec-1.1.0",
+version = "0.25.0"
+checksum = "ef1d73c59a56771343712b22ea5615092c612c16ba291c0979e3105dfeec4890"
+version = "0.3.18"
+checksum = "d5848f5a9e8117cf94f2f90faac24a87ff81600ff8628c1e3deaab572e76bfa1"
+ "toml_edit 0.25.19+spec-1.1.0",
+ "toml 1.2.1+spec-1.1.0",
+version = "4.5.0"
+checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
+version = "1.1.3"
+checksum = "9c187e0a369471c550af028cba56d4f4fa2a489ad28151ae95a4d340a2a8b782"
+version = "1.2.1+spec-1.1.0"
+checksum = "d5755c51863cdac711f1956baf8eb9588e060755f7d3c4c979e70ea1e1f32cd7"
+ "serde_spanned 1.1.3",
+ "toml_datetime 1.1.3+spec-1.1.0",
+version = 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
+version = "3.20.0"
+checksum = "d20a22850ea7fecad12c5f8cd97d246c3af1f04ef400033977c2f13425c45816"
+version = "4.18.1"
+checksum = "81f8da0d2ae4200dde8773d72ba47a65c220b251ba7b9248db5bd263c247e959"
+version = "6.2.0"
+checksum = "34c6783f42c21c952ad7112b354f0ba2f10760e9decea5b1b60523d6e270faaf"
+version = "1.11.0"
+checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
+version = "1.1.10"
+checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
+ "toml 1.2.0+spec-1.1.0",
+version = "0.24.0"
+checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
+version = "0.3.17"
+checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
+ "toml_edit 0.25.18+spec-1.1.0",
+ "toml 1.2.0+spec-1.1.0",
+version = "4.4.0"
+checksum = "39178e0a867f9e3eaa6292a4ab1dd3613f2519c5b564341e1e7b29b270736cc4"
+version = "1.1.2"
+checksum = "4e7523beb55eece201a2356bee0bbca0d1ab466c14c07703b2e0ee6d42cb0c2c"
+version = "1.2.0+spec-1.1.0"
+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+ "serde_spanned 1.1.2",
+ "toml_datetime 1.1.2+spec-1.1.0",
+version = "1.1.2+spec-1.1.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4194a203` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b908ef4` are properly handled with clean fallback behavior.

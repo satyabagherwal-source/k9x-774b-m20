@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T20:38:23.318Z",
-    "lastVerified": "2026-11-06T20:38:23.318Z",
+    "lastChecked": "2026-11-06T20:45:42.752Z",
+    "lastVerified": "2026-11-06T20:45:42.752Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -239,22 +239,21 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T19:16:51.067Z",
-    "lastVerified": "2026-11-06T19:16:51.067Z",
+    "lastChecked": "2026-11-06T20:45:39.404Z",
+    "lastVerified": "2026-11-06T20:45:39.404Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
+    "contentHash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4194a203"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -560,8 +559,8 @@
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T11:08:33.379Z",
-    "lastVerified": "2026-11-05T11:08:33.379Z",
+    "lastChecked": "2026-11-06T20:45:32.946Z",
+    "lastVerified": "2026-11-06T20:45:32.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -2059,14 +2058,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T23:48:59.795Z",
-    "lastVerified": "2026-11-05T23:48:59.795Z",
+    "lastChecked": "2026-11-06T20:45:35.138Z",
+    "lastVerified": "2026-11-06T20:45:35.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
+    "contentHash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2466,12 +2465,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wix-react-native-navigation": {
-    "name": "wix/react-native-navigation",
+    "name": "react-native-navigation",
     "officialUrl": "https://github.com/wix/react-native-navigation",
     "sourceType": "github",
     "technology": "MDX",
-    "lastChecked": "2026-11-04T02:53:29.659Z",
-    "lastVerified": "2026-11-04T02:53:29.659Z",
+    "lastChecked": "2026-11-06T20:45:25.505Z",
+    "lastVerified": "2026-11-06T20:45:25.505Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-react-native-navigation",
@@ -2480,7 +2479,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f5ab5e81"
   },
   "alexellis-k3sup": {
     "name": "k3sup",
@@ -4206,9 +4206,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-05T06:28:39.920Z",
+    "lastChecked": "2026-11-06T20:45:20.391Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-05T06:28:39.920Z"
+    "lastVerified": "2026-11-06T20:45:20.391Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -4325,9 +4325,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-05T12:00:09.174Z",
+    "lastChecked": "2026-11-06T20:45:27.890Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-05T12:00:09.174Z"
+    "lastVerified": "2026-11-06T20:45:27.890Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -10328,9 +10328,9 @@
   "manojahi-serpiq": {
     "name": "serpiq",
     "officialUrl": "https://github.com/manojahi/serpiq",
-    "lastChecked": "2026-11-03T16:50:30.001Z",
+    "lastChecked": "2026-11-06T20:45:22.901Z",
     "revisionIdentifier": "f3330d7e",
-    "lastVerified": "2026-11-03T16:50:30.001Z"
+    "lastVerified": "2026-11-06T20:45:22.901Z"
   },
   "prof18-feed-flow": {
     "name": "prof18/feed-flow",
