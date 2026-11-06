@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T20:30:52.849Z",
+  "last_updated": "2026-11-06T20:38:20.722Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
-      "verified_at": "2026-11-06T15:20:53.696Z",
+      "content_hash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
+      "verified_at": "2026-11-06T20:38:18.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:20:53.696Z"
+      "last_updated": "2026-11-06T20:38:18.904Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
-      "verified_at": "2026-11-05T19:00:24.232Z",
+      "content_hash": "1f11f1d5be0f416e1c71391131339e914251b39c52960ecfa34119477e3c0a2f",
+      "verified_at": "2026-11-06T20:38:17.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:00:24.232Z"
+      "last_updated": "2026-11-06T20:38:17.018Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
-      "verified_at": "2026-11-05T10:58:15.818Z",
+      "content_hash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
+      "verified_at": "2026-11-06T20:38:20.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T10:58:15.818Z"
+      "last_updated": "2026-11-06T20:38:20.722Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",

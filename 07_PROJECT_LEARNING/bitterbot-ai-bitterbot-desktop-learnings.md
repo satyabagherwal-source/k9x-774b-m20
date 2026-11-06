@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a41e019a`  
+> **Source Version**: `1a23cb72`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:20:51.770Z  
+> **Timestamp**: 2026-11-06T20:38:18.572Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:20:51.562Z  
+> **Harvest Timestamp**: 2026-11-06T20:38:18.347Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2480 stars
+- **Stars / Engagement**: 2481 stars
 
 ---
 
@@ -1698,87 +1698,1048 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a41e019a` (2026-11-06)
-**Commit Message**: fix(gateway): correct WSL logon task XML schema (#367)
+### Incident Patch 1: `1a23cb72` (2026-11-06)
+**Commit Message**: feat(skills): experience-guided skill prior (on by default) and its controlled test (#347)
 
-Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
+* feat(skills): experience-guided skill prior as a gated bandit, with its controlled test
 
-**File**: `src/daemon/wsl-task-xml.test.ts` (modified, +33/-1)
+Adds `skills.prior` (default off): a Beta-Bernoulli posterior per (context
+cell, skill) with hierarchical shrinkage from the skill's global posterior,
+geometric discounting, and a reset when the skill's content hash changes.
+It reorders the <available_skills> index before each run and journals the
+decision on the `skills` stream; it never removes an entry or grants a
+tool. The update touches only the skill that was read, only when a
+deterministic verifier settled the outcome, and never twice for one run:
+the three-factor form eta * e * g * (r - b) with a count-based step, the
+read-skill indicator as eligibility and the per-cell mean as the baseline.
+No co-occurrence term, no time-decayed trace. Placement (best first or
+best last) is configurable because models show a positional preference
+among near-equivalent entries. No live path writes the ledger today: the
+live skill_executions signal is empty after migration v63.
+
+benchmarks/skill-prior/ is the controlled test: a 21-skill pool (one
+correct and one
+
+**File**: `benchmarks/skill-prior/README.md` (added, +468/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+import { execFileSync } from "node:child_process";
- import { describe, expect, it } from "vitest";
- import {
-   buildWslTaskArguments,
-@@ -41,7 +42,7 @@ describe("WSL logon task XML", () => {
-       "    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>",
-       "    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>",
-       "    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>",
--      "    <AllowHardTerminatingTask>true</AllowHardTerminatingTask>",
-+      "    <AllowHardTerminate>true</AllowHardTerminate>",
-       "    <StartWhenAvailable>true</StartWhenAvailable>",
-       "    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>",
-       "    <IdleSettings>",
-@@ -106,6 +107,37 @@ describe("WSL logon task XML", () => {
-     expect(buf.subarray(2).toString("utf16le")).toBe("<a/>");
-   });
- 
-+  it.skipIf(process.platform !== "win32")(
-+    "passes Windows Task Scheduler validation without registering a task",
-+    () => {
-+      // TASK_VALIDATE_ONLY (1) checks the real Windows schema without creating
-+      // or starting a task. A string snapshot alone previously blessed a typo.
-+      const script = `
-+$ErrorActionPreference = 'Stop'
-+$xml = [Console]::In.ReadToEnd()
-+$user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-+$xml = $xml.Replace('BITTERBOT_TEST_USER', [System.Security.SecurityElement]::Escape($user))
-+$scheduler = New-Object -ComObject 'Schedule.Service'
-+$scheduler.Connect()
-+$folder = $scheduler.GetFolder('\\')
-+[void]$folder.RegisterTask('Bitterbot XML validation', $xml, 1, $null, $null, 3, $null)
-+Write-Output 'valid'
-+`;
-+      const validate = (xml: string) =>
-+        execFileSync(
-+          "powershell.exe",
-+          ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script],
-+          { input: xml, encoding: "utf8", windowsHide: true, timeout: 15_000, stdio: "pipe" },
-+        ).trim();
-+      const xml = buildWslTaskXml({ ...spec, windowsUser: "BITTERBOT_TEST_USER" });
-+      expect(validate(xml)).toBe("valid");
-+      expect(() =>
-+        validate(xml.replaceAll("AllowHardTerminate", "AllowHardTerminatingTask")),
-+      ).toThrow();
-+    },
-+    35_000,
-+  );
+@@ -0,0 +1,468 @@
++# Experience-guided skill prior: controlled test
 +
-   it("names the task after the distro and the profile", () => {
-     expect(resolveWslTaskName("Ubuntu")).toBe("Bitterbot Gateway (WSL Ubuntu)");
-     expect(resolveWslTaskName("Ubuntu", "default")).toBe("Bitterbot Gateway (WSL Ubuntu)");
++Does validated experience change which skill the agent tries first, and does that
++change outcomes? This harness tests the `skills.prior` mechanism
++(`src/agents/skills/skill-prior.ts`: an outcome-gated, per-context-cell
++Beta-Bernoulli bandit that reorders the `<available_skills>` index) with the
++model, tools, verifier and candidate pool held fixed.
++
++The design follows the research report "Test the skill prior as a gated bandit"
++(reports/, 2026-11-01): the index-level insertion point, deterministic ground
++truth from the canonical capability families, a controlled pool with
++mere-appearance decoys, two abort gates before any treatment run, and the control
++arms the agent-memory literature has not run (shuffled associations, global
++success ordering, ungated co-occurrence).
++
++## Pool
++
++`pool.ts` writes 21 skills under `<out>/pool/<name>/SKILL.md`: for each of the
++nine canonical capability families one CORRECT skill (its procedure solves the
++family) and one DECOY (same routing description, a wrong rule in the body), plus
++three unrelated fillers. Names carry the `xp-` prefix; the index is built from
++the pool root alone, so no live skill is ever in the experiment.
++
++## Phases
++
++Every real turn is one embedded agent run on a throwaway validation session in a
++scratch workspace that holds the task's files; memory writers are off; the
++transcript dies with the trial. The journal lives at `<out>/journal.sqlite`,
++never under `~/.bitterbot`. Runs are logged to `<out>/records.jsonl` and resumed
++by key, and the run stops at `--ceiling-usd` (token usage at list prices).
++
++```sh
++node --import tsx benchmarks/skill-prior/run.ts --phase order    --seeds 3 --trials 1
++node --import tsx benchmarks/skill-prior/run.ts --phase headroom --seeds 3 --trials 1
++node --import tsx benchmarks/skill-prior/run.ts --phase arms --learn-seeds 6 --eval-seeds 4 --trials 2 --yes
++node --import tsx benchmarks/skill-prior/run.ts --phase cards --variant underspecified --eval-seeds 6 --trials 1 --yes
++```
++
++| Phase      | Question                                                                                                                                                                                                                                                                                                                    | Abort rule                                                                                                                                                                                    |
++| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `order`    | With the whole pool in the index, does the first SKILL.md read depend on whether the family's correct skill is listed first or last (decoy adjacent)?                                                                                                                                                                       | If `readCorrect` does not move, the index-level insertion is inert; re-register around the pre-action interceptor. If almost nothing is read at all, the model routes on the task text alone. |
++| `headroom` | Forced-skill truth table per instance: no skill, correct alone, decoy alone.                                                                                                                                                                                                                                                | If correct-forced minus no-skill is below the minimum detectable effect, the pool must be redesigned (the model does not need the skill).                                                     |
++| `arms`     | Learn on development seeds with Thompson ordering; the treatment (cell = family), a context-free global ledger and an ungated co-occurrence ledger all see the same episodes. Freeze, then evaluate on qualification seeds: `baseline`, `global`, `prior`, `shuffled` (treatment weights permuted across cells), `ungated`. | Registered outcomes: contextual value, popularity only, no value, harm, inconclusive.                                                                                                         |
++
++Seeds are partitioned 50/25/25 into development / qualification / final by
++`sha256(salt:seed)` (`tasks.ts`); the final split is not touched by this harness.
++
++`--variant underspecified` removes the clause that disambiguates the rule from
++six of the nine prompts (inclusive r
 ```
 
-**File**: `src/daemon/wsl-task-xml.ts` (modified, +1/-1)
+**File**: `benchmarks/skill-prior/analysis.test.ts` (added, +92/-0)
 ```diff
-@@ -87,7 +87,7 @@ export function buildWslTaskXml(spec: WslTaskSpec): string {
-     "    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>",
-     "    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>",
-     "    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>",
--    "    <AllowHardTerminatingTask>true</AllowHardTerminatingTask>",
-+    "    <AllowHardTerminate>true</AllowHardTerminate>",
-     "    <StartWhenAvailable>true</StartWhenAvailable>",
-     "    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>",
-     "    <IdleSettings>",
+@@ -0,0 +1,92 @@
++import { describe, expect, it } from "vitest";
++import { headroom, pairedContrast, readCorrect, summarizeArm } from "./analysis.js";
++import type { TrialRecord } from "./executor.js";
++import { poolByFamily } from "./pool.js";
++
++function rec(
++  over: Partial<TrialRecord> & { arm: string; taskId: string; family: string },
++): TrialRecord {
++  return {
++    key: `${over.arm}|${over.taskId}|${over.trialIndex ?? 0}`,
++    phase: "test",
++    seed: 1,
++    trialIndex: 0,
++    indexOrder: [],
++    pass: 0,
++    read: [],
++    tokensIn: 100,
++    tokensOut: 10,
++    cacheRead: 0,
++    wallMs: 1,
++    model: "anthropic/claude-haiku-4-5",
++    error: null,
++    runId: "r",
++    ...over,
++  };
++}
++
++describe("analysis", () => {
++  const correct = poolByFamily("ledger-sum").correct.name;
++  const decoy = poolByFamily("ledger-sum").decoy.name;
++
++  it("credits a read of the family's correct skill only", () => {
++    expect(readCorrect(rec({ arm: "a", taskId: "t", family: "ledger-sum", read: [correct] }))).toBe(
++      1,
++    );
++    expect(readCorrect(rec({ arm: "a", taskId: "t", family: "ledger-sum", read: [decoy] }))).toBe(
++      0,
++    );
++  });
++
++  it("pairs by task instance and reports wins, losses and a CI", () => {
++    const arm: TrialRecord[] = [];
++    const base: TrialRecord[] = [];
++    for (let i = 0; i < 12; i++) {
++      const taskId = `t${i}`;
++      arm.push(rec({ arm: "prior", taskId, family: "ledger-sum", pass: i < 9 ? 1 : 0 }));
++      base.push(rec({ arm: "baseline", taskId, family: "ledger-sum", pass: i < 4 ? 1 : 0 }));
++    }
++    const c = pairedContrast(arm, base, "pass")!;
++    expect(c.n).toBe(12);
++    expect(c.wins).toBe(5);
++    expect(c.losses).toBe(0);
++    expect(c.meanDelta).toBeCloseTo(5 / 12);
++    expect(c.ci95Low).toBeGreaterThan(0);
++    expect(c.byFamily["ledger-sum"]).toBeCloseTo(5 / 12);
++  });
++
++  it("summarizes arms and computes headroom from the forced-skill table", () => {
++    const rs: TrialRecord[] = [];
++    for (let i = 0; i < 4; i++) {
++      rs.push(rec({ arm: "none", taskId: `t${i}`, family: "ledger-sum", pass: i < 2 ? 1 : 0 }));
++      rs.push(
++        rec({
++          arm: "correct",
++          taskId: `t${i}`,
++          family: "ledger-sum",
++          pass: 1,
++          indexOrder: [correct],
++          read: [correct],
++        }),
++      );
++      rs.push(
++        rec({
++          arm: "decoy",
++          taskId: `t${i}`,
++          family: "ledger-sum",
++          pass: 0,
++          indexOrder: [decoy],
++          read: [decoy],
++        }),
++      );
++    }
++    const h = headroom(rs);
++    expect(h.overall.headroom).toBeCloseTo(0.5);
++    expect(h.overall.decoyHarm).toBeCloseTo(0.5);
++    expect(h.globalOrder[0]!.skill).toBe(correct);
++    const s = summarizeArm(rs.filter((r) => r.arm === "correct"))!;
++    expect(s.readCorrect).toBe(1);
++    expect(s.pass).toBe(1);
++    expect(s.byFamily["ledger-sum"]!.trials).toBe(4);
++  });
++});
+```
+
+**File**: `benchmarks/skill-prior/analysis.ts` (added, +283/-0)
+```diff
+@@ -0,0 +1,283 @@
++/**
++ * Pure analysis for the skill prior test. Paired by task instance (same
++ * seed, same family, same files) across arms; the gate's exact sign test and
++ * paired bootstrap give the uncertainty; families are the strata.
++ */
++
++import { bootstrapMeanCi } from "../../src/memory/skill-evolution/bootstrap-ci.js";
++import { exactSignTest } from "../../src/memory/skill-evolution/sign-test.js";
++import type { TrialRecord } from "./executor.js";
++import { poolByFamily } from "./pool.js";
++
++export function correctSkillFor(family: string): string {
++  return poolByFamily(family).correct.name;
++}
++
++/**
++ * Latent-convention trials carry their own truth and score the FIRST skill
++ * read (the choice), since a run that opens all four variants has not chosen.
++ */
++export function readCorrect(r: TrialRecord): 0 | 1 {
++  if (r.correctSkill) {
++    return r.read[0] === r.correctSkill ? 1 : 0;
++  }
++  return r.read.includes(correctSkillFor(r.family)) ? 1 : 0;
++}
++
++export function readDecoy(r: TrialRecord): 0 | 1 {
++  if (r.decoySkills) {
++    return r.read[0] !== undefined && r.decoySkills.includes(r.read[0]) ? 1 : 0;
++  }
++  return r.read.includes(poolByFamily(r.family).decoy.name) ? 1 : 0;
++}
++
++function byTask(records: readonly TrialRecord[]): Map<string, TrialRecord[]> {
++  const m = new Map<string, TrialRecord[]>();
++  for (const r of records) {
++    const list = m.get(r.taskId) ?? [];
++    list.push(r);
++    m.set(r.taskId, list);
++  }
++  return m;
++}
++
++const mean = (xs: readonly number[]) =>
++  xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
++
++export interface ArmSummary {
++  arm: string;
++  trials: number;
++  tasks: number;
++  pass: number | null;
++  readCorrect: number | null;
++  readDecoy: number | null;
++  readAny: number | null;
++  tokensPerTrial: number | null;
++  wallMsPerTrial: number | null;
++  errors: number;
++  byFamily: Record<string, { trials: number; pass: number | null; readCorrect: number | null }>;
++}
++
++export function summarizeArm(records: readonly TrialRecord[]): ArmSummary | null {
++  const first = records[0];
++  if (!first) {
++    return null;
++  }
++  const fams = new Map<string, TrialRecord[]>();
++  for (const r of records) {
++    const list = fams.get(r.family) ?? [];
++    list.push(r);
++    fams.set(r.family, list);
++  }
++  const byFamily: ArmSummary["byFamily"] = {};
++  for (const [fam, list] of fams) {
++    byFamily[fam] = {
++      trials: list.length,
++      pass: mean(list.map((r) => r.pass)),
++      readCorrect: mean(list.map(readCorrect)),
++    };
++  }
++  return {
++    arm: first.arm,
++    trials: records.length,
++    tasks: byTask(records).size,
++    pass: mean(records.map((r) => r.pass)),
++    readCorrect: mean(records.map(readCorrect)),
++    readDecoy: mean(records.map(readDecoy)),
++    readAny: mean(records.map((r) => (r.read.length > 0 ? 1 : 0))),
++    tokensPerTrial: mean(records.map((r) => r.tokensIn + r.tokensOut)),
++    wallMsPerTrial: mean(records.map((r) => r.wallMs)),
++    errors: records.filter((r) => r.error !== null).length,
++    byFamily,
++  };
++}
++
++export interface PairedContrast {
++  arm: string;
++  baseline: string;
++  metric: "pass" | "readCorrect";
++  n: number;
++  wins: number;
++  losses: number;
++  ties: number;
++  pValue: number | null;
++  meanDelta: number | null;
++  ci95Low: number | null;
++  ci95High: number | null;
++  /** Per-family mean delta (the strata). */
++  byFamily: Record<string, number | null>;
++}
++
++/** Paired per task instance: mean over trials in arm minus mean in baseline. */
++export function pairedContrast(
++  arm: readonly TrialRecord[],
++  baseline: readonly TrialRecord[],
++  metric: "pass" | "readCorrect",
++): PairedContrast | null {
++  const a = arm[0];
++  const b = baseline[0];
++  if (!a || !b) {
++    return null;
++  }
++  const f = (r: TrialRecord) => (metric === "pass" ? r.pass : readCorrect(r));
++  const at = byTask(arm);
++  const bt = byTask(baseline);
++  const deltas: number[] = [];
++  const famDeltas = new Map<string, number[]>();
++  for (const [taskId, list] of at) {
++    const other = bt.get(taskId);
++    if (!other) {
++      continue;
++    }
++    const d = (mean(list.map(f)) ?? 0) - (mean(other.map(f)) ?? 0);
++    deltas.push(d);
++    const fam = list[0]!.family;
++    const fd = famDeltas.get(fam) ?? [];
++    fd.push(d);
++    famDeltas.set(fam, fd);
++  }
++  const sign = exactSignTest(deltas);
++  const ci = deltas.length ? bootstrapMeanCi(deltas) : null;
++  const byFamily: Record<string, number | null> = {};
++  for (const [fam, ds] of famDeltas) {
++    byFamily[fam] = mean(ds);
++  }
++  return {
++    arm: a.arm,
++    baseline: b.arm,
++    metric,
++    n: deltas.length,
++    wins: sign.wins,
++    losses: sign.losses,
++    ties: sign.ties,
++    pValue: deltas.length ? sign.pValue : null,
++    meanDelta: ci?.meanDelta ?? null,
++    ci95Low: ci?.ci95Low ?? null,
++    ci95High: ci?.ci95High ?? null,
++    byFamily,
++  };
++}
++
++/**
++ * Phase 0b headroom from the forced-skill truth table: per famil
+```
+
+**File**: `benchmarks/skill-prior/conventions-analysis.test.ts` (added, +150/-0)
+```diff
+@@ -0,0 +1,150 @@
++import { describe, expect, it } from "vitest";
++import {
++  clusterBootstrapCi,
++  holm,
++  idealPickProb,
++  noisyRecords,
++  recordsFromTraining,
++  shuffled,
++  swapRecords,
++} from "./conventions-analysis.js";
++import type { TrialRecord } from "./executor.js";
++
++const rec = (over: Partial<TrialRecord>): TrialRecord => ({
++  key: "k",
++  phase: "cv-train",
++  arm: "forced-a",
++  taskId: "t",
++  family: "ledger-sum",
++  seed: 1,
++  trialIndex: 0,
++  indexOrder: ["xp-ledger-sum-a"],
++  pass: 1,
++  read: ["xp-ledger-sum-a"],
++  tokensIn: 0,
++  tokensOut: 0,
++  cacheRead: 0,
++  wallMs: 0,
++  model: "m",
++  error: null,
++  runId: "r",
++  cell: "alder:ledger-sum",
++  ...over,
++});
++
++describe("recordsFromTraining", () => {
++  it("credits only runs that read the forced skill without error", () => {
++    const ev = recordsFromTraining([
++      rec({}),
++      rec({ pass: 0 }),
++      rec({ read: [] }),
++      rec({ error: "boom" }),
++      rec({ indexOrder: ["xp-ledger-sum-b"], read: ["xp-ledger-sum-b"], pass: 0 }),
++    ]);
++    expect(ev).toEqual({
++      "alder:ledger-sum": {
++        "xp-ledger-sum-a": { passed: 1, runs: 2 },
++        "xp-ledger-sum-b": { passed: 0, runs: 1 },
++      },
++    });
++  });
++});
++
++describe("swapRecords", () => {
++  it("exchanges the right variant's record with exactly one wrong variant's", () => {
++    const cell = {
++      a: { passed: 2, runs: 2 },
++      b: { passed: 0, runs: 2 },
++      c: { passed: 0, runs: 1 },
++      d: { passed: 0, runs: 2 },
++    };
++    const out = swapRecords(cell, "a", ["b", "c", "d"], "seed");
++    expect(out.a).not.toEqual(cell.a);
++    const moved = ["b", "c", "d"].filter((k) => out[k as "b"]?.passed === 2);
++    expect(moved).toHaveLength(1);
++    expect(out[moved[0] as "b"]).toEqual(cell.a);
++    expect(swapRecords(cell, "a", ["b", "c", "d"], "seed")).toEqual(out);
++  });
++});
++
++describe("holm", () => {
++  it("matches the textbook step-down", () => {
++    expect(holm([0.01, 0.04, 0.03, 0.2])).toEqual([0.04, 0.09, 0.09, 0.2]);
++  });
++});
++
++describe("clusterBootstrapCi", () => {
++  it("centres on the pooled mean and widens with between-family spread", () => {
++    const tight = clusterBootstrapCi(
++      new Map([
++        ["f1", [0.2, 0.2]],
++        ["f2", [0.2, 0.2]],
++        ["f3", [0.2, 0.2]],
++      ]),
++    )!;
++    expect(tight.mean).toBeCloseTo(0.2);
++    expect(tight.hi - tight.lo).toBeLessThan(1e-9);
++    const spread = clusterBootstrapCi(
++      new Map([
++        ["f1", [1, 1]],
++        ["f2", [0, 0]],
++        ["f3", [-1, -1]],
++      ]),
++    )!;
++    expect(spread.mean).toBeCloseTo(0);
++    expect(spread.hi - spread.lo).toBeGreaterThan(0.5);
++  });
++});
++
++describe("shuffled", () => {
++  it("is a deterministic permutation", () => {
++    const xs = ["a", "b", "c", "d", "e"];
++    expect(shuffled(xs, "s").toSorted()).toEqual(xs);
++    expect(shuffled(xs, "s")).toEqual(shuffled(xs, "s"));
++  });
++});
++
++describe("noisyRecords", () => {
++  const vs = ["a", "b", "c", "d"];
++  it("is exact at eps 0", () => {
++    const r = noisyRecords(vs, "b", 0, 5, "s");
++    expect(r.b).toEqual({ passed: 5, runs: 5 });
++    expect(r.a).toEqual({ passed: 0, runs: 5 });
++  });
++  it("nests: higher eps only adds flips, larger n only adds runs", () => {
++    for (let i = 0; i < 50; i++) {
++      const lo = noisyRecords(vs, "a", 0.1, 5, `s${i}`);
++      const hi = noisyRecords(vs, "a", 0.3, 5, `s${i}`);
++      const big = noisyRecords(vs, "a", 0.3, 10, `s${i}`);
++      expect(hi.a!.passed).toBeLessThanOrEqual(lo.a!.passed);
++      for (const v of ["b", "c", "d"]) {
++        expect(hi[v]!.passed).toBeGreaterThanOrEqual(lo[v]!.passed);
++      }
++      for (const v of vs) {
++        expect(big[v]!.passed).toBeGreaterThanOrEqual(hi[v]!.passed);
++        expect(big[v]!.passed - hi[v]!.passed).toBeLessThanOrEqual(5);
++      }
++    }
++  });
++  it("flip rate tracks eps", () => {
++    let flips = 0;
++    let total = 0;
++    for (let i = 0; i < 400; i++) {
++      const r = noisyRecords(vs, "a", 0.3, 5, `t${i}`);
++      flips += 5 - r.a!.passed + r.b!.passed + r.c!.passed + r.d!.passed;
++      total += 20;
++    }
++    expect(flips / total).toBeGreaterThan(0.27);
++    expect(flips / total).toBeLessThan(0.33);
++  });
++});
++
++describe("idealPickProb", () => {
++  it("handles unique best, ties and inversions", () => {
++    const e = (passed: number) => ({ passed, runs: 5 });
++    expect(idealPickProb({ a: e(4), b: e(1), c: e(0), d: e(2) }, "a")).toBe(1);
++    expect(idealPickProb({ a: e(3), b: e(3), c: e(0), d: e(2) }, "a")).toBe(0.5);
++    expect(idealPickProb({ a: e(2), b: e(3), c: e(0), d: e(2) }, "a")).toBe(0);
++    expect(idealPickProb({}, "a")).toBe(0);
++  });
++});
+```
+
+**File**: `benchmarks/skill-prior/conventions-analysis.ts` (added, +180/-0)
+```diff
+@@ -0,0 +1,180 @@
++/**
++ * Pure helpers for the latent-convention runner (conventions-run.ts):
++ * verified records from forced training runs, the swapped-record control,
++ * Holm adjustment and the family-cluster bootstrap.
++ */
++
++import { createHash } from "node:crypto";
++import type { SkillEvidence } from "../../src/agents/skills/skill-prior.js";
++import { readCorrect } from "./analysis.js";
++import type { TrialRecord } from "./executor.js";
++import { mulberry32 } from "./tasks.js";
++
++export function shuffled<T>(xs: readonly T[], seed: string): T[] {
++  const rng = mulberry32(createHash("sha256").update(seed).digest().readUInt32BE(0));
++  const a = [...xs];
++  for (let i = a.length - 1; i > 0; i--) {
++    const j = Math.floor(rng() * (i + 1));
++    [a[i], a[j]] = [a[j]!, a[i]!];
++  }
++  return a;
++}
++
++/** Verified records per cell from the training phase: runs that read the forced skill. */
++export function recordsFromTraining(
++  train: readonly TrialRecord[],
++): Record<string, Record<string, SkillEvidence>> {
++  const out: Record<string, Record<string, SkillEvidence>> = {};
++  for (const r of train) {
++    const forced = r.indexOrder.length === 1 ? r.indexOrder[0]! : null;
++    if (!forced || !r.cell || r.error !== null || !r.read.includes(forced)) {
++      continue;
++    }
++    const cell = (out[r.cell] ??= {});
++    const e = (cell[forced] ??= { passed: 0, runs: 0 });
++    e.passed += r.pass;
++    e.runs += 1;
++  }
++  return out;
++}
++
++/** The right variant and one seeded wrong variant exchange records. */
++export function swapRecords(
++  cell: Record<string, SkillEvidence>,
++  correct: string,
++  decoys: readonly string[],
++  seed: string,
++): Record<string, SkillEvidence> {
++  const out = { ...cell };
++  const victim = shuffled(decoys, seed)[0]!;
++  const c = cell[correct];
++  const d = cell[victim];
++  delete out[correct];
++  delete out[victim];
++  if (d) {
++    out[correct] = d;
++  }
++  if (c) {
++    out[victim] = c;
++  }
++  return out;
++}
++
++/** Holm step-down adjustment; returns adjusted p in input order. */
++export function holm(ps: readonly number[]): number[] {
++  const idx = ps.map((p, i) => ({ p, i })).toSorted((a, b) => a.p - b.p);
++  const adj = new Array<number>(ps.length);
++  let running = 0;
++  idx.forEach(({ p, i }, k) => {
++    running = Math.max(running, Math.min(1, (ps.length - k) * p));
++    adj[i] = running;
++  });
++  return adj;
++}
++
++/**
++ * Two-stage cluster bootstrap of the paired mean delta: resample families,
++ * then instances within each drawn family. Nine families is few clusters, so
++ * this is the primary interval, not a normal-theory clustered SE.
++ */
++export function clusterBootstrapCi(
++  deltasByFamily: ReadonlyMap<string, readonly number[]>,
++  draws = 4000,
++  seed = 7,
++): { mean: number; lo: number; hi: number } | null {
++  const fams = [...deltasByFamily.values()].filter((d) => d.length > 0);
++  if (fams.length === 0) {
++    return null;
++  }
++  const all = fams.flat();
++  const mean = all.reduce((a, b) => a + b, 0) / all.length;
++  const rng = mulberry32(seed);
++  const stats: number[] = [];
++  for (let b = 0; b < draws; b++) {
++    let s = 0;
++    let n = 0;
++    for (let f = 0; f < fams.length; f++) {
++      const fam = fams[Math.floor(rng() * fams.length)]!;
++      for (let i = 0; i < fam.length; i++) {
++        s += fam[Math.floor(rng() * fam.length)]!;
++        n++;
++      }
++    }
++    stats.push(s / n);
++  }
++  stats.sort((a, b) => a - b);
++  return { mean, lo: stats[Math.floor(0.025 * draws)]!, hi: stats[Math.floor(0.975 * draws)]! };
++}
++
++export function deltasByFamily(
++  arm: readonly TrialRecord[],
++  base: readonly TrialRecord[],
++  metric: "pass" | "readCorrect",
++): Map<string, number[]> {
++  const f = (r: TrialRecord) => (metric === "pass" ? r.pass : readCorrect(r));
++  const avg = (rs: TrialRecord[]) => rs.reduce((s, r) => s + f(r), 0) / rs.length;
++  const group = (rs: readonly TrialRecord[]) => {
++    const m = new Map<string, TrialRecord[]>();
++    for (const r of rs) {
++      m.set(r.taskId, [...(m.get(r.taskId) ?? []), r]);
++    }
++    return m;
++  };
++  const a = group(arm);
++  const b = group(base);
++  const out = new Map<string, number[]>();
++  for (const [task, list] of a) {
++    const other = b.get(task);
++    if (other) {
++      const fam = list[0]!.family;
++      out.set(fam, [...(out.get(fam) ?? []), avg(list) - avg(other)]);
++    }
++  }
++  return out;
++}
++
++/**
++ * Records with controlled verifier error: each variant gets `n` logged runs
++ * whose true outcome (pass for the right variant, fail for the others) is
++ * flipped with probability `eps`. The uniform draw per run slot depends only
++ * on (seed, variant, slot), so a higher `eps` only adds flips and a larger
++ * `n` only adds runs: the dose arms are nested (common random numbers).
++ */
++export function noisyRecords(
++  variants: readonly string[],
++  correct: string,
++  eps: number,
++  n: number,
++  seed: string,
++): Record<string, SkillEvidence> {
++  const out: Re
+```
+
+**File**: `benchmarks/skill-prior/conventions-run.ts` (added, +808/-0)
+```diff
+@@ -0,0 +1,808 @@
++/**
++ * Latent-convention twins: does verified experience fix errors the model
++ * cannot avoid on its own? (Design: reports "Skill selection test data and
++ * methods", 2026-11-02.)
++ *
++ *   node --import tsx benchmarks/skill-prior/conventions-run.ts --phase train --train-seeds 2 --yes
++ *   node --import tsx benchmarks/skill-prior/conventions-run.ts --phase pilot --pilot-seeds 1
++ *   node --import tsx benchmarks/skill-prior/conventions-run.ts --phase main --eval-seeds 3 --trials 1 --yes
++ *
++ * Phases:
++ *   train  Forced-skill runs on development seeds: every variant alone in the
++ *          index, once per training seed, in every workspace. Doubles as the
++ *          truth table (forced right vs forced wrong). The outcome of a run
++ *          that read the forced skill becomes that skill's verified record in
++ *          the cell `<env>:<family>`; the treatment ledger learns the same
++ *          records.
++ *   pilot  Headroom gate on fresh development seeds: full index, randomized
++ *          order, no card. Pre-registered pass rule: first read is a wrong
++ *          variant in >= 30% of trials and pass <= 65%.
++ *   main   Qualification seeds, six arms on the same instances and the same
++ *          randomized order (A-D):
++ *            none      no card
++ *            card      verified records from training
++ *            swapped   the right variant and one wrong variant exchange records
++ *            placebo   same line, usage count only, no outcome
++ *            prior     learned ledger order (best last), no card
++ *            prior-card  learned order plus verified records
++ *          Primary: card minus none on pass. Secondary (Holm): card minus
++ *          placebo, card minus swapped, prior minus none, prior-card minus card.
++ *
++ *   noise  Record accuracy, same qualification instances and orders as main:
++ *          none, card (real records) and records with controlled verifier
++ *          error eps in {0.1, 0.2, 0.3, 0.4} over 5 runs, plus eps 0.3 over
++ *          10 runs. Primary: pass against eps; each noisy arm against none
++ *          (Holm). Mechanism: the model's right first reads against an ideal
++ *          record follower (highest shown pass rate, ties split).
++ *
++ * Records go to <out>/records.jsonl (resumable by key); journal, trial dirs
++ * and ledgers live under <out> (default ~/bitterbot-skill-prior/conventions),
++ * never under ~/.bitterbot.
++ */
++
++import { createHash } from "node:crypto";
++import fs from "node:fs/promises";
++import os from "node:os";
++import path from "node:path";
++import { parseArgs } from "node:util";
++import {
++  type Candidate,
++  placeRanking,
++  SkillPriorLedger,
++} from "../../src/agents/skills/skill-prior.js";
++import { loadConfig } from "../../src/config/config.js";
++import { startEventJournal } from "../../src/infra/event-journal.js";
++import {
++  type ArmSummary,
++  type PairedContrast,
++  pairedContrast,
++  readCorrect,
++  renderArmTable,
++  renderContrasts,
++  summarizeArm,
++} from "./analysis.js";
++import {
++  clusterBootstrapCi,
++  deltasByFamily,
++  holm,
++  idealPickProb,
++  noisyRecords,
++  recordsFromTraining,
++  shuffled,
++  swapRecords,
++} from "./conventions-analysis.js";
++import {
++  CONVENTION_POOL,
++  CONVENTION_POOL_NAMES,
++  type ConventionInstance,
++  conventionInstance,
++  ENVS,
++  VARIANTS,
++  conventionSkillName,
++} from "./conventions.js";
++import {
++  estimateUsd,
++  makeExecutor,
++  trialKey,
++  type TrialRecord,
++  type TrialSpec,
++} from "./executor.js";
++import { FAMILIES, writePool } from "./pool.js";
++import { seedsIn } from "./tasks.js";
++
++const SALT = "conventions-v1";
++
++const { values: args } = parseArgs({
++  options: {
++    phase: { type: "string" },
++    "train-seeds": { type: "string", default: "2" },
++    "pilot-seeds": { type: "string", default: "1" },
++    "eval-seeds": { type: "string", default: "3" },
++    trials: { type: "string", default: "1" },
++    model: { type: "string", default: "anthropic/claude-haiku-4-5" },
++    out: { type: "string" },
++    "ceiling-usd": { type: "string", default: "250" },
++    "max-runs": { type: "string" },
++    families: { type: "string" },
++    envs: { type: "string" },
++    arms: { type: "string" },
++    "timeout-ms": { type: "string" },
++    "keep-trials": { type: "boolean", default: false },
++    yes: { type: "boolean", default: false },
++  },
++});
++
++const phase = args.phase;
++if (phase !== "train" && phase !== "pilot" && phase !== "main" && phase !== "noise") {
++  throw new Error("--phase must be train | pilot | main | noise");
++}
++const families = args.families
++  ? (args.families.split(",").map((f) => f.trim()) as (typeof FAMILIES)[number][])
++  : [...FAMILIES];
++const envs = args.envs
++  ? (args.envs.split(",").map((e) => e.trim()) as (typeof ENVS)[number][])
++  : [...ENVS];
++const trials = Number(args.trials);
++const ceilingUsd = Number(args["ceiling-usd"]);
++const maxRuns = args["max-runs"] ? Number(args["max-runs"]) : Number.P
+```
+
+**File**: `benchmarks/skill-prior/conventions.test.ts` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++import { describe, expect, it } from "vitest";
++import {
++  CONVENTION_POOL,
++  CONVENTION_POOL_NAMES,
++  conventionInstance,
++  conventionOf,
++  conventionSkillName,
++  ENVS,
++  VARIANTS,
++} from "./conventions.js";
++import { FAMILIES } from "./pool.js";
++
++describe("latent-convention pool", () => {
++  it("has four variants per family with one shared description, plus fillers", () => {
++    expect(CONVENTION_POOL).toHaveLength(FAMILIES.length * 4 + 3);
++    expect(new Set(CONVENTION_POOL_NAMES).size).toBe(CONVENTION_POOL_NAMES.length);
++    for (const f of FAMILIES) {
++      const skills = VARIANTS.map((v) =>
++        CONVENTION_POOL.find((s) => s.name === conventionSkillName(f, v))!,
++      );
++      expect(new Set(skills.map((s) => s.description)).size).toBe(1);
++      expect(new Set(skills.map((s) => s.body)).size).toBe(4);
++    }
++  });
++
++  it("balances workspaces: each variant is right in exactly two of eight per family", () => {
++    for (const f of FAMILIES) {
++      const counts = new Map<string, number>();
++      for (const e of ENVS) {
++        const v = conventionOf(e, f);
++        counts.set(v, (counts.get(v) ?? 0) + 1);
++      }
++      expect([...counts.values()]).toEqual([2, 2, 2, 2]);
++    }
++  });
++
++  it("generates deterministic instances whose four answers all differ", () => {
++    for (const f of FAMILIES) {
++      for (const e of ENVS) {
++        for (const seed of [1, 2, 3]) {
++          const a = conventionInstance(e, f, seed);
++          expect(conventionInstance(e, f, seed).task).toEqual(a.task);
++          expect(new Set(Object.values(a.truths)).size).toBe(4);
++          expect(a.task.checker.value).toBe(a.truths[a.variant]);
++          expect(a.correctSkill).toBe(conventionSkillName(f, a.variant));
++          expect(a.decoySkills).toHaveLength(3);
++          // The convention is never stated in the prompt or files.
++          expect(a.task.prompt).not.toMatch(
++            /inclusive|exclusive|zero-based|one-based|refund|WARN|underscore/i,
++          );
++        }
++      }
++    }
++  });
++
++  // Independent recounts from the generated files, so a generator bug cannot
++  // hide behind its own arithmetic.
++  it("ledger truths match a recount from the CSV", () => {
++    for (const seed of [1, 2, 3, 4, 5]) {
++      const inst = conventionInstance("cedar", "ledger-sum", seed);
++      const account = /account (\w+)/.exec(inst.task.prompt)![1];
++      const rows = inst.task
++        .files!["data/ledger.csv"]!.trim()
++        .split("\n")
++        .slice(1)
++        .map((l) => l.split(","));
++      const mine = rows.filter((r) => r[1] === account);
++      const tot = (keep: (memo: string) => boolean) =>
++        String(mine.filter((r) => keep(r[3]!)).reduce((s, r) => s + Number(r[2]), 0));
++      expect(inst.truths).toEqual({
++        a: tot(() => true),
++        b: tot((m) => m !== "refund"),
++        c: tot((m) => m !== "opening balance"),
++        d: tot((m) => m !== "refund" && m !== "opening balance"),
++      });
++    }
++  });
++
++  it("date-window truths match a recount from the events file", () => {
++    for (const seed of [1, 2, 3, 4, 5]) {
++      const inst = conventionInstance("elm", "date-window", seed);
++      const [, from, to] = /from (\S+) through (\S+)\?/.exec(inst.task.prompt)!;
++      const lines = inst.task.files!["data/events.txt"]!.trim().split("\n");
++      const n = (endIncl: boolean, skip: boolean) =>
++        String(
++          lines.filter((l) => {
++            const d = l.slice(0, 10);
++            return (
++              d >= from! && (endIncl ? d <= to! : d < to!) && !(skip && l.includes("(cancelled)"))
++            );
++          }).length,
++        );
++      expect(inst.truths).toEqual({
++        a: n(true, false),
++        b: n(false, false),
++        c: n(true, true),
++        d: n(false, true),
++      });
++    }
++  });
++
++  it("regex-valid truths match the stated patterns", () => {
++    for (const seed of [1, 2, 3, 4, 5]) {
++      const inst = conventionInstance("birch", "regex-valid", seed);
++      const lines = inst.task.files!["data/ids.txt"]!.trim().split("\n");
++      const n = (re: RegExp, notTst = false) =>
++        String(lines.filter((l) => re.test(l) && !(notTst && l.startsWith("TST"))).length);
++      expect(inst.truths).toEqual({
++        a: n(/^[A-Z]{3}-\d{4}$/),
++        b: n(/^[A-Za-z]{3}-\d{4}$/),
++        c: n(/^[A-Z]{3}-?\d{4}$/),
++        d: n(/^[A-Z]{3}-\d{4}$/, true),
++      });
++    }
++  });
++
++  it("json-path truths match a walk of the payload", () => {
++    for (const seed of [1, 2, 3, 4, 5]) {
++      const inst = conventionInstance("garnet", "json-path", seed);
++      const k = Number(/items\[(\d+)\]/.exec(inst.task.prompt)![1]);
++      const items = (
++        JSON.parse(inst.task.files!["data/payload.json"]!) as {
++          items: Array<{ name: string; archived: boolean }>;
++        }
++      ).items;
++      const live = items.filter((i) => !i.archived);
++      expect(inst.truths).toEqual({
++        a: items[
+```
+
+**File**: `benchmarks/skill-prior/conventions.ts` (added, +869/-0)
+```diff
+@@ -0,0 +1,869 @@
++/**
++ * Latent-convention twins: a harder pool for the skill-memory test.
++ *
++ * Each of nine task families has FOUR skills with the identical description
++ * and four different house conventions (refunds in or out of an account
++ * total, WARN counted as an error or not, zero- or one-based paths, ...).
++ * Every generated instance is built so the four conventions give four
++ * different answers. Which convention is right is a property of the
++ * WORKSPACE (environment) the task runs in, fixed by a seeded, balanced
++ * assignment and never stated in the prompt or the files. A fresh agent can
++ * only guess (about 25% right); verified experience from earlier tasks in
++ * the same workspace is the only thing that can tell it which variant holds.
++ *
++ * The memory cell is `<env>:<family>`. Names are matched in shape
++ * (`xp-<family>-a` .. `-d`) and assignments are balanced (each convention
++ * is right in exactly two of the eight workspaces per family), so neither a
++ * name nor a letter carries information.
++ */
++
++import { createHash } from "node:crypto";
++import type { CorpusTask } from "../../src/memory/skill-evolution/task-corpus.js";
++import { FAMILIES, type Family, type PoolSkill } from "./pool.js";
++import { mulberry32 } from "./tasks.js";
++
++type Rng = () => number;
++
++export const ENVS = [
++  "alder",
++  "birch",
++  "cedar",
++  "dunmore",
++  "elm",
++  "fenwick",
++  "garnet",
++  "holloway",
++] as const;
++export type Env = (typeof ENVS)[number];
++
++export const VARIANTS = ["a", "b", "c", "d"] as const;
++export type Variant = (typeof VARIANTS)[number];
++
++const FINAL_RULE =
++  "Finish with exactly one line of the form `FINAL: <answer>` and nothing after it.";
++
++interface Generated {
++  prompt: string;
++  files: Record<string, string>;
++  /** Answer under each convention, indexed like VARIANTS. */
++  truths: [string, string, string, string];
++}
++
++interface FamilySpec {
++  family: Family;
++  /** Identical for all four skills of the family. */
++  description: string;
++  /** Procedure steps per convention, indexed like VARIANTS. */
++  steps: [string[], string[], string[], string[]];
++  generate: (rng: Rng) => Generated;
++}
++
++const int = (rng: Rng, lo: number, hi: number) => lo + Math.floor(rng() * (hi - lo + 1));
++const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[Math.floor(rng() * xs.length)]!;
++function shuffle<T>(rng: Rng, xs: readonly T[]): T[] {
++  const a = [...xs];
++  for (let i = a.length - 1; i > 0; i--) {
++    const j = Math.floor(rng() * (i + 1));
++    [a[i], a[j]] = [a[j]!, a[i]!];
++  }
++  return a;
++}
++const sum = (xs: readonly number[]) => xs.reduce((s, x) => s + x, 0);
++const day = (rng: Rng) => `2026-03-${String(int(rng, 1, 28)).padStart(2, "0")}`;
++
++// ---------------------------------------------------------------- families
++
++const ledger: FamilySpec = {
++  family: "ledger-sum",
++  description:
++    "Use when asked for one account's total from a CSV ledger with date,account,amount,memo columns. Workspaces book totals differently and this is one house convention. Not for order, inventory or event files.",
++  steps: [
++    [
++      "Read data/ledger.csv with the read tool.",
++      "Keep every row whose account column equals the requested account exactly.",
++      "House convention: the total is the net of ALL kept rows, including the opening balance and refunds, each with its sign.",
++      "Report the integer total.",
++    ],
++    [
++      "Read data/ledger.csv with the read tool.",
++      "Keep every row whose account column equals the requested account exactly.",
++      "House convention: refunds are booked in a separate ledger, so drop rows whose memo is `refund`; keep the opening balance and everything else with its sign.",
++      "Report the integer total.",
++    ],
++    [
++      "Read data/ledger.csv with the read tool.",
++      "Keep every row whose account column equals the requested account exactly.",
++      "House convention: the total covers the period's activity only, so drop the row whose memo is `opening balance`; keep refunds and everything else with its sign.",
++      "Report the integer total.",
++    ],
++    [
++      "Read data/ledger.csv with the read tool.",
++      "Keep every row whose account column equals the requested account exactly.",
++      "House convention: drop both the `opening balance` row and every `refund` row; sum the remaining rows with their signs.",
++      "Report the integer total.",
++    ],
++  ],
++  generate(rng) {
++    const accounts = shuffle(rng, ["acme", "globex", "initech", "umbrella"]);
++    const target = accounts[0]!;
++    const rows: Array<{ account: string; amount: number; memo: string }> = [];
++    rows.push({ account: target, amount: int(rng, 120, 900), memo: "opening balance" });
++    for (let i = int(rng, 1, 3); i > 0; i--) {
++      rows.push({ account: target, amount: -int(rng, 10, 150), memo: "refund" });
++    }
++    for (let i = int(rng, 3, 5); i > 0; i--) {
++      rows.push({ account: target, amount: in
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
 - **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
 - **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
 - **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
 - **PR #363** (2026-11-05): Add shadow learning strategy lab and publish synthetic benchmark evidence (@VGIL77)
 - **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
-- **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
 
 ---
 
@@ -1798,52 +2759,49 @@ Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): correct WSL logon task XML schema (#367)
+## X. skills): experience-guided skill prior (on by default) and its controlled test (
 
 **RULE**:
-When implementing operations in `src/daemon/wsl-task-xml.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/skill-prior/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a41e019a`: gateway): correct WSL logon task XML schema (#367). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a23cb72`: skills): experience-guided skill prior (on by default) and its controlled test (#347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/daemon/wsl-task-xml.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/skill-prior/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { execFileSync } from "node:child_process";
-      "    <AllowHardTerminate>true</AllowHardTerminate>",
-  it.skipIf(process.platform !== "win32")(
-    "passes Windows Task Scheduler validation without registering a task",
-    () => {
-      // TASK_VALIDATE_ONLY (1) checks the real Windows schema without creating
-      // or starting a task. A string snapshot alone previously blessed a typo.
-      const script = `
-$ErrorActionPreference = 'Stop'
-$xml = [Console]::In.ReadToEnd()
-$user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-$xml = $xml.Replace('BITTERBOT_TEST_USER', [System.Security.SecurityElement]::Escape($user))
-$scheduler = New-Object -ComObject 'Schedule.Service'
-$scheduler.Connect()
-$folder = $scheduler.GetFolder('\\')
-[void]$folder.RegisterTask('Bitterbot XML validation', $xml, 1, $null, $null, 3, $null)
-Write-Output 'valid'
-`;
-      const validate = (xml: string) =>
-        execFileSync(
-          "powershell.exe",
-          ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script],
-          { input: xml, encoding: "utf8", windowsHide: true, timeout: 15_000, stdio: "pipe" },
-        ).trim();
-      const xml = buildWslTaskXml({ ...spec, 
+# Experience-guided skill prior: controlled test
+
+Does validated experience change which skill the agent tries first, and does that
+change outcomes? This harness tests the `skills.prior` mechanism
+(`src/agents/skills/skill-prior.ts`: an outcome-gated, per-context-cell
+Beta-Bernoulli bandit that reorders the `<available_skills>` index) with the
+model, tools, verifier and candidate pool held fixed.
+
+The design follows the research report "Test the skill prior as a gated bandit"
+(reports/, 2026-11-01): the index-level insertion point, deterministic ground
+truth from the canonical capability families, a controlled pool with
+mere-appearance decoys, two abort gates before any treatment run, and the control
+arms the agent-memory literature has not run (shuffled associations, global
+success ordering, ungated co-occurrence).
+
+## Pool
+
+`pool.ts` writes 21 skills under `<out>/pool/<name>/SKILL.md`: for each of the
+nine canonical capability families one CORRECT skill (its procedure solves the
+family) and one DECOY (same routing description, a wrong rule in the body), plus
+three unrelated fillers. Names carry the `xp-` prefix; the index is built from
+the pool root alone, so no live skill is eve
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      "    <AllowHardTerminatingTask>true</AllowHardTerminatingTask>",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a41e019a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a23cb72` are properly handled with clean fallback behavior.

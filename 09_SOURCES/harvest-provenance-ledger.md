@@ -7916,3 +7916,6 @@ Every entry in this ledger must capture:
 | `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `8f4d2140` | Multi-dimensional audit evidence | 2026-11-06T19:23:48.732Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `8f9133b3` | Multi-dimensional audit evidence | 2026-11-06T19:23:54.872Z |
 | `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-06T20:30:52.832Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b5f748ab` | Multi-dimensional audit evidence | 2026-11-06T20:38:17.008Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `1a23cb72` | Multi-dimensional audit evidence | 2026-11-06T20:38:18.891Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `41584c75` | Multi-dimensional audit evidence | 2026-11-06T20:38:20.713Z |

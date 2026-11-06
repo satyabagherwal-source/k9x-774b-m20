@@ -7907,3 +7907,6 @@
 | `CYCLE-20261106-4O6X` | `2026-11-06T19:23:48.729Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md` | Yes (`95de3374...`) |
 | `CYCLE-20261106-4SXG` | `2026-11-06T19:23:54.868Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4505db5...`) |
 | `CYCLE-20261106-IX7H` | `2026-11-06T20:30:52.829Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e0706cc3...`) |
+| `CYCLE-20261106-SFXO` | `2026-11-06T20:38:17.004Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f11f1d5...`) |
+| `CYCLE-20261106-SHDZ` | `2026-11-06T20:38:18.887Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`0becd247...`) |
+| `CYCLE-20261106-SISK` | `2026-11-06T20:38:20.708Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b1ec118...`) |

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T20:30:55.423Z",
-    "lastVerified": "2026-11-06T20:30:55.423Z",
+    "lastChecked": "2026-11-06T20:38:23.318Z",
+    "lastVerified": "2026-11-06T20:38:23.318Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -138,22 +138,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T19:09:45.725Z",
-    "lastVerified": "2026-11-06T19:09:45.725Z",
+    "lastChecked": "2026-11-06T20:38:18.347Z",
+    "lastVerified": "2026-11-06T20:38:18.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
-    "promotedRulesCount": 1,
+    "contentHash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a41e019a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -544,14 +543,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:58:15.016Z",
-    "lastVerified": "2026-11-05T10:58:15.016Z",
+    "lastChecked": "2026-11-06T20:38:18.888Z",
+    "lastVerified": "2026-11-06T20:38:18.888Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
+    "contentHash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1954,22 +1953,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T23:39:55.141Z",
-    "lastVerified": "2026-11-05T23:39:55.141Z",
+    "lastChecked": "2026-11-06T20:38:14.265Z",
+    "lastVerified": "2026-11-06T20:38:14.265Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
+    "contentHash": "1f11f1d5be0f416e1c71391131339e914251b39c52960ecfa34119477e3c0a2f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "00354062"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2376,9 +2374,9 @@
   "expo-create-react-native-app": {
     "name": "create-react-native-app",
     "officialUrl": "https://github.com/expo/create-react-native-app",
-    "lastChecked": "2026-11-04T02:46:28.463Z",
+    "lastChecked": "2026-11-06T20:38:04.465Z",
     "revisionIdentifier": "3a7b11ee",
-    "lastVerified": "2026-11-04T02:46:28.463Z"
+    "lastVerified": "2026-11-06T20:38:04.465Z"
   },
   "kubeedge-kubeedge": {
     "name": "kubeedge",
@@ -4142,9 +4140,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-05T06:21:31.909Z",
+    "lastChecked": "2026-11-06T20:37:59.465Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-05T06:21:31.909Z"
+    "lastVerified": "2026-11-06T20:37:59.465Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -4241,8 +4239,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:53:14.470Z",
-    "lastVerified": "2026-11-05T11:53:14.470Z",
+    "lastChecked": "2026-11-06T20:38:06.974Z",
+    "lastVerified": "2026-11-06T20:38:06.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -10299,9 +10297,9 @@
   "berkaycubuk-kitsune": {
     "name": "kitsune",
     "officialUrl": "https://github.com/berkaycubuk/kitsune",
-    "lastChecked": "2026-11-03T16:40:20.384Z",
+    "lastChecked": "2026-11-06T20:38:01.977Z",
     "revisionIdentifier": "616da5b1",
-    "lastVerified": "2026-11-03T16:40:20.384Z"
+    "lastVerified": "2026-11-06T20:38:01.977Z"
   },
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",

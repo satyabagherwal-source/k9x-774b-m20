@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a41e019a",
+    "sourceVersion": "1a23cb72",
     "license": "MIT",
-    "contentHash": "5631f6dfdf8d1c2c2199ffb843fb1daf4fd15bb73b0e91434317e878a808f7d7",
-    "lastHarvestedAt": "2026-11-06T15:20:53.687Z",
+    "contentHash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
+    "lastHarvestedAt": "2026-11-06T20:38:18.891Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "00354062",
+    "sourceVersion": "b5f748ab",
     "license": "Apache-2.0",
-    "contentHash": "c63451d8b1829eeea9a4720c9e719052b6afba73215d78d945be32b8a13fe0fd",
-    "lastHarvestedAt": "2026-11-05T19:00:24.225Z",
+    "contentHash": "1f11f1d5be0f416e1c71391131339e914251b39c52960ecfa34119477e3c0a2f",
+    "lastHarvestedAt": "2026-11-06T20:38:17.008Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "d3063b15",
+    "sourceVersion": "41584c75",
     "license": "Apache-2.0",
-    "contentHash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
-    "lastHarvestedAt": "2026-11-05T10:58:15.800Z",
+    "contentHash": "5b1ec118cd3eb95d02fc856b4cfb81cb712e1615f7f355a88b2b71b2d297a770",
+    "lastHarvestedAt": "2026-11-06T20:38:20.713Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

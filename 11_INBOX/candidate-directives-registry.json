@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T19:23:48.739Z",
+  "last_updated": "2026-11-06T20:38:18.898Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4028,6 +4028,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat"
+    },
+    {
+      "id": "CD-SHEA",
+      "directive_title": "skills): experience-guided skill prior (on by default) and its controlled test (",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "1a23cb72",
+      "date_staged": "2026-11-06",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

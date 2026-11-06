@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `d3063b15`  
+> **Source Version**: `41584c75`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:58:15.024Z  
+> **Timestamp**: 2026-11-06T20:38:18.897Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:58:15.016Z  
+> **Harvest Timestamp**: 2026-11-06T20:38:18.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46600 stars
+- **Stars / Engagement**: 46608 stars
 
 ---
 
@@ -647,9 +647,7 @@ func GetMilvusRoles(args []string, flags *flag.FlagSet) *roles.MilvusRoles {
 	case typeutil.DataNodeRole:
 		role.EnableDataNode = true
 	case typeutil.StreamingNodeRole:
-		sessionutil.EnableEmbededQueryNodeLabel()
 		role.EnableStreamingNode = true
-		role.EnableQueryNode = true
 	case typeutil.StandaloneRole, typeutil.EmbeddedRole:
 		role.EnableMixCoord = true
 		role.EnableProxy = true
@@ -669,10 +667,6 @@ func GetMilvusRoles(args []string, flags *flag.FlagSet) *roles.MilvusRoles {
 		role.EnableDataNode = enableDataNode
 		role.EnableProxy = enableProxy
 		role.EnableStreamingNode = enableStreamingNode
-		if enableStreamingNode && !enableQueryNode {
-			role.EnableQueryNode = true
-			sessionutil.EnableEmbededQueryNodeLabel()
-		}
 
 	case typeutil.CDCRole:
 		role.EnableCDC = true
@@ -1412,14 +1406,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55166** (2026-11-05): **test: build big_entities lazily in stability/test_restart.py**
-  *Symptoms*: ## Problem  `tests/python_client/testcases/stability/test_restart.py` builds `big_entities = gen_entities(100000)` at module level. pytest imports every module during collection, so each pytest-xdist worker materialises 100k 128-dim float vectors as Python lists (~650 MB) before any test runs. Every test in this module is named `_test_*`, so pytest never collects any of them; the memory is spent for nothing.  With `-n 32` per suite, that is ~20 GB per python_client suite, and nightly runs several suites in parallel on the same host. On a 119 GB host running the nightly suites concurrently, python workers peaked at ~76 GB about 3 minutes after start (during collection), MemAvailable dropped to 1.6 GB and the standalone Milvus under test was OOM-killed.  ## Change  Generate the entities on first use through a cached `big_entities()` helper. The test bodies only change `big_entities` to `big_entities()`.  ## Verification  Same venv, whole-tree `pytest --collect-only -q testcases` (single process, i.e. one worker's collection cost), two runs each:  | | peak RSS | collected | |---|---|---| | master | 1,116,968 KB / 1,118,380 KB | 5408 | | this PR | 459,444 KB / 459,460 KB | 5408 |  - Collected node IDs are identical before and after (sorted diff is empty); `test_restart.py` still collects 0 tests. - `big_entities()` returns the same cached object on repeated calls, with the same field names and row counts (`int64`, `float`, `float_vector`, 100000 rows each) as `gen_entities(100000
-  **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > /lgtm /approve
+- **Issue #55222** (2026-11-06): **fix: report NumPy import schema errors through the job instead of the proxy**
+  *Symptoms*: issue: #55220  ## What this changes  This reverts the redundant NumPy schema check that #54794 added to the proxy. `ImportTask.PreExecute` no longer calls `numpy.ValidateSchema`; a NumPy import with an invalid schema now creates a job and fails in preimport, like every other import schema error.  ## Why  Before this, NumPy schema errors were rejected synchronously: `code=2100` with an empty `jobID`. Parquet schema errors and NumPy header errors (dimension, element type, shape) still created a job and failed later, so the same kind of input produced two different client flows.  The proxy call came from the element-null work, where a NumPy file named after a struct sub-field was silently dropped; rejecting it at the API boundary kept a job from being created. A later change moved the remaining field rules (auto-id, function output, unsupported type, missing required field) into the shared `ValidateSchema`, which widened the synchronous rejection well beyond that intent.  ## Where the checks still run  Every NumPy consumer calls the same function before reading any data:  - Import V2 preimport and import: `numpy.NewReader` -> `CreateReaders` -> `ValidateSchema` - Import V3 row count: `NumRowsAndBytes` -> `ValidateSchema`, so zero-row inputs are covered - Import V3 reshard reader: `NewReader` -> `CreateReaders` -> `ValidateSchema`  A failed preimport marks the job `Failed` with the same `ErrImportFailed` (2100, InputError, non-retryable) reason, and nothing writes data.  ## Test 
 
-- **Issue #55156** (2026-11-05): **enhance: [2.6] restrict AWS credential sources in chunk managers**
-  *Symptoms*:  issue: #54503 pr: #54504  Backport #54504 to `2.6`. `AwsChunkManager` and `MinioChunkManager` use the shared storage AWS credential chain: environment credentials, then IRSA, with EC2 instance-profile credentials available only when `AWS_EC2_METADATA_ENABLE=true` (case-insensitive). Accept AK/SK without a session token while retaining this branch's existing AK/SK assertions.  Pin milvus-storage to `48823358`, the merged `2.6` credential-chain backport: https://github.com/milvus-io/milvus-storage/pull/775.  Backport adaptations: - Use the public `s3_fs.h` header and the existing 2.6 ChunkManager paths. - The master-only `test_s3_endpoint_auth.cpp` fixture/endpoint guard and `segcore_error_boundary_baseline.txt` infrastructure are absent on this branch and are not imported. The storage pin contains its credential-policy regression tests; ChunkManager runtime coverage is not verified here.  Validation: static review of the provider declaration/implementation, credential ordering and EC2 opt-in, both ChunkManager call sites, and existing include/link configuration; `git diff --check`; `clang-format-12 --dry-run --Werror` on both changed C++ files. No compilation or tests run, as requested. 
+- **Issue #55214** (2026-11-06): **enhance: [3.0] broadcast file resource metadata through WAL (#54562)**
+  *Symptoms*: relate: #54518 pr: https://github.com/milvus-io/milvus/pull/54562  ## Summary  Broadcast AddFileResource and RemoveFileResource metadata through WAL, preserving source resource IDs and idempotent ACK replay. Node synchronization stays with the existing observer; file transfer, existing-resource bootstrap, cross-PChannel readiness, and failover remain follow-ups. Validation on the 3.0 baseline relies on PR CI; live dual-cluster CDC and failover have not been run. 
+  **Post-Mortem & Fix Analysis**:
+  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+  > <!-- ciloop-result-3824 --> ### :white_check_mark: CI Loop Results  `ffbc584`  | Stage | Result | Duration | Tests | |-------|--------|----------|-------| | :white_check_mark: Build | SUCCESS | 11.4min | - | | :white_check_mark: Code-Check | SUCCESS | 4.9min | - | | :white_check_mark: UT-Integration | SUCCESS | 34.0min | - | | :white_check_mark: UT-GO | SUCCESS | 26.9min | - | | :white_check_mark: UT-CPP-Cov | SUCCESS | 32.4min | 9191 total, 9191 passed, 0 failed |  **Total:** 57min | [Pipeline](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/3824/pipeline-overview/) | [Artifacts](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/3824/artifact)  **Overall Coverage:** 75.4% **Diff Coverage:** Go 95.0% (172 hit, 9 miss, 181 measurable lines, 594 unmeasured) **Diff Coverage HTML:** [view changed lines](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,1089 +1430,1219 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de9d02bb` (2026-11-05)
-**Commit Message**: fix: keep the search timestamp in the search requery (#55068)
+### Incident Patch 1: `5f9a1114` (2026-11-06)
+**Commit Message**: enhance: bound memory of ORDER BY ... LIMIT in segcore SortBuffer with a selection algorithm (#54383)
 
-issue: #55066
+issue: #53846
 
-## Problem
+### Problem (investigated hotspot)
 
-`requeryOperator.requery` builds the requery `RetrieveRequest.Base`
-without a timestamp. The guard in `QueryTask.SetTs` that keeps a
-requery's preset timestamp (`t.reQuery && t.Base.Timestamp != 0`)
-therefore never applies, and the scheduler gives the requery a new
-timestamp (the proxy wall clock, since a requery always skips TSO
-allocation). `QueryTask.PreExecute` derives from that timestamp:
+Before making changes, I looked for the bottleneck in `ORDER BY ...
+LIMIT`. When K is small, most of the time goes to memory operations:
+`SortBuffer` stores every row and frees it later, even though most rows
+are discarded.
 
-- the collection TTL cutoff (`CollectionTtlTimestamps`), under every
-consistency level;
-- the guarantee timestamp and the entity TTL cutoff
-(`EntityTtlPhysicalTime`), under Bounded. Strong passes the search's
-guarantee through, and Session / Customized / Eventually do not depend
-on the timestamp.
+| 1M rows | K | total | alloc (`newRow`) | `store` | free | **memory
+ops** | sort |
+|---|---|---|---|---|---|---|---|
+| INT64 key, INT64 pk | 100 | 82 ms | 46% | 19% | 25% | **90%** | 7% |
+| | 16384 | 120 ms | 41% | 16% | 15% | **72%** | 25% |
+| INT64 key, VARCHAR pk | 100 | 221 ms | 22% | 43% | 31% | **96%** | 3%
+|
+| | 16384 | 226 ms | 19% | 37% | 29% | **85%** | 12% |
+| VARCHAR key, INT64 pk | 100 | 205 ms | 21% | 38% | 32% | **91%** | 8%
+|
+| | 16384 | 259 ms | 17% | 30% | 24% | **70%** | 28% |
+| INT64 key (full sort) | 1M | 475 ms | 8% | 4% | 5% | 17% | **79%** |
 
-Reads still use the search's per-channel MVCC (`channelsMvcc` overrides
-MVCC and guarantee per shard), so only the TTL cutoffs differ. Segcore
-applies both cutoffs to the retrieve (`MvccNode` for collection TTL, the
-TTL field filter for entity TTL). A row that expires between the search
-and the requery is returned by the search and filtered out by the
-requery, and the search fails with `ErrInconsistentRequery`
+The existing `partial_sort` **is not an equivalent optimization**: it
+reduces comparisons, not the O(N) memory work. To bound memory I
+compared a heap with a selection algorithm. Rough numbers from an
+experimental revision, 1M rows, speedup over b
 
-**File**: `internal/proxy/dql/requery_integration_test.go` (modified, +82/-0)
+**File**: `internal/core/src/exec/SortBuffer.cpp` (modified, +178/-30)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"context"
- 	"strconv"
- 	"testing"
-+	"time"
+@@ -18,13 +18,71 @@
  
- 	"github.com/cockroachdb/errors"
- 	"github.com/stretchr/testify/assert"
-@@ -41,6 +42,7 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
- 	"github.com/milvus-io/milvus/pkg/v3/util/timerecord"
-+	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
+ #include <algorithm>
+ #include <functional>
++#include <limits>
++#include <string_view>
  
-@@ -221,6 +223,86 @@ func TestSearchTask_Requery(t *testing.T) {
- 	})
+ #include "common/EasyAssert.h"
+ #include "log/Log.h"
+ 
+ namespace milvus {
+ namespace exec {
+ 
++namespace {
++
++// With a limit, up to kCandidateBufferFactor * limit candidate rows are kept
++// before shrinking back to limit. The slack amortizes each O(n) selection
++// over the (factor - 1) * limit rows accepted in between.
++constexpr int64_t kCandidateBufferFactor = 2;
++
++// Left-hand side of SortBuffer::CompareImpl(): a row stored in the
++// RowContainer.
++struct StoredRow {
++    const char* row;
++
++    bool
++    IsNull(int32_t, const RowColumn& column) const {
++        return RowContainer::isNullAt(
++            row, column.nullByte(), column.nullMask());
++    }
++    template <typename T>
++    T
++    ValueAt(int32_t, const RowColumn& column) const {
++        return RowContainer::valueAt<T>(row, column.offset());
++    }
++    const std::string*
++    StrAt(int32_t, const RowColumn& column) const {
++        return RowContainer::strAt(row, column.offset());
++    }
++};
++
++// Left-hand side of SortBuffer::CompareImpl(): an input row that has not been
++// stored, read straight from its column vectors. Values are read exactly as
++// RowContainer::storeWithNull()/storeNoNulls() read them (ValidAt and
++// RawValueAt), so comparing in place equals comparing the stored row, and
++// strings are viewed without being copied.
++struct InputRow {
++    const std::vector<ColumnVectorPtr>& columns;
++    vector_size_t index;
++
++    bool
++    IsNull(int32_t column_index, const RowColumn&) const {
++        return !columns[column_index]->ValidAt(index);
++    }
++    template <typename T>
++    T
++    ValueAt(int32_t column_index, const RowColumn&) const {
++        return *static_cast<const T*>(
++            columns[column_index]->RawValueAt(index, sizeof(T)));
++    }
++    const std::string*
++    StrAt(int32_t column_index, const RowColumn&) const {
++        return static_cast<const std::string*>(
++            columns[column_index]->RawValueAt(index, sizeof(std::string)));
++    }
++};
++
++}  // namespace
++
+ SortBuffer::SortBuffer(const std::vector<DataType>& column_types,
+                        const std::vector<SortKeyInfo>& sort_keys,
+                        int64_t limit)
+@@ -47,6 +105,13 @@ SortBuffer::SortBuffer(const std::vector<DataType>& column_types,
+     // Create RowContainer with no accumulators (pure data storage)
+     std::vector<Accumulator> empty_accumulators;
+     data_ = std::make_unique<RowContainer>(column_types_, empty_accumulators);
++
++    if (limit_ > 0) {
++        candidate_capacity_ = limit_ > std::numeric_limits<int64_t>::max() /
++                                           kCandidateBufferFactor
++                                  ? std::numeric_limits<int64_t>::max()
++                                  : limit_ * kCandidateBufferFactor;
++    }
  }
  
-+// TestSearchTask_RequeryKeepsSearchTimestamp checks that the requery task keeps
-+// the search timestamp through scheduling, so its guarantee and TTL cutoffs
-+// match the search. Otherwise a row that expires between the search and the
-+// requery is missing from the requery and the search fails with
-+// ErrInconsistentRequery.
-+func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
-+	const (
-+		collectionName = "test_collection"
-+		collectionID   = int64(100)
-+	)
-+	ctx := context.Background()
-+	searchTime := time.Unix(1_700_000_000, 0)
-+	searchTS := tsoutil.ComposeTSByTime(searchTime)
-+	schedulerTS := tsoutil.ComposeTSByTime(searchTime.Add(2 * time.Second))
-+	collectionTTL := time.Hour
-+	gracefulTime := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
+ void
+@@ -58,6 +123,13 @@ SortBuffer::AddRow(const std::vector<ColumnVectorPtr>& columns,
+                column_types_.size(),
+                columns.size());
+ 
++    // With a limit, only rows that can still make the top limit_ are stored
++    if (limit_ > 0) {
++        OfferRow(columns, row_index);
++        num_input_rows_++;
++        return;
++    }
 +
-+	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
-+		Name: collectionName,
-+		Fields: []*schemapb.FieldSchema{
-+			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
-+			{FieldID: 101, Name: "vec", DataType: schemapb.DataType_FloatVector, TypeParams: []*commonpb.KeyValuePair{{Key: common.DimKey, Value: "4"}}},
+     // Allocate a new row in RowContainer
+     char* row = data_->newRow();
+ 
+@@ -82,6 +154,16 @@ SortBuffer::AddRows(const std::vector<ColumnVectorPtr>& columns,
+         return;
+     }
+ 
++    // With a limit, rows go through OfferRow() instead of being stored in bulk
++    if (limit_ > 0) {
++        for (vector_size_t i = 0; i < num_rows; ++i) {
++            OfferRow(columns, i);
++        }
++        num_input_rows_ += num_rows;
++        return;
++    }
++
++    // Without a limit
+     // Phase 1: Batch-allocate all rows upfront
+     std::vector<char*> new_rows(num_rows);
+     for (vector_size_t i = 0; i < num_rows; ++i) {
+@@ -100,6 +182,60 @@ SortBuffer::AddRows(const std::vector<ColumnVectorPtr>& columns,
+     num_input_rows_ += num_rows;
+ }
+ 
++// Bounded TopK (threshold + periodic selection): stores the input row as a
++// candidate unless it can no longer make the top limit_; when the candidates
++// are full, first shrinks them back to limit_ with a selection algorithm.
++void
++SortBuffer::OfferRow(const std::vector<ColumnVectorPtr>& columns,
++                     vector_size_t row_index) {
++    // A row that is not strictly better than the threshold can never make the
++    // top limit_: at least limit_ candidates already compare <= it, and the
++    // threshold only improves. Such rows are compared in place and never
++    // stored. Ties are rejected too; as with the (unstable) sort, no
++    // particular row among equal keys is guaranteed to be kept.
++    if (threshold_row_ != nullptr &&
++        CompareInput(columns, row_index, threshold_row_) >= 0) {
++        return;
++    }
++
++    // Only a row that is kept needs room, so shrink just before storing it
++    if (static_cast<int64_t>(sorted_rows_.size()
+```
+
+**File**: `internal/core/src/exec/SortBuffer.h` (modified, +50/-3)
+```diff
+@@ -52,7 +52,11 @@ struct SortKeyInfo {
+  * - Pointer-based sorting: Only sorts pointers (8 bytes each), not row data
+  * - Multi-field sorting: Supports compound ORDER BY (field1 ASC, field2 DESC)
+  * - NULL handling: Configurable NULLS FIRST/LAST per sort key
+- * - TopK optimization: Uses partial_sort when limit is small relative to input
++ * - TopK optimization: With a limit, rows that cannot make the top limit are
++ *   rejected on arrival and never stored; at most 2 * limit candidate rows
++ *   are kept and shrunk back to limit with a selection algorithm
++ *   (std::nth_element) when full. The final sort orders the candidates and
++ *   the result is truncated to limit
+  * - Batched output: Returns results in configurable batch sizes
+  *
+  * Usage pattern:
+@@ -63,7 +67,8 @@ struct SortKeyInfo {
+  *
+  * Memory model:
+  *   - Current implementation is memory-only (no disk spilling)
+- *   - Memory usage: O(rows * row_size) for data + O(rows * 8) for pointers
++ *   - Memory usage: O(n * row_size) for data + O(n * 8) for pointers, where
++ *     n = rows without a limit, and n <= 2 * limit with a limit
+  *
+  * @note This class is NOT thread-safe. External synchronization is required
+  *       if used from multiple threads.
+@@ -241,6 +246,42 @@ class SortBuffer {
+     std::vector<VectorPtr>
+     ExtractOutput(int64_t num_rows);
+ 
++    /**
++     * @brief With a limit: add one input row to the candidate rows, unless it
++     *        can no longer make the top limit_
++     */
++    void
++    OfferRow(const std::vector<ColumnVectorPtr>& columns,
++             vector_size_t row_index);
++
++    /**
++     * @brief With a limit: keep the best limit_ candidate rows, release the
++     *        rest for reuse and update the rejection threshold
++     */
++    void
++    ShrinkCandidates();
++
++    /**
++     * @brief Compare a not yet stored input row against a stored row
++     *
++     * Same semantics as Compare(input_row, row); the input row's sort keys
++     * are read directly from the column vectors.
++     */
++    int
++    CompareInput(const std::vector<ColumnVectorPtr>& columns,
++                 vector_size_t row_index,
++                 const char* row) const;
++
++    /**
++     * @brief Shared implementation of Compare() and CompareInput()
++     *
++     * @tparam Lhs Accessor for the left-hand row (a stored row, or an input
++     *             row read from column vectors)
++     */
++    template <typename Lhs>
++    int
++    CompareImpl(const Lhs& lhs, const char* rhs) const;
++
+     //=========================================================================
+     // Data Members
+     //=========================================================================
+@@ -254,9 +295,15 @@ class SortBuffer {
+     std::unique_ptr<RowContainer> data_;
+ 
+     // Sorted row pointers (8 bytes per row)
+-    // After Sort(), these point to rows in data_ in sorted order
++    // After Sort(), these point to rows in data_ in sorted order.
++    // With a limit, during input these are the (unordered) candidate rows.
+     std::vector<char*> sorted_rows_;
+ 
++    // TopK state, only used with a limit
++    int64_t candidate_capacity_ = 0;       // shrink candidates when reached
++    const char* threshold_row_ = nullptr;  // worst row kept by last shrink
++    std::vector<char*> free_rows_;  // released rows, reused before newRow()
++
+     // State tracking
+     bool sorted_ = false;
+     int64_t num_input_rows_ = 0;
+```
+
+**File**: `internal/core/src/exec/operator/query-agg/RowContainer.h` (modified, +18/-0)
+```diff
+@@ -467,6 +467,24 @@ class RowContainer {
+         numRows_ = 0;
+     }
+ 
++    /// Frees the strings owned by 'row' (same per-row logic as clear()) and
++    /// re-initializes it, so the row can be reused for another store(). The
++    /// row stays owned by the container.
++    void
++    resetRow(char* row) {
++        for (auto i = 0; i < variable_offsets_.size(); i++) {
++            auto& off = variable_offsets_[i];
++            auto& row_col = columnAt(variable_idxes_[i]);
++            bool isStrNull =
++                isNullAt(row, row_col.nullByte(), row_col.nullMask());
++            auto str = *reinterpret_cast<std::string**>(row + off);
++            if (!isStrNull && str) {
++                delete str;
++            }
++        }
++        initializeRow(row);
++    }
++
+     char*
+     initializeRow(char* row);
+ 
+```
+
+**File**: `internal/core/unittest/test_sort_buffer.cpp` (modified, +335/-0)
+```diff
+@@ -12,8 +12,14 @@
+ #include <gtest/gtest.h>
+ 
+ #include <algorithm>
++#include <cmath>
++#include <iomanip>
++#include <limits>
+ #include <memory>
+ #include <random>
++#include <set>
++#include <sstream>
++#include <string>
+ #include <vector>
+ 
+ #include "common/Types.h"
+@@ -1151,3 +1157,332 @@ TEST_F(SortBufferTest, NonSortColumnPreserved) {
+     EXPECT_EQ(raw[1], "two");
+     EXPECT_EQ(raw[2], "three");
+ }
++
++// =========================================================================
++// TopK (limit > 0): the result must equal the first `limit` rows of a full
++// sort (limit = -1), and every output row must still carry its own columns.
++// =========================================================================
++
++namespace {
++
++struct TopKSpec {
++    DataType key_type = DataType::INT64;
++    bool nullable = false;
++    int64_t key_cardinality = 0;  // 0 = (almost) unique keys
++    bool second_key = false;      // add a VARCHAR second sort key
++    bool varchar_pk = false;
++    int sorted_input = 0;  // +1 / -1: key increases / decreases with arrival
++};
++
++// Columns: [pk, key, (key2 varchar), row_id (int64)]
++struct TopKTable {
++    std::vector<DataType> types;
++    std::vector<std::vector<ColumnVectorPtr>> batches;
++    std::vector<vector_size_t> batch_rows;
++};
++
++void
++SetKey(const ColumnVectorPtr& col, size_t i, DataType type, int64_t v) {
++    switch (type) {
++        case DataType::BOOL:
++            col->SetValueAt<bool>(i, (v & 1) != 0);
++            break;
++        case DataType::INT8:
++            col->SetValueAt<int8_t>(i, static_cast<int8_t>(v));
++            break;
++        case DataType::INT16:
++            col->SetValueAt<int16_t>(i, static_cast<int16_t>(v));
++            break;
++        case DataType::INT32:
++            col->SetValueAt<int32_t>(i, static_cast<int32_t>(v));
++            break;
++        case DataType::INT64:
++        case DataType::TIMESTAMPTZ:
++            col->SetValueAt<int64_t>(i, v);
++            break;
++        case DataType::FLOAT:
++            // every 13th value is NaN, which sorts as the largest value
++            col->SetValueAt<float>(i,
++                                   v % 13 == 0
++                                       ? std::numeric_limits<float>::quiet_NaN()
++                                       : static_cast<float>(v % 100000) / 3);
++            break;
++        case DataType::DOUBLE:
++            col->SetValueAt<double>(
++                i,
++                v % 13 == 0 ? std::numeric_limits<double>::quiet_NaN()
++                            : static_cast<double>(v) / 7);
++            break;
++        default:  // VARCHAR
++            col->SetValueAt<std::string>(i, "k" + std::to_string(v));
++    }
++}
++
++TopKTable
++GenerateTopKTable(const TopKSpec& spec,
++                  int64_t num_rows,
++                  uint64_t seed,
++                  int64_t batch_size = 256) {
++    TopKTable table;
++    table.types = {spec.varchar_pk ? DataType::VARCHAR : DataType::INT64,
++                   spec.key_type};
++    if (spec.second_key) {
++        table.types.push_back(DataType::VARCHAR);
++    }
++    table.types.push_back(DataType::INT64);
++
++    std::mt19937_64 rng(seed);
++    for (int64_t start = 0; start < num_rows; start += batch_size) {
++        auto n = std::min(batch_size, num_rows - start);
++        std::vector<ColumnVectorPtr> cols;
++        for (auto type : table.types) {
++            cols.push_back(std::make_shared<ColumnVector>(type, n));
++        }
++        for (int64_t i = 0; i < n; ++i) {
++            int64_t id = start + i;
++            uint64_t r = rng();
++            if (spec.varchar_pk) {
++                cols[0]->SetValueAt<std::string>(i, "pk-" + std::to_string(id));
++            } else {
++                cols[0]->SetValueAt<int64_t>(i, id);
++            }
++            if (spec.nullable && r % 10 == 0) {
++                cols[1]->nullAt(i);
++            } else {
++                int64_t v =
++                    spec.sorted_input > 0   ? id
++                    : spec.sorted_input < 0 ? num_rows - id
++                    : spec.key_cardinality > 0
++                        ? static_cast<int64_t>((r >> 8) % spec.key_cardinality)
++                        : static_cast<int64_t>(r >> 2);
++                SetKey(cols[1], i, spec.key_type, v);
++            }
++            if (spec.second_key) {
++                if (spec.nullable && r % 7 == 0) {
++                    cols[2]->nullAt(i);
++                } else {
++                    cols[2]->SetValueAt<std::string>(
++                        i, "s" + std::to_string((r >> 40) % 5));
++                }
++            }
++            cols.back()->SetValueAt<int64_t>(i, id);
++        }
++        table.batches.push_back(std::move(cols));
++        table.batch_rows.push_back(static_cast<vector_size_t>(n));
++    }
++    return table;
++}
++
++template <typename T>
++std::string
++RenderFloat(T v) {
++    if (std::isnan(v)) {
++        return "nan";
++    }
++    std::ostringstream os;
++    os << std::setprecision(std::numeric_li
+```
+
+---
+
+### Incident Patch 2: `6049ebb7` (2026-11-06)
+**Commit Message**: fix: Preserve derived artifacts during deltalog refresh (#52892)
+
+issue: #51819
+
+## What was changed
+
+- Stage fresh source columns and the complete refreshed deltalog set
+together
+with unchanged Function output column groups and retained manifest
+stats,
+  then commit one complete target manifest. Reuse Go-owned column-group
+  descriptors to preserve all packed-writer file properties.
+- Start from an empty snapshot in the existing segment namespace so old
+  target deltalogs are not retained. Prepare real-PK L0 references or
+  virtual-PK translated deltalogs before the final transaction.
+- Derive text and JSON stats placeholders from the retained entries
+before
+committing, and preserve them when DataCoord adopts the refresh result.
+Source imports only replace bloom-filter stats, so no post-commit stats
+  reread is needed.
+- Use manifest contents as the source of truth when checking Function
+output
+  columns, with fake binlogs retained only as the legacy fallback.
+- Validate manifest FFI arrays and retained column ownership/row
+alignment.
+  Remove the obsolete carry and intermediate-manifest cleanup helpers.
+- Keep real-I/O manifest test fixtures under their temporary storage
+roots so
+
+**File**: `docs/design-docs/design_docs/20260526-external_table_add_column_refresh.md` (modified, +19/-6)
+```diff
+@@ -240,9 +240,9 @@ For each current segment:
+ 1. If any fragment is missing from the new external fragment set, the segment
+    is invalidated and its surviving fragments are treated as orphan fragments.
+ 2. If all fragments still exist and all current external fields are covered by
+-   fake binlogs, the segment is kept unchanged.
+-3. If all fragments still exist but some external fields are missing from fake
+-   binlog `ChildFields`, the segment is patched in place.
++   fake binlogs or the pinned manifest, the segment is kept unchanged.
++3. If all fragments still exist but some external fields are absent from both
++   fake binlog `ChildFields` and the pinned manifest, the segment is patched in place.
+ 
+ Orphan fragments are still balanced into new segments using the existing
+ refresh path.
+@@ -252,9 +252,14 @@ refresh path.
+ DataNode derives target external fields from the task schema:
+ 
+ - Only fields with `external_field` are considered.
+-- Existing coverage is read from segment fake binlog `ChildFields`.
+-- A field is missing if the schema requires it and no fake binlog child field
+-  covers it.
++- Existing coverage is first read from segment fake binlog `ChildFields`.
++- Fields not advertised there are checked together against the pinned segment
++  manifest. StorageV3 fake binlogs are not persisted, so their absence after a
++  DataCoord restart does not prove that the physical columns are missing.
++- `StorageColumnResolver` supplies physical names for this check: numeric field
++  IDs for `milvus-table`, and `external_field` names for ordinary file formats.
++- Only fields absent from both sources are returned as missing. Manifest read
++  failures abort the task rather than being treated as missing columns.
+ 
+ The missing set is expressed as external column names, not Milvus field IDs,
+ because manifest column groups reference external source column names.
+@@ -277,6 +282,14 @@ When missing columns are detected for an otherwise unchanged segment, DataNode:
+ The old segment is not mutated in DataNode. DataCoord performs the actual meta
+ patch after validation.
+ 
++The sampling, memory estimate, and fake-binlog construction are shared with
++manifest-only deltalog updates. After catalog recovery a StorageV3 segment can
++have all physical columns but no fake binlogs. Before returning such a same-ID
++manifest patch, DataNode reconstructs its fake binlogs from the final manifest
++without appending columns or recomputing Functions. Existing binlogs are reused;
++sampling failure aborts the task without publishing a partial result. Unchanged
++segments returned only through `kept_segments` do not need this reconstruction.
++
+ ### 6.4 Worker Response
+ 
+ `GetUpdatedSegments()` returns only segments DataCoord should upsert:
+```
+
+**File**: `internal/core/src/storage/loon_ffi/milvus_table_c.cpp` (modified, +22/-43)
+```diff
+@@ -805,32 +805,27 @@ AppendSourceDeltalogs(LoonTransactionHandle transaction,
+ 
+ }  // namespace
+ 
+-// loon_milvus_table_create_manifest_from_segment_manifests creates one target
+-// StorageV3 manifest from source StorageV3 segment manifests. Real-PK mode also
+-// imports source deltalogs and bloom-filter stats; virtual-PK mode leaves delete
+-// translation to DataNode. On success it reports the committed version and,
+-// when out_manifest_size is not null, the byte size of the committed manifest.
++// Stage source column groups on a caller-owned transaction without committing.
++// DataNode can add translated deletes and retained Function output/stats before
++// the single commit, so refresh never needs an incomplete intermediate manifest.
++// Only bloom-filter stats are imported from the source; text/JSON stats remain
++// target-owned and are supplied by the caller.
+ extern "C" LoonFFIResult
+-loon_milvus_table_create_manifest_from_segment_manifests(
+-    const char* base_path,
+-    char** source_manifest_paths,
+-    const int64_t* source_row_counts,
+-    size_t num_source_manifests,
+-    char** target_columns,
+-    size_t num_target_columns,
+-    const char* external_source,
+-    const LoonProperties* properties,
+-    int has_external_primary_key,
+-    int64_t* out_committed_version,
+-    int64_t* out_manifest_size) {
+-    if (base_path == nullptr || source_manifest_paths == nullptr ||
++loon_milvus_table_append_source_manifests(LoonTransactionHandle transaction,
++                                          char** source_manifest_paths,
++                                          const int64_t* source_row_counts,
++                                          size_t num_source_manifests,
++                                          char** target_columns,
++                                          size_t num_target_columns,
++                                          const char* external_source,
++                                          const LoonProperties* properties,
++                                          int has_external_primary_key) {
++    if (transaction == 0 || source_manifest_paths == nullptr ||
+         source_row_counts == nullptr || num_source_manifests == 0 ||
+-        target_columns == nullptr || num_target_columns == 0 ||
+-        out_committed_version == nullptr) {
+-        RETURN_ERROR(
+-            LOON_INVALID_ARGS,
+-            "base_path, source_manifest_paths, source_row_counts, "
+-            "target_columns, and out_committed_version must not be empty");
++        target_columns == nullptr || num_target_columns == 0) {
++        RETURN_ERROR(LOON_INVALID_ARGS,
++                     "transaction, source_manifest_paths, source_row_counts, "
++                     "and target_columns must not be empty");
+     }
+ 
+     try {
+@@ -844,17 +839,6 @@ loon_milvus_table_create_manifest_from_segment_manifests(
+             target_column_set.emplace(target_columns[i]);
+         }
+ 
+-        TransactionGuard transaction;
+-        ThrowIfFFIError(
+-            loon_transaction_open(base_path,
+-                                  properties,
+-                                  0,
+-                                  /*manifest_size=*/-1,
+-                                  LOON_TRANSACTION_RESOLVE_OVERWRITE,
+-                                  10,
+-                                  &transaction.handle),
+-            "open milvus-table target manifest transaction");
+-
+         std::unordered_set<std::string> added_delta_paths;
+         std::unordered_set<std::string> added_stat_paths;
+         std::map<std::string, StatData> imported_stats;
+@@ -886,12 +870,12 @@ loon_milvus_table_create_manifest_from_segment_manifests(
+             }
+ 
+             auto target_groups = MaterializeColumnGroups(target_groups_data);
+-            ThrowIfFFIError(loon_transaction_append_files(transaction.handle,
++            ThrowIfFFIError(loon_transaction_append_files(transaction,
+                                                           target_groups.groups),
+                             "append milvus-table source column groups");
+ 
+             if (has_external_primary_key) {
+-                AppendSourceDeltalogs(transaction.handle,
++                AppendSourceDeltalogs(transaction,
+                                       source_manifest.manifest->delta_logs,
+                                       external_source,
+                                       properties,
+@@ -904,12 +888,7 @@ loon_milvus_table_create_manifest_from_segment_manifests(
+             }
+         }
+ 
+-        AppendImportedStats(transaction.handle, imported_stats);
+-
+-        ThrowIfFFIError(
+-            loon_transaction_commit(
+-                transaction.handle, out_committed_version, out_manifest_size),
+-            "commit milvus-table target manifest");
++        AppendImportedStats(transaction, imported_stats);
+         RETURN_SUCCESS();
+     } catch (const LoonFFIError& e) {
+         // Preserve the producer's own err_code instead of collapsing to
+```
+
+**File**: `internal/core/unittest/test_loon_ffi_error_passthrough.cpp` (modified, +52/-28)
+```diff
+@@ -14,6 +14,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++#include <folly/ScopeGuard.h>
+ #include <gtest/gtest.h>
+ 
+ #include <string>
+@@ -25,18 +26,15 @@
+ 
+ // milvus_table_c.cpp exports this without a header of its own.
+ extern "C" LoonFFIResult
+-loon_milvus_table_create_manifest_from_segment_manifests(
+-    const char* base_path,
+-    char** source_manifest_paths,
+-    const int64_t* source_row_counts,
+-    size_t num_source_manifests,
+-    char** target_columns,
+-    size_t num_target_columns,
+-    const char* external_source,
+-    const LoonProperties* properties,
+-    int has_external_primary_key,
+-    int64_t* out_committed_version,
+-    int64_t* out_manifest_size);
++loon_milvus_table_append_source_manifests(LoonTransactionHandle transaction,
++                                          char** source_manifest_paths,
++                                          const int64_t* source_row_counts,
++                                          size_t num_source_manifests,
++                                          char** target_columns,
++                                          size_t num_target_columns,
++                                          const char* external_source,
++                                          const LoonProperties* properties,
++                                          int has_external_primary_key);
+ 
+ // The err_code a loon FFI call reports must survive milvus's OWN C-ABI export
+ // layer (milvus_table_c.cpp), whose tail returns a LoonFFIResult. That tail
+@@ -58,30 +56,56 @@ TEST(LoonFFIErrorPassthrough, NestedErrCodeSurvivesTheExportBoundary) {
+     std::vector<char*> manifests{missing_manifest.data()};
+     std::vector<int64_t> row_counts{1};
+     std::vector<char*> columns{column.data()};
+-    int64_t committed_version = -1;
+ 
+-    auto result = loon_milvus_table_create_manifest_from_segment_manifests(
+-        base_path.c_str(),
++    // Both the target transaction and the nested source read require valid
++    // properties. A null configuration fails with LOON_INVALID_ARGS before
++    // reaching the missing manifest, which is the failure this test exercises.
++    const char* keys[] = {loon_properties_fs_storage_type,
++                          loon_properties_fs_root_path};
++    const char* values[] = {"local", "/"};
++    LoonProperties properties{};
++    auto props_result = loon_properties_create(keys, values, 2, &properties);
++    SCOPE_EXIT {
++        loon_ffi_free_result(&props_result);
++        loon_properties_free(&properties);
++    };
++    ASSERT_NE(loon_ffi_is_success(&props_result), 0)
++        << loon_ffi_get_errmsg(&props_result);
++
++    LoonTransactionHandle transaction = 0;
++    auto begin = loon_transaction_open(base_path.c_str(),
++                                       &properties,
++                                       0,
++                                       -1,
++                                       LOON_TRANSACTION_RESOLVE_OVERWRITE,
++                                       10,
++                                       &transaction);
++    SCOPE_EXIT {
++        loon_ffi_free_result(&begin);
++        loon_transaction_destroy(transaction);
++    };
++    ASSERT_NE(loon_ffi_is_success(&begin), 0) << loon_ffi_get_errmsg(&begin);
++
++    auto result = loon_milvus_table_append_source_manifests(
++        transaction,
+         manifests.data(),
+         row_counts.data(),
+         manifests.size(),
+         columns.data(),
+         columns.size(),
+         /*external_source=*/nullptr,
+-        /*properties=*/nullptr,
+-        /*has_external_primary_key=*/0,
+-        &committed_version,
+-        /*out_manifest_size=*/nullptr);
++        &properties,
++        /*has_external_primary_key=*/0);
++    SCOPE_EXIT {
++        loon_ffi_free_result(&result);
++    };
+ 
+-    ASSERT_EQ(loon_ffi_is_success(&result), 0)
+-        << "a missing source manifest must fail";
+-    EXPECT_NE(result.err_code, LOON_GOT_EXCEPTION)
+-        << "the export boundary collapsed the producer's err_code to "
+-           "LOON_GOT_EXCEPTION; Go then classifies every failure of this entry "
+-           "point as permanent";
++    EXPECT_EQ(result.err_code, LOON_FILE_NOT_FOUND)
++        << "the export boundary must preserve the missing-manifest error, not "
++           "an argument error or a generic exception: "
++        << loon_ffi_get_errmsg(&result);
+     // The classification the Go side derives from the code must round-trip
+     // through milvus's own mapper as well.
+-    EXPECT_NE(milvus::storage::LoonErrCodeToErrorCode(result.err_code),
+-              milvus::ErrorCode::UnexpectedError);
+-    loon_ffi_free_result(&result);
++    EXPECT_EQ(milvus::storage::LoonErrCodeToErrorCode(result.err_code),
++              milvus::ErrorCode::ObjectNotExist);
+ }
+```
+
+**File**: `internal/datacoord/externalrefresh/checker.go` (modified, +4/-4)
+```diff
+@@ -525,10 +525,10 @@ func (c *externalCollectionRefreshChecker) AggregateJobState(job *datapb.Externa
+ 	// rest of its life, whatever the parameter says NOW. This is the only exit
+ 	// that does not re-run the apply, so keying it on the parameter instead of
+ 	// the marker would make turning the parameter off mid-wait replay the
+-	// apply - and applyExternalRefreshPatch clears TextStatsLogs/JsonKeyStats,
+-	// so that replay would discard indexes built during the very wait it was
+-	// disabling. Off now simply means release the job: finish it at once
+-	// without waiting, which is what an operator disabling the hold wants.
++	// apply with older text/JSON placeholders. That replay would discard stats
++	// built during the very wait it was disabling. Off now simply means release
++	// the job: finish it at once without waiting, which is what an operator
++	// disabling the hold wants.
+ 	if state == indexpb.JobState_JobStateFinished && job.GetIndexWaitStartedTime() != 0 {
+ 		if c.indexWaitEnabled() && !c.indexWaitDone(job) {
+ 			return
+```
+
+**File**: `internal/datacoord/externalrefresh/checker_test.go` (modified, +4/-4)
+```diff
+@@ -1547,10 +1547,10 @@ func TestExternalCollectionRefreshChecker_IndexWait(t *testing.T) {
+ 	t.Run("turning the parameter off mid-wait releases the job without re-applying", func(t *testing.T) {
+ 		// Keying the branch on the parameter rather than the marker would send
+ 		// an already-applied job down the generic transition, which carries a
+-		// pre-apply - and applyExternalRefreshPatch clears TextStatsLogs and
+-		// JsonKeyStats, so the replay would discard indexes built during the
+-		// very wait being disabled. An operator turning the hold off wants the
+-		// held jobs released, so the job finishes at once instead.
++		// pre-apply with older text/JSON placeholders. That replay would discard
++		// stats built during the very wait being disabled. An operator turning
++		// the hold off wants the held jobs released, so the job finishes at once
++		// instead.
+ 		mockey.PatchConvey("parameter off mid-wait", t, func() {
+ 			pt := paramtable.Get()
+ 			pt.Save(pt.DataCoordCfg.RefreshWaitForIndex.Key, "true")
+```
+
+**File**: `internal/datacoord/externalrefresh/task.go` (modified, +10/-7)
+```diff
+@@ -404,11 +404,11 @@ func applyExternalCollectionSegmentUpdateAtFence(
+ 				continue
+ 			}
+ 			if externalRefreshManifestAlreadyApplied(existing, incoming) {
+-				// Replaying a patch is NOT harmless: applyExternalRefreshPatch
+-				// clears TextStatsLogs and JsonKeyStats, so a second write
+-				// would discard a text index or JSON key stats built since the
+-				// first one, orphaning their files. A genuine patch always
+-				// installs a strictly newer manifest, so it still applies.
++				// Replaying a patch is NOT harmless: replacing placeholders
++				// from the same incoming result could discard text or JSON stats
++				// built since the first apply, orphaning their files. A genuine
++				// patch always installs a strictly newer manifest, so it still
++				// applies.
+ 				alreadyAppliedSegments[segmentID] = struct{}{}
+ 				mlog.Info(ctx, "external refresh segment patch already applied, skipping replay",
+ 					mlog.FieldSegmentID(segmentID))
+@@ -681,8 +681,11 @@ func applyExternalRefreshPatch(oldSeg *meta.SegmentInfo, incoming *datapb.Segmen
+ 	cloned.ManifestPath = incoming.GetManifestPath()
+ 	cloned.SchemaVersion = incoming.GetSchemaVersion()
+ 	cloned.Binlogs = incoming.GetBinlogs()
+-	cloned.TextStatsLogs = nil
+-	cloned.JsonKeyStats = nil
++	// The incoming placeholders describe the stats carried by the incoming
++	// manifest. Apply both atomically so deltalog-only refreshes do not trigger
++	// redundant text or JSON stats rebuilds.
++	cloned.TextStatsLogs = incoming.GetTextStatsLogs()
++	cloned.JsonKeyStats = incoming.GetJsonKeyStats()
+ 	if incoming.GetStorageVersion() != 0 {
+ 		cloned.StorageVersion = incoming.GetStorageVersion()
+ 	}
+```
+
+**File**: `internal/datacoord/externalrefresh/task_test.go` (modified, +35/-8)
+```diff
+@@ -1492,11 +1492,10 @@ func TestApplyExternalCollectionSegmentUpdateForBaseline_ReplayNewSegment(t *tes
+ }
+ 
+ func TestApplyExternalCollectionSegmentUpdateForBaseline_ReplayPatchedBaselineSegment(t *testing.T) {
+-	// A replayed patch is not harmless: applyExternalRefreshPatch clears
+-	// TextStatsLogs and JsonKeyStats unconditionally, so writing the same
+-	// result twice discards a text index or JSON key stats built between the
+-	// two applies and orphans their files. New segments have always had this
+-	// short-circuit; patches need it for the same reason.
++	// A replayed patch is not harmless: replacing placeholders from the same
++	// incoming result discards text or JSON stats built between the two applies
++	// and orphans their files. New segments have always had this short-circuit;
++	// patches need it for the same reason.
+ 	ctx := context.Background()
+ 	collectionID := int64(100)
+ 	segmentID := int64(10)
+@@ -1550,7 +1549,7 @@ func TestApplyExternalCollectionSegmentUpdateForBaseline_ReplayPatchedBaselineSe
+ 		"a genuine patch still invalidates the stats it supersedes")
+ }
+ 
+-func TestApplyExternalRefreshPatchClearsStatsPlaceholders(t *testing.T) {
++func TestApplyExternalRefreshPatchUsesIncomingStatsPlaceholders(t *testing.T) {
+ 	oldManifest := packed.MarshalManifestPath("files/insert_log/100/200/300", 1)
+ 	newManifest := packed.MarshalManifestPath("files/insert_log/100/200/300", 2)
+ 
+@@ -1560,6 +1559,8 @@ func TestApplyExternalRefreshPatchClearsStatsPlaceholders(t *testing.T) {
+ 			CollectionID:   100,
+ 			PartitionID:    200,
+ 			NumOfRows:      1000,
++			State:          commonpb.SegmentState_Flushed,
++			Level:          datapb.SegmentLevel_L1,
+ 			ManifestPath:   oldManifest,
+ 			StorageVersion: storage.StorageV3,
+ 			SchemaVersion:  1,
+@@ -1590,6 +1591,23 @@ func TestApplyExternalRefreshPatchClearsStatsPlaceholders(t *testing.T) {
+ 		ManifestPath:   newManifest,
+ 		StorageVersion: storage.StorageV3,
+ 		SchemaVersion:  2,
++		TextStatsLogs: map[int64]*datapb.TextIndexStats{
++			500: {
++				FieldID: 500,
++				Version: 1,
++				BuildID: 10,
++				Files:   []string{"files/insert_log/100/200/300/_stats/text_index.500/tokenizer.json"},
++			},
 +		},
-+	})
-+	mockTest(t, (*metacache.MetaCache).GetCollectionID, collectionID, nil)
-+	mockTest(t, (*metacache.MetaCache).GetCollectionSchema, schema, nil)
-+	mockTest(t, (*metacache.MetaCache).GetCollectionInfo, &collectionInfo{CollID: collectionID, Schema: schema, CollectionTTL: uint64(collectionTTL)}, nil)
++		JsonKeyStats: map[int64]*datapb.JsonKeyStats{
++			500: {
++				FieldID:                500,
++				Version:                1,
++				BuildID:                10,
++				Files:                  []string{"shared_key_index/.managed.json_0"},
++				JsonKeyStatsDataFormat: common.JSONStatsDataFormatVersion,
++			},
++		},
+ 		Binlogs: []*datapb.FieldBinlog{{
+ 			FieldID:     0,
+ 			ChildFields: []int64{100, 500},
+@@ -1604,8 +1622,17 @@ func TestApplyExternalRefreshPatchClearsStatsPlaceholders(t *testing.T) {
+ 
+ 	patched := applyExternalRefreshPatch(oldSeg, incoming)
+ 	assert.Equal(t, newManifest, patched.GetManifestPath())
+-	assert.Empty(t, patched.GetTextStatsLogs())
+-	assert.Empty(t, patched.GetJsonKeyStats())
++	assert.Equal(t, incoming.GetTextStatsLogs(), patched.GetTextStatsLogs())
++	assert.Equal(t, incoming.GetJsonKeyStats(), patched.GetJsonKeyStats())
++	assert.False(t, meta.NeedDoTextIndex(patched, []UniqueID{500}, true))
++	assert.False(t, meta.NeedDoJSONKeyIndex(patched, []UniqueID{500}, true))
 +
-+	var requeryTask *QueryTask
-+	mockTestTo(t, (*namespaceRequeryMockNode).ExecuteQuery, func(_ *namespaceRequeryMockNode, _ context.Context, qt taskmodel.Task, _ trace.Span) (*milvuspb.QueryResults, segcore.StorageCost, error) {
-+		requeryTask = qt.(*QueryTask)
-+		return &milvuspb.QueryResults{Status: merr.Success()}, segcore.StorageCost{}, nil
-+	})
++	incomingWithoutStats := proto.Clone(incoming).(*datapb.SegmentInfo)
++	incomingWithoutStats.TextStatsLogs = nil
++	incomingWithoutStats.JsonKeyStats = nil
++	patchedWithoutStats := applyExternalRefreshPatch(oldSeg, incomingWithoutStats)
++	assert.True(t, meta.NeedDoTextIndex(patchedWithoutStats, []UniqueID{500}, true))
++	assert.True(t, meta.NeedDoJSONKeyIndex(patchedWithoutStats, []UniqueID{500}, true))
+ }
+ 
+ func TestApplyExternalCollectionSegmentUpdateForBaseline_RejectPatchRowCountChange(t *testing.T) {
+```
+
+**File**: `internal/datanode/external/milvus_table_deltalog.go` (modified, +57/-29)
+```diff
+@@ -68,6 +68,32 @@ func (t *RefreshExternalCollectionTask) addMilvusTableL0DeltalogsToManifest(
+ 	manifestPath string,
+ 	fragments []packed.Fragment,
+ ) (string, error) {
++	entries, err := t.prepareMilvusTableL0Deltalogs(ctx, fragments)
++	if err != nil {
++		return "", err
++	}
++	if len(entries) == 0 {
++		return manifestPath, nil
++	}
++	if err := ensureContext(ctx); err != nil {
++		return "", err
++	}
++	updatedManifestPath, err := packed.AddDeltaLogsToManifestOverwrite(manifestPath, t.req.GetStorageConfig(), entries)
++	if err != nil {
++		return "", err
++	}
++	if err := ensureContext(ctx); err != nil {
++		return "", err
++	}
++	return updatedManifestPath, nil
++}
 +
-+	// With a fresh requery timestamp, Strong only moves the collection TTL
-+	// cutoff; Bounded also moves the guarantee and the entity TTL cutoff.
-+	for _, tc := range []struct {
-+		name          string
-+		level         commonpb.ConsistencyLevel
-+		guaranteeTime time.Time
-+	}{
-+		{name: "strong", level: commonpb.ConsistencyLevel_Strong, guaranteeTime: searchTime},
-+		{name: "bounded", level: commonpb.ConsistencyLevel_Bounded, guaranteeTime: searchTime.Add(-gracefulTime)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			requeryTask = nil
-+			searchTask := &SearchTask{
-+				ctx: ctx,
-+				SearchRequest: &internalpb.SearchRequest{
-+					Base:               &commonpb.MsgBase{MsgType: commonpb.MsgType_Search, Timestamp: searchTS},
-+					CollectionID:       collectionID,
-+					ConsistencyLevel:   tc.level,
-+					GuaranteeTimestamp: tsoutil.ComposeTSByTime(tc.guaranteeTime),
-+				},
-+				request: &milvuspb.SearchRequest{CollectionName: collectionName},
-+				schema:  schema,
-+				tr:      timerecord.NewTimeRecorder("search"),
-+				node:    &namespaceRequeryMockNode{},
-+			}
-+			op, err := newRequeryOperator(searchTask, nil)
-+			require.NoError(t, err)
-+			ids := &schemapb.IDs{IdField: &schemapb.IDs_IntId{IntId: &schemapb.LongArray{Data: []int64{1}}}}
-+			_, _, err = op.(*requeryOperator).requery(ctx, nil, ids, []string{"id"})
-+			require.NoError(t, err)
-+			require.NotNil(t, requeryTask)
++// prepareMilvusTableL0Deltalogs collects references without committing a
++// manifest, so delete-only refresh can publish them together with its artifacts.
++func (t *RefreshExternalCollectionTask) prepareMilvusTableL0Deltalogs(
++	ctx context.Context,
++	fragments []packed.Fragment,
++) ([]packed.DeltaLogEntry, error) {
+ 	var entries []packed.DeltaLogEntry
+ 	seen := make(map[string]struct{})
+ 	for _, fragment := range fragments {
+@@ -82,14 +108,14 @@ func (t *RefreshExternalCollectionTask) addMilvusTableL0DeltalogsToManifest(
+ 				}
+ 				seen[sourcePath] = struct{}{}
+ 				if err := packed.ValidateMilvusTableSourceDeltalogPath(sourcePath); err != nil {
+-					return "", err
++					return nil, err
+ 				}
+ 				logID := binlog.GetLogID()
+ 				if logID == 0 {
+-					return "", merr.WrapErrServiceInternalMsg("milvus-table source deltalog %s has no allocated log ID", sourcePath)
++					return nil, merr.WrapErrServiceInternalMsg("milvus-table source deltalog %s has no allocated log ID", sourcePath)
+ 				}
+ 				if err := ensureContext(ctx); err != nil {
+-					return "", err
++					return nil, err
+ 				}
+ 				entries = append(entries, packed.DeltaLogEntry{
+ 					Path:       sourcePath,
+@@ -98,20 +124,7 @@ func (t *RefreshExternalCollectionTask) addMilvusTableL0DeltalogsToManifest(
+ 			}
+ 		}
+ 	}
+-	if len(entries) == 0 {
+-		return manifestPath, nil
+-	}
+-	if err := ensureContext(ctx); err != nil {
+-		return "", err
+-	}
+-	updatedManifestPath, err := packed.AddDeltaLogsToManifestOverwrite(manifestPath, t.req.GetStorageConfig(), entries)
+-	if err != nil {
+-		return "", err
+-	}
+-	if err := ensureContext(ctx); err != nil {
+-		return "", err
+-	}
+-	return updatedManifestPath, nil
++	return entries, nil
+ }
+ 
+ // milvusTableDeltalogRef identifies one source StorageV3 deltalog that may
+@@ -241,17 +254,35 @@ func (t *RefreshExternalCollectionTask) translateMilvusTableDeltalogsToVirtualPK
+ 	segmentID int64,
+ 	fragments []packed.Fragment,
+ ) (string, error) {
+-	refs, err := collectMilvusTableDeltalogRefs(fragments)
++	entries, err := t.prepareMilvusTableVirtualPKDeltalogs(ctx, basePath, segmentID, fragments)
+ 	if err != nil {
+ 		return "", err
+ 	}
+-	if len(refs) == 0 {
++	if len(entries) == 0 {
+ 		return manifestPath, nil
+ 	}
++	return packed.AddDeltaLogsToManifestOverwrite(manifestPath, t.req.GetStorageConfig(), entries)
++}
 +
-+			// Replay what the scheduler does before running the task: it assigns a
-+			// newer timestamp, which must not replace the search timestamp.
-+			require.NoError(t, requeryTask.OnEnqueue())
-+			requeryTask.SetTs(schedulerTS)
-+			require.NoError(t, requeryTask.PreExecute(ctx))
++// prepareMilvusTableVirtualPKDeltalogs writes translated logs but does not create
++// a manifest. The caller registers the complete set in its final transaction.
++func (t *RefreshExternalCollectionTask) prepareMilvusTableVirtualPKDeltalogs(
++	ctx context.Context,
++	basePath string,
++	segmentID int64,
++	fragments []packed.Fragment,
++) ([]packed.DeltaLogEntry, error) {
++	refs, err := collectMilvusTableDeltalogRefs(fragments)
++	if err != nil {
++		return nil, err
++	}
++	if len(refs) == 0 {
++		return nil, nil
++	}
+ 
+ 	sourcePKField, err := t.getMilvusTableSourcePKField()
+ 	if err != nil {
+-		return "", err
++		return nil, err
+ 	}
+ 
+ 	var entries []packed.DeltaLogEntry
+@@ -265,15 +296,15 @@ func (t *RefreshExternalCollectionTask) translateMilvusTableDeltalogsToVirtualPK
+ 		deletedSourcePKKeys := make(map[string]struct{})
+ 		for _, ref := range batchRefs {
+ 			if err := ensureContext(ctx); err != nil {
+-				return "", err
++				return nil, err
+ 			}
+ 			deletes, refDeletedSourcePKKeys, err := t.loadMilvusTableSourceDeltalogDeletes(
+ 				ctx,
+ 				ref,
+ 				sourcePKField.GetDataType(),
+ 			)
+ 			if err != nil {
+-				return "", err
++				return nil, err
+ 			}
+ 			batchDeletes = append(batchDeletes, deletes)
+ 			for key := range refDeletedSourcePKKeys {
+@@ -283,11 +314,11 @@ func (t *RefreshExternalCollectionTask) translateMilvusTableDeltalogsToVirtualPK
+ 
+ 		sourcePKOffsets, err := t.loadMilvusTableSourcePKOffsets(ctx, fragments, sourcePKField, deletedSourcePKKeys)
+ 		if err != nil {
+-			return "", err
++			return nil, err
+ 		}
+ 		for _, deletes := range batchDeletes {
+ 			if err := ensureContext(ctx); err != nil {
+-				return "", err
++				return nil, err
+ 			}
+ 			entry, err := t.writeMilvusTableVirtualPKDeltalog(
+ 				ctx,
+@@ -297,15 +328,12 @@ func (t *RefreshExternalCollectionTask) translateMilvusTableDeltalogsToVirtualPK
+ 				deletes,
+ 			)
+ 			if err != nil {
+-				return "", err
++				return nil, err
+ 			}
+ 			entries = append(entries, entry)
+ 		}
+ 	}
+-	if len(entries) == 0 
+```
+
+---
+
+### Incident Patch 3: `86fa36ec` (2026-11-06)
+**Commit Message**: fix: clear drained piece references when a reshard bucket spills (#55202)
+
+## Scope
+
+**This is not a fix for the OOM reported in the linked issue, and the
+stale references cleared here are not its root cause.** The retention is
+bounded and self-limiting -- the dropped slots are overwritten one by
+one by the pieces routed afterwards, and a cut drops the backing array
+entirely -- so it works out to a few hundred MiB per task and well under
+1 GiB per node, roughly 6% of the `HeapAlloc` observed at the OOM. That
+cannot account for a multi-GiB overshoot of the GC goal, and a bounded
+steady-state quantity cannot produce the monotonic 3.26 GiB climb seen
+in the last 30 seconds. At most this is one contributing factor; it is
+not the decisive one.
+
+It is still worth fixing on its own merits. A spill that reports bytes
+freed while the heap does not move makes the accounting lie, and the
+dynamic free-memory checkpoint is exactly the brake meant to react to
+what the static model misses. The change is one line, cannot affect the
+happy path, and also removes a large amount of pointless spill I/O: on
+the reported run the node wrote ~6.9 GiB of spill per task without
+buying memory back.
+
+The linke
+
+**File**: `internal/datanode/importv3/reshard_bucket.go` (modified, +6/-0)
+```diff
+@@ -88,6 +88,12 @@ func (b *bucket) spill(spill *SpillManager, bucketOrdinal int64) (int64, error)
+ 		return 0, err
+ 	}
+ 	freed := b.bytes
++	// append reuses the backing array when it has room, so it overwrites only
++	// the slot at head and the drained pieces past the new len would keep their
++	// InsertData reachable -- the GC scans the whole allocation, not the slice
++	// length. Clearing first keeps every slot in [len, cap) at its zero value,
++	// so the accounted bytes this spill reports as freed really leave the heap.
++	clear(b.pieces[head:])
+ 	b.pieces = append(b.pieces[:head], piece{disk: &spillRange, logical: spillRange.Logical, rows: spillRange.Rows})
+ 	b.bytes = 0
+ 	return freed, nil
+```
+
+**File**: `internal/datanode/importv3/reshard_bucket_test.go` (added, +188/-0)
+```diff
+@@ -0,0 +1,188 @@
++// Licensed to the LF AI & Data foundation under one or more contributor
++// license agreements. See the NOTICE file distributed with this work for
++// additional information regarding copyright ownership.
++// The ASF licenses this file to you under the Apache License, Version 2.0.
 +
-+			require.Equal(t, searchTS, requeryTask.BeginTs())
-+			require.Equal(t, tsoutil.ComposeTSByTime(tc.guaranteeTime), requeryTask.GetGuaranteeTimestamp())
-+			require.Equal(t, tsoutil.ComposeTSByTime(searchTime.Add(-collectionTTL)), requeryTask.GetCollectionTtlTimestamps())
-+			require.Equal(t, uint64(tc.guaranteeTime.UnixMilli()*1000), requeryTask.GetEntityTtlPhysicalTime())
-+		})
++package importv3
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// bucketTestPolicy never cuts on its own and never splits a sort input: these
++// tests drive the spill and the cut explicitly.
++func bucketTestPolicy() *fragmentPolicy {
++	return &fragmentPolicy{target: 1 << 40, sortInput: 1 << 40, overhead: 600}
++}
++
++// newBucketTestFixture builds a bucket table over one (vchannel, partition)
++// bucket plus the spill area its drained tails go to.
++func newBucketTestFixture(t *testing.T) (*bucketTable, *SpillManager, bucketKey) {
++	t.Helper()
++	spill, err := NewSpillManager(t.TempDir(), spillTestSchema(), 1)
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = spill.Close() })
++	key := bucketKey{vchannelOrdinal: 0, partitionOrdinal: 0}
++	return newBucketTable(bucketTestPolicy(), 1), spill, key
++}
++
++// routePieces routes count in-memory pieces of rows rows each into key's bucket
++// through the table, so the bucket and the table both account them, and returns
++// the accounted bytes charged.
++func routePieces(t *testing.T, table *bucketTable, key bucketKey, pkStart int64, count, rows int) int64 {
++	t.Helper()
++	var accounted int64
++	for i := 0; i < count; i++ {
++		data, logical := spillTestBatch(pkStart+int64(i*rows), rows)
++		mem := logical + table.policy.overhead
++		require.Nil(t, table.add(key, data, mem, logical), "the fixture policy must not cut on its own")
++		accounted += mem
++	}
++	return accounted
++}
++
++// requireZeroedPieceTail pins the bucket's piece invariant: every slot of the
++// backing array past len is the zero piece. A drained slot that keeps its
++// *storage.InsertData stays reachable for the GC, which scans the whole
++// allocation and not the slice length, so the accounted bytes a spill reports
++// as freed would never actually leave the heap.
++func requireZeroedPieceTail(t *testing.T, b *bucket) {
++	t.Helper()
++	backing := b.pieces[:cap(b.pieces)]
++	for i := len(b.pieces); i < len(backing); i++ {
++		require.Nil(t, backing[i].mem, "slot %d past len %d still references a drained InsertData", i, len(b.pieces))
++		require.Nil(t, backing[i].disk, "slot %d past len %d still references a spilled range", i, len(b.pieces))
 +	}
 +}
 +
- // TestSearchTask_ErrExecute exercises the error propagation of SearchTask
- // execution. The shard dispatch is stubbed at the lb level: Execute runs the
- // workload, whose Exec invokes the query node client; each scenario returns a
-```
-
-**File**: `internal/proxy/dql/search_pipeline.go` (modified, +3/-0)
-```diff
-@@ -1366,6 +1366,9 @@ func (op *requeryOperator) requery(ctx context.Context, span trace.Span, ids *sc
- 			Base: commonpbutil.NewMsgBase(
- 				commonpbutil.WithMsgType(commonpb.MsgType_Retrieve),
- 				commonpbutil.WithSourceID(paramtable.GetNodeID()),
-+				// Keep the search timestamp (QueryTask.SetTs does not overwrite it) so
-+				// the requery derives the same guarantee and TTL cutoffs as the search.
-+				commonpbutil.WithTimeStamp(op.timestamp),
- 			),
- 			ReqID:            paramtable.GetNodeID(),
- 			PartitionIDs:     op.partitionIDs, // use search partitionIDs
-```
-
----
-
-### Incident Patch 2: `e4976eac` (2026-11-05)
-**Commit Message**: fix: preserve CMEK keys across storage and background tasks (#53450)
-
-Encrypted writers could lose their encryption context when the writer
-key or cipher plugin was unavailable. Storage V3 also passed binary DEKs
-through NUL-terminated strings, which could truncate valid keys. This PR
-blocks writes that lack their required context, separates import source
-and target keys, and fixes Storage V3 key transport and reader
-decryption.
-
-## Changes
-
-1. **Storage V3 writer and reader fixes.** Base64-encode binary DEKs
-across the cgo/Loon string interfaces and install key retrievers on
-manifest readers for sealed load/reopen, growing recovery and paged
-field reads. Add native-bridge and Arrow Go Parquet readback regressions
-for keys with a NUL at offset 0, 16, 24 or 31.
-2. **Writer-context validation and import identities.** Propagate
-writer-key lookup errors through DataCoord request builders, ordinary
-V2/V3 flush and shared raw-data writers. Preserve explicit encryption
-contexts at receivers and reject packed writers that lack the required
-cipher plugin. Resolve Import V3 backup source keys separately from
-target writer keys; plaintext backup readers explicitly use no source
-context.
-3. **
-
-**File**: `Makefile` (modified, +1/-1)
-```diff
-@@ -338,7 +338,7 @@ integration-test-base: getdeps
- 	@(bash $(PWD)/scripts/run_intergration_test.sh --exclude-package ./cmek --exclude-package ./idempotency "$(INSTALL_PATH)/gotestsum --")
- 
- integration-test-cmek: getdeps build-cmek-fixtures
--	@echo "Running CMEK scalar-index integration tests ..."
-+	@echo "Running CMEK integration tests ..."
- 	@(env MILVUS_CMEK_FIXTURE_DIR="$(CMEK_FIXTURE_PATH)" MILVUS_INTEGRATION_COVERAGE_APPEND="$(MILVUS_INTEGRATION_COVERAGE_APPEND)" bash $(PWD)/scripts/run_intergration_test.sh --package ./cmek "$(INSTALL_PATH)/gotestsum --")
- 
- BUILD_TAGS = $(shell git describe --tags --always --dirty="-dev")
-```
-
-**File**: `docs/design-docs/design_docs/20260921-import-v3-reshard-design.md` (modified, +5/-4)
-```diff
-@@ -365,10 +365,11 @@ ordered fragment readers
- - Ordinary import materializes `timestamp = ImportJob.DataTs`; backup keeps the
-   source timestamp carried in the fragment and requires it.
- - Writer options come from the `WriterSpec`. Column groups are encrypted with the
--  **target** collection's CMEK zone, while fragment readers use the read/source
--  plugin context. **TEXT columns are the deliberate exception: they are written
--  plaintext.** The target-zone plugin context is still threaded all the way down
--  into the TEXT-aware writer, but its two call sites
-+  **target** collection's CMEK zone. Reshard uses the source plugin context only
-+  to read original backup data; it writes fragments with the target context,
-+  which fragment readers also use. **TEXT columns are the deliberate exception:
-+  they are written plaintext.** The target-zone plugin context is still threaded
-+  all the way down into the TEXT-aware writer, but its two call sites
-   (`internal/flushcommon/syncmgr/pack_writer_v3.go`,
-   `internal/storage/binlog_record_writer.go`) intentionally do not apply it yet,
-   because the TEXT read chain has no key retriever wiring: segcore reads V3
-```
-
-**File**: `internal/core/src/segcore/ChunkedSegmentSealedImpl.cpp` (modified, +13/-0)
-```diff
-@@ -153,6 +153,7 @@
- #include "storage/FileManager.h"
- #include "storage/StatusToErrorCode.h"
- #include "storage/KeyRetriever.h"
-+#include "storage/PluginLoader.h"
- #include "storage/LocalChunkManager.h"
- #include "storage/LocalChunkManagerSingleton.h"
- #include "storage/MmapManager.h"
-@@ -2681,6 +2682,13 @@ ChunkedSegmentSealedImpl::LoadColumnGroups(
-                                             /*arrow_schema=*/nullptr,
-                                             needed_columns,
-                                             *properties));
-+    // QueryNode registers the collection's cipher context before loading.
-+    // Resolve encrypted Parquet keys through that context when opening files.
-+    if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
-+        reader->set_keyretriever([](const std::string& key_metadata) {
-+            return storage::KeyRetriever().GetKey(key_metadata);
-+        });
-+    }
-     committer.Commit([reader](RuntimeResourceState& runtime,
-                               PublishedSegmentState&) mutable {
-         runtime.reader = std::move(reader);
-@@ -8224,6 +8232,11 @@ ChunkedSegmentSealedImpl::PrepareLoadDiffForReopen(
-                 milvus_storage::api::Reader::create(
-                     column_groups, arrow_schema, needed_columns, *properties)
-                     .release());
-+            if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
-+                reader->set_keyretriever([](const std::string& key_metadata) {
-+                    return storage::KeyRetriever().GetKey(key_metadata);
-+                });
-+            }
-             committer.Commit(
-                 [reader = std::move(reader)](RuntimeResourceState& runtime,
-                                              PublishedSegmentState&) mutable {
-```
-
-**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +6/-0)
-```diff
-@@ -82,6 +82,7 @@
- #include "segcore/Utils.h"
- #include "segcore/memory_planner.h"
- #include "storage/KeyRetriever.h"
-+#include "storage/PluginLoader.h"
- #include "storage/ThreadPool.h"
- #include "storage/ThreadPools.h"
- #include "storage/Types.h"
-@@ -4190,6 +4191,11 @@ SegmentGrowingImpl::LoadColumnsGroups(std::string manifest_path) {
-         schema->ConvertToLoonArrowSchema(/*text_lob_as_binary=*/true);
-     reader_ = milvus_storage::api::Reader::create(
-         column_groups, arrow_schema, nullptr, *properties);
-+    if (storage::PluginLoader::GetInstance().getCipherPlugin()) {
-+        reader_->set_keyretriever([](const std::string& key_metadata) {
-+            return storage::KeyRetriever().GetKey(key_metadata);
-+        });
-+    }
- 
-     // A column group whose fields were all dropped from the segment schema
-     // has an empty read projection; opening it violates the reader contract
-```
-
-**File**: `internal/core/src/segcore/packed_writer_c.cpp` (modified, +4/-2)
-```diff
-@@ -121,7 +121,8 @@ NewPackedWriterWithStorageConfig(struct ArrowSchema* schema,
-         parquet::WriterProperties::Builder builder;
-         auto plugin_ptr =
-             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
--        if (plugin_ptr != nullptr && c_plugin_context != nullptr) {
-+        if (c_plugin_context != nullptr) {
-+            AssertInfo(plugin_ptr != nullptr, "failed to get cipher plugin");
-             plugin_ptr->Update(c_plugin_context->ez_id,
-                                c_plugin_context->collection_id,
-                                std::string(c_plugin_context->key));
-@@ -203,7 +204,8 @@ NewPackedWriter(struct ArrowSchema* schema,
-         parquet::WriterProperties::Builder builder;
-         auto plugin_ptr =
-             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
--        if (plugin_ptr != nullptr && c_plugin_context != nullptr) {
-+        if (c_plugin_context != nullptr) {
-+            AssertInfo(plugin_ptr != nullptr, "failed to get cipher plugin");
-             plugin_ptr->Update(c_plugin_context->ez_id,
-                                c_plugin_context->collection_id,
-                                std::string(c_plugin_context->key));
-```
-
-**File**: `internal/core/src/storage/Util.cpp` (modified, +11/-0)
-```diff
-@@ -83,6 +83,7 @@
- #include "storage/MemFileManagerImpl.h"
- #include "storage/DiskFileManagerImpl.h"
- #include "storage/KeyRetriever.h"
-+#include "storage/PluginLoader.h"
- #include "segcore/memory_planner.h"
- #include "mmap/Types.h"
- #include "storage/loon_ffi/ffi_reader_c.h"
-@@ -2186,6 +2187,11 @@ ReadFieldDataFromManifestInto(const std::string& manifest_path,
-             }
-             auto reader = milvus_storage::api::Reader::create(
-                 column_groups, nullptr, columns, reader_properties);
-+            if (PluginLoader::GetInstance().getCipherPlugin()) {
-+                reader->set_keyretriever([](const std::string& key_metadata) {
-+                    return KeyRetriever().GetKey(key_metadata);
-+                });
-+            }
-             const auto parallelism =
-                 milvus_storage::ThreadPoolHolder::GetParallelism();
-             auto pool =
-@@ -2415,6 +2421,11 @@ VisitFieldDataFromManifestPaged(
-     if (!(reader != nullptr)) {
-         ThrowInfo(ErrorCode::FileReadFailed, "Failed to create reader");
-     }
-+    if (PluginLoader::GetInstance().getCipherPlugin()) {
-+        reader->set_keyretriever([](const std::string& key_metadata) {
-+            return KeyRetriever().GetKey(key_metadata);
-+        });
-+    }
-     std::shared_ptr<arrow::RecordBatch> batch;
- 
-     // Decode batches on a background thread pool while this thread keeps
-```
-
-**File**: `internal/core/src/storage/loon_ffi/ffi_writer_c.cpp` (modified, +24/-11)
-```diff
-@@ -13,12 +13,16 @@
- // limitations under the License.
- 
- #include <string.h>
-+#include <cstdlib>
- #include <exception>
- #include <memory>
- #include <string>
- #include <utility>
- 
-+#include <arrow/util/base64.h>
++// TestBucketSpillDropsDrainedPieceReferences pins that a spill really releases
++// the tail it drained: the bucket collapses into one unsplittable on-disk piece,
++// the freed bytes it reports are the bytes it held, the segment totals survive
++// (the flushed fragment covers everything the bucket ever received) and no slot
++// of the backing array past the new len still references a drained InsertData.
++// Without that last part the accounting reads zero while the heap keeps every
++// routed chunk alive, and the free-memory checkpoint has nothing left to spill.
++func TestBucketSpillDropsDrainedPieceReferences(t *testing.T) {
++	table, spill, key := newBucketTestFixture(t)
++	accounted := routePieces(t, table, key, 0, 3, 4)
++	b := table.buckets[key]
++	require.Len(t, b.pieces, 3)
++	require.Equal(t, accounted, b.bytes)
++	require.Equal(t, accounted, table.memBytes())
++	logicalBytes, rows := b.logicalBytes, b.rows
++	require.Positive(t, logicalBytes)
 +
- #include "PluginInterface.h"
-+#include "common/CGoCatch.h"
- #include "common/EasyAssert.h"
- #include "common/common_type_c.h"
- #include "storage/KeyRetriever.h"
-@@ -33,7 +37,7 @@
-  *   2. Updates the plugin with encryption zone ID, collection ID, and key
-  *   3. Retrieves the encryptor for the given zone and collection
-  *   4. Encodes key metadata containing zone ID, collection ID, and key version
-- *   5. Returns the encryption key and metadata as newly allocated strings
-+ *   5. Returns the Base64-encoded key and metadata as newly allocated strings
-  *
-  * @see GetEncParams declaration in ffi_writer_c.h for parameter documentation
-  */
-@@ -42,6 +46,10 @@ GetEncParams(CPluginContext* c_plugin_context,
-              char** out_key,
-              char** out_meta) {
-     try {
-+        AssertInfo(out_key != nullptr && out_meta != nullptr,
-+                   "encryption parameter outputs must not be null");
-+        *out_key = nullptr;
-+        *out_meta = nullptr;
-         AssertInfo(c_plugin_context != nullptr, "c_plugin_context is nullptr");
-         auto plugin_ptr =
-             milvus::storage::PluginLoader::GetInstance().getCipherPlugin();
-@@ -56,15 +64,20 @@ GetEncParams(CPluginContext* c_plugin_context,
-             milvus::storage::EncodeKeyMetadata(c_plugin_context->ez_id,
-                                                c_plugin_context->collection_id,
-                                                got.second);
--        *out_key = strdup(got.first->GetKey().c_str());
--        *out_meta = strdup(metadata.c_str());
-+        // Both cgo and Loon properties use NUL-terminated strings. Encode the
-+        // binary DEK before crossing either boundary. The Parquet writer
-+        // decodes it when constructing its encryption configuration.
-+        auto key = arrow::util::base64_encode(got.first->GetKey());
-+        auto key_buffer =
-+            std::unique_ptr<char, decltype(&free)>(strdup(key.c_str()), free);
-+        auto metadata_buffer = std::unique_ptr<char, decltype(&free)>(
-+            strdup(metadata.c_str()), free);
-+        if (!key_buffer || !metadata_buffer) {
-+            throw std::bad_alloc();
-+        }
-+        *out_key = key_buffer.release();
-+        *out_meta = metadata_buffer.release();
-         return milvus::SuccessCStatus();
--
--    } catch (std::exception& e) {
--        return milvus::FailureCStatus(milvus::ErrorCode::UnexpectedError,
--                                      e.what());
--    } catch (...) {
--        return milvus::FailureCStatus(milvus::ErrorCode::UnexpectedError,
--                                      "unknown exception");
-     }
--}
-\ No newline at end of file
-+    CGO_CATCH_AND_RETURN_CSTATUS
++	freed, err := table.spillBucket(spill, b)
++	require.NoError(t, err)
++
++	require.Equal(t, accounted, freed, "a spill frees exactly the accounted bytes the tail held")
++	require.Len(t, b.pieces, 1, "the drained tail collapses into one on-disk piece")
++	require.NotNil(t, b.pieces[0].disk)
++	require.Nil(t, b.pieces[0].mem)
++	require.Zero(t, b.bytes)
++	require.Zero(t, table.memBytes())
++	require.Equal(t, logicalBytes, b.logicalBytes, "a spill keeps the segment totals")
++	require.Equal(t, rows, b.rows)
++	require.Equal(t, logicalBytes, b.pieces[0].logical)
++	require.Equal(t, rows, b.pieces[0].rows)
++	require.Greater(t, cap(b.pieces), len(b.pieces),
++		"the drained slots must still sit inside the backing array for the assertions below to bite")
++	requireZeroedPieceTail(t, b)
++
++	// The drained rows still come back through the range the piece carries.
++	_, gotRows, pks := readRange(t, spill, *b.pieces[0].disk)
++	require.Equal(t, int(rows), gotRows)
++	for i, pk := range pks {
++		require.Equal(t, int64(i), pk)
++	}
 +}
-```
-
-**File**: `internal/core/src/storage/loon_ffi/ffi_writer_c.h` (modified, +4/-3)
-```diff
-@@ -30,8 +30,9 @@ extern "C" {
-  * @param[in] c_plugin_context Pointer to the plugin context containing:
-  *                             - ez_id: Encryption zone ID
-  *                             - collection_id: The collection ID
-- *                             - key: The encryption key string
-- * @param[out] out_key Pointer to receive the encryption key (caller must free with free())
-+ *                             - key: Base64 EZ key to register
-+ * @param[out] out_key Pointer to receive the Base64-encoded encryption key (caller must free with free()).
-+ *                    Pass this text unchanged to Loon's writer.enc.key property.
-  * @param[out] out_meta Pointer to receive the encoded key metadata (caller must free with free())
-  *
-  * @return CStatus Success status or error with message if failed
-@@ -43,4 +44,4 @@ GetEncParams(CPluginContext* c_plugin_context, char** out_key, char** out_meta);
- 
- #ifdef __cplusplus
- }
--#endif
-\ No newline at end of file
-+#endif
-```
-
----
-
-### Incident Patch 3: `d3063b15` (2026-11-05)
-**Commit Message**: fix: Reuse StorageV2 footers across batches (#54482)
-
-StorageV2 creates an independent reader for each batch, repeatedly
-fetching and parsing the same Parquet footer. Smaller load batches
-amplify this overhead.
-
-Reuse plaintext footer metadata through caller-owned
-`PreparedParquetFile` contexts while keeping independent readers for
-each batch:
-- Sealed column groups prepare each touched file once per `get_cells()`
-call and share the context across that call's batch readers. The
-translator retains only the filesystem, paths, row-group layout, and
-skip metrics; it does not retain parsed footers across lazy loads or
-reloads.
-- Growing loads reuse the contexts created during metadata discovery for
-the load operation. Paged reads share a context across the current
-file's read windows.
-- Contexts are released when their owning operation and tasks finish.
-Encrypted files continue to open fresh without sharing decoded footers.
-No process-wide footer cache is introduced.
-
-This uses the file-context API already present in master's
-milvus-storage dependency; this PR does not change the storage version.
-
-## Validation
-
-Counted-filesystem tests cover concurrent batch readers, footer
-reads/bytes
-
-**File**: `internal/core/src/segcore/ChunkedSegmentSealedImpl.cpp` (modified, +1/-0)
-```diff
-@@ -3362,6 +3362,7 @@ ChunkedSegmentSealedImpl::load_column_group_data_internal(
-                 GroupChunkType::DEFAULT,
-                 field_metas,
-                 column_group_info,
-+                fs,
-                 std::move(insert_files),
-                 std::move(packing.row_group_meta_list),
-                 info.enable_mmap,
-```
-
-**File**: `internal/core/src/segcore/MemoryPlannerFooterReuseTest.cpp` (added, +311/-0)
-```diff
-@@ -0,0 +1,311 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+#include <atomic>
-+#include <future>
-+#include <memory>
-+#include <vector>
 +
-+#include <gtest/gtest.h>
-+#include <arrow/api.h>
-+#include <arrow/filesystem/localfs.h>
-+#include <arrow/io/memory.h>
-+#include <parquet/arrow/writer.h>
-+
-+#include "milvus-storage/common/constants.h"
-+#include "segcore/memory_planner.h"
-+#include "storage/KeyRetriever.h"
-+
-+namespace milvus::segcore {
-+namespace {
-+
-+using namespace milvus_storage;
-+
-+// Every input gets its own BufferReader. Track footer intersections separately
-+// from data reads; creating a prepared reader must issue neither kind of read.
-+struct ReadCounts {
-+    std::atomic<int> opens{0};
-+    std::atomic<int> handles{0};
-+    std::atomic<int> footer_reads{0};
-+    std::atomic<int> data_reads{0};
-+    std::atomic<bool> fail_reads{false};
-+    std::atomic<bool> fail_opens{false};
-+};
-+
-+class CountedInput : public arrow::io::RandomAccessFile {
-+ public:
-+    CountedInput(std::shared_ptr<arrow::Buffer> data,
-+                 std::shared_ptr<ReadCounts> counts)
-+        : input_(std::move(data)), counts_(std::move(counts)) {
-+        ++counts_->handles;
-+        auto buffer = input_.buffer();
-+        if (buffer->size() < 8) {
-+            footer_start_ = 0;
-+            return;
-+        }
-+        const auto* tail = buffer->data() + buffer->size() - 8;
-+        uint32_t footer_size = static_cast<uint32_t>(tail[0]) |
-+                               static_cast<uint32_t>(tail[1]) << 8 |
-+                               static_cast<uint32_t>(tail[2]) << 16 |
-+                               static_cast<uint32_t>(tail[3]) << 24;
-+        footer_start_ = buffer->size() - 8 - footer_size;
-+    }
-+    ~CountedInput() override {
-+        (void)CountedInput::Close();
-+    }
-+    arrow::Status
-+    Close() override {
-+        if (!input_.closed()) {
-+            --counts_->handles;
-+        }
-+        return input_.Close();
-+    }
-+    bool
-+    closed() const override {
-+        return input_.closed();
-+    }
-+    arrow::Result<int64_t>
-+    Tell() const override {
-+        return input_.Tell();
-+    }
-+    arrow::Status
-+    Seek(int64_t position) override {
-+        return input_.Seek(position);
-+    }
-+    arrow::Result<int64_t>
-+    GetSize() override {
-+        return input_.GetSize();
-+    }
-+    arrow::Result<int64_t>
-+    Read(int64_t nbytes, void* out) override {
-+        ARROW_ASSIGN_OR_RAISE(auto pos, Tell());
-+        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
-+        return input_.Read(nbytes, out);
-+    }
-+    arrow::Result<std::shared_ptr<arrow::Buffer>>
-+    Read(int64_t nbytes) override {
-+        ARROW_ASSIGN_OR_RAISE(auto pos, Tell());
-+        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
-+        return input_.Read(nbytes);
-+    }
-+    arrow::Result<int64_t>
-+    ReadAt(int64_t pos, int64_t nbytes, void* out) override {
-+        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
-+        return input_.ReadAt(pos, nbytes, out);
-+    }
-+    arrow::Result<std::shared_ptr<arrow::Buffer>>
-+    ReadAt(int64_t pos, int64_t nbytes) override {
-+        ARROW_RETURN_NOT_OK(Record(pos, nbytes));
-+        return input_.ReadAt(pos, nbytes);
-+    }
-+
-+ private:
-+    arrow::Status
-+    Record(int64_t pos, int64_t nbytes) {
-+        if (counts_->fail_reads) {
-+            return arrow::Status::IOError("injected read failure");
-+        }
-+        if (pos + nbytes > footer_start_) {
-+            ++counts_->footer_reads;
-+        } else {
-+            ++counts_->data_reads;
-+        }
-+        return arrow::Status::OK();
-+    }
-+    arrow::io::BufferReader input_;
-+    std::shared_ptr<ReadCounts> counts_;
-+    int64_t footer_start_;
-+};
-+
-+// Serve an immutable packed file through a fresh counted handle for each reader.
-+class CountedFileSystem : public arrow::fs::SubTreeFileSystem {
-+ public:
-+    CountedFileSystem(std::shared_ptr<arrow::Buffer> data, std::string key)
-+        : arrow::fs::SubTreeFileSystem(
-+              "", std::make_shared<arrow::fs::LocalFileSystem>()),
-+          counts(std::make_shared<ReadCounts>()),
-+          data_(std::move(data)),
-+          key_(std::move(key)) {
-+    }
-+    using arrow::fs::SubTreeFileSystem::OpenInputFile;
-+    arrow::Result
-```
-
-**File**: `internal/core/src/segcore/SegmentGrowingImpl.cpp` (modified, +13/-22)
-```diff
-@@ -2158,34 +2158,24 @@ SegmentGrowingImpl::load_column_group_data_internal(
-         // Get all row groups for each file
-         std::vector<std::vector<int64_t>> row_group_lists;
-         row_group_lists.reserve(insert_files.size());
-+        PreparedParquetFiles prepared_files;
-+        prepared_files.reserve(insert_files.size());
-         for (const auto& file : insert_files) {
--            auto result = milvus_storage::FileRowGroupReader::Make(
--                fs,
--                file,
--                milvus_storage::DEFAULT_READ_BUFFER_SIZE,
--                storage::GetReaderProperties(),
--                storage::GetArrowReaderProperties());
-+            auto result = milvus_storage::PreparedParquetFile::Open(
-+                fs, file, storage::GetReaderProperties());
-             if (!result.ok()) {
-                 ThrowInfo(
--                    milvus::storage::ArrowStatusToErrorCode(result),
--                    "[StorageV2] Failed to create file row group reader: " +
--                        result.status().ToString());
-+                    milvus::storage::ArrowStatusToErrorCode(result.status()),
-+                    "[StorageV2] Failed to prepare file {}: {}",
-+                    file,
-+                    result.status().ToString());
-             }
--            auto reader = result.ValueOrDie();
--            auto row_group_num =
--                reader->file_metadata()->GetRowGroupMetadataVector().size();
-+            auto prepared = std::move(result).ValueOrDie();
-+            auto row_group_num = prepared->row_group_metadata().size();
-             std::vector<int64_t> all_row_groups(row_group_num);
-             std::iota(all_row_groups.begin(), all_row_groups.end(), 0);
-             row_group_lists.push_back(all_row_groups);
--            auto status = reader->Close();
--            if (!status.ok()) {
--                ThrowInfo(milvus::storage::ArrowStatusToErrorCode(status),
--                          "[StorageV2] failed to close file reader when get "
--                          "row group "
--                          "metadata from file {} with error {}",
--                          file,
--                          status.ToString());
--            }
-+            prepared_files.push_back(std::move(prepared));
-         }
- 
-         // create parallel degree split strategy
-@@ -2200,7 +2190,8 @@ SegmentGrowingImpl::load_column_group_data_internal(
-                                     row_group_lists,
-                                     fs,
-                                     nullptr,
--                                    infos.load_priority);
-+                                    infos.load_priority,
-+                                    prepared_files);
-         });
- 
-         LOG_INFO(
-```
-
-**File**: `internal/core/src/segcore/memory_planner.cpp` (modified, +91/-75)
-```diff
-@@ -111,19 +111,16 @@ BatchReaderMemoryLimit(int64_t batch_loaded_memory_bytes,
- }
- 
- arrow::Result<std::vector<std::shared_ptr<arrow::Table>>>
--ReadFileRowGroupBlock(const milvus_storage::ArrowFileSystemPtr& fs,
--                      const std::string& file,
--                      int64_t rg_offset,
--                      int64_t rg_count,
--                      int64_t reader_memory_limit) {
--    ARROW_ASSIGN_OR_RAISE(auto reader,
--                          milvus_storage::FileRowGroupReader::Make(
--                              fs,
--                              file,
--                              nullptr,
--                              reader_memory_limit,
--                              milvus::storage::GetReaderProperties(),
--                              milvus::storage::GetArrowReaderProperties()));
-+ReadFileRowGroupBlock(
-+    const std::shared_ptr<milvus_storage::PreparedParquetFile>& file,
-+    int64_t rg_offset,
-+    int64_t rg_count,
-+    int64_t reader_memory_limit) {
-+    ARROW_ASSIGN_OR_RAISE(
-+        auto reader,
-+        file->MakeReader(nullptr,
-+                         reader_memory_limit,
-+                         milvus::storage::GetArrowReaderProperties()));
-     auto close_guard = folly::makeGuard([&reader]() { (void)reader->Close(); });
-     ARROW_RETURN_NOT_OK(reader->SetRowGroupOffsetAndCount(rg_offset, rg_count));
-     std::vector<std::shared_ptr<arrow::Table>> tables;
-@@ -201,12 +198,16 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
-                  const std::vector<std::vector<int64_t>>& row_group_lists,
-                  const milvus_storage::ArrowFileSystemPtr& fs,
-                  const std::shared_ptr<arrow::Schema> schema,
--                 milvus::proto::common::LoadPriority priority) {
-+                 milvus::proto::common::LoadPriority priority,
-+                 const PreparedParquetFiles& prepared_files) {
-     auto close_channel = folly::makeGuard([&channel] { channel->close(); });
-     try {
-         AssertInfo(remote_files.size() == row_group_lists.size(),
-                    "[StorageV2] Number of remote files must match number of "
-                    "row group lists");
-+        AssertInfo(prepared_files.empty() ||
-+                       prepared_files.size() == remote_files.size(),
-+                   "[StorageV2] Prepared files must match remote files");
-         auto& pool =
-             ThreadPools::GetThreadPool(milvus::PriorityForLoad(priority));
- 
-@@ -218,6 +219,25 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
-                 continue;
-             }
- 
-+            std::shared_ptr<milvus_storage::PreparedParquetFile> prepared;
-+            if (prepared_files.empty()) {
-+                auto result = milvus_storage::PreparedParquetFile::Open(
-+                    fs, file, milvus::storage::GetReaderProperties());
-+                if (!result.ok()) {
-+                    ThrowInfo(milvus::storage::ArrowStatusToErrorCode(
-+                                  result.status()),
-+                              "[StorageV2] Failed to prepare file {}: {}",
-+                              file,
-+                              result.status().ToString());
-+                }
-+                prepared = std::move(result).ValueOrDie();
-+            } else {
-+                prepared = prepared_files[file_idx];
-+            }
-+            AssertInfo(prepared != nullptr,
-+                       "[StorageV2] Prepared file {} is null",
-+                       file);
-+
-             // Use provided strategy to split row groups
-             auto blocks = strategy->split(row_groups);
- 
-@@ -238,63 +258,59 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
-                 memory_limit / blocks.size(), FILE_SLICE_SIZE.load());
- 
-             for (const auto& block : blocks) {
--                futures.emplace_back(pool.Submit(
--                    [block, fs, file, file_idx, schema, reader_memory_limit]() {
--                        AssertInfo(fs != nullptr,
--                                   "[StorageV2] file system is nullptr");
--                        auto result = milvus_storage::FileRowGroupReader::Make(
--                            fs,
--                            file,
--                            schema,
--                            reader_memory_limit,
--                            milvus::storage::GetReaderProperties(),
--                            milvus::storage::GetArrowReaderProperties());
--                        if (!result.ok()) {
--                            ThrowInfo(milvus::storage::ArrowStatusToErrorCode(
--                                          result.status()),
--                                      "[StorageV2] Failed to create row group "
--                                      "reader: {}",
--                                      result.status().ToString());
--                        }
--                        auto row_group_reader = result.ValueOrDie();
--                        auto close_guard 
-```
-
-**File**: `internal/core/src/segcore/memory_planner.h` (modified, +11/-7)
-```diff
-@@ -31,10 +31,14 @@
- #include "common/OpContext.h"
- #include "milvus-storage/common/metadata.h"
- #include "milvus-storage/filesystem/fs.h"
-+#include "milvus-storage/format/parquet/file_reader.h"
- #include "milvus-storage/reader.h"
- 
- namespace milvus::segcore {
- 
-+using PreparedParquetFiles =
-+    std::vector<std::shared_ptr<milvus_storage::PreparedParquetFile>>;
-+
- struct RowGroupBlock {
-     int64_t offset;  // Start offset of the row group block
-     int64_t count;   // Number of row groups in this block
-@@ -73,6 +77,8 @@ class ParallelDegreeSplitStrategy : public RowGroupSplitStrategy {
-  * @param strategy: strategy to split row groups
-  * @param row_group_lists: list of row group lists
-  * @param schema: schema of the data, if not provided, storage v2 will read all columns of the files.
-+ * @param prepared_files: contexts from metadata discovery, in remote_files order.
-+ * If omitted, prepare each file once before splitting it into reader tasks.
-  */
- void
- LoadWithStrategy(const std::vector<std::string>& remote_files,
-@@ -83,7 +89,8 @@ LoadWithStrategy(const std::vector<std::string>& remote_files,
-                  const milvus_storage::ArrowFileSystemPtr& fs,
-                  const std::shared_ptr<arrow::Schema> schema = nullptr,
-                  milvus::proto::common::LoadPriority priority =
--                     milvus::proto::common::LoadPriority::HIGH);
-+                     milvus::proto::common::LoadPriority::HIGH,
-+                 const PreparedParquetFiles& prepared_files = {});
- 
- // ---- Cell-batch loading ----
- 
-@@ -166,14 +173,11 @@ LoadCellBatchAsync(milvus::OpContext* op_ctx,
- 
- /**
-  * Creates a BatchReaderFactory that reads from Parquet files via
-- * FileRowGroupReader. This factory uses one reader for the requested contiguous
-- * row group range and leaves row group internals to the storage/Arrow reader.
-- * The returned factory owns a copy of remote_files, so the caller's vector
-- * need not outlive the factory.
-+ * independent readers from caller-prepared files. The factory retains the file
-+ * contexts across batch tasks; it shares plaintext footers but no reader state.
-  */
- BatchReaderFactory
--MakeFileReaderFactory(std::vector<std::string> remote_files,
--                      milvus_storage::ArrowFileSystemPtr fs);
-+MakeFileReaderFactory(PreparedParquetFiles prepared_files);
- 
- /**
-  * Creates a BatchReaderFactory that reads from a ChunkReader via batch
-```
-
-**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslator.cpp` (modified, +32/-5)
-```diff
-@@ -14,7 +14,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- #include "segcore/storagev2translator/GroupChunkTranslator.h"
--#include "segcore/default_fs.h"
- 
- #include <assert.h>
- #include <algorithm>
-@@ -44,14 +43,15 @@
- #include "log/Log.h"
- #include "milvus-storage/common/config.h"
- #include "milvus-storage/common/constants.h"
--#include "milvus-storage/filesystem/fs.h"
-+#include "milvus-storage/format/parquet/file_reader.h"
- #include "mmap/Types.h"
- #include "segcore/InsertRecord.h"
- #include "segcore/Utils.h"
- #include "segcore/memory_planner.h"
- #include "segcore/storagev2translator/GroupCTMeta.h"
- #include "storage/EntryStreamUtils.h"
- #include "storage/KeyRetriever.h"
-+#include "storage/StatusToErrorCode.h"
- #include "storage/LoadOverheadController.h"
- #include "segcore/storagev2translator/StorageV2Config.h"
- #include "storage/Util.h"
-@@ -71,6 +71,7 @@ GroupChunkTranslator::GroupChunkTranslator(
-     GroupChunkType group_chunk_type,
-     const std::unordered_map<FieldId, FieldMeta>& field_metas,
-     FieldDataInfo column_group_info,
-+    milvus_storage::ArrowFileSystemPtr fs,
-     std::vector<std::string> insert_files,
-     std::vector<milvus_storage::RowGroupMetadataVector>&& row_group_meta_list,
-     bool use_mmap,
-@@ -101,6 +102,7 @@ GroupChunkTranslator::GroupChunkTranslator(
-       }()),
-       field_metas_(field_metas),
-       column_group_info_(column_group_info),
-+      fs_(std::move(fs)),
-       insert_files_(std::move(insert_files)),
-       row_group_meta_list_(std::move(row_group_meta_list)),
-       meta_(num_fields,
-@@ -143,6 +145,8 @@ GroupChunkTranslator::GroupChunkTranslator(
-                                    })),
-       writeback_mode_(writeback_mode),
-       load_priority_(load_priority) {
-+    AssertInfo(insert_files_.size() == row_group_meta_list_.size(),
-+               "[StorageV2] Files must match row group metadata");
-     // Build prefix sum for O(1) lookup in get_cid_from_file_and_row_group_index
-     file_row_group_prefix_sum_.reserve(row_group_meta_list_.size() + 1);
-     file_row_group_prefix_sum_.push_back(
-@@ -361,6 +365,10 @@ GroupChunkTranslator::get_cells(milvus::OpContext* ctx,
-         cells;
-     cells.reserve(cids.size());
- 
-+    if (cids.empty()) {
-+        return cells;
-+    }
-+
-     auto max_cid = *std::max_element(cids.begin(), cids.end());
-     if (max_cid >= meta_.chunk_memory_size_.size()) {
-         ThrowInfo(
-@@ -387,9 +395,28 @@ GroupChunkTranslator::get_cells(milvus::OpContext* ctx,
-     }
- 
-     // Submit cell-batch loading tasks
--    auto fs = milvus::segcore::GetDefaultArrowFileSystem();
--
--    auto factory = milvus::segcore::MakeFileReaderFactory(insert_files_, fs);
-+    // Preserve file_idx while preparing only files touched by this operation.
-+    // Batch tasks share the contexts, but the translator never retains them.
-+    PreparedParquetFiles prepared_files(insert_files_.size());
-+    for (const auto& spec : cell_specs) {
-+        if (prepared_files[spec.file_idx]) {
-+            continue;
-+        }
-+        CheckCancellation(ctx, segment_id_, "GroupChunkTranslator::prepare");
-+        const auto& path = insert_files_[spec.file_idx];
-+        auto result = milvus_storage::PreparedParquetFile::Open(
-+            fs_, path, storage::GetReaderProperties());
-+        if (!result.ok()) {
-+            ThrowInfo(storage::ArrowStatusToErrorCode(result.status()),
-+                      "[StorageV2] Failed to prepare file {}: {}",
-+                      path,
-+                      result.status().ToString());
-+        }
-+        prepared_files[spec.file_idx] = std::move(result).ValueOrDie();
-+    }
-+    CheckCancellation(ctx, segment_id_, "GroupChunkTranslator::prepare");
-+    auto factory =
-+        milvus::segcore::MakeFileReaderFactory(std::move(prepared_files));
-     auto finalize_cell =
-         [this, priority](
-             const std::vector<std::shared_ptr<arrow::Table>>& tables,
-```
-
-**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslator.h` (modified, +5/-0)
-```diff
-@@ -24,6 +24,7 @@
- #include "cachinglayer/Utils.h"
- #include "common/ChunkTarget.h"
- #include "milvus-storage/common/metadata.h"
-+#include "milvus-storage/filesystem/fs.h"
- #include "mmap/Types.h"
- #include "common/Types.h"
- #include "common/GroupChunk.h"
-@@ -40,6 +41,7 @@ class GroupChunkTranslator
-         GroupChunkType group_chunk_type,
-         const std::unordered_map<FieldId, FieldMeta>& field_metas,
-         FieldDataInfo column_group_info,
-+        milvus_storage::ArrowFileSystemPtr fs,
-         std::vector<std::string> insert_files,
-         std::vector<milvus_storage::RowGroupMetadataVector>&&
-             row_group_meta_list,
-@@ -114,6 +116,9 @@ class GroupChunkTranslator
-     std::string key_;
-     std::unordered_map<FieldId, FieldMeta> field_metas_;
-     FieldDataInfo column_group_info_;
-+    // Full footers are prepared only for the files requested by get_cells and
-+    // released with that operation. Keep only the layout across calls.
-+    milvus_storage::ArrowFileSystemPtr fs_;
-     std::vector<std::string> insert_files_;
-     std::vector<milvus_storage::RowGroupMetadataVector> row_group_meta_list_;
-     std::vector<size_t> file_row_group_prefix_sum_;
-```
-
-**File**: `internal/core/src/segcore/storagev2translator/GroupChunkTranslatorTest.cpp` (modified, +188/-0)
-```diff
-@@ -58,6 +58,10 @@
- #include "segcore/storagev2translator/StorageV2Config.h"
- #include <folly/ScopeGuard.h>
- #include "test_utils/Constants.h"
-+#include "test_utils/CountedFileSystem.h"
-+#include "storage/KeyRetriever.h"
-+#include "storage/StatusToErrorCode.h"
-+#include <folly/CancellationToken.h>
- #include "test_utils/DataGen.h"
- 
- using namespace milvus;
-@@ -116,8 +120,189 @@ class GroupChunkTranslatorTest : public ::testing::TestWithParam<bool> {
- 
-     std::vector<std::string> paths_;
-     int64_t segment_id_ = 0;
-+
-+    // Two files, each with several row groups. Non-adjacent cids force
-+    // separate batches while a request confined to file 1 leaves file 0 cold.
-+    std::unique_ptr<GroupChunkTranslator>
-+    MakeFooterReuseTranslator(
-+        const std::shared_ptr<test::CountedFileSystem>& fs,
-+        std::vector<std::string>& files) {
-+        files = {path_ + "/footer_scope_0.parquet",
-+                 path_ + "/footer_scope_1.parquet"};
-+        auto write_paths = std::vector<std::string>{files[0]};
-+        auto groups = std::vector<std::vector<int>>{
-+            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
-+        auto config = milvus_storage::StorageConfig();
-+        auto result = milvus_storage::PackedRecordBatchWriter::Make(
-+            fs_,
-+            write_paths,
-+            arrow_schema_,
-+            config,
-+            groups,
-+            1024 * 1024,
-+            parquet::default_writer_properties());
-+        AssertInfo(result.ok(), "failed to create footer test writer");
-+        auto writer = std::move(result).ValueOrDie();
-+        int64_t rows = 0;
-+        for (int i = 0; i < 12; ++i) {
-+            auto data = DataGen(schema_, 1000);
-+            auto batch = ConvertToArrowRecordBatch(data, 128, arrow_schema_);
-+            rows += batch->num_rows();
-+            AssertInfo(writer->Write(batch).ok(),
-+                       "failed to write footer test file");
-+        }
-+        AssertInfo(writer->Close().ok(), "failed to close footer test file");
-+        AssertInfo(fs_->CopyFile(files[0], files[1]).ok(),
-+                   "failed to copy footer test file");
-+        auto metadata = LoadGroupChunkMetadata(files, {}, "test_footer_scope");
-+        AssertInfo(metadata.row_group_meta_list[0].size() >= 3,
-+                   "footer test requires at least three row groups");
-+        return std::make_unique<GroupChunkTranslator>(
-+            segment_id_,
-+            GroupChunkType::DEFAULT,
-+            schema_->get_fields(),
-+            FieldDataInfo(0, rows * 2, TestLocalPath),
-+            fs,
-+            files,
-+            std::move(metadata.row_group_meta_list),
-+            GetParam(),
-+            true,
-+            schema_->get_field_ids().size(),
-+            proto::common::LoadPriority::LOW,
-+            "disable",
-+            MmapChunkWritebackMode::Disabled,
-+            /* force_one_row_group_per_cell */ true);
-+    }
- };
- 
-+TEST_P(GroupChunkTranslatorTest, FooterReuseScopedToRequestedFilesAndCall) {
-+    auto fs = std::make_shared<test::CountedFileSystem>(fs_);
-+    std::vector<std::string> files;
-+    auto translator = MakeFooterReuseTranslator(fs, files);
-+    auto untouched = fs->CountsFor(files[0]);
-+    auto requested = fs->CountsFor(files[1]);
-+    // Metadata discovery uses fs_, so the translator must start with no
-+    // footer references or counted handles from construction.
-+    EXPECT_EQ(requested->opens, 0);
-+    const int before_probe = requested->footer_reads;
-+    const auto bytes_before_probe = requested->footer_bytes.load();
-+    auto probe = milvus_storage::PreparedParquetFile::Open(
-+        fs, files[1], storage::GetReaderProperties());
-+    ASSERT_TRUE(probe.ok()) << probe.status();
-+    const int reads_per_prepare = requested->footer_reads - before_probe;
-+    const auto bytes_per_prepare = requested->footer_bytes - bytes_before_probe;
-+    ASSERT_GT(reads_per_prepare, 0);
-+    auto reader = probe.ValueOrDie()->MakeReader();
-+    ASSERT_TRUE(reader.ok()) << reader.status();
-+    std::weak_ptr<parquet::FileMetaData> footer =
-+        reader.ValueOrDie()->file_metadata()->GetParquetMetadata();
-+    reader.ValueOrDie().reset();
-+    probe.ValueOrDie().reset();
-+    EXPECT_TRUE(footer.expired());
-+    EXPECT_EQ(requested->handles, 0);
-+    const int baseline = requested->footer_reads;
-+    const auto baseline_bytes = requested->footer_bytes.load();
-+    const int baseline_opens = requested->opens;
-+    // Keep original file_idx=1, and split the same file into two batches.
-+    const std::vector<cachinglayer::cid_t> cids{
-+        translator->get_global_row_group_idx(1, 0),
-+        translator->get_global_row_group_idx(1, 2)};
-+    for (int call = 1; call <= 2; ++call) {
-+        auto cells = translator->get_cells(nullptr, cids);
-+        EXPECT_EQ(cells.size(), cids.size());
-+        EXPECT_EQ(requested->footer_reads, baseline + call * reads_per_prepare);
-+        // A preparation also probes the 4-byte encryption m
++// TestBucketRespillKeepsLeadingDiskPieceAndDropsTail pins the second spill of
++// one bucket, the path where a stale reference really hides: the pieces routed
++// after the first spill land in the very slots it drained, so the tail the
++// second spill drops is only partly overwritten by the append that installs the
++// new on-disk piece. The leading disk piece must survive untouched and readable
++// while every slot past the new len goes back to zero.
++func TestBucketRespillKeepsLeadingDiskPiece
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55166** (2026-11-05): test: build big_entities lazily in stability/test_restart.py (@czs007)
-- **PR #55156** (2026-11-05): enhance: [2.6] restrict AWS credential sources in chunk managers (@jiaqizho)
-- **PR #55149** (closed): fix: [2.6] cancel stale orphan segment cleanup after node is reassigned (@czs007)
-- **PR #55145** (2026-11-04): fix: let JSON_CONTAINS use JSON path indexes ahead of JSON stats (@xiaofan-luan)
-- **PR #55143** (2026-11-05): fix: [3.0] count each proxy request once at boundary (#55105) (@congqixia)
-- **PR #55142** (2026-11-05): fix: [2.6] count each proxy request once at boundary (#55105) (@congqixia)
+- **PR #55222** (2026-11-06): fix: report NumPy import schema errors through the job instead of the proxy (@xaxys)
+- **PR #55214** (2026-11-06): enhance: [3.0] broadcast file resource metadata through WAL (#54562) (@aoiasd)
+- **PR #55203** (2026-11-06): fix: [cp3.0] validate import schemas when a numpy or parquet file counts to zero (@xaxys)
+- **PR #55202** (2026-11-06): fix: clear drained piece references when a reshard bucket spills (@xaxys)
+- **PR #55201** (2026-11-06): fix: [3.0] stop growing filter cursors at batch boundaries (@zhengbuqian)
+- **PR #55200** (2026-11-06): fix: [3.0] Preserve segment index types across snapshot restore (@weiliu1031)
 
 ---
 
@@ -2538,47 +2662,54 @@ reads/bytes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the search timestamp in the search requery (#55068)
+## X. enhance: bound memory of ORDER BY ... LIMIT in segcore SortBuffer with a selecti
 
 **RULE**:
-When implementing operations in `internal/proxy/dql/requery_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/exec/SortBuffer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de9d02bb`: keep the search timestamp in the search requery (#55068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f9a1114`: enhance: bound memory of ORDER BY ... LIMIT in segcore SortBuffer with a selection algorithm (#54383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/proxy/dql/requery_integration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/exec/SortBuffer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-	"github.com/milvus-io/milvus/pkg/v3/util/tsoutil"
-// TestSearchTask_RequeryKeepsSearchTimestamp checks that the requery task keeps
-// the search timestamp through scheduling, so its guarantee and TTL cutoffs
-// match the search. Otherwise a row that expires between the search and the
-// requery is missing from the requery and the search fails with
-// ErrInconsistentRequery.
-func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
-	const (
-		collectionName = "test_collection"
-		collectionID   = int64(100)
-	)
-	ctx := context.Background()
-	searchTime := time.Unix(1_700_000_000, 0)
-	searchTS := tsoutil.ComposeTSByTime(searchTime)
-	schedulerTS := tsoutil.ComposeTSByTime(searchTime.Add(2 * time.Second))
-	collectionTTL := time.Hour
-	gracefulTime := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
+#include <limits>
+#include <string_view>
+namespace {
 
-	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
-		Name: collectionName,
-		Fields: []*schemapb.FieldSchema{
-			{FieldID: 100, Name: "id", IsPrimaryKey: true, DataType: schemapb.DataType_Int64},
-			{FieldID: 101, Name: "vec", DataType: schemapb.DataType_FloatVector, TypeParams: []*commonpb.KeyValuePair{{Key: common.DimKey, Value: "4"}}},
-		},
-	})
-	mo
+// With a limit, up to kCandidateBufferFactor * limit candidate rows are kept
+// before shrinking back to limit. The slack amortizes each O(n) selection
+// over the (factor - 1) * limit rows accepted in between.
+constexpr int64_t kCandidateBufferFactor = 2;
+
+// Left-hand side of SortBuffer::CompareImpl(): a row stored in the
+// RowContainer.
+struct StoredRow {
+    const char* row;
+
+    bool
+    IsNull(int32_t, const RowColumn& column) const {
+        return RowContainer::isNullAt(
+            row, column.nullByte(), column.nullMask());
+    }
+    template <typename T>
+    T
+    ValueAt(int32_t, const RowColumn& column) const {
+        return RowContainer::valueAt<T>(row, column.offset());
+    }
+    const std::string*
+    StrAt(int32_t, const RowColumn& column) const {
+        return RowContainer::strAt(row, column.offset());
+    }
+};
+
+// Left-hand side of SortBuffer::CompareImpl(): an input row that has not been
+// stored, read straight from its column vectors. Values are read exactly as
+// RowContainer::storeWithNull()/storeNoNulls() read them (ValidAt and
+// RawValueAt), so comparing in place equals comparing the stored row, an
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2588,4 +2719,4 @@ func TestSearchTask_RequeryKeepsSearchTimestamp(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de9d02bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f9a1114` are properly handled with clean fallback behavior.
