@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T14:34:06.498Z",
-  "total_verified_learnings": 1225,
+  "last_updated": "2026-11-06T14:40:46.128Z",
+  "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10321,11 +10321,16 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "12508b40",
-      "content_hash": "111cb24bbce5633b209d64d79bb8a65de37d625292f801f2153c90dae519f38e",
+      "source_version": "e17756e7",
+      "content_hash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update dependency vitest to v4.1.11 [SECURITY] (#3936)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1727,
           "title": "LDAP): handle escaped commas when parsing DNs (#3703)",
@@ -10362,7 +10367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:56:58.597Z",
+      "verified_at": "2026-11-06T14:40:44.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11419,11 +11424,16 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "932cd18b",
-      "content_hash": "9beb91d565a43649ebd0d6895ac1a5fc492f609ff80e992cb51340cab2859e02",
+      "source_version": "2cb963b6",
+      "content_hash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOI",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2169,
           "title": "server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)",
@@ -11520,7 +11530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T09:05:02.880Z",
+      "verified_at": "2026-11-06T14:40:46.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37986,11 +37996,16 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "a4447108",
-      "content_hash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
+      "source_version": "5752f709",
+      "content_hash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci(actions): make the unit test timeout configurable (#19364)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3232,
           "title": "ci(actions): dispatch with GitHub App tokens (#19205)",
@@ -38037,7 +38052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:21:01.942Z",
+      "verified_at": "2026-11-06T14:40:41.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152748,14 +152763,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5202,
       "title": "Quantization Sensitivity Mapping Invariant",
-      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
-      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T09:47:08.198Z"
+      "verified_at": "2026-11-06T14:40:35.467Z"
     },
     "rule-5203": {
       "learning_id": "rule-5203",
@@ -184324,6 +184339,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-06T14:05:31.919Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
+      "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "slug": "hf-unsloth-qwen3.8-flash-next-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
+      "content_hash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Attention Context Window Scaling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Token Prediction (MTP) Throughput Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 5202,
+          "title": "Quantization Sensitivity Mapping Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T14:40:35.467Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

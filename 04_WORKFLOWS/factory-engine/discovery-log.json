@@ -20506,5 +20506,17 @@
     "downloads": 8209,
     "qualityScore": 3520,
     "discoveredAt": "2026-11-06T14:03:04.850Z"
+  },
+  {
+    "name": "unsloth/Qwen3.8-Flash-Next-GGUF",
+    "fullName": "unsloth/Qwen3.8-Flash-Next-GGUF",
+    "url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/Qwen3.8-Flash-Next-GGUF (1443 likes, 1309045 downloads)",
+    "likes": 1443,
+    "downloads": 1309045,
+    "qualityScore": 16430,
+    "discoveredAt": "2026-11-06T14:38:13.868Z"
   }
 ]

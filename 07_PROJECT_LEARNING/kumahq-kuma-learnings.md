@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `a91f7fe5`  
+> **Source Version**: `5752f709`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:36:52.061Z  
+> **Timestamp**: 2026-11-06T14:40:40.641Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:36:48.676Z  
+> **Harvest Timestamp**: 2026-11-06T14:40:40.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -998,11 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #19339** (2026-11-02): **chore(deps/dev): bump node to 26**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [node](https://nodejs.org) ([source](https://redirect.github.com/nodejs/node)) | tools | major | `24` → `26` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>nodejs/node (node)</summary>  ### [`v26.13.0`](https://redirect.github.com/nodejs/node/releases/tag/v26.13.0): 2026-10-28, Version 26.13.0 'Lithium' (LTS), @&#8203;richardlau  [Compare Source](https://redirect.github.com/nodejs/node/compare/v26.12.1...v26.13.0)  ##### Notable Changes  This release marks the transition of Node.js 26.x into Long Term Support (LTS) with the codename 'Lithium'. It will continue to receive updates through to the end of April 2029.  Other than updating metadata, such as the `process.release` object, to reflect that the release is LTS, no further changes from Node.js 26.12.1 are included.  If you are updating from an earlier Long Term Support release (e.g. Node.js 24 or 22 or earlier) please note that since Node.js 25 the official binaries for Linux are linked against libatomic, which may need to be installed separately depending on your Linux distribution.  ### [`v26.12.1`](https://redirect.github.com/nodejs/node/releases/tag/v26.12.1): 2026-10-21, Version 26.12.1 (Current), @&#8203;aduh95 prepared by @&#
+- **Issue #19368** (2026-11-06): **ci(actions): make the unit test timeout configurable (backport of #19364)**
+  *Symptoms*: Backport of #19364 to `release-2.11`.  ## Motivation  `test_unit` has a hardcoded 30-minute timeout. That fits GitHub-hosted runners with a warm build cache, but a repository that runs this CI on smaller runners, or with `KUMA_CI_SKIP_PUSH` and so always from a cold build cache, can run past it with no test failing. Recent runs on 2-core runners take about 25 to 35 minutes.  ## Implementation information  `timeout-minutes` on `test_unit` now reads the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT`, falling back to 30. Nothing changes where the variable is unset, so kumahq/kuma does not need to define it, and kong-mesh's copy of the workflow keeps its current limit. Documented in `.github/workflows/README.md`.  > Changelog: skip 
 
-- **Issue #19338** (2026-11-02): **chore(deps/dev): bump npm:@redocly/cli from 2.63.0 to 2.66.1**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [npm:@redocly/cli](https://redirect.github.com/Redocly/redocly-cli) | `2.63.0` → `2.66.1` | ![age](https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.66.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.63.0/2.66.1?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Redocly/redocly-cli (npm:@&#8203;redocly/cli)</summary>  ### [`v2.66.1`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.66.1)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.66.0...@redocly/cli@2.66.1)  ##### Patch Changes  - Fixed an issue where the generated PHP and Python clients failed when a discriminator mapping pointed to a schema that is itself a `oneOf`. - Updated [@&#8203;redocly/client-generator](https://redirect.github.com/redocly/client-generator) to v0.7.5.  ### [`v2.66.0`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.66.0)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.65.1...@redocly/cli@2.66.0)  ##### Minor Changes  - Added the `skills` command that i
+- **Issue #19367** (2026-11-06): **ci(actions): make the unit test timeout configurable (backport of #19364)**
+  *Symptoms*: Backport of #19364 to `release-2.13`.  ## Motivation  `test_unit` has a hardcoded 30-minute timeout. That fits GitHub-hosted runners with a warm build cache, but a repository that runs this CI on smaller runners, or with `KUMA_CI_SKIP_PUSH` and so always from a cold build cache, can run past it with no test failing. Recent runs on 2-core runners take about 25 to 35 minutes.  ## Implementation information  `timeout-minutes` on `test_unit` now reads the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT`, falling back to 30. Nothing changes where the variable is unset, so kumahq/kuma does not need to define it, and kong-mesh's copy of the workflow keeps its current limit. Documented in `.github/workflows/README.md`.  > Changelog: skip 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,66 +1019,43 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7c0ec00` (2026-11-02)
-**Commit Message**: chore(deps): bump gcr.io/distroless/static-debian13:debug-nonroot from c7b8faa to 12c2026 (#19323)
+### Incident Patch 1: `5752f709` (2026-11-06)
+**Commit Message**: ci(actions): make the unit test timeout configurable (#19364)
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: Ilya Lobkov <[REDACTED_EMAIL]>
 
-**File**: `tools/releases/dockerfiles/static.Dockerfile` (modified, +1/-1)
+**File**: `.github/workflows/README.md` (modified, +4/-0)
 ```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:c7b8faacc4439b8f5c41ca7ce4a3f8ff3e8520cb0c3444fae7292f687b00d0dd
-+FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:12c2026b21e05857a4c730b4dbf812becf02b396cb7916166c8305f45f140ab0
+@@ -96,3 +96,7 @@ A repository that mirrors this one gets a `push` event for every branch and tag
+ The guard sits on the first job of each `push`-triggered workflow, so the jobs that need it are skipped with it. In `build-test-distribute.yaml` that job is `release_sha_gate`, and `distributions`, which runs `always()`, checks for it explicitly. A new `push`-triggered workflow needs the same `if:`.
  
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
+ `build-test-distribute.yaml` also runs on pull requests into `security/**` branches. Such a mirror stages unreleased fixes on `security/<branch>` and needs CI on the pull requests that land there. Nothing here creates those branches, so this changes nothing in this repository.
++
++# Unit test timeout
++
++Set the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT` to change the `test_unit` job's timeout in minutes, for a repository whose runners are slower or start from a cold build cache. Unset, it stays at 30.
 ```
 
----
-
-### Incident Patch 2: `dcddc0d4` (2026-11-02)
-**Commit Message**: chore(deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 68f210b to 37b8b2d (#19322)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/base.Dockerfile` (modified, +1/-1)
+**File**: `.github/workflows/_test.yaml` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:68f210b8b9d3105847b270a1aef56abfcd8ee1f8bb54921999e451f42d0dad0c
-+FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:37b8b2d30e81bf028eae7c1e8c65d775d46b2a21a2b76cde6bf8bf59ef0e3289
- 
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
-```
-
----
-
-### Incident Patch 3: `6f1283b6` (2026-11-02)
-**Commit Message**: chore(deps): bump gcr.io/distroless/base-nossl-debian13:debug from d085c34 to 4a1b47e (#19321)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/base-root.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # use only when root is really needed
--FROM gcr.io/distroless/base-nossl-debian13:debug@sha256:d085c34ea66f46cdd1ff439c01f88c6875f6f49adeb2c1fcc7a22d33e1af515e
-+FROM gcr.io/distroless/base-nossl-debian13:debug@sha256:4a1b47e4dc79d5331f6b9265f8933a96351fb6341441902acf8dc8a9a6d25630
- 
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
+@@ -23,7 +23,7 @@ env:
+   MISE_DISABLE_TOOLS: "golangci-lint,skaffold,aqua:stackrox/kube-linter"
+ jobs:
+   test_unit:
+-    timeout-minutes: 30
++    timeout-minutes: ${{ fromJSON(vars.KUMA_CI_UNIT_TEST_TIMEOUT || '30') }}
+     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'ci/skip-test') || inputs.IS_RELEASE_TAG) }}
+     runs-on: >-
+       ${{ (github.event_name == 'pull_request'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19339** (2026-11-02): chore(deps/dev): bump node to 26 (@renovate[bot])
-- **PR #19338** (2026-11-02): chore(deps/dev): bump npm:@redocly/cli from 2.63.0 to 2.66.1 (@renovate[bot])
-- **PR #19337** (2026-11-02): chore(deps/dev): bump chart-releaser from 1.8.1 to 1.10.1 (@renovate[bot])
-- **PR #19336** (2026-11-02): chore(deps): bump reviewdog/action-actionlint from 1.80.6 to 1.81.1 (@renovate[bot])
-- **PR #19335** (2026-11-02): chore(deps): bump jdx/mise-action from 5.1.2 to 5.2.1 (@renovate[bot])
-- **PR #19334** (2026-11-02): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@renovate[bot])
+- **PR #19368** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
+- **PR #19367** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
+- **PR #19366** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
+- **PR #19365** (2026-11-06): ci(actions): make the unit test timeout configurable (backport of #19364) (@lobkovilya)
+- **PR #19364** (2026-11-06): ci(actions): make the unit test timeout configurable (@lobkovilya)
+- **PR #19355** (2026-11-05): ci(actions): add swap before golangci-lint in the check job (backport of #19351) (@lobkovilya)
 
 ---
 
@@ -1098,28 +1075,31 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump gcr.io/distroless/static-debian13:debug-nonroot from c7b8faa to 12c2
+## X. ci(actions): make the unit test timeout configurable (#19364)
 
 **RULE**:
-When implementing operations in `tools/releases/dockerfiles/static.Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7c0ec00`: deps): bump gcr.io/distroless/static-debian13:debug-nonroot from c7b8faa to 12c2026 (#19323). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5752f709`: ci(actions): make the unit test timeout configurable (#19364). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/releases/dockerfiles/static.Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:12c2026b21e05857a4c730b4dbf812becf02b396cb7916166c8305f45f140ab0
+
+# Unit test timeout
+
+Set the repository variable `KUMA_CI_UNIT_TEST_TIMEOUT` to change the `test_unit` job's timeout in minutes, for a repository whose runners are slower or start from a cold build cache. Unset, it stays at 30.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:c7b8faacc4439b8f5c41ca7ce4a3f8ff3e8520cb0c3444fae7292f687b00d0dd
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7c0ec00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5752f709` are properly handled with clean fallback behavior.

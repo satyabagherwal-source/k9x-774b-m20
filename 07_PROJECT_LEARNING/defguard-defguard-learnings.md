@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `12508b40`  
+> **Source Version**: `e17756e7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:56:58.077Z  
+> **Timestamp**: 2026-11-06T14:40:43.126Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:56:58.068Z  
+> **Harvest Timestamp**: 2026-11-06T14:40:43.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2887 stars
+- **Stars / Engagement**: 2899 stars
 
 ---
 
@@ -44,7 +44,6 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use ipnetwork::IpNetwork;
 use serde::Serialize;
 use url::Url;
-use utoipa::ToSchema;
 
 /// Strip any `http://` or `https://` scheme prefix a user may have accidentally
 /// included in a hostname/IP field that expects a bare host, not a URL.
@@ -110,7 +109,8 @@ pub fn parse_network_address_list(ips: &str) -> Vec<IpNetwork> {
         .collect()
 }
 
-#[derive(Debug, Serialize, PartialEq, ToSchema)]
+#[derive(Debug, Serialize, PartialEq)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct SplitIp {
     network_part: String,
     modifiable_part: String,
@@ -318,7 +318,7 @@ fn main() -> anyhow::Result<()> {
 
 ### Core Architecture Module: `crates/defguard_core/src/appstate.rs`
 ```
-use std::sync::{Arc, Mutex, RwLock, atomic::AtomicBool};
+use std::sync::{Arc, RwLock, atomic::AtomicBool};
 
 use axum::extract::FromRef;
 use axum_extra::extract::cookie::Key;
@@ -327,15 +327,11 @@ use reqwest::Client;
 use serde_json::json;
 use sqlx::PgPool;
 use tokio::{
-    sync::{
-        broadcast::Sender,
-        mpsc::{UnboundedReceiver, UnboundedSender},
-    },
+    sync::{broadcast, mpsc},
     task::spawn,
 };
 
 use crate::{
-    auth::failed_login::FailedLoginMap,
     db::{AppEvent, WebHook},
     error::WebError,
     events::{ApiEvent, DirectorySyncEvent, LdapSyncEventType},
@@ -348,16 +344,15 @@ const X_DEFGUARD_EVENT: &str = "x-defguard-event";
 #[derive(Clone)]
 pub struct AppState {
     pub pool: PgPool,
-    tx: UnboundedSender<AppEvent>,
-    pub gateway_tx: Sender<GatewayCommand>,
-    pub web_reload_tx: tokio::sync::broadcast::Sender<()>,
-    pub failed_logins: Arc<Mutex<FailedLoginMap>>,
+    tx: mpsc::UnboundedSender<AppEvent>,
+    pub gateway_tx: mpsc::UnboundedSender<GatewayCommand>,
+    pub web_reload_tx: broadcast::Sender<()>,
     key: Key,
-    pub event_tx: UnboundedSender<ApiEvent>,
-    pub ldap_tx: UnboundedSender<LdapSyncEventType>,
-    pub dirsync_tx: UnboundedSender<DirectorySyncEvent>,
+    pub event_tx: mpsc::UnboundedSender<ApiEvent>,
+    pub ldap_tx: mpsc::UnboundedSender<LdapSyncEventType>,
+    pub dirsync_tx: mpsc::UnboundedSender<DirectorySyncEvent>,
     pub incompatible_components: Arc<RwLock<IncompatibleComponents>>,
-    pub proxy_control_tx: tokio::sync::mpsc::Sender<ProxyControlMessage>,
+    pub proxy_control_tx: mpsc::Sender<ProxyControlMessage>,
     /// Reflects whether the HTTP server is currently running with TLS
     pub tls_active: Arc<AtomicBool>,
 }
@@ -372,7 +367,7 @@ impl AppState {
     }
 
     /// Handle webhook events
-    async fn handle_triggers(pool: PgPool, mut rx: UnboundedReceiver<AppEvent>) {
+    async fn handle_triggers(pool: PgPool, mut rx: mpsc::UnboundedReceiver<AppEvent>) {
         let reqwest_client = Client::builder().user_agent("reqwest").build().unwrap();
         while let Some(msg) = rx.recv().await {
             debug!("WebHook triggered");
@@ -438,17 +433,16 @@ impl AppState {
     /// Create application state
     pub fn new(
         pool: PgPool,
-        tx: UnboundedSender<AppEvent>,
-        rx: UnboundedReceiver<AppEvent>,
-        gateway_tx: Sender<GatewayCommand>,
-        web_reload_tx: tokio::sync::broadcast::Sender<()>,
+        tx: mpsc::UnboundedSender<AppEvent>,
+        rx: mpsc::UnboundedReceiver<AppEvent>,
+        gateway_tx: mpsc::UnboundedSender<GatewayCommand>,
+        web_reload_tx: broadcast::Sender<()>,
         key: Key,
-        failed_logins: Arc<Mutex<FailedLoginMap>>,
-        event_tx: UnboundedSender<ApiEvent>,
-        ldap_tx: UnboundedSender<LdapSyncEventType>,
-        dirsync_tx: UnboundedSender<DirectorySyncEvent>,
+        event_tx: mpsc::UnboundedSender<ApiEvent>,
+        ldap_tx: mpsc::UnboundedSender<LdapSyncEventType>,
+        dirsync_tx: mpsc::UnboundedSender<DirectorySyncEvent>,
         incompatible_components: Arc<RwLock<IncompatibleComponents>>,
-        proxy_control_tx: tokio::sync::mpsc::Sender<ProxyControlMessage>,
+        proxy_control_tx: mpsc::Sender<ProxyControlMessage>,
         tls_active: Arc<AtomicBool>,
     ) -> Self {
         spawn(Self::handle_triggers(pool.clone(), rx));
@@ -458,7 +452,6 @@ impl AppState {
             tx,
             gateway_tx,
             web_reload_tx,
-            failed_logins,
             key,
             event_tx,
             ldap_tx,
@@ -478,148 +471,51 @@ impl FromRef<AppState> for Key {
 
 ```
 
-### Core Architecture Module: `crates/defguard_core/src/auth/failed_login.rs`
+### Core Architecture Module: `crates/defguard_core/src/auth/login_throttle.rs`
 ```
-use std::{collections::HashMap, sync::Mutex};
+use defguard_common::db::{
+    Id,
+    models::{ThrottleScope, User},
+};
+use sqlx::PgExecutor;
 
-use chrono::{DateTime, Local, TimeDelta};
-use thiserror::Error;
+use crate::error::WebError;
 
-// Time window in seconds
-const FAILED_LOGIN_WINDOW: i64 = 60;
-// Failed login count threshold
-const FAILED_LOGIN_COUNT: u32 = 5;
-// How long (in seconds) to lock users out after crossing the threshold
-const FAILED_LOGIN_TIMEOUT: i64 = 5 * 60;
-
-#[derive(Error, Debug)]
-#[error("Too many login attempts")]
-pub struct FailedLoginError;
-
-pub struct FailedLoginMap(HashMap<String, FailedLogin>);
-
-pub struct FailedLogin {
-    attempt_count: u32,
-    first_attempt: DateTime<Local>,
-    last_attempt: DateTime<Local>,
+/// A known account uses its stored username, so that its username and email share one count.
+#[must_use]
+pub fn login_key(user: Option<&User<Id>>, username_or_email: &str) -> String {
+    user.map_or_else(
+        || username_or_email.to_lowercase(),
+        |user| user.username.clone(),
+    )
 }
 
-impl Default for FailedLogin {
-    fn default() -> Self {
-        Self {
-            attempt_count: 1,
-            first_attempt: Local::now(),
-            last_attempt: Local::now(),
-        }
-    }
-}
-
-impl FailedLogin {
-    // How much time has elapsed since first failed login attempt
-    fn time_since_first_attempt(&self) -> TimeDelta {
-        Local::now().signed_duration_since(self.first_attempt)
-    }
-
-    // How much time has elapsed since last failed login attempt
-    fn time_since_last_attempt(&self) -> TimeDelta {
-        Local::now().signed_duration_since(self.last_attempt)
-    }
-
-    fn increment(&mut self) {
-        self.attempt_count += 1;
-        self.last_attempt = Local::now();
-    }
-
-    fn reset(&mut self) {
-        self.attempt_count = 1;
-        self.first_attempt = Local::now();
-        self.last_attempt = Local::now();
-    }
-
-    // Check if user login attempt should be stopped
-    fn should_prevent_login(&self) -> bool {
-        self.attempt_count >= FAILED_LOGIN_COUNT
-            && self.time_since_last_attempt() <= TimeDelta::seconds(FAILED_LOGIN_TIMEOUT)
-    }
-
-    // Check if attempt counter can be reset.
-    // Counter can be reset after enough time has passed since the initial attempt.
-    // If user was blocked we also check if enough time (timeout) has passed since last attempt.
-    fn should_reset_counter(&self) -> bool {
-        self.time_since_first_attempt() > TimeDelta::seconds(FAILED_LOGIN_WINDOW)
-            && self.attempt_count < FAILED_LOGIN_COUNT
-            || self.time_since_last_attempt() > TimeDelta::seconds(FAILED_LOGIN_TIMEOUT)
-    }
-}
-
-impl Default for FailedLoginMap {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl FailedLoginMap {
-    #[must_use]
-    pub fn new() -> Self {
-        Self(HashMap::new())
-    }
-
-    // Add failed login attempt to tracker
-    pub fn log_failed_attempt(&mut self, username: &str) {
-        info!("Logging failed login attempt for username {username}");
-        match self.0.get_mut(username) {
-            None => {
-                self.0.insert(username.into(), FailedLogin::default());
-            }
-            Some(failed_login) => {
-                if failed_login.should_reset_counter() {
-                    failed_login.reset();
-                } else {
-                    failed_login.increment();
-                }
-            }
-        }
-    }
-
-    // Check if user can proceed with login process or should be locked out
-    pub fn verify_username(&mut self, username: &str) -> Result<(), FailedLoginError> {
-        debug!("Checking if user {username} can proceed with login");
-        if let Some(failed_login) = self.0.get_mut(username)
-            && failed_login.should_prevent_login()
-        {
-            debug!("Preventing user {username} from logging in");
-            // log a failed attempt to prolong timeout
-            failed_login.increment();
-            return Err(FailedLoginError);
-        }
+/// Call before the credential is examined, and [`refund_login_attempt`] a correct one.
+pub async fn charge_login_attempt<'e, E: PgExecutor<'e>>(
+    executor: E,
+    key: &str,
+) -> Result<(), WebError> {
+    if ThrottleScope::WebLogin.hit(executor, key).await? {
         Ok(())
+    } else {
+        info!("Preventing login for {key}: too many failed attempts");
+        Err(WebError::TooManyLoginAttempts)
     }
 }
 
-// Check if auth request with a given username can proceed
-pub fn check_failed_logins(
-    failed_logins: &Mutex<FailedLoginMap>,
-    username: &str,
-) -> Result<(), FailedLoginError> {
-    let mut failed_logins = failed_logins
-        .lock()
-        .expect("Failed to get a lock on failed login map.");
-    failed_logins.verify_username(username)
-}
-
-// Helper to log failed login attempt
-pub fn log_failed_login_attempt(failed_logins: &Mutex<FailedLoginMap>, username: &str) {
-    let mut failed_logins = failed_logins
-        .lock()
-        .expect("Failed to get a lock on failed login map.");
-    failed_logins.log_failed_attempt(username);
+pub async fn refund_login_attempt<'e, E: PgExecutor<'e>>(
+    executor: E,
+    key: &str,
+) -> Result<(), WebError> {
+    ThrottleScope::WebLogin.refund(executor, key).await?;
+    Ok(())
 }
 
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/auth/mod.rs`
 ```
-pub mod failed_login;
+pub mod login_throttle;
 
 use axum::{
     Extension,
@@ -921,7 +817,7 @@ mod tests {
     #[test]
     fn test_get_available_scopes() {
         // All requested scopes are available
-        let all_scopes = vec!["email".
+        let all_scopes = vec!["email
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/cert_settings.rs`
@@ -939,7 +835,6 @@ use defguard_common::db::models::{
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use thiserror::Error;
-use utoipa::ToSchema;
 
 /// Errors arising from certificate settings operations.
 #[derive(Debug, Error)]
@@ -1008,7 +903,8 @@ fn extract_hostname(url: &str, label: &str) -> Result<String, CertSettingsError>
 }
 
 /// SSL configuration type for Defguard's internal (core) web server.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum InternalSslType {
     /// No SSL - plain HTTP, user manages reverse proxy / SSL termination themselves.
@@ -1019,14 +915,16 @@ pub enum InternalSslType {
     OwnCert,
 }
 
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
+#[derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct InternalUrlSettingsConfig {
     pub ssl_type: InternalSslType,
     pub cert_pem: Option<String>,
     pub key_pem: Option<String>,
 }
 
-#[derive(Serialize, Debug, ToSchema)]
+#[derive(Serialize, Debug)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct CertInfoResponse {
     pub common_name: String,
     pub valid_for_days: i64,
@@ -1035,7 +933,8 @@ pub struct CertInfoResponse {
 }
 
 /// SSL configuration type for the external (proxy) web server.
-#[derive(Default, Serialize, Deserialize, Debug, Clone, PartialEq, ToSchema)]
+#[derive(Default, Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum ExternalSslType {
     /// No SSL - plain HTTP, user manages reverse proxy / SSL termination themselves.
@@ -1049,7 +948,8 @@ pub enum ExternalSslType {
     OwnCert,
 }
 
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
+#[derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct ExternalUrlSettingsConfig {
     pub ssl_type: ExternalSslType,
     pub cert_pem: Option<String>,
@@ -1191,10 +1091,6 @@ pub async fn apply_external_url_settings(
     update_current_settings(&mut *transaction, settings).await?;
 
     let hostname = match config.ssl_type {
-        ExternalSslType::None | ExternalSslType::OwnCert => String::new(),
-        ExternalSslType::DefguardCa | ExternalSslType::LetsEncrypt => {
-            let url = public_proxy_url.trim();
-            if url.is_empty(
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/mod.rs`
@@ -1217,8 +1113,12 @@ use defguard_common::db::{
         group::Group,
         oauth2client::OAuth2Client,
         proxy::Proxy,
-        settings::{LdapSyncStatus, OpenIdUsernameHandling, smtp::SmtpEncryption},
+        settings::{
+            LdapSyncStatus, OpenIdUsernameHandling, SecretFieldChange,
+            smtp::{SmtpAuthentication, SmtpEncryption},
+        },
         user::User,
+        vpn_client_mfa_session::MfaAttribution,
     },
 };
 
@@ -1403,7 +1303,10 @@ pub struct VpnClientMetadata {
 pub struct VpnClientMfaMetadata {
     pub location: WireguardNetwork<Id>,
     pub device: Device<Id>,
-    pub method: ClientMFAMethod,
+    /// The complete challenge-and-response record plus the governing flow title. Flattened so
+    /// the serialized activity-log shape stays `{ snapshot, flow_name }`.
+    #[serde(flatten)]
+    pub attribution: MfaAttribution,
     /// Name of the device used to approve the login when the mobile approve MFA
     /// method is used. Omitted for all other methods.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1416,6 +1319,14 @@ pub struct VpnClientMfaFailedMetadata {
     pub device: Device<Id>,
     pub method: ClientMFAMethod,
     pub message: String,
+}
+
+#[derive(Serialize)]
+pub struct VpnClientMfaAbortedMetadata {
+    pub location: WireguardNetwork<Id>,
+    pub device: Device<Id>,
+    #[serde(flatten)]
+    pub attribution: MfaAttribution,
 }
 
 #[derive(Serialize)]
@@ -1560,40 +1471,20 @@ impl From<OpenIdProvider<Id>> for OpenIdProviderNoSecrets {
 
 #[derive(Serialize)]
 pub struct SettingsUpdateMetadata {
-    pub before: SettingsNoSecrets,
-    pub after: SettingsNoSecrets,
+    pub(crate) before: SettingsNoSecrets,
+    pub(crate) after: SettingsNoSecrets,
+    /// Changes in protected fields.
+    pub protected_fields: Vec<SecretFieldChange>,
 }
 
-#[derive(Serialize)]
-pub struct EnterpriseSettingsUpdateMetadata {
-    pub before: EnterpriseSettingsInfo,
-    pub after: EnterpriseSettingsInfo,
-}
+impl SettingsUpdateMetadata {
+    #[must_use]
+    pub fn new(before: Settings, after: Settings) -> Self {
+        let protected_fields = Settings::secret_changes(&before, &after);
 
-#[derive(Serialize)]
-pub struct SettingsNoSecrets {
-    // Modules
-    pub openid_enabled: bool,
-    pub wireguard_enabled: bool,
-    pub webhooks_enabled: bool,
-    pub worker_enabled: bool,
-    // MFA
-    pub challenge_template: String,
-    // Branding
-    pub instance_name: String,
-    pub main_logo_url: String,
-    pub nav_logo_url: String,
-    // SMTP
-    pub smtp_server: Option<String>,
-    pub smtp_port: Option<i32>,
-    pub smtp_encryption: SmtpEncryption,
-    pub smtp_user: Option<String>,
-    pub smtp_sender: Option<String>,
-    pub smtp_tls_verify_cert: bool,
-    // Enrollment
-    pub enrollment_vpn_step_optional: bool,
-    pub enrollment_welcome_message: Option<String>,
-    pub enr
+        Self {
+            before: before.into(),
+       
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/models/activity_log/mod.rs`
@@ -1603,11 +1494,11 @@ use defguard_common::db::{Id, NoId};
 use ipnetwork::IpNetwork;
 use model_derive::Model;
 use sqlx::{FromRow, Type};
-use utoipa::ToSchema;
 
 pub mod metadata;
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize, ToSchema, Type)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize, Type)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 #[sqlx(type_name = "activity_log_module", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum ActivityLogModule {
@@ -1687,8 +1578,10 @@ pub enum EventType {
     VpnClientMfaDisconnected,
     VpnClientMfaSuccess,
     VpnClientMfaFailed,
+    VpnClientMfaAborted,
     VpnClientSessionSuperseded,
     VpnClientMfaSessionSuperseded,
+    VpnClientMfaLoginSuperseded,
     // Enrollment events
     EnrollmentTokenAdded,
     EnrollmentStarted,
@@ -1744,6 +1637,11 @@ pub enum EventType {
     DevicePostureDuplicated,
     DevicePostureLocationsAssigned,
     LocationPosturesAssigned,
+    // MFA flow management
+    MfaFlowCreated,
+    MfaFlowUpdated,
+    MfaFlowDeleted,
+    LocationMfaFlowsAssigned,
     DevicePostureCheckPassed,
     DevicePostureCheckFailed,
     // LDAP sync events
@@ -1809,6 +1707,7 @@ use defguard_common::{
     random::gen_alphanumeric,
     types::UrlParseError,
 };
+use serde::{Deserialize, Serialize};
 use sqlx::{PgConnection, PgExecutor, PgPool, query, query_as};
 use tera::Context;
 use thiserror::Error;
@@ -1818,6 +1717,9 @@ use crate::mail::templates;
 
 pub static ENROLLMENT_TOKEN_TYPE: &str = "ENROLLMENT";
 pub static PASSWORD_RESET_TOKEN_TYPE: &str = "PASSWORD_RESET";
+pub static MFA_CONFIG_TOKEN_TYPE: &str = "MFA_CONFIG";
+// One window covers both the time to authorize and the time to configure factors.
+pub const MFA_CONFIG_SESSION_TIMEOUT: Duration = Duration::from_hours(1);
 
 #[derive(Error, Debug)]
 pub enum TokenError {
@@ -1849,6 +1751,14 @@ pub enum TokenError {
     TemplateError(#[from] templates::TemplateError),
     #[error(transparent)]
     UrlParseError(#[from] UrlParseError),
+    #[error("Failed to serialize MFA setup state: {0}")]
+    MfaSetupStateSerialization(String),
+    #[error("WebAuthn configuration error: {0}")]
+    WebauthnConfig(String),
+    #[error("WebAuthn registration error: {0}")]
+    WebauthnRegistration(String),
+    #[error("Security key is not a trusted hardware authenticator: {0}")]
+    UntrustedAuthenticator(String),
 }
 
 impl From<TokenError> for Status {
@@ -1864,15 +1774,36 @@ impl From<TokenError> for Status {
             | TokenError::WelcomeEmailNotConfigured
             | TokenError::TemplateError(_)
             | TokenError::UrlParseError(_)
-            | TokenError::TemplateErrorInternal(_) => (Code::Internal, unexpected_err_msg.as_str()),
+            | TokenError::TemplateErrorInternal(_)
+            | TokenError::MfaSetupStateSerialization(_)
+            | TokenError::WebauthnConfig(_) => (Code::Internal, unexpected_err_msg.as_str()),
             TokenError::NotFound | TokenError::SessionExpired | TokenError::TokenUsed => {
                 (Code::Unauthenticated, "invalid token")
             }
             TokenError::AlreadyActive => (Code::InvalidArgument, "already active"),
+            TokenError::WebauthnRegistration(ref msg) => (Code::InvalidArgument, msg.as_str()),
+            TokenError::UntrustedAuthenticator(_) => (
+                Code::InvalidArgument,
+                "security key is not a trusted hardware authenticator, update the client or use \
+                a certified security key",
+            ),
             TokenError::TokenExpired => (Code::Unauthenticated, "token expired"),
         };
         Self::new(code, msg)
     }
+}
+
+/// An in-flight authorization attempt of an MFA configuration session.
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+pub enum MfaConfigAuthState {
+    Fido2 {
+        challenge: String,
+    },
+    /// An OIDC round trip, marked completed by the Edge callback.
+    Oidc {
+        attempt_id: String,
+        completed: bool,
+    },
 }
 
 // Representation of a user enrollment session
@@ -1887,6 +1818,9 @@ pub struct Token {
     pub used_at: Option<NaiveDateTime>,
     pub token_type: Option<String>,
     pub device_id: Option<Id>,
+    /// CBOR-serialized ceremony state. An unauthorized MFA configuration session holds
+    /// [`MfaConfigAuthState`], an authorized one a `PasskeyRegistration` during FIDO2 setup.
+    pub mfa_setup_state: Option<Vec<u8>>,
 }
 
 impl fmt::Debug for Token {
@@ -1924,6 +1858,7 @@ impl Token {
             used_at: None,
             token_type,
             device_id: None,
+            mfa_setup_state: None,
         }
     }
 
@@ -1957,161 +1892,105 @@ impl Token {
         Ok(())
     }
 
-    // check if token has already expired
-    #[must_use]
-    pub fn is_expired(&self) -> bool {
-        self.expires_at < Utc::now().naive_utc()
-    }
-
-    // check if token has already been used
-    #[must_use]
-    pub fn is_used(&self) -> bool {
-        self.used_at.is_some()
-    }
-
-    // check if enrollment session is still valid
-    // after using the token user has 10 minutes to complete enrollment
-    #[must_use]
-    pub fn is_session_valid(&self, session_timeout_seconds: u64) -> bool {
-        if let Some(used_at) = self.used_at {
-            let now = Utc::now();
-            return now.naive_utc()
-                < (used_at + TimeDelta::seconds(session_timeout_seconds as i64));
-        }
-        false
-    }
-
-    // check if token can be used to start an enrollment session
-    // and set timestamp if token is valid
-    // returns session deadline
-    pub async fn start_session(
-        &mut self,
-        transaction: &mut PgConnection,
-        session_timeout_seconds: u64,
-    ) -> Result<NaiveDateTime, TokenError> {
-        // check if token can be used
-        debug!("Creating a new session.");
-        if self.is_expired() {
-            debug!("Token is already expired. Cannot establish a new session.");
-            return Err(TokenError::TokenExpired);
-        }
-        match self.used_at {
-            // session started but still valid
-            Some(used_at) if self.is_session_valid(session_timeout_seconds) => {
-                debug!("Session already exists yet it is still valid.");
-                Ok(used_at + TimeDelta::seconds(session_timeout_seconds as i64))
-            }
-            // session expired
-            Some(_) => {
-                debug!("Session has expired.");
-                Err(TokenError::TokenUsed)
-            }
-            // session not yet started
-            None => {
-                let now = Utc::now().naive_utc();
-                query!("UPDATE token SET used_at = $1 WHERE id = $2", now, self.id)
-                    .execute(transaction)
-                    .await?;
-                self.used_at = Some(now);
-
-                debug!("Generate a new session successfully.");
-                Ok(now + TimeDelta::seconds(session_timeout_seconds as i64))
-            }
-        }
-    }
-
-    pub async fn find_by_id(pool: &PgPool, id: &str) -> Result<Self, TokenError> {
-        if let Some(enrollment) = query_as!(
-            Self,
-            "SELECT id, user_id, admin_id, email, created_at, expires_at, used_at, token_type, device_id \
-            FROM token WHERE id = $1",
-            id
+    pub async fn clear_mfa_setup_state<'e, E>(&mut self, executor: E) -> Result<(), TokenError>
+    where
+        E: PgExecutor<'e>,
+    {
+        query!(
+            "UPDATE token SET mfa_setup_state = NULL WHERE id = $1",
+            self.id
         )
-        .fetch_optional(pool)
-        .await?
-        {
-            debug!("Fetch token {enrollment:?} from database.");
-            Ok(enrollment)
-        } else {
-            debug!("Token with id {id} does not exist in database.");
-            Err(TokenError::NotFound)
-        }
-    }
-
-    pub async fn fetch_all(pool: &PgPool) -> Result<Vec<Self>, TokenError> {
-        let tokens = query_as!(
-            Self,
-            "SELECT id, user_id, admin_id, email, created_at, expires_at, used_at, token_type, device_id \
-            FROM token",
-        )
-        .fetch_all(pool)
+        .execute(executor)
         .await?;
-        Ok(tokens)
+        self.mfa_setup_state = None;
+        Ok(())
     }
 
-    pub async fn fetch_user<'e, E>(&self, executor: E) -> Result<User<Id>, TokenError>
-    where
-        E: PgExecutor<'e>,
-    {
-        debug!("Find user by id {}.", self.user_id);
-        let Some(user) = User::find_by_id(executor, self.user_id).await? else {
-            error!(
-                "User not found for enrollment token of user {}",
-                self.user_id
-            );
-            return Err(TokenError::UserNotFound);
-        };
-        debug!("Fetched user {user:?}.");
-
-        Ok(user)
-    }
-
-    pub async fn fetch_admin<'e, E>(&self, executor: E) -> Result<Option<User<Id>>, TokenError>
-    where
-        E: PgExecutor<'e>,
-    {
-        debug!("Fetch admin data");
-        if self.admin_id.is_none() {
-            debug!("Admin doesn't have ID; stop fetching data");
-            return Ok(None);
-        }
-
-        let admin_id = self.admin_id.unwrap();
-        debug!("Trying to find admin using ID {admin_id}");
-        let user = User::find_by_id(executor, admin_id).await?;
-        debug!("Fetched admin {user:?}.");
-
-        Ok(user)
-    }
-
-    pub async fn delete_unused_user_tokens<'e, E>(
+    async fn set_mfa_config_auth_state<'e, E>(
+        &mut self,
         executor: E,
-        user_id: Id,
+        state: &MfaConfigAuthState,
     ) -> Result<(), TokenError>
     where
         E: PgExecutor<'e>,
     {
-        debug!("Deleting unused tokens for the user");
-        let result = query!(
-            "DELETE FROM token \
-            WHERE user_id = $1 \
-            AND used_at IS NULL",
-            user_id
+        let mfa_setup_state = serde_cbor::to_vec(state)
+            .map_err(|err| TokenError::MfaSetupStateSerialization(err.to_string()))?;
+        query!(
+            "UPDATE token SET mfa_setup_state = $1 WHERE id = $2",
+            mfa_setup_state,
+            self.id
         )
         .execute(executor)
         .await?;
-        info!(
-            "Deleted {} unused enrollment tokens for the user",
-            result.rows_affected()
-        );
-
+        self.mfa_setup_state = Some(mfa_setup_state);
         Ok(())
     }
 
-    pub async fn delete_unused_user_password_reset_tokens(
+    #[must_use]
+    pub fn get_mfa_config_auth_state(&self) -> Option<MfaConfigAuthState> {
+        self.mfa_setup_state
+            .as_ref()
+            .and_then(|state| serde_cbor::from_slice(state).ok())
+    }
+
+    pub(crate) async fn lock_mfa_config_auth_state(
+        &self,
         transaction: &mut PgConnection,
-        user_id: Id,
-    ) -> Result<(), TokenErr
+    ) -> Result<Option<MfaConfigAuthState>, TokenError> {
+        let state = query!(
+            "SELECT mfa_setup_state FROM token WHERE id = $1 FOR UPDATE",
+            self.id
+        )
+        .fetch_optional(&mut *transaction)
+        .await?
+        .ok_or(TokenError::NotFound)?
+        .mfa_setup_state;
+        Ok(state.and_then(|state| serde_cbor::from_slice(&state).ok()))
+    }
+
+    /// Starts a new authorization attempt. Returns `false`, leaving the state as is, when a
+    /// completed OIDC attempt is waiting for the client to authorize the session.
+    pub async fn replace_mfa_config_auth_state(
+        &mut self,
+        pool: &PgPool,
+        state: &MfaConfigAuthState,
+    ) -> Result<bool, TokenError> {
+        let mut transaction = pool.begin().await?;
+        if let Some(MfaConfigAuthState::Oidc {
+            completed: true, ..
+        }) = self.lock_mfa_config_auth_state(&mut transaction).await?
+        {
+            return Ok(false);
+        }
+        self.set_mfa_config_auth_state(&mut *transaction, state)
+            .await?;
+        transaction.commit().await?;
+        Ok(true)
+    }
+
+    /// Whether `attempt_id` is still the pending OIDC attempt, locking the token row for the
+    /// rest of `transaction`. A token deleted by a newer session counts as superseded.
+    async fn lock_pending_mfa_config_oidc_attempt(
+        &self,
+        transaction: &mut PgConnection,
+        attempt_id: &str,
+    ) -> Result<bool, TokenError> {
+        match self.lock_mfa_config_auth_state(transaction).await {
+            Ok(Some(MfaConfigAuthState::Oidc {
+                attempt_id: current,
+                completed: false,
+            })) => Ok(current == attempt_id),
+            Ok(_) | Err(TokenError::NotFound) => Ok(false),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Marks the OIDC attempt `attempt_id` completed. Returns `false` when that attempt is no
+    /// longer the current one or was already completed.
+    pub async fn mark_mfa_config_oidc_completed(
+        &mut self,
+        pool: 
 ```
 
 
@@ -2120,13 +1999,15 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3900** (2026-10-26): **Multi step mfa locations are not sent to the client on the free tier even if they are one step only**
-  *Symptoms*: One step mfa locations should be always sent to the client.
-
-- **Issue #3872** (2026-10-26): **[MFA] Disabling SMTP doesn't re-evaluate user's MFA state**
-  *Symptoms*: State from screenshot should not be possible to occur.  <img width="532" height="343" alt="Image" src="https://github.com/user-attachments/assets/cd7132b8-2faf-4d67-9b49-bf46e562ca9a" />
+- **Issue #3993** (2026-11-03): **macos systemextension is not uninstalled with application**
+  *Symptoms*: To reprouce: - installed app from .DMG - uninstalled via Applications  Result: command `systemextensionsctl list` returns:  `82GZ7KN29J net.defguard.VPNExtension (2.2.0/441) VPNExtension [activated enabled]`  Impact: When installed from appstore/testflight afterwards the app cannot connect to any location without clear reason.  We should clean up the systemextension on uninstall to the best of our abilities. We should create test scenario for removing systemextension on uninstall.
   **Post-Mortem & Fix Analysis**:
-  > Let's change to a single label: "Unavailable" (Orange). Default stays.
+  > @filipslezaklab didn't empty the trash, hence the problem.  Normally, the extension can remain active and enabled after the app is moved to Trash. macOS is supposed to offer to remove the associated system extension when you delete its host app, but this is not always reliable, especially on recent macOS versions.  ## What normally happens  When you drag an app containing a system extension to Trash, Finder may show a prompt saying it will remove the associated system extension. The supported removal mechanism is for the host app to issue a deactivation request; macOS then stages the extension for removal, often completing it after a restart.  However, users and developers have reported cases where the app is deleted but the extension remains [activated enabled] even after emptying Trash and rebooting. This has been reported on macOS 15.3 and again on macOS 26 Tahoe.
+
+- **Issue #3965** (2026-10-29): **Password special character check differs between UI and backend**
+  *Symptoms*: - [x] Treat space as special symbol - [x] Fix behaviour that password with space at the end won't work during login. - [x] Remove validation that blocks spaces in password edit forms. - [x] Align special character check between UI and backend. UI counts any non-alphanumeric character as special, backend only ASCII punctuation. Example: `Zażółć123` passes in UI, backend rejects it with `No special characters in password`.   https://github.com/user-attachments/assets/920fa237-6801-422e-a1db-24aafaa0574a
+  **Post-Mortem & Fix Analysis**:
+  > Test scenario: Test if space is treated as special character during password change/setup. Test if passwords with space at the end works 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2143,14 +2024,170 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12508b40` (2026-10-28)
-**Commit Message**: Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972)
+### Incident Patch 1: `6ddbf7f3` (2026-10-23)
+**Commit Message**: Update dependency vitest to v4.1.11 [SECURITY] (#3936)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `web/package.json` (modified, +1/-1)
 ```diff
-@@ -5135,9 +5135,9 @@ dependencies = [
+@@ -88,6 +88,6 @@
+     "typescript": "~6.0.3",
+     "vite": "^8.3.4",
+     "vite-plugin-image-optimizer": "^2.0.3",
+-    "vitest": "4.1.9"
++    "vitest": "4.1.11"
+   }
+ }
+```
+
+**File**: `web/pnpm-lock.yaml` (modified, +59/-43)
+```diff
+@@ -283,7 +283,7 @@ importers:
+         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+       '@vitest/ui':
+         specifier: 4.1.9
+-        version: 4.1.9(vitest@4.1.9)
++        version: 4.1.9(vitest@4.1.11)
+       autoprefixer:
+         specifier: ^10.6.1
+         version: 10.6.1(postcss@8.5.31)
+@@ -321,8 +321,8 @@ importers:
+         specifier: ^2.0.3
+         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+       vitest:
+-        specifier: 4.1.9
+-        version: 4.1.9(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
++        specifier: 4.1.11
++        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+ 
+ packages:
+ 
+@@ -1842,11 +1842,11 @@ packages:
+       oxc-transform-react:
+         optional: true
+ 
+-  '@vitest/expect@4.1.9':
+-    resolution: {integrity: sha512-vl/rYsUKcBr3SnQn166+XR5ZQcgMx3DQhFWdfli/cWpLnLUmbxZvyrJZotLFUryib+LtArYMSTJ5RbQ57ZqrlA==}
++  '@vitest/expect@4.1.11':
++    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
+ 
+-  '@vitest/mocker@4.1.9':
+-    resolution: {integrity: sha512-EVkXzBjrPGM+cK8/ANWgBrkUCfJfb38/EfTSO8h7pWvKkyPkpWxvR7BkD2MyItMF62C97zAEoqdpUixwR/e+Rw==}
++  '@vitest/mocker@4.1.11':
++    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
+     peerDependencies:
+       msw: ^2.4.9
+       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+@@ -1856,23 +1856,29 @@ packages:
+       vite:
+         optional: true
+ 
++  '@vitest/pretty-format@4.1.11':
++    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
++
+   '@vitest/pretty-format@4.1.9':
+     resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
+ 
+-  '@vitest/runner@4.1.9':
+-    resolution: {integrity: sha512-KXLMDtc7oe70+3mJfGrPUWPesswH+3sTxAMAMl8DG7I8IUQT4XW718dY5ID3vPUcmlu27CcKfY4P3h3I29SLJg==}
++  '@vitest/runner@4.1.11':
++    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
+ 
+-  '@vitest/snapshot@4.1.9':
+-    resolution: {integrity: sha512-Jc7RKGNBo8Z28WYIm0Niej4xdSPByRf6mU58VpHQkd6Zh05rlnA+twjbK5HyeIGHxrzsc3mJgS43uM0CZKzaIA==}
++  '@vitest/snapshot@4.1.11':
++    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
+ 
+-  '@vitest/spy@4.1.9':
+-    resolution: {integrity: sha512-fHpsS6mIi+PiEW+vcRVOMkX1oSaPKne3VOclSFICPcGOmfKgXPU5iAah+wcNcj2xPrCCmfq99IDGf+EojhhvhA==}
++  '@vitest/spy@4.1.11':
++    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
+ 
+   '@vitest/ui@4.1.9':
+     resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
+     peerDependencies:
+       vitest: 4.1.9
+ 
++  '@vitest/utils@4.1.11':
++    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
++
+   '@vitest/utils@4.1.9':
+     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
+ 
+@@ -3591,20 +3597,20 @@ packages:
+       yaml:
+         optional: true
+ 
+-  vitest@4.1.9:
+-    resolution: {integrity: sha512-nE3/LEyc0z87uHYLZebqCUOaJr2hdtuPp7BQ4BosVFnfltxgAvMG08NyrSGlPpOUWvR27c5flSmYFTNr78L9GQ==}
++  vitest@4.1.11:
++    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
+     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
+     hasBin: true
+     peerDependencies:
+       '@edge-runtime/vm': '*'
+       '@opentelemetry/api': ^1.9.0
+       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
+-      '@vitest/browser-playwright': 4.1.9
+-      '@vitest/browser-preview': 4.1.9
+-      '@vitest/browser-webdriverio': 4.1.9
+-      '@vitest/coverage-istanbul': 4.1.9
+-      '@vitest/coverage-v8': 4.1.9
+-      '@vitest/ui': 4.1.9
++      '@vitest/browser-playwright': 4.1.11
++      '@vitest/browser-preview': 4.1.11
++      '@vitest/browser-webdriverio': 4.1.11
++      '@vitest/coverage-istanbul': 4.1.11
++      '@vitest/coverage-v8': 4.1.11
++      '@vitest/ui': 4.1.11
+       happy-dom: '*'
+       jsdom: '*'
+       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+@@ -5035,42 +5041,46 @@ snapshots:
+       '@rolldown/pluginutils': 1.0.1
+       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2)
+ 
+-  '@vitest/expect@4.1.9':
++  '@vitest/expect@4.1.11':
+     dependencies:
+       '@standard-schema/spec': 1.1.0
+       '@types/chai': 5.2.3
+-      '@vitest/spy': 4.1.9
+-      '@vitest/utils': 4.1.9
++      '@vitest/spy': 4.1.11
++      '@vitest/utils': 4.1.11
+       chai:
+```
+
+**File**: `web/pnpm-workspace.yaml` (modified, +3/-0)
+```diff
+@@ -15,3 +15,6 @@ onlyBuiltDependencies:
+   - '@swc/core'
+   - esbuild
+   - sharp
++minimumReleaseAgeExclude:
++  # Renovate security update: vitest@4.1.11
++  - vitest@4.1.11
+```
+
+---
+
+### Incident Patch 2: `d76aa308` (2026-10-28)
+**Commit Message**: fix cargo deny (#3971)
+
+**File**: `Cargo.lock` (modified, +3/-3)
+```diff
+@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
+ dependencies = [
+  "quote",
+- "syn 3.0.9",
++ "syn 2.0.119",
+ ]
+ 
+ [[package]]
+@@ -5137,9 +5137,9 @@ dependencies = [
  
  [[package]]
  name = "pulldown-cmark"
@@ -2160,17 +2197,136 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 -checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
 +checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
  dependencies = [
-  "bitflags 2.13.1",
+  "bitflags 2.13.2",
   "getopts",
 ```
 
+---
+
+### Incident Patch 3: `38f81762` (2026-10-26)
+**Commit Message**: Fix 403 error after user switch (#3953)
+
+**File**: `web/src/pages/user-profile/UserProfilePage/UserProfilePage.tsx` (modified, +5/-1)
+```diff
+@@ -32,6 +32,7 @@ const defaultTab = UserProfileTab.Details;
+ export const UserProfilePage = () => {
+   const navigate = useNavigate();
+   const authUsername = useAuth((s) => s.user?.username as string);
++  const isAdmin = useAuth((s) => s.isAdmin);
+   const search = useSearch({ from: '/_authorized/_default/user/$username' });
+   const activeTab = search.tab ?? defaultTab;
+ 
+@@ -46,7 +47,10 @@ export const UserProfilePage = () => {
+ 
+   const { data: userProfile } = useSuspenseQuery(userProfileQueryOptions(username));
+   const { data: userAuthKeys } = useSuspenseQuery(getUserAuthKeysQueryOptions(username));
+-  const { data: licenseInfo } = useQuery(getLicenseInfoQueryOptions);
++  const { data: licenseInfo } = useQuery({
++    ...getLicenseInfoQueryOptions,
++    enabled: isAdmin,
++  });
+ 
+   const apiTokensTabAvailability = useMemo((): ApiTokensTabAvailabilityValue => {
+     if (!userProfile.user.is_admin) {
+```
+
+**File**: `web/src/routes/auth.tsx` (modified, +2/-1)
+```diff
+@@ -6,7 +6,7 @@ import api from '../shared/api/api';
+ import { ActiveWizard, type User, UserMfaMethod } from '../shared/api/types';
+ import { isPresent } from '../shared/defguard-ui/utils/isPresent';
+ import { useAuth } from '../shared/hooks/useAuth';
+-import { getSessionInfoQueryOptions } from '../shared/query';
++import { getLicenseInfoQueryOptions, getSessionInfoQueryOptions } from '../shared/query';
+ 
+ const basicSchema = z.object({
+   url: z.string().nullable().optional(),
+@@ -73,6 +73,7 @@ function RouteComponent() {
+       const basicResult = basicSchema.safeParse(state);
+       const basicResponse = basicResult.data;
+       if (isPresent(basicResponse) && basicResult.success) {
++        queryClient.removeQueries({ queryKey: getLicenseInfoQueryOptions.queryKey });
+         useAuth.getState().setUser(basicResponse.user);
+         await Promise.all([
+           queryClient.invalidateQueries({
+```
+
+**File**: `web/tests/auth-user-switch.test.tsx` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
++import { act, render } from '@testing-library/react';
++import { type ComponentType, createElement } from 'react';
++import { afterEach, describe, expect, it, vi } from 'vitest';
++import { Route } from '../src/routes/auth';
++import api from '../src/shared/api/api';
++import type { User } from '../src/shared/api/types';
++import { useAuth } from '../src/shared/hooks/useAuth';
++import { getLicenseInfoQueryOptions } from '../src/shared/query';
++
++vi.mock('@tanstack/react-router', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('@tanstack/react-router')>()),
++  useNavigate: () => vi.fn(),
++  Outlet: () => null,
++}));
++
++afterEach(() => {
++  vi.clearAllTimers();
++  vi.useRealTimers();
++  vi.restoreAllMocks();
++  useAuth.getState().reset();
++});
++
++describe('switching users', () => {
++  it('discards the previous user license error when login succeeds', async () => {
++    vi.useFakeTimers();
++    const queryClient = new QueryClient({
++      defaultOptions: { queries: { retry: false } },
++    });
++    const forbidden = new Error('Request failed with status code 403');
++    vi.spyOn(api, 'getSessionInfo').mockResolvedValue({
++      data: { authorized: true, is_admin: true, active_wizard: null, username: 'admin' },
++    } as Awaited<ReturnType<typeof api.getSessionInfo>>);
++
++    await expect(
++      queryClient.fetchQuery({
++        ...getLicenseInfoQueryOptions,
++        queryFn: async () => {
++          throw forbidden;
++        },
++      }),
++    ).rejects.toThrow(forbidden);
++    expect(queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey)?.status).toBe(
++      'error',
++    );
++
++    render(
++      <QueryClientProvider client={queryClient}>
++        {createElement(Route.options.component as ComponentType)}
++      </QueryClientProvider>,
++    );
++
++    await act(async () => {
++      useAuth.getState().authSubject.next({
++        user: { username: 'admin', is_admin: true } as User,
++      });
++    });
++
++    expect(
++      queryClient.getQueryState(getLicenseInfoQueryOptions.queryKey),
++    ).toBeUndefined();
++    queryClient.clear();
++  });
++});
+```
+
 #### Recent Merged Pull Requests:
-- **PR #3975** (2026-10-28): Use unified component in modals (@jakub-tldr)
-- **PR #3973** (2026-10-28): Show correct firewall state with inactive license (@jakub-tldr)
-- **PR #3972** (2026-10-28): Security patches (stable/2.x) (@renovate[bot])
-- **PR #3971** (2026-10-28): fix cargo deny (@filipslezaklab)
-- **PR #3970** (2026-10-28): profile empty states (@filipslezaklab)
-- **PR #3967** (2026-10-28): DG220-3: [core] Settings Update Silently Clears JWT and OIDC Signing Keys (@wojcik91)
+- **PR #4010** (2026-11-06): Add Device::{attestation_status,attested_at} fields (@j-chmielewski)
+- **PR #4008** (2026-11-06): chore: post 2.2 release sync (@wojcik91)
+- **PR #3999** (2026-11-04): chore: prerelease cleanup (@wojcik91)
+- **PR #3996** (2026-11-03): update trusted authenticators db (@filipslezaklab)
+- **PR #3982** (2026-11-02): add MFA flows e2e tests (@wojcik91)
+- **PR #3981** (2026-10-30): update labels (@filipslezaklab)
 
 ---
 
@@ -2190,30 +2346,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972)
+## X. Update dependency vitest to v4.1.11 [SECURITY] (#3936)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12508b40`: Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ddbf7f3`: Update dependency vitest to v4.1.11 [SECURITY] (#3936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.13.5"
-checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
+    "vitest": "4.1.11"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.13.4"
-checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+    "vitest": "4.1.9"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12508b40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ddbf7f3` are properly handled with clean fallback behavior.

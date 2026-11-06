@@ -7884,3 +7884,7 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `f06f106b` | Multi-dimensional audit evidence | 2026-11-06T14:33:55.501Z |
 | `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-06T14:33:58.551Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `7eb750ee` | Multi-dimensional audit evidence | 2026-11-06T14:34:06.612Z |
+| `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-06T14:40:35.577Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `5752f709` | Multi-dimensional audit evidence | 2026-11-06T14:40:41.791Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `e17756e7` | Multi-dimensional audit evidence | 2026-11-06T14:40:44.388Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `2cb963b6` | Multi-dimensional audit evidence | 2026-11-06T14:40:46.210Z |

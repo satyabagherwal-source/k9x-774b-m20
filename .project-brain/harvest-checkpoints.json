@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T14:34:06.631Z",
+  "last_updated": "2026-11-06T14:40:46.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "111cb24bbce5633b209d64d79bb8a65de37d625292f801f2153c90dae519f38e",
-      "verified_at": "2026-10-28T13:56:58.701Z",
+      "content_hash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
+      "verified_at": "2026-11-06T14:40:44.394Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:56:58.701Z"
+      "last_updated": "2026-11-06T14:40:44.394Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
-      "verified_at": "2026-11-03T21:36:52.833Z",
+      "content_hash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
+      "verified_at": "2026-11-06T14:40:41.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:36:52.833Z"
+      "last_updated": "2026-11-06T14:40:41.803Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "9beb91d565a43649ebd0d6895ac1a5fc492f609ff80e992cb51340cab2859e02",
-      "verified_at": "2026-11-05T09:05:03.010Z",
+      "content_hash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
+      "verified_at": "2026-11-06T14:40:46.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:05:03.010Z"
+      "last_updated": "2026-11-06T14:40:46.216Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -18164,6 +18164,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-06T14:05:32.001Z"
+    },
+    "unsloth/Qwen3.8-Flash-Next-GGUF": {
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "content_hash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
+      "verified_at": "2026-11-06T14:40:35.583Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T14:40:35.583Z"
     }
   },
   "repos": {

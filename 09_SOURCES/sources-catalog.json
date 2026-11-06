@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "12508b40",
+    "sourceVersion": "e17756e7",
     "license": "NOASSERTION",
-    "contentHash": "111cb24bbce5633b209d64d79bb8a65de37d625292f801f2153c90dae519f38e",
-    "lastHarvestedAt": "2026-10-28T13:56:58.693Z",
+    "contentHash": "f8717d261030d46afea040e2c8e04b7d2eec61c0a838ba28560b254539e1dd4c",
+    "lastHarvestedAt": "2026-11-06T14:40:44.388Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "a91f7fe5",
+    "sourceVersion": "5752f709",
     "license": "Apache-2.0",
-    "contentHash": "01cc69a28892001c9cad604a2e75a1c8edd9c88dca6a49b88290fd98a125a75a",
-    "lastHarvestedAt": "2026-11-03T21:36:52.823Z",
+    "contentHash": "02bcdb6f0765c95eb95bd5deb6ecd8425f2cfa6f61d386cf59aa369c7508fd73",
+    "lastHarvestedAt": "2026-11-06T14:40:41.791Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "932cd18b",
+    "sourceVersion": "2cb963b6",
     "license": "NOASSERTION",
-    "contentHash": "9beb91d565a43649ebd0d6895ac1a5fc492f609ff80e992cb51340cab2859e02",
-    "lastHarvestedAt": "2026-11-05T09:05:02.993Z",
+    "contentHash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
+    "lastHarvestedAt": "2026-11-06T14:40:46.210Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -12068,5 +12068,15 @@
     "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
     "lastHarvestedAt": "2026-11-06T14:05:31.987Z",
     "learningId": "learn-huggingface-webai-official-twil-8b"
+  },
+  "hf-unsloth-qwen3.8-flash-next-gguf": {
+    "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+    "sourceVersion": "hf-unsloth-qwen3.8-flash-next-gguf",
+    "license": "Open-Source",
+    "contentHash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
+    "lastHarvestedAt": "2026-11-06T14:40:35.577Z",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf"
   }
 }

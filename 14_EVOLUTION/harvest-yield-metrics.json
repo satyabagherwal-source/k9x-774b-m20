@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T14:34:06.618Z",
-  "total_cycles_completed": 7840,
-  "total_learnings_persisted": 7840,
-  "total_rules_promoted": 7488,
+  "last_updated": "2026-11-06T14:40:46.214Z",
+  "total_cycles_completed": 7844,
+  "total_learnings_persisted": 7844,
+  "total_rules_promoted": 7494,
   "history": [
-    {
-      "timestamp": "2026-11-05T13:06:34.629Z",
-      "repository": "yikart/AiToEarn",
-      "learningId": "learn-github-yikart-aitoearn",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:13:32.531Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:13:34.599Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:13:43.007Z",
-      "repository": "openyurtio/openyurt",
-      "learningId": "learn-github-openyurtio-openyurt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T13:20:17.652Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-06T14:34:06.618Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:40:35.581Z",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:40:41.800Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:40:44.392Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T14:40:46.214Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

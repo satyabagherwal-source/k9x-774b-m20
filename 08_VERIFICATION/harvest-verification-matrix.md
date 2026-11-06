@@ -7875,3 +7875,7 @@
 | `CYCLE-20261106-RVHL` | `2026-11-06T14:33:55.497Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6aa1b4ff...`) |
 | `CYCLE-20261106-RXUB` | `2026-11-06T14:33:58.547Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`f560ac9e...`) |
 | `CYCLE-20261106-S428` | `2026-11-06T14:34:06.608Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6e88714d...`) |
+| `CYCLE-20261106-0G6U` | `2026-11-06T14:40:35.574Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5202, Rule null, Rule null` | Yes (`dad55ccf...`) |
+| `CYCLE-20261106-0KZG` | `2026-11-06T14:40:41.788Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`02bcdb6f...`) |
+| `CYCLE-20261106-0MZM` | `2026-11-06T14:40:44.386Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f8717d26...`) |
+| `CYCLE-20261106-0OE1` | `2026-11-06T14:40:46.201Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0d5945e9...`) |
