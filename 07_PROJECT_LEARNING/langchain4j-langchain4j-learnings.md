@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `4001574c`  
+> **Source Version**: `ee8fd5f1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:05:21.790Z  
+> **Timestamp**: 2026-11-06T23:02:47.790Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:05:21.786Z  
+> **Harvest Timestamp**: 2026-11-06T23:02:47.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13360 stars
+- **Stars / Engagement**: 13367 stars
 
 ---
 
@@ -838,112 +838,636 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4001574c` (2026-11-05)
-**Commit Message**: Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)
+### Incident Patch 1: `6100a1a4` (2026-11-06)
+**Commit Message**: Make async agents implicitly fire-and-forget when their output is not required by the agentic system (#6955)
 
-This PR contains the following updates:
+<!--
+Thank you so much for your contribution!
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [io.netty:netty-bom](https://netty.io/)
-([source](https://redirect.github.com/netty/netty)) | `4.1.139.Final` →
-`4.1.140.Final` |
-![age](https://developer.mend.io/api/mc/badges/age/maven/io.netty:netty-bom/4.1.140.Final?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/io.netty:netty-bom/4.1.139.Final/4.1.140.Final?slim=true)
-|
+Please fill in all the sections below.
+Please open the PR as ready for review (not as a draft), with tests and
+documentation already included.
+Please note that PRs with breaking changes, or without tests and
+documentation, will be rejected.
+
+Please note that PRs will be reviewed based on the priority of the
+issues they address.
+We ask for your patience. We are doing our best to review your PR as
+quickly as possible.
+Please refrain from pinging and asking when it will be reviewed. Thank
+you for understanding!
+-->
+
+## Issue
+<!-- Please specify the ID of the issue this PR is addressing. For
+example: "Closes #1234" or "Fixes #1234" -->
+Closes #6923
+Closes #6885
+
+## Change
+
+An agent declared with `async = true` is now awaited only where its
+result is actually read: by a downstream agent consuming its output key,
+by a root call whose output is that key, or by an explicit `readState`.
+The root call of an agentic system no longer blocks at its end waiting
+for a trailing async agent, so a workflow can return a decision in
+seconds while 
+
+**File**: `docs/docs/tutorials/agents.md` (modified, +72/-0)
+```diff
+@@ -707,6 +707,78 @@ EveningPlannerAgent eveningPlannerAgent = AgenticServices
+ List<EveningPlan> plans = eveningPlannerAgent.plan("romantic");
+ ```
+ 
++The root call of the agentic system does not wait either for an asynchronous agent whose result nobody reads: it returns as soon as the other agents are done, while that agent is still running, and the `AgenticScope` is ended at that point as for any other root call, without waiting for it. This makes it possible to delegate a long side task to the last agent of a workflow, like a fix delegated to a remote coding agent that takes minutes, while the workflow returns its own result in seconds:
++
++```java
++RemediationAgent remediation = AgenticServices
++        .a2aBuilder(REMEDIATION_SERVER_URL, RemediationAgent.class)
++        .async(true)
++        .outputKey("fix")
++        .listener(new AgentListener() {
++            @Override
++            public void afterAgentInvocation(AgentResponse response) {
++                // called when the remediation completes, after analyze(...) returned
++                notifyTeam(response.output());
++            }
++        })
++        .build();
++
++RolloutAnalysis analysis = AgenticServices
++        .sequenceBuilder(RolloutAnalysis.class)
++        .subAgents(dataCollector, scorer, remediation)
++        .outputKey("decision")
++        .build();
++
++String decision = analysis.analyze(rollout); // returns while the remediation is still running
++```
++
++The result of such an agent reaches you in two ways:
++
++- the `afterAgentInvocation` of its `AgentListener` is called when the agent completes. This is the way to consume it, which is why the listener is registered on the agent itself in the example above.
++- the result is written to the `AgenticScope` under the output key of the agent, where a later root call on the same memory id can read it.
++
++To wait for such an agent anyway, for example in a test, call the agentic system through a method returning a `ResultWithAgenticScope` and read the output key of the agent: `readState` waits until the agent completes.
++
++```java
++public interface RolloutAnalysisWithScope {
++
++    @Agent
++    ResultWithAgenticScope<String> analyze(@V("rollout") String rollout);
++}
++
++RolloutAnalysisWithScope analysis = AgenticServices
++        .sequenceBuilder(RolloutAnalysisWithScope.class)
++        .subAgents(dataCollector, scorer, remediation)
++        .outputKey("decision")
++        .build();
++
++ResultWithAgenticScope<String> result = analysis.analyze(rollout); // returns while the remediation is still running
++String fix = result.agenticScope().readState("fix", ""); // waits for the remediation to complete
++```
++
++When such an agent fails:
++
++- the error handler of the agentic system handles the failure, on the thread of the agent, and the `onAgentInvocationError` of its listener is notified. The root call has already returned its result, so no compensation runs for it.
++- an `AgentMonitor` records the execution as failed, unless the error handler recovered the failure.
++- reading the result of the failed agent throws its failure, until the next root call on the same memory id starts and drops it. A saved copy of the `AgenticScope` never contains it.
++
++When such an agent suspends the agentic system, like an A2A client agent whose remote task needs more input:
++
++- its pending response is left in the `AgenticScope`, as for a synchronous agent, and an agent reading its result suspends the agentic system as usual.
++- when the root call returns without noticing the suspension, it cannot throw the `AgenticSystemSuspendedException` to its caller, so the `onAgenticSystemSuspended` of the listener of the agentic system is notified instead. The next root call on the same memory id resumes from the pending response once it is completed, or suspends again otherwise.
++
++The `AgenticScope` and the later root calls behave as follows:
++
++- an ephemeral `AgenticScope` is destroyed at the end of the root call as usual, so `beforeAgenticScopeDestroyed` is notified before the events of the asynchronous agents of that scope still running. These agents keep writing their results to it, where the caller can read them through a `ResultWithAgenticScope`.
++- a persistent `AgenticScope` is saved at the end of the root call without the pending results, and again when each of them completes.
++- a later root call on the same memory id waits for the asynchronous agents of the previous call still running before it starts, so that only one root call at a time runs on an `AgenticScope`. A caller invoking the same memory id again right after the previous call returned may therefore block until they complete.
++
++Also note that:
++
++- asynchronous agents run on the default executor of LangChain4j, so their pending work is lost when the JVM exits.
++- when the root call ends while some asynchronous agents are still running, the `AgenticScope` logs their output keys at debug level. This tells whether the root call was blocked by an asynchrono
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/Agent.java` (modified, +7/-0)
+```diff
+@@ -4,6 +4,7 @@
+ import static java.lang.annotation.RetentionPolicy.RUNTIME;
+ 
+ import dev.langchain4j.agentic.declarative.TypedKey;
++import dev.langchain4j.agentic.observability.AgentListener;
+ import java.lang.annotation.Retention;
+ import java.lang.annotation.Target;
+ 
+@@ -151,6 +152,12 @@
+ 
+     /**
+      * If true, the agent will be invoked in an asynchronous manner, allowing the workflow to continue without waiting for the agent's result.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
+      *
+      * @return true if the agent should be invoked in an asynchronous manner, false otherwise.
+      */
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/AgenticServices.java` (modified, +9/-0)
+```diff
+@@ -1208,6 +1208,15 @@ public NonAiAgentBuilder<T> outputType(Type outputType) {
+ 
+         /**
+          * Controls whether this agent executes asynchronously within an agentic system.
++         * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++         * function or output key of the agentic system.
++         * <p>
++         * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++         * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++         * the same memory id waits for these agents to complete before it starts.
++         *
++         * @param async {@code true} to run asynchronously
++         * @return this builder
+          */
+         public NonAiAgentBuilder<T> async(boolean async) {
+             this.async = async;
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/agent/AgentBuilder.java` (modified, +6/-0)
+```diff
+@@ -710,6 +710,12 @@ public B outputKey(Class<? extends TypedKey<?>> outputKey) {
+ 
+     /**
+      * Controls whether this agent executes asynchronously within an agentic system.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
+      *
+      * @param async {@code true} to run asynchronously
+      * @return {@code this}
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/agent/DecisionAgentBuilder.java` (modified, +10/-1)
+```diff
+@@ -280,7 +280,16 @@ public DecisionAgentBuilder<T> outputKey(Class<? extends TypedKey<?>> outputKey)
+ 
+     /**
+      * Controls whether this agent executes asynchronously within an agentic system: the decision call then runs
+-     * on the executor used for every asynchronous agent, and the agents reading its output wait for it.
++     * on the executor used for every asynchronous agent.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
++     *
++     * @param async {@code true} to run asynchronously
++     * @return this builder
+      */
+     public DecisionAgentBuilder<T> async(boolean async) {
+         this.async = async;
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/declarative/A2AClientAgent.java` (modified, +7/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.agentic.declarative;
+ 
+ import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.observability.AgentListener;
+ 
+ import static java.lang.annotation.ElementType.METHOD;
+ import static java.lang.annotation.RetentionPolicy.RUNTIME;
+@@ -71,6 +72,12 @@
+ 
+     /**
+      * If true, the agent will be invoked in an asynchronous manner, allowing the workflow to continue without waiting for the agent's result.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
+      *
+      * @return true if the agent should be invoked in an asynchronous manner, false otherwise.
+      */
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/declarative/HumanInTheLoop.java` (modified, +7/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.agentic.declarative;
+ 
+ import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.observability.AgentListener;
+ 
+ import static java.lang.annotation.ElementType.METHOD;
+ import static java.lang.annotation.RetentionPolicy.RUNTIME;
+@@ -72,6 +73,12 @@
+ 
+     /**
+      * If true, the agent will be invoked in an asynchronous manner, allowing the workflow to continue without waiting for the agent's result.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
+      *
+      * @return true if the agent should be invoked in an asynchronous manner, false otherwise.
+      */
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/declarative/McpClientAgent.java` (modified, +7/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.agentic.declarative;
+ 
+ import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.observability.AgentListener;
+ 
+ import static java.lang.annotation.ElementType.METHOD;
+ import static java.lang.annotation.RetentionPolicy.RUNTIME;
+@@ -63,6 +64,12 @@
+ 
+     /**
+      * If true, the agent will be invoked in an asynchronous manner, allowing the workflow to continue without waiting for the agent's result.
++     * The result is awaited only where it is read: by another agent taking it as an argument, or by the output
++     * function or output key of the agentic system.
++     * <p>
++     * When nothing reads the result, the call to the agentic system returns while the agent is still running, and
++     * the result or the failure of the agent is then reported only to its {@link AgentListener}. The next call on
++     * the same memory id waits for these agents to complete before it starts.
+      *
+      * @return true if the agent should be invoked in an asynchronous manner, false otherwise.
+      */
+```
 
 ---
 
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/2069) for more information.
+### Incident Patch 2: `742b2f10` (2026-11-06)
+**Commit Message**: fix(agentic): resume a debate at its judge after a suspension (#6979)
+
+## Problem
+
+Fixes #6978.
+
+`DebatePlanner` implements `executionState()` and
+`restoreExecutionState()`, so a debate is expected to resume where it
+was suspended. It does not: `firstAction()` always starts a new debate,
+and `judgePhase` -- the flag saying that the debate is over and only the
+judge is left -- is not part of the saved state at all.
+
+A debate suspended while its judge runs, for example a judge that asks a
+human for an approval before rendering its verdict, therefore resumes by
+scheduling the debaters of round 1 again. The execution loop skips the
+debaters that already ran, so the plan ends before the judge and the
+invocation returns `null` instead of the verdict.
+
+## Change
+
+- `judgePhase` is part of `executionState()` and is restored.
+- `lastDebatersMessages` was already saved by `executionState()` but
+never restored; it is restored too.
+- `firstAction()` resumes at the judge when the debate was suspended in
+the judge phase.
+
+The other stateful planners resume from the saved position in
+`firstAction()` -- `SequentialPlanner`, `LoopPlanner`, `P2PPlanner` --
+or, like `ConfidenceCascadePlanner`, resume
+
+**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/debate/DebatePlanner.java` (modified, +25/-5)
+```diff
+@@ -4,18 +4,17 @@
+ import dev.langchain4j.agentic.planner.AgentInstance;
+ import dev.langchain4j.agentic.planner.AgenticSystemTopology;
+ import dev.langchain4j.agentic.planner.InitPlanningContext;
+-import dev.langchain4j.agentic.planner.PlanningContext;
+ import dev.langchain4j.agentic.planner.Planner;
++import dev.langchain4j.agentic.planner.PlanningContext;
+ import dev.langchain4j.agentic.scope.AgentInvocation;
+ import dev.langchain4j.agentic.scope.AgenticScope;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+-
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.stream.Collectors;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
+ 
+ /**
+  * A debate planner that orchestrates iterative adversarial rounds among debater agents.
+@@ -24,6 +23,9 @@
+  * each other's reasoning (via a {@code "debateContext"} scope key) and can revise their positions.
+  * Rounds continue until the {@link ConvergenceStrategy} reports convergence or {@code maxRounds}
+  * is reached, at which point the judge agent (the last registered subagent) renders a final verdict.
++ * <p>
++ * A debate suspended while its judge is running, for example because the judge waits for a human, resumes at the
++ * judge when it is invoked again, so that the verdict is not lost.
+  */
+ public class DebatePlanner implements Planner {
+ 
+@@ -74,6 +76,13 @@ public void init(InitPlanningContext initPlanningContext) {
+ 
+     @Override
+     public Action firstAction(PlanningContext planningContext) {
++        if (judgePhase) {
++            // a debate suspended while its judge was running, for instance because the judge waits for a human,
++            // resumes at the judge: starting a new debate would skip the debaters that already ran and end it
++            // before the judge has rendered its verdict
++            LOG.info("Resuming the debate at the judge of round {}", currentRound);
++            return call(judge);
++        }
+         planningContext.agenticScope().writeState(DEBATE_CONTEXT_KEY, "");
+         LOG.info("Starting debate round 1 with {} debaters", debaters.size());
+         return call(debaters);
+@@ -129,7 +138,10 @@ private void writeDebateContext(AgenticScope scope) {
+ 
+     @Override
+     public Map<String, Object> executionState() {
+-        return Map.of("currentRound", currentRound, "lastDebatersMessages", lastDebatersMessages);
++        return Map.of(
++                "currentRound", currentRound,
++                "judgePhase", judgePhase,
++                "lastDebatersMessages", lastDebatersMessages);
+     }
+ 
+     @Override
+@@ -138,6 +150,14 @@ public void restoreExecutionState(Map<String, Object> state) {
+         if (savedRound instanceof Number n) {
+             this.currentRound = n.intValue();
+         }
++        Object savedJudgePhase = state.get("judgePhase");
++        if (savedJudgePhase instanceof Boolean savedJudge) {
++            this.judgePhase = savedJudge;
++        }
++        Object savedMessages = state.get("lastDebatersMessages");
++        if (savedMessages instanceof Map<?, ?> messages) {
++            messages.forEach((name, message) -> lastDebatersMessages.put(String.valueOf(name), message));
++        }
+     }
+ 
+     @Override
+```
+
+**File**: `langchain4j-agentic-patterns/src/test/java/dev/langchain4j/agentic/patterns/debate/DebatePlannerResumeTest.java` (added, +118/-0)
+```diff
+@@ -0,0 +1,118 @@
++package dev.langchain4j.agentic.patterns.debate;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++import dev.langchain4j.agentic.Agent;
++import dev.langchain4j.agentic.AgenticServices;
++import dev.langchain4j.agentic.AgenticServices.AgenticScopeFunction;
++import dev.langchain4j.agentic.UntypedAgent;
++import dev.langchain4j.agentic.internal.SuspendedResponse;
++import dev.langchain4j.agentic.scope.AgenticScopeAccess;
++import dev.langchain4j.agentic.scope.AgenticScopeKey;
++import dev.langchain4j.agentic.scope.AgenticScopePersister;
++import dev.langchain4j.agentic.scope.AgenticScopeSerializer;
++import dev.langchain4j.agentic.scope.AgenticScopeStore;
++import dev.langchain4j.agentic.scope.AgenticSystemSuspendedException;
++import dev.langchain4j.agentic.scope.DefaultAgenticScope;
++import dev.langchain4j.service.MemoryId;
++import dev.langchain4j.service.V;
++import java.util.Map;
++import java.util.Optional;
++import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.jupiter.api.AfterEach;
++import org.junit.jupiter.api.Test;
++
++/**
++ * Tests that a debate resumes at the point where it was suspended, instead of starting a new debate.
++ */
++class DebatePlannerResumeTest {
++
++    static class JsonInMemoryStore implements AgenticScopeStore {
++
++        private final Map<AgenticScopeKey, String> scopes = new ConcurrentHashMap<>();
++
++        @Override
++        public boolean save(AgenticScopeKey key, DefaultAgenticScope agenticScope) {
++            scopes.put(key, AgenticScopeSerializer.toJson(agenticScope));
++            return true;
++        }
++
++        @Override
++        public Optional<DefaultAgenticScope> load(AgenticScopeKey key) {
++            return Optional.ofNullable(scopes.get(key)).map(AgenticScopeSerializer::fromJson);
++        }
++
++        @Override
++        public boolean delete(AgenticScopeKey key) {
++            return scopes.remove(key) != null;
++        }
++
++        @Override
++        public Set<AgenticScopeKey> getAllKeys() {
++            return scopes.keySet();
++        }
++    }
++
++    public interface ReviewPanel extends AgenticScopeAccess {
++
++        @Agent
++        String review(@MemoryId String sessionId, @V("topic") String topic);
++    }
++
++    private final AtomicInteger debaterInvocations = new AtomicInteger();
++    private final AtomicInteger verdictWrites = new AtomicInteger();
++
++    @AfterEach
++    void cleanup() {
++        AgenticScopePersister.setStore(null);
++    }
++
++    @Test
++    void debate_resumes_at_a_judge_that_suspended() {
++        AgenticScopePersister.setStore(new JsonInMemoryStore());
++
++        // the judge asks a human for the approval and then turns it into the final verdict
++        UntypedAgent judge = AgenticServices.sequenceBuilder()
++                .subAgents(
++                        AgenticServices.humanInTheLoopBuilder()
++                                .outputKey("approval")
++                                .responseProvider(scope -> new SuspendedResponse<>("approval"))
++                                .build(),
++                        AgenticServices.nonAiAgentBuilder(scope -> {
++                                    verdictWrites.incrementAndGet();
++                                    return "final:" + scope.readState("approval");
++                                })
++                                .name("verdictWriter")
++                                .outputKey("verdict")
++                                .build())
++                .outputKey("verdict")
++                .build();
++
++        ReviewPanel panel = AgenticServices.plannerBuilder(ReviewPanel.class)
++                .subAgents(debater("optimist"), debater("pessimist"), judge)
++                .outputKey("verdict")
++                .planner(DebatePlanner::new)
++                .build();
++
++        assertThatThrownBy(() -> panel.review("s1", "mars")).isInstanceOf(AgenticSystemSuspendedException.class);
++
++        panel.getAgenticScope("s1").completePendingResponse("APPROVED");
++
++        assertThat(panel.review("s1", "mars")).isEqualTo("final:APPROVED");
++        assertThat(debaterInvocations).hasValue(2);
++        assertThat(verdictWrites).hasValue(1);
++    }
++
++    private AgenticScopeFunction<String> debater(String name) {
++        return AgenticServices.nonAiAgentBuilder(scope -> {
++                    debaterInvocations.incrementAndGet();
++                    return "it works";
++                })
++                .name(name)
++                .outputKey(name)
++                .build();
++    }
++}
+```
 
 ---
 
-### Configuration
+### Incident Patch 3: `c5c8c19a` (2026-11-06)
+**Commit Message**: Throw a clear exception when evicting the single chat memory of an AI service (#7010)
 
-📅 **Schedule**: (UTC)
+<!--
+Thank you so much for your contribution!
 
-- Branch creation
-  - At any time (no schedule defined)
-- Automerge
-  - At any time (no schedule defined)
+Please fill in all the sections below.
+Please open the PR as ready for review (not as a draft), with tests and
+documentation already included.
+Please note that PRs with breaking changes, or without tests and
+documentation, will be rejected.
 
-🚦 **Automerge**: Disabled by config. Please merge this manually once you
-are satisfied.
+Please note that PRs will be reviewed based on the priority of the
+issues they address.
+We ask for your patience. We are doing our best to review your PR as
+quickly as possible.
+Please refrain from pinging and asking when it will be reviewed. Thank
+you for understanding!
+-->
 
-♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the
-rebase/retry checkbox.
+## Issue
+<!-- Please specify the ID of the issue this PR is addressing. For
+example: "Closes #1234" or "Fixes #1234" -->
+No issue: found while reviewing #6967.
 
-🔕 **Ignore**: Close this PR and you won't be reminded about this update
-again.
+## Change
+<!-- Please describe the changes you made. -->
+An AI Service that extends `ChatMemoryAccess` and is configured with a
+single `chatMemory(...)` passes the validation, but
+`evictChatMemory(memoryId)` then fails with a `NullPointerException`:
+`ChatMemoryService` has no map of chat memories in that case.
 
----
+That single chat memory is shared by all the memory ids and was created
+b
 
-- [ ] <!-- rebase
-
-**File**: `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml` (modified, +1/-1)
+**File**: `docs/docs/tutorials/ai-services.md` (modified, +2/-0)
 ```diff
-@@ -19,7 +19,7 @@
-             <dependency>
-                 <groupId>io.netty</groupId>
-                 <artifactId>netty-bom</artifactId>
--                <version>4.1.139.Final</version>
-+                <version>4.1.140.Final</version>
-                 <type>pom</type>
-                 <scope>import</scope>
-             </dependency>
+@@ -806,6 +806,8 @@ List<ChatMessage> messagesWithKlaus = assistant.getChatMemory(1).messages();
+ boolean chatMemoryWithFrancineEvicted = assistant.evictChatMemory(2);
+ ```
+ 
++Only the chat memories created by a `ChatMemoryProvider` can be evicted. When an AI Service is configured with a single `ChatMemory`, shared by all its invocations, `evictChatMemory` throws an `UnsupportedOperationException`.
++
+ :::note
+ Please note that if an AI Service method does not have a parameter annotated with `@MemoryId`,
+ the value of `memoryId` in `ChatMemoryProvider` will default to a string `"default"`.
 ```
 
-**File**: `document-loaders/langchain4j-document-loader-azure-storage-blob/pom.xml` (modified, +1/-1)
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/memory/ChatMemoryAccess.java` (modified, +3/-0)
 ```diff
-@@ -17,7 +17,7 @@
-             <dependency>
-                 <groupId>io.netty</groupId>
-                 <artifactId>netty-bom</artifactId>
--                <version>4.1.139.Final</version>
-+                <version>4.1.140.Final</version>
-                 <type>pom</type>
-                 <scope>import</scope>
-             </dependency>
+@@ -20,6 +20,9 @@ public interface ChatMemoryAccess {
+      *
+      * @param memoryId The id of the chat memory to be evicted.
+      * @return true if {@link ChatMemory} with the given id existed, and it was successfully evicted, false otherwise.
++     * @throws UnsupportedOperationException if this AI service has a single chat memory, configured with
++     *         {@code chatMemory(...)} and shared by all the memory ids: it cannot be evicted, only a chat memory
++     *         created for a memory id by a {@code chatMemoryProvider(...)} can.
+      */
+     boolean evictChatMemory(Object memoryId);
+ }
 ```
 
-**File**: `langchain4j-azure-cosmos-nosql/pom.xml` (modified, +1/-1)
+**File**: `langchain4j/src/main/java/dev/langchain4j/service/memory/ChatMemoryService.java` (modified, +6/-0)
 ```diff
-@@ -18,7 +18,7 @@
-             <dependency>
-                 <groupId>io.netty</groupId>
-                 <artifactId>netty-bom</artifactId>
--                <version>4.1.139.Final</version>
-+                <version>4.1.140.Final</version>
-                 <type>pom</type>
-                 <scope>import</scope>
-             </dependency>
+@@ -65,6 +65,12 @@ public ChatMemory getChatMemory(Object memoryId) {
+     }
+ 
+     public ChatMemory evictChatMemory(Object memoryId) {
++        if (chatMemoryProvider == null) {
++            throw new UnsupportedOperationException("Cannot evict the chat memory of the memory id '" + memoryId
++                    + "': this AI service has a single chat memory, shared by all the memory ids. Configure it with"
++                    + " chatMemoryProvider(...) instead of chatMemory(...) to have a chat memory for each memory id,"
++                    + " which can be evicted.");
++        }
+         return chatMemories.remove(memoryId);
+     }
+ 
 ```
 
-**File**: `langchain4j-azure-open-ai/pom.xml` (modified, +1/-1)
+**File**: `langchain4j/src/test/java/dev/langchain4j/service/AiServicesTest.java` (modified, +26/-0)
 ```diff
-@@ -31,7 +31,7 @@
-             <dependency>
-                 <groupId>io.netty</groupId>
-                 <artifactId>netty-bom</artifactId>
--                <version>4.1.139.Final</version>
-+                <version>4.1.140.Final</version>
-                 <type>pom</type>
-                 <scope>import</scope>
-             </dependency>
+@@ -100,6 +100,32 @@ void should_not_call_chatModel_when_ChatMemoryAccess_methods_are_called() {
+         verify(chatModel, times(1)).chat(any(ChatRequest.class));
+     }
+ 
++    interface AssistantWithSingleMemoryAccess extends ChatMemoryAccess {
++
++        String chat(String message);
++    }
++
++    @Test
++    void should_fail_with_a_clear_error_when_evicting_the_single_chat_memory_of_an_AI_service() {
++
++        // given
++        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
++        AssistantWithSingleMemoryAccess assistant = AiServices.builder(AssistantWithSingleMemoryAccess.class)
++                .chatModel(ChatModelMock.thatAlwaysResponds("Hi"))
++                .chatMemory(chatMemory)
++                .build();
++        assistant.chat("Hello");
++
++        // when-then
++        assertThatThrownBy(() -> assistant.evictChatMemory("default"))
++                .isExactlyInstanceOf(UnsupportedOperationException.class)
++                .hasMessage("Cannot evict the chat memory of the memory id 'default': this AI service has a single"
++                        + " chat memory, shared by all the memory ids. Configure it with chatMemoryProvider(...)"
++                        + " instead of chatMemory(...) to have a chat memory for each memory id, which can be"
++                        + " evicted.");
++        assertThat(chatMemory.messages()).hasSize(2);
++    }
++
+     @Test
+     void test_getClass() {
+         // dynamic proxies don't intercept final methods
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6983** (2026-11-04): Fix VertexAiGeminiStreamingChatModelIT for unsupported parameters reported through onError (@dliubarskyi)
-- **PR #6977** (closed): Update dependency org.hibernate.nosql:hibernate-milvus to v1.0.0-SNAPSHOT (@renovate[bot])
-- **PR #6976** (2026-11-05): Update dependency io.netty:netty-bom to v4.1.140.Final (@renovate[bot])
-- **PR #6970** (closed): Update dependency com.datastax.astra:astra-db-client to v1.2.7 (@renovate[bot])
-- **PR #6969** (closed): Replace dependency io.weaviate:client with io.weaviate:client6 (@renovate[bot])
-- **PR #6968** (2026-11-04): Build the modules before generating Javadoc in the docs workflow (@dliubarskyi)
+- **PR #7010** (2026-11-06): Throw a clear exception when evicting the single chat memory of an AI service (@dliubarskyi)
+- **PR #7002** (2026-11-06): Fix flaky StreamableHttpMcpTransportMaxMessageSizeTest.limits_messages_to_20_mib_by_default (@dliubarskyi)
+- **PR #6999** (2026-11-06): Update dependency com.google.guava:guava to v33.8.0 (@renovate[bot])
+- **PR #6998** (2026-11-06): Update dependency com.google.genai:google-genai to v1.80.0 (@renovate[bot])
+- **PR #6991** (2026-11-06): Update dependency com.google.errorprone:error_prone_annotations to v2.52.0 (@renovate[bot])
+- **PR #6990** (2026-11-06): Update dependency software.amazon.awssdk:bom to v2.57.10 (@renovate[bot])
 
 ---
 
@@ -963,28 +1487,50 @@ again.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency io.netty:netty-bom to v4.1.140.Final (#6976)
+## X. Make async agents implicitly fire-and-forget when their output is not required b
 
 **RULE**:
-When implementing operations in `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/tutorials/agents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4001574c`: Update dependency io.netty:netty-bom to v4.1.140.Final (#6976). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6100a1a4`: Make async agents implicitly fire-and-forget when their output is not required by the agentic system (#6955). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `code-execution-engines/langchain4j-code-execution-engine-azure-acads/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/agents.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                <version>4.1.140.Final</version>
+The root call of the agentic system does not wait either for an asynchronous agent whose result nobody reads: it returns as soon as the other agents are done, while that agent is still running, and the `AgenticScope` is ended at that point as for any other root call, without waiting for it. This makes it possible to delegate a long side task to the last agent of a workflow, like a fix delegated to a remote coding agent that takes minutes, while the workflow returns its own result in seconds:
+
+```java
+RemediationAgent remediation = AgenticServices
+        .a2aBuilder(REMEDIATION_SERVER_URL, RemediationAgent.class)
+        .async(true)
+        .outputKey("fix")
+        .listener(new AgentListener() {
+            @Override
+            public void afterAgentInvocation(AgentResponse response) {
+                // called when the remediation completes, after analyze(...) returned
+                notifyTeam(response.output());
+            }
+        })
+        .build();
+
+RolloutAnalysis analysis = AgenticServices
+        .sequenceBuilder(RolloutAnalysis.class)
+        .subAgents(dataCollector, scorer, remediation)
+        .outputKey("decision")
+        .build();
+
+String decision = analysis
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-                <version>4.1.139.Final</version>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4001574c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6100a1a4` are properly handled with clean fallback behavior.

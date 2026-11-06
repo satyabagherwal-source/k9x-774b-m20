@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-V7PE",
-    "timestamp": "2026-11-05T00:49:02.402Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "e56a1e7bb50b6dffba1abb8d7937f9f5e00b40a541e2c01befddbf599a971d6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-YE6C",
-    "timestamp": "2026-11-05T00:51:30.756Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "799e0f7f9bed419371a343e788b6eddf3a02548eb9560edbd706edd5e03cebdd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-A2ZE",
-    "timestamp": "2026-11-05T01:00:36.122Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-AASP",
     "timestamp": "2026-11-05T01:00:46.249Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7447,51 @@
     "contentHash": "9125e00e1254a53644f74b7ad00beebba9bddd24f0be93b72e61ad5ed8219852",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-Y6A8",
+    "timestamp": "2026-11-06T23:02:42.512Z",
+    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+    "contentHash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-YBBA",
+    "timestamp": "2026-11-06T23:02:49.030Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-0WOZ",
+    "timestamp": "2026-11-06T23:04:50.051Z",
+    "repository": "github/squad",
+    "learningId": "learn-github-github-squad",
+    "contentHash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

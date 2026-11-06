@@ -7942,3 +7942,6 @@
 | `CYCLE-20261106-PNTT` | `2026-11-06T22:56:05.345Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d2cc3a7b...`) |
 | `CYCLE-20261106-PODP` | `2026-11-06T22:56:06.061Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a06e39b2...`) |
 | `CYCLE-20261106-PQQE` | `2026-11-06T22:56:09.110Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9125e00e...`) |
+| `CYCLE-20261106-Y6A8` | `2026-11-06T23:02:42.512Z` | `unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`c451f704...`) |
+| `CYCLE-20261106-YBBA` | `2026-11-06T23:02:49.030Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0f70a0ed...`) |
+| `CYCLE-20261106-0WOZ` | `2026-11-06T23:04:50.051Z` | `github/squad` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3368cadd...`) |

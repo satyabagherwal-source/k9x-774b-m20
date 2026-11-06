@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T22:56:09.129Z",
-  "total_cycles_completed": 7907,
-  "total_learnings_persisted": 7907,
-  "total_rules_promoted": 7552,
+  "last_updated": "2026-11-06T23:04:50.058Z",
+  "total_cycles_completed": 7910,
+  "total_learnings_persisted": 7910,
+  "total_rules_promoted": 7558,
   "history": [
-    {
-      "timestamp": "2026-11-05T17:29:11.408Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:36:34.876Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T17:36:41.181Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T17:47:55.819Z",
       "repository": "burner22/numbat",
@@ -1403,6 +1382,27 @@
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T23:02:42.519Z",
+      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T23:02:49.044Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T23:04:50.058Z",
+      "repository": "github/squad",
+      "learningId": "learn-github-github-squad",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

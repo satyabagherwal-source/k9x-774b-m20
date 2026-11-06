@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:56:09.016Z",
-  "total_verified_learnings": 1227,
+  "last_updated": "2026-11-06T23:04:49.970Z",
+  "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -38377,11 +38377,16 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "4001574c",
-      "content_hash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
+      "source_version": "ee8fd5f1",
+      "content_hash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Make async agents implicitly fire-and-forget when their output is not required b",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2430,
           "title": "Guardrail Rewrite Immutability and Downstream Reprompt Invariant",
@@ -38453,7 +38458,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:05:22.247Z",
+      "verified_at": "2026-11-06T23:02:48.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174127,10 +174132,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
-      "content_hash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
+      "content_hash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Precision Layer Isolation for MoE Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Memory Boundary Pre-Check for Large Model Loading",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6586,
           "title": "Quantization Variant Naming & Versioning Invariant",
@@ -174142,7 +174157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:14:57.197Z",
+      "verified_at": "2026-11-06T23:02:42.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184690,6 +184705,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-06T20:30:52.735Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-github-squad": {
+      "learning_id": "learn-github-github-squad",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "github/squad",
+      "repository": "github/squad",
+      "slug": "github-squad",
+      "platform": "github",
+      "source_url": "https://github.com/github/squad",
+      "source_version": "7b731ec9",
+      "content_hash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
+      "dossier_path": "07_PROJECT_LEARNING/github-squad-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/github-squad-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Cross-Platform Atomic File Swapping & Sharing-Violation Backoff",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Recursive Synchronization Lock Bypass via Environment Guards",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Subcommand Help Guard & Argument Dispatch Boundary",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T23:04:49.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

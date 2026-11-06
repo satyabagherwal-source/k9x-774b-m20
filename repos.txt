@@ -4910,3 +4910,7 @@ https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-06T20:30:27.454Z] ---
 # [HUGGINGFACE-AI-MODELS] baidu/ERNIE-5.5-Flash-Base (2616 score) - Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Base (209 likes, 526 download
 https://huggingface.co/baidu/ERNIE-5.5-Flash-Base
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T23:02:25.147Z] ---
+# [AI-AGENTS] github/squad (2269 score) - Squad: AI agent teams for any project
+https://github.com/github/squad

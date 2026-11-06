@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T22:56:09.134Z",
+  "last_updated": "2026-11-06T23:04:50.061Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
-      "verified_at": "2026-11-05T13:05:22.343Z",
+      "content_hash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
+      "verified_at": "2026-11-06T23:02:49.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:05:22.343Z"
+      "last_updated": "2026-11-06T23:02:49.046Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -17766,14 +17766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-      "content_hash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
-      "verified_at": "2026-11-03T19:14:57.319Z",
+      "content_hash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
+      "verified_at": "2026-11-06T23:02:42.530Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:14:57.319Z"
+      "last_updated": "2026-11-06T23:02:42.530Z"
     },
     "kortix-ai/CompanyOS": {
       "repository": "kortix-ai/CompanyOS",
@@ -18194,6 +18194,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-06T20:30:52.848Z"
+    },
+    "github/squad": {
+      "repository": "github/squad",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-github-squad",
+      "content_hash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
+      "verified_at": "2026-11-06T23:04:50.060Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T23:04:50.060Z"
     }
   },
   "repos": {

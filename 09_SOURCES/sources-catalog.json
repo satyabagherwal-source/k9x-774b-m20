@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "4001574c",
+    "sourceVersion": "ee8fd5f1",
     "license": "Apache-2.0",
-    "contentHash": "70cdea6936c76a491cb1e59c21b6e24e83dd54fb515667166f138f3dda5d95f7",
-    "lastHarvestedAt": "2026-11-05T13:05:22.328Z",
+    "contentHash": "0f70a0ede1e80611511c8ed4e5876c8d0c1ceda9e19725237cc8e2084fb5718c",
+    "lastHarvestedAt": "2026-11-06T23:02:49.033Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -11805,8 +11805,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
     "license": "Open-Source",
-    "contentHash": "da7e3d55cb8083df8d7947bdda604b42adcd88fab16e069368b48abfaca22077",
-    "lastHarvestedAt": "2026-11-03T19:14:57.307Z",
+    "contentHash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
+    "lastHarvestedAt": "2026-11-06T23:02:42.515Z",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   },
   "kortix-ai-companyos": {
@@ -12088,5 +12088,15 @@
     "contentHash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
     "lastHarvestedAt": "2026-11-06T20:30:52.832Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
+  },
+  "github-squad": {
+    "repository": "github/squad",
+    "platform": "github",
+    "sourceUrl": "https://github.com/github/squad",
+    "sourceVersion": "7b731ec9",
+    "license": "MIT",
+    "contentHash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
+    "lastHarvestedAt": "2026-11-06T23:04:50.054Z",
+    "learningId": "learn-github-github-squad"
   }
 }

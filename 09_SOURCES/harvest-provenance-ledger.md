@@ -7951,3 +7951,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `28ed047e` | Multi-dimensional audit evidence | 2026-11-06T22:56:05.349Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `c500baff` | Multi-dimensional audit evidence | 2026-11-06T22:56:06.065Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `30d662db` | Multi-dimensional audit evidence | 2026-11-06T22:56:09.114Z |
+| `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-06T23:02:42.515Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `ee8fd5f1` | Multi-dimensional audit evidence | 2026-11-06T23:02:49.033Z |
+| `learn-github-github-squad` | `https://github.com/github/squad` | `7b731ec9` | Multi-dimensional audit evidence | 2026-11-06T23:04:50.054Z |

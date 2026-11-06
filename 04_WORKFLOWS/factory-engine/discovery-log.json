@@ -20530,5 +20530,20 @@
     "downloads": 526,
     "qualityScore": 2616,
     "discoveredAt": "2026-11-06T20:28:18.941Z"
+  },
+  {
+    "name": "squad",
+    "fullName": "github/squad",
+    "url": "https://github.com/github/squad",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Squad: AI agent teams for any project",
+    "stars": 3332,
+    "forks": 511,
+    "openIssues": 101,
+    "language": "TypeScript",
+    "qualityScore": 2269,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-06T22:59:07.642Z"
   }
 ]
