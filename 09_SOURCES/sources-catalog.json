@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "9b54d90e",
+    "sourceVersion": "1ad12fba",
     "license": "MIT",
-    "contentHash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
-    "lastHarvestedAt": "2026-11-04T00:38:32.310Z",
+    "contentHash": "f5c951d5c8b8cdf9ecfa6512dafd1c57a4c865be7e23fd78414776c84d6a3897",
+    "lastHarvestedAt": "2026-11-06T13:52:01.014Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "2e0f254a",
+    "sourceVersion": "511dc96e",
     "license": "AGPL-3.0",
-    "contentHash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
-    "lastHarvestedAt": "2026-11-04T19:33:52.565Z",
+    "contentHash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
+    "lastHarvestedAt": "2026-11-06T13:52:03.039Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "d4923790",
+    "sourceVersion": "37af1172",
     "license": "GPL-2.0",
-    "contentHash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
-    "lastHarvestedAt": "2026-11-05T08:01:22.261Z",
+    "contentHash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
+    "lastHarvestedAt": "2026-11-06T13:52:08.182Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {

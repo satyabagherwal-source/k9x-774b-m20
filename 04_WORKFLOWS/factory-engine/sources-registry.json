@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T13:42:10.368Z",
-    "lastVerified": "2026-11-06T13:42:10.368Z",
+    "lastChecked": "2026-11-06T13:52:10.778Z",
+    "lastVerified": "2026-11-06T13:52:10.778Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -317,12 +317,12 @@
     "lastVerified": "2026-11-05T19:14:55.320Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T20:06:48.650Z",
-    "lastVerified": "2026-11-05T20:06:48.650Z",
+    "lastChecked": "2026-11-06T13:51:58.800Z",
+    "lastVerified": "2026-11-06T13:51:58.800Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -331,7 +331,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ea260c54"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -354,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T13:20:23.678Z",
+    "lastChecked": "2026-11-06T13:52:03.874Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T13:20:23.678Z"
+    "lastVerified": "2026-11-06T13:52:03.874Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -884,14 +885,14 @@
     "officialUrl": "https://github.com/react-hook-form/react-hook-form",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T00:38:31.453Z",
-    "lastVerified": "2026-11-04T00:38:31.453Z",
+    "lastChecked": "2026-11-06T13:51:58.582Z",
+    "lastVerified": "2026-11-06T13:51:58.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
+    "contentHash": "f5c951d5c8b8cdf9ecfa6512dafd1c57a4c865be7e23fd78414776c84d6a3897",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3164,22 +3165,21 @@
     "lastVerified": "2026-11-04T04:04:43.143Z"
   },
   "beclab-olares": {
-    "name": "Olares",
+    "name": "beclab/Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T09:20:28.174Z",
-    "lastVerified": "2026-11-05T09:20:28.174Z",
+    "lastChecked": "2026-11-06T13:52:02.562Z",
+    "lastVerified": "2026-11-06T13:52:02.562Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2e0f254a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -3189,12 +3189,12 @@
     "lastVerified": "2026-11-05T15:13:10.425Z"
   },
   "clementtsang-bottom": {
-    "name": "ClementTsang/bottom",
+    "name": "bottom",
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:21:45.776Z",
-    "lastVerified": "2026-11-05T04:21:45.776Z",
+    "lastChecked": "2026-11-06T13:51:48.858Z",
+    "lastVerified": "2026-11-06T13:51:48.858Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
@@ -3203,7 +3203,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cc6facab"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7062,14 +7063,14 @@
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-05T08:00:49.679Z",
-    "lastVerified": "2026-11-05T08:00:49.679Z",
+    "lastChecked": "2026-11-06T13:52:06.680Z",
+    "lastVerified": "2026-11-06T13:52:06.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
+    "contentHash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9959,9 +9960,9 @@
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
     "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
-    "lastChecked": "2026-11-03T11:22:03.429Z",
+    "lastChecked": "2026-11-06T13:51:51.344Z",
     "revisionIdentifier": "20d2e73081",
-    "lastVerified": "2026-11-03T11:22:03.429Z"
+    "lastVerified": "2026-11-06T13:51:51.344Z"
   },
   "sayaka-sh-spmp": {
     "name": "spmp",

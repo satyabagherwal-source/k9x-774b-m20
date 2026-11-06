@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:42:07.691Z",
+  "last_updated": "2026-11-06T13:52:08.094Z",
   "total_verified_learnings": 1224,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4734,8 +4734,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "2e0f254a",
-      "content_hash": "f60931850ddc18ef32940cb0fcfb0299579877c785346f9240a394a623c917a6",
+      "source_version": "511dc96e",
+      "content_hash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4840,7 +4840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:33:52.381Z",
+      "verified_at": "2026-11-06T13:52:02.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40006,11 +40006,16 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "d4923790",
-      "content_hash": "8a5ae4445113626822d04fe9a2645955aa54390f49e46585e1d3c0a696283ba0",
+      "source_version": "37af1172",
+      "content_hash": "2c55a73e2b68ba4cf912f76cb3f7cbf88a37cee970fc93c9df87fe12c7f4becc",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Followup: fix versioning.delete_history in MDEV-39226: Push whole multi-table ..",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2136,
           "title": "MDEV-41020 A `MEMORY` table refuses a row it just held",
@@ -40062,7 +40067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:01:22.147Z",
+      "verified_at": "2026-11-06T13:52:08.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50833,11 +50838,16 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "9b54d90e",
-      "content_hash": "5cecd2738a074dbbffc72430667bf47b8cd4ea43782f12ccdd9c6a7ae243dd6c",
+      "source_version": "1ad12fba",
+      "content_hash": "f5c951d5c8b8cdf9ecfa6512dafd1c57a4c865be7e23fd78414776c84d6a3897",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "🤖 build(deps-dev): bump vite from 6.4.4 to 6.4.5 in /app (#13983)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1704,
           "title": "🐞 fix(unregister): drop the field's rules when keepValue keeps only its value (",
@@ -50884,7 +50894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:38:32.247Z",
+      "verified_at": "2026-11-06T13:52:00.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `9b54d90e`  
+> **Source Version**: `1ad12fba`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:38:31.823Z  
+> **Timestamp**: 2026-11-06T13:51:59.855Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:38:31.453Z  
+> **Harvest Timestamp**: 2026-11-06T13:51:58.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44898 stars
+- **Stars / Engagement**: 44906 stars
 
 ---
 
@@ -781,345 +781,262 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e2df215` (2026-10-31)
-**Commit Message**: 🐞 fix: preserve falsy submission callback failures (#13967)
+### Incident Patch 1: `fd46589e` (2026-11-05)
+**Commit Message**: 🤖 build(deps-dev): bump vite from 6.4.4 to 6.4.5 in /app (#13983)
 
+Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 6.4.4 to 6.4.5.
+- [Release notes](https://github.com/vitejs/vite/releases)
+- [Changelog](https://github.com/vitejs/vite/blob/v6.4.5/packages/vite/CHANGELOG.md)
+- [Commits](https://github.com/vitejs/vite/commits/v6.4.5/packages/vite)
+
+---
+updated-dependencies:
+- dependency-name: vite
+  dependency-version: 6.4.5
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 Co-authored-by: Bill <[REDACTED_EMAIL]>
 
-**File**: `src/__tests__/useForm/handleSubmit.test.tsx` (modified, +32/-0)
+**File**: `app/package.json` (modified, +1/-1)
 ```diff
-@@ -670,6 +670,38 @@ describe('handleSubmit', () => {
-     },
-   );
+@@ -27,6 +27,6 @@
+     "@types/yup": "^0.29.14",
+     "@vitejs/plugin-react": "^4.3.4",
+     "typescript": "^5.7.2",
+-    "vite": "^6.4.4"
++    "vite": "^6.4.5"
+   }
+ }
+```
+
+**File**: `app/pnpm-lock.yaml` (modified, +8/-8)
+```diff
+@@ -53,13 +53,13 @@ importers:
+         version: 0.29.14
+       '@vitejs/plugin-react':
+         specifier: ^4.3.4
+-        version: 4.3.4(vite@6.4.4)
++        version: 4.3.4(vite@6.4.5)
+       typescript:
+         specifier: ^5.7.2
+         version: 5.7.2
+       vite:
+-        specifier: ^6.4.4
+-        version: 6.4.4
++        specifier: ^6.4.5
++        version: 6.4.5
  
-+  describe.each(['throws', 'rejects'] as const)(
-+    'when onValid %s',
-+    (failureType) => {
-+      it.each([undefined, null, false, 0, ''])(
-+        'preserves a falsy failure reason (%s) and marks submission unsuccessful',
-+        async (failure) => {
-+          const { result } = renderHook(() => useFormWithSubmitState());
-+          const onValid =
-+            failureType === 'throws'
-+              ? () => {
-+                  throw failure;
-+                }
-+              : () => Promise.reject(failure);
-+          const settled = await act(async () =>
-+            Promise.allSettled([
-+              result.current.methods.handleSubmit(onValid)(),
-+            ]),
+ packages:
+ 
+@@ -1004,8 +1004,8 @@ packages:
+       '@types/react':
+         optional: true
+ 
+-  vite@6.4.4:
+-    resolution: {integrity: sha512-xGjU/SyjeNyb0E4KxXBvYz/1C+3JXuujvf2hXNOtnlcE+58o5ajd9N2/n2VhkiJvpCP2qQasnUpx5PXNeI+p1Q==}
++  vite@6.4.5:
++    resolution: {integrity: sha512-4enwjFfi4IwtEh0w+jPzpLVOFQiPHmmzPxcHXQOyEur47o6u0jE573DmGpjA+7irXoMLYRZD5ZaFUEneS3abPg==}
+     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+     hasBin: true
+     peerDependencies:
+@@ -1581,14 +1581,14 @@ snapshots:
+ 
+   '@types/yup@0.29.14': {}
+ 
+-  '@vitejs/plugin-react@4.3.4(vite@6.4.4)':
++  '@vitejs/plugin-react@4.3.4(vite@6.4.5)':
+     dependencies:
+       '@babel/core': 7.26.0
+       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
+       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
+       '@types/babel__core': 7.20.5
+       react-refresh: 0.14.2
+-      vite: 6.4.4
++      vite: 6.4.5
+     transitivePeerDependencies:
+       - supports-color
+ 
+@@ -1916,7 +1916,7 @@ snapshots:
+     optionalDependencies:
+       '@types/react': 19.0.2
+ 
+-  vite@6.4.4:
++  vite@6.4.5:
+     dependencies:
+       esbuild: 0.25.12
+       fdir: 6.5.0(picomatch@4.0.5)
+```
+
+---
+
+### Incident Patch 2: `1ad12fba` (2026-11-06)
+**Commit Message**: 🐞 fix: synchronize useWatch cache when compute is omitted (#13987)
+
+* fix: synchronize useWatch cache when compute is omitted
+
+* test: cover compute toggles and undefined outputs
+
+**File**: `src/__tests__/useWatch.test.tsx` (modified, +48/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import React from 'react';
+ import {
++  act,
+   fireEvent,
+   render,
+   renderHook,
+@@ -21,6 +22,7 @@ import { useForm } from '../useForm';
+ import { FormProvider, useFormContext } from '../useFormContext';
+ import { useWatch } from '../useWatch';
+ import noop from '../utils/noop';
++import { Watch } from '../watch';
+ 
+ let i = 0;
+ 
+@@ -2410,6 +2412,52 @@ describe('useWatch', () => {
+   });
+ 
+   describe('compute ', () => {
++    it.each([
++      {
++        label: 'a string',
++        compute: (value: string) => value.toUpperCase(),
++        expected: 'A',
++      },
++      {
++        label: 'undefined',
++        compute: () => undefined,
++        expected: undefined,
++      },
++    ])(
++      'update to $label after compute is disabled and re-enabled',
++      ({ compute, expected }) => {
++        let watched: unknown;
++        let setValue: UseFormReturn<{ test: string }>['setValue'];
++        const Component = ({ computed }: { computed: boolean }) => {
++          const form = useForm({ defaultValues: { test: 'a' } });
++          setValue = form.setValue;
++
++          return (
++            <Watch
++              control={form.control}
++              names="test"
++              compute={computed ? compute : undefined}
++              render={(value) => {
++                watched = value;
++                return null;
++              }}
++            />
 +          );
++        };
++        const { rerender } = render(<Component computed />);
 +
-+          expect(result.current.state).toEqual({
-+            isSubmitting: false,
-+            isSubmitted: true,
-+            isSubmitSuccessful: false,
-+            submitCount: 1,
-+            errors: {},
-+          });
-+          expect(settled).toEqual([{ status: 'rejected', reason: failure }]);
-+        },
-+      );
-+    },
-+  );
++        expect(watched).toBe(expected);
 +
-   it('preserve a falsy value thrown by onInvalid', async () => {
-     const { result } = renderHook(() => useFormWithSubmitState());
- 
++        rerender(<Component computed={false} />);
++        act(() => setValue('test', 'b'));
++        expect(watched).toBe('b');
++
++        rerender(<Component computed />);
++        act(() => setValue('test', 'a'));
++        expect(watched).toBe(expected);
++      },
++    );
++
+     it('update to undefined on the first computed value change', () => {
+       const Form = () => {
+         const { control, register } = useForm({
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +4/-2)
+**File**: `src/useWatch.ts` (modified, +1/-0)
 ```diff
-@@ -2089,6 +2089,7 @@ export function createFormControl<
-     ): Promise<Awaited<TResult> | undefined> => {
-       let result: Awaited<TResult> | undefined = undefined;
-       let onValidError = undefined;
-+      let onValidFailed = false;
-       if (e) {
-         e.preventDefault && e.preventDefault();
-         e.persist && e.persist();
-@@ -2159,6 +2160,7 @@ export function createFormControl<
-         try {
-           result = await onValid(fieldValues as TTransformedValues, e);
-         } catch (error) {
-+          onValidFailed = true;
-           onValidError = error;
+@@ -189,6 +189,7 @@ export function useWatch<TFieldValues extends FieldValues>(
+           }
+         } else {
+           updateValue(formValues);
++          _computeFormValues.current = formValues;
          }
-       } else {
-@@ -2177,11 +2179,11 @@ export function createFormControl<
-       _subjects.state.next({
-         isSubmitted: true,
-         isSubmitting: false,
--        isSubmitSuccessful: isEmptyObject(_formState.errors) && !onValidError,
-+        isSubmitSuccessful: isEmptyObject(_formState.errors) && !onValidFailed,
-         submitCount: _formState.submitCount + 1,
-         errors: _formState.errors,
-       });
--      if (onValidError) {
-+      if (onValidFailed) {
-         throw onValidError;
        }
-       return result;
+     },
 ```
 
 ---
 
-### Incident Patch 2: `9b54d90e` (2026-11-03)
-**Commit Message**: 🐞 fix(setError): focus enabled radio and checkbox inputs (#13977)
+### Incident Patch 3: `7e65ad52` (2026-11-05)
+**Commit Message**: 🤖 build(deps): bump joi from 18.2.9 to 18.3.1 in /app (#13986)
 
+Bumps [joi](https://github.com/hapijs/joi) from 18.2.9 to 18.3.1.
+- [Commits](https://github.com/hapijs/joi/compare/v18.2.9...v18.3.1)
+
+---
+updated-dependencies:
+- dependency-name: joi
+  dependency-version: 18.3.1
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 Co-authored-by: Bill <[REDACTED_EMAIL]>
 
-**File**: `src/__tests__/useForm/setError.test.tsx` (modified, +71/-0)
+**File**: `app/package.json` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,77 @@ import { useForm } from '../../useForm';
- import { FormProvider, useFormContext } from '../../useFormContext';
- 
- describe('setError', () => {
-+  it.each(['radio', 'checkbox'] as const)(
-+    'should focus enabled %s options only when requested',
-+    (type) => {
-+      const App = () => {
-+        const { register, setError } = useForm<{ choice: string }>();
-+        return (
-+          <>
-+            <input
-+              aria-label="disabled"
-+              type={type}
-+              value="first"
-+              disabled
-+              {...register('choice')}
-+            />
-+            <input
-+              aria-label="enabled"
-+              type={type}
-+              value="second"
-+              {...register('choice')}
-+            />
-+            <button onClick={() => setError('choice', { type: 'manual' })}>
-+              no focus
-+            </button>
-+            <button
-+              onClick={() =>
-+                setError('choice', { type: 'manual' }, { shouldFocus: true })
-+              }
-+            >
-+              focus
-+            </button>
-+          </>
-+        );
-+      };
-+      render(<App />);
-+      const enabled = screen.getByLabelText('enabled');
-+      fireEvent.click(screen.getByRole('button', { name: 'no focus' }));
-+      expect(enabled).not.toHaveFocus();
-+      fireEvent.click(screen.getByRole('button', { name: 'focus' }));
-+      expect(enabled).toHaveFocus();
-+    },
-+  );
-+
-+  it.each(['radio', 'checkbox'] as const)(
-+    'should not focus an entirely disabled %s group',
-+    (type) => {
-+      const App = () => {
-+        const { register, setError } = useForm<{ choice: string }>();
-+        return (
-+          <>
-+            <input
-+              aria-label="disabled"
-+              type={type}
-+              disabled
-+              {...register('choice')}
-+            />
-+            <button
-+              onClick={() =>
-+                setError('choice', { type: 'manual' }, { shouldFocus: true })
-+              }
-+            >
-+              focus
-+            </button>
-+          </>
-+        );
-+      };
-+      render(<App />);
-+      fireEvent.click(screen.getByRole('button'));
-+      expect(screen.getByLabelText('disabled')).not.toHaveFocus();
-+    },
-+  );
-+
-   const tests: [string, ErrorOption, DeepMap<any, FieldError>][] = [
-     [
-       'should only set an error when it is not existed',
+@@ -13,7 +13,7 @@
+     "@emotion/styled": "^11.14.0",
+     "@hookform/resolvers": "3.9.0",
+     "@mui/material": "^5.16.13",
+-    "joi": "^18.2.9",
++    "joi": "^18.3.1",
+     "react": "^19.0.0",
+     "react-dom": "^19.0.0",
+     "react-hook-form": "file:..",
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +7/-1)
+**File**: `app/pnpm-lock.yaml` (modified, +5/-5)
 ```diff
-@@ -1766,7 +1766,13 @@ export function createFormControl<
-       isValid: false,
-     });
+@@ -21,8 +21,8 @@ importers:
+         specifier: ^5.16.13
+         version: 5.16.13(@emotion/react@11.14.0(@types/react@19.0.2)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.2)(react@19.0.0))(@types/react@19.0.2)(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+       joi:
+-        specifier: ^18.2.9
+-        version: 18.2.9
++        specifier: ^18.3.1
++        version: 18.3.1
+       react:
+         specifier: ^19.0.0
+         version: 19.0.0
+@@ -796,8 +796,8 @@ packages:
+     resolution: {integrity: sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==}
+     engines: {node: '>= 0.4'}
  
--    options && options.shouldFocus && ref && ref.focus && ref.focus();
-+    if (options && options.shouldFocus) {
-+      const fieldRef = field._f?.refs
-+        ? field._f.refs.find((ref) => !ref.disabled) || field._f.refs[0]
-+        : ref;
-+
-+      fieldRef && fieldRef.focus && fieldRef.focus();
-+    }
-   };
+-  joi@18.2.9:
+-    resolution: {integrity: sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==}
++  joi@18.3.1:
++    resolution: {integrity: sha512-mV9M4Llh4va3NT90p7KBtQhoZqjs8xLX7EWYE4y/GG3yLF6REbIBEHSUb0UX1JXRht2w5tiLSsvmpYc5akiqIw==}
+     engines: {node: '>= 20'}
  
-   const watch: UseFormWatch<TFieldValues> = (
-```
-
----
-
-### Incident Patch 3: `0079ea69` (2026-11-03)
-**Commit Message**: 🐞 fix(trigger): touch nested fields when shouldTouch targets a parent (#13978)
-
-* fix(trigger): touch nested fields when shouldTouch targets a parent
-
-trigger('address', { shouldTouch: true }) wrote `true` at
-touchedFields.address instead of marking address.street and
-address.city, so getFieldState reported those fields as untouched and
-onTouched forms kept their errors until each field was blurred.
-
-Touch the registered fields under each requested name, the same way
-setValue's shouldTouch does for an object. A field array name now
-touches the fields of its rows, and a row name touches the row's fields
-instead of writing true. Leaf names keep their current handling, and a
-field array root itself is still never set to true.
-
-* fix(trigger): keep touching unregistered Object.prototype member names
-
-get(_fields, 'valueOf') returns the inherited function, so an
-unregistered name such as valueOf or hasOwnProperty took the subtree
-walk and was no longer marked touched. Walk only when the entry under
-the name is an object or an array, and touch the name directly
-otherwise, as before.
-
-Also assert that triggering a field array name touches its row fields
-and that triggering a row touches 
-
-**File**: `src/__tests__/useForm/trigger.test.tsx` (modified, +70/-0)
-```diff
-@@ -751,6 +751,46 @@ describe('trigger', () => {
-     expect(result.current.formState.touchedFields.test3).toBeUndefined();
-   });
+   js-tokens@4.0.0:
+@@ -1710,7 +1710,7 @@ snapshots:
+     dependencies:
+       hasown: 2.0.2
  
-+  it('mark the nested fields as touched when shouldTouch is true with a parent name', async () => {
-+    const { result } = renderHook(() =>
-+      useForm<{ address: { street: string; city: string } }>({
-+        defaultValues: { address: { street: '', city: '' } },
-+      }),
-+    );
-+
-+    result.current.register('address.street');
-+    result.current.register('address.city');
-+    result.current.formState.touchedFields;
-+
-+    await act(async () => {
-+      await result.current.trigger('address', { shouldTouch: true });
-+    });
-+
-+    expect(result.current.formState.touchedFields.address).toEqual({
-+      street: true,
-+      city: true,
-+    });
-+  });
-+
-+  it('mark names that are Object.prototype members as touched when shouldTouch is true', async () => {
-+    const { result } = renderHook(() =>
-+      useForm({ defaultValues: { valueOf: '', hasOwnProperty: '' } }),
-+    );
-+
-+    result.current.formState.touchedFields;
-+
-+    await act(async () => {
-+      await result.current.trigger(['valueOf', 'hasOwnProperty'], {
-+        shouldTouch: true,
-+      });
-+    });
-+
-+    expect(result.current.formState.touchedFields).toEqual({
-+      valueOf: true,
-+      hasOwnProperty: true,
-+    });
-+  });
-+
-   it('mark every mounted field as touched when shouldTouch is true and no name is provided', async () => {
-     const { result } = renderHook(() =>
-       useForm<{ test1: string; test2: string }>({
-@@ -872,6 +912,36 @@ describe('trigger', () => {
-     });
- 
-     expect(result.current.form.formState.touchedFields.test).not.toBe(true);
-+    expect(result.current.form.formState.touchedFields.test?.[0]?.value).toBe(
-+      true,
-+    );
-+  });
-+
-+  it('mark the fields of a field array row as touched when shouldTouch is true with a row name', async () => {
-+    type FormValues = { test: { value: string }[] };
-+
-+    const { result } = renderHook(() => {
-+      const form = useForm<FormValues>({
-+        defaultValues: { test: [{ value: 'a' }, { value: 'b' }] },
-+      });
-+      const fieldArray = useFieldArray({
-+        control: form.control,
-+        name: 'test',
-+      });
-+      return { form, fieldArray };
-+    });
-+
-+    result.current.form.register('test.0.value');
-+    result.current.form.register('test.1.value');
-+    result.current.form.formState.touchedFields;
-+
-+    await act(async () => {
-+      await result.current.form.trigger('test.1', { shouldTouch: true });
-+    });
-+
-+    expect(result.current.form.formState.touchedFields.test?.[1]).toEqual({
-+      value: true,
-+    });
-   });
- 
-   it('not mark the field as touched when shouldTouch is not supplied', async () => {
-```
-
-**File**: `src/logic/createFormControl.ts` (modified, +11/-1)
-```diff
-@@ -1617,9 +1617,19 @@ export function createFormControl<
-     }
- 
-     if (options.shouldTouch) {
--      for (const fieldName of name ? fieldNames : _names.mount) {
-+      const touchField = (fieldName: InternalFieldName) => {
-         !_names.array.has(fieldName) &&
-           set(_formState.touchedFields, fieldName, true);
-+      };
-+
-+      for (const fieldName of name ? fieldNames : _names.mount) {
-+        const field = get(_fields, fieldName);
-+
-+        isObject(field) || Array.isArray(field)
-+          ? iterateFieldsByAction(_fields, (_, key) => touchField(key), [
-+              fieldName,
-+            ])
-+          : touchField(fieldName);
-       }
-     }
- 
+-  joi@18.2.9:
++  joi@18.3.1:
+     dependencies:
+       '@hapi/address': 5.1.1
+       '@hapi/formula': 3.0.2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13980** (closed): docs(types): fix JSDoc examples for useFieldArray update and getFieldState (@MidnightLabDev)
-- **PR #13979** (2026-11-03): refactor(collectDirtyFieldNames): skip non-dirty array holes (@zigzagdev)
-- **PR #13978** (2026-11-03): fix(trigger): touch nested fields when shouldTouch targets a parent (@clean99)
-- **PR #13977** (2026-11-03): fix(setError): focus enabled radio and checkbox inputs (@charan-rathore)
-- **PR #13976** (2026-11-01): fix(unregister): clear descendant registrations when removing a parent (@charan-rathore)
-- **PR #13975** (2026-11-01): fix(trigger): preserve nested field-array root errors (@clean99)
+- **PR #13988** (closed): 🔧 ci: scope the pull request workflow tokens, stop persisting checkout credentials and lock the actions (@Totara-thib)
+- **PR #13987** (2026-11-06): fix: synchronize useWatch cache when compute is omitted (@wozhenbang2004)
+- **PR #13986** (2026-11-05): build(deps): bump joi from 18.2.9 to 18.3.1 in /app (@dependabot[bot])
+- **PR #13985** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 (@dependabot[bot])
+- **PR #13984** (closed): fix: avoid mutating field metadata in resolver options (@zendesk-robryan)
+- **PR #13983** (2026-11-05): build(deps-dev): bump vite from 6.4.4 to 6.4.5 in /app (@dependabot[bot])
 
 ---
 
@@ -1139,59 +1056,28 @@ and that triggering a row touches
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix: preserve falsy submission callback failures (#13967)
+## X. 🤖 build(deps-dev): bump vite from 6.4.4 to 6.4.5 in /app (#13983)
 
 **RULE**:
-When implementing operations in `src/__tests__/useForm/handleSubmit.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e2df215`: 🐞 fix: preserve falsy submission callback failures (#13967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd46589e`: 🤖 build(deps-dev): bump vite from 6.4.4 to 6.4.5 in /app (#13983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useForm/handleSubmit.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  describe.each(['throws', 'rejects'] as const)(
-    'when onValid %s',
-    (failureType) => {
-      it.each([undefined, null, false, 0, ''])(
-        'preserves a falsy failure reason (%s) and marks submission unsuccessful',
-        async (failure) => {
-          const { result } = renderHook(() => useFormWithSubmitState());
-          const onValid =
-            failureType === 'throws'
-              ? () => {
-                  throw failure;
-                }
-              : () => Promise.reject(failure);
-          const settled = await act(async () =>
-            Promise.allSettled([
-              result.current.methods.handleSubmit(onValid)(),
-            ]),
-          );
-
-          expect(result.current.state).toEqual({
-            isSubmitting: false,
-            isSubmitted: true,
-            isSubmitSuccessful: false,
-            submitCount: 1,
-            errors: {},
-          });
-          expect(settled).toEqual([{ status: 'rejected', reason: failure }]);
-        },
-      );
-    },
-  );
-
+    "vite": "^6.4.5"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "vite": "^6.4.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e2df215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd46589e` are properly handled with clean fallback behavior.

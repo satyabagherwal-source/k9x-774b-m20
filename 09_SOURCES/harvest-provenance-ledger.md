@@ -7870,3 +7870,6 @@ Every entry in this ledger must capture:
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `e81a7d08` | Multi-dimensional audit evidence | 2026-11-06T13:34:51.817Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `51c1838b` | Multi-dimensional audit evidence | 2026-11-06T13:34:56.039Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `d9f7beef` | Multi-dimensional audit evidence | 2026-11-06T13:42:07.793Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `1ad12fba` | Multi-dimensional audit evidence | 2026-11-06T13:52:01.014Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `511dc96e` | Multi-dimensional audit evidence | 2026-11-06T13:52:03.039Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `37af1172` | Multi-dimensional audit evidence | 2026-11-06T13:52:08.182Z |

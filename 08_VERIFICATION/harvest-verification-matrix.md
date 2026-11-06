@@ -7861,3 +7861,6 @@
 | `CYCLE-20261106-NX5X` | `2026-11-06T13:34:51.813Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`238f4e4a...`) |
 | `CYCLE-20261106-O0F7` | `2026-11-06T13:34:56.035Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c4e2c88f...`) |
 | `CYCLE-20261106-X9KD` | `2026-11-06T13:42:07.789Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6009dc64...`) |
+| `CYCLE-20261106-9ZAR` | `2026-11-06T13:52:01.011Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5c951d5...`) |
+| `CYCLE-20261106-A0UQ` | `2026-11-06T13:52:03.026Z` | `beclab/Olares` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/beclab-olares-learnings.md` | Yes (`bdd2efaf...`) |
+| `CYCLE-20261106-A4TU` | `2026-11-06T13:52:08.178Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2c55a73e...`) |

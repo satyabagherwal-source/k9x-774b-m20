@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T13:42:07.798Z",
-  "total_cycles_completed": 7826,
-  "total_learnings_persisted": 7826,
-  "total_rules_promoted": 7472,
+  "last_updated": "2026-11-06T13:52:08.195Z",
+  "total_cycles_completed": 7829,
+  "total_learnings_persisted": 7829,
+  "total_rules_promoted": 7474,
   "history": [
-    {
-      "timestamp": "2026-11-05T12:29:16.190Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T12:29:27.268Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T12:29:31.078Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T12:36:26.432Z",
       "repository": "N1nEmAn/sapper-v2",
@@ -1403,6 +1382,27 @@
       "repository": "dkhamsing/open-source-ios-apps",
       "learningId": "learn-github-dkhamsing-open-source-ios-apps",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:52:01.020Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:52:03.043Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:52:08.195Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
