@@ -7885,3 +7885,5 @@
 | `CYCLE-20261106-M2MU` | `2026-11-06T14:57:24.438Z` | `okteto/okteto` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/okteto-okteto-learnings.md` | Yes (`accdc0ce...`) |
 | `CYCLE-20261106-M51U` | `2026-11-06T14:57:27.570Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93f348b1...`) |
 | `CYCLE-20261106-NIP1` | `2026-11-06T14:58:31.909Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aade0c5b...`) |
+| `CYCLE-20261106-WWBS` | `2026-11-06T15:05:49.480Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0c9aa84...`) |
+| `CYCLE-20261106-WXHW` | `2026-11-06T15:05:50.996Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`97a889dd...`) |

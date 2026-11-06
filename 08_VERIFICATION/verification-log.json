@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-2FI3",
-    "timestamp": "2026-11-04T22:34:41.019Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "bdbee4ddec6c9c98490ad7b5b9d4608b90da22d1f50c63971e32cbfe69b8c67f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-2HMB",
-    "timestamp": "2026-11-04T22:34:43.763Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "7a702b79cd21a123353e6b5d2bc7b60d93fa71c8705711f3b81f0554e90b518d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-2KNA",
     "timestamp": "2026-11-04T22:34:47.686Z",
     "repository": "kosi-libs/Kodein",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-WWBS",
+    "timestamp": "2026-11-06T15:05:49.480Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "e0c9aa84fb28b839934508647979e48c828fa63063fa7e942e5e15d709dfeb24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-WXHW",
+    "timestamp": "2026-11-06T15:05:50.996Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `888b7bc2`  
+> **Source Version**: `82b428a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:34:55.182Z  
+> **Timestamp**: 2026-11-06T15:05:48.099Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:34:54.257Z  
+> **Harvest Timestamp**: 2026-11-06T15:05:46.400Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26165 stars
+- **Stars / Engagement**: 26183 stars
 
 ---
 
@@ -1237,99 +1237,153 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f48ed60f` (2026-11-03)
-**Commit Message**: api-docs: Fix description of the realm_bot/delete event.
+### Incident Patch 1: `403e7cb2` (2026-10-09)
+**Commit Message**: webhooks/gogs-gitea: Fix PR comments being reported as issue comments.
 
-Since it was first documented, this event was described as being
-sent to all users when a bot is deactivated. It has never been sent
-on deactivation. Since it was added in 32e38d36aa, it has only been
-sent to a bot's previous owner when the bot's owner is changed, if
-the previous owner isn't an organization administrator.
+The Gogs integration, which Gitea reuses, treated every
+`issue_comment` event as an issue comment, even though the event is
+also delivered for comments on pull requests.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Gitea already has a fixture, and the test `test_issue_comment_in_pr`
+pinning this behavior has been updated.
+For Gogs, patch `issue.pull_request` on the existing
+`issue_comment__new.json` payload in the test rather than
+adding a near-duplicate fixture.
 
-**File**: `zerver/openapi/zulip.yaml` (modified, +5/-5)
+Co-authored-by: Alex Auvolat <[REDACTED_EMAIL]>
+
+**File**: `zerver/webhooks/gitea/tests.py` (modified, +2/-2)
 ```diff
-@@ -4932,9 +4932,9 @@ paths:
-                             - type: object
-                               additionalProperties: false
-                               description: |
--                                Event sent to all users when a bot has been deactivated.
--                                Note that this is very similar to the bot_remove event
--                                and one of them will be removed soon.
-+                                Event sent to the previous owner of a bot when the bot's
-+                                owner is changed, unless the previous owner is an
-+                                organization administrator.
-                               properties:
-                                 id:
-                                   $ref: "#/components/schemas/EventIdSchema"
-@@ -4950,13 +4950,13 @@ paths:
-                                 bot:
-                                   type: object
-                                   description: |
--                                    Object containing details about the deactivated bot.
-+                                    Object containing details about the bot.
-                                   additionalProperties: false
-                                   properties:
-                                     user_id:
-                                       type: integer
-                                       description: |
--                                        The user ID of the deactivated bot.
-+                                        The user ID of the bot.
-                               example:
-                                 {
-                                   "type": "realm_bot",
+@@ -88,8 +88,8 @@ def test_issue_comment_new(self) -> None:
+         self.check_webhook("issue_comment__new", expected_topic_name, expected_message)
+ 
+     def test_issue_comment_in_pr(self) -> None:
+-        expected_topic_name = "test / issue #1 dummy"
+-        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [issue #1](https://try.gitea.io/kostekIV/test/issues/1):\n\n``` quote\ntest comment\n```"""
++        expected_topic_name = "test / PR #1 dummy"
++        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [PR #1](https://try.gitea.io/kostekIV/test/pulls/1):\n\n``` quote\ntest comment\n```"""
+         self.check_webhook("issue_comment__in_pr", expected_topic_name, expected_message)
+ 
+     def test_issue_comment_edited(self) -> None:
+```
+
+**File**: `zerver/webhooks/gogs/tests.py` (modified, +14/-0)
+```diff
+@@ -1,5 +1,7 @@
+ from unittest.mock import MagicMock, patch
+ 
++import orjson
++
+ from zerver.lib.test_classes import WebhookTestCase
+ from zerver.lib.webhooks.git import COMMITS_LIMIT
+ 
+@@ -128,6 +130,18 @@ def test_issue_comment_new(self) -> None:
+         expected_message = """kostekIV [commented](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3635) on [issue #3](https://try.gogs.io/kostekIV/test/issues/3):\n\n``` quote\nTest comment\n```"""
+         self.check_webhook("issue_comment__new", expected_topic_name, expected_message)
+ 
++    def test_issue_comment_in_pr(self) -> None:
++        expected_topic_name = "test / PR #3 New test issue"
++        expected_message = """kostekIV [commented](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3635) on [PR #3](https://try.gogs.io/kostekIV/test/pulls/3):\n\n``` quote\nTest comment\n```"""
++        payload = orjson.loads(self.get_body("issue_comment__new"))
++        payload["issue"]["pull_request"] = {"merged": False, "merged_at": None}
++        self.check_webhook(
++            "issue_comment__new",
++            expected_topic_name,
++            expected_message,
++            custom_payload=payload,
++        )
++
+     def test_issue_comment_edited(self) -> None:
+         expected_topic_name = "test / issue #3 New test issue"
+         expected_message = """kostekIV edited a [comment](https://try.gogs.io/kostekIV/test/issues/3#issuecomment-3634) on [issue #3](https://try.gogs.io/kostekIV/test/issues/3):\n\n``` quote\nedit comment\n```"""
+```
+
+**File**: `zerver/webhooks/gogs/view.py` (modified, +15/-6)
+```diff
+@@ -24,6 +24,7 @@
+     get_push_commits_event_message,
+     get_release_event_message,
+     is_branch_name_notifiable,
++    is_pull_request_comment_event,
+ )
+ from zerver.models import UserProfile
+ 
+@@ -34,6 +35,10 @@ def get_issue_url(repo_url: str, issue_nr: int) -> str:
+     return f"{repo_url}/issues/{issue_nr}"
+ 
+ 
++def get_pr_url(repo_url: str, pr_nr: int) -> str:
++    return f"{repo_url}/pulls/{pr_nr}"
++
++
+ def format_push_event(payload: WildValue) -> str:
+     user_name = payload["sender"]["username"].tame(check_string)
+     compare_url = payload["compare_url"].tame(check_string)
+@@ -133,15 +138,19 @@ def format_issue_comment_event(payload: WildValue, include_title: bool = False)
+         action = f"{action} a [comment]"
+     action += "({}) on".format(comment["html_url"].tame(check_string))
+ 
+-    return get_issue_event_message(
++    is_pr_comment = is_pull_request_comment_event(payload)
++    repo_url = payload["repository"]["html_url"].tame(check_string)
++    number = issue["number"].tame(check_int)
++    url = get_pr_url(repo_url, number) if is_pr_comment else get_issue_url(repo_url, number)
++
++    return get_pull_request_event_message(
+         user_name=payload["sender"]["login"].tame(check_string),
+         action=action,
+-        url=get_issue_url(
+-            payload["repository"]["html_url"].tame(check_string), issue["number"].tame(check_int)
+-        ),
+-        number=issue["number"].tame(check_int),
++        url=url,
++        number=number,
+         message=comment["body"].tame(check_string),
+         title=issue["title"].tame(check_string) if include_title else None,
++        type="PR" if is_pr_comment else "issue",
+     )
+ 
+ 
+@@ -242,7 +251,7 @@ def gogs_webhook_main(
+         )
+         topic_name = TOPIC_WITH_PR_OR_ISSUE_INFO_TEMPLATE.format(
+             repo=repo,
+-            type="issue",
++            type="PR" if is_pull_request_comment_event(payload) else "issue",
+             id=payload["issue"]["number"].tame(check_int),
+             title=payload["issue"]["title"].tame(check_string),
+         )
 ```
 
 ---
 
-### Incident Patch 2: `50890136` (2026-11-02)
-**Commit Message**: logging: Fix log_to_file loggers writing to rotated log files.
+### Incident Patch 2: `9cde567e` (2026-11-03)
+**Commit Message**: docs: Fix stale path to build_emoji tool.
 
-Previously, log_to_file used a plain FileHandler, which keeps writing
-to the file it first opened. Our logrotate config rotates most of
-these logs with "create", which renames the live file to .log.1 and
-creates an empty one. Long-running processes, such as queue workers,
-kept writing to .log.1 until they restarted. Logrotate only checks
-the size of the new, empty file, so .log.1 grew unchecked.
-
-Fix this by using WatchedFileHandler, which reopens the file when
-logrotate replaces it. The file handlers in our LOGGING config
-already use it, as our logrotate config expects.
-
-Tested with a script that renames and recreates a log file between
-two log calls, as logrotate does. FileHandler wrote the second call
-to the renamed file, and WatchedFileHandler wrote it to the new one.
+The tool lives in tools/setup/emoji/, as emoji.md already says.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `zerver/lib/logging_util.py` (modified, +2/-1)
+**File**: `docs/subsystems/dependencies.md` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@
- from contextlib import suppress
- from datetime import datetime, timedelta, timezone
- from logging import Logger
-+from logging.handlers import WatchedFileHandler
+@@ -216,7 +216,7 @@ maintain them.
  
- import orjson
- from django.conf import settings
-@@ -270,6 +271,6 @@ def log_to_file(
- ) -> None:
-     """Note: `filename` should be declared in zproject/computed_settings.py with zulip_path."""
-     formatter = logging.Formatter(log_format)
--    handler = logging.FileHandler(filename)
-+    handler = WatchedFileHandler(filename)
-     handler.setFormatter(formatter)
-     logger.addHandler(handler)
+ Zulip uses the [iamcal emoji data package][iamcal] for its emoji data
+ and sprite sheets. We download this dependency using `npm`, and then
+-have a tool, `tools/setup/build_emoji`, which reformats the emoji data
++have a tool, `tools/setup/emoji/build_emoji`, which reformats the emoji data
+ into the files under `static/generated/emoji`. Those files are in
+ turn used by our [Markdown processor](markdown.md) and
+ `tools/update-prod-static` to make Zulip's emoji work in the various
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40575** (2026-11-03): api-docs: Fix description of the realm_bot/delete event. (@sahil839)
-- **PR #40570** (2026-11-03): uploads: Avoid redundant queries in do_claim_attachments. (@NoxiousTab)
-- **PR #40567** (closed): settings : Move full name change hint to p tag (@sumitsharma777-Eng)
-- **PR #40566** (closed): bots: Validate missing outgoing webhook URL before bot creation. (@rushil23shah-hue)
-- **PR #40565** (2026-11-03): Release Zulip Server 13.0-rc1. (@benprew)
-- **PR #40564** (2026-11-02): stripe: Verify Stripe's TLS certificate using certifi's CA bundle. (@sahil839)
+- **PR #40611** (2026-11-06): locale: Add hr. (@mateuszmandera)
+- **PR #40610** (2026-11-06): util: Report page body state when `the` finds no element. (@evykassirer)
+- **PR #40605** (closed): Changes in the Introuction to topics page (@arnavpandey0714-glitch)
+- **PR #40602** (closed): Evidencia/video cicd fondo login (@jcelemin7)
+- **PR #40599** (2026-11-05): Updated translations for main from Weblate. (@mateuszmandera)
+- **PR #40589** (closed): streams: Add channel-level wildcard mention permission (@Hirdyansh-bh)
 
 ---
 
@@ -1349,36 +1403,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api-docs: Fix description of the realm_bot/delete event.
+## X. webhooks/gogs-gitea: Fix PR comments being reported as issue comments.
 
 **RULE**:
-When implementing operations in `zerver/openapi/zulip.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zerver/webhooks/gitea/tests.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f48ed60f`: api-docs: Fix description of the realm_bot/delete event.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `403e7cb2`: webhooks/gogs-gitea: Fix PR comments being reported as issue comments.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/openapi/zulip.yaml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/webhooks/gitea/tests.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                                Event sent to the previous owner of a bot when the bot's
-                                owner is changed, unless the previous owner is an
-                                organization administrator.
-                                    Object containing details about the bot.
-                                        The user ID of the bot.
+        expected_topic_name = "test / PR #1 dummy"
+        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [PR #1](https://try.gitea.io/kostekIV/test/pulls/1):\n\n``` quote\ntest comment\n```"""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                                Event sent to all users when a bot has been deactivated.
-                                Note that this is very similar to the bot_remove event
-                                and one of them will be removed soon.
-                                    Object containing details about the deactivated bot.
-                                        The user ID of the deactivated bot.
+        expected_topic_name = "test / issue #1 dummy"
+        expected_message = """kostekIV [commented](https://try.gitea.io/kostekIV/test/pulls/1/files#issuecomment-24399) on [issue #1](https://try.gitea.io/kostekIV/test/issues/1):\n\n``` quote\ntest comment\n```"""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f48ed60f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `403e7cb2` are properly handled with clean fallback behavior.

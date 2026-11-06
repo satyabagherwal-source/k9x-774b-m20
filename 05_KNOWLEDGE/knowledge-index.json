@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T14:58:31.820Z",
+  "last_updated": "2026-11-06T15:05:50.908Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11557,11 +11557,16 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "0a744fdf",
-      "content_hash": "93b5452116af84df48f22267bee19c333f1367d7696146794d3b3f9d5936ead0",
+      "source_version": "afb8bc2e",
+      "content_hash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "e2e): bump proxy download test file size to 100MiB (#5099)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1848,
           "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp from",
@@ -11593,7 +11598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:06:42.361Z",
+      "verified_at": "2026-11-06T15:05:50.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64922,11 +64927,16 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "888b7bc2",
-      "content_hash": "ff047b4d07f8aec1dc440bb3e894f8afb9ec3408c50c75c829c40101de327ed4",
+      "source_version": "82b428a7",
+      "content_hash": "e0c9aa84fb28b839934508647979e48c828fa63063fa7e942e5e15d709dfeb24",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "webhooks/gogs-gitea: Fix PR comments being reported as issue comments.",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1748,
           "title": "test_microsoft_teams_importer: Fix check that never ran.",
@@ -64973,7 +64983,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:34:55.822Z",
+      "verified_at": "2026-11-06T15:05:49.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

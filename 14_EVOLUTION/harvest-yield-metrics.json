@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T14:58:31.926Z",
-  "total_cycles_completed": 7850,
-  "total_learnings_persisted": 7850,
-  "total_rules_promoted": 7499,
+  "last_updated": "2026-11-06T15:05:51.006Z",
+  "total_cycles_completed": 7852,
+  "total_learnings_persisted": 7852,
+  "total_rules_promoted": 7501,
   "history": [
-    {
-      "timestamp": "2026-11-05T13:33:48.046Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T13:40:19.452Z",
-      "repository": "RevenueCat/purchases-ios",
-      "learningId": "learn-github-revenuecat-purchases-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T13:40:25.449Z",
       "repository": "databendlabs/databend",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T14:58:31.926Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:05:49.491Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T15:05:51.006Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

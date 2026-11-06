@@ -7894,3 +7894,5 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `a2043817` | Multi-dimensional audit evidence | 2026-11-06T14:57:24.442Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `f0e48548` | Multi-dimensional audit evidence | 2026-11-06T14:57:27.574Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `76004d06` | Multi-dimensional audit evidence | 2026-11-06T14:58:31.912Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `82b428a7` | Multi-dimensional audit evidence | 2026-11-06T15:05:49.484Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `afb8bc2e` | Multi-dimensional audit evidence | 2026-11-06T15:05:51.000Z |

@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "888b7bc2",
+    "sourceVersion": "82b428a7",
     "license": "Apache-2.0",
-    "contentHash": "ff047b4d07f8aec1dc440bb3e894f8afb9ec3408c50c75c829c40101de327ed4",
-    "lastHarvestedAt": "2026-11-04T01:34:55.928Z",
+    "contentHash": "e0c9aa84fb28b839934508647979e48c828fa63063fa7e942e5e15d709dfeb24",
+    "lastHarvestedAt": "2026-11-06T15:05:49.484Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "0a744fdf",
+    "sourceVersion": "afb8bc2e",
     "license": "Apache-2.0",
-    "contentHash": "93b5452116af84df48f22267bee19c333f1367d7696146794d3b3f9d5936ead0",
-    "lastHarvestedAt": "2026-11-03T22:06:42.474Z",
+    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
+    "lastHarvestedAt": "2026-11-06T15:05:51.000Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
