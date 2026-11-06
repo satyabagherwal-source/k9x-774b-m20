@@ -7877,3 +7877,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `34d0b198` | Multi-dimensional audit evidence | 2026-11-06T13:58:52.513Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `60cf157a` | Multi-dimensional audit evidence | 2026-11-06T14:05:31.084Z |
 | `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-06T14:05:31.987Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `63fba09b` | Multi-dimensional audit evidence | 2026-11-06T14:25:40.921Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `4cee4138` | Multi-dimensional audit evidence | 2026-11-06T14:25:42.460Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1889115d` | Multi-dimensional audit evidence | 2026-11-06T14:25:42.661Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e9796cca` | Multi-dimensional audit evidence | 2026-11-06T14:25:58.291Z |

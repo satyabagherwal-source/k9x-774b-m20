@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-HB9K",
-    "timestamp": "2026-11-04T21:50:16.136Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "ebd10e6061dedebf128e41bf8f42f55e87ea98da09e705da243d4e141114b96b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-QBDS",
-    "timestamp": "2026-11-04T21:57:16.192Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "5a3ea6fa764acad3ba1d16169afc9767d51657f926d558249278740911d4eb8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-QEFM",
-    "timestamp": "2026-11-04T21:57:20.146Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-RP2N",
-    "timestamp": "2026-11-04T21:58:20.591Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "86e1ea5267424e2b0d453067682345b2968a00392c9a653ea05b045e93d54cde",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-0HFW",
     "timestamp": "2026-11-04T22:05:10.604Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7492,6 +7432,66 @@
     "contentHash": "6e0045b4421b36ca1375140c1baef43565bac40ca925e78994f1838310424c36",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-H9V9",
+    "timestamp": "2026-11-06T14:25:40.917Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-HB20",
+    "timestamp": "2026-11-06T14:25:42.456Z",
+    "repository": "NervJS/taro",
+    "learningId": "learn-github-nervjs-taro",
+    "contentHash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-HB7L",
+    "timestamp": "2026-11-06T14:25:42.657Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-HN9S",
+    "timestamp": "2026-11-06T14:25:58.288Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

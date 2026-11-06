@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source**: github ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
-> **Source Version**: `1c0e11a1`  
+> **Source Version**: `4cee4138`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:00:52.686Z  
+> **Timestamp**: 2026-11-06T14:25:40.579Z  
 > **Learning ID**: `learn-github-nervjs-taro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:00:47.428Z  
+> **Harvest Timestamp**: 2026-11-06T14:25:31.072Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37743 stars
+- **Stars / Engagement**: 37741 stars
 
 ---
 
@@ -1218,572 +1218,267 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa805616` (2026-11-02)
-**Commit Message**: fix(h5): settle blob conversion failures before upload (#19588)
+### Incident Patch 1: `cd702e62` (2026-11-04)
+**Commit Message**: fix(router): correct framework param type of createRouter/createMultiRouter (#19601)
 
-**File**: `packages/taro-h5/__tests__/network/blob-conversion.test.ts` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+import { uploadFile } from '../../src/api/network/upload'
-+import { convertObjectUrlToBlob, NETWORK_TIMEOUT } from '../../src/api/network/utils'
-+
-+function observe (promise: Promise<unknown>) {
-+  const state: { status: string, value?: unknown } = { status: 'pending' }
-+  promise.then(value => { state.status = 'resolved'; state.value = value }, error => {
-+    state.status = 'rejected'
-+    state.value = error
-+  })
-+  return state
-+}
-+
-+async function flushPromises () {
-+  for (let i = 0; i < 5; i++) await Promise.resolve()
-+}
-+
-+describe('blob conversion lifecycle', () => {
-+  let requests: XMLHttpRequest[]
-+  const NativeXHR = window.XMLHttpRequest
-+
-+  beforeEach(() => {
-+    jest.useFakeTimers()
-+    requests = []
-+    jest.spyOn(window, 'XMLHttpRequest').mockImplementation(() => {
-+      const xhr = new NativeXHR()
-+      jest.spyOn(xhr, 'open').mockImplementation(() => {})
-+      jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+      jest.spyOn(xhr, 'abort').mockImplementation(() => {})
-+      requests.push(xhr)
-+      return xhr
-+    })
-+  })
-+
-+  afterEach(() => {
-+    jest.clearAllTimers()
-+    jest.useRealTimers()
-+    jest.restoreAllMocks()
-+  })
-+
-+  function response (xhr: XMLHttpRequest, status: number, value: unknown) {
-+    Object.defineProperty(xhr, 'status', { configurable: true, value: status })
-+    Object.defineProperty(xhr, 'response', { configurable: true, value })
-+  }
-+
-+  function expectCleanup (xhr: XMLHttpRequest) {
-+    expect(xhr.onload).toBeNull()
-+    expect(xhr.onerror).toBeNull()
-+    expect(xhr.onabort).toBeNull()
-+    expect(xhr.ontimeout).toBeNull()
-+  }
-+
-+  test.each(['error', 'abort', 'timeout'])('rejects on a conversion %s event', async event => {
-+    const state = observe(convertObjectUrlToBlob('blob:file'))
-+    const xhr = requests[0]
-+    xhr.dispatchEvent(new ProgressEvent(event))
-+    await flushPromises()
-+    expect(state).toEqual({
-+      status: 'rejected',
-+      value: { status: 0, message: event === 'error' ? 'file conversion failed' : event }
-+    })
-+    expectCleanup(xhr)
-+    expect(jest.getTimerCount()).toBe(0)
-+  })
-+
-+  test('sets a finite default timeout before reading the blob URL', () => {
-+    observe(convertObjectUrlToBlob('blob:file'))
-+    const xhr = requests[0]
-+    expect(xhr.timeout).toBe(NETWORK_TIMEOUT)
-+    expect(xhr.open).toHaveBeenCalledWith('GET', 'blob:file', true)
-+    expect(xhr.responseType).toBe('blob')
-+    expect(xhr.withCredentials).toBe(true)
-+    expect(xhr.send).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test('returns the blob and releases handlers on success', async () => {
-+    const state = observe(convertObjectUrlToBlob('blob:file'))
-+    const xhr = requests[0]
-+    const blob = new Blob(['file'])
-+    response(xhr, 200, blob)
-+    xhr.dispatchEvent(new ProgressEvent('load'))
-+    await flushPromises()
-+    expect(state).toEqual({ status: 'resolved', value: blob })
-+    expectCleanup(xhr)
-+  })
-+
-+  test.each([403, 404, 500])('preserves HTTP failure status %s', async status => {
-+    const state = observe(convertObjectUrlToBlob('blob:file'))
-+    const xhr = requests[0]
-+    response(xhr, status, null)
-+    xhr.dispatchEvent(new ProgressEvent('load'))
-+    await flushPromises()
-+    expect(state).toEqual({ status: 'rejected', value: { status } })
-+    expectCleanup(xhr)
-+  })
-+
-+  test.each(['open', 'send'] as const)('preserves a synchronous %s error and releases handlers', async method => {
-+    const error = new Error(`${method} failed`)
-+    jest.spyOn(window, 'XMLHttpRequest').mockImplementationOnce(() => {
-+      const xhr = new NativeXHR()
-+      jest.spyOn(xhr, 'open').mockImplementation(() => {})
-+      jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+      jest.spyOn(xhr, method).mockImplementation(() => { throw error })
-+      requests.push(xhr)
-+      return xhr
-+    })
-+    const state = observe(convertObjectUrlToBlob('blob:file'))
-+    await flushPromises()
-+    expect(state).toEqual({ status: 'rejected', value: error })
-+    expectCleanup(requests[0])
-+  })
-+
-+  test.each(['load', 'error'] as const)('ignores late terminal handlers after %s', async first => {
-+    const resolved = jest.fn()
-+    const rejected = jest.fn()
-+    convertObjectUrlToBlob('blob:file').then(resolved, rejected)
-+    const xhr = requests[0]
-+    const load = xhr.onload
-+    const error = xhr.onerror
-+    response(xhr, 200, new Blob(['file']))
-+    xhr.dispatchEvent(new ProgressEvent(first))
-+    load?.call(xhr, new ProgressEvent('load'))
-+    error?.call(xhr, new ProgressEvent('error'))
-+    await flushPromises()
-+    expect(resolved).toHaveBeenCalledTimes(first === 'load' ? 1 : 0)
-+    expect(rejected).toHaveBeenCalledTimes(first === 'error' ? 1 : 0)
-+    expectCleanup(xhr)
-+  })
-+
-+  test.each(['error', 'abort', 'timeout'])('uploadFile reports a conversion %s exactly once', async event => {
-+    const success = jest.fn()
-+    const fail = jest.fn()
-+    const complete = jest.fn()
-+    const task = up
-```
+createRouter and createMultiRouter declared their fourth parameter as framework?: string, but the generated entry code interpolates loaderMeta.importFrameworkName as an identifier, so the value passed at runtime is the framework runtime object: the react namespace for React, createElement for Vue 3, and undefined for Solid. The parameter is only forwarded to the createPullDownComponent hook, whose React and Vue 3 implementations require that object. Widen the declared type to any and document what it actually is, leaving runtime behaviour unchanged.
 
-**File**: `packages/taro-h5/src/api/network/upload.ts` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
-     xhr.send(form)
-   }
- 
--  convertObjectUrlToBlob(filePath)
-+  convertObjectUrlToBlob(filePath, timeout || NETWORK_TIMEOUT)
-     .then((fileObj: string | (Blob & { name?: string })) => {
-       if (settled) return
-       if (!fileName) {
-```
+Co-authored-by: Zakary <[REDACTED_EMAIL]>
 
-**File**: `packages/taro-h5/src/api/network/utils.ts` (modified, +27/-11)
+**File**: `packages/taro-router/src/router/mpa.ts` (modified, +6/-1)
 ```diff
-@@ -53,20 +53,36 @@ export const setHeader = (xhr, header) => {
-  * @param {string} url 要转换的 blob url
-  * @returns {Promise<File>}
+@@ -25,12 +25,17 @@ const launchStampId = createStampId()
+  * - 应用生命周期可能多次触发
+  * - TabBar 会多次加载
+  * - 不支持路由动画
++ *
++ * @param framework 框架运行时对象，由编译产物注入（见 `taro-loader` 的 `importFrameworkName`），
++ * 仅用于转发给 `createPullDownComponent` hook。React 为 react 命名空间对象，
++ * Vue 3 为 `createElement`（`h`），Solid 下为 `undefined`。
++ * 各框架的类型互不兼容，且 `@tarojs/router` 自身不消费它，故不在此收窄。
   */
--export const convertObjectUrlToBlob = url => {
-+export const convertObjectUrlToBlob = (url, timeout = NETWORK_TIMEOUT) => {
-   return new Promise((resolve, reject) => {
-     const xhr = new XMLHttpRequest()
--    xhr.open('GET', url, true)
--    xhr.responseType = 'blob'
--    xhr.withCredentials = true
--    xhr.onload = function () {
--      if (this.status === 200) {
--        resolve(this.response)
--      } else {
--        /* eslint-disable prefer-promise-reject-errors */
--        reject({ status: this.status })
-+    let settled = false
-+    const settle = (success: boolean, value: unknown) => {
-+      if (settled) return
-+      settled = true
-+      xhr.onload = null
-+      xhr.onerror = null
-+      xhr.onabort = null
-+      xhr.ontimeout = null
-+      if (success) resolve(value)
-+      else reject(value)
-+    }
-+
-+    try {
-+      xhr.open('GET', url, true)
-+      xhr.responseType = 'blob'
-+      xhr.withCredentials = true
-+      xhr.timeout = timeout
-+      xhr.onload = () => {
-+        if (xhr.status === 200) settle(true, xhr.response)
-+        else settle(false, { status: xhr.status })
-       }
-+      xhr.onerror = () => settle(false, { status: xhr.status, message: 'file conversion failed' })
-+      xhr.onabort = () => settle(false, { status: xhr.status, message: 'abort' })
-+      xhr.ontimeout = () => settle(false, { status: xhr.status, message: 'timeout' })
-+      xhr.send()
-+    } catch (error) {
-+      settle(false, error)
-     }
--    xhr.send()
-   })
- }
+ export async function createMultiRouter (
+   history: History,
+   app: AppInstance,
+   config: MpaRouterConfig,
+-  framework?: string
++  framework?: any
+ ) {
+   if (typeof app.onUnhandledRejection === 'function') {
+     window.addEventListener('unhandledrejection', app.onUnhandledRejection)
+```
+
+**File**: `packages/taro-router/src/router/spa.ts` (modified, +7/-1)
+```diff
+@@ -24,11 +24,17 @@ import type { SpaRouterConfig } from '../../types/router'
+ const createStampId = incrementId()
+ let launchStampId = createStampId()
+ 
++/**
++ * @param framework 框架运行时对象，由编译产物注入（见 `taro-loader` 的 `importFrameworkName`），
++ * 仅用于转发给 `createPullDownComponent` hook。React 为 react 命名空间对象，
++ * Vue 3 为 `createElement`（`h`），Solid 下为 `undefined`。
++ * 各框架的类型互不兼容，且 `@tarojs/router` 自身不消费它，故不在此收窄。
++ */
+ export function createRouter (
+   history: History,
+   app: AppInstance,
+   config: SpaRouterConfig,
+-  framework?: string
++  framework?: any
+ ) {
+   if (typeof app.onUnhandledRejection === 'function') {
+     window.addEventListener('unhandledrejection', app.onUnhandledRejection)
 ```
 
 ---
 
-### Incident Patch 2: `1c0e11a1` (2026-11-03)
-**Commit Message**: fix(h5): keep request cancellable while reading response bodies (#19598)
+### Incident Patch 2: `1da2b70e` (2026-11-04)
+**Commit Message**: fix(shared): correct return type of createPullDownComponent hook (#19603)
 
-**File**: `packages/taro-h5/__tests__/network/request-body.test.ts` (added, +182/-0)
+The `createPullDownComponent` hook is declared to return `void`, but both
+framework implementations return the wrapped page component, and
+`@tarojs/router` passes that return value straight into `createPageConfig`:
+
+- `@tarojs/plugin-framework-react` returns `R.forwardRef(...)`
+  (packages/taro-framework-react/src/runtime/connect.ts)
+- `@tarojs/plugin-framework-vue3` returns a component options object with
+  `render` (packages/taro-framework-vue3/src/runtime/connect.ts)
+
+TypeScript allows returning a value from a `void`-typed position, and inside
+the repo the result immediately flows into `createPageConfig(component: any)`,
+so the wrong declaration never surfaced. It is still shipped in the published
+`@tarojs/shared` typings: any external caller of
+`hooks.call('createPullDownComponent', ...)` receives `void | undefined` and
+cannot use the wrapped component without casting.
+
+Change the return type to `any`, make the two implicitly-typed parameters
+explicit, and document what `framework` actually receives at runtime.
+
+Co-authored-by: Zakary <[REDACTED_EMAIL]>
+
+**File**: `packages/shared/src/runtime-hooks.ts` (modified, +16/-2)
 ```diff
-@@ -0,0 +1,182 @@
+@@ -204,8 +204,22 @@ type ITaroHooks = {
+   mergePageInstance: (prev, next) => void
+   /** 用于修改传递给小程序 Page 构造器的对象 */
+   modifyPageObject: (config: Record<any, any>) => void
+-  /** H5 下拉刷新 wrapper */
+-  createPullDownComponent: (el, path: string, framework, customWrapper?: any, stampId?: string) => void
++  /**
++   * H5 下拉刷新 wrapper
++   *
++   * 由 `@tarojs/router` 在页面开启 `enablePullDownRefresh` 时调用，返回值会作为页面组件
++   * 传给 `createPageConfig`，所以返回类型不是 `void`：`@tarojs/plugin-framework-react`
++   * 返回 `React.forwardRef(...)` 的结果，`@tarojs/plugin-framework-vue3` 返回带 `render`
++   * 的组件选项对象。
++   *
++   * @param el 页面组件，具体形态由框架决定（React 组件、Vue 组件选项对象等）
++   * @param path 页面路径
++   * @param framework 框架运行时对象，由编译产物注入（见 `taro-loader` 的 `importFrameworkName`）：
++   * React 为 react 命名空间对象，Vue 3 为 `createElement`（`h`），Solid 下为 `undefined`
++   * @returns 包裹后的页面组件。各框架的组件类型互不兼容，且 `@tarojs/shared` 不依赖任何
++   * 具体框架，故此处不收窄
++   */
++  createPullDownComponent: (el: any, path: string, framework: any, customWrapper?: any, stampId?: string) => any
+   /** H5 获取原生 DOM 对象 */
+   getDOMNode: (instance) => any
+   /**
+```
+
+---
+
+### Incident Patch 3: `a71413de` (2026-11-05)
+**Commit Message**: fix(h5): report a meaningful errMsg when previewImage fails to load an image (#19607)
+
+`loadImage` listened for the `error` event of the `<img>` element and called
+`fail({ errMsg: err.message })`. Browsers dispatch a plain `Event` (not an
+`ErrorEvent`) when an image fails to load, so `err.message` was always
+`undefined` and callers received `{ errMsg: undefined }`.
+
+The message also lacked the `previewImage:fail ` prefix that every other
+callback of this API follows, so the failure could not be told apart from
+other Taro API errors.
+
+Use the failing url to describe the error and prefix the message consistently.
+The listener is now registered with `{ once: true }` so a repeated `error`
+event does not invoke `fail` several times for the same image.
+
+Note that this path intentionally does not go through `MethodHandler`: the
+failure happens after the preview has already been opened and `handle.success`
+has run, so routing it through the handler would trigger `complete` twice.
+
+**File**: `packages/taro-h5/__tests__/media/previewImage.test.ts` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
 +import * as Taro from '@tarojs/taro-h5'
 +
-+function mockPendingBody () {
-+  let resolveBody!: (value: unknown) => void
-+  let rejectBody!: (reason: Error) => void
-+  let startReading!: () => void
-+  let signal!: AbortSignal
-+  const body = new Promise((resolve, reject) => {
-+    resolveBody = resolve
-+    rejectBody = reject
-+  })
-+  const reading = new Promise<void>(resolve => { startReading = resolve })
-+  const read = jest.fn(() => {
-+    startReading()
-+    return body
-+  })
-+  jest.spyOn(global, 'fetch').mockImplementationOnce((_url, options) => {
-+    signal = options!.signal!
-+    signal.addEventListener('abort', () => {
-+      rejectBody(new DOMException('The operation was aborted.', 'AbortError'))
-+    }, { once: true })
-+    return Promise.resolve({
-+      status: 200,
-+      headers: new Headers({ 'content-type': 'application/json' }),
-+      json: () => read().then(text => JSON.parse(text as string)),
-+      text: read,
-+      arrayBuffer: read,
-+    } as unknown as Response)
-+  })
-+  return { reading, resolveBody, rejectBody, getSignal: () => signal }
++/** 让挂起的微任务/宏任务都执行完 */
++const flush = () => new Promise(resolve => setTimeout(resolve, 0))
++
++const BROKEN_URL = 'https://example.com/broken.png'
++
++/** 打开预览，并返回容器内渲染出来的 img 节点 */
++function imagesInPreview () {
++  return Array.from(document.querySelectorAll<HTMLImageElement>('.preview-image img'))
 +}
 +
-+const responseTypes = [
-+  { name: 'default JSON', options: {}, body: '{"ok":true}', data: { ok: true } },
-+  { name: 'JSON', options: { dataType: 'json' as const }, body: '{"ok":true}', data: { ok: true } },
-+  { name: 'text', options: { dataType: 'text' as const }, body: 'body', data: 'body' },
-+  { name: 'arraybuffer', options: { responseType: 'arraybuffer' as const }, body: new ArrayBuffer(2), data: new ArrayBuffer(2) },
-+]
-+
-+describe('request response body lifecycle', () => {
-+  beforeEach(() => {
-+    jest.useFakeTimers()
-+  })
-+
++describe('previewImage', () => {
 +  afterEach(() => {
-+    jest.restoreAllMocks()
-+    jest.clearAllTimers()
-+    jest.useRealTimers()
++    document.body.innerHTML = ''
 +  })
 +
-+  describe.each(responseTypes)('$name', ({ options, body, data }) => {
-+    test.each(['abort', 'timeout', 'signal'])('should reject on %s while reading the body', async cause => {
-+      const pending = mockPendingBody()
-+      const controller = new AbortController()
-+      const success = jest.fn()
-+      const fail = jest.fn()
-+      const complete = jest.fn()
-+      const task = Taro.request({
-+        url: '/slow-body',
-+        ...options,
-+        timeout: 100,
-+        ...(cause === 'signal' ? { signal: controller.signal } : {}),
-+        success,
-+        fail,
-+        complete,
-+      })
-+      const result = task.catch(error => error)
-+      await pending.reading
++  it('图片加载成功时回调 previewImage:ok 并挂载预览容器', async () => {
++    const success = jest.fn()
++    const complete = jest.fn()
 +
-+      if (cause === 'abort') task.abort()
-+      if (cause === 'timeout') jest.advanceTimersByTime(100)
-+      if (cause === 'signal') controller.abort()
-+
-+      expect(pending.getSignal().aborted).toBe(true)
-+      const error = await result
-+      expect(error).toMatchObject({ name: 'AbortError', statusCode: 200 })
-+      expect(success).not.toHaveBeenCalled()
-+      expect(fail).toHaveBeenCalledTimes(1)
-+      expect(fail).toHaveBeenCalledWith(error)
-+      expect(complete).toHaveBeenCalledTimes(1)
-+      expect(jest.getTimerCount()).toBe(0)
++    await Taro.previewImage({
++      urls: [BROKEN_URL],
++      current: BROKEN_URL,
++      success,
++      complete,
 +    })
 +
-+    test('should clear the timeout and disable abort before success callbacks', async () => {
-+      const pending = mockPendingBody()
-+      const fail = jest.fn()
-+      const complete = jest.fn()
-+      const success = jest.fn()
-+      const task = Taro.request({ url: '/slow-body', ...options, timeout: 100, success, fail, complete })
-+      success.mockImplementation(() => {
-+        expect(jest.getTimerCount()).toBe(0)
-+        task.abort()
-+      })
-+      await pending.reading
-+      jest.advanceTimersByTime(50)
-+      pending.resolveBody(body)
-+
-+      await expect(task).resolves.toMatchObject({ statusCode: 200, data })
-+      task.abort()
-+      jest.advanceTimersByTime(100)
-+      expect(pending.getSignal().aborted).toBe(false)
-+      expect(success).toHaveBeenCalledTimes(1)
-+      expect(fail).not.toHaveBeenCalled()
-+      expect(complete).toHaveBeenCalledTimes(1)
-+    })
++    expect(document.querySelector('.preview-image')).not.toBeNull()
++    expect(imagesInPreview()).toHaveLength(1)
++    expect(success).toHaveBeenCalledWith(expect.objectContaining({ errMsg: 'previewImage:ok' }))
++    expect(complete).toHaveBeenCalledWith(expect.objectContaining({ errMsg: 'previewImage:ok' }))
 +  })
 +
-+  test.each([new TypeError('Failed to fetch'), new Error('Body stream failed'), new SyntaxError('Custom abort reason')])(
-+    'should propagate JSON body read errors: %s', async error => {
-+      const pending = mockPendingBody()
-+      const success = jest.fn()
-+      const complete = jest.fn()
-+      const fail = jest.fn()
-+      const task = Taro.request({ url: '/broken-body', timeout: 100, success, fail, complete })
-+      fail.mockImplementation(() => {
-+        expect(jest.getTimerCount()).toBe(0)
-+        task.abort()
-+      })
-+      await pending.reading
-+      pending.rejectBody(error)
++  it('图片加载失败时 errMsg 应带 previewImage:fail 前缀并指明失败的图片', async () => {
++    const fail = jest.fn()
 +
-+      await expect(task).rejects.toBe(error)
-+      expect(error).toMatchObject({ statusCode: 200, errMsg: error.message })
-+      task.abort()
-+      jest.advanceTimersByTime(100)
-+      expect(pending.getSignal().aborted).toBe(false)
-+      expect(success).not.toHaveBeenCalled()
-+      expect(fail).toHaveBeenCalledTimes(1)
-+      expect(complete).toHaveBeenCalledTimes(1)
-+    }
-+  )
++    await Taro.previewImage({
++      urls: [BROKEN_URL],
++      current: BROKEN_URL,
++      fail,
++    })
++    await flush()
 +
-+  test.each(['{', ''])('should preserve null data for invalid JSON: %j', async body => 
++    const [image] = imagesInPreview()
++    expect(image).toBeTruthy()
++
++    // 浏览器在 <img> 加载失败时派发的是普通 Event，不存在 message 字段
++    image.dispatchEvent(new Event('error'))
++    await flush()
++
++    expect(fail).toHaveBeenCalledTimes(1)
++    const res = fail.mock.calls[0][0]
++    expect(typeof res.errMsg).toBe('string')
++    expect(res.errMsg).toContain('previewImage:fail')
++    expect(res.errMsg).toContain(BROKEN_URL)
++  })
++
++  it('同一张图片重复派发 error 时只回调一次 fail', async () => {
++    const fail = jest.fn()
++
++    await Taro.previewImage({
++      urls: [BROKEN_URL],
++      current: BROKEN_URL,
++      fail,
++    })
++    await flush()
++
++    const [image] = imagesInPreview()
++    image.dispatchEvent(new Event('error'))
++    image.dispatchEvent(new Event('error'))
++    await flush()
++
++    expect(fail).toHaveBeenCalledTimes(1)
++  })
++
++  it('多张图片分别加载失败时各自上报自己的 url', async () => {
++    const fail = jest.fn()
++    const first = 'https://example.com/first.png'
++    const second = 'https://example.com/second.png'
++
++    await Taro.previewImage({
++      urls: [first, second],
++      current: first,
++      fail,
++    })
++    await flush()
++
++    const images = imagesInPreview()
++    expect(images).toHaveLength(2)
++
++    images[1].dispatchEvent(new Event('error'))
++    await flush()
++
++    expect(fail).toHaveBeenCalledTimes(1)
++    expect(fail.mock.calls[0][0].errMsg).toContain(second)
++  })
++})
 ```
 
-**File**: `packages/taro-h5/src/api/network/request/index.ts` (modified, +14/-9)
+**File**: `packages/taro-h5/src/api/media/image/previewImage.ts` (modified, +7/-3)
 ```diff
-@@ -130,13 +130,6 @@ function _request (options: Partial<Taro.request.Option> = {}) {
-   params.credentials = credentials
-   const p: RequestTask<Taro.request.SuccessCallbackResult> = fetch(url, params)
-     .then(response => {
--      if (timeoutTimer) {
--        clearTimeout(timeoutTimer)
--        timeoutTimer = null
--      }
--      if (controller) {
--        controller = null
--      }
-       if (!response) {
-         const errorResponse = { ok: false }
-         throw errorResponse
-@@ -151,8 +144,13 @@ function _request (options: Partial<Taro.request.Option> = {}) {
+@@ -37,9 +37,13 @@ export const previewImage: typeof Taro.previewImage = async (options) => {
+       // Note: 等待图片加载完后返回，会导致轮播被卡住
+       resolve(item)
+       if (isFunction(loadFail)) {
+-        image.addEventListener('error', (err) => {
+-          loadFail({ errMsg: err.message })
+-        })
++        // Note: <img> 加载失败时派发的是普通 Event，不存在 message 字段，
++        // 直接读取 err.message 只会得到 undefined，因此用出错的 url 描述失败原因。
++        // 该失败发生在预览框打开（handle.success）之后，不能再走 MethodHandler，
++        // 否则 complete 会被重复触发，所以这里自行补齐 errMsg 前缀。
++        image.addEventListener('error', () => {
++          loadFail({ errMsg: `previewImage:fail image load failed: ${url}` })
++        }, { once: true })
        }
-       if (res.statusCode !== 204) {
-         if (dataType === 'json' || typeof dataType === 'undefined') {
--          return response.json().catch(() => {
--            return null
-+          return response.text().then(text => {
-+            // Only tolerate JSON parsing errors, not response body read failures.
-+            try {
-+              return JSON.parse(text)
-+            } catch {
-+              return null
-+            }
-           })
-         }
-       }
-@@ -162,6 +160,13 @@ function _request (options: Partial<Taro.request.Option> = {}) {
-       return Promise.resolve(null)
      })
-     .then(data => {
-+      if (timeoutTimer) {
-+        clearTimeout(timeoutTimer)
-+        timeoutTimer = null
-+      }
-+      if (controller) {
-+        controller = null
-+      }
-       res.data = data
-       isFunction(success) && success!(res as Taro.request.SuccessCallbackResult)
-       isFunction(complete) && complete!(res as Partial<Taro.request.SuccessCallbackResult> & TaroGeneral.CallbackResult)
-```
-
----
-
-### Incident Patch 3: `0922dacc` (2026-11-02)
-**Commit Message**: fix(runtime): check node identity and ancestry in contains (#19595)
-
-**File**: `packages/taro-runtime/src/dom-external/node.ts` (modified, +6/-10)
-```diff
-@@ -80,14 +80,10 @@ export function cloneNode (this: TaroNode, isDeep = false) {
-   return newNode
- }
- 
--export function contains (this: TaroNode, node: TaroNode & { id?: string }): boolean {
--  let isContains = false
--  this.childNodes.some(childNode => {
--    const { uid } = childNode
--    if (uid === node.uid || uid === node.id || (childNode as any).contains(node)) {
--      isContains = true
--      return true
--    }
--  })
--  return isContains
-+export function contains (this: TaroNode, node: TaroNode | null): boolean {
-+  while (node) {
-+    if (node === this) return true
-+    node = node.parentNode
-+  }
-+  return false
- }
-```
-
-**File**: `packages/taro-runtime/tests/contains.spec.ts` (added, +149/-0)
-```diff
-@@ -0,0 +1,149 @@
-+import { describe, expect, test } from 'vitest'
-+
-+import { DOCUMENT_FRAGMENT } from '../src/constants'
-+import { document } from '../src/index'
-+
-+import type { TaroNode } from '../src/dom/node'
-+
-+describe('Node.contains', () => {
-+  test.each([
-+    ['element', () => document.createElement('view')],
-+    ['text', () => document.createTextNode('hello')],
-+    ['comment', () => document.createComment()],
-+    ['fragment', () => document.createElement(DOCUMENT_FRAGMENT)],
-+    ['document', () => document]
-+  ] as const)('%s contains itself', (_name, createNode) => {
-+    const node = createNode()
-+    expect(node.contains(node)).toBe(true)
-+  })
-+
-+  test.each([false, true])('contains(null) is false with children=%s', (withChildren) => {
-+    const parent = document.createElement('view')
-+    if (withChildren) parent.appendChild(document.createElement('text'))
-+    expect(parent.contains(null)).toBe(false)
-+  })
-+
-+  test('contains element, text and comment descendants at different depths', () => {
-+    const parent = document.createElement('view')
-+    const child = document.createElement('view')
-+    const grandchild = document.createElement('text')
-+    const text = document.createTextNode('hello')
-+    const comment = document.createComment()
-+    parent.appendChild(child)
-+    child.appendChild(grandchild)
-+    grandchild.appendChild(text)
-+    grandchild.appendChild(comment)
-+
-+    for (const node of [child, grandchild, text, comment]) {
-+      expect(parent.contains(node)).toBe(true)
-+      expect(node.contains(parent)).toBe(false)
-+    }
-+    expect(child.contains(text)).toBe(true)
-+    expect(text.contains(comment)).toBe(false)
-+  })
-+
-+  test('does not contain siblings or nodes from another tree', () => {
-+    const parent = document.createElement('view')
-+    const first = document.createElement('view')
-+    const second = document.createElement('view')
-+    const other = document.createElement('view')
-+    const outside = document.createElement('view')
-+    parent.appendChild(first)
-+    parent.appendChild(second)
-+    other.appendChild(outside)
-+
-+    expect(first.contains(second)).toBe(false)
-+    expect(second.contains(first)).toBe(false)
-+    expect(parent.contains(outside)).toBe(false)
-+    expect(parent.contains(other)).toBe(false)
-+  })
-+
-+  test.each(['', 'contains-duplicate-id'])('does not confuse unrelated nodes with id=%j', (id) => {
-+    const parent = document.createElement('view')
-+    const child = document.createElement('view')
-+    const outside = document.createElement('view')
-+    child.id = id
-+    outside.id = id
-+    parent.appendChild(child)
-+    expect(parent.contains(child)).toBe(true)
-+    expect(parent.contains(outside)).toBe(false)
-+  })
-+
-+  test('an unrelated id matching a generated uid does not establish containment', () => {
-+    const parent = document.createElement('view')
-+    const child = document.createElement('view')
-+    const outside = document.createElement('view')
-+    parent.appendChild(child)
-+    outside.id = child.uid
-+    expect(parent.contains(outside)).toBe(false)
-+  })
-+
-+  test('changing ids does not change containment', () => {
-+    const parent = document.createElement('view')
-+    const child = document.createElement('text')
-+    parent.appendChild(child)
-+    child.id = 'contains-before'
-+    expect(parent.contains(child)).toBe(true)
-+    child.id = 'contains-after'
-+    expect(parent.contains(child)).toBe(true)
-+    child.removeAttribute('id')
-+    expect(parent.contains(child)).toBe(true)
-+  })
-+
-+  test('updates containment after removing and moving a subtree', () => {
-+    const source = document.createElement('view')
-+    const destination = document.createElement('view')
-+    const child = document.createElement('view')
-+    const text = document.createTextNode('hello')
-+    child.appendChild(text)
-+    source.appendChild(child)
-+    expect(source.contains(text)).toBe(true)
-+
-+    destination.appendChild(child)
-+    expect(source.contains(child)).toBe(false)
-+    expect(source.contains(text)).toBe(false)
-+    expect(destination.contains(child)).toBe(true)
-+    expect(destination.contains(text)).toBe(true)
-+
-+    child.remove()
-+    expect(destination.contains(child)).toBe(false)
-+    expect(destination.contains(text)).toBe(false)
-+    expect(child.contains(text)).toBe(true)
-+  })
-+
-+  test('deep clones contain only their own descendants, including with copied ids', () => {
-+    const source = document.createElement('view')
-+    const child = document.createElement('text')
-+    child.id = 'contains-cloned-id'
-+    source.appendChild(child)
-+    const clone = source.cloneNode(true)
-+    expect(clone.contains(clone.firstChild)).toBe(true)
-+    expect(source.contains(clone.firstChild)).toBe(false)
-+    expect(clone.contains(child)).toBe(false)
-+  })
-+
-+  test('fragment containment follows its children when they are inserted', () => {
-+    const fragment = document.createElement(DOCUMENT_FRAGMENT)
-+    const parent = doc
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19607** (2026-11-05): fix(h5): report a meaningful errMsg when previewImage fails to load an image (@Jarvis636431)
+- **PR #19605** (2026-11-05): feat(runtime): 鸿蒙ASCF元服务支持分栏模式适配 (@txazo)
+- **PR #19603** (2026-11-04): fix(shared): correct return type of createPullDownComponent hook (@Jarvis636431)
+- **PR #19601** (2026-11-04): fix(router): correct framework param type of createRouter/createMultiRouter (@Jarvis636431)
+- **PR #19600** (2026-11-04): fix(h5): call WeChat JS-SDK once in processOpenApi (@Jarvis636431)
 - **PR #19598** (2026-11-03): fix(h5): keep request cancellable while reading response bodies (@Jarvis636431)
-- **PR #19596** (2026-11-02): chore(release): publish 4.3.2 (@Single-Dancer)
-- **PR #19595** (2026-11-02): fix(runtime): 修正 contains 的节点包含关系判断 (@Jarvis636431)
-- **PR #19593** (2026-11-02): fix(runtime): 修复派发期间监听器变更导致重复调用或抛错 (@Jarvis636431)
-- **PR #19591** (2026-11-02): fix(h5): 支持音频事件无参取消全部监听 (@Jarvis636431)
-- **PR #19589** (2026-11-02): fix(runtime): 兼容新版 Vue v-model 的根节点检查 (@Jarvis636431)
 
 ---
 
@@ -1803,67 +1498,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): settle blob conversion failures before upload (#19588)
+## X. router): correct framework param type of createRouter/createMultiRouter (#19601)
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/network/blob-conversion.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/taro-router/src/router/mpa.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa805616`: h5): settle blob conversion failures before upload (#19588). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd702e62`: router): correct framework param type of createRouter/createMultiRouter (#19601). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/network/blob-conversion.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-router/src/router/mpa.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { uploadFile } from '../../src/api/network/upload'
-import { convertObjectUrlToBlob, NETWORK_TIMEOUT } from '../../src/api/network/utils'
-
-function observe (promise: Promise<unknown>) {
-  const state: { status: string, value?: unknown } = { status: 'pending' }
-  promise.then(value => { state.status = 'resolved'; state.value = value }, error => {
-    state.status = 'rejected'
-    state.value = error
-  })
-  return state
-}
-
-async function flushPromises () {
-  for (let i = 0; i < 5; i++) await Promise.resolve()
-}
-
-describe('blob conversion lifecycle', () => {
-  let requests: XMLHttpRequest[]
-  const NativeXHR = window.XMLHttpRequest
-
-  beforeEach(() => {
-    jest.useFakeTimers()
-    requests = []
-    jest.spyOn(window, 'XMLHttpRequest').mockImplementation(() => {
-      const xhr = new NativeXHR()
-      jest.spyOn(xhr, 'open').mockImplementation(() => {})
-      jest.spyOn(xhr, 'send').mockImplementation(() => {})
-      jest.spyOn(xhr, 'abort').mockImplementation(() => {})
-      requests.push(xhr)
-      return xhr
-    })
-  })
-
-  afterEach(() => {
-    jest.clearAllTimers()
-    jest.useRealTimers()
-    jest.restoreAllMocks()
-  })
-
-  function response (xhr: XMLHttpRequest, status: num
+ *
+ * @param framework 框架运行时对象，由编译产物注入（见 `taro-loader` 的 `importFrameworkName`），
+ * 仅用于转发给 `createPullDownComponent` hook。React 为 react 命名空间对象，
+ * Vue 3 为 `createElement`（`h`），Solid 下为 `undefined`。
+ * 各框架的类型互不兼容，且 `@tarojs/router` 自身不消费它，故不在此收窄。
+  framework?: any
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  framework?: string
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa805616` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd702e62` are properly handled with clean fallback behavior.

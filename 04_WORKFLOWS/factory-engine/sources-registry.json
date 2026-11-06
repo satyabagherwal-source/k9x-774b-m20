@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T14:05:34.572Z",
-    "lastVerified": "2026-11-06T14:05:34.572Z",
+    "lastChecked": "2026-11-06T14:26:00.907Z",
+    "lastVerified": "2026-11-06T14:26:00.907Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -240,22 +240,21 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T13:41:55.514Z",
-    "lastVerified": "2026-11-06T13:41:55.514Z",
+    "lastChecked": "2026-11-06T14:25:40.783Z",
+    "lastVerified": "2026-11-06T14:25:40.783Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
+    "contentHash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "155fa931"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -625,22 +624,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T21:40:12.645Z",
-    "lastVerified": "2026-11-05T21:40:12.645Z",
+    "lastChecked": "2026-11-06T14:25:35.929Z",
+    "lastVerified": "2026-11-06T14:25:35.929Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
+    "contentHash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0e15816b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -1135,14 +1133,14 @@
     "officialUrl": "https://github.com/NervJS/taro",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T01:00:47.428Z",
-    "lastVerified": "2026-11-04T01:00:47.428Z",
+    "lastChecked": "2026-11-06T14:25:31.072Z",
+    "lastVerified": "2026-11-06T14:25:31.072Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nervjs-taro",
-    "contentHash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
+    "contentHash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3315,8 +3313,8 @@
     "officialUrl": "https://github.com/o2sh/onefetch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:35:58.780Z",
-    "lastVerified": "2026-11-05T04:35:58.780Z",
+    "lastChecked": "2026-11-06T14:25:19.694Z",
+    "lastVerified": "2026-11-06T14:25:19.694Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-o2sh-onefetch",
@@ -3365,9 +3363,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-05T09:51:15.959Z",
+    "lastChecked": "2026-11-06T14:25:27.113Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-05T09:51:15.959Z"
+    "lastVerified": "2026-11-06T14:25:27.113Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -7278,14 +7276,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T08:40:20.069Z",
-    "lastVerified": "2026-11-05T08:40:20.069Z",
+    "lastChecked": "2026-11-06T14:25:38.541Z",
+    "lastVerified": "2026-11-06T14:25:38.541Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
+    "contentHash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10002,9 +10000,9 @@
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
     "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
-    "lastChecked": "2026-11-03T11:59:07.986Z",
+    "lastChecked": "2026-11-06T14:25:22.171Z",
     "revisionIdentifier": "1faa101f3b",
-    "lastVerified": "2026-11-03T11:59:07.986Z"
+    "lastVerified": "2026-11-06T14:25:22.171Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",

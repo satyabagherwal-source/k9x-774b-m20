@@ -2353,20 +2353,20 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "0e15816b",
+    "sourceVersion": "e9796cca",
     "license": "Apache-2.0",
-    "contentHash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
-    "lastHarvestedAt": "2026-11-04T18:42:22.594Z",
+    "contentHash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
+    "lastHarvestedAt": "2026-11-06T14:25:58.291Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "155fa931",
+    "sourceVersion": "1889115d",
     "license": "NOASSERTION",
-    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
-    "lastHarvestedAt": "2026-11-06T13:13:04.159Z",
+    "contentHash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
+    "lastHarvestedAt": "2026-11-06T14:25:42.661Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "1c0e11a1",
+    "sourceVersion": "4cee4138",
     "license": "NOASSERTION",
-    "contentHash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
-    "lastHarvestedAt": "2026-11-04T01:00:53.439Z",
+    "contentHash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
+    "lastHarvestedAt": "2026-11-06T14:25:42.460Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "6aab26ea",
+    "sourceVersion": "63fba09b",
     "license": "Apache-2.0",
-    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
-    "lastHarvestedAt": "2026-11-05T08:42:43.684Z",
+    "contentHash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
+    "lastHarvestedAt": "2026-11-06T14:25:40.921Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

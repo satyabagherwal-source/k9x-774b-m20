@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T14:05:31.935Z",
+  "last_updated": "2026-11-06T14:25:58.198Z",
   "total_verified_learnings": 1225,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9737,14 +9737,19 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "155fa931",
-      "content_hash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
+      "source_version": "1889115d",
+      "content_hash": "8fcf5e6b0752098abbf73fb303d55c85045358c596435599634e8f5a0d209ce9",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (#5000)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cat, applydp, to): read stdin consistently (#5005)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10098,7 +10103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:13:04.022Z",
+      "verified_at": "2026-11-06T14:25:42.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15360,11 +15365,16 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "6aab26ea",
-      "content_hash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
+      "source_version": "63fba09b",
+      "content_hash": "e6dc9f9a912f77f31d7fc05e72b3888dc5ce6fcf0131deb09f510ae3c28f4516",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (#709",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2152,
           "title": "py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370",
@@ -15446,7 +15456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:42:43.611Z",
+      "verified_at": "2026-11-06T14:25:40.800Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44386,11 +44396,16 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "1c0e11a1",
-      "content_hash": "5f2006006b69feeb7f4ab5ad3c2cd8efbc1fb8a9341a840f7704a527ad4d1979",
+      "source_version": "4cee4138",
+      "content_hash": "3f46b1d1d7cf487725716b8a362ceb3f82dfd1340eac39140345afe8860fe2c5",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "router): correct framework param type of createRouter/createMultiRouter (#19601)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1722,
           "title": "h5): clear download timeout after completion (#19532)",
@@ -44432,7 +44447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:00:53.332Z",
+      "verified_at": "2026-11-06T14:25:42.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45116,11 +45131,16 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "0e15816b",
-      "content_hash": "c67e80fa6ab04553697670042a49f60712915959eac9ff6a2a16e510bf97929d",
+      "source_version": "e9796cca",
+      "content_hash": "85d2ca5a0e03a2f49f5fd9fccb466d8c0a4676d084a76ed5abe0d5c129c4f1a7",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docker): create home directory for nono user (#2278)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1717,
           "title": "ci): update cargo audit failures (#2127)",
@@ -45227,7 +45247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:42:22.527Z",
+      "verified_at": "2026-11-06T14:25:58.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

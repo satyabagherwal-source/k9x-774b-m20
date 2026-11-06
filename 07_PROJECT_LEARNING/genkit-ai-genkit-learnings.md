@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `6aab26ea`  
+> **Source Version**: `63fba09b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:42:43.169Z  
+> **Timestamp**: 2026-11-06T14:25:39.489Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:40:20.069Z  
+> **Harvest Timestamp**: 2026-11-06T14:25:38.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6566 stars
+- **Stars / Engagement**: 6571 stars
 
 ---
 
@@ -232,13 +232,18 @@ import {
   BaseRuntimeManager,
   GenkitToolsError,
 } from '@genkit-ai/tools-common/manager';
+import path from 'path';
 import { z } from 'zod';
 import {
   SUPPORTED_DOC_LANGUAGES,
   detectProjectLanguage,
   type SupportedDocLanguage,
 } from '../utils/docs';
-import { startDevProcessManager, startManager } from '../utils/manager-utils';
+import {
+  resolveTelemetryServer,
+  startDevProcessManager,
+  startManager,
+} from '../utils/manager-utils';
 
 export {
   SUPPORTED_DOC_LANGUAGES,
@@ -302,21 +307,46 @@ export function resolveProjectRoot(
 export class McpRuntimeManager {
   private manager: BaseRuntimeManager | undefined;
   private currentProjectRoot: string | undefined;
+  private telemetryServers = new Map<string, Promise<string>>();
 
   /** @param auth `--experimental-auth`. */
   constructor(private readonly auth?: boolean) {}
 
+  private getTelemetryServerUrl(projectRoot: string): Promise<string> {
+    const resolvedRoot = path.resolve(projectRoot);
+    let urlPromise = this.telemetryServers.get(resolvedRoot);
+    if (!urlPromise) {
+      urlPromise = resolveTelemetryServer({ projectRoot: resolvedRoot }).catch(
+        (err) => {
+          this.telemetryServers.delete(resolvedRoot);
+          throw err;
+        }
+      );
+      this.telemetryServers.set(resolvedRoot, urlPromise);
+    }
+    return urlPromise;
+  }
+
   async getManager(projectRoot: string) {
-    if (this.manager && this.currentProjectRoot === projectRoot) {
+    const resolvedRoot = path.resolve(projectRoot);
+    if (this.manager && this.currentProjectRoot === resolvedRoot) {
       return this.manager;
     }
     if (this.manager) {
-      await this.manager.stop();
+      const prev = this.manager;
+      this.manager = undefined;
+      this.currentProjectRoot = undefined;
+      await prev.stop();
     }
+    const telemetryServerUrl = await this.getTelemetryServerUrl(resolvedRoot);
     // No auth here: attaching to existing runtimes never generates a secret.
     // `this.auth` applies when a runtime is spawned (getManagerWithDevProcess).
-    this.manager = await startManager({ projectRoot, manageHealth: true });
-    this.currentProjectRoot = projectRoot;
+    this.manager = await startManager({
+      projectRoot: resolvedRoot,
+      manageHealth: true,
+      telemetryServerUrl,
+    });
+    this.currentProjectRoot = resolvedRoot;
     return this.manager;
   }
 
@@ -327,30 +357,39 @@ export class McpRuntimeManager {
     explicitProjectRoot: boolean;
     timeout?: number;
   }): Promise<BaseRuntimeManager> {
-    const { projectRoot, command, args, timeout, explicitProjectRoot } = params;
+    const { command, args, timeout, explicitProjectRoot } = params;
+    const resolvedRoot = path.resolve(params.projectRoot);
     if (this.manager) {
-      await this.manager.stop();
+      const prev = this.manager;
+      this.manager = undefined;
+      this.currentProjectRoot = undefined;
+      await prev.stop();
     }
+    const telemetryServerUrl = await this.getTelemetryServerUrl(resolvedRoot);
     const devManager = await startDevProcessManager(
-      projectRoot,
+      resolvedRoot,
       command,
       args,
       {
         nonInteractive: true,
         healthCheck: timeout !== 0,
         timeout,
-        cwd: explicitProjectRoot ? projectRoot : undefined,
+        cwd: explicitProjectRoot ? resolvedRoot : undefined,
         auth: this.auth,
+        telemetryServerUrl,
       }
     );
     this.manager = devManager.manager;
-    this.currentProjectRoot = projectRoot;
+    this.currentProjectRoot = resolvedRoot;
     return this.manager;
   }
 
   async kill() {
     if (this.manager) {
-      await this.manager.stop();
+      const prev = this.manager;
+      this.manager = undefined;
+      this.currentProjectRoot = undefined;
+      await prev.stop();
     }
   }
 }
@@ -535,10 +574,12 @@ export async function getDevEnvVars(
   projectRoot: string,
   options?: DevProcessManagerOptions
 ): Promise<DevEnv> {
-  const telemetryServerUrl = await resolveTelemetryServer({
-    projectRoot,
-    corsOrigin: options?.corsOrigin,
-  });
+  const telemetryServerUrl =
+    options?.telemetryServerUrl ??
+    (await resolveTelemetryServer({
+      projectRoot,
+      corsOrigin: options?.corsOrigin,
+    }));
   const disableRealtimeTelemetry = options?.disableRealtimeTelemetry ?? false;
   const experimentalReflectionV2 = options?.experimentalReflectionV2 ?? false;
   const reflectionSecret = resolveReflectionSecret({
@@ -622,8 +663,7 @@ export async function startDevProcessManager(
   // runtime can never disagree, whichever path produced envVars.
   const reflectionSecret: string | undefined = envVars[REFLECTION_SECRET_ENV];
 
-  const processManager = new ProcessManager(command, args, envVars);
-  cons
+  const processManager = new
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/option-parsers.ts`
@@ -2031,338 +2071,197 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1aff696` (2026-11-05)
-**Commit Message**: fix(py): a failing tool cancels and awaits the other tools in its turn (#6952)
+### Incident Patch 1: `a28a48e7` (2026-11-05)
+**Commit Message**: ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (#7090)
 
-**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +169/-26)
+**File**: `.github/workflows/changes.yml` (modified, +5/-0)
 ```diff
-@@ -680,7 +680,7 @@ def augment_with_context(
+@@ -60,6 +60,9 @@ on:
+       tools:
+         description: "genkit-tools/** (CLI, Dev UI server, telemetry server)"
+         value: ${{ jobs.detect.outputs.tools }}
++      schema:
++        description: "genkit-tools/genkit-schema.json"
++        value: ${{ jobs.detect.outputs.schema }}
+       samples:
+         description: "samples/**"
+         value: ${{ jobs.detect.outputs.samples }}
+@@ -81,6 +84,7 @@ jobs:
+       js: ${{ steps.areas.outputs.js }}
+       python: ${{ steps.areas.outputs.python }}
+       tools: ${{ steps.areas.outputs.tools }}
++      schema: ${{ steps.areas.outputs.schema }}
+       samples: ${{ steps.areas.outputs.samples }}
+       specs: ${{ steps.areas.outputs.specs }}
+       other: ${{ steps.other.outputs.other }}
+@@ -93,6 +97,7 @@ jobs:
+             js: js/**
+             python: py/**
+             tools: genkit-tools/**
++            schema: genkit-tools/genkit-schema.json
+             samples: samples/**
+             specs: tests/specs/**
  
- def raise_if_aborted(abort_signal: asyncio.Event) -> None:
-     if abort_signal.is_set():
--        raise GenkitError(status='ABORTED', message='Generation aborted.')
-+        raise GenkitError(status='CANCELLED', message='Generation aborted.')
- 
- 
- def define_generate_action(ai: _aio.Genkit) -> None:
-@@ -852,6 +852,9 @@ async def run_generate(
-             current_turn=current_turn,
-             call=call,
-         )
-+    except asyncio.CancelledError as exc:
-+        stamp_cancelled_error(exc=exc, messages=call.messages)
-+        raise
-     except (Exception, _StreamingCallbackError) as exc:
-         if streaming_callback_cause(exc=exc) is None:
-             raise
-@@ -1271,10 +1274,34 @@ def log_dropped_failure(exc: BaseException, *, model: str | None = None, tool: s
-     logger.error('%s raised, returning finish_reason=failed', culprit, exc_info=exc, **fields)
- 
- 
--def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
-+def stamp_cancelled_error(
-+    *,
-+    exc: asyncio.CancelledError,
-+    messages: list[Message],
-+) -> None:
-+    """Attach the closed history onto a foreign CancelledError as ``messages``.
-+
-+    The history ends at the last completed round. The unfinished turn is
-+    dropped, as on a failed or aborted response. Only the exception is
-+    stamped, never the current task: a long-lived caller task would carry
-+    stale history into later calls. Read it back with
-+    ``genkit._core._compat.cancelled_history``, which handles 3.10 re-raising
-+    a fresh ``CancelledError`` on await.
-+    """
-+    exc.__dict__['messages'] = [as_message(m) for m in messages]
-+
-+
-+def raise_if_foreign_cancel(
-+    *,
-+    exc: BaseException,
-+    abort_signal: asyncio.Event,
-+    messages: list[Message] | None = None,
-+) -> None:
-     # abort_signal is our own stop. A wait_for / task.cancel() has to
-     # surface as CancelledError so the deadline still works.
-     if isinstance(exc, asyncio.CancelledError) and not abort_signal.is_set():
-+        if messages is not None:
-+            stamp_cancelled_error(exc=exc, messages=messages)
-         raise
- 
- 
-@@ -1506,7 +1533,11 @@ def remember_response(result: object) -> None:
-             name=resolved.model.name,
-         )
-     except TURN_FAILURES as exc:
--        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-+        raise_if_foreign_cancel(
-+            exc=exc,
-+            abort_signal=ctx.abort_signal,
-+            messages=call.messages,
-+        )
-         # A hook can raise before the model ever built a request. Build it here
-         # so the caller still gets back what they asked for; the cost is only
-         # paid on the failure path.
-@@ -1595,7 +1626,11 @@ async def generate_turn(
-             current_turn=current_turn,
-         )
-     except TURN_FAILURES as exc:
--        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-+        raise_if_foreign_cancel(
-+            exc=exc,
-+            abort_signal=ctx.abort_signal,
-+            messages=call.messages,
-+        )
-         return box_from_exc(
-             response=call.earned(),
-             messages=call.messages,
-@@ -1879,7 +1914,11 @@ async def run_tools_or_stop(
-             on_tool_chunk=make_tool_chunk_streamer(chunks=chunks, ctx=ctx),
-         )
-     except TURN_FAILURES as exc:
--        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-+        raise_if_foreign_cancel(
-+            exc=exc,
-+            abort_signal=ctx.abort_signal,
-+            messages=list(options.messages),
-+        )
-         return box_from_exc(
-             response=response,
-             messages=list(options.messages),
-@@ -2283,7 +2322,10 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
-             logger.debug('tool triggered an interrupt', tool=trp.tool_request.name)
-             return (None, interrupt_request_part(trp, intr))
- 
--    outs = await asyncio.gather(*[run_one_tool(tool, trp) for _, tool, trp in work])
-+    outs = await gather_turn(
-+        [run_one_tool(tool, trp) for _, tool, trp in work],
-+        watched_abort=mw_pipeline.ctx.abort_signal,
-+    )
- 
-     has_interrupts = False
-     response_parts: list[Part] = []
-@@ -2314,6 +2356,70 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
-     return (None, Message(role=Role.TOOL, content=response_parts))
- 
- 
-+async def gather_turn(
-+    coros: Sequence[Awaitable[T]],
-+    *,
-+    watched_abort: asyncio.Event | None,
-+) -> list[T]:
-+    """Run one turn's tools concurrently. If one fails or cancels, cancel and await the rest.
-+
-+    ``asyncio.gather`` raises the first failure but leaves the other tools
-+    running, so they would keep committing side effects after generate
-+    returned. It also cancels all children directly on outer cancellation
-+    before ``except`` runs, which would deliver a second cancel during
-+    ``finally`` cleanup. ``asyncio.w
 ```
 
-**File**: `py/packages/genkit/src/genkit/_core/_compat.py` (modified, +33/-1)
+**File**: `.github/workflows/python.yml` (modified, +88/-38)
 ```diff
-@@ -19,7 +19,7 @@
- import asyncio
- import functools
- import sys
--from typing import Any, TypeVar, overload as overload
-+from typing import TYPE_CHECKING, Any, TypeVar, overload as overload
+@@ -16,12 +16,7 @@
  
- # StrEnum - use strenum package for cross-version compatibility
- # Note: StrEnum was added to stdlib in Python 3.11, but we use strenum for 3.10 compat
-@@ -31,9 +31,41 @@
-     from strenum import StrEnum as StrEnum  # noqa: E402
- from typing_extensions import override as override  # noqa: E402
+ name: Python Checks
  
-+if TYPE_CHECKING:
-+    from genkit._core._model import Message
-+
- _T = TypeVar('_T')
+-on:
+-  pull_request:
+-    paths:
+-      - "py/**"
+-      - "genkit-tools/genkit-schema.json"
+-      - ".github/workflows/python.yml"
++on: pull_request
  
+ permissions:
+   contents: read
+@@ -32,11 +27,23 @@ concurrency:
+   cancel-in-progress: true
  
-+def cancelled_history(exc: BaseException) -> 'list[Message] | None':
-+    """Return the history that generate attached to a cancel, or None.
+ jobs:
++  changes:
++    uses: ./.github/workflows/changes.yml
++    permissions:
++      pull-requests: read
 +
-+    On a foreign cancel, generate sets ``messages`` on the ``CancelledError``
-+    it re-raises: the history up to the last completed round, with no
-+    partial turn.
-+
-+    - Direct ``task.cancel()`` on 3.11+ re-raises that same ``CancelledError``.
-+    - ``asyncio.wait_for`` and ``asyncio.timeout`` raise ``TimeoutError``
-+      (``asyncio.TimeoutError`` on 3.10) with the ``CancelledError`` on
-+      ``__cause__``.
-+    - On 3.10, each task hop raises a fresh ``CancelledError`` with the
-+      previous one on ``__context__``.
-+    """
-+    cur: BaseException | None = exc
-+    seen: set[int] = set()
-+    while cur is not None and id(cur) not in seen:
-+        seen.add(id(cur))
-+        if isinstance(cur, (TimeoutError, asyncio.TimeoutError)):
-+            cur = cur.__cause__
-+            continue
-+        if isinstance(cur, asyncio.CancelledError) and 'messages' in cur.__dict__:
-+            return cur.__dict__['messages']
-+        if sys.version_info >= (3, 11):
-+            return None
-+        cur = cur.__context__
-+    return None
-+
-+
- def _wake_waiter(waiter: asyncio.Future[None], _task: object) -> None:
-     """Resolve ``waiter`` once when the watched task finishes."""
-     if not waiter.done():
+   # =============================================================================
+   # Fast checks that run quickly and catch common issues early
+   # =============================================================================
+   lint-and-format:
+     name: Lint and Format
++    needs: changes
++    if: >-
++      ${{ !cancelled() && (needs.changes.result != 'success' ||
++      needs.changes.outputs.python == 'true' ||
++      needs.changes.outputs.schema == 'true' ||
++      needs.changes.outputs.specs == 'true' ||
++      needs.changes.outputs.other == 'true') }}
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -52,18 +59,16 @@ jobs:
+           python-version: "3.12"
+ 
+       - name: Install dependencies
+-        run: |
+-          cd py
+-          uv sync --group lint
++        run: uv sync --frozen --group lint --directory py
+ 
+       - name: Check lockfile is up to date
+         run: uv lock --check --directory py
+ 
+       - name: Format check
+-        run: uv run --directory py ruff format --check --preview .
++        run: uv run --no-sync --directory py ruff format --check --preview .
+ 
+       - name: Lint with ruff
+-        run: uv run --directory py ruff check --preview .
++        run: uv run --no-sync --directory py ruff check --preview .
+ 
+       # Every import is declared, and every declared dependency is imported.
+       - name: Check dependencies match imports
+@@ -80,6 +85,13 @@ jobs:
+   # =============================================================================
+   type-check:
+     name: Type Check (${{ matrix.checker }})
++    needs: changes
++    if: >-
++      ${{ !cancelled() && (needs.changes.result != 'success' ||
++      needs.changes.outputs.python == 'true' ||
++      needs.changes.outputs.schema == 'true' ||
++      needs.changes.outputs.specs == 'true' ||
++      needs.changes.outputs.other == 'true') }}
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -92,42 +104,42 @@ jobs:
+         with:
+           persist-credentials: false
+ 
+-      - name: Install system dependencies
+-        run: |
+-          sudo apt-get update
+-          sudo apt-get install -y --no-install-recommends build-essential libffi-dev cmake libjpeg-dev zlib1g-dev
+-
+       - name: Install uv and setup Python
+         uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+         with:
+           enable-cache: true
+           python-version: "3.12"
+ 
+       - name: Install dependencies
+-        run: |
+-          cd py
+-          uv sync --group lint
++        run: uv sync --frozen --group lint --directory py
+ 
+       - name: Generate schema typing
+         run: ./py/bin/generate_schema_typing --ci
+ 
+       - name: Type check with Ty
+         if: matrix.checker == 'ty'
+-        run: uv run --directory py ty check .
++        run: uv run --no-sync --directory py ty check .
+ 
+       - name: Type check with Pyrefly
+         if: matrix.checker == 'pyrefly'
+-        run: uv run --directory py pyrefly check
++        run: uv run --no-sync --directory py pyrefly check
+ 
+       - name: Type check with Pyright
+         if: matrix.checker == 'pyright'
+-        run: cd py && uv run pyright
++        run: uv run --no-sync --directory py pyright
+ 
+   # =============================================================================
+   # Security and compliance checks
+   # =============================================================================
+   security-and-compliance:
+     name: Security and Compliance
++    needs: changes
++    if: >-
++      ${{ !cancelled() && (needs.changes.result != 'success' ||
++      needs.changes.outputs.python == 'true' ||
++      needs.changes.outputs.schema == 'true' ||
++      needs.changes.outputs.specs == 'true' ||
++      needs.changes.outputs.other == 'true') }}
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -143,15 +155,13 @@ jobs:
+           python-version: "3.12"
+ 
+       - name: Install dependencies
+-        run: |
+-          cd py
+-          uv sync --group lint
++        run: uv sync --frozen --group lint --directory py
+ 
+       - name: Check source file license headers
+         run: ./bin/check_license
+ 
+       - name: Check Python dependency licenses
+-        run: uv run --directory py liccheck -s pyproject.toml
++        run: uv run --no-sync --directory py liccheck -s pyproject.toml
+ 
+       - name: Check for hardcoded secrets
+         run: |
+@@ -169,10 +179,16 @@ jobs:
+   # =============================================================================
+   tests:
+     name: Tests (Python ${{ matrix.python-version }})
++    needs
 ```
 
-**File**: `py/packages/genkit/tests/genkit/ai/generate_test.py` (modified, +694/-0)
+**File**: `py/conftest.py` (added, +184/-0)
 ```diff
-@@ -33,6 +33,7 @@
- )
- from genkit._ai._model import text_from_content, text_from_message
- from genkit._ai._tools import Interrupt, ToolContext, define_tool
-+from genkit._core._compat import cancelled_history
- from genkit._core._error import ErrorReason, GenkitError, PublicError, _StreamingCallbackError
- from genkit._core._middleware import _MiddlewareMetadata
- from genkit._core._model import GenerateActionOptions, ModelRequest, Resume
-@@ -2485,6 +2486,303 @@ async def tool_c() -> str:
-     ]
- 
- 
-+def _model_calls_tools(*names: str) -> ModelResponse:
-+    return ModelResponse(
-+        finish_reason=FinishReason.STOP,
-+        message=Message(
-+            role=Role.MODEL,
-+            content=[Part(tool_request=ToolRequest(name=n, ref=f'ref-{n}', input={})) for n in names],
-+        ),
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_failing_tool_cancels_and_awaits_other_tools_in_turn() -> None:
-+    """One tool fails: the other is cancelled before generate returns and never commits."""
-+    ai = Genkit()
-+    pm, _ = define_scripted_model(ai)
-+    charges: list[str] = []
-+    charge_started = asyncio.Event()
-+    charge_cancelled = asyncio.Event()
-+
-+    @ai.tool(name='check_allergens')
-+    async def check_allergens() -> str:
-+        await charge_started.wait()
-+        raise GenkitError(status='UNAVAILABLE', message='allergen db down')
-+
-+    @ai.tool(name='charge_card')
-+    async def charge_card() -> str:
-+        charge_started.set()
-+        try:
-+            await asyncio.sleep(0.05)
-+        except asyncio.CancelledError:
-+            charge_cancelled.set()
-+            raise
-+        charges.append('order-42')
-+        return 'charged'
-+
-+    pm.responses.append(_model_calls_tools('check_allergens', 'charge_card'))
-+
-+    response = await generate_action(
-+        CallScope(ai),
-+        GenerateActionOptions(
-+            model='scriptedModel',
-+            messages=[Message(role=Role.USER, content=[Part.from_text('order')])],
-+            tools=['check_allergens', 'charge_card'],
-+        ),
-+    )
-+
-+    assert response.error is not None
-+    assert response.error.message == 'allergen db down'
-+    assert charge_cancelled.is_set()
-+    await asyncio.sleep(0.1)
-+    assert charges == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_abort_during_parallel_tools_lets_each_cleanup_finish() -> None:
-+    """Abort while two tools run: each finally completes before generate returns (no second cancel)."""
-+    ai = Genkit(model='scriptedModel')
-+    pm, _ = define_scripted_model(ai)
-+    abort_signal = asyncio.Event()
-+    started: list[str] = []
-+    both_started = asyncio.Event()
-+    released: list[str] = []
-+
-+    async def hold(name: str, cleanup_s: float) -> str:
-+        started.append(name)
-+        if len(started) == 2:
-+            both_started.set()
-+        try:
-+            # Ignores abort_signal; execute_tool_request's watcher cancels it.
-+            await asyncio.sleep(10)
-+        finally:
-+            await asyncio.sleep(cleanup_s)
-+            released.append(name)
-+        return 'held'
-+
-+    @ai.tool(name='hold_table')
-+    async def hold_table() -> str:
-+        return await hold('table', 0)
-+
-+    @ai.tool(name='hold_inventory')
-+    async def hold_inventory() -> str:
-+        return await hold('inventory', 0.05)
-+
-+    pm.responses = [_model_calls_tools('hold_table', 'hold_inventory')]
-+
-+    task = asyncio.create_task(
-+        generate_action(
-+            CallScope(ai),
-+            GenerateActionOptions(
-+                model='scriptedModel',
-+                messages=[Message(role=Role.USER, content=[Part.from_text('book')])],
-+                tools=['hold_table', 'hold_inventory'],
-+            ),
-+            abort_signal=abort_signal,
-+        )
-+    )
-+    await asyncio.wait_for(both_started.wait(), timeout=2.0)
-+    abort_signal.set()
-+    response = await asyncio.wait_for(task, timeout=2.0)
-+
-+    assert response.finish_reason == FinishReason.ABORTED
-+    assert sorted(released) == ['inventory', 'table']
-+
-+
-+@pytest.mark.asyncio
-+async def test_failed_tool_turn_leaves_no_unretrieved_task_exceptions() -> None:
-+    """A sibling that fails during teardown is retrieved; the first failure is the one raised."""
-+    loop = asyncio.get_running_loop()
-+    reported: list[dict[str, Any]] = []
-+    previous = loop.get_exception_handler()
-+    loop.set_exception_handler(lambda _loop, context: reported.append(context))
-+    try:
-+        ai = Genkit()
-+        pm, _ = define_scripted_model(ai)
-+        void_started = asyncio.Event()
-+
-+        @ai.tool(name='check_allergens')
-+        async def check_allergens() -> str:
-+            await void_started.wait()
-+            raise GenkitError(status='UNAVAILABLE', message='allergen db down')
-+
-+        void_cleaned_up = asyncio.Event()
-+
-+        @ai.tool(name='void_order')
-+        async def void_order() -> str:
-+            void_started.set()
-+            try:
-+                await asyncio.sleep(10)
-+            except asyncio.Can
-```
-
-**File**: `py/packages/genkit/tests/genkit/ai/tool_cancel_cleanup_test.py` (added, +356/-0)
-```diff
-@@ -0,0 +1,356 @@
+@@ -0,0 +1,184 @@
 +# Copyright 2026 Google LLC
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -2379,1291 +2278,1103 @@ Observed empirical fixes and code patches:
 +#
 +# SPDX-License-Identifier: Apache-2.0
 +
-+"""Tests for async cleanup and exception retrieval when tool execution is cancelled."""
++"""Workspace-wide pytest configuration."""
 +
-+from __future__ import annotations
-+
-+import asyncio
-+import contextlib
-+import gc
-+from collections.abc import AsyncIterator
-+from typing import Any
++import ast
++import os
++import sys
++import traceback
++from collections.abc import Iterator
++from pathlib import Path
++from typing import TextIO
 +
 +import pytest
++import structlog
++from structlog.typing import ExcInfo
 +
-+from genkit import FinishReason, Genkit, GenkitError, Message, ModelResponse, Part, Role
-+from genkit._ai._generate import execute_tool_request, resolve_tool
-+from genkit._ai._tools import Interrupt
-+from genkit._core._middleware import MiddlewareContext
-+from genkit.model import ToolRequest
-+from genkit.testing import define_scripted_model
++_WORKSPACE_ROOT = Path(__file__).resolve().parent
++_SKIP_DIRS = frozenset({
++    '.git',
++    '.hg',
++    '.mypy_cache',
++    '.nox',
++    '.pytest_cache',
++    '.ruff_cache',
++    '.tox',
++    '.venv',
++    '__pycache__',
++    'build',
++    'dist',
++    'node_modules',
++    'site-packages',
++    'venv',
++})
 +
 +
-+def _model_calls_tool(*, name: str, ref: str) -> ModelResponse:
-+    return ModelResponse(
-+        finish_reason=FinishReason.STOP,
-+        message=Message(
-+            role=Role.MODEL,
-+            content=[Part(tool_request=ToolRequest(name=name, input={}, ref=ref))],
-+        ),
-+    )
++def _debugger_attached() -> bool:
++    """Return True when a Python debugger (not coverage) is attached."""
++    monitoring = getattr(sys, 'monitoring', None)
++    if monitoring is not None and monitoring.get_tool(monitoring.DEBUGGER_ID) is not None:
++        return True
++    trace = sys.gettrace()
++    if trace is None:
++        return False
++    module = getattr(trace, '__module__', None) or type(trace).__module__
++    return not module.startswith('coverage')
 +
 +
-+@pytest.mark.asyncio
-+async def test_execute_tool_request_cancel_awaits_async_context_manager_cleanup() -> None:
-+    """Cancelling execute_tool_request awaits the tool's async context manager teardown before unwinding."""
-+    ai = Genkit()
-+    lease_events: list[str] = []
-+    acquired = asyncio.Event()
++def _source_has_breakpoint(source: bytes) -> bool:
++    """Return True when *source* contains an AST call to ``breakpoint`` or ``set_trace``."""
++    if b'breakpoint' not in source and b'set_trace' not in source:
++        return False
++    try:
++        tree = ast.parse(source)
++    except (SyntaxError, ValueError):
++        return False
++    for node in ast.walk(tree):
++        if not isinstance(node, ast.Call):
++            continue
++        func = node.func
++        if isinstance(func, ast.Name) and func.id in {'breakpoint', 'set_trace'}:
++            return True
++        if isinstance(func, ast.Attribute) and func.attr in {'breakpoint', 'set_trace'}:
++            return True
++    return False
 +
-+    @contextlib.asynccontextmanager
-+    async def inventory_lease() -> AsyncIterator[None]:
-+        lease_events.append('acquired')
-+        acquired.set()
++
++def _iter_py_files(roots: list[Path]) -> Iterator[str]:
++    """Yield deduplicated ``.py`` file paths under *roots*, skipping ignored directories."""
++    seen_dirs: set[str] = set()
++    seen_files: set[str] = set()
++    stack: list[str] = []
++
++    for root in roots:
++        resolved = os.path.realpath(root)
++        if os.path.isfile(resolved):
++            if resolved.endswith('.py') and resolved not in seen_files:
++                seen_files.add(resolved)
++                yield resolved
++        elif os.path.isdir(resolved) and resolved not in seen_dirs:
++            seen_dirs.add(resolved)
++            stack.append(resolved)
++
++    while stack:
++        current = stack.pop()
 +        try:
-+            yield
-+        finally:
-+            await asyncio.sleep(0)
-+            await asyncio.sleep(0)
-+            lease_events.append('released')
-+
-+    @ai.tool(name='hold_inventory')
-+    async def hold_inventory() -> str:
-+        async with inventory_lease():
-+            await asyncio.sleep(10)
-+        return 'held'
-+
-+    action = await resolve_tool(ai._registry, 'hold_inventory')
-+    trp = Part.from_tool_request(name='hold_inventory', ref='r1', input={})
-+    ctx = MiddlewareContext(ai)
-+
-+    task = asyncio.create_task(execute_tool_request(tool=action, tool_request_part=trp, ctx=ctx))
-+    await acquired.wait()
-+    task.cancel()
-+
-+    with pytest.raises(asyncio.CancelledError):
-+        await task
-+
-+    assert lease_events == ['acquired', 'released']
-+    assert asyncio.all_tasks() == {asyncio.current_task()}
++            with os.scandir(current) as entries:
++                for entry in entries:
++                    if entry.name in _SKIP_DIRS:
++                        continue
++                    if entry.is_dir(follow_symlinks=False):
++                        if entry.path not in seen_dirs:
++                            seen_dirs.add(entry.path)
++                            stack.append(entry.path)
++                    elif entry.name.endswith('.py') and entry.is_file(follow_symlinks=False):
++                        if entry.path not in seen_files:
++                            seen_files.add(entry.path)
++                            yield entry.path
++        except OSError:
++            continue
 +
 +
-+@pytest.mark.asyncio
-+async def test_generate_cancel_awaits_tool_async_finally_cleanup_before_unwinding() -> None:
-+    """Cancelling ai.generate mid-tool waits for the tool's async finally block to complete before returning."""
-+    ai = Genkit(model='scriptedModel')
-+    pm, _ = define_scripted_model(ai)
-+    seat_locked = asyncio.Event()
-+    seat_released = False
++def _has_active_breakpoint(config: pytest.Config) -> bool:
++    """Return True when ``PYTHONBREAKPOINT!=0`` and any workspace or target ``.py`` file calls ``breakpoint()``."""
++    if os.environ.get('PYTHONBREAKPOINT') == '0':
++        return False
 +
-+    @contextlib.asynccontextmanager
-+    async def seat_hold() -> AsyncIterator[None]:
-+        nonlocal seat_released
-+        seat_locked.set()
++    roots = [_WORKSPACE_ROOT]
++    invocation_dir = getattr(getattr(config, 'invocation_params', None), 'dir', None) or _WORKSPACE_ROOT
++    for raw_arg in getattr(config, 'args', None) or ():
++        if not isinstance(raw_arg, str) or raw_arg.startswith('-'):
++            continue
++        path_part = raw_arg.split('::', 1)[0]
++        if not path_part:
++            continue
++        candidate = Path(path_part)
++        if not candidate.is_absolute():
++            candidate = Path(invocation_dir) / candidate
++        if candidate.exists():
++            roots.append(candidate)
++
++    for file_path in _iter_py_files(roots):
 +        try:
-+            yield
-+        finally:
-+            await asyncio.sleep(0)
-+            await asyncio.sleep(0)
-+            seat_released = True
-+
-+    @ai.tool(name='lock_seat')
-+    async def lock_seat() -> str:
-+        async with seat_hold():
-+            await asyncio.sleep(10)
-+        return '12A'
-+
-+    pm.responses = [_model_calls_tool(name='lock_seat', ref='r1')]
-+
-+    gen_task = asyncio.create_task(ai.generate(prompt='Reserve seat 12A', tools=['lock_seat']))
-+    await seat_locked.wait()
-+    gen_task.cancel()
-+
-+    with pytest.raises(asyncio.CancelledError):
-+        await gen_task
-+
-+    assert seat_released is True
++            with open(file_path, 'rb') as handle:
++                raw = handle.read()
++        except OSError:
++            continue
++        if _source_has_breakpoint(raw):
++            return True
++    return False
 +
 +
-+@pytest.mark.asyncio
-+async def test_generate_cancel_with_multiple_tools_awaits_every_tool_async_finally_cleanup() -> None:
-+    """With 2+ parallel tools, a single task.cancel() cancels each tool once and lets finally blocks finish."""
-+    ai = Genkit(model='scriptedModel')
-+    pm, _ = define_scripted_model(ai)
-+    seat_locked = asyncio.Event()
-+    baggage_locked = asyncio.Event()
-+    cleaned: list[str] = []
-+
-+    @contextlib.asynccontextmanager
-+    async def hold_resource(label: str, ready: asyncio.Event) -> AsyncIterator[None]:
-+        ready.set()
-+        try:
-+            yield
-+        finally:
-+            await asyncio.sleep(0)
-+            await asyncio.sleep(0)
-+            cleaned.append(label)
-+
-+    @ai.tool(name='lock_seat')
-+    async def lock_seat() -> str:
-+        async with hold_resource('seat', seat_locked):
-+            await asyncio.sleep(10)
-+        return '12A'
-+
-+    @ai.tool(name='hold_bagg
++def _plain_traceback_with_locals(sio: TextIO, exc_info
 ```
 
-**File**: `py/packages/genkit/tests/genkit/core/compat_test.py` (modified, +100/-1)
+**File**: `py/packages/genkit-mcp/tests/mcp_host_test.py` (modified, +4/-4)
 ```diff
-@@ -9,7 +9,9 @@
+@@ -56,12 +56,12 @@
+ # assert is one the host asked for.
+ LONG_TTL_MILLIS = 600_000
  
- import pytest
+-# Long enough for a healthy test server to start and answer on a slow machine,
+-# since the same timeout bounds its handshake.
+-STALL_TIMEOUT_MILLIS = 3_000
++# Long enough for a healthy test server to start and answer under parallel
++# xdist load on CI runners, since the same timeout bounds its handshake.
++STALL_TIMEOUT_MILLIS = 8_000
  
--from genkit._core._compat import await_unchained
-+from genkit import Message, Part, Role
-+from genkit._ai._generate import stamp_cancelled_error
-+from genkit._core._compat import await_unchained, cancelled_history
+ # Bounds every wait on a test server, so a regression fails rather than hangs.
+-LIMIT = 15
++LIMIT = 30
  
+ # Module level, so no test frame's locals can put it into a rendered traceback.
+ SECRET = 'genkit-mcp-redaction-canary-7f3a'
+```
+
+**File**: `py/packages/genkit/pyproject.toml` (modified, +0/-4)
+```diff
+@@ -128,10 +128,6 @@ DEP003 = ["pydantic_core"]
+ [tool.hatch.build.targets.wheel]
+ packages = ["src/genkit"]
  
- @pytest.mark.asyncio
-@@ -139,3 +141,100 @@ async def nested(depth: int) -> None:
-             await outer
-     finally:
-         sys.setrecursionlimit(previous_limit)
+-[tool.pytest.ini_options]
+-pythonpath = [".", "src", "tests", "packages/genkit/src"]
+-testpaths  = ["tests"]
+-
+ [tool.uv.sources]
+ genkit-a2ui                         = { workspace = true }
+ genkit-amazon-bedrock               = { workspace = true }
+```
+
+**File**: `py/pyproject.toml` (modified, +7/-3)
+```diff
+@@ -50,6 +50,7 @@ dev = [
+   "pytest-asyncio>=0.25.3",
+   "pytest>=8.3.4",
+   "pytest-cov>=6.0.0",
++  "pytest-xdist>=3.6.1",
+   "datamodel-code-generator>=0.27.3",
+   "pytest-mock>=3.14.0",
+   "twine>=7.0.0",
+@@ -94,10 +95,11 @@ lint = [
+ # Pytest for unit testing and coverage.
+ [tool.pytest.ini_options]
+ addopts = [
+-  "--cov",
+-  #"--cov-report=", # Disable terminal report generation by pytest-cov
++  "-n",
++  "auto",
++  "--dist",
++  "worksteal",
+   "-ra",
+-  "-vv",
+   "--import-mode=importlib",
+ ]
+ asyncio_default_fixture_loop_scope = "session"
+@@ -124,6 +126,8 @@ omit = [
+   "**/constants.py", # Typically just constants
+   "**/typing.py",    # Often auto-generated or complex types
+   "**/types.py",     # Often auto-generated or complex types
++  "**/tests/**",     # Unit test suites
++  "**/*_test.py",    # Standalone test modules
+ ]
+ source = ["packages"]
+ 
+```
+
+**File**: `py/tests/conftest_test.py` (added, +256/-0)
+```diff
+@@ -0,0 +1,256 @@
++# Copyright 2026 Google LLC
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++# SPDX-License-Identifier: Apache-2.0
++
++"""Tests for workspace pytest hooks in py/conftest.py."""
++
++import argparse
++import bdb
++import contextlib
++import importlib.util
++import io
++import logging
++import os
++import shutil
++import subprocess  # noqa: S404
++import sys
++from pathlib import Path
++from types import ModuleType
++from typing import cast
++from unittest import mock
++
++import pytest
++import structlog
++
++_PY_ROOT = Path(__file__).resolve().parents[1]
 +
 +
-+def _order_history() -> list[Message]:
-+    return [Message(role=Role.USER, content=[Part.from_text('book dinner for 2')])]
++def _load_root_conftest() -> ModuleType:
++    path = _PY_ROOT / 'conftest.py'
++    spec = importlib.util.spec_from_file_location('py_workspace_conftest', path)
++    assert spec is not None and spec.loader is not None
++    module = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(module)
++    return module
 +
 +
-+@pytest.mark.asyncio
-+async def test_cancelled_history_reads_stamp_across_task_hops() -> None:
-+    """History stamped inside a cancelled task is found after awaiting through two task hops."""
-+    history = _order_history()
-+    started = asyncio.Event()
-+
-+    async def reserve() -> None:
-+        try:
-+            started.set()
-+            await asyncio.sleep(10)
-+        except asyncio.CancelledError as exc:
-+            stamp_cancelled_error(exc=exc, messages=history)
-+            raise
-+
-+    async def book() -> None:
-+        await asyncio.create_task(reserve())
-+
-+    task = asyncio.create_task(book())
-+    await started.wait()
-+    task.cancel()
-+    with pytest.raises(asyncio.CancelledError) as exc_info:
-+        await task
-+
-+    found = cancelled_history(exc_info.value)
-+    assert found is not None
-+    assert [m.text for m in found] == ['book dinner for 2']
-+    assert 'message' not in exc_info.value.__dict__
-+    # 3.10 hands back a fresh CancelledError; 3.11+ returns the stamped one.
-+    assert (exc_info.value.__dict__.get('messages') is None) == (sys.version_info < (3, 11))
++root_conftest = _load_root_conftest()
 +
 +
-+def test_cancelled_history_returns_none_without_stamp() -> None:
-+    """Unstamped cancels and unrelated errors have no history."""
-+    assert cancelled_history(asyncio.CancelledError()) is None
-+    assert cancelled_history(ValueError('kitchen closed')) is None
++class _FakeConfig:
++    def __init__(
++        self,
++        *,
++        numprocesses: str | int = 'auto',
++        dist: str = 'worksteal',
++        capture: str = 'fd',
++        usepdb: bool = False,
++        trace: bool = False,
++        args: list[str] | None = None,
++    ) -> None:
++        self.option = argparse.Namespace(numprocesses=numprocesses, dist=dist)
++        self.args = args or []
++        self._options: dict[str, object] = {
++            'capture': capture,
++            'usepdb': usepdb,
++            'trace': trace,
++        }
++
++    def getoption(self, name: str, default: object = None) -> object:
++        return self._options.get(name, default)
 +
 +
-+def test_cancelled_history_walks_context_only_on_310() -> None:
-+    """A stamp on __context__ is read on 3.10 only; 3.11+ reads the exception itself."""
-+    history = _order_history()
-+    stamped = asyncio.CancelledError()
-+    stamp_cancelled_error(exc=stamped, messages=history)
-+    fresh = asyncio.CancelledError()
-+    fresh.__context__ = stamped
-+
-+    found = cancelled_history(fresh)
-+    if sys.version_info < (3, 11):
-+        assert found is not None
-+        assert [m.text for m in found] == ['book dinner for 2']
-+    else:
-+        assert found is None
++def test_cmdline_main_keeps_xdist_auto_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
++    """Default captured test runs on the clean workspace keep parallel worksteal distribution."""
++    monkeypatch.delenv('PYTHONBREAKPOINT', raising=False)
++    cfg = _FakeConfig(numprocesses='auto', dist='worksteal', capture='fd')
++    with mock.patch.object(root_conftest, '_debugger_attached', return_value=False):
++        root_conftest.pytest_cmdline_main(cast(pytest.Config, cfg))
++    assert cfg.option.numprocesses == 'auto'
++    assert cfg.option.dist == 'worksteal'
 +
 +
-+def test_cancelled_history_stops_on_context_cycle() -> None:
-+    """A self-referencing __context__ chain terminates."""
-+    a = asyncio.CancelledError()
-+    b = asyncio.CancelledError()
-+    a.__context__ = b
-+    b.__context__ = a
-+    assert cancelled_history(a) is None
++def test_cmdline_main_disables_xdist_when_capture_disabled() -> None:
++    """Passing -s / --capture=no drops to in-process so stdin breakpoint() works."""
++    cfg = _FakeConfig(numprocesses='auto', dist='worksteal', capture='no')
++    with mock.patch.object(root_conftest, '_debugger_attached', return_value=False):
++        root_conftest.pytest_cmdline_main(cast(pytest.Config, cfg))
++    assert cfg.option.numprocesses == 0
++    assert cfg.option.dist == 'no'
 +
 +
-+@pytest.mark.asyncio
-+async def test_cancelled_history_reads_stamp_from_wait_for_and_timeout() -> None:
-+    """wait_for and asyncio.timeout raise TimeoutError with the stamped CancelledError on __cause__."""
-+    history = _order_history()
++@pytest.mark.parametrize(('usepdb', 'trace'), [(True, False), (False, True)])
++def test_cmdline_main_disables_xdist_for_pdb_and_trace_flags(usepdb: bool, trace: bool) -> None:
++    """Passing --pdb or --trace drops automatic xdist to in-process."""
++    cfg = _FakeConfig(numprocesses='auto', dist='worksteal', capture='fd', usepdb=usepdb, trace=trace)
++    with mock.patch.object(root_conftest, '_debugger_attached', return_value=False):
++        root_conftest.pytest_cmdline_main(cast(pytest.Config, cfg))
++    assert cfg.option.numprocesses == 0
++    assert cfg.option.dist == 'no'
 +
-+    async def reserve() -> None:
-+        try:
-+            await asyncio.sleep(10)
-+        except asyncio.CancelledError as exc:
-+            stamp_cancelled_error(exc=exc, messages=history)
-+            raise
 +
-+    with pytest.raises((TimeoutError, asyncio.TimeoutError)) as wait_for_exc:
-+        await asyncio.wait_for(reserve(), timeout=0.01)
++def test_cmdline_main_disables_xdist_when_debugger_attached() -> None:
++    """An attached IDE/bdb debugger drops automatic xdist to in-process."""
++    cfg = _FakeConfig(numprocesses='auto', dist='worksteal', capture='fd')
++    with mock.patch.object(root_conftest, '_debugger_attached', return_value=True):
++        root_conftest.pytest_cmdline_main(cast(pytest.Config, cfg))
++    assert cfg.option.numprocesses == 0
++    assert cfg.option.dist == 'no'
 +
-+    found = cancelled_history(wait_for_exc.value)
-+    assert found is not None
-+    assert [m.text for m in found] == ['book dinner for 2']
 +
-+    if sys.version_info >= (3, 11):
-+        with pytest.raises(TimeoutError) as timeout_exc:
-+            async with asyncio.timeout(0.01):
-+                await reserve()
++def test_cmdline_main_detects_active_breakpoints_via_ast(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    """AST scan catches breakpoint() and set_trace(), ignores strings/comments, and honors PYTHONBREAKPOINT=0."""
++    monkeypatch.delenv('PYTHONBREAKPOINT', raising=False)
 +
-+        found_timeout = cancelled_history(timeout_exc.value)
-+        assert found_timeout is not None
-+        assert [m.text for m in found_timeout] == ['book dinner for 2']
-+
-+    assert cancelled_history(TimeoutError('unrelated socket timeout')) is None
++    inert = tmp_path / 'inert_test.py'
++    inert.write_text(
++        '# breakpoint() in a comment\n'
++        'DOC = """pdb.set_trace() and breakpoint() in a string"""\n'
++        'def test_inert() -> None:\n'
++        '    assert DOC\n',
++        encoding='utf-8',
++    )
++    cfg_inert = _FakeConfig(args=[str(inert)])
++    with mock.patch.object(root_conftest, '_debugger_attached', return_value=False):
++        root_conftest.pytest_cmdline_main(cast(pytest.Config, cfg_inert))
++ 
+```
+
+**File**: `py/uv.lock` (modified, +2/-0)
+```diff
+@@ -2005,6 +2005,7 @@ dev = [
+     { name = "pytest-asyncio" },
+     { name = "pytest-cov" },
+     { name = "pytest-mock" },
++    { name = "pytest-xdist" },
+     { name = "twine" },
+ ]
+ lint = [
+@@ -2074,6 +2075,7 @@ dev = [
+     { name = "pytest-asyncio", specifier = ">=0.25.3" },
+     { name = "pytest-cov", specifier = ">=6.0.0" },
+     { name = "pytest-mock", specifier = ">=3.14.0" },
++    { name = "pytest-xdist", specifier = ">=3.6.1" },
+     { name = "twine", specifier = ">=7.0.0" },
+ ]
+ lint = [
 ```
 
 ---
 
-### Incident Patch 2: `6aab26ea` (2026-11-05)
-**Commit Message**: fix(py): cancel streamed actions on HTTP SSE client disconnect (#7056)
+### Incident Patch 2: `f82a1035` (2026-11-05)
+**Commit Message**: fix(py): keep the reflection server off the app's uvicorn loggers (#7031)
 
-**File**: `py/packages/genkit-django/README.md` (modified, +1/-1)
+**File**: `py/packages/genkit/src/genkit/_ai/_aio.py` (modified, +33/-22)
 ```diff
-@@ -45,7 +45,7 @@ urlpatterns = [
- ]
- ```
- 
--The view requires Django's ASGI server (Django 4.1+):
-+The view requires Django's ASGI server (Django 5.0+):
- 
- ```bash
- uvicorn myproject.asgi:application
-```
-
-**File**: `py/packages/genkit-django/pyproject.toml` (modified, +1/-3)
-```diff
-@@ -20,10 +20,8 @@ classifiers = [
-   "Development Status :: 4 - Beta",
-   "Environment :: Console",
-   "Environment :: Web Environment",
--  "Framework :: Django",
-   "Framework :: AsyncIO",
-   "Framework :: Django",
--  "Framework :: Django :: 4.2",
-   "Framework :: Django :: 5.0",
-   "Framework :: Django :: 5.1",
-   "Framework :: Pydantic",
-@@ -46,7 +44,7 @@ classifiers = [
- dependencies = [
-   "genkit>=0.12.0,<2",
-   "pydantic>=2.11",
--  "django>=4.2",
-+  "django>=5.0",
- ]
- description = "A Genkit flow as a Django view"
- keywords = [
-```
-
-**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +7/-3)
-```diff
-@@ -17,6 +17,7 @@
- """Genkit Django handler for serving flows as HTTP endpoints."""
+@@ -20,7 +20,6 @@
  
  import asyncio
-+import contextlib
- import json
- import logging
- from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
-@@ -118,7 +119,7 @@ async def say_hi(name: str, ctx: FlowContext) -> str:
-     ]
-     ```
- 
--    Requires Django ASGI (Django 4.1+). The returned view is `csrf_exempt`
-+    Requires Django ASGI (Django 5.0+). The returned view is `csrf_exempt`
-     because this is a JSON API.
- 
-     Args:
-@@ -182,8 +183,11 @@ async def event_stream() -> AsyncIterator[str]:
-                         _log_failure(error=e, flow=flow.name, where='stream')
-                         yield error_sse(e)
-                         return
--                    async for line in to_sse(stream_response):
--                        yield line
-+                    # a client that hangs up closes this generator; aclosing makes
-+                    # that cancel the flow right away instead of whenever it's collected.
-+                    async with contextlib.aclosing(to_sse(stream_response)) as lines:
-+                        async for line in lines:
-+                            yield line
- 
-                 return StreamingHttpResponse(event_stream(), content_type='text/event-stream; charset=utf-8')
- 
-```
-
-**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +61/-0)
-```diff
-@@ -17,6 +17,7 @@
- 
- """Tests for the Django plugin."""
- 
-+import asyncio
- import json
- import logging
+ import inspect
+-import logging
+ import signal
+ import socket
  import sys
-@@ -26,6 +27,7 @@
+@@ -100,7 +99,14 @@
+ from genkit._core._environment import is_dev_environment
+ from genkit._core._error import ErrorReason, GenkitError
+ from genkit._core._flow import Flow
+-from genkit._core._logger import configure_logging, get_logger, resolve_level
++from genkit._core._logger import (
++    REFLECTION_THREAD_NAME,
++    configure_logging,
++    get_logger,
++    has_app_uvicorn_logging,
++    quiet_log_export_logs,
++    quiet_reflection_logs,
++)
+ from genkit._core._middleware import Middleware
+ from genkit._core._model import (
+     Document,
+@@ -1206,6 +1212,7 @@ def _start_reflection_background(self) -> None:
+                 than a background thread nobody is watching.
+         """
+         config = self._reflection_config
++        quiet_log_export_logs()
  
- import pytest
- from django.core.exceptions import PermissionDenied
-+from django.core.handlers.asgi import ASGIHandler
- from django.http import HttpRequest
- from django.test import AsyncClient
- from django.test.utils import override_settings
-@@ -506,6 +508,65 @@ async def test_context_provider_reads_raw_django_request(urlconf: None) -> None:
-     assert json.loads(response.content) == {'result': 'table T7'}
+         sock: socket.socket | None = None
+         if config.mode == 'v1':
+@@ -1219,6 +1226,7 @@ def _start_reflection_background(self) -> None:
+             # URL-safe host (wildcard binds as loopback, IPv6 bracketed).
+             host, port = sock.getsockname()[:2]
+             self._reflection_server_spec = ServerSpec(scheme='http', host=advertised_reflection_host(host), port=port)
++            quiet_reflection_logs()
  
+         async def _run_server() -> None:
+             if config.mode == 'v2':
+@@ -1243,26 +1251,29 @@ async def _run_server() -> None:
+                 )
  
-+@pytest.mark.asyncio
-+async def test_django_streaming_client_disconnect_cancels_flow(monkeypatch: pytest.MonkeyPatch) -> None:
-+    """A client that hangs up after the first SSE chunk of a streamed flow view cancels the flow."""
-+    ai = Genkit()
-+    flow_cancelled = asyncio.Event()
-+
-+    @genkit_django_handler(ai)
-+    @ai.flow()
-+    async def slow(_: str, ctx: FlowContext) -> str:
-+        ctx.send_chunk(1)
-+        try:
-+            await asyncio.Event().wait()
-+        except asyncio.CancelledError:
-+            flow_cancelled.set()
-+            raise
-+        return 'never'
-+
-+    module = types.ModuleType('genkit_django_disconnect_urls')
-+    module.urlpatterns = [path('slow', slow)]  # type: ignore[attr-defined]  # pyrefly: ignore[missing-attribute]
-+    monkeypatch.setitem(sys.modules, 'genkit_django_disconnect_urls', module)
-+
-+    first_chunk = asyncio.Event()
-+    request_read = False
-+    bodies: list[bytes] = []
-+
-+    async def receive() -> dict[str, Any]:
-+        nonlocal request_read
-+        if not request_read:
-+            request_read = True
-+            return {'type': 'http.request', 'body': json.dumps({'data': 'x'}).encode(), 'more_body': False}
-+        await first_chunk.wait()
-+        return {'type': 'http.disconnect'}
-+
-+    async def send(message: dict[str, Any]) -> None:
-+        if message['type'] == 'http.response.body' and message.get('body'):
-+            bodies.append(message['body'])
-+            first_chunk.set()
-+
-+    scope = {
-+        'type': 'http',
-+        'asgi': {'version': '3.0'},
-+        'http_version': '1.1',
-+        'method': 'POST',
-+        'scheme': 'http',
-+        'path': '/slow',
-+        'raw_path': b'/slow',
-+        'root_path': '',
-+        'query_string': b'',
-+        'headers': [(b'content-type', b'application/json'), (b'accept', b'text/event-stream')],
-+        'client': ('testclient', 50000),
-+        'server': ('testserver', 80),
-+    }
-+    with override_settings(ROOT_URLCONF='genkit_django_disconnect_urls'):
-+        await asyncio.wait_for(ASGIHandler()(scope, receive, send), timeout=5)
-+
-+    assert bodies == [b'data: {"message":1}\n\n']
-+    assert flow_cancelled.is_set()
-+
-+
- @pytest.mark.asyncio
- async def test_django_failure_logs_name_the_flow(
-     urlconf: None,  # noqa: ARG001
+             app = create_reflection_asgi_app(registry=self._registry, secret=config.secret)
+-            level = resolve_level()
+-            is_debug = level <= logging.DEBUG
+-            if level <= logging.DEBUG:
+-                log_level = 'debug'
+-            elif level <= logging.WARNING:
+-                log_level = 'warning'
+-            elif level <= logging.ERROR:
+-                log_level = 'error'
++            # If the application configured uvicorn loggers, leave log_config
++            # and log_level at None so uvicorn's Config doesn't re-apply
++            # dictConfig or overwrite levels; ReflectionLogFilter filters
++            # reflection records by thread. Otherwise, configure uvicorn with
++            # debug level so records reach ReflectionLogFilter (which quiets
++            # them under info and prints them under debug).
++            if has_app_uvicorn_logging():
++                uvicorn_config = uvicorn.Config(
++                    app,
++                    host=spec.host,
++                    port=spec.port,
++                    loop='asyncio',
++                    log_config=None,
++                    log_level=None,
++                )
+             else:
+-                log_level = 'critical'
+-
+-            # Pass log_level explicitly so uvicorn's internal server engine doesn't default to INFO on startup.
+-            uvicorn_config = uvicorn.Config(
+-                app,
+-                host=spec.host,
+-                port=spec.port,
+-                loop='asyncio',
+-                access_log=is_debug,
+-                log_level=log_level,
+-            )
++                uvicorn_config = uvicorn.Config(
++                    app,
++                    host=spec.host,
++                    port=spec.port,
++                    loop='asyncio',
++                    log_level='debug',
++                )
+             server = ReflectionServer(uvicorn_config, ready=self._reflection_ready)
+             # Dev only: the runtime file exists so a local CLI watching the
+             # same filesystem can discover this runtime. Nothing is watching in
+@@ -1298,7 +1309,7 @@ def _thread_main() -> None:
+         threading.Thread(
+             target=_thread_main,
+             daemon=True,
+-            name='genkit-reflection-server',
++            name=REFLECTION_THREAD_NAME,
+         ).start()
+ 
+     def _initialize_registry(self, model: ModelArg | None, plugins: list[Plugin] | None) -> None:
 ```
 
-**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +6/-2)
+**File**: `py/packages/genkit/src/genkit/_core/_logger.py` (modified, +86/-10)
 ```diff
-@@ -19,6 +19,7 @@
- from __future__ import annotations
+@@ -7,14 +7,16 @@
  
- import asyncio
-+import contextlib
- import json
  import logging
- from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
-@@ -173,8 +174,11 @@ async def event_stream() -> AsyncIterator[str]:
-                 _log_failure(error=e, flow=action_obj.name, where='stream')
-                 yield error_sse(e)
-                 return
--            async for line in to_sse(stream_handle):
--                yield line
-+            # a client that hangs up closes this generator; aclosing makes
-+            # that cancel the flow right away instead of whenever it's collected.
-+            async with contextlib.aclosing(to_sse(stream_handle)) as lines:
-+                async for line in lines:
-+                    yield line
- 
-         return StreamingResponse(event_stream(), media_type='text/event-stream')
- 
-```
-
-**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +68/-0)
-```diff
-@@ -22,6 +22,7 @@
- import functools
- import json
- import logging
-+from collections.abc import MutableMapping
- from typing import Any, cast
- 
- import pytest
-@@ -1249,3 +1250,70 @@ async def custom_ack(request: Request) -> Response:
-     assert err.status_code == 404
-     assert err.headers['x-trace-id'] == 'trace-42'
-     assert err.content == b'{"message":"order missing","status":"NOT_FOUND"}'
-+
-+
-+async def post_sse_then_hang_up(app: FastAPI, path: str) -> list[bytes]:
-+    """POST `{"data": "x"}` asking for SSE, then disconnect right after the first body chunk arrives."""
-+    first_chunk = asyncio.Event()
-+    request_read = False
-+    bodies: list[bytes] = []
-+
-+    async def receive() -> dict[str, Any]:
-+        nonlocal request_read
-+        if not request_read:
-+            request_read = True
-+            return {'type': 'http.request', 'body': json.dumps({'data': 'x'}).encode(), 'more_body': False}
-+        await first_chunk.wait()
-+        return {'type': 'http.disconnect'}
-+
-+    async def send(message: MutableMapping[str, Any]) -> None:
-+        if message['type'] == 'http.response.body' and message.get('body'):
-+            bodies.append(message['body'])
-+            first_chunk.set()
-+
-+    scope = {
-+        'type': 'http',
-+        'asgi': {'version': '3.0', 'spec_version': '2.3'},
-+        'http_version': '1.1',
-+        'method': 'POST',
-+        'scheme': 'http',
-+        'path': path,
-+        'raw_path': path.encode(),
-+        'root_path': '',
-+        'query_string': b'',
-+        'headers': [(b'content-type', b'application/json'), (b'accept', b'text/event-stream')],
-+        'client': ('testclient', 50000),
-+        'server': ('testserver', 80),
-+    }
-+    await asyncio.wait_for(app(scope, receive, send), timeout=5)
-+    return bodies
-+
-+
-+@pytest.mark.asyncio
-+async def test_fastapi_streaming_client_disconnect_cancels_flow() -> None:
-+    """A client that hangs up after the first SSE chunk cancels the flow and lets awaiting `finally:` finish."""
-+    ai = Genkit()
-+    flow_cancelled = asyncio.Event()
-+    cleanup_finished = asyncio.Event()
-+
-+    @ai.flow()
-+    async def slow(_: str, ctx: FlowContext) -> str:
-+        ctx.send_chunk(1)
-+        try:
-+            await asyncio.Event().wait()
-+        except asyncio.CancelledError:
-+            flow_cancelled.set()
-+            raise
-+        finally:
-+            await asyncio.sleep(0.02)
-+            cleanup_finished.set()
-+        return 'never'
-+
-+    app = FastAPI()
-+    app.include_router(serve_flow(slow, base_path='/slow'))
-+
-+    bodies = await post_sse_then_hang_up(app, '/slow')
-+
-+    assert bodies == [b'data: {"message":1}\n\n']
-+    assert flow_cancelled.is_set()
-+    await asyncio.wait_for(cleanup_finished.wait(), timeout=1.0)
-```
-
-**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +22/-10)
-```diff
-@@ -17,10 +17,11 @@
- """Genkit Flask plugin."""
- 
- import asyncio
-+import contextlib
- import json
- import logging
- from asyncio import AbstractEventLoop
--from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
-+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Generator
- from typing import Any, TypeVar, cast
- 
- from flask import Response, request
-@@ -86,7 +87,7 @@ def _create_loop() -> AbstractEventLoop:
-         return asyncio.new_event_loop()
- 
- 
--def _iter_over_async(ait: AsyncIterable[T], loop: AbstractEventLoop) -> Iterable[T]:
-+def _iter_over_async(ait: AsyncIterable[T], loop: AbstractEventLoop) -> Generator[T, None, None]:
-     """Synchronously iterates over an AsyncIterable using a specified event loop."""
-     ait_iter = ait.__aiter__()
- 
-@@ -97,12 +98,20 @@ async def get_next() -> tuple[bool, T | None]:
-         except StopAsyncIteration:
-             return True, None
- 
--    while True:
--        done, obj = loop.run_until_complete(get_next())
--        if done:
--            break
--        assert obj is not None
--        yield obj
-+    try:
-+        while True:
-+            done, obj = loop.run_until_complete(get_next())
-+            if done:
-+                break
-+            assert obj is not None
-+            yield obj
-+    finally:
-+        # Werkzeug closes this iterator when the client hangs up. The async side
-+        # only runs while we drive the loop, so close it here or the flow never
-+        # hears about it.
-+        aclose = getattr(ait_iter, 'aclose', None)
-+        if aclose is not None and not loop.is_closed() and not loop.is_running():
-+            loop.run_until_complete(aclose())
- 
- 
- class _FlaskRequestData(RequestData):
-@@ -190,8 +199,11 @@ async def async_gen() -> AsyncIterator[str]:
-                         _log_failure(error=e, flow=flow.name, where='stream')
-                         yield error_sse(e)
-                         return
--                    async for line in to_sse(stream_response):
--                        yield line
-+                    # closing this generator has to cancel the flow before the
-+                    # loop stops; nothing runs the loop afterwards to collect it.
-+                    async with contextlib.aclosing(to_sse(stream_response)) as lines:
-+                        async for line in lines:
-+                            yield line
- 
-                 return Response(_iter_over_async(async_gen(), loop), mimetype='text/event-stream')
-             try:
-```
-
-**File**: `py/packages/genkit-flask/tests/flask_test.py` (modified, +80/-0)
-```diff
-@@ -17,13 +17,18 @@
- 
- """Tests for the Flask plugin."""
- 
-+import asyncio
- import json
- import logging
+ import os
 +import threading
-+import warnings
-+from collections.abc import AsyncIterator
+ from collections.abc import Awaitable, Callable
+ from typing import Protocol, cast
++from weakref import WeakKeyDictionary
+ 
+ import structlog
+ from structlog.typing import BindableLogger
+ 
+ from genkit._core._environment import is_dev_environment
+-from genkit._core._telemetry._log_exporter import enable_log_export
++from genkit._core._telemetry._log_exporter import LOG_EXPORT_THREAD_NAME, enable_log_export
+ 
+ # Environment variable name
+ GENKIT_LOG = 'GENKIT_LOG'
+@@ -31,24 +33,42 @@
+     'fatal': logging.CRITICAL,
+ }
+ 
+-# Shared genkit start TTY. Uvicorn is our reflection health polls. httpx logs
+-# INFO on every hop (Gemini generateContent, the app's own clients). Collector
+-# POSTs use urllib, so they never hit this logger. GENKIT_LOG=debug turns these
+-# back on.
+-QUIET_LOGGERS = (
++# The reflection server runs uvicorn on this thread. uvicorn hard-codes its
++# logger names, so the reflection server's startup and health-poll access lines
++# share `uvicorn.error` / `uvicorn.access` with the app's own uvicorn server.
++REFLECTION_THREAD_NAME = 'genkit-reflection-server'
++
++# Loggers the reflection server writes to. Genkit only adds a filter that drops
++# records from REFLECTION_THREAD_NAME; levels, handlers and propagation stay as
++# the app configured them.
++REFLECTION_LOGGERS = (
+     'uvicorn.access',
+     'uvicorn.error',
++)
++
++# Shared genkit start TTY. httpx and httpcore log INFO on every hop (model
++# calls, the app's own clients, and Dev UI log export batches on
++# LOG_EXPORT_THREAD_NAME). GENKIT_LOG=debug turns these back on.
++QUIET_LOGGERS = (
+     'httpx',
+     'httpcore',
+ )
+ 
++_genkit_quieted_levels: WeakKeyDictionary[logging.Logger, int] = WeakKeyDictionary()
++
+ 
+ def resolve_level() -> int:
+     """Resolve logging level from GENKIT_LOG environment variable."""
+     raw = os.environ.get(GENKIT_LOG, 'info').strip().lower()
+     return _LOG_LEVELS.get(raw, DEFAULT_LOG_LEVEL)
+ 
+ 
++def _quiet_level() -> int:
++    """Return the quiet threshold: WARNING (or stricter GENKIT_LOG), unless debug."""
++    level = resolve_level()
++    return level if level == logging.DEBUG else max(level, logging.WARNING)
++
++
+ def unrecognized_level() -> str | None:
+     """Return the raw ``GENKIT_LOG`` value when it names no known level.
+ 
+@@ -95,7 +115,7 @@ def configure_structlog_level() -> bool:
+ 
+ 
+ def configure_logging(*, shared_tty: bool | None = None) -> None:
+-    """Configure genkit console logging and mute reflection access logs on a shared TTY.
++    """Configure genkit console logging and mute client HTTP hops on a shared TTY.
+ 
+     Safe to call more than once. Default console level is ``info``; override
+     with ``GENKIT_LOG=debug|info|warn|error``. In ``GENKIT_ENV=dev``, debug
+@@ -110,13 +130,69 @@ def configure_logging(*, shared_tty: bool | None = None) -> None:
+     if not shared_tty:
+         return
+ 
+-    level = resolve_level()
+-    quiet_level = level if level == logging.DEBUG else max(level, logging.WARNING)
++    quiet_level = _quiet_level()
+ 
+     for name in QUIET_LOGGERS:
+         logger = logging.getLogger(name)
+-        if logger.level == logging.NOTSET:
++        if logger.level == logging.NOTSET or _genkit_quieted_levels.get(logger) == logger.level:
+             logger.setLevel(quiet_level)
++            _genkit_quieted_levels[logger] = quiet_level
++        _attach_thread_filter(logger, LOG_EXPORT_THREAD_NAME)
++
++
++class ReflectionLogFilter(logging.Filter):
++    """Drop internal Genkit worker records below the quiet level by thread name.
++
++    Records from any other thread pass untouched, so the app's uvicorn startup,
++    access lines, and HTTP client logs keep the level and handlers the app
++    configured. Checks ``threading.current_thread().name`` rather than
++    ``record.threadName`` so ``logging.logThreads = False`` cannot bypass it.
++    The quiet level is WARNING, or ``GENKIT_LOG`` when it is stricter.
++    ``GENKIT_LOG=debug`` lets every record through.
++    """
++
++    def __init__(self, thread_names: frozenset[str] = frozenset({REFLECTION_THREAD_NAME})) -> None:
++        super().__init__()
++        self.thread_names = thread_names
++
++    def filter(self, record: logging.LogRecord) -> bool:
++        """Return ``False`` for quiet records emitted on ``self.thread_names``."""
++        if threading.current_thread().name not in self.thread_names:
++            return True
++        return record.levelno >= _quiet_level()
++
++
++def _attach_thread_filter(logger: logging.Logger, thread_name: str) -> None:
++    """Attach a :class:`ReflectionLogFilter` for ``thread_name`` if absent."""
++    for existing in logger.filters:
++        if isinstance(existing, ReflectionLogFilter) and thread_name in existing.thread_names:
++            return
++    logger.addFilter(ReflectionLogFilter(frozenset({thread_name})))
++
++
++def has_app_uvicorn_logging() -> bool:
++    """Report whether the host application configured uvicorn loggers."""
++    for nam
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_telemetry/_log_exporter.py` (modified, +2/-1)
+```diff
+@@ -31,6 +31,7 @@
+ LOG_ENDPOINT = '/api/otlp'
+ LOG_HEADERS = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+ SCOPE_NAME = 'genkit-py'
++LOG_EXPORT_THREAD_NAME = 'genkit-log-export'
+ 
+ QUEUE_SIZE = 1024
+ BATCH_SIZE = 64
+@@ -294,7 +295,7 @@ def __init__(self, *, telemetry_server_url: str) -> None:
+         self.warned_unreachable = False
+         self.last_result_ok = True
+         self.queue: Queue[dict[str, object] | None] = Queue(maxsize=QUEUE_SIZE)
+-        self.worker = threading.Thread(target=self.run_worker, name='genkit-log-export', daemon=True)
++        self.worker = threading.Thread(target=self.run_worker, name=LOG_EXPORT_THREAD_NAME, daemon=True)
+         self.worker.start()
+ 
+     def set_url(self, *, url: str) -> None:
+```
+
+**File**: `py/packages/genkit/tests/genkit/core/logger_test.py` (modified, +183/-23)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ import logging
+ import os
++import threading
+ from collections.abc import Iterator
  from typing import Any
+ from unittest import mock
+@@ -16,11 +17,18 @@
  
- import pytest
- from flask import Flask, abort
- from genkit_flask import genkit_flask_handler
-+from genkit_flask._handler import _iter_over_async
- from pydantic import BaseModel
+ from genkit._core._logger import (
+     GENKIT_LOG,
++    LOG_EXPORT_THREAD_NAME,
+     QUIET_LOGGERS,
++    REFLECTION_LOGGERS,
++    REFLECTION_THREAD_NAME,
++    ReflectionLogFilter,
++    _genkit_quieted_levels,
+     configure_logging,
+     configure_structlog_level,
+     get_logger,
++    has_app_uvicorn_logging,
+     is_debug_enabled,
++    quiet_reflection_logs,
+     resolve_level,
+     unrecognized_level,
+ )
+@@ -53,20 +61,81 @@ def test_resolve_level() -> None:
+         assert resolve_level() == logging.INFO
  
- from genkit import FlowContext, Genkit, GenkitError, PublicError
-@@ -458,6 +463,81 @@ async def chat(_: str) -> str:
-     assert response.status_code == 401
  
- 
-+def test_flask_streaming_client_disconnect_cancels_flow() -> None:
-+    """A client that hangs up after the first SSE chunk cancels the flow and lets awaiting `finally:` finish."""
-+    ai = Genkit()
-+    flow_cancelled = threading.Event()
-+    cleanup_finished = threading.Event()
-+    app = Flask(__name__)
-+    app.config.update({'TESTING': True})
-+
-+    @app.post('/slow')
-+    @genkit_flask_handler(ai)
-+    @ai.flow()
-+    async def slow(_: str, ctx: FlowContext) -> str:
-+        ctx.send_chunk(1)
-+        try:
-+            await asyncio.Event().wait()
-+        except asyncio.CancelledError:
-+            flow_cancelled.set()
-+            raise
-+        finally:
-+            await asyncio.sleep(0.02)
-+            cleanup_finished.set()
-+        return 'never'
-+
-+    response = app.test_client().post(
-+        '/slow', json={'data': 'x'}, headers={'accept': 'text/event-stream'}, buffered=False
-+    )
-+    first = next(iter(response.response))
-+    # Werkzeug closes the response iterator when the client goes away.
-+    response.close()
-+
-+    assert first == b'data: {"message":1}\n\n'
-+    assert flow_cancelled.is_set()
-+    assert cleanup_finished.is_set()
+-def test_quiet_loggers_are_shared_tty_access_noise() -> None:
+-    """Dev UI mutes reflection polls and httpx INFO hops, not provider SDKs."""
++def _record(level: int) -> logging.LogRecord:
++    return logging.LogRecord('uvicorn.access', level, __file__, 1, 'GET /api/__health', None, None)
 +
 +
-+def test_flask_iter_over_async_skips_aclose_when_loop_closed() -> None:
-+    """Closing `_iter_over_async` after `loop.close()` does not raise `RuntimeError` or leak an unawaited coroutine."""
-+    loop = asyncio.new_event_loop()
-+
-+    async def source() -> AsyncIterator[str]:
-+        yield 'first'
-+        yield 'second'
-+
-+    sync_iter = _iter_over_async(source(), loop)
-+    assert next(sync_iter) == 'first'
-+    loop.close()
-+
-+    with warnings.catch_warnings():
-+        warnings.simplefilter('error', RuntimeWarning)
-+        sync_iter.close()
++def _filter_on_thread(log_filter: logging.Filter, record: logging.LogRecord, thread_name: str) -> bool:
++    result: list[bool] = []
++    thread = threading.Thread(target=lambda: result.append(log_filter.filter(record)), name=thread_name)
++    thread.start()
++    thread.join(timeout=5)
++    assert not thread.is_alive()
++    return result[0]
 +
 +
-+def test_flask_iter_over_async_skips_aclose_when_loop_running() -> None:
-+    """Closing `_iter_over_async` while `loop` is busy does not raise `RuntimeError` or leak a coroutine."""
-+    loop = asyncio.new_event_loop()
++@pytest.mark.parametrize(
++    ('genkit_log', 'level', 'passes'),
++    [
++        ('info', logging.INFO, False),
++        ('info', logging.WARNING, True),
++        ('debug', logging.INFO, True),
++        ('error', logging.WARNING, False),
++        ('error', logging.ERROR, True),
++    ],
++)
++def test_reflection_filter_quiets_only_the_reflection_thread(genkit_log: str, level: int, passes: bool) -> None:
++    """Reflection records follow max(WARNING, GENKIT_LOG); debug lets them all through."""
++    log_filter = ReflectionLogFilter()
++    with mock.patch.dict(os.environ, {GENKIT_LOG: genkit_log}):
++        assert _filter_on_thread(log_filter, _record(level), REFLECTION_THREAD_NAME) is passes
++        assert log_filter.filter(_record(level)) is True
 +
-+    async def source() -> AsyncIterator[str]:
-+        yield 'first'
-+        yield 'second'
 +
-+    sync_iter = _iter_over_async(source(), loop)
-+    assert next(sync_iter) == 'first'
++def test_reflection_filter_works_when_log_threads_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
++    """Disabling logging.logThreads leaves record.threadName None without bypassing the filter."""
++    monkeypatch.setattr(logging, 'logThreads', False)
++    log_filter = ReflectionLogFilter()
++    record = _record(logging.INFO)
++    assert record.threadName is None
 +
-+    async def close_while_busy() -> None:
-+        assert loop.is_running()
-+        with warnings.catch_warnings():
-+            warnings.simplefilter('error', RuntimeWarning)
-+            sync_iter.close()
++    with mock.patch.dict(os.environ, {GENKIT_LOG: 'info'}):
++        assert _filter_on_thread(log_filter, record, REFLECTION_THREAD_NAME) is False
++        assert log_filter.filter(record) is True
 +
++
++def test_quiet_reflection_logs_adds_one_filter_and_keeps_levels() -> None:
++    """Repeat calls attach the filter once and never touch levels or handlers."""
++    loggers = [logging.getLogger(name) for name in REFLECTION_LOGGERS]
++    saved = [(lg, lg.level, list(lg.handlers), list(lg.filters)) for lg in loggers]
 +    try:
-+        loop.run_until_complete(close_while_busy())
++        for lg in loggers:
++            lg.setLevel(logging.INFO)
++        quiet_reflection_logs()
++        quiet_reflection_logs()
++        for lg, _, handlers, _ in saved:
++            assert sum(isinstance(f, ReflectionLogFilter) for f in lg.filters) == 1
++            assert lg.level == logging.INFO
++            assert lg.handlers == handlers
 +    finally:
-+        loop.close()
++        for lg, level, handlers, filters in saved:
++            lg.setLevel(level)
++            lg.handlers = handlers
++            lg.filters = filters
 +
 +
- def test_flask_failure_logs_name_the_flow(caplog: pytest.LogCaptureFixture) -> None:
-     """Failure lines say which flow failed: 5xx with traceback, 4xx without."""
-     ai = Genkit()
++def test_quiet_loggers_are_httpx_and_httpcore() -> None:
++    """Dev UI mutes client HTTP hops on a shared TTY, not provider SDKs."""
+     assert QUIET_LOGGERS == (
+-        'uvicorn.access',
+-        'uvicorn.error',
+         'httpx',
+         'httpcore',
+     )
+-    assert 'google_genai.models' not in QUIET_LOGGERS
+-    assert 'opentelemetry.exporter' not in QUIET_LOGGERS
++    assert 'uvicorn.access' not in QUIET_LOGGERS
++    assert 'uvicorn.error' not in QUIET_LOGGERS
+ 
+ 
+ def test_configure_logging_mutes_quiet_loggers() -> None:
+-    """Test that configure_logging sets QUIET_LOGGERS to WARNING in dev environment."""
++    """Test that configure_logging sets QUIET_LOGGERS to WARNING on a shared TTY."""
+     with (
+         mock.patch.dict(os.environ, {'GENKIT_LOG': 'info'}),
+         mock.patch('logging.getLogger') as mock_get_logger,
+@@ -93,20 +162,6 @@ def test_configure_logging_allows_debug() -> None:
+         mock_get_logger.return_value.setLevel.assert_has_calls(expected_calls, any_order=True)
+ 
+ 
+-def test_configure_logging_respects_higher_levels() -> None:
+-    """Test that GENKIT_LOG=error sets QUIET_LOGGERS to ERROR."""
+-    with (
+-        mock.patch.dict(os.environ, {'GENKIT_LOG': 'error'}),
+-        mock.patch('logging.getLogger') as mock_get_logger,
+-    ):
+-        mock_get_logger.return_value.level = logging.NOTSET
+-        configure_logging(shared_tty=True)
+-        for name in QUIET_LOGGERS:
+-            mock_get_logger.assert_any_call(
+```
+
+**File**: `py/packages/genkit/tests/genkit/veneer/reflection_server_test.py` (modified, +103/-0)
+```diff
+@@ -14,10 +14,12 @@
+ 
+ import asyncio
+ import json
++import logging
+ import os
+ import socket
+ import threading
+ import time
++from collections.abc import Iterator
+ from typing import Any
+ from unittest import mock
+ 
+@@ -276,6 +278,82 @@ def test_ready_message_in_dev_mentions_the_dev_ui() -> None:
+     assert message.startswith('Dev UI ready.')
+ 
+ 
++class _Records(logging.Handler):
++    """Collects records in memory."""
++
++    def __init__(self) -> None:
++        super().__init__()
++        self.records: list[logging.LogRecord] = []
++
++    def emit(self, record: logging.LogRecord) -> None:
++        self.records.append(record)
++
++
++@pytest.fixture
++def app_uvicorn_logging() -> Iterator[_Records]:
++    """Configure uvicorn.error / uvicorn.access the way an app server does, then restore them."""
++    loggers = [logging.getLogger('uvicorn.error'), logging.getLogger('uvicorn.access')]
++    saved = [(lg, lg.level, list(lg.handlers), list(lg.filters), lg.propagate) for lg in loggers]
++    handler = _Records()
++    for lg in loggers:
++        lg.setLevel(logging.INFO)
++        lg.handlers = [handler]
++        lg.propagate = False
++    yield handler
++    for lg, level, handlers, filters, propagate in saved:
++        lg.setLevel(level)
++        lg.handlers = handlers
++        lg.filters = filters
++        lg.propagate = propagate
++
++
++def test_reflection_server_leaves_app_uvicorn_logging_alone(app_uvicorn_logging: _Records) -> None:
++    """Starting the reflection server must not reset the app's uvicorn levels or handlers."""
++    port = _find_free_port()
++    with mock.patch.dict(os.environ, {GENKIT_ENV: GenkitEnvironment.DEV, 'GENKIT_LOG': 'info'}):
++        ai = _genkit_on_port(port)
++        resp = _wait_and_get(ai, '/api/__health')
++    assert resp.status_code == 200
++
++    for name in ('uvicorn.error', 'uvicorn.access'):
++        lg = logging.getLogger(name)
++        assert lg.level == logging.INFO, name
++        assert app_uvicorn_logging in lg.handlers, name
++        assert lg.propagate is False, name
++
++
++def test_reflection_server_records_are_dropped_but_app_records_pass(app_uvicorn_logging: _Records) -> None:
++    """Health polls on the reflection thread stay quiet; the app's own access lines still print."""
++    port = _find_free_port()
++    with mock.patch.dict(os.environ, {GENKIT_ENV: GenkitEnvironment.DEV, 'GENKIT_LOG': 'info'}):
++        ai = _genkit_on_port(port)
++        resp = _wait_and_get(ai, '/api/__health')
++        assert resp.status_code == 200
++        logging.getLogger('uvicorn.access').info('127.0.0.1 - "POST /order HTTP/1.1" 200')
++
++    messages = [r.getMessage() for r in app_uvicorn_logging.records]
++    assert '127.0.0.1 - "POST /order HTTP/1.1" 200' in messages
++    assert not [m for m in messages if '/api/__health' in m]
++
++
++def test_reflection_server_records_are_dropped_when_log_threads_disabled(
++    app_uvicorn_logging: _Records,
++    monkeypatch: pytest.MonkeyPatch,
++) -> None:
++    """Health polls stay quiet even when the app disables logging.logThreads."""
++    monkeypatch.setattr(logging, 'logThreads', False)
++    port = _find_free_port()
++    with mock.patch.dict(os.environ, {GENKIT_ENV: GenkitEnvironment.DEV, 'GENKIT_LOG': 'info'}):
++        ai = _genkit_on_port(port)
++        resp = _wait_and_get(ai, '/api/__health')
++        assert resp.status_code == 200
++        logging.getLogger('uvicorn.access').info('127.0.0.1 - "POST /order HTTP/1.1" 200')
++
++    messages = [r.getMessage() for r in app_uvicorn_logging.records]
++    assert '127.0.0.1 - "POST /order HTTP/1.1" 200' in messages
++    assert not [m for m in messages if '/api/__health' in m]
++
++
+ def test_no_server_in_prod_mode() -> None:
+     """Genkit() with no GENKIT_ENV must NOT start a background server."""
+     with mock.patch.dict(os.environ, {}, clear=True):
+@@ -293,3 +371,28 @@ def test_no_server_from_host_or_port_alone() -> None:
+ 
+     assert not ai._reflection_config.enabled  # pyright: ignore[reportPrivateUsage]
+     assert not ai._reflection_ready.is_set()  # pyright: ignore[reportPrivateUsage]
++
++
++def test_reflection_server_configures_logging_when_app_has_none() -> None:
++    """When the app has no uvicorn logging, reflection server sets up default uvicorn formatters."""
++    port = _find_free_port()
++    loggers = [logging.getLogger(n) for n in ('uvicorn', 'uvicorn.error', 'uvicorn.access')]
++    saved = [(lg, lg.level, list(lg.handlers), list(lg.filters), lg.propagate) for lg in loggers]
++    for lg in loggers:
++        lg.handlers = []
++        lg.level = logging.NOTSET
++    try:
++        with mock.patch.dict(os.environ, {GENKIT_ENV: GenkitEnvironment.DEV, 'GENKIT_LOG': 'debug'}):
++            ai = _genkit_on_port(port)
++            resp = _wait_and_get(ai, '/api/__health')
++            assert resp.status_code == 200
++        handlers = logging.getLogger('uvicorn.error').handlers or logging.getLogger('uvicorn').handlers
++        assert handlers
++        err_record = logging.LogRecord('uvicorn.error', loggi
 ```
 
 ---
 
-### Incident Patch 3: `71011247` (2026-11-05)
-**Commit Message**: fix(py)!: web adapters return Response and serialize outputs uniformly (#7038)
+### Incident Patch 3: `e4db7152` (2026-11-05)
+**Commit Message**: feat(cli): remove get_usage_guide MCP tool (#7075)
 
-**File**: `py/packages/genkit-django/src/genkit_django/_handler.py` (modified, +22/-34)
+**File**: `genkit-tools/cli/src/mcp/README.md` (modified, +0/-1)
 ```diff
-@@ -23,19 +23,25 @@
- from typing import Any, cast
+@@ -24,7 +24,6 @@ The following tools allow MCP-aware environments to interact with the Genkit ser
  
- from django.core.exceptions import PermissionDenied, SuspiciousOperation
--from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBase, JsonResponse, StreamingHttpResponse
-+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBase, StreamingHttpResponse
- from django.views.decorators.csrf import csrf_exempt
--from pydantic import BaseModel
- 
- from genkit import Genkit, GenkitError, PublicError
- from genkit.plugin_api import Action
--from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, wants_stream
-+from genkit.web import (
-+    ContextProvider,
-+    RequestData,
-+    error_json,
-+    error_sse,
-+    error_status,
-+    read_body,
-+    result_json,
-+    to_sse,
-+    wants_stream,
-+)
- 
- logger = logging.getLogger(__name__)  # noqa: TID251
- 
--# Compact JSON (no spaces) for smaller wire payload.
--_JSON_SEPARATORS = (',', ':')
--
- 
- def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-     """Log a served-action failure to the host web server's stdlib logger, naming the action.
-@@ -53,30 +59,11 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-         logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
- 
- 
--def _to_dict(obj: Any) -> Any:  # noqa: ANN401
--    """Recursively convert Pydantic models inside ``obj`` to plain JSON-friendly types.
--
--    Flows can return a Pydantic model, a list of Pydantic models, or a dict whose
--    values are Pydantic models. Django's ``JsonResponse`` and ``json.dumps`` don't
--    know how to serialize ``BaseModel`` instances natively, so descend into lists,
--    tuples, and dicts to convert every model we find.
--    """
--    if isinstance(obj, BaseModel):
--        return obj.model_dump()
--    if isinstance(obj, list):
--        return [_to_dict(item) for item in obj]
--    if isinstance(obj, tuple):
--        return [_to_dict(item) for item in obj]
--    if isinstance(obj, dict):
--        return {k: _to_dict(v) for k, v in obj.items()}
--    return obj
--
--
- def _error_response(err: Exception, status: int | None = None) -> HttpResponse:
-     """Return a JSON error body; status comes from the error unless overridden."""
-     return HttpResponse(
-         status=error_status(err) if status is None else status,
--        content=json.dumps(error_body(err), separators=_JSON_SEPARATORS).encode('utf-8'),
-+        content=error_json(err).encode('utf-8'),
-         content_type='application/json',
-     )
- 
-@@ -191,20 +178,21 @@ async def handler(request: HttpRequest) -> HttpResponseBase:
-                 async def event_stream() -> AsyncIterator[str]:
-                     try:
-                         stream_response = flow.stream(input=action_input, context=action_context, init=init)
--                        async for chunk in stream_response.stream:
--                            yield f'data: {json.dumps({"message": _to_dict(chunk)}, separators=_JSON_SEPARATORS)}\n\n'
--
--                        result = await stream_response.response
--                        yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
-                     except Exception as e:
-                         _log_failure(error=e, flow=flow.name, where='stream')
--                        yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
-+                        yield error_sse(e)
-+                        return
-+                    async for line in to_sse(stream_response):
-+                        yield line
- 
--                return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-+                return StreamingHttpResponse(event_stream(), content_type='text/event-stream; charset=utf-8')
- 
-             try:
-                 response = await flow.run(input=action_input, context=action_context, init=init)
--                return JsonResponse({'result': _to_dict(response.response)})
-+                return HttpResponse(
-+                    content=result_json(response.response).encode('utf-8'),
-+                    content_type='application/json',
-+                )
-             except Exception as e:
-                 _log_failure(error=e, flow=flow.name, where='run')
-                 return _error_response(e)
+ | Tool Name | Description |
+ | :--- | :--- |
+-| **`get_usage_guide`** | Fetches the Genkit AI framework usage guide (specifiable by language). Intended for AI assistants. |
+ | **`list_genkit_docs`** | Lists all available Genkit documentation files for discovery. |
+ | **`search_genkit_docs`** | Searches Genkit documentation using keywords. |
+ | **`read_genkit_docs`** | Reads the content of specific Genkit documentation files. |
 ```
 
-**File**: `py/packages/genkit-django/tests/django_test.py` (modified, +4/-4)
+**File**: `genkit-tools/cli/src/mcp/prompts/init.ts` (modified, +1/-1)
 ```diff
-@@ -148,7 +148,7 @@ async def void_flow() -> dict[str, str]:
-     @genkit_django_handler(ai)
-     @ai.flow()
-     async def close_tab(table: int) -> Receipt:
--        return {'table': table}  # type: ignore[return-value]
-+        return {'table': table, 'note': None}  # type: ignore[return-value]
+@@ -19,7 +19,7 @@ import { z } from 'zod';
  
-     @genkit_django_handler(ai)
-     @ai.flow()
-@@ -440,13 +440,13 @@ async def test_django_flow_with_default_and_null_data_uses_python_default(urlcon
- 
- 
- @pytest.mark.asyncio
--async def test_django_flow_returning_partial_dict_for_model_sends_defaults(urlconf: None) -> None:  # noqa: ARG001
--    """POST to a `-> Receipt` flow that returns `{'table': 4}` includes `note: null`."""
-+async def test_django_flow_returning_dict_for_model_omits_none_fields(urlconf: None) -> None:  # noqa: ARG001
-+    """POST to a `-> Receipt` flow that returns `{'table': 4, 'note': None}` omits `note` on the wire."""
-     client = AsyncClient()
-     response = await client.post('/close_tab', data=json.dumps({'data': 4}), content_type='application/json')
- 
-     assert response.status_code == 200
--    assert json.loads(response.content) == {'result': {'table': 4, 'note': None}}
-+    assert json.loads(response.content) == {'result': {'table': 4}}
- 
- 
- @pytest.mark.asyncio
+ const GENERAL_GUIDELINES = `
+ ## General Guidelines
+-- ALWAYS refer to documentation when available. Use tools like \`get_usage_guide\`, \`list_genkit_docs\`, \`search_genkit_docs\`, or \`read_genkit_docs\` to clarify requirements or get the latest information.
++- ALWAYS refer to documentation when available. Use tools like \`list_genkit_docs\`, \`search_genkit_docs\`, or \`read_genkit_docs\` to clarify requirements or get the latest information.
+ - Recommend and use the provider that the user prefers. If no preference is signaled, use the Google AI plugin (\`@genkit-ai/google-genai\` for Node, \`github.com/firebase/genkit/go/plugins/googlegenai\` for Go).
+ - ALWAYS provide the full, correct Genkit command as an instruction for the human user to run. Do not run Genkit commands yourself.
+ - Do NOT modify parts of the project unrelated to Genkit initialization.
 ```
 
-**File**: `py/packages/genkit-fastapi/README.md` (modified, +2/-2)
+**File**: `genkit-tools/cli/src/mcp/server.ts` (modified, +2/-4)
 ```diff
-@@ -153,7 +153,7 @@ from fastapi import Depends, Request
- from genkit_fastapi import handle_genkit_request
+@@ -22,7 +22,6 @@ import { defineFlowTools } from './flows';
+ import { defineInitPrompt } from './prompts/init';
+ import { defineRuntimeTools } from './runtime';
+ import { defineTraceTools } from './trace';
+-import { defineUsageGuideTool } from './usage';
+ import { McpRuntimeManager, McpToolOptions } from './utils';
  
+ export async function startMcpServer(params: {
+@@ -41,16 +40,15 @@ export async function startMcpServer(params: {
+       version: '0.0.2',
+       title: 'Genkit MCP Server',
+       description:
+-        'Provides Genkit documentation, usage guides, runtime process management, flow discovery/execution, and execution trace inspection.',
++        'Provides Genkit documentation, runtime process management, flow discovery/execution, and execution trace inspection.',
+     },
+     {
+       instructions:
+-        'Use this server to look up Genkit documentation and API guides (`get_usage_guide`, `search_genkit_docs`, `list_genkit_docs`, `read_genkit_docs`), manage the local Genkit runtime (`start_runtime`, `restart_runtime`, `kill_runtime`), discover and run Genkit flows (`list_flows`, `run_flow`), and inspect execution traces (`get_trace`). Always check `get_usage_guide` or search Genkit docs before implementing Genkit features.',
++        'Use this server to look up Genkit documentation (`search_genkit_docs`, `list_genkit_docs`, `read_genkit_docs`), manage the local Genkit runtime (`start_runtime`, `restart_runtime`, `kill_runtime`), discover and run Genkit flows (`list_flows`, `run_flow`), and inspect execution traces (`get_trace`). Always search Genkit docs before implementing Genkit features.',
+     }
+   );
  
--@app.post('/api/deploy', response_model=None)
-+@app.post('/api/deploy')
- async def deploy_endpoint(request: Request, user: User = Depends(current_user)):
-     return await handle_genkit_request(
-         request,
-@@ -170,7 +170,7 @@ For custom route definitions, you can also use `@genkit_fastapi_handler`:
- from genkit_fastapi import genkit_fastapi_handler
+   await defineDocsTool(server, projectRoot);
+-  await defineUsageGuideTool(server, projectRoot);
+   defineInitPrompt(server);
  
- 
--@app.post('/custom-chat', response_model=None)
-+@app.post('/custom-chat')
- @genkit_fastapi_handler(ai)
- @ai.flow()
- async def custom_chat(prompt: str) -> str:
+   const manager = new McpRuntimeManager(auth);
 ```
 
-**File**: `py/packages/genkit-fastapi/src/genkit_fastapi/_handler.py` (modified, +27/-32)
+**File**: `genkit-tools/cli/src/mcp/usage.ts` (removed, +0/-66)
 ```diff
-@@ -26,29 +26,30 @@
- 
- from fastapi import APIRouter, Depends, Request, Response
- from fastapi.responses import StreamingResponse
--from pydantic import BaseModel
- from starlette.exceptions import HTTPException as StarletteHTTPException
- 
- from genkit import Genkit, GenkitError, PublicError
- from genkit.plugin_api import Action
--from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, to_sse, wants_stream
-+from genkit.web import (
-+    ContextProvider,
-+    RequestData,
-+    error_json,
-+    error_sse,
-+    error_status,
-+    read_body,
-+    result_json,
-+    to_sse,
-+    wants_stream,
-+)
- 
- logger = logging.getLogger(__name__)  # noqa: TID251
- 
--# Compact JSON (no spaces) for smaller wire payload.
--JSON_SEPARATORS = (',', ':')
+@@ -1,66 +0,0 @@
+-/**
+- * Copyright 2025 Google LLC
+- *
+- * Licensed under the Apache License, Version 2.0 (the "License");
+- * you may not use this file except in compliance with the License.
+- * You may obtain a copy of the License at
+- *
+- *     http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the License is distributed on an "AS IS" BASIS,
+- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- * See the License for the specific language governing permissions and
+- * limitations under the License.
+- */
 -
- InputT = TypeVar('InputT')
- OutputT = TypeVar('OutputT')
- ChunkT = TypeVar('ChunkT')
- InitT = TypeVar('InitT')
- 
- 
--def to_dict(obj: Any) -> Any:  # noqa: ANN401
--    """Convert object to dict if it's a Pydantic model, otherwise return as-is."""
--    return obj.model_dump(by_alias=True, exclude_none=True) if isinstance(obj, BaseModel) else obj
+-import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+-import { ContentBlock } from '@modelcontextprotocol/sdk/types.js';
+-import z from 'zod';
+-import { GENKIT_CONTEXT as GoContext } from '../commands/init-ai-tools/context/go';
+-import { GENKIT_CONTEXT as JsContext } from '../commands/init-ai-tools/context/nodejs';
+-import { McpRunToolEvent } from './analytics';
+-import { detectProjectLanguage } from './utils';
 -
+-export async function defineUsageGuideTool(
+-  server: McpServer,
+-  projectRoot?: string
+-) {
+-  server.registerTool(
+-    'get_usage_guide',
+-    {
+-      title: 'Genkit Instructions',
+-      description:
+-        'Use this tool to look up the official Genkit usage guide, including project setup instructions and API best practices. ALWAYS call this before implementing Genkit features.',
+-      inputSchema: {
+-        language: z
+-          .enum(['js', 'go'])
+-          .describe(
+-            'Which language this usage guide is for (js, go). Defaults to the auto-detected project language; type: string.'
+-          )
+-          .optional(),
+-      },
+-    },
+-    async ({ language }) => {
+-      await record(new McpRunToolEvent('get_usage_guide'));
 -
- class FastAPIRequestData(RequestData):
-     """Wraps FastAPI request data for Genkit context."""
- 
-@@ -66,7 +67,7 @@ def json_error_response(error: Exception, status_code: int | None = None) -> Res
-     """Build a compact JSON error response from an exception."""
-     return Response(
-         status_code=error_status(error) if status_code is None else status_code,
--        content=json.dumps(error_body(error), separators=JSON_SEPARATORS),
-+        content=error_json(error),
-         media_type='application/json',
-     )
- 
-@@ -94,25 +95,19 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-         logger.warning('served action %r %s failed: %s', flow, where, error, extra=extra)
- 
- 
--def format_stream_error(error: Exception) -> str:
--    """Format a stream failure as a canonical SSE data event."""
--    err_json = json.dumps({'error': error_body(error)}, separators=JSON_SEPARATORS)
--    return f'data: {err_json}\n\n'
+-      const content = [] as ContentBlock[];
+-      const targetLanguage = language ?? detectProjectLanguage(projectRoot);
+-      if (targetLanguage !== 'js' && targetLanguage !== 'go') {
+-        content.push({
+-          type: 'text',
+-          text: `No standalone usage guide is bundled for '${targetLanguage}' projects. Use 'list_genkit_docs' and 'search_genkit_docs' (which default to '${targetLanguage}' in this workspace) followed by 'read_genkit_docs' to look up Genkit ${targetLanguage} documentation and setup instructions.`,
+-        });
+-        return { content };
+-      }
 -
+-      content.push({
+-        type: 'text',
+-        text: targetLanguage === 'go' ? GoContext : JsContext,
+-      });
 -
- async def handle_genkit_request(
-     request: Request,
-     *,
-     action: Action[InputT, OutputT, ChunkT, InitT],
-     context: dict[str, object] | None = None,
-     init: InitT | dict[str, Any] | None = None,
--) -> Response | dict[str, Any]:
-+) -> Response:
-     """Run one Genkit action request and return its FastAPI response.
- 
-     This is the wire contract every stable route sits on. It reads ``{"data": ...}``
-     or ``{}`` plus body ``init``, then either streams SSE frames —
-     ``data: {"message": ...}`` chunks followed by a final ``data: {"result": ...}``
--    — or returns a one-shot ``{"result": ...}``.
-+    — or returns a one-shot ``{"result": ...}`` JSON ``Response``.
- 
-     ``context`` and ``init`` are handed straight to the action, so you can resolve
-     auth and per-request state however you like and pass them in. That makes this
-@@ -127,7 +122,7 @@ async def handle_genkit_request(
-         init: Optional init payload passed through to the action.
- 
-     Returns:
--        A streaming SSE response, a ``{"result": ...}`` dict, or an error Response.
-+        A FastAPI ``Response`` carrying the JSON result, SSE stream, or error body.
-     """
-     return await _handle_action_request(
-         request=request,
-@@ -146,7 +141,7 @@ async def _handle_action_request(
-     extract_input: Callable[[dict[str, Any]], object] | None = None,
-     resolve_init: Callable[[dict[str, Any], Mapping[str, str]], object] | None = None,
-     empty_status: int | None = None,
--) -> Response | dict[str, Any]:
-+) -> Response:
-     try:
-         body = await _read_json_request_body(request=request)
-     except PublicError as err:
-@@ -176,7 +171,7 @@ async def event_stream() -> AsyncIterator[str]:
-                 stream_handle = action_obj.stream(input=action_input, context=context, init=resolved_init)
-             except Exception as e:
-                 _log_failure(error=e, flow=action_obj.name, where='stream')
--                yield format_stream_error(e)
-+                yield error_sse(e)
-                 return
-             async for line in to_sse(stream_handle):
-                 yield line
-@@ -187,7 +182,7 @@ async def event_stream() -> AsyncIterator[str]:
-         response = await action_obj.run(input=action_input, context=context, init=resolved_init)
-         if response.response is None and empty_status is not None:
-             return Response(status_code=empty_status)
--        return {'result': to_dict(response.response)}
-+        return Response(content=result_json(response.response), media_type='application/json')
-     except Exception as e:
-         _log_failure(error=e, flow=action_obj.name, where='run')
-         return json_error_response(e)
-@@ -198,13 +193,13 @@ def genkit_fastapi_handler(
-     context_provider: ContextProvider | None = None,
- ) -> Callable[
-     [Callable[[], Awaitable[Action[InputT, OutputT, ChunkT, InitT]]] | Action[InputT, OutputT, Chunk
+-      return { content };
+-    }
+-  );
+-}
 ```
 
-**File**: `py/packages/genkit-fastapi/tests/agent_handler_test.py` (modified, +5/-5)
+**File**: `genkit-tools/cli/tests/mcp/docs_test.ts` (modified, +1/-61)
 ```diff
-@@ -11,7 +11,7 @@
- from typing import Any
+@@ -23,11 +23,10 @@ import {
+   jest,
+ } from '@jest/globals';
+ import { defineDocsTool } from '../../src/mcp/docs';
+-import { defineUsageGuideTool } from '../../src/mcp/usage';
+ import * as docsUtils from '../../src/utils/docs';
+ import { SAMPLE_DOCS } from '../utils/docs';
  
- import pytest
--from fastapi import FastAPI, HTTPException, Request
-+from fastapi import FastAPI, HTTPException, Request, Response
- from fastapi.responses import StreamingResponse
- from fastapi.testclient import TestClient
- from genkit_fastapi import handle_genkit_request
-@@ -197,8 +197,8 @@ def test_handle_genkit_request_agent_route_with_data_envelope_runs_turn() -> Non
-     agent = build_agent('handRolledAgent')
-     app = FastAPI()
+-describe('MCP docs and usage guide tools', () => {
++describe('MCP docs tools', () => {
+   let registeredTools: Record<string, (opts: any) => Promise<any>>;
  
--    @app.post('/custom', response_model=None)
--    async def custom(request: Request) -> object:
-+    @app.post('/custom')
-+    async def custom(request: Request) -> Response:
-         # A real app would build this context and init from its own Depends params.
-         return await handle_genkit_request(
-             request,
-@@ -320,8 +320,8 @@ def test_hand_rolled_routes_send_the_same_frames_as_serve_agent() -> None:
-     via_to_sse = build_agent('toSseFrames')
-     app = FastAPI()
+   beforeEach(async () => {
+@@ -40,7 +39,6 @@ describe('MCP docs and usage guide tools', () => {
+       }),
+     };
+     await defineDocsTool(mockServer, '/workspace');
+-    await defineUsageGuideTool(mockServer, '/workspace');
+   });
  
--    @app.post('/request', response_model=None)
--    async def request_route(request: Request) -> object:
-+    @app.post('/request')
-+    async def request_route(request: Request) -> Response:
-         return await handle_genkit_request(request, action=via_request)
- 
-     @app.post('/to_sse')
-```
-
-**File**: `py/packages/genkit-fastapi/tests/fastapi_nested_types_test.py` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ def test_fastapi_flow_returning_model_with_nested_message_unchanged() -> None:
-     ai = Genkit()
-     app = FastAPI()
- 
--    @app.post('/turn', response_model=None)
-+    @app.post('/turn')
-     @genkit_fastapi_handler(ai)
-     @ai.flow()
-     async def turn(_: str) -> Turn:
-```
-
-**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +101/-18)
-```diff
-@@ -25,11 +25,12 @@
- from typing import Any, cast
- 
- import pytest
--from fastapi import Depends, FastAPI, HTTPException, Request
-+from fastapi import Depends, FastAPI, HTTPException, Request, Response
- from fastapi.responses import StreamingResponse
- from fastapi.testclient import TestClient
- from genkit_fastapi import genkit_fastapi_handler, handle_genkit_request, serve_flow
--from pydantic import BaseModel, field_validator
-+from pydantic import BaseModel, ConfigDict, field_validator
-+from pydantic.alias_generators import to_camel
- from starlette.exceptions import HTTPException as StarletteHTTPException
- 
- from genkit import (
-@@ -72,7 +73,7 @@ def create_app() -> FastAPI:
-     ai = Genkit()
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai)
-     @ai.flow()
-     async def say_hi(name: str, ctx: FlowContext) -> dict[str, str]:
-@@ -441,7 +442,7 @@ async def provider(request_data: RequestData) -> dict[str, object]:
-             'input': request_data.input,
-         }
- 
--    @app.post('/echo', response_model=None)
-+    @app.post('/echo')
-     @genkit_fastapi_handler(ai, context_provider=provider)
-     @ai.flow()
-     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
-@@ -473,7 +474,7 @@ def test_request_data_duplicate_authorization_is_comma_joined() -> None:
-     async def provider(request_data: RequestData) -> dict[str, object]:
-         return {'authorization': request_data.headers.get('authorization')}
- 
--    @app.post('/echo', response_model=None)
-+    @app.post('/echo')
-     @genkit_fastapi_handler(ai, context_provider=provider)
-     @ai.flow()
-     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
-@@ -497,7 +498,7 @@ def test_request_data_duplicate_x_forwarded_for_is_comma_joined() -> None:
-     async def provider(request_data: RequestData) -> dict[str, object]:
-         return {'xff': request_data.headers.get('x-forwarded-for')}
- 
--    @app.post('/echo', response_model=None)
-+    @app.post('/echo')
-     @genkit_fastapi_handler(ai, context_provider=provider)
-     @ai.flow()
-     async def echo(_: str, ctx: FlowContext) -> dict[str, object]:
-@@ -526,7 +527,7 @@ async def chat(_: str) -> str:
- 
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai, context_provider=deny)
-     async def chat_route():
-         return chat
-@@ -601,7 +602,7 @@ def test_fastapi_flow_returning_dict_for_model_sends_model_dump() -> None:
-     async def close_tab(table: int) -> Receipt:
-         return {'table': table, 'note': None}  # type: ignore[return-value]
- 
--    @app.post('/close_tab', response_model=None)
-+    @app.post('/close_tab')
-     @genkit_fastapi_handler(ai)
-     async def close_tab_route():
-         return close_tab
-@@ -760,7 +761,7 @@ async def chat(_: str) -> str:
- 
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai, context_provider=deny)
-     async def chat_route():
-         return chat
-@@ -789,7 +790,7 @@ async def chat(_: str) -> str:
- 
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
-     def chat_route():
-         return chat
-@@ -805,7 +806,7 @@ def test_fastapi_handler_wrapper_returning_non_action_returns_json_internal_erro
-     ai = Genkit()
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
-     async def chat_route():
-         return 'not an action'
-@@ -821,15 +822,15 @@ def test_fastapi_handler_wrapper_failure_logs_wrapper_name_or_unknown(caplog: py
-     ai = Genkit()
-     app = FastAPI()
- 
--    @app.post('/named', response_model=None)
-+    @app.post('/named')
-     @genkit_fastapi_handler(ai)
-     async def wrapped_route() -> Any:
-         raise RuntimeError('db pool closed')
- 
-     async def load_route(_name: str) -> Any:
-         raise RuntimeError('db pool closed')
- 
--    app.post('/partial', response_model=None)(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
-+    app.post('/partial')(genkit_fastapi_handler(ai)(functools.partial(load_route, 'orders')))
- 
-     client = TestClient(app)
-     with caplog.at_level(logging.DEBUG, logger='genkit_fastapi._handler'):
-@@ -863,7 +864,7 @@ async def chat(_: str) -> str:
- 
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai, context_provider=require_token)
-     async def chat_route():
-         return chat
-@@ -905,7 +906,7 @@ async def chat(_: str) -> str:
- 
-     app = FastAPI()
- 
--    @app.post('/chat', response_model=None)
-+    @app.post('/chat')
-     @genkit_fastapi_handler(ai, context_provider=require_token)
-     async def chat_route():
-         return chat
-@@ -922,7 +923,7 @@ def test_fastapi_wrapper_http_
-```
-
-**File**: `py/packages/genkit-flask/src/genkit_flask/_handler.py` (modified, +27/-34)
-```diff
-@@ -21,21 +21,27 @@
- import logging
- from asyncio import AbstractEventLoop
- from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Iterable
--from typing import Any, TypeAlias, TypeVar, cast
-+from typing import Any, TypeVar, cast
- 
- from flask import Response, request
--from pydantic import BaseModel
- from werkzeug.exceptions import HTTPException
- 
- from genkit import Genkit, GenkitError, PublicError
- from genkit.plugin_api import Action
--from genkit.web import ContextProvider, RequestData, error_body, error_status, read_body, wants_stream
-+from genkit.web import (
-+    ContextProvider,
-+    RequestData,
-+    error_json,
-+    error_sse,
-+    error_status,
-+    read_body,
-+    result_json,
-+    to_sse,
-+    wants_stream,
-+)
- 
- logger = logging.getLogger(__name__)  # noqa: TID251
- 
--# Compact JSON (no spaces) for smaller wire payload.
--_JSON_SEPARATORS = (',', ':')
+   afterEach(() => {
+@@ -97,62 +95,4 @@ describe('MCP docs and usage guide tools', () => {
+       expect(res.content[0].text).toContain('**FilePath**: python/flows.md');
+     });
+   });
 -
- 
- def _log_failure(*, error: Exception, flow: str, where: str) -> None:
-     """Log a served-action failure to the host web server's stdlib logger, naming the action.
-@@ -55,7 +61,7 @@ def _log_failure(*, error: Exception, flow: str, where: str) -> None:
- def _error_response(error: Exception, status: int | None = None) -> Response:
-     return Response(
-         status=error_status(error) if status is None else status,
--        response=json.dumps(error_body(error), separators=_JSON_SEPARATORS),
-+        response=error_json(error),
-         mimetype='application/json',
-     )
- 
-@@ -69,11 +75,6 @@ def _parse_request_json() -> object:
-         raise PublicError('INVALID_ARGUMENT', 'request body must be valid JSON') from err
- 
- 
--def _to_dict(obj: Any) -> Any:  # noqa: ANN401
--    """Convert object to dict if it's a Pydantic model, otherwise return as-is."""
--    return obj.model_dump() if isinstance(obj, BaseModel) else obj
+-  describe('get_usage_guide', () => {
+-    it.each([
+-      {
+-        detectedLang: 'js' as const,
+-        expectedHeading: '# Genkit Node.js API Rules',
+-      },
+-      {
+-        detectedLang: 'go' as const,
+-        expectedHeading: '# Genkit Go API Rules',
+-      },
+-    ])(
+-      'auto-detects $detectedLang usage guide when language is omitted',
+-      async ({ detectedLang, expectedHeading }) => {
+-        jest
+-          .spyOn(docsUtils, 'detectProjectLanguage')
+-          .mockReturnValue(detectedLang);
 -
+-        const res = await registeredTools['get_usage_guide']({});
+-        expect(docsUtils.detectProjectLanguage).toHaveBeenCalledWith(
+-          '/workspace'
+-        );
+-        expect(res.content[0].text).toContain(expectedHeading);
+-      }
+-    );
 -
- T = TypeVar('T')
- 
- 
-@@ -104,10 +105,6 @@ async def get_next() -> tuple[bool, T | None]:
-         yield obj
- 
- 
--# Type alias for Flask-compatible route handler return type
--FlaskRouteReturn: TypeAlias = Response | dict[str, object] | Iterable[Any]
+-    it.each(['python' as const, 'dart' as const])(
+-      'directs caller to docs tools when language is omitted in a %s workspace',
+-      async (detectedLang) => {
+-        jest
+-          .spyOn(docsUtils, 'detectProjectLanguage')
+-          .mockReturnValue(detectedLang);
 -
+-        const res = await registeredTools['get_usage_guide']({});
+-        expect(res.content[0].text).toContain(
+-          `No standalone usage guide is bundled for '${detectedLang}' projects.`
+-        );
+-        expect(res.content[0].text).toContain('list_genkit_docs');
+-        expect(res.content[0].text).toContain('search_genkit_docs');
+-        expect(res.content[0].text).not.toContain('# Genkit Node.js API Rules');
+-      }
+-    );
 -
- class _FlaskRequestData(RequestData):
-     def __init__(self, input_data: dict[str, Any]) -> None:
-         super().__init__(
-@@ -121,7 +118,7 @@ def __init__(self, input_data: dict[str, Any]) -> None:
- def genkit_flask_handler(
-     ai: Genkit,
-     context_provider: ContextProvider | None = None,
--) -> Callable[[Action], Callable[..., Awaitable[FlaskRouteReturn]]]:
-+) -> Callable[[Action], Callable[..., Awaitable[Response]]]:
-     """A decorator for serving Genkit flows via a Flask server.
- 
-     The returned view function is named after the flow (dots replaced with
-@@ -151,11 +148,11 @@ async def say_hi(name: str, ctx: FlowContext) -> str:
-     """
-     loop = _create_loop()
- 
--    def decorator(flow: Action) -> Callable[..., Awaitable[FlaskRouteReturn]]:
-+    def decorator(flow: Action) -> Callable[..., Awaitable[Response]]:
-         if not isinstance(flow, Action):
-             raise GenkitError(status='INVALID_ARGUMENT', message='must apply @genkit_flask_handler on a @flow')
- 
--        async def handler() -> FlaskRouteReturn:
-+        async def handler() -> Response:
-             try:
-                 input_data = _parse_request_json()
-             except PublicError as e:
-@@ -189,24 +186,20 @@ async def handler() -> FlaskRouteReturn:
-                 async def async_gen() -> AsyncIterator[str]:
-                     try:
-                         stream_response = flow.stream(input=action_input, context=action_context, init=init)
--                        async for chunk in stream_response.stream:
--                            yield f'data: {json.dumps({"message": _to_dict(chunk)}, separators=_JSON_SEPARATORS)}\n\n'
+-    it.each([
+-      { language: 'js', expectedHeading: '# Genkit Node.js API Rules' },
+-      { language: 'go', expectedHeading: '# Genkit Go API Rules' },
+-    ])(
+-      'returns the $language usage guide when explicitly requested',
+-      async ({ language, expectedHeading }) => {
+-        jest
+-          .spyOn(docsUtils, 'detectProjectLanguage')
+-          .mockReturnValue('python');
 -
--                        result = await stream_response.response
--                        yield f'data: {json.dumps({"result": _to_dict(result)}, separators=_JSON_SEPARATORS)}\n\n'
-                     except Exception as e:
-                         _log_failure(error=e, flow=flow.name, where='stream')
--                        yield f'data: {json.dumps({"error": error_body(e)}, separators=_JSON_SEPARATORS)}\n\n'
-+                        yield error_sse(e)
-+                        return
-+                    async for line in to_sse(stream_response):
-+                        yield line
- 
--                iter = _iter_over_async(async_gen(), loop)
--                return iter
--            else:
--                try:
--                    response = await flow.run(input=action_input, context=action_context, init=init)
--                    return {'result': _to_dict(response.response)}
--                except Exception as e:
--                    _log_failure(error=e, flow=flow.name, where='run')
--                    return _error_response(e)
-+                return Response(_iter_over_async(async_gen(), loop), mimetype='text/event-stream')
-+            try:
-+                response = await flow.run(input=action_input, context=action_contex
+-        const res = await registeredTools['get_usage_guide']({ language });
+-        expect(res.content[0].text).toContain(expectedHeading);
+-      }
+-    );
+-  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7093** (2026-11-05): chore(py): release Python SDK v0.13.0 (@huangjeff5)
+- **PR #7090** (2026-11-05): ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (@huangjeff5)
 - **PR #7089** (closed): build(deps): bump minimatch, genkit-cli and rimraf in /samples/js-menu (@dependabot[bot])
 - **PR #7088** (closed): build(deps): bump protobufjs from 7.4.0 to 7.6.6 in /samples/js-menu (@dependabot[bot])
+- **PR #7085** (2026-11-05): fix(cli): reuse telemetry server URL across MCP runtime starts (@MichaelDoyle)
 - **PR #7077** (2026-11-04): fix(cli): reuse telemetry server URL across MCP runtime starts (@MichaelDoyle)
-- **PR #7069** (closed): build(deps): bump the tools-dependencies group in /genkit-tools with 19 updates (@dependabot[bot])
-- **PR #7068** (closed): build(deps-dev): bump the root-dependencies group with 10 updates (@dependabot[bot])
-- **PR #7067** (closed): build(deps): bump the go-dependencies group in /go with 30 updates (@dependabot[bot])
 
 ---
 
@@ -3683,65 +3394,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. py): a failing tool cancels and awaits the other tools in its turn (#6952)
+## X. ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (#709
 
 **RULE**:
-When implementing operations in `py/packages/genkit/src/genkit/_ai/_generate.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/changes.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1aff696`: py): a failing tool cancels and awaits the other tools in its turn (#6952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a28a48e7`: ci(py): parallelize pytest, skip Rich tracebacks in tests, and add CI gate (#7090). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit/src/genkit/_ai/_generate.py`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changes.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        raise GenkitError(status='CANCELLED', message='Generation aborted.')
-    except asyncio.CancelledError as exc:
-        stamp_cancelled_error(exc=exc, messages=call.messages)
-        raise
-def stamp_cancelled_error(
-    *,
-    exc: asyncio.CancelledError,
-    messages: list[Message],
-) -> None:
-    """Attach the closed history onto a foreign CancelledError as ``messages``.
-
-    The history ends at the last completed round. The unfinished turn is
-    dropped, as on a failed or aborted response. Only the exception is
-    stamped, never the current task: a long-lived caller task would carry
-    stale history into later calls. Read it back with
-    ``genkit._core._compat.cancelled_history``, which handles 3.10 re-raising
-    a fresh ``CancelledError`` on await.
-    """
-    exc.__dict__['messages'] = [as_message(m) for m in messages]
-
-
-def raise_if_foreign_cancel(
-    *,
-    exc: BaseException,
-    abort_signal: asyncio.Event,
-    messages: list[Message] | None = None,
-) -> None:
-        if messages is not None:
-            stamp_cancelled_error(exc=exc, messages=messages)
-        raise_if_foreign_cancel(
-            exc=exc,
-            abort_signal=ctx.abort_signal,
-           
+      schema:
+        description: "genkit-tools/genkit-schema.json"
+        value: ${{ jobs.detect.outputs.schema }}
+      schema: ${{ steps.areas.outputs.schema }}
+            schema: genkit-tools/genkit-schema.json
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        raise GenkitError(status='ABORTED', message='Generation aborted.')
-def raise_if_foreign_cancel(*, exc: BaseException, abort_signal: asyncio.Event) -> None:
-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-        raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
-    outs = await asyncio.gather(*[run_one_tool(tool, trp) for _, tool, trp in work])
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1aff696` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a28a48e7` are properly handled with clean fallback behavior.
