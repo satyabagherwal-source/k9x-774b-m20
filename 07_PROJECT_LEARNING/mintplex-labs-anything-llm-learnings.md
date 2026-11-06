@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `cbaf3357`  
+> **Source Version**: `308b2766`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:23:18.330Z  
+> **Timestamp**: 2026-11-06T19:09:49.213Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:23:18.324Z  
+> **Harvest Timestamp**: 2026-11-06T19:09:48.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67963 stars
+- **Stars / Engagement**: 68006 stars
 
 ---
 
@@ -1309,360 +1309,359 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b1b81d6` (2026-11-04)
-**Commit Message**: fix: honour the workspace chat mode in the mobile stream-chat command (#6983)
+### Incident Patch 1: `44b1d514` (2026-11-06)
+**Commit Message**: fix: keep non-Latin path text in single-link scrape titles (#7025)
 
-* fix: honour the workspace chat mode in the mobile stream-chat command
+The single-link scraper titled a page slugify(host + path) + ".html".
+slugify deletes every character it has no transliteration for, so pages
+under Chinese, Japanese, Korean, Thai, Hebrew or Hindi paths all got the
+same title, e.g. "zh.wikipedia.org_wiki_.html" for every zh.wikipedia
+article. Query strings were dropped too.
 
-The mobile stream-chat command passed a literal mode of "chat" to
-ApiChatHandler.streamChat, so a workspace configured as Automatic or
-Query behaved as plain Chat from the phone and tools never ran unless
-the message was prefixed with @agent.
+Build the default title the way the bulk link scraper already does:
+the decoded host and path plus the query string, unslugified. The url
+and the file name are unchanged.
 
-Pass workspace.chatMode, as the web stream endpoint and the developer
-API thread endpoints already do for the same handler.
+Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
 
-* fix: await the mobile command handler so a rejected chat cannot crash the server
-
-The /mobile/send/:command route returned the handler's promise without
-awaiting it, so its try/catch never saw a rejection. With the workspace
-chat mode honoured, an "automatic" workspace runs the agent pre-flight on
-every mobile message, which can reject on a misconfigured provider; that
-rejection would escape as an unhandled promise rejection. Await the call,
-and when the stream headers are already out just end the response rather
-than attempting a 500 after the fact.
-
-* test: trim mobile stream-chat tests to happy path plus input edge cases
-
----------
-
-Co-authored-by: Timothy Carambat 
-
-**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +79/-1)
+**File**: `collector/__tests__/processLink/convert/generic.test.js` (modified, +24/-0)
 ```diff
-@@ -12,13 +12,14 @@ jest.mock("../../../../models/workspaceThread", () => ({
- }));
- jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
- jest.mock("../../../../utils/chats/apiChatHandler", () => ({
--  ApiChatHandler: {},
-+  ApiChatHandler: { streamChat: jest.fn() },
- }));
- jest.mock("../../../../endpoints/utils", () => ({ getModelTag: () => "test" }));
- 
- const prisma = require("../../../../utils/prisma");
- const { WorkspaceChats } = require("../../../../models/workspaceChats");
- const { Workspace } = require("../../../../models/workspace");
-+const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
- const {
-   handleMobileCommand,
- } = require("../../../../endpoints/mobile/utils/index");
-@@ -125,4 +126,81 @@ describe("handleMobileCommand: stream-chat", () => {
-     expect(response.status).toHaveBeenCalledWith(404);
-     expect(response.json).toHaveBeenCalledWith({ error: "Thread not found" });
-   });
+@@ -269,6 +269,30 @@ describe("scrapeGenericUrl", () => {
+       expect(data.docAuthor).toBe("no author found");
+       expect(data.pageContent).toBe(PAGE);
+     });
 +
-+  function streamResponse(user = null) {
-+    return {
-+      locals: { user },
-+      status: jest.fn().mockReturnThis(),
-+      json: jest.fn().mockReturnThis(),
-+      setHeader: jest.fn(),
-+      flushHeaders: jest.fn(),
-+      end: jest.fn(),
-+    };
-+  }
++    it("keeps non-Latin path text and the query string in the default title", async () => {
++      mockFetch();
++      writeToServerDocuments.mockImplementation(({ data }) => data);
 +
-+  function streamChat(body, response) {
-+    return handleMobileCommand(
-+      { params: { command: "stream-chat" }, body },
-+      response
-+    );
-+  }
++      for (const link of [
++        "https://example.com/wiki/%E5%8C%97%E4%BA%AC",
++        "https://example.com/wiki/%E4%B8%8A%E6%B5%B7",
++        "https://example.com/wiki/%EC%84%9C%EC%9A%B8",
++        "https://example.com/item?id=1",
++        "https://example.com/item?id=2",
++      ])
++        await scrapeGenericUrl({ link, captureAs: "html" });
 +
-+  it("chats in the workspace's configured mode", async () => {
-+    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
-+    const response = streamResponse();
-+
-+    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
-+
-+    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-+      expect.objectContaining({
-+        mode: "automatic",
-+        message: "hi",
-+        thread: null,
-+      })
-+    );
-+    expect(response.end).toHaveBeenCalled();
-+  });
-+
-+  it("uses the mode of the workspace resolved for the signed-in user", async () => {
-+    const user = { id: 3 };
-+    Workspace.getWithUser.mockResolvedValue({
-+      ...workspace,
-+      chatMode: "query",
++      expect(
++        writeToServerDocuments.mock.calls.map(([{ data }]) => data.title)
++      ).toEqual([
++        "example.com_wiki_北京.html",
++        "example.com_wiki_上海.html",
++        "example.com_wiki_서울.html",
++        "example.com_item?id=1.html",
++        "example.com_item?id=2.html",
++      ]);
 +    });
-+    const response = streamResponse(user);
-+
-+    await streamChat({ workspaceSlug: 123, message: "hi" }, response);
-+
-+    expect(Workspace.get).not.toHaveBeenCalled();
-+    expect(Workspace.getWithUser).toHaveBeenCalledWith(user, { slug: "123" });
-+    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-+      expect.objectContaining({ mode: "query", user })
-+    );
-+  });
-+
-+  it.each([
-+    [{ workspaceSlug: "my-ws" }, "Message is required"],
-+    [{ workspaceSlug: "my-ws", message: "" }, "Message is required"],
-+    [{ message: "hi" }, "Workspace ID is required"],
-+  ])("rejects %j before opening the stream", async (body, error) => {
-+    const response = streamResponse();
-+
-+    await streamChat(body, response);
-+
-+    expect(response.status).toHaveBeenCalledWith(400);
-+    expect(response.json).toHaveBeenCalledWith({ error });
-+    expect(response.flushHeaders).not.toHaveBeenCalled();
-+    expect(ApiChatHandler.streamChat).not.toHaveBeenCalled();
-+  });
-+
-+  it("propagates a chat handler failure to the route instead of ending the stream", async () => {
-+    ApiChatHandler.streamChat.mockRejectedValue(new Error("bad provider"));
-+    const response = streamResponse();
-+
-+    await expect(
-+      streamChat({ workspaceSlug: "my-ws", message: "hi" }, response)
-+    ).rejects.toThrow("bad provider");
-+    expect(response.flushHeaders).toHaveBeenCalled();
-+    expect(response.end).not.toHaveBeenCalled();
-+  });
- });
+   });
+ 
+   describe("delegation by content type", () => {
 ```
 
-**File**: `server/endpoints/mobile/index.js` (modified, +2/-1)
+**File**: `collector/processLink/convert/generic.js` (modified, +1/-1)
 ```diff
-@@ -148,9 +148,10 @@ function mobileEndpoints(app) {
-     [validDeviceToken],
-     async (request, response) => {
-       try {
--        return handleMobileCommand(request, response);
-+        return await handleMobileCommand(request, response);
-       } catch (e) {
-         console.error(e);
-+        if (response.headersSent) return response.end();
-         response.sendStatus(500).end();
-       }
-     }
-```
-
-**File**: `server/endpoints/mobile/utils/index.js` (modified, +1/-1)
-```diff
-@@ -182,7 +182,7 @@ async function handleMobileCommand(request, response) {
-       workspace,
-       thread,
-       message,
--      mode: "chat",
-+      mode: workspace.chatMode,
-       user: user,
-       sessionId: null,
-       attachments: [],
+@@ -92,7 +92,7 @@ async function scrapeGenericUrl({
+   const data = {
+     id: v4(),
+     url: "file://" + slugify(filename) + ".html",
+-    title: metadata.title || slugify(filename) + ".html",
++    title: metadata.title || `${filename}${url.search}.html`,
+     docAuthor: metadata.docAuthor || "no author found",
+     description: metadata.description || "No description found.",
+     docSource: metadata.docSource || "URL link uploaded by the user.",
 ```
 
 ---
 
-### Incident Patch 2: `83a3db61` (2026-11-04)
-**Commit Message**: fix: auto-name threads first messaged via the mobile app or developer API (#6982)
+### Incident Patch 2: `308b2766` (2026-11-06)
+**Commit Message**: fix(mcp): scan saved servers after an individual start (#7042)
 
-* fix: auto-name threads first messaged via the mobile app or developer API
+**File**: `server/__tests__/endpoints/api/mcpServers.test.js` (modified, +94/-0)
+```diff
+@@ -550,6 +550,12 @@ describe("Developer API /v1/mcp-servers", () => {
+         expect(stop.json).toEqual({ success: true, error: null });
+         expect(MCPHypervisor._instance.mcps.live).toBeUndefined();
+ 
++        const listed = await call("GET", "/v1/mcp-servers");
++        expect(listed.status).toBe(200);
++        expect(listed.json.servers).toMatchObject([
++          { name: "live", running: false, tools: [] },
++        ]);
++
+         const start = await call("POST", "/v1/mcp-servers/live/toggle");
+         expect(start.json).toEqual({ success: true, error: null });
+         expect(MCPHypervisor._instance.mcps.live).toBeDefined();
+@@ -567,6 +573,94 @@ describe("Developer API /v1/mcp-servers", () => {
+   });
+ 
+   describe("GET /v1/mcp-servers and POST /v1/mcp-servers/reload", () => {
++    it("boots existing servers when adding a server is the first MCP operation", async () => {
++      const sse = await startSSETestServer();
++      const url = `http://localhost:${sse.address().port}`;
++
++      try {
++        writeConfig({ existing: { url }, disabled: { url, ...NO_START } });
++        const added = await call("POST", "/v1/mcp-servers/new", {
++          body: { name: "added", config: { url } },
++        });
++        expect(added.status).toBe(200);
++        expect(added.json.running).toBe(true);
++        const layer = new MCPCompatibilityLayer();
++        const addedClient = layer.mcps.added;
++
++        const listed = await call("GET", "/v1/mcp-servers");
++        expect(listed.status).toBe(200);
++        const servers = Object.fromEntries(
++          listed.json.servers.map((server) => [server.name, server])
++        );
++        expect(servers).toMatchObject({
++          added: { running: true },
++          existing: { running: true },
++          disabled: { running: false, tools: [] },
++        });
++        expect(layer.mcps.added).toBe(addedClient);
++        expect((await layer.activeMCPServers()).sort()).toEqual([
++          "@@mcp_added",
++          "@@mcp_existing",
++        ]);
++      } finally {
++        MCPHypervisor._instance?.pruneMCPServers();
++        await closeServer(sse);
++      }
++    });
++
++    it("shares the initial scan across concurrent list and agent discovery", async () => {
++      const sse = await startSSETestServer();
++      let createTransport;
++      try {
++        writeConfig({
++          live: { url: `http://localhost:${sse.address().port}` },
++        });
++        const layer = new MCPCompatibilityLayer();
++        createTransport = jest.spyOn(layer, "createHttpTransport");
++
++        const [servers, active] = await Promise.all([
++          layer.servers(),
++          layer.activeMCPServers(),
++        ]);
++
++        expect(servers).toMatchObject([{ name: "live", running: true }]);
++        expect(active).toEqual(["@@mcp_live"]);
++        expect(createTransport).toHaveBeenCalledTimes(1);
++      } finally {
++        // Also close any transport that a duplicate startup overwrote.
++        for (const { value } of createTransport?.mock.results ?? [])
++          await value?.close();
++        MCPHypervisor._instance?.pruneMCPServers();
++        await closeServer(sse);
++      }
++    });
++
++    it("allows a later list to retry when no server could start", async () => {
++      const sse = await startSSETestServer();
++      try {
++        writeConfig({
++          live: { url: `http://localhost:${sse.address().port}` },
++        });
++        const layer = new MCPCompatibilityLayer();
++        jest.spyOn(layer, "createHttpTransport").mockImplementationOnce(() => {
++          throw new Error("MCP endpoint temporarily unavailable");
++        });
++
++        const failed = await call("GET", "/v1/mcp-servers");
++        expect(failed.json.servers).toMatchObject([
++          { name: "live", running: false },
++        ]);
++
++        const recovered = await call("GET", "/v1/mcp-servers");
++        expect(recovered.json.servers).toMatchObject([
++          { name: "live", running: true },
++        ]);
++      } finally {
++        MCPHypervisor._instance?.pruneMCPServers();
++        await closeServer(sse);
++      }
++    });
++
+     it("returns an empty list with no servers configured", async () => {
+       const res = await call("GET", "/v1/mcp-servers");
+       expect(res.status).toBe(200);
+```
 
-The first-message rename of a thread (WorkspaceThread.autoRenameThread)
-was only wired into the web UI stream endpoint and the agent chat-history
-plugin. Threads whose first message arrived through the mobile stream-chat
-command or the developer API thread chat/stream-chat endpoints kept the
-default "Thread" name indefinitely.
+**File**: `server/__tests__/utils/MCP/index.test.js` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@ describe("MCPCompatibilityLayer.servers", () => {
+     mcpLayer = new MCPCompatibilityLayer();
+ 
+     // Simulate a server that connected at boot but has since died - its
+-    // ping() rejects. bootMCPServers() skips booting since mcps is populated.
++    // ping() rejects.
+     mcpLayer.mcps = {
+       "dead-server": {
+         ping: () => Promise.reject(new Error("fetch failed")),
+```
 
-Call autoRenameThread after the chat handler returns at those three sites,
-mirroring server/endpoints/chat.js. The model's own guards (default name,
-exactly one chat) are unchanged, so explicitly named threads are untouched.
+**File**: `server/utils/MCP/hypervisor/index.js` (modified, +22/-6)
+```diff
+@@ -55,6 +55,8 @@ class MCPHypervisor {
+    * @type { { [key: string]: {status: 'success' | 'failed', message: string} } }
+    */
+   mcpLoadingResults = {};
++  #booted = false;
++  #bootPromise = null;
+ 
+   constructor() {
+     if (MCPHypervisor._instance) return MCPHypervisor._instance;
+@@ -265,6 +267,8 @@ class MCPHypervisor {
+    * and will also apply changes to the config file if any where made.
+    */
+   async reloadMCPServers() {
++    // Let an in-flight scan finish before replacing its clients and results.
++    while (this.#bootPromise) await this.#bootPromise.catch(() => {});
+     this.pruneMCPServers();
+     await this.bootMCPServers();
+   }
+@@ -333,6 +337,7 @@ class MCPHypervisor {
+     this.mcpLoadingResults[name] = {
+       status: "failed",
+       message: `Server was stopped manually by the administrator.`,
++      manuallyStopped: true,
+     };
+     return true;
+   }
+@@ -359,6 +364,7 @@ class MCPHypervisor {
+     }
+     this.mcps = {};
+     this.mcpLoadingResults = {};
++    this.#booted = false;
+   }
+ 
+   /**
+@@ -560,18 +566,27 @@ class MCPHypervisor {
+   }
+ 
+   /**
+-   * Boot the MCP servers according to the server definitions.
+-   * This function will skip booting MCP servers if they are already running.
++   * Scan the MCP server definitions and allow retry if no server could start.
+    * @returns { Promise<{ [key: string]: {status: string, message: string} }> } The results of the boot process.
+    */
+   async bootMCPServers() {
+-    if (Object.keys(this.mcps).length > 0) {
+-      this.log("MCP Servers already running, skipping boot.");
+-      return this.mcpLoadingResults;
+-    }
++    if (this.#booted) return this.mcpLoadingResults;
++    this.#bootPromise ??= this.#bootConfiguredMCPServers().finally(() => {
++      this.#bootPromise = null;
++    });
++    return this.#bootPromise;
++  }
+ 
++  async #bootConfiguredMCPServers() {
+     const serverDefinitions = this.mcpServerConfigs;
+     for (const { name, server } of serverDefinitions) {
++      // Preserve servers already started or explicitly stopped through the API.
++      if (
++        Object.hasOwn(this.mcps, name) ||
++        this.mcpLoadingResults[name]?.manuallyStopped
++      )
++        continue;
++
+       if (
+         server.anythingllm?.hasOwnProperty("autoStart") &&
+         server.anythingllm.autoStart === false
+@@ -616,6 +631,7 @@ class MCPHypervisor {
+     }
+ 
+     const runningServers = Object.keys(this.mcps);
++    this.#booted = runningServers.length > 0;
+     this.log(
+       `Successfully started ${runningServers.length} MCP servers:`,
+       runningServers
+```
 
-* Emit rename_thread on streamed thread renames, drop narrow tests
+---
 
-Match the web chat endpoint: API stream-chat and mobile stream-chat now pass onRename to autoRenameThread and write a rename_thread action chunk. Removes the new endpoint/model test files and the added mobile test cases.
+### Incident Patch 3: `3082e52b` (2026-11-06)
+**Commit Message**: fix: preserve literal data prefixes in OpenAI chat streams (#7015)
+
+* fix: preserve literal data prefixes in OpenAI chat streams
+
+* test: tidy openaiCompatible test imports and trailing newline
 
 ---------
 
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/endpoints/api/workspaceThread/index.js` (modified, +22/-0)
+**File**: `server/__tests__/utils/chats/openaiCompatible.test.js` (modified, +29/-1)
 ```diff
-@@ -455,6 +455,12 @@ function apiWorkspaceThreadEndpoints(app) {
-           attachments,
-           reset,
-         });
-+        await WorkspaceThread.autoRenameThread({
-+          thread,
-+          workspace,
-+          user,
-+          prompt: message,
-+        });
-         await Telemetry.sendTelemetry("sent_chat", {
-           LLMSelection: process.env.LLM_PROVIDER || "openai",
-           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-@@ -643,6 +649,22 @@ function apiWorkspaceThreadEndpoints(app) {
-           attachments,
-           reset,
-         });
-+        // If thread was renamed emit event to the client via special `action` response.
-+        await WorkspaceThread.autoRenameThread({
-+          thread,
-+          workspace,
-+          user,
-+          prompt: message,
-+          onRename: (thread) => {
-+            writeResponseChunk(response, {
-+              action: "rename_thread",
-+              thread: {
-+                slug: thread.slug,
-+                name: thread.name,
-+              },
-+            });
-+          },
-+        });
-         await Telemetry.sendTelemetry("sent_chat", {
-           LLMSelection: process.env.LLM_PROVIDER || "openai",
-           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-```
-
-**File**: `server/endpoints/mobile/utils/index.js` (modified, +17/-0)
-```diff
-@@ -2,6 +2,7 @@ const { Workspace } = require("../../../models/workspace");
- const { WorkspaceChats } = require("../../../models/workspaceChats");
- const { WorkspaceThread } = require("../../../models/workspaceThread");
- const { ApiChatHandler } = require("../../../utils/chats/apiChatHandler");
-+const { writeResponseChunk } = require("../../../utils/helpers/chat/responses");
- const { reqBody } = require("../../../utils/http");
- const prisma = require("../../../utils/prisma");
- const { getModelTag } = require("../../utils");
-@@ -187,6 +188,22 @@ async function handleMobileCommand(request, response) {
-       attachments: [],
-       reset: false,
+@@ -3,6 +3,7 @@ const { OpenAICompatibleChat } = require('../../../utils/chats/openaiCompatible'
+ const { WorkspaceChats } = require('../../../models/workspaceChats');
+ const { getVectorDbClass, getLLMProvider, resolveProviderConnector } = require('../../../utils/helpers');
+ const { extractTextContent, extractAttachments } = require('../../../endpoints/api/openai/helpers');
++const { handleDefaultStreamResponseV2 } = require('../../../utils/helpers/chat/responses');
+ 
+ // Mock dependencies
+ jest.mock('../../../models/workspaceChats');
+@@ -249,5 +250,32 @@ describe('OpenAICompatibleChat', () => {
+         })
+       );
      });
-+    // If thread was renamed emit event to the client via special `action` response.
-+    await WorkspaceThread.autoRenameThread({
-+      thread,
-+      workspace,
-+      user,
-+      prompt: message,
-+      onRename: (thread) => {
-+        writeResponseChunk(response, {
-+          action: "rename_thread",
-+          thread: {
-+            slug: thread.slug,
-+            name: thread.name,
-+          },
-+        });
-+      },
-+    });
-     return response.end();
-   }
- 
-```
-
----
-
-### Incident Patch 3: `5c872bad` (2026-11-04)
-**Commit Message**: test: fix mobile stream-chat mock and skip host-dependent suites locally (#7012)
-
-The mobile stream-chat test mocked WorkspaceThread as an empty object, so
-the autoRenameThread call after streaming threw and failed CI.
-
-The embedded lemonade boot and CUDA suites spawn a #!/bin/sh stand-in and
-rely on POSIX file modes, so skip them on Windows. The ffmpeg suite now
-also skips when no ffmpeg binary is on PATH, so yarn jest passes on a
-fresh machine.
-
-**File**: `collector/__tests__/utils/WhisperProviders/ffmpeg/index.test.js` (modified, +6/-4)
-```diff
-@@ -1,14 +1,18 @@
- process.env.STORAGE_DIR = "test-storage";
- const fs = require("fs");
- const path = require("path");
-+const { spawnSync } = require("child_process");
- 
- // Mock fix-path as a noop to prevent SIGSEGV (segfault)
- // Returns ESM-style default export for dynamic import()
- jest.mock("fix-path", () => ({ default: jest.fn() }));
- 
- const { FFMPEGWrapper } = require("../../../../utils/WhisperProviders/ffmpeg");
- 
--const describeRunner = process.env.GITHUB_ACTIONS ? describe.skip : describe;
-+// Needs a real ffmpeg on PATH, so skip in CI and on machines without one.
-+const hasFFMPEG = !spawnSync("ffmpeg", ["-version"]).error;
-+const describeRunner =
-+  process.env.GITHUB_ACTIONS || !hasFFMPEG ? describe.skip : describe;
- 
- describeRunner("FFMPEGWrapper", () => {
-   /** @type { import("../../../../utils/WhisperProviders/ffmpeg/index").FFMPEGWrapper } */
-@@ -50,9 +54,7 @@ describeRunner("FFMPEGWrapper", () => {
- 
-     const response = await fetch(sampleUrl);
-     if (!response.ok)
--      throw new Error(
--        `Failed to download sample file: ${response.statusText}`
--      );
-+      throw new Error(`Failed to download sample file: ${response.statusText}`);
- 
-     const buffer = await response.arrayBuffer();
-     fs.writeFileSync(inputPath, Buffer.from(buffer));
-```
-
-**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ jest.mock("../../../../models/workspace", () => ({
-   Workspace: { get: jest.fn(), getWithUser: jest.fn() },
- }));
- jest.mock("../../../../models/workspaceThread", () => ({
--  WorkspaceThread: {},
-+  WorkspaceThread: { autoRenameThread: jest.fn() },
- }));
- jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
- jest.mock("../../../../utils/chats/apiChatHandler", () => ({
-```
-
-**File**: `server/__tests__/utils/AiProviders/embeddedLemonade/engine.test.js` (modified, +6/-2)
-```diff
-@@ -52,7 +52,11 @@ afterEach(() => {
-   jest.restoreAllMocks();
- });
- 
--describe("EmbeddedLemonadeEngine boot", () => {
-+// These suites spawn a `#!/bin/sh` stand-in for lemond and rely on POSIX file
-+// modes, neither of which Windows supports, so they only run on POSIX hosts.
-+const describePosix = process.platform === "win32" ? describe.skip : describe;
 +
-+describePosix("EmbeddedLemonadeEngine boot", () => {
-   it("reports a lemond that cannot be executed instead of crashing the server", async () => {
-     installLemond("#!/bin/sh\nsleep 30\n", 0o644);
- 
-@@ -151,7 +155,7 @@ describe("EmbeddedLemonadeEngine boot", () => {
++    test('should preserve literal data: prefixes in streamed text', async () => {
++      const upstream = (async function* () {
++        yield { choices: [{ delta: { content: 'before ' }, finish_reason: null }] };
++        yield { choices: [{ delta: { content: 'data: value' }, finish_reason: null }] };
++        yield { choices: [{ delta: { content: ' after' }, finish_reason: null }] };
++        yield { choices: [{ delta: {}, finish_reason: 'stop' }] };
++      })();
++      upstream.endMeasurement = jest.fn();
++      mockLLMConnector.streamGetChatCompletion.mockResolvedValue(upstream);
++      mockLLMConnector.handleStream.mockImplementation(handleDefaultStreamResponseV2);
++
++      await OpenAICompatibleChat.streamChat({
++        workspace: mockWorkspace,
++        response: mockResponse,
++        prompt: 'Show a YAML data field.',
++        systemPrompt: 'You are a helpful assistant',
++      });
++
++      const choices = mockResponse.write.mock.calls.map(
++        ([frame]) => JSON.parse(frame.slice('data: '.length)).choices[0]
++      );
++      expect(choices.map(({ delta }) => delta.content).join('')).toBe(
++        'before data: value after'
++      );
++      expect(choices.at(-1).finish_reason).toBe('stop');
++    });
    });
- });
- 
--describe("EmbeddedLemonadeEngine CUDA selection", () => {
-+describePosix("EmbeddedLemonadeEngine CUDA selection", () => {
-   // These lemonds are running - wait for them to exit so their exit log lands while console.log is still mocked.
-   afterEach(() => EmbeddedLemonadeEngine.stop());
- 
+-});
+\ No newline at end of file
++});
+```
+
+**File**: `server/utils/chats/openaiCompatible.js` (modified, +1/-1)
+```diff
+@@ -309,7 +309,7 @@ async function streamChat({
+   const responseInterceptor = new PassThrough({});
+   responseInterceptor.on("data", (chunk) => {
+     try {
+-      const originalData = JSON.parse(chunk.toString().split("data: ")[1]);
++      const originalData = JSON.parse(chunk.toString().replace(/^data: /, ""));
+       const modified = formatJSON(originalData, {
+         chunked: true,
+         model: workspace.slug,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7012** (2026-11-04): test: fix mobile stream-chat mock and skip host-dependent suites locally (@timothycarambat)
-- **PR #7011** (2026-11-04): fix: reject nested folder names and move destinations in document storage (@timothycarambat)
-- **PR #7010** (2026-11-04): fix: use SambaNova completion_tokens_per_sec for non-streaming outputTps (@timothycarambat)
-- **PR #7009** (2026-11-04): fix: resolve local $ref pointers to other properties in dereferenceSchema (@Fahmid-Arman)
-- **PR #7007** (2026-11-05): Add workspace and thread search to the mobile sidebar drawer (@shatfield4)
-- **PR #7006** (2026-11-04): fix: accept null and JSON string arguments in prompt-based tool calls (@Fahmid-Arman)
+- **PR #7047** (closed): using @agent in openapiCompatible (@devsick)
+- **PR #7042** (2026-11-06): fix(mcp): scan saved servers after an individual start (@Max-Reisinger)
+- **PR #7038** (2026-11-06): Forward user and workspace identity to MCP servers (@timothycarambat)
+- **PR #7037** (2026-11-06): feat: developer API endpoints for MCP server management (@timothycarambat)
+- **PR #7036** (2026-11-06): Allow editing prompt after aborting response (@shatfield4)
+- **PR #7035** (2026-11-06): fix: match model router hour ranges that span midnight (@MohammadHijjawi97)
 
 ---
 
@@ -1682,69 +1681,51 @@ fresh machine.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. honour the workspace chat mode in the mobile stream-chat command (#6983)
+## X. keep non-Latin path text in single-link scrape titles (#7025)
 
 **RULE**:
-When implementing operations in `server/__tests__/endpoints/mobile/utils/index.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `collector/__tests__/processLink/convert/generic.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b1b81d6`: honour the workspace chat mode in the mobile stream-chat command (#6983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44b1d514`: keep non-Latin path text in single-link scrape titles (#7025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/endpoints/mobile/utils/index.test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `collector/__tests__/processLink/convert/generic.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  ApiChatHandler: { streamChat: jest.fn() },
-const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
 
-  function streamResponse(user = null) {
-    return {
-      locals: { user },
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-      setHeader: jest.fn(),
-      flushHeaders: jest.fn(),
-      end: jest.fn(),
-    };
-  }
+    it("keeps non-Latin path text and the query string in the default title", async () => {
+      mockFetch();
+      writeToServerDocuments.mockImplementation(({ data }) => data);
 
-  function streamChat(body, response) {
-    return handleMobileCommand(
-      { params: { command: "stream-chat" }, body },
-      response
-    );
-  }
+      for (const link of [
+        "https://example.com/wiki/%E5%8C%97%E4%BA%AC",
+        "https://example.com/wiki/%E4%B8%8A%E6%B5%B7",
+        "https://example.com/wiki/%EC%84%9C%EC%9A%B8",
+        "https://example.com/item?id=1",
+        "https://example.com/item?id=2",
+      ])
+        await scrapeGenericUrl({ link, captureAs: "html" });
 
-  it("chats in the workspace's configured mode", async () => {
-    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
-    const response = streamResponse();
-
-    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
-
-    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-      expect.objectContaining({
-        mode: "automatic",
-        message: "hi",
-        thread: null,
-      })
-    );
-    expect(response.end).toHaveBeenCalled();
-  });
-
-  it("uses the mode of the workspace resolved for the signed-in user", async () => {
-    const user = { id: 3 };
-    Workspace.getWithUser.mockResolvedValue({
-      ...workspace,
-    
+      expect(
+        writeToServerDocuments.mock.calls.map(([{ data }]) => data.title)
+      ).toEqual([
+        "example.com_wiki_北京.html",
+        "example.com_wiki_上海.html",
+        "example.com_wiki_서울.html",
+        "example.com_item?id=1.html",
+        "example.com_item?id=2.html",
+      ]);
+    });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  ApiChatHandler: {},
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b1b81d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44b1d514` are properly handled with clean fallback behavior.

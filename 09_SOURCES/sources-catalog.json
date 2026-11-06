@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "210154bd",
+    "sourceVersion": "27b7f518",
     "license": "GPL-3.0",
-    "contentHash": "180ee9dd566ee64070d57313cb346bc4d065680a8386d6b4f2cc0fe058239a71",
-    "lastHarvestedAt": "2026-11-04T02:19:17.806Z",
+    "contentHash": "26d4f35a6996d890d29165d00f5cf6177339e570c4f161b5bee4aa60f33ec60b",
+    "lastHarvestedAt": "2026-11-06T19:09:43.209Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "cbaf3357",
+    "sourceVersion": "308b2766",
     "license": "MIT",
-    "contentHash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
-    "lastHarvestedAt": "2026-11-05T10:23:18.995Z",
+    "contentHash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
+    "lastHarvestedAt": "2026-11-06T19:09:51.043Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

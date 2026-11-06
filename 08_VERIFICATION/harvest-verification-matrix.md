@@ -7901,3 +7901,5 @@
 | `CYCLE-20261106-3C22` | `2026-11-06T18:54:46.730Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`acec04fc...`) |
 | `CYCLE-20261106-D267` | `2026-11-06T19:02:20.479Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fa535438...`) |
 | `CYCLE-20261106-D406` | `2026-11-06T19:02:22.854Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26a2a333...`) |
+| `CYCLE-20261106-MJS5` | `2026-11-06T19:09:43.205Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26d4f35a...`) |
+| `CYCLE-20261106-MPTR` | `2026-11-06T19:09:51.039Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b2458236...`) |

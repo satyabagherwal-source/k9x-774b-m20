@@ -7910,3 +7910,5 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `bb1c0fbf` | Multi-dimensional audit evidence | 2026-11-06T18:54:46.734Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d3413e65` | Multi-dimensional audit evidence | 2026-11-06T19:02:20.483Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `b8e88959` | Multi-dimensional audit evidence | 2026-11-06T19:02:22.858Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `27b7f518` | Multi-dimensional audit evidence | 2026-11-06T19:09:43.209Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `308b2766` | Multi-dimensional audit evidence | 2026-11-06T19:09:51.043Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T19:02:22.864Z",
-  "total_cycles_completed": 7866,
-  "total_learnings_persisted": 7866,
-  "total_rules_promoted": 7515,
+  "last_updated": "2026-11-06T19:09:51.058Z",
+  "total_cycles_completed": 7868,
+  "total_learnings_persisted": 7868,
+  "total_rules_promoted": 7517,
   "history": [
-    {
-      "timestamp": "2026-11-05T14:22:46.076Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T14:22:48.935Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:22:52.698Z",
       "repository": "crate/crate",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T19:02:22.864Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:09:43.215Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:09:51.058Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

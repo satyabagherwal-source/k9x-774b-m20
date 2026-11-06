@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T19:02:22.755Z",
+  "last_updated": "2026-11-06T19:09:50.948Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42664,11 +42664,16 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "cbaf3357",
-      "content_hash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
+      "source_version": "308b2766",
+      "content_hash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "keep non-Latin path text in single-link scrape titles (#7025)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2215,
           "title": "Built-in LLM for Docker (embedded_lemonade) (#6719)",
@@ -42750,7 +42755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:23:18.900Z",
+      "verified_at": "2026-11-06T19:09:50.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56652,11 +56657,16 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "210154bd",
-      "content_hash": "180ee9dd566ee64070d57313cb346bc4d065680a8386d6b4f2cc0fe058239a71",
+      "source_version": "27b7f518",
+      "content_hash": "26d4f35a6996d890d29165d00f5cf6177339e570c4f161b5bee4aa60f33ec60b",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "core: add partial indexes on unsynced rows (#10528)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1767,
           "title": "core: fix token refresh race between TokenManager instances (#10540)",
@@ -56693,7 +56703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:19:17.693Z",
+      "verified_at": "2026-11-06T19:09:43.087Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
