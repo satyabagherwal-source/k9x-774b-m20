@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `6bdbadfd`  
+> **Source Version**: `f7683239`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:14:51.643Z  
+> **Timestamp**: 2026-11-05T19:29:29.511Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:14:51.541Z  
+> **Harvest Timestamp**: 2026-11-05T19:29:29.503Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17412 stars
+- **Stars / Engagement**: 17422 stars
 
 ---
 
@@ -1429,419 +1429,578 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bdbadfd` (2026-11-04)
-**Commit Message**: fix(web): remove SveltePress (#4803)
+### Incident Patch 1: `f7683239` (2026-11-05)
+**Commit Message**: fix: keep the editor typable after clicking a highlighted lint (#3834)
 
-**File**: `AGENTS.md` (modified, +8/-6)
-```diff
-@@ -1,9 +1,10 @@
- # Harper Docs Map for Agents
- 
--This repository’s documentation site is powered by Vite + SvelteKit + SveltePress.
-+This repository’s documentation site uses Vite, SvelteKit, mdsvex, and rehype-highlight.
- 
--Use `packages/web/vite.config.ts` as the source of truth for documentation scope:
--- Sidebar and important doc routes are defined in `packages/web/vite.config.ts`.
-+Use `packages/web/src/lib/docs/config.ts` as the source of truth for documentation scope:
-+- Sidebar, navigation, site metadata, and search settings are defined in `packages/web/src/lib/docs/config.ts`.
-+- `packages/web/vite.config.ts` contains build configuration, not the documentation sidebar.
- - Route `/docs/...` maps to `packages/web/src/routes/docs/...`.
- - Most docs are in `+page.md`; some are `+page.svelte` or route helpers.
- 
-@@ -17,7 +18,7 @@ Agents should remind humans of this when possible.
- 
- ## Read First
- 
--1. `packages/web/vite.config.ts`: Sidebar source of truth and canonical map of important docs routes.
-+1. `packages/web/src/lib/docs/config.ts`: Sidebar source of truth and canonical map of important docs routes. For website architecture, Markdown authoring, theme/search behavior, and validation, read `packages/web/src/routes/docs/contributors/website/+page.md`.
- 2. `packages/web/src/routes/docs/about/+page.md`: High-level product overview, privacy model, versioning policy, and ecosystem context.
- 3. `packages/web/src/routes/docs/weir/+page.md`: Weir rule language reference with syntax, expression types, and examples.
- 4. `packages/web/src/routes/docs/rules/+page.svelte`: Live/generated rule catalog (rule names, defaults, and descriptions).
-@@ -74,7 +75,7 @@ Agents should remind humans of this when possible.
- - `packages/web/src/routes/docs/contributors/visual-studio-code/+page.md`: How to run, debug, test, and package the VS Code extension locally.
- - `packages/web/src/routes/docs/contributors/chrome-extension/+page.md`: Internal architecture and local development notes for the browser extensions.
- - `packages/web/src/routes/docs/contributors/desktop/+page.md`: Placeholder for Harper Desktop contributor documentation.
--- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/SveltePress).
-+- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/mdsvex).
- - `packages/web/src/routes/docs/contributors/wordpress/+page.md`: How to build and run the WordPress plugin locally.
- - `packages/web/src/routes/docs/contributors/obsidian/+page.md`: Obsidian-plugin contributor workflow and plugin-specific constraints.
- - `packages/web/src/routes/docs/contributors/review/+page.md`: PR reviewer playbook, including ways to fetch artifacts and test patches locally.
-@@ -84,7 +85,8 @@ Agents should remind humans of this when possible.
- 
- ## Documentation Route Helpers (Non-`+page.md`)
- 
--- `packages/web/src/routes/docs/about/+page.ts`: Route behavior helper (`ssr = false`) for the About page.
-+- `packages/web/src/routes/docs/rules/+page.ts`: Disables SSR for the browser-rendered rule catalog.
-+- `packages/web/src/routes/docs/rules/+page.server.ts`: Loads rule descriptions and defaults with the inlined Harper WASM binary.
- - `packages/web/src/routes/docs/harperjs/CDN/example/+server.ts`: Serves the HTML example used by the `harper.js` CDN documentation page.
- 
- ## External Sidebar Targets (No Local Source File)
-```
+* fix: keep the editor typable after clicking a highlighted lint
 
-**File**: `biome.json` (modified, +0/-1)
-```diff
-@@ -25,7 +25,6 @@
- 			"!**/harper-wasm/pkg",
- 			"!**/.vscode-test",
- 			"!**/.svelte-kit",
--			"!**/.sveltepress",
- 			"!**/packages/obsidian-plugin/main.js",
- 			"!**/pnpm-lock.yaml",
- 			"!**/package-lock.json",
-```
+* test: match the redesigned suggestion title in the activation-key test
 
-**File**: `justfile` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ soft-clean:
-   rm -rf "{{justfile_directory()}}"/packages/lint-framework/{dist}
-   rm -rf "{{justfile_directory()}}"/packages/obsidian-plugin/{harper-obsidian-plugin.zip,main.js}
-   rm -rf "{{justfile_directory()}}"/packages/vscode-plugin/{.vscode-test,bin,build}
--  rm -rf "{{justfile_directory()}}"/packages/web/{.svelte-kit,.sveltepress,build}
-+  rm -rf "{{justfile_directory()}}"/packages/web/{.svelte-kit,build}
-   rm -rf "{{justfile_directory()}}"/packages/wordpress-plugin/{build,harper.zip}
-   rm -rf "{{justfile_directory()}}"/harper-desktop/{.svelte-kit,build,package}
-   rm -rf "{{justfile_directory()}}"/harper-wasm/pkg
-```
+The popup redesign titles a replacement row `Click to replace "an" with
+"a"`, so the test waited for a `Replace with "a"` title that no longer
+exists and timed out.
 
-**File**: `packages/web/.gitignore` (modified, +0/-1)
-```diff
-@@ -2,7 +2,6 @@
- node_modules
- /build
- /.svelte-kit
--/.sveltepress
- /package
- .env
- .env.*
-```
+* test: assert the suggestion row is focused with toBeFocused
 
-**File**: `packages/web/mdsvex.config.js` (added, +33/-0)
+The row sits in the popup shadow root, so `:focus` resolved to both the
+row and its host and the strict locator failed.
+
+* test: skip the activation-key test on Firefox
+
+It sets the activation key through the extension background, which
+Firefox does not expose to Playwright, so it waited until the browser
+closed. Use getBackground and skip Firefox like the other tests that
+write extension storage.
+
+---------
+
+Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+
+**File**: `packages/chrome-plugin/tests/simple_textarea.spec.ts` (modified, +70/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+import { fileURLToPath } from 'node:url';
-+import rehypeHighlight from 'rehype-highlight';
+@@ -20,6 +20,76 @@ testCanIgnoreSuggestion(TEST_PAGE_URL, getTextarea);
+ testCanBlockRuleSuggestion(TEST_PAGE_URL, getTextarea);
+ testMultipleSuggestionsAndUndo(TEST_PAGE_URL, getTextarea);
+ 
++test('Keeps the textarea typable after opening a suggestion with a click', async ({ page }) => {
++	await page.goto(TEST_PAGE_URL);
 +
-+/**
-+ * Escape code text after highlighting, before mdsvex serializes it as a Svelte template.
-+ * Keep highlight spans intact and leave prose, embedded HTML, and Svelte expressions alone.
-+ * The highlighter is disabled below without mdsvex's early code escaping, so entities such
-+ * as `&lt;` and literal braces are escaped exactly once and retain their original text.
-+ */
-+function rehypeEscapeHighlightedCode() {
-+	function visit(node, inCodeBlock = false) {
-+		const isCodeBlock = inCodeBlock || (node.type === 'element' && node.tagName === 'pre');
-+		if (isCodeBlock && node.type === 'text') {
-+			const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '{': '&#123;', '}': '&#125;' };
-+			node.value = node.value.replace(/[&<>{}]/g, (character) => entities[character]);
-+		}
-+		for (const child of node.children ?? []) visit(child, isCodeBlock);
-+	}
-+	return (tree) => visit(tree);
-+}
++	const editor = getTextarea(page);
++	await replaceEditorContent(editor, 'This word is misspellled.');
 +
-+export default {
-+	extensions: ['.md'],
-+	layout: fileURLToPath(new URL('./src/lib/docs/MarkdownLayout.svelte', import.meta.url)),
-+	smartypants: false,
-+	// `highlight: false` escapes code before rehype can highlight it. Disable only the
-+	// highlighter instead, and let the final rehype plugin perform code escaping once.
-+	highlight: { highlighter: false },
-+	rehypePlugins: [
-+		[rehypeHighlight, { detect: false, ignoreMissing: true }],
-+		rehypeEscapeHighlightedCode,
-+	],
-+};
++	expect(await clickHarperHighlight(page)).toBe(true);
++	await page.locator('.harper-container').waitFor({ state: 'visible' });
++	await assertLocatorIsFocused(page, editor);
++
++	const valueBeforeDelete = await editor.inputValue();
++	await page.keyboard.press('Delete');
++	expect(await editor.inputValue()).not.toBe(valueBeforeDelete);
++});
++
++test('Focuses suggestions when opening the popup with the activation key', async ({
++	browserName,
++	context,
++	page,
++}) => {
++	test.skip(
++		browserName === 'firefox',
++		'Firefox MV3 background context is not exposed reliably in playwright-webextext.',
++	);
++	const background = await getBackground(context);
++	await background.evaluate(() => chrome.storage.local.set({ activationKey: 'shift' }));
++	await page.goto(TEST_PAGE_URL);
++
++	const editor = getTextarea(page);
++	await replaceEditorContent(editor, 'This is an test.');
++	await page.locator('#harper-highlight').waitFor({ state: 'visible' });
++
++	await page.keyboard.press('Shift');
++	await page.waitForTimeout(50);
++	await page.keyboard.press('Shift');
++
++	const firstSuggestion = page.getByTitle('Click to replace "an" with "a"');
++	await firstSuggestion.waitFor({ state: 'visible' });
++	// The row lives in the popup's shadow root, so `:focus` also matches its host.
++	await expect(firstSuggestion).toBeFocused();
++
++	await page.keyboard.press('Escape');
++	await page.locator('.harper-container').waitFor({ state: 'hidden' });
++	await assertLocatorIsFocused(page, editor);
++
++	await page.keyboard.press('Shift');
++	await page.waitForTimeout(50);
++	await page.keyboard.press('Shift');
++	await firstSuggestion.waitFor({ state: 'visible' });
++	await expect(firstSuggestion).toBeFocused();
++
++	await page.keyboard.press('Enter');
++	await expect(editor).toHaveValue('This is a test.');
++});
++
++test('Dismisses a click-opened popup when clicking outside its highlight', async ({ page }) => {
++	await page.goto(TEST_PAGE_URL);
++
++	const editor = getTextarea(page);
++	await replaceEditorContent(editor, 'This word is misspellled.');
++
++	expect(await clickHarperHighlight(page)).toBe(true);
++	await page.locator('.harper-container').waitFor({ state: 'visible' });
++
++	await editor.click({ position: { x: 2, y: 2 } });
++
++	await page.locator('.harper-container').waitFor({ state: 'hidden' });
++	await assertLocatorIsFocused(page, editor);
++});
++
+ test('Wraps correctly', async ({ page }, testInfo) => {
+ 	await page.goto(TEST_PAGE_URL);
+ 
 ```
 
-**File**: `packages/web/package.json` (modified, +2/-2)
+**File**: `packages/lint-framework/src/lint/PopupHandler.ts` (modified, +6/-0)
 ```diff
-@@ -20,6 +20,8 @@
- 		"drizzle-kit": "^0.31.5",
- 		"esbuild": "^0.28.1",
- 		"flowbite": "^3.1.2",
-+		"mdsvex": "^0.12.6",
-+		"rehype-highlight": "^7.0.2",
- 		"svelte": "^5.57.3",
- 		"svelte-check": "^4.1.5",
- 		"tailwindcss": "^4.1.16",
-@@ -32,8 +34,6 @@
- 	"dependencies": {
- 		"@docsearch/css": "^3.9.0",
- 		"@docsearch/js": "^3.9.0",
--		"@sveltepress/theme-default": "^8.11.0",
--		"@sveltepress/vite": "^1.10.0",
- 		"brace": "^0.11.1",
- 		"chart.js": "^4.4.8",
- 		"components": "workspace:*",
-```
-
-**File**: `packages/web/src/app.css` (modified, +5/-12)
-```diff
-@@ -4,6 +4,9 @@
+@@ -33,6 +33,8 @@ export default class PopupHandler {
+ 	private currentLintBoxes: IgnorableLintBox[];
+ 	private popupLint: number | undefined;
+ 	private selectedSuggestion = 0;
++	/** Only a keyboard activation moves focus into the popup; a click leaves it in the editor. */
++	private autofocusSuggestion = false;
+ 	private currentHint: string | null | undefined;
+ 	private currentHintFor: number | undefined;
+ 	private renderBox: RenderBox;
+@@ -98,6 +100,7 @@ export default class PopupHandler {
  
- @custom-variant dark (&:where(.dark, .dark *));
- 
-+/* Apply after the element selector; exclude embedded UI and all of its descendants. */
-+@custom-variant docs-prose (&:not(:where([data-docs-embed], [data-docs-embed] *)));
-+
- @theme {
- 	--font-serif: Domine, serif;
- 
-@@ -94,9 +97,8 @@
- 	--docsearch-hit-color: var(--marketing-ink);
- }
- 
--/* Outrank SveltePress's :root:root and :root:root.dark brand defaults only.
--   Keep its dark-mode text and surface colors intact. */
--html:root:root:root {
-+/* Shared search brand colors for documentation and marketing pages. */
-+:root {
- 	--docsearch-primary-color: var(--marketing-amber);
- 	--docsearch-highlight-color: var(--marketing-amber);
- }
-@@ -146,15 +148,6 @@ p {
- 	@apply leading-[130%] [&:not(:first-child)]:mt-6;
- }
- 
--.theme-default--page-layout .content > h2 {
--	margin-top: 2rem;
--	padding-top: 1rem;
--}
--
--.theme-default--page-layout .content p + .svp-code-block-wrapper {
--	margin-top: 1rem;
--}
--
- a {
- 	@apply underline-offset-4 text-black dark:text-white;
- }
-```
-
-**File**: `packages/web/src/app.d.ts` (modified, +0/-2)
-```diff
-@@ -1,5 +1,3 @@
--/// <reference types="@sveltepress/vite/types" />
--
- // See https://kit.svelte.dev/docs/types#app
- // for information about these interfaces
- declare global {
-```
-
----
-
-### Incident Patch 2: `c448c402` (2026-11-04)
-**Commit Message**: fix(web): CSS problems from SveltePress upgrade
-
-**File**: `packages/web/src/app.css` (modified, +18/-8)
-```diff
-@@ -84,7 +84,6 @@
- 	--marketing-underline: #c96442;
- 	--marketing-grass: #2f8a5b;
- 
--	--docsearch-primary-color: var(--marketing-amber);
- 	--docsearch-text-color: var(--marketing-ink);
- 	--docsearch-muted-color: var(--marketing-ink-3);
- 	--docsearch-searchbox-background: #fff;
-@@ -93,6 +92,12 @@
- 	--docsearch-footer-background: #fbfaf6;
- 	--docsearch-hit-background: #fff;
- 	--docsearch-hit-color: var(--marketing-ink);
-+}
-+
-+/* Outrank SveltePress's :root:root and :root:root.dark brand defaults only.
-+   Keep its dark-mode text and surface colors intact. */
-+html:root:root:root {
-+	--docsearch-primary-color: var(--marketing-amber);
- 	--docsearch-highlight-color: var(--marketing-amber);
- }
- 
-@@ -118,17 +123,17 @@ ol {
- }
- 
- h1 {
--	@apply text-4xl font-extrabold tracking-tight lg:text-5xl py-4;
-+	@apply text-4xl font-extrabold tracking-tight lg:text-5xl;
- 	font-family: Domine, serif;
- }
- 
- h2 {
--	@apply text-3xl font-semibold tracking-tight py-4;
-+	@apply text-3xl font-semibold tracking-tight;
- 	font-family: Domine, serif;
- }
- 
- h3 {
--	@apply text-2xl font-semibold tracking-tight py-4;
-+	@apply text-2xl font-semibold tracking-tight;
- 	font-family: Domine, serif;
- }
- 
-@@ -141,6 +146,15 @@ p {
- 	@apply leading-[130%] [&:not(:first-child)]:mt-6;
- }
- 
-+.theme-default--page-layout .content > h2 {
-+	margin-top: 2rem;
-+	padding-top: 1rem;
-+}
-+
-+.theme-default--page-layout .content p + .svp-code-block-wrapper {
-+	margin-top: 1rem;
-+}
-+
- a {
- 	@apply underline-offset-4 text-black dark:text-white;
- }
-@@ -202,10 +216,6 @@ textarea {
+ 		this.popupLint = closestIdx;
+ 		this.selectedSuggestion = 0;
++		this.autofocusSuggestion = true;
+ 		this.render();
+ 		if (popupFocused) this.focusSelectedSuggestion();
  	}
- }
+@@ -119,6 +122,7 @@ export default class PopupHandler {
+ 				if (this.popupLint != null) this.close();
+ 				this.popupLint = i;
+ 				this.selectedSuggestion = 0;
++				this.autofocusSuggestion = false;
+ 				this.render();
+ 				return;
+ 			}
+@@ -130,6 +134,7 @@ export default class PopupHandler {
+ 	private close = () => {
+ 		this.popupLint = undefined;
+ 		this.selectedSuggestion = 0;
++		this.autofocusSuggestion = false;
+ 		this.render();
+ 	};
  
--.header {
--	padding-top: 6px;
--}
--
- th[align="center"] {
- 	text-align: center;
- }
+@@ -153,6 +158,7 @@ export default class PopupHandler {
+ 			tree = SuggestionBox({
+ 				box,
+ 				selectedIndex: this.selectedSuggestion,
++				autofocus: this.autofocusSuggestion,
+ 				onSelect: (index) => {
+ 					if (index === this.selectedSuggestion) return;
+ 					this.selectedSuggestion = index;
 ```
 
-**File**: `packages/web/src/lib/marketing/MarketingFooter.svelte` (modified, +3/-3)
+**File**: `packages/lint-framework/src/lint/SuggestionBox.ts` (modified, +3/-1)
 ```diff
-@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
- 		</div>
- 
- 		<div class="flex flex-col gap-2.5">
--			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
-+			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
- 				Get Harper
- 			</h2>
- 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href="/desktop">Harper Desktop</a>
-@@ -38,7 +38,7 @@ const currentYear = new Date().getFullYear();
- 		</div>
- 
- 		<div class="flex flex-col gap-2.5">
--			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
-+			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
- 				Resources
- 			</h2>
- 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href="/docs/about">Documentation</a>
-@@ -49,7 +49,7 @@ const currentYear = new Date().getFullYear();
- 		</div>
- 
- 		<div class="flex flex-col gap-2.5">
--			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] text-primary uppercase dark:text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
-+			<h2 class='!m-0 py-0 text-[0.66rem] font-extrabold tracking-[0.14em] !text-primary uppercase dark:!text-primary-300 [font-family:"JetBrains_Mono",monospace]'>
- 				Community
- 			</h2>
- 			<a class="!text-black/70 no-underline hover:!text-black hover:no-underline dark:!text-white/70 dark:hover:!text-white" href={marketingLinks.github}>GitHub</a>
-```
-
-**File**: `packages/web/src/lib/marketing/PrivacySpeedCards.svelte` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ export let desktop = false;
- 	<article
- 		class="flex min-h-44 flex-col gap-4 overflow-hidden rounded-2xl border border-black/10 bg-white p-6 text-black dark:border-white/10 dark:bg-black dark:text-white md:p-8"
- 	>
--		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal">
-+		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal !text-inherit">
- 			{desktop ? 'Your words never leave your device.' : 'Harper is completely private.'}
- 		</h2>
- 		<p class="!m-0 text-sm leading-relaxed text-black/70 dark:text-white/70">
-@@ -51,7 +51,7 @@ export let desktop = false;
- 	<article
- 		class="flex min-h-44 flex-col gap-4 overflow-hidden rounded-2xl bg-black p-6 text-white dark:bg-white dark:text-black md:p-8"
- 	>
--		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal">
-+		<h2 class="m-0 py-0 text-[clamp(2rem,4vw,2.25rem)] leading-[1.08] font-semibold tracking-normal !text-inherit">
- 			Suggestions in under 10ms.
- 		</h2>
- 		<p class="!m-0 text-sm leading-relaxed text-white/70 dark:text-black/70">
+@@ -152,7 +152,7 @@ function popupHook(props: Parameters<typeof SuggestionBox>[0], refocusClose: ()
+ 		const frame = requestAnimationFrame(() => {
+ 			if (!node.isConnected) return;
+ 			measure();
+-			if (!node.dataset.autofocused) {
++			if (props.autofocus && !node.dataset.autofocused) {
+ 				saveCursorState();
+ 				node.dataset.autofocused = 'true';
+ 				focusRow(node, props.selectedIndex);
+@@ -502,6 +502,8 @@ function styleTag(kind: LintKind) {
+ export default function SuggestionBox(props: {
+ 	box: IgnorableLintBox;
+ 	selectedIndex: number;
++	/** Move focus to the selected row when the popup opens. */
++	autofocus: boolean;
+ 	onSelect: (index: number) => void;
+ 	/** Optional consumer capabilities; the popup never persists configuration itself. */
+ 	actions: {
 ```
 
 ---
 
-### Incident Patch 3: `3e08646c` (2026-11-04)
-**Commit Message**: fix(chrome-ext): Typst editors did not properly use `<br>` (#4732)
+### Incident Patch 2: `0294fdab` (2026-11-05)
+**Commit Message**: fix(web): the dark mode had some regressions (#4817)
 
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +2/-1)
+**File**: `packages/components/src/lib/logos/GitHubLogo.svelte` (modified, +1/-2)
 ```diff
-@@ -93,8 +93,9 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
- 		if (needsCharacterInput) {
- 			// Draft.js needs character key events at a normal typing cadence for its selection model.
- 			await editorEl.pressSequentially(lines[i], { delay: 200 });
--		} else {
-+		} else if (lines[i]) {
- 			// Native text input updates the editor model without exposing partial words to linting.
-+			// Firefox rejects empty insertText calls; the break key below creates empty lines.
- 			await editorEl.page().keyboard.insertText(lines[i]);
- 		}
- 		if (i < lines.length - 1) {
+@@ -4,9 +4,8 @@ export let height = '100%';
+ </script>
+ 
+ <svg class="block" {width} {height} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+-	<circle cx="16" cy="17" r="15" style="fill: white;" />
+ 	<path
+ 		d="M16 0.396c-8.839 0-16 7.167-16 16 0 7.073 4.584 13.068 10.937 15.183 0.803 0.151 1.093-0.344 1.093-0.772 0-0.38-0.009-1.385-0.015-2.719-4.453 0.964-5.391-2.151-5.391-2.151-0.729-1.844-1.781-2.339-1.781-2.339-1.448-0.989 0.115-0.968 0.115-0.968 1.604 0.109 2.448 1.645 2.448 1.645 1.427 2.448 3.744 1.74 4.661 1.328 0.14-1.031 0.557-1.74 1.011-2.135-3.552-0.401-7.287-1.776-7.287-7.907 0-1.751 0.62-3.177 1.645-4.297-0.177-0.401-0.719-2.031 0.141-4.235 0 0 1.339-0.427 4.4 1.641 1.281-0.355 2.641-0.532 4-0.541 1.36 0.009 2.719 0.187 4 0.541 3.043-2.068 4.381-1.641 4.381-1.641 0.859 2.204 0.317 3.833 0.161 4.235 1.015 1.12 1.635 2.547 1.635 4.297 0 6.145-3.74 7.5-7.296 7.891 0.556 0.479 1.077 1.464 1.077 2.959 0 2.14-0.020 3.864-0.020 4.385 0 0.416 0.28 0.916 1.104 0.755 6.4-2.093 10.979-8.093 10.979-15.156 0-8.833-7.161-16-16-16z"
+-		style="fill: black;"
++		fill="currentColor"
+ 	/>
+ </svg>
 ```
 
-**File**: `packages/chrome-plugin/tests/typst.spec.ts` (modified, +25/-0)
+**File**: `packages/components/src/lib/logos/LinearLogo.svelte` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,31 @@ test('Typst CodeMirror editor can apply a suggestion', async ({ page }) => {
- 	await expect(editor).toContainText('This is a test');
- });
+@@ -3,4 +3,4 @@ export let width = '100%';
+ export let height = '100%';
+ </script>
  
-+for (const blankLines of [1, 3, 5]) {
-+	test(`Typst CodeMirror can apply a suggestion after ${blankLines} blank lines`, async ({
-+		page,
-+	}) => {
-+		test.slow();
-+		await page.goto(TEST_PAGE_URL, { waitUntil: 'domcontentloaded' });
-+
-+		const editor = page.locator('.cm-editor .cm-content[contenteditable="true"]').first();
-+		await expect(editor).toBeVisible({ timeout: 30000 });
-+		await replaceEditorContent(
-+			editor,
-+			`This is correct.${'\n'.repeat(blankLines + 1)}This is an test`,
-+		);
-+
-+		await assertHighlightCount(page, 1);
-+
-+		expect(await clickHarperHighlight(page)).toBe(true);
-+		await page.getByTitle('Click to replace "an" with "a"').click();
-+
-+		await expect(editor).toContainText('This is correct.');
-+		await expect(editor).toContainText('This is a test');
-+		await assertHighlightCount(page, 0);
-+	});
-+}
-+
- test('Typst CodeMirror handles multiline suggestions distinctly', async ({ page }) => {
- 	test.setTimeout(120000);
- 	await page.goto(TEST_PAGE_URL, { waitUntil: 'domcontentloaded' });
+-<svg class="text-[#222326] dark:text-white" {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="currentColor" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
++<svg class="text-[#222326]" {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="currentColor" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
 ```
 
-**File**: `packages/lint-framework/src/lint/domUtils.ts` (modified, +2/-1)
+**File**: `packages/web/src/lib/components/Toasts.svelte` (modified, +4/-4)
 ```diff
-@@ -95,6 +95,7 @@ export function leafNodes(node: Node): Node[] {
- /**
-  * Given an element and a Span of text inside it, compute the Range that represents the region of the DOM represented.
-  * Accounts for `<br>` elements which `innerText` converts to newlines.
-+ * CodeMirror spans already exclude line breaks, so its placeholder `<br>` elements count as zero.
-  * @param target
-  * @param span
-  */
-@@ -110,7 +111,7 @@ export function getRangeForTextSpan(target: Element, span: Span): Range | null {
- 		const child = children[i] as HTMLElement;
+@@ -20,15 +20,15 @@ export let className: string | undefined = undefined;
+ 		<Card
+ 			className={`border px-4 py-3 text-sm shadow-xl ${
+ 				toast.tone === 'success'
+-					? 'border-green-200 bg-green-50 text-green-900'
++					? 'border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-950 dark:text-green-100'
+ 					: toast.tone === 'error'
+-						? 'border-red-200 bg-red-50 text-red-900'
+-						: 'border-black/10 bg-white text-black'
++						? 'border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-100'
++						: 'border-black/10 bg-white text-black dark:border-white/10 dark:bg-[#1c1a16] dark:text-white'
+ 			}`}
+ 		>
+ 			<div class="text-sm font-semibold">{toast.title}</div>
+ 			{#if toast.body}
+-				<div class="mt-1 text-xs leading-snug text-black/70">{toast.body}</div>
++				<div class="mt-1 text-xs leading-snug text-black/70 dark:text-white/70">{toast.body}</div>
+ 			{/if}
+ 		</Card>
+ 	{/each}
+```
+
+**File**: `packages/web/src/lib/components/WeirStudioFileExplorer.svelte` (modified, +13/-12)
+```diff
+@@ -9,6 +9,7 @@ import {
+ 	PlusIcon,
+ 	TrashIcon,
+ } from 'components';
++import { studioPrimaryButton, studioSecondaryButton } from '$lib/components/weirStudioTheme';
  
- 		if (child.nodeName === 'BR') {
--			traversed += 1;
-+			traversed += child.closest('.cm-line') ? 0 : 1;
- 			continue;
- 		}
+ /** Whether to render the file explorer as a closed drawer or an open one. */
+ export let drawerOpen = true;
+@@ -49,15 +50,15 @@ function commitRename(from: string) {
+ </script>
  
+ <aside
+-	class={`relative z-10 flex h-full flex-col border-r border-black/10 bg-white/80 backdrop-blur transition-all duration-300 ${drawerOpen ? 'w-72' : 'w-14'}`}
++	class={`relative z-10 flex h-full flex-col border-r border-black/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-[#1c1a16]/80 transition-all duration-300 ${drawerOpen ? 'w-72' : 'w-14'}`}
+ >
+ 	<div class="flex items-center justify-between px-3 py-3">
+ 		{#if drawerOpen}
+-			<div class="text-sm font-semibold uppercase tracking-wider text-black/70">Weirpack</div>
++			<div class="text-sm font-semibold uppercase tracking-wider text-black/70 dark:text-white/70">Weirpack</div>
+ 			<Button
+ 				size="xs"
+ 				color="white"
+-				className="h-8 w-8 !p-0"
++				className={`h-8 w-8 !p-0 ${studioSecondaryButton}`}
+ 				on:click={onToggleDrawer}
+ 				title="Collapse drawer"
+ 				aria-label="Collapse drawer"
+@@ -68,7 +69,7 @@ function commitRename(from: string) {
+ 			<Button
+ 				size="xs"
+ 				color="white"
+-				className="mx-auto h-8 w-8 !p-0"
++				className={`mx-auto h-8 w-8 !p-0 ${studioSecondaryButton}`}
+ 				on:click={onToggleDrawer}
+ 				title="Expand drawer"
+ 				aria-label="Expand drawer"
+@@ -83,7 +84,7 @@ function commitRename(from: string) {
+ 			<Button
+ 				color="dark"
+ 				size="sm"
+-				className="w-full uppercase tracking-wide"
++				className={`w-full uppercase tracking-wide ${studioPrimaryButton}`}
+ 				on:click={onCreateFile}
+ 			>
+ 				<PlusIcon className="h-4 w-4" />
+@@ -94,7 +95,7 @@ function commitRename(from: string) {
+ 		<div class="flex-1 overflow-auto px-2 pb-4">
+ 			{#each files as [file]}
+ 				<div
+-					class={`group flex items-center justify-between rounded-lg px-2 py-2 text-sm ${file == activeFile ? 'bg-white shadow-sm' : 'hover:bg-white/60'}`}
++					class={`group flex items-center justify-between rounded-lg px-2 py-2 text-sm ${file == activeFile ? 'bg-white shadow-sm dark:bg-white/10' : 'hover:bg-white/60 dark:hover:bg-white/5'}`}
+ 				>
+ 					<div class="flex flex-1 items-center gap-2 text-left">
+ 						<span class={`h-2 w-2 rounded-full ${file == activeFile ? 'bg-primary': ''} bg-cream`}></span>
+@@ -118,20 +119,20 @@ function commitRename(from: string) {
+ 								/>
+ 							</div>
+ 						{:else}
+-							<button class="flex-1 truncate text-left" on:click={() => onSelectFile(file)}>
++							<button class="flex-1 truncate text-left dark:text-white/85" on:click={() => onSelectFile(file)}>
+ 								{file}
+ 							</button>
+ 						{/if}
+ 					</div>
+ 
+ 					<div
+-						class={`flex items-center gap-1 text-black/50 transition ${renamingFile === file ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
++						class={`flex items-center gap-1 text-black/50 transition dark:text-white/50 ${renamingFile === file ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+ 					>
+ 						{#if renamingFile === file}
+ 							<Button
+ 								size="xs"
+ 								color="white"
+-								className="h-6 w-6 !p-0"
++								className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
+ 								on:click={() => commitRename(file)}
+ 								title="Confirm rename"
+ 								aria-label="Confirm rename"
+@@ -142,7 +143,7 @@ function commitRename(from: string) {
+ 							<Button
+ 								size="xs"
+ 								color="white"
+-								className="h-6 w-6 !p-0"
++								className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
+ 								on:click={() => startRename(file)}
+ 								title="Rename file"
+ 								aria-label="Rename file"
+@@ -153,7 +154,7 @@ function commitRename(from: string) {
+ 								<Button
+ 									size="xs"
+ 									color="white"
+-									className="h-6 w-6 !p-0"
++									className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
+ 									on:click={() => onDeleteFile(file)}
+ 									title="Delete file"
+ 									aria-label="Delete file"
+@@ -167,7 +168,7 @@ function commitRename(from: string) {
+ 			{/each}
+ 		</div>
+ 	{:else}
+-		<div class="flex flex-1 flex-col items-center gap-4 pt-6 text-xs text-black/50">
++		<div class="flex flex-1 flex-col items-center gap-4 pt-6 text-xs text-black/50 dark:text-white/50">
+ 			<div class="rotate-135 text-xs font-semibold tracking-widest uppercase">Files</div>
+ 		</div>
+ 	{/if}
+```
+
+**File**: `packages/web/src/lib/components/WeirStudioStart.svelte` (modified, +14/-13)
+```diff
+@@ -1,5 +1,6 @@
+ <script lang="ts">
+ import { Button, Card } from 'components';
++import { studioPrimaryButton, studioSecondaryButton } from '$lib/components/weirStudioTheme';
+ 
+ export let onUpload: () => void;
+ export let onOpenExample: () => void;
+@@ -10,16 +11,16 @@ export let loading = false;
+ export let loadingLabel = 'Checking for saved Weirpack...';
+ </script>
+ 
+-<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#fef4e7]/95">
+-	<Card className="w-[min(640px,90vw)] space-y-6 border-black/10 bg-white/95 p-8">
++<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#fef4e7]/95 dark:bg-black/90">
++	<Card className="w-[min(640px,90vw)] space-y-6 border-black/10 bg-white/95 p-8 dark:border-white/10 dark:bg-[#1c1a16]/95">
+ 		<div class="space-y-2">
+-			<div class="text-xs font-semibold uppercase tracking-[0.25em] text-black/50">Weir Studio</div>
++			<div class="text-xs font-semibold uppercase tracking-[0.25em] text-black/50 dark:text-white/50">Weir Studio</div>
+ 			{#if loading}
+-				<h2 class="text-2xl font-semibold text-black">Restoring session</h2>
+-				<p class="text-sm text-black/60">{loadingLabel}</p>
++				<h2 class="text-2xl font-semibold text-black dark:text-white">Restoring session</h2>
++				<p class="text-sm text-black/60 dark:text-white/60">{loadingLabel}</p>
+ 			{:else}
+-				<h2 class="text-2xl font-semibold text-black">Choose how to start</h2>
+-				<p class="text-sm text-black/60">
++				<h2 class="text-2xl font-semibold text-black dark:text-white">Choose how to start</h2>
++				<p class="text-sm text-black/60 dark:text-white/60">
+ 					Load a Weirpack to edit rules, run tests, and export updates.
+ 				</p>
+ 			{/if}
+@@ -36,32 +37,32 @@ export let loadingLabel = 'Checking for saved Weirpack...';
+ 			<Button
+ 				color="dark"
+ 				size="md"
+-				className="w-full justify-between"
++				className={`w-full justify-between ${studioPrimaryButton}`}
+ 				on:click={onUpload}
+ 				disabled={loading}
+ 			>
+ 				<span>Upload an existing Weirpack</span>
+-				<span class="text-xs uppercase tracking-[0.2em] text-white/60">Upload</span>
++				<span class="text-xs uppercase tracking-[0.2em] text-white/60 dark:text-black/50">Upload</span>
+ 			</Button>
+ 			<Button
+ 				color="white"
+ 				size="md"
+-				className="w-full justify-between"
++				className={`w-full justify-between ${studioSecondaryButton}`}
+ 				on:click={onOpenExample}
+ 				disabled={loading}
+ 			>
+ 				<span>Open example Weirpack</span>
+-				<span class="text-xs uppercase tracking-[0.2em] text-black/40">Example</span>
++				<span class="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Example</span>
+ 			</Button>
+ 			<Button
+ 				color="white"
+ 				size="md"
+-				className="w-full justify-between"
++				className={`w-full justify-between ${studioSecondaryButton}`}
+ 				on:click={onCreateEmpty}
+ 				disabled={loading}
+ 			>
+ 				<span>Create an empty Weirpack</span>
+-				<span class="text-xs uppercase tracking-[0.2em] text-black/40">Empty</span>
++				<span class="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Empty</span>
+ 			</Button>
+ 		</div>
+ 	</Card>
+```
+
+**File**: `packages/web/src/lib/components/WeirStudioWorkspace.svelte` (modified, +28/-12)
+```diff
+@@ -1,7 +1,16 @@
+ <script lang="ts">
+ import { Button, Card, CloseIcon, DownloadIcon, PlayIcon } from 'components';
+-import type { ComponentType } from 'svelte';
++import { type ComponentType, getContext } from 'svelte';
+ import WeirStudioFileExplorer from '$lib/components/WeirStudioFileExplorer.svelte';
++import {
++	studioAceTheme,
++	studioPrimaryButton,
++	studioSecondaryButton,
++} from '$lib/components/weirStudioTheme';
++import type ThemeController from '$lib/docs/ThemeController';
++import { THEME_CONTEXT } from '$lib/docs/ThemeController';
++
++const theme = getContext<ThemeController>(THEME_CONTEXT);
+ 
+ export let drawerOpen = true;
+ export let files: Map<string, string> = new Map();
+@@ -38,19 +47,19 @@ export let getEditorMode: (name: string) => string;
+ />
+ 
+ <main class="relative z-10 flex flex-1 flex-col">
+-	<div class="flex items-center justify-between border-b border-black/10 bg-white/70 px-4 py-3">
++	<div class="flex items-center justify-between border-b border-black/10 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-[#1c1a16]/70">
+ 		<div class="flex items-center gap-3">
+-			<div class="text-xs font-semibold uppercase tracking-[0.2em] text-black/50">Studio</div>
+-			<div class="text-sm font-medium text-black/80">{activeFile ?? 'No file selected'}</div>
++			<div class="text-xs font-semibold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">Studio</div>
++			<div class="text-sm font-medium text-black/80 dark:text-white/80">{activeFile ?? 'No file selected'}</div>
+ 		</div>
+ 		<div class="flex items-center gap-3">
+-			<div class="text-xs uppercase tracking-[0.18em] text-black/40">
++			<div class="text-xs uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
+ 				{linterReady ? 'Weir runner online' : 'Warming up harper.js'}
+ 			</div>
+ 			<Button
+ 				size="xs"
+ 				color="white"
+-				className="h-8 w-8 !p-0"
++				className={`h-8 w-8 !p-0 ${studioSecondaryButton}`}
+ 				title="Close Weirpack"
+ 				aria-label="Close Weirpack"
+ 				on:click={onClosePack}
+@@ -61,22 +70,22 @@ export let getEditorMode: (name: string) => string;
+ 	</div>
+ 
+ 	<div class="flex-1 overflow-hidden p-4">
+-		<Card className="h-full border-black/10 bg-white/95 p-0 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.4)]">
++		<Card className="h-full border-black/10 bg-white/95 p-0 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.4)] dark:border-white/10 dark:bg-[#1c1a16]/95">
+ 			{#if editorReady && AceEditorComponent}
+-				{#key activeFile}
++				{#key `${activeFile}:${$theme}`}
+ 					<svelte:component
+ 						this={AceEditorComponent}
+ 						width="100%"
+ 						height="100%"
+ 						value={activeFile ? files.get(activeFile) : ""}
+ 						lang={getEditorMode(activeFile ?? '')}
+-						theme="chrome"
++						theme={studioAceTheme[$theme]}
+ 						options={editorOptions}
+ 						on:input={(event: CustomEvent<string>) => onUpdateContent(event.detail)}
+ 					/>
+ 				{/key}
+ 			{:else}
+-				<div class="flex h-full items-center justify-center text-sm uppercase tracking-[0.3em] text-black/40">
++				<div class="flex h-full items-center justify-center text-sm uppercase tracking-[0.3em] text-black/40 dark:text-white/40">
+ 					Loading editor…
+ 				</div>
+ 			{/if}
+@@ -89,14 +98,21 @@ export let getEditorMode: (name: string) => string;
+ 		size="md"
+ 		color="dark"
+ 		pill
+-		className={runningTests ? 'opacity-70' : undefined}
++		className={`${studioPrimaryButton} ${runningTests ? 'opacity-70' : ''}`}
+ 		on:click={onRunTests}
+ 		disabled={!packLoaded || runningTests}
+ 	>
+ 		<PlayIcon className="h-4 w-4" />
+ 		{runningTests ? 'Running' : 'Run tests'}
+ 	</Button>
+-	<Button size="md" color="white" pill on:click={onDownload} disabled={!packLoaded}>
++	<Button
++		size="md"
++		color="white"
++		pill
++		className={studioSecondaryButton}
++		on:click={onDownload}
++		disabled={!packLoaded}
++	>
+ 		<DownloadIcon className="h-4 w-4" />
+ 		Download
+ 	</Button>
+```
+
+**File**: `packages/web/src/lib/components/weirStudioTheme.ts` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++/**
++ * Dark-mode overrides for the shared `components` Button inside Weir Studio.
++ * The shared Button uses a cool gray dark palette; Weir Studio uses the site's warm palette.
++ * Important modifiers are required because both class sets sit in the same utilities layer.
++ */
++
++/** Use with `color="white"`. */
++export const studioSecondaryButton =
++	'dark:bg-[#1c1a16]! dark:text-white/80! dark:border-white/15! dark:hover:bg-white/10! dark:focus:ring-white/20!';
++
++/** Use with `color="dark"`. The button inverts to white in dark mode. */
++export const studioPrimaryButton =
++	'dark:bg-white! dark:text-black! dark:hover:bg-white/85! dark:focus:ring-white/30!';
++
++/** Ace themes that match the light and dark site themes. */
++export const studioAceTheme = { light: 'chrome', dark: 'tomorrow_night' } as const;
+```
+
+**File**: `packages/web/src/lib/marketing/AppLogoTile.svelte` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ export let id: string;
+ export let size = 40;
+ 
+ const tileClasses =
+-	'inline-flex shrink-0 items-center justify-center bg-white shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:bg-white [&_svg]:block [&_svg]:h-[68%] [&_svg]:w-[68%]';
++	'inline-flex shrink-0 items-center justify-center bg-white shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] text-black dark:bg-white [&_svg]:block [&_svg]:h-[68%] [&_svg]:w-[68%]';
+ 
+ $: tileStyle = `width: ${size}px; height: ${size}px; border-radius: ${Math.round(size * 0.235)}px;`;
+ </script>
+```
+
+---
+
+### Incident Patch 3: `8506fe8c` (2026-11-05)
+**Commit Message**: fix(chrome-ext): warn users that the "Isolate English" setting is in beta
+
+**File**: `packages/chrome-plugin/src/options/Options.svelte` (modified, +2/-2)
+```diff
+@@ -487,8 +487,8 @@ async function removeWeirpack(id: string) {
+               <!-- Ignore Non-English Text -->
+               <div class="flex items-center justify-between gap-4 py-3.5">
+                 <div class="flex flex-col">
+-                  <h3 id="isolate-label" class="text-base font-semibold">Ignore Non-English Text</h3>
+-                  <p id="isolate-desc" class="text-xs text-gray-600 dark:text-[#d1d5db]!">Skip text that Harper detects as not English.</p>
++                  <h3 id="isolate-label" class="text-base font-semibold">Ignore Non-English Text (Beta)</h3>
++                  <p id="isolate-desc" class="text-xs text-gray-600 dark:text-[#d1d5db]!">Skip text that Harper detects as not English. This feature is in beta and is unlikely to work reliably.</p>
+                 </div>
+ 
+                 <div class="h-9 w-48 shrink-0 rounded-lg border border-gray-200 p-1 dark:border-slate-700 dark:bg-slate-900">
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4823** (2026-11-05): feat: flag verb agreement errors in questions (@mcampal)
+- **PR #4817** (2026-11-05): fix(web): the dark mode had some regressions (@elijah-potter)
+- **PR #4811** (2026-11-05): fix(web): keep site utilities after prebuilt CSS (@retrofox)
 - **PR #4803** (2026-11-04): fix(web): remove SveltePress (@elijah-potter)
 - **PR #4802** (2026-11-04): feat: we see us → we see each other (@hippietrail)
 - **PR #4799** (2026-11-04): feat: what so ever → whatsoever (@hippietrail)
-- **PR #4798** (2026-11-04): feat: all that's X are → all that's X is (@hippietrail)
-- **PR #4796** (2026-11-03): chore(chrome-ext): add spell checker to extension title (@elijah-potter)
-- **PR #4793** (2026-11-03): feat: round about → roundabout (@hippietrail)
 
 ---
 
@@ -1861,40 +2020,61 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): remove SveltePress (#4803)
+## X. keep the editor typable after clicking a highlighted lint (#3834)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/chrome-plugin/tests/simple_textarea.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bdbadfd`: web): remove SveltePress (#4803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7683239`: keep the editor typable after clicking a highlighted lint (#3834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/simple_textarea.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-This repository’s documentation site uses Vite, SvelteKit, mdsvex, and rehype-highlight.
-Use `packages/web/src/lib/docs/config.ts` as the source of truth for documentation scope:
-- Sidebar, navigation, site metadata, and search settings are defined in `packages/web/src/lib/docs/config.ts`.
-- `packages/web/vite.config.ts` contains build configuration, not the documentation sidebar.
-1. `packages/web/src/lib/docs/config.ts`: Sidebar source of truth and canonical map of important docs routes. For website architecture, Markdown authoring, theme/search behavior, and validation, read `packages/web/src/routes/docs/contributors/website/+page.md`.
-- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/mdsvex).
-- `packages/web/src/routes/docs/rules/+page.ts`: Disables SSR for the browser-rendered rule catalog.
-- `packages/web/src/routes/docs/rules/+page.server.ts`: Loads rule descriptions and defaults with the inlined Harper WASM binary.
+test('Keeps the textarea typable after opening a suggestion with a click', async ({ page }) => {
+	await page.goto(TEST_PAGE_URL);
+
+	const editor = getTextarea(page);
+	await replaceEditorContent(editor, 'This word is misspellled.');
+
+	expect(await clickHarperHighlight(page)).toBe(true);
+	await page.locator('.harper-container').waitFor({ state: 'visible' });
+	await assertLocatorIsFocused(page, editor);
+
+	const valueBeforeDelete = await editor.inputValue();
+	await page.keyboard.press('Delete');
+	expect(await editor.inputValue()).not.toBe(valueBeforeDelete);
+});
+
+test('Focuses suggestions when opening the popup with the activation key', async ({
+	browserName,
+	context,
+	page,
+}) => {
+	test.skip(
+		browserName === 'firefox',
+		'Firefox MV3 background context is not exposed reliably in playwright-webextext.',
+	);
+	const background = await getBackground(context);
+	await background.evaluate(() => chrome.storage.local.set({ activationKey: 'shift' }));
+	await page.goto(TEST_PAGE_URL);
+
+	const editor = getTextarea(page);
+	await replaceEditorContent(editor, 'This is an test.');
+	await page.locator('#harper-highlight').waitFor({ state: 'visible' });
+
+	await page.keyboard.press('Shift');
+	await 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-This repository’s documentation site is powered by Vite + SvelteKit + SveltePress.
-Use `packages/web/vite.config.ts` as the source of truth for documentation scope:
-- Sidebar and important doc routes are defined in `packages/web/vite.config.ts`.
-1. `packages/web/vite.config.ts`: Sidebar source of truth and canonical map of important docs routes.
-- `packages/web/src/routes/docs/contributors/website/+page.md`: Local development, preview, and validation for writewithharper.com (SvelteKit/SveltePress).
-- `packages/web/src/routes/docs/about/+page.ts`: Route behavior helper (`ssr = false`) for the About page.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bdbadfd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7683239` are properly handled with clean fallback behavior.

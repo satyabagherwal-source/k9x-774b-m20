@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `e737551c`  
+> **Source Version**: `660c438c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:05:36.175Z  
+> **Timestamp**: 2026-11-05T19:52:51.462Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:05:35.554Z  
+> **Harvest Timestamp**: 2026-11-05T19:52:50.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3856 stars
+- **Stars / Engagement**: 3854 stars
 
 ---
 
@@ -1717,252 +1717,178 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e737551c` (2026-11-04)
-**Commit Message**: Round down LogParams::since_time to the second (#2136)
+### Incident Patch 1: `660c438c` (2026-11-05)
+**Commit Message**: Show missing feature requirements on kube-client items in docs (#2141)
 
-jiff's default HalfExpand rounding sent 10.7s as 11s, so logs written in the rest of that second were skipped. Round down instead, matching client-go and the pre-jiff chrono behaviour.
+* Show the ws feature requirement on ws-only kube-client re-exports
+
+AttachedProcess, TerminalSize, Portforwarder and UpgradeConnectionError were
+documented as needing only the client feature on docs.rs, in kube-client,
+in kube, or both.
+
+Same-crate inlined re-exports only pick up doc(cfg) from the pub use, so
+annotate those. The kube facade only sees a plain #[cfg] on the item
+definition (docs.rs passes --cfg docsrs to rustdoc, not to rustc for
+dependencies), so gate the items themselves rather than only their module.
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
-**File**: `kube-core/src/kubelet_debug.rs` (modified, +28/-2)
+* Export Ephemeral without the ws feature
+
+The trait and the Api ephemeral container methods it bounds are not ws-gated,
+only its re-export was. Move it to the ungated re-export so it can be named
+without ws, and so kube and kube-client docs agree it needs only client.
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Show the oauth and ws feature requirement on OAuthError and Api::portforward
+
+OAuthError lived in an oauth-gated module without an item-level cfg, so the
+kube re-export showed client only. The portforward Api impl and the Portforward
+impl for 
+
+**File**: `kube-client/src/api/mod.rs` (modified, +4/-2)
 ```diff
-@@ -4,7 +4,7 @@ use crate::{
-     request::Error,
-     subresource::{AttachParams, LogParams},
- };
--use jiff::Unit;
-+use jiff::{RoundMode, TimestampRound, Unit};
+@@ -6,18 +6,20 @@ mod remote_command;
  use std::fmt::Debug;
  
- /// Struct that hold all required parameters to call specific pod methods from node
-@@ -147,7 +147,11 @@ impl Request {
-             // or b.) a rounding increment is configured (which we don't set) that does not fit into 86400 seconds (a day)
-             // without any remainder.
-             // `jiff::Timestamp` provides RFC3339 via `Display`, docs: https://docs.rs/jiff/latest/jiff/struct.Timestamp.html#impl-Display-for-Timestamp
--            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
-+            // Round down like client-go; rounding up would skip lines logged later in the same second.
-+            let floor = TimestampRound::new()
-+                .smallest(Unit::Second)
-+                .mode(RoundMode::Floor);
-+            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
-         }
+ #[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ pub use remote_command::{AttachedProcess, TerminalSize};
+ #[cfg(feature = "ws")]
+ mod portforward;
+ #[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ pub use portforward::Portforwarder;
  
-         if let Some(tl) = &lp.tail_lines {
-@@ -232,6 +236,28 @@ mod test {
-         );
-     }
+ mod subresource;
+ pub use subresource::Resize;
+ #[cfg(feature = "ws")]
+ #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+-pub use subresource::{Attach, AttachParams, Ephemeral, Execute, Portforward};
+-pub use subresource::{Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
++pub use subresource::{Attach, AttachParams, Execute, Portforward};
++pub use subresource::{Ephemeral, Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
  
-+    #[test]
-+    fn node_logs_since_time_rounds_down() {
-+        let lp = LogParams {
-+            since_time: Some("2023-10-19T13:14:26.7Z".parse().unwrap()),
-+            ..Default::default()
-+        };
-+        let req = Request::kubelet_node_logs(
-+            &KubeletDebugParams {
-+                name: "some-name",
-+                namespace: "some-namespace",
-+                pod_uid: None,
-+            },
-+            "some-container",
-+            &lp,
-+        )
-+        .unwrap();
-+        assert_eq!(
-+            req.uri(),
-+            "/containerLogs/some-namespace/some-name/some-container?&sinceTime=2023-10-19T13%3A14%3A26Z"
-+        );
-+    }
-+
-     #[test]
-     fn node_portforward_test() {
-         let req = Request::kubelet_node_portforward(
+ mod util;
+ 
 ```
 
-**File**: `kube-core/src/subresource.rs` (modified, +21/-2)
+**File**: `kube-client/src/api/portforward.rs` (modified, +3/-0)
 ```diff
-@@ -3,7 +3,7 @@ use crate::{
-     params::{DeleteParams, PostParams},
-     request::{Error, JSON_MIME, Request},
- };
--use jiff::{Timestamp, Unit};
-+use jiff::{RoundMode, Timestamp, TimestampRound, Unit};
- use std::fmt::Debug;
+@@ -83,6 +83,9 @@ enum Message {
+ /// Provides `AsyncRead + AsyncWrite` for each port and **does not** bind to local ports.  Error
+ /// channel for each port is only written by the server when there's an exception and
+ /// the port cannot be used (didn't initialize or can't be used anymore).
++// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
++#[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ pub struct Portforwarder {
+     ports: HashMap<u16, DuplexStream>,
+     errors: HashMap<u16, ErrorReceiver>,
+```
+
+**File**: `kube-client/src/api/remote_command.rs` (modified, +4/-0)
+```diff
+@@ -26,6 +26,8 @@ type TerminalSizeReceiver = mpsc::Receiver<TerminalSize>;
+ type TerminalSizeSender = mpsc::Sender<TerminalSize>;
  
- pub use k8s_openapi::api::autoscaling::v1::{Scale, ScaleSpec, ScaleStatus};
-@@ -75,7 +75,11 @@ impl Request {
-             // or b.) a rounding increment is configured (which we don't set) that does not fit into 86400 seconds (a day)
-             // without any remainder.
-             // `jiff::Timestamp` provides RFC3339 via `Display`, docs: https://docs.rs/jiff/latest/jiff/struct.Timestamp.html#impl-Display-for-Timestamp
--            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
-+            // Round down like client-go; rounding up would skip lines logged later in the same second.
-+            let floor = TimestampRound::new()
-+                .smallest(Unit::Second)
-+                .mode(RoundMode::Floor);
-+            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
-         }
+ /// TerminalSize define the size of a terminal
++// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
++#[cfg(feature = "ws")]
+ #[derive(Debug, Serialize, Deserialize)]
+ #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ #[serde(rename_all = "PascalCase")]
+@@ -102,6 +104,8 @@ const MAX_BUF_SIZE: usize = 1024;
+ ///
+ /// [`attach`]: crate::Api::attach
+ /// [`exec`]: crate::Api::exec
++// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
++#[cfg(feature = "ws")]
+ #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ pub struct AttachedProcess {
+     has_stdin: bool,
+```
+
+**File**: `kube-client/src/api/subresource.rs` (modified, +2/-0)
+```diff
+@@ -763,9 +763,11 @@ fn portforward_path() {
+ pub trait Portforward {}
  
-         if let Some(tl) = &lp.tail_lines {
-@@ -458,4 +462,19 @@ mod test {
-             "/api/v1/namespaces/ns/pods/mypod/log?&sinceTime=2023-10-19T13%3A14%3A26Z" // cross-referenced with kubectl
-         );
-     }
-+
-+    #[test]
-+    fn logs_since_time_rounds_down() {
-+        let url = corev1::Pod::url_path(&(), Some("ns"));
-+        let date: Timestamp = "2023-10-19T13:14:26.7Z".parse().unwrap();
-+        let lp = LogParams {
-+            since_time: Some(date),
-+            ..Default::default()
-+        };
-+        let req = Request::new(url).logs("mypod", &lp).unwrap();
-+        assert_eq!(
-+            req.uri(),
-+            "/api/v1/namespaces/ns/pods/mypod/log?&sinceTime=2023-10-19T13%3A14%3A26Z"
-+        );
-+    }
- }
+ #[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ impl Portforward for k8s_openapi::api::core::v1::Pod {}
+ 
+ #[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ impl<K> Api<K>
+ where
+     K: Clone + DeserializeOwned + Portforward,
+```
+
+**File**: `kube-client/src/client/auth/oauth.rs` (modified, +2/-0)
+```diff
+@@ -10,6 +10,8 @@ use crate::client::Body;
+ 
+ #[derive(Error, Debug)]
+ /// Possible errors when requesting token with OAuth
++// also gated here (not just the module) so rustdoc shows the oauth requirement on `kube` re-exports
++#[cfg(feature = "oauth")]
+ pub enum Error {
+     /// Default provider appears to be configured, but was invalid
+     #[error("default provider is configured but invalid: {0}")]
+```
+
+**File**: `kube-client/src/client/mod.rs` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ pub use auth::OAuthError;
+ pub use auth::oidc_errors;
+ 
+ #[cfg(feature = "ws")]
++#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+ pub use upgrade::UpgradeConnectionError;
+ 
+ #[cfg(feature = "kubelet-debug")]
 ```
 
 ---
 
-### Incident Patch 2: `1fa58766` (2026-11-04)
-**Commit Message**: kube-client: report dropped log stream connections as UnexpectedEof (#2127)
+### Incident Patch 2: `12a544c8` (2026-11-05)
+**Commit Message**: fix parse error messages for LabelSelectorRequirement into Expression (#2143)
 
-Turns out `Client::request_stream` was hiding useful error information.
-When a log stream connection dropped, callers got a generic
-`io::Error::other` with no way to tell what happened.
+The second 'In' looks like a copy-paste error, fixed to mitigate confusion.
 
-Now request_stream reuses the error classification from request_events.
-Dropped connections show up as `io::ErrorKind::UnexpectedEof`, so the
-caller can check `e.kind()` directly and resume with `since_time`.
-Watch behaviour unchanged.
+Make clear that an expression operator might also be missing, because the
+deserializer in k8s-openapi would turn it into an empty string:
+<https://github.com/Arnavion/k8s-openapi/blob/ec1be51e4ca5fbb3254ef91d978f1b97fab004b5/src/v1_37/apimachinery/pkg/apis/meta/v1/label_selector_requirement.rs#L70>
 
-Fixes #1075
+Signed-off-by: Jiji Freya Daniel Maslowski <[REDACTED_EMAIL]>
 
-Signed-off-by: Alexei Pastuchov <[REDACTED_EMAIL]>
-Co-authored-by: doxxx <[REDACTED_EMAIL]>
-
-**File**: `kube-client/src/client/mod.rs` (modified, +174/-16)
+**File**: `kube-core/src/labels.rs` (modified, +2/-1)
 ```diff
-@@ -307,12 +307,16 @@ impl Client {
-     ///
-     /// The response can be processed using [`AsyncReadExt`](futures::AsyncReadExt)
-     /// and [`AsyncBufReadExt`](futures::AsyncBufReadExt).
-+    ///
-+    /// Reads fail with an [`std::io::Error`] of kind
-+    /// [`UnexpectedEof`](std::io::ErrorKind::UnexpectedEof) if the connection
-+    /// is dropped before the response is complete.
-+    /// Long-lived streams, such as followed logs, can check for it and resume the request.
-     pub async fn request_stream(&self, request: Request<Vec<u8>>) -> Result<impl AsyncBufRead + use<>> {
-         let res = self.send(request.map(Body::from)).await?;
-         let res = handle_api_errors(res).await?;
--        // Map the error, since we want to convert this into an `AsyncBufReader` using
--        // `into_async_read` which specifies `std::io::Error` as the stream's error type.
--        let body = res.into_body().into_data_stream().map_err(std::io::Error::other);
-+        // `into_async_read` requires `std::io::Error` as the stream's error type.
-+        let body = res.into_body().into_data_stream().map_err(body_error_to_io);
-         Ok(body.into_async_read())
+@@ -308,11 +308,12 @@ impl TryFrom<LabelSelectorRequirement> for Expression {
+             "NotIn" => match values {
+                 Some(values) => Ok(Expression::NotIn(key, values)),
+                 None => Err(ParseExpressionError(
+-                    "Expected values for In operator, got none".into(),
++                    "Expected values for NotIn operator, got none".into(),
+                 )),
+             },
+             "Exists" => Ok(Expression::Exists(key)),
+             "DoesNotExist" => Ok(Expression::DoesNotExist(key)),
++            "" => Err(ParseExpressionError("Missing expression operator".into())),
+             _ => Err(ParseExpressionError("Invalid expression operator".into())),
+         }
      }
- 
-@@ -361,17 +365,7 @@ impl Client {
-         tracing::trace!("headers: {:?}", res.headers());
- 
-         let frames = FramedRead::new(
--            StreamReader::new(res.into_body().into_data_stream().map_err(|e| {
--                // Resumable watch termination. TLS stacks nest an `io::Error`
--                // of kind `UnexpectedEof`. Chunk decoders still report
--                // "unexpected EOF during chunk" in the error text. Classify
--                // either case by keeping the original error as the source.
--                let chunk_eof = e.to_string().contains("unexpected EOF during chunk");
--                if error_chain_contains_unexpected_eof(&e) || chunk_eof {
--                    return std::io::Error::new(std::io::ErrorKind::UnexpectedEof, e);
--                }
--                std::io::Error::other(e)
--            })),
-+            StreamReader::new(res.into_body().into_data_stream().map_err(body_error_to_io)),
-             LinesCodec::new(),
-         );
- 
-@@ -549,6 +543,21 @@ impl Client {
-     }
- }
- 
-+// Converts a response body error into the `std::io::Error` that streaming
-+// readers expect, keeping the original error as the source.
-+//
-+// A connection dropped mid-response becomes `UnexpectedEof`, so long-lived
-+// streams (watches, followed logs) can tell it apart and resume. TLS stacks
-+// nest an `io::Error` of kind `UnexpectedEof`, while chunk decoders only
-+// report "unexpected EOF during chunk" in the error text, so check both.
-+fn body_error_to_io(err: Error) -> std::io::Error {
-+    let chunk_eof = err.to_string().contains("unexpected EOF during chunk");
-+    if error_chain_contains_unexpected_eof(&err) || chunk_eof {
-+        return std::io::Error::new(std::io::ErrorKind::UnexpectedEof, err);
-+    }
-+    std::io::Error::other(err)
-+}
-+
- // `err` or an error reached through `std::error::Error::source` is an
- // `std::io::Error` of kind `UnexpectedEof`.
- fn error_chain_contains_unexpected_eof(err: &(dyn std::error::Error + 'static)) -> bool {
-@@ -630,13 +639,13 @@ mod tests {
- 
-     use crate::{
-         Api, Client, Error, Result,
--        api::WatchEvent,
-+        api::{LogParams, WatchEvent},
-         client::Body,
-         config::{AuthInfo, Cluster, Context, Kubeconfig, NamedAuthInfo, NamedCluster, NamedContext},
-     };
- 
-     use bytes::Bytes;
--    use futures::{Stream, StreamExt};
-+    use futures::{AsyncBufReadExt, Stream, StreamExt};
-     use http::{Request, Response};
-     use http_body::Frame;
-     use http_body_util::StreamBody;
-@@ -1092,6 +1101,155 @@ mod tests {
-         .to_string()
-     }
- 
-+    #[tokio::test]
-+    async fn log_stream_direct_unexpected_eof_is_eof_error() {
-+        let body = body_from_chunks(vec![
-+            Ok(Bytes::from("line one\n")),
-+            Err(std::io::Error::new(ErrorKind::UnexpectedEof, "connection closed")),
-+        ]);
-+        let (spawned, logs) = open_log_stream(body).await;
-+        let mut lines = pin!(logs.lines());
-+
-+        expect_log_line(next_log_line(&mut lines).await, "line one");
-+        let io_err = expect_log_error(next_log_line(&mut lines).await);
-+        assert_eq!(io_err.kind(), ErrorKind::UnexpectedEof, "{io_err:?}");
-+        let body_err = retained_body_error(&io_err);
-+        assert!(chain_has_io_kind(body_err, ErrorKind::UnexpectedEof), "{body_err:?}");
-+        spawned.await.unwrap();
-+    }
-+
-+    #[tokio::test]
-+    async fn log_stream_wrapped_unexpected_eof_is_eof_error() {
-+        let body = body_from_chunks(vec![
-+            Ok(Bytes::from("line one\n")),
-+            Err(nested_io(
-+                &["outer transport interruption", "inner transport interruption"],
-+                std::io::Error::new(ErrorKind::UnexpectedEof, "connection closed"),
-+            )),
-+        ]);
-+        let (spawned, logs) = open_log_stream(body).awai
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
+- **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
+- **PR #2139** (2026-11-05): Fall back to the status code when Status::reason is not a known reason (@doxxx93)
+- **PR #2137** (2026-11-05): kube-client: introduce delete_opt (@p-alik)
 - **PR #2136** (2026-11-04): Round down LogParams::since_time to the second (@doxxx93)
 - **PR #2135** (2026-11-04): Allow LLVM-exception license for ar_archive_writer in cargo deny (@doxxx93)
-- **PR #2134** (2026-11-02): bump msrv to 1.95 (@clux)
-- **PR #2133** (2026-11-02): Chore(deps): Update rstest requirement from 0.27.0 to 0.28.0 (@dependabot[bot])
-- **PR #2132** (2026-11-02): Chore(deps): Update parking_lot requirement from 0.12.0 to 0.13.0 (@dependabot[bot])
-- **PR #2131** (2026-11-02): make `just bump-k8s` idempotent (@clux)
 
 ---
 
@@ -1982,56 +1908,32 @@ Co-authored-by: doxxx <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Round down LogParams::since_time to the second (#2136)
+## X. Show missing feature requirements on kube-client items in docs (#2141)
 
 **RULE**:
-When implementing operations in `kube-core/src/kubelet_debug.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-client/src/api/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e737551c`: Round down LogParams::since_time to the second (#2136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `660c438c`: Show missing feature requirements on kube-client items in docs (#2141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-core/src/kubelet_debug.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-client/src/api/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use jiff::{RoundMode, TimestampRound, Unit};
-            // Round down like client-go; rounding up would skip lines logged later in the same second.
-            let floor = TimestampRound::new()
-                .smallest(Unit::Second)
-                .mode(RoundMode::Floor);
-            qp.append_pair("sinceTime", &st.round(floor).unwrap().to_string());
-    #[test]
-    fn node_logs_since_time_rounds_down() {
-        let lp = LogParams {
-            since_time: Some("2023-10-19T13:14:26.7Z".parse().unwrap()),
-            ..Default::default()
-        };
-        let req = Request::kubelet_node_logs(
-            &KubeletDebugParams {
-                name: "some-name",
-                namespace: "some-namespace",
-                pod_uid: None,
-            },
-            "some-container",
-            &lp,
-        )
-        .unwrap();
-        assert_eq!(
-            req.uri(),
-            "/containerLogs/some-namespace/some-name/some-container?&sinceTime=2023-10-19T13%3A14%3A26Z"
-        );
-    }
-
+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
+pub use subresource::{Attach, AttachParams, Execute, Portforward};
+pub use subresource::{Ephemeral, Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use jiff::Unit;
-            qp.append_pair("sinceTime", &st.round(Unit::Second).unwrap().to_string());
+pub use subresource::{Attach, AttachParams, Ephemeral, Execute, Portforward};
+pub use subresource::{Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e737551c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `660c438c` are properly handled with clean fallback behavior.

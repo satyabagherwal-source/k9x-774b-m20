@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `7514fb8b`  
+> **Source Version**: `aa861529`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:57:50.180Z  
+> **Timestamp**: 2026-11-05T19:45:25.409Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:57:49.493Z  
+> **Harvest Timestamp**: 2026-11-05T19:45:25.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,11 +1592,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7816** (2026-11-04): **build(deps): bump docker/login-action from 4.6.0 to 4.7.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
+- **Issue #7818** (2026-11-05): **internal/dag: reject IP filter policy when any CIDR is invalid**
+  *Symptoms*: Fixes #7817  `toIPFilterRules` stored the result of each `net.ParseCIDR` call in the same `err` variable. When a valid CIDR followed an invalid one, `err` was reset to `nil`. As a result:  - The HTTPProxy status reported an `InvalidCIDR` error. - The virtual host or route was still programmed, with the invalid entry dropped. For `ipDenyPolicy`, this means traffic from the intended range is allowed.  When the invalid CIDR was the last entry, the virtual host or route was rejected. With this change, the parse error is kept, so an invalid CIDR rejects the policy wherever it appears in the list.  ## Changes  - `internal/dag/httpproxy_processor.go`: store the parse error in a variable scoped to the loop, and copy it to `err` only on failure. - `internal/dag/httpproxy_processor_test.go`: add a `TestToIPFilterRule` case with an invalid CIDR followed by a valid one. - `changelogs/unreleased/`: changelog entry.  ## Testing  ``` go test ./internal/dag/ -run TestToIPFilterRule -count=1 -v ```  Without the fix, the new case fails with `An error is expected but got nil`. With the fix, all cases pass. `go test ./internal/dag/ ./internal/featuretests/v3/` and `./hack/golangci-lint run ./internal/dag/...` also pass. 
 
-- **Issue #7815** (2026-11-04): **build(deps): bump the k8s-dependencies group with 4 updates**
-  *Symptoms*: Bumps the k8s-dependencies group with 4 updates: [k8s.io/api](https://github.com/kubernetes/api), [k8s.io/apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver), [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) and [k8s.io/client-go](https://github.com/kubernetes/client-go).  Updates `k8s.io/api` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/api/commit/1b2a9bb670561fbceb53d14bc90f8dbac28ceaa1"><code>1b2a9bb</code></a> Update dependencies to v0.34.13 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/api/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apiextensions-apiserver` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/apiextensions-apiserver/commit/be5a186885df79a34ef3fe89dd2c8b2aa2c3cf4d"><code>be5a186</code></a> Update dependencies to v0.34.13 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/apiextensions-apiserver/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apimachinery` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/kubernetes/apimachinery/compare/v0.34.12...v0.34.13">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/client-go` from 0.34.12 to 0.34.13 <details> <summary>Commits</summary> <ul> <li><
+- **Issue #7817** (2026-11-05): **HTTPProxy IP filter policy with an invalid CIDR is still programmed when a valid CIDR follows it**
+  *Symptoms*: **What steps did you take and what happened:**  Create an HTTPProxy whose `ipDenyPolicy` (or `ipAllowPolicy`) has an invalid CIDR followed by a valid one:  ```yaml apiVersion: projectcontour.io/v1 kind: HTTPProxy metadata:   name: example spec:   virtualhost:     fqdn: example.com     ipDenyPolicy:     - source: Remote       cidr: 10.0.0.0/33     - source: Remote       cidr: 192.168.0.0/16   routes:   - services:     - name: s1       port: 80 ```  The HTTPProxy status reports `InvalidCIDR` for `10.0.0.0/33`, but the virtual host is still programmed in Envoy. Its RBAC filter only denies `192.168.0.0/16`, so clients in `10.0.0.0/8` that should be denied are allowed through.  If you swap the two entries so that the invalid CIDR comes last, the virtual host is rejected and not programmed.  The cause is in `toIPFilterRules` in `internal/dag/httpproxy_processor.go`. The same `err` variable receives the result of each `net.ParseCIDR` call, so parsing a valid CIDR after an invalid one sets `err` back to `nil`. The final `if err != nil` check that clears the rules, and the callers that reject the virtual host or route, then don't see the error.  **What did you expect to happen:**  An invalid CIDR anywhere in the list rejects the virtual host or route, no matter where it appears in the list. That already happens when the invalid entry is last.  **Anything else you would like to add:**  The same applies to route-level `ipAllowPolicy` and `ipDenyPolicy`. The CRD has no schema validation 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1613,232 +1613,188 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff7259a2` (2026-11-04)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812)
+### Incident Patch 1: `9eda82a2` (2026-11-05)
+**Commit Message**: internal/timeout: reject negative durations (#7799)
 
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.72.1 to 0.73.0.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.72.1...v0.73.0)
+* internal/timeout: reject negative durations
 
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+timeout.Parse accepted any string that time.ParseDuration accepts,
+including negative durations such as "-1m". Ingress timeout
+annotations (projectcontour.io/response-timeout, the legacy
+projectcontour.io/request-timeout and projectcontour.io/per-try-timeout)
+have no schema validation, so a negative value in one of them was
+turned into a negative route timeout or per-try timeout and sent to
+Envoy.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Envoy rejects negative durations ("Invalid duration: Expected positive
+duration"), so it NACKed the whole RDS update for the listener. A typo
+in one Ingress annotation blocked route updates for every virtual host
+on that listener, and Contour reported nothing.
 
-**File**: `go.mod` (modified, +3/-1)
+Make timeout.Parse return an error for negative durations, the same
+way it does for strings it can't parse. Ingress annotations then fall
+back to the default timeout and the error is logged, as already
+happens for other invalid values. Negative timeouts in the Contour
+configuration file or ContourConfiguration now fail at startup with a
+clear error instead of producing listeners that Envoy rejects. "-0s"
+still parses as zero and so 
+
+**File**: `changelogs/unreleased/7799-NopeCharon-small.md` (added, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@ require (
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.25.0
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.72.1
-+	github.com/prometheus/common v0.73.0
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tsaarni/certyaml v0.13.0
-@@ -83,13 +83,15 @@ require (
- 	github.com/google/go-querystring v1.1.0 // indirect
- 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
-+	github.com/hashicorp/go-uuid v1.0.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/miekg/dns v1.1.65 // indirect
- 	github.com/moby/spdystream v0.5.1 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
-+	github.com/pandatix/go-abnf v0.5.1 // indirect
- 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
+@@ -0,0 +1 @@
++Negative durations in timeout settings are now rejected instead of being passed to Envoy, which rejected them. An Ingress with a negative `projectcontour.io/response-timeout`, `projectcontour.io/request-timeout` or `projectcontour.io/per-try-timeout` annotation now gets the default timeout, and a negative timeout in the Contour configuration is reported as an error at startup.
 ```
 
-**File**: `go.sum` (modified, +6/-2)
+**File**: `internal/dag/builder_test.go` (modified, +40/-0)
 ```diff
-@@ -137,6 +137,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 h1:JeSE6pjso5T
- github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
-+github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
-+github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
- github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
- github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
-@@ -172,6 +174,8 @@ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
-+github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
-+github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
- github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
-@@ -185,8 +189,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
- github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
--github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
-+github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
-+github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
- github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
- github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
+@@ -6320,6 +6320,28 @@ func TestDAGInsert(t *testing.T) {
+ 		},
+ 	}
+ 
++	i12gV1 := &networking_v1.Ingress{
++		ObjectMeta: meta_v1.ObjectMeta{
++			Name:      "timeout",
++			Namespace: "default",
++			Annotations: map[string]string{
++				"projectcontour.io/response-timeout": "-1m",
++			},
++		},
++		Spec: networking_v1.IngressSpec{
++			Rules: []networking_v1.IngressRule{{
++				IngressRuleValue: networking_v1.IngressRuleValue{
++					HTTP: &networking_v1.HTTPIngressRuleValue{
++						Paths: []networking_v1.HTTPIngressPath{{
++							Path:    "/",
++							Backend: *backendv1("kuard", intstr.FromString("http")),
++						}},
++					},
++				},
++			}},
++		},
++	}
++
+ 	// i13_v1 a and b are a pair of ingressesv1 for the same vhost
+ 	// they represent a tricky way over 'overlaying' routes from one
+ 	// ingress onto another
+@@ -10287,6 +10309,24 @@ func TestDAGInsert(t *testing.T) {
+ 				},
+ 			),
+ 		},
++		"ingressv1: insert ingress w/ negative timeout annotation": {
++			objs: []any{
++				i12gV1,
++				s1,
++			},
++			want: listeners(
++				&Listener{
++					Name: HTTP_LISTENER_NAME,
++					Port: 8080,
++					VirtualHosts: virtualhosts(
++						virtualhost("*", &Route{
++							PathMatchCondition: prefixString("/"),
++							Clusters:           clustermap(s1),
++						}),
++					),
++				},
++			),
++		},
+ 		"insert httpproxy w/ invalid timeoutpolicy": {
+ 			objs: []any{
+ 				proxyTimeoutPolicyInvalidResponse,
 ```
 
----
-
-### Incident Patch 2: `3a110e8b` (2026-11-04)
-**Commit Message**: build(deps): bump the k8s-dependencies group with 4 updates (#7810)
-
-Bumps the k8s-dependencies group with 4 updates: [k8s.io/api](https://github.com/kubernetes/api), [k8s.io/apiextensions-apiserver](https://github.com/kubernetes/apiextensions-apiserver), [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) and [k8s.io/client-go](https://github.com/kubernetes/client-go).
-
-
-Updates `k8s.io/api` from 0.37.1 to 0.37.2
-- [Commits](https://github.com/kubernetes/api/compare/v0.37.1...v0.37.2)
-
-Updates `k8s.io/apiextensions-apiserver` from 0.37.1 to 0.37.2
-- [Release notes](https://github.com/kubernetes/apiextensions-apiserver/releases)
-- [Commits](https://github.com/kubernetes/apiextensions-apiserver/compare/v0.37.1...v0.37.2)
-
-Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2
-- [Commits](https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2)
-
-Updates `k8s.io/client-go` from 0.37.1 to 0.37.2
-- [Changelog](https://github.com/kubernetes/client-go/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2)
-
----
-updated-dependencies:
-- dependency-name: k8s.io/api
-  dependency-version: 0.37.2
-  dependency-type: direct:
-
-**File**: `go.mod` (modified, +5/-5)
+**File**: `internal/dag/policy_test.go` (modified, +21/-0)
 ```diff
-@@ -33,10 +33,10 @@ require (
- 	google.golang.org/grpc v1.84.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v3 v3.0.1
--	k8s.io/api v0.37.1
--	k8s.io/apiextensions-apiserver v0.37.1
--	k8s.io/apimachinery v0.37.1
--	k8s.io/client-go v0.37.1
-+	k8s.io/api v0.37.2
-+	k8s.io/apiextensions-apiserver v0.37.2
-+	k8s.io/apimachinery v0.37.2
-+	k8s.io/client-go v0.37.2
- 	k8s.io/klog/v2 v2.140.0
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	sigs.k8s.io/controller-runtime v0.25.2
-@@ -114,7 +114,7 @@ require (
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
--	k8s.io/streaming v0.37.1 // indirect
-+	k8s.io/streaming v0.37.2 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
- 	sigs.k8s.io/randfill v1.0.0 // indirect
- 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
+@@ -111,6 +111,21 @@ func TestRetryPolicyIngress(t *testing.T) {
+ 				PerTryTimeout: timeout.DefaultSetting(),
+ 			},
+ 		},
++		"negative per try timeout": {
++			i: &networking_v1.Ingress{
++				ObjectMeta: meta_v1.ObjectMeta{
++					Annotations: map[string]string{
++						"projectcontour.io/retry-on":        "5xx",
++						"projectcontour.io/per-try-timeout": "-10s",
++					},
++				},
++			},
++			want: &RetryPolicy{
++				RetryOn:       "5xx",
++				NumRetries:    1,
++				PerTryTimeout: timeout.DefaultSetting(),
++			},
++		},
+ 	}
+ 
+ 	for name, tc := range tests {
+@@ -225,6 +240,12 @@ func TestTimeoutPolicy(t *testing.T) {
+ 			},
+ 			wantErr: true,
+ 		},
++		"negative response timeout": {
++			tp: &contour_v1.TimeoutPolicy{
++				Response: "-90s",
++			},
++			wantErr: true,
++		},
+ 		"infinite response timeout": {
+ 			tp: &contour_v1.TimeoutPolicy{
+ 				Response: "infinite",
 ```
 
-**File**: `go.sum` (modified, +10/-10)
+**File**: `internal/timeout/timeout.go` (modified, +7/-1)
 ```diff
-@@ -306,20 +306,20 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
- gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
- gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
- honnef.co/go/tools v0.1.3/go.mod h1:NgwopIslSNH47DimFoV78dnkksY2EFtX0ajyb3K/las=
--k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
--k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
--k8s.io/apiextensions-apiserver v0.37.1 h1:7fIQG8eThDSTVYBWg/DOpI8v5wYfKCo0N8/TDMjj+zY=
--k8s.io/apiextensions-apiserver v0.37.1/go.mod h1:1Q3ujWwHgnhBoGsdmGORflwK1sDFmuaqH1OsMDWk2Gs=
--k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
--k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
--k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
--k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
-+k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
-+k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
-+k8s.io/apiextensions-apiserver v0.37.2 h1:myaUiAlm1NRLYdpAvWYTqdgeiCepFupJiRFVVueMUYw=
-+k8s.io/apiextensions-apiserver v0.37.2/go.mod h1:BFl1aPC89HsgFgYI+3xpFtckvkAeenDTZP84njA9yw4=
-+k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
-+k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
-+k8s.io/client-go v0.37.2 h1:sgFtyRZukGkOrsu+QgS7LYnbFFJ5ut3MchdBNduD//E=
-+k8s.io/client-go v0.37.2/go.mod h1:bo3LFC8YbCtKFPX21Yj8puMsoJLAv/+SvuOODma0s54=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
--k8s.io/streaming v0.37.1 h1:TpzVfQeFuVndn2g9mFqxy1UcUYPwDzqjUmwR/IzJCWc=
--k8s.io/streaming v0.37.1/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
-+k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
-+k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- rsc.io/pdf v0.1.1 h1:k1MczvYDUvJBe93bYd7wrZLLUEcLZAuF824/I4e5Xr4=
+@@ -67,7 +67,7 @@ func DurationSetting(duration time.Duration) Setting {
+ //   - any valid representation of "0" means "use the default".
+ //   - a valid Go duration string is used as the specific timeout value.
+ //   - "infinity" or "infinite" means "disable the timeout".
+-//   - any other value results in an error.
++//   - any other value, including a negative duration, results in an error.
+ func Parse(timeout string) (Setting, error) {
+ 	// An empty string is interpreted as no explicit timeout specified, so
+ 	// use the Envoy default.
+@@ -86,6 +86,12 @@ func Parse(timeout string) (Setting, error) {
+ 		return Setting{}, fmt.Errorf("unable to parse timeout string %q: %w", timeout, err)
+ 	}
+ 
++	// Envoy rejects negative durations, which would cause the whole
++	// configuration update containing the timeout to be rejected.
++	if d < 0 {
++		return Setting{}, fmt.Errorf("invalid timeout string %q: duration must not be negative", timeout)
++	}
++
+ 	if d == 0 {
+ 		return DefaultSetting(), nil
+ 	}
 ```
 
----
-
-### Incident Patch 3: `7514fb8b` (2026-11-04)
-**Commit Message**: build(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#7813)
-
-Bumps [golang.org/x/net](https://github.com/golang/net) from 0.61.0 to 0.62.0.
-- [Commits](https://github.com/golang/net/compare/v0.61.0...v0.62.0)
-
----
-updated-dependencies:
-- dependency-name: golang.org/x/net
-  dependency-version: 0.62.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `internal/timeout/timeout_test.go` (modified, +9/-0)
 ```diff
-@@ -26,7 +26,7 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tsaarni/certyaml v0.13.0
- 	go.uber.org/automaxprocs v1.6.0
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.37.0
- 	gonum.org/v1/plot v0.17.0
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -254,8 +254,8 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -55,6 +55,15 @@ func TestParse(t *testing.T) {
+ 			want:     DefaultSetting(),
+ 			wantErr:  true,
+ 		},
++		"negative": {
++			duration: "-10s",
++			want:     DefaultSetting(),
++			wantErr:  true,
++		},
++		"negative zero": {
++			duration: "-0s",
++			want:     DefaultSetting(),
++		},
+ 	}
+ 
+ 	for name, tc := range tests {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7818** (2026-11-05): internal/dag: reject IP filter policy when any CIDR is invalid (@RaphaelFakhri)
 - **PR #7816** (2026-11-04): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
 - **PR #7815** (2026-11-04): build(deps): bump the k8s-dependencies group with 4 updates (@dependabot[bot])
 - **PR #7814** (2026-11-04): build(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
 - **PR #7813** (2026-11-04): build(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@dependabot[bot])
 - **PR #7812** (2026-11-04): build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (@dependabot[bot])
-- **PR #7810** (2026-11-04): build(deps): bump the k8s-dependencies group with 4 updates (@dependabot[bot])
 
 ---
 
@@ -1858,30 +1814,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812)
+## X. internal/timeout: reject negative durations (#7799)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/unreleased/7799-NopeCharon-small.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff7259a2`: build(deps): bump github.com/prometheus/common from 0.72.1 to 0.73.0 (#7812). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eda82a2`: internal/timeout: reject negative durations (#7799). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/unreleased/7799-NopeCharon-small.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-	github.com/prometheus/common v0.73.0
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
+Negative durations in timeout settings are now rejected instead of being passed to Envoy, which rejected them. An Ingress with a negative `projectcontour.io/response-timeout`, `projectcontour.io/request-timeout` or `projectcontour.io/per-try-timeout` annotation now gets the default timeout, and a negative timeout in the Contour configuration is reported as an error at startup.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/prometheus/common v0.72.1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff7259a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eda82a2` are properly handled with clean fallback behavior.

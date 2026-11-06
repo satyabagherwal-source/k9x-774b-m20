@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `a87308b0`  
+> **Source Version**: `4613dae4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T06:32:08.252Z  
+> **Timestamp**: 2026-11-05T23:39:57.452Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T06:32:08.243Z  
+> **Harvest Timestamp**: 2026-11-05T23:39:57.443Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7180 stars
+- **Stars / Engagement**: 7196 stars
 
 ---
 
@@ -1086,13 +1086,16 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3444** (2026-10-30): **feat(query): add reusable planning signals**
-  *Symptoms*: Add a common foundation for query-planner optimizations to learn from previous requests. Each signal declares whether its observations apply to one datastore revision or can be reused across revisions, keeping recommendations tied to compatible data and schema versions.  Retained evidence has explicit memory limits, and estimates stay stable while a plan is being prepared. Schema changes can preserve compatible evidence, reduce its weight, or discard it. This establishes the foundation for subsequent signal-driven optimizations without changing permission results.  Validated with race detection, generated tests for revision isolation and snapshot stability, query and optimizer regression tests, and lint checks. 
+- **Issue #3452** (2026-11-05): **otel: add `--otel-ignore-remote-sampling`**
+  *Symptoms*: ## Why  SpiceDB follows the sampling decision a caller sends in its trace headers (`traceparent`, b3). If a caller marks most requests as sampled, SpiceDB traces most requests, no matter what `--otel-sample-ratio` is set to.  We saw this in production: one caller's requests arrived marked as sampled about 50–75% of the time, while the ratio was 0.01. The trace volume overwhelmed the tracing backend. Changing `--otel-trace-propagator` doesn't help when the caller sends several header formats.  ## What  A new flag, `--otel-ignore-remote-sampling`, defaulting to `false`.  | | Default (`false`) | `true` | |---|---|---| | Request with no trace headers | ratio | ratio | | Request whose caller says "sampled" | sampled | ratio | | Request whose caller says "not sampled" | not sampled | ratio | | Span inside SpiceDB (local parent) | follows parent | follows parent | | Caller's trace ID | kept | kept |  The default is unchanged. The zero value of the new config field (`IgnoreRemoteSampling`) also keeps today's behaviour, so code that builds `OTelConfig` directly isn't affected.  ## Why traces stay whole  The ratio sampler decides from the trace ID alone. That means every SpiceDB node on the dispatch path reaches the same decision for a given trace, and so does any downstream service that follows its parent. This holds as long as they all use the same ratio.  ## Testing  - Unit tests for every row of the table, with the flag on and off. - Test that the flag defaults to `false`. 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `90.66986%` with `78 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [pkg/query/signals/owner.go](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-cGtnL3F1ZXJ5L3NpZ25hbHMvb3duZXIuZ28=) | 85.64% | [35 Missing and 14 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_te
+  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3452?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
 
-- **Issue #3440** (2026-10-30): **fix(schema): preserve annotations on unchanged definitions during schema writes**
-  *Symptoms*: Fixes #3412  ## Description  Since v1.49.0, every schema write has stripped the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. The write path annotated only definitions with a semantic diff, but then wrote every compiled definition, so unchanged ones replaced their stored, annotated copies. This happens in both the legacy and single-store schema modes.  Without the annotations, permissions that alias a relation are dispatched as separate subproblems, and equivalent permissions stop sharing dispatch cache entries. Affected deployments see more dispatches, higher check latency and more datastore load, with no errors.  ## Changes  - Annotate every definition before writing the schema, not only changed ones. Both storage paths write from the same set of definitions, so this fixes legacy and single-store writes alike. It also repairs datastores that were already stripped: writing the schema again restores the annotations. - Size the BDD operation caches used to compute canonical cache keys to the expression being canonicalized, instead of rudd's 10,000-entry default per cache. Annotating every definition otherwise raised memory allocated per schema write by about 80%; with this change the increase is about 3–5%, and annotation itself is about 40% faster. The caches only memoize operations, so the computed keys are unchanged.  ## Testing  A new test writes a schema, then rewrites it, in all four schema modes, and checks that annotati
+- **Issue #3445** (2026-11-05): **feat(query): add context and execution planning signals**
+  *Symptoms*: Add planning signals for request-context stability, permission-check outcomes, and completed result sizes, including historical estimates that age as observations get older. These provide evidence for subsequent optimizations while keeping incomplete work distinct from completed results.  Each signal includes a short summary, examples, and tests for its estimates, revision scope, and behavior across schema changes. Validation includes race detection, generated properties, storage-budget regressions, and lint checks. 
+  **Post-Mortem & Fix Analysis**:
+  > Waiting for the base PR, [#3444](https://github.com/authzed/spicedb/pull/3444), to merge. This is a dependent draft and will be rebased after that PR lands. 
+  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3445?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `86.83473%` with `47 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3445?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [pkg/query/signals/historicalresultsize/signal.go](https://app.codecov.io/gh/authzed/spicedb/pull/3445?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-cGtnL3F1ZXJ5L3NpZ25hbHMvaGlzdG9yaWNhbHJlc3VsdHNpemUvc2lnbmFsLmdv) | 89.12% | [10 Missing and 6 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3445?src=pr&el=tree&utm_medium=referral&utm_source=github&ut
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1109,900 +1112,284 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2eb05375` (2026-10-29)
-**Commit Message**: fix(schema): preserve annotations on unchanged definitions during schema writes
+### Incident Patch 1: `52ec6e3c` (2026-10-30)
+**Commit Message**: fix(query): bound provider retention and isolate concurrent digest updates
 
-Schema writes passed every compiled definition to WriteSchema, but only
-annotated those with a semantic diff. Unchanged definitions were therefore
-written without their aliasing_relation and canonical_cache_key
-annotations, in both the legacy and unified schema storage paths.
-
-Annotate every definition before writing, which also restores annotations
-on datastores already affected. Size the BDD operation caches used for
-canonical cache keys to the expression, rather than the 10,000-entry
-default, so annotating every definition does not add significant
-allocation.
-
-Fixes #3412
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `pkg/query/signals/contextfield/ownership_test.go` (added, +25/-0)
 ```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
- ### Fixed
-+- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
- - LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
- - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
- - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
-```
-
-**File**: `internal/namespace/canonicalization.go` (modified, +5/-1)
-```diff
-@@ -67,7 +67,11 @@ func computeCanonicalCacheKeys(typeDef *schema.ValidatedDefinition, aliasMap map
- 		return map[string]string{}, nil
- 	}
- 
--	bdd, err := rudd.New(varMap.Len())
-+	// The default operation cache holds 10,000 entries per cache, far more than the small
-+	// expressions of a single definition need, and is allocated anew for every definition
-+	// annotated. Instead, size the caches to match the node table and grow alongside it.
-+	// The caches only memoize operations, so their size does not affect the resulting keys.
-+	bdd, err := rudd.New(varMap.Len(), rudd.Cachesize(2*varMap.Len()+2), rudd.Cacheratio(100))
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `internal/services/shared/schema.go` (modified, +12/-9)
-```diff
-@@ -192,17 +192,20 @@ func ApplySchemaChangesOverExisting(
- 			return nil, err
- 		}
- 
--		if len(diff.Deltas()) > 0 {
--			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
-+		// Annotate every definition, not only changed ones: the non-additive path below
-+		// writes all compiled definitions, so an unannotated copy of an unchanged
-+		// definition would overwrite the stored, annotated one.
-+		vts, ok := validated.validatedDefinitions[nsdef.Name]
-+		if !ok {
-+			return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
-+		}
- 
--			vts, ok := validated.validatedDefinitions[nsdef.Name]
--			if !ok {
--				return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
--			}
-+		if err := namespace.AnnotateNamespace(vts); err != nil {
-+			return nil, err
-+		}
- 
--			if err := namespace.AnnotateNamespace(vts); err != nil {
--				return nil, err
--			}
-+		if len(diff.Deltas()) > 0 {
-+			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
- 		}
- 	}
- 
-```
-
-**File**: `internal/services/shared/schema_annotations_test.go` (added, +163/-0)
-```diff
-@@ -0,0 +1,163 @@
-+package shared
+@@ -0,0 +1,25 @@
++package contextfield
 +
 +import (
-+	"context"
 +	"strings"
 +	"testing"
++	"unsafe"
 +
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
-+	"github.com/authzed/spicedb/internal/datastore/memdb"
-+	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
-+	"github.com/authzed/spicedb/pkg/datalayer"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
-+	"github.com/authzed/spicedb/pkg/schemadsl/input"
 +)
 +
-+const annotationsTestSchema = `
-+definition user {}
++func TestRetainedFingerprintsOwnTheirBackingStorage(t *testing.T) {
++	a := &accumulator{frequencies: map[string]uint64{}}
 +
-+definition document {
-+	relation viewer: user
-+	permission view = viewer
-+	permission read = viewer
-+}`
++	for range 2 {
++		backing := strings.Repeat("x", 1<<20) + "same-value"
++		fingerprint := backing[len(backing)-len("same-value"):]
 +
-+// TestApplySchemaChangesPreservesAnnotations ensures that rewriting a schema does not
-+// strip the aliasing_relation and canonical_cache_key annotations from definitions
-+// that are unchanged, and that a rewrite restores them if they are missing.
-+// See https://github.com/authzed/spicedb/issues/3412
-+func TestApplySchemaChangesPreservesAnnotations(t *testing.T) {
-+	modes := []datalayer.SchemaMode{
-+		datalayer.SchemaModeReadLegacyWriteLegacy,
-+		datalayer.SchemaModeReadLegacyWriteBoth,
-+		datalayer.SchemaModeReadNewWriteBoth,
-+		datalayer.SchemaModeReadNewWriteNew,
++		require.NoError(t, a.Add(Observation{Present: true, Fingerprint: fingerprint}))
++		require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(a.first))
++
++		for retained := range a.frequencies {
++			require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(retained))
++		}
 +	}
-+
-+	tcs := []struct {
-+		name               string
-+		seedUnannotated    bool
-+		secondSchema       string
-+		expectedAliasing   int
-+		expectedCanonicals int
-+	}{
-+		{
-+			name:               "identical rewrite",
-+			secondSchema:       annotationsTestSchema,
-+			expectedAliasing:   2,
-+			expectedCanonicals: 3,
-+		},
-+		{
-+			name:               "rewrite adding another definition",
-+			secondSchema:       annotationsTestSchema + "\n\ndefinition folder {\n\trelation owner: user\n}",
-+			expectedAliasing:   2,
-+			expectedCanonicals: 3,
-+		},
-+		{
-+			name:               "identical rewrite repairs unannotated definitions",
-+			seedUnannotated:    true,
-+			secondSchema:       annotationsTestSchema,
-+			expectedAliasing:   2,
-+			expectedCanonicals: 3,
-+		},
-+	}
-+
-+	for _, mode := range modes {
-+		for _, tc := range tcs {
-+			t.Run(mode.String()+"/"+tc.name, func(t *testing.T) {
-+				require := require.New(t)
-+				rawDS, err := dsfortesting.NewMemDBDatastoreForTesting(t, 0, 0, memdb.DisableGC)
-+				require.NoError(err)
-+				dl := datalayer.NewDataLayer(rawDS, datalayer.WithSchemaMode(mode))
-+
-+				compile := func(schema string) *compiler.CompiledSchema {
-+					compiled, err := compiler.Compile(compiler.InputSchema{
-+						Source:       input.Source("schema"),
-+						SchemaString: schema,
-+					}, compiler.AllowUnprefixedObjectType())
-+					require.NoError(err)
-+					return compiled
-+				}
-+
-+				readAnnotations := func() map[string]string {
-+					annotations := map[string]string{}
-+					_, err := dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
-+						sr, err := rwt.ReadSchema(ctx)
-+						require.NoError(err)
-+						def, found, err := sr.LookupTypeDefByName(ctx, "document")
-+						require.NoError(err)
-+						require.True(found)
-+						for _, rel := range def.Definition.Relation {
-+							if rel.AliasingRelation != "" {
-+								annotations[rel.Name+"#alias"] = rel.AliasingRelation
-+							}
-+							if rel.CanonicalCacheKey != "" {
-+								annotations[rel.Name+"#key"] = rel.CanonicalCacheKey
-+							}
-+						}
-+						return nil
-+					})
-+					require.NoError(err)
-+					return annotations
-+				}
-+
-+				countAnnotations := func(annotations map[string]string) (aliasing, canonicals int) {
-+					for k := range annotations {
-+						if strings.HasSuffix(k, "#alias") {
-+							aliasing++
-+						} else {
-+							canonicals++
-+						}
-+					}
-+					return aliasing, canonicals
-+				}
-+
-+				// Seed the starting schema, either through the normal write path or, to
-+				// simulate a datastore stripped by the bug, by writing unannotated definitions.
-+				compiled := compile(annotationsTestSchema)
-+				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
-+					if tc.seedUnannotated {
-+						defs := make([]datastore.SchemaDefinition, 0, len(compiled.ObjectDefinitions))
-+						for _, def := range compiled.ObjectDefinitions {
-+							defs = append(defs, def)
-+						}
-+						_, err := rwt.WriteSchema(ctx, defs, annotationsTestSchema, caveattypes.Default.TypeSet)
-+						return err
-+					}
-+
-+					validated, err := ValidateSchemaChanges(ctx, compiled, caveattypes.Default.TypeSet, false, annotationsTestSchema)
-+					require.NoError(err)
-+					_, err = ApplySchemaChanges(ctx, rwt, caveattypes.Default.TypeSet, validated)
-+					return err
-+				})
-+				require.NoError(err)
-+
-+				startingAnnotations := readAnnotations()
-+				if tc.seedUnannotated {
-+					require.Empty(startingAnnotations)
-+				}
-+
-+				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
-+					validated, err := ValidateSchemaChanges(ctx, compile(tc.secondSchema), caveattypes.Default.TypeS
++}
 ```
 
----
-
-### Incident Patch 2: `a87308b0` (2026-10-30)
-**Commit Message**: docs(query): distinguish signal identity from canonical keys
-
-**File**: `pkg/query/signals/signal/execution.go` (modified, +2/-0)
+**File**: `pkg/query/signals/contextfield/signal.go` (modified, +13/-5)
 ```diff
-@@ -38,6 +38,8 @@ const (
- // ExecutionKey identifies an observed execution population independently of dispatch keys.
- type ExecutionKey struct {
- 	// Identity is the full structural identity of the observed subtree.
-+	// It must include all descendants, unlike query.CanonicalKey, which omits
-+	// children of caveat nodes.
- 	Identity string
+@@ -2,6 +2,7 @@
+ package contextfield
  
- 	// Operation identifies the execution operation represented by evidence.
+ import (
++	"strings"
+ 	"time"
+ 
+ 	"github.com/ccoveille/go-safecast/v2"
+@@ -76,14 +77,20 @@ func (a *accumulator) Add(o Observation) error {
+ 	}
+ 
+ 	present := a.samples - a.missing
+-	if present == 1 {
+-		a.first = o.Fingerprint
+-	} else if a.first != o.Fingerprint {
++	if present > 1 && a.first != o.Fingerprint {
+ 		a.different = true
+ 	}
+ 
+ 	if _, ok := a.frequencies[o.Fingerprint]; ok || len(a.frequencies) < 16 {
+-		a.frequencies[o.Fingerprint]++
++		// Map updates can replace an equal string key's backing pointer. Own the
++		// fingerprint on every write, including repeated values, so a substring
++		// supplied by an observer cannot retain a much larger context buffer.
++		fingerprint := strings.Clone(o.Fingerprint)
++		if present == 1 {
++			a.first = fingerprint
++		}
++
++		a.frequencies[fingerprint]++
+ 	} else {
+ 		a.overflow++
+ 		a.different = true
+@@ -118,7 +125,8 @@ func (a *accumulator) Value(time.Time) (Estimate, signal.Availability) {
+ 
+ // Size returns the estimated resident size of the accumulator in bytes.
+ func (a *accumulator) Size() int64 {
+-	size := int64(64)
++	// A later equal map-key update can leave first with its own backing bytes.
++	size := int64(64) + safecast.MustConvert[int64](len(a.first))
+ 
+ 	for k := range a.frequencies {
+ 		size += 64 + safecast.MustConvert[int64](len(k))
 ```
 
----
-
-### Incident Patch 3: `8e3a1226` (2026-10-30)
-**Commit Message**: fix(query): harden signal storage bounds and lifecycle coverage
-
-**File**: `pkg/query/signals/README.md` (added, +74/-0)
+**File**: `pkg/query/signals/resultsize/README.md` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,74 @@
-+# Planning signals
+@@ -47,3 +47,9 @@ eagerly exhausts an underlying iterator, that completed raw population is a vali
+ sample even if the API consumer later stops. The arrow-direction optimization
+ uses the mean from matching enumeration keys, falling back to historical evidence
+ when the exact-revision estimate is unavailable.
 +
-+Signals store observations that can inform query-planner choices. Each provider
-+owns a named definition, typed population key, observation and estimate, and an
-+accumulator. This package supplies registration, bounded storage and scoped reads;
-+it does not change query execution or enable a particular optimization.
-+
-+## Registration and scope
-+
-+Construct descriptors with `signal.NewSource` or `signal.NewDerived`, register
-+all dependencies, and create one `Owner` for the datalayer using `NewOwner`.
-+Registration rejects duplicate names, incompatible bindings and dependency cycles.
-+Freeze a registry before sharing it concurrently. Provider callbacks must follow
-+the accumulator contract: clones and returned values are independent snapshots.
-+
-+Bind the owner to a loaded stored schema and the request's selected datastore
-+revision. A provider explicitly chooses `RevisionBound` or `CrossRevision`:
-+
-+- Revision-bound evidence stays at that exact revision, including a quantized
-+  revision selected for checks. Neighboring revisions do not share that evidence.
-+- Cross-revision evidence can be reused within the same schema. Its provider owns
-+  aging and availability; storage does not infer how much the data changed.
-+- On a schema change, only cross-revision providers with an explicit compatibility
-+  callback can transfer evidence. `signal.Unchanged` compares their declared
-+  dependencies against the schema diff. A transfer may retain, discount or reset
-+  evidence. It preserves observation times but starts a distinct publication epoch.
-+
-+For example, checks of `document:report#view@user:alice` at revision R may record
-+an observation under a population key for the `document#view` subtree. A second
-+subject can contribute to the same population if the provider's key excludes the
-+subject. A revision-bound lookup at R+1 is missing; a cross-revision provider may
-+return historical evidence. Adding an unrelated schema definition can preserve
-+that historical evidence, while changing a declared dependency resets it.
-+
-+Consumers use `signal.Observe(view, input, key, observation)` and
-+`signal.Lookup(view, reference, key)`. Check `estimate.IsAvailable()` before using
-+the value. Missing, expired and disabled evidence are distinct from a measured
-+zero. `LookupFirst` tries compatible references in order and reports which one
-+supplied the first available estimate; a lookup error stops that search.
-+
-+`view.ForPlan()` memoizes each population's first independent snapshot for one
-+planning run. Further observations or store eviction cannot change that snapshot.
-+Different populations are read independently, not as one transactional snapshot.
-+
-+## Ownership and bounds
-+
-+Defaults are 16 MiB total estimated resident storage, 256 KiB per entry, four
-+schemas, 64 exact revisions per schema, and 64 weak owner handles per stored
-+schema. Options can override these limits. Storage accounts for retained schemas,
-+entry and key storage, dependency footprints, and accumulator-reported bytes.
-+Providers must include all their retained state in `Size()`.
-+
-+Keys support scalar values, strings, and arrays or structs recursively containing
-+those values. Struct fields must be exported. Pointers, interfaces, channels and
-+other reference graphs are rejected, as are nonreflexive values such as NaN.
-+Retained keys and footprint strings are copied so a substring cannot retain an
-+unaccounted backing buffer. Footprint slices are copied before retention.
-+
-+Oversized or evicted evidence becomes unavailable; it does not affect permission
-+semantics. The schema cache holds only bounded weak owner references. Owners and
-+schemas do not leak learning state between independent datalayers. Legacy readers
-+can use an isolated local view instead of a shared stored-schema attachment.
-+
-+Derived providers consume accepted source increments in dependency order, not
-+cumulative snapshots. Source publication is serialized through derived delivery.
-+They cannot be written directly through the public observation API.
-+
-+## Tests
-+
-+Package tests use synthetic providers and stored-schema fixtures to cover scope
-+isolation, publication, snapshots, eviction, schema compatibility and concurrency.
-+The shared `internal/querysignalstest` helpers provide a fake clock and schema
-+builders for provider-specific tests. Numeric distribution helpers are tested in
-+`signal` without depending on a built-in provider.
++The memory estimate includes the digest's preallocated buffers and slice-growth
++headroom. Even a sparse compression-100 digest reserves about 16 KiB before entry
++and key overhead, so a smaller per-entry budget declines it. Historical buckets
++account for their digests independently and can be evicted before their configured
++retention period when the shared storage budget is exhausted.
 ```
 
-**File**: `pkg/query/signals/key.go` (added, +144/-0)
+**File**: `pkg/query/signals/resultsize/memory_test.go` (added, +41/-0)
 ```diff
-@@ -0,0 +1,144 @@
-+package signals
+@@ -0,0 +1,41 @@
++package resultsize
 +
 +import (
-+	"errors"
 +	"reflect"
-+	"strings"
++	"testing"
 +
 +	"github.com/ccoveille/go-safecast/v2"
-+
-+	"github.com/authzed/spicedb/pkg/query/signals/signal"
++	"github.com/stretchr/testify/require"
 +)
 +
-+// Value-only keys make retention predictable: no mutable object graph can hide
-+// behind a pointer or interface. Exported fields let the store own string data.
-+func supportedKey(t reflect.Type) bool {
-+	switch t.Kind() {
-+	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
-+		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
-+		return true
-+	case reflect.Array:
-+		return supportedKey(t.Elem())
-+	case reflect.Struct:
-+		for i := range t.NumField() {
-+			f := t.Field(i)
-+			if !f.IsExported() || !supportedKey(f.Type) {
-+				return false
-+			}
-+		}
++func assertDigestBuffersAccounted(t *testing.T, a *accumulator) {
++	t.Helper()
 +
-+		return true
-+	default:
-+		return false
-+	}
++	// This regression deliberately inspects the dependency's backing capacities:
++	// a library upgrade must not silently invalidate our conservative Size bound.
++	summary := reflect.ValueOf(a.digest).Elem().FieldByName("summary").Elem()
++	means := summary.FieldByName("means").Cap()
++	counts := summary.FieldByName("counts").Cap()
++	bufferBytes := 8 * safecast.MustConvert[int64](means+counts)
++
++	require.GreaterOrEqual(t, a.Size(), bufferBytes+256)
 +}
 +
-+func validateKey(key any, expected reflect.Type) error {
-+	if reflect.TypeOf(key) != expected || !reflect.ValueOf(key).Comparable() {
-+		return errors.New("invalid signal key type")
-+	}
++func TestDigestBudgetCoversCompressionAndClones(t *testing.T) {
++	a := NewAccumulator().(*accumulator)
++	assertDigestBuffersAccounted(t, a)
 +
-+	// NaN, including a NaN inside an array or struct, cannot be found or deleted
-+	// from a map. Reject it before lookup as well as before admission.
-+	if !reflect.ValueOf(key).Equal(reflect.ValueOf(key)) {
-+		return errors.New("nonreflexive signal key")
-+	}
++	for block := range 4 {
++		for i := range 2048 {
++			count := safecast.MustConvert[uint64]((i*7919 + block) % 12345)
 +
-+	return nil
-+}
-+
-+func ownedKey(value reflect.Value) reflect.Value {
-+	switch value.Kind() {
-+	case reflect.String:
-+		snapshot := reflect.New(value.Type()).Elem()
-+		snapshot.SetString(strings.Clone(value.String()))
-+		return snapshot
-+	case reflect.Struct:
-+		snapshot := reflect.New(value.Type()).Elem()
-+
-+		for i := range value.NumField() {
-+			snapshot.Field(i).Set(ownedKey(value.Field(i)))
++			require.NoError(t, a.Add(Observation{Count: count}))
 +		}
 +
-+		return snapshot
-+	case reflect.Array:
-+		snapshot := reflect.New(value.Type()).Elem()
-+
-+		for i := range value.Len() {
-+			snapshot.Index(i).Set(ownedKey(value.Index(i)))
-+		}
-+
-+		return snapshot
-+	default:
-+		return value
++		assertDigestBuffersAccounted(t, a)
++		require.NoError(t, a.digest.Compress())
++		assertDigestBuffersAccounted(t, a)
++		cloned := a.Clone().(*accumulator)
++		assertDigestBuffersAccounted(t, cloned)
 +	}
-+}
-+
-+// String headers and inline fields are in Type.Size; only backing bytes are extra.
-+func keyStringBytes(value reflect.Value) int64 {
-+	switch value.Kind() {
-+	case reflect.String:
-+		return int64(value.Len())
-+	case reflect.Struct:
-+		var size int64
-+
-+		for i := range value.NumField() {
-+			size += keyStringBytes(value.Field(i))
-+		}
-+
-+		return size
-+	case reflect.Array:
-+		var size int64
-+
-+		for i := range value.Len() {
-+			size += keyStringBytes(value.Index(i))
-+		}
-+
-+		return size
-+	default:
-+		return 0
-+	}
-+}
-+
-+func ownedFootprint(f signal.Footprint) signal.Footprint {
-+	result := signal.Footprint{
-+		Elements: make([]signal.Element, len(f.Elements)),
-+		Caveats:  make([]string, len(f.Caveats)),
-+	}
-+
-+	for i, e := range f.Elements {
-+		result.Elements[i] = signal.Element{
-+			Namespace: strings.Clone(e.Namespace),
-+			Relation:  strings.Clone(e.Relation),
-+		}
-+	}
-+
-+	for i, name := range f.Caveats {
-+		result.Caveats[i] = strings.Clone(name)
-+	}
-+
-+	return result
-+}
-+
-+func entryCost(key entryKey, state signal.State, footprint signal.Footprint) int64 {
-+	// Include map/entry overhead, retained names, inline key storage, string
-+	// backing bytes and the dependency slices as well as provider-owned state.
-+	size := int64(256)
-+	size += safecast.MustConvert[int64](len(key.schema))
-+	size += safecast.MustConvert[int64](len(key.name))
-+	size += safecast.MustConvert[int64](len(key.revision))
-+	size += safecast.MustConvert[int64](reflect.TypeOf(key.key).Size()) + keyStringBytes(reflect.ValueOf(key.key))
-+	size += safecast.MustConvert[int64](len(footprint.Elements)) * safecast.MustConvert[int64](reflect.TypeFor[signal.Element]().Size())
-+	size += safecast.MustConvert[int64](len(footprint.Caveats)) * safecast.MustConvert[int64](reflect.TypeFor[string]().Size())
-+
-+	for _, e := range footprint.Elements {
-+		size += safecast.MustConvert[int64](len(e.Namespace)) + safecast.MustConvert[int64](len(e.Relation))
-+	}
-+
-+	for _, name := range footprint.Caveats {
-+		size += safecast.MustConvert[int64](len(name))
-+	}
-+
-+	return size + state.Size()
 +}
 ```
 
-**File**: `pkg/query/signals/owner.go` (modified, +19/-13)
+**File**: `pkg/query/signals/resultsize/ownership_test.go` (added, +71/-0)
 ```diff
-@@ -4,12 +4,11 @@ import (
- 	"errors"
- 	"fmt"
- 	"reflect"
-+	"strings"
- 	"sync"
- 	"sync/atomic"
- 	"weak"
- 
--	"github.com/ccoveille/go-safecast/v2"
--
- 	"github.com/authzed/spicedb/pkg/datastore"
- 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
- 	"github.com/authzed/spicedb/pkg/query/signals/signal"
-@@ -23,13 +22,14 @@ type entryKey struct {
- }
- 
- type entry struct {
--	publicationMu sync.Mutex
--	mu            sync.Mutex
--	state         signal.State    // GUARDED_BY(mu)
--	evidence      signal.Evidence // GUARDED_BY(publicationMu)
--	footprint     signal.Footprint
--	cost          int64
--	used          uint64
-+	publicationMu      sync.Mutex
-+	publicationVersion uint64 // GUARDED_BY(publicationMu)
-+	mu                 sync.Mutex
-+	state              signal.State    // GUARDED_BY(mu)
-+	evidence           signal.Evidence // GUARDED_BY(mu)
-+	footprint          signal.Footprint
-+	cost               int64
-+	used               uint64
- }
- 
- type schemaState struct {
-@@ -330,7 +330,7 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
- 		state = d.New()
- 	}
- 
--	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(k.key))) + state.Size()
-+	cost := entryCost(k, state, signal.Footprint{})
- 	o.mu.Lock()
- 
- 	if _, ok := o.schemas[k.schema]; !ok {
-@@ -391,6 +391,11 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
- 		return nil
- 	}
- 
-+	// Copy string backing only when admitting a new population. Lookup hits do
-+	// not allocate, and a short substring cannot retain an unaccounted buffer.
-+	k.key = ownedKey(reflect.ValueOf(k.key)).Interface()
-+	k.schema = strings.Clone(k.schema)
-+	k.revision = strings.Clone(k.revision)
- 	o.entries[k] = e
- 	o.bytes += e.cost
- 	o.trimLocked()
-@@ -466,14 +471,15 @@ func (o *Owner) write(scope signal.Scope, d signal.Descriptor, key, observation
- 	}
- 
- 	e.evidence.PublishedAt = now
--	e.evidence.ID.Version++
-+	e.publicationVersion++
-+	e.evidence.ID.Version = e.publicationVersion
- 	update := signal.UpdateID{Epoch: e.evidence.ID.Epoch, Sequence: e.evidence.ID.Version}
- 
- 	if d.Footprint != nil {
--		e.footprint = d.Footprint(key)
-+		e.footprint = ownedFootprint(d.Footprint(key))
- 	}
- 
--	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(key))) + e.state.Size()
-+	cost := entryCost(k, e.state, e.footprint)
- 	e.mu.Unlock()
- 	o.mu.Lock()
- 	resident := o.entries[k] == e
-```
-
-**File**: `pkg/query/signals/property_test.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package signals_test
+@@ -0,0 +1,71 @@
++package resultsize_test
 +
 +import (
++	"sync"
 +	"testing"
 +
-+	"github.com/stretchr/testify/require"
-+	"pgregory.net/rapid"
-+
-+	"github.com/authzed/spicedb/internal/datastore/revisions"
-+	"github.com/authzed/spicedb/pkg/query/signals"
-+	"github.com/authzed/spicedb/pkg/query/signals/signal"
-+)
-+
-+func TestRevisionEvictionPreservesPlanningSnapshots(t *testing.T) {
-+	rapid.Check(t, func(rt *rapid.T) {
-+		observations := rapid.SliceOfN(rapid.IntRange(-100, 100), 1, 20).Draw(rt, "observations")
-+		revision := rapid.Uint64Range(1, 1000).Draw(rt, "revision")
-+		key := rapid.StringMatching(`[a-z]{1,20}`).Draw(rt, "population")
-+		r, err := signals.NewRegistry(definition("sum"))
-+
-+		require.NoError(rt, err)
-+		o, err := signals.NewOwner(r, signals.Options{MaxRevisions: 1, MaxBytes: 4096})
-+
-+		require.NoError(rt, err)
-+		a, err := o.Bind(stored("schema"), signal.Scope{
-+			SchemaHash: "schema",
-+			Revision:   revisions.NewForTransactionID(revision),
-+		})
-+
-+		require.NoError(rt, err)
-+		total := 0
-+
-+		for _, observation := range observations {
-+			require.NoError(rt, signal.Observe(a, sumInput, key, observation))
-+			total += observation
-+		}
-+
-+		plan := a.ForPlan()
-+		before, err := signal.Lookup(plan, sumRef, key)
-+
-+		require.NoError(rt, err)
-+		require.Equal(rt, total, before.Value)
-+		b, err := o.Bind(stored("schema"), signal.Scope{
-+			SchemaHash: "schema",
-+			Revision:   revisions.NewForTransactionID(revision + 1),
-+		})
-+
-+		require.NoError(rt, err)
-+		require.NoError(rt, signal.Observe(b, sumInput, key, 1))
-+		after, err := signal.Lookup(plan, sumRef, key)
-+
-+		require.NoError(rt, err)
-+		require.Equal(rt, before, after)
-+		evicted, err := signal.Lookup(a, sumRef, key)
-+
-+		require.NoError(rt, err)
-+		require.False(rt, evicted.IsAvailable())
-+		require.LessOrEqual(rt, o.ResidentBytes(), int64(4096))
-+	})
-+}
-```
-
-**File**: `pkg/query/signals/registry.go` (modified, +5/-1)
-```diff
-@@ -40,10 +40,14 @@ func (r *Registry) Register(d signal.Descriptor) error {
- 	}
- 
- 	if d.Name == "" || d.KeyType == nil || !d.KeyType.Comparable() ||
--		d.ObservationType == nil || d.ValueType == nil || d.New == nil || d.Policy > signal.CrossRevision {
-+		d.ObservationType == nil || d.ValueType == nil || (d.New == nil && d.Build == nil) || d.Policy > signal.CrossRevision {
- 		return fmt.Errorf("invalid signal descriptor %q", d.Name)
- 	}
- 
-+	if !supportedKey(d.KeyType) {
-+		return fmt.Errorf("unsupported signal key type for %q", d.Name)
-+	}
-+
- 	if _, ok := r.definitions[d.Name]; ok {
- 		return fmt.Errorf("duplicate signal %q", d.Name)
- 	}
-```
-
-**File**: `pkg/query/signals/safety_test.go` (added, +216/-0)
-```diff
-@@ -0,0 +1,216 @@
-+package signals_test
-+
-+import (
-+	"math"
-+	"reflect"
-+	"strings"
-+	"testing"
-+	"time"
-+
++	"github.com/ccoveille/go-safecast/v2"
 +	"github.com/stretchr/testify/require"
 +
-+	"github.com/authzed/spicedb/internal/datastore/revisions"
 +	"github.com/authzed/spicedb/internal/querysignalstest"
 +	"github.com/authzed/spicedb/pkg/query/signals"
++	"github.com/authzed/spicedb/pkg/query/signals/resultsize"
 +	"github.com/authzed/spicedb/pkg/query/signals/signal"
 +)
 +
-+func TestNonreflexiveKeyIsRejected(t *testing.T) {
-+	type key struct{ Value [1]float64 }
++func TestAccumulatorClonesCanLearnConcurrently(t *testing.T) {
++	original := resultsize.NewAccumulator()
 +
-+	d := signal.NewSource[key, int, int]("sum", signal.SourceConfig[key, int, int]{
-+		New: func() signal.Accumulator[int, int] { return &sum{} },
-+	})
-+	r, err := signals.NewRegistry(d)
-+	require.NoError(t, err)
-+	o, err := signals.NewOwner(r, signals.Options{})
-+	require.NoError(t, err)
-+	v := view(t, o, "a", 1)
-+	invalid := key{Value: [1]float64{math.NaN()}}
++	for i := range 100 {
++		require.NoError(t, original.Add(resultsize.Observation{Count: safecast.MustConvert[uint64](i % 7)}))
++	}
 +
-+	require.ErrorContains(t, signal.Observe(v, signal.Input[key, int]{Name: "sum"}, invalid, 1), "key")
-+	_, err = signal.Lookup(v, signal.Reference[key, int]{Name: "sum"}, invalid)
-+	require.ErrorContains(t, err, "key")
-+	_, err = signal.Lookup(v.ForPlan(), signal.Reference[key, int]{Name: "sum"}, invalid)
-+	require.ErrorContains(t, err, "key")
-+}
++	cloned := original.Clone()
++	errors := make(chan error, 2)
++	var workers sync.WaitGroup
 +
-+func TestRegistryRejectsReferenceKeys(t *testing.T) {
-+	for _, keyType := range []reflect.Type{
-+		reflect.TypeFor[*string](),
-+		reflect.TypeFor[any](),
-+		reflect.TypeFor[struct{ Value any }](),
-+		reflect.TypeFor[[1]chan int](),
-+	} {
-+		t.Run(keyType.String(), func(t *testing.T) {
-+			d := definition("sum")
-+			d.KeyType = keyType
-+			_, err := signals.NewRegistry(d)
-+
-+			require.ErrorContains(t, err, "key")
++	for _, accumulator := range []signal.Accumulator[resultsize.Observation, resultsize.Estimate]{original, cloned} {
++		workers.Go(func() {
++			for i := range 2000 {
++				if err := accumulator.Add(resultsize.Observation{Count: safecast.MustConvert[uint64](i % 17)}); err != nil {
++					errors <- err
++					return
++				}
++			}
 +		})
 +	}
-+}
 +
-+func TestSourceRequiresConstructor(t *testing.T) {
-+	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{})
-+	_, err := signals.NewRegistry(d)
++	workers.Wait()
++	close(errors)
 +
-+	require.Error(t, err)
-+}
-+
-+func TestSchemaTransferHasIndependentPublicationIdentity(t *testing.T) {
-+	d := definition("sum")
-+	d.Policy = signal.CrossRevision
-+	d.Transfer = func(signal.SchemaChange, signal.Footprint) signal.TransferDecision {
-+		return signal.TransferDecision{Action: signal.Retain}
++	for err := range errors {
++		require.NoError(t, err)
 +	}
-+	r, err := signals.NewRegistry(d)
-+	require.NoError(t, err)
-+	o, err := signals.NewOwner(r, signals.Options{})
-+	require.NoError(t, err)
-+	a := view(t, o, "a", 1)
 +
-+	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
-+	b := view(t, o, "b", 2)
-+	require.NoError(t, signal.Observe(a, sumInput, "x", 2))
-+	require.NoError(t, signal.Observe(b, sumInput, "x", 5))
-+	av, err := signal.Lookup(a, sumRef, "x")
-+	require.NoError(t, err)
-+	bv, err := signal.Lookup(b, sumRef, "x")
-+	require.NoError(t, err)
-+	require.Equal(t, 3, av.Value)
-+	require.Equal(t, 6, bv.Value)
-+	require.NotEqual(t, av.Evidence.ID, bv.Evidence.ID)
++	a, _ := original.Value(querysignalstest.NewClock().Now())
++	b, _ := cloned.Value(querysignalstest.NewClock().Now())
++
++	require.Equal(t, uint64(2100), a.Samples)
++	require.Equal(t, a.Samples, b.Samples)
 +}
 +
-+func TestFootprintCountsTowardEntryBudget(t *testing.T) {
-+	d := definition("sum")
-+	d.Footprint = func(any) signal.Footprint {
-+		return signal.Footprint{Caveats: []string{strings.Repeat("x", 4096)}}
-+	}
-+	r, err := signals.NewRegistry(d)
-+	require.NoError(t, err)
-+	o, err := signals.NewOwner(r, signals.Options{MaxEntryBytes: 1024})
-+	require.NoError(t, err)
-+	v := view(t, o, "a", 1)
++func TestSparseDigestHonorsResidentBudget(t *testing.T) {
++	accumulator := resultsize.NewAccumulator()
 +
-+	require.NoError(t, signal.Observe(v, sumInput, "x", 1))
-+	e, err := signal.Lookup(v, sumRef, "x")
++	// Compression 100 reserves two 1,000-element slices before the first sample.
++	require.GreaterOrEqual(t, accumulator.Size(), int64(16000))
++	r, err := signals.NewRegistry(resultsize.New())
++
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{MaxEntryBytes: 2048})
++
++	require.NoError(t, err)
++	v := querysignalstest.View(t, o, "schema", 1)
++	key := signal.ExecutionKey{Identity: "read", Operation: signal.IterSubjects}
++
++	require.NoError(t, signal.Observe(v, resultsize.Input, key, resultsize.Observation{Count: 1}))
++	e, err := signal.Lookup(v, resultsize.Ref, key)
 +
 +	require.NoError(t, err)
 +	require.False(t, e.IsAvailable())
 +}
-+
-+func TestFootprintIsOwnedByEntry(t *testing.T) {
-+	footprint := signal.Footprint{Elements: []signal.Element{{Namespace: "doc", Relation: "read"}}}
-+	d := definition("sum")
-+	d.Policy = signal.CrossRevision
-+	d.Footprint = func(any) signal.Footprint { return footprint }
-+	d.Transfer = func(_ signal.SchemaChange, f signal.Footprint) signal.TransferDecision {
-+		require.Equal(t, "read", f.Elements[0].Relation)
-+		return signal.TransferDecision{Action: signal.Retain}
-+	}
-+	r, err := signals.NewRegistry(d)
-+	require.NoError(t, err)
-+	o, err := signals.NewOwner(r, signals.Options{})
-+	require.NoError(t, err)
-+	a := view(t, o, "a", 1)
-+
-+	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
-+	footprint.Elements[0].Relation = "edited"
-+	b := view(t, o, "b", 2)
-+	e, err := signal.Lookup(b, sumRef, "x")
-+
-+	require.NoError(t, err)
-+	require.Equal(t, 1, e.Value)
-+}
-+
-+func TestBuildOnlySource(t *testing.T) {
-+	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{
-+		Build: func(now func() time.Time) signal.Accumulator[int, int] {
-+			require.Equal(t, time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), now())
-+			return &sum{}
-+		},
-+	})
-+	clock := querysignalstest.NewClock()
-+	o := querysignalstest.Owner(t, clock, d)
-+	v := querysignalstest.View(t, o, "a", 1)
-+
-+	require.NoError(t, signal.Observe(v, sumInput, "x", 4))
-+	e, err := signal.Lookup(v, sumRef, "x")
-+
-+	require.NoError(t, err)
-+	require.Equal(t, 4, e.Value)
-+}
-+
-+func TestDerivedSignalsReceiveIncrementsAcrossRevisions(t *testing.T) {
-+	source := definition("sum")
-+	derived := signal.NewDerived("history", sumInput, signal.SourceConfig[string, int, int]{
-+		Policy: signal.CrossRevision,
-+		New:    func() 
 ```
 
-**File**: `pkg/query/signals/signal/definition.go` (modified, +5/-4)
+**File**: `pkg/query/signals/resultsize/signal.go` (modified, +27/-2)
 ```diff
-@@ -143,10 +143,11 @@ func NewSource[K comparable, O, V any](name Name, c SourceConfig[K, O, V]) Descr
- 		KeyType:         reflect.TypeFor[K](),
- 		ObservationType: reflect.TypeFor[O](),
- 		ValueType:       reflect.TypeFor[V](),
--		New: func() State {
--			return adapter[O, V]{c.New()}
--		},
--		Transfer: c.Transfer,
-+		Transfer:        c.Transfer,
-+	}
-+
-+	if c.New != nil {
-+		d.New = func() State { return adapter[O, V]{c.New()} }
- 	}
+@@ -3,6 +3,7 @@ package resultsize
  
- 	if c.Build != nil {
-```
-
-**File**: `pkg/query/signals/signal/distribution_test.go` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+package signal_test
+ import (
+ 	"errors"
++	"math/rand/v2"
+ 	"time"
+ 
+ 	"github.com/caio/go-tdigest/v4"
+@@ -78,8 +79,27 @@ func NewAccumulator() signal.Accumulator[Observation, Estimate] {
+ 	return &accumulator{digest: mustDigest()}
+ }
+ 
++const digestCompression = 100
 +
-+import (
-+	"math"
-+	"testing"
++// Digest clones share their RNG. The package-level generator is safe when
++// independent schema accumulators continue learning on different goroutines.
++type sharedRNG struct{}
 +
-+	"github.com/caio/go-tdigest/v4"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/pkg/query/signals/signal"
-+)
-+
-+func TestDistributionRetainsIndependentSnapshot(t *testing.T) {
-+	digest, err := tdigest.New()
-+
-+	require.NoError(t, err)
-+	require.NoError(t, digest.AddWeighted(10, 100))
-+	require.NoError(t, digest.AddWeighted(20, 100))
-+	snapshot := signal.DigestDistribution(digest, 10, 20)
-+
-+	require.NoError(t, digest.AddWeighted(1000, 10000))
-+	require.InDelta(t, 10.0, snapshot.Quantile(0), 1e-9)
-+	require.InDelta(t, 20.0, snapshot.Quantile(1), 1e-9)
-+	require.InDelta(t, 15.0, snapshot.Quantile(0.5), 1)
-+	require.Zero(t, snapshot.CDF(9))
-+	require.InDelta(t, 1.0, snapshot.CDF(20), 1e-9)
-+
-+	for _, q := range []float64{-1, 2, math.NaN()} {
-+		require.True(t, math.IsNaN(snapshot.Quantile(q)))
-+	}
++// Float32 returns a random value from the concurrent package-level generator.
++func (sharedRNG) Float32() float32 {
++	return rand.Float32() //nolint:gosec // Digest sampling does not require cryptographic randomness.
 +}
 +
-+func TestWeightedMixtureOwnsParts(t *testing.T) {
-+	low, err := tdigest.New()
-+
-+	require.NoError(t, err)
-+	require.NoError(t, low.AddWeighted(1, 100))
-+	high, err := tdigest.New()
-+
-+	require.NoError(t, err)
-+	require.NoError(t, high.AddWeighted(9, 100))
-+	parts := []signal.WeightedDistribution{
-+		{Distribution: signal.DigestDistribution(low, 1, 1), Weight: 1},
-+		{Distribution: signal.DigestDistribution(high, 9, 9), Weight: 3},
-+	}
-+	mixture := signal.Mixture(parts, 1, 9)
-+	parts[0].Weight = 1000
-+
-+	require.InDelta(t, 0.25, mixture.CDF(5), 1e-9)
-+	require.InDelta(t, 9.0, mixture.Quantile(0.5), 1e-6)
++// Intn returns a random index from the concurrent package-level generator.
++func (sharedRNG) Intn(n int) int {
++	return rand.IntN(n) //nolint:gosec // Digest sampling does not require cryptographic randomness.
 +}
 +
-+func TestExecutionFootprintRoundTrip(t *testing.T) {
-+	footprint := signal.Footprint{
-+		Elements: []signal.Element{{Namespace: "doc", Relation: "view"}},
-+		Caveats:  []string{"allowed"},
-+	}
-+	key := signal.ExecutionKey{Dependencies: signal.EncodeFootprint(footprint)}
-+
-+	require.Equal(t, footprint, key.Footprint())
-+	require.Empty(t, (signal.ExecutionKey{Dependencies: "invalid"}).Footprint())
-+}
+ func mustDigest() *tdigest.TDigest {
+-	d, err := tdigest.New(tdigest.Compression(100))
++	d, err := tdigest.New(
++		tdigest.Compression(digestCompression),
++		tdigest.RandomNumberGenerator(sharedRNG{}),
++	)
+ 	if err != nil {
+ 		panic(err)
+ 	}
+@@ -167,7 +187,12 @@ func (a *accumulator) Value(time.Time) (Estimate, signal.Availability) {
+ func (a *accumulator) Size() int64 {
+ 	n := int64(0)
+ 	a.digest.ForEachCentroid(func(float64, uint64) bool { n++; return true })
+-	return 128 + 32*n
++	// go-tdigest v4 reserves two compression*10 slices of eight-byte elements.
++	// Centroid growth can retain capacity beyond the live length. Reserve twice
++	// that length once it exceeds the initial allocation; compression replaces
++	// both buffers with a fresh initial allocation. Clones may need less, so this
++	// deliberately remains a conservative bound rather than reporting live data.
++	return 256 + 16*max(digestCompression*10, 2*n)
+ }
+ 
+ // Clone returns an independent copy of the accumulator state.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3452** (2026-11-05): otel: add `--otel-ignore-remote-sampling` (@vroldanbet)
+- **PR #3445** (2026-11-05): feat(query): add context and execution planning signals (@josephschorr)
 - **PR #3444** (2026-10-30): feat(query): add reusable planning signals (@josephschorr)
 - **PR #3440** (2026-10-30): fix(schema): preserve annotations on unchanged definitions during schema writes (@josephschorr)
 - **PR #3437** (2026-10-28): chore: bump go-jose to v4.1.6 for CVE-2026-116587 (@vroldanbet)
 - **PR #3435** (2026-10-28): fix(dispatch): lock LookupResources cursors to the dispatcher that produced them (@vroldanbet)
-- **PR #3434** (2026-10-28): fix(graph): prevent read pool deadlocks from nested connection acquisition (@josephschorr)
-- **PR #3432** (2026-10-26): fix(cache): expire dispatch cache entries a fixed TTL after they are written (@josephschorr)
 
 ---
 
@@ -2022,21 +1409,45 @@ Fixes #3412
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. schema): preserve annotations on unchanged definitions during schema writes
+## X. query): bound provider retention and isolate concurrent digest updates
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/query/signals/contextfield/ownership_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2eb05375`: schema): preserve annotations on unchanged definitions during schema writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52ec6e3c`: query): bound provider retention and isolate concurrent digest updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/query/signals/contextfield/ownership_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
+package contextfield
+
+import (
+	"strings"
+	"testing"
+	"unsafe"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestRetainedFingerprintsOwnTheirBackingStorage(t *testing.T) {
+	a := &accumulator{frequencies: map[string]uint64{}}
+
+	for range 2 {
+		backing := strings.Repeat("x", 1<<20) + "same-value"
+		fingerprint := backing[len(backing)-len("same-value"):]
+
+		require.NoError(t, a.Add(Observation{Present: true, Fingerprint: fingerprint}))
+		require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(a.first))
+
+		for retained := range a.frequencies {
+			require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(retained))
+		}
+	}
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2046,4 +1457,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2eb05375` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52ec6e3c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `f6e5ac35`  
+> **Source Version**: `d04aa46b`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:51:03.409Z  
+> **Timestamp**: 2026-11-05T22:40:11.330Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:51:03.402Z  
+> **Harvest Timestamp**: 2026-11-05T22:40:11.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11465 stars
+- **Stars / Engagement**: 11471 stars
 
 ---
 
@@ -1920,11 +1920,15 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14842** (2026-11-04): **test: fix most frequent unit-test flakes**
-  *Symptoms*: Fix the four most frequent flaky unit tests in recent PR CI runs. All were races between a test and the code under test, or with other test runs:  * LinkSpecSuite/TestVXLAN, LinkStatusSuite/TestVXLANInterface: unit tests from concurrent CI jobs share a network namespace, and the kernel refuses (EEXIST) to create a second VXLAN link with the same VNI and destination port. Both tests hardcoded VNI 100; they now use a random VNI.  * ContentLibrarySuite (TestKeepsTheMountOfAHeldLibraryItNoLongerWants, TestReleasesTheMountOfAPreviousGenerationOnceTheHoldComesBack): a controller pass started by the config apply read the library as not held. The test then added its hold and created the stray mount request before that pass listed requests, so the pass destroyed the request. Add awaitReconcile, which writes a file into the library and waits for the new fingerprint, and use it before creating stray requests.  * ProcessSuite (TestPriority, TestIOPriority, TestSchedulingPolicy): the runner applies process properties after launch, while the test checked them as soon as the child wrote its PID file. Wait for the running event, which is reported once the properties are applied.  * AcquireSuite/TestFromEmbeddedToMaintenance: the controller reads the embedded config once, when it starts, but the test wrote it only after the controller was registered. It either missed the config and timed out, or read a half-written file. Write the embedded config in the suite setup, before the controller is r
+- **Issue #14856** (2026-11-05): **fix: use the image pull returned reference for upgrade**
+  *Symptoms*: Fixes #14829 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
-- **Issue #14840** (2026-11-04): **fix: use aescbc provider for AES-CBC key in etcd encryption config**
-  *Symptoms*: ## What  With the 1.14+ version contract, `talosctl gen config` emits a `KubeEtcdEncryptionConfig` document. When the secrets bundle contains `aescbcencryptionsecret`, the AES-CBC key (`key1`) is placed under a `secretbox` provider instead of `aescbc`:  ```yaml kind: KubeEtcdEncryptionConfig config:   resources:     - providers:         - secretbox:        # should be aescbc             keys:               - name: key1                 secret: <AES-CBC key> ```  kube-apiserver then fails to decrypt existing secrets with `no matching key was found for the provided Secretbox transformer`. This affects clusters whose bundle carries an AES-CBC key: clusters created before Talos 1.3, or migrated from kubeadm with AES-CBC encryption at rest.  ## Fix  Use the `aescbc` provider, matching the legacy path in `internal/app/machined/pkg/controllers/k8s/internal/k8stemplates/apiserver.go`. This is a follow-up to 570fe34f0 (#13885), which fixed the key names and order but not the provider type.  Added `TestGenerateEtcdEncryptionConfig`, which covers secretbox only, aescbc only, and both. The aescbc cases fail without the fix.  ## Note  The legacy path also appends `identity: {}` as the last provider, while the generated `KubeEtcdEncryptionConfig` does not. I left that out of this PR, since it may be intentional, but it is another difference from the "in sync" comment in `kubernetes.go`. 
+- **Issue #14855** (2026-11-05): **feat: disable SELinux categories by default**
+  *Symptoms*: It turns out many custom container runtimes - gvisor, spin, etc. are not compatible.  So we will make this feature opt-in by default. 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,1234 +1945,271 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6e5ac35` (2026-11-04)
-**Commit Message**: feat: automatically detect the install image on upgrade
+### Incident Patch 1: `26cebd68` (2026-11-05)
+**Commit Message**: fix: avoid data race in block device inotify watcher
 
-For nodes running Talos 1.14 and newer the upgrade image is now automatically detected for each node.
-Each node keeps its own Image Factory host, schematic, platform and SecureBoot setting, so nodes with different images can be upgraded with a single command.
-Any of these, except the platform, can be changed with the CLI flags.
+The event loop looked up a watch by descriptor and got back the
+shared *watch, then read its wd and path without the lock. Re-adding
+a watch for a path that was deleted and recreated rewrites the same
+struct under the lock in Add, so the two raced.
 
-Upgrade to a new Talos version, keeping everything else as it is:
+In the race-enabled build machined runs as PID 1, so the race report
+killed init and panicked the kernel on a worker during user volume
+tests in integration-qemu-race.
 
-```bash
-talosctl upgrade -n <NODES> --talos-version 1.15.0
-```
+Return a copy of the watch from the locked lookup instead.
 
-Upgrade to a different schematic, e.g. to add a system extension:
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-```bash
-talosctl upgrade -n <NODES> --schematic-id <SCHEMATIC_ID> --talos-version 1.15.0
-```
-
-`--talos-version` defaults to the version of `talosctl`, so set it explicitly to stay on the Talos version the nodes are running.
-
-Upgrade to an exact installer image (it can't be combined with the flags above):
-
-```bash
-talosctl upgrade -n <NODES> --image factory.talos.dev/metal-installer/<SCHEMATIC_ID>:v1.15.0
-```
-
-The `--image` flag is now mandatory when upgrading nodes running Talos versions before 1.14.
-
-Signed-off-by: Orzelius <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yaml` (modified, +27/-27)
+**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go` (modified, +10/-5)
 ```diff
-@@ -3431,55 +3431,55 @@ jobs:
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-iso
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-iso
-           - factoryBootMethod: disk-image
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-image
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-image
-           - factoryBootMethod: ipxe
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryVersion: v1.13.9
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-pxe
-+            factoryVersion: v1.14.2
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-pxe
-           - factoryBootMethod: secureboot-iso
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-secureboot
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-secureboot
-           - factoryBootMethod: secureboot-iso
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.12.11
--            factoryVersion: v1.12.10
--            kubernetesVersion: 1.35.8
--            test: factory-1.12-secureboot
-+            factoryUpgradeVersion: v1.13.11
-+            factoryVersion: v1.13.10
-+            kubernetesVersion: 1.36.5
-+            test: factory-1.13-secureboot
-           - factoryBootMethod: iso
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.12.11
--            factoryVersion: v1.12.10
--            kubernetesVersion: 1.35.8
--            test: factory-1.12-iso
-+            factoryUpgradeVersion: v1.13.11
-+            factoryVersion: v1.13.10
-+            kubernetesVersion: 1.36.5
-+            test: factory-1.13-iso
-           - factoryBootMethod: iso
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.11.6
--            factoryVersion: v1.11.5
--            kubernetesVersion: 1.34.11
--            test: factory-1.11-iso
-+            factoryUpgradeVersion: v1.12.11
-+            factoryVersion: v1.12.10
-+            kubernetesVersion: 1.35.9
-+            test: factory-1.12-iso
-       fail-fast: false
-     needs:
-       - default
-```
-
-**File**: `.github/workflows/integration-image-factory-triggered.yaml` (modified, +28/-28)
-```diff
-@@ -1,6 +1,6 @@
- # THIS FILE WAS AUTOMATICALLY GENERATED BY KRES, PLEASE DO NOT EDIT.
- #
--# Generated on 2026-09-23T10:36:00Z by kres c0dd940.
-+# Generated on 2026-10-12T10:14:28Z by kres 42d8dc1.
- 
- concurrency:
-   group: ${{ github.head_ref || github.run_id }}
-@@ -27,55 +27,55 @@ jobs:
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-iso
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-iso
-           - factoryBootMethod: disk-image
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-image
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-image
-           - factoryBootMethod: ipxe
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryVersion: v1.13.9
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-pxe
-+            factoryVersion: v1.14.2
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-pxe
-           - factoryBootMethod: secureboot-iso
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.13.9
--            factoryVersion: v1.13.8
--            kubernetesVersion: 1.36.4
--            test: factory-1.13-secureboot
-+            factoryUpgradeVersion: v1.14.2
-+            factoryVersion: v1.14.1
-+            kubernetesVersion: 1.37.1
-+            test: factory-1.14-secureboot
-           - factoryBootMethod: secureboot-iso
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.12.11
--            factoryVersion: v1.12.10
--            kubernetesVersion: 1.35.8
--            test: factory-1.12-secureboot
-+            factoryUpgradeVersion: v1.13.11
-+            factoryVersion: v1.13.10
-+            kubernetesVersion: 1.36.5
-+            test: factory-1.13-secureboot
-           - factoryBootMethod: iso
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.12.11
--            factoryVersion: v1.12.10
--            kubernetesVersion: 1.35.8
--            test: factory-1.12-iso
-+            factoryUpgradeVersion: v1.13.11
-+            factoryVersion: v1.13.10
-+            kubernetesVersion: 1.36.5
-+            test: factory-1.13-iso
-           - factoryBootMethod: iso
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.11.6
--            factoryVersion: v1.11.5
--            kubernetesVersion: 1.34.11
--            test: factory-1.11-iso
-+            factoryUpgradeVersion: v1.12.11
-+            factoryVersion: v1.12.10
-+            kubernetesVersion: 1.35.9
-+            test: factory-1.12-iso
-       fail-fast: false
-     steps:
-       - name: gather-system-info
-```
-
-**File**: `.kres.yaml` (modified, +27/-27)
-```diff
-@@ -2180,62 +2180,62 @@ spec:
-         labelKeys: [test]
-         flatJobMatrix: true
-         include:
--          - test: factory-1.13-iso
-+          - test: factory-1.14-iso
-             factoryBootMethod: iso
--            factoryVersion: v1.13.8
-+            factoryVersion: v1.14.1
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            kubernetesVersion: 1.36.4
-+            kubernetesVersion: 1.37.1
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--          - test: factory-1.13-image
-+            factoryUpgradeVersion: v1.14.2
-+          - test: factory-1.14-image
-             factoryBootMethod: disk-image
--            factoryVersion: v1.13.8
-+            factoryVersion: v1.14.1
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            kubernetesVersion: 1.36.4
-+            kubernetesVersion: 1.37.1
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.13.9
--          - test: factory-1.13-pxe
-+            factoryUpgradeVersion: v1.14.2
-+          - test: factory-1.14-pxe
-             factoryBootMethod: ipxe
--            factoryVersion: v1.13.9
-+            factoryVersion: v1.14.2
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            kubernetesVersion: 1.36.4
-+            kubernetesVersion: 1.37.1
-             factoryUpgrade: ""
-             factoryUpgradeSchematic: ""
-             factoryUpgradeVersion: ""
--          - test: factory-1.13-secureboot
-+          - test: factory-1.14-secureboot
-             factoryBootMethod: secureboot-iso
--            factoryVersion: v1.13.8
-+            factoryVersion: v1.14.1
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            kubernetesVersion: 1.36.4
-+            kubernetesVersion: 1.37.1
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.13.9
--          - test: factory-1.12-secureboot
-+            factoryUpgradeVersion: v1.14.2
-+          - test: factory-1.13-secureboot
-             factoryBootMethod: secureboot-iso
--            factoryVersion: v1.12.10
-+            factoryVersion: v1.13.10
-             factorySchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            kubernetesVersion: 1.35.8
-+            kubernetesVersion: 1.36.5
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            factoryUpgradeVersion: v1.12.11
--          - test: factory-1.12-iso
-+            factoryUpgradeVersion: v1.13.11
-+          - test: factory-1.13-iso
-             factoryBootMethod: iso
--            factoryVersion: v1.12.10
-+            factoryVersion: v1.13.10
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            kubernetesVersion: 1.35.8
-+            kubernetesVersion: 1.36.5
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.12.11
--          - test: factory-1.11-iso
-+            factoryUpgradeVersion: v1.13.11
-+          - test: factory-1.12-iso
-             factoryBootMethod: iso
--            factoryVersion: v1.11.5
-+            factoryVersion: v1.12.10
-             factorySchematic: 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
--            kubernetesVersion: 1.34.11
-+            kubernetesVersion: 1.35.9
-             factoryUpgrade: "true"
-             factoryUpgradeSchematic: cf9b7aab9ed7c365d5384509b4d31c02fdaa06d2b3ac6cc0bc806f28130eff1f
--            factoryUpgradeVersion: v1.11.6
-+            factoryUpgradeVersion: v1.12.11
-       steps:
-         - name: download-artifacts
-           artifactStep:
-```
-
-**File**: `cmd/talosctl/cmd/mgmt/cluster/create/create_qemu.go` (modified, +3/-7)
-```diff
-@@ -7,7 +7,6 @@ package create
- import (
- 	"context"
- 	"fmt"
--	"net/url"
- 	"os"
- 	"path/filepath"
- 	"slices"
-@@ -18,6 +17,7 @@ import (
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops"
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker"
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset"
-+	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/helpers"
- 	"github.com/siderolabs/talos/pkg/machinery/config"
- 	"github.com/siderolabs/talos/pkg/machinery/config/encoder"
- 	"github.com/siderolabs/talos/pkg/machinery/config/machine"
-@@ -46,13 +46,9 @@ func createQemuCluster(
- 		presetOptions.schematicID = constants.ImageFactoryEmptySchematicID
- 	}
- 
--	factoryURL, err := url.Parse(presetOptions.imageFactoryURL)
-+	factoryURL, err := helpers.ParseImageFactoryURL(presetOptions.imageFactoryURL)
- 	if err != nil {
--		return fmt.Errorf("malformed Image Factory URL: %q: %w", presetOptions.imageFactoryURL, err)
--	}
--
--	if factoryURL.Scheme == "" || factoryURL.Host == "" {
--		return fmt.Errorf("image Factory URL must include scheme and host: %q", presetOptions.imageFactoryURL)
-+		return err
- 	}
- 
- 	if slices.Contains(presetOptions.presets, preset.Maintenance{}.Name()) && cOps.OmniAPIEndpoint != "" {
-```
-
-**File**: `cmd/talosctl/cmd/talos/image.go` (modified, +35/-7)
-```diff
-@@ -277,22 +277,53 @@ func imagePull(ctx context.Context, imageRef string) error {
- 	return err
+@@ -61,11 +61,16 @@ func (w *watches) removePath(path string) (uint32, bool) {
+ 	return wd, true
  }
  
-+func uniformImageMap(nodes []string, image string) map[string]string {
-+	nodeImageMap := make(map[string]string, len(nodes))
-+
-+	for _, node := range nodes {
-+		nodeImageMap[node] = image
+-func (w *watches) byWd(wd uint32) *watch {
++func (w *watches) byWd(wd uint32) (watch, bool) {
+ 	w.mu.RLock()
+ 	defer w.mu.RUnlock()
+ 
+-	return w.wd[wd]
++	existing, ok := w.wd[wd]
++	if !ok {
++		return watch{}, false
 +	}
 +
-+	return nodeImageMap
-+}
-+
- func imagePullInternal(
- 	ctx context.Context,
- 	clientFactory *global.ClientFactory,
- 	containerdInstance *common.ContainerdInstance,
- 	imageRef string,
- 	rep *reporter.Reporter,
-+) (map[string]string, error) {
-+	nodeImageMap := uniformImageMap(clientFactory.Nodes(), imageRef)
-+
-+	finishedPulls, err := imagePullPerNode(ctx, clientFactory, containerdInstance, nodeImageMap, rep)
-+	if status.Code(err) == codes.Unimplemented {
-+		// fallback to legacy API for older Talos
-+		return nil, imagePullLegacy(ctx, imageRef)
-+	}
-+
-+	return finishedPulls, err
-+}
-+
-+// imagePullPerNode pulls nodeImageMap[node] on each node.
-+//
-+// If any node doesn't support the ImageService API, the codes.Unimplemented error is returned as is.
-+func imagePullPerNode(
-+	ctx context.Context,
-+	clientFactory *global.ClientFactory,
-+	containerdInstance *common.ContainerdInstance,
-+	nodeImageMap map[string]string,
-+	rep *reporter.Reporter,
- ) (map[string]string, error) {
- 	streamCtx, cancel := context.WithCancel(ctx)
- 	defer cancel()
++	return *existing, true
+ }
  
--	responseChan := multiplex.StreamingViaFactory(
-+	responseChan := multiplex.StreamingViaFactoryPerNode(
- 		streamCtx, clientFactory,
--		func(ctx context.Context, c *client.Client) (grpc.ServerStreamingClient[machine.ImageServicePullResponse], error) {
-+		func(ctx context.Context, c *client.Client, node multiplex.NodeRef) (grpc.ServerStreamingClient[machine.ImageServicePullResponse], error) {
- 			return c.ImageService().Pull(ctx, &machine.ImageServicePullRequest{
- 				Containerd: containerdInstance,
--				ImageRef:   imageRef,
-+				ImageRef:   nodeImageMap[node],
- 			})
- 		},
- 	)
-@@ -307,10 +338,7 @@ func imagePullInternal(
- 	for resp := range responseChan {
- 		if resp.Err != nil {
- 			if status.Code(resp.Err) == codes.Unimplemented {
--				cancel()
--
--				// fallback to legacy API for older Talos
--				return nil, imagePullLegacy(ctx, imageRef)
-+				return nil, resp.Err
- 			}
+ func (w *watches) updatePath(path string, f func(*watch) (*watch, error)) error {
+@@ -189,16 +194,16 @@ func (w *Watcher) Run() (<-chan string, <-chan error) {
+ 				// doesn't append the filename to the event, but we would like to always fill the
+ 				// the "Name" field with a valid filename. We retrieve the path of the watch from
+ 				// the "paths" map.
+-				watch := w.watches.byWd(uint32(raw.Wd))
++				watch, ok := w.watches.byWd(uint32(raw.Wd))
  
- 			errs = errors.Join(errs, fmt.Errorf("error from node %s: %w", resp.Node, resp.Err))
+ 				// inotify will automatically remove the watch on deletes; just need
+ 				// to clean our state here.
+-				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
++				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
+ 					w.watches.remove(watch.wd)
+ 				}
+ 
+ 				var name string
+-				if watch != nil {
++				if ok {
+ 					name = watch.path
+ 				}
+ 
 ```
 
-**File**: `cmd/talosctl/cmd/talos/upgrade.go` (modified, +287/-29)
+**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify_test.go` (modified, +44/-0)
 ```diff
-@@ -8,13 +8,17 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"maps"
-+	"slices"
- 	"strings"
- 	"text/tabwriter"
- 	"time"
+@@ -126,3 +126,47 @@ func TestWatcherDirectory(t *testing.T) {
  
- 	"github.com/blang/semver/v4"
--	"github.com/siderolabs/gen/xerrors"
-+	"github.com/cosi-project/runtime/pkg/safe"
-+	"github.com/cosi-project/runtime/pkg/state"
- 	"github.com/spf13/cobra"
-+	"github.com/spf13/pflag"
- 	"google.golang.org/grpc"
- 
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/talos/lifecycle"
-@@ -29,18 +33,33 @@ import (
- 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
- 	"github.com/siderolabs/talos/pkg/machinery/client"
- 	"github.com/siderolabs/talos/pkg/machinery/client/multiplex"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
- 	"github.com/siderolabs/talos/pkg/machinery/version"
- 	"github.com/siderolabs/talos/pkg/reporter"
- )
- 
-+const (
-+	upgradeImageFlagName     = "image"
-+	imageFactoryHostFlagName = "image-factory-host"
-+	schematicIDFlagName      = "schematic-id"
-+	talosVersionFlagName     = "talos-version"
-+	secureBootFlagName       = "secure-boot"
-+)
-+
- var upgradeCmdFlags = struct {
- 	trackableActionCmdFlags
- 	imageCmdFlagsType
- 
--	upgradeImage string
--	noReboot     bool
--	rebootMode   flags.PflagExtended[machine.RebootRequest_Mode]
--	progress     flags.PflagExtended[reporter.OutputMode]
-+	upgradeImage     string
-+	imageFactoryHost string
-+	schematicID      string
-+	talosVersion     string
-+	secureBoot       bool
-+	// no platform flag as changing the platform via an upgrade is not officially supported
-+
-+	noReboot   bool
-+	rebootMode flags.PflagExtended[machine.RebootRequest_Mode]
-+	progress   flags.PflagExtended[reporter.OutputMode]
- 
- 	drain        bool
- 	drainTimeout time.Duration
-@@ -55,12 +74,32 @@ var upgradeCmdFlags = struct {
- 	progress:   reporter.NewOutputModeFlag(),
+ 	require.NoError(t, watcher.Close())
  }
- 
-+const (
-+	upgradeCmdDescription     = "Upgrade Talos on the target node(s)"
-+	upgradeCmdDescriptionLong = upgradeCmdDescription + "\n" + `
-+For nodes running Talos versions before 1.14 supplying an --image flag is necessary.
 +
-+For nodes running Talos 1.14 and newer, the upgrade image is automatically detected for each node.
-+This means that each node retains its schematic, Image Factory host, platform and secureboot setting as they are set on that node.
-+The options can be optionally modified with the cli flags.`
-+)
-+
- // upgradeCmd represents the processes command.
- var upgradeCmd = &cobra.Command{
- 	Use:   "upgrade",
--	Short: "Upgrade Talos on the target node",
--	Long:  ``,
-+	Short: upgradeCmdDescription,
-+	Long:  upgradeCmdDescriptionLong,
- 	Args:  cobra.NoArgs,
-+	Example: fmt.Sprintf(`# upgrade node(s) to a set version keeping other parameters the same
-+# (each node retains its schematic, Image Factory host, platform and secureboot setting)
-+talosctl upgrade -n <NODE(S)> --talos-version 1.14.2
-+
-+# upgrade node(s) to a different schematic
-+# (--talos-version defaults to the talosctl version, so set it explicitly to keep the current Talos version)
-+talosctl upgrade -n <NODE(S)> --%s=e3c92... --talos-version 1.14.2
-+
-+# upgrade node(s) to an exact image
-+talosctl upgrade -n <NODE(S)> --image=factory.talos.dev/metal-installer-secureboot/ecc3...b557:v1.14.2`, schematicIDFlagName),
- 	RunE: func(cmd *cobra.Command, args []string) error {
- 		if upgradeCmdFlags.debug {
- 			upgradeCmdFlags.wait = true
-@@ -70,28 +109,31 @@ var upgradeCmd = &cobra.Command{
- 			upgradeCmdFlags.wait = true
- 		}
- 
--		return upgradeRun(cmd.Context())
-+		return upgradeRun(cmd.Context(), cmd.Flags())
- 	},
- }
- 
--func upgradeRun(ctx context.Context) error {
-+func upgradeRun(ctx context.Context, flags *pflag.FlagSet) error {
- 	clientFactory, err := NewClientFactory(ctx, &upgradeCmdFlags, action.GRPCDialOptions()...)
- 	if err != nil {
- 		return err
- 	}
- 
- 	defer clientFactory.Close() //nolint:errcheck
- 
--	return upgradeViaLifecycleService(ctx, clientFactory)
-+	return upgradeViaLifecycleService(ctx, clientFactory, flags)
- }
- 
--var talosUpgradeAPIVersionRange = semver.MustParseRange(">1.13.0-alpha.2 <2.0.0")
-+var (
-+	talosUpgradeAPIVersionRange            = semver.MustParseRange(">1.13.0-alpha.2 <2.0.0")
-+	talosImageFactorySchematicVersionRange = semver.MustParseRange(">=1.14.0-alpha.2")
-+)
- 
- // upgradeViaLifecycleService tries the new LifecycleService.Upgrade streaming API.
- // If the server returns codes.Unimplemented, it falls back to the legacy MachineService.Upgrade.
- //
--//nolint:gocyclo
--func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.ClientFactory) (retErr error) {
-+//nolint:gocyclo,cyclop
-+func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.ClientFactory, flags *pflag.FlagSet) (retErr error) {
- 	if upgradeCmdFlags.debug {
- 		upgradeCmdFlags.wait = true
- 	}
-@@ -103,6 +145,10 @@ func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.Clien
- 	if upgradeCmdFlags.legacy {
- 		safeout.Warningf("Forcing use of legacy upgrade method. This flag is deprecated and will be removed in Talos 1.18.")
- 
-+		if upgradeCmdFlags.upgradeImage
-```
-
-**File**: `cmd/talosctl/cmd/talos/upgrade_test.go` (added, +208/-0)
-```diff
-@@ -0,0 +1,208 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package talos //nolint:testpackage // to test unexported commands and helpers
-+
-+import (
-+	"errors"
-+	"testing"
-+
-+	"github.com/cosi-project/runtime/pkg/state"
-+	"github.com/cosi-project/runtime/pkg/state/impl/inmem"
-+	"github.com/cosi-project/runtime/pkg/state/impl/namespaced"
-+	"github.com/spf13/pflag"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/siderolabs/talos/pkg/images"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
-+)
-+
-+// parseUpgradeFlags parses args into the upgrade command flags and restores the defaults once the test is done.
-+func parseUpgradeFlags(t *testing.T, args ...string) *pflag.FlagSet {
-+	t.Helper()
-+
-+	t.Cleanup(func() {
-+		for _, name := range []string{
-+			upgradeImageFlagName,
-+			imageFactoryHostFlagName,
-+			schematicIDFlagName,
-+			talosVersionFlagName,
-+			secureBootFlagName,
-+		} {
-+			flag := upgradeCmd.Flags().Lookup(name)
-+			require.NoError(t, flag.Value.Set(flag.DefValue))
-+
-+			flag.Changed = false
-+		}
-+	})
-+
-+	require.NoError(t, upgradeCmd.ParseFlags(args))
-+
-+	return upgradeCmd.Flags()
-+}
-+
-+func TestGetNodeInstallImageMapUniform(t *testing.T) {
-+	nodes := []string{"10.5.0.2", "10.5.0.3"}
-+	image := "ghcr.io/siderolabs/installer:v1.13.0"
-+
-+	flags := parseUpgradeFlags(t, "--image", image)
-+
-+	// no client factory: the uniform path must not talk to the nodes
-+	imageMap, err := getNodeInstallImageMap(t.Context(), nodes, nil, flags)
++func TestWatcherReAddDeletedPath(t *testing.T) {
++	watcher, err := inotify.NewWatcher()
 +	require.NoError(t, err)
-+	assert.Equal(t, map[string]string{
-+		nodes[0]: image,
-+		nodes[1]: image,
-+	}, imageMap)
-+}
 +
-+func TestImageFlagConflicts(t *testing.T) {
-+	for _, flag := range imageComponentFlagNames {
-+		t.Run(flag, func(t *testing.T) {
-+			parseUpgradeFlags(t, "--image", "ghcr.io/siderolabs/installer:v1.13.0", "--"+flag+"=1")
++	path := filepath.Join(t.TempDir(), "dev")
 +
-+			err := upgradeCmd.ValidateFlagGroups()
-+			require.ErrorContains(t, err, upgradeImageFlagName)
-+			require.ErrorContains(t, err, flag)
-+		})
-+	}
++	require.NoError(t, os.WriteFile(path, nil, 0o644))
++	require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
 +
-+	t.Run("image only", func(t *testing.T) {
-+		parseUpgradeFlags(t, "--image", "ghcr.io/siderolabs/installer:v1.13.0")
++	watchCh, errCh := watcher.Run()
 +
-+		require.NoError(t, upgradeCmd.ValidateFlagGroups())
-+	})
-+}
++	done := make(chan struct{})
++	drained := make(chan struct{})
 +
-+func TestReadNodeImageParams(t *testing.T) {
-+	for _, tc := range []struct {
-+		name     string
-+		args     []string
-+		expected nodeImageParams
-+	}{
-+		{
-+			name: "from node state",
-+			expected: nodeImageParams{
-+				factoryHost: "factory.example.com",
-+				schematic:   "node-schematic",
-+				platform:    "aws",
-+				version:     upgradeCmdFlags.talosVersion,
-+				secureBoot:  true,
-+			},
-+		},
-+		{
-+			name: "flags override node state",
-+			args: []string{"--schematic-id", "flag-schematic", "--secure-boot=false"},
-+			expected: nodeImageParams{
-+				factoryHost: "factory.example.com",
-+				schematic:   "flag-schematic",
-+				platform:    "aws",
-+				version:     upgradeCmdFlags.talosVersion,
-+				secureBoot:  false,
-+			},
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			flags := parseUpgradeFlags(t, tc.args...)
-+			st := newNodeImageState(t)
++	go func() {
++		defer close(drained)
 +
-+			p, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
-+			require.NoError(t, err)
-+			assert.Equal(t, tc.expected, p)
-+		})
-+	}
-+}
-+
-+func TestReadNodeImageParamsSkipsOverriddenReads(t *testing.T) {
-+	flags := parseUpgradeFlags(t,
-+		"--image-factory-host", "factory.talos.dev",
-+		"--schematic-id", "abc",
-+		"--secure-boot",
-+	)
-+
-+	// only the platform is always read from the node, any other read would fail with NotFound
-+	st := state.WrapCore(namespaced.NewState(inmem.Build))
-+
-+	platform := runtime.NewPlatformMetadataSpec(runtime.NamespaceName, runtime.PlatformMetadataID)
-+	platform.TypedSpec().Platform = "metal"
-+	require.NoError(t, st.Create(t.Context(), platform))
-+
-+	p, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
-+	require.NoError(t, err)
-+	assert.Equal(t, nodeImageParams{
-+		factoryHost: "factory.talos.dev",
-+		schematic:   "abc",
-+		platform:    "metal",
-+		version:     upgradeCmdFlags.talosVersion,
-+		secureBoot:  true,
-+	}, p)
-+}
-+
-+func TestReadNodeImageParamsNotFromFactory(t *testing.T) {
-+	flags := parseUpgradeFlags(t)
-+
-+	// empty state: the node has no ImageFactorySchematic
-+	st := state.WrapCore(namespaced.NewState(inmem.Build))
-+
-+	_, err := readNodeImageParams(t.Context(), st, imageParamsFromFlags(), newChangedImageFlags(flags))
-+	require.ErrorContains(t, err, "not installed from Image Factory")
-+	require.ErrorContains(t, err, "--image")
-+}
-+
-+func TestReadNodeImageParamsEmptyFactoryURL(t *testing.T) {
-+	flags := parseUpgradeFlags(t)
-+	st := newNodeImageState(t)
-+
-+	schematic := runtime.NewImageFactorySchematic(runtime.NamespaceName, runtime.ImageFactorySchematicID)
-+	schematic.TypedSpec().SchematicID = "node-sc
-```
-
-**File**: `cmd/talosctl/pkg/talos/helpers/checks.go` (modified, +40/-44)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"strings"
- 
- 	"github.com/blang/semver/v4"
--	"github.com/siderolabs/gen/xerrors"
- 
- 	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/safeout"
- 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
-@@ -26,62 +25,65 @@ type ClientFactory interface {
- 	Nodes() []string
- }
- 
--// VersionOutsideRangeError is returned when a node is running a Talos version that is outside the desired range.
--type VersionOutsideRangeError struct{}
-+// GetTalosVersionBounds returns the lowest and the highest Talos version running across all nodes.
-+func GetTalosVersionBounds(ctx context.Context, clientFactory ClientFactory) (lowest, highest semver.Version, err error) {
-+	found := false
- 
--// TalosVersionCheck verifies that all nodes are running the desired Talos version.
--func TalosVersionCheck(ctx context.Context, clientFactory ClientFactory, desired semver.Range) error {
--	respCh := multiplex.UnaryViaFactory(
--		ctx, clientFactory,
--		func(ctx context.Context, c *client.Client) (*machine.VersionResponse, error) {
--			return c.Version(ctx)
--		},
--	)
-+	if err = forEachServerVersion(ctx, clientFactory, func(_ string, serverVersion semver.Version) {
-+		if !found || serverVersion.LT(lowest) {
-+			lowest = serverVersion
++		for {
++			select {
++			case <-watchCh:
++			case <-done:
++				return
++			}
 +		}
- 
--	var errs error
-+		if !found || serverVersion.GT(highest) {
-+			highest = serverVersion
-+		}
- 
--	for resp := range respCh {
--		if resp.Err != nil {
--			errs = errors.Join(errs, fmt.Errorf("%s: error getting server version: %w", resp.Node, resp.Err))
-+		found = true
-+	}); err != nil {
-+		return semver.Version{}, semver.Version{}, err
++	}()
++
++	for range 2000 {
++		require.NoError(t, os.Remove(path))
++		require.NoError(t, os.WriteFile(path, nil, 0o644))
++		require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
 +	}
- 
--			continue
--		}
-+	if !found {
-+		return semver.Version{}, semver.Version{}, errors.New("no server versions found")
++
++	select {
++	case err = <-errCh:
++		require.NoError(t, err)
++	default:
 +	}
- 
--		for _, msg := range resp.Payload.GetMessages() {
--			serverVersion, err := semver.ParseTolerant(msg.GetVersion().Tag)
--			if err != nil {
--				errs = errors.Join(errs, fmt.Errorf("%s: error parsing server version: %w", resp.Node, err))
-+	return lowest, highest, nil
++
++	close(done)
++	<-drained
++
++	require.NoError(t, watcher.Close())
 +}
- 
--				continue
--			}
-+// ClientVersionCheck verifies that client is not outdated vs. Talos version.
-+func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error {
-+	clientVersion, err := semver.ParseTolerant(version.NewVersion().Tag)
-+	if err != nil {
-+		return fmt.Errorf("error parsing client version: %w", err)
-+	}
- 
--			if !desired(serverVersion) {
--				errs = errors.Join(errs, xerrors.NewTaggedf[VersionOutsideRangeError]("%s: server version %s is outside the desired range", resp.Node, serverVersion))
--			}
-+	var warnings []string
-+
-+	errs := forEachServerVersion(ctx, clientFactory, func(node string, serverVersion semver.Version) {
-+		if serverVersion.Compare(clientVersion) < 0 {
-+			warnings = append(warnings, fmt.Sprintf("%s: server version %s is older than client version %s", node, serverVersion, clientVersion))
- 		}
-+	})
-+
-+	if warnings != nil {
-+		fmt.Fprintf(safeout.Stderr(), "WARNING: %s\n", strings.Join(warnings, ", "))
- 	}
- 
- 	return errs
- }
- 
--// ClientVersionCheck verifies that client is not outdated vs. Talos version.
--func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error {
-+// forEachServerVersion fetches the Talos version from all nodes and calls fn for each successfully parsed version.
-+//
-+// Errors fetching or parsing versions are collected and returned after all nodes are processed.
-+func forEachServerVersion(ctx context.Context, clientFactory ClientFactory, fn func(node string, serverVersion semver.Version)) error {
- 	respCh := multiplex.UnaryViaFactory(
- 		ctx, clientFactory,
- 		func(ctx context.Context, c *client.Client) (*machine.VersionResponse, error) {
- 			return c.Version(ctx)
- 		},
- 	)
- 
--	clientVersion, err := semver.ParseTolerant(version.NewVersion().Tag)
--	if err != nil {
--		return fmt.Errorf("error parsing client version: %w", err)
--	}
--
--	var (
--		warnings []string
--		errs     error
--	)
-+	var errs error
- 
- 	for resp := range respCh {
- 		if resp.Err != nil {
-@@ -98,15 +100,9 @@ func ClientVersionCheck(ctx context.Context, clientFactory ClientFactory) error
- 				continue
- 			}
- 
--			if serverVersion.Compare(clientVersion) < 0 {
--				warnings = append(warnings, fmt.Sprintf("%s: server version %s is older than client version %s", resp.Node, serverVersion, clientVersion))
--			}
-+			fn(resp.Node, serverVersion)
- 		}
- 	}
- 
--	if warnings != nil {
--		fmt.Fprintf(safeout.Stderr(), "WARNING: %s\n", strings.Join(warnings, ", "))
--	}
--
- 	return errs
- }
 ```
 
 ---
 
-### Incident Patch 2: `a87dccb6` (2026-11-03)
-**Commit Message**: feat: implement service healthcheck startup probes
+### Incident Patch 2: `45005426` (2026-11-05)
+**Commit Message**: fix: sync unpacked image layers to disk
 
-The idea is to make the initialDelay smaller, for example:
+containerd writes the files of an unpacked layer without fsync but
+commits the snapshot to its metadata store right away. After a power
+loss or a hard reset a committed layer can be left with zero-length
+files, containers then fail with "exec format error", and later pulls
+reuse the broken snapshot, so the node stays broken until the image is
+removed by hand.
 
-* Talos starts `apid`
-* it becomes healthy say in 30ms
-* Talos waits full 1 second before doing the healthcheck and declaring
-  the service as healthy
+syncfs setting makes containerd syncfs each layer after it is
+applied. It works with any pull path - CRI & Talos.
 
-We don't want to run healthchecks in general more often, but we don't
-want to spam the logs on service slow startup either, so introduce
-similar to Kubernetes startup probes which run early, check often, and
-ignore failures. They should detect initial healthy state as soon as
-possible, and hand it over to regular checks.
-
+Signed-off-by: Max Makarov <[REDACTED_EMAIL]>
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/system/health/check.go` (modified, +80/-19)
+**File**: `hack/cri-plugin.part` (modified, +3/-0)
 ```diff
-@@ -27,38 +27,99 @@ func Run(ctx context.Context, settings *Settings, state *State, check Check) err
- 	case <-time.After(settings.InitialDelay):
- 	}
+@@ -4,6 +4,9 @@ version = 4
+   discard_unpacked_layers = true
+   use_local_image_pull = true
  
-+	var startupSucceeded bool
++[plugins."io.containerd.service.v1.diff-service"]
++  sync_fs = true
 +
-+	if settings.StartupWindow > 0 {
-+		var err error
-+
-+		startupSucceeded, err = runStartup(ctx, settings, state, check)
-+		if err != nil {
-+			return err
-+		}
-+
-+		// the startup window might have expired at the same time as the context was canceled
-+		if err = ctx.Err(); err != nil {
-+			return err
-+		}
-+	}
-+
- 	ticker := time.NewTicker(settings.Period)
- 	defer ticker.Stop()
- 
--	var (
--		err            error
--		healthy        bool
--		message        string
--		checkCtx       context.Context
--		checkCtxCancel context.CancelFunc
--	)
-+	// if the startup phase reported the service as healthy, wait for the next tick before the next check,
-+	// otherwise run (and report) the check right away
-+	skipCheck := startupSucceeded
- 
- 	for {
--		err = func() error {
--			checkCtx, checkCtxCancel = context.WithTimeout(ctx, settings.Timeout) //nolint:fatcontext
--			defer checkCtxCancel()
--
--			return check(checkCtx)
--		}()
-+		if !skipCheck {
-+			runAndReport(ctx, settings.Timeout, state, check)
-+		}
- 
--		healthy = err == nil
--		message = ""
-+		skipCheck = false
- 
--		if !healthy {
--			message = err.Error()
-+		select {
-+		case <-ctx.Done():
-+			return ctx.Err()
-+		case <-ticker.C:
- 		}
-+	}
-+}
-+
-+// runStartup runs the startup phase of the health check.
-+//
-+// Failures are not reported, the first successful check is reported and ends the startup phase.
-+// It returns true if the startup phase ended with a successful check, and false if the startup window expired.
-+func runStartup(ctx context.Context, settings *Settings, state *State, check Check) (bool, error) {
-+	period := settings.StartupPeriod
-+	if period <= 0 {
-+		period = settings.Period
-+	}
- 
--		state.Update(healthy, message)
-+	timeout := settings.StartupTimeout
-+	if timeout <= 0 {
-+		timeout = settings.Timeout
-+	}
-+
-+	window := time.NewTimer(settings.StartupWindow)
-+	defer window.Stop()
-+
-+	ticker := time.NewTicker(period)
-+	defer ticker.Stop()
-+
-+	for {
-+		if runCheck(ctx, timeout, check) == nil {
-+			state.Update(true, "")
-+
-+			return true, nil
-+		}
- 
- 		select {
- 		case <-ctx.Done():
--			return ctx.Err()
-+			return false, ctx.Err()
-+		case <-window.C:
-+			return false, nil
- 		case <-ticker.C:
- 		}
- 	}
- }
-+
-+// runAndReport runs the health check and reports the result (both success and failure) to the state.
-+func runAndReport(ctx context.Context, timeout time.Duration, state *State, check Check) {
-+	err := runCheck(ctx, timeout, check)
-+
-+	healthy := err == nil
-+	message := ""
-+
-+	if !healthy {
-+		message = err.Error()
-+	}
-+
-+	state.Update(healthy, message)
-+}
-+
-+func runCheck(ctx context.Context, timeout time.Duration, check Check) error {
-+	checkCtx, checkCtxCancel := context.WithTimeout(ctx, timeout)
-+	defer checkCtxCancel()
-+
-+	return check(checkCtx)
-+}
+ [plugins."io.containerd.cri.v1.runtime"]
+   enable_cdi = true
+   cdi_spec_dirs = ["/run/cdi"]
 ```
 
-**File**: `internal/app/machined/pkg/system/health/health_test.go` (modified, +105/-0)
+**File**: `hack/release.toml` (modified, +25/-0)
 ```diff
-@@ -203,6 +203,111 @@ func (suite *CheckSuite) TestInitialState() {
- 	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
- }
+@@ -1090,6 +1090,31 @@ neighbors:
+ ```
  
-+func (suite *CheckSuite) TestStartupSilentFailures() {
-+	settings := health.Settings{
-+		InitialDelay: time.Millisecond,
-+		Period:       time.Minute,
-+		Timeout:      time.Second,
+ The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
++"""
 +
-+		StartupWindow:  time.Minute,
-+		StartupPeriod:  5 * time.Millisecond,
-+		StartupTimeout: time.Second,
-+	}
++    [notes.image_layers_sync_fs]
++        title = "Image Layers Synced to Disk"
++        description = """\
++The CRI containerd now syncs each unpacked image layer to disk (`syncfs`) before committing the snapshot.
++Previously, a power loss or a hard reset shortly after an image pull could leave a committed layer with zero-length files:
++containers using the image failed with `exec format error`, and the broken snapshot was reused until the image was removed by hand.
 +
-+	var called atomic.Uint32
++This applies to all image layers unpacked by the CRI containerd: images pulled by the kubelet, the `kubelet` and `etcd` images pulled by Talos,
++and images imported into the CRI containerd with `talosctl image import`.
 +
-+	check := func(context.Context) error {
-+		if called.Add(1) <= 3 {
-+			return errors.New("not ready yet")
-+		}
++Each synced layer flushes all dirty data of the `EPHEMERAL` filesystem, which can slow down image pulls and add I/O latency on write-heavy nodes.
++If image pull performance matters more than crash consistency, the sync can be disabled with a machine configuration patch:
 +
-+		return nil
-+	}
++```yaml
++apiVersion: v1alpha1
++kind: CRICustomizationConfig
++name: disable-sync-fs
++content: |
++    [plugins."io.containerd.service.v1.diff-service"]
++      sync_fs = false
++```
 +
-+	var state health.State
-+
-+	notifyCh := make(chan health.StateChange, 10)
-+	state.Subscribe(notifyCh)
-+
-+	errCh := make(chan error)
-+	ctx, ctxCancel := context.WithCancel(context.Background())
-+
-+	go func() {
-+		errCh <- health.Run(ctx, &settings, &state, check)
-+	}()
-+
-+	select {
-+	case change := <-notifyCh:
-+		// failures during the startup phase are not reported, so the first change is straight to healthy
-+		suite.Assert().Nil(change.Old.Healthy)
-+		suite.Require().NotNil(change.New.Healthy)
-+		suite.Assert().True(*change.New.Healthy)
-+	case <-time.After(10 * time.Second):
-+		suite.FailNow("timed out waiting for health change")
-+	}
-+
-+	// no extra check right after the startup phase, the next one happens after the regular period
-+	time.Sleep(50 * time.Millisecond)
-+	suite.Assert().EqualValues(4, called.Load())
-+
-+	ctxCancel()
-+
-+	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
-+
-+	state.Unsubscribe(notifyCh)
-+	suite.Assert().Empty(notifyCh)
-+}
-+
-+func (suite *CheckSuite) TestStartupWindowExpired() {
-+	settings := health.Settings{
-+		InitialDelay: time.Millisecond,
-+		Period:       time.Minute,
-+		Timeout:      time.Second,
-+
-+		StartupWindow:  100 * time.Millisecond,
-+		StartupPeriod:  5 * time.Millisecond,
-+		StartupTimeout: time.Second,
-+	}
-+
-+	var called atomic.Uint32
-+
-+	check := func(context.Context) error {
-+		called.Add(1)
-+
-+		return errors.New("health failed")
-+	}
-+
-+	var state health.State
-+
-+	notifyCh := make(chan health.StateChange, 10)
-+	state.Subscribe(notifyCh)
-+
-+	errCh := make(chan error)
-+	ctx, ctxCancel := context.WithCancel(context.Background())
-+
-+	go func() {
-+		errCh <- health.Run(ctx, &settings, &state, check)
-+	}()
-+
-+	select {
-+	case change := <-notifyCh:
-+		// the failure is reported once the startup window expires (without waiting for the regular period)
-+		suite.Assert().Nil(change.Old.Healthy)
-+		suite.Require().NotNil(change.New.Healthy)
-+		suite.Assert().False(*change.New.Healthy)
-+		suite.Assert().Equal("health failed", change.New.LastMessage)
-+	case <-time.After(10 * time.Second):
-+		suite.FailNow("timed out waiting for health change")
-+	}
-+
-+	// the check was retried silently during the startup window
-+	suite.Assert().Greater(called.Load(), uint32(2))
-+
-+	ctxCancel()
-+
-+	suite.Assert().EqualError(<-errCh, context.Canceled.Error())
-+}
-+
- func TestCheckSuite(t *testing.T) {
- 	suite.Run(t, new(CheckSuite))
- }
++Snapshots already broken by an earlier crash are not repaired: remove the affected image (e.g. `talosctl image rm`) so that it is pulled again.
+ """
+ 
+ [make_deps]
 ```
 
-**File**: `internal/app/machined/pkg/system/health/settings.go` (modified, +20/-1)
-```diff
-@@ -13,11 +13,30 @@ type Settings struct {
- 	InitialDelay time.Duration
- 	Period       time.Duration
- 	Timeout      time.Duration
-+
-+	// StartupWindow enables the startup phase (similar to k8s startup probe), which
-+	// starts after the InitialDelay.
-+	//
-+	// During the startup phase, the health check runs every StartupPeriod with StartupTimeout,
-+	// failures are not reported (health stays unknown), and the first successful check is reported
-+	// and ends the startup phase.
-+	//
-+	// If the startup window expires without a successful check, the health check switches
-+	// to the regular settings (Period, Timeout), reporting failures.
-+	StartupWindow time.Duration
-+	// StartupPeriod is the health check period during the startup phase (defaults to Period).
-+	StartupPeriod time.Duration
-+	// StartupTimeout is the health check timeout during the startup phase (defaults to Timeout).
-+	StartupTimeout time.Duration
- }
- 
- // DefaultSettings provides some default health check settings.
- var DefaultSettings = Settings{
--	InitialDelay: time.Second,
-+	InitialDelay: 100 * time.Millisecond,
- 	Period:       5 * time.Second,
- 	Timeout:      500 * time.Millisecond,
-+
-+	StartupWindow:  2 * time.Second,
-+	StartupPeriod:  200 * time.Millisecond,
-+	StartupTimeout: 150 * time.Millisecond,
- }
-```
+---
 
-**File**: `internal/app/machined/pkg/system/services/etcd.go` (modified, +28/-2)
+### Incident Patch 3: `f5c9f0fc` (2026-11-05)
+**Commit Message**: test: fix finalizer race in storage pool volume outage tests
+
+The outage tests drop a request or pool behind the controller by
+removing its finalizer and then destroying the resource. During the
+injected outage the controller keeps requeueing, and each pass re-adds
+its finalizer to every running spec and pool it holds. A reconcile
+between the two calls made the destroy fail with pending finalizers.
+
+Repeat the removal and destroy until the destroy succeeds.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/storage/storage_pool_volume_test.go` (modified, +17/-8)
 ```diff
-@@ -30,6 +30,8 @@ import (
- 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
- 	clientv3 "go.etcd.io/etcd/client/v3"
- 	"go.etcd.io/etcd/etcdutl/v3/snapshot"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/backoff"
+@@ -655,8 +655,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
+ 			})
+ 		}},
+ 		{name: "request-incarnation", change: func(f completedVolumeFixture) {
+-			suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
+-			suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
++			suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
+ 			replacement := storageres.NewStoragePoolVolumeSpec(storageres.NamespaceName, f.request.Metadata().ID())
+ 			*replacement.TypedSpec() = *f.request.TypedSpec()
+ 			key, _ := f.request.Metadata().Labels().Get(libvirtstorage.CopyBindingLabel)
+@@ -679,8 +678,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
+ 			}, state.WithUpdateOwner("storage.StoragePoolController"))
+ 		}},
+ 		{name: "pool-incarnation", change: func(f completedVolumeFixture) {
+-			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
+-			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
++			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
  
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/system"
-@@ -255,13 +257,31 @@ func (e *Etcd) Runner(r runtime.Runtime) (runner.Runner, error) {
- 	), nil
- }
- 
-+// healthCheckConnectParams are the gRPC connection parameters for the health check etcd client.
-+//
-+// The client is reused across health checks, and etcd is probed early and often during startup,
-+// so the default gRPC reconnect backoff (1s base, capped at 2 minutes) would grow with every refused
-+// connection before etcd opens its client listener, delaying the detection of a healthy etcd.
-+//
-+// MinConnectTimeout is set explicitly, as otherwise the connection attempt deadline is limited to
-+// the (short) backoff delay, while etcd holds the connection until it is ready to serve (e.g. has quorum).
-+var healthCheckConnectParams = grpc.ConnectParams{
-+	Backoff: backoff.Config{
-+		BaseDelay:  100 * time.Millisecond,
-+		Multiplier: 1.6,
-+		Jitter:     0.2,
-+		MaxDelay:   2 * time.Second,
-+	},
-+	MinConnectTimeout: 20 * time.Second,
-+}
-+
- // HealthFunc implements the HealthcheckedService interface.
- func (e *Etcd) HealthFunc(runtime.Runtime) health.Check {
- 	return func(ctx context.Context) error {
- 		if e.client == nil {
- 			var err error
- 
--			e.client, err = etcd.NewLocalClient(ctx)
-+			e.client, err = etcd.NewLocalClient(ctx, grpc.WithConnectParams(healthCheckConnectParams))
- 			if err != nil {
- 				return err
+ 			replacement := storageres.NewStoragePoolStatus(storageres.NamespaceName, f.pool.Metadata().ID())
+ 			*replacement.TypedSpec() = *f.pool.TypedSpec()
+@@ -692,8 +690,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
+ 			suite.Require().NoError(err)
+ 		}},
+ 		{name: "missing-pool", change: func(f completedVolumeFixture) {
+-			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
+-			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
++			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
+ 		}},
+ 		{name: "pool-mutation", change: func(f completedVolumeFixture) {
+ 			suite.AddFinalizer(f.pool.Metadata(), "storage.StoragePoolController/mutating/backing")
+@@ -795,8 +792,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageRequestWithdrawal()
+ 				suite.Require().NoError(err)
+ 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
+ 			case "missing-request":
+-				suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
+-				suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
++				suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
+ 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
  			}
-@@ -274,9 +294,15 @@ func (e *Etcd) HealthFunc(runtime.Runtime) health.Check {
- // HealthSettings implements the HealthcheckedService interface.
- func (e *Etcd) HealthSettings(runtime.Runtime) *health.Settings {
- 	return &health.Settings{
--		InitialDelay: 5 * time.Second,
-+		InitialDelay: 100 * time.Millisecond,
- 		Period:       20 * time.Second,
- 		Timeout:      15 * time.Second,
+ 		})
+@@ -2497,6 +2493,19 @@ func (suite *StoragePoolVolumeSuite) changeCopySpec(spec *storageres.StoragePool
+ 	}, state.WithUpdateOwner("hypervisor.VirtualMachineDiskController"))
+ }
+ 
++// forceDestroy destroys a resource behind the controller's back. A controller
++// retrying through an outage can re-add its finalizer between the removal and
++// the destroy, so both are repeated until the destroy wins.
++func (suite *StoragePoolVolumeSuite) forceDestroy(ptr resource.Pointer, owner string) {
++	suite.Require().EventuallyWithT(func(t *assert.CollectT) {
++		if !assert.NoError(t, suite.State().RemoveFinalizer(suite.Ctx(), ptr, volumeFinalizer)) {
++			return
++		}
 +
-+		// etcd might take a while to reach quorum (e.g. when the whole cluster is restarting),
-+		// so probe silently and report the first success right away
-+		StartupWindow:  30 * time.Second,
-+		StartupPeriod:  time.Second,
-+		StartupTimeout: time.Second,
- 	}
- }
- 
-```
-
-**File**: `internal/app/machined/pkg/system/services/kubelet.go` (modified, +1/-1)
-```diff
-@@ -227,7 +227,7 @@ func (k *Kubelet) HealthFunc(runtime.Runtime) health.Check {
- // HealthSettings implements the HealthcheckedService interface.
- func (k *Kubelet) HealthSettings(runtime.Runtime) *health.Settings {
- 	settings := health.DefaultSettings
--	settings.InitialDelay = 2 * time.Second // increase initial delay as kubelet is slow on startup
-+	settings.StartupWindow = 10 * time.Second // kubelet is slow on startup, so give it a longer startup window
- 
- 	return &settings
- }
++		assert.NoError(t, suite.State().Destroy(suite.Ctx(), ptr, state.WithDestroyOwner(owner)))
++	}, 2*time.Second, 10*time.Millisecond)
++}
++
+ func (suite *StoragePoolVolumeSuite) TestCopyBackingChangeRejectsOldCompletion() {
+ 	spec, copyCtx, release := suite.heldCopy("backing.raw")
+ 	pool, err := safe.StateGetByID[*storageres.StoragePoolStatus](suite.Ctx(), suite.State(), volumePool)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14842** (2026-11-04): test: fix most frequent unit-test flakes (@smira)
-- **PR #14840** (2026-11-04): fix: use aescbc provider for AES-CBC key in etcd encryption config (@fabiomatavelli)
-- **PR #14839** (2026-11-04): fix: build darwin integration tests (@frezbo)
-- **PR #14838** (2026-11-04): feat: implement service healthcheck startup probes (@smira)
-- **PR #14836** (2026-11-04): fix: update the trustd EKU OID (@smira)
-- **PR #14834** (closed): feat: add talosctl md add to replace a failed RAID1 member (@mcanevet)
+- **PR #14856** (2026-11-05): fix: use the image pull returned reference for upgrade (@smira)
+- **PR #14855** (2026-11-05): feat: disable SELinux categories by default (@smira)
+- **PR #14853** (2026-11-05): test: fix finalizer race in storage pool volume outage tests (@frezbo)
+- **PR #14852** (2026-11-05): fix: print detected upgrade image to stderr (@frezbo)
+- **PR #14851** (2026-11-05): chore: split unit-test actions (@smira)
+- **PR #14850** (2026-11-05): fix: avoid data race in block device inotify watcher (@frezbo)
 
 ---
 
@@ -3188,80 +2229,41 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. automatically detect the install image on upgrade
+## X. avoid data race in block device inotify watcher
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6e5ac35`: automatically detect the install image on upgrade. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26cebd68`: avoid data race in block device inotify watcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            factoryUpgradeVersion: v1.14.2
-            factoryVersion: v1.14.1
-            kubernetesVersion: 1.37.1
-            test: factory-1.14-iso
-            factoryUpgradeVersion: v1.14.2
-            factoryVersion: v1.14.1
-            kubernetesVersion: 1.37.1
-            test: factory-1.14-image
-            factoryVersion: v1.14.2
-            kubernetesVersion: 1.37.1
-            test: factory-1.14-pxe
-            factoryUpgradeVersion: v1.14.2
-            factoryVersion: v1.14.1
-            kubernetesVersion: 1.37.1
-            test: factory-1.14-secureboot
-            factoryUpgradeVersion: v1.13.11
-            factoryVersion: v1.13.10
-            kubernetesVersion: 1.36.5
-            test: factory-1.13-secureboot
-            factoryUpgradeVersion: v1.13.11
-            factoryVersion: v1.13.10
-            kubernetesVersion: 1.36.5
-            test: factory-1.13-iso
-            factoryUpgradeVersion: v1.12.11
-            factoryVersion: v1.12.10
-            kubernetesVersion: 1.35.9
-            test: factory-1.12-iso
+func (w *watches) byWd(wd uint32) (watch, bool) {
+	existing, ok := w.wd[wd]
+	if !ok {
+		return watch{}, false
+	}
+
+	return *existing, true
+				watch, ok := w.watches.byWd(uint32(raw.Wd))
+				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
+				if ok {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            factoryUpgradeVersion: v1.13.9
-            factoryVersion: v1.13.8
-            kubernetesVersion: 1.36.4
-            test: factory-1.13-iso
-            factoryUpgradeVersion: v1.13.9
-            factoryVersion: v1.13.8
-            kubernetesVersion: 1.36.4
-            test: factory-1.13-image
-            factoryVersion: v1.13.9
-            kubernetesVersion: 1.36.4
-            test: factory-1.13-pxe
-            factoryUpgradeVersion: v1.13.9
-            factoryVersion: v1.13.8
-            kubernetesVersion: 1.36.4
-            test: factory-1.13-secureboot
-            factoryUpgradeVersion: v1.12.11
-            factoryVersion: v1.12.10
-            kubernetesVersion: 1.35.8
-            test: factory-1.12-secureboot
-            factoryUpgradeVersion: v1.12.11
-            factoryVersion: v1.12.10
-            kubernetesVersion: 1.35.8
-            test: factory-1.12-iso
-            factoryUpgradeVersion: v1.11.6
-            factoryVersion: v1.11.5
-            kubernetesVersion: 1.34.11
-            test: factory-1.11-iso
+func (w *watches) byWd(wd uint32) *watch {
+	return w.wd[wd]
+				watch := w.watches.byWd(uint32(raw.Wd))
+				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
+				if watch != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6e5ac35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26cebd68` are properly handled with clean fallback behavior.

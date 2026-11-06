@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `f8a950c3`  
+> **Source Version**: `f21e0197`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:27:39.182Z  
+> **Timestamp**: 2026-11-06T00:02:42.835Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:27:38.431Z  
+> **Harvest Timestamp**: 2026-11-06T00:02:41.713Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21489 stars
+- **Stars / Engagement**: 21526 stars
 
 ---
 
@@ -2289,272 +2289,850 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3deecf21` (2026-11-04)
-**Commit Message**: tui: start /cloud transfer as soon as the host is ready by interrupting the running turn
+### Incident Patch 1: `42cd9972` (2026-11-05)
+**Commit Message**: tui: mutate incremental body base in place instead of deep-cloning on append
 
-**File**: `crates/jcode-tui/src/tui/app.rs` (modified, +4/-0)
-```diff
-@@ -1188,6 +1188,10 @@ pub struct App {
-     // Running `/cloud` or `/local` job (wakes the machine, moves the session).
-     cloud_job: Option<commands_cloud::CloudJob>,
-     pending_cloud_handoff: Option<commands_cloud::PendingCloudHandoff>,
-+    // Request id of a ready handoff that already interrupted the running turn.
-+    cloud_interrupt_sent_for: Option<u64>,
-+    // Remote mode: the daemon turn must be cancelled for a ready handoff.
-+    cloud_remote_interrupt_pending: bool,
-     cloud_recovery_context: Option<(String, String)>,
-     cloud_recovery_auto_pending: bool,
-     // One autonomous diagnosis per command/session per client lifetime. A
-```
+Drop stale full-prep frames and the last drawn frame that still reference
+the base before Arc::make_mut, so appending to a 4000-message transcript
+no longer clones ~24k wrapped lines (39ms -> 4.7ms per append frame).
+Also make the test cache switch and body-path probe thread-local so the
+prepend regression test is not clobbered by parallel tests.
 
-**File**: `crates/jcode-tui/src/tui/app/commands_cloud.rs` (modified, +52/-3)
+**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +37/-0)
 ```diff
-@@ -195,7 +195,7 @@ pub(super) fn handle_cloud_command(app: &mut App, trimmed: &str, session_id: &st
-     if command == CloudCommand::Where && app.pending_cloud_handoff.is_some() {
-         let pending = app.pending_cloud_handoff.as_ref().unwrap();
-         app.push_display_message(DisplayMessage::system(format!(
--            "Pending handoff: {} (session {}). Waiting for an idle turn boundary. Use /cloud cancel to cancel.",
-+            "Pending handoff: {} (session {}). Starts as soon as the host is ready. Use /cloud cancel to cancel.",
-             pending.trimmed, pending.session_id
-         )));
-         return true;
-@@ -222,7 +222,7 @@ pub(super) fn handle_cloud_command(app: &mut App, trimmed: &str, session_id: &st
-         ) {
-             "Cloud repository replacement queued for the next idle turn boundary. This session stays here. Use /cloud cancel to cancel."
-         } else {
--            "Cloud handoff queued for the next idle turn boundary. The current turn continues here. Use /cloud cancel to cancel."
-+            "Cloud handoff queued. The current turn continues while the host gets ready, then the transfer starts right away. Use /cloud cancel to cancel."
-         };
-         app.push_display_message(DisplayMessage::system(message));
-         // A queued-command dispatcher may still be restoring the composer draft.
-@@ -570,6 +570,54 @@ impl App {
-         self.pending_cloud_handoff.take()
-     }
- 
-+    /// A move waits for the host to be prepared while the turn keeps running.
-+    /// Once the host is ready, stop the turn so the transfer starts right away.
-+    /// The moved session gets a continue message, so the agent resumes the
-+    /// interrupted task on the cloud host. Interrupts at most once per request.
-+    fn interrupt_turn_for_ready_handoff(&mut self) {
-+        let Some(pending) = self.pending_cloud_handoff.as_ref() else {
-+            return;
-+        };
-+        // Only cloud moves get a continue message on arrival. `/local` keeps
-+        // waiting for the turn so an interrupted task is not silently dropped.
-+        let ready = matches!(
-+            pending.command,
-+            CloudCommand::Move { .. } | CloudCommand::MoveSelected { .. }
-+        ) && pending.prepared;
-+        if !ready
-+            || !self.is_processing
-+            || self.cloud_job.is_some()
-+            || self.cloud_interrupt_sent_for == Some(pending.request_id)
-+        {
-+            return;
-+        }
-+        self.cloud_interrupt_sent_for = Some(pending.request_id);
-+        self.cancel_requested = true;
-+        self.cloud_remote_interrupt_pending = true;
-+        self.interleave_message = None;
-+        self.interleave_images.clear();
-+        self.pending_soft_interrupts.clear();
-+        self.pending_soft_interrupt_requests.clear();
-+        self.set_status_notice("Interrupting turn to start cloud transfer...");
-+    }
-+
-+    #[cfg(test)]
-+    pub(super) fn poll_cloud_job_interrupt_only_for_test(&mut self) {
-+        self.interrupt_turn_for_ready_handoff();
-+    }
-+
-+    /// Remote mode: the running turn lives in the daemon, so the interrupt
-+    /// must be sent over the socket. Returns true once per interrupt.
-+    pub(super) fn take_cloud_remote_interrupt(&mut self) -> bool {
-+        let take = std::mem::take(&mut self.cloud_remote_interrupt_pending);
-+        if take {
-+            // The daemon owns the turn here, so the local flag must not linger
-+            // and cancel a later turn.
-+            self.cancel_requested = false;
-+        }
-+        take
-+    }
-+
-     fn cloud_handoff_can_dispatch(&self) -> bool {
-         !self.is_processing
-             && self.hidden_queued_system_messages.is_empty()
-@@ -602,6 +650,7 @@ impl App {
-             self.pending_queued_dispatch = true;
-             return true;
-         }
-+        self.interrupt_turn_for_ready_handoff();
-         let had_pending = self.pending_cloud_handoff.is_some();
-         if let Some(pending) = self.take_ready_cloud_handoff() {
-             return start_cloud_command(
-@@ -907,7 +956,7 @@ fn finish_cloud_command(app: &mut App, job: CloudJob, output: std::process::Outp
-             let mut steps = job.steps.clone();
-             push_cloud_step(
-                 &mut steps,
--                "cloud host ready, transfer starts at the next idle turn".to_string(),
-+                "cloud host ready, starting transfer".to_string(),
-             );
-             app.replace_display_message_content(
-                 job.progress_message,
-```
-
-**File**: `crates/jcode-tui/src/tui/app/commands_cloud_tests.rs` (modified, +27/-2)
-```diff
-@@ -1166,15 +1166,19 @@ fn parses_cloud_commands() {
- fn queued_system_reminders_reach_agent_before_handoff() {
-     let mut app = crate::tui::app::tests::create_test_app();
-     let session = super::super::commands::active_session_id(&app);
--    app.hidden_queued_system_messages.push("bg task done".into());
-+    app.hidden_queued_system_messages
-+        .push("bg task done".into());
-     handle_cloud_command(&mut app, "/local", &session);
-     assert!(app.pending_cloud_handoff.is_some());
-     // Reminders still dispatch while the handoff waits.
-     assert!(!app.cloud_handoff_blocks_work());
-     assert!(app.poll_cloud_job());
-     assert!(app.pending_queued_dispatch);
-     assert!(app.cloud_job.is_none());
--    assert_eq!(app.hidden_queued_system_messages, vec!["bg task done".to_string()]);
-+    assert_eq!(
-+        app.hidden_queued_system_messages,
-+        vec!["bg task done".to_string()]
-+    );
-     assert!(app.pending_cloud_handoff.is_some());
- 
-     // Once delivered, the handoff proceeds and blocks new work again.
-@@ -1183,3 +1187,24 @@ fn queued_system_reminders_reach_agent_before_handoff() {
-     assert!(app.cloud_handoff_blocks_work());
-     assert!(app.take_ready_cloud_handoff().is_some());
+@@ -1401,6 +1401,43 @@ fn full_prep_cache() -> &'static Mutex<FullPrepCacheState> {
+     FULL_PREP_CACHE.get_or_init(|| Mutex::new(FullPrepCacheState::default()))
  }
-+
-+#[test]
-+fn prepared_handoff_interrupts_running_turn_once() {
-+    let mut app = crate::tui::app::tests::create_test_app();
-+    let session = super::super::commands::active_session_id(&app);
-+    let mut request = pending(CloudCommand::Move { host: None }, &session);
-+    app.is_processing = true;
-+    app.pending_cloud_handoff = Some(request.clone());
-+    app.poll_cloud_job_interrupt_only_for_test();
-+    assert!(!app.cancel_requested, "unprepared host must not interrupt");
-+
-+    request.prepared = true;
-+    app.pending_cloud_handoff = Some(request);
-+    app.poll_cloud_job_interrupt_only_for_test();
-+    assert!(app.cancel_requested, "ready host interrupts the turn");
-+    assert!(app.take_cloud_remote_interrupt());
-+    assert!(!app.cancel_requested, "remote mode clears the local flag");
-+
-+    app.poll_cloud_job_interrupt_only_for_test();
-+    assert!(!app.take_cloud_remote_interrupt(), "interrupts only once");
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote.rs` (modified, +8/-0)
-```diff
-@@ -127,6 +127,14 @@ pub(super) async fn handle_tick(app: &mut App, remote: &mut RemoteConnection) ->
-     needs_redraw |= app.retire_expired_status_notice();
-     needs_redraw |= app.poll_usage_reset();
-     needs_redraw |= app.poll_cloud_job();
-+    if app.take_cloud_remote_interrupt() {
-+        if let Err(error) = remote.cancel_with_reason("cloud_handoff_ready").await {
-+            crate::logging::warn(&format!(
-+                "Failed to interrupt turn for cloud handoff: {error}"
-+            ));
-+        }
-+        needs_redraw = true;
+ 
++/// Drop every frame-level reference to `base` except the caller's, so the
++/// incremental body build can mutate it in place. Otherwise `Arc::make_mut`
++/// deep-clones the whole wrapped transcript (tens of ms on long sessions) on
++/// every appended message.
++///
++/// The base was just taken out of the body cache because no body entry matched
++/// the current key, so any full-prep frame embedding it is keyed on an older
++/// transcript and cannot be hit again. The last drawn frame is republished by
++/// the draw that triggered this build.
++pub(super) fn release_frame_refs_to_body(base: &Arc<PreparedMessages>) {
++    let holds = |frame: &Arc<PreparedChatFrame>| {
++        frame
++            .sections
++            .iter()
++            .any(|section| Arc::ptr_eq(&section.prepared, base))
++    };
++    if let Ok(mut cache) = full_prep_cache().lock() {
++        cache.entries.retain(|entry| !holds(&entry.prepared));
++        cache
++            .oversized_entries
++            .retain(|entry| !holds(&entry.prepared));
 +    }
-     if let Some((provider, account)) = app.usage_reset.invalidate_account.take() {
-         let sent = match provider {
-             super::usage_reset::Provider::OpenAi => remote.invalidate_openai_usage(account).await,
++    #[cfg(test)]
++    TEST_LAST_CHAT_FRAME.with(|slot| {
++        let mut slot = slot.borrow_mut();
++        if slot.as_ref().is_some_and(holds) {
++            *slot = None;
++        }
++    });
++    #[cfg(not(test))]
++    if let Ok(mut slot) = last_chat_frame_state().lock()
++        && slot.as_ref().is_some_and(holds)
++    {
++        *slot = None;
++    }
++}
++
+ /// Drop only reconstructible presentation data. Call after retaining a bounded
+ /// terminal frame so idle repaints cannot immediately recreate these caches.
+ pub(crate) fn release_idle_render_caches() {
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/tui_lifecycle.rs` (modified, +4/-0)
+**File**: `crates/jcode-tui/src/tui/ui_frame_metrics.rs` (modified, +27/-5)
 ```diff
-@@ -430,6 +430,8 @@ impl App {
-             cloud_handoff_requested: None,
-             cloud_job: None,
-             pending_cloud_handoff: None,
-+            cloud_interrupt_sent_for: None,
-+            cloud_remote_interrupt_pending: false,
-             cloud_recovery_context: None,
-             cloud_recovery_auto_pending: false,
-             cloud_recovery_auto_attempted: Default::default(),
-@@ -931,6 +933,8 @@ impl App {
-             cloud_handoff_requested: None,
-             cloud_job: None,
-             pending_cloud_handoff: None,
-+            cloud_interrupt_sent_for: None,
-+            cloud_remote_interrupt_pending: false,
-             cloud_recovery_context: None,
-             cloud_recovery_auto_pending: false,
-             cloud_recovery_auto_attempted: Default::default(),
+@@ -612,6 +612,7 @@ pub(super) fn note_body_cache_miss() {
+ }
+ 
+ pub(super) fn note_body_incremental_reuse(base_messages: usize) {
++    note_test_body_last(None, Some(base_messages));
+     with_frame_perf_stats_mut(|stats| {
+         stats.body_incremental_reuses += 1;
+         stats.body_last_incremental_base_messages = Some(base_messages);
+@@ -624,6 +625,7 @@ pub(super) fn note_body_built(
+     elapsed: Duration,
+     build_path: &'static str,
+ ) {
++    note_test_body_last(Some(build_path), None);
+     with_frame_perf_stats_mut(|stats| {
+         let elapsed_ms = duration_ms(elapsed);
+         stats.body_build_ms += elapsed_ms;
+@@ -1446,11 +1448,31 @@ mod draw_call_tests {
+     }
+ }
+ 
++#[cfg(test)]
++#[cfg(test)]
++thread_local! {
++    // Per-thread copy of the last body path, so assertions are not clobbered by
++    // tests drawing on other threads into the process-global stats.
++    static TEST_BODY_LAST: std::cell::RefCell<(String, Option<usize>)> =
++        const { std::cell::RefCell::new((String::new(), None)) };
++}
++
+ #[cfg(test)]
+ pub(crate) fn body_last_path_for_tests() -> (String, Option<usize>) {
+-    let stats = frame_perf_stats_snapshot();
+-    (
+-        stats.body_last_path,
+-        stats.body_last_incremental_base_messages,
+-    )
++    TEST_BODY_LAST.with(|last| last.borrow().clone())
++}
++
++fn note_test_body_last(path: Option<&str>, base: Option<usize>) {
++    #[cfg(test)]
++    TEST_BODY_LAST.with(|last| {
++        let mut last = last.borrow_mut();
++        if let Some(path) = path {
++            last.0 = path.to_string();
++        }
++        if base.is_some() {
++            last.1 = base;
++        }
++    });
++    #[cfg(not(test))]
++    let _ = (path, base);
+ }
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_prepare.rs` (modified, +11/-4)
+```diff
+@@ -1026,6 +1026,10 @@ fn prepare_body_cached(app: &dyn TuiState, width: u16) -> Arc<PreparedMessages>
+ 
+     drop(cache);
+ 
++    if let Some((base, _, _)) = incremental_base.as_ref() {
++        super::release_frame_refs_to_body(base);
++    }
++
+     let build_start = Instant::now();
+     let (prepared, build_path) = match incremental_base {
+         Some((prev, prev_count, prev_prompt_offset)) => {
+@@ -2734,21 +2738,24 @@ fn wrap_lines_with_map(
+ mod tests;
+ 
+ #[cfg(test)]
+-static ENABLE_PREP_CACHE_IN_TESTS: std::sync::atomic::AtomicBool =
+-    std::sync::atomic::AtomicBool::new(false);
++thread_local! {
++    // Thread-local so a probe that opts into the caches does not make tests
++    // running in parallel share (and clobber) its cache entries and metrics.
++    static ENABLE_PREP_CACHE_IN_TESTS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
++}
+ 
+ /// Tests bypass the prep caches by default for determinism. Perf probes opt in
+ /// so they measure the production cached path.
+ #[cfg(test)]
+ pub(crate) fn set_prep_cache_enabled_for_tests(enabled: bool) {
+-    ENABLE_PREP_CACHE_IN_TESTS.store(enabled, std::sync::atomic::Ordering::SeqCst);
++    ENABLE_PREP_CACHE_IN_TESTS.with(|flag| flag.set(enabled));
+ }
+ 
+ #[inline]
+ fn prep_cache_bypassed() -> bool {
+     #[cfg(test)]
+     {
+-        !ENABLE_PREP_CACHE_IN_TESTS.load(std::sync::atomic::Ordering::SeqCst)
++        !ENABLE_PREP_CACHE_IN_TESTS.with(|flag| flag.get())
+     }
+     #[cfg(not(test))]
+     {
 ```
 
 ---
 
-### Incident Patch 2: `55dd2097` (2026-11-04)
-**Commit Message**: tui: keep /cloud progress checklist pinned to the bottom of the transcript
+### Incident Patch 2: `d8483169` (2026-11-05)
+**Commit Message**: fix(providers): stop impersonating Claude Code and Codex CLI on OAuth
 
-**File**: `crates/jcode-tui/src/tui/app/commands_cloud.rs` (modified, +14/-1)
+Live probes (Opus/Sonnet, two ChatGPT accounts, HTTPS + websocket) show
+none of these are needed for acceptance, billing bucket, or caching:
+- Anthropic: Claude CLI User-Agent, x-app, X-Stainless-*, session id,
+  browser-access header, claude-code-20250219 beta, outbound PascalCase
+  tool renaming, sidecar 'You are Claude Code' identity
+- ChatGPT: originator=codex_cli_rs (now 'jcode')
+
+The Anthropic billing system block is the only required piece and stays.
+Inbound PascalCase tool names still map back for old transcripts.
+Findings and probe scripts in docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
+
+**File**: `crates/jcode-base/src/auth/oauth.rs` (modified, +1/-1)
 ```diff
-@@ -382,6 +382,7 @@ fn start_cloud_command(
-     let carried = carried.filter(|(index, _)| *index < app.display_messages.len());
-     let (progress_message, steps) = match carried {
-         Some((index, steps)) => {
-+            let index = app.move_display_message_to_end(index);
-             app.replace_display_message_content(index, render_cloud_steps(&steps, 0, None));
-             (index, steps)
-         }
-@@ -635,8 +636,20 @@ impl App {
-         let finished = done
-             .as_ref()
-             .map(|result| result.as_ref().is_ok_and(|output| output.status.success()));
--        let index = job.progress_message;
-         let content = render_cloud_steps(&job.steps, frame, finished);
-+        if redraw || done.is_some() {
-+            // Keep the live checklist next to the composer instead of leaving
-+            // it stranded above output that arrived while the turn continued.
-+            let old_index = job.progress_message;
-+            let index = self.move_display_message_to_end(old_index);
-+            if let Some(job) = self.cloud_job.as_mut() {
-+                job.progress_message = index;
-+            }
-+        }
-+        let Some(job) = self.cloud_job.as_ref() else {
-+            return redraw;
-+        };
-+        let index = job.progress_message;
-         if redraw || done.is_some() {
-             self.replace_display_message_content(index, content);
-         }
+@@ -713,7 +713,7 @@ async fn fetch_claude_profile_at_url(
+             "User-Agent",
+             crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
+         )
+-        .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219")
++        .header("anthropic-beta", "oauth-2025-04-20")
+         .bearer_auth(access_token)
+         .send()
+         .await?;
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/state_ui_messages.rs` (modified, +14/-0)
+**File**: `crates/jcode-base/src/provider/anthropic.rs` (modified, +22/-20)
 ```diff
-@@ -529,6 +529,20 @@ impl App {
-         true
+@@ -18,10 +18,7 @@ use std::sync::atomic::{AtomicU8, Ordering};
+ use uuid::Uuid;
+ 
+ pub use jcode_provider_core::CredentialMode as AnthropicCredentialMode;
+-use jcode_provider_core::{
+-    ANTHROPIC_OAUTH_BETA_HEADERS, anthropic_effectively_1m,
+-    anthropic_stainless_arch as stainless_arch, anthropic_stainless_os as stainless_os,
+-};
++use jcode_provider_core::{ANTHROPIC_OAUTH_BETA_HEADERS, anthropic_effectively_1m};
+ 
+ // 0 follows persisted configuration, 1/2 are explicit process-local overrides.
+ static CACHE_TTL_1H: AtomicU8 = AtomicU8::new(0);
+@@ -40,8 +37,21 @@ pub fn is_cache_ttl_1h() -> bool {
+     }
+ }
+ 
+-/// User-Agent for OAuth requests, matching the official Claude Code CLI.
+-pub const CLAUDE_CLI_USER_AGENT: &str = "claude-cli/2.1.280 (external, sdk-cli)";
++/// User-Agent for Claude subscription (OAuth) requests.
++///
++/// This identifies Jcode honestly. It used to mimic the official Claude Code
++/// CLI (`claude-cli/x.y.z (external, sdk-cli)`) along with `x-app: cli`,
++/// `X-Stainless-*`, `X-Claude-Code-Session-Id` and
++/// `anthropic-dangerous-direct-browser-access`. Live probes on 2026-11-05
++/// showed none of those are needed: Opus and Sonnet accept OAuth requests with
++/// a plain Jcode User-Agent, bill them to the same subscription bucket
++/// (identical `anthropic-ratelimit-unified-*` headers), and cache prompts
++/// normally. The only required piece is the billing attribution system block,
++/// see `jcode_provider_anthropic::OAUTH_BILLING_HEADER` and
++/// docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
++///
++/// The name is kept so existing call sites don't churn.
++pub const CLAUDE_CLI_USER_AGENT: &str = concat!("jcode/", env!("CARGO_PKG_VERSION"));
+ 
+ pub const OAUTH_BETA_HEADERS: &str = ANTHROPIC_OAUTH_BETA_HEADERS;
+ 
+@@ -54,24 +64,16 @@ pub fn new_oauth_request_id() -> String {
+     Uuid::new_v4().to_string()
+ }
+ 
+-/// Attach the OAuth attribution headers the official Claude CLI sends.
+-/// Shared by the runtime crate's request path and base's usage probes.
++/// Attach per-request headers for Claude subscription (OAuth) calls.
++///
++/// Only a request id is sent. The Claude Code CLI impersonation headers that
++/// used to live here were not needed, see [`CLAUDE_CLI_USER_AGENT`].
++/// `_session_id` is kept for call-site compatibility.
+ pub fn apply_oauth_attribution_headers(
+     req: reqwest::RequestBuilder,
+-    session_id: &str,
++    _session_id: &str,
+ ) -> reqwest::RequestBuilder {
+     req.header("x-client-request-id", new_oauth_request_id())
+-        .header("x-app", "cli")
+-        .header("X-Claude-Code-Session-Id", session_id)
+-        .header("X-Stainless-Arch", stainless_arch())
+-        .header("X-Stainless-Lang", "js")
+-        .header("X-Stainless-OS", stainless_os())
+-        .header("X-Stainless-Package-Version", "0.81.0")
+-        .header("X-Stainless-Retry-Count", "0")
+-        .header("X-Stainless-Runtime", "node")
+-        .header("X-Stainless-Runtime-Version", "v24.3.0")
+-        .header("X-Stainless-Timeout", "600")
+-        .header("anthropic-dangerous-direct-browser-access", "true")
+ }
+ 
+ /// Available models
+```
+
+**File**: `crates/jcode-base/src/sidecar.rs` (modified, +22/-18)
+```diff
+@@ -27,20 +27,24 @@ const SIDECAR_CLAUDE_MODEL: &str = "claude-haiku-4-5-20251001";
+ const OPENAI_API_BASE: &str = "https://api.openai.com/v1";
+ const CHATGPT_API_BASE: &str = "https://chatgpt.com/backend-api/codex";
+ const OPENAI_RESPONSES_PATH: &str = "responses";
+-const OPENAI_ORIGINATOR: &str = "codex_cli_rs";
++/// See `ORIGINATOR` in jcode-provider-openai-runtime: Jcode identifies itself.
++const OPENAI_ORIGINATOR: &str = "jcode";
+ 
+ /// Claude Messages API endpoint (with beta=true for OAuth)
+ const CLAUDE_API_URL: &str = "https://api.anthropic.com/v1/messages?beta=true";
+ 
+ /// Claude Messages API endpoint for direct API-key access (no OAuth beta flag).
+ const CLAUDE_API_KEY_URL: &str = "https://api.anthropic.com/v1/messages";
+ 
+-/// Beta headers required for OAuth
+-const OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20,claude-code-20250219";
++/// Beta headers required for OAuth. No `claude-code-*` beta, see
++/// `ANTHROPIC_OAUTH_BETA_HEADERS` in jcode-provider-core.
++const OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20";
+ 
+-/// Claude Code identity block required for OAuth direct API access
+-const CLAUDE_CODE_IDENTITY: &str = "You are Claude Code, Anthropic's official CLI for Claude.";
+-const CLAUDE_CODE_JCODE_NOTICE: &str = "You are jcode, powered by Claude Code. You are a third-party CLI, not the official Claude Code CLI.";
++/// Billing attribution block that Claude subscription (OAuth) requests need.
++/// Anthropic strips it before the model sees it. No identity sentence is sent,
++/// see `OAUTH_BILLING_HEADER` in jcode-provider-anthropic.
++const CLAUDE_OAUTH_BILLING_BLOCK: &str =
++    "x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;";
+ 
+ /// Maximum tokens for sidecar responses (keep small for speed/cost)
+ const DEFAULT_MAX_TOKENS: u32 = 1024;
+@@ -1151,11 +1155,7 @@ fn build_claude_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
+     let mut blocks = Vec::new();
+     blocks.push(ClaudeApiSystemBlock {
+         block_type: "text",
+-        text: CLAUDE_CODE_IDENTITY,
+-    });
+-    blocks.push(ClaudeApiSystemBlock {
+-        block_type: "text",
+-        text: CLAUDE_CODE_JCODE_NOTICE,
++        text: CLAUDE_OAUTH_BILLING_BLOCK,
+     });
+     if !system.is_empty() {
+         blocks.push(ClaudeApiSystemBlock {
+@@ -1168,9 +1168,8 @@ fn build_claude_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
+ 
+ /// Build the system param for the direct API-key path.
+ ///
+-/// The "You are Claude Code" identity spoof and jcode notice are only valid
+-/// for the OAuth/subscription endpoint; a direct API key talks to the standard
+-/// Messages API and must not impersonate the official CLI. So this only carries
++/// The OAuth billing block is only valid for the subscription endpoint; a
++/// direct API key talks to the standard Messages API. So this only carries
+ /// the caller's own system prompt (if any).
+ fn build_claude_api_key_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
+     if system.is_empty() {
+@@ -1712,7 +1711,7 @@ mod tests {
+ 
+     #[test]
+     fn test_build_claude_api_key_system_param_omits_identity_spoof() {
+-        // API-key path must NOT impersonate the official Claude Code CLI.
++        // API-key path carries no OAuth billing block.
+         let none = build_claude_api_key_system_param("");
+         assert!(none.is_none(), "empty system => no system param");
+ 
+@@ -1721,12 +1720,17 @@ mod tests {
+         assert_eq!(blocks.len(), 1, "only the caller's system prompt is sent");
+         assert_eq!(blocks[0].text, "be terse");
+ 
+-        // The OAuth builder, by contrast, injects the Claude Code identity spoof.
++        // The OAuth builder adds only the billing block, no identity sentence.
+         let ClaudeApiSystem::Blocks(oauth_blocks) =
+             build_claude_system_param("be terse").expect("oauth system present");
++        assert_eq!(oauth_blocks.len(), 2);
++        assert_eq!(oauth_blocks[0].text, CLAUDE_OAUTH_BILLING_BLOCK);
++        assert_eq!(oauth_blocks[1].text, "be terse");
+         assert!(
+-            oauth_blocks.iter().any(|b| b.text == CLAUDE_CODE_IDENTITY),
+-            "oauth path keeps the identity block"
++            !oauth_blocks
++                .iter()
++                .any(|b| b.text.contains("You are Claude Code") || b.text.contains("Agent SDK")),
++            "oauth path must not inject a Claude identity sentence"
+         );
      }
  
-+    /// Move a live status message (such as a progress checklist) to the end of
-+    /// the transcript so it stays next to the composer while later output
-+    /// arrives. Returns the message's new index.
-+    pub(super) fn move_display_message_to_end(&mut self, idx: usize) -> usize {
-+        let last = self.display_messages.len().saturating_sub(1);
-+        if idx >= last {
-+            return idx;
+```
+
+**File**: `crates/jcode-base/src/usage.rs` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ async fn fetch_anthropic_usage_data_uncached(
+                 crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
+             )
+             .header("Authorization", format!("Bearer {}", access_token))
+-            .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219"),
++            .header("anthropic-beta", "oauth-2025-04-20"),
+         &crate::provider::anthropic::new_oauth_request_id(),
+     )
+     .send()
+```
+
+**File**: `crates/jcode-base/src/usage/anthropic_reset.rs` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ fn authorize(request: reqwest::RequestBuilder, access_token: &str) -> reqwest::R
+                 "User-Agent",
+                 crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
+             )
+-            .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219"),
++            .header("anthropic-beta", "oauth-2025-04-20"),
+         &crate::provider::anthropic::new_oauth_request_id(),
+     )
+ }
+```
+
+**File**: `crates/jcode-provider-anthropic/src/lib.rs` (modified, +11/-8)
+```diff
+@@ -1176,8 +1176,8 @@ mod cache_prefix_invariant_tests {
+         let formatted = format_tools(&registry, true, false);
+         let names: Vec<&str> = formatted.iter().map(|t| t.name.as_str()).collect();
+ 
+-        // Curated builtins are present under their OAuth names.
+-        for builtin in ["Bash", "Read", "Agent", "Write", "Edit", "Glob", "Grep"] {
++        // Builtins are present under their own Jcode names (no Claude Code rename).
++        for builtin in ["bash", "read", "subagent", "write", "edit", "glob", "grep"] {
+             assert!(
+                 names.contains(&builtin),
+                 "missing builtin {builtin} in {names:?}"
+@@ -1190,10 +1190,13 @@ mod cache_prefix_invariant_tests {
+                 "custom tool {custom} was dropped on OAuth; got {names:?}"
+             );
+         }
+-        // No duplicate Agent/Bash/Read from the registry remap.
+-        assert_eq!(names.iter().filter(|n| **n == "Agent").count(), 1);
+-        assert_eq!(names.iter().filter(|n| **n == "Bash").count(), 1);
+-        assert_eq!(names.iter().filter(|n| **n == "Read").count(), 1);
++        // No duplicates from the registry.
++        assert_eq!(names.iter().filter(|n| **n == "subagent").count(), 1);
++        assert_eq!(names.iter().filter(|n| **n == "bash").count(), 1);
++        assert_eq!(names.iter().filter(|n| **n == "read").count(), 1);
++        for legacy in ["Bash", "Read", "Agent"] {
++            assert!(!names.contains(&legacy), "legacy Claude Code name {legacy} sent");
 +        }
-+        let message = self.display_messages.remove(idx);
-+        self.display_messages.push(message);
-+        self.bump_display_messages_version();
-+        last
-+    }
+     }
+ 
+     #[test]
+@@ -1210,13 +1213,13 @@ mod cache_prefix_invariant_tests {
+         let formatted = format_tools(&registry, true, false);
+         let names: Vec<&str> = formatted.iter().map(|t| t.name.as_str()).collect();
+ 
+-        for ghost in ["Agent", "Glob", "Grep", "Skill"] {
++        for ghost in ["Agent", "Glob", "Grep", "Skill", "subagent", "glob", "grep"] {
+             assert!(
+                 !names.contains(&ghost),
+                 "advertised ghost builtin {ghost} without a backing registry tool: {names:?}"
+             );
+         }
+-        for present in ["Bash", "Read", "Write", "Edit", "agentgrep"] {
++        for present in ["bash", "read", "write", "edit", "agentgrep"] {
+             assert!(names.contains(&present), "missing {present} in {names:?}");
+         }
+     }
+```
+
+**File**: `crates/jcode-provider-anthropic/src/oauth_tool_schema_tests.rs` (modified, +10/-10)
+```diff
+@@ -50,7 +50,7 @@ fn oauth_bash_forwards_registered_schema_and_timeout_units() {
+         let formatted = format_tools(std::slice::from_ref(&registry_bash), is_oauth, false);
+         assert_eq!(formatted.len(), 1, "Bash must be advertised exactly once");
+         let bash = &formatted[0];
+-        assert_eq!(bash.name, if is_oauth { "Bash" } else { "bash" });
++        assert_eq!(bash.name, "bash");
+         assert_eq!(bash.input_schema, registry_bash.input_schema);
+         assert_eq!(bash.description, registry_bash.description);
+         assert!(
+@@ -87,8 +87,8 @@ fn oauth_schedule_wakeup_forwards_the_real_schedule_schema() {
+     let formatted = format_tools(&registry, true, false);
+     let scheduled = formatted
+         .iter()
+-        .find(|t| t.name == "ScheduleWakeup")
+-        .expect("schedule must be advertised under its OAuth name");
++        .find(|t| t.name == "schedule")
++        .expect("schedule must be advertised under its own name");
+ 
+     let props = scheduled.input_schema["properties"]
+         .as_object()
+@@ -101,7 +101,7 @@ fn oauth_schedule_wakeup_forwards_the_real_schedule_schema() {
+     assert_eq!(
+         formatted
+             .iter()
+-            .filter(|t| t.name == "ScheduleWakeup")
++            .filter(|t| t.name == "schedule")
+             .count(),
+         1,
+         "schedule must not be advertised twice"
+@@ -115,7 +115,7 @@ fn oauth_bash_schema_advertises_the_justification_escape_hatch() {
+     let formatted = format_tools(&[bash_registry_definition()], true, false);
+     let bash = formatted
+         .iter()
+-        .find(|t| t.name == "Bash")
++        .find(|t| t.name == "bash")
+         .expect("Bash must be advertised");
+     assert!(
+         bash.input_schema["properties"]
+@@ -131,12 +131,12 @@ fn oauth_builtins_forward_registry_schemas_including_intent() {
+     // The OAuth route used to swap in hand-curated Claude-Code schemas for
+     // Edit/Write/Read/..., which silently dropped registry options such as
+     // `intent`. Every route must advertise the registry definition verbatim,
+-    // only renamed.
++    // under the same name.
+     for (local, oauth) in [
+-        ("edit", "Edit"),
+-        ("write", "Write"),
+-        ("read", "Read"),
+-        ("bash", "Bash"),
++        ("edit", "edit"),
++        ("write", "write"),
++        ("read", "read"),
++        ("bash", "bash"),
+     ] {
+         let def = ToolDefinition {
+             name: local.to_string(),
+```
+
+**File**: `crates/jcode-provider-core/src/anthropic.rs` (modified, +30/-41)
+```diff
+@@ -1,8 +1,13 @@
+-/// Claude Code OAuth beta headers used by the Anthropic transport.
+-pub const ANTHROPIC_OAUTH_BETA_HEADERS: &str = "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24";
++/// Anthropic betas used on Claude subscription (OAuth) requests.
++///
++/// `claude-code-20250219` used to be first in this list to look like the
++/// official Claude Code CLI. Live probes on 2026-11-05 showed it is not needed
++/// for acceptance, billing or caching, so it was removed. `oauth-2025-04-20` is
++/// required. See docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
++pub const ANTHROPIC_OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24";
+ 
+-/// Claude Code OAuth beta headers with Anthropic's explicit 1M context beta.
+-pub const ANTHROPIC_OAUTH_BETA_HEADERS_1M: &str = "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24,context-1m-2025-08-07";
++/// OAuth betas plus Anthropic's explicit 1M context beta.
++pub const ANTHROPIC_OAUTH_BETA_HEADERS_1M: &str = "oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24,context-1m-2025-08-07";
+ 
+ /// How a Claude model exposes its 1M-token long-context window.
+ ///
+@@ -380,22 +385,21 @@ pub fn anthropic_reasoning_caps(model: &str) -> AnthropicReasoningCaps {
+     }
+ }
+ 
++/// Tool name sent to Anthropic on the OAuth path.
++///
++/// Jcode used to rename its tools to Claude Code's PascalCase names (`bash` to
++/// `Bash`, `subagent` to `Agent`, ...) on the way out. Live probes on
++/// 2026-11-05 showed OAuth requests with Jcode's own tool names are accepted,
++/// so tools now go out under their real names. Kept as a function so call
++/// sites don't churn. [`anthropic_map_tool_name_from_oauth`] still accepts the
++/// old PascalCase names, so a model that emits them out of habit, or a resumed
++/// transcript that contains them, still resolves.
+ pub fn anthropic_map_tool_name_for_oauth(name: &str) -> String {
+-    match name {
+-        "bash" => "Bash",
+-        "read" => "Read",
+-        "write" => "Write",
+-        "edit" => "Edit",
+-        "glob" => "Glob",
+-        "grep" => "Grep",
+-        "subagent" => "Agent",
+-        "schedule" => "ScheduleWakeup",
+-        "skill_manage" => "Skill",
+-        _ => name,
+-    }
+-    .to_string()
++    name.to_string()
+ }
+ 
++/// Map a tool name returned by Anthropic back to Jcode's local name. Accepts
++/// the legacy Claude Code PascalCase names for compatibility.
+ pub fn anthropic_map_tool_name_from_oauth(name: &str) -> String {
+     match name {
+         "Bash" => "bash",
+@@ -412,23 +416,6 @@ pub fn anthropic_map_tool_name_from_oauth(name: &str) -> String {
+     .to_string()
+ }
+ 
+-pub fn anthropic_stainless_arch() -> &'static str {
+-    match std::env::consts::ARCH {
+-        "x86_64" => "x64",
+-        "aarch64" => "arm64",
+-        other => other,
+-    }
+-}
+-
+-pub fn anthropic_stainless_os() -> &'static str {
+-    match std::env::consts::OS {
+-        "linux" => "Linux",
+-        "macos" => "MacOS",
+-        "windows" => "Windows",
+-        other => other,
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -493,24 +480,26 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn oauth_tool_name_mapping_is_reversible_for_known_tools() {
+-        for (local, oauth) in [
++    fn oauth_tool_names_go_out_unchanged_and_legacy_names_map_back() {
++        for (local, legacy) in [
+             ("bash", "Bash"),
+             ("read", "Read"),
+             ("subagent", "Agent"),
+             ("schedule", "ScheduleWakeup"),
+             ("skill_manage", "Skill"),
+         ] {
+-            assert_eq!(anthropic_map_tool_name_for_oauth(local), oauth);
+-            assert_eq!(anthropic_map_tool_name_from_oauth(oauth), local);
++            assert_eq!(anthropic_map_tool_name_for_oauth(local), local);
++            assert_eq!(anthropic_map_tool_name_from_oauth(legacy), local);
++            assert_eq!(anthropic_map_tool_name_from_oauth(local), local);
+         }
+         assert_eq!(anthropic_map_tool_name_for_oauth("custom"), "custom");
+     }
+ 
+     #[test]
+-    fn stainless_labels_are_non_empty() {
+-        assert!(!anthropic_stainless_arch().is_empty());
+-        assert!(!anthropic_stainless_os().is_empty());
++    fn oauth_betas_do_not_claim_claude_code() {
++        assert!(ANTHROPIC_OAUTH_BETA_HEADERS.contains("oauth-2025-04-20"));
++        assert!(!ANTHROPIC_OAUTH_BETA_HEADERS.contains("claude-code-"));
++        assert!(!ANTHROPIC_OAUTH_BETA_HEADERS_1M.contains("claude-code-")
+```
+
+---
+
+### Incident Patch 3: `fd0ea599` (2026-11-05)
+**Commit Message**: fix(anthropic): drop Claude Agent SDK identity sentence from OAuth prompt
+
+Live probes on Opus/Sonnet show the billing attribution block alone is
+enough for OAuth acceptance, and Anthropic strips it before the model sees
+it. The identity sentence made the model claim Jcode is built on the
+Claude Agent SDK. Document the probe matrix and add a re-run script.
+
+**File**: `crates/jcode-provider-anthropic-runtime/src/anthropic_tests.rs` (modified, +18/-11)
+```diff
+@@ -962,22 +962,29 @@ fn test_system_param_split_oauth() {
+     let result = build_system_param_split(static_content, dynamic_content, true);
+ 
+     if let Some(ApiSystem::Blocks(blocks)) = result {
+-        // Should have 4 blocks: identity, notice, static (cached), dynamic (not cached)
+-        assert_eq!(blocks.len(), 4);
++        // 3 blocks: billing attribution, static (cached), dynamic (not cached).
++        // No identity sentence: it made the model claim Jcode is built on the
++        // Claude Agent SDK, and the billing block alone is enough for OAuth.
++        assert_eq!(blocks.len(), 3);
+ 
+-        // Block 0: identity (no cache)
++        // Block 0: billing attribution (no cache)
+         assert!(blocks[0].cache_control.is_none());
++        assert!(blocks[0].text.starts_with("x-anthropic-billing-header: "));
+ 
+-        // Block 1: notice (no cache)
+-        assert!(blocks[1].cache_control.is_none());
++        // Block 1: static (cached)
++        assert!(blocks[1].cache_control.is_some());
++        assert!(blocks[1].text.contains("static"));
+ 
+-        // Block 2: static (cached)
+-        assert!(blocks[2].cache_control.is_some());
+-        assert!(blocks[2].text.contains("static"));
++        // Block 2: dynamic (not cached)
++        assert!(blocks[2].cache_control.is_none());
++        assert!(blocks[2].text.contains("dynamic"));
+ 
+-        // Block 3: dynamic (not cached)
+-        assert!(blocks[3].cache_control.is_none());
+-        assert!(blocks[3].text.contains("dynamic"));
++        assert!(
++            !blocks.iter().any(|b| b.text.contains("Agent SDK")
++                || b.text.contains("You are a Claude agent")
++                || b.text.contains("You are Claude Code")),
++            "OAuth system blocks must not inject a Claude identity sentence"
++        );
+     } else {
+         panic!("Expected Blocks variant");
+     }
+```
+
+**File**: `crates/jcode-provider-anthropic/src/lib.rs` (modified, +25/-7)
+```diff
+@@ -12,10 +12,31 @@ use history_repair::*;
+ 
+ /// Claude Code billing attribution text observed in the official CLI's system
+ /// prompt blocks.
++///
++/// On Claude subscription (OAuth) requests this is sent as the first system
++/// block, as plain text, not as an HTTP header despite the name. Anthropic
++/// strips it server-side before the model sees it: on 2026-11-05 adding it
++/// changed `usage.input_tokens` by 0, while the identity sentence below added
++/// 16, and the model reported no `cc_version`/`cch` in its context.
++///
++/// This block alone is what gets larger models (Opus, Sonnet) accepted on the
++/// OAuth path. Live probes on 2026-11-05 (Opus 4.5 x3, Sonnet 4.5) showed:
++/// - billing block only: accepted
++/// - "Claude Agent SDK" identity sentence only: accepted
++/// - both: accepted
++/// - neither: rejected with HTTP 429 `rate_limit_error` every time
++/// - Haiku 4.5 accepted all variants, so it is not a useful probe model.
++///
++/// We therefore send only the billing block and no identity sentence. The
++/// identity sentence ("You are a Claude agent, built on Anthropic's Claude
++/// Agent SDK.") was added in 96cdd995b and removed on 2026-11-05 because it
++/// made the model tell users that Jcode is built on the Claude Agent SDK,
++/// which is false. Do not add an identity sentence back unless a fresh probe
++/// shows the billing block alone is rejected. If you change this, re-run
++/// `scripts/anthropic_oauth_identity_probe.py claude-opus-4-5` (not Haiku).
++/// Full write-up: docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md
+ pub const OAUTH_BILLING_HEADER: &str = "cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;";
+ 
+-const CLAUDE_CODE_IDENTITY: &str = "You are a Claude agent, built on Anthropic's Claude Agent SDK.";
+-
+ /// Minimal user turn appended when a formatted conversation would otherwise end
+ /// on an assistant message, which Anthropic rejects on non-prefill models.
+ pub(crate) const CONTINUATION_USER_TURN: &str = "Continue.";
+@@ -678,16 +699,13 @@ pub fn build_system_param_split(
+ ) -> Option<ApiSystem> {
+     if is_oauth {
+         let mut blocks = Vec::new();
++        // Billing attribution block. Required for OAuth acceptance on larger
++        // models. Intentionally no identity sentence, see OAUTH_BILLING_HEADER.
+         blocks.push(ApiSystemBlock {
+             block_type: "text",
+             text: format!("x-anthropic-billing-header: {}", OAUTH_BILLING_HEADER),
+             cache_control: None,
+         });
+-        blocks.push(ApiSystemBlock {
+-            block_type: "text",
+-            text: CLAUDE_CODE_IDENTITY.to_string(),
+-            cache_control: None,
+-        });
+         // Static content - CACHED (instruction files, base prompt, skills)
+         if !static_part.is_empty() {
+             blocks.push(ApiSystemBlock {
+```
+
+**File**: `docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++# Anthropic OAuth identity probe (2026-11-05)
 +
-     pub(super) fn remove_display_message(&mut self, idx: usize) -> Option<DisplayMessage> {
-         if idx < self.display_messages.len() {
-             let removed = self.display_messages.remove(idx);
++## Why this exists
++
++On Claude subscription (OAuth) requests, Jcode used to put this sentence near
++the top of the system prompt:
++
++> You are a Claude agent, built on Anthropic's Claude Agent SDK.
++
++It was added in `96cdd995b` (2026-04-16, "Fix Claude OAuth third-party request
++path"). That commit also replaced the older "You are Claude Code..." sentence
++and the "You are jcode, powered by Claude Code..." line, moved the billing tag
++from an HTTP header into the system prompt, and bumped its version, all at once.
++The commit message doesn't say which of those changes fixed the request path.
++
++Side effect: the model believed the sentence. When a user asked "who are you",
++it said Jcode is built on the Claude Agent SDK, which is false. Nothing in the
++prompt told it otherwise, because the jcode line had been removed.
++
++## What was tested
++
++Raw requests to `https://api.anthropic.com/v1/messages?beta=true` with the
++claude-otter OAuth token. Each request kept Jcode's normal OAuth headers
++(Bearer auth, Claude CLI User-Agent, `claude-code-20250219,oauth-2025-04-20`
++betas, `x-app: cli`, session id). Only the system blocks changed. Prompt: "Who
++are you, in one sentence?"
++
++The billing tag is this first system block:
++
++```
++x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;
++```
++
++| Variant | Opus 4.5 (x3) and Sonnet 4.5 | Model's answer |
++|---|---|---|
++| A. Billing tag + SDK sentence (old current) | works | Sometimes "built on Anthropic's Claude Agent SDK" |
++| B. Billing tag, no identity sentence | works | "I'm Jcode..." with no SDK claim |
++| C. SDK sentence, no billing tag | works | Claims it's built on the Agent SDK |
++| D. Neither | rejected every time, HTTP 429 `rate_limit_error` | n/a |
++| E. Billing + SDK + "you are actually Jcode" note | works | mixed |
++| F. Old setup (billing + "Claude Code" + jcode note) | works | "I'm Jcode..." |
++| G. Billing + jcode prompt, then SDK sentence | works | "I'm Jcode..." |
++
++Haiku 4.5 accepted every variant, including D, so it can't be used to tell the
++variants apart. Use Opus or Sonnet.
++
++The 429 on D isn't a real rate limit, because the other variants run right
++before and after it succeeded. It looks like Anthropic's way of turning away
++OAuth traffic that doesn't look like Claude Code.
++
++## Does the model see the billing tag?
++
++No. Anthropic strips it on the server:
++
++| System blocks | `usage.input_tokens` |
++|---|---|
++| SDK sentence + short prompt | 34 |
++| Billing tag + short prompt | 18 |
++| Billing tag + SDK sentence + short prompt | 34 |
++
++The billing tag adds 0 tokens and the SDK sentence adds 16. When asked, Sonnet
++also said there was no `cc_version` or `cch` in its context.
++
++## Decision
++
++Send only the billing tag and no identity sentence. Either one is enough to get
++accepted, and the billing tag is invisible to the model, so it can't make the
++model misdescribe itself.
++
++## Not covered
++
++- These were short prompts with no tools. A full Jcode session (long prompt,
++  tools, thinking) could be checked differently. Check a real session on Opus
++  after any change here.
++- Anthropic can change these checks at any time. Re-run the probe if OAuth
++  requests start getting 429s right away.
++- The sidecar (`crates/jcode-base/src/sidecar.rs`) still sends "You are Claude
++  Code..." followed by a jcode note. It wasn't changed.
++
++## Re-running
++
++```
++scripts/anthropic_oauth_identity_probe.py claude-opus-4-5
++```
++
++Uses the first Anthropic account in `~/.jcode/auth.json`. Each variant costs
++one small request.
+```
+
+**File**: `scripts/anthropic_oauth_identity_probe.py` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++#!/usr/bin/env python3
++"""Probe which system-prompt blocks Anthropic requires on the Claude OAuth path.
++
++Sends one tiny request per variant using the first account in
++~/.jcode/auth.json and prints accept/reject plus the model's self-description.
++Use an Opus or Sonnet model; Haiku accepts every variant. See the doc comment on
++OAUTH_BILLING_HEADER in crates/jcode-provider-anthropic/src/lib.rs.
++
++Usage: scripts/anthropic_oauth_identity_probe.py [model]   (default haiku)
++"""
++import json,uuid,urllib.request,urllib.error,os,sys
++d=json.load(open(os.path.expanduser('~/.jcode/auth.json')))
++tok=d['anthropic_accounts'][0]['access']
++BILL="x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;"
++SDK="You are a Claude agent, built on Anthropic's Claude Agent SDK."
++CC="You are Claude Code, Anthropic's official CLI for Claude."
++JC="You are jcode, powered by Claude Code. You are a third-party CLI, not the official Claude Code CLI."
++JPROMPT="You are Jcode, an open-source coding agent. Use tools to edit files and run builds. "*20
++BETA="claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14"
++model=sys.argv[1] if len(sys.argv)>1 else "claude-haiku-4-5"
++variants={
++ "A current (bill+SDK+jcode)":[BILL,SDK,JPROMPT],
++ "B no identity (bill+jcode)":[BILL,JPROMPT],
++ "C no bill, SDK":[SDK,JPROMPT],
++ "D neither":[JPROMPT],
++ "E bill+SDK+jcode-notice":[BILL,SDK,"Note: you are actually Jcode, a third-party harness, not built on the Agent SDK.",JPROMPT],
++ "F old (bill+CC+JC notice)":[BILL,CC,JC,JPROMPT],
++ "G bill+jcode first then SDK":[BILL,JPROMPT,SDK],
++}
++sid=str(uuid.uuid4())
++for name,blocks in variants.items():
++  body={"model":model,"max_tokens":60,"system":[{"type":"text","text":t} for t in blocks],
++        "messages":[{"role":"user","content":"Who are you, in one sentence?"}]}
++  req=urllib.request.Request("https://api.anthropic.com/v1/messages?beta=true",data=json.dumps(body).encode(),method="POST",headers={
++   "Authorization":"Bearer "+tok,"content-type":"application/json","anthropic-version":"2023-06-01",
++   "anthropic-beta":BETA,"User-Agent":"claude-cli/2.1.280 (external, sdk-cli)","x-app":"cli",
++   "X-Claude-Code-Session-Id":sid,"anthropic-dangerous-direct-browser-access":"true"})
++  try:
++    r=json.load(urllib.request.urlopen(req,timeout=60))
++    print(f"{name}: OK -> {r['content'][0]['text'][:110]!r}")
++  except urllib.error.HTTPError as e:
++    print(f"{name}: HTTP {e.code} -> {e.read().decode()[:160]}")
 ```
 
 #### Recent Merged Pull Requests:
@@ -2583,24 +3161,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui: start /cloud transfer as soon as the host is ready by interrupting the runn
+## X. tui: mutate incremental body base in place instead of deep-cloning on append
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/app.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/ui.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3deecf21`: tui: start /cloud transfer as soon as the host is ready by interrupting the running turn. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42cd9972`: tui: mutate incremental body base in place instead of deep-cloning on append. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/ui.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Request id of a ready handoff that already interrupted the running turn.
-    cloud_interrupt_sent_for: Option<u64>,
-    // Remote mode: the daemon turn must be cancelled for a ready handoff.
-    cloud_remote_interrupt_pending: bool,
+/// Drop every frame-level reference to `base` except the caller's, so the
+/// incremental body build can mutate it in place. Otherwise `Arc::make_mut`
+/// deep-clones the whole wrapped transcript (tens of ms on long sessions) on
+/// every appended message.
+///
+/// The base was just taken out of the body cache because no body entry matched
+/// the current key, so any full-prep frame embedding it is keyed on an older
+/// transcript and cannot be hit again. The last drawn frame is republished by
+/// the draw that triggered this build.
+pub(super) fn release_frame_refs_to_body(base: &Arc<PreparedMessages>) {
+    let holds = |frame: &Arc<PreparedChatFrame>| {
+        frame
+            .sections
+            .iter()
+            .any(|section| Arc::ptr_eq(&section.prepared, base))
+    };
+    if let Ok(mut cache) = full_prep_cache().lock() {
+        cache.entries.retain(|entry| !holds(&entry.prepared));
+        cache
+            .oversized_entries
+            .retain(|entry| !holds(&entry.prepared));
+    }
+    #[cfg(test)]
+    TEST_LAST_CHAT_FRAME.with(|slot| {
+        let mut slot = slot.borrow_mut();
+        if slot.as_ref().is_some_and(holds) {
+            *slot = None;
+        }
+    });
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2610,4 +3213,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3deecf21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42cd9972` are properly handled with clean fallback behavior.

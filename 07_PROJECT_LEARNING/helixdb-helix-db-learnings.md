@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `6ab2eaff`  
+> **Source Version**: `48427266`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:20:48.286Z  
+> **Timestamp**: 2026-11-05T18:45:47.786Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:20:48.279Z  
+> **Harvest Timestamp**: 2026-11-05T18:45:47.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6267 stars
+- **Stars / Engagement**: 6268 stars
 
 ---
 
@@ -2039,421 +2039,216 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbda0daf` (2026-10-31)
-**Commit Message**: Pin the SlateDB fork with its v0.17 fixes and cleanups
+### Incident Patch 1: `0118a4ed` (2026-11-05)
+**Commit Message**: Document SQL across the query guides (#1249)
 
-The fork now polls the WAL on `wal_poll_interval`, counts spawned
-block fetches in per-query metrics, and no longer resolves terminal
-merges across a TTL boundary. Adapt to its removed shims:
-- map `cache_puts` onto SlateDB's `cache_on_flush` and
-  `cache_on_compaction`;
-- open readers with an explicit `DbReaderMode`;
-- read sorted runs through `sst_views()`;
-- stage the sweep benchmark's exclusive additions as ordinary merges.
+* Document SQL alongside Cypher across the guides
 
-**File**: `Cargo.lock` (modified, +3/-3)
+- the SQL guide follows the Cypher guide's structure: running a statement,
+  request options, what is supported, values and parameters, writes and
+  transactions, indexes and performance, limits and errors
+- reading, writing, filtering, projection and parameter guides add a SQL
+  tab where one SQL statement does the same work, verified to return the
+  Cypher tab's results; search and index pages name SQL beside Cypher
+- docs/sql.md holds the implementation notes, linked from cypher.md and
+  the codebase map
+- Indexes and search follow Traversals in the navigation
+
+* Correct the SQL id-lookup and relationship-insert examples; note stack and telemetry design
+
+**File**: `docs/codebase-map.md` (modified, +7/-2)
 ```diff
-@@ -4840,7 +4840,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "ahash",
-  "async-channel",
-@@ -4886,7 +4886,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "chrono",
-  "log",
-@@ -4901,7 +4901,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "async-trait",
-  "bytes",
-```
-
-**File**: `crates/db-testkit/fuzz/Cargo.lock` (modified, +3/-3)
-```diff
-@@ -3195,7 +3195,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "ahash",
-  "async-channel",
-@@ -3241,7 +3241,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "chrono",
-  "log",
-@@ -3256,7 +3256,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "async-trait",
-  "bytes",
-```
-
-**File**: `crates/db/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -4,8 +4,8 @@ version = "0.1.0"
- edition = "2024"
+@@ -64,13 +64,15 @@ cargo metadata --offline --locked --no-deps --format-version 1
  
- [dependencies]
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da" }
--slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da", optional = true }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0" }
-+slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0", optional = true }
- http-body = { version = "1", optional = true }
- helix-ast = { path = "../ast" }
- helix-planner = { path = "../planner" }
-@@ -68,7 +68,7 @@ memmap2 = { version = "0.9", optional = true }
- [dev-dependencies]
- # `wal_disable` only adds the opt-in `Settings::wal_enabled` field (default
- # `true`); one legacy-text migration fixture writes without a WAL.
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da", features = ["wal_disable"] }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "8506d9541a280237e7a5abc9d40cb2d9005bc1a0", features = ["wal_disable"] }
- tokio-test = "0.4"
- proptest = "1"
- bincode = "^1.3.3"
-```
-
-**File**: `crates/db/fuzz/Cargo.lock` (modified, +3/-3)
-```diff
-@@ -3175,7 +3175,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "ahash",
-  "async-channel",
-@@ -3221,7 +3221,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "chrono",
-  "log",
-@@ -3236,7 +3236,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
- dependencies = [
-  "async-trait",
-  "bytes",
-```
-
-**File**: `crates/db/src/config/cache.rs` (modified, +4/-2)
-```diff
-@@ -362,7 +362,8 @@ impl SlateObjectStoreCacheSettings {
-             root_folder: Some(self.root.to_path_buf()),
-             max_cache_size_bytes: self.max_cache_size_bytes.map(NonZeroUsize::get),
-             part_size_bytes: self.part_size_bytes.get(),
--            cache_puts: self.cache_puts,
-+            cache_on_flush: self.cache_puts,
-+            cache_on_compaction: self.cache_puts,
-             preload_disk_cache_on_startup: self.warm.to_slate_preload(),
-             scan_interval: self.scan_interval,
-             max_open_file_handles: self.max_open_file_handles.get(),
-@@ -400,7 +401,8 @@ impl SlateObjectStoreCacheSettings {
-     ///     8,
-     /// )?;
-     /// let reads_only = settings.clone().with_cache_puts(false);
--    /// assert!(!reads_only.to_slate_options().cache_puts);
-+    /// assert!(!reads_only.to_slate_options().cache_on_flush);
-+    /// assert!(!reads_only.to_slate_options().cache_on_compaction);
-     /// assert_eq!(reads_only.with_cache_puts(true), settings);
-     /// # Ok::<(), db::config::ConfigError>(())
-     /// ```
-```
-
-**File**: `crates/db/src/config/tests.rs` (modified, +1/-1)
-```diff
-@@ -286,7 +286,7 @@ fn slate_object_store_cache_settings_project_all_slate_options() {
-     );
-     assert_eq!(options.max_cache_size_bytes, Some(512));
-     assert_eq!(options.part_size_bytes, 4096);
--    assert!(options.cache_puts);
-+    assert!(options.cache_on_flush && options.cache_on_compaction);
-     assert_eq!(
-         options.preload_disk_cache_on_startup,
-         Some(slatedb::config::PreloadLevel::AllSst)
-```
-
-**File**: `crates/db/src/execution/interpreter/mutation/topology.rs` (modified, +2/-2)
-```diff
-@@ -1609,7 +1609,7 @@ mod tests {
-             SweepBenchmarkStrategy::ExclusiveReadModifyWrite if present => {
-                 let additions = ids.clone().collect::<RoaringTreemap>();
-                 transaction
--                    .merge_commutative(
-+                    .merge(
-                         node_label_key(DataScope::LegacyUnscoped, LABEL),
-                         secondary::SecondaryEqualityValue::encode_ids(&additions),
-                     )
-@@ -1619,7 +1619,7 @@ mod tests {
-                     adjacency.add_out(id);
-                 }
-                 transaction
--                    .merge_commutative(
-+                    .merge(
-                         DataKey::Data {
-                             scope: DataScope::LegacyUnscoped,
-                             kind: DataKeyKind::Adjacency(AdjacencyKey::new(PARENT_ID)),
-```
-
-**File**: `crates/db/src/execution/interpreter/read_view.rs` (modified, +1/-1)
-```diff
-@@ -509,7 +509,7 @@ mod tests {
-         let reader = slatedb::DbReader::open(
-             "reader-read-view",
-             object_store,
--            None,
-+            slatedb::DbReaderMode::ManagedCheckpoint,
-             slatedb::config::DbReaderOptions {
-                 manifest_poll_interval: std::time::Duration::from_millis(10),
-                 ..slatedb::config::DbReaderOptions::default()
-```
-
----
-
-### Incident Patch 2: `9ed0df10` (2026-11-02)
-**Commit Message**: Pin the SlateDB fork with the reader poll and multi-get fixes
-
-Idle WAL polls send one HEAD instead of eight, multi-get fallbacks read
-at their request's visibility bound, and manifests with unreadable SST
-info fail to open instead of panicking.
-
-**File**: `Cargo.lock` (modified, +3/-4)
-```diff
-@@ -4840,9 +4840,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-- "ahash",
-  "async-channel",
-  "async-trait",
-  "atomic",
-@@ -4886,7 +4885,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "chrono",
-  "log",
-@@ -4901,7 +4900,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "async-trait",
-  "bytes",
-```
-
-**File**: `crates/db-testkit/fuzz/Cargo.lock` (modified, +3/-17)
-```diff
-@@ -2,19 +2,6 @@
- # It is not intended for manual editing.
- version = 4
+ ```mermaid
+ flowchart TD
+-    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher"]
++    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher, /v2/sql"]
+     CLI["CLI: query / cypher"] --> HTTP
+     GRPC["gRPC methods"] --> SERVICE["db::query_service · request authority"]
+     HTTP --> SERVICE
+     RUST["Rust SDK / embedded HelixDB"] --> SERVICE
+     FFI["UniFFI embedded bindings"] --> SERVICE
+     SERVICE --> DSL["Native JSON AST · helix-ast"]
++    HTTP --> SQL["SQL translate · sqlparser → Cypher syntax"]
++    SQL --> CYPHER
+     SERVICE --> CYPHER["Cypher compile · lexer → parser → bind"]
+     DSL --> NATIVE["planner::planning · native adapters"]
+     CYPHER --> ROWS["planner::relational::Query · validated scopes/effects"]
+@@ -89,6 +91,7 @@ flowchart TD
+ | Request service | [query_service.rs](../crates/db/src/query_service.rs), [cypher.rs](../crates/db/src/cypher.rs) | Tenant scope, execute/explain mode, parameters, catalog observation, cancellation and output format belong to one attempt. |
+ | Native language | [AST](../crates/ast/src), [native planning](../crates/planner/src/planning) | SDK JSON contracts and native semantics remain supported. |
+ | Cypher language | [frontend](../crates/cypher/src), [requests](../crates/cypher/src/request.rs), [transport contract](../crates/cypher/src/api.rs) | Resolve names to stable slots; reject unsupported semantics before execution; never translate through native DSL syntax. |
++| SQL language | [translator](../crates/cypher/src/sql.rs), [requests](../crates/cypher/src/sql/request.rs) | Translate one statement into Cypher syntax without reading storage; follow SQL's results; reject what Cypher cannot express before execution. |
+ | Result encoding | [Cypher output](../crates/db/src/cypher/output.rs), [parameter decoding](../crates/db/src/cypher/parameters.rs) | Ordered columns, rectangular rows, lossless graph IDs and values; diagnostics stay outside result data. Prepare output before committing writes. |
+ | Native bindings | [UniFFI](../bindings/uniffi/src), [Rust SDK](../sdks/rust/src) | Own API/language conversion and runtime handles; delegate storage and query execution to the engine. |
  
--[[package]]
--name = "ahash"
--version = "0.8.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
--dependencies = [
-- "cfg-if",
-- "getrandom 0.3.4",
-- "once_cell",
-- "version_check",
-- "zerocopy",
--]
--
- [[package]]
- name = "aho-corasick"
- version = "1.1.4"
-@@ -3195,9 +3182,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-- "ahash",
-  "async-channel",
-  "async-trait",
-  "atomic",
-@@ -3241,7 +3227,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "chrono",
-  "log",
-@@ -3256,7 +3242,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "async-trait",
-  "bytes",
+@@ -195,7 +198,9 @@ Materialisation depends on the selected pipeline:
+ Disk spilling is not implemented. Resource exhaustion must fail the query, never
+ silently truncate its successful result. The public behaviour is in the
+ [Cypher guide](database/helix-db/query-guides/cypher.mdx), and implementation
+-detail is in the [Cypher implementation notes](cypher.md).
++detail is in the [Cypher implementation notes](cypher.md). SQL translates into
++the same Cypher syntax; see the [SQL guide](database/helix-db/query-guides/sql.mdx)
++and the [SQL implementation notes](sql.md).
+ 
+ ## Storage, transactions and indexes
+ 
 ```
 
-**File**: `crates/db/Cargo.toml` (modified, +3/-3)
+**File**: `docs/cypher.md` (modified, +3/-12)
 ```diff
-@@ -4,8 +4,8 @@ version = "0.1.0"
- edition = "2024"
+@@ -67,18 +67,9 @@ decode requests with `helix_cypher::request::Request`, which needs no database.
  
- [dependencies]
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f" }
--slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f", optional = true }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385" }
-+slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385", optional = true }
- http-body = { version = "1", optional = true }
- helix-ast = { path = "../ast" }
- helix-planner = { path = "../planner" }
-@@ -68,7 +68,7 @@ memmap2 = { version = "0.9", optional = true }
- [dev-dependencies]
- # `wal_disable` only adds the opt-in `Settings::wal_enabled` field (default
- # `true`); one legacy-text migration fixture writes without a WAL.
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f", features = ["wal_disable"] }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385", features = ["wal_disable"] }
- tokio-test = "0.4"
- proptest = "1"
- bincode = "^1.3.3"
+ ## SQL translation
+ 
+-`helix_cypher::sql` translates one SQL statement into the same
+-`syntax::Statement` the Cypher parser builds, so binding, planning, execution and
+-error reporting are shared, and every span points into the SQL text. It is a port
+-of neo4j-jdbc's translator (`neo4j-jdbc-translator/impl`, Apache-2.0); the golden
+-corpus in `crates/cypher/tests/sql/translations.txt` carries its tests and marks
+-each deliberate divergence. Translation reads no storage or catalog, so a gateway
+-can route SQL by effect like Cypher. `sql::request::Request::compile` returns the
+-ordinary `CompiledRequest`, whose text is the printed Cypher (`syntax::Statement`
+-implements `Display`), so telemetry records the redacted Cypher shape.
+-sqlparser materializes every token and builds operator chains left-deep, then
+-walks and drops them recursively; the translation therefore bounds an estimate of
+-the token count before tokenizing and the binary operators before parsing.
++`helix_cypher::sql` translates SQL into the same `syntax::Statement` the Cypher
++parser builds, so SQL shares binding, planning, execution and error reporting
++with Cypher. The [SQL implementation notes](sql.md) describe the translation.
+ 
+ ## Index selection
+ 
 ```
 
-**File**: `crates/db/fuzz/Cargo.lock` (modified, +3/-17)
+**File**: `docs/database/helix-db/core-concepts/overview.mdx` (modified, +3/-1)
 ```diff
-@@ -2,19 +2,6 @@
- # It is not intended for manual editing.
- version = 4
+@@ -18,7 +18,9 @@ sends back. To run it, start a local instance as described in
+   the body sent to `POST /v2/query`, and the v3 SDKs are typed builders for exactly that
+   body. The Cypher tab is the equivalent statement for
+   [`POST /v2/cypher`](/database/helix-db/query-guides/cypher), and the steps below show
+-  the clauses of that statement that do the same work.
++  the clauses of that statement that do the same work. Other guides add a SQL tab for
++  [`POST /v2/sql`](/database/helix-db/query-guides/sql) where one SQL statement does the
++  same work; this query writes and then reads in one transaction, which SQL cannot.
+ </Note>
  
--[[package]]
--name = "ahash"
--version = "0.8.12"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
--dependencies = [
-- "cfg-if",
-- "getrandom 0.3.4",
-- "once_cell",
-- "version_check",
-- "zerocopy",
--]
--
- [[package]]
- name = "aho-corasick"
- version = "1.1.4"
-@@ -3175,9 +3162,8 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- [[package]]
- name = "slatedb"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-- "ahash",
-  "async-channel",
-  "async-trait",
-  "atomic",
-@@ -3221,7 +3207,7 @@ dependencies = [
- [[package]]
- name = "slatedb-common"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "chrono",
-  "log",
-@@ -3236,7 +3222,7 @@ dependencies = [
- [[package]]
- name = "slatedb-txn-obj"
- version = "0.17.0"
--source = "git+https://github.com/HelixDB/slatedb.git?rev=4fd156c7f52be9c0b9c10d9a129df654608cc47f#4fd156c7f52be9c0b9c10d9a129df654608cc47f"
-+source = "git+https://github.com/HelixDB/slatedb.git?rev=d105178194bde272d082e0c8abd1fbec2dcf3385#d105178194bde272d082e0c8abd1fbec2dcf3385"
- dependencies = [
-  "async-trait",
-  "bytes",
+ ## The whole query
 ```
 
-**File**: `crates/server/Cargo.toml` (modified, +1/-1)
+**File**: `docs/database/helix-db/query-guides/filtering.mdx` (modified, +6/-0)
 ```diff
-@@ -21,7 +21,7 @@ prost = "0.14.3"
- reqwest = { version = "0.13", default-features = false }
- serde = { version = "1", features = ["derive"] }
- serde_json = "1"
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "4fd156c7f52be9c0b9c10d9a129df654608cc47f" }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "d105178194bde272d082e0c8abd1fbec2dcf3385" }
- simd-json = { version = "0.18.1", default-features = false, features = [
-     "runtime-detection",
-     "serde_impl",
+@@ -115,6 +115,12 @@ WHERE u.score >= 100
+ RETURN id(u) AS id, u.name AS name, u.score AS score
+ ```
+ 
++```sql SQL
++SELECT id(u) AS id, u.name AS name, u.score AS score
++FROM User u
++WHERE u.score >= 100
++```
++
+ </CodeGroup>
+ 
+ ## Filter search candidates
 ```
 
----
-
-### Incident Patch 3: `aba7a20c` (2026-11-04)
-**Commit Message**: Crucible: build with line-tables debuginfo and no incremental cache (#1247)
-
-Base builds ran out of VM disk (lld SIGBUS) with full debuginfo. Match
-rust-ci.yml so the warm-up target stays around 12 GiB.
-
-**File**: `.crucible.toml` (modified, +3/-0)
+**File**: `docs/database/helix-db/query-guides/parameters.mdx` (modified, +11/-0)
 ```diff
-@@ -7,6 +7,9 @@ build_timeout_secs = 2700 # base builds; default 1800
+@@ -165,11 +165,22 @@ WITH u LIMIT $limit
+ RETURN id(u) AS id, u.name AS name, u.tenantId AS tenantId
+ ```
  
- [test]
- timeout_secs = 1800       # per test VM; default 900
-+# Same lean build as rust-ci.yml. Full debuginfo and incremental caches fill the
-+# VM disk (lld then dies with SIGBUS): about 12 GiB of target/ instead of over 44.
-+env = { CARGO_INCREMENTAL = "0", CARGO_PROFILE_DEV_DEBUG = "line-tables-only", CARGO_PROFILE_TEST_DEBUG = "line-tables-only" }
++```sql SQL
++-- parameters: {"tenant_id": "acme", "limit": 25}
++SELECT id(u) AS id, u.name AS name, u.tenantId AS tenantId
++FROM User u
++WHERE u.tenantId = :tenant_id
++LIMIT :limit
++```
++
+ </CodeGroup>
  
- [checks]
- # PR CI runs as GitHub Actions; Crucible runs are for agents (CLI / MCP).
+ The Cypher statement reads the same values as `$tenant_id` and `$limit`. A Cypher
+ request has no `parameter_types`; each value's type comes from its
+ [JSON encoding](/database/helix-db/query-guides/cypher#values-and-parameters).
++The SQL statement binds the same values as `:tenant_id` and `:limit`; with `?`
++placeholders instead, `parameters` is a list bound in written order. See
++[SQL values and parameters](/database/helix-db/query-guides/sql#values-and-parameters).
+ 
+ ## Supported parameter families
+ 
+```
+
+**File**: `docs/database/helix-db/query-guides/prefiltering.mdx` (modified, +2/-1)
+```diff
+@@ -15,7 +15,8 @@ vector and full-text search.
+ For why filtering before ranking matters, see
+ [Filtered vector search](/learn/vector-search/filtered-vector-search).
+ 
+-Prefiltered search is native-only: Cypher has no vector or full-text search syntax.
++Prefiltered search is native-only: Cypher and SQL have no vector or full-text search
++syntax.
+ The [Cypher guide](/database/helix-db/query-guides/cypher#what-is-not-supported) lists
+ what Cypher covers.
+ 
+```
+
+**File**: `docs/database/helix-db/query-guides/projections.mdx` (modified, +5/-0)
+```diff
+@@ -105,6 +105,11 @@ MATCH (u:User)
+ RETURN id(u) AS user_id, u.name AS name
+ ```
+ 
++```sql SQL
++SELECT id(u) AS user_id, u.name AS name
++FROM User u
++```
++
+ </CodeGroup>
+ 
+ ## Project correlated bindings
+```
+
+**File**: `docs/database/helix-db/query-guides/reading-data.mdx` (modified, +13/-0)
+```diff
+@@ -138,6 +138,13 @@ WITH u LIMIT 25
+ RETURN id(u) AS id, u.name AS name
+ ```
+ 
++```sql SQL
++SELECT id(u) AS id, u.name AS name
++FROM User u
++WHERE u.status = 'active'
++LIMIT 25
++```
++
+ </CodeGroup>
+ 
+ ## Read by indexed property
+@@ -208,6 +215,12 @@ MATCH (user:User {email: 'alice@example.com'})
+ RETURN id(user) AS user
+ ```
+ 
++```sql SQL
++SELECT id(u) AS "user"
++FROM User u
++WHERE u.email = 'alice@example.com'
++```
++
+ </CodeGroup>
+ 
+ ## Read an earlier result
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1251** (2026-11-05): Crucible: keep test telemetry off the network (@xav-db)
+- **PR #1250** (2026-11-05): Add SQL explain, gRPC, embedded and SDK support (@xav-db)
+- **PR #1249** (2026-11-05): Document SQL across the query guides (@xav-db)
+- **PR #1248** (2026-11-05): Translate SQL to Cypher and serve it at POST /v2/sql (@xav-db)
 - **PR #1247** (2026-11-04): Crucible: lean debuginfo for base builds (@xav-db)
 - **PR #1245** (2026-11-04): Add Crucible config: large VMs, longer timeouts, no Crucible PR check (@xav-db)
-- **PR #1244** (2026-11-04): Bump SlateDB to the v0.17 fork (@xav-db)
-- **PR #1243** (2026-11-03): Show `auth status` workspaces one per line (@xav-db)
-- **PR #1241** (2026-11-03): Fix MCP first-read example and document index operation tracking (@xav-db)
-- **PR #1240** (2026-11-04): Collect disk manifests and compactions without GC boundary files (@xav-db)
 
 ---
 
@@ -2473,32 +2268,35 @@ rust-ci.yml so the warm-up target stays around 12 GiB.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin the SlateDB fork with its v0.17 fixes and cleanups
+## X. Document SQL across the query guides (#1249)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/codebase-map.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbda0daf`: Pin the SlateDB fork with its v0.17 fixes and cleanups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0118a4ed`: Document SQL across the query guides (#1249). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/codebase-map.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
-source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
-source = "git+https://github.com/HelixDB/slatedb.git?rev=8506d9541a280237e7a5abc9d40cb2d9005bc1a0#8506d9541a280237e7a5abc9d40cb2d9005bc1a0"
+    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher, /v2/sql"]
+    HTTP --> SQL["SQL translate · sqlparser → Cypher syntax"]
+    SQL --> CYPHER
+| SQL language | [translator](../crates/cypher/src/sql.rs), [requests](../crates/cypher/src/sql/request.rs) | Translate one statement into Cypher syntax without reading storage; follow SQL's results; reject what Cypher cannot express before execution. |
+detail is in the [Cypher implementation notes](cypher.md). SQL translates into
+the same Cypher syntax; see the [SQL guide](database/helix-db/query-guides/sql.mdx)
+and the [SQL implementation notes](sql.md).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
-source = "git+https://github.com/HelixDB/slatedb.git?rev=a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da#a0ea2a4e0cbbbd705bf00511ea146f2b0ae029da"
+    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher"]
+detail is in the [Cypher implementation notes](cypher.md).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbda0daf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0118a4ed` are properly handled with clean fallback behavior.

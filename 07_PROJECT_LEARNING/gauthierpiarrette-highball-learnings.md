@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `36a1b9f1`  
+> **Source Version**: `b4f4a5a6`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:38:46.270Z  
+> **Timestamp**: 2026-11-05T22:54:58.581Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:38:45.088Z  
+> **Harvest Timestamp**: 2026-11-05T22:54:58.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2139 stars
+- **Stars / Engagement**: 2174 stars
 
 ---
 
@@ -1039,8 +1039,8 @@ for path in sys.argv[1:]:
   > Thanks for the report. Your environment is set to Windows 7, and the current Visual C++ installer quits with an error on Windows 7. I reproduced it here, and the next version of Highball makes the installer see Windows 10 so it works either way. Until then, in the environment's settings set Windows version to Windows 10, then press Try again.
   > Works, thx 
 
-- **Issue #615** (2026-11-01): **dev build: missing `manifest.json`**
-  *Symptoms*: ### What happened  first off, I got the `highball` CLI built and working in the spirit of #432 so the primary goal has been achieved :)  I'm following the build instructions I found in `README.md`  https://github.com/gauthierpiarrette/highball/blob/b240de4a70653f2a48a700aff55d8f82b5a54cf1/README.md?plain=1#L98-L104  just a heads up setting up d3dmetal (line 102) in this dev build erred out: ``` Build complete! (67.47 sec) highball % .build/release/highball engine install spike/engine-manifest.json installing x64-sikarugir10.0_6-r28: Wine 10.0 (Sikarugir) r28 installed x64-sikarugir10.0_6-r28 at /Users/Shared/system/configs/Highball/engines/x64-sikarugir10.0_6-r28 wine: wine-10.0 (Sikarugir) highball % .build/release/highball engine accept x64-sikarugir10.0_6-r2 apple-gptk-license-2023-08-17 Error: The file “manifest.json” couldn’t be opened because there is no such file. ```  ### Chip and macOS  M1, macOS 27.2  ### Highball version  unreleased (dev build)  ### Log  _No response_
+- **Issue #618** (2026-11-05): **New environment vkd3d-proton works really well but use of controller causes crash.**
+  *Symptoms*: ### What happened  The new vkd3d-proton solution to the stuttering issue works amazingly well. However, the game crashes the moment a gamepad controller is used to control the game.  ### Chip and macOS  Apple M5 Max, macOS 27.2  ### Highball version  0.10.24  ### Log  ~/Library/Application Support/Highball/logs/2026-11-01T211923Z-Forza Horizon 6 2-steam.exe.log: # gin arm64-kk-wine11.18-r1 bottle=Forza Horizon 6 2 renderer=vkd3d # wine ~/Library/Application Support/Highball/bottles/Forza Horizon 6 2/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 2483190 # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/arm64-kk-wine11.18-r1/renderers/vkd3d/wine # WINEDLLOVERRIDES=dxgi,d3d11,d3d10core,d3d12,d3d12core=n,b;winemenubuilder.exe=d;gameoverlayrenderer64,gameoverlayrenderer=d;concrt140,msvcp140,msvcp140_1,msvcp140_2,msvcp140_atomic_wait,msvcp140_codecvt_ids,vccorlib140,vcomp140,vcruntime140,vcruntime140_1=n,b # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXVK_CONFIG=dxgi.maxVideoMemoryBudget=18432;dxgi.maxDeviceMemory=8192;dxgi.maxSharedMemory=8192;dxgi.customVendorId=8086;dxgi.customDeviceId=56a1;dxgi.customDeviceDesc="Intel(R) Arc(TM) A750 Graphics" # VKD3D_SHADER_MODEL=6_6 # VKD3D_FEATURE_LEVEL=12_1 # VKD3D_CONFIG=no_staggered_submit # VKD3D_SHADER_CACHE_PATH=C:\highball\cache\vkd3d\arm64-kk-wine11.18-r1-f7255a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,186 +1057,23 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a5a088b` (2026-11-01)
-**Commit Message**: A bug report keeps how the run ended when its log is too long for the URL, the Steam library list is also read from config, and the README's engine id can't go stale.
+### Incident Patch 1: `dbc36ebc` (2026-11-04)
+**Commit Message**: arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054 and kosmickrisp-arm64-20261104T165852Z-push). The Khronos loader exports MoltenVK's vkGetMTLDeviceMVK, so GStreamer's VideoToolbox plugin loads and H.264 game videos play (ContractVille stayed black). patches-arm64 0053 and 0054 (upstream 1c2d909829c by Rémi Bernon) give legacy OpenGL contexts their extensions and the ES2 compatibility calls (Paperback: The Game crashed). KosmicKrisp patch 0008 gives LINEAR images Metal cannot back with a buffer a tiled texture with linear subresource layouts (Red Dead Redemption 2 aborted in Metal, now reaches its menu and the opening cutscene at 60 fps). Installed from the public releases on the M4: ContractVille reaches its menu after its intro video (46 fps), Paperback its title. Forza Horizon 6's route stays on r3. 83 engine tests pass. (#649)
 
-The report URL shrank its digest from the tail, so a long log lost the crash (highball#618, cut 50 repeats before the end). It now shrinks from the middle, as the digest itself does.
-
-A second Steam library wasn't found when steamapps can't be read, as with a Finder alias left in its place (highball#603). Steam keeps the same list in config/libraryfolders.vdf. Not reproduced on the reporter's Mac, the cause is read from the thread and the code.
-
-`engine accept` with an id that isn't installed says so instead of "manifest.json couldn't be opened", and the README no longer names an old engine (highball#615).
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `spike/engines/arm64-kk-wine11.18-r4.json` (added, +102/-0)
 ```diff
-@@ -99,7 +99,7 @@ git clone https://github.com/gauthierpiarrette/highball && cd highball        #
- git clone https://github.com/gauthierpiarrette/highball-db ../highball-db     # recipes + game database (CC0)
- swift build -c release
- .build/release/highball engine install spike/engine-manifest.json
--.build/release/highball engine accept x64-sikarugir10.0_6-r2 apple-gptk-license-2023-08-17  # optional: D3DMetal
-+.build/release/highball engine accept <the id install printed> apple-gptk-license-2023-08-17  # optional: D3DMetal
- .build/release/highball bottle create play --recipe steam
- .build/release/highball run play Steam
- ```
-```
-
-**File**: `Sources/HighballKit/Paths.swift` (modified, +16/-7)
-```diff
-@@ -417,18 +417,18 @@ public enum BugReport {
-     /// launch header, the backend banner and the effective configuration; the tail carries how the
-     /// run ended. A plain `suffix` would drop exactly the head — the content this function exists
-     /// to preserve — and keep the MoltenVK spam, reinstating the failure it was written to fix.
--    static func trim(_ lines: [String]) -> String {
-+    static func trim(_ lines: [String], budget: Int = maxDigestCharacters) -> String {
-         let whole = lines.joined(separator: "\n")
--        guard whole.count > maxDigestCharacters else { return whole }
--        let headBudget = maxDigestCharacters * 2 / 3
-+        guard whole.count > budget else { return whole }
-+        let headBudget = budget * 2 / 3
-         var head: [String] = [], used = 0
-         for line in lines {
-             if used + line.count + 1 > headBudget, !head.isEmpty { break }
-             head.append(line); used += line.count + 1
-         }
-         var tail: [String] = [], tailUsed = 0
-         for line in lines[head.count...].reversed() {
--            if used + tailUsed + line.count + 1 > maxDigestCharacters { break }
-+            if used + tailUsed + line.count + 1 > budget { break }
-             tail.append(line); tailUsed += line.count + 1
-         }
-         let dropped = lines.count - head.count - tail.count
-@@ -529,13 +529,22 @@ public enum BugReport {
-             ]
-             return comps.url!
-         }
--        // Shrink from the tail until the encoded URL fits: the head holds the launch header, the
--        // backend banner and the effective configuration, which are what triage reads first.
-+        // Shrink from the middle until the encoded URL fits, as `trim` does: the head holds the launch
-+        // header and the configuration, the tail how the run ended. Cutting the tail here lost the
-+        // crash from reports whose digest was long (highball#618, cut 50 repeats before the end).
-         var result = url(log: logDigest)
-         while result.absoluteString.count > maxURLCharacters, logDigest.count > 400 {
--            logDigest = String(logDigest.prefix(logDigest.count * 3 / 4))
-+            logDigest = shortened(logDigest)
-             result = url(log: logDigest)
-         }
-         return result
-     }
-+
-+    /// `text` at about three quarters of its length, both ends kept. Always shorter, so the caller's
-+    /// loop ends: a text of a few long lines `trim` can't cut between loses its end instead.
-+    static func shortened(_ text: String) -> String {
-+        let budget = text.count * 3 / 4
-+        let cut = trim(text.components(separatedBy: "\n"), budget: budget)
-+        return cut.count < text.count ? cut : String(text.prefix(budget))
-+    }
- }
-```
-
-**File**: `Sources/HighballKit/SteamLibrary.swift` (modified, +6/-4)
-```diff
-@@ -97,12 +97,14 @@ public enum SteamLibrary {
-     /// paths (`D:\SteamLibrary`), which the bottle's drive letters turn back into Mac paths; a
-     /// letter the bottle does not map, or a folder that is not there (an external disk left at
-     /// home), is skipped. Before this a game installed in a second library folder never reached
--    /// the library at all (highball-db#316, a Steam library on /Volumes/MEDIA_DEV).
-+    /// the library at all (highball-db#316, a Steam library on /Volumes/MEDIA_DEV). Steam keeps the
-+    /// list in `config` too, the only copy left where `steamapps` itself can't be read, such as a
-+    /// Finder alias left in its place (highball#603).
-     static func libraryFolders(steamRoot root: URL, bottleURL: URL) -> [URL] {
-         var folders = [root.standardizedFileURL]
--        let vdf = root.appending(path: "steamapps/libraryfolders.vdf")
--        guard let text = try? String(contentsOf: vdf, encoding: .utf8) else { return folders }
--        for path in libraryPaths(in: text) {
-+        let lists = ["steamapps/libraryfolders.vdf", "config/libraryfolders.vdf"]
-+            .compactMap { try? String(contentsOf: root.appending(path: $0), encoding: .utf8) }
-+        for path in lists.flatMap(libraryPaths(in:)) {
-             guard let url = unixURL(windowsPath: path, bottleURL: bottleURL)?.standardizedFileURL,
-                   !folders.contains(url),
-                   FileManager.default.fileExists(atPath: url.appending(path: "steamapps").path) else { continue }
-```
-
-**File**: `Sources/highball/main.swift` (modified, +4/-1)
-```diff
-@@ -28,7 +28,10 @@ struct Engine: AsyncParsableCommand {
-         @Argument var license: String
-         func run() async throws {
-             let store = EngineStore()
--            let e = try store.accept(license: license, engine: store.engine(engine))
-+            guard let installed = try? store.engine(engine) else {
-+                fail("engine '\(engine)' is not installed; `highball engine list` shows the ids")
-+            }
-+            let e = try store.accept(license: license, engine: installed)
-             print("accepted \(license) for \(e.id); renderers now: \(HighballKit.Renderer.allCases.filter { $0 == .wined3d || e.rendererDir($0.rawValue) != nil }.map(\.rawValue).joined(separator: ","))")
-         }
-     }
-```
-
-**File**: `Tests/HighballKitTests/RegressionTests.swift` (modified, +11/-0)
-```diff
-@@ -1117,6 +1117,17 @@ extension RegressionTests {
- 
-     // Forza Horizon 6's second route: an environment on the route's line goes by the route, every other by the recipe,
-     // under one id, so what an environment records for the game stays in one place.
-+    /// highball#618: a long digest lost its end to the URL limit, and the end is the crash.
-+    func testAReportTooLongForItsURLKeepsBothEnds() throws {
-+        let lines = ["# gin engine header"] + (0..<400).map { "0123:err:ole:class \($0) not registered, padded out to make the digest long" } + ["unhandled exception at the very end"]
-+        var text = lines.joined(separator: "\n")
-+        while text.count > 1500 { text = BugReport.shortened(text) }
-+        XCTAssertTrue(text.contains("# gin engine header"))
-+        XCTAssertTrue(text.contains("unhandled exception at the very end"))
-+        let few = String(repeating: "x", count: 4000)
-+        XCTAssertLessThan(BugReport.shortened(few).count, few.count, "a text it can't cut between lines still gets shorter")
-+    }
-+
-     func testPreviewRouteAppliesOnlyOnItsOwnLine() throws {
-         let json = #"""
-         {"id":"game","kind":"game","title":"Game","renderer":"d3dmetal","engine":"x64-a-r18","minMemoryGB":null,
-```
-
-**File**: `Tests/HighballKitTests/SteamLibraryFoldersTests.swift` (modified, +15/-0)
-```diff
-@@ -65,6 +65,21 @@ final class SteamLibraryFoldersTests: XCTestCase {
-                        external.appending(path: "steamapps/common/BloodySpell").standardizedFileURL.path)
-     }
- 
-+    func testTheLibraryListInConfigIsReadWhenSteamappsCantBe() throws {
-+        // highball#603: a Finder alias named steamapps is a file, so the list inside it can't be read.
-+        let bottle = tmp.appending(path: "alias-bottle", directoryHint: .isDirectory)
-+        let steam = bottle.appending(path: "drive_c/Program Files (x86)/Steam", directoryHint: .isDirectory)
-+        let external = tmp.appending(path: "alias-external/SteamLibrary", directoryHint: .isDirectory)
-+        try FileManager.default.createDirectory(at: steam.appending(path: "config"), withIntermediateDirectories: true)
-+        try FileManager.default.createDirectory(at: external.appending(path: "steamapps"), withIntermediateDirectories: true)
-+        try FileManager.default.createDirectory(at: bottle.appending(path: "dosdevices"), withIntermediateDirectories: true)
-+        try FileManager.default.createSymbolicLink(at: bottle.appending(path: "dosdevices/d:"), withDestinationURL: external.deletingLastPathComponent())
-+        try Data("alias".utf8).write(to: steam.appending(path: "steamapps"))
-+        try Data(#""libraryfolders" { "1" { "path" "D:\\\\SteamLibrary" } }"#.utf8).write(to: steam.appending(path: "config/libraryfolders.vdf"))
-+        let folders = SteamLibrary.libraryFolders(steamRoot: steam, bottleURL: bottle)
-+        XCTAssertEqual(folders.map(\.standardizedFileURL.path).last, external.standardizedFileURL.path)
-+    }
-+
-     func testASymlinkedSteamappsFolderIsRead() throws {
-         // highball-db#316: steamapps moved to an external disk with a symlink left in its place.
-         let bottle = tmp.appending(path: "bottle", directoryHint: .isDirectory)
-```
-
----
-
-### Incident Patch 2: `0996abf8` (2026-11-03)
-**Commit Message**: arm64-kk-wine11.18-r3: r2 with FEX patch 0034 by ineshd, every other archive the same (release engine-arm64-wine-11.18-20261103T154050Z-fh6-native-r3-fex0034, run 41654526917). FEX patched an unaligned atomic in its code buffer without the MAP_JIT write permission, and Forza Horizon 6 crashed within a minute of a controller coming into use (highball#618). Tested by ineshd for 30 minutes with an Xbox controller on an M5. Installed from the public release on the M4, a new environment boots and runs 32-bit and 64-bit programs. Thanks to ineshd.
-
-**File**: `spike/engines/arm64-kk-wine11.18-r3.json` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,102 @@
 +{
 +  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "id": "arm64-kk-wine11.18-r3",
-+  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r3",
++  "id": "arm64-kk-wine11.18-r4",
++  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r4",
 +  "arch": "arm64",
 +  "minMacOS": "27.0",
 +  "requires": [],
 +  "channel": "preview",
 +  "direct3D9": "wined3d",
 +  "notes": [
++    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. Video: GStreamer's VideoToolbox plugin imports MoltenVK's vkGetMTLDeviceMVK, which the Khronos loader this line ships as libMoltenVK.dylib lacked, so the plugin never loaded, no H.264 video played and a game waiting on its intro video stayed black (ContractVille). The loader now carries that call (highball-engine kosmickrisp-arm64/mvk_compat.c). OpenGL: Wine 11.18 marked no extension in a legacy (before 3.0) context, so a game asking for framebuffer objects there got nothing; patches-arm64 0054 is the upstream fix by Rémi Bernon (1c2d909829c). 0053 gives a legacy context GL_ARB_ES2_compatibility's five calls, as the Wine 11 line's 0021 does. Paperback: The Game needed both. KosmicKrisp: highball patch 0008 gives a LINEAR image Metal cannot back with a buffer (several levels or layers, or 3D) a tiled texture with linear-looking subresource layouts, as MoltenVK did; Red Dead Redemption 2 aborted in Metal during its first load before, and now reaches its menu and the opening cutscene at 60 fps. Every other file is r3's: FEX with ineshd's 0034, vkd3d-proton and DXVK. On a base M4 with macOS 27.0 FNAF, Among Us, the Half-Life 2 demo, WHERE SAFETY ENDS, Bloodbreaker, Portal, Portal 2, Big Walk, The Last Flame, The Sims Legacy Collection, ContractVille and Paperback reach their menus. Forza Horizon 6 was not run on r4, its route stays on r3.",
 +    "r3 (2026-11-03): r2 with FEX patch 0034 by ineshd. FEX patched an unaligned atomic in its code buffer without the MAP_JIT write permission the engine turns on, and Forza Horizon 6 crashed at xtajit64.dll+0x1177ac within a minute of a controller coming into use (highball#618). Every other archive is r2's. Tested by the contributor for 30 minutes with an Xbox controller on an M5; on an M4 here the engine boots and runs 32-bit and 64-bit programs.",
 +    "r2 (2026-11-01): r1 with a KosmicKrisp build that carries highball patch 0007, every other archive the same. Encoder end barriers ask for Device visibility instead of ResourceAlias, and HB_KK_NO_UBO_ROBUST=1, which a recipe asks for, drops the bounds check on constant buffer reads. Forza Horizon 6's benchmark on a base M4 at 1080p, Very Low, FSR Quality: GPU time per frame from 26.7 ms to about 21 ms, 36 to 43 fps uncapped. A new driver build means the shader cache fills again on the first start.",
 +    "r1 (2026-11-01): Forza Horizon 6's native route. Wine 11.18 with patches-arm64 through 0052, FEX 2610 with fex/patches through 0033, vkd3d-proton with renderers-arm64 through 0010, and KosmicKrisp (Mesa's Vulkan driver on Metal 4) with steamac's patches and kosmickrisp-arm64/highball in place of MoltenVK. A line of its own: Microsoft Flight Simulator 2024's engine and its offers do not move until a flight has run on these patches.",
@@ -1246,165 +1083,32 @@ A second Steam library wasn't found when steamapps can't be read, as with a Find
 +  "components": {
 +    "wine": {
 +      "kind": "engine",
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261103T154050Z-fh6-native-r3-fex0034/engine-arm64-wine-11.18-20261103T154050Z-fh6-native-r3-fex0034.tar.gz",
-+      "size": 402952624,
-+      "sha256": "49aca95de5241aef08842feed6235cd92c9d62226b3433c4d9af332a90cdf100",
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054.tar.gz",
++      "size": 402959763,
++      "sha256": "a4c16fbb2e1e527a2b0cc543a3e92bb1b7135ad5eacc0da1f863f625a6b38a39",
 +      "extract": {
 +        "into": "engine",
 +        "subpath": "engine"
 +      },
 +      "license": "LGPL-2.1+",
-+      "version": "wine-11.18 (WineHQ) Highball arm64 build 2026-11-01, patches-arm64 through 0052, FEX 2610 with fex/patches through 0034, Wine Mono 11.3.0 and Gecko 2.47.4 included",
-+      "note": "Built by highball-engine's build-arm64 workflow (run 41654526917) from r2's sources plus FEX patch 0034 by ineshd."
++      "version": "wine-11.18 (WineHQ) Highball arm64 build 2026-11-04, patches-arm64 through 0054, FEX 2610 with fex/patches through 0034, Wine Mono 11.3.0 and Gecko 2.47.4 included",
++      "note": "Built by highball-engine's build-arm64 workflow (run 41832138860) from branch arm64-games at 8b315e7: r3's sources plus patches-arm64 0053 and 0054."
 +    },
 +    "frameworks": {
 +      "kind": "frameworks",
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261103T154050Z-fh6-native-r3-fex0034/engine-arm64-wine-11.18-20261103T154050Z-fh6-native-r3-fex0034.tar.gz",
-+      "size": 402952624,
-+      "sha256": "49aca95de5241aef08842feed6235cd92c9d62226b3433c4d9af332a90cdf100",
-+      "extract": {
-+        "into": "frameworks",
-+        "subpath": "frameworks"
-+      },
-+      "license": "mixed (LGPL-2.1 GStreamer 1.28.7 and its plugins, Apache-2.0 MoltenVK inside the GStreamer framework)",
-+      "version": "GStreamer 1.28.7 (the official macOS framework, pruned to the plugins winegstreamer uses, with applemedia for VideoToolbox decoding, thinned to arm64)",
-+      "note": "The same archive as the wine component, its frameworks folder; the store downloads it once."
-+    },
-+    "vulkan": {
-+      "kind": "runtime",
-+      "order": 1,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/kosmickrisp-arm64-20261101T180026Z-push/kosmickrisp-arm64-20261101T180026Z-push.tar.gz",
-+      "size": 2544058,
-+      "sha256": "7fe4d482dbe154f372a9bc91051337e9fea0a0a7e619c7277fce61e7b712761f",
-+      "extract": {
-+        "into": "engine/lib/libMoltenVK.dylib",
-+        "subpath": "lib/libMoltenVK.dylib"
-+      },
-+      "license": "Apache-2.0",
-+      "version": "Khronos Vulkan loader 1.4.363",
-+      "note": "The name Wine's winevulkan opens on this line, replacing the engine's own MoltenVK (so it installs after the wine component). VK_DRIVER_FILES in baseEnv points it at KosmicKrisp. build-kosmickrisp-arm64 run 41333821997."
-+    },
-+    "kosmickrisp": {
-+      "kind": "runtime",
-+      "order": 1,
-+      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/kosmickrisp-arm64-2026
-```
-
----
-
-### Incident Patch 3: `4f58b296` (2026-11-03)
-**Commit Message**: A game's recipe can switch on athei's x87sidecar with HB_X87SIDECAR=1. Old 32-bit games do their maths on the x87 unit, which Rosetta runs slowly, and the sidecar compiles that code much faster (an x87 loop 884 to 40 ms on a base M4, Tale of Wuxia 4.4 to 45 fps, highball-db#352). The launch gets ROSETTA_X87_PATH only where the engine ships the sidecar and runs under Rosetta, never for every game, since the sidecar relies on how Rosetta lays out its translations and checks that at each start (#165). Steam restarts for a game whose sidecar setting differs from its own, since the game inherits it. Tests cover both.
-
-**File**: `Sources/HighballKit/Bottle.swift` (modified, +8/-0)
-```diff
-@@ -923,6 +923,14 @@ public struct Bottle: Sendable {
-             let inserted = (env["DYLD_INSERT_LIBRARIES"] ?? "").split(separator: ":").map(String.init)
-             env["DYLD_INSERT_LIBRARIES"] = ([lib.path] + inserted.filter { $0 != lib.path }).joined(separator: ":")
-         }
-+        // Old 32-bit games do their maths on the x87 unit, which Rosetta runs slowly. A game's recipe
-+        // asks for athei's x87sidecar with HB_X87SIDECAR=1, and it applies only where the engine
-+        // ships the sidecar and runs under Rosetta. Never on for everything: the sidecar relies on
-+        // how Rosetta lays out its translations, and checks that at each start (highball#165).
-+        env.removeValue(forKey: "ROSETTA_X87_PATH")
-+        if env["HB_X87SIDECAR"] == "1", engine.manifest.requiresRosetta, let sidecar = engine.x87Sidecar {
-+            env["ROSETTA_X87_PATH"] = sidecar.path
-+        }
-         // A recipe's value can depend on this Mac (a video memory budget from its memory), and an engine's or a recipe's
-         // on this environment (a driver's shader cache kept inside it, and gone with it).
-         return env.mapValues { MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path) }
-```
-
-**File**: `Sources/HighballKit/EngineStore.swift` (modified, +8/-0)
-```diff
-@@ -638,6 +638,14 @@ public struct InstalledEngine: Sendable {
-         let lib = frameworksDir.appending(path: "libhbaudiobuf.dylib")
-         return FileManager.default.fileExists(atPath: lib.path) ? lib : nil
-     }
-+    /// athei's x87sidecar (MIT), when the engine ships it as a component. Wine re-executes a
-+    /// 32-bit program through it when ROSETTA_X87_PATH names it (the Wine 11 engines' patch 0012,
-+    /// cooperative attach, no entitlements), and it compiles the program's x87 maths much faster
-+    /// than Rosetta does: Tale of Wuxia's maps went from 4.4 to 45 fps (highball-db#352).
-+    public var x87Sidecar: URL? {
-+        let tool = root.appending(path: "x87sidecar/x87sidecar")
-+        return FileManager.default.isExecutableFile(atPath: tool.path) ? tool : nil
-+    }
-     public var renderersDir: URL { root.appending(path: "renderers", directoryHint: .isDirectory) }
-     public var wineBinary: URL { engineDir.appending(path: "bin/wine") }
-     public var wineserverBinary: URL { engineDir.appending(path: "bin/wineserver") }
-```
-
-**File**: `Sources/HighballKit/SteamRestart.swift` (modified, +5/-0)
-```diff
-@@ -103,6 +103,11 @@ public enum SteamRestart {
-         for (key, what) in inherited where (live[key] == "1") != (wanted[key] == "1") {
-             reasons.append("it runs with \(what) \(live[key] == "1" ? "on" : "off") and the game wants it \(wanted[key] == "1" ? "on" : "off")")
-         }
-+        // Wine re-executes a 32-bit program through the x87 sidecar when it starts, and the game
-+        // inherits the variable from the client.
-+        if live["ROSETTA_X87_PATH"] != wanted["ROSETTA_X87_PATH"] {
-+            reasons.append("it runs with the x87 sidecar \(live["ROSETTA_X87_PATH"] == nil ? "off" : "on") and the game wants it \(wanted["ROSETTA_X87_PATH"] == nil ? "off" : "on")")
-+        }
-         // Frame generation is a family of LSFGM_ variables the shim reads when the game starts,
-         // so a toggle flipped while the client runs would otherwise leave the game where the
-         // client was (highball#109 follow-up). Any difference in the family restarts the client.
-```
-
-**File**: `Tests/HighballKitTests/RendererAvailabilityTests.swift` (modified, +17/-0)
-```diff
-@@ -160,6 +160,23 @@ final class RendererAvailabilityTests: XCTestCase {
-         XCTAssertNil(fine.note)
-     }
- 
-+    /// A game's recipe asks for athei's x87sidecar with HB_X87SIDECAR=1 (highball#165), and the
-+    /// launch gets ROSETTA_X87_PATH only where the engine ships the sidecar.
-+    func testTheX87SidecarIsSetOnlyForAGameThatAsksAndAnEngineThatShipsIt() throws {
-+        let e = try engine(accepted: false)
-+        var asks = bottle(renderer: .dxmt)
-+        asks.settings.environment = ["HB_X87SIDECAR": "1"]
-+        XCTAssertNil(try asks.environment(engine: e)["ROSETTA_X87_PATH"], "no sidecar in this engine")
-+        let tool = e.root.appending(path: "x87sidecar/x87sidecar")
-+        try FileManager.default.createDirectory(at: tool.deletingLastPathComponent(), withIntermediateDirectories: true)
-+        FileManager.default.createFile(atPath: tool.path, contents: Data(), attributes: [.posixPermissions: 0o755])
-+        XCTAssertEqual(try asks.environment(engine: e)["ROSETTA_X87_PATH"], tool.path)
-+        XCTAssertNil(try bottle(renderer: .dxmt).environment(engine: e)["ROSETTA_X87_PATH"], "a game that doesn't ask")
-+        var stale = bottle(renderer: .dxmt)
-+        stale.settings.environment = ["ROSETTA_X87_PATH": "/somewhere/else"]
-+        XCTAssertNil(try stale.environment(engine: e)["ROSETTA_X87_PATH"], "only the switch sets it")
-+    }
-+
-     func testEnvironmentFollowsTheDegradedRendererInsteadOfThrowing() throws {
-         let e = try engine(accepted: false)
-         let env = try bottle(renderer: .d3dmetal).environment(engine: e)
-```
-
-**File**: `Tests/HighballKitTests/SteamRestartTests.swift` (modified, +10/-0)
-```diff
-@@ -128,6 +128,16 @@ final class SteamRestartTests: XCTestCase {
-         XCTAssertEqual(SteamRestart.rendererName(ofLive: [:]), "wined3d")
-     }
- 
-+    /// The x87 sidecar is chosen when a 32-bit program starts, and the game inherits the variable
-+    /// from the client, so a client started without it is restarted for a game that asks for it.
-+    func testAClientWithoutTheX87SidecarIsRestartedForAGameThatWantsIt() {
-+        let base = ["WINEDLLPATH_PREPEND": "/e/dxmt", "WINEMSYNC": "1"]
-+        var wanted = base; wanted["ROSETTA_X87_PATH"] = "/e/x87sidecar/x87sidecar"
-+        XCTAssertNotNil(SteamRestart.reason(live: base, wanted: wanted, wantedRenderer: "dxmt"))
-+        XCTAssertNotNil(SteamRestart.reason(live: wanted, wanted: base, wantedRenderer: "dxmt"))
-+        XCTAssertNil(SteamRestart.reason(live: wanted, wanted: wanted, wantedRenderer: "dxmt"))
-+    }
-+
-     /// The audio buffer library loads when a process starts and the game inherits it from the
-     /// client, so a client running without it is restarted for a launch that wants it (highball#127).
-     func testAClientWithoutTheAudioLibraryIsRestartedForALaunchThatWantsIt() {
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054/engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054.tar.gz",
++      "size": 402959763,
++      "sha256": "a4c16fbb2e1e527a2b0cc543a3e92bb1b7135ad5eacc0da1f863f625a6b38a39",
++      "extrac
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #649** (2026-11-04): arm64-kk-wine11.18-r4 (@gauthierpiarrette)
+- **PR #647** (2026-11-04): highball tricks finds cabextract (@gauthierpiarrette)
+- **PR #646** (2026-11-04): Report attaches a log from the newest sitting (@gauthierpiarrette)
+- **PR #644** (2026-11-04): Wine 11 engines r30 and r31 (@gauthierpiarrette)
+- **PR #643** (closed): Wine 11 engines r30 and r31 (@gauthierpiarrette)
 - **PR #635** (closed): Gate runs without screen captures (@gauthierpiarrette)
-- **PR #634** (2026-11-03): Forza Horizon 6's arm64 engine r3 (controller crash fix), and a per-game x87 sidecar switch (@gauthierpiarrette)
-- **PR #632** (2026-11-03): GOG installs in a symlinked Games folder turn to Play (#600) (@gauthierpiarrette)
-- **PR #625** (2026-11-02): Games follow the Mac's output when it changes (#460) (@nikiomori)
-- **PR #619** (2026-11-01): Bug reports keep the end of a long log, Steam's library list from config, a clear engine accept error (@gauthierpiarrette)
-- **PR #617** (2026-11-01): Forza Horizon 6's arm64 engine r2: about 20% less GPU time per frame (@gauthierpiarrette)
 
 ---
 
@@ -1424,28 +1128,38 @@ A second Steam library wasn't found when steamapps can't be read, as with a Find
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. A bug report keeps how the run ended when its log is too long for the URL, the S
+## X. arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases 
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `spike/engines/arm64-kk-wine11.18-r4.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a5a088b`: A bug report keeps how the run ended when its log is too long for the URL, the Steam library list is also read from config, and the README's engine id can't go stale.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbc36ebc`: arm64-kk-wine11.18-r4: r3 with fixes for games beyond Forza Horizon 6 (releases engine-arm64-wine-11.18-20261104T130327Z-arm64-games-0053-0054 and kosmickrisp-arm64-20261104T165852Z-push). The Khronos loader exports MoltenVK's vkGetMTLDeviceMVK, so GStreamer's VideoToolbox plugin loads and H.264 game videos play (ContractVille stayed black). patches-arm64 0053 and 0054 (upstream 1c2d909829c by Rémi Bernon) give legacy OpenGL contexts their extensions and the ES2 compatibility calls (Paperback: The Game crashed). KosmicKrisp patch 0008 gives LINEAR images Metal cannot back with a buffer a tiled texture with linear subresource layouts (Red Dead Redemption 2 aborted in Metal, now reaches its menu and the opening cutscene at 60 fps). Installed from the public releases on the M4: ContractVille reaches its menu after its intro video (46 fps), Paperback its title. Forza Horizon 6's route stays on r3. 83 engine tests pass. (#649). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `spike/engines/arm64-kk-wine11.18-r4.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-.build/release/highball engine accept <the id install printed> apple-gptk-license-2023-08-17  # optional: D3DMetal
+{
+  "$schema": "https://highball.app/schemas/engine-manifest/v0",
+  "id": "arm64-kk-wine11.18-r4",
+  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r4",
+  "arch": "arm64",
+  "minMacOS": "27.0",
+  "requires": [],
+  "channel": "preview",
+  "direct3D9": "wined3d",
+  "notes": [
+    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. Video: GStreamer's VideoToolbox plugin imports MoltenVK's vkGetMTLDeviceMVK, which the Khronos loader this line ships as libMoltenVK.dylib lacked, so the plugin never loaded, no H.264 video played and a game waiting on its intro video stayed black (ContractVille). The loader now carries that call (highball-engine kosmickrisp-arm64/mvk_compat.c). OpenGL: Wine 11.18 marked no extension in a legacy (before 3.0) context, so a game asking for framebuffer objects there got nothing; patches-arm64 0054 is the upstream fix by Rémi Bernon (1c2d909829c). 0053 gives a legacy context GL_ARB_ES2_compatibility's five calls, as the Wine 11 line's 0021 does. Paperback: The Game needed both. KosmicKrisp: highball patch 0008 gives a LINEAR image Metal cannot back with a buffer (several levels or layers, or 3D) a tiled texture with linear-looking 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-.build/release/highball engine accept x64-sikarugir10.0_6-r2 apple-gptk-license-2023-08-17  # optional: D3DMetal
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a5a088b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbc36ebc` are properly handled with clean fallback behavior.

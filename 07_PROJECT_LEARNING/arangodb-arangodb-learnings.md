@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `cdc63f4b`  
+> **Source Version**: `511a3044`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:00:35.053Z  
+> **Timestamp**: 2026-11-05T22:31:52.634Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:00:34.925Z  
+> **Harvest Timestamp**: 2026-11-05T22:31:52.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14293 stars
+- **Stars / Engagement**: 14294 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23587** (2026-11-04): **Update `benchmarks.yml`**
-  *Symptoms*: ### Scope & Purpose  *(Please describe the changes in this PR for reviewers, motivation, rationale - **mandatory**)*  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [ ] GitHub issue / Jira ticket: - [ ] Design document:  
+- **Issue #23596** (2026-11-05): **[BTS-2437] [3.12] Access collection from the transaction only after "begin" succeeded**
+  *Symptoms*: Backport of https://github.com/arangodb/arangodb/pull/23595 to 3.12.
 
-- **Issue #23586** (2026-11-04): **[COR-1218] Fix the internal error for an unbound MATCH vertex without a label**
-  *Symptoms*: **Problem**  MATCH (v) RETURN v with {matchStatement: "experimental"} fails with internal error 4 (variable not found in reference AstNode) when v has no label and was not previously bound.  It should report a parse error indicating that v needs a label or must be bound earlier.  **Root cause**  A bare (v) is treated as a reference to an existing variable. When the variable is not in scope, the lookup throws an internal error instead of a user facing parse error.  **Fix**  Check whether the variable is in scope before creating the reference. If it is not, raise parse error 1501:  MATCH vertex variable 'v' needs a label or has to be bound earlier  Previously bound variables, such as LET x = DOCUMENT(...) MATCH (x), continue to work.
+- **Issue #23595** (2026-11-05): **[BTS-2437] Access collection from the transaction only after "begin" succeeded**
+  *Symptoms*: ### Scope & Purpose  A maintainer-mode assertion could be triggered when the transaction begin failed, e.g. because the shard has been dropped.  ``` assertion failed in arangod/StorageEngine/TransactionState.cpp:171 [TransactionCollection *arangodb::TransactionState::collection(DataSourceId, AccessMode::Type) const]: _status == transaction::Status::CREATED || _status == transaction::Status::RUNNING ```  It has no impact in a production build.  - [X] :hankey: Bugfix  ### Checklist - [X] Backports   - [X] Backport for 3.12: https://github.com/arangodb/arangodb/pull/23596  #### Related Information  - [X] Jira ticket: https://arangodb.atlassian.net/browse/BTS-2437  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,162 +1662,38 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69d30263` (2026-11-04)
-**Commit Message**: Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-icu-lightcrashhandler
+### Incident Patch 1: `62592e77` (2026-11-05)
+**Commit Message**: Merge pull request #23595 from arangodb/bug-fix/bts-2437
 
-[COR-1240] [devel] `arangodbtests_rocksdb` gets ICU setup and light crash handler
+[BTS-2437] Access collection from the transaction only after "begin" succeeded
 
-**File**: `tests/RocksDBEngine/CMakeLists.txt` (modified, +3/-1)
+**File**: `arangod/VocBase/Methods/Indexes.cpp` (modified, +2/-2)
 ```diff
-@@ -32,7 +32,8 @@ target_link_libraries(arango_tests_rocksdb_engine
- add_executable(arangodbtests_rocksdb
-   main.cpp
-   RestHandlersStub.cpp
--  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
-+  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
-+  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
+@@ -867,13 +867,13 @@ requires std::is_same_v<IndexSpec, IndexId> or
+   auto trx = createTrxForDrop(col);
  
- target_include_directories(arangodbtests_rocksdb PRIVATE
-   ${PROJECT_SOURCE_DIR}/arangod
-@@ -42,6 +43,7 @@ target_include_directories(arangodbtests_rocksdb PRIVATE
+   auto beginRes = co_await trx->beginAsync();
+-  auto& collection = *trx->documentCollection();
  
- target_link_libraries(arangodbtests_rocksdb
-   arango_tests_rocksdb_engine
-+  arango_crashhandler_light
-   arango_rocksdb
-   arango_metrics_base
-   arango_vocbase
-```
-
-**File**: `tests/RocksDBEngine/main.cpp` (modified, +3/-0)
-```diff
-@@ -23,6 +23,7 @@
+   if (!beginRes.ok()) {
+-    events::DropIndex(collection.vocbase().name(), collection.name(), "",
++    events::DropIndex(col.vocbase().name(), col.name(), "",
+                       beginRes.errorNumber());
+     co_return beginRes;
+   }
++  auto& collection = *trx->documentCollection();
  
- #include "Activities/RegistryGlobalVariable.h"
- #include "Async/Registry/registry_variable.h"
-+#include "Basics/icu-helper.h"
- #include "Basics/VelocyPackHelper.h"
- 
- // Entry point for the standalone storage-engine test binary.
-@@ -45,5 +46,7 @@ int main(int argc, char** argv) {
-   arangodb::async_registry::registry.set_metrics(nullptr);
-   arangodb::activities::registry.setMetrics(nullptr);
- 
-+  IcuInitializer::setup(argv[0]);
-+
-   return RUN_ALL_TESTS();
- }
-```
-
----
-
-### Incident Patch 2: `b1210fba` (2026-11-03)
-**Commit Message**: Add ICU setup in tests/RocksDBEngine/main.cpp; add arango_crashhandler_light to target library
-
-**File**: `tests/RocksDBEngine/CMakeLists.txt` (modified, +3/-1)
-```diff
-@@ -32,7 +32,8 @@ target_link_libraries(arango_tests_rocksdb_engine
- add_executable(arangodbtests_rocksdb
-   main.cpp
-   RestHandlersStub.cpp
--  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
-+  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
-+  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
- 
- target_include_directories(arangodbtests_rocksdb PRIVATE
-   ${PROJECT_SOURCE_DIR}/arangod
-@@ -42,6 +43,7 @@ target_include_directories(arangodbtests_rocksdb PRIVATE
- 
- target_link_libraries(arangodbtests_rocksdb
-   arango_tests_rocksdb_engine
-+  arango_crashhandler_light
-   arango_rocksdb
-   arango_metrics_base
-   arango_vocbase
-```
-
-**File**: `tests/RocksDBEngine/main.cpp` (modified, +3/-0)
-```diff
-@@ -23,6 +23,7 @@
- 
- #include "Activities/RegistryGlobalVariable.h"
- #include "Async/Registry/registry_variable.h"
-+#include "Basics/icu-helper.h"
- #include "Basics/VelocyPackHelper.h"
- 
- // Entry point for the standalone storage-engine test binary.
-@@ -45,5 +46,7 @@ int main(int argc, char** argv) {
-   arangodb::async_registry::registry.set_metrics(nullptr);
-   arangodb::activities::registry.setMetrics(nullptr);
- 
-+  IcuInitializer::setup(argv[0]);
-+
-   return RUN_ALL_TESTS();
- }
-```
-
----
-
-### Incident Patch 3: `cdc63f4b` (2026-11-04)
-**Commit Message**: Merge pull request #23587 from arangodb/fix-ann-benchmark
-
-Update `benchmarks.yml`
-
-**File**: `.circleci/benchmarks.yml` (modified, +2/-2)
-```diff
-@@ -14,15 +14,15 @@ parameters:
-     description: "Benchmark to run; each has its scripts in scripts/benchmark/<benchmark>/."
-   arango-image:
-     type: string
--    default: "arangodb/enterprise-preview:3.12-nightly"
-+    default: "arangodb/core-preview:4.0-nightly"
-     description: "arangod image the benchmark runs against, e.g. arangodb/core-preview:4.0-nightly for the 4.0 nightly. Ignored with build-arango set to true."
-   build-arango:
-     type: boolean
-     default: true
-     description: "Use compiled local arangod instead of arango-image. The 'nightly-package-x64' CMake preset is used."
-   build-docker-image:
-     type: string
--    default: "public.ecr.aws/b0b8h2r4/arangodb/ubuntubuildarangodb-312:24.04-b6c8a8886"
-+    default: "public.ecr.aws/b0b8h2r4/arangodb/ubuntubuildarangodb-40:24.04-07ab72a0"
-     description: "Only with build-arango: Ubuntu build image the compile job runs in."
- 
- commands:
-```
-
-**File**: `scripts/benchmark/ann/README.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ The scripts here also set up the results store and Grafana locally, so the whole
-    port 8529, so use another one, e.g.:
- 
-    ```bash
--   docker run -d -p 8530:8529 -e ARANGO_NO_AUTH=1 arangodb/enterprise-preview:devel-nightly --vector-index=true
-+   docker run -d -p 8530:8529 -e ARANGO_NO_AUTH=1 arangodb/core-preview:4.0-nightly --vector-index=true
-    ```
- 
- 2. Start the results store + Grafana (http://localhost:3000, `admin` / `admin`). With
-```
-
-**File**: `scripts/benchmark/ann/docker-compose.yml` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- # `--profile ci` adds the arangod under test and the harness, wired like the
- # CircleCI job, to reproduce a CI run locally:
- #   docker compose --profile ci up --build harness
--x-sut-image: &sut-image ${ARANGODB_IMAGE:-arangodb/enterprise-preview:devel-nightly}
-+x-sut-image: &sut-image ${ARANGODB_IMAGE:-arangodb/core-preview:4.0-nightly}
- 
- services:
-   arangodb:
+   auto indexIdRes = co_await std::invoke(
+       overload{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23596** (2026-11-05): [BTS-2437] [3.12] Access collection from the transaction only after "begin" succeeded (@goedderz)
+- **PR #23595** (2026-11-05): [BTS-2437] Access collection from the transaction only after "begin" succeeded (@goedderz)
+- **PR #23593** (2026-11-05): ci: float the trivy-scan orb on @1 (@MarkusReadius)
+- **PR #23591** (2026-11-05): [COR-966] improve foxx installer url matching (@jvolmer)
+- **PR #23588** (2026-11-05): [COR-1034] Check version from x-arango-api-version against server... (@mpoeter)
 - **PR #23587** (2026-11-04): Update `benchmarks.yml` (@jbajic)
-- **PR #23586** (2026-11-04): [COR-1218] Fix the internal error for an unbound MATCH vertex without a label (@bluepal-avanthi-dundigala)
-- **PR #23585** (2026-11-04): [BTS-2511] Set up the temporary directory once, thread-safely; wait for Current in shard sync checks (@maierlars)
-- **PR #23584** (2026-11-04): Adjust 4.0 branch references to devel after the switch (@mpoeter)
-- **PR #23581** (closed): [COR-1240] [3.12.14] `arangodbtests_rocksdb` gets ICU setup and light crash handler (@knakatasf)
-- **PR #23580** (2026-11-04): [COR-1240] [devel] `arangodbtests_rocksdb` gets ICU setup and light crash handler (@knakatasf)
 
 ---
 
@@ -1837,30 +1713,30 @@ Update `benchmarks.yml`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-i
+## X. Merge pull request #23595 from arangodb/bug-fix/bts-2437
 
 **RULE**:
-When implementing operations in `tests/RocksDBEngine/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arangod/VocBase/Methods/Indexes.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69d30263`: Merge pull request #23580 from arangodb/bug-fix/cor-1240-arangodbtests-rocksdb-icu-lightcrashhandler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62592e77`: Merge pull request #23595 from arangodb/bug-fix/bts-2437. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/RocksDBEngine/CMakeLists.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/VocBase/Methods/Indexes.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp
-  ${PROJECT_SOURCE_DIR}/tests/Basics/icu-helper.cpp)
-  arango_crashhandler_light
+    events::DropIndex(col.vocbase().name(), col.name(), "",
+  auto& collection = *trx->documentCollection();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  ${PROJECT_SOURCE_DIR}/tests/Mocks/FakeScheduler.cpp)
+  auto& collection = *trx->documentCollection();
+    events::DropIndex(collection.vocbase().name(), collection.name(), "",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69d30263` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62592e77` are properly handled with clean fallback behavior.

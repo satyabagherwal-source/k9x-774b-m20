@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `eca2269a`  
+> **Source Version**: `f10139f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T21:43:41.493Z  
+> **Timestamp**: 2026-11-06T00:02:56.805Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T21:43:40.788Z  
+> **Harvest Timestamp**: 2026-11-06T00:02:56.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2479 stars
+- **Stars / Engagement**: 2480 stars
 
 ---
 
@@ -519,6 +519,430 @@ export function persistFrameResponse(opts: {
   };
   writeGameMeta(next, root);
   return { index, meta: next };
+}
+
+```
+
+### Core Architecture Module: `benchmarks/learning-strategy/telecom/rediscovery-engineer.mjs`
+```
+import assert from "node:assert/strict";
+import { createBridge } from "./bridge.mjs";
+import { projectFeedback } from "./feedback.mjs";
+import { PROGRAM_SCHEMA, validateProgram } from "./rediscovery-runtime.mjs";
+
+export const ENGINEER =
+  "Engineer reusable improvements to a customer-support agent. Investigate causes, distinguish interface failures from actor failures, preserve successful behavior, and verify hypotheses with available development experiments. You may design a bounded advisory program, but cannot change policy, tools, the simulator or the evaluator. Do not include case identifiers or customer-specific values in the program. No particular diagnosis or solution is supplied.";
+export const CAPABILITIES =
+  "A program has instructions (at most 2000 characters), delivery system or each_turn, and up to 6 checks. Total compact JSON must be <=4000 characters. Each check: unique lowercase id <=40; source customer, tools, or public; contains 1-4 literal search strings <=80 characters; take 1-3 recent matches; when always, found or missing; instruction <=500 characters. At each_turn, the host searches actor-visible customer speech, historical actor tool responses, or only the latest explicit public fact snapshot. Matching is case-insensitive literal OR. It supplies cited excerpts (up to 1200 characters each) and emits instructions according to when. Matches do not prove truth or current state. Original history remains available. With system delivery, instructions and all check instructions are placed once in the system context, without retrieval or conditions. The original baseline instructions and policy always remain. This is a declarative program, not executable source. Design any useful approach in this space; do not assume repeating advice is best.";
+export const DIAGNOSIS_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["hypotheses", "probes"],
+  properties: {
+    hypotheses: { type: "string" },
+    probes: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["case", "actions"],
+        properties: {
+          case: { type: "string" },
+          actions: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: ["role", "name", "argumentsJson"],
+              properties: {
+                role: { type: "string", enum: ["assistant", "user"] },
+                name: { type: "string" },
+                argumentsJson: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+export function parseResponse(response) {
+  assert.notEqual(response.stopReason, "max_tokens", "Engineer output truncated");
+  return JSON.parse(
+    response.content
+      .filter((b) => b.type === "text")
+      .map((b) => b.text)
+      .join("\n"),
+  );
+}
+export function feedbackRow(episode, caseId) {
+  const projected = projectFeedback(episode);
+  const text = JSON.stringify(
+    projected.timeline.map((r) => {
+      if (!r.observations) return r;
+      const { observations, ...rest } = r;
+      return {
+        ...rest,
+        publicSnapshot: Object.fromEntries(observations.records.map((v) => [v.fact, v.value])),
+      };
+    }),
+  );
+  const bindings = [
+    ...new Set(
+      episode.transcript
+        .filter((r) => r.type === "tool" && r.seat === "actor")
+        .flatMap((r) =>
+          Object.values(r.arguments ?? {}).filter(
+            (v) => typeof v === "string" && /^(?:555-|[CLPBD]\d{4})/.test(v),
+          ),
+        ),
+    ),
+  ];
+  return {
+    case: caseId,
+    passed: episode.verdict.passed && ["user-ended", "human-transfer"].includes(episode.reason),
+    termination: projected.termination,
+    actorObservedSyntheticBindings: bindings,
+    traceTruncated: text.length > 6000,
+    publicTrace:
+      text.length <= 6000
+        ? text
+        : text.slice(0, 1500) + "\n[Middle omitted; absence is not evidence]\n" + text.slice(-4500),
+  };
+}
+export function engineerPacket({ branch, round, actor, feedback, context }) {
+  const rows = branch === "experience" ? feedback.map(JSON.parse) : [];
+  const selected = [
+    ...rows.filter((r) => !r.passed).slice(0, 2),
+    ...rows.filter((r) => r.passed).slice(0, 1),
+  ];
+  return {
+    engineer: ENGINEER,
+    capabilities: CAPABILITIES,
+    round,
+    parentProgram: actor,
+    policy: context.policy,
+    agentTools: context.agentTools,
+    customerTools: context.userTools,
+    evidence:
+      branch === "experience"
+        ? {
+            summaries: rows.map(
+              ({ publicTrace: _trace, actorObservedSyntheticBindings: _bindings, ...r }) => r,
+            ),
+            traces: selected,
+          }
+        : "Execution history, grades, selection outcomes and diagnostic results are withheld in this feedback-ablation control. Use the policy, tool contracts and your previous design. Return no probes. Your proposals receive the same fixed number of evaluations and the same final host selection rule.",
+    diagnosticContract:
+      "Experience branch only: propose up to 3 experiments, each at most 6 native actions, using case aliases from the summaries. Each experiment resets a copy to that parent trial's final state, applies your chosen actions, and reports before/after binary native success plus tool outputs. Roles may be assistant or user. These are privileged development probes, not actions available to the deployed support agent; consent and role separation still apply during evaluated conversations. No initialization, private customer scenario, hidden task specification or reference solution is exposed. Known synthetic IDs observed by the actor are provided for tool arguments. Terminal handoff and unsupported tools are unavailable. Invalid probes return errors and are not retried.",
+  };
+}
+export function diagnosisRequest(packet) {
+  return {
+    messages: [
+      {
+        role: "user",
+        content:
+          JSON.stringify(packet) +
+          "\nForm competing explanations and choose informative diagnostic experiments. Return hypotheses and probes.",
+      },
+    ],
+    output_config: { format: { type: "json_schema", schema: DIAGNOSIS_SCHEMA } },
+    cache_control: { type: "ephemeral" },
+  };
+}
+export function programRequest(packet, diagnosis, probes) {
+  return {
+    messages: [
+      {
+        role: "user",
+        content:
+          JSON.stringify({ ...packet, diagnosis, diagnosticResults: probes }) +
+          "\nEngineer one reusable program using the supplied contract. Use evidence where available, preserve successful behavior and account for uncertainty. Return only the program JSON. This is your final submission for this round; no manual repair or extra generation is available.",
+      },
+    ],
+    output_config: { format: { type: "json_schema", schema: PROGRAM_SCHEMA } },
+    cache_control: { type: "ephemeral" },
+  };
+}
+export async function diagnosticProbes(diagnosis, branch, bank) {
+  if (branch !== "experience") return [{ status: "withheld-control" }];
+  if (!Array.isArray(diagnosis?.probes) || diagnosis.probes.length > 3)
+    return [{ error: "At most three probes are allowed" }];
+  const results = [];
+  for (const p of diagnosis.probes) {
+    const b = createBridge();
+    const actions = [];
+    try {
+      const source = bank.get(p.case);
+      assert.ok(source, "Unknown case alias");
+      assert.ok(
+        Array.isArray(p.actions) && p.actions.length >= 1 && p.actions.length <= 6,
+        "Probe needs 1-6 actions",
+      );
+      const context = await b.request({ method: "reset", index: source.index });
+      for (const t of source.episode.transcript.filter((r) => r.type === "tool")) {
+        const r = await b.request({
+          method: "call",
+          role: t.seat === "actor" ? "assistant" : "user",
+          name: t.name,
+          arguments: t.arguments,
+        });
+        assert.equal(r.content, t.content);
+        assert.equal(r.error, t.error);
+      }
+      const before = await b.request({ method: "judge" });
+      assert.equal(before.passed, source.episode.verdict.passed);
+      for (const a of p.actions) {
+        assert.ok(["assistant", "user"].includes(a.role), "Unsupported role");
+        const tools = a.role === "assistant" ? context.agentTools : context.userTools;
+        assert.ok(
+          a.name !== "transfer_to_human_agents" && tools.some((t) => t.function.name === a.name),
+          "Unsupported diagnostic tool",
+        );
+        const args = JSON.parse(a.argumentsJson);
+        const result = await b.request({
+          method: "call",
+          role: a.role,
+          name: a.name,
+          arguments: args,
+        });
+        actions.push({
+          ...a,
+          ...result,
+          content: result.content.slice(0, 1500),
+          truncated: result.content.length > 1500,
+        });
+      }
+      const after = await b.request({ method: "judge" });
+      results.push({
+        case: p.case,
+        beforePassed: before.passed,
+        afterPassed: after.passed,
+        actions,
+      });
+    } catch (error) {
+      results.push({ case: p.case, actions, error: error.message });
+    } finally {
+      b.close();
+    }
+  }
+  return results;
+}
+export function parseProgram(response) {
+  try {
+    const program = validateProgram(parseResponse(response));
+    return { valid: true, program, actor: JSON.stringify(program) };
+  } catch (error) {
+    return { valid: false, error: error.message };
+  }
+}
+
+```
+
+### Core Architecture Module: `benchmarks/learning-strategy/telecom/rediscovery2-engineer.mjs`
+```
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import {
+  ENGINEER,
+  DIAGNOSIS_SCHEMA as BASE_SCHEMA,
+  diagnosisRequest as baseDiagnosisRequest,
+  parseResponse,
+  diagnosticProbes,
+} from "./rediscovery-engineer.mjs";
+import { SCHEMAS, parseProgram, compilerFeedback } from "./rediscovery2-runtime.mjs";
+export { ENGINEER, parseResponse, diagnosticProbes };
+export const CAPABILITIES =
+  "Choose delivery in your diagnostic plan. For system delivery, return ONLY delivery and instructions (1..3500 characters); no checks/search metadata exists. It appends the instruction text once. For each_turn delivery, use instructions <=2000 characters plus up to 6 checks; each check has unique lowercase id <=40, source customer/tools/public, contains 1..4 literal search strings of 1..80 characters, take integer1..3, when always/found/missing, instruction1..500 characters. Total compact program JSON <=4000 characters. each_turn reads only actor-visible historical customer speech/tool responses and the latest explicit public snapshot. Matches do not establish current truth. The baseline and policy remain authoritative. Generated content may not contain instance identities, account IDs or phone numbers. You may revise a compiler-rejected submission once, using only mechanical feedback. There are no human repairs. Static instructions must express conditional advice as prose, not assert facts about a case.";
+const digest = (v) => createHash("sha256").update(JSON.stringify(v)).digest("hex");
+
+/** Private synthetic development evidence; never a real-user anonymizer. */
+export function publicTrace(episode) {
+  const rows = [],
+    pending = [];
+  const rejected = new Set(
+    episode.transcript
+      .filter((r) => ["grounding", "observation-failure"].includes(r.type))
+      .map((r) => r.responseId),
+  );
+  for (const r of episode.transcript) {
+    if (r.type === "public-observations")
+      rows.push({ kind: "customer-publication", speech: r.speech, snapshot: r.snapshot });
+    else if (r.type === "tool" && r.seat === "actor") {
+      const call = pending.shift();
+      assert.ok(call);
+      assert.equal(call.name, r.name);
+      assert.deepEqual(call.input, r.arguments);
+      rows.push({
+        kind: "actor-tool-result",
+        callId: call.id,
+        name: r.name,
+        arguments: r.arguments,
+        content: r.content,
+        error: r.error,
+      });
+    } else if (r.id && r.seat === "actor") {
+      rows.push({ kind: "actor-response", content: r.content });
+      pending.push(...r.content.filter((b) => b.type === "tool_use"));
+    } else if (
+      r.id &&
+      r.seat === "user" &&
+      !rejected.has(r.id) &&
+      r.content.some((b) => b.type === "tool_use" && b.name === "end_conversation")
+    ) {
+      const speech = r.content
+        .filter((b) => b.type === "text")
+        .map((b) => b.text)
+        .join("\n")
+        .trim();
+      if (speech && episode.publicConversation.some((t) => t.seat === "user" && t.text === speech))
+        rows.push({ kind: "customer-final-speech", speech });
+    }
+  }
+  return rows;
+}
+export function feedbackSummary(episode, caseId) {
+  return {
+    case: caseId,
+    passed: episode.verdict.passed && ["user-ended", "human-transfer"].includes(episode.reason),
+    termination: episode.reason,
+    traceHash: digest(publicTrace(episode)),
+  };
+}
+export function engineerPacket({
+  branch,
+  round,
+  actor,
+  feedback,
+  context,
+  bank,
+  previousCompilerFeedback = null,
+}) {
+  const summaries = branch === "experience" ? feedback.map(JSON.parse) : [];
+  const packet = {
+    engineer: ENGINEER,
+    capabilities: CAPABILITIES,
+    round,
+    parentProgram: actor,
+    previousCompilerFeedback,
+    policy: context.policy,
+    agentTools: context.agentTools,
+    customerTools: context.userTools,
+    evidence:
+      branch === "experience"
+        ? {
+            summaries,
+            traces: [],
+            omitted: [],
+            note: "Complete selected actor-visible traces, retaining arguments, results and identifier associations. Synthetic data only; keep instance values out of generated programs. No private customer tools or hidden scenario. Missing traces are identified, never interpreted as absent actions.",
+          }
+        : "Execution histories, grades, diagnostic results and host selection are withheld. Reason from policy/tools and your own prior submission. Return no probes. Mechanical compiler feedback and the same maximum revision opportunity are available to both arms.",
+    diagnosticContract:
+      "Experience only: up to 3 native experiments, at most 6 actions each, on isolated copies of parent final states. Use case aliases from summaries and tool names/arguments from the provided contracts. Roles assistant or user are privileged development capabilities; normal support execution retains role separation and consent. Results include before/after binary outcome and tool outputs, not hidden assertions. Terminal handoff is unavailable. Failed probes are retained without retries. Explicitly assess which hypotheses are supported, refuted or unresolved before writing your program.",
+  };
+  if (branch === "experience") {
+    const selected = [
+      ...summaries.filter((r) => !r.passed).slice(0, 2),
+      ...summaries.filter((r) => r.passed).slice(0, 1),
+    ];
+    for (const s of selected) {
+      const e = bank.get(s.case)?.episode;
+      assert.ok(e);
+      assert.deepEqual(feedbackSummary(e, s.case), s);
+      const row = { ...s, traceTruncated: false, timeline: publicTrace(e) };
+      packet.evidence.traces.push(row);
+      if (Buffer.byteLength(JSON.stringify(packet)) > 180000) {
+        packet.evidence.traces.pop();
+        packet.evidence.omitted.push({
+          case: s.case,
+          reason: "complete trace exceeds request allocation; no middle sections removed",
+        });
+      }
+    }
+    if (summaries.some((r) => !r.passed))
+      assert.ok(
+        packet.evidence.traces.some((r) => !r.passed),
+        "No complete failed trace fits; qualify a different evidence interface",
+      );
+  }
+  assert.ok(Buffer.byteLength(JSON.stringify(packet)) <= 185000);
+  return packet;
+}
+export function diagnosisRequest(packet) {
+  const request = baseDiagnosisRequest(packet);
+  request.output_config.format.schema = {
+    ...BASE_SCHEMA,
+    required: [...BASE_SCHEMA.required, "delivery"],
+    properties: {
+      ...BASE_SCHEMA.properties,
+      delivery: { type: "string", enum: ["system", "each_turn"] },
+    },
+  };
+  return request;
+}
+export function programRequest(packet, diagnosis, probes, repair = null) {
+  const request = {
+    messages: [
+      {
+        role: "user",
+        content:
+          JSON.stringify({
+            ...packet,
+            diagnosis,
+            diagnosticResults: probes,
+            compilerRepair: repair,
+          }) +
+          "\nReturn assessment and program. In assessment, distinguish supported, refuted and unresolved hypotheses using actual probe outputs (or explain evidence is withheld). Do not invent results. Produce a reusable program with the chosen delivery. A rejected first submission gets at most one compiler-only revision; no human fixes or task feedback between those attempts.",
+      },
+    ],
+    output_config: {
+      format: {
+        type: "json_schema",
+        schema: {
+          type: "object",
+          additionalProperties: false,
+          required: ["assessment", "program"],
+          properties: { assessment: { type: "string" }, program: SCHEMAS[diagnosis.delivery] },
+        },
+      },
+    },
+    cache_control: { type: "ephemeral" },
+  };
+  assert.ok(SCHEMAS[diagnosis.delivery]);
+  assert.ok(
+    Buffer.byteLength(JSON.stringify(request)) < 299000,
+    "Generation request exceeds qualified allocation",
+  );
+  return request;
+}
+
+export async function generateProgram(
+  provider,
+  packet,
+  diagnosis,
+  probes,
+  { label, remainingUsd, signal },
+) {
+  const attempts = [];
+  let usd = 0,
+    response,
+    generated,
+    feedback = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    response = await provider.call(programRequest(packet, diagnosis, probes, feedback), {
+      tag: `${label}:program-${attempt}`,
+      maxTokens: 4096,
+      localRemaining: remainingUsd - usd,
+      signal,
+    });
+    usd += response.usd;
+    generated = parseProgram(response, diagnosis.delivery);
+    attempts.push({ id: response.id, generated });
+    feedback = compilerFeedback(response, diagnosis.delivery);
+    if (generated.valid) break;
+  }
+  return { attempts, response, generated, feedback, usd };
 }
 
 ```
@@ -1245,531 +1669,6 @@ function ControlApp() {
 
 ```
 
-### Core Architecture Module: `desktop/renderer/src/components/agents/AgentsView.tsx`
-```
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-import { describeError } from "../../lib/describe-error";
-import { cn } from "../../lib/utils";
-import { useAgentsStore, type AgentEntry, type AgentFile } from "../../stores/agents-store";
-import { useGatewayStore } from "../../stores/gateway-store";
-
-function AgentFilePanel({
-  file,
-  agentId,
-  onSave,
-}: {
-  file: AgentFile;
-  agentId: string;
-  onSave: (agentId: string, name: string, content: string) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(file.content ?? "");
-
-  return (
-    <div className="rounded-lg border border-border/10 bg-muted/20 overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/30">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-foreground">{file.name}</span>
-          {file.missing && (
-            <span className="text-badge px-1 py-0.5 rounded bg-warning/10 text-warning">
-              missing
-            </span>
-          )}
-          {file.size != null && (
-            <span className="text-badge text-muted-foreground">
-              {file.size < 1024 ? `${file.size}B` : `${(file.size / 1024).toFixed(1)}KB`}
-            </span>
-          )}
-        </div>
-        <div className="flex gap-1">
-          {editing ? (
-            <>
-              <button
-                onClick={() => {
-                  onSave(agentId, file.name, draft);
-                  setEditing(false);
-                }}
-                className="px-2 py-0.5 text-xs rounded bg-brand/20 text-brand hover:bg-brand/40"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => {
-                  setDraft(file.content ?? "");
-                  setEditing(false);
-                }}
-                className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground hover:bg-muted/90"
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => {
-                setDraft(file.content ?? "");
-                setEditing(true);
-              }}
-              className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground hover:bg-muted/90"
-            >
-              Edit
-            </button>
-          )}
-        </div>
-      </div>
-      {editing ? (
-        <textarea
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          className="w-full p-3 text-xs font-mono bg-transparent border-0 focus:outline-none resize-none min-h-[120px]"
-          rows={8}
-        />
-      ) : file.content ? (
-        <pre className="p-3 text-xs font-mono text-foreground/80 whitespace-pre-wrap max-h-[200px] overflow-y-auto">
-          {file.content}
-        </pre>
-      ) : (
-        <div className="p-3 text-xs text-muted-foreground italic">
-          {file.missing ? "File does not exist yet" : "No content"}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const GENOME_FILES = new Set(["GENOME.md"]);
-const PROTOCOL_FILES = new Set(["PROTOCOLS.md", "TOOLS.md", "HEARTBEAT.md"]);
-const MEMORY_FILES = new Set(["MEMORY.md", "memory/MEMORY.md"]);
-
-function FilesSections({
-  files,
-  agentId,
-  onSaveFile,
-}: {
-  files: AgentFile[];
-  agentId: string;
-  onSaveFile: (agentId: string, name: string, content: string) => void;
-}) {
-  const genome = files.filter((f) => GENOME_FILES.has(f.name));
-  const protocols = files.filter((f) => PROTOCOL_FILES.has(f.name));
-  const memory = files.filter((f) => MEMORY_FILES.has(f.name));
-  const known = new Set([...GENOME_FILES, ...PROTOCOL_FILES, ...MEMORY_FILES]);
-  const other = files.filter((f) => !known.has(f.name));
-
-  return (
-    <div className="space-y-5">
-      {genome.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-brand uppercase tracking-wider px-1 mb-2">
-            Core identity (read-mostly)
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Safety rules, temperament baselines and core values. This file anchors who your agent is
-            — everything it learns is constrained by it, and nothing the agent does rewrites it.
-          </p>
-          <div className="space-y-2">
-            {genome.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {memory.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-brand-cyan uppercase tracking-wider px-1 mb-2">
-            Working memory (agent-maintained)
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Rewritten by the agent during its maintenance cycles: its self-notes, what it knows
-            about you, what it's working on, and open questions it wants to chase.
-          </p>
-          <div className="space-y-2">
-            {memory.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {protocols.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-foreground/70 uppercase tracking-wider px-1 mb-2">
-            Operating procedures
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Runtime behavior, memory conventions, safety rules, tools config. These govern what the
-            agent does, not who it is.
-          </p>
-          <div className="space-y-2">
-            {protocols.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {other.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-foreground/50 uppercase tracking-wider px-1 mb-2">
-            Other
-          </h4>
-          <div className="space-y-2">
-            {other.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function AgentDetail({
-  agent,
-  files,
-  filesLoading,
-  onSaveFile,
-}: {
-  agent: AgentEntry;
-  files: AgentFile[];
-  filesLoading: boolean;
-  onSaveFile: (agentId: string, name: string, content: string) => void;
-}) {
-  return (
-    <div className="space-y-4">
-      <div className="rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm p-4">
-        <div className="flex items-center gap-3 mb-3">
-          {agent.avatar && <span className="text-2xl">{agent.avatar}</span>}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">{agent.name ?? agent.id}</h3>
-            <p className="text-xs text-muted-foreground font-mono">{agent.id}</p>
-          </div>
-          {agent.isDefault && (
-            <span className="text-xs px-2 py-0.5 rounded bg-brand/10 text-brand">default</span>
-          )}
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {agent.workspace && (
-            <div>
-              <span className="text-muted-foreground">Workspace: </span>
-              <span className="text-foreground font-mono">{agent.workspace}</span>
-            </div>
-          )}
-          {agent.model && (
-            <div>
-              <span className="text-muted-foreground">Model: </span>
-              <span className="text-foreground">{agent.model}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {filesLoading ? (
-        <div className="p-4 text-sm text-muted-foreground text-center">Loading files…</div>
-      ) : (
-        <FilesSections files={files} agentId={agent.id} onSaveFile={onSaveFile} />
-      )}
-    </div>
-  );
-}
-
-export function AgentsView() {
-  const gwStatus = useGatewayStore((s) => s.status);
-  const request = useGatewayStore((s) => s.request);
-  const agents = useAgentsStore((s) => s.agents);
-  const selectedAgentId = useAgentsStore((s) => s.selectedAgentId);
-  const files = useAgentsStore((s) => s.files);
-  const filesLoading = useAgentsStore((s) => s.filesLoading);
-  const loading = useAgentsStore((s) => s.loading);
-  const setAgents = useAgentsStore((s) => s.setAgents);
-  const setSelectedAgentId = useAgentsStore((s) => s.setSelectedAgentId);
-  const setFiles = useAgentsStore((s) => s.setFiles);
-  const setFilesLoading = useAgentsStore((s) => s.setFilesLoading);
-  const setLoading = useAgentsStore((s) => s.setLoading);
-  const setError = useAgentsStore((s) => s.setError);
-
-  const refresh = useCallback(async () => {
-    if (gwStatus !== "connected") return;
-    setLoading(true);
-    try {
-      const res = (await request("agents.list", {})) as {
-        agents?: AgentEntry[];
-      };
-      if (res?.agents) {
-        setAgents(res.agents);
-        if (!selectedAgentId && res.agents.length > 0) {
-          setSelectedAgentId(res.agents[0].id);
-        }
-      }
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load agents");
-    } finally {
-      setLoading(false);
-    }
-  }, [gwStatus, request, setAgents, setSelectedAgentId, selectedAgentId, setLoading, setError]);
-
-  // Load files when agent selection changes
-  const loadFiles = useCallback(async () => {
-    if (gwStatus !== "connected" || !selectedAgentId) return;
-    setFilesLoading(true);
-    try {
-      const listRes = (await request("agents.files.list", {
-        agentId: selectedAgentId,
-      })) as { files?: AgentFile[] };
-      const fileList = listRes?.files ?? [];
-
-      // Load content for each file
-      const withContent = await Promise.all(
-        fileList.map(async (f) => {
-          if (f.missing) return f;
-          try {
-            const getRes = (await request("agents.files.get", {
-      
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/channels/ChannelSetupDrawer.tsx`
-```
-import { CheckCircle2, Loader2, QrCode, XCircle } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useGatewayStore } from "../../stores/gateway-store";
-import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { CHANNEL_SETUP_DESCRIPTORS } from "./channel-setup-fields";
-import { QrPairingDialog } from "./QrPairingDialog";
-
-interface ChannelSetupDrawerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  channelId: string;
-  label: string;
-  accountId?: string;
-  onSaved?: () => void;
-}
-
-type ProbeState = { ok: boolean; error?: string } | null;
-
-/**
- * Guided credential setup for a channel: per-channel fields with help copy,
- * validate-before-save (channels.validate probes the draft live without
- * persisting), then channels.configure writes + hot-restarts the account.
- */
-export function ChannelSetupDrawer({
-  open,
-  onOpenChange,
-  channelId,
-  label,
-  accountId,
-  onSaved,
-}: ChannelSetupDrawerProps) {
-  const request = useGatewayStore((s) => s.request);
-  const descriptor = CHANNEL_SETUP_DESCRIPTORS[channelId];
-
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [validating, setValidating] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [probe, setProbe] = useState<ProbeState>(null);
-  const [qrOpen, setQrOpen] = useState(false);
-
-  const handleOpenChange = (next: boolean) => {
-    if (!next) {
-      // Secrets never linger after the dialog closes.
-      setValues({});
-      setProbe(null);
-      setValidating(false);
-      setSaving(false);
-    }
-    onOpenChange(next);
-  };
-
-  const buildInput = () => {
-    const input: Record<string, string> = {};
-    for (const [key, value] of Object.entries(values)) {
-      if (value.trim()) input[key] = value.trim();
-    }
-    return input;
-  };
-
-  const requiredFilled = (descriptor?.fields ?? [])
-    .filter((f) => !f.optional)
-    .every((f) => Boolean(values[f.key]?.trim()));
-  const hasAnyInput = Object.values(values).some((v) => v.trim());
-
-  const handleValidate = async () => {
-    setValidating(true);
-    setProbe(null);
-    try {
-      const res = await request<{
-        result?: { ok?: boolean; error?: string | null };
-        probed?: boolean;
-        note?: string;
-      }>(
-        "channels.validate",
-        { channel: channelId, accountId, input: buildInput() },
-        {
-          timeoutMs: 30_000,
-        },
-      );
-      const ok = res?.result?.ok === true;
-      setProbe({
-        ok,
-        error: ok ? (res?.note ?? undefined) : (res?.result?.error ?? "Validation failed."),
-      });
-    } catch (err) {
-      setProbe({ ok: false, error: err instanceof Error ? err.message : String(err) });
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const res = await request<{
-        ok?: boolean;
-        runtime?: string;
-        probe?: { ok?: boolean; error?: string };
-      }>(
-        "channels.configure",
-        { channel: channelId, accountId, input: buildInput() },
-        {
-          timeoutMs: 30_000,
-        },
-      );
-      // Make sure the account is enabled so saving is sufficient to go live.
-      try {
-        await request("channels.update", { channel: channelId, accountId, enabled: true });
-      } catch {
-        // Older gateway without channels.update; configure already restarted it.
-      }
-      const probeOk = res?.probe ? res.probe.ok === true : true;
-      if (probeOk) {
-        toast.success(`${label} configured`, {
-          description: "Credentials saved and the channel restarted - no gateway restart.",
-        });
-      } else {
-        toast.warning(`${label} saved, but the probe failed`, {
-          description: res?.probe?.error ?? "Check the credentials.",
-        });
-      }
-      onSaved?.();
-      handleOpenChange(false);
-    } catch {
-      // Central toast reports the failure; keep the dialog open for retry.
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <>
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-[440px]">
-          <DialogHeader>
-            <DialogTitle>Set up {label}</DialogTitle>
-            <DialogDescription>
-              {descriptor?.docsHint ??
-                "Credentials are sent to your gateway, verified live, and applied without a restart."}
-            </DialogDescription>
-          </DialogHeader>
-
-          {!descriptor ? (
-            <p className="text-sm text-muted-foreground">
-              Guided setup is not available for this channel yet. Use the Config tab or the CLI
-              wizard (<span className="font-mono">bitterbot onboard</span>).
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {descriptor.fields.map((field) => (
-                <div key={field.key} className="space-y-1">
-                  <Label htmlFor={`setup-${channelId}-${field.key}`}>
-                    {field.label}
-                    {field.optional && (
-                      <span className="text-muted-foreground font-normal"> (optional)</span>
-                    )}
-                  </Label>
-                  <Input
-                    id={`setup-${channelId}-${field.key}`}
-                    type={field.sensitive ? "password" : "text"}
-                    autoComplete="off"
-                    placeholder={field.placeholder}
-                    value={values[field.key] ?? ""}
-                    onChange={(e) => {
-                      setValues((prev) => ({ ...prev, [field.key]: e.target.value }));
-                      setProbe(null);
-                    }}
-                  />
-                  {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
-                </div>
-              ))}
-
-              {descriptor.qrLogin && (
-                <Button variant="outline" className="w-full" onClick={() => setQrOpen(true)}>
-                  <QrCode className="h-4 w-4 mr-2" /> Link device via QR
-                </Button>
-              )}
-
-              {probe && (
-                <div
-                  className={`flex items-start gap-2 text-sm rounded-md border p-2 ${
-                    probe.ok ? "border-success/30 text-success" : "border-danger/30 text-danger"
-                  }`}
-                >
-                  {probe.ok ? (
-                    <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  ) : (
-                    <XCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  )}
-                  <span>{probe.ok ? (probe.error ?? "Connected.") : probe.error}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {descriptor && descriptor.fields.length > 0 && (
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => void handleValidate()}
-                disabled={!hasAnyInput || validating || saving}
-              >
-                {validating && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
-                Validate
-              </Button>
-              <Button onClick={() => void handleSave()} disabled={!requiredFilled || saving}>
-                {saving && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
-                Save &amp; Enable
-              </Button>
-            </DialogFooter>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <QrPairingDialog
-        open={qrOpen}
-        onOpenChange={setQrOpen}
-        channelId={channelId}
-        label={label}
-        accountId={accountId}
-        onLinked={onSaved}
-      />
-    </>
-  );
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1799,385 +1698,166 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eca2269a` (2026-11-02)
-**Commit Message**: fix(skills): skills index compactor no longer merges a block into the next one (#351)
+### Incident Patch 1: `f10139f8` (2026-11-05)
+**Commit Message**: feat(memory): run gated failure experiments from idle dreams (#365)
 
-The compactor's block regex matched the description lazily with [\s\S]*?,
-so a <skill> block with any child line beyond name/description/location
-failed at its own </skill>, backtracked, and swallowed the following block:
-the model saw one skill's name with the next skill's location, and the next
-skill disappeared from the index. Descriptions are XML-escaped, so the
-description now matches [^<]*; extra child lines are captured and kept.
+* feat(memory): schedule gated failure experiments from idle dreams
 
-Found when per-skill <evidence> lines in the skill-prior harness pointed the
-model at the decoy's SKILL.md on every annotated entry.
+* fix(skills): bind learning promotion to its evaluated incumbent
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(memory): commit learning reservations on supported Node versions
 
-**File**: `src/agents/system-prompt-skills.test.ts` (modified, +29/-0)
+---------
+
+Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
+
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -117,6 +117,35 @@ describe("compactSkillsPrompt", () => {
-     expect(out.length).toBeLessThan(4_000);
-   });
+@@ -15,7 +15,7 @@ A consciousness-inspired memory pipeline:
+ - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
+ - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
+ - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
+-- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
++- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
  
-+  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
-+    const annotated = [
-+      "  <skill>",
-+      "    <name>alpha</name>",
-+      "    <description>Use for alpha. Not for beta.</description>",
-+      "    <location>/skills/alpha/SKILL.md</location>",
-+      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
-+      "  </skill>",
-+    ].join("\n");
-+    const out = compactSkillsPrompt(
-+      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
-+    );
-+    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
-+    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
-+    expect(alpha).toContain(
-+      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
-+    );
-+    expect(alpha).not.toContain("beta/SKILL.md");
-+    expect(alpha).toContain("<description>Use for alpha.</description>");
-+    expect(compactSkillsPrompt(out)).toBe(out);
-+  });
-+
-+  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
-+    const raw = skill("alpha", "Use when x < y.");
-+    const out = compactSkillsPrompt(index([raw, skill("beta", "Use for beta.")]));
-+    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta"]);
-+    expect(out).toContain("<location>/skills/alpha/SKILL.md</location>");
-+  });
-+
-   it("is a no-op without skill blocks", () => {
-     expect(compactSkillsPrompt("no skills here")).toBe("no skills here");
-   });
-```
-
-**File**: `src/agents/system-prompt-skills.ts` (modified, +20/-2)
-```diff
-@@ -10,8 +10,16 @@
- export const SKILLS_PROMPT_BUDGET_CHARS = 4_000;
- const DESCRIPTION_STEPS = [160, 80, 40];
- 
-+/**
-+ * One `<skill>` block. The description is XML-escaped, so it holds no `<` and
-+ * cannot run past its own closing tag into the next block. Any further child
-+ * lines (an `<evidence>` note, say) are captured and kept as they are; the
-+ * old lazy `[\s\S]*?` description let a block with an extra line swallow
-+ * the next block whole, pairing one skill's name with the next one's
-+ * location.
-+ */
- const SKILL_BLOCK_RE =
--  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([\s\S]*?)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?[ \t]*<\/skill>/gm;
-+  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([^<]*)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?((?:[ \t]*<(?!\/?skill>)[^\n]*\n)*)[ \t]*<\/skill>/gm;
- 
- function unescapeXml(text: string): string {
-   return text
-@@ -88,7 +96,14 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
-   const defaultRoot = resolveDefaultSkillsRoot(prompt);
-   const rendered = prompt.replace(
-     SKILL_BLOCK_RE,
--    (_block, indent: string, name: string, description: string | undefined, location) => {
-+    (
-+      _block,
-+      indent: string,
-+      name: string,
-+      description: string | undefined,
-+      location: string | undefined,
-+      extra: string | undefined,
-+    ) => {
-       const inner = `${indent}  `;
-       const lines = [`${indent}<skill>`, `${inner}<name>${name}</name>`];
-       if (maxDescriptionChars !== null && description) {
-@@ -104,6 +119,9 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
-       ) {
-         lines.push(`${inner}<location>${location}</location>`);
-       }
-+      if (extra) {
-+        lines.push(extra.replace(/\n$/, ""));
-+      }
-       lines.push(`${indent}</skill>`);
-       return lines.join("\n");
-     },
-```
-
----
-
-### Incident Patch 2: `41241db2` (2026-11-02)
-**Commit Message**: fix(skills): record skill executions when the agent reads a skill's SKILL.md (#350)
-
-The execution-tracking hook matched skill crystals only when skill_category
-equalled the tool name. Since migration v63 removed the tool-name-keyed
-crystals, nothing matched and skill_executions stayed empty, so the bridge
-maturity gate could never pass and run outcomes had nothing to stamp.
-
-A read of <skill>/SKILL.md now credits that skill's crystal (by folder name
-or crystal path), once per run. The tool-name match is kept.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/memory/skills-pipeline.md` (modified, +26/-17)
-```diff
-@@ -36,18 +36,28 @@ below for each module.
- 
- ### What an execution row means (PLAN-45 Phase 1)
- 
--`skill_executions` receives one row per tool call that matched a skill
--crystal by name (`recorded_by = 'after_tool_call'`). The match
--(`execution-tracking-hook.ts`) requires a chunk with `semantic_type` or
--`memory_type` of `skill`, a lifecycle of `generated`/`activated`/`frozen`, an
--origin other than `dream`, and a `skill_category` equal to the normalized
--tool name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the
--SKILL.md frontmatter name or folder name (`skill-category.ts`), and the only
--chunks ever keyed on tool names were the retired crystallizer's, which
--migration v63 purged. On a post-v63 node the hook therefore never matches:
--the table stays empty, and the bridge maturity gate below (three run-level
--executions at a success rate of 0.7 or better) cannot pass, so no crystal
--auto-publishes. The hook also skips A2A and validation sessions. When a row
-+`skill_executions` receives one row per skill a run loaded
-+(`recorded_by = 'after_tool_call'`). The hook (`execution-tracking-hook.ts`)
-+matches a chunk with `semantic_type` or `memory_type` of `skill`, a lifecycle
-+of `generated`/`activated`/`frozen` and an origin other than `dream`, in one
-+of two ways:
-+
-+- **SKILL.md read** (the match that fires in practice): a `read` call whose
-+  path ends in `SKILL.md` credits the crystal whose `skill_category` equals
-+  the skill's folder name, or whose `path` is that folder. A second read of
-+  the same SKILL.md in the same run adds no row, so a run is counted once.
-+- **Tool name**: a crystal whose `skill_category` equals the normalized tool
-+  name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the SKILL.md
-+  frontmatter name or folder name (`skill-category.ts`), and the only chunks
-+  ever keyed on tool names were the retired crystallizer's, which migration
-+  v63 purged, so on a post-v63 node this match finds nothing. Before the
-+  SKILL.md match was added (2026-11-02) the table therefore stayed empty and
-+  the bridge maturity gate below could not pass.
-+
-+Only skills that have a crystal get rows. File-based skills without one
-+(bundled skills, most workspace skills) are credited by the SKILL.md read
-+crediting pass instead (see "SKILL.md read crediting" below). The hook also
-+skips A2A and validation sessions. When a row
- is written it carries the journal run it happened in (`run_id`,
- `tool_call_id`) and an `evidence` class:
- 
-@@ -638,8 +648,8 @@ consolidation cycle (default factor: 0.95).
- 
- ### SKILL.md read crediting (PLAN-44 Phase 5a)
- 
--The tracker above matches tool names against memory crystals; it never
--saw a file-based skill. `src/memory/skill-evolution/skill-reads.ts` closes
-+The tracker above records only skills that have a memory crystal; most
-+file-based skills have none. `src/memory/skill-evolution/skill-reads.ts` closes
- that: on every housekeeping pass it scans journal runs since a cursor,
- finds `read` (or exec) tool calls whose path is a live skill's SKILL.md,
- and records one event per (run, skill) with the run's outcome (ended
-@@ -1080,9 +1090,8 @@ responses (same gate, wire name `response-<query>-<skill>`), and the manual
-    passes AND the `SkillExecutionTracker` reports at least 3 run-level
-    executions with a success rate in `[0.7, 1]`. If either dependency is not
-    wired on the bridge, or a metric is non-finite or above 1, the answer is
--   "no": missing evidence is never permission to publish. On a post-v63 node
--   no crystal reaches 3 executions (see "What an execution row means"), so
--   this leg is currently closed.
-+   "no": missing evidence is never permission to publish. Executions count
-+   only once the run outcome is stamped (see "What an execution row means").
- 5. Generates a SKILL.md format with frontmatter
- 6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+ ### 2. Dream Engine (`src/memory/dream-engine.ts`)
  
 ```
 
-**File**: `src/memory/execution-tracking-hook.test.ts` (modified, +65/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -175,3 +175,68 @@ describe("createExecutionTrackingHook evidence semantics (PLAN-45 Phase 0)", ()
-     expect(rows.map((r) => r.success)).toEqual([1, 0]);
-   });
- });
-+
-+describe("createExecutionTrackingHook SKILL.md attribution", () => {
-+  function readSetup() {
-+    const { db } = setup();
-+    db.prepare(
-+      `INSERT INTO chunks (
-+        id, path, source, start_line, end_line, text, hash, model, embedding,
-+        updated_at, created_at, lifecycle, semantic_type, skill_category, origin
-+      ) VALUES ('sk2', '/home/u/.bitterbot/skills/public-apis', 'skills', 0, 0, 'skill body', 'h2',
-+        'local', '[]', ?, ?, 'frozen', 'skill', 'public-apis', 'indexed')`,
-+    ).run(NOW, NOW);
-+    const tracker = new SkillExecutionTracker(db);
-+    const hook = createExecutionTrackingHook(tracker, db, null);
-+    const read = (path: string, runId = "r1", key = "path") =>
-+      hook(
-+        { toolName: "read", params: { [key]: path }, result: "ok", durationMs: 3 },
-+        { toolName: "read", sessionKey: "s1", runId, toolCallId: `tc-${runId}-${path}` },
-+      );
-+    const rows = () =>
-+      db
-+        .prepare(`SELECT skill_crystal_id AS id, run_id, tool_name FROM skill_executions`)
-+        .all() as Array<{ id: string; run_id: string; tool_name: string }>;
-+    return { db, read, rows };
-+  }
-+
-+  it("credits the skill whose SKILL.md the agent read, by folder name", () => {
-+    const { read, rows } = readSetup();
-+    read("/opt/elsewhere/public-apis/SKILL.md");
-+    expect(rows()).toEqual([{ id: "sk2", run_id: "r1", tool_name: "read" }]);
-+  });
-+
-+  it("matches by crystal path and accepts file_path and Windows separators", () => {
-+    const { read, rows } = readSetup();
-+    read("C:\\Users\\u\\skills\\public-apis\\SKILL.md", "r1", "file_path");
-+    read("/home/u/.bitterbot/skills/public-apis/skill.md", "r2");
-+    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
-+  });
-+
-+  it("records one row per skill per run when the SKILL.md is read again", () => {
-+    const { read, rows } = readSetup();
-+    read("/s/public-apis/SKILL.md", "r1");
-+    read("/s/public-apis/SKILL.md", "r1");
-+    read("/s/public-apis/SKILL.md", "r2");
-+    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
-+  });
-+
-+  it("ignores reads of other files and SKILL.md files with no crystal", () => {
-+    const { read, rows } = readSetup();
-+    read("/s/public-apis/README.md");
-+    read("/s/unknown-skill/SKILL.md");
-+    read("SKILL.md");
-+    expect(rows()).toEqual([]);
-+  });
-+
-+  it("lets the run-outcome back-fill stamp the row", () => {
-+    const { db, read } = readSetup();
-+    read("/s/public-apis/SKILL.md", "r9");
-+    expect(stampExecutionRunOutcome(db, "r9", { label: "pass", level: 1 })).toBe(1);
-+    const row = db
-+      .prepare(`SELECT run_outcome_label, evidence FROM skill_executions WHERE run_id = 'r9'`)
-+      .get() as { run_outcome_label: string; evidence: string };
-+    expect(row.run_outcome_label).toBe("pass");
-+    expect(row.evidence).not.toBe("tool");
-+  });
-+});
+@@ -214,7 +214,7 @@ The gate observes whether the agent actually reads the skill. A skill that does
+ 
+ **You can inspect the evidence.** The Evolution tab and `bitterbot skills evidence` expose validation results, credited uses, model information, and lineage. Young nodes may produce few promotions while evidence accumulates.
+ 
+-Production skill evolution is **on by default**, subject to evidence, model availability and budgets. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for host-supplied experiments. It does not automatically run experiments or put research candidates into live conversations. Set `memory.proceduralLearning.mode: "off"` to disable that facility; `skills.evolution.enabled: false` disables the production evolution loop.
++Production skill evolution is **on by default**, subject to evidence, model availability and budgets. An idle dream tick can now run failure-driven experiments without waiting for a full creative cycle. Candidates must pass the existing task gates before canary exposure; monitoring and rollback continue afterward. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) remains a host-invoked shadow facility, and its research candidates do not become live skills. Set `memory.proceduralLearning.automation.enabled: false` to disable the idle coordinator, `memory.proceduralLearning.mode: "off"` to disable its evidence service, or `skills.evolution.enabled: false` to disable production evolution altogether.
+ 
+ Skills can also include **pre-action interceptors**: code that checks proposed tool calls and can modify parameters, add context, require prerequisites, or block execution. Because an interceptor is a code path rather than a prompt, it runs on every matching tool call.
+ 
 ```
 
-**File**: `src/memory/execution-tracking-hook.ts` (modified, +79/-6)
+**File**: `benchmarks/learning-strategy/README.md` (modified, +1/-1)
 ```diff
-@@ -2,11 +2,17 @@
-  * Execution Tracking Hook: an `after_tool_call` plugin hook that feeds
-  * tool execution outcomes into the SkillExecutionTracker.
-  *
-- * What a row here MEANS (PLAN-45 Phase 0): "a tool whose name matches a
-- * skill crystal's category ran and did not report an error". That is
-- * tool-level evidence (`recorded_by = 'after_tool_call'`), never a judgment
-- * that the user's task succeeded. Competence consumers must not read it as
-- * such; Phase 1 back-fills run-level outcomes from the event journal.
-+ * What a row here MEANS (PLAN-45 Phase 0): "the agent loaded a skill in this
-+ * run" (it read the skill's SKILL.md), or "a tool whose name matches a skill
-+ * crystal's category ran". Either way the row is tool-level evidence
-+ * (`recorded_by = 'after_tool_call'`), never a judgment that the user's task
-+ * succeeded. Competence consumers must not read it as such; Phase 1
-+ * back-fills run-level outcomes from the event journal by run id.
-+ *
-+ * The SKILL.md match is the one that fires in practice. Skill crystals carry
-+ * the skill's folder or frontmatter name as `skill_category`, not a tool
-+ * name, so after migration v63 removed the tool-name-keyed crystals the
-+ * tool-name match found nothing and the table stayed empty.
-  *
-  * `reward_score` is written as NULL. The previous value was a bucket of the
-  * result's character count (0.5-0.8), which also fired the hormonal "reward"
-@@ -68,6 +74,65 @@ function findMatchingSkill(db: DatabaseSync, toolName: string): string | null {
-   }
+@@ -2,7 +2,7 @@
+ 
+ Published evidence: [data/README.md](data/README.md). Restore the checksum-verified archives before following historical `results/` links or running recorded-trace tests. The [readable latest results and branded graphic](published/telecom-repair-reuse-v1/README.md) are available without extraction.
+ 
+-Current gateway behavior: the [host learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for registered host adapters. Explicit `memory.proceduralLearning.mode: "off"` disables it. The service is lazy and does not schedule these experiments or activate their candidates. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
++Current gateway behavior: the [learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode. Its idle dream lane coordinates bounded failure experiments through the production skill-evolution gates. The manual research lab and verified-experience adapters remain separate: the scheduler does not rerun these benchmark studies or activate their candidates. Explicit `memory.proceduralLearning.mode: "off"` disables this service; `automation.enabled: false` disables its idle coordinator. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
+ 
+ The latest [conditional procedure reuse study](../../docs/memory/telecom-guarded-procedure-reuse.md) completed 60 comparison attempts and 88 additional-state executions. Two independently generated procedures each repaired **12/28 additional failed states** and preserved **16/16 healthy states with zero mutations**. Execution required no new model calls, but matched advice at **6/12** on the four original inputs. Both failed the frozen qualification gate. These are repeated states within four consumed case clusters, not fresh tasks or recipient transfer.
+ 
+```
+
+**File**: `docs/concepts/architecture.md` (modified, +3/-1)
+```diff
+@@ -69,7 +69,9 @@ The core of Bitterbot. A cognitive architecture grounded in computational neuros
+ | **Evolving Identity**    | `GENOME.md` (immutable safety axioms) constrains evolution. `MEMORY.md` (the Phenotype) is rewritten every dream cycle based on lived experience.                                                                                                                                                                                                                          |
+ | **Consolidation Engine** | Runs every 30 minutes: Ebbinghaus decay, chunk merging, SNN near-merge discovery, orphan cluster rescue, curiosity region mapping, governance enforcement.                                                                                                                                                                                                                 |
+ 
+-**Storage:** Single SQLite database per agent at `~/.bitterbot/memory/<agentId>.sqlite`. No external services.
++**Storage:** The memory index lives at `~/.bitterbot/memory/<agentId>.sqlite`. The procedural evidence service uses a separate `procedural-learning.sqlite` in the agent directory, so experiment records survive vector reindexing. No external database service is required.
++
++The dream engine also coordinates a [failure-learning lane](../memory/learning-strategy-lab.md#automatic-failure-experiments). Idle ticks can start bounded experiments independently of creative dreaming; proposal generation, task validation, canary monitoring and rollback remain separate modules.
+ 
+ Full documentation: [Memory Architecture](../memory/architecture-overview.md) · [Dream Engine](../memory/dream-engine.md) · [Curiosity](../memory/curiosity-and-search.md) · [Emotional System](../memory/emotional-system.md)
+ 
+```
+
+**File**: `docs/gateway/configuration-reference.md` (modified, +8/-2)
+```diff
+@@ -1949,13 +1949,19 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
+ 
+ ### `memory.proceduralLearning`
+ 
+-Available by default in shadow mode. No config block is needed. These settings make the host service available; they do not schedule experiments or inject research lessons into live prompts. The separate production skill-evolution loop is already on by default through `skills.evolution.enabled`.
++Available by default in shadow mode. No config block is needed. The service hosts both manual research experiments and an automatic failure-learning coordinator. Idle dream ticks run production experiments through the existing skill-evolution task gates; research candidates remain shadow-only. Production evolution is separately controlled by `skills.evolution.enabled`.
+ 
+ ```json5
+ {
+   memory: {
+     proceduralLearning: {
+       mode: "shadow", // "off" | "shadow" | "active"; default "shadow"
++      automation: {
++        enabled: true, // idle failure experiments through the production gates
++        maxLlmCalls: 64, // callback dispatches, not dollars or provider requests
++        maxAgentTurns: 240, // a trial turn can make multiple model requests
++        maxWallMinutes: 60, // checked before dispatch and promotion
++      },
+       experienceMemory: {
+         enabled: true, // redacted experience from verified acquisition runs only
+         minSupport: 2,
+@@ -1970,7 +1976,7 @@ Available by default in shadow mode. No config block is needed. These settings m
  }
+ ```
  
-+/**
-+ * The skill a `read` call loaded, when it read a SKILL.md: the skill key (its
-+ * folder name) and folder. Null for any other call.
-+ */
-+export function skillReadTarget(
-+  toolName: string,
-+  params: Record<string, unknown> | undefined,
-+): { key: string; dir: string } | null {
-+  if (normalizeToolName(toolName) !== "read" || !params) {
-+    return null;
-+  }
-+  const raw = [params.path, params.file_path, params.filePath].find(
-+    (v): v is string => typeof v === "string",
-+  );
-+  if (!raw) {
-+    return null;
-+  }
-+  const parts = raw.replace(/\\/g, "/").split("/");
-+  if (parts.length < 2 || parts.at(-1)?.toLowerCase() !== "skill.md") {
-+    return null;
-+  }
-+  const key = parts.at(-2);
-+  return key ? { key, dir: parts.slice(0, -1).join("/") } : null;
-+}
-+
-+/** The skill crystal for a SKILL.md read, by skill key or crystal path. */
-+function findSkillForRead(db: DatabaseSync, target: { key: string; dir: string }): string | null {
-+  try {
-+    const row = db
-+      .prepare(
-+        `SELECT id FROM chunks
-+         WHERE (COALESCE(semantic_type, 'general') = 'skill'
-+                OR COALESCE(memory_type, 'plaintext') = 'skill')
-+           AND COALESCE(lifecycle, 'generated') IN ('generated', 'activated', 'frozen')
-+           AND COALESCE(origin, '') != 'dream'
-+           AND (skill_category = ? OR path = ?)
-+         ORDER BY created_at DESC
-+         LIMIT 1`,
-+      )
-+      .get(target.key, target.dir) as { id: string } | undefined;
-+    return row?.id ?? null;
-+  } catch {
-+    return null;
-+  }
-+}
-+
-+/** True when this run already has a row for this skill (a re-read). */
-+function alreadyRecordedForRun(db: DatabaseSync, skillId: string, runId: string): boolean {
-+  try {
-+    return (
-+      db
-+        .prepare(`SELECT 1 FROM skill_executions WHERE skill_crystal_id = ? AND run_id = ? LIMIT 1`)
-+        .get(skillId, runId) !== undefined
-+    );
-+  } catch {
-+    return false;
-+  }
-+}
-+
- /**
-  * Publish maturity gate (mirrors checkBountyClaimQuality's execution floor in
-  * skill-network-bridge.ts): re-attempt network publish once a skill has this
-@@ -113,10 +178,18 @@ export function createExecutionTrackingHook(
-         hormonalManager.stimulate("error");
-       }
+-`mode: "off"` prevents the service from opening. `experienceMemory.enabled: false` disables extraction while retaining the lab. Explicit settings survive the default change; restart the gateway to apply changes. The strategy lab requires `shadow`; `active` is for explicit host adapters and does not start autonomous learning. Host integrations supply sandbox adapters, pinned verifiers and experiment budgets. Ordinary conversations are not automatically collected, and held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab) for the API, storage and promotion boundaries.
++`mode: "off"` prevents the service from opening. `automation.enabled: false` disables the idle coordinator while preserving the legacy full-dream evolution hook; `skills.evolution.enabled: false` disables production evolution altogether. `experienceMemory.enabled: false` disables adapter extraction while retaining the lab. Restart the gateway to apply changes. The automatic coordinator and strategy lab require `shadow`; `active` is for explicit host adapters. Automatic work respects the dream idle threshold, evolution cadence, usage budgets and pause state. Dispatch limits are reserved durably before work; exhausted limits hold candidates, and in-flight calls finish under their existing timeouts. Research host integrations still supply their own adapters, verifiers and budgets. The experiment ledger stores journal references and hashes, not raw conversations; held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab#automatic-failure-experiments) for recovery, accounting and promotion boundaries.
  
--      const skillId = findMatchingSkill(db, event.toolName);
-+      const readTarget = skillReadTarget(event.toolName, event.params);
-+      const skillId = readTarget
-+        ? findSkillForRead(db, readTarget)
-+        : findMatchingSkill(db, event.toolName);
-       if (!skillId) {
-         return;
-       }
-+      // One row per skill per run: the run outcome is stamped by run id, so
-+      // a second read of the same SKILL.md would count the run twice.
-+      if (readTarget && ctx.runId && alreadyRecordedForRun(db, skillId, ctx.runId)) {
-+        return;
-+      }
+ ### `memory.curiosity.evidence`
  
-       const execId = tracker.startExecution(skillId, ctx.sessionKey, {
-         toolName: event.toolName,
+```
+
+**File**: `docs/memory/architecture-overview.md` (modified, +1/-1)
+```diff
+@@ -502,7 +502,7 @@ cfg.memory?.healthSweep / .digest / .dreamBrief → scheduled reports
+ 
+ Most subsystems have sensible defaults and are enabled by default; disable one by setting `enabled: false` in its config block. The opt-in exceptions: the `exploration` dream mode (`memory.dream.modes.exploration.enabled`), learned construction rules (`memory.architectEvolution.enabled`), the dream engine's Skill Seekers research step (`memory.curiosity.autoResearch.enabled` must be `true`), and harness evolution (`agents.defaults.harnessEvolve.enabled`).
+ 
+-**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables it. Its per-agent database opens lazily for host use, with verified-experience extraction enabled when an adapter supplies a redacted extractor. This research facility does not automatically collect conversation traces, schedule experiments or modify live prompts. The separate production [skill-evolution loop](skills-pipeline.md) is already on by default and retains its validation, canary and rollback gates. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
++**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables this service. Its separate per-agent database opens lazily and records automatic failure experiments as well as host-requested research. Idle dream ticks coordinate the existing production [skill-evolution loop](skills-pipeline.md), with durable dispatch limits, task validation, canary exposure and rollback. `automation.enabled: false` disables the idle coordinator while retaining the legacy full-cycle hook. The manual strategy lab and adapter-based verified-experience extraction remain shadow-only; research candidates do not become live skills. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
+ 
+ **Message Batches lanes.** `memory.batch` (kill switch `enabled`, default `true`) routes latency-tolerant background lanes through the Anthropic Message Batches API: a lane call submits one batch, polls with backoff, and falls back to the live call on timeout (`maxWaitMinutes`, default 20) or any error. Default `lanes`: `memory/dream`, `memory/extraction`, `memory/discovery`, `skills/evolution` (the judge and maintainer; the proposer loop and on-demand RPC lanes always run live). Only Anthropic API-key models qualify; other providers take the live path.
+ 
+```
+
+**File**: `docs/memory/dream-engine.md` (modified, +2/-0)
+```diff
+@@ -54,6 +54,8 @@ type DreamState = "DORMANT" | "INCUBATING" | "DREAMING" | "SYNTHESIZING" | "AWAK
+ 
+ A cycle is triggered by a timer (default tick every 120 minutes, adaptive between 30 and 240 minutes by default), manually via `MemoryIndexManager.dream()`, or by an **emotional mini-dream** (see below). A scheduled full cycle also needs at least one new conversation, 60 minutes idle and 8 hours since the last full cycle (`minNewSessions`, `minIdleMinutes`, `minHoursBetween`).
+ 
++The same scheduled tick checks a dedicated [failure-learning lane](learning-strategy-lab.md#automatic-failure-experiments) before the creative-cycle gate. On the default agent, it can propose and test improvements after the idle threshold even if there are no new turns or a full dream ran recently. It shares the production evolution cadence (24 hours by default) and the full-cycle hook's single run, with durable dispatch limits and pause checks. Its task gate, canary and rollback modules retain promotion authority. The lane is serialized with other memory maintenance and may defer it while network work finishes; it does not consume the creative-cycle counters or run in emotional mini-dreams.
++
+ The minimum chunks required to trigger a dream cycle is **5**, so the dream engine activates within a single conversation session rather than requiring days of accumulated data.
+ 
+ After each dream cycle completes, the engine also performs an **RLM Working Memory rewrite** — updating MEMORY.md as a recursive state vector. See [Working Memory](./working-memory.md) for details.
+```
+
+**File**: `docs/memory/learning-strategy-lab.md` (modified, +28/-11)
+```diff
+@@ -3,20 +3,21 @@ title: "Learning Strategy Lab"
+ description: "Shadow evaluation of evolving actor and proposer instructions with local execution evidence and authenticated transfer."
+ ---
+ 
+-The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. It does not start a background job, alter the live harness, or publish to the public network. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
++The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. The lab does not schedule research studies or activate its candidates. The same service now also hosts a separate automatic coordinator for production failure experiments, described below. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
+ 
+ Hosts obtain the per-agent service with `getProceduralLearning({ cfg, agentId })` from the plugin SDK. No configuration block is required. The returned service may be null when explicitly disabled or when the memory manager is unavailable. A typical experiment registers development and held-out panels, adds the starting strategy with `archive.add`, evaluates it, proposes and evaluates children, selects from `archive.rank(developmentPanelId)`, and freezes the chosen hashes with `archive.seal` before final evaluation. The runnable benchmark below demonstrates this complete sequence, including fixed-proposer controls and recipient imports. Registering a panel is a trusted host operation; the `isolation` declaration is not itself an operating-system sandbox.
+ 
+ ## Defaults and automatic behavior
+ 
+-| Component                                                                  | Default             | What runs                                                                                                                                                                                 |
+-| -------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+-| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | The dream post-cycle hook learns from journaled runs and proposes skills when evidence, a model, cadence and budgets permit. Validation, canary monitoring and rollback govern promotion. |
+-| Procedural service (`memory.proceduralLearning.mode`)                      | `shadow`            | A local evidence store opens on first host use. Sandbox evaluations run only when a host registers an adapter and requests them.                                                          |
+-| Verified experience (`memory.proceduralLearning.experienceMemory.enabled`) | `true`              | After a settled acquisition run, a registered adapter's optional redacted extractor can attach experience. Held-out runs and invalid or interrupted outcomes are excluded.                |
+-| Strategy lab (`service.strategies`)                                        | Available in shadow | The host explicitly supplies panels, proposals and evaluations. There is no scheduler or automatic connection to conversation traces.                                                     |
++| Component                                                                  | Default             | What runs                                                                                                                                                                                  |
++| -------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
++| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | Idle dream ticks and the post-cycle hook share a learning lane. Evidence, model availability, cadence and budgets apply; task validation, canary monitoring and rollback govern promotion. |
++| Automatic coordinator (`memory.proceduralLearning.automation.enabled`)     | `true`              | In shadow mode, coordinates failure-driven production experiments on the default agent, with durable reservations and bounded retries.                                                     |
++| Procedural service (`memory.proceduralLearning.mode`)   
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
+- **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
+- **PR #363** (2026-11-05): Add shadow learning strategy lab and publish synthetic benchmark evidence (@VGIL77)
 - **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
 - **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
 - **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
-- **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
-- **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
-- **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
 
 ---
 
@@ -2197,51 +1877,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): skills index compactor no longer merges a block into the next one (#351
+## X. memory): run gated failure experiments from idle dreams (#365)
 
 **RULE**:
-When implementing operations in `src/agents/system-prompt-skills.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eca2269a`: skills): skills index compactor no longer merges a block into the next one (#351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f10139f8`: memory): run gated failure experiments from idle dreams (#365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents/system-prompt-skills.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
-    const annotated = [
-      "  <skill>",
-      "    <name>alpha</name>",
-      "    <description>Use for alpha. Not for beta.</description>",
-      "    <location>/skills/alpha/SKILL.md</location>",
-      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
-      "  </skill>",
-    ].join("\n");
-    const out = compactSkillsPrompt(
-      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
-    );
-    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
-    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
-    expect(alpha).toContain(
-      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
-    );
-    expect(alpha).not.toContain("beta/SKILL.md");
-    expect(alpha).toContain("<description>Use for alpha.</description>");
-    expect(compactSkillsPrompt(out)).toBe(out);
-  });
-
-  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
-    const raw = skill("alpha", "Use when x
+- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eca2269a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f10139f8` are properly handled with clean fallback behavior.

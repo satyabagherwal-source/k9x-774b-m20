@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `a89b18dc`  
+> **Source Version**: `bfcd87d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:37:24.571Z  
+> **Timestamp**: 2026-11-05T22:54:58.562Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:37:24.383Z  
+> **Harvest Timestamp**: 2026-11-05T22:54:58.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9708 stars
+- **Stars / Engagement**: 9717 stars
 
 ---
 
@@ -1736,11 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5305** (2026-11-04): **fix(mcp-server): support 2025-11-25 Tools clients**
-  *Symptoms*: ## I. Summary  Requests carrying `MCP-Protocol-Version: 2025-11-25` currently fail before initialize negotiation. Add that known version to the existing downstream handshake/Tools path, return it when requested, and keep discovery/error declarations consistent. Preserve the existing `2025-06-18` fallback for other unsupported initialization-body versions and strict unknown/modern identity rejection.  Production changes are limited to version classification, initialization and discovery. Upstream protocol selection and optional MCP capabilities retain their current boundaries. The normal runtime entry now exercises an equivalent pre-fix/fixed Tools comparison; historical business/control oracles remain pinned.  ## II. Related issue  Fixes #5302. Planning: Proposal #5303 and Design #5304; implementation TASK-5304001 and verification TASK-5304002.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace or formatting. - [x] **Verified maintainer/administrator exception:** Material agent participation; live canonical-repository identity/role checks are recorded below. - [ ] **Material agent participation:** Material participation without the verified exception.  Normal-path timed obligation
+- **Issue #5309** (2026-11-05): **fix(mcp-server): preserve SSE data priority with a no-space fallback**
+  *Symptoms*: ## I. Summary  MCP backends that emit legal SSE `data:{...}` lines currently fail initialization or HTTP tool response extraction. Keep the existing `data: ` immediate-return path, remember the first nonempty no-space candidate and use it only after a clean scan with no original-format match. An earlier no-space notification therefore cannot replace a later original-format result.  The only production edit is `parseSSEResponse` and its comments. Add focused parser/TestHost regressions and a bounded baseline/candidate mode in the existing real Wasm harness. No caller, other parser, MCP version, dependency or normal-mode historical baseline changes.  ## II. Related issue  Fixes #5306. Implements [Proposal #5307](https://github.com/higress-group/higress/issues/5307) and [Design #5308](https://github.com/higress-group/higress/issues/5308).  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Only nonsubstantive agent use. - [x] **Verified maintainer/administrator exception:** Material agent participation; authenticated canonical-repository role and PR-author match are recorded below. - [ ] **Material agent participation:** Ordinary non-exception path.  Ordinary-path timed obligations are N/A under the verified exception; implementation/verifica
 
-- **Issue #5304** (2026-11-04): **Design: Bounded MCP 2025-11-25 compatibility for mcp-server Tools workflows**
-  *Symptoms*: <!-- issue-spec:issue=design change=mcp-server-20251125-tools-compat version=1 -->  - Proposal Issue: 5303  ## Context  Implement Proposal #5303 for report #5302 by adding `2025-11-25` to the existing downstream initialize-based Tools path. Keep the unknown-body fallback at `2025-06-18`, reject unsupported version headers, and preserve modern `2026-07-28` validation and existing upstream protocol selection.  This Issue is the authoritative Design carrier. It defines a bounded compatibility measure, not complete implementation of every `2025-11-25` feature. AI assisted its preparation under explicit user authorization. The original publication did not claim implementation or test completion. The normal contribution path requires maintainer approval of the Proposal and Design; this run uses the verified administrator exception documented below.  ## Current Implementation Locations  Freeze the pre-fix comparison at upstream [`03a91cb3fbe2664ac190868ee062ca6bccbba4e2`](https://github.com/higress-group/higress/commit/03a91cb3fbe2664ac190868ee062ca6bccbba4e2), `mcp-server/VERSION=2.0.4-alpha`. If the implementation base changes, compare the relevant source and refresh this design's assumptions before reusing evidence.  1. `server/plugin.go:onHttpRequestHeaders` captures the transport before consuming protocol identity headers. 2. `protocol.HasModernIdentityHeaders` treats a nonempty version absent from `legacyVersions` as modern identity. Missing `2025-11-25` therefore reaches the 
+- **Issue #5306** (2026-11-05): **mcp-server：兼容 data: 后无空格的 SSE 响应（原格式优先、无空格兜底）**
+  *Symptoms*: - [x] 已检索仓库相关 issue。#4684、#5280/#5281 为相关机制与兼容性依据。  ### Ⅰ. Issue Description  **本次范围已于 2026-11-05 收敛：生产代码只修改 `parseSSEResponse`，采用“原格式优先、无空格兜底”，补充必要测试。** 原报告中的共享 SSE 解码器及各分支统一改造不再属于本次交付；其它 SSE 问题列在文末后续事项，不阻塞本次修复验收。  在排查 `mcp-server` 代理 SSE 响应解析失败时发现，当前函数只匹配 `data: `，无法识别冒号后没有空格的合法 `data:JSON`。本次解决“单行完整 JSON 响应仅因 data 冒号后没有空格而无法提取”的问题，优先保护此前已成功的输入和业务行为。  本 issue 是已确认的缺陷与修复范围，不代表产品代码已经修改或修复已经验证。原始故障响应未完整确认；函数级复现不能证明每个现场 `sse_parse_error` 都由无空格导致。  ### Ⅱ. Describe what happened  源码核对基线：upstream [`main@a89b18dc12882f06fe4ac9fe33cfa8c03d11292a`](https://github.com/higress-group/higress/commit/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a)。该提交已通过 #5305 支持 `2025-11-25` Tools 客户端；本问题独立于协议版本头支持，本次不修改版本支持或协商逻辑。  [`parseSSEResponse`](https://github.com/higress-group/higress/blob/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a/plugins/wasm-go/pkg/mcp/server/proxy_tool.go#L292-L322) 对每行先执行 `strings.TrimSpace`，再执行：  ```go if strings.HasPrefix(line, "data: ") {     dataContent := strings.TrimPrefix(line, "data: ")     return []byte(dataContent), nil } ```  因此 `data:JSON` 不会匹配，扫描结束后返回 `no data field found in SSE response`。后续调用路径会产生 `sse_parse_error`。SSE 规范允许冒号后省略空格，详见 [WHATWG SSE 字段解析规则](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)。  #### 各分支的处理范围  | 分支/调用路径 | 本次是否修改生产代码 | 说明 | | --- | --- | --- | | `parseSSEResponse` | **是，仅修改该函数** | 增加无空格候选兜底，保留原格式优先。 | | 显式 HTTP 初始化、HTTP tools/list/tools/call（含 auto 协商后的业务请求）、server/discover SSE 透传 | 否 | 现有调用点共享上述函数，自动获得
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,323 +1757,509 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a89b18dc` (2026-11-04)
-**Commit Message**: fix(mcp-server): support 2025-11-25 Tools clients (5305)
+### Incident Patch 1: `bfcd87d1` (2026-11-05)
+**Commit Message**: fix(mcp-server): preserve SSE data priority with a no-space fallback (#5309)
 
 Signed-off-by: xunmu <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +3/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +64/-0)
 ```diff
-@@ -248,7 +248,9 @@ Legacy/Modern 的完整 UTF-8 JSON-RPC 请求体上限统一为 **100 MiB**，
- 
- ## 协议支持与后端连接
- 
--插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18` 和 `2026-07-28` 的工具服务能力。
-+插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18`、`2025-11-25` 和 `2026-07-28` 的工具服务能力。
+@@ -275,3 +275,67 @@ as red reproduction. Candidate acceptance requires all 12 PASS and exit zero.
+ The external recorder must additionally validate exact sources/hashes, access
+ records, successful Wasm loading and cleanup; this focused output does not claim
+ the full compatibility matrix or update previous source-scoped results.
 +
-+`2025-11-25` 的支持限定于现有 `initialize` → `notifications/initialized` → `tools/list` / `tools/call` 工作流；明确请求该版本时返回相同版本。无版本头且初始化正文请求未知版本时，兼容回退仍为 `2025-06-18`；未知版本头继续被拒绝。此项兼容不扩展 Tasks、Sampling、URL Elicitation、OAuth 或传输能力，也不改变后端版本选择策略。
- 
- 使用内置工具或 REST-to-MCP 时，无需配置后端 MCP 协议策略。代理已有 MCP Server 时，需要根据后端能力配置 `transport` 和 `protocolStrategy`。
- 
++
++## Focused SSE no-space fallback (#5308)
++
++From a clean, committed candidate checkout, select only the ten-case parser
++matrix. This mode builds plain Wasm for the exact affected source
++`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
++Compose services, backend, renderer, build and bounded lifecycle, with one
++`plugin.wasm` mount path. It does not run or retarget the normal business
++oracle, control, November-version or routing matrices.
++
++```sh
++env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
++  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
++  --sse-no-space \
++  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
++  --candidate HEAD \
++  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
++  --backend-image docker.io/library/python:3.12-alpine \
++  --output "$SSE_EVIDENCE/runtime"
++```
++
++Use an empty absolute external output directory. Python 3.12+ is needed for
++archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
++Images must already resolve locally to immutable RepoDigests. Both roles use
++the same resolved gateway/Python image identities and frozen harness.
++
++The five positive targets are no-space upstream initialization, HTTP list,
++HTTP call, CRLF call, and business after successful auto controls. The five
++controls are original-format list/call (including initialization), an earlier
++no-space progress notification followed by an original-format result, empty
++data followed by an original result, and invalid no-space JSON. Mixed traffic
++supplies `progressToken`. Formatting is selected only by synthetic fixture
++headers; default responses and unrelated probe/handshake controls stay intact.
++
++`verify-sse-baseline.log` retains verifier exit 1 and five actual failed
++positive assertions; its controls must pass. `verify-candidate.log` must exit
++0 with all ten cases passing. Invalid JSON remains an error on both roles:
++extraction on baseline, existing JSON decoding on candidate. An overall runner
++exit 0 means this expected red/green matrix was observed, not that baseline
++positive targets succeeded.
++
++`sse-no-space-{sse-baseline,candidate}.json` separates assertions, exact client
++requests, gateway access IDs and backend ledgers, including upstream wire bytes
++and hashes. `compat-inputs.json` records source, selected Go/module inputs,
++Wasm/harness/config hashes and image inspections. Finalization rejects missing,
++duplicate or unobserved cases, changed requests/configs/wire data, mismatched
++Go/module inputs, stale hashes and incomplete cleanup.
++`sse-no-space-manifest.json` seals all completed evidence files. Cleanup uses
++Compose down with volumes/orphans and inventories only this run's labelled
++containers, networks and volumes. The Compose fixture publishes no host ports;
++its listeners and server processes disappear with those containers.
++
++Before containers, run the fixture checks from this directory:
++
++```sh
++env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 compat_self_test.py
++```
++
++The new checks exercise selection, complete registry, format isolation,
++assertion fault injection, source/config/request equivalence and failed cleanup.
++They run alongside all retained normal-mode fixture assertions. These injected
++self-tests establish harness behavior; real Wasm evidence requires the command
++above.
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +3/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_backend.py` (modified, +20/-1)
 ```diff
-@@ -252,7 +252,9 @@ Legacy and Modern share a **100 MiB** limit for the complete UTF-8 JSON-RPC body
+@@ -45,6 +45,18 @@ def rpc_response(rpc_id, result=None, error=False):
+     return b'{"jsonrpc":"2.0","id":' + token(rpc_id).encode() + b',' + field + b'}'
  
- ## Protocol Support and Backend Connections
  
--The plugin supports tool services using MCP `2024-11-05`, `2025-03-26`, `2025-06-18`, and `2026-07-28`.
-+The plugin supports tool services using MCP `2024-11-05`, `2025-03-26`, `2025-06-18`, `2025-11-25`, and `2026-07-28`.
++def sse_no_space_wire(response, framing):
++    """Synthetic complete SSE bytes, selected only by the focused test header."""
++    if framing == "no-space": return b"data:" + response + b"\n\n"
++    if framing == "no-space-crlf": return b"data:" + response + b"\r\n\r\n"
++    if framing == "original": return b"data: " + response + b"\n\n"
++    if framing == "mixed":
++        return b'data:{"jsonrpc":"2.0","method":"notifications/progress","params":{"progressToken":"sse-progress","progress":1}}\n\ndata: ' + response + b"\n\n"
++    if framing == "empty": return b"data:\n\ndata: " + response + b"\n\n"
++    if framing == "invalid": return b"data:{invalid json}\n\n"
++    raise ValueError("unknown focused SSE framing")
 +
-+`2025-11-25` support covers the existing `initialize` → `notifications/initialized` → `tools/list` / `tools/call` workflow, negotiating the same version when requested. An unknown initialize-body version without a version header still falls back to `2025-06-18`; unknown version headers remain rejected. This compatibility addition does not expand Tasks, Sampling, URL Elicitation, OAuth or transport capabilities, or change backend version selection.
- 
- Built-in tools and REST-to-MCP do not require a backend MCP protocol strategy. When proxying an existing MCP server, configure `transport` and `protocolStrategy` according to the backend's capabilities.
- 
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/conformance_test.go` (modified, +4/-4)
-```diff
-@@ -138,7 +138,7 @@ func TestOfficial20260728PositiveRequestsAndCapabilityHonesty(t *testing.T) {
- 				case "server/discover":
- 					minimumTools := readOfficialFixture(t, "tools-minimum-capability.json")
- 					require.JSONEq(t, string(minimumTools), gjson.GetBytes(response.Data, "result.capabilities").Raw)
--					require.JSONEq(t, `["2024-11-05","2025-03-26","2025-06-18","2026-07-28"]`, gjson.GetBytes(response.Data, "result.supportedVersions").Raw)
-+					require.JSONEq(t, `["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"]`, gjson.GetBytes(response.Data, "result.supportedVersions").Raw)
- 					assertCacheWireContract(t, response)
- 					for _, path := range []string{
- 						"result.capabilities.tools.listChanged",
-@@ -152,7 +152,7 @@ func TestOfficial20260728PositiveRequestsAndCapabilityHonesty(t *testing.T) {
- 					} {
- 						require.False(t, gjson.GetBytes(response.Data, path).Exists(), "%s leaked in %s", path, response.Data)
- 					}
--					require.False(t, gjson.GetBytes(response.Data, `result.supportedVersions.#(=="2025-11-25")`).Exists())
-+					require.True(t, gjson.GetBytes(response.Data, `result.supportedVersions.#(=="2025-11-25")`).Exists())
- 				case "tools/list":
- 					require.Equal(t, "get_weather", gjson.GetBytes(response.Data, "result.tools.0.name").String())
- 					assertCacheWireContract(t, response)
-@@ -358,7 +358,7 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
- 		Code:       -32022,
- 		Message:    "unsupported MCP protocol version",
- 		ID:         `"list-tools-example"`,
--		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2026-07-28"],"requested":"1900-01-01"}`,
-+		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"],"requested":"1900-01-01"}`,
- 		Reference:  "unsupported-version-error.json",
- 	}
- 
-@@ -369,7 +369,7 @@ func derivedConformanceCases(t *testing.T) []derivedCase {
- 		Code:       -32022,
- 		Message:    "unsupported MCP protocol version",
- 		ID:         "null",
--		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2026-07-28"],"requested":"1900-01-01"}`,
-+		Data:       `{"supported":["2024-11-05","2025-03-26","2025-06-18","2025-11-25","2026-07-28"],"requested":"1900-01-01"}`,
- 		Reference:  "unsupported-version-error.json",
- 	}
- 
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +1/-1)
-```diff
-@@ -3668,7 +3668,7 @@ func TestPlugin_McpProtocolVersionUnsupportedRejected(t *testing.T) {
- 				"code": -32022,
- 				"message": "unsupported MCP protocol version",
- 				"data": {
--					"supported": ["2024-11-05", "2025-03-26", "2025-06-18", "2026-07-28"],
-+					"supported": ["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25", "2026-07-28"],
- 					"requested": "9999-99-99"
- 				}
- 			}
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +30/-1)
-```diff
-@@ -1,7 +1,7 @@
- # MCP compatibility runtime verification
- 
- The default `run.sh` entry delegates to `run-compat.sh`. This loop builds a clean
--exact candidate and two pinned sources, uses the existing Compose backend,
-+exact candidate and three pinned sources, uses the existing Compose backend,
- Envoy renderer, bounded lifecycle helpers and evidence finalizer, then runs the
- existing routing regression runner. It does not certify native, official-client
- or kind acceptance; those checks remain separate verification commands.
-@@ -40,6 +40,7 @@ name; it neither reads provider credentials nor operates on a Kubernetes cluster
- | --- | --- | --- |
- | Business oracle | `958b5e7f8e0062d1e26963d008e7be4b707fa715` | Corresponding historical Legacy business path |
- | Control/scope baseline | `bde990b4bfc7ecb581338e2d0ae858aaedb2fd69` | Retained probe/handshake/cancellation and instructions scope |
-+| November compatibility baseline | `03a91cb3fbe2664ac190868ee062ca6bccbba4e2` | Same-input rejection/fallback comparison for downstream `2025-11-25` |
- | Candidate | Clean checkout HEAD | Independent acceptance assertions and corresponding business comparison |
- 
- The control binary also runs five explicitly labelled diagnostic red cases:
-@@ -60,6 +61,34 @@ external request target/method and vendor response templates are adapted to the
- observable local backend. Their source and derived fixture hashes and exact
- adaptations are recorded in `builtin-manifest.json`.
- 
-+## Downstream `2025-11-25` comparison
 +
-+The normal entry also builds the dedicated pre-fix module and runs 17 focused
-+cases (21 exchanges) against that module and the candidate. The historical
-+business oracle and control/scope baseline retain their original roles and
-+expectations. Both new variants load `plugin.wasm` through byte-identical Envoy
-+configuration and receive the same request bodies and headers; their config,
-+request and header hashes must match during finalization.
-+
-+`nov25-<variant>.json` preserves the responses and assertions separately. It
-+checks initialize with/without a version header, older same-version negotiation,
-+unknown-body fallback fixed at `2025-06-18`, unknown-header and strict modern
-+identity rejection, and exact discovery versions/capabilities/result metadata.
-+The complete initialize -> initialized -> list -> successful call -> failed call
-+sequence uses a deterministic legacy RealMCP peer. Its descriptor/input schema,
-+client IDs, content and `isError` are asserted. The baseline rejects every
-+November-header request before any backend operation; the candidate records
-+three upstream handshakes and exactly three business operations. The ledger
-+records upstream protocol/initialize versions and a synthetic session alias to
-+prove the downstream version is not copied upstream or executed twice.
-+
-+This is existing handshake-based Tools coverage. It adds no optional MCP
-+capabilities or upstream version policy, and preserves the upstream-only
-+`2025-11-25` auto-detection rejection tests. Finalization requires both complete
-+focused exchange/access ledgers, source/module/toolchain/Wasm identities,
-+equivalent config/input hashes and successful cleanup. Native fixture self-tests
-+do not claim real Envoy acceptance.
-+
- ## Independent cases and observability
- 
- `compat_contract.py` enumerates unique case IDs and expected per-case downstream
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_backend.py` (modified, +14/-1)
-```diff
-@@ -8,7 +8,7 @@
- import threading
- from urllib.parse import parse_qs, quote, urlsplit
- 
--from compat_contract import JSONNumber, MODERN, strict_request, token, unique_json, SSE_GET_AUTH_BODY, SSE_GET_AUTH_CHALLENGES, body_record
-+from compat_contract import JSONNumber, MODERN, strict_request, token, unique_json, NOV25_TOOL, SSE_GET_AUTH_BODY, SSE_GET_AUTH_CHALLENGES, body_record
- from typed_canonical import canonical_json_sha256, loads_typed
- 
- LOCK = threading.Lock()
-@@ -66,6 +66,9 @@ def record(handler, raw, request=None, rejection=None):
-              "ordinaryHeaders": handler.headers.get_all("X-Ordinary", []),
-              "rpcBodyBytes": len(raw), "rpcBodySha256": hashlib.sha256(raw).hexdigest(),
-              "accepted": rejection is None, "rejection": rejection,
-+             "protocolVersion": handler.headers.get("MCP-Protocol-Version"),
-+             "initializeVersion": (request.get("params") or {}).get("protocolVersion") if method == "initialize" else None,
-+             "sessionAlias": "nov25-upstream" if handler.headers.get("Mcp-Session-Id") == "nov25-upstream-session" else "other" if handler.headers.get("Mcp-Session-Id") else None,
-              "initializeCapabilityKeys": sorted((request.get("params") or {}).get("capabilities", {})) if method == "initialize" else None}
-     if request.get("params") is not None:
-         event["paramsTypedSha256"] = canonical_json_sha256(request["params"])
-@@ -202,6 +205,16 @@ def post(handler, body):
-             result = result[:-1] + b',"padding":"' + b"x" * ((1 << 20) + 1) + b'"}'
-         if mode == "deep":
-             result = result[:-1] + b',"deep":' + b'[' * 70 + b'0' + b']' * 70 + b'}'
-+    if headers.get("X-Compat-Nov25") == "1":
-+        if method == "initialize":
-+            raw_response(handler, 200, rpc_response(rpc_id, result), headers=(("Mcp-Session-Id", "nov25-upstream-session"),))
-+            return True
-+        if method == "tools/list":
-+            result = json.dumps({"tools": [NOV25_TOOL]}, separators=(",", ":")).encode()
-+        elif method == "tools/call":
-+            arguments = request.get("params", {}).get("arguments", {})
-+            failed = arguments.get("fail") is True
-+            result = json.dumps({"content": [{"type": "text", "text": "synthetic execution failed" if failed else "echo:" + arguments.get("value", "")}], "isError": failed}, separators=(",", ":")).encode()
+ def record(handler, raw, request=None, rejection=None):
+     request = request or {}
+     method = request.get("method")
+@@ -171,7 +183,7 @@ def post(handler, body):
+         record(handler, body.encode(), rejection=str(error))
+         raw_response(handler, 400, b'{"error":"strict upstream rejected request"}')
+         return True
+-    record(handler, body.encode(), request)
++    event = record(handler, body.encode(), request)
+     method, rpc_id = request.get("method"), request.get("id")
+     mode = handler.headers.get("X-Compat-Response", "success")
+     if handler.headers.get("Host") == "unknownhost":
+@@ -216,6 +228,13 @@ def post(handler, body):
+             failed = arguments.get("fail") is True
+             result = json.dumps({"content": [{"type": "text", "text": "synthetic execution failed" if failed else "echo:" + arguments.get("value", "")}], "isError": failed}, separators=(",", ":")).encode()
      response = rpc_response(rpc_id, result, mode == "rpc-error")
++    framing = headers.get("X-Compat-SSE-Format")
++    stage = headers.get("X-Compat-SSE-Stage", "business")
++    if framing and ((stage == "all" and method != "server/discover") or stage == method or stage == "business" and method.startswith("tools/")):
++        wire = sse_no_space_wire(response, framing)
++        event["sseFixture"] = {"format": framing, "stage": method, **body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
++        raw_response(handler, 200, wire, "text/event-stream")
++        return True
      if path == "/unified/messages":
          key = handler.headers.get("X-Compat-Case", "unassociated")
+         with LOCK:
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_contract.py` (modified, +28/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_fixture.py` (modified, +27/-0)
 ```diff
-@@ -181,7 +181,7 @@ def body_record(raw):
- 
- def exchange_count(case):
-     """Independent per-case downstream request count, including counter controls."""
--    return {"input": 4, "descriptors": 7, "builtin": 2}.get(case["kind"], 1)
-+    return case.get("exchanges", {"input": 4, "descriptors": 7, "builtin": 2}.get(case["kind"], 1))
+@@ -94,6 +94,33 @@ def nov25_config(out):
+     Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listener + "  clusters:\n" + cluster)
  
  
- SSE_GET_AUTH_AFFECTED = "10f72611286e9d81b83094249b1af8787a12a3ac"
-@@ -196,3 +196,30 @@ def sse_get_auth_cases():
-              "rpcId": '\"client\\u002did\"' if profile == "legacy" else "" if profile == "notification" else "null" if method == "tools/list" else "1.50"}
-             for profile in ("legacy", "modern", "notification")
-             for method in ("tools/list", "tools/call") for status in (401, 403)]
++SSE_NO_SPACE_BASELINE = "a89b18dc12882f06fe4ac9fe33cfa8c03d11292a"
 +
 +
-+# A dedicated bug baseline; historical business and control pins remain unchanged.
-+NOV25_BASELINE = "03a91cb3fbe2664ac190868ee062ca6bccbba4e2"
-+NOV25 = "2025-11-25"
-+NOV25_OLD_VERSIONS = ["2024-11-05", "2025-03-26", "2025-06-18", MODERN]
-+NOV25_VERSIONS = NOV25_OLD_VERSIONS[:-1] + [NOV25, MODERN]
-+NOV25_TOOL = {"name": "echo", "description": "synthetic Tools compatibility fixture",
-+              "inputSchema": {"type": "object", "properties": {"value": {"type": "string"}, "fail": {"type": "boolean"}}, "required": ["value"]}}
++def sse_no_space_cases():
++    """Closed #5308 matrix; positive targets stay red on the affected source."""
++    return [
++        {"id": "sse-no-space/initialize", "route": "http-legacy", "method": "tools/call", "format": "no-space", "stage": "initialize", "target": True},
++        {"id": "sse-no-space/list", "route": "http-legacy", "method": "tools/list", "format": "no-space", "target": True},
++        {"id": "sse-no-space/call", "route": "http-legacy", "method": "tools/call", "format": "no-space", "target": True},
++        {"id": "sse-no-space/crlf", "route": "http-legacy", "method": "tools/call", "format": "no-space-crlf", "target": True},
++        {"id": "sse-no-space/post-auto", "route": "auto-modern", "method": "tools/call", "format": "no-space", "target": True},
++        {"id": "sse-no-space/original-list", "route": "http-legacy", "method": "tools/list", "format": "original", "stage": "all", "target": False},
++        {"id": "sse-no-space/original-call", "route": "http-legacy", "method": "tools/call", "format": "original", "stage": "all", "target": False},
++        {"id": "sse-no-space/mixed", "route": "http-legacy", "method": "tools/call", "format": "mixed", "target": False},
++        {"id": "sse-no-space/empty", "route": "http-legacy", "method": "tools/call", "format": "empty", "target": False},
++        {"id": "sse-no-space/invalid", "route": "http-legacy", "method": "tools/call", "format": "invalid", "target": False},
++    ]
 +
 +
-+def nov25_cases():
-+    """Same finite traffic plan for the pre-fix and candidate binaries."""
-+    rows = [{"id": "nov25/" + kind, "kind": kind, "exchanges": 1}
-+            for kind in ("initialize-header", "initialize-body", "fallback", "modern-body-fallback", "unknown-header",
-+                         "missing-version", "empty-version", "duplicate-version", "handshake-modern-identity",
-+                         "handshake-modern-meta", "modern-missing-meta", "modern-mismatched-meta", "discovery")]
-+    rows += [{"id": "nov25/old/" + version, "kind": "old", "version": version, "exchanges": 1}
-+             for version in NOV25_OLD_VERSIONS[:-1]]
-+    rows += [{"id": "nov25/tools-workflow", "kind": "tools-workflow", "exchanges": 5}]
-+    return rows
++def sse_no_space_config(out):
++    # Fixed VM identities/module path make baseline and candidate config identical.
++    listeners = "".join(base.listener_yaml(PORTS[name], "sse-no-space-" + name, "compat-route", proxy(name), "plugin.wasm")
++                        for name in ("http-legacy", "auto-modern"))
++    cluster = base.cluster_yaml("compat-route").replace("address: compat-route,", "address: backend-primary,")
++    Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listeners + "  clusters:\n" + cluster)
 +
 +
-+def nov25_request(method, params=None, rpc_id="nov25-client"):
-+    value = {"jsonrpc": "2.0", "method": method, "params": params or {}}
-+    if method != "notifications/initialized": value["id"] = rpc_id
-+    return json.dumps(value, separators=(",", ":")).encode()
+ if __name__ == "__main__":
+     import sys
+     if "--sse-get-auth-headers" in sys.argv[3:]:
 ```
 
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_evidence.py` (modified, +63/-2)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_self_test.py` (modified, +128/-1)
 ```diff
-@@ -71,6 +71,66 @@ def core_ledger_errors(expected, snapshot, log):
-     return errors
+@@ -558,8 +558,135 @@ def evidence_checks():
+         require(json.loads((root / "compat-manifest.json").read_text())["checksums"] != evidence.checksums(root), "post-finalization mutation hidden")
  
  
-+def nov25_errors(root, inputs):
-+    """Require exact baseline, equivalent binary inputs and complete red/green traffic."""
-+    errors, snapshots = [], {}
-+    if inputs.get("nov25Baseline") != contract.NOV25_BASELINE:
-+        errors.append("November pre-fix source pin differs")
-+    entry = inputs.get("versions", {}).get("nov25-baseline", {})
-+    candidate = inputs.get("versions", {}).get("candidate", {})
-+    wasm = root / "plain-nov25-baseline.wasm"
-+    if entry.get("source") != contract.NOV25_BASELINE or not wasm.is_file() or entry.get("wasm", {}).get("plain") != hashlib.sha256(wasm.read_bytes()).hexdigest():
-+        errors.append("November baseline source/Wasm identity differs")
-+    if not entry.get("go") or entry.get("go") != candidate.get("go") or not entry.get("moduleFiles") or entry.get("moduleFiles") != candidate.get("moduleFiles"):
-+        errors.append("November baseline/candidate toolchain or module inputs differ")
-+    configs = inputs.get("nov25Configs", {})
-+    if set(configs) != {"nov25-baseline", "candidate"} or len(set(configs.values())) != 1:
-+        errors.append("November baseline/candidate configs differ")
-+    expected = contract.nov25_cases()
-+    for variant in ("nov25-baseline", "candidate"):
++
++def sse_no_space_focused_checks():
++    """Run the focused verifier/finalizer with injected observations, never Wasm."""
++    import contextlib
++    import subprocess
++    import sys
++    from types import SimpleNamespace
++    from unittest.mock import patch
++    import run_compat
++    import verify
++    cases = compat_fixture.sse_no_space_cases()
++    require(len(cases) == 10 and len({row["id"] for row in cases}) == 10 and sum(row["target"] for row in cases) == 5, "focused matrix incomplete")
++    # Actual backend selection must preserve default/control JSON responses.
++    for method in ("server/discover", "initialize", "notifications/initialized", "tools/list", "tools/call"):
++        for stage in (None, "business", "initialize", "all"):
++            h = parse_headers(io.BytesIO(b"Content-Type: application/json\r\n\r\n"))
++            if stage:
++                h["X-Compat-SSE-Format"], h["X-Compat-SSE-Stage"] = "no-space", stage
++            handler = SimpleNamespace(headers=h, command="POST", path="/unified/modern")
++            compat_backend.reset()
++            with patch.object(compat_backend, "raw_response") as send:
++                require(compat_backend.post(handler, c.envelope(False, method=method, tool="echo").decode()), "backend request missing")
++                event = compat_backend.state()["events"][-1]
++                formatted = bool(stage and method != "notifications/initialized" and
++                                 (stage == method or stage == "all" and method != "server/discover" or stage == "business" and method.startswith("tools/")))
++                require(("sseFixture" in event) == formatted, "focused format poisoned controls/default")
++                if formatted: require(send.call_args.args[3] == "text/event-stream", "focused media mismatch")
++    for framing in {row["format"] for row in cases}:
++        wire = compat_backend.sse_no_space_wire(b'{"result":{}}', framing)
++        require(wire.endswith(b"\r\n\r\n") if framing.endswith("crlf") else wire.endswith(b"\n\n"), "SSE wire incomplete")
++    rejected(lambda: compat_backend.sse_no_space_wire(b'{}', "unknown"))
++    with tempfile.TemporaryDirectory() as directory:
++        root = Path(directory)
++        result = {"tools": [{"name": "echo", "inputSchema": {"type": "object"}}], "content": [], "number": c.JSONNumber("900719925474099312345"), "value": c.JSONNumber("2")}
++        def attach(verifier, fault=None):
++            state = {}
++            def exchange(port, raw, modern, **options):
++                case = next(row for row in cases if row["id"] == verifier.case)
++                require(c.loads_typed(raw)["params"]["_meta"]["progressToken"] == "sse-progress", "progressToken omitted")
++                require(port == compat_fixture.PORTS[case["route"]] and modern == (case["route"] == "auto-modern"), "focused route changed")
++                init_red = verifier.variant == "sse-baseline" and case.get("stage") == "initialize"
++                methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
++                events = []
++                for method in methods:
++                    event = {"case": verifier.case, "rpcMethod": method, "kind": "probe" if method == "server/discover" else "control" if method in ("initialize", "notifications/initialized") else "business",
++                             "accepted": True, "backendOrigin": "primary", "protocolVersion": c.MODERN if modern else "2025-03-26"}
++                    stage = case.get("stage", "business")
++                    if method != "notifications/initialized" and (stage == "all" or stage == method or stage == "business" and method.startswith("tools/")):
++                        wire = compat_backend.sse_no_space_wire(b'{"jsonrpc":"2.0","id":2,"result":{}}', case["format"])
++                        event["sseFixture"] = {"format": case["format"], "stage": method, **c.body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
++                    events.append(event)
++                state["events"] = events
++                failed = verifier.variant == "sse-baseline" and case["target"] or case["format"] == "invalid"
++                response = {"jsonrpc": "2.0", "id": "sse-client"}
++                if failed: response["error"] = {"code": c.JSONNumber("-32603"), "message": "no data field found in SSE response" if verifier.variant == "sse-baseline" else "invalid JSON response"}
++                else: response["result"] = copy.deepcopy(result)
++                if fault == "dispatch": events.append(copy.deepcopy(events[-1]))
++                elif fault == "id": response["id"] = "wrong"
++                elif fault == "number" and not failed: response["result"]["
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py` (modified, +140/-51)
+```diff
+@@ -13,6 +13,7 @@
+ import uuid
+ 
+ import compat_contract as contract
++from compat_fixture import SSE_NO_SPACE_BASELINE, sse_no_space_cases, sse_no_space_config
+ from run_routing import ROOT, recorded_run, sha
+ 
+ HERE = Path(__file__).resolve().parent
+@@ -27,6 +28,63 @@ def source_is_clean(revision):
+     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() == revision and not subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
+ 
+ 
++def sse_no_space_errors(out, inputs):
++    """Reject incomplete, stale or non-equivalent focused evidence."""
++    from collections import Counter
++    errors = []
++    def require(value, message):
++        if not value: errors.append(message)
++    require(not inputs.get("error") and not inputs.get("verifierFailed"), "runner/build/verifier failed")
++    require(inputs.get("sourceStillClean") is True and inputs.get("tokenOverridesUnset") is True, "source/token preconditions failed")
++    require(inputs.get("cleanupComplete") is True, "run-owned cleanup incomplete")
++    require(inputs.get("sseBaseline") == SSE_NO_SPACE_BASELINE, "wrong affected source")
++    require(inputs.get("verifierExits") == {"sse-baseline": 1, "candidate": 0}, "baseline red/candidate green process exits missing")
++    expected, snapshots = sse_no_space_cases(), {}
++    for role, revision in (("sse-baseline", SSE_NO_SPACE_BASELINE), ("candidate", inputs.get("candidate"))):
 +        try:
-+            config = root / f"envoy-nov25-{variant}.yaml"
-+            if configs.get(variant) != hashlib.sha256(config.read_bytes()).hexdigest():
-+                errors.append("November config identity differs: " + variant)
-+            snapshot = json.loads((root / f"nov25-{variant}.json").read_text())
-+            rows = snapshot.get("cases", [])
-+            if snapshot.get("baseline") != contract.NOV25_BASELINE or snapshot.get("expectedCases") != expected or not contract.complete(expected, rows) or any(row.get("status") != "PASS" for row in rows):
-+                errors.append("November incomplete/failed cases: " + variant)
-+            snapshots[variant] = snapshot
-+            log = (root / f"gateway-nov25-{variant}.log").read_text(errors="replace")
-+            errors.extend("November " + variant + " " + error for error in core_ledger_errors(expected, snapshot, log))
-+            if "plugin start successfully" not in log:
-+                errors.append("November Wasm loading marker missing: " + variant)
-+        except (OSError, ValueError, KeyError) as error:
-+            errors.append("November evidence unavailable: " + str(error))
-+    if set(snapshots) == {"nov25-baseline", "candidate"}:
-+        def requests(role):
-+            return [{key: row.get(key) for key in ("case", "port", "request", "requestHeadersSha256")} for row in snapshots[role].get("exchanges", [])]
-+        if requests("nov25-baseline") != requests("candidate") or any(not row.get("request") or not row.get("requestHeadersSha256") for row in snapshots["candidate"].get("exchanges", [])):
-+            errors.append("November baseline/candidate traffic inputs differ")
-+    return errors
++            version = inputs["versions"][role]
++            require(version["source"] == revision and set(version["wasm"]) == {"plain"}, role + ": source/flavor mismatch")
++            require(version["wasm"]["plain"] == sha(out / f"plain-{role}.wasm"), role + ": Wasm hash mismatch")
++            snapshot = json.loads((out / f"sse-no-space-{role}.json").read_text())
++            snapshots[role] = snapshot
++            require(snapshot["variant"] == role and snapshot["expectedCases"] == expected and not snapshot.get("startupError"), role + ": registry/startup mismatch")
++            require(contract.complete(expected, snapshot["cases"]), role + ": missing/duplicate case")
++            require(Counter(row["id"] for row in expected) == Counter(row["case"] for row in snapshot["exchanges"]), role + ": missing/duplicate exchange")
++            access_ids = [row["accessRequestId"] for row in snapshot["exchanges"]]
++            require(all(access_ids) and len(access_ids) == len(set(access_ids)), role + ": invalid access identity")
++            gateway_log = (out / f"gateway-{role}.log").read_text()
++            for request_id in access_ids:
++                require(gateway_log.count("access request_id=" + request_id + " ") == 1, role + ": missing/duplicate gateway access")
++            rows = {row["id"]: row for row in snapshot["cases"]}
++            for case in expected:
++                row = rows[case["id"]]
++                red = role == "sse-baseline" and case["target"]
++                require(row["status"] == ("FAIL" if red else "PASS") and row.get("validRedReproduction") is red, role + ": unexpected outcome " + case["id"])
++                require(bool(row.get("detail", {}).get("ledger", {}).get("events")), role + ": unobserved case " + case["id"])
++            require(inputs["configs"][role] == sha(out / f"envoy-{role}.yaml"), role + ": config hash mismatch")
++        except (KeyError, OSError, ValueError, TypeError) as error:
++            errors.append(role + ": incomplete evidence: " + str(error))
++    try:
++        require(inputs["configs"]["sse-baseline"] == inputs["configs"]["candidate"], "role configs differ")
++        before, after = (inputs["versions"][role] for role in ("sse-baseline", "candidate"))
++        require(before["go"] == after["go"] and before["moduleFiles"] == after["moduleFiles"], "Go/module inputs differ")
++        require(len(inputs["images"]) == 2 and all("@sha256:" in name for name in inputs["images"]), "immutable image pair missing")
++        for name, digest in inputs["harness"].items():
++            require(sha(out / "harness" / name) == digest, "harness mutated: " + name)
++        left, right = (snapshots[role] for role in ("sse-baseline", "candidate"))
++        for first, second in zip(left["exchanges"], right["exchanges"]):
++            require(all(first[key] == second[key] for key in ("case", "request", "requestHeadersSha256")), "role requests differ")
++        for first, second in zip(left["cases"], right["cases"]):
++            wire = lambda row: [(event["rpcMethod"], event["sseFixture"]["sha256"]) for event in row["detail"]["ledger"]["events"] if "sseFixture" in event]
++            require(wire(first) == wire(second), "backend wire differs: " + first["id"])
++            case = next(row for row in expected if row["id"] == first["id"])
++            if not case["target"] and case["format"] != "invalid":
++                require(first["detail"]["resultSha256"] == second["detail"]["resultSha256"], "control business result d
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/verify_compat.py` (modified, +73/-1)
+```diff
+@@ -17,7 +17,7 @@
+ from pathlib import Path
+ 
+ import compat_contract as contract
+-from compat_fixture import PORTS
++from compat_fixture import PORTS, sse_no_space_cases
+ from typed_canonical import JSONNumber, canonical_json_sha256, loads_typed
+ 
+ 
+@@ -500,6 +500,76 @@ def write(self, expected):
+             "cases": self.rows, "exchanges": self.exchanges}, indent=2, sort_keys=True) + "\n")
+ 
+ 
++    def sse_no_space_case(self, case):
++        """Assert stage/count identity before recognizing a targeted baseline red."""
++        modern = case["route"] == "auto-modern"
++        raw = contract.envelope(modern, method=case["method"], tool="echo", rpc_id='"sse-client"')
++        if modern:
++            raw = raw.replace(b'"_meta":{', b'"_meta":{"progressToken":"sse-progress",', 1)
++        else:
++            raw = raw[:-2] + b',"_meta":{"progressToken":"sse-progress"}}}'
++        extra = [("X-Compat-SSE-Format", case["format"]), ("X-Compat-SSE-Stage", case.get("stage", "business"))]
++        status, headers, response = self.exchange(PORTS[case["route"]], raw, modern, tool="echo", method=case["method"], extra=extra)
++        self.exchanges[-1]["observedResponse"] = response
++        ledger = self.ledger()
++        baseline_red = self.variant == "sse-baseline" and case["target"]
++        init_red = baseline_red and case.get("stage") == "initialize"
++        methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
++        counts = {"transport": 0, "probe": int(modern), "control": 0 if modern else 1 if init_red else 2, "business": 0 if init_red else 1}
++        check(ledger["attempts"] == counts and [row["rpcMethod"] for row in ledger["events"]] == methods, "missing/duplicate/unexpected backend dispatch")
++        check(all(row["accepted"] and row["backendOrigin"] == "primary" for row in ledger["events"]), "strict peer rejection or wrong backend")
++        check(all(row["protocolVersion"] == contract.MODERN if modern else row["protocolVersion"] in (None, "2025-03-26") for row in ledger["events"]), "upstream version policy changed")
++        fixtures = [row["sseFixture"] for row in ledger["events"] if "sseFixture" in row]
++        check(len(fixtures) == (2 if case.get("stage") == "all" else 1), "target SSE response was not observed")
++        for fixture in fixtures:
++            wire = base64.b64decode(fixture["rawBase64"], validate=True)
++            check(fixture["format"] == case["format"] and contract.body_record(wire) == {key: fixture[key] for key in ("utf8Bytes", "sha256")}, "wire fixture mismatch")
++        check(status == 200 and isinstance(response, dict) and response.get("jsonrpc") == "2.0" and response.get("id") == "sse-client", "HTTP/envelope/client ID changed")
++        check(headers.get("content-type", "").split(";", 1)[0] == "application/json", "gateway media changed")
++        if baseline_red or case["format"] == "invalid":
++            error = response.get("error", {})
++            check(integer(error.get("code")) == -32603 and "result" not in response, "controlled error missing")
++            message = error.get("message", "")
++            extraction = self.variant == "sse-baseline"
++            check("no data field found in SSE response" in message if extraction else message == "invalid JSON response", "wrong extraction/JSON failure stage")
++            return {"ledger": ledger, "stage": "extraction" if extraction else "json", "validRedReproduction": baseline_red,
++                    "positiveAssertion": "normal business result missing" if baseline_red else None}
++        check("error" not in response and "result" in response, "normal business result missing")
++        result = response["result"]
++        check(integer(result.get("number")) == 900719925474099312345 and integer(result.get("value")) == 2 and result.get("content") == [], "precise business result changed")
++        check(result.get("tools") == [{"name": "echo", "inputSchema": {"type": "object"}}], "tool list changed")
++        return {"ledger": ledger, "stage": "business", "validRedReproduction": False, "resultSha256": canonical_json_sha256(result)}
 +
++    def run_sse_no_space(self):
++        import verify as existing
++        expected = sse_no_space_cases()
++        startup_error = None
++        try:
++            existing.wait_http("http://backend-primary:8080/healthz")
++            existing.wait_http("http://gateway:9901/ready")
++        except Exception as error:
++            startup_error = str(error)
++        for case in expected:
++            self.case = case["id"]
++            row = {"id": self.case, "status": "FAIL", "validRedReproduction": False}
++            try:
++                check(not startup_error, "startup failed: " + str(startup_error))
++                self.backend(reset=True)
++                detail = self.sse_no_space_case(case)
++                row.update(detail=detail, validRedReproduction=detail["validRedReproduct
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_compatibility_test.go` (modified, +71/-0)
+```diff
+@@ -259,6 +259,77 @@ func TestProxyLooseClientIDsReachStrictUpstreamsAndRestoreClientSemantics(t *tes
+ 	}
+ }
+ 
++// TestSSENoSpaceHTTPCompatibility 验证显式 HTTP 握手、list/call 和 auto 后业务均沿用原调用方策略。
++// 输入仅改变 SSE data 字段空格；输出必须保留客户端 ID、精确数字和既有 JSON 错误边界。
++func TestSSENoSpaceHTTPCompatibility(t *testing.T) {
++	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyAuto} {
++		for _, operation := range []string{string(OpToolsList), string(OpToolsCall)} {
++			for _, framing := range []string{"initialize", "LF", "CRLF", "mixed", "empty", "invalid"} {
++				t.Run(fmt.Sprintf("%s/%s/%s", strategy, operation, framing), func(t *testing.T) {
++					var host wasmtest.TestHost
++					if strategy == ProtocolStrategyAuto {
++						host = newAutoTestHost(t, "")
++					} else {
++						host = newProxyBridgeHost(t, strategy)
++					}
++					headers, body := looseProxyRequest(true, operation, `"sse-client"`)
++					body = bytes.Replace(body, []byte(`"_meta":{`), []byte(`"_meta":{"progressToken":"sse-progress",`), 1)
++					require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
++					host.CallOnHttpRequestBody(body)
++					if strategy == ProtocolStrategyAuto {
++						finishProxyControls(t, host, strategy, true, true)
++					} else {
++						initialize := calloutAt(t, host, 0)
++						initBody := autoResult(gjson.GetBytes(initialize.Body, "id").Raw, validAutoInitResult)
++						initPrefix := "data: "
++						if framing == "initialize" {
++							initPrefix = "data:"
++						}
++						completeCallout(host, initialize, "200", [][2]string{{"Content-Type", "text/event-stream"}}, append(append([]byte(initPrefix), initBody...), []byte("\n\n")...))
++						notification := calloutAt(t, host, 0)
++						require.Equal(t, "notifications/initialized", gjson.GetBytes(notification.Body, "method").String())
++						completeCallout(host, notification, "202", nil, nil)
++					}
++					business := routedRequest(t, host)
++					result := autoResult(gjson.GetBytes(business.Body, "id").Raw, `{"tools":[],"content":[],"number":900719925474099312345}`)
++					wire := append(append([]byte("data:"), result...), []byte("\n\n")...)
++					switch framing {
++					case "initialize":
++						wire = append(append([]byte("data: "), result...), []byte("\n\n")...)
++					case "CRLF":
++						wire = bytes.ReplaceAll(wire, []byte("\n"), []byte("\r\n"))
++					case "mixed":
++						wire = append(append([]byte("data:{\"jsonrpc\":\"2.0\",\"method\":\"notifications/progress\",\"params\":{\"progressToken\":\"sse-progress\",\"progress\":1}}\n\ndata: "), result...), []byte("\n\n")...)
++					case "empty":
++						wire = append(append([]byte("data:\n\ndata: "), result...), []byte("\n\n")...)
++					case "invalid":
++						wire = []byte("data:{invalid json}\n\n")
++					}
++					completeCallout(host, business, "200", [][2]string{{"Content-Type", "text/event-stream"}}, wire)
++					response := proxyTestResponse(host)
++					require.NotNil(t, response)
++					assert.Equal(t, `"sse-client"`, gjson.GetBytes(response.Data, "id").Raw)
++					if framing == "invalid" {
++						assert.Equal(t, int64(utils.ErrInternalError), gjson.GetBytes(response.Data, "error.code").Int())
++						assert.NotContains(t, string(response.Data), "no data field found")
++						if operation == string(OpToolsCall) {
++							assert.Contains(t, string(response.Data), "invalid JSON response")
++						} else {
++							assert.Contains(t, string(response.Data), "invalid character")
++						}
++					} else {
++						assert.Equal(t, uint32(200), response.StatusCode)
++						assert.False(t, gjson.GetBytes(response.Data, "error").Exists())
++						assert.Equal(t, "900719925474099312345", gjson.GetBytes(response.Data, "result.number").Raw)
++						assert.Equal(t, "[]", gjson.GetBytes(response.Data, "result.tools").Raw)
++					}
++					require.Empty(t, host.GetHttpCalloutAttributes())
++				})
++			}
++		}
++	}
++}
 +
-+def retained_control_sequence(row):
-+    detail = row.get("detail", {})
-+    if row["case"] != "auto-concurrent-legacy-session-isolation":
-+        return detail.get("upstreamSequence")
-+    # Only this two-request barrier case permits different global interleavings.
-+    # Reuse its live oracle before comparing the stable, ordered request paths.
-+    backends = detail["backendEvents"]
-+    if set(backends) != {"backend-primary"}:
-+        raise ValueError("concurrent legacy backend ownership differs")
-+    events = backends["backend-primary"]
-+    verify_auto.check_legacy_sessions({"events": events, "auto": detail["backendState"]}, {"alice": "alice", "bob": "bob"})
-+    methods = [event["rpcMethod"] for event in events]
-+    if detail["upstreamSequence"] != methods or [event["seq"] for event in events] != list(range(1, 9)):
-+        raise ValueError("concurrent legacy sequence differs from its event ledger")
-+    if methods[:methods.index(verify_auto.CALL)].count(verify_auto.NOTIFY) != 2:
-+        raise ValueError("concurrent legacy business preceded the initialized barrier")
-+    return {key: [event["rpcMethod"] for event in events if event["requestKey"] == key]
-+            for key in ("alice", "bob")}
+ func TestHTTPBusinessResponsePolicyDoesNotInheritControlRestrictions(t *testing.T) {
+ 	deep := strings.Repeat("[", 70) + "0" + strings.Repeat("]", 70)
+ 	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyModern, ProtocolStrategyAuto} {
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_tool.go` (modified, +13/-1)
+```diff
+@@ -289,12 +289,15 @@ func sendUpstreamAuthFailure(ctx wrapper.HttpContext, statusCode int, responseHe
+ 	return true
+ }
+ 
+-// parseSSEResponse parses Server-Sent Events format and extracts data field content
++// parseSSEResponse 从完整 SSE 响应 sseData 中提取 data 字段，返回原始内容或扫描/缺失错误。
++// 原有 "data: " 格式仍立即返回；仅在完整扫描无错误且没有原格式时，回退到第一个非空 "data:" 内容。
++// 本函数沿用行级 TrimSpace 和 32MB 扫描上限，不校验 JSON、不选择通知或最终响应，也不拼接多行事件。
+ func parseSSEResponse(sseData []byte) ([]byte, error) {
+ 	scanner := bufio.NewScanner(bytes.NewReader(sseData))
+ 	// Set max token size to 32MB to handle large messages
+ 	maxTokenSize := 32 * 1024 * 1024 // 32MB
+ 	scanner.Buffer(make([]byte, 0, 64*1024), maxTokenSize)
++	var fallback string
+ 
+ 	for scanner.Scan() {
+ 		line := strings.TrimSpace(scanner.Text())
+@@ -309,6 +312,11 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
+ 			dataContent := strings.TrimPrefix(line, "data: ")
+ 			return []byte(dataContent), nil
+ 		}
 +
-+
- def finalize(root):
-     root = Path(root)
-     errors, variants, coverage = [], {}, {}
-@@ -84,6 +144,7 @@ def finalize(root):
-         inputs = {}
-         errors.append("inputs unavailable: " + str(error))
-     errors.extend(metadata_errors(root, inputs))
-+    errors.extend(nov25_errors(root, inputs))
-     for variant in ("oracle", "control", "candidate"):
-         try:
-             snapshot = json.loads((root / f"compat-{variant}.json").read_text())
-@@ -133,7 +194,7 @@ def finalize(root):
-             rows = controls["cases"]
-             if controls["expectedCases"] != [name for name, _ in verify_auto.cases(None)] or not completeness(controls["expectedCases"], rows) or any(row.get("status") != "PASS" for 
++		// 无空格内容只作为候选，继续扫描以保留后续原格式的优先级。
++		if fallback == "" && strings.HasPrefix(line, "data:") {
++			fallback = strings.TrimPrefix(line, "data:")
++		}
+ 	}
+ 
+ 	if err := scanner.Err(); err != nil {
+@@ -318,6 +326,10 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
+ 		return nil, fmt.Errorf("error reading SSE data: %v", err)
+ 	}
+ 
++	// 候选不能掩盖扫描错误；空 data 字段不会占据回退位置。
++	if fallback != "" {
++		return []byte(fallback), nil
++	}
+ 	return nil, fmt.Errorf("no data field found in SSE response")
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5309** (2026-11-05): fix(mcp-server): preserve SSE data priority with a no-space fallback (@sunxia0)
 - **PR #5305** (2026-11-04): fix(mcp-server): support 2025-11-25 Tools clients (@sunxia0)
 - **PR #5294** (2026-11-03): fix(mcp): bind user-level access to consumers (@johnlanni)
 - **PR #5293** (2026-11-03): fix(mcp): remove client config headers on ingress (@johnlanni)
 - **PR #5292** (2026-11-02): fix(plugins): isolate ai-cache data by consumer (@johnlanni)
 - **PR #5291** (2026-11-01): fix(plugins): require raw bodies for request validation (@johnlanni)
-- **PR #5289** (2026-11-01): fix(request-validation): validate all JSON body types (@johnlanni)
 
 ---
 
@@ -2093,30 +2279,52 @@ Signed-off-by: xunmu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): support 2025-11-25 Tools clients (5305)
+## X. mcp-server): preserve SSE data priority with a no-space fallback (#5309)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a89b18dc`: mcp-server): support 2025-11-25 Tools clients (5305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfcd87d1`: mcp-server): preserve SSE data priority with a no-space fallback (#5309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18`、`2025-11-25` 和 `2026-07-28` 的工具服务能力。
 
-`2025-11-25` 的支持限定于现有 `initialize` → `notifications/initialized` → `tools/list` / `tools/call` 工作流；明确请求该版本时返回相同版本。无版本头且初始化正文请求未知版本时，兼容回退仍为 `2025-06-18`；未知版本头继续被拒绝。此项兼容不扩展 Tasks、Sampling、URL Elicitation、OAuth 或传输能力，也不改变后端版本选择策略。
+
+## Focused SSE no-space fallback (#5308)
+
+From a clean, committed candidate checkout, select only the ten-case parser
+matrix. This mode builds plain Wasm for the exact affected source
+`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
+Compose services, backend, renderer, build and bounded lifecycle, with one
+`plugin.wasm` mount path. It does not run or retarget the normal business
+oracle, control, November-version or routing matrices.
+
+```sh
+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
+  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
+  --sse-no-space \
+  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
+  --candidate HEAD \
+  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
+  --backend-image docker.io/library/python:3.12-alpine \
+  --output "$SSE_EVIDENCE/runtime"
+```
+
+Use an empty absolute external output directory. Python 3.12+ is needed for
+archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
+Images must already resolve locally to immutable RepoDigests. Bo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-插件支持 MCP `2024-11-05`、`2025-03-26`、`2025-06-18` 和 `2026-07-28` 的工具服务能力。
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a89b18dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfcd87d1` are properly handled with clean fallback behavior.

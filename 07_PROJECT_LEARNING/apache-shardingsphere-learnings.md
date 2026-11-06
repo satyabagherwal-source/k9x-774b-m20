@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `a5c8b104`  
+> **Source Version**: `a6dfa0c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:39:16.966Z  
+> **Timestamp**: 2026-11-05T22:08:37.860Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:39:16.961Z  
+> **Harvest Timestamp**: 2026-11-05T22:08:37.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1450,13 +1450,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40471** (2026-11-05): **Complete Oracle CREATE TABLE column definitions**
-  *Symptoms*: What: Parse visible and invisible virtual columns into CREATE TABLE definitions, mark identity columns as auto-incrementing, and cover the resulting AST metadata in parser fixtures.  Why: Preserve Oracle column information that was previously omitted while reusing the existing column-definition model.  Changes proposed in this pull request:   - Complete Oracle CREATE TABLE column definitions  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
-
-- **Issue #40470** (2026-11-05): **Simplify docs README and remove duplicate license**
+- **Issue #40476** (2026-11-05): **Use current documentation URLs for blog references**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  Completed a minimal documentation cleanup. Website build inputs and root-level license files remain unchanged.  ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  Both independent reviews and the coordinator’s review passed. Diff checks and file hash verification passed.  ### Coverage  Standalone local candidate, baseline e1cb0fe656ce; reviewed README changes and LICENSE deletion. Checkstyle and Spotless do not apply to these changes. This review covers local changes only; CI was not reviewed.
+  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
+
+- **Issue #40474** (2026-11-05): **Fix documentation links, images and translation pairing**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1473,278 +1475,218 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5c8b104` (2026-11-05)
-**Commit Message**: Complete Oracle CREATE TABLE column definitions (#40471)
+### Incident Patch 1: `34de0a1f` (2026-11-05)
+**Commit Message**: Fix SQL error prefix for Firebird SQLDA status vectors (#40443)
 
-**File**: `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4` (modified, +1/-1)
+Preserve the numeric -804 SQL error segment before SQLDA errors, including invalid batch message lengths. Add a regression for the exact ordered wire response and a release note for issue #40408.
+
+Assisted-By: OpenAI Codex
+
+Co-authored-by: rys888 <[REDACTED_EMAIL]>
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -414,7 +414,7 @@ inlineRefConstraint
-     ;
- 
- virtualColumnDefinition
--    : columnName dataType? (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
-+    : columnName dataType? visibleClause (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
-     ;
- 
- outOfLineConstraint
+@@ -94,6 +94,7 @@
+ 1. Proxy: Fix silently dropped backslashes and rejected NULL elements in PostgreSQL text array binary parameters - [#39395](https://github.com/apache/shardingsphere/pull/39395)
+ 1. Proxy: Fix MySQL COM_QUERY binary string literal corruption - [#39433](https://github.com/apache/shardingsphere/pull/39433)
+ 1. Proxy: Add error handling for unknown or closed BLOB handles and ids in Firebird - [#39773](https://github.com/apache/shardingsphere/pull/39773)
++1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
+ 1. Proxy: Fix startup failure when storage units set `dataSourceClassName` to `com.zaxxer.hikari.HikariDataSource` - [#40303](https://github.com/apache/shardingsphere/issues/40303)
+ 1. JDBC & Proxy: Remove default MySQL prepared statement query properties when creating data sources - [#38593](https://github.com/apache/shardingsphere/pull/38593)
+ 1. JDBC & Proxy: Reject ordinary pushdown SELECT statements routed to different storage database types - [#40385](https://github.com/apache/shardingsphere/pull/40385)
 ```
 
-**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/type/OracleDDLStatementVisitor.java` (modified, +14/-0)
+**File**: `database/protocol/dialect/firebird/src/main/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVector.java` (modified, +6/-0)
 ```diff
-@@ -242,6 +242,7 @@
- import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.TypeNameContext;
- import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VariableNameContext;
- import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VarrayTypeSpecContext;
-+import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.VirtualColumnDefinitionContext;
- import org.apache.shardingsphere.sql.parser.engine.oracle.visitor.statement.OracleStatementVisitor;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.VariableSegment;
-@@ -606,6 +607,9 @@ public ASTNode visitCreateRelationalTableClause(final CreateRelationalTableClaus
-             if (null != each.columnDefinition()) {
-                 result.getValue().add((ColumnDefinitionSegment) visit(each.columnDefinition()));
-             }
-+            if (null != each.virtualColumnDefinition()) {
-+                result.getValue().add((ColumnDefinitionSegment) visit(each.virtualColumnDefinition()));
-+            }
-             if (null != each.outOfLineConstraint()) {
-                 result.getValue().add((ConstraintDefinitionSegment) visit(each.outOfLineConstraint()));
-             }
-@@ -623,6 +627,7 @@ public ASTNode visitColumnDefinition(final ColumnDefinitionContext ctx) {
-         boolean isPrimaryKey = ctx.inlineConstraint().stream().anyMatch(each -> null != each.primaryKey());
-         boolean isNotNull = ctx.inlineConstraint().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
-         ColumnDefinitionSegment result = new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataType, isPrimaryKey, isNotNull, getText(ctx));
-+        result.setAutoIncrement(null != ctx.identityClause());
-         if (null != ctx.REF() && null != ctx.dataType()) {
-             result.setRef(true);
-         }
-@@ -641,6 +646,15 @@ private String getText(final ParserRuleContext ctx) {
-         return ctx.start.getInputStream().getText(new Interval(ctx.start.getStartIndex(), ctx.stop.getStopIndex()));
+@@ -54,6 +54,12 @@ private static String stripStateSuffix(final String message) {
+     
+     @Override
+     protected void write(final FirebirdPacketPayload payload) {
++        if (ISCConstants.isc_dsql_sqlda_err == gdsCode) {
++            payload.writeInt4(ISCConstants.isc_arg_gds);
++            payload.writeInt4(ISCConstants.isc_sqlerr);
++            payload.writeInt4(ISCConstants.isc_arg_number);
++            payload.writeInt4(-804);
++        }
+         for (Segment each : segments) {
+             payload.writeInt4(ISCConstants.isc_arg_gds);
+             payload.writeInt4(each.gdsCode);
+```
+
+**File**: `database/protocol/dialect/firebird/src/test/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVectorTest.java` (modified, +16/-0)
+```diff
+@@ -18,6 +18,7 @@
+ package org.apache.shardingsphere.database.protocol.firebird.err;
+ 
+ import org.apache.shardingsphere.database.protocol.firebird.payload.FirebirdPacketPayload;
++import org.apache.shardingsphere.database.protocol.payload.PacketPayload;
+ import org.firebirdsql.gds.ISCConstants;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.ExtendWith;
+@@ -85,6 +86,21 @@ void assertWriteOmitsArgumentWhenMessageIsEmpty() {
+         verifyNoMoreInteractions(payload);
      }
      
-+    @Override
-+    public ASTNode visitVirtualColumnDefinition(final VirtualColumnDefinitionContext ctx) {
-+        ColumnSegment column = (ColumnSegment) visit(ctx.columnName());
-+        DataTypeSegment dataType = null == ctx.dataType() ? null : (DataTypeSegment) visit(ctx.dataType());
-+        boolean isPrimaryKey = ctx.inlineConstraint().stream().anyMatch(each -> null != each.primaryKey());
-+        boolean isNotNull = ctx.inlineConstraint().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
-+        return new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataType, isPrimaryKey, isNotNull, getText(ctx));
++    @Test
++    void assertWriteSqldaError() {
++        FirebirdStatusVector actual = new FirebirdStatusVector(new SQLException("", "07002", ISCConstants.isc_dsql_sqlda_err));
++        actual.write((PacketPayload) payload);
++        InOrder inOrder = inOrder(payload);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_sqlerr);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_number);
++        inOrder.verify(payload).writeInt4(-804);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_dsql_sqlda_err);
++        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_end);
++        verifyNoMoreInteractions(payload);
 +    }
 +    
-     @SuppressWarnings("unchecked")
-     @Override
-     public ASTNode visitOutOfLineConstraint(final OutOfLineConstraintContext ctx) {
-```
-
-**File**: `test/it/parser/src/main/resources/case/ddl/create-table.xml` (modified, +67/-1)
-```diff
-@@ -1102,7 +1102,7 @@
-     
-     <create-table sql-case-id="create_table_with_column_identity">
-         <table name="t_order" start-index="13" stop-index="19" />
--        <column-definition type="NUMBER" start-index="22" stop-index="99">
-+        <column-definition type="NUMBER" auto-increment="true" start-index="22" stop-index="99">
-             <column name="order_id" />
-         </column-definition>
-         <column-definition type="NUMBER" start-index="102" stop-index="119">
-@@ -1122,6 +1122,66 @@
-         </column-definition>
-     </create-table>
-     
-+    <create-table sql-case-id="create_table_with_virtual_column_visible_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="true" text="foo_total NUMBER VISIBLE GENERATED ALWAYS AS (foo_id + 1) VIRTUAL NOT NULL" start-index="39" stop-index="112">
-+            <column name="foo_total" />
-+        </column-definition>
-+    </create-table>
-+    
-+    <create-table sql-case-id="create_table_with_virtual_column_invisible_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition primary-key="true" auto-increment="false" not-null="false" text="foo_key INVISIBLE AS (foo_id + 2) PRIMARY KEY" start-index="39" stop-index="83">
-+            <column name="foo_key" />
-+        </column-definition>
-+    </create-table>
-+    
-+    <create-table sql-case-id="create_table_with_virtual_column_default_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_id NUMBER" start-index="24" stop-index="36">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition primary-key="false" auto-increment="false" not-null="false" text="foo_total AS (foo_id * 2)" start-index="39" stop-index="63">
-+            <column name="foo_total" />
-+        </column-definition>
-+    </create-table>
-+    
-+    <create-table sql-case-id="create_table_with_identity_always_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 5 INCREMENT BY 2)" start-index="24" stop-index="95">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_value NUMBER DEFAULT 7" start-index="98" stop-index="123">
-+            <column name="foo_value" />
-+        </column-definition>
-+    </create-table>
-+    
-+    <create-table sql-case-id="create_table_with_identity_by_default_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED BY DEFAULT AS IDENTITY" start-index="24" stop-index="69">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="false" text="foo_value NUMBER" start-index="72" stop-index="87">
-+            <column name="foo_value" />
-+        </column-definition>
-+    </create-table>
-+    
-+    <create-table sql-case-id="create_table_with_identity_default_on_null_oracle">
-+        <table name="foo_table" start-index="13" stop-index="21" />
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="true" not-null="false" text="foo_id NUMBER GENERATED BY DEFAULT ON NULL AS IDENTITY (START WITH 3)" start-index="24" stop-index="92">
-+            <column name="foo_id" />
-+        </column-definition>
-+        <column-definition type="NUMBER" primary-key="false" auto-increment="false" not-null="true" text="foo_value NUMBER NOT NULL" start-index="95" stop-index="119">
-+            <column name="foo_value" />
-+        </column-definition>
-+    </create-table>
-+    
-     <create-table sql-case-id="create_table_with_column_encrypt">
-         <table name="t_order" start-index="13" stop-index="19" />
-         <column-definition type="NUMBER" start-index="22" stop-index="97">
-@@ -2891,6 +2951,9 @@
-         <column-definition type="NUMBER" start-index="188" stop-index="220">
-             <column name="amount_sold" start-index="188" stop-index="198" />
-         </column-d
-```
-
-**File**: `test/it/parser/src/main/resources/sql/supported/ddl/create-table.xml` (modified, +6/-0)
-```diff
-@@ -98,6 +98,12 @@
-     <sql-case id="create_table_with_quota" value="CREATE TABLE &quot;t_order&quot; (&quot;order_id&quot; NUMBER(10), &quot;user_id&quot; NUMBER(10), &quot;status&quot; VARCHAR2(10), &quot;column1&quot; VARCHAR2(10), &quot;column2&quot; VARCHAR2(10), &quot;column3&quot; VARCHAR2(10))" db-types="Oracle" />
-     <sql-case id="create_table_with_column_on_null_default" value="CREATE TABLE t_order (order_id NUMBER(10) DEFAULT ON NULL 0, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
-     <sql-case id="create_table_with_column_identity" value="CREATE TABLE t_order (order_id NUMBER(10) GENERATED BY DEFAULT AS IDENTITY START WITH 1 MAXVALUE 100, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
-+    <sql-case id="create_table_with_virtual_column_visible_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_total NUMBER VISIBLE GENERATED ALWAYS AS (foo_id + 1) VIRTUAL NOT NULL)" db-types="Oracle" />
-+    <sql-case id="create_table_with_virtual_column_invisible_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_key INVISIBLE AS (foo_id + 2) PRIMARY KEY)" db-types="Oracle" />
-+    <sql-case id="create_table_with_virtual_column_default_oracle" value="CREATE TABLE foo_table (foo_id NUMBER, foo_total AS (foo_id * 2))" db-types="Oracle" />
-+    <sql-case id="create_table_with_identity_always_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 5 INCREMENT BY 2), foo_value NUMBER DEFAULT 7)" db-types="Oracle" />
-+    <sql-case id="create_table_with_identity_by_default_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED BY DEFAULT AS IDENTITY, foo_value NUMBER)" db-types="Oracle" />
-+    <sql-case id="create_table_with_identity_default_on_null_oracle" value="CREATE TABLE foo_table (foo_id NUMBER GENERATED BY DEFAULT ON NULL AS IDENTITY (START WITH 3), foo_value NUMBER NOT NULL)" db-types="Oracle" />
-     <sql-case id="create_table_with_column_encrypt" value="CREATE TABLE t_order (order_id NUMBER(10) ENCRYPT USING 'encrypt_algorithm' IDENTIFIED BY '123456', user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle" />
-     <sql-case id="create_table_with_inline_foreign_key_reference" value="CREATE TABLE t_order_item (item_id NUMBER(10), order_id NUMBER(10) CONSTRAINT fk_order_id REFERENCES t_order (order_id) ON DELETE CASCADE, user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle,PostgreSQL,openGauss" />
-     <sql-case id="create_table_with_inline_check" value="CREATE TABLE t_order (order_id NUMBER(10) CONSTRAINT chk_order_id CHECK (order_id > 0), user_id NUMBER(10), status VARCHAR2(10), column1 VARCHAR2(10), column2 VARCHAR2(10), column3 VARCHAR2(10))" db-types="Oracle,PostgreSQL,openGauss" />
+     @Test
+     void assertWriteWithNullMessage() {
+         FirebirdStatusVector vector = new FirebirdStatusVector(new SQLException(null, "28000", ISCConstants.isc_login));
 ```
 
 ---
 
-### Incident Patch 2: `b4e1815f` (2026-11-05)
-**Commit Message**: Use JDBC Array for PostgreSQL index options (#40454)
+### Incident Patch 2: `ef37ccdb` (2026-11-05)
+**Commit Message**: Fix documentation links, images and translation pairing (#40474)
 
-**File**: `kernel/data-pipeline/dialect/postgresql/src/main/java/org/apache/shardingsphere/data/pipeline/postgresql/sqlbuilder/ddl/index/PostgreSQLIndexSQLGenerator.java` (modified, +4/-4)
+**File**: `docs/blog/content/material/2022_03_09_SQL_Parse_Format_Function_A_Technical_Deep_Dive_by_Apache_ShardingSphere.en.md` (modified, +1/-1)
 ```diff
-@@ -19,8 +19,8 @@
+@@ -263,7 +263,7 @@ mysql> parse SELECT id, name FROM t_user WHERE status = 'ACTIVE' AND age > 18;
+ +----------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ ```
  
- import org.apache.shardingsphere.data.pipeline.postgresql.sqlbuilder.ddl.PostgreSQLDDLTemplateExecutor;
- import org.apache.shardingsphere.data.pipeline.postgresql.sqlbuilder.template.PostgreSQLPipelineFreemarkerManager;
--import org.postgresql.jdbc.PgArray;
+-For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/current/cn/concepts/distsql/](https://shardingsphere.apache.org/document/current/cn/concepts/distsql/)
++For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/](https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/)
  
-+import java.sql.Array;
- import java.sql.Connection;
- import java.sql.SQLException;
- import java.util.ArrayList;
-@@ -119,15 +119,15 @@ private boolean isSortOrder(final Map<String, Object> columnDetail) throws SQLEx
-         if (null == columnDetail.get("options")) {
-             return false;
-         }
--        String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
-+        String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
-         return options.length > 0 && "DESC".equals(options[0]);
-     }
-     
-     private Object isNulls(final Map<String, Object> columnDetail) throws SQLException {
-         if (null == columnDetail.get("options")) {
-             return false;
-         }
--        String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
-+        String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
-         return options.length > 1 && options[1].split(" ").length > 1 && "FIRST".equals(options[1].split(" ")[1]);
-     }
-     
-@@ -140,7 +140,7 @@ private String getColumnPropertyDisplayData(final Map<String, Object> columnDeta
-             result += " " + columnDetail.get("opcname");
-         }
-         if ("btree".equals(indexData.get("amname"))) {
--            String[] options = (String[]) ((PgArray) columnDetail.get("options")).getArray();
-+            String[] options = (String[]) ((Array) columnDetail.get("options")).getArray();
-             if (options.length > 0) {
-                 result += " " + options[0];
-             }
+ ## Conclusion
+ 
 ```
 
-**File**: `kernel/data-pipeline/dialect/postgresql/src/test/java/org/apache/shardingsphere/data/pipeline/postgresql/sqlbuilder/ddl/index/PostgreSQLIndexSQLGeneratorTest.java` (modified, +9/-9)
+**File**: `docs/blog/content/material/2022_03_11_Asia’s_E-Commerce_Giant_Dangdang_Increases_Order_Processing_Speed_by_30%_Saves_Over_Ten_Million_in_Technology_Budget_with_Apache_ShardingSphere.en.md` (modified, +1/-1)
 ```diff
-@@ -22,8 +22,8 @@
- import org.junit.jupiter.api.Test;
- import org.mockito.MockedStatic;
- import org.mockito.internal.configuration.plugins.Plugins;
--import org.postgresql.jdbc.PgArray;
+@@ -42,7 +42,7 @@ Based on the situation described above, Dangdang’s tech team proposed a wareho
  
-+import java.sql.Array;
- import java.sql.Connection;
- import java.sql.SQLException;
- import java.util.Arrays;
-@@ -119,17 +119,17 @@ void assertGenerateWithIncludeAndBtreeOptions() throws SQLException, ReflectiveO
-         when(templateExecutor.getMajorVersion()).thenReturn(11);
-         when(templateExecutor.executeByTemplate(anyMap(), eq("component/indexes/%s/nodes.ftl"))).thenReturn(Collections.singletonList(Collections.singletonMap("oid", 3L)));
-         when(templateExecutor.executeByTemplate(anyMap(), eq("component/indexes/%s/properties.ftl"))).thenReturn(Collections.singletonList(createBtreeIndexProps()));
--        PgArray emptyOptions = mock(PgArray.class);
-+        Array emptyOptions = mock(Array.class);
-         when(emptyOptions.getArray()).thenReturn(new String[0]);
--        PgArray descOptions = mock(PgArray.class);
-+        Array descOptions = mock(Array.class);
-         when(descOptions.getArray()).thenReturn(new String[]{"DESC"});
--        PgArray nullsFirstOptions = mock(PgArray.class);
-+        Array nullsFirstOptions = mock(Array.class);
-         when(nullsFirstOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS FIRST"});
--        PgArray nullsLastOptions = mock(PgArray.class);
-+        Array nullsLastOptions = mock(Array.class);
-         when(nullsLastOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS LAST"});
--        PgArray nullsWithoutSpaceOptions = mock(PgArray.class);
-+        Array nullsWithoutSpaceOptions = mock(Array.class);
-         when(nullsWithoutSpaceOptions.getArray()).thenReturn(new String[]{"ASC", "NULLS"});
--        PgArray emptyArrayOptions = mock(PgArray.class);
-+        Array emptyArrayOptions = mock(Array.class);
-         when(emptyArrayOptions.getArray()).thenReturn(new String[0]);
-         Collection<Map<String, Object>> columnDetails = Arrays.asList(createColumnDetailWithNullOptions(emptyOptions),
-                 createColumnDetail("desc_col", null, null, descOptions), createColumnDetail("nulls_first_col", null, null, nullsFirstOptions),
-@@ -190,7 +190,7 @@ private Map<String, Object> createBtreeIndexProps() {
-         return result;
-     }
-     
--    private Map<String, Object> createColumnDetailWithNullOptions(final PgArray fallbackOptions) {
-+    private Map<String, Object> createColumnDetailWithNullOptions(final Array fallbackOptions) {
-         Map<String, Object> result = mock(Map.class);
-         when(result.get("attdef")).thenReturn("col_with_null_options");
-         when(result.get("collnspname")).thenReturn(null);
-@@ -209,7 +209,7 @@ private Map<String, Object> createContext(final String schema, final String tabl
-         return result;
-     }
-     
--    private Map<String, Object> createColumnDetail(final String attdef, final String collation, final String opClass, final PgArray options) {
-+    private Map<String, Object> createColumnDetail(final String attdef, final String collation, final String opClass, final Array options) {
-         Map<String, Object> result = new HashMap<>(4, 1F);
-         result.put("attdef", attdef);
-         result.put("collnspname", collation);
+ However, at that time, there wasn’t a versatile and mature enough open source database middleware living up to Dangdang’s expectations, so they created one and named it Sharding-JDBC.
+ 
+-[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/current/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
++[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/5.1.0/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
+ 
+ With ShardingSphere providing services in the form of the `.jar` files package, users can connect the client directly to the database without additional deployment and dependencies. It can be seen as an enhanced JDBC driver, fully compatible with JDBC and all ORM frameworks.
+ 
+```
+
+**File**: `docs/blog/content/material/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.0.en.md` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ The updates effectively reduce the consumed database connection resources in the
+ 
+ First, it’s better to review Apache ShardingSphere’s microkernel and the principle that explains how the Executor Engine works in the processes. As shown in the figure below, the Apache ShardingSphere microkernel includes core processes: SQL Parser, SQL Router, SQL Rewriter, SQL Executor, and Result Merger.
+ 
+-![Processes in Apache ShardingSphere Microkernel](...)
++![Processes in Apache ShardingSphere Microkernel](https://shardingsphere.apache.org/blog/img/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.01.png)
+ 
+ SQL Parser Engine can parse the SQL statements entered by the user and generate SQL Statements containing contextual information.
+ 
+```
+
+**File**: `docs/blog/content/material/2022_03_23_Apache_ShardingSphere_Proxy_Performance_with_PostgreSQL_is_Improved_26.8%_with_Version_5.1.0.en.md` (modified, +1/-1)
+```diff
+@@ -246,7 +246,7 @@ We use TPC-C to conduct the ShardingSphere-Proxy benchmark test, to verify the p
+ 
+ To highlight the performance loss of ShardingSphere-Proxy itself, this test will use ShardingSphere-Proxy with sharding data (1 shard) against PostgreSQL 14.2.
+ 
+-The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/current/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
++The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/5.1.0/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
+ 
+ **Testing Environment**
+ ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/irmtm4oucizld7hmuf5y.png)
+```
+
+**File**: `docs/blog/content/material/2022_04_29_Apache_ShardingSphere_Enterprise_Applications_Zhuanzhuan’s_Transaction_System_with_100s_of_Millions_of_Records.en.md` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ Advantages of ShardingSphere:
+ 
+ ShardingSphere initiated the Database Plus concept and adopts a plugin oriented architecture where all modules are independent of each other, allowing each to be used individually or flexibly combined.
+ 
+-It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
++It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/5.1.1/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
+ 
+ Below is a feature comparison of the three products:
+ ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7517wpdgk6gmgb0s8202.png)
+```
+
+**File**: `docs/blog/content/material/2022_06_02_Database_Mesh_2.0_Database_Governance_in_a_Cloud_Native_Environment.en.md` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ This means that the implementation of Service Mesh in Kubernetes’ Sidecar mode
+ 
+ When a new technology concept is launched, it’ll be characterized hahahby different business scenarios and patterns, different architectural design, different infrastructure maturity, and even different engineering cultures. It is a belief that has been fully demonstrated in the implementation of Kubernetes, and has been reinforced by Service Mesh. What about Database Mesh?
+ 
+-[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
++[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/5.1.1/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
+ 
+ For example, analysis and support for SQL protocol are added in Service Mesh by means of secondary development to enhance the database traffic governance ability, which is compatible with the unified service governance configuration. The concept of Database Mesh is integrated into a complete set of middleware service frameworks, and a unified access mode is provided for business applications in the form of SDK or Sidecar to simplify the operation for developers.
+ 
+```
+
+**File**: `docs/blog/content/material/2022_07_06_ShardingSphere-JDBC_Driver_Released_A_JDBC_Driver_That_Requires_No_Code_Modifications.en.md` (modified, +1/-1)
+```diff
+@@ -92,7 +92,7 @@ try (
+ 
+ **Reference**
+ 
+-- [JDBC driver](https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
++- [JDBC driver](https://shardingsphere.apache.org/document/5.1.2/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
+ 
+ ## Conclusion
+ 
+```
+
+**File**: `docs/blog/content/material/2022_07_26_DistSQL_Applications_Building_a_Dynamic_Distributed_Database.en.md` (modified, +5/-5)
+```diff
+@@ -126,7 +126,7 @@ Next, we’ll adopt regular sharding and use the `INLINE` expression algorithm t
+ 
+ **Primary key generator**
+ 
+-The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/).
++The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/).
+ 
+ 1.Create the primary key generator.
+ 
+@@ -182,7 +182,7 @@ mysql> SHOW SHARDING ALGORITHMS;
+ ```
+ **Default sharding strategy**
+ 
+-Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/) for its concept.
++Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/) for its concept.
+ 
+ Sharding strategy consists of `databaseStrategy` and `tableStrategy`.
+ 
+@@ -486,11 +486,11 @@ If you have any questions or suggestions about [Apache ShardingSphere](https://s
+ 
+ ## References
+ 
+-1. [Concept-DistSQL](https://shardingsphere.apache.org/document/current/en/concepts/distsql/)
++1. [Concept-DistSQL](https://shardingsphere.apache.org/document/5.1.2/en/concepts/distsql/)
+ 
+-2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/)
++2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/)
+ 
+-3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/)
++3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/)
+ 
+ 4. [Concept INLINE Expression
+ ](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/inline-expression/)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40476** (2026-11-05): Use current documentation URLs for blog references (@terrymanu)
+- **PR #40474** (2026-11-05): Fix documentation links, images and translation pairing (@terrymanu)
+- **PR #40473** (2026-11-05): Unify HttpCore dependency version to 4.4.15 (@terrymanu)
 - **PR #40471** (2026-11-05): Complete Oracle CREATE TABLE column definitions (@sandynz)
 - **PR #40470** (2026-11-05): Simplify docs README and remove duplicate license (@terrymanu)
-- **PR #40467** (2026-11-04): Unify libthrift dependency management at 0.16.0 (@terrymanu)
-- **PR #40466** (2026-11-04): Unify JSpecify dependency management at 1.0.1 (@terrymanu)
-- **PR #40464** (2026-11-04): Unify Stax2 API dependency management at 4.2.1 (@terrymanu)
-- **PR #40463** (2026-11-04): Unify PostgreSQL and openGauss data type grammar definitions (@terrymanu)
+- **PR #40468** (closed): Bump org.apache.thrift:libthrift from 0.16.0 to 0.24.0 (@dependabot[bot])
 
 ---
 
@@ -1764,28 +1706,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Complete Oracle CREATE TABLE column definitions (#40471)
+## X. SQL error prefix for Firebird SQLDA status vectors (#40443)
 
 **RULE**:
-When implementing operations in `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5c8b104`: Complete Oracle CREATE TABLE column definitions (#40471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34de0a1f`: SQL error prefix for Firebird SQLDA status vectors (#40443). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/DDLStatement.g4`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    : columnName dataType? visibleClause (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
+1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    : columnName dataType? (GENERATED ALWAYS)? AS LP_ expr RP_ VIRTUAL? inlineConstraint*
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5c8b104` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34de0a1f` are properly handled with clean fallback behavior.

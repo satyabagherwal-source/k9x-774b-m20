@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `c51f047e`  
+> **Source Version**: `2e23492a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:58:08.081Z  
+> **Timestamp**: 2026-11-05T22:16:04.928Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:58:07.780Z  
+> **Harvest Timestamp**: 2026-11-05T22:16:04.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112473 stars
+- **Stars / Engagement**: 112533 stars
 
 ---
 
@@ -2262,13 +2262,11 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16447** (2026-11-03): **fix(utils): match file extensions case-insensitively in MimeType**
-  *Symptoms*: `MimeType::parse_from_uri_with_fallback` matched the extension case-sensitively, so a file like `app.JS` or `Style.CSS` got the fallback type, which is `text/html` for the `tauri://` and asset protocols. The webview then refuses to run `app.JS` as a module script. `parse_with_fallback` also only skipped `infer` for a lowercase `.svg`, so `Logo.SVG` came back as `text/html`, or `text/xml` if it starts with `<?xml`, and doesn't render in an `<img>`.  This lowercases the extension before matching and makes the `.svg` check case-insensitive. Added a test (`should_ignore_extension_case`) and a change file for `tauri-utils`.  I used Claude Code to write this change. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 4fd24c23f60bf12f5bb1f92a60def5ffbacb9e89 There are 7 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </details>  [Add another change file through the GitHub 
+- **Issue #16466** (2026-11-05): **chore(deps): update dependency eslint-plugin-security to v4.2.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-security](https://redirect.github.com/eslint-community/eslint-plugin-security) | [`4.2.0` → `4.2.1`](https://renovatebot.com/diffs/npm/eslint-plugin-security/4.2.0/4.2.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-security/4.2.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-security/4.2.0/4.2.1?slim=true) |  ---  ### Release Notes  <details> <summary>eslint-community/eslint-plugin-security (eslint-plugin-security)</summary>  ### [`v4.2.1`](https://redirect.github.com/eslint-community/eslint-plugin-security/blob/HEAD/CHANGELOG.md#421-2026-10-18)  [Compare Source](https://redirect.github.com/eslint-community/eslint-plugin-security/compare/eslint-plugin-security-v4.2.0...eslint-plugin-security-v4.2.1)  ##### Bug Fixes  - check `RegExp()` called without `new` in the regexp rules ([#&#8203;232](https://redirect.github.com/eslint-community/eslint-plugin-security/issues/232)) ([affbfc0](https://redirect.github.com/eslint-community/eslint-plugin-security/commit/affbfc0d7b83434434551f128335d04400e554bb))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled 
 
-- **Issue #16444** (2026-11-03): **fix(utils): don't panic parsing a hex Color with non-ASCII characters**
-  *Symptoms*: `Color::from_str` checks the byte length and then slices at byte offsets, so a hex color string with a multi-byte character panics instead of returning an error:  ```rust "#€€".parse::<Color>() // panics: byte index 2 is not a char boundary ```  This parser handles `backgroundColor` in tauri.conf.json and the string form of `setBackgroundColor` from JS. The fix rejects anything that isn't a hex digit before slicing, which also stops `#+f+f+f` from being accepted (`from_str_radix` allows a sign). It also keeps the trimmed string when there's no leading `#`, so `" fff "` parses like `" #fff "`.  ### Testing  - Added cases to `config::test::parse_hex_color`. Without the fix it panics with "end byte index 2 is not a char boundary"; with it, all 43 `tauri-utils` lib tests pass. - `cargo clippy -p tauri-utils` and `rustfmt --check` on `config.rs` are clean. - Added `.changes/utils-color-parse-non-ascii.md` (`tauri-utils: patch:bug`).  I used Claude Code to write this change. 
+- **Issue #16465** (2026-11-05): **[bug] RPM bundling fails for a prerelease version: invalid version "0.0.0-1": contains invalid character**
+  *Symptoms*: ### Describe the bug  Since `tauri-bundler` 2.10.3 (the move to `rpm` 0.30, #15639), bundling an RPM fails for any app version that has a semver prerelease, for example `0.0.0-1729` or `1.2.0-rc.1`:  ``` Bundling Stigmer-0.0.0-1729-1.x86_64.rpm (.../target/release/bundle/rpm/Stigmer-0.0.0-1729-1.x86_64.rpm) failed to bundle project: invalid version "0.0.0-1729": contains invalid character (allowed: alphanumeric, '.', '_', '+', '%', '{', '}', '~', '^') ```  `crates/tauri-bundler/src/bundle/linux/rpm.rs` passes `settings.version_string()` straight to `rpm::PackageBuilder::new`. RPM versions cannot contain `-`, which RPM reserves as the version–release separator. With `tauri-bundler` 2.10.1 (rpm 0.16) the same versions bundled without error.  ### Reproduction  1. In `tauri.conf.json`, set `"version": "0.0.0-1"`, with `bundle.targets` `"all"` (or including `rpm`). 2. Run `tauri build` on Linux.  The `.deb` and the AppImage bundle; the RPM fails with the error above.  ### Expected behavior  A prerelease version bundles. RPM's own convention for a prerelease is `~` (`1.2.0~rc.1` sorts before `1.2.0`), so mapping the semver `-` to `~` for the RPM `Version` tag would keep the ordering right. Alternatively, a `bundle > linux > rpm` option to set the RPM version separately would work.  ### Platform and versions  - `@tauri-apps/cli` 2.12.4 (`tauri-bundler` 2.10.4) - GitHub Actions `ubuntu-22.04`, through `tauri-apps/tauri-action` - Last good: `@tauri-apps/cli` 2.10.1  ### Workaround  We
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2285,243 +2283,369 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `219a6072` (2026-11-03)
-**Commit Message**: fix(utils): don't panic parsing a hex Color with non-ASCII characters (#16444)
+### Incident Patch 1: `2e23492a` (2026-11-05)
+**Commit Message**: chore(deps): update dependency eslint-plugin-security to v4.2.1 (#16466)
 
-`Color::from_str` checked the byte length and then sliced the string at
-byte offsets 0..2, 2..4, ..., so a 3, 6 or 8 byte string with a
-multi-byte character such as "#€€" panicked with "byte index 2 is not a
-char boundary". Reject anything that isn't a hex digit before slicing,
-which also stops `u8::from_str_radix` from accepting a leading `+`.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-The trimmed string was also dropped when it had no leading `#`, so
-" fff " failed while " #fff " parsed.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changes/utils-color-parse-non-ascii.md` (added, +5/-0)
+**File**: `packages/api/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri-utils": patch:bug
-+---
-+
-+Fix parsing a hex `Color` string panicking when it contains non-ASCII characters, for example `#€€`; it now returns an error. Surrounding whitespace is also trimmed when the string has no leading `#`.
+@@ -52,7 +52,7 @@
+     "@types/node": "^24.11.0",
+     "eslint": "^10.0.2",
+     "eslint-config-prettier": "10.1.8",
+-    "eslint-plugin-security": "4.2.0",
++    "eslint-plugin-security": "4.2.1",
+     "globals": "^17.4.0",
+     "rollup": "4.64.10",
+     "tslib": "^2.8.1",
 ```
 
-**File**: `crates/tauri-utils/src/config.rs` (modified, +11/-2)
+**File**: `pnpm-lock.yaml` (modified, +5/-5)
 ```diff
-@@ -1765,8 +1765,12 @@ impl From<[u8; 3]> for Color {
+@@ -246,8 +246,8 @@ importers:
+         specifier: 10.1.8
+         version: 10.1.8(eslint@10.0.2(jiti@2.6.1)(supports-color@10.2.2))
+       eslint-plugin-security:
+-        specifier: 4.2.0
+-        version: 4.2.0
++        specifier: 4.2.1
++        version: 4.2.1
+       globals:
+         specifier: ^17.4.0
+         version: 17.4.0
+@@ -3145,8 +3145,8 @@ packages:
+     peerDependencies:
+       eslint: '>=7.0.0'
  
- impl FromStr for Color {
-   type Err = String;
--  fn from_str(mut color: &str) -> Result<Self, Self::Err> {
--    color = color.trim().strip_prefix('#').unwrap_or(color);
-+  fn from_str(color: &str) -> Result<Self, Self::Err> {
-+    let color = color.trim();
-+    let color = color.strip_prefix('#').unwrap_or(color);
-+    if !color.bytes().all(|b| b.is_ascii_hexdigit()) {
-+      return Err("Invalid hex color, must only contain hexadecimal digits, for example: #fff, #ffffff, or #ffffffff".into());
-+    }
-     let color = match color.len() {
-       3 => color.chars()
-             .flat_map(|c| std::iter::repeat_n(c, 2))
-@@ -5242,6 +5246,11 @@ mod test {
-     assert_eq!(Color(0, 0, 0, 255), "#000000".parse().unwrap());
-     assert_eq!(Color(0, 0, 0, 255), "#000000ff".parse().unwrap());
-     assert_eq!(Color(0, 255, 0, 255), "#00ff00ff".parse().unwrap());
-+
-+    assert!("#€€".parse::<Color>().is_err());
-+    assert!("#€".parse::<Color>().is_err());
-+    assert!("#+f+f+f".parse::<Color>().is_err());
-+    assert_eq!(Color(255, 255, 255, 255), " fff ".parse().unwrap());
-   }
+-  eslint-plugin-security@4.2.0:
+-    resolution: {integrity: sha512-LL5jbxRzlNv0vkSyBtbO7qAPofqd3xlseAFTDevyDTMmScjBrLv2/VkQ7ZFQxBaFYsa3dhpE7NcV+JkwJ9l6RQ==}
++  eslint-plugin-security@4.2.1:
++    resolution: {integrity: sha512-iF95SSqdSUVTvB7srNXoNeTQIqwfALTn9nmoqJyixSIKqEydlW01Cqb7xNveqE4Zd6YWBoQICQ4FH9NkR1byDg==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
  
-   #[test]
+   eslint-scope@9.1.1:
+@@ -7725,7 +7725,7 @@ snapshots:
+     dependencies:
+       eslint: 10.0.2(jiti@2.6.1)(supports-color@10.2.2)
+ 
+-  eslint-plugin-security@4.2.0:
++  eslint-plugin-security@4.2.1:
+     dependencies:
+       safe-regex: 2.1.1
+ 
 ```
 
 ---
 
-### Incident Patch 2: `c51f047e` (2026-11-03)
-**Commit Message**: fix(utils): match file extensions case-insensitively in MimeType (#16447)
+### Incident Patch 2: `eebf7c23` (2026-11-04)
+**Commit Message**: fix(core): don't hold the webviews lock while emitting to webviews (#16438)
 
-`MimeType::parse_from_uri_with_fallback` compared the extension
-case-sensitively, so `app.JS` or `Style.CSS` fell through to the
-fallback (`text/html` for the `tauri://` and asset protocols), and
-`parse_with_fallback` only skipped `infer` for a lowercase `.svg`, so
-`Logo.SVG` was served as `text/html` or `text/xml`.
+* fix(core): don't hold the webviews lock while emitting to webviews
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(core): don't hold the js listeners lock while emitting to webviews
 
-**File**: `.changes/utils-mime-type-extension-case.md` (added, +5/-0)
+* docs(core): explain why holding the locks while evaluating deadlocks
+
+**File**: `.changes/emit-webviews-lock-deadlock.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"tauri-utils": patch:bug
++"tauri": patch:bug
 +---
 +
-+Match file extensions case-insensitively when guessing a MIME type, so files such as `app.JS` or `Logo.SVG` no longer get the fallback type (`text/html` for the `tauri://` and `asset://` protocols).
++Fix a deadlock when emitting an event from a non-main thread with the `tracing` feature enabled while the main thread emits an event or looks up a webview, for example in a document title change handler.
 ```
 
-**File**: `crates/tauri-utils/src/mime_type.rs` (modified, +26/-3)
+**File**: `crates/tauri/src/event/listener.rs` (modified, +20/-13)
 ```diff
-@@ -53,8 +53,8 @@ impl MimeType {
+@@ -308,7 +308,7 @@ impl Listeners {
  
-   /// parse a URI suffix to convert text/plain mimeType to their actual web compatible mimeType with specified fallback for unknown file extensions.
-   pub fn parse_from_uri_with_fallback(uri: &str, fallback: MimeType) -> MimeType {
--    let suffix = uri.split('.').next_back();
--    match suffix {
-+    let suffix = uri.split('.').next_back().map(str::to_ascii_lowercase);
-+    match suffix.as_deref() {
-       Some("bin") => Self::OctetStream,
-       Some("css" | "less" | "sass" | "styl") => Self::Css,
-       Some("csv") => Self::Csv,
-@@ -82,7 +82,7 @@ impl MimeType {
+   pub(crate) fn emit_js_filter<'a, R, I, F>(
+     &self,
+-    mut webviews: I,
++    webviews: I,
+     emit_args: &EmitArgs,
+     filter: Option<F>,
+   ) -> crate::Result<()>
+@@ -318,19 +318,26 @@ impl Listeners {
+     F: Fn(&EventTarget) -> bool,
+   {
+     let event = &emit_args.event;
+-    let js_listeners = self.inner.js_event_listeners.lock().unwrap();
+-    webviews.try_for_each(|webview| {
+-      if let Some(handlers) = js_listeners.get(webview.label()).and_then(|s| s.get(event)) {
+-        let ids = handlers
+-          .iter()
+-          .filter(|handler| match_any_or_filter(&handler.target, &filter))
+-          .map(|handler| handler.id)
+-          .collect::<Vec<_>>();
+-        webview.emit_js(emit_args, &ids)?;
+-      }
++    // `eval` can block until the main thread runs the script, so holding the listeners lock
++    // while waiting deadlocks any main thread code that takes it (e.g. `emit`)
++    let targets = {
++      let js_listeners = self.inner.js_event_listeners.lock().unwrap();
++      webviews
++        .filter_map(|webview| {
++          let handlers = js_listeners.get(webview.label())?.get(event)?;
++          let ids = handlers
++            .iter()
++            .filter(|handler| match_any_or_filter(&handler.target, &filter))
++            .map(|handler| handler.id)
++            .collect::<Vec<_>>();
++          Some((webview, ids))
++        })
++        .collect::<Vec<_>>()
++    };
+ 
+-      Ok(())
+-    })
++    targets
++      .into_iter()
++      .try_for_each(|(webview, ids)| webview.emit_js(emit_args, &ids))
    }
-   /// infer mimetype from content (or) URI if needed with specified fallback for unknown file extensions.
-   pub fn parse_with_fallback(content: &[u8], uri: &str, fallback: MimeType) -> String {
--    let mime = if uri.ends_with(".svg") {
-+    let mime = if uri.to_ascii_lowercase().ends_with(".svg") {
-       // when reading svg, we can't use `infer`
-       None
-     } else {
-@@ -151,4 +151,27 @@ mod tests {
-     let custom_scheme = MimeType::parse_from_uri("wry://tauri.app").to_string();
-     assert_eq!(custom_scheme, String::from("text/html"));
-   }
-+
-+  #[test]
-+  fn should_ignore_extension_case() {
-+    assert_eq!(
-+      MimeType::parse_from_uri("assets/app.JS").to_string(),
-+      "text/javascript"
-+    );
-+    assert_eq!(
-+      MimeType::parse_from_uri("assets/Style.Css").to_string(),
-+      "text/css"
-+    );
-+    assert_eq!(
-+      MimeType::parse(
-+        b"<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>",
-+        "Logo.SVG"
-+      ),
-+      "image/svg+xml"
-+    );
-+    assert_eq!(
-+      MimeType::parse(b"<?xml version=\"1.0\"?><svg></svg>", "Logo.SVG"),
-+      "image/svg+xml"
-+    );
-+  }
- }
+ 
+   pub(crate) fn emit_js<'a, R, I>(&self, webviews: I, emit_args: &EmitArgs) -> crate::Result<()>
+```
+
+**File**: `crates/tauri/src/manager/mod.rs` (modified, +18/-6)
+```diff
+@@ -534,8 +534,16 @@ impl<R: Runtime> AppManager<R> {
+     };
+ 
+     let listeners = self.listeners();
++    // `eval` can block until the main thread runs the script, so holding the webviews lock
++    // while waiting deadlocks any main thread code that takes it (e.g. `get_webview`)
++    let webviews = self
++      .webview
++      .webviews_lock()
++      .values()
++      .cloned()
++      .collect::<Vec<_>>();
+ 
+-    listeners.emit_js(self.webview.webviews_lock().values(), &emit_args)?;
++    listeners.emit_js(webviews.iter(), &emit_args)?;
+     listeners.emit(emit_args)?;
+ 
+     Ok(())
+@@ -563,12 +571,16 @@ impl<R: Runtime> AppManager<R> {
+     };
+ 
+     let listeners = self.listeners();
++    // `eval` can block until the main thread runs the script, so holding the webviews lock
++    // while waiting deadlocks any main thread code that takes it (e.g. `get_webview`)
++    let webviews = self
++      .webview
++      .webviews_lock()
++      .values()
++      .cloned()
++      .collect::<Vec<_>>();
+ 
+-    listeners.emit_js_filter(
+-      self.webview.webviews_lock().values(),
+-      &emit_args,
+-      Some(&filter),
+-    )?;
++    listeners.emit_js_filter(webviews.iter(), &emit_args, Some(&filter))?;
+ 
+     listeners.emit_filter(emit_args, Some(filter))?;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `31f29e19` (2026-10-31)
-**Commit Message**: fix(cli): percent-decode request paths in the builtin dev server (fix #12763) (#16436)
+### Incident Patch 3: `8d5f74c1` (2026-11-05)
+**Commit Message**: fix(windows): let accessibility hit tests pass through resize helper (fix #12901) (#16439)
 
-**File**: `.changes/cli-dev-server-percent-decode.md` (added, +6/-0)
+* fix(windows): pass through resize helper accessibility hit tests (fix #12901)
+
+* Update .changes/windows-resize-accessibility-hit-test.md
+
+* ci: test tauri-runtime-wry across the platform matrix
+
+**File**: `.changes/windows-resize-accessibility-hit-test.md` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +---
-+"tauri-cli": patch:bug
-+"@tauri-apps/cli": patch:bug
++'tauri': 'patch:bug'
++'tauri-runtime-wry': 'patch:bug'
 +---
 +
-+Fix the builtin dev server serving `index.html` instead of files whose names contain spaces or non-ASCII characters, such as `my font.woff2`.
++On Windows, let accessibility hit tests pass through the resize helper outside the top border of frameless windows with shadows, so screen readers can reach the window content.
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `.github/workflows/test-core.yml` (modified, +3/-0)
 ```diff
-@@ -8467,6 +8467,7 @@ dependencies = [
-  "oxc_ast",
-  "oxc_parser",
-  "oxc_span",
-+ "percent-encoding",
-  "phf 0.14.0",
-  "plist",
-  "pretty_assertions",
-```
-
-**File**: `crates/tauri-cli/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -83,6 +83,7 @@ regex = "1"
- heck = "0.5"
- dialoguer = "0.12"
- url = { version = "2", features = ["serde"] }
-+percent-encoding = "2"
- os_pipe = "1"
- ignore = "0.4"
- ctrlc = "3"
-```
-
-**File**: `crates/tauri-cli/src/dev/builtin_dev_server.rs` (modified, +43/-1)
-```diff
-@@ -85,7 +85,10 @@ async fn handler(uri: Uri, headers: HeaderMap, state: State<ServerState>) -> imp
-   }
+@@ -132,6 +132,9 @@ jobs:
+       - name: test tauri
+         run: ${{ matrix.platform.cargo }} ${{ matrix.features.key == 'no-default' && 'check' || matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} --manifest-path crates/tauri/Cargo.toml
  
-   // Frontend files should not contain query parameters. This seems to be how Vite handles it.
--  let uri = uri.path();
-+  // The path is percent-encoded, decode it like the `tauri://` protocol does so files with spaces
-+  // or non-ASCII characters in their names are found.
-+  let path = percent_encoding::percent_decode_str(uri.path()).decode_utf8_lossy();
-+  let uri = path.as_ref();
++      - name: test tauri-runtime-wry
++        run: ${{ matrix.platform.cargo }} ${{ matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} ${{ matrix.platform.command == 'build' && '--lib --bins --tests' || '' }} --manifest-path crates/tauri-runtime-wry/Cargo.toml
++
+       - name: test tauri examples
+         if: ${{ matrix.features.key != 'no-default' && matrix.platform.command == 'test' }}
+         run: |
+```
+
+**File**: `crates/tauri-runtime-wry/src/undecorated_resizing.rs` (modified, +124/-8)
+```diff
+@@ -292,13 +292,6 @@ mod windows {
+             return DefWindowProcW(child, msg, wparam, lparam);
+           }
  
-   let uri = if uri == "/" {
-     uri
-@@ -368,4 +371,43 @@ mod tests {
-     );
-     assert!(fs_read_scoped(inner.join("../secret.txt"), &inner).is_err());
+-          // if the window has undecorated shadows,
+-          // it should always be the top border,
+-          // ensured by the cutout drag window
+-          if data.has_undecorated_shadows {
+-            return LRESULT(HTTOP as _);
+-          }
+-
+           let mut rect = RECT::default();
+           if GetWindowRect(child, &mut rect).is_err() {
+             return DefWindowProcW(child, msg, wparam, lparam);
+@@ -307,9 +300,22 @@ mod windows {
+           let (cx, cy) = (GET_X_LPARAM(lparam) as i32, GET_Y_LPARAM(lparam) as i32);
+ 
+           let dpi = util::hwnd_dpi(child);
+-          let border_x = util::get_system_metrics_for_dpi(SM_CXFRAME, dpi);
+           let border_y = util::get_system_metrics_for_dpi(SM_CYFRAME, dpi);
+ 
++          if data.has_undecorated_shadows {
++            // Accessibility hit tests can query points outside the window region.
++            // Only the top strip participates in resizing when shadows are enabled.
++            let in_top_border =
++              cx >= rect.left && cx < rect.right && cy >= rect.top && cy < rect.top + border_y;
++            return LRESULT(if in_top_border {
++              HTTOP as _
++            } else {
++              HTTRANSPARENT as _
++            });
++          }
++
++          let border_x = util::get_system_metrics_for_dpi(SM_CXFRAME, dpi);
++
+           let res = hit_test(
+             rect.left,
+             rect.top,
+@@ -503,6 +509,116 @@ mod windows {
+   fn GET_Y_LPARAM(lparam: LPARAM) -> i16 {
+     (((lparam.0 as usize) & 0xFFFF_0000) >> 16) as u16 as i16
    }
 +
-+  #[tokio::test]
-+  async fn serves_percent_encoded_paths() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let temp = dunce::canonicalize(temp.path()).unwrap();
-+    let dir = temp.join("dist");
-+    std::fs::create_dir(&dir).unwrap();
-+    std::fs::write(dir.join("index.html"), "<html></html>").unwrap();
-+    std::fs::write(dir.join("my font.woff2"), "font").unwrap();
-+    std::fs::write(dir.join("页面.css"), "css").unwrap();
-+    std::fs::write(temp.join("secret.txt"), "secret").unwrap();
++  #[cfg(test)]
++  mod tests {
++    use super::*;
 +
-+    let state = ServerState {
-+      dir,
-+      address: "127.0.0.1:1430".parse().unwrap(),
-+      tx: channel(1).0,
-+    };
-+    let get = |path: &str| {
-+      let mut headers = HeaderMap::new();
-+      headers.insert(header::HOST, HeaderValue::from_static("127.0.0.1:1430"));
-+      let response = handler(path.parse().unwrap(), headers, State(state.clone()));
-+      async move {
-+        let response = response.await.into_response();
-+        assert_eq!(response.status(), StatusCode::OK);
-+        axum::body::to_bytes(response.into_body(), usize::MAX)
-+          .await
++    struct ResizeWindow(HWND);
++
++    impl ResizeWindow {
++      fn new(x: i32, y: i32, shadows: bool) -> (Self, HWND) {
++        let parent = unsafe {
++          CreateWindowExW(
++            WINDOW_EX_STYLE::default(),
++            w!("STATIC"),
++            w!("Tauri resize hit-test regression"),
++            WS_OVERLAPPEDWINDOW,
++            x,
++            y,
++            320,
++            240,
++            None,
++            None,
++            None,
++            None,
++          )
 +          .unwrap()
++        };
++        let window = Self(parent);
++        attach_resize_handler(parent.0 as isize, shadows);
++        let child = unsafe { FindWindowExW(Some(parent), None, CLASS_NAME, WINDOW_NAME) }.unwrap();
++        (window, child)
 +      }
-+    };
++    }
 +
-+    assert_eq!(get("/my%20font.woff2").await, "font");
-+    assert_eq!(get("/%E9%A1%B5%E9%9D%A2.css").await, "css");
-+    // decoded paths are still scoped to the served directory
-+    assert_ne!(get("/%2E%2E/secret.txt").await, "secret");
-+    assert_ne!(get("/..%2Fsecret.txt").await, "secret");
-+    let secret = temp.join("secret.txt").display().to_string();
-+    let secret = percent_encoding::utf8_percent_encode(&secret, percent_encoding::NON_ALPHANUMERIC);
-+    assert_ne!(get(&format!("/{secret}")).await, "secret");
-+  }
- }
++    impl Drop for ResizeWindow {
++      fn drop(&mut self) {
++        unsafe { DestroyWindow(self.0).unwrap() };
++      }
++    }
++
++    fn hit_test_at(child: HWND, x: i32, y: i32) -> isize {
++      let point = (x as u16 as usize) | ((y as u16 as usize) << 16);
++      unsafe { SendMessageW(child, WM_NCHITTEST, None, Some(LPARAM(point as isize))) }.0
++    }
++
++    #[test]
++    fn shadow_resize_hit_test_respects_the_window_region() {
++      for (x, y) in [(100, 100), (-400, -300)] {
++        let (_window, child) = ResizeWindow::new(x, y, true);
++        let mut rect = RECT::default();
++        unsafe { GetWindowRect(child, &mut rect).unwrap() };
++        let region = unsafe { Owned::new(CreateRectRgn(0, 0, 0, 0)) };
++        assert_ne!(unsafe { GetWindowRgn(child, *region) }, GDI_REGION_TYPE(0));
++        let width = rect.right - rect.left;
++        let height = rect.bottom - rect.top;
++        let border = unsafe { util::get_system_metrics_for_dpi(SM_CYFRAME, util::hwnd_dpi(child)) };
++        for (dx, dy) in [
++          (width / 2, height / 2),
++          (0, 0),
++          (width - 1, 0),
++          (width / 2, border - 1),
++          (width / 2, border),
++          (0, height - 1),
++          (-1, 0),
++          (width, 0),
++          (width / 2, -1),
++        ] {
++          let in_region = unsafe { PtInRegion(*region, dx, dy) }.as_bool();
++          assert_eq!(
++            hit_test_at(child, rect.left + dx, rect.top + dy),
++            if in_region {
++              HTTOP as isize
++            } else {
++              HTTRANSPARENT as isize
++            },
++            "point ({dx}, {dy}) at window origin ({}, {})",
++            rect.left,
++            rect.top,
++          );
++        }
++      }
++    }
++
++    #[test]
++    fn shadowless_resize_hit_test_keeps_edges_and_client_area() {
++      let (_window, child) = ResizeWindow::new(-400, -300, false);
++      let mut rect = RECT::default();
++      unsafe { GetWindowRect(child, &mut rect).unwrap() };
++      assert_eq!(hit_test_at(child, rect.left, rect.top), HTTOPLEFT as isize);
++      assert_eq!(
++        hit_test_at(child, rect.right - 1, rect.top),
++        HTTOPRIGHT as isize
++      );
++      assert_eq!(
++        hit_test_at(child, rect.left, rect.bottom - 1),
++        HTBOTTOMLEFT as isize
++      );
++      assert_eq!(
++        hit_test_at(child, rect.right - 1, rect.bottom - 1),
++        HTBOTTOMRIGHT as isize
++      );
++      assert_eq!(
++        hit_test_at(
++          child,
++          (rect.left + rect.right) / 2,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16447** (2026-11-03): fix(utils): match file extensions case-insensitively in MimeType (@b84330808)
-- **PR #16444** (2026-11-03): fix(utils): don't panic parsing a hex Color with non-ASCII characters (@b84330808)
-- **PR #16436** (2026-10-31): fix(cli): percent-decode request paths in the builtin dev server (fix #12763) (@b84330808)
-- **PR #16421** (2026-10-28): docs(tauri-build): keep Common Control v6 dependency in app_manifest example (@oyobbeb)
-- **PR #16420** (2026-10-27): chore(deps): update vulnerable Zstandard dependencies (@amrbashir)
-- **PR #16419** (closed): chore: close stale issues and pull requests automatically (@amrbashir)
+- **PR #16466** (2026-11-05): chore(deps): update dependency eslint-plugin-security to v4.2.1 (@renovate[bot])
+- **PR #16464** (2026-11-05): fix(core): apply dataStoreIdentifier from the window config (fix #16461) (@lazerg)
+- **PR #16463** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 (@dependabot[bot])
+- **PR #16462** (2026-11-05): fix(core): don't bring the app to the front on macOS restart (fix #16458) (@lazerg)
+- **PR #16456** (2026-11-05): refactor: take `Vec<Webview<R>>` in `emit_js` (@Legend-Master)
+- **PR #16453** (2026-11-05): fix(utils): keep the drive prefix of absolute resource paths on Windows (@b84330808)
 
 ---
 
@@ -2541,32 +2665,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. utils): don't panic parsing a hex Color with non-ASCII characters (#16444)
+## X. deps): update dependency eslint-plugin-security to v4.2.1 (#16466)
 
 **RULE**:
-When implementing operations in `.changes/utils-color-parse-non-ascii.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/api/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `219a6072`: utils): don't panic parsing a hex Color with non-ASCII characters (#16444). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e23492a`: deps): update dependency eslint-plugin-security to v4.2.1 (#16466). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/utils-color-parse-non-ascii.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/api/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-"tauri-utils": patch:bug
----
-
-Fix parsing a hex `Color` string panicking when it contains non-ASCII characters, for example `#€€`; it now returns an error. Surrounding whitespace is also trimmed when the string has no leading `#`.
+    "eslint-plugin-security": "4.2.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "eslint-plugin-security": "4.2.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `219a6072` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e23492a` are properly handled with clean fallback behavior.

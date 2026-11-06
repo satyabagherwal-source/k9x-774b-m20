@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `a275a777`  
+> **Source Version**: `372d151c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:18:05.729Z  
+> **Timestamp**: 2026-11-05T22:54:52.021Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:18:05.724Z  
+> **Harvest Timestamp**: 2026-11-05T22:54:51.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5299 stars
+- **Stars / Engagement**: 5304 stars
 
 ---
 
@@ -746,7 +746,7 @@ fn suppression_inventory_json(fixture: &War
 use super::{Ctx, Harness, Mode, Reason, Scope, Step, StepReport, StepStatus};
 use crate::setup_hooks::{
     AgentsBlockReport, AgentsOutcome, GateReport, HookAgentArg, ScriptOutcome, SettingsOutcome,
-    SetupHooksOptions, execute_agent_hooks,
+    SetupHooksOptions, execute_agent_hooks, symlinked_hook_target,
 };
 
 pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
@@ -779,6 +779,24 @@ fn run(ctx: &Ctx, harness: Harness) -> Vec<StepReport> {
         gitignore_claude: ctx.gitignore_claude,
         uninstall: ctx.mode == Mode::Uninstall,
     };
+    match symlinked_hook_target(&opts, ctx.mode) {
+        Ok(Some(target)) => {
+            return vec![
+                StepReport::new(Some(harness), Step::Hooks, StepStatus::Skipped, ctx.scope())
+                    .path(ctx, &target.path)
+                    .symlinked(ctx, &target.link),
+            ];
+        }
+        Ok(None) => {}
+        Err(message) => {
+            return vec![StepReport::failed(
+                Some(harness),
+                Step::Hooks,
+                ctx.scope(),
+                message,
+            )];
+        }
+    }
     let report = match execute_agent_hooks(&opts, ctx.mode) {
         Ok(Some(report)) => report,
         Ok(None) => return Vec::new(),
@@ -1427,13 +1445,11 @@ pub use fallow_types::path_util::{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3998** (2026-10-29): **Can't use tsrs**
-  *Symptoms*: ### What happened?  ``` Fallow 3.37.0 (latest; upstream main too) can't switch to tsrs here. Its tsrs backend is experimental (FALLOW_TYPE_AWARE_BACKEND=tsrs), and both the sidecar and the Rust binary require exactly tsrs 0.18.0-ts7.1.0-dev.20260929. That version ships no Windows binary (@tsrs/win32-x64 starts at 0.20.0). Our 0.20.1 is rejected: 'unsupported type-aware backend version 0.20.1-ts7.1.0-beta; expected 0.18.0…', and Fallow falls back to syntactic analysis with 114 false findings. What should T-094 do? ``` I installed tsrs to typecheck my project, and decided to also switch fallow to the same backend, then i got the error above why is fallow so restrictive? Why can't I use the same tsrs I installed to typecheck my project?  ### Reproduction  install latest tsrs 0.20.1  ### Expected behavior  I should be able to reuse my existing tsrs installation that i already use to typecheck the project  ### Fallow version  3.37.0  ### Operating system  Windows  ### Configuration  ```toml  ```
-  **Post-Mortem & Fix Analysis**:
-  > This is in v3.38.0: `npm install fallow@3.38.0`.  The experimental tsrs backend now accepts any tsrs from `0.18.0` up to but not including `1.0.0`, so your tsrs 0.20.1 works with `FALLOW_TYPE_AWARE_BACKEND=tsrs`. The default backend accepts any TypeScript 7 release. `fallow type-aware status` shows the version that fallow resolved. Guarded fixes still need `typescript@7.0.2`.  Thanks for raising this, @Smrtnyk. 
+- **Issue #4245** (2026-11-05): **`fallow mutation` counts `__tests__` helpers and bench files as static test files**
+  *Symptoms*: `fallow mutation` counts two kinds of files as static test files that Vitest does not run:  - a helper module under `__tests__/` that imports the mutated file, for example `src/__tests__/utils.ts`; - a Vitest benchmark file, for example `benchmarks/add.bench.js`.  Vitest does not list these files with its default `include` (`**/*.{test,spec}.?(c|m)[jt]s?(x)`). The run then reports `test-files-not-discovered` and the status `partial`, also when every real test ran.  ## Repro  A Vitest 4.1.11 project with an empty `vitest.config.mjs` and these files:  ```js // src/add.js export const add = (a, b) => a + b;  // src/__tests__/utils.ts import { add } from "../add.js"; export const sum3 = (a, b, c) => add(add(a, b), c);  // src/__tests__/add.test.js import { expect, test } from "vitest"; import { add } from "../add.js"; import { sum3 } from "./utils";  test("add", () => {   expect(add(1, 2)).toBe(3);   expect(sum3(1, 2, 3)).toBe(6); });  // benchmarks/add.bench.js import { bench } from "vitest"; import { add } from "../src/add.js";  bench("add", () => {   add(1, 2); }); ```  `fallow mutation src/add.js --format json --quiet` gives:  ```json "completion": { "status": "partial", "reasons": ["test-files-not-discovered"] }, "errors": [{ "code": "test-files-not-discovered", "message": "the runner does not list 2 static test files, so they did not run: benchmarks/add.bench.js, src/__tests__/utils.ts" }] ```  and `files[0].static_test_files` is `["benchmarks/add.bench.js", "src/__tests__/
 
-- **Issue #3950** (2026-10-29): **mutation: temporary copies bypass the Node child-process overlay**
-  *Symptoms*: A selected `node:test` case can run an unchanged temporary copy of a planned source file and produce a false survivor. The child inherits `NODE_OPTIONS`; the preload works when the child executes the original path.  Reproduced on main `ef1617dd4924c86829bef25deafeabef3743cb7f` (3.36.0), Node 22.23.3.  `src/cli.mjs`:  ```js export const value = () => { return 1; }; if (import.meta.main) {   console.log(value()); } ```  `test/runner.test.mjs`:  ```js import assert from "node:assert/strict"; import { spawnSync } from "node:child_process"; import { copyFileSync, mkdtempSync, rmSync } from "node:fs"; import { tmpdir } from "node:os"; import { join } from "node:path"; import { test } from "node:test"; import { fileURLToPath } from "node:url"; import { value } from "../src/cli.mjs";  test("the library and CLI return the same value", (t) => {   assert.equal(value(), 1);   const directory = mkdtempSync(join(tmpdir(), "copied-cli-repro-"));   t.after(() => rmSync(directory, { recursive: true, force: true }));   const original = fileURLToPath(new URL("../src/cli.mjs", import.meta.url));   const copied = join(directory, "cli.mjs");   copyFileSync(original, copied);   const child = spawnSync(process.execPath, [copied], {     encoding: "utf8", env: process.env, timeout: 10000,   });   assert.equal(child.status, 0, child.stderr);   assert.equal(child.stdout, "1\n"); }); ```  Configure `entry: ["src/cli.mjs", "test/*.test.mjs"]`, `mutation.runner: "node-test"`, and `test: "node --test test/*
+- **Issue #4233** (2026-11-05): **Graph cache: a new file at a missed resolver candidate path keeps a stale resolution**
+  *Symptoms*: The persisted graph cache can serve a stale import resolution when a new file appears at a path that the resolver tried and did not find.  ## Steps  1. Make a project with `src/index.ts` that has `import { alpha } from './util'`, and `src/util.ts`. 2. Run `fallow dead-code` with the cache on. 3. Add an extensionless file `src/util` (or a `src/util.json`, or a build output file in an ignored directory) that the resolver prefers for `./util`. 4. Run `fallow dead-code` again with the cache on, and once with `--no-cache`.  ## Result  The warm run uses the resolutions of step 2. The `--no-cache` run resolves `./util` to the new file. The two runs report different findings.  ## Cause  The graph cache key covers the discovered source files, the resolver manifests and the install state. It does not cover the paths that the resolver tried and did not find. Discovery does not list an extensionless file or a `.json` file, so the new file does not change the key.  ## Evidence  The read-set oracle in `crates/engine/tests/integration/cache_model/read_set.rs` records these misses. It skips them now (see the module comment), because the key cannot cover them yet.  ## Possible fix  Record the missing candidates that the resolver tried for each specifier, and key on their existence. This needs a bound, because each specifier can try many extensions. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1450,695 +1466,256 @@ pub use fallow_types::path_util::{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcabf464` (2026-11-04)
-**Commit Message**: fix(cache): key the graph cache on lockfiles and install markers (#4192)
+### Incident Patch 1: `b78f34c4` (2026-11-05)
+**Commit Message**: fix(security): trace require() bindings of node child_process and fs (#4238)
 
-* fix(cache): key the graph cache on lockfiles and install markers
+* fix(security): trace require() bindings of node child_process and fs
 
-An install into an existing node_modules did not change the graph cache
-key. A warm run then used the import resolutions of the run before the
-install. The resolver input hash now reads the lockfiles and the install
-markers of npm, pnpm and Yarn for the root, the workspace roots and the
-directories above the root.
+`fallow security` gave no candidate for a sink that a destructured
+require() binds, for example
+`const { exec } = require("node:child_process"); exec(cmd)`. The
+detector checks provenance against ES imports only, because core
+releases the require() facts before analysis.
 
-Closes #4188
+The extractor already traced named and require() bindings of node:vm
+to a `node:vm.<member>` path, which proves the provenance on its own.
+The same now applies to node:child_process, node:fs and
+node:fs/promises. The catalogue rows for the bare callees match the
+`node:` paths instead. A parameter that hides the import no longer
+gives a candidate.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The module list moves to fallow-types, because the policy effect lookup
+reads callee uses as written. It now builds the same `node:` path, so a
+banned-effect rule keeps its match on `exec(cmd)` after a named import.
 
-* fix(cache): key the graph cache on the package names of a Bun install
+The extraction output changes, so CACHE_VERSION goes to 414.
 
-Bun writes no install marker in node_modules. When the lockfile already
-lists a package, a Bun install does not change the lockfile, so a warm
-run used the resolutions of the run before the install. For each
-directory with bun.lock or bun.lockb, the graph cache key now includes
-the package names in node_modules, the scoped names, and the entries of
-the isolated store.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
----------
+Closes #4226
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/fix-graph-cache-install-state.md` (added, +4/-0)
+* fix(security): report the destination of rename and copyFile for fs bindings
+
+A 
+
+**File**: `changelog.d/fix-security-require-provenance.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,4 @@
+@@ -0,0 +1,5 @@
 +### Fixed
 +
-+- **The graph cache now misses after a package install into an existing `node_modules`.** Before this fix, a run after `npm install`, `pnpm install` or `yarn install` could use the import resolutions of the run before the install. The graph cache key now includes the content of the lockfile and of the install marker that the package manager writes in `node_modules` (`.package-lock.json`, `.pnpm/lock.yaml`, `.yarn-state.yml`, `.yarn-integrity`). Bun writes no install marker, so for a project with `bun.lock` or `bun.lockb` the key also includes the package names in `node_modules`. Fallow reads these files for the project root, for each workspace root, and for each directory above the root. Fallow does not walk `node_modules`, and a fresh install with the same content keeps the cache.
-+  (Closes [#4188](https://github.com/fallow-rs/fallow/issues/4188))
++- **`fallow security` reports a sink that a destructured `require()` binds.** Before, `const { exec } = require("node:child_process"); exec(cmd)` gave no `command-injection` candidate, and `const { readFileSync } = require("node:fs")` gave no `path-traversal` candidate. The same code with an ES import gave a candidate. Fallow now traces a named binding of `node:child_process`, `node:fs` and `node:fs/promises` to its module, for ES imports, aliased imports (`import { readFile as read }`) and destructured `require()` calls. The same applies to `world-writable-permission` and `insecure-temp-file`, and to `fs.promises.writeFile` and `fs.promises.chmod` on `const fs = require("fs")`. The destination of `rename`, `copyFile` and `copyFileSync` is now also a `path-traversal` candidate for these bindings, when the argument or the module reads untrusted input. In `fallow security`, a parameter that has the same name as the import no longer gives a candidate.
++
++  The callee in `evidence` and in `candidate.sink.callee` now names the module, as it already did for `node:vm`. This applies to named imports and to `require()` bindings. For example, `execSync()` and `cp.execSync()` after `const cp = require("child_process")` become `node:child_process.execSync()`. A default or namespace import keeps its written callee, such as `fs.readFile()`. `finding_id` does not change, because it does not include the callee. (Closes [#4226](https://github.com/fallow-rs/fallow/issues/4226))
 ```
 
-**File**: `crates/core/src/resolution_inputs.rs` (modified, +186/-2)
+**File**: `crates/core/src/analyze/policy/mod.rs` (modified, +61/-4)
 ```diff
-@@ -7,6 +7,12 @@
- //! `oxc_resolver` discovers next to a source file, plus its `extends` and
- //! `references` chain. An edit to one of these files changes import targets
- //! without a change to any source file, so the mode must cover them.
-+//!
-+//! The resolver also reads `node_modules`, so an install changes import
-+//! targets too. A walk of `node_modules` costs too much, so the hash reads the
-+//! lockfile and the install marker that the package manager writes on each
-+//! install. Bun writes no install marker, so for a Bun project the hash reads
-+//! the package names at the top level of `node_modules`.
+@@ -8,6 +8,7 @@ use fallow_types::extract::{ImportedName, ModuleInfo};
+ use fallow_types::output::IssueAction;
+ use fallow_types::output_dead_code::PolicyViolationFinding;
+ use fallow_types::results::{PolicyRuleKind, PolicyViolation, PolicyViolationSeverity};
++use fallow_types::security_sinks::node_binding_module;
  
- use std::hash::{Hash, Hasher};
- use std::path::{Path, PathBuf};
-@@ -24,6 +30,37 @@ const PACKAGE_MANIFESTS: &[&str] = &["package.json", "deno.json", "deno.jsonc"];
- /// owning `tsconfig.json` (automatic tsconfig discovery).
- const NEAREST_CONFIGS: &[&str] = &["package.json", "tsconfig.json"];
- 
-+/// Lockfiles and install markers that change when a package manager adds,
-+/// removes or updates a package in `node_modules`. Each path is relative to
-+/// the project root or to a workspace root.
-+///
-+/// The hash reads the content of each file, not the modification time. A
-+/// fresh install in CI writes the same content with a new time, so a time
-+/// would make each restored cache miss. `node_modules/.modules.yaml` of pnpm
-+/// holds an install timestamp, so the hash reads the copy of the lockfile in
-+/// `node_modules/.pnpm/lock.yaml` instead.
-+const INSTALL_STATE_FILES: &[&str] = &[
-+    "package-lock.json",
-+    "npm-shrinkwrap.json",
-+    "pnpm-lock.yaml",
-+    "yarn.lock",
-+    "bun.lock",
-+    "bun.lockb",
-+    "node_modules/.package-lock.json",
-+    "node_modules/.pnpm/lock.yaml",
-+    "node_modules/.yarn-state.yml",
-+    "node_modules/.yarn-integrity",
-+];
-+
-+/// Lockfiles of Bun. Bun writes no install marker in `node_modules`, so a
-+/// directory with one of these files keys the package names in its
-+/// `node_modules` (see [`bun_install_listings`]).
-+const BUN_LOCKFILES: &[&str] = &["bun.lock", "bun.lockb"];
-+
-+/// The directory in `node_modules` where the isolated linker of Bun puts one
-+/// `<name>@<version>` directory for each installed package.
-+const BUN_STORE_DIR: &str = ".bun";
-+
- /// Hash the workspace `(name, root)` pairs and the content of every resolver
- /// input file. Every path is spelled relative to `root`, so a copy of the
- /// project under another absolute path hashes the same.
-@@ -72,6 +109,13 @@ pub fn resolution_inputs_hash(
-         state.hash(&mut hasher);
+ use crate::discover::FileId;
+ use crate::graph::ModuleGraph;
+@@ -719,11 +720,67 @@ fn effect_for_callee(
+     if written.is_some() {
+         return written;
      }
- 
-+    let mut bun_listings = bun_install_listings(root, workspaces);
-+    bun_listings.sort_unstable();
-+    bun_listings.len().hash(&mut hasher);
-+    for listing in &bun_listings {
-+        listing.hash(&mut hasher);
-+    }
+-    let canonical = canonical_callee_path(module, callee_path)?;
+-    catalogue_matchers()
++    [
++        canonical_callee_path(module, callee_path),
++        node_binding_callee_path(module, callee_path),
++    ]
++    .into_iter()
++    .flatten()
++    .find_map(|path| {
++        catalogue_matchers()
++            .iter()
++            .find(|matcher| matcher_matches_callee(matcher, module, &path, declared_deps))
++            .map(|matcher| matcher.effect)
++    })
++}
 +
-     hasher.finish()
- }
- 
-@@ -82,7 +126,8 @@ pub fn resolution_inputs_hash(
- /// only when the package is installed, so an install changes the result
- /// without an edit to a source file or a manifest. Only the existence keys the
- /// mode: a modification time changes on every fresh install in CI and would
--/// make each restored cache miss.
-+/// make each restored cache miss. The lockfiles and install markers in
-+/// [`INSTALL_STATE_FILES`] key an install into an existing `node_modules`.
- fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, bool)> {
-     std::iter::once(root)
-         .chain(workspaces.iter().map(|ws| ws.root.as_path()))
-@@ -93,6 +138,58 @@ fn node_modules_states(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String
-         .collect()
- }
- 
-+/// Return `(path, package names)` for the `node_modules` directory next to
-+/// each Bun lockfile at the project root, at a workspace root, or above the
-+/// root.
-+///
-+/// A Bun install into an existing `node_modules` does not change the lockfile
-+/// when the lockfile already lists the package, for example after a pull of a
-+/// lockfile change. The names are the top-level entries, the entries of each
-+/// `@scope` directory, and the `<name>@<version>` entries of the isolated
-+/// store. The list does not read file content or a modification time, so a
-+/// fresh install of the same packages keeps the hash. Other dot entries are
-+/// tool caches such as `.cache`, so the list skips them.
-+fn bun_install_listings(root: &Path, workspaces: &[WorkspaceInfo]) -> Vec<(String, Vec<String>)> {
-+    let dirs: FxHashSet<&Path> = std::iter::once(root)
-+        .chain(workspaces.iter().map(|ws| ws.root.as_path()))
-+        .chain(root.ancestors().skip(1))
-+        .collect();
-+    dirs.into_iter()
-+        .filter(|dir| BUN_LOCKFILES.iter().any(|name| dir.join(name).is_file()))
-+        .filter_map(|dir| {
-+            let node_modules = dir.join("node_modules");
-+            let names = node_modules_package_names(&node_modules)?;
-+            Some((portable_key(root, &node_modules), names))
++/// The `node:<module>.<member>` path of a callee whose leading identifier an
++/// ES import or a `require()` binds to a module in
++/// [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES).
++/// The extractor writes the same path for a sink site, and the catalogue
++/// rows of those modules match only that path.
++fn node_binding_callee_path(module: &ModuleInfo, callee_path: &str) -> Option<String> {
++    let (head, rest) = match callee_path.split_once('.') {
++        Some((head, rest)) => (head, Some(rest)),
++        None => (callee_path, None),
++    };
++    // `fs.promises.<member>` takes the path of an `fs/promises` import, as in
++    // the extractor.
++    let join = |root: String, member: Option<&str>| -> Option<String> {
++        let path = match (member, rest) {
++            (Some(member), Some(rest)) => format!("{root}.{member}.{rest}"),
++            (Some(member), None) => format!("{root}.{member}"),
++            (None, Some(rest)) => format!("{root}.{rest}"),
++            (None, None) => return None,
++        };
++        Some(match path.strip_prefix("node:fs.promises.") {
++            Some(member) => format!("node:fs.{member}"),
++            None => path,
 +        })
++    };
++    if let Some(import) = module
++        .imports
+         .iter()
+-        .find(|matcher| matcher_matches_callee(matcher, module, &canonical, declared_deps))
+-        .map(|matcher| matcher.effect)
++        .find(|import| import.local_name == head && !import.is_type_only)
++    {
++        let root = node_binding_module(&import.source)?;
++        return match &import.imported_name {
++            ImportedName::Named(imported) => join(root, Some(imported)),
++            ImportedName::Namespace | ImportedName::Default => join(root, None),
++            ImportedName::SideEffect => None,
++        };
++    }
++    let call = module.require_calls.iter().find(|call| {
++        !call.is_type_only
++            && (call.local_name.as_deref() == Some(head)
++                || call.destructured_names.iter().any(|name| name == head))
++    })?;
++    let root = node_binding_module(&call.source)?;
++    if call.local_name.as_deref() == Some(head) {
++        join(root, None)
++    } else {
++        join(root, Some(head))
++    }
+ }
+ 
+ fn matcher_matches_callee(
+```
+
+**File**: `crates/core/src/analyze/policy/tests.rs` (modified, +78/-0)
+```diff
+@@ -1347,3 +1347,81 @@ fn scope_glob_single_star_stays_within_one_segment() {
+     assert!(matches("src/a.ts"));
+     assert!(!matches("src/nested/a.ts"));
+ }
++
++/// Run one `banned-effect` rule over a module and return the matched texts.
++fn banned_effect_matches(effect: EffectKind, module: ModuleInfo) -> Vec<String> {
++    let root = PathBuf::from("/tmp/policy-test");
++    let config = make_config(
++        root.clone(),
++        vec![pack(vec![banned_effect("no-effect", &[effect])])],
++        Severity::Warn,
++    );
++    let graph = build_graph(&root, &["src/app.ts"]);
++    let suppressions = SuppressionContext::empty();
++    let line_offsets = FxHashMap::default();
++    find_policy_violations(&graph, &[module], &config, &suppressions, &line_offsets)
++        .into_iter()
++        .map(|violation| violation.matched)
 +        .collect()
 +}
 +
-+fn node_modules_package_names(node_modules: &Path) -> Option<Vec<String>> {
-+ 
-```
-
-**File**: `crates/core/tests/integration_test/vite_asset_query_imports.rs` (modified, +91/-0)
-```diff
-@@ -251,3 +251,94 @@ fn install_after_a_cached_run_reports_a_missing_query_file() {
-         .collect();
-     assert_eq!(unresolved, vec!["plain-pkg/build/missing.mjs?url"]);
- }
++#[test]
++fn banned_effect_matches_a_named_node_module_import() {
++    let module = module(
++        0,
++        vec![callee("exec", 0)],
++        vec![import(
++            "node:child_process",
++            ImportedName::Named("exec".to_string()),
++            "exec",
++            false,
++        )],
++    );
 +
-+/// Run a cached analysis on a project whose `node_modules` holds only
-+/// `other-pkg`. Then install `plain-pkg` the way a package manager does: the
-+/// install adds the package and writes the lockfile and the install marker.
-+/// The warm run must see the installed package and report the missing file.
-+///
-+/// Bun writes no install marker. For `marker: None` the lockfile lists
-+/// `plain-pkg` before the cold run and the install does not change it, as
-+/// after a pull of a lockfile change.
-+fn assert_install_into_existing_node_modules_misses_cache(lockfile: &str, marker: Option<&str>) {
-+    let temp = tempfile::tempdir().expect("temp");
-+    let root = temp.path().join("project");
-+    write(&root, "package.json", PACKAGE_JSON);
-+    write(
-+        &root,
-+        "src/index.ts",
-+        "import a from 'plain-pkg/build/missing.mjs?url';\nconsole.log(a);\n",
-+    );
-+    write(
-+        &root,
-+        "node_modules/other-pkg/package.json",
-+        r#"{"name":"other-pkg","version":"1.0.0"}"#,
-+    );
-+    let installed = "other-pkg@1.0.0\nplain-pkg@1.0.0\n";
-+    match marker {
-+        Some(marker) => {
-+            write(&root, lockfile, "other-pkg@1.0.0\n");
-+            write(&root, marker, "other-pkg@1.0.0\n");
-+        }
-+        None => write(&root, lockfile, installed),
-+    }
-+    let mut config = create_config_with_cache(root.clone(), temp.path().join("cache"));
-+    config.entry_patterns = vec!["src/index.ts".to_string()];
-+    let before = fallow_core::analyze(&config).expect("cold analysis");
-+    assert!(before.unresolved_imports.is_empty());
-+
-+    write(
-+        &root,
-+        "node_modules/plain-pkg/package.json",
-+        r#"{"name":"plain-pkg","version":"1.0.0","main":"index.js"}"#,
-+    );
-+    write(
-+        &root,
-+        "node_modules/plain-pkg/index.js",
-+        "module.exports = {};",
-+    );
-+    if let Some(marker) = marker {
-+        write(&root, lockfile, installed);
-+        write(&root, marker, installed);
-+    }
-+    let after = fallow_core::analyze(&config).expect("analysis after install");
-+    let unresolved: Vec<&str> = after
-+        .unresolved_imports
-+        .iter()
-+        .map(|finding| finding.import.specifier.as_str())
-+        .collect();
 +    assert_eq!(
-+        unresolved,
-+        vec!["plain-pkg/build/missing.mjs?url"],
-+        "the install into node_modules with {lockfile} must make the graph cache miss"
++        banned_effect_matches(EffectKind::Shell, module),
++        ["shell: exec"]
 +    );
 +}
 +
 +#[test]
-+fn npm_install_into_existing_node_modules_misses_graph_cache() {
-+    assert_install_into_existing_node_modules_misses_cache(
-+        "package-lock.json",
-+        Some("node_modules/.package-lock.json"),
-+    );
-+}
++fn banned_effect_matches_a_destructured_node_module_require() {
++    let mut shell = module(0, vec![callee("execSync", 0)], Vec::new());
++    shell
++        .require_calls
++        .push(require_call("child_process", None, &["execSync"]));
++    let mut storage = module(0, vec![callee("unlinkSync", 0)], Vec::new());
++    storage
++        .require_calls
++        .push(require_call("node:fs", None, &["unlinkSync"]));
 +
-+#[test]
-+fn pnpm_install_into_existing_node_modules_misses_graph_cache() {
-+    assert_install_into_existing_node_modules_misses_cache(
-+        "pnpm-lock.yaml",
-+        Some("node_modules/.pnpm/lock.yaml"),
-+    );
-+}
-+
-+#[test]
-+fn yarn_install_into_existing_node_modules_misses_graph_cache() {
-+    assert_install_into_existing_node_modules_misses_cache(
-+        "yarn.lock",
-+        Some("node_modules/.yarn-state.yml"),
-+    );
-+}
-+
-+#[test]
-+fn bun_install_into_existing_node_modules_misses_graph_cache() {
-+    assert_install_into_existing_node_modules_misses_cache("bun.lock", None);
-+}
-```
-
----
-
-### Incident Patch 2: `a1ddbb8d` (2026-11-04)
-**Commit Message**: feat(security): recognize more callees in existing sink categories (#4220)
-
-A comparison with the JS and TS sink list of another public scanner
-showed callees that fallow did not report. The largest gap was named
-node:fs imports: `import { readFileSync } from "node:fs"` gave no
-path-traversal candidate.
-
-New callees:
-
-- command-injection: shelljs `shell.exec`, and `execFile` and
-  `execFileSync` from node:child_process.
-- ssti: `Handlebars.compile`, `pug.render`, `_.template`,
-  `lodash.template`.
-- ssrf: more axios and got methods, a bare `axios()` with a built URL,
-  and `http.get` and `https.get` with Node module provenance.
-- unsafe-deserialization: js-yaml `loadAll`.
-- xxe: `libxmljs.parseXml`.
-- jquery-html: `$.parseHTML`.
-- route-send-file: Express `res.download`.
-- path-traversal: named node:fs imports, and the fs write, append,
-  delete and copy calls.
-
-Build and CLI code calls fs and execFile with computed paths all the
-time. The new fs and execFile rows therefore use the `path.join`
-source gate. A bare fs callee must be the binding of the node:fs
-import. The existing member rows keep their source match, because a
-module can pass its node:fs import on as `fs`.
-
-Signed-off
-
-**File**: `changelog.d/feat-security-sink-gaps.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+### Added
-+
-+- **`fallow security` recognizes more callees in existing sink categories.** The new callees are:
-+  - `command-injection`: `shell.exec` from `shelljs`, and `execFile` and `execFileSync` from `node:child_process`. `execFile` runs no shell, so it reports only when the argument or the module reads untrusted input.
-+  - `ssti`: `Handlebars.compile`, `pug.render`, `_.template` and `lodash.template`.
-+  - `ssrf`: `axios.put`, `axios.patch`, `axios.delete`, `axios.head`, a bare `axios()` call with a template, a concatenation or a call result as its URL, the `got` method calls, and `http.get` and `https.get` from the Node modules. An `axios(config)` call stays quiet, and so does an `http.get` that the module does not import from `node:http`.
-+  - `unsafe-deserialization`: `loadAll` from `js-yaml`.
-+  - `xxe`: `libxmljs.parseXml`.
-+  - `jquery-html`: `$.parseHTML` and `jQuery.parseHTML`.
-+  - `route-send-file`: `res.download` and `response.download` in Express projects.
-+  - `path-traversal`: named `node:fs` and `node:fs/promises` imports such as `import { readFileSync } from "node:fs"`, and the `fs` write, append, delete and copy calls. These rows report only when the argument or the module reads untrusted input, as the `path.join` row does. A local helper with the same name as an `fs` function stays quiet.
-+
-+  Existing candidates do not change.
-```
-
-**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +79/-0)
-```diff
-@@ -1363,3 +1363,82 @@ fn llm_call_injection_langchain_invoke_does_not_fire() {
-         "the excluded LangChain .invoke callee must not be flagged"
-     );
- }
-+
-+// ── catalogue gaps: callee variants of existing categories ───────────────────
-+
-+const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 16] = [
-+    ("src/exec-file.ts", "command-injection", 78),
-+    ("src/shelljs.ts", "command-injection", 78),
-+    ("src/ssti-handlebars.ts", "ssti", 1336),
-+    ("src/ssti-lodash.ts", "ssti", 1336),
-+    ("src/ssti-pug-render.ts", "ssti", 1336),
-+    ("src/ssrf-axios-put.ts", "ssrf", 918),
-+    ("src/ssrf-axios-call.ts", "ssrf", 918),
-+    ("src/ssrf-got-get.ts", "ssrf", 918),
-+    ("src/ssrf-https-get.ts", "ssrf", 918),
-+    ("src/yaml-load-all.ts", "unsafe-deserialization", 502),
-+    ("src/xxe-libxmljs.ts", "xxe", 611),
-+    ("src/jquery-parse-html.ts", "jquery-html", 79),
-+    ("src/send-download.ts", "route-send-file", 22),
-+    ("src/fs-named-import.ts", "path-traversal", 22),
-+    ("src/fs-promises-named.ts", "path-traversal", 22),
-+    ("src/fs-write-sync.ts", "path-traversal", 22),
-+];
-+
-+#[test]
-+fn catalogue_gap_sinks_fire_once() {
-+    let results = analyze_with_security_sink("security-sink-catalogue-gaps");
-+    for (suffix, category, cwe) in CATALOGUE_GAP_SINKS {
-+        assert_candidate(&results, suffix, category, cwe);
-+        assert_eq!(
-+            anchored_count(&results, suffix),
-+            1,
-+            "{suffix} should produce exactly one candidate"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn catalogue_gap_lookalikes_do_not_fire() {
-+    let results = analyze_with_security_sink("security-sink-catalogue-gaps");
-+    for (suffix, reason) in [
-+        (
-+            "src/fs-local-helper.ts",
-+            "a local readFile helper is not the node:fs binding",
-+        ),
-+        (
-+            "src/axios-config-object.ts",
-+            "an axios() config object is not a URL argument",
-+        ),
-+        (
-+            "src/http-client-local.ts",
-+            "http.get without the node:http import is not a Node request",
-+        ),
-+        (
-+            "src/shell-local.ts",
-+            "shell.exec without the shelljs import is not a shell call",
-+        ),
-+        (
-+            "src/fs-literal.ts",
-+            "a literal file path is not a candidate",
-+        ),
-+        (
-+            "src/axios-config-variable.ts",
-+            "an axios() config variable is not a URL argument",
-+        ),
-+        (
-+            "src/download-client.ts",
-+            "a storage client download is not a route file send",
-+        ),
-+        (
-+            "src/exec-file-tooling.ts",
-+            "execFile of a computed binary without untrusted input is not a candidate",
-+        ),
-+        (
-+            "src/fs-build-path.ts",
-+            "a computed path without untrusted input is not a candidate",
-+        ),
-+    ] {
-+        assert!(!anchored_on(&results, suffix), "{suffix}: {reason}");
-+    }
-+}
-```
-
-**File**: `crates/security/data/security_matchers.toml` (modified, +177/-5)
-```diff
-@@ -186,6 +186,45 @@ arg_index = 0
- import_provenance = "node:child_process"
- evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
- 
-+[[matcher]]
-+id = "command-injection"
-+cwe = 78
-+title = "OS command injection sink"
-+effect = "shell"
-+sink_shape = "member-call"
-+callee_patterns = ["shell.exec", "shelljs.exec"]
-+arg_index = 0
-+import_provenance = "shelljs"
-+evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
-+
-+# `execFile` runs no shell, and tooling code runs computed binary paths all the
-+# time. These rows therefore need untrusted input in the argument or module.
-+[[matcher]]
-+id = "command-injection"
-+cwe = 78
-+title = "OS command injection sink"
-+effect = "shell"
-+sink_shape = "member-call"
-+callee_patterns = ["child_process.execFile", "child_process.execFileSync"]
-+arg_index = 0
-+import_provenance = "node:child_process"
-+requires_module_source = true
-+ignored_source_kinds = ["process-argv"]
-+evidence_template = "Non-literal program path passed to {callee}(). Candidate for verification: confirm the program is not attacker-controlled."
-+
-+[[matcher]]
-+id = "command-injection"
-+cwe = 78
-+title = "OS command injection sink"
-+effect = "shell"
-+sink_shape = "call"
-+callee_patterns = ["execFile", "execFileSync"]
-+arg_index = 0
-+import_provenance = "node:child_process"
-+requires_module_source = true
-+ignored_source_kinds = ["process-argv"]
-+evidence_template = "Non-literal program path passed to {callee}(). Candidate for verification: confirm the program is not attacker-controlled."
-+
- # ── CWE-94/95: Code injection ───────────────────────────────────────────────
- [[matcher]]
- id = "code-injection"
-@@ -458,10 +497,64 @@ cwe = 918
- title = "Server-side request forgery sink"
- effect = "network"
- sink_shape = "member-call"
--callee_patterns = ["axios.get", "axios.post", "http.request", "https.request", "superagent.get", "undici.request"]
-+callee_patterns = [
-+  "axios.get",
-+  "axios.post",
-+  "axios.put",
-+  "axios.patch",
-+  "axios.delete",
-+  "axios.head",
-+  "got.get",
-+  "got.post",
-+  "got.put",
-+  "got.patch",
-+  "got.delete",
-+  "http.request",
-+  "https.request",
-+  "superagent.get",
-+  "undici.request",
-+]
- arg_index = 0
- evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
- 
-+# A bare axios() call usually takes a config object, inline or in a variable,
-+# so this row admits only a template, a concatenation or a call result.
-+[[matcher]]
-+id = "ssrf"
-+cwe = 918
-+title = "Server-side request forgery sink"
-+effect = "network"
-+sink_shape = "call"
-+callee_patterns = ["axios"]
-+arg_index = 0
-+arg_kinds = ["template-with-subst", "concat", "call"]
-+import_provenance = "axios"
-+evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
-+
-+# An Angular HttpClient is often a local named `http`, so `get` needs the Node
-+# module import.
-+[[matcher]]
-+id = "ssrf"
-+cwe = 918
-+title = "Server-side request forgery sink"
-+effect = "network"
-+sink_shape = "member-call"
-+callee_patterns = ["http.get"]
-+arg_index = 0
-+import_provenance = "node:http"
-+evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
-+
-+[[matcher]]
-+id = "ssrf"
-+cwe = 918
-+title = "Server-side request forgery sink"
-+effect = "network"
-+sink_shape = "member-call"
-+callee_patterns = ["https.get"]
-+arg_index = 0
-+import_provenance = "node:https"
-+evidence_template = "Non-literal URL passed to {callee}(). Candidate for verification: confirm the destination is not attacker-controlled."
-+
- [[matcher]]
- id = "ssrf"
- cwe = 918
-@@ -525,7 +618,8 @@ evidence_template = "A non-public env secret reaches the body/options of {callee
- # that build code also imports, and a module two imports away, stay quiet,
- # because a dev server imports its config and its whole build pipeline.
- # CLI arguments do not count: the user who runs a CLI owns its file system.
--# The direct file-system rows below stay ungated.
-+# The `fs.readFile` and `fs.rename` rows stay ungated. The other file-system
-+# rows use this gate.
- [[matcher]]
- id = "path-traversal"
- cwe = 22
-@@ -551,6 +645,62 @@ arg_index = 0
- import_provenance = "node:fs"
- evidence_template = "Non-literal file-system path passed to {callee}(). Candidate for verification: confirm the input cannot escape the intended directory (reject `..`)."
- 
-+# The rows below cover the other write and delete calls, and named imports
-+# (`import { readFile } from "node:fs/promises"`). Build and CLI code calls
-+# them with computed paths all the time, so they use the `path.join` source
-+# gate. A bare callee must be the local binding of the `node:fs` import.
-+[[matcher]]
-+id = "path-traversal"
-+cwe = 22
-+tit
-```
-
-**File**: `crates/security/src/provenance.rs` (modified, +5/-1)
-```diff
-@@ -6,7 +6,7 @@
- //! name such as `get` never counts as `https.get` in a module that does not
- //! import `node:https`.
- 
--use fallow_types::extract::ModuleInfo;
-+use fallow_types::extract::{ModuleInfo, SinkShape};
- 
- use crate::Matcher;
- 
-@@ -53,6 +53,10 @@ impl Matcher {
-     pub fn requires_binding_trace(&self) -> bool {
-         BINDING_TRACE_ROWS.contains(&self.id.as_str())
-             || (self.id == "weak-crypto" && self.is_literal_aware())
-+            // A bare `readFile(path)` is a file-system call only when it is the
-+            // named import. The member rows keep the looser source match,
-+            // because a module can pass its `node:fs` import on as `fs`.
-+            || (self.id == "path-traversal" && self.sink_shape == SinkShape::Call)
-     }
- 
-     /// Whether the module satisfies the row's import provenance for the
-```
-
-**File**: `tests/fixtures/security-sink-catalogue-gaps/package.json` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+{
-+  "name": "security-sink-catalogue-gaps-fixture",
-+  "version": "0.0.0",
-+  "private": true,
-+  "dependencies": {
-+    "axios": "1.0.0",
-+    "express": "4.0.0",
-+    "got": "14.0.0",
-+    "handlebars": "4.0.0",
-+    "jquery": "3.0.0",
-+    "js-yaml": "3.0.0",
-+    "libxmljs": "1.0.0",
-+    "lodash": "4.0.0",
-+    "pug": "3.0.0",
-+    "shelljs": "0.8.0"
-+  }
-+}
-```
-
-**File**: `tests/fixtures/security-sink-catalogue-gaps/src/axios-config-object.ts` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+import axios from "axios";
-+
-+export async function send(id: string): Promise<void> {
-+  await axios({ method: "post", url: "/api/items", data: { id } });
-+}
-```
-
-**File**: `tests/fixtures/security-sink-catalogue-gaps/src/axios-config-variable.ts` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+import axios from "axios";
-+
-+export async function send(config: object): Promise<void> {
-+  await axios(config);
-+}
-```
-
-**File**: `tests/fixtures/security-sink-catalogue-gaps/src/download-client.ts` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+// An Express project with a storage client that has a `download` method.
-+interface Storage {
-+  download(key: string): Promise<Uint8Array>;
-+}
-+
-+export async function fetchObject(storage: Storage, key: string): Promise<Uint8Array> {
-+  return storage.download(key);
-+}
-```
-
----
-
-### Incident Patch 3: `bd9fb02b` (2026-11-04)
-**Commit Message**: fix(extract): credit the default export of a new URL module path (#4200)
-
-Code can name a module with new URL("./lib/sign.ts", import.meta.url)
-and hand the path to a loader, such as a build tool or a script runner.
-The loader calls the default export of the module. Before, the edge
-credited the file only, so dead-code reported the default export as
-unused.
-
-The edge now credits the default export when the path has an
-extension. Other exports stay reportable. These edges keep the
-file-only credit:
-
-- a direct argument of a Worker or SharedWorker constructor, also
-  inside parentheses or a TypeScript cast;
-- a path without an extension;
-- a source that module.register() loads, because the register edge
-  already credits the loader hook exports.
-
-The cached extraction facts change, so CACHE_VERSION goes to 409 and
-GRAPH_CACHE_VERSION goes to 102.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/fix-new-url-runtime-entry.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **`new URL("./lib/sign.ts", import.meta.url)` now credits the `default` export of the module.** A build tool or a script runner loads such a module by path and calls its default export. Before, the analysis credited the file but reported its `default` export as unused. Other exports stay reportable. A module that a `Worker` or `SharedWorker` constructor gets, a directory URL, and a loader hook module of `module.register()` keep their earlier credit. The cached extraction facts change, so `CACHE_VERSION` goes to 409 and `GRAPH_CACHE_VERSION` goes to 102.
-```
-
-**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
-```diff
-@@ -714,6 +714,8 @@ mod namespace_class_static_member;
- mod namespace_spy_call_member;
- #[path = "integration_test/new_url_node_modules_package.rs"]
- mod new_url_node_modules_package;
-+#[path = "integration_test/new_url_runtime_entry.rs"]
-+mod new_url_runtime_entry;
- #[path = "integration_test/node_modules_bin_path.rs"]
- mod node_modules_bin_path;
- #[path = "integration_test/npm_alias_dependency_binaries.rs"]
-```
-
-**File**: `crates/core/tests/integration_test/new_url_runtime_entry.rs` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+//! A `new URL("./x.ts", import.meta.url)` path can name a module that a
-+//! runtime loader loads by path, such as a build tool or a script runner. The
-+//! loader calls the default export, so the analysis credits `default`. Other
-+//! exports stay reportable. A direct argument of a `Worker` constructor and a
-+//! directory URL credit no export.
-+
-+use super::common::{create_config, fixture_path};
-+
-+#[cfg_attr(miri, ignore)]
-+#[test]
-+fn new_url_module_path_credits_the_default_export() {
-+    let root = fixture_path("new-url-runtime-entry");
-+    let config = create_config(root);
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+
-+    let mut unused: Vec<String> = results
-+        .unused_exports
-+        .iter()
-+        .map(|finding| {
-+            let path = finding.export.path.to_string_lossy().replace('\\', "/");
-+            let file = path.rsplit('/').next().unwrap_or_default().to_string();
-+            format!("{file}:{}", finding.export.export_name)
-+        })
-+        .collect();
-+    unused.sort();
 +    assert_eq!(
-+        unused,
-+        [
-+            "index.ts:default",
-+            "signer.ts:signerName",
-+            "worker.ts:default"
-+        ],
-+        "a new URL module path credits only `default`, and not for a worker or a directory"
++        banned_effect_matches(EffectKind::Shell, shell),
++        ["shell: execSync"]
++    );
++    assert_eq!(
++        banned_effect_matches(EffectKind::Storage, storage),
++        ["storage: unlinkSync"]
 +    );
 +}
++
++#[test]
++fn banned_effect_ignores_a_local_with_the_name_of_a_node_module_member() {
++    let module = module(0, vec![callee("exec", 0)], Vec::new());
++
++    assert!(banned_effect_matches(EffectKind::Shell, module).is_empty());
++}
++
++#[test]
++fn banned_effect_matches_fs_promises_on_a_module_import() {
++    let module = module(
++        0,
++        vec![callee("fs.promises.rm", 0)],
++        vec![import("node:fs", ImportedName::Default, "fs", false)],
++    );
++
++    assert_eq!(
++        banned_effect_matches(EffectKind::Storage, module),
++        ["storage: fs.promises.rm"]
++    );
++}
+```
+
+**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +21/-1)
+```diff
+@@ -1366,7 +1366,23 @@ fn llm_call_injection_langchain_invoke_does_not_fire() {
+ 
+ // ── catalogue gaps: callee variants of existing categories ───────────────────
+ 
+-const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 16] = [
++const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 24] = [
++    ("src/cjs-fs-rename-destination.ts", "path-traversal", 22),
++    ("src/cjs-fs-promises-temp.ts", "insecure-temp-file", 377),
++    (
++        "src/cjs-fs-promises-chmod.ts",
++        "world-writable-permission",
++        732,
++    ),
++    ("src/cjs-destructured-exec.ts", "command-injection", 78),
++    ("src/cjs-module-exec.ts", "command-injection", 78),
++    ("src/cjs-destructured-fs.ts", "path-traversal", 22),
++    ("src/fs-aliased-import.ts", "path-traversal", 22),
++    (
++        "src/cjs-destructured-chmod.ts",
++        "world-writable-permission",
++        732,
++    ),
+     ("src/exec-file.ts", "command-injection", 78),
+     ("src/shelljs.ts", "command-injection", 78),
+     ("src/ssti-handlebars.ts", "ssti", 1336),
+@@ -1434,6 +1450,10 @@ fn catalogue_gap_lookalikes_do_not_fire() {
+             "src/exec-file-tooling.ts",
+             "execFile of a computed binary without untrusted input is not a candidate",
+         ),
++        (
++            "src/exec-local-shadow.ts",
++            "a parameter that hides the exec import is not a shell call",
++        ),
+         (
+             "src/fs-build-path.ts",
+             "a computed path without untrusted input is not a candidate",
 ```
 
 **File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
@@ -2147,281 +1724,1233 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
  /// extraction semantics change, and give the reason in the commit message and
  /// the CHANGELOG. A stale version serves old extraction results from a warm
  /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 408;
-+pub(super) const CACHE_VERSION: u32 = 409;
+-pub(super) const CACHE_VERSION: u32 = 413;
++pub(super) const CACHE_VERSION: u32 = 414;
  
  /// Duplication token cache version. Bump it when duplicate tokenization,
  /// normalization, or the on-disk token cache schema changes, and give the
 ```
 
-**File**: `crates/extract/src/visitor/mod.rs` (modified, +2/-4)
+**File**: `crates/extract/src/tests/js_ts/callee_uses.rs` (modified, +4/-2)
 ```diff
-@@ -694,10 +694,8 @@ pub(crate) struct ModuleInfoExtractor {
-     /// specifier local the graph already treats as a whole-object observation.
-     /// See issue #2377.
-     structured_namespace_reference_spans: FxHashSet<Span>,
--    /// Spans of `new URL(path, import.meta.url)` expressions passed directly
--    /// to a filesystem call or to `fileURLToPath`. The path names a file on
--    /// disk, not a module the code loads, so the reference is speculative.
--    filesystem_path_new_url_spans: FxHashSet<Span>,
-+    /// Context of `new URL(path, import.meta.url)` edges in this file.
-+    new_url_context: visit_impl::NewUrlContext,
-     /// `(root local, namespace local)` for a namespace placed in an object
-     /// literal bound to that root (`const api = { ns }`). The placement itself
-     /// is precise, so a bare reference to the root is what hands the namespace
-```
-
-**File**: `crates/extract/src/visitor/tests.rs` (modified, +64/-0)
-```diff
-@@ -10861,6 +10861,70 @@ fn new_url_import_meta_url_tracked() {
+@@ -88,8 +88,10 @@ fn coexists_with_security_sink_capture() {
+         "callee-use capture should coexist with sink capture"
+     );
+     assert!(
+-        info.security_sinks.iter().any(|s| s.callee_path == "exec"),
+-        "security sink capture should be unaffected"
++        info.security_sinks
++            .iter()
++            .any(|s| s.callee_path == "node:child_process.exec"),
++        "security sink capture should trace the named import"
      );
  }
  
-+fn new_url_destructured_names(source: &str, specifier: &str) -> Vec<String> {
-+    let info = parse(source);
-+    info.dynamic_imports
+```
+
+**File**: `crates/extract/src/visitor/tests.rs` (modified, +7/-4)
+```diff
+@@ -13220,7 +13220,7 @@ fn security_sink_arg_via_conditional_expression_collects_source_paths() {
+     let sink = info
+         .security_sinks
+         .iter()
+-        .find(|s| s.callee_path == "execSync");
++        .find(|s| s.callee_path == "node:child_process.execSync");
+     assert!(
+         sink.is_some(),
+         "execSync with conditional arg should be captured: {:#?}",
+@@ -13245,7 +13245,10 @@ fn security_sink_arg_via_await_expression_collects_source_paths() {
+         }
+         ",
+     );
+-    let sink = info.security_sinks.iter().find(|s| s.callee_path == "exec");
++    let sink = info
++        .security_sinks
 +        .iter()
-+        .find(|d| d.source == specifier)
-+        .map(|d| d.destructured_names.clone())
-+        .expect("new URL edge")
-+}
++        .find(|s| s.callee_path == "node:child_process.exec");
+     assert!(
+         sink.is_some(),
+         "exec with await-wrapped arg should be captured: {:#?}",
+@@ -13268,7 +13271,7 @@ fn security_sink_arg_via_unary_expression_collects_source_paths() {
+     let sink = info
+         .security_sinks
+         .iter()
+-        .find(|s| s.callee_path == "execSync");
++        .find(|s| s.callee_path == "node:child_process.execSync");
+     assert!(
+         sink.is_some(),
+         "execSync with source-backed arg should be captured"
+@@ -13294,7 +13297,7 @@ fn security_sink_ident_collected_through_template_literal_expression() {
+     let sink = info
+         .security_sinks
+         .iter()
+-        .find(|s| s.callee_path == "execSync");
++        .find(|s| s.callee_path == "node:child_process.execSync");
+     assert!(
+         sink.is_some(),
+         "execSync with template-literal arg should be captured"
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +22/-27)
+```diff
+@@ -8,7 +8,7 @@ use fallow_types::extract::{
+     SecurityControlSite, SinkArgKind, SinkLiteralValue, SinkShape, SinkSite,
+     SkippedSecurityCalleeExpressionKind, SkippedSecurityCalleeReason, SkippedSecurityCalleeSite,
+ };
+-use fallow_types::security_sinks::JSX_SPREAD_SINK_PROPS;
++use fallow_types::security_sinks::{JSX_SPREAD_SINK_PROPS, node_binding_module};
+ 
+ use super::super::ModuleInfoExtractor;
+ use super::visit_security_controls::security_control_kind_for_callee;
+@@ -63,11 +63,6 @@ enum SinkBinding {
+     ScriptElement,
+ }
+ 
+-/// Node.js built-in modules whose named and CommonJS bindings resolve to a
+-/// `node:<module>.<member>` callee path. The `node:` root is not a valid
+-/// identifier, so the path proves the import provenance on its own.
+-const NODE_BINDING_MODULES: &[&str] = &["vm"];
+-
+ /// Properties of a `<script>` element whose value the browser loads or runs
+ /// as code.
+ const SCRIPT_ELEMENT_CODE_PROPERTIES: &[&str] = &["src", "text", "textContent", "innerText"];
+@@ -158,15 +153,6 @@ fn set_sink_binding(
+     }
+ }
+ 
+-/// The `node:` path of an import source when the module is in
+-/// [`NODE_BINDING_MODULES`] (`vm` and `node:vm` both give `node:vm`).
+-fn node_binding_module(source: &str) -> Option<String> {
+-    let module = source.strip_prefix("node:").unwrap_or(source);
+-    NODE_BINDING_MODULES
+-        .contains(&module)
+-        .then(|| format!("node:{module}"))
+-}
+-
+ /// Whether `expr` is `<object>.createElement("script")`.
+ fn is_create_script_element_call(expr: &Expression<'_>) -> bool {
+     let Expression::CallExpression(call) = unwrap_static_expr(expr) else {
+@@ -370,7 +356,7 @@ fn is_string_code_callee(callee_path: &str) -> bool {
+ fn is_chmod_literal_callee(callee_path: &str) -> bool {
+     matches!(
+         callee_path,
+-        "fs.chmod" | "fs.chmodSync" | "fs.promises.chmod" | "chmod" | "chmodSync"
++        "fs.chmod" | "fs.chmodSync" | "fs.promises.chmod" | "node:fs.chmod" | "node:fs.chmodSync"
+     )
+ }
+ 
+@@ -384,11 +370,11 @@ fn is_temp_file_literal_callee(callee_path: &str) -> bool {
+             | "fs.createWriteStream"
+             | "fs.promises.writeFile"
+             | "fs.promises.appendFile"
+-            | "writeFile"
+-            | "writeFileSync"
+-            | "appendFile"
+-            | "appendFileSync"
+-            | "createWriteStream"
++            | "node:fs.writeFile"
++            | "node:fs.writeFileSync"
++            | "node:fs.appendFile"
++            | "node:fs.appendFileSync"
++            | "node:fs.createWriteStream"
+     )
+ }
+ 
+@@ -1217,9 +1203,12 @@ impl ModuleInfoExtractor {
+     /// On top of [`Self::static_callee_path`], this maps a global-object prefix
+     /// on a code-executing global (`window.eval`) and a local alias of one
+     /// (`const e = eval; e(code)`) to the bare global. A binding of a Node.js
+-    /// built-in module in [`NODE_BINDING_MODULES`] resolves to its `node:`
+-    /// path (`runInNewContext(code)` after `import { runInNewContext } from
+-    /// "vm"` becomes `node:vm.runInNewContext`).
++    /// built-in module in
++    /// [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES)
++    /// resolves to its `node:` path (`runInNewContext(code)` after
++    /// `import { runInNewContext } from "vm"` becomes
++    /// `node:vm.runInNewContext`). `fs.promises.<member>` on a module binding
++    /// becomes `node:fs.<member>`, the path of an `fs/promises` import.
+     fn security_callee_path(&self, expr: &Expression<'_>) -> Option<String> {
+         let path = normalize_global_code_exec_path(self.static_callee_path(expr)?);
+         let (root, rest) = match path.split_once('.') {
+@@ -1230,7 +1219,13 @@ impl ModuleInfoExtractor {
+             (Some(SinkBinding::CodeExec(target) | SinkBinding::NodeModuleMember(target)), None) => {
+                 Some(target.clone())
+             }
+-            (Some(SinkBinding::NodeModule(module)), Some(rest)) => Some(format!("{module}.{rest}")),
++            (Some(SinkBinding::NodeModule(module)), Some(rest)) => {
++                let rest = match rest.strip_prefix("promises.") {
++                    Some(member) if module == "node:fs" => member,
++                    _ => rest,
++                };
++                Some(format!("{module}.{rest}"))
++            }
+             _ => None,
+         };
+         Some(resolved.unwrap_or(path))
+@@ -1521,7 +1516,7 @@ impl ModuleInfoExtractor {
+ 
+     /// The sink binding that a value gives to `name`: an alias of a
+     /// code-executing global or of a Node.js module binding, a `require()` of
+-    /// a module in [`NODE_BINDING_MODULES`], or a new `<script>` element.
++    /// a module in [`NODE_BINDING_MODULES`](fallow_types::security_sinks::NODE_BINDING_MODULES), or a new `<script>` element.
+     fn sink_binding_of_value(&self, name: &str, value: &Expression<'_>) -> Option<SinkBinding> {
+         if is_create_script_element_call(value) {
+             return Some(SinkBinding::ScriptElement);
+@@ -1553,7 +1548,7 @@ impl ModuleInfoExtr
+```
+
+---
+
+### Incident Patch 2: `78ab1c08` (2026-11-05)
+**Commit Message**: fix(graph): refuse the graph cache when a probed path changes (#4255)
+
+* fix(graph): refuse the graph cache when a probed path changes
+
+The persisted graph cache reused an import resolution after a new file appeared at a path that the resolver tried and did not find. Discovery does not list an extensionless file, a .json file, or build output in an ignored directory, so the manifest did not change. For example, a new file src/util changes the target of ./util from src/util.ts.
+
+Resolution now records each path below the root that it checks and does not find. The resolver payload stores these paths, grouped by directory, and the resolved targets that discovery does not list. restore_resolved_project refuses the payload when a stored missed path exists or a stored target is gone.
+
+The read-set oracle no longer skips missing module candidates.
+
+Closes #4233
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* test(graph): skip the probe tests that need a temp directory under Miri
+
+Miri isolation blocks file system calls. The other temp directory tests of the crate use the same mark.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(graph): check small probe lists without th
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-0)
+```diff
+@@ -236,6 +236,7 @@ jobs:
+               - 'crates/api/src/similar_code/transport.rs'
+               - 'crates/api/src/type_aware/client/mod.rs'
+               - 'crates/api/tests/integration/common.rs'
++              - 'crates/graph/src/missed_probes.rs'
+               - 'crates/graph/src/resolve/fallbacks.rs'
+               - 'crates/graph/src/resolve/specifier.rs'
+               - 'crates/graph/src/resolve/tests.rs'
+```
+
+**File**: `changelog.d/fix-graph-cache-missed-candidates.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **The graph cache now misses when a file appears at a path that import resolution tried and did not find.** Before this fix, a warm run could keep a stale import target after a new extensionless file, a new `.json` file, or new build output in an ignored directory. For example, a new file `src/util` changes the target of `./util` from `src/util.ts`, but discovery does not list it. The graph cache now stores the paths that resolution checked and did not find, and the resolved targets that discovery does not list. A warm run rebuilds the graph when one of these paths appears or is removed. (#4233)
+```
+
+**File**: `crates/core/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -1222,7 +1222,7 @@ fn restore_cached_resolved_project(
+         // debug for the reason `CacheRejection::discarded_existing_work`
+         // documents.
+         tracing::debug!(
+-            "Graph cache decoded but its resolver payload no longer maps to the discovered files"
++            "Graph cache decoded but its resolver payload no longer maps to the project files"
+         );
+         Some(CacheRejection::FileSetChanged)
+     })
+```
+
+**File**: `crates/engine/tests/integration/cache_model/read_set.rs` (modified, +18/-30)
+```diff
+@@ -14,12 +14,6 @@
+ //! The oracle skips these paths:
+ //!
+ //! - an existing directory, and a missing path below an existing file;
+-//! - a missing module candidate: a path that the resolver tries for a
+-//!   specifier, with an extension or as an extensionless file, that is not a
+-//!   config or install file. The key does not record these probes yet, so
+-//!   a new non-source file at such a path (a `.json` file, an extensionless
+-//!   file, or build output in an ignored directory) can change a resolution
+-//!   with no change to the key (#4233);
+ //! - a path below `__fallow_ws_self_resolve__`, the directory name that the
+ //!   resolver uses for a synthetic importer of a workspace package.
+ //!
+@@ -205,35 +199,16 @@ fn perturbation_for(path: &Path, kinds: &FxHashSet<ReadKind>) -> Option<Perturba
+     if path.ancestors().skip(1).any(Path::is_file) {
+         return None;
+     }
+-    if kinds.contains(&ReadKind::Dir) {
+-        return Some(Perturbation::CreateDir);
+-    }
+-    is_config_name(path).then_some(Perturbation::CreateFile)
++    Some(if kinds.contains(&ReadKind::Dir) {
++        Perturbation::CreateDir
++    } else {
++        Perturbation::CreateFile
++    })
+ }
+ 
+ /// The directory name of the synthetic importer for a workspace package.
+ const SELF_RESOLVE_DIR: &str = "__fallow_ws_self_resolve__";
+ 
+-/// True for the name of a config or install file that a resolver reads,
+-/// as opposed to a module candidate.
+-fn is_config_name(path: &Path) -> bool {
+-    let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+-        return false;
+-    };
+-    let json = path.extension().is_some_and(|extension| {
+-        extension.eq_ignore_ascii_case("json") || extension.eq_ignore_ascii_case("jsonc")
+-    });
+-    let tsconfig = json && (name.starts_with("tsconfig") || name.starts_with("jsconfig"));
+-    tsconfig
+-        || matches!(
+-            name,
+-            "package.json" | "deno.json" | "deno.jsonc" | ".pnp.cjs" | ".pnp.data.json"
+-        )
+-        || INSTALL_STATE_FILES
+-            .iter()
+-            .any(|state| Path::new(state).file_name() == Some(name.as_ref()))
+-}
+-
+ /// Apply `perturbation` again and compare a warm run with a cache-free run.
+ fn stale_after(
+     project: &Project,
+@@ -414,3 +389,16 @@ fn graph_cache_key_covers_bun_reads() {
+ fn graph_cache_key_covers_deno_reads() {
+     assert_key_covers_read_set("deno project", &DENO, &[]);
+ }
 +
 +#[test]
-+fn new_url_module_path_credits_default_export() {
-+    assert_eq!(
-+        new_url_destructured_names(
-+            "export const sign = new URL('./lib/sign.ts', import.meta.url);",
-+            "./lib/sign.ts",
-+        ),
-+        ["default"]
++fn graph_cache_key_covers_reads_of_files_that_discovery_does_not_list() {
++    assert_key_covers_read_set(
++        "node workspace with files at missed candidate paths",
++        &NODE,
++        &[
++            Step::ToggleExtensionlessUtil,
++            Step::ToggleDataJson,
++            Step::ToggleBuildOutput,
++        ],
 +    );
 +}
-+
-+#[test]
-+fn new_url_worker_argument_credits_no_export() {
-+    for source in [
-+        "new Worker(new URL('./worker.ts', import.meta.url));",
-+        "new SharedWorker(new URL('./worker.ts', import.meta.url));",
-+        "new Worker((new URL('./worker.ts', import.meta.url)));",
-+        "new Worker(new URL('./worker.ts', import.meta.url) as URL);",
-+    ] {
-+        assert!(
-+            new_url_destructured_names(source, "./worker.ts").is_empty(),
-+            "a worker runs the module as a script: {source}"
-+        );
+```
+
+**File**: `crates/engine/tests/integration/cache_model/sequences.rs` (modified, +15/-0)
+```diff
+@@ -130,6 +130,21 @@ const REGRESSIONS: &[Regression] = &[
+         template: &ANGULAR,
+         steps: &[Step::SwapAngularMain],
+     },
++    Regression {
++        name: "extensionless file at a missed candidate path (#4233)",
++        template: &NODE,
++        steps: &[Step::ToggleExtensionlessUtil, Step::ToggleExtensionlessUtil],
++    },
++    Regression {
++        name: "json file at a missed candidate path (#4233)",
++        template: &NODE,
++        steps: &[Step::ToggleDataJson, Step::ToggleDataJson],
++    },
++    Regression {
++        name: "build output in an ignored directory (#4233)",
++        template: &NODE,
++        steps: &[Step::ToggleBuildOutput, Step::ToggleBuildOutput],
++    },
+ ];
+ 
+ /// The facts of one sequence run.
+```
+
+**File**: `crates/engine/tests/integration/cache_model/templates.rs` (modified, +30/-1)
+```diff
+@@ -72,6 +72,16 @@ pub enum Step {
+     SwapAngularIncludePath,
+     /// Point the `main` entry of `angular.json` to the other file.
+     SwapAngularMain,
++    /// Add or remove the extensionless file `src/util`. The resolver tries
++    /// this path for `./util` before `src/util.ts`, and discovery does not
++    /// list it.
++    ToggleExtensionlessUtil,
++    /// Add or remove `src/data.json`, the target of the unresolved import
++    /// `./data`. Discovery does not list a `.json` file.
++    ToggleDataJson,
++    /// Add or remove `dist/gen.js`, the target of the unresolved import
++    /// `../dist/gen`. The default ignore patterns exclude `dist`.
++    ToggleBuildOutput,
+ }
+ 
+ const SOURCE_STEPS: [Step; 7] = [
+@@ -88,7 +98,7 @@ const CLONE_A: &str = "export const sumA = (items: number[]): number => {\n  let
+ const CLONE_B: &str = "export const sumB = (items: number[]): number => {\n  let total = 0;\n  for (const item of items) {\n    total += item * 2;\n    total -= 1;\n  }\n  return total;\n};\n";
+ const CLONE_B_BROKEN: &str = "export const sumB = (items: number[]): number => {\n  let total = 0;\n  while (items.length>0) {\n    total = items.pop() ?? 10;\n    break;\n  }\n  return total;\n};\n";
+ 
+-const ENTRY_ALPHA: &str = "import { db } from '#db';\nimport { alias } from '@alias';\nimport { alpha } from './util';\nimport { value } from '@demo/lib/src/util';\nimport { nested } from '../nested/entry';\nimport asset from 'plain-pkg/build/missing.mjs?url';\n\nexport const run = (): unknown[] => [db, alias, alpha(), value, nested, asset];\n";
++const ENTRY_ALPHA: &str = "import { db } from '#db';\nimport { alias } from '@alias';\nimport { alpha } from './util';\nimport { value } from '@demo/lib/src/util';\nimport { nested } from '../nested/entry';\nimport asset from 'plain-pkg/build/missing.mjs?url';\nimport data from './data';\nimport { gen } from '../dist/gen';\n\nexport const run = (): unknown[] => [db, alias, alpha(), value, nested, asset, data, gen];\n";
+ const BUN_ENTRY_ALPHA: &str = "import { alpha } from './util';\nimport asset from 'plain-pkg/build/missing.mjs?url';\n\nexport const run = (): unknown[] => [alpha(), asset];\n";
+ const DENO_ENTRY_ALPHA: &str = "import { db } from 'db';\nimport { alpha } from './src/util.ts';\n\nexport const run = (): unknown[] => [db, alpha()];\n";
+ 
+@@ -168,6 +178,9 @@ pub const NODE: Template = Template {
+         Step::ToggleProduction,
+         Step::ToggleIgnoreOrphan,
+         Step::ToggleCondition,
++        Step::ToggleExtensionlessUtil,
++        Step::ToggleDataJson,
++        Step::ToggleBuildOutput,
+     ],
+ };
+ 
+@@ -204,6 +217,7 @@ pub const BUN: Template = Template {
+         Step::NodeModulesNoise,
+         Step::ToggleProduction,
+         Step::ToggleIgnoreOrphan,
++        Step::ToggleExtensionlessUtil,
+     ],
+ };
+ 
+@@ -379,6 +393,14 @@ fn swap_in_file(project: &mut Project, file: &str, from: &str, to: &str, keep_mt
+     }
+ }
+ 
++fn toggle_file(project: &mut Project, file: &str, content: &str) {
++    if project.exists(file) {
++        project.remove(file);
++    } else {
++        project.write(file, content);
 +    }
 +}
 +
-+#[test]
-+fn new_url_directory_credits_no_export() {
-+    assert!(
-+        new_url_destructured_names("new URL('./services', import.meta.url);", "./services")
-+            .is_empty()
-+    );
-+}
-+
-+#[test]
-+fn new_url_registered_loader_credits_only_hooks() {
-+    let info = parse(
-+        "import { register } from 'node:module';\n\
-+         const hooks = new URL('./hooks.ts', import.meta.url);\n\
-+         register(hooks);",
-+    );
-+    let names: Vec<&[String]> = info
-+        .dynamic_imports
-+        .iter()
-+        .filter(|d| d.source == "./hooks.ts")
-+        .map(|d| d.destructured_names.as_slice())
-+        .collect();
-+    assert!(
-+        names
-+            .iter()
-+            .all(|names| !names.contains(&"default".to_string())),
-+        "a registered loader edge credits only hook exports: {names:?}"
-+    );
-+}
-+
- #[test]
- fn new_url_non_relative_not_tracked() {
-     let info = parse("new URL('https://example.com', import.meta.url);");
-```
-
-**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +4/-25)
-```diff
-@@ -7,7 +7,6 @@ use oxc_ast_visit::walk;
- use oxc_semantic::ScopeFlags;
- use oxc_span::{GetSpan, Span};
- use rustc_hash::{FxHashMap, FxHashSet};
--use std::path::PathBuf;
- 
- use crate::{
-     AngularComponentFieldArrayTypeFact, AngularThisSpreadFact, ComputedEnumKeyUseFact,
-@@ -119,7 +118,7 @@ mod visit_taint_sources;
- pub(super) use visit_chain_names::jsx_member_object_name;
- pub use visit_chain_names::push_member_tag_accesses;
- use visit_chain_names::{call_receiver_name, static_member_object_name, type_name_member_path};
--pub(super) use visit_dynamic_imports::ComponentLoaderImport;
-+pub(super) use visit_dynamic_imports::{ComponentLoaderImport, NewUrlContext};
- pub(super) use visit_factory_returns::count_returns_in_statements;
- use visit_factory_returns::{
-     FactoryReturnFunctionInput, classify_factory_assigned_value, collect_self_scope_assignments,
-@@ -3654,6 +3653,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
-         walk::walk_program(self, program);
-         self.finish_local_import_loaders();
-         self.finish_promise_import_bindings();
-+        self.finish_register_loader_new_urls();
-         self.record_jsx_import_source_pragma(program);
+ fn toggle_option(values: &mut Vec<String>, value: &str) {
+     if let Some(index) = values.iter().position(|existing| existing == value) {
+         values.remove(index);
+@@ -476,6 +498,13 @@ pub fn apply(project: &mut Project, step: Step) {
+                 false,
+             );
+         }
++        Step::ToggleExtensionlessUtil => {
++            toggle_file(project, "src/util", "export const alpha = () => 3;\n");
++        }
++        Step::ToggleDataJson => toggle_file(project, "src/data.json", "{\"data\": 1}\n"),
++        Step::ToggleBuildOutput => {
++            toggle_file(project, "dist/gen.js", "export const gen = 1;\n");
++        }
+         manifest => apply_manifest_step(project, manifest),
      }
- 
-@@ -4714,30 +4714,9 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
-         self.record_queue_worker_constructor_param_sources(expr);
-         self.record_callee_use(&expr.callee, expr.span.start, true);
-         self.record_new_url_package_reference(expr);
-+        self.record_worker_new_url_arguments(expr);
- 
--        if let Some(source) = new_url_import_source(expr) {
--            // A speculative reference credits its target when it resolves, and
--            // the resolver drops it silently when it does not. Two rules make a
--            // `new URL(specifier, import.meta.url)` speculative:
--            // - The specifier has no file extension, so it may name a directory
--            //   (`new URL("./services", import.meta.url)`). See issue #840.
--            // - The expression is a direct argument of a filesystem call or of
--            //   `fileURLToPath`, so it names a file on disk. The file can be an
--            //   output that does not exist yet, or a probe for an optional file.
--            // Other specifiers with an extension (`new URL("./worker.js", ...)`) stay
--            // not speculative, so a missing file is still an `unresolved-import`.
--            let is_speculative = PathBuf::from(&source).extension().is_none()
--                || self.filesystem_path_new_url_spans.contains(&expr.span);
--            self.dynamic_imports.push(DynamicImportInfo {
--                source,
--                span: expr.span,
--                destructured_names: Vec::new(),
--                local_name: None,
--                is_speculative,
--                value_escapes: false,
--            });
--            self.mark_import_load_kind(expr.span, ImportLoadKind::OutOfThread);
--        }
-+        self.record_new_url_edge(expr);
- 
-         self.capture_declarative_validation_new_expression(expr);
-         self.capture_new_expression_sink(expr);
+ }
 ```
 
-**File**: `crates/extract/src/visitor/visit_impl_dynamic_imports.rs` (modified, +84/-1)
+**File**: `crates/graph/src/cache/mod.rs` (modified, +116/-2)
 ```diff
-@@ -15,6 +15,25 @@ pub(in crate::visitor) enum ComponentLoaderImport {
-     NextDynamic,
+@@ -40,7 +40,7 @@ pub use store::{GRAPH_CACHE_FILE, GraphCacheStore};
+ /// Never reuse a version number that a published build wrote, even from a
+ /// development commit. Git history and the CHANGELOG record the reason for
+ /// each bump.
+-pub const GRAPH_CACHE_VERSION: u32 = 102;
++pub const GRAPH_CACHE_VERSION: u32 = 103;
+ 
+ /// Cached form of a resolved target.
+ ///
+@@ -401,6 +401,63 @@ impl CachedResolvedReplacedModuleTarget {
+ pub struct CachedResolvedProject {
+     modules: Vec<CachedResolvedModule>,
+     replaced_module_targets: Vec<CachedResolvedReplacedModuleTarget>,
++    /// The paths that the resolution checked and did not find (see
++    /// [`ResolvedProject::missed_probes`]).
++    missed_probes: crate::missed_probes::MissedProbes,
++    /// The resolved targets below the root that are not discovered files
++    /// and not below `node_modules`, root-relative and sorted.
++    external_targets: Vec<String>,
++}
++
++impl CachedResolvedProject {
++    /// True when the files that the cached resolution depends on, but that
++    /// discovery does not list, changed: a file now exists at a path that the
++    /// resolution checked and did not find, or a resolved target outside the
++    /// discovered files is gone. Discovery does not list an extensionless
++    /// file, a `.json` file, or a file in an ignored directory, so the
++    /// manifest cannot show these changes.
++    #[must_use]
++    fn probed_paths_changed(&self, root: &Path) -> bool {
++        let start = std::time::Instant::now();
++        let changed = self.missed_probes.any_exists(root)
++            || crate::missed_probes::any_missing(root, &self.external_targets);
++        tracing::debug!(
++            missed_probes = self.missed_probes.len(),
++            external_targets = self.external_targets.len(),
++            elapsed_ms = start.elapsed().as_secs_f64() * 1000.0,
++            changed,
++            "checked the probed paths of the graph cache"
++        );
++        changed
++    }
++}
++
++/// The root-relative paths of the [`ResolveResult::ExternalFile`] targets
++/// below `root` and not below `node_modules`.
++fn external_targets(root: &Path, resolved: &ResolvedProject) -> Vec<String> {
++    // The resolver can spell a target with the canonical root. Most projects
++    // have no external target, so the root is canonicalized only on demand.
++    let canonical_root = std::cell::OnceCell::new();
++    let mut targets: Vec<String> = resolved
++        .modules
++        .iter()
++        .flat_map(ResolvedModule::all_resolved_source_edges)
++        .filter_map(|edge| match edge.target() {
++            ResolveResult::ExternalFile(path) => crate::missed_probes::project_relative(root, path)
++                .or_else(|| {
++                    canonical_root
++                        .get_or_init(|| dunce::canonicalize(root).ok())
++                        .as_deref()
++                        .and_then(|canonical| {
++                            crate::missed_probes::project_relative(canonical, path)
++                        })
++                }),
++            _ => None,
++        })
++        .collect();
++    targets.sort_unstable();
++    targets.dedup();
++    targets
  }
  
-+/// Context of `new URL(path, import.meta.url)` edges in one file.
-+#[derive(Debug, Default)]
-+pub(in crate::visitor) struct NewUrlContext {
-+    /// Spans of URLs passed directly to a filesystem call or to
-+    /// `fileURLToPath`. The path names a file on disk, not a module the code
-+    /// loads, so the reference is speculative.
-+    pub(in crate::visitor) filesystem_path_spans: FxHashSet<Span>,
-+    /// Spans of URLs passed directly to a `Worker` or `SharedWorker`
-+    /// constructor. A worker module runs as a script, so the edge credits the
-+    /// file and no export.
-+    pub(in crate::visitor) worker_spans: FxHashSet<Span>,
-+    /// Sources that `module.register()` loads as Node loader hooks. A URL
-+    /// edge to such a source credits only the hook exports.
-+    pub(in crate::visitor) register_loader_sources: FxHashSet<String>,
-+}
-+
-+/// Constructors that run a module as a worker script.
-+const WORKER_CONSTRUCTORS: &[&str] = &["Worker", "SharedWorker"];
-+
- impl<'a> ModuleInfoExtractor {
-     /// Record each `new URL(path, import.meta.url)` passed directly to a
-     /// filesystem call, so `visit_new_expression` marks it speculative.
-@@ -26,11 +45,75 @@ impl<'a> ModuleInfoExtractor {
-             if let Argument::NewExpression(new_expr) = arg
-                 && new_url_import_source(new_expr).is_some()
-             {
--                self.filesystem_path_new_url_spans.insert(new_expr.span);
-+                self.new_url_context
-+                    .filesystem_path_spans
-+                    .insert(new_expr.span);
-             }
+ /// Convert a resolved project into the compact graph-cache resolver payload.
+@@ -425,6 +482,8 @@ pub fn cache_resolved_project(
+     Some(CachedResolvedProject {
+         modules,
+         replaced_module_targets,
++        missed_probes: resolved.missed_probes.clone(),
++        external_targets: external_targets(root, resolved),
+     })
+ }
+ 
+@@ -433,14 +492,19 @@ pub fn cache_resolved_project(
+ /// Returns `None` if the payload no longer aligns with the current parse result.
+ /// A normal graph-cache manifest hit should keep these aligned; this extra check
+ /// keeps corrupt or hand-edited cache files on the safe miss path.
++///
++/// Also returns `None` when a file that the cached resolution probed, and that
++/// discovery does not list, appeared or was removed. The caller restores the
++/// payload only after the manifest compare, so a run that misses on the
++/// manifest pays no file system call for the probes.
+ #[must_use]
+ pub fn restore_resolved_project(
+     root: &Path,
+     modules: &[fallow_types::extract::ModuleInfo],
+     files: &[DiscoveredFile],
+     cached: &CachedResolvedProject,
+ ) -> Option<ResolvedProject> {
+-    if modules.len() != cached.modules.len() {
++    if modules.len() != cached.modules.len() || cached.probed_paths_changed(root) {
+         return None;
+     }
+ 
+@@ -463,6 +527,7 @@ pub fn restore_resolved_project(
+         modules: resolved_modules,
+         replaced_module_targets,
+         work: crate::resolve::ResolveWork::default(),
++        missed_probes: cached.missed_probes.clone(),
+     })
+ }
+ 
+@@ -1129,6 +1194,55 @@ mod tests {
          }
      }
  
-+    /// Record each `new URL(path, import.meta.url)` passed directly to a
-+    /// `Worker` or `SharedWorker` constructor, so `visit_new_expression`
-+    /// credits the worker file and no export.
-+    pub(super) fn record_worker_new_url_arguments(&mut self, expr: &NewExpression<'_>) {
-+        if !matches!(&expr.callee, Expression::Identifier(callee) if WORKER_CONSTRUCTORS.contains(&callee.name.as_str()))
-+        {
-+            return;
++    #[test]
++    #[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
++    fn a_changed_probed_path_takes_the_cache_miss_path() {
++        let temp = tempfile::tempdir().unwrap();
++        let r
+```
+
+**File**: `crates/graph/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@
+ 
+ pub mod cache;
+ pub mod graph;
++pub mod missed_probes;
+ pub mod project;
+ pub mod read_trace;
+ pub mod resolve;
+```
+
+---
+
+### Incident Patch 3: `37d90e8a` (2026-11-05)
+**Commit Message**: fix(agent): refuse to write through a symlink that leaves the project (#4254)
+
+* fix(agent): refuse to write through a symlink in the project
+
+A cloned repository can commit .mcp.json, .claude/ or another harness
+path as a symlink to a file outside the project. agent install and
+uninstall then merged the MCP entry into that outside file. With
+--force they also copied its content into a backup in the working tree
+and overwrote it.
+
+In project scope, every agent step now checks the path and each
+directory below the project root. When one of them is a symlink, or the
+path leaves the root, the step does not write, back up or delete. The
+row is skipped with the new symlinked_path reason. hooks install
+--target agent exits 2 with an error for the same paths. User scope
+still follows symlinks, because dotfile managers link files in the home
+directory.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(agent): allow symlinks that stay inside the project
+
+The first guard refused every symlink below the project root. That broke
+normal links such as CLAUDE.md -> AGENTS.md and .claude/skills ->
+../.agents/skills. The guard now refuses a path only when a component
+resolves outside the c
+
+**File**: `changelog.d/fix-setup-refuse-symlinked-config.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Security
++
++- **`agent install`, `hooks install`, `init` and their uninstall commands no longer write through a symlink that leaves the project.** A cloned repository could commit a project file such as `.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`, a skill directory, `AGENTS.md`, `.husky/pre-commit` or `.gitignore` as a symlink to a file outside the project. Fallow then wrote, backed up or deleted that outside file, and `--force` copied its content into the working tree. Fallow now refuses a project path when the path, or a directory on the way to it, is a symlink that resolves outside the project root or a dangling link. `agent install` reports the row as `skipped` with the new reason `symlinked_path`. `hooks install` and `init` exit with code 2. A link that stays inside the project, such as `CLAUDE.md -> AGENTS.md` or `.claude/skills -> ../.agents/skills`, still works. `--user` targets and `.git/hooks` still follow symlinks. The skill step also reads `node_modules/fallow/skills` only from files inside the fallow package, so a link in the package cannot copy an outside file into the project.
+```
+
+**File**: `crates/cli/src/agent_install/guide.rs` (modified, +32/-0)
+```diff
+@@ -66,6 +66,9 @@ fn install_agents_guide(ctx: &Ctx) -> StepReport {
+     let path = ctx.root.join(AGENTS_FILE);
+     let base =
+         StepReport::new(None, Step::Guide, StepStatus::Written, Scope::Shared).path(ctx, &path);
++    if let Some(link) = ctx.symlink_on([path.as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
+     let existing = match read_optional_text(&path) {
+         Ok(existing) => existing,
+         Err(error) => return failed(ctx, &path, error),
+@@ -114,6 +117,14 @@ fn install_claude_import(ctx: &Ctx) -> StepReport {
+         Scope::Shared,
+     )
+     .path(ctx, &path);
++    if let Some(link) = ctx.symlink_on([path.as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
++    if claude_file_is_agents_file(ctx) {
++        return base
++            .with_status(StepStatus::Unchanged)
++            .detail(CLAUDE_LINKS_TO_AGENTS);
++    }
+     let existing = match read_optional_text(&path) {
+         Ok(existing) => existing,
+         Err(error) => return failed(ctx, &path, error),
+@@ -167,6 +178,9 @@ fn uninstall_agents_guide(ctx: &Ctx) -> StepReport {
+     let path = ctx.root.join(AGENTS_FILE);
+     let base =
+         StepReport::new(None, Step::Guide, StepStatus::Removed, Scope::Shared).path(ctx, &path);
++    if let Some(link) = ctx.symlink_on([path.as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
+     let existing = match read_optional_text(&path) {
+         Ok(Some(existing)) => existing,
+         Ok(None) => {
+@@ -205,6 +219,14 @@ fn uninstall_claude_import(ctx: &Ctx) -> StepReport {
+         Scope::Shared,
+     )
+     .path(ctx, &path);
++    if let Some(link) = ctx.symlink_on([path.as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
++    if claude_file_is_agents_file(ctx) {
++        return base
++            .with_status(StepStatus::Unchanged)
++            .detail(CLAUDE_LINKS_TO_AGENTS);
++    }
+     let existing = match read_optional_text(&path) {
+         Ok(Some(existing)) => existing,
+         Ok(None) => {
+@@ -243,6 +265,16 @@ fn uninstall_claude_import(ctx: &Ctx) -> StepReport {
+     }
+ }
+ 
++const CLAUDE_LINKS_TO_AGENTS: &str =
++    "CLAUDE.md links to AGENTS.md; Claude Code reads the guide through the link";
++
++/// Whether `CLAUDE.md` and `AGENTS.md` resolve to one file. An import block
++/// would then land in `AGENTS.md` and make it import itself.
++fn claude_file_is_agents_file(ctx: &Ctx) -> bool {
++    let resolve = |name: &str| dunce::canonicalize(ctx.root.join(name)).ok();
++    resolve(CLAUDE_FILE).is_some_and(|claude| resolve(AGENTS_FILE) == Some(claude))
++}
++
+ fn import_block() -> String {
+     format!(
+         "{}\n{IMPORT_LINE}\n{}\n",
+```
+
+**File**: `crates/cli/src/agent_install/hooks.rs` (modified, +19/-1)
+```diff
+@@ -5,7 +5,7 @@
+ use super::{Ctx, Harness, Mode, Reason, Scope, Step, StepReport, StepStatus};
+ use crate::setup_hooks::{
+     AgentsBlockReport, AgentsOutcome, GateReport, HookAgentArg, ScriptOutcome, SettingsOutcome,
+-    SetupHooksOptions, execute_agent_hooks,
++    SetupHooksOptions, execute_agent_hooks, symlinked_hook_target,
+ };
+ 
+ pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
+@@ -38,6 +38,24 @@ fn run(ctx: &Ctx, harness: Harness) -> Vec<StepReport> {
+         gitignore_claude: ctx.gitignore_claude,
+         uninstall: ctx.mode == Mode::Uninstall,
+     };
++    match symlinked_hook_target(&opts, ctx.mode) {
++        Ok(Some(target)) => {
++            return vec![
++                StepReport::new(Some(harness), Step::Hooks, StepStatus::Skipped, ctx.scope())
++                    .path(ctx, &target.path)
++                    .symlinked(ctx, &target.link),
++            ];
 +        }
-+        if let Some(Expression::NewExpression(new_expr)) = expr
-+            .arguments
-+            .first()
-+            .and_then(Argument::as_expression)
-+            .map(Expression::get_inner_expression)
-+            && new_url_import_source(new_expr).is_some()
-+        {
-+            self.new_url_context.worker_spans.insert(new_expr.span);
++        Ok(None) => {}
++        Err(message) => {
++            return vec![StepReport::failed(
++                Some(harness),
++                Step::Hooks,
++                ctx.scope(),
++                message,
++            )];
 +        }
 +    }
+     let report = match execute_agent_hooks(&opts, ctx.mode) {
+         Ok(Some(report)) => report,
+         Ok(None) => return Vec::new(),
+```
+
+**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +9/-0)
+```diff
+@@ -410,6 +410,9 @@ fn json_step(
+         StepStatus::Removed
+     };
+     let base = StepReport::new(Some(harness), Step::Mcp, status, scope).path(ctx, path);
++    if let Some(link) = ctx.symlink_on([path, backup_path(path).as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
+     let outcome = merge_json_server(path, "mcpServers", entry, ctx.dry_run, ctx.force);
+     outcome_report(base, outcome, ctx, path, Reason::InvalidJson)
+ }
+@@ -430,6 +433,9 @@ fn approval_step(ctx: &Ctx, mode: Mode) -> StepReport {
+             .reason(Reason::ApprovalNotRequested)
+             .detail("pass --approve to pre-approve the project MCP server for yourself");
+     }
++    if let Some(link) = ctx.symlink_on([path.as_path(), backup_path(&path).as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
+     if is_git_tracked(&ctx.root, CLAUDE_LOCAL_SETTINGS) {
+         return base
+             .with_status(StepStatus::Skipped)
+@@ -469,6 +475,9 @@ fn codex_step(ctx: &Ctx, path: &Path, command: Option<&McpCommand>) -> StepRepor
+     } else {
+         base
+     };
++    if let Some(link) = ctx.symlink_on([path, backup_path(path).as_path()]) {
++        return base.symlinked(ctx, &link);
++    }
+     let outcome = merge_codex(path, command, ctx.dry_run, ctx.force);
+     outcome_report(base, outcome, ctx, path, Reason::InvalidToml)
+ }
+```
+
+**File**: `crates/cli/src/agent_install/mod.rs` (modified, +37/-1)
+```diff
+@@ -140,14 +140,17 @@ pub enum Reason {
+     NotAnObject,
+     /// Fallow markers exist but not as a start-then-end pair.
+     ManagedBlockMalformed,
++    /// In project scope, the path or a directory on the way to it is a
++    /// symlink that resolves outside the project root, or a dangling link.
++    SymlinkedPath,
+ }
+ 
+ impl Reason {
+     #[cfg_attr(
+         not(test),
+         expect(dead_code, reason = "read by the documentation drift test")
+     )]
+-    pub const ALL: [Self; 15] = [
++    pub const ALL: [Self; 16] = [
+         Self::SkillNameTaken,
+         Self::SkillNotEmbedded,
+         Self::McpEntryUnavailable,
+@@ -163,6 +166,7 @@ impl Reason {
+         Self::InvalidToml,
+         Self::NotAnObject,
+         Self::ManagedBlockMalformed,
++        Self::SymlinkedPath,
+     ];
+ 
+     pub const fn as_str(self) -> &'static str {
+@@ -182,6 +186,7 @@ impl Reason {
+             Self::InvalidToml => "invalid_toml",
+             Self::NotAnObject => "not_an_object",
+             Self::ManagedBlockMalformed => "managed_block_malformed",
++            Self::SymlinkedPath => "symlinked_path",
+         }
+     }
+ }
+@@ -257,6 +262,21 @@ impl StepReport {
+         self
+     }
+ 
++    /// Turn the row into a skip because its path goes through the symlink
++    /// `link`, which resolves outside the project root. The row keeps its own
++    /// path, and `detail` names the link.
++    pub fn symlinked(mut self, ctx: &Ctx, link: &Path) -> Self {
++        self.status = StepStatus::Skipped;
++        self.reason = Some(Reason::SymlinkedPath);
++        self.detail = Some(format!(
++            "{} {}; {}",
++            display_path(&ctx.root, ctx.home.as_deref(), link),
++            crate::setup_hooks::symlink_guard::OUTSIDE_LINK,
++            crate::setup_hooks::symlink_guard::OUTSIDE_LINK_REMEDY
++        ));
++        self
++    }
 +
-+    /// Record the edge of a `new URL(path, import.meta.url)` expression.
-+    pub(super) fn record_new_url_edge(&mut self, expr: &NewExpression<'_>) {
-+        let Some(source) = new_url_import_source(expr) else {
-+            return;
+     pub fn failed(
+         harness: Option<Harness>,
+         step: Step,
+@@ -346,6 +366,19 @@ impl Ctx {
+         }
+     }
+ 
++    /// In project scope, the first symlink on the way from the root to one
++    /// of `paths` that resolves outside the root. Always `None` under
++    /// `--user`, because dotfile managers
++    /// link the files in the home directory.
++    pub fn symlink_on<'a>(&self, paths: impl IntoIterator<Item = &'a Path>) -> Option<PathBuf> {
++        if self.user {
++            return None;
++        }
++        paths
++            .into_iter()
++            .find_map(|path| crate::setup_hooks::symlinked_component(&self.root, path))
++    }
++
+     pub const fn scope(&self) -> Scope {
+         if self.user {
+             Scope::Local
+@@ -814,3 +847,6 @@ fn render_step(step: &StepReport, dry_run: bool) -> String {
+ 
+ #[cfg(test)]
+ mod tests;
++
++#[cfg(all(test, unix))]
++mod symlink_tests;
+```
+
+**File**: `crates/cli/src/agent_install/skill.rs` (modified, +86/-16)
+```diff
+@@ -17,6 +17,7 @@ use crate::setup_hooks::read_optional_text;
+ 
+ include!(concat!(env!("OUT_DIR"), "/embedded_skill.rs"));
+ 
++const NODE_MODULES_PACKAGE: &str = "node_modules/fallow";
+ const NODE_MODULES_SKILLS: &str = "node_modules/fallow/skills";
+ 
+ /// One skill that the npm package ships and `agent install` writes.
+@@ -143,8 +144,25 @@ pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
+     };
+     targets
+         .into_iter()
+-        .map(|target| match Source::resolve(&ctx.root, target.skill) {
+-            Ok(source) => install_one(ctx, &target, &source),
++        .map(|target| {
++            if let Some(link) = symlink_in(ctx, &target) {
++                return StepReport::new(
++                    target.harness,
++                    Step::Skill,
++                    StepStatus::Skipped,
++                    target.scope,
++                )
++                .path(ctx, &target.dir)
++                .symlinked(ctx, &link);
++            }
++            install_resolved(ctx, &target)
++        })
++        .collect()
++}
++
++fn install_resolved(ctx: &Ctx, target: &Target) -> StepReport {
++    match Source::resolve(&ctx.root, target.skill) {
++            Ok(source) => install_one(ctx, target, &source),
+             Err(reason) => {
+                 StepReport::new(target.harness, Step::Skill, StepStatus::Skipped, target.scope)
+                     .path(ctx, &target.dir)
+@@ -153,8 +171,7 @@ pub fn install(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
+                         "install or upgrade the fallow npm package so the skill ships with the binary, or build fallow from a full checkout",
+                     )
+             }
+-        })
+-        .collect()
++    }
+ }
+ 
+ pub fn uninstall(ctx: &Ctx, harnesses: &[Harness]) -> Vec<StepReport> {
+@@ -181,25 +198,40 @@ enum Source {
+ 
+ impl Source {
+     fn resolve(root: &Path, skill: &'static ReleasedSkill) -> Result<Self, Reason> {
+-        let shipped = root.join(skill.node_modules_dir());
+-        if let Ok(Some(text)) = read_optional_text(&shipped.join("SKILL.md"))
+-            && let Some(frontmatter) = frontmatter_block(&text)
+-        {
+-            let openai_yaml = read_optional_text(&shipped.join("agents").join("openai.yaml"))
+-                .ok()
+-                .flatten();
+-            return Ok(Self::Stub {
+-                skill,
+-                frontmatter: frontmatter.to_string(),
+-                openai_yaml,
+-            });
++        if let Some(stub) = Self::shipped(root, skill) {
++            return Ok(stub);
+         }
+         skill
+             .embedded()
+             .map(Self::Embedded)
+             .ok_or(Reason::SkillNotEmbedded)
+     }
+ 
++    /// The stub source from `node_modules/fallow`, or `None` when the package
++    /// has no usable `SKILL.md`. pnpm and `npm link` make the package directory
++    /// a link, so the check resolves it first and then accepts only files whose
++    /// real path stays inside it. A file that links out of the package could
++    /// otherwise copy any readable file into the working tree.
++    fn shipped(root: &Path, skill: &'static ReleasedSkill) -> Option<Self> {
++        let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
++        let shipped = root.join(skill.node_modules_dir());
++        let PackageFile::Text(text) = read_package_file(&package, &shipped.join("SKILL.md")) else {
++            return None;
 +        };
-+        // A speculative reference credits its target when it resolves, and
-+        // the resolver drops it silently when it does not. Two rules make a
-+        // `new URL(specifier, import.meta.url)` speculative:
-+        // - The specifier has no file extension, so it may name a directory
-+        //   (`new URL("./services", import.meta.url)`). See issue #840.
-+        // - The expression is a direct argument of a filesystem call or of
-+        //   `fileURLToPath`, so it names a file on disk. The file can be an
-+        //   output that does not exist yet, or a probe for an optional file.
-+        // Other specifiers with an extension (`new URL("./worker.js", ...)`) stay
-+        // not speculative, so a missing file is still an `unresolved-import`.
-+        let has_extension = std::path::Path::new(&source).extension().is_some();
-+        let is_speculative = !has_extension
-+            || self
-+                .new_url_context
-+                .filesystem_path_spans
-+                .contains(&expr.span);
-+        // A module path with an extension can name a runtime entry: a build
-+        // tool or a script runner loads the module by path and calls its
-+        // default export. So the edge credits `default`. A worker module runs
-+        // as a script and a directory URL names no module, so those edges
-+        // credit the file only.
-+        let destructured_names =
-+            if has_extension && !self.new_url_context.worker_spans.contains(&expr.span) {
-+                vec![NEW_URL_LOADER_EXPORT.to_string()]
-+            } else {
-+                Vec::new()
++        let frontmatter = frontmatter_block(&text)?;
++        let openai_yaml =
++            match read_package_file(&package, &shipped.join("agents").join("openai.yaml")) {
++                PackageFile::Missing => None,
++                PackageFile::Text(yaml) => Some(yaml),
++                PackageFile::Refused => return None,
 +            };
-+        self.dynamic_imports.push(DynamicImportInfo {
-+            source,
-+            span: expr.span,
-+            destructured_names,
-+            local_name: None,
-+            is_speculative,
-+            value_escapes: false,
-+        });
-+        self.mark_import_load_kind(expr.span, ImportLoadKind::OutOfThread);
++        Some(Self::Stub {
++            skill,
++            frontmatter: frontmatter.to_string(),
++            openai_yaml,
++        })
 +    }
 +
-     fn push_relative_dynamic_import_pattern(
-         &mut self,
-         prefix: String,
+     const fn flavor(&self) -> Flavor {
+         match self {
+             Self::Stub { .. } => Flavor::Stub,
+@@ -245,6 +277,30 @@ impl Source {
+     }
+ }
+ 
++enum PackageFile {
++    Missing,
++    Text(String),
++    /// The file resolves outside the package, dangles, or cannot be read.
++    Refused,
++}
++
++fn read_package_file(package: &Path, path: &Path) -> PackageFile {
++    if path.symlink_metadata().is_err() {
++        return PackageFile::Missing;
++    }
++    let Ok(real) = dunce::canonicalize(path) else {
++        return PackageFile::Refused;
++    };
++    if !real.starts_with(package) {
++        return PackageFile::Refused;
++    }
++    match read_optional_text(&real) {
++        Ok(Some(text)) => PackageFile::Text(text),
++        Ok(None) => PackageFile::Missing,
++        Err(_) => PackageFile::Refused,
++    }
++}
++
+ fn marker_line(flavor: Flavor) -> String {
+     format!(
+         "<!-- {MARKER_PREFIX} {MARKER_VERSION} skill={} version={} -->",
+@@ -448,6 +504,17 @@ fn managed_files(skill: &ReleasedSkill) -> Vec<String> {
+     files
+ }
+ 
++/// The fi
+```
+
+**File**: `crates/cli/src/agent_install/symlink_tests.rs` (added, +389/-0)
+```diff
+@@ -0,0 +1,389 @@
++//! A cloned repository can commit a symlink where fallow writes a harness
++//! file. In project scope every step must leave the link target alone and
++//! report a skipped row. In user scope a symlinked dotfile is normal.
++
++use std::os::unix::fs::symlink;
++use std::path::Path;
++
++use super::*;
++
++fn ctx(root: &Path, mode: Mode) -> Ctx {
++    Ctx {
++        root: root.to_path_buf(),
++        home: None,
++        user: false,
++        dry_run: false,
++        force: false,
++        approve: false,
++        gitignore_claude: false,
++        mode,
++    }
++}
++
++fn command() -> mcp::McpCommand {
++    mcp::McpCommand {
++        command: "fallow-mcp".to_string(),
++        args: Vec::new(),
++        source: mcp::McpSource::Path,
++    }
++}
++
++fn row<'a>(steps: &'a [StepReport], path: &str) -> &'a StepReport {
++    steps
++        .iter()
++        .find(|s| s.path.as_deref() == Some(path))
++        .unwrap_or_else(|| panic!("no row for {path} in {steps:?}"))
++}
++
++fn assert_symlink_skip(step: &StepReport) {
++    assert_eq!(step.status, StepStatus::Skipped, "{step:?}");
++    assert_eq!(
++        step.reason.map(Reason::as_str),
++        Some("symlinked_path"),
++        "{step:?}"
++    );
++}
++
++/// The row keeps its own `path`, and `detail` names the symlink.
++fn assert_detail_names(step: &StepReport, link: &str) {
++    let detail = step.detail.as_deref().unwrap_or_default();
++    assert!(
++        detail.starts_with(&format!("{link} is a symlink")),
++        "{step:?}"
++    );
++}
++
++fn entries(dir: &Path) -> Vec<String> {
++    let mut names: Vec<String> = std::fs::read_dir(dir)
++        .unwrap()
++        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
++        .collect();
++    names.sort();
++    names
++}
++
++#[test]
++fn forced_mcp_install_does_not_write_or_copy_a_symlinked_mcp_json() {
++    let root = tempfile::tempdir().unwrap();
++    let outside = tempfile::tempdir().unwrap();
++    let secret = outside.path().join("secret.json");
++    std::fs::write(&secret, "token = not json").unwrap();
++    symlink(&secret, root.path().join(".mcp.json")).unwrap();
++
++    let forced = Ctx {
++        force: true,
++        ..ctx(root.path(), Mode::Install)
++    };
++    let steps = mcp::install(&forced, &[Harness::Claude], Some(&command()));
++
++    assert_eq!(
++        std::fs::read_to_string(&secret).unwrap(),
++        "token = not json"
++    );
++    assert_eq!(entries(root.path()), vec![".mcp.json".to_string()]);
++    assert_symlink_skip(row(&steps, ".mcp.json"));
++}
++
++#[test]
++fn mcp_uninstall_does_not_edit_a_symlinked_mcp_json() {
++    let root = tempfile::tempdir().unwrap();
++    let outside = tempfile::tempdir().unwrap();
++    let target = outside.path().join("mcp.json");
++    let body = "{\n  \"mcpServers\": {\n    \"fallow\": { \"command\": \"fallow-mcp\", \"args\": [] },\n    \"other\": { \"command\": \"x\" }\n  }\n}\n";
++    std::fs::write(&target, body).unwrap();
++    symlink(&target, root.path().join(".mcp.json")).unwrap();
++
++    let steps = mcp::uninstall(&ctx(root.path(), Mode::Uninstall), &[Harness::Claude]);
++
++    assert_eq!(std::fs::read_to_string(&target).unwrap(), body);
++    assert_symlink_skip(row(&steps, ".mcp.json"));
++}
++
++#[test]
++fn mcp_install_does_not_follow_a_symlinked_parent_directory() {
++    let root = tempfile::tempdir().unwrap();
++    let outside = tempfile::tempdir().unwrap();
++    symlink(outside.path(), root.path().join(".cursor")).unwrap();
++    symlink(outside.path(), root.path().join(".codex")).unwrap();
++
++    let steps = mcp::install(
++        &ctx(root.path(), Mode::Install),
++        &[Harness::Cursor, Harness::Codex],
++        Some(&command()),
++    );
++
++    assert!(entries(outside.path()).is_empty());
++    assert_symlink_skip(row(&steps, ".cursor/mcp.json"));
++    assert_symlink_skip(row(&steps, ".codex/config.toml"));
++}
++
++#[test]
++fn mcp_install_does_not_write_through_a_symlinked_backup_path() {
++    let root = tempfile::tempdir().unwrap();
++    let outside = tempfile::tempdir().unwrap();
++    let victim = outside.path().join("victim");
++    std::fs::write(&victim, "keep").unwrap();
++    std::fs::write(root.path().join(".mcp.json"), "not json").unwrap();
++    symlink(&victim, root.path().join(".mcp.json.fallow-bak")).unwrap();
++
++    let forced = Ctx {
++        force: true,
++        ..ctx(root.path(), Mode::Install)
++    };
++    let steps = mcp::install(&forced, &[Harness::Claude], Some(&command()));
++
++    assert_eq!(std::fs::read_to_string(&victim).unwrap(), "keep");
++    assert_eq!(
++        std::fs::read_to_string(root.path().join(".mcp.json")).unwrap(),
++        "not json"
++    );
++    assert_symlink_skip(row(&steps, ".mcp.json"));
++    assert_detail_names(row(&steps, ".mcp.json"), ".mcp.json.fallow-bak");
++}
++
++#[test]
++fn approval_does_not_follow_a_symlinked_claude_directory() {
++    let root = tempfile::tempdir().unwrap();
++    let outside = tempfile::tempdir().unwrap();
++    symlink(outside.path(), root.path().join(".claude")).unwr
+```
+
+**File**: `crates/cli/src/init.rs` (modified, +25/-41)
+```diff
+@@ -8,6 +8,9 @@ use crate::{exit_codes::exit_invalid_input, validate};
+ #[path = "init_default_branch.rs"]
+ mod default_branch;
+ use default_branch::detect_default_branch;
++#[path = "init_project_files.rs"]
++mod project_files;
++use project_files::{ensure_gitignore, refuse_outside_link};
+ 
+ const AGENTS_GUIDE_FILENAME: &str = "AGENTS.md";
+ /// Static template used as the ground truth for the empty-project case and
+@@ -748,6 +751,15 @@ fn run_init_config(root: &Path, use_toml: bool, quiet: bool) -> ExitCode {
+         }
+     }
+ 
++    let config_name = if use_toml {
++        "fallow.toml"
++    } else {
++        ".fallowrc.json"
++    };
++    if let Err(code) = refuse_outside_link(root, &root.join(config_name)) {
++        return code;
++    }
++
+     let info = detect_project(root);
+ 
+     if use_toml {
+@@ -810,6 +822,9 @@ fn run_init_agents(root: &Path) -> ExitCode {
+         eprintln!("{AGENTS_GUIDE_FILENAME} already exists");
+         return exit_invalid_input();
+     }
++    if let Err(code) = refuse_outside_link(root, &agents_path) {
++        return code;
++    }
+ 
+     let info = detect_project(root);
+     let guide = build_agents_guide(&info);
+@@ -822,46 +837,6 @@ fn run_init_agents(root: &Path) -> ExitCode {
+     ExitCode::SUCCESS
+ }
+ 
+-/// Ensure `.fallow/` is listed in the project's `.gitignore`.
+-///
+-/// If `.gitignore` exists and already contains `.fallow` (with or without
+-/// trailing slash), this is a no-op. Otherwise the entry is appended (or
+-/// the file is created).
+-fn ensure_gitignore(root: &Path) {
+-    let gitignore_path = root.join(".gitignore");
+-    let existing = std::fs::read_to_string(&gitignore_path).unwrap_or_default();
+-
+-    let already_ignored = existing.lines().any(|line| {
+-        let trimmed = line.trim();
+-        trimmed == ".fallow" || trimmed == ".fallow/"
+-    });
+-
+-    if already_ignored {
+-        return;
+-    }
+-
+-    let is_new = existing.is_empty();
+-    let entry = if is_new || existing.ends_with('\n') {
+-        ".fallow/\n"
+-    } else {
+-        "\n.fallow/\n"
+-    };
+-
+-    let mut contents = existing;
+-    contents.push_str(entry);
+-
+-    if let Err(e) = std::fs::write(&gitignore_path, contents) {
+-        eprintln!("Warning: Failed to update .gitignore: {e}");
+-        return;
+-    }
+-
+-    if is_new {
+-        eprintln!("Created .gitignore with .fallow/ entry");
+-    } else {
+-        eprintln!("Added .fallow/ to .gitignore");
+-    }
+-}
+-
+ pub const GIT_HOOK_MARKER: &str = "# Generated by fallow hooks install --target git.";
+ 
+ /// Hint printed when an existing pre-commit hook prevents installation.
+@@ -1013,6 +988,9 @@ pub fn run_git_hooks_install(opts: &GitHooksInstallOptions<'_>) -> ExitCode {
+ 
+     match target {
+         HookTarget::Husky(hook_path) => {
++            if let Err(code) = refuse_outside_link(root, &hook_path) {
++                return code;
++            }
+             if let Err(code) = install_hook_file(
+                 &hook_path,
+                 ".husky/pre-commit",
+@@ -1133,7 +1111,13 @@ pub fn run_git_hooks_uninstall(opts: &GitHooksUninstallOptions<'_>) -> ExitCode
+     };
+ 
+     let hook_path = match target {
+-        HookTarget::Husky(path) | HookTarget::GitHooks(path) => path,
++        HookTarget::Husky(path) => {
++            if let Err(code) = refuse_outside_link(opts.root, &path) {
++                return code;
++            }
++            path
++        }
++        HookTarget::GitHooks(path) => path,
+         HookTarget::Lefthook => {
+             eprintln!(
+                 "Lefthook detected. Remove the fallow command from your lefthook.yml manually."
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4223** (2026-11-04): refactor: move the crate boundary tests to cargo-fallow rules (@BartWaardenburg)
-- **PR #4222** (2026-11-04): chore: check the Rust workspace with cargo-fallow (@BartWaardenburg)
-- **PR #4221** (2026-11-04): feat(config): add workspaces.settings and supportEntry (@BartWaardenburg)
-- **PR #4220** (2026-11-04): feat(security): recognize more callees in existing sink categories (@BartWaardenburg)
-- **PR #4219** (2026-11-04): docs(contributing): ask authors to know the impact of a change (@BartWaardenburg)
-- **PR #4218** (2026-11-04): docs(contributing): add rules for changes written with coding agents (@BartWaardenburg)
+- **PR #4266** (2026-11-05): chore: sync napi, Docker pins and RELEASED_TAG to v3.40.0 (@BartWaardenburg)
+- **PR #4265** (2026-11-05): fix(mutation): leave bench files and __tests__ helpers out of the test files (@BartWaardenburg)
+- **PR #4263** (2026-11-05): test(mutation): add the result cache to the cache model tests (@BartWaardenburg)
+- **PR #4262** (2026-11-05): fix(health): count @keyframes in SCSS and Less sources (@BartWaardenburg)
+- **PR #4260** (2026-11-05): chore: adopt cargo-fallow 0.2.0 checks (@BartWaardenburg)
+- **PR #4257** (2026-11-05): fix(policy): report each call site for banned-call, banned-effect and forbidden calls (@BartWaardenburg)
 
 ---
 
@@ -2441,24 +2970,25 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cache): key the graph cache on lockfiles and install markers (#4192)
+## X. security): trace require() bindings of node child_process and fs (#4238)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-graph-cache-install-state.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-security-require-provenance.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcabf464`: cache): key the graph cache on lockfiles and install markers (#4192). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b78f34c4`: security): trace require() bindings of node child_process and fs (#4238). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-graph-cache-install-state.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-security-require-provenance.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **The graph cache now misses after a package install into an existing `node_modules`.** Before this fix, a run after `npm install`, `pnpm install` or `yarn install` could use the import resolutions of the run before the install. The graph cache key now includes the content of the lockfile and of the install marker that the package manager writes in `node_modules` (`.package-lock.json`, `.pnpm/lock.yaml`, `.yarn-state.yml`, `.yarn-integrity`). Bun writes no install marker, so for a project with `bun.lock` or `bun.lockb` the key also includes the package names in `node_modules`. Fallow reads these files for the project root, for each workspace root, and for each directory above the root. Fallow does not walk `node_modules`, and a fresh install with the same content keeps the cache.
-  (Closes [#4188](https://github.com/fallow-rs/fallow/issues/4188))
+- **`fallow security` reports a sink that a destructured `require()` binds.** Before, `const { exec } = require("node:child_process"); exec(cmd)` gave no `command-injection` candidate, and `const { readFileSync } = require("node:fs")` gave no `path-traversal` candidate. The same code with an ES import gave a candidate. Fallow now traces a named binding of `node:child_process`, `node:fs` and `node:fs/promises` to its module, for ES imports, aliased imports (`import { readFile as read }`) and destructured `require()` calls. The same applies to `world-writable-permission` and `insecure-temp-file`, and to `fs.promises.writeFile` and `fs.promises.chmod` on `const fs = require("fs")`. The destination of `rename`, `copyFile` and `copyFileSync` is now also a `path-traversal` candidate for these bindings, when the argument or the module reads untrusted input. In `fallow security`, a parameter that has the same name as the import no longer gives a candidate.
+
+  The callee in `evidence` and in `candidate.sink.callee` now names the module, as it already did for `node:vm`. This applies to named imports and to `require()` bindings. For example, `execSync()` and `cp.execSync()` after `
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2468,4 +2998,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcabf464` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b78f34c4` are properly handled with clean fallback behavior.

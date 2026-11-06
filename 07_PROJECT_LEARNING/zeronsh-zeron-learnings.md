@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `35561ead`  
+> **Source Version**: `971a3271`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:02:49.004Z  
+> **Timestamp**: 2026-11-05T23:39:50.631Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:02:48.997Z  
+> **Harvest Timestamp**: 2026-11-05T23:39:49.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3451 stars
+- **Stars / Engagement**: 3459 stars
 
 ---
 
@@ -1741,11 +1741,11 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1217** (2026-11-04): **zgx: plugin notices keep their Review button and stay until dealt with**
-  *Symptoms*: Fixes plugin "waiting for you to allow it" notices showing no Review button.  **Cause:** the app sent the waiting request and then reloaded its scripts in the same turn, whenever the loaded plugin set changed, including at launch. The button's function lived in the old script VM and died with it, while the toast survived in state.  **Fix:** - A toast's action is now data, naming an action its owner declares (`toast.action`), so it survives a reload. A toast with a function action now goes on reload instead of staying without its button. - Waiting notices follow the host's lists (`screens/plugins/waiting.luau`) instead of one-shot requests. - Review only opens the consent window; nothing here allows anything.  **What behaves differently** - Requested: the notice stays until dealt with or dismissed, with the × always showing, and it has its Review button. - A failed plugin's Show folder button also survives a reload. - A notice goes as soon as its plugin is allowed or declined, wherever that was decided. - A dismissed notice stays dismissed until that plugin changes. The Plugins page keeps its Review. - Template notices behave the same way as plugin notices. - Two plugins with the same name get a notice each. - With 4 up, a new toast hides the oldest notice until that toast goes.  **Verified on 8fe08846** - `ZGX_CHECK=0 zgx test ui`: 756 passed, 0 failed, on the installed CLI, whose pin differs from this branch's. The new tests also pass on the CLI at the pin. - `cargo test --b
+- **Issue #1240** (2026-11-05): **iOS: version 1.0.1, since Apple has closed 1.0**
+  *Symptoms*: TestFlight failed on the new icons because Apple refuses new builds on version 1.0: "must contain a higher version than that of the previously approved version [1.0]" and "The train version '1.0' is closed for new build submissions."  This changes `MARKETING_VERSION` to 1.0.1 for every target. Nothing else changes.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796510020&installation_model_id=425430&pr_number=1240&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1240&signature=f23d49554394e35203ac629dfc73b42be8a0e6b6c89b925686f0017c3dbe9655"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png" width="190" height="28"></picture></a> <sup><a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1240?autoLogin=true&ref=codesmith_pr_footer">Open in [code]smith</a> · Need help on this PR? Tag <code>@codesmith-bot</code> with what you need.</sup>  <!-- codesmith:autofix:disabled --> <!-- /codesmith:footer -->
 
-- **Issue #1216** (2026-11-04): **zgx v3: a split pane's × shows only for its head**
-  *Symptoms*: A split pane's × now shows only while the pointer is over that pane's head, or the keyboard is on the ×.  **What behaves differently:** only that ×. - At rest it's unseen, and it fades in over 120 ms on focused and unfocused panes alike. With motion reduced there's no fade. - While unseen it lets presses through to the head, for focus and drag. - It keeps its room, label, tooltip and Tab position, and nothing in the head moves as it appears.  Zeron v2 has no split panes and doesn't change; only its base hash is re-recorded.  **Verified on af718d91** - `ZGX_CHECK=0 zgx test ui`: 756 passed, 0 failed. - `zgx lint ui`: 0 errors; 5 existing warnings in fixtures this doesn't touch. - The v2 parity bin test passes. - New `tests/pane_close_hover.test.luau` (8 tests). The press test fails if the × keeps taking clicks while hidden. - Rest and hover checked in real windows in both themes. Keyboard focus, clicking and reduced motion are checked only in UI tests.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796361188&installation_model_id=425430&pr_number=1216&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1216&signature=36269b91a865925035122a44991e490b74d64bc9826b476d48d577dc2f107677"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-
+- **Issue #1239** (2026-11-05): **The new app icon on iOS and Android**
+  *Symptoms*: The new Zeron icon on mobile, to match the desktop beta.  - **iOS:** light, dark and tinted icons, and the new mark on the sign-in screen. - **Android:** flat ink on ivory in light mode and ivory on ink in dark, with the mark and tile as separate layers so launchers can animate them. The sign-in screen uses the same mark.  **Checked so far:** the iOS asset catalog compiles with `actool`. The Android XML parses and nothing still refers to the removed resources. Android hasn't been compiled locally, because this Mac has no Android SDK, so CI is the first compile for it and for the iOS Swift edit.  **Not checked:** neither icon has been seen on a real device.  Merging publishes Android, since pushes to main release it. TestFlight is a separate manual run.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796505090&installation_model_id=425430&pr_number=1239&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1239&signature=ecff1730d04c7bce682f6734fdf0389dcbe3b72e6f900b2cc7bdef540d7b056b"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,743 +1762,250 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `280a0612` (2026-11-04)
-**Commit Message**: zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built-in template (#1199)
+### Incident Patch 1: `971a3271` (2026-11-05)
+**Commit Message**: iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
 
-* zgx: Zeron v3: the Inset layout as the default, split chats and cards
+App Store Connect refuses new builds on a version it has approved.
 
-The Inset template's layout, merged three ways onto today's default (its
-base: d898f936, #1137): the chat page and the right panel are rounded
-cards set into the window under the title bar, and chats can sit side by
-side or stacked, up to 6 (screens/shell/split.luau). Every fix since the
-base stands; the template's scroll-probe experiment, never Zeron's, goes.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-Made to cost what it should:
-- Panes, the page's card and the panel's tab groups are placed by edges
-  that are a share of the page plus points (zgx's terminal example's
-  way): resizing the window or sliding the sidebar runs no script of
-  theirs, where Inset wrote every rect from on_resize.
-- The gap round the cards eases by a tween zgx runs, not anime writing a
-  state every frame; the panel's card follows its width through two
-  computeds that tell only a change.
-- What reads the sessions list (a pane's title, a split's chats) tells
-  only real changes; lanes are watched by one effect, not a timer in
-  each pane's cleanup.
-
-Dragging a chat: over a p
-
-**File**: `apps/zgx/README.md` (modified, +3/-3)
+**File**: `apps/ios/Zeron.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -315,8 +315,8 @@ it opened on. From a fullscreen app it is covered and waits; zgx's
- - Allowing happens in a window of its own with no plugins (`ui/consent.luau`).
- 
- **Templates are whole interfaces**, like WordPress themes. Each is a folder, `<data>/templates/<id>/`, holding `zeron-template.json` and any part of Zeron's UI (`app.luau`, `screens/`, `ds/`, `assets/`…). A file it leaves out is Zeron's own.
--- One template is in use at a time. "Zeron", Zeron's own, is always there.
--- Settings → Templates lists them as Plugins lists plugins: Installed (Zeron's own, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
-+- One template is in use at a time. The default, "Zeron v3" (id `zeron`), is always there. "Zeron v2" (id `zeron-v2`), the single-page layout from before v3, is Zeron's too: its files are `ui/templates/zeron-v2/`, installed into `<data>/templates/zeron-v2/` and kept current with each version, built in and trusted only while exactly as this build wrote it (`src/plugins/official.rs`). A test fails when a default file v2 replaces changes, until v2's copy is brought in step (`zeron_v2_is_in_step_with_the_default`).
-+- Settings → Templates lists them as Plugins lists plugins: Installed (the default and Zeron v2, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
- - One is out of date when it was made for another version of Zeron: its manifest's `zeron_version` against this build's (the root workspace's version, which `build.rs` hands zgx as `ZERON_VERSION`). A save to Zeron's own while developing never makes one out of date; `template_status` still names the files whose Zeron original changed.
- - Agents make and change them through Zeron's MCP server: `list_templates`, `create_template`, `use_template`, `template_status`, `delete_template` and `describe_app`.
- 
-@@ -337,7 +337,7 @@ it opened on. From a fullscreen app it is covered and waits; zgx's
- - A file that fails (at load, at build or later) falls back to Zeron's own for that module alone, with one notice.
- - If its `app.luau` fails, the whole window goes back to Zeron's own and the template shows as broken.
- - Saving the file again retries it.
--- **The way back from any template:** View → **Use Default Interface** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
-+- **The way back from any template:** View → **Use Zeron v3** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
- 
- **Plugins layer on whatever template is in use.** One that aims at an element the template dropped (its id or class) says "Not shown in this template" on the Plugins page. That check is static: only literal selectors are seen. A placed node that needs what its place doesn't give draws nothing, and its row says why.
- 
-```
-
-**File**: `apps/zgx/docs/i18n.md` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ zgx's catalog lives in the script host and isn't reachable from Rust (`Locales`
- - errors shown in the UI: `src/files.rs` (images, folders, names), `src/appshots/` (capture errors), `src/terminal.rs`, `src/images.rs`, `src/projects.rs`, `src/plugins/*` (consent, templates, settings, elements);
- - default titles: `src/sessions.rs` "New chat", "New side chat";
- - `src/chat.rs`'s "Allow this?" and "Updated the plan";
--- the menu item `src/main.rs` "Use Default Interface";
-+- the menu item `src/main.rs` "Use Zeron v3";
- - the host's toasts, `src/plugins/host_bar.rs` (a template in preview, the template switched, signing keys, safe mode at launch). These stay out of the scripts' catalog on purpose: a template replaces the scripts' words too, so it could rewrite them.
- 
- The way through, when it's worth it: Rust returns a key and its arguments (`{ key = "files.errors.too_large" }`) and the script shows `ui.t(key, args)`. Or zgx exposes `ScriptHost::i18n()` and Rust formats messages itself.
-```
-
-**File**: `apps/zgx/docs/templates.md` (modified, +13/-3)
-```diff
-@@ -2,13 +2,22 @@
- 
- A template is a whole interface for Zeron, like a WordPress theme. It's a folder holding any part of Zeron's own Luau app: `app.luau`, `screens/`, `ds/`, `assets/`. Zeron runs its window from its own app with your template laid over it, so any file you leave out is Zeron's own. One template is in use at a time. Colours are separate: the person picks a theme, and it's worn over whichever template runs (see Colours and themes). Agents make and change templates through Zeron's MCP tools; this guide is the whole reference.
- 
-+## Zeron's templates
-+
-+Two come with Zeron, listed first on the Templates page, by Zeron:
-+
-+- **Zeron v3** (id `zeron`), the default. The chat and its panel are rounded cards set into the window under the title bar, and chats can sit side by side: drag one from the sidebar (or a pane's head) to a chat's edge, up to 6 (`screens/shell/split.luau`).
-+- **Zeron v2** (id `zeron-v2`), the single-page layout from before Zeron v3: one chat at a time, no cards. It's a template like yours, laying 8 files over the default (`ui/templates/zeron-v2/` in Zeron's source). Zeron installs it and updates it with each version, and it can't be deleted.
-+
-+To make one from either, `create_template` with `from` set to its id.
-+
- ## How it runs
- 
- - The window runs from `<data>/templates/.live/`: Zeron's own files (`.zeron/`) with the template in use on top.
- - Saving a file rewrites only what changed, and the window reloads **in place**. State is kept wherever both versions have the module.
- - **Fallback, per file:** a file that fails (to load, to build, or later) is replaced by Zeron's own copy of that file alone. You get one notice, and `template_status` names it with its error. Save it again to retry.
- - **Fallback, whole:** if your `app.luau` fails, the whole window goes back to Zeron's own and the template shows as broken.
--- **The way back from any template:** View → Use Default Interface (in the menu bar, or the bar Zeron draws at the window's top on Linux and Windows), Revert on a preview's toast, holding ⌥ as Zeron opens, or launching it with `--zeron-template`. Each starts **safe mode**: Zeron's own interface runs whatever `.active` says, the terminals templates opened are closed, and it stays so across launches until the person picks a template on Zeron's Templates page. A template that crashes Zeron at launch twice in a row starts it too.
-+- **The way back from any template:** View → Use Zeron v3 (in the menu bar, or the bar Zeron draws at the window's top on Linux and Windows), Revert on a preview's toast, holding ⌥ as Zeron opens, or launching it with `--zeron-template`. Each starts **safe mode**: Zeron's own interface runs whatever `.active` says, the terminals templates opened are closed, and it stays so across launches until the person picks a template on Zeron's Templates page. A template that crashes Zeron at launch twice in a row starts it too.
- 
- ## Preview until the person keeps it
- 
-@@ -30,8 +39,9 @@ zeron-template.json    id, name, description, author, version, zeron_version
- theme.luau             your template's own theme, as data (see Colours and themes)
- app.luau               the root: the window, built from the rest
- screens/shell/         the window: init.luau (its frame), sidebar.luau, title_bar.luau,
--                       page.luau (the routed page), settings.luau (Settings' list),
--                       route.luau (where it is), appearance.luau
-+                       page.luau (the routed page, its cards and split chats),
-+                       split.luau (which chats sit side by side), settings.luau
-+                       (Settings' list), route.luau (where it is), appearance.luau
- screens/chat/          a chat: home.luau (a new chat), session.luau, composer.luau, store.luau
- screens/files/         the files pane
- screens/panel/         the side panel (terminals, tabs)
-```
-
-**File**: `apps/zgx/src/fit_tests.rs` (modified, +2/-1)
-```diff
-@@ -237,7 +237,8 @@ fn the_panels_strip_settles_where_a_fresh_one_stands() {
-     app.click("#panel-open-files");
-     app.frames(60);
-     let fresh = strip_rest(&mut app);
--    assert_eq!(fresh.0, 0., "a fresh strip stands at the panel's start");
-+    // (Inside the panel card's 1-point edge.)
-+    assert_eq!(fresh.0, 1., "a fresh strip stands at the panel's start");
-     assert_eq!(fresh.2, fresh.3, "a fresh strip's first tab shows whole");
-     let mut faults = Vec::new();
-     let mut check = |app: &mut TestApp, what: &str| {
-```
-
-**File**: `apps/zgx/src/main.rs` (modified, +4/-2)
-```diff
-@@ -64,6 +64,8 @@ mod menu_tests;
- #[cfg(test)]
- mod shell_tests;
- #[cfg(test)]
-+mod split_tests;
-+#[cfg(test)]
- mod route_motion_tests;
- #[cfg(test)]
- mod hit_sweep_tests;
-@@ -949,7 +951,7 @@ fn menus_noting(commands: &[zgx_script::Command]) -> (Vec<AppMenu>, Vec<(String,
-         };
-         menus[index].entries.push(entry);
-     }
--    // "Use Default Interface", the host's own, after the scripts' View items:
-+    // "Use Zeron v3", the host's own, after the scripts' View items:
-     // no template can take it away (src/plugins).
-     let view = match menus.iter().position(|m| m.label == "View") {
-         Some(index) => index,
-@@ -965,7 +967,7 @@ fn menus_noting(commands: &[zgx_script::Command]) -> (Vec<AppMenu>, Vec<(String,
-     if let Some(preview) = plugins::preview::current() {
-         menus[view].entries.push(AppMenuEntry::item(format!("Keep {}…", preview.name), plugins::KEEP_TEMPLATE));
-     }
--    menus[view].entries.push(AppMenuEntry::item("Use Default Interface", plugins::USE_ZERON_TEMPLATE));
-+    menus[view].entries.push(AppMenuEntry::item("Use Zeron v3", plugins::USE_ZERON_TEMPLATE));
-     (menus, lost)
- }
- 
-```
-
-**File**: `apps/zgx/src/placement_tests.rs` (modified, +7/-3)
-```diff
-@@ -46,11 +46,15 @@ fn a_sessions_composer_sits_on_the_page_foot_and_its_menu_opens_at_the_click() {
-         settle(&app);
- 
-         // The dock rests its gap (screens/chat/dock's GAP, 16) above the
--        // page's foot, which is the window's bottom.
-+        // page's foot: its card's bottom, inside the card's 1-point edge,
-+        // the window's gap (4) under it.
-         let dock = app.find("#chat-composer-dock").expect("the session's composer");
-         let d = app.ui.scene.borrow().transformed_bounds(dock);
--        let gap = h - (d.y + d.height);
--        assert!((gap - 16.).abs() < 1., "at {zoom}: the dock ends {gap} above the window's bottom ({h})");
-+        let page = app.find("#shell-page").expect("the page");
-+        let p = app.ui.scene.borrow().transformed_bounds(page);
-+        assert!((h - (p.y + p.height) - 4.).abs() < 1., "at {zoom}: the page's card stands the window's gap above its bottom");
-+        let gap = (p.y + p.height - 1.) - (d.y + d.height);
-+        assert!((gap - 16.).abs() < 1., "at {zoom}: the dock ends {gap} above the page's foot ({p:?})");
- 
-         // Words in the draft, selected; a secondary click on them.
-         app.type_text("#chat-composer >> role:textbox", "asdasd");
-```
-
-**File**: `apps/zgx/src/plugins/host_bar.rs` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- //!   on another device, this device's revoked), and the default interface
- //!   at launch because the template crashed Zeron (safe mode);
- //! - on Linux and Windows, which have no system menu bar, the app's menu
--//!   bar (zgx's `app_menu_bar`): View → Use Default Interface is always in
-+//!   bar (zgx's `app_menu_bar`): View → Use Zeron v3 is always in
- //!   it, the host's own item.
- //!
- //! The toasts look like the app's own (ds/toast.luau: its width, corner,
-```
-
-**File**: `apps/zgx/src/plugins/live.rs` (modified, +30/-15)
-```diff
-@@ -45,11 +45,12 @@ pub const ZERON_VERSION: &str = env!("ZERON_VERSION");
- pub const NEVER_TEMPLATED: &[&str] = &["screens/plugins/", "screens/templates/", "account/", ".luaurc"];
- 
- /// What of `ui/` isn't the main window's interface: the gallery and its
--/// demos, tests and their fixtures, the intro, and the consent windows (each
--/// its own host, always Zeron's own).
-+/// demos, tests and their fixtures, the intro, the consent windows (each
-+/// its own host, always Zeron's own), and the official templates' files
-+/// (`official`: each installed as a template of its own).
- fn not_the_app(rel: &str) -> bool {
-     let first = rel.split('/').next().unwrap_or(rel);
--    matches!(first, "demos" | "tests" | ".zgx")
-+    matches!(first, "demos" | "tests" | ".zgx") || super::official::source_file(rel)
-         || matches!(rel, "gallery.luau" | "intro.luau" | "consent.luau" | "template_consent.luau")
-         || (!rel.contains('/') && rel.ends_with("_fixture.luau"))
- }
-@@ -153,8 +154,9 @@ pub fn mirror(to: &Path, want: &BTreeMap<String, PathBuf>, keep: impl Fn(&str) -
- }
- 
- /// `.zeron`, as `ui/` has it now: the app's files, their hashes, the catalog
--/// of screens (what each draws, the hooks it declares) and Zeron's manifest.
--/// How many files changed.
-+/// of screens (what each draws, the hooks it declares) and Zeron's manifest;
-+/// and the official templates beside it, as this build ships them
-+/// (`official::install`). How many of `.zeron`'s files changed.
- pub fn sync_zeron(ui: &Path, templates: &Path) -> std::io::Result<usize> {
-     let dir = templates.join(ZERON);
-     let want = files(ui, |rel| !not_the_app(rel));
-@@ -170,13 +172,14 @@ pub fn sync_zeron(ui: &Path, templates: &Path) -> std::io::Result<usize> {
-         &dir.join("zeron-template.json"),
-         &json(serde_json::json!({
-             "id": BUILTIN,
--            "name": "Zeron",
--            "description": "The default interface.",
-+            "name": super::official::DEFAULT_NAME,
-+            "description": super::official::DEFAULT_DESCRIPTION,
-             "author": "Zeron",
-             "version": ZERON_VERSION,
-             "zeron_version": ZERON_VERSION,
-         })),
-     )?;
-+    super::official::install(ui, templates);
-     Ok(changed)
- }
- 
-@@ -313,10 +316,15 @@ pub fn template_stamp(dir: &Path) -> String {
-     stamp(dir, |_| true)
- }
- 
--/// `ui/`'s app files as they stand: unchanged, `.zeron` needn't be copied
--/// again.
-+/// `ui/`'s app files (and the official templates') as they stand:
-+/// unchanged, `.zeron` needn't be copied again.
- pub fn ui_stamp(ui: &Path) -> String {
--    stamp(ui, |rel| !not_the_app(rel))
-+    stamp(ui, synced)
-+}
-+
-+/// What of `ui/` a sync copies: the app's files, and the official templates'.
-+fn synced(rel: &str) -> bool {
-+    !not_the_app(rel) || super::official::source_file(rel)
- }
- 
- /// What a look found, off the UI thread: `.zeron` brought up to date (only
-@@ -336,7 +344,9 @@ pub struct Survey {
- 
- pub fn survey(ui: &Path, templates: &Path, last_ui_stamp: Option<&str>) -> Survey {
-     let ui_stamp = ui_stamp(ui);
--    let current = last_ui_stamp == Some(ui_stamp.as_str()) && templates.join(ZERON).join(".hashes.json").is_file();
-+    // (An official template gone, deleted by hand: put back, as `.zeron` is.)
-+    let current =
-+        last_ui_stamp == Some(ui_stamp.as_str()) && templates.join(ZERON).join(".hashes.json").is_file() && !super::official::missing(ui, templates);
-     let synced = if current { Ok(0) } else { sync_zeron(ui, templates).map_err(|e| e.to_string()) };
-     let id = active(templates);
-     let (template_stamp, files_) = if id == BUILTIN {
-@@ -374,8 +384,8 @@ pub fn watched(templates: &Path, ui: &Path) -> (Vec<PathBuf>, Vec<PathBuf>) {
-     let mut dirs = vec![templates.to_path_buf()];
-     let id = active(templates);
-     let edited_in_place = |rel: &str| rel.ends_with(".luau") || rel.ends_with(".json") || rel == ".luaurc";
--    files_.extend(files(ui, |rel| !not_the_app(rel) && edited_in_place(rel)).into_values());
--    folders(ui, &mut dirs, |rel| !not_the_app(rel));
-+    files_.extend(files(ui, |rel| synced(rel) && edited_in_place(rel)).into_values());
-+    folders(ui, &mut dirs, synced);
-     if id != BUILTIN {
-         let dir = templates.join(&id);
-         files_.extend(files(&dir, |_| true).into_values());
-@@ -423,6 +433,9 @@ pub struct Installed {
-     /// Installed from someone's signed package: `.imported.json`'s
-     /// `{key, author}` (the engine's `template_packages`).
-     pub imported: Option<serde_json::Value>,
-+    /// One of Zeron's official templates, exactly as this build wrote it
-+    /// (`official::verified`): built in, as the default is.
-+    pub official: Option<super::official::Official>,
- }
- 
- /// Whether a template made for Zeron `made_for` is out of date in Zeron
-@@ -439,7 +452,8 @@ fn read_json(path: &Path) -> serde_json::Value {
-     std::fs::read(path).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default()
- }
- 
--
+@@ -465,7 +465,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -504,7 +504,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -524,7 +524,7 @@
+ 				CODE_SIGN_STYLE = Automatic;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				GENERATE_INFOPLIST_FILE = YES;
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -542,7 +542,7 @@
+ 				CODE_SIGN_STYLE = Automatic;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				GENERATE_INFOPLIST_FILE = YES;
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -562,7 +562,7 @@
+ 				CODE_SIGN_STYLE = Automatic;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				GENERATE_INFOPLIST_FILE = YES;
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -580,7 +580,7 @@
+ 				CODE_SIGN_STYLE = Automatic;
+ 				CURRENT_PROJECT_VERSION = 1;
+ 				GENERATE_INFOPLIST_FILE = YES;
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+@@ -606,7 +606,7 @@
+ 					"@executable_path/Frameworks",
+ 					"@executable_path/../../Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SKIP_INSTALL = YES;
+@@ -633,7 +633,7 @@
+ 					"@executable_path/Frameworks",
+ 					"@executable_path/../../Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.0;
++				MARKETING_VERSION = 1.0.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SKIP_INSTALL = YES;
 ```
 
 ---
 
-### Incident Patch 2: `c35901bc` (2026-11-04)
-**Commit Message**: zgx: template and security notices as host toasts in the window's corner (#1195)
+### Incident Patch 2: `2a2212c7` (2026-11-05)
+**Commit Message**: The new app icon on iOS and Android (#1239)
 
-* zgx: the template preview's strip becomes a host toast
+iOS gets its light, dark and tinted icons. Android goes flat, ink on ivory in
+light mode and ivory on ink in dark, its mark and tile separate layers again so
+launchers can animate them. The sign-in screens carry the new mark.
 
-The brown strip across the top of the window (over the title bar and
-the traffic lights) is now a toast the host draws in the bottom-left
-corner, in the app's own toast look: "Previewing <name>", one line on
-what it can't do until kept, Revert and Keep. It stays while the
-preview lasts and minimises to a pill that opens it again. The strip's
-notices are toasts too, each with its own words: the template switched
-without you choosing it, a new signing key on another device, this
-device's key revoked, and (new) the default interface at launch after
-⌥ or a template that crashed Zeron twice.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-It is still the host's, not the scripts': a zgx layer at the window's
-root that re-raises itself after every layout, so a template's modal,
-layer or native view opened after it draws under it and can't take its
-clicks; its colours, type and glyphs are fixed (never the template's
-theme tokens), following only light or dark; its buttons run host
-commands. The engine's key notices carry the other device's name so the
-host can write its own copy.
-
-Co-Authored-By: C
-
-**File**: `apps/zgx/README.md` (modified, +1/-1)
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SignInScreen.kt` (modified, +6/-2)
 ```diff
-@@ -337,7 +337,7 @@ it opened on. From a fullscreen app it is covered and waits; zgx's
- - A file that fails (at load, at build or later) falls back to Zeron's own for that module alone, with one notice.
- - If its `app.luau` fails, the whole window goes back to Zeron's own and the template shows as broken.
- - Saving the file again retries it.
--- **The way back from any template:** View → **Use Zeron's Template** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
-+- **The way back from any template:** View → **Use Default Interface** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
- 
- **Plugins layer on whatever template is in use.** One that aims at an element the template dropped (its id or class) says "Not shown in this template" on the Plugins page. That check is static: only literal selectors are seen. A placed node that needs what its place doesn't give draws nothing, and its row says why.
- 
+@@ -3,6 +3,7 @@ package sh.zeron.android.ui
+ import android.net.Uri
+ import androidx.browser.customtabs.CustomTabsIntent
+ import androidx.compose.foundation.Image
++import androidx.compose.foundation.background
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Spacer
+@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.res.colorResource
+ import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+@@ -49,9 +51,11 @@ fun SignInScreen(model: AppModel) {
+         verticalArrangement = Arrangement.Center,
+     ) {
+         Image(
+-            painterResource(R.mipmap.ic_launcher_foreground),
++            painterResource(R.drawable.ic_launcher_foreground),
+             null,
+-            Modifier.size(148.dp).clip(MaterialShapes.Cookie12Sided.toShape()),
++            Modifier.size(148.dp)
++                .clip(MaterialShapes.Cookie12Sided.toShape())
++                .background(colorResource(R.color.icon_background)),
+         )
+         Spacer(Modifier.height(32.dp))
+         Text("Zeron", style = MaterialTheme.typography.displayMedium)
 ```
 
-**File**: `apps/zgx/docs/i18n.md` (modified, +2/-1)
+**File**: `apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml` (added, +13/-0)
 ```diff
-@@ -74,6 +74,7 @@ zgx's catalog lives in the script host and isn't reachable from Rust (`Locales`
- - errors shown in the UI: `src/files.rs` (images, folders, names), `src/appshots/` (capture errors), `src/terminal.rs`, `src/images.rs`, `src/projects.rs`, `src/plugins/*` (consent, templates, settings, elements);
- - default titles: `src/sessions.rs` "New chat", "New side chat";
- - `src/chat.rs`'s "Allow this?" and "Updated the plan";
--- the menu item `src/main.rs` "Use Zeron's Template".
-+- the menu item `src/main.rs` "Use Default Interface";
-+- the host's toasts, `src/plugins/host_bar.rs` (a template in preview, the template switched, signing keys, safe mode at launch). These stay out of the scripts' catalog on purpose: a template replaces the scripts' words too, so it could rewrite them.
- 
- The way through, when it's worth it: Rust returns a key and its arguments (`{ key = "files.errors.too_large" }`) and the script shows `ui.t(key, args)`. Or zgx exposes `ScriptHost::i18n()` and Rust formats messages itself.
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!-- Written by scripts/make-app-icons.py. -->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="108dp"
++    android:height="108dp"
++    android:viewportWidth="108"
++    android:viewportHeight="108">
++    <group android:translateX="18.0013" android:translateY="18.0013" android:scaleX="0.07031" android:scaleY="0.07031">
++        <path
++            android:fillColor="@color/icon_foreground"
++            android:pathData="M289.41,369.31 L289.36,384.72 L289.24,390.73 L289.04,395.26 L288.75,399.03 L288.38,402.30 L287.92,405.20 L287.38,407.83 L286.76,410.22 L286.05,412.42 L285.25,414.44 L284.36,416.32 L283.38,418.06 L282.30,419.67 L281.13,421.16 L279.85,422.54 L278.47,423.82 L276.98,424.99 L275.37,426.07 L273.63,427.05 L271.76,427.94 L269.73,428.74 L267.53,429.45 L265.14,430.07 L262.51,430.61 L259.61,431.07 L256.34,431.44 L252.58,431.73 L248.04,431.93 L242.03,432.05 L226.62,432.09 L211.21,432.05 L205.20,431.93 L200.67,431.73 L196.90,431.44 L193.64,431.07 L190.73,430.61 L188.11,430.07 L185.72,429.45 L183.52,428.74 L181.49,427.94 L179.61,427.05 L177.88,426.07 L176.27,424.99 L174.77,423.82 L173.39,422.54 L172.12,421.16 L170.94,419.67 L169.87,418.06 L168.89,416.32 L168.00,414.44 L167.20,412.42 L166.49,410.22 L165.86,407.83 L165.32,405.20 L164.87,402.30 L164.50,399.03 L164.21,395.26 L164.00,390.73 L163.88,384.72 L163.84,369.31 L163.88,353.90 L164.00,347.89 L164.21,343.36 L164.50,339.59 L164.87,336.33 L165.32,333.42 L165.86,330.80 L166.49,328.40 L167.20,326.21 L168.00,324.18 L168.89,322.30 L169.87,320.56 L170.94,318.95 L172.12,317.46 L173.39,316.08 L174.77,314.80 L176.27,313.63 L177.88,312.56 L179.61,311.57 L181.49,310.68 L183.52,309.89 L185.72,309.17 L188.11,308.55 L190.73,308.01 L193.64,307.56 L196.90,307.19 L200.67,306.90 L205.20,306.69 L211.21,306.57 L226.62,306.53 L242.03,306.57 L248.04,306.69 L252.58,306.90 L256.34,307.19 L259.61,307.56 L262.51,308.01 L265.14,308.55 L267.53,309.17 L269.73,309.89 L271.76,310.68 L273.63,311.57 L275.37,312.56 L276.98,313.63 L278.47,314.80 L279.85,316.08 L281.13,317.46 L282.30,318.95 L283.38,320.56 L284.36,322.30 L285.25,324.18 L286.05,326.21 L286.76,328.40 L287.38,330.80 L287.92,333.42 L288.38,336.33 L288.75,339.59 L289.04,343.36 L289.24,347.89 L289.36,353.90 Z M432.09,369.31 L432.05,384.72 L431.93,390.73 L431.73,395.26 L431.44,399.03 L431.07,402.30 L430.61,405.20 L430.07,407.83 L429.45,410.22 L428.74,412.42 L427.94,414.44 L427.05,416.32 L426.07,418.06 L424.99,419.67 L423.82,421.16 L422.54,422.54 L421.16,423.82 L419.67,424.99 L418.06,426.07 L416.32,427.05 L414.44,427.94 L412.42,428.74 L410.22,429.45 L407.83,430.07 L405.20,430.61 L402.30,431.07 L399.03,431.44 L395.26,431.73 L390.73,431.93 L384.72,432.05 L369.31,432.09 L353.90,432.05 L347.89,431.93 L343.36,431.73 L339.59,431.44 L336.33,431.07 L333.42,430.61 L330.80,430.07 L328.40,429.45 L326.21,428.74 L324.18,427.94 L322.30,427.05 L320.56,426.07 L318.95,424.99 L317.46,423.82 L316.08,422.54 L314.80,421.16 L313.63,419.67 L312.56,418.06 L311.57,416.32 L310.68,414.44 L309.89,412.42 L309.17,410.22 L308.55,407.83 L308.01,405.20 L307.56,402.30 L307.19,399.03 L306.90,395.26 L306.69,390.73 L306.57,384.72 L306.53,369.31 L306.57,353.90 L306.69,347.89 L306.90,343.36 L307.19,339.59 L307.56,336.33 L308.01,333.42 L308.55,330.80 L309.17,328.40 L309.89,326.21 L310.68,324.18 L311.57,322.30 L312.56,320.56 L313.63,318.95 L314.80,317.46 L316.08,316.08 L317.46,314.80 L318.95,313.63 L320.56,312.56 L322.30,311.57 L324.18,310.68 L326.21,309.89 L328.40,309.17 L330.80,308.55 L333.42,308.01 L336.33,307.56 L339.59,307.19 L343.36,306.90 L347.89,306.69 L353.90,306.57 L369.31,306.53 L384.72,306.57 L390.73,306.69 L395.26,306.90 L399.03,307.19 L402.30,307.56 L405.20,308.01 L407.83,308.55 L410.22,309.17 L412.42,309.89 L414.44,310.68 L416.32,311.57 L418.06,312.56 L419.67,313.63 L421.16,314.80 L422.54,316.08 L423.82,317.46 L424.99,318.95 L426.07,320.56 L427.05,322.30 L427.94,324.18 L428.74,326.21 L429.45,328.40 L430.07,330.80 L430.61,333.42 L431.07,336.33 L431.44,339.59 L431.73,343.36 L431.93,347.89 L432.05,353.90 Z M574.78,369.31 L574.74,384.72 L574.62,390.73 L574.41,395.26 L574.13,399.03 L573.75,402.30 L573.30,405.20 L572.76,407.83 L572.14,410.22 L571.43,412.42 L570.63,414.44 L569.74,416.32 L568.76,418.06 L567.68,419.67 L566.51,421.16 L565.23,422.54 L563.85,423.82 L562.36,424.99 L560.75,426.07 L559.01,427.05 L557.13,427.94 L555.11,428.74 L552.91,429.45 L550.51,430.07 L547.89,430.61 L544.98,431.07 L541.72,431.44 L537.95,431.73 L533.42,431.93 L527.41,432.05 L512.00,432.09 L496.59,432.05 L490.58,431.93 L486.05,431.73 L482.28,431.44 L479.02,431.07 L476.11,430.61 L473.49,430.07 L471.09,429.45 L468.89,428.74 L466.87,427.94 L464.99,427.05 L463.25,426.07 L461.64,424.99 L460.15,423.82 L458.77,422.54 L457.49,421.16 L456.32,419.67 L455.24,418.06 L454.26,416.32 L453.37,414.44 L452.57,412.42 L451.86,410.22 L451.24,407.83 L450.70,405.20 L450.25,402.30 L449.87,399.03 L449.59,395.26 L449.38
 ```
 
-**File**: `apps/zgx/docs/templates.md` (modified, +2/-2)
+**File**: `apps/android/app/src/main/res/drawable/ic_launcher_inset.xml` (removed, +0/-4)
 ```diff
-@@ -8,11 +8,11 @@ A template is a whole interface for Zeron, like a WordPress theme. It's a folder
- - Saving a file rewrites only what changed, and the window reloads **in place**. State is kept wherever both versions have the module.
- - **Fallback, per file:** a file that fails (to load, to build, or later) is replaced by Zeron's own copy of that file alone. You get one notice, and `template_status` names it with its error. Save it again to retry.
- - **Fallback, whole:** if your `app.luau` fails, the whole window goes back to Zeron's own and the template shows as broken.
--- **The way back from any template:** View → Use Zeron's Template (in the menu bar, or the bar Zeron draws at the window's top on Linux and Windows), Revert on a preview's bar, holding ⌥ as Zeron opens, or launching it with `--zeron-template`. Each starts **safe mode**: Zeron's own interface runs whatever `.active` says, the terminals templates opened are closed, and it stays so across launches until the person picks a template on Zeron's Templates page. A template that crashes Zeron at launch twice in a row starts it too.
-+- **The way back from any template:** View → Use Default Interface (in the menu bar, or the bar Zeron draws at the window's top on Linux and Windows), Revert on a preview's toast, holding ⌥ as Zeron opens, or launching it with `--zeron-template`. Each starts **safe mode**: Zeron's own interface runs whatever `.active` says, the terminals templates opened are closed, and it stays so across launches until the person picks a template on Zeron's Templates page. A template that crashes Zeron at launch twice in a row starts it too.
- 
- ## Preview until the person keeps it
- 
--A template is Zeron's own code, so it can do anything Zeron can, but only once the person has **kept** it in Zeron's own window. Until then it runs as a **preview**: it draws as it likes, under a bar Zeron draws ("Agent template · Keep… / Revert"), and Zeron refuses what it asks of the host's powers. That means terminals, the account, plugins, switching or changing templates, writing files, and sending to agents or answering for them.
-+A template is Zeron's own code, so it can do anything Zeron can, but only once the person has **kept** it in Zeron's own window. Until then it runs as a **preview**: it draws as it likes, under a toast Zeron draws ("Previewing <name>", with Keep and Revert), and Zeron refuses what it asks of the host's powers. That means terminals, the account, plugins, switching or changing templates, writing files, and sending to agents or answering for them.
- 
- - Every template you make or switch to with these tools starts as a preview. So does one installed signed by this device, and one changed since it was kept: what the person keeps is the template's files as they were, so an edit after that is a preview again until they keep it again.
- - Keep opens Zeron's own sheet in a window of its own. Only that window records the decision, in Zeron's app data, never the engine's. No tool, IPC call or plugin can keep a template for the person.
+@@ -1,4 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<inset xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:drawable="@mipmap/ic_launcher_foreground"
+-    android:inset="-6%" />
 ```
 
-**File**: `apps/zgx/src/main.rs` (modified, +16/-5)
+**File**: `apps/android/app/src/main/res/mipmap-anydpi/ic_launcher.xml` (modified, +2/-1)
 ```diff
-@@ -430,7 +430,14 @@ fn open(cx: &mut WindowContext, entry: &str, inspect: bool) {
-     // (Development: `ZERON_ZGX_DEV_PLUGINS` loads plugin folders into a
-     // fixture's window, no engine. src/plugins `dev_plugins`.)
-     plugins::dev_plugins(&host);
--    serve(cx, host, entry, inspect);
-+    // (Development: `ZERON_ZGX_HOST_TOASTS=1` lays the host's toasts over a
-+    // fixture, a template in preview and a notice of each kind.)
-+    let chrome = plugins::host_bar::dev_toasts(cx);
-+    let floor = chrome.is_some().then(|| host.shared("toast_floor", 16.));
-+    serve_with(cx, host, entry, inspect, chrome);
-+    if let Some(floor) = floor {
-+        plugins::host_bar::follow(floor);
-+    }
- }
- 
- /// The main window: app.luau as the shell (`window` = "main"), where setup
-@@ -443,10 +450,14 @@ fn open_main(cx: &mut WindowContext, inspect: bool) {
-     host.shared("window", "main");
-     // Plugins and your templates (src/plugins): the main window's alone.
-     plugins::install(cx, &host);
--    // The host's own bar above it (a template in preview, a switch you
--    // didn't make, and the menu bar where the system has none).
-+    // The host's own toasts over it (a template in preview, a switch you
-+    // didn't make, signing keys, safe mode at launch) and the menu bar
-+    // where the system has none.
-     let chrome = plugins::host_bar::view(cx);
-+    // Where the app's toasts stand, over the host's (host_bar.rs `follow`).
-+    let floor = host.shared("toast_floor", 16.);
-     let view = serve_with(cx, host, "app.luau", inspect, Some(chrome));
-+    plugins::host_bar::follow(floor);
-     // What zgx reports of the window's elements, for plugins' places.
-     plugins::set_view(view);
-     // Launch's allocator peak handed back once it has settled (src/heap.rs).
-@@ -938,7 +949,7 @@ fn menus_noting(commands: &[zgx_script::Command]) -> (Vec<AppMenu>, Vec<(String,
-         };
-         menus[index].entries.push(entry);
-     }
--    // "Use Zeron's Template", the host's own, after the scripts' View items:
-+    // "Use Default Interface", the host's own, after the scripts' View items:
-     // no template can take it away (src/plugins).
-     let view = match menus.iter().position(|m| m.label == "View") {
-         Some(index) => index,
-@@ -954,7 +965,7 @@ fn menus_noting(commands: &[zgx_script::Command]) -> (Vec<AppMenu>, Vec<(String,
-     if let Some(preview) = plugins::preview::current() {
-         menus[view].entries.push(AppMenuEntry::item(format!("Keep {}…", preview.name), plugins::KEEP_TEMPLATE));
-     }
--    menus[view].entries.push(AppMenuEntry::item("Use Zeron's Template", plugins::USE_ZERON_TEMPLATE));
-+    menus[view].entries.push(AppMenuEntry::item("Use Default Interface", plugins::USE_ZERON_TEMPLATE));
-     (menus, lost)
- }
- 
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+     <background android:drawable="@color/icon_background" />
+-    <foreground android:drawable="@drawable/ic_launcher_inset" />
++    <foreground android:drawable="@drawable/ic_launcher_foreground" />
++    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+ </adaptive-icon>
 ```
 
-**File**: `apps/zgx/src/plugins/host_bar.rs` (modified, +873/-78)
+**File**: `apps/android/app/src/main/res/values-night/colors.xml` (modified, +2/-0)
 ```diff
-@@ -1,155 +1,950 @@
- //! What the host draws in the main window itself, outside the scripts'
- //! view, so no template can take it away:
- //!
--//! - while a template runs as a preview (`preview`): "Agent template ·
--//!   <name>", with Keep… (Zeron's own keep sheet) and Revert (Zeron's
--//!   template, in safe mode);
--//! - a notice when the template changed without you choosing it here (an
--//!   agent's `use_template`, an update, a file written by hand);
-+//! - while a template runs as a preview (`preview`), a toast: "Previewing
-+//!   <name>", what it can't do until you keep it, with Keep (the host's
-+//!   keep sheet) and Revert (the default interface, in safe mode). It stays
-+//!   while the preview lasts; its minimise button folds it to a pill that
-+//!   opens it again;
-+//! - notices, toasts that go by themselves (`notice`): the template
-+//!   changed without you choosing it here (an agent's `use_template`, an
-+//!   update, a file written by hand), the account's signing keys (one added
-+//!   on another device, this device's revoked), and the default interface
-+//!   at launch because the template crashed Zeron (safe mode);
- //! - on Linux and Windows, which have no system menu bar, the app's menu
--//!   bar (zgx's `app_menu_bar`): View → Use Zeron's Template is always in
-+//!   bar (zgx's `app_menu_bar`): View → Use Default Interface is always in
- //!   it, the host's own item.
- //!
--//! It sits above the scripts' view in the window's own layout. (A script's
--//! modal or layer mounts at the window's top and may still paint over it:
--//! zgx's host-owned top layer will hold it above them.)
-+//! The toasts look like the app's own (ds/toast.luau: its width, corner,
-+//! padding and type) and share their corner, the window's bottom right,
-+//! 16 points in, in one column: the host's at its foot (they stay put as
-+//! the app's come and go above them), the app's stacked over them from
-+//! `toast_floor`, a shared value the host publishes (`follow`).
-+//!
-+//! A template replaces the whole interface, `ds/` and its toasts included,
-+//! so nothing here comes from the scripts: the toasts are a layer of the
-+//! host's own (a zgx portal at the window's root), kept the root's last
-+//! child after every layout (`keep_on_top`), so a script's modal, layer or
-+//! native view opened after them still draws under them and can't take
-+//! their clicks; their colours, type and glyphs are fixed here, never the
-+//! theme's tokens (a template sets those), only following whether the
-+//! theme is light or dark; and their buttons run host commands.
- 
- use std::cell::RefCell;
-+use std::sync::Arc;
- 
--use zgx::compose::{View, button, column, row, switch, text};
--use zgx::scene::Color;
-+use zgx::compose::{ModalPlacement, PlacementEdge, View, button, column, component, modal, row, svg, switch, text};
-+use zgx::cursor::Cursor;
-+use zgx::scene::{BoxShadow, Color, NodeId, Scene, Transform};
-+use zgx::semantics::{Live, Role};
- use zgx::style::Styled;
-+use zgx::svg::SvgData;
-+use zgx::text_layout::FontFamily;
- use zgx_desktop::WindowContext;
- 
- use super::preview;
- 
-+/// How a toast reads: plain, or one to look at (amber).
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum Tone {
-+    Neutral,
-+    Warning,
-+}
-+
-+/// A notice's button: its label and the host command it runs.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct Action {
-+    pub label: &'static str,
-+    pub command: &'static str,
-+}
-+
-+/// A notice: a toast that goes by itself (`NOTICE_FOR`) unless it `stays`.
-+#[derive(Clone, Debug, PartialEq)]
-+pub struct Notice {
-+    pub title: String,
-+    pub body: String,
-+    pub tone: Tone,
-+    pub action: Option<Action>,
-+    pub stays: bool,
-+}
-+
-+/// The default interface, in safe mode (the menu bar's "Use Default
-+/// Interface").
-+const USE_DEFAULT: Action = Action { label: "Use default interface", command: super::USE_ZERON_TEMPLATE };
-+
-+impl Notice {
-+    /// The template changed without you choosing it here: to `name`, or
-+    /// to the default (`to_default`); by a chat or otherwise. One in
-+    /// preview has its own toast with Revert, so this one has no button.
-+    pub fn switched(name: &str, to_default: bool, by_chat: bool, in_preview: bool) -> Self {
-+        let body = if by_chat {
-+            "A chat switched the template. You didn't choose it here."
-+        } else {
-+            "The template changed without you choosing it here."
-+        };
-+        Notice {
-+            title: if to_default { "Back to the default interface".into() } else { format!("Switched to {name}") },
-+            body: body.into(),
-+            tone: Tone::Neutral,
-+            action: (!to_default && !in_preview).then_some(USE_DEFAULT),
-+            stays: false,
-+        }
-+    }
-+
-+    /// The engine's word on the account's signing keys (`kind`), in the
-+    /// host's words; one it doesn't know, in the engine's (`words`).
-+    pub fn key(kind: &str, device: Option<&str>, words: &str) -> Self {
-+        let h
+@@ -1,4 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <resources>
+     <color name="launch_background">#060606</color>
++    <color name="icon_background">#141418</color>
++    <color name="icon_foreground">#F4F1EA</color>
+ </resources>
 ```
 
-**File**: `apps/zgx/src/plugins/mod.rs` (modified, +25/-17)
+**File**: `apps/android/app/src/main/res/values/colors.xml` (modified, +2/-1)
 ```diff
-@@ -680,14 +680,22 @@ pub fn prepare_live() -> PathBuf {
-     }
- }
- 
--/// The host's own menu item's action ("Use Zeron's Template").
-+/// The host's own menu item's action ("Use Default Interface").
- pub const USE_ZERON_TEMPLATE: &str = "zeron.use-zeron-template";
- /// The host's own "Keep <template>…": the keep sheet for the one in preview.
- pub const KEEP_TEMPLATE: &str = "zeron.keep-template";
- 
--/// One of the host's own commands (its menu items and its bar's buttons:
-+/// One of the host's own commands (its menu items and its toasts' buttons:
- /// never a script's, `zeron.` being the host's).
- pub fn host_command(id: &str) {
-+    // (A test hears what ran instead: Revert's safe mode would be written
-+    // to the app's own data folder.)
-+    #[cfg(test)]
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <resources>
+     <color name="launch_background">#F3F3F5</color>
+-    <color name="icon_background">#12052B</color>
++    <color name="icon_background">#F4F1EA</color>
++    <color name="icon_foreground">#141418</color>
+ </resources>
+```
+
+**File**: `apps/android/icons/zeron.svg` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 940" fill="#000000"><rect x="0" y="600" width="100" height="100" rx="16"/><rect x="0" y="720" width="100" height="100" rx="16"/><rect x="240" y="840" width="100" height="100" rx="16"/><rect x="240" y="720" width="100" height="100" rx="16"/><rect x="120" y="840" width="100" height="100" rx="16"/><rect x="120" y="600" width="100" height="100" rx="16"/><rect x="240" y="600" width="100" height="100" rx="16"/><rect x="0" y="480" width="100" height="100" rx="16"/><rect x="0" y="360" width="100" height="100" rx="16"/><rect x="480" y="840" width="100" height="100" rx="16"/><rect x="480" y="720" width="100" height="100" rx="16"/><rect x="120" y="360" width="100" height="100" rx="16"/><rect x="120" y="240" width="100" height="100" rx="16"/><rect x="240" y="360" width="100" height="100" rx="16"/><rect x="600" y="720" width="100" height="100" rx="16"/><rect x="480" y="600" width="100" height="100" rx="16"/><rect x="360" y="360" width="100" height="100" rx="16"/><rect x="240" y="240" width="100" height="100" rx="16"/><rect x="600" y="600" width="100" height="100" rx="16"/><rect x="720" y="600" width="100" height="100" rx="16"/><rect x="720" y="480" width="100" height="100" rx="16"/><rect x="240" y="120" width="100" height="100" rx="16"/><rect x="600" y="380" width="100" height="100" rx="16"/><rect x="720" y="240" width="100" height="100" rx="16"/><rect x="720" y="0" width="100" height="100" rx="16"/><rect x="480" y="240" width="100" height="100" rx="16"/><rect x="480" y="0" width="100" height="100" rx="16"/><rect x="120" y="480" width="100" height="100" rx="16"/><rect x="240" y="480" width="100" height="100" rx="16"/><rect x="360" y="840" width="100" height="100" rx="16"/><rect x="360" y="720" width="100" height="100" rx="16"/><rect x="360" y="600" width="100" height="100" rx="16"/><rect x="360" y="480" width="100" height="100" rx="16"/><rect x="120" y="720" width="100" height="100" rx="16"/></svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 780"><path fill="#000000" d="M167.41,247.31 L167.36,262.72 L167.24,268.73 L167.04,273.26 L166.75,277.03 L166.38,280.30 L165.92,283.20 L165.38,285.83 L164.76,288.22 L164.05,290.42 L163.25,292.44 L162.36,294.32 L161.38,296.06 L160.30,297.67 L159.13,299.16 L157.85,300.54 L156.47,301.82 L154.98,302.99 L153.37,304.07 L151.63,305.05 L149.76,305.94 L147.73,306.74 L145.53,307.45 L143.14,308.07 L140.51,308.61 L137.61,309.07 L134.34,309.44 L130.58,309.73 L126.04,309.93 L120.03,310.05 L104.62,310.09 L89.21,310.05 L83.20,309.93 L78.67,309.73 L74.90,309.44 L71.64,309.07 L68.73,308.61 L66.11,308.07 L63.72,307.45 L61.52,306.74 L59.49,305.94 L57.61,305.05 L55.88,304.07 L54.27,302.99 L52.77,301.82 L51.39,300.54 L50.12,299.16 L48.94,297.67 L47.87,296.06 L46.89,294.32 L46.00,292.44 L45.20,290.42 L44.49,288.22 L43.86,285.83 L43.32,283.20 L42.87,280.30 L42.50,277.03 L42.21,273.26 L42.00,268.73 L41.88,262.72 L41.84,247.31 L41.88,231.90 L42.00,225.89 L42.21,221.36 L42.50,217.59 L42.87,214.33 L43.32,211.42 L43.86,208.80 L44.49,206.40 L45.20,204.21 L46.00,202.18 L46.89,200.30 L47.87,198.56 L48.94,196.95 L50.12,195.46 L51.39,194.08 L52.77,192.80 L54.27,191.63 L55.88,190.56 L57.61,189.57 L59.49,188.68 L61.52,187.89 L63.72,187.17 L66.11,186.55 L68.73,186.01 L71.64,185.56 L74.90,185.19 L78.67,184.90 L83.20,184.69 L89.21,184.57 L104.62,184.53 L120.03,184.57 L126.04,184.69 L130.58,184.90 L134.34,185.19 L137.61,185.56 L140.51,186.01 L143.14,186.55 L145.53,187.17 L147.73,187.89 L149.76,188.68 L151.63,189.57 L153.37,190.56 L154.98,191.63 L156.47,192.80 L157.85,194.08 L159.13,195.46 L160.30,196.95 L161.38,198.56 L162.36,200.30 L163.25,202.18 L164.05,204.21 L164.76,206.40 L165.38,208.80 L165.92,211.42 L166.38,214.33 L166.75,217.59 L167.04,221.36 L167.24,225.89 L167.36,231.90 Z M310.09,247.31 L310.05,262.72 L309.93,268.73 L309.73,273.26 L309.44,277.03 L309.07,280.30 L308.61,283.20 L308.07,285.83 L307.45,288.22 L306.74,290.42 L305.94,292.44 L305.05,294.32 L304.07,296.06 L302.99,297.67 L301.82,299.16 L300.54,300.54 L299.16,301.82 L297.67,302.99 L296.06,304.07 L294.32,305.05 L292.44,305.94 L290.42,306.74 L288.22,307.45 L285.83,308.07 L283.20,308.61 L280.30,309.07 L277.03,309.44 L273.26,309.73 L268.73,309.93 L262.72,310.05 L247.31,310.09 L231.90,310.05 L225.89,309.93 L221.36,309.73 L217.59,309.44 L214.33,309.07 L211.42,308.61 L208.80,308.07 L206.40,307.45 L204.21,306.74 L202.18,305.94 L200.30,305.05 L198.56,304.07 L196.95,302.99 L195.46,301.82 L194.08,300.54 L192.80,299.16 L191.63,297.67 L190.56,296.06 L189.57,294.32 L188.68,292.44 L187.89,290.42 L187.17,288.22 L186.55,285.83 L186.01,283.20 L185.56,280.30 L185.19,277.03 L184.90,273.26 L184.69,268.73 L184.57,262.72 L184.53,247.31 L184.57,231.90 L184.69,225.89 L184.90,221.36 L185.19,217.59 L185.56,214.33 L186.01,211.42 L186.55,208.80 L187.17,206.40 L187.89,204.21 L188.68,202.18 L189.57,200.30 L190.56,198.56 L191.63,196.95 L192.80,195.46 L194.08,194.08 L195.46,192.80 L196.95,191.63 L198.56,190
+```
+
+**File**: `apps/ios/Zeron/Assets.xcassets/AppIcon.appiconset/Contents.json` (modified, +28/-1)
+```diff
+@@ -5,7 +5,34 @@
+       "idiom" : "universal",
+       "platform" : "ios",
+       "size" : "1024x1024"
++    },
 +    {
-+        HOST_COMMANDS_RAN.with(|r| r.borrow_mut().push(id.to_owned()));
-+        return;
-+    }
-+    #[allow(unreachable_code)]
-     match id {
-         USE_ZERON_TEMPLATE => use_zeron_template(),
-         KEEP_TEMPLATE => {
-@@ -699,7 +707,13 @@ pub fn host_command(id: &str) {
++      "appearances" : [
++        {
++          "appearance" : "luminosity",
++          "value" : "dark"
++        }
++      ],
++      "filename" : "AppIcon1024-dark.png",
++      "idiom" : "universal",
++      "platform" : "ios",
++      "size" : "1024x1024"
++    },
++    {
++      "appearances" : [
++        {
++          "appearance" : "luminosity",
++          "value" : "tinted"
++        }
++      ],
++      "filename" : "AppIcon1024-tinted.png",
++      "idiom" : "universal",
++      "platform" : "ios",
++      "size" : "1024x1024"
      }
+   ],
+-  "info" : { "author" : "xcode", "version" : 1 }
++  "info" : {
++    "author" : "xcode",
++    "version" : 1
++  }
  }
- 
--/// `work` on the main window's tasks (the host's bar's timers).
-+#[cfg(test)]
-+thread_local! {
-+    /// The host commands a test ran (`host_command`).
-+    pub(crate) static HOST_COMMANDS_RAN: RefCell<Vec<String>> = RefCell::default();
-+}
-+
-+/// `work` on the main window's tasks (the host's toasts' timers).
- pub(crate) fn spawn_on_bridge(work: impl std::future::Future<Output = ()> + 'static) {
-     if let Some(b) = BRIDGE.with(|b| b.borrow().upgrade()) {
-         b.tasks.spawn(work);
-@@ -944,7 +958,7 @@ pub fn set_view(handle: zgx::compose::ViewHandle) {
-     }
- }
- 
--/// "Use Zeron's Template" (the host's own menu item and bar button, which no
-+/// "Use Default Interface" (the host's own menu item, and Revert in its toast, which no
- /// template can take away): safe mode (preview.rs), so Zeron's own runs
- /// whatever `.active` says until you pick a template on the Templates page,
- /// and the terminals templates started are closed. The window follows.
-@@ -1116,7 +1130,7 @@ impl Bridge {
-             if let (Some(id), Some(words)) = (notice["id"].as_str(), notice["words"].as_str())
-                 && self.told.borrow_mut().insert(format!("key-notice:{id}"))
-             {
--                host_bar::notice(words.to_owned());
-+                host_bar::notice(host_bar::Notice::key(notice["kind"].as_str().unwrap_or(""), notice["device"].as_str(), words));
-             }
-         }
-         // Each one newly waiting for you: said once.
-@@ -1456,17 +1470,11 @@ impl Bridge {
-         // A switch you didn't make here (an agent's use_template, a file
-         // written by hand): said by the host, whatever the template shows.
-         if was != id && !self.chose.replace(false) {
--            let by = std::fs::read(root.join(".active.by.json"))
-+            let by_chat = std::fs::read(root.join(".active.by.json"))
-                 .ok()
-                 .and_then(|b| serde_json::from_slice::<Json>(&b).ok())
--                .and_then(|v| v["chat"].as_str().map(|c| format!(" (asked by chat {})", &c[..c.len().min(8)])))
--                .unwrap_or_default();
--            let words = if id == live::BUILTIN {
--                format!("The default interface is back: the template was switched without you choosing it here{by}.")
--            } else {
--                format!("The template changed to {name} without you choosing it here{by}.")
--            };
--            host_bar::notice(words);
-+                .is_some_and(|v| v["chat"].as_str().is_some_and(|c| !c.is_empty()));
-+            host_bar::notice(host_bar::Notice::switched(&name, id == live::BUILTIN, by_chat, !trusted));
-         }
-         let laid = {
-             let (root, want) = (root.to_path_buf(), want.clone());
-@@ -3290,13 +3298,13 @@ mod markdown_tests;
- 
- #[cfg(test)]
- mod menu_tests {
--    /// "Use Zeron's Template" is the host's own, in View, whatever the
-+    /// "Use Default Interface" is the host's own, in View, whatever the
-     /// scripts declare (none here, as when a template broke before any).
-     #[test]
-     fn the_host_s_menu_always_has_a_way_back_to_zeron_s_template() {
-         let menus = format!("{:?}", crate::menus(&[]));
-         assert!(menus.contains("View"), "{menus}");
--        assert!(menus.contains("Use Zeron's Template"), "{menus}");
-+        assert!(menus.contains("Use Default Interface"), "{menus}");
-         assert!(menus.contains(super::USE_ZERON_TEMPLATE), "{menus}");
-     }
- 
-@@ -3320,7 +3328,7 @@ mod menu_tests {
-         let shown = format!("{bar:?}");
-         assert!(zgx_desktop::app_menu_bar(bar, |_| {}).is_ok(), "the platform takes the bar: {shown}");
-         assert_eq!(shown.matches(super::USE_ZERON_TEMPLATE).count(), 1, "{shown}");
--        assert!(shown.contains("Use Zeron's Template") && !shown.contains("Stay Here") && !shown.contains("Keep Me"), "{shown}");
-+        assert!(shown.contains("Use Default Interface") && !shown.contains("Stay Here") && !shown
-```
-
-**File**: `apps/zgx/src/plugins/preview.rs` (modified, +29/-6)
-```diff
-@@ -5,8 +5,9 @@
- //! (`template_consent`, its keep sheet, or allowing its package there).
- //! Until then (one an agent made or switched to, one imported and signed by
- //! "you", one edited since you kept it) it runs as a **preview**: it draws
--//! as it likes, with a bar the host draws over it, "Agent template · Keep /
--//! Revert", and the host refuses its dangerous actions (`BLOCKED`).
-+//! as it likes, with a toast the host draws over it ("Previewing <name>",
-+//! Keep and Revert, host_bar.rs), and the host refuses its dangerous
-+//! actions (`BLOCKED`).
- //!
- //! What you kept is bound to the template's content: the sha256 of every
- //! file it lays over Zeron's own (`digest`). The record lives in the app's
-@@ -17,7 +18,7 @@
- //! what this guards.)
- //!
- //! **Safe mode** (`safe`) is the way back that no template can undo: "Use
--//! Zeron's Template" in the host's menu or bar, holding ⌥ as Zeron opens,
-+//! Default Interface" in the host's menu, Revert in its toast, holding ⌥ as Zeron opens,
- //! or a template that crashed the window at launch twice running. It runs
- //! Zeron's own whatever `.active` says (a template re-selecting itself from
- //! a timer, a terminal or an agent changes nothing), closes the terminals
-@@ -90,7 +91,7 @@ pub struct Preview {
- 
- thread_local! {
-     static NOW: RefCell<Option<Preview>> = const { RefCell::new(None) };
--    /// What's told of the change (the host's bar and menu follow it).
-+    /// What's told of the change (the host's toast and menu follow it).
-     static HEARD: RefCell<Vec<Box<dyn Fn(Option<&Preview>)>>> = RefCell::default();
-     /// Terminals started while a template other than Zeron's own ran:
-     /// closed when safe mode starts. `(id, device)`.
-@@ -117,7 +118,7 @@ pub fn set(preview: Option<Preview>) {
-     }
- }
- 
--/// `f` hears each change of the preview (the host's bar, the menu bar).
-+/// `f` hears each change of the preview (the host's toast, the menu bar).
- pub fn on_change(f: impl Fn(Option<&Preview>) + 'static) {
-     HEARD.with(|h| h.borrow_mut().push(Box::new(f)));
- }
-@@ -131,7 +132,7 @@ pub fn refuse(action: &str) -> Result<(), String> {
-     match current() {
-         Some(p) if blocked(action) => {
-             eprintln!("zeron-zgx: preview: {action} refused while {} isn't kept", p.id);
--            Err(format!("{} is a preview. Keep it in Zeron's bar first, or revert to Zeron's template.", p.name))
-+            Err(format!("{} is a preview. Keep it first, or revert to the default interface.", p.name))
-         }
-         _ => Ok(()),
-     }
-@@ -241,10 +242,32 @@ pub fn read_at_launch() {
-     if held || crashed {
-         eprintln!("zeron-zgx: safe mode ({})", if held { "⌥ held at launch" } else { "the template crashed Zeron twice" });
-         let _ = write_safe(true);
-+        LAUNCH_REASON.store(if held { 1 } else { 2 }, Ordering::Relaxed);
-     }
-     SAFE.store(on, Ordering::Relaxed);
- }
- 
-+/// Why safe mode started as Zeron opened (the host's toast says so once).
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum SafeReason {
-+    /// ⌥ held as it opened.
-+    Held,
-+    /// The template crashed the window at launch twice running.
-+    Crashed,
-+}
-+
-+/// 0: none; 1: `Held`; 2: `Crashed`.
-+static LAUNCH_REASON: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
-+
-+/// Why safe mode started at this launch, told once.
-+pub fn take_safe_at_launch() -> Option<SafeReason> {
-+    match LAUNCH_REASON.swap(0, Ordering::Relaxed) {
-+        1 => Some(SafeReason::Held),
-+        2 => Some(SafeReason::Crashed),
-+        _ => None,
-+    }
-+}
-+
- fn write_safe(on: bool) -> std::io::Result<()> {
-     let Some(path) = safe_path() else { return Ok(()) };
-     if on {
-```
-
-**File**: `apps/zgx/ui/demos/files_snapshot.luau` (modified, +1/-1)
-```diff
-@@ -6829,7 +6829,7 @@ it opened on. From a fullscreen app it is covered and waits; zgx's
- - A file that fails (at load, at build or later) falls back to Zeron's own for that module alone, with one notice.
- - If its `app.luau` fails, the whole window goes back to Zeron's own and the template shows as broken.
- - Saving the file again retries it.
--- **The way back from any template:** View → **Use Zeron's Template** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
-+- **The way back from any template:** View → **Use Default Interface** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
- 
- **Plugins layer on whatever template is in use.** One that aims at an element the template dropped (its id or class) says "Not shown in this template" on the Plugins page. That check is static: only literal selectors are seen. A placed node that needs what its place doesn't give draws nothing, and its row says why.
- 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1217** (2026-11-04): zgx: plugin notices keep their Review button and stay until dealt with (@wingleeio)
-- **PR #1216** (2026-11-04): zgx v3: a split pane's × shows only for its head (@wingleeio)
-- **PR #1215** (2026-11-04): zgx: the plugin and template permission windows can be dragged by their top (@wingleeio)
-- **PR #1214** (2026-11-04): zgx: bump to 7cd25fc1; the panel home builds only the rows it shows (@wingleeio)
-- **PR #1213** (2026-11-04): zgx v3: Expand's arrows draw smaller beside the panel toggle (@wingleeio)
-- **PR #1212** (2026-11-04): zgx on Windows: one title bar beside the caption buttons, no menu bar, glass that respects the system (@wingleeio)
+- **PR #1240** (2026-11-05): iOS: version 1.0.1, since Apple has closed 1.0 (@wingleeio)
+- **PR #1239** (2026-11-05): The new app icon on iOS and Android (@wingleeio)
+- **PR #1236** (closed): zgx: the model picker's reasoning and stars from the keys (@gaelcado)
+- **PR #1231** (closed): zgx sidebar: labels that don't fit fade, and the foot's rows share one edge (@gaelcado)
+- **PR #1229** (closed): zgx: the title bar's controls sit on the traffic lights' line (@gaelcado)
+- **PR #1228** (closed): zgx: a test that a new chat's composer holds its place as the page resizes (@gaelcado)
 
 ---
 
@@ -2518,32 +2025,42 @@ Co-Authored-By: C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built
+## X. iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
 
 **RULE**:
-When implementing operations in `apps/zgx/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/ios/Zeron.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `280a0612`: zgx: Zeron v3 (Inset layout and split chats) as the default; Zeron v2 as a built-in template (#1199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `971a3271`: iOS: version 1.0.1, since Apple has closed 1.0 (#1240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/ios/Zeron.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- One template is in use at a time. The default, "Zeron v3" (id `zeron`), is always there. "Zeron v2" (id `zeron-v2`), the single-page layout from before v3, is Zeron's too: its files are `ui/templates/zeron-v2/`, installed into `<data>/templates/zeron-v2/` and kept current with each version, built in and trusted only while exactly as this build wrote it (`src/plugins/official.rs`). A test fails when a default file v2 replaces changes, until v2's copy is brought in step (`zeron_v2_is_in_step_with_the_default`).
-- Settings → Templates lists them as Plugins lists plugins: Installed (the default and Zeron v2, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
-- **The way back from any template:** View → **Use Zeron v3** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- One template is in use at a time. "Zeron", Zeron's own, is always there.
-- Settings → Templates lists them as Plugins lists plugins: Installed (Zeron's own, built in, first) and Yours, a row each with Use and a ⋯ menu (its folder, Duplicate, Delete), and New template (a copy of Zeron's own).
-- **The way back from any template:** View → **Use Default Interface** (the host's own menu item, which no template can remove), `zeron template use zeron`, or launching with `--zeron-template`.
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `280a0612` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `971a3271` are properly handled with clean fallback behavior.

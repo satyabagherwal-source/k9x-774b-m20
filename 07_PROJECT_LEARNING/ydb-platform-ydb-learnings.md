@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `1dda9d96`  
+> **Source Version**: `c26894aa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:58:30.972Z  
+> **Timestamp**: 2026-11-05T23:49:02.550Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:58:30.964Z  
+> **Harvest Timestamp**: 2026-11-05T23:49:02.542Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4785 stars
+- **Stars / Engagement**: 4786 stars
 
 ---
 
@@ -2067,566 +2067,516 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c50d2c3` (2026-11-05)
-**Commit Message**: Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209)
+### Incident Patch 1: `5da12a8a` (2026-11-05)
+**Commit Message**: fix offsets replication for consumers with availability period (#58279)
 
-Co-authored-by: Rutkovsky Alexander <[REDACTED_EMAIL]>
-
-**File**: `ydb/docs/en/core/concepts/bridge.md` (modified, +21/-48)
+**File**: `ydb/core/persqueue/pqtablet/partition/partition.cpp` (modified, +2/-1)
 ```diff
-@@ -2,27 +2,27 @@
+@@ -4148,7 +4148,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
+     for (auto& user : AffectedUsers) {
+         if (auto* actual = GetPendingUserIfExists(user)) {
+             TUserInfo& userInfo = UsersInfoStorage->GetOrCreate(user, ctx);
+-            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
++            const auto previousOffset = userInfo.Offset;
+             if (userInfo.Type == NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION
+                 && !actual->Session.empty() && actual->ReadSessionActor
+                 && (userInfo.Session != actual->Session || userInfo.Generation != actual->Generation
+@@ -4181,6 +4181,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
+                 userInfo.Offset = GetStartOffset();
+             }
  
- {% include [feature_enterprise.md](../_includes/feature_enterprise.md) %}
- 
--Bridge mode is a {{ ydb-short-name }} cluster operating mode that stores data with synchronous replication between multiple parts of the cluster called [piles](glossary.md#pile).
-+This article describes a special operating mode of the {{ ydb-short-name }} cluster in which data is stored with synchronous replication between multiple parts of the cluster called [pile](glossary.md#pile).
- 
--Bridge mode extends the basic distributed storage modes: each pile uses one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config), for example `mirror-3-dc` or `block-4-2`, and is fault-tolerant on its own. Bridge adds synchronous replication between piles and managed failover and switchover of load between them. This provides an extra layer of fault tolerance on top of the selected topology. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements, for example when availability must survive three out of four data centers failing.
-+The bridge mode is an extension on top of the basic distributed storage modes: each pile is built using one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config) (for example, `mirror-3-dc` or `block-4-2`) and is fault-tolerant on its own; bridge adds synchronous replication between piles on top of that, plus managed failover/switchover of load between them. This provides an extra layer of fault tolerance on top of the chosen topologies. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements — for example, when you need to remain available if three out of four data centers fail.
- 
- ## Description of the mode {#description}
- 
--In bridge mode, cluster nodes are split into several [piles](glossary.md#pile), typically one pile per data center. If a pile fails, bridged storage becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
-+In bridge mode, cluster nodes are split into several [piles](glossary.md#pile) (typically one pile per datacenter). If one of the piles fails, the cluster becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
- 
--{{ ydb-short-name }} supports an arbitrary number of piles; however, some scenarios below use two piles for simplicity.
-+{{ ydb-short-name }} supports an arbitrary number of piles; however, for simplicity, the following discussion considers the case of two piles.
- 
- At the [distributed storage](glossary.md#distributed-storage) level, bridge mode implements synchronous Active/Active replication between piles. At the [database node](glossary.md#database-node) level, Active/Passive redundancy is possible.
- 
--Each bridged [storage group](glossary.md#storage-group) has one part in every pile. Within each pile, any {{ ydb-short-name }} [operating mode](topology.md#cluster-config) supported for data storage may be used.
-+Data is stored in pairs of [storage groups](glossary.md#storage-group) from different piles. Within each pile, any {{ ydb-short-name }} [operating mode](topology.md#cluster-config) supported for data storage may be used.
- 
--Bridge mode can achieve zero-downtime [switchover](https://en.wikipedia.org/wiki/Switchover). On [failover](https://en.wikipedia.org/wiki/Failover), the cluster requires explicit disabling of replication to the failed pile before it can resume. When any participating pile fails, request processing for bridged groups is suspended until replication to that pile is disabled.
-+Bridge mode can achieve zero-downtime [switchover](https://en.wikipedia.org/wiki/Switchover). On [failover](https://en.wikipedia.org/wiki/Failover), the cluster requires explicit disabling of replication to the failed pile before it can resume. When any pile is disabled, request processing is suspended until the command to disable replication to that pile is executed.
- 
- Piles are not standalone {{ ydb-short-name }} clusters; they are parts of a single cluster with a complex topology:
- 
- - [Tablets](glossary.md#tablet) in bridge mode run as a single instance;
--- each pile runs its own [static group](glossary.md#static-group) and storage group parts with regular [VDisk](glossary.md#vdisk)s. Bridged storage groups are accessed through a bridge proxy, which exposes the [DS-proxy](glossary.md#ds-proxy) interface to tablets and performs operations using the DS-proxy instances of the participating piles;
--- each pile runs its own set of replicas of [StateStorage](glossary.md#state-storage), [SchemeBoard](glossary.md#scheme-board), and [Board](glossary.md#board). Access to StateStorage, SchemeBoard, and Board is through similar proxy co
++            const bool offsetHasChanged = userInfo.Offset != previousOffset;
+             if (offsetHasChanged && !userInfo.UpdateTimestampFromCache()) {
+                 userInfo.ActualTimestamps = false;
+                 ReadTimestampForOffset(user, userInfo, ctx);
 ```
 
-**File**: `ydb/docs/en/core/concepts/glossary.md` (modified, +0/-4)
+**File**: `ydb/core/persqueue/ut/partition_ut.cpp` (modified, +79/-0)
 ```diff
-@@ -194,10 +194,6 @@ A monotonically increasing lower bound on the event times in a [streaming query]
+@@ -321,6 +321,7 @@ class TPartitionFixture : public NUnitTest::TBaseFixture {
+                        bool strict = false);
+     void SendGetOffset(ui64 cookie,
+                        const TString& clientId);
++    void TestReplicateOffsetClampedToStart(bool important);
+     void WaitCmdWrite(const TCmdWriteMatcher& matcher = {});
+     void WaitCmdWriteTx(const TCmdWriteTxMatcher& matcher = {});
+     void SendCmdWriteResponse(NMsgBusProxy::EResponseStatus status);
+@@ -3283,6 +3284,84 @@ Y_UNIT_TEST_F(ReplicationDataSentOnlyForSessionStartAndChangedOffsets, TPartitio
+     Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
+ }
  
- **Bridge mode** is a special cluster topology in which data is stored with synchronous replication between multiple [piles](#pile). The specifics of the mode are described in [{#T}](topology.md#bridge) and also in [{#T}](bridge.md).
- 
--#### Non-uniform storage {#non-uniform-storage}
--
--**Non-uniform storage** is a bridge cluster mode in which bridged storage pools and ordinary storage pools coexist. Ordinary pools can reduce storage overhead and write latency but still depend on the bridge control plane for failover. For details, see [Bridged and ordinary storage pools](bridge.md#storage-pools).
--
- ### Table {#table}
- 
- A **table** is a structured piece of information organized into rows and columns. Each row represents a single record or item, and each column is a specific attribute or field with a defined data type.
-```
-
-**File**: `ydb/docs/en/core/devops/deployment-options/manual/bridge-management.md` (modified, +48/-421)
-```diff
-@@ -1,478 +1,107 @@
--# Managing a cluster in bridge mode
-+## Managing a cluster in bridge mode
- 
- {% include [feature_enterprise.md](../../../_includes/feature_enterprise.md) %}
- 
--Bridge cluster management is a set of procedures for converting a cluster to [bridge mode](../../../concepts/bridge.md), changing its pile topology and storage pool modes, and recovering from pile failures. This article describes these procedures using [{{ ydb-short-name }} CLI commands](../../../reference/ydb-cli/commands/bridge/index.md) and {{ ydb-short-name }} DSTool.
-+Below are typical operations for a cluster in [bridge mode](../../../concepts/bridge.md) using the [corresponding {{ ydb-short-name }} CLI commands](../../../reference/ydb-cli/commands/bridge/index.md).
- 
--## Common command usage {#common}
-+### View current state {#list}
- 
--Run management commands through any available cluster node. Add the endpoint to the command as follows:
--
--```bash
--{{ ydb-cli }} -e grpc://<node>:2135 admin cluster bridge list
--```
--
--Where:
--
--- `<node>` is the host name or IP address of an available cluster node, for example `node-1.example.com`.
--
--Mutating `ydb admin` commands ask for confirmation, while the read-only `bridge list` command does not. Without a TTY, confirmation is silently declined and the command exits with code 1. Scripts must therefore pass the global `-y` option to mutating commands. The examples below omit the endpoint for brevity.
--
--{% note warning "Points of no return" %}
--
--Converting a cluster to bridge mode is irreversible. After conversion and after a persisted bridge feature-level raise caused by pile operations, non-uniform storage, or per-pile storage overrides, nodes that do not support the required level are fenced out. Upgrade every static and dynamic node before enabling a feature. There is no supported way to make a cluster non-bridged again.
--
--{% endnote %}
--
--## Operations overview {#operations}
--
--| Operation | Command or action | Reversible |
--| --- | --- | --- |
--| Convert to a single-pile bridge | `{{ ydb-cli }} -y admin cluster bridge convert [--skip-storage-pool-conversion]` | No |
--| Enable non-uniform storage | Set `bridge_config.enable_non_uniform_storage: true` | No |
--| List a pile | Add it to `bridge_config.piles` and its nodes to `hosts`, then replace the configuration | Yes, while it is `INACTIVE` |
--| Add a pile | `{{ ydb-cli }} -y admin cluster bridge add-pile --pile P` | Yes, with `remove-pile` |
--| Return a pile | `{{ ydb-cli }} -y admin cluster bridge rejoin --pile P` | — |
--| Switch the primary pile | `{{ ydb-cli }} -y admin cluster bridge switchover --new-primary P` | — |
--| Planned takedown | `{{ ydb-cli }} -y admin cluster bridge takedown --pile P [--new-primary Q]` | `rejoin` |
--| Emergency disconnect | `{{ ydb-cli }} -y admin cluster bridge failover --pile P [--pile R] [--new-primary Q]` | `rejoin` |
--| Remove a pile | `{{ ydb-cli }} -y admin cluster bridge remove-pile --pile P` | No, the data is deleted |
--| Switch a pool's mode | `ydb-dstool pool set-bridge-mode --pool-name N (--bridged \| --ordinary [--retain-pile P])` | Yes |
--| View state and progress | `{{ ydb-cli }} admin cluster bridge list [--format json]` | — |
--
--## View current state {#list}
--
--The `list` command shows the current state of each pile, conversion progress, and pending pile operations:
-+Shows the current state of each pile configured on the {{ ydb-short-name }} cluster.
- 
- ```bash
- {{ ydb-cli }} admin cluster bridge list
- ```
- 
- Example output:
- 
--```text
--Pile pile-a: PRIMARY
--Pile pile-b: SYNCHRONIZED
--Generation: 4
--```
--
--For scripts, use `--format json`. During conversion, the output includes `Conversion from non-bridged cluster is in progress, piles can't be added yet`. During pile addition or removal, it includes `Pending operation on pile P: ADD` or `REMOVE`. If the last attempt failed and is being retried, the output also includes its error. For the output format, see the [command reference](../../../reference/ydb-cli/commands/bridge/list.md).
--
--## Planned `PRIMARY` change (switchover) {#switchover}
--
--If maintenance is planned in the data center or on the equipment where the current `PRIMARY` pile runs, switch the cluster to another pile in advance. Select a pile in the `SYNCHRONIZED` state:
--
- ```bash
--{{ ydb-cli }} -y admin cluster bridge switchover --new-primary <pile>
-+pile-a: PRIMARY
-+pile-b: SYNCHRONIZED
- ```
- 
--Where `<pile>` is the name of the new primary pile, for example `pile-b`.
--
--The switchover is performed smoothly: roles go through `PRIMARY/PROMOTED` and end in `SYNCHRONIZED/PRIMARY`.
--
--## Planned pile disconnection (takedown) {#takedown}
--
--Before maintenance that will make a pile unavailable, take it out of the cluster:
--
--```bash
--{{ ydb-cli }} -y admin cluster bridge takedown --pile <pile>
--```
-+### Planned `PRIMARY` change (switchover) {#switchover}
- 
--If disconnecting the current `PRIMARY`, specify a synchronized replacement:
-+If planned maintenance is scheduled i
-```
-
-**File**: `ydb/docs/en/core/reference/configuration/bridge_config.md` (modified, +3/-20)
-```diff
-@@ -1,10 +1,8 @@
--# bridge_config {#bridge-config}
-+# bridge_config
- 
--The `bridge_config` section configures [piles](../../concepts/glossary.md#pile) and mixed storage for [bridge mode](../../concepts/bridge.md). Use it to declare pile names and optionally allow bridged and ordinary storage pools to coexist.
-+This section describes cluster [piles](../../concepts/glossary.md#pile) for [bridge mode](../../concepts/bridge.md). List the pile names used to bind hosts and other entities. In bridge mode, each host must also specify the corresponding pile name in the `hosts` section (`bridge_pile_name` field); see [Bridge mode specifics](hosts.md#hosts-bridge).
- 
--Each host must specify its pile in the `hosts` section with the `location.bridge_pile_name` field; see [Bridge mode specifics](hosts.md#hosts-bridge). Nodes read `bridge_config` and their own `location` only at startup, so changing these settings requires a rolling restart of static and dynamic nodes.
--
--## Syntax {#syntax}
-+## Syntax
- 
- ```yaml
- bridge_config:
-@@ -13,19 +11,4 @@ bridge_config:
-   - name: <pile_name_2>
-   ...
-   - name: <pile_name_n>
--  enable_non_uniform_storage: <true_or_false>
- ```
--
--Where:
--
--- `<pile_name_1>`, `<pile_name_2>`, and `<pile_name_n>` are unique pile names, for example `pile-a`, `pile-b`, and `pile-c`;
--- `<true_or_false>` is `true` to enable non-uniform storage or `false` to leave it disabled.
--
--## Parameters {#parameters}
--
--| Parameter | Default value | Description |
--| --- | --- | --- |
--| `piles` | `[]` | Lists piles configured in the cluster. A listed pile without allocated resources is `INACTIVE`. |
--| `enable_non_uniform_storage` | `false` | Enables [non-uniform storage](../../concepts/bridge.md#storage-pools), allowing bridged and ordinary pools in one cluster. This setting is irreversible after activation. |
--
--During default conversion of a non-bridged cluster, leave `enable_non_uniform_storage` unset until conversion completes. Conversion with `--skip-storage-pool-conversion` requires it to be `true` before conversion starts. For the procedure, see [Converting a cluster](../../devops/deployment-options/manual/bridge-management.md#convert).
-```
-
-**File**: `ydb/docs/en/core/reference/configuration/domains_config.md` (modified, +0/-3)
-```diff
-@@ -58,7 +58,6 @@ The following [fault tolerance modes](../../concepts/topology.md) are available:
-       encryption_mode: <optional, specify 1 to encrypt data on the disk>
-       erasure_species: <fault tolerance mode name - none, block-4-2, or mirror-3-dc>
-       kind: <storage pool name - specify the same value as above>
--      bridge_mode: <optional, true for a bridged pool or false for an ordinary pool>
-       pdisk_filter:
-       - property:
-         - type: <device type to be compared with the one specified in host_configs.drive.type>
-@@ -67,8 +66,6 @@ The following [fault tolerance modes](../../concepts/topology.md) are available:
-   ...
- ```
- 
--In a bridge cluster with [non-uniform storage](../../concepts/bridge.md#storage-pools), `bridge_mode` selects whether the pool is bridged (`true`) or ordinary (`false`). Set it explicitly when creating pool types: an omitted value is resolved from the cluster's persisted bridge state. This field cannot change the mode of an existing pool; use [`ydb-dstool pool set-bridge-mode`](../ydb-dstool/pool-set-bridge-mode.md) instead.
--
- Each database in the cluster is assigned at least one of the available storage pools selected in the database creation operation. The names of storage pools among those assigned can be used in the `DATA` attribute when defining column groups in YQL operators [`CREATE TABLE`](../../yql/reference/syntax/create_table/family.md)/[`ALTER TABLE`](../../yql/reference/syntax/alter_table/family.md).
- 
- ## State Storage Configuration {#domains-state}
-```
-
-**File**: `ydb/docs/en/core/reference/ydb-cli/_includes/commands.md` (modified, +0/-3)
-```diff
-@@ -22,12 +22,9 @@ Any command can be run from the command line with the `--help` option to get hel
- 
- | Command / subcommand | Brief description |
- | --- | --- |
--| [admin cluster bridge add-pile](../commands/bridge/add-pile.md) | Add an inactive [pile](../../../concepts/glossary.md#pile) and allocate its storage group parts |
--| [admin cluster bridge convert](../commands/bridge/convert.md) | Convert a non-bridged cluster to a single-pile [bridge mode](../../../concepts/bridge.md) cluster |
- | [admin cluster bridge failover](../commands/bridge/failover.md) | Emergency switchover when [pile](../../../concepts/glossary.md#pile) is unavailable |
- | [admin cluster bridge list](../commands/bridge/list.md) | List state of each [pile](../../../concepts/glossary.md#pile) in [bridge mode](../../../concepts/bridge.md) |
- | [admin cluster bridge rejoin](../commands/bridge/rejoin.md) | Returning [pile](../../../concepts/glossary.md#pile) to the [cluster](../../../concepts/glossary.md#cluster) after maintenance or recovery |
--| [admin cluster bridge remove-pile](../commands/bridge/remove-pile.md) | Remove a disconnected [pile](../../../concepts/glossary.md#pile) and delete its storage group parts |
- | [admin cluster bridge switchover](../commands/bridge/switchover.md) | Planned `PRIMARY` [pile](../../../concepts/glossary.md#pile) change |
- | [admin cluster bridge takedown](../commands/bridge/takedown.md) | Taking [pile](../../../concepts/glossary.md#pile) out of the [cluster](../../../concepts/glossary.md#cluster) for maintenance |
- | [admin cluster config fetch](../commands/configuration/cluster/fetch.md) | Getting the current dynamic configuration of the [cluster](../../../concepts/glossary.md#cluster) |
-```
-
-**File**: `ydb/docs/en/core/reference/ydb-cli/commands/bridge/add-pile.md` (removed, +0/-64)
-```diff
-@@ -1,64 +0,0 @@
--# admin cluster bridge add-pile
--
--{% include [feature_enterprise.md](../../../../_includes/feature_enterprise.md) %}
--
--Use the `admin cluster bridge add-pile` command to allocate storage resources for a pile already listed in `bridge_config`. The command creates the pile's parts of bridged storage groups and leaves the pile `DISCONNECTED` so it can then be returned with [rejoin](rejoin.md).
--
--{% include [danger-warning](../_includes/danger-warning.md) %}
--
--General command syntax:
--
--```bash
--{{ ydb-cli }} [global options...] admin cluster bridge add-pile [options...]
--```
--
--- `global options` — [global parameters](../global-options.md) for the CLI;
--- `options` — [subcommand parameters](#options).
--
--View command help:
--
--```bash
--{{ ydb-cli }} admin cluster bridge add-pile --help
--```
--
--## Subcommand parameters {#options}
--
--| Name | Description |
--| --- | --- |
--| `--pile <pile>` | Name of the `INACTIVE` pile to add. |
--
--## Requirements {#requirements}
--
--- Cluster conversion must be complete.
--- The pile and its hosts must be present in the configuration, its static nodes must be running, and [list](list.md) must show it as `INACTIVE`.
--- `system_tablets` node lists must include nodes from the new pile so system tablets can start there after failover.
--- No other pile addition or removal can be pending.
--- The pile must have enough drives and failure domains for static groups, State Storage, and all bridged pools.
--
--For the full procedure, see [Listing and adding a pile](../../../../devops/deployment-options/manual/bridge-management.md#add-pile).
--
--## Examples {#examples}
--
--Add the registered pile `pile-b`:
--
--```bash
--{{ ydb-cli }} -y admin cluster bridge add-pile --pile pile-b
--```
--
--The command starts a pending `ADD` operation. If there is insufficient space, it fails without changing the configuration. A transient BSC error is retained in the pending operation and retried. Immediately after hosts are registered, `group allocation failed` can also mean that BSC has not discovered them yet; retry after a few seconds.
--
--### Verifying the result {#verify}
--
--Check the operation and pile state:
--
--```bash
--{{ ydb-cli }} admin cluster bridge list
--```
--
--Wait for the pending `ADD` operation to clear and for the pile to become `DISCONNECTED`, then return it:
--
--```bash
--{{ ydb-cli }} -y admin cluster bridge rejoin --pile pile-b
--```
--
--The pile synchronizes in the background and becomes `SYNCHRONIZED`. A stuck `ADD` operation can be cancelled with [remove-pile](remove-pile.md).
-```
-
-**File**: `ydb/docs/en/core/reference/ydb-cli/commands/bridge/convert.md` (removed, +0/-63)
-```diff
-@@ -1,63 +0,0 @@
--# admin cluster bridge convert
--
--{% include [feature_enterprise.md](../../../../_includes/feature_enterprise.md) %}
--
--Use the `admin cluster bridge convert` command to convert a non-bridged cluster into a [bridge cluster](../../../../concepts/bridge.md) with one pile. Conversion is irreversible.
--
--{% include [danger-warning](../_includes/danger-warning.md) %}
--
--General command syntax:
--
--```bash
--{{ ydb-cli }} [global options...] admin cluster bridge convert [options...]
--```
--
--- `global options` — [global parameters](../global-options.md) for the CLI;
--- `options` — [subcommand parameters](#options).
--
--View command help:
--
--```bash
--{{ ydb-cli }} admin cluster bridge convert --help
--```
--
--## Subcommand parameters {#options}
--
--| Name | Description |
--| --- | --- |
--| `--skip-storage-pool-conversion` | Leave existing storage pools and groups ordinary. Static and system storage is still converted. Existing pools can later be converted separately with [`ydb-dstool pool set-bridge-mode`](../../../ydb-dstool/pool-set-bridge-mode.md). This option requires `bridge_config.enable_non_uniform_storage: true`. |
--
--## Requirements {#requirements}
--
--- Configuration V2 and self-management must be enabled.
--- Every static and dynamic node must run a supporting build and must have been restarted with a single-pile `bridge_config`.
--- The configuration must contain exactly one pile.
--- With `--skip-storage-pool-conversion`, `bridge_config.enable_non_uniform_storage` must be `true`. With default conversion, it must be unset until conversion completes.
--
--For the complete checklist and configuration examples, see [Converting a cluster](../../../../devops/deployment-options/manual/bridge-management.md#convert).
--
--## Examples {#examples}
--
--Convert the cluster and make every existing pool bridged:
--
--```bash
--{{ ydb-cli }} -y admin cluster bridge convert
--```
--
--Convert only system storage and leave existing pools ordinary:
--
--```bash
--{{ ydb-cli }} -y admin cluster bridge convert --skip-storage-pool-conversion
--```
--
--These are alternative modes. Choose the second for large clusters or when ordinary pools are required, so pool synchronization can be controlled separately.
--
--### Verifying the result {#verify}
--
--Use [list](list.md) to wait until conversion is complete:
--
--```bash
--{{ ydb-cli }} admin cluster bridge list
--```
--
--The conversion is still running while the output contains `Conversion from non-bridged cluster is in progress, piles can't be added yet`. After completion, the single pile is shown as `PRIMARY`. Until then, the pile list cannot change.
-```
-
----
-
-### Incident Patch 2: `430c9eae` (2026-11-04)
-**Commit Message**: Bridge: fix ignored BridgeSyncRateBytesPerSecond setting (#58162)
-
-**File**: `ydb/core/blobstorage/nodewarden/distconf_ut.cpp` (modified, +26/-0)
-```diff
-@@ -11369,6 +11369,32 @@ Y_UNIT_TEST_SUITE(TDeriveStorageConfigBridgeTest) {
-         UNIT_ASSERT_STRING_CONTAINS(error, "mandatory pile name is missing for node 1");
-     }
- 
-+    // node warden takes the rate of its syncer quoter from the derived config, so a value lost here is replaced with the
-+    // default one as soon as distconf provides the config
-+    Y_UNIT_TEST(BridgeSyncRateBytesPerSecond) {
-+        NKikimrConfig::TAppConfig appConfig;
-+        appConfig.MutableNameserviceConfig();
-+        auto *bsFrom = appConfig.MutableBlobStorageConfig();
-+        NKikimrBlobStorage::TStorageConfig config;
-+        const auto& bsTo = *config.MutableBlobStorageConfig();
-+        TString error;
-+
-+        bsFrom->SetBridgeSyncRateBytesPerSecond(123'000'000);
-+        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
-+        UNIT_ASSERT_VALUES_EQUAL(bsTo.GetBridgeSyncRateBytesPerSecond(), 123'000'000);
-+
-+        // zero turns the throttling off, it isn't the same as the value being unset
-+        bsFrom->SetBridgeSyncRateBytesPerSecond(0);
-+        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
-+        UNIT_ASSERT(bsTo.HasBridgeSyncRateBytesPerSecond());
-+        UNIT_ASSERT_VALUES_EQUAL(bsTo.GetBridgeSyncRateBytesPerSecond(), 0);
-+
-+        // the value dropped from the new config doesn't stick from the previous one
-+        bsFrom->ClearBridgeSyncRateBytesPerSecond();
-+        UNIT_ASSERT_C(NStorage::DeriveStorageConfig(appConfig, &config, &error), error);
-+        UNIT_ASSERT(!bsTo.HasBridgeSyncRateBytesPerSecond());
-+    }
-+
-     // parts of static groups get new generations when the pile becomes unsynced; donors and VDisks being destroyed are
-     // separate entries of older generations, which must stay as they are (otherwise they look as active ones)
-     Y_UNIT_TEST(ResetStaticGroupPilePartsKeepsDonors) {
-```
-
-**File**: `ydb/core/blobstorage/nodewarden/node_warden_impl.cpp` (modified, +6/-0)
-```diff
-@@ -1946,6 +1946,12 @@ bool NKikimr::NStorage::DeriveStorageConfig(const NKikimrConfig::TAppConfig& app
-         bsTo->ClearBscSettings();
-     }
- 
-+    if (bsFrom.HasBridgeSyncRateBytesPerSecond()) {
-+        bsTo->SetBridgeSyncRateBytesPerSecond(bsFrom.GetBridgeSyncRateBytesPerSecond());
++void TPartitionFixture::TestReplicateOffsetClampedToStart(bool important)
++{
++    const TConfigParams initialConfig{.Version = 1, .Consumers = {
++        {.Consumer = "reader", .Offset = 5}, {.Consumer = "replication"}}};
++    auto* partition = CreatePartition({.Partition = TPartitionId{0}, .Begin = 5, .End = 10,
++        .Config = initialConfig, .FillHead = true}, initialConfig);
++    Config.SetVersion(2);
++    GetConsumer(Config, "replication")->SetType(NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION);
++    if (important) {
++        GetConsumer(Config, "reader")->SetImportant(true);
 +    } else {
-+        bsTo->ClearBridgeSyncRateBytesPerSecond();
++        GetConsumer(Config, "reader")->SetAvailabilityPeriodMs(TDuration::Days(1).MilliSeconds());
 +    }
++    SendEvent(new TEvPQ::TEvChangePartitionConfig(TopicConverter, Config));
++    WaitCmdWrite();
++    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
++    WaitPartitionConfigChanged();
 +
-     // copy PDiskConfig from DefineHostConfig/DefineBox if this section is managed automatically
-     if (!hasStaticGroupInfo(bsFrom.GetServiceSet()) && config->GetSelfManagementConfig().GetEnabled()) {
-         THashMap<std::tuple<ui32, TString>, NKikimrBlobStorage::TPDiskConfig> pdiskConfigs;
++    TVector<NKikimrPQ::TReplicationDataPayload> payloads;
++    Ctx->Runtime->SetObserverFunc([&](TAutoPtr<IEventHandle>& event) {
++        if (event->GetTypeRewrite() == TEvPersQueue::TEvReplicationData::EventType) {
++            auto& payload = payloads.emplace_back();
++            UNIT_ASSERT(payload.ParseFromString(event->Get<TEvPersQueue::TEvReplicationData>()->Record.GetPayload()));
++            return TTestActorRuntimeBase::EEventAction::DROP;
++        }
++        return TTestActorRuntimeBase::EEventAction::PROCESS;
++    });
++
++    auto event = MakeHolder<TEvPQ::TEvSetClientInfo>(101, "replication", 0, "replication-session",
++        1, 1, 1, Ctx->Edge, TEvPQ::TEvSetClientInfo::ESCI_CREATE_SESSION);
++    event->ReadSessionActor = Ctx->Runtime->AllocateEdgeActor();
++    SendEvent(event.Release());
++    WaitCmdWrite();
++    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
++    WaitProxyResponse({.Cookie = 101});
++    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
++    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 1);
++    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 5);
++
++    // Model retention moving the lower boundary past the saved consumer offset.
++    auto& compactionEncoder = TPartitionTestWrapper::CompactionBlobEncoder(*partition);
++    auto& encoder = compactionEncoder.IsEmpty()
++        ? TPartitionTestWrapper::BlobEncoder(*partition) : compactionEncoder;
++    encoder.StartOffset = 7;
++    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetStartOffset(*partition), 7);
++    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 5);
++
++    // Creating a reader session does not change the pending offset. The effective
++    // offset is raised to StartOffset only when applying the persisted user info.
++    SendCreateSession(102, "reader", "reader-session", 1, 1);
++    WaitCmdWrite();
++    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
++    WaitProxyResponse({.Cookie = 102});
++    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
++    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 7);
++    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
++    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().size(), 1);
++    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 7);
++
++    SendSetOffset(103, "reader", 7, "reader-session");
++    WaitCmdWrite();
++    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
++    WaitProxyResponse({.Cookie = 103});
++    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
++    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
++    Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
++}
++
++Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForAvailabilityPeriod, TPartitionFixture)
++{
++    TestReplicateOffsetClampedToStart(false);
++}
++
++Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForImportantConsumer, TPartitionFixture)
++{
++    TestReplicateOffsetClampedToStart(true);
++}
++
+ void TPartitionFixture::TestRestoreReadSessionActor(bool hasDataRequest)
+ {
+     const TString session = "replication-session";
 ```
 
 ---
 
-### Incident Patch 3: `85452744` (2026-11-04)
-**Commit Message**: Fix bridge discovery waits and unmute metadata tests (#58157)
+### Incident Patch 2: `5e498b4f` (2026-11-05)
+**Commit Message**: Fix workload vector fp8 (#58248)
 
-**File**: `.github/config/muted_ya.txt` (modified, +0/-6)
+**File**: `ydb/library/workload/vector/ut/file_import_ut.cpp` (modified, +23/-12)
 ```diff
-@@ -49,8 +49,6 @@ ydb/core/transfer/ut/functional Transfer.RetentionGapDoesNotFailTransfer
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapCredentialRetry
- ydb/core/tx/replication/service/ut_topic_reader RemoteTopicReader.RetentionGapAfterSessionStartWithLaterMessageReportsDataLoss
- ydb/core/tx/replication/service/ut_topic_reader RemoteTopicReader.RetentionGapBeforeSessionStartWithLaterMessageReportsDataLoss
--ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathAfterSubscriptionWaitsForReplicaQuorum
--ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathWaitsForReplicaQuorum
- ydb/core/tx/schemeshard/ut_restore unittest.[*/*] chunk
- ydb/core/util/ut TCircularOperationQueueTest.ShouldShuffle
- ydb/core/viewer/tests test.py.TestViewer.test_topic_data_cdc
-@@ -314,8 +312,6 @@ ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_disabled
- ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_disabled_enabled
- ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_enabled
- ydb/tests/functional/blobstorage test_vdisks.py.TestTinyVDisks.test_enabled_disabled
--ydb/tests/functional/bridge test_discovery.py.TestDiscovery.test_basic
--ydb/tests/functional/bridge test_discovery.py.TestDiscovery.test_update_piles
- ydb/tests/functional/bridge test_mixed_storage.py.TestMixedStorageDatabases.test_create_grow_and_promote
- ydb/tests/functional/bridge test_state_storage_selfheal.py.TestBridgeStateStorageSelfHeal.test_automatic_selfheal[reassign-primary]
- ydb/tests/functional/bridge test_state_storage_selfheal.py.TestBridgeStateStorageSelfHeal.test_automatic_selfheal[reassign-secondary-r2]
-@@ -336,8 +332,6 @@ ydb/tests/functional/config test_config_migration.py.TestConfigMigrationFromV2Wi
- ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithMixedDiskTypes.test_mixed_disk_types_extracted_during_migration
- ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithSecurityConfig.test_security_config_preserved_during_migration
- ydb/tests/functional/config test_config_migration.py.TestConfigMigrationWithStoragePoolTypes.test_storage_pool_types_extracted_during_migration
--ydb/tests/functional/config test_distconf_reassign_state_storage.py.TestKiKiMRDistConfReassignStateStorageBadCases.test_cluster_change_state_storage
--ydb/tests/functional/config test_distconf_self_heal.py.TestKiKiMRDistConfSelfHealParallelCall2.test
- ydb/tests/functional/dstool test_canonical_requests.py.Test.test_group_take_snapshot
- ydb/tests/functional/federation_test unittest.[*/*] chunk
- ydb/tests/functional/mirror3dc test_mirror3dc.py.TestMirror3dc.test_exclude_one_dc
+@@ -5,6 +5,7 @@
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_binary.h>
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_nested.h>
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_primitive.h>
++#include <contrib/libs/apache/arrow/cpp/src/arrow/csv/api.h>
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/io/memory.h>
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/dictionary.h>
+ #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/reader.h>
+@@ -50,32 +51,44 @@ namespace {
+ 
+ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
+ 
+-    Y_UNIT_TEST_TWIN(CsvFloatListsPreserveLegacyFormat, Directory) {
++    Y_UNIT_TEST_QUAD(CsvFloatListsUseSelectedFormat, Directory, Tsv) {
+         TTempDir directory;
+-        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", "csv");
++        const char* format = Tsv ? "tsv" : "csv";
++        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", format);
+         {
+             TFileOutput output(file.Name());
+-            output << "1,\"[1 0 2.5]\"\n";
++            output << (Tsv ? "1\t[1, 0, 2.5]\n" : "1,\"[1 0 2.5]\"\n");
+         }
+ 
+         for (const auto& vector : VectorCases) {
+             TVectorWorkloadParams params;
+             params.KeyColumns = {"id"};
+             params.EmbeddingColumn = "embedding";
+-            params.VectorOpts.VectorType = vector.Type;
+-            params.VectorOpts.VectorDimension = 3;
+             TWorkloadVectorFilesDataInitializer initializer(params);
+             NLastGetopt::TOpts opts;
+             initializer.ConfigureOpts(opts);
+-            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", "csv"};
++            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
++            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", format,
++                "--vector-type", vector.Type, "--vector-dimension", "3"};
+             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
+             const auto generators = initializer.GetBulkInitialData();
+             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
+             const auto portions = generators.front()->GenerateDataPortion();
+             UNIT_ASSERT_VALUES_EQUAL(portions.size(), 1);
+             auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
+             UNIT_ASSERT(csv);
+-            UNIT_ASSERT_C(csv->Data.Contains(FloatEmbedding), vector.Type);
++            const auto input = std::make_shared<arrow::io::BufferReader>(arrow::util::string_view(csv->Data.data(), csv->Data.size()));
++            auto convertOptions = arrow::csv::ConvertOptions::Defaults();
++            convertOptions.column_types["embedding"] = arrow::binary();
++            auto parseOptions = arrow::csv::ParseOptions::Defaults();
++            parseOptions.newlines_in_values = true;
++            const auto reader = arrow::csv::TableReader::Make(arrow::io::default_io_context(), input,
++                arrow::csv::ReadOptions::Defaults(), parseOptions, convertOptions).ValueOrDie();
++            const auto table = reader->Read().ValueOrDie();
++            UNIT_ASSERT_VALUES_EQUAL(table->num_rows(), 1);
++            const auto column = std::static_pointer_cast<arrow::BinaryArray>(table->GetColumnByName("embedding")->chunk(0));
++            const auto bytes = column->GetView(0);
++            UNIT_ASSERT_VALUES_EQUAL_C(TStringBuf(bytes.data(), bytes.size()), vector.Bytes, vector.Type);
+             UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
+         }
+     }
+@@ -114,12 +127,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
+             TVectorWorkloadParams params;
+             params.KeyColumns = {"id"};
+             params.EmbeddingColumn = "embedding";
+-            params.VectorOpts.VectorType = vector.Type;
+-            params.VectorOpts.VectorDimension = 3;
+             TWorkloadVectorFilesDataInitializer initializer(params);
+             NLastGetopt::TOpts opts;
+             initializer.ConfigureOpts(opts);
+-            const char* argv[] = {"files", "--input", file.Name().c_str()};
++            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
++            const char* argv[] = {"files", "--input", file.Name().c_str(), "--vector-type", vector.Type, "--vector-dimension", "3"};
+             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
+             const auto generators = initializer.GetBulkInitialData();
+             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
+@@ -136,8 +148,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
+             const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
+             UNIT_ASSERT(column);
+             const auto bytes = column->GetView(0);
+-            cons
 ```
 
-**File**: `.github/config/muted_ya_asan.txt` (modified, +0/-2)
+**File**: `ydb/library/workload/vector/ut/float8_ut.cpp` (modified, +4/-4)
 ```diff
-@@ -57,8 +57,6 @@ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRes
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery+NewFirst
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery-NewFirst
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
--ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathAfterSubscriptionWaitsForReplicaQuorum
--ydb/core/tx/scheme_board/ut_populator TPopulatorQuorumTest.ColdDeletionWithPathWaitsForReplicaQuorum
- ydb/core/tx/schemeshard/ut_stats TStoragePoolsStatsPersistence.DatabaseUsageAfterRestartDuringMoveWithShardIdxStats
- ydb/library/actors/interconnect/ut DynamicProxy.RaceCheck10
- ydb/library/nmslib/test/run_test_integr exectest.run[test_integr]
+@@ -48,14 +48,14 @@ Y_UNIT_TEST_SUITE(VectorWorkload) {
+     Y_UNIT_TEST_QUAD(Float8BulkData, E5M2, Prefixed) {
+         using T = std::conditional_t<E5M2, TFloat8E5M2, TFloat8E4M3>;
+         TVectorWorkloadParams params;
+-        params.VectorOpts.VectorType = E5M2 ? "float8_e5m2" : "float8_e4m3";
+-        params.VectorOpts.VectorDimension = 67;
+-        params.KmeansTreePrefixed = Prefixed;
+         params.BulkSize = 3;
+         TWorkloadVectorGenerateDataInitializer initializer(params);
+         NLastGetopt::TOpts opts;
+         initializer.ConfigureOpts(opts);
+-        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42"};
++        params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
++        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42",
++            "--vector-type", E5M2 ? "float8_e5m2" : "float8_e4m3", "--vector-dimension", "67",
++            "--kmeans-tree-prefixed", Prefixed ? "1" : "0"};
+         NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
+         const auto generators = initializer.GetBulkInitialData();
+         UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
 ```
 
-**File**: `ydb/tests/functional/bridge/test_discovery.py` (modified, +26/-18)
+**File**: `ydb/library/workload/vector/ut/int4_ut.cpp` (modified, +7/-4)
 ```diff
-@@ -1,4 +1,5 @@
- from common import BridgeKiKiMRTest
-+from ydb.tests.library.common.wait_for import retry_assertions
+@@ -145,6 +145,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
+     }
  
- from ydb.public.api.grpc.ydb_discovery_v1_pb2_grpc import DiscoveryServiceStub
- from ydb.public.api.protos.ydb_bridge_common_pb2 import PileState
-@@ -13,13 +14,13 @@
+     Y_UNIT_TEST_QUAD(Int4CsvImport, Signed, Directory) {
++        using T = NVectorDistance::NPrivate::TInt4<Signed>;
+         TTempDir directory;
+         auto file = TTempFileHandle::InDir(directory.Path(), "int4", "csv");
+         {
+@@ -168,14 +169,15 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
+         auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
+         UNIT_ASSERT(csv);
+         TStringBuilder expected;
+-        NKnnVectorSerialization::TSerializer<float> serializer(&expected.Out);
++        NKnnVectorSerialization::TSerializer<T> serializer(&expected.Out);
+         for (int value : {-9, 0, 19}) { serializer.HandleElement(value); }
+         serializer.Finish();
+         UNIT_ASSERT_STRING_CONTAINS(csv->Data, expected);
+         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
+     }
  
- class TestDiscovery(BridgeKiKiMRTest):
-     def list_endpoints(self):
--        channel = grpc.insecure_channel(self.cluster.nodes[1].endpoint)
--        stub = DiscoveryServiceStub(channel)
--        request = discovery.ListEndpointsRequest(database="/Root")
--        response = stub.ListEndpoints(request)
-+        with grpc.insecure_channel(self.cluster.nodes[1].endpoint) as channel:
-+            stub = DiscoveryServiceStub(channel)
-+            request = discovery.ListEndpointsRequest(database="/Root")
-+            response = stub.ListEndpoints(request, timeout=self.bridge_rpc_timeout)
+     Y_UNIT_TEST_TWIN(Int4ParquetImport, Signed) {
++        using T = NVectorDistance::NPrivate::TInt4<Signed>;
+         auto file = TTempFileHandle::InCurrentDir("int4", "parquet");
+         arrow::UInt64Builder ids;
+         UNIT_ASSERT(ids.Append(1).ok());
+@@ -223,10 +225,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
+         const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
+         UNIT_ASSERT(column);
+         const auto bytes = column->GetView(0);
+-        NKnnVectorSerialization::TDeserializer<float> decoder(TStringBuf(bytes.data(), bytes.size()));
+-        const float expected[] = {-9.0f, 0.0f, 19.0f};
++        CheckInt4Embedding<T>(TStringBuf(bytes.data(), bytes.size()), 3);
++        NKnnVectorSerialization::TDeserializer<T> decoder(TStringBuf(bytes.data(), bytes.size()));
++        const int expected[] = {T::MinValue, 0, T::MaxValue};
+         size_t index = 0;
+-        decoder.DoDeserialize([&](const float& value) { UNIT_ASSERT_VALUES_EQUAL(value, expected[index++]); });
++        decoder.DoDeserialize([&](const T& value) { UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(value), expected[index++]); });
+         UNIT_ASSERT_VALUES_EQUAL(index, 3);
+         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
+     }
+```
+
+**File**: `ydb/library/workload/vector/vector_data_generator.cpp` (modified, +34/-9)
+```diff
+@@ -40,19 +40,44 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
+ private:
+     const std::shared_ptr<IBulkDataGenerator> InnerDataGenerator;
+     const TString EmbeddingColumnName;
++    const TString VectorType;
  
-         result = discovery.ListEndpointsResult()
--        response.operation.result.Unpack(result)
-+        assert_that(response.operation.result.Unpack(result), str(response))
-         return result, response.operation.status
+ private:
+-    template <typename TProducer>
++    template <typename T, typename TProducer>
+     TString SerializeEmbedding(TProducer&& produce) const {
+-        // Preserve file-import compatibility: float lists use FloatVector for every
+-        // requested vector type, including INT4/UINT4. Binary embeddings are passed through.
+         TStringBuilder buffer;
+-        NKnnVectorSerialization::TSerializer<float> serializer(&buffer.Out);
++        NKnnVectorSerialization::TSerializer<T> serializer(&buffer.Out);
+         produce([&](float value) { serializer.HandleElement(value); });
+         serializer.Finish();
+         return TString(buffer);
+     }
  
-     def check_endpoints(self, result):
-@@ -28,20 +29,28 @@ def check_endpoints(self, result):
-         for endpoint in result.endpoints:
-             assert_that(endpoint.bridge_pile_name, is_(expected_pile_names[endpoint.node_id]))
- 
-+    def wait_for_discovery(self, expected_states):
-+        def check():
-+            try:
-+                result, status = self.list_endpoints()
-+            except grpc.RpcError as error:
-+                if error.code() not in (grpc.StatusCode.UNAVAILABLE, grpc.StatusCode.DEADLINE_EXCEEDED):
-+                    raise
-+                raise AssertionError(f"Discovery is not ready: {error}") from error
-+            assert_that(status, is_(StatusIds.SUCCESS))
-+            self.check_endpoints(result)
-+            self.check_states(result, expected_states)
++    template <typename TProducer>
++    TString SerializeEmbedding(TProducer&& produce) const {
++        if (VectorType == "float") {
++            return SerializeEmbedding<float>(produce);
++        } else if (VectorType == "float16") {
++            return SerializeEmbedding<TFloat16>(produce);
++        } else if (VectorType == "bfloat16") {
++            return SerializeEmbedding<TBFloat16>(produce);
++        } else if (VectorType == "float8_e4m3") {
++            return SerializeEmbedding<TFloat8E4M3>(produce);
++        } else if (VectorType == "float8_e5m2") {
++            return SerializeEmbedding<TFloat8E5M2>(produce);
++        } else if (VectorType == "uint4") {
++            return SerializeEmbedding<TUint4>(produce);
++        } else if (VectorType == "int4") {
++            return SerializeEmbedding<TInt4>(produce);
++        } else if (VectorType == "uint8") {
++            return SerializeEmbedding<uint8_t>(produce);
++        } else if (VectorType == "int8") {
++            return SerializeEmbedding<int8_t>(produce);
++        } else if (VectorType == "bit") {
++            return SerializeEmbedding<bool>(produce);
++        }
++        ythrow yexception() << "Unknown vector type: " << VectorType;
++    }
 +
-+        retry_assertions(check, timeout_seconds=120, step_seconds=0.5)
+     static std::pair<std::shared_ptr<arrow::Schema>, std::shared_ptr<arrow::RecordBatch>> DeserializeArrow(TDataPortion::TArrow* data) {
+         arrow::ipc::DictionaryMemo dictionary;
+ 
+@@ -247,10 +272,11 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
+     }
+ 
+ public:
+-    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName)
++    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName, const TString vectorType)
+         : IBulkDataGenerator(innerDataGenerator->GetName(), innerDataGenerator->GetSize())
+         , InnerDataGenerator(innerDataGenerator)
+         , EmbeddingColumnName(embeddingColumnName)
++        , VectorType(vectorType)
+     {}
+ 
+     virtual TDataPortions GenerateDataPortion() override {
+@@ -572,7 +598,7 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
+                     VectorParams.GetColumns(),
+                     TDataGenerator::EPortionSizeUnit::Line
+                 );
+-                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName));
++                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType));
+             }
+         }
+         return result;
+@@ -594,13 +620,12 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
+     );
+ 
+     return {
+-        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName)
++        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType)
+     };
+ }
+ 
+ TWorkloadVectorGenerateDataInitializer::TWorkloadVectorGenerateDataInitializer(const TVectorWorkloadParams& params)
+     : TWorkloadVectorDataInitializerBase("generator", "Generate random vectors and build a vector index", params)
+-    , VectorOpts(params.VectorOpts)
+ { }
+ 
+ void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& opts) {
+@@ -621,7 +646,7 @@ void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& o
+ 
+ TBulkDataGeneratorList TWorkloadVectorGenerateDataInitializer::DoGetBulkInitialData() {
+     Cout << "Using random seed: " << RandomSeed << Endl;
+-    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
++    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorParams.VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
+ }
+ 
+ } // namespace NYdbWorkload
+```
+
+**File**: `ydb/library/workload/vector/vector_data_generator.h` (modified, +0/-1)
+```diff
+@@ -32,7 +32,6 @@ class TWorkloadVectorFilesDataInitializer : public TWorkloadVectorDataInitialize
+ 
+ class TWorkloadVectorGenerateDataInitializer : public TWorkloadVectorDataInitializerBase {
+ private:
+-    const NVector::TVectorOpts& VectorOpts;
+     size_t RowCount = 10000;
+     size_t PrefixCount = 100;
+     uint32_t RandomSeed = 42;
+```
+
+---
+
+### Incident Patch 3: `00e6b742` (2026-11-05)
+**Commit Message**: fix incorrect storage pool usage count when topics were ignored (#57650)
+
+**File**: `ydb/core/viewer/viewer_tenantinfo.h` (modified, +9/-4)
+```diff
+@@ -979,20 +979,25 @@ class TJsonTenantInfo : public TViewerPipeClient {
+                         }
+ 
+                         THashMap<NKikimrViewer::TStorageUsage::EType, ui64> tablesStorageByType;
++                        const auto guessedStorageType = GuessStorageType(domainDescription);
+ 
+                         for (const auto& poolUsage : domainDescription.GetDiskSpaceUsage().GetStoragePoolsUsage()) {
+                             auto type = GetStorageType(poolUsage.GetPoolKind());
+                             tablesStorageByType[type] += poolUsage.GetTotalSize();
+                         }
+ 
+                         if (tablesStorageByType.empty() && domainDescription.HasDiskSpaceUsage()) {
+-                            tablesStorageByType[GuessStorageType(domainDescription)] =
+-                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize()
+-                                + domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
++                            tablesStorageByType[guessedStorageType] =
++                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize();
++                        }
 +
-     def test_basic(self):
--        result, status = self.list_endpoints()
--        assert_that(status, is_(StatusIds.SUCCESS))
--        self.check_endpoints(result)
--        self.check_states(result, {
-+        self.wait_for_discovery({
-             "r1": PileState.PRIMARY,
-             "r2": PileState.SYNCHRONIZED,
-         })
++                        if (domainDescription.HasDiskSpaceUsage()) {
++                            tablesStorageByType[guessedStorageType] +=
++                                domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
+                         }
  
-     def test_update_piles(self):
--        result, status = self.list_endpoints()
--        assert_that(status, is_(StatusIds.SUCCESS))
--        self.check_endpoints(result)
--        self.check_states(result, {
-+        self.wait_for_discovery({
-             "r1": PileState.PRIMARY,
-             "r2": PileState.SYNCHRONIZED,
-         })
-@@ -50,12 +59,11 @@ def test_update_piles(self):
-             PileState(pile_name="r2", state=PileState.PROMOTED),
-         ]
-         self.update_cluster_state(self.bridge_client, updates)
--        self.wait_for_cluster_state(self.bridge_client, {"r1": PileState.PRIMARY, "r2": PileState.PROMOTED})
-+        self.wait_for_cluster_state(
-+            self.bridge_client, {"r1": PileState.PRIMARY, "r2": PileState.PROMOTED}, timeout_seconds=120,
-+        )
+                         if (storageQuotasByType.empty()) {
+-                            auto& quotas = storageQuotasByType[GuessStorageType(domainDescription)];
++                            auto& quotas = storageQuotasByType[guessedStorageType];
+                             quotas.HardQuota = domainDescription.GetDatabaseQuotas().data_size_hard_quota();
+                             quotas.SoftQuota = domainDescription.GetDatabaseQuotas().data_size_soft_quota();
+                         }
+```
+
+**File**: `ydb/core/viewer/viewer_ut.cpp` (modified, +32/-2)
+```diff
+@@ -1258,7 +1258,9 @@ Y_UNIT_TEST_SUITE(Viewer) {
+     }
  
--        result, status = self.list_endpoints()
--        assert_that(status, is_(StatusIds.SUCCESS))
--        self.check_endpoints(result)
--        self.check_states(result, {
-+        self.wait_for_discovery({
-             "r1": PileState.PRIMARY,
-             "r2": PileState.PROMOTED,
-         })
+     void CheckStorageLimitWithGroupSizeInUnits(bool enforcedSlotSize, bool cluster = false,
+-            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false)
++            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false,
++            ui64 tablesSize = 0, ui64 topicsSize = 0, std::optional<TString> poolUsageKind = "ssd",
++            TString expectedTablesStorageType = "SSD")
+     {
+         TPortManager tp;
+         auto settings = TServerSettings(tp.GetPort(2134))
+@@ -1297,6 +1299,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
+                         pool->SetName(kind);
+                         pool->SetKind(kind);
+                     }
++                    if (tablesSize || topicsSize) {
++                        auto* diskSpaceUsage = domain->MutableDiskSpaceUsage();
++                        if (poolUsageKind) {
++                            auto* poolUsage = diskSpaceUsage->AddStoragePoolsUsage();
++                            poolUsage->SetPoolKind(*poolUsageKind);
++                            poolUsage->SetTotalSize(tablesSize);
++                        } else {
++                            diskSpaceUsage->MutableTables()->SetTotalSize(tablesSize);
++                        }
++                        diskSpaceUsage->MutableTopics()->SetDataSize(topicsSize);
++                    }
+                     break;
+                 }
+                 case NSysView::TEvSysView::EvGetStoragePoolsResponse: {
+@@ -1412,10 +1425,10 @@ Y_UNIT_TEST_SUITE(Viewer) {
+         const auto& tenants = json["TenantInfo"].GetArray();
+         UNIT_ASSERT_VALUES_EQUAL(tenants.size(), 1);
+         const auto& tenant = tenants[0];
++        const auto& storage = tenant["DatabaseStorage"].GetArray();
+         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedLimit"].GetString(),
+             ToString(saturatedQuota ? Max<ui64>() : fixedQuota + (enforcedSlotSize ? 500 : 600)));
+         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedSize"].GetString(), "50");
+-        const auto& storage = tenant["DatabaseStorage"].GetArray();
+         UNIT_ASSERT_VALUES_EQUAL(storage.size(), 2);
+         for (const auto& usage : storage) {
+             const auto& type = usage["Type"].GetString();
+@@ -1426,6 +1439,12 @@ Y_UNIT_TEST_SUITE(Viewer) {
+             UNIT_ASSERT_VALUES_EQUAL(usage["Limit"].GetString(), expectedLimit);
+             UNIT_ASSERT_VALUES_EQUAL(usage["Size"].GetString(), type == "SSD" ? "20" : "30");
+         }
++        if (tablesSize || topicsSize) {
++            const auto& tablesStorage = tenant["TablesStorage"].GetArray();
++            UNIT_ASSERT_VALUES_EQUAL(tablesStorage.size(), 1);
++            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Type"].GetString(), expectedTablesStorageType);
++            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Size"].GetString(), ToString(tablesSize + topicsSize));
++        }
+     }
+ 
+     Y_UNIT_TEST(TenantInfoStorageLimitWithGroupSizeInUnits)
+@@ -1438,6 +1457,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
+         CheckStorageLimitWithGroupSizeInUnits(true);
+     }
+ 
++    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithPoolUsage)
++    {
++        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 100, 200);
++    }
++
++    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithoutPoolUsage)
++    {
++        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 0, 200,
++            std::nullopt);
++    }
++
+     Y_UNIT_TEST(ClusterStorageLimitWithGroupSizeInUnits)
+     {
+         CheckStorageLimitWithGroupSizeInUnits(false, true);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58217** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58215** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #58209** (2026-11-05): Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (@alexvru)
-- **PR #58208** (2026-11-05): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #58207** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #58205** (2026-11-05): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #58339** (2026-11-05): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #58329** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58328** (2026-11-05): Sync branches 261105-2001: stable-26-3-1 to nbs-26-3-1 (@ydbot)
+- **PR #58323** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58321** (closed): Sync branches 261105-1740: rightlib to main (@ydbot)
+- **PR #58319** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -2646,33 +2596,29 @@ Co-authored-by: Rutkovsky Alexander <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209)
+## X. offsets replication for consumers with availability period (#58279)
 
 **RULE**:
-When implementing operations in `ydb/docs/en/core/concepts/bridge.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/persqueue/pqtablet/partition/partition.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c50d2c3`: Revert "Document bridge cluster lifecycle and mixed storage (#57823)" (#58209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5da12a8a`: offsets replication for consumers with availability period (#58279). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/docs/en/core/concepts/bridge.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/persqueue/pqtablet/partition/partition.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-This article describes a special operating mode of the {{ ydb-short-name }} cluster in which data is stored with synchronous replication between multiple parts of the cluster called [pile](glossary.md#pile).
-The bridge mode is an extension on top of the basic distributed storage modes: each pile is built using one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config) (for example, `mirror-3-dc` or `block-4-2`) and is fault-tolerant on its own; bridge adds synchronous replication between piles on top of that, plus managed failover/switchover of load between them. This provides an extra layer of fault tolerance on top of the chosen topologies. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements — for example, when you need to remain available if three out of four data centers fail.
-In bridge mode, cluster nodes are split into several [piles](glossary.md#pile) (typically one pile per datacenter). If one of the piles fails, the cluster becomes unavailable until the command to disable that pile is executed. After it is disabled, t
+            const auto previousOffset = userInfo.Offset;
+            const bool offsetHasChanged = userInfo.Offset != previousOffset;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-Bridge mode is a {{ ydb-short-name }} cluster operating mode that stores data with synchronous replication between multiple parts of the cluster called [piles](glossary.md#pile).
-Bridge mode extends the basic distributed storage modes: each pile uses one of the {{ ydb-short-name }} [operating modes](topology.md#cluster-config), for example `mirror-3-dc` or `block-4-2`, and is fault-tolerant on its own. Bridge adds synchronous replication between piles and managed failover and switchover of load between them. This provides an extra layer of fault tolerance on top of the selected topology. Bridge mode requires more hardware and is more complex to operate; it is especially useful for clusters deployed across two data centers and for systems with higher availability requirements, for example when availability must survive three out of four data centers failing.
-In bridge mode, cluster nodes are split into several [piles](glossary.md#pile), typically one pile per data center. If a pile fails, bridged storage becomes unavailable until the command to disable that pile is executed. After it is disabled, the cluster resumes operation.
-{{ ydb-short-name }} supports an arbitrary number of pil
+            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c50d2c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5da12a8a` are properly handled with clean fallback behavior.

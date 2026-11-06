@@ -20410,5 +20410,62 @@
     "qualityScore": 17873,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-05T13:51:11.147Z"
+  },
+  {
+    "name": "CozyClay",
+    "fullName": "HaD0Yun/CozyClay",
+    "url": "https://github.com/HaD0Yun/CozyClay",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open source previs software in the browser: block a scene, pose characters, author camera moves and cuts, then take the same shots to an AI video model.",
+    "stars": 1530,
+    "forks": 179,
+    "openIssues": 14,
+    "language": "JavaScript",
+    "qualityScore": 1097,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T17:44:02.307Z"
+  },
+  {
+    "name": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "fullName": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ccore/Qwen3.5-4B-GLB-3D-Coder (171 likes, 12206 downloads)",
+    "likes": 171,
+    "downloads": 12206,
+    "qualityScore": 3710,
+    "discoveredAt": "2026-11-05T19:35:42.716Z"
+  },
+  {
+    "name": "claude-code-templates",
+    "fullName": "davila7/claude-code-templates",
+    "url": "https://github.com/davila7/claude-code-templates",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source registry and CLI for Claude Code components: agents, commands, skills, hooks, MCPs, settings and mods",
+    "stars": 33145,
+    "forks": 3869,
+    "openIssues": 467,
+    "language": "Python",
+    "qualityScore": 18183,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T21:36:05.441Z"
+  },
+  {
+    "name": "a2ui",
+    "fullName": "a2ui-project/a2ui",
+    "url": "https://github.com/a2ui-project/a2ui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Open-source generative UI framework: agents stream declarative JSON, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.",
+    "stars": 16985,
+    "forks": 1368,
+    "openIssues": 540,
+    "language": "TypeScript",
+    "qualityScore": 9353,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-05T22:45:57.117Z"
   }
 ]

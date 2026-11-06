@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source**: github ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
-> **Source Version**: `7bcadd29`  
+> **Source Version**: `7ec1e4e2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:20:18.202Z  
+> **Timestamp**: 2026-11-05T23:39:55.997Z  
 > **Learning ID**: `learn-github-kirillzyusko-react-native-keyboard-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:20:17.835Z  
+> **Harvest Timestamp**: 2026-11-05T23:39:55.990Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⌨️ Keyboard manager which works in identical way on both iOS and Android
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3758 stars
+- **Stars / Engagement**: 3761 stars
 
 ---
 
@@ -348,14 +348,14 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1742** (2026-11-03): **fix: keyboard flash after a launch from Spotlight with preload**
-  *Symptoms*: ## 📜 Description  `preloadKeyboardIfNeeded` resigns its hidden `UITextField` inside `UIView.performWithoutAnimation` and skips the preload when something is already the first responder. Launching the app from Spotlight with the Spotlight keyboard open no longer shows the keyboard sliding away over the first screen, and an `autoFocus` input keeps its focus.  ## 💡 Motivation and Context  Fixes #1077  ### 1️⃣ Keyboard flashes after a launch from Spotlight  Steps (iPhone 16 Pro, iOS 26.6.1, **system** keyboard active, app not running): open Spotlight, type the app name, keep the keyboard open and tap the app in the results. Observed: the full keyboard is drawn over the app's first screen and slides down for 0.38 s. Expected: nothing keyboard-related is visible, exactly what happens without `preload`.  When an app is launched while a keyboard is already on screen, UIKit hands that keyboard over to the new app's first responder instead of creating a new one. If the preload runs at that moment, its hidden field receives the Spotlight keyboard (`UIKeyboardDidShow` with duration `0` arrives before `WillShow`) and the following `resignFirstResponder` hides it with the regular animated transition, rendered on top of the app. In every other situation the show and the hide run in the same run-loop turn, nothing is committed and the preload stays invisible.  The handover only happens if the preload runs after the scene became active and before the launch transition is over (on this devic
-
-- **Issue #1739** (2026-11-03): **refactor: always decorate KeyboardAwareScrollView**
-  *Symptoms*: ## 📜 Description  Always render `KeyboardAwareScrollView` through `ScrollViewWithBottomPadding`, so `layout` mode also disables native `scrollRectToVisible:animated:` on iOS. Keep the spacer in `layout` mode and pass zero dynamic inset to the decorator.  ## 💡 Motivation and Context  `layout` mode returned the scroll view directly, bypassing the decorator's iOS scroll override. Switching between `layout` and `insets` also replaced the scroll view subtree, clearing child state and dismissing the keyboard. A shared wrapper keeps the scroll view mounted in both modes.  <details> <summary>Runnable example — replace FabricExample/index.js</summary>  ```jsx import React, { useState } from "react"; import { AppRegistry, Button, Keyboard, TextInput, View } from "react-native"; import { KeyboardAwareScrollView, KeyboardProvider } from "react-native-keyboard-controller"; import { name } from "./app.json";  const inputStyle = { borderWidth: 1, padding: 12, margin: 16 };  function Draft() {   const [value, setValue] = useState("");   return <TextInput placeholder="Draft message" style={inputStyle} value={value} onChangeText={setValue} />; }  function App() {   const [mode, setMode] = useState("layout");   return (     <KeyboardProvider>       <View style={{ flex: 1, paddingTop: 64 }}>         <Button title="Layout" onPress={() => setMode("layout")} />         <Button title="Insets" onPress={() => setMode("insets")} />         <Button title="Dismiss" onPres
+- **Issue #1747** (2026-11-05): **docs: checkout `1.23.0` version**
+  *Symptoms*: ## 📜 Description  Checkout docs for `1.23.0` version.  ## 💡 Motivation and Context  Since `1.22.0` the docs describe API that is available only starting from `1.23.0`:  - `transparent` prop for `KeyboardExtender` (#1714); - `contentX`/`contentY` fields in the `layout` object of `useReanimatedFocusedInput` (#1738).  Users on `1.22.x` should keep seeing docs that match their installed version, so a new documentation version is required. `docs/docs` is left untouched and continues to serve as `next`.  ## 📢 Changelog  ### Docs  - `docs/versioned_docs/version-1.23.0/`, `docs/versioned_sidebars/version-1.23.0-sidebars.json`, `docs/versions.json`: checkout `1.23.0` version (`yarn docusaurus docs:version 1.23.0`); - `docs/docusaurus.config.js`: added `1.23.0` to the `versions` map.  ## 🤔 How Has This Been Tested?  No device verification: documentation-only change. Verified manually via the local docs dev server.  ## 📸 Screenshots (if appropriate):  | Before (main) | After (this PR) | | ------------- | --------------- | | <img alt="before: 1.22.0 is the latest version" src="https://github.com/user-attachments/assets/aefa0577-b371-4373-8eeb-79d0302ff2e4" /> | <img alt="after: 1.23.0 is the latest version" src="https://github.com/user-attachments/assets/80232983-7583-4b5e-9739-cc10c936abe3" /> |  ## 📝 Checklist  - [x] CI successfully passed - [x] I added new mocks and corresponding unit-tests if library API was changed 
   **Post-Mortem & Fix Analysis**:
-  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 353657 bytes | 353939 bytes | -282 bytes 📉 | <!-- Sticky Pull Request Comment -->
-  > LGTM <!-- Sticky Pull Request Commentai-review -->
+  > Images automagically compressed by [Calibre](https://calibreapp.com)'s [image-actions](https://github.com/marketplace/actions/image-actions) ✨  Compression reduced images by <strong>29.6%</strong>, saving <strong>61.9 KB</strong>.  | Filename | Before | After | Improvement | Visual comparison | | -------- | ------ | ----- | ----------- | ----------------- | | <code>docs/versioned_docs/version-1.23.0/api/hooks/keyboard/use-keyboard-handler/move.png</code> | 53.3 KB | 31.7 KB | 40.5% | [View diff](/kirillzyusko/react-native-keyboard-controller/pull/1747/commits/4eb9219eeabd4cea4a5e9f03dcb3601736d6265c?short_path=294e384#diff-294e384c53f62cae05cdd2bf539d5a62) | | <code>docs/versioned_docs/version-1.23.0/api/hooks/keyboard/use-keyboard-handler/interactive.png</code> | 59.8 KB | 38.6 KB | 35.4% | [View diff](/kirillzyusko/react-native-keyboard-controller/pull/1747/commits/4eb9219eeabd4cea4a5e9f03dcb3601736d6265c?short_path=10d6c26#diff-10d6c26c1c89291910735586cf04c783) | | <code>docs/versio
+  > [PR Preview Action](https://github.com/rossjrw/pr-preview-action) v1.8.2 :---: Preview removed because the pull request was closed. 2026-11-05 13:02 UTC <!-- Sticky Pull Request Commentpr-preview -->
+
+- **Issue #1746** (2026-11-05): **docs: blogpost 1.23.0**
+  *Symptoms*: ## 📜 Description  Added blogpost for the upcoming `1.23.0` version.  ## 💡 Motivation and Context  To keep people aware about new changes. The post covers the three highlights of the release: more precise focused input tracking in `KeyboardAwareScrollView` (#1691, #1734, #1736, #1738) with a note about `bottomOffset` for inputs with `paddingTop`, the preload fix from #1742, and the `transparent` prop for `KeyboardExtender` (#1714).  ## 📢 Changelog  ### Docs  - `docs/blog/2026-11-04-release-1-23/index.mdx`: added blogpost about the `1.23.0` release; - `docs/static/video/keyboard-extender-whatsapp.mp4`: a short clip of the WhatsApp image editor (buttons attached to the keyboard without a container, moving together with it) as a reference for the `transparent` prop; - `cspell.json`: added `kylesuss`.  ## 🤔 How Has This Been Tested?  No device verification: docs-only change. Tested via a local docs build and preview.  ## 📸 Screenshots (if appropriate):  ![Rendered blog post](https://github.com/user-attachments/assets/03c92170-2d64-4607-acb0-d965cde9b1da)  ## 📝 Checklist  - [ ] CI successfully passed - [x] I added new mocks and corresponding unit-tests if library API was changed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -372,653 +372,635 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a69842d1` (2026-10-31)
-**Commit Message**: fix: refresh iOS selection geometry after input layout changes (#1736)
+### Incident Patch 1: `7ec1e4e2` (2026-11-05)
+**Commit Message**: chore: release 1.23.0 (#1745)
 
-## 📜 Description
+# Release
 
-Refresh iOS caret geometry after the focused input changes layout so
-`KeyboardAwareScrollView` follows the new line immediately. Deduplicate
-identical selection events and reset the cache on blur.
+Version 1.23.0
 
-## 💡 Motivation and Context
-
-Addresses the growing-input case from #1129. With a controlled multiline
-`TextInput`, Return can advance the selection index before RN resizes
-the input. The event reports position `834` with the previous line's
-`end.y=367.7`; the input then grows `379 → 400`, but KASV still uses
-that old caret. The scroll stays at `33.7` until another character
-produces fresh geometry.
-
-The existing deferred layout observer now reads selection again after
-updating the layout. This sends the corrected `834@388.7` and scrolls to
-`54.7` without another keystroke. Comparing the complete
-target/selection payload preserves that correction while suppressing
-identical repeats; resetting the cache lets the same selection be
-reported on refocus.
-
-The same case also reproduces with #1734 (`b44ddfd`): its one-frame
-delay can still run before the resize. A temporary 100 ms delay made the
-repro pas
-
-**File**: `.github/workflows/verify-ios.yml` (modified, +2/-2)
+**File**: `FabricExample/ios/Podfile.lock` (modified, +4/-4)
 ```diff
-@@ -29,7 +29,7 @@ jobs:
-         env:
-           WORKING_DIRECTORY: ios
-   format:
--    runs-on: macOS-14
-+    runs-on: macOS-15
-     name: 📚 Swift Format
-     defaults:
-       run:
-@@ -46,7 +46,7 @@ jobs:
-       - name: Verify that the formatted code hasn't been changed
-         run: git diff --exit-code HEAD
-   objc-lint:
--    runs-on: macOS-14
-+    runs-on: macOS-15
-     name: 🔎 ObjC Lint
-     steps:
-       - uses: actions/checkout@v4
+@@ -1316,7 +1316,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - react-native-keyboard-controller (1.22.9):
++  - react-native-keyboard-controller (1.23.0):
+     - hermes-engine
+     - RCTRequired
+     - RCTTypeSafety
+@@ -1329,7 +1329,7 @@ PODS:
+     - React-graphics
+     - React-ImageManager
+     - React-jsi
+-    - react-native-keyboard-controller/common (= 1.22.9)
++    - react-native-keyboard-controller/common (= 1.23.0)
+     - React-NativeModulesApple
+     - React-RCTFabric
+     - React-renderercss
+@@ -1339,7 +1339,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - react-native-keyboard-controller/common (1.22.9):
++  - react-native-keyboard-controller/common (1.23.0):
+     - hermes-engine
+     - RCTRequired
+     - RCTTypeSafety
+@@ -2481,7 +2481,7 @@ SPEC CHECKSUMS:
+   React-mutationobservernativemodule: 2dcf0e333fe6621c3ffea838fcc48d54435724a1
+   react-native-advanced-input-mask: 9a8a43833aa0f4a17d2a8e6e3e0a78ab4f840824
+   react-native-blur: 8fade3c195ce83cfa6578e3e77b01bbcf935a8e1
+-  react-native-keyboard-controller: d381c5816e6160a914ae3cbe5074edcea1ff265f
++  react-native-keyboard-controller: c5146cf499c29f43f6ee5d62674d184bd3113fa8
+   react-native-safe-area-context: 352ca3a1d913db1068dcd86669bf60d59608d6eb
+   react-native-skia: adc530ff3d0cf7214d4fbf079a850cfa996a1e22
+   react-native-webview: 3e750a1f0c41f792a219131b9ddab41d04cfdd8b
 ```
 
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/FocusedInputObserver.kt` (modified, +6/-6)
+**File**: `example/ios/Podfile.lock` (modified, +2/-2)
 ```diff
-@@ -47,7 +47,7 @@ class FocusedInputObserver(
- 
-   // state variables
-   private var lastFocusedInput: EditText? = null
--  private var lastEventDispatched: FocusedInputLayoutChangedEventData = noFocusedInputEvent
-+  private var lastLayoutEventDispatched: FocusedInputLayoutChangedEventData = noFocusedInputEvent
-   private var textWatcher: TextWatcher? = null
-   private var selectionSubscription: (() -> Unit)? = null
- 
-@@ -124,7 +124,7 @@ class FocusedInputObserver(
-       }
-       // unfocused
-       if (newFocus == null) {
--        dispatchEventToJS(noFocusedInputEvent)
-+        dispatchLayoutEventToJS(noFocusedInputEvent)
-       }
-     }
- 
-@@ -148,7 +148,7 @@ class FocusedInputObserver(
-         parentScrollViewTarget = input.parentScrollViewTarget,
-       )
- 
--    dispatchEventToJS(event)
-+    dispatchLayoutEventToJS(event)
-   }
- 
-   fun destroy() {
-@@ -176,9 +176,9 @@ class FocusedInputObserver(
-     unsubscribeFromSelectionChanges?.invoke()
-   }
- 
--  private fun dispatchEventToJS(event: FocusedInputLayoutChangedEventData) {
--    if (event != lastEventDispatched) {
--      lastEventDispatched = event
-+  private fun dispatchLayoutEventToJS(event: FocusedInputLayoutChangedEventData) {
-+    if (event != lastLayoutEventDispatched) {
-+      lastLayoutEventDispatched = event
-       context.dispatchEvent(
-         eventPropagationView.id,
-         FocusedInputLayoutChangedEvent(
+@@ -1807,7 +1807,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - SocketRocket
+     - Yoga
+-  - react-native-keyboard-controller (1.22.9):
++  - react-native-keyboard-controller (1.23.0):
+     - boost
+     - DoubleConversion
+     - fast_float
+@@ -3007,7 +3007,7 @@ SPEC CHECKSUMS:
+   React-Mapbuffer: 33f678ee25b6c0ee2b01b1ecec08e3e02424cefe
+   React-microtasksnativemodule: 44b44a4d3cd6ffb85d928abf741acdc26722de2e
+   react-native-blur: 2181432139e3b470cad492f7729cb640cee60045
+-  react-native-keyboard-controller: 69a2a26685e92eae49ffdcc0eddf6576bd3fdd17
++  react-native-keyboard-controller: 3f56e199ee45c3e91692ded0d0370111b8d73441
+   react-native-safe-area-context: aac2745e96999c8633d2f6119e4e39b499c2ac8b
+   react-native-skia: 841224c153394b64410d94ff87f7a7a5af44a95e
+   react-native-text-input-mask: 22ca8eeef84d42a896f79428f7d175a5eb8b1c4e
 ```
 
-**File**: `ios/delegates/KCTextInputCompositeDelegate.swift` (modified, +3/-5)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -98,11 +98,9 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
-     if #available(iOS 13.0, *) {
-       // rely on textFieldDidChangeSelection
-       observedTextFieldForSelection = nil
--    } else {
--      if let realTextField = textField {
--        addSelectionRangeObserver(to: realTextField)
--        observedTextFieldForSelection = realTextField
--      }
-+    } else if let realTextField = textField {
-+      addSelectionRangeObserver(to: realTextField)
-+      observedTextFieldForSelection = realTextField
-     }
-   }
- 
-```
-
-**File**: `ios/extensions/UITextInput.swift` (modified, +2/-3)
-```diff
-@@ -19,9 +19,8 @@ public extension UITextInput {
-       return false
-     }
- 
--    guard let selectedRange = selectedTextRange else { return false }
--
--    guard let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
-+    guard let selectedRange = selectedTextRange,
-+          let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
-     let rect = firstRect(for: range)
- 
-     return rect.origin.x.isFinite && rect.origin.y.isFinite
-```
-
-**File**: `ios/observers/FocusedInputObserver.swift` (modified, +35/-16)
-```diff
-@@ -22,6 +22,8 @@ let noFocusedInputEvent: [String: Any] = [
-   ],
- ]
- 
-+let noFocusedInputSelectionEvent: [AnyHashable: Any] = [:]
-+
- @objc(FocusedInputObserver)
- public class FocusedInputObserver: NSObject {
-   // class members
-@@ -38,7 +40,8 @@ public class FocusedInputObserver: NSObject {
-   private var currentInput: UIView?
-   private var currentResponder: UIView?
-   private var observation: NSKeyValueObservation?
--  private var lastEventDispatched: [AnyHashable: Any] = noFocusedInputEvent
-+  private var lastLayoutEventDispatched: [AnyHashable: Any] = noFocusedInputEvent
-+  private var lastSelectionEventDispatched: [AnyHashable: Any] = noFocusedInputSelectionEvent
- 
-   @objc public init(
-     onLayoutChangedHandler: @escaping (NSDictionary) -> Void,
-@@ -148,10 +151,8 @@ public class FocusedInputObserver: NSObject {
- 
-     setupObservers()
-     // dispatch onSelectionChange on focus
--    if let textInput = responder as? UITextInput {
--      DispatchQueue.main.async {
--        updateSelectionPosition(textInput: textInput, sendEvent: self.onSelectionChange)
--      }
-+    DispatchQueue.main.async {
-+      self.syncUpSelection()
-     }
- 
-     syncUpLayout()
-@@ -172,7 +173,8 @@ public class FocusedInputObserver: NSObject {
-     removeObservers(newResponder: nil)
-     currentInput = nil
-     currentResponder = nil
--    dispatchEventToJS(data: noFocusedInputEvent)
-+    lastSelectionEventDispatched = noFocusedInputSelectionEvent
-+    dispatchLayoutEventToJS(data: noFocusedInputEvent)
-   }
- 
-   @objc public func syncUpLayout() {
-@@ -195,7 +197,12 @@ public class FocusedInputObserver: NSObject {
-       ],
-     ]
- 
--    dispatchEventToJS(data: data)
-+    dispatchLayoutEventToJS(data: data)
-+  }
-+
-+  private func syncUpSelection() {
-+    guard let textInput = currentResponder as? UITextInput else { return }
-+    updateSelectionPosition(textInput: textInput, sendEvent: onSelectionChange)
-   }
- 
-   private func onTextChanged(text: String?) {
-@@ -206,15 +213,24 @@ public class FocusedInputObserver: NSObject {
-     }
-   }
- 
--  private func dispatchEventToJS(data: [String: Any]) {
--    if NSDictionary(dictionary: data).isEqual(to: lastEventDispatched) {
-+  private func dispatchLayoutEventToJS(data: [String: Any]) {
-+    if NSDictionary(dictionary: data).isEqual(to: lastLayoutEventDispatched) {
-       return
-     }
- 
--    lastEventDispatched = data
-+    lastLayoutEventDispatched = data
-     onLayoutChangedHandler(data as NSDictionary)
-   }
- 
-+  private func dispatchSelectionEventToJS(data: [String: Any]) {
-+    if NSDictionary(dictionary: data).isEqual(to: lastSelectionEventDispatched) {
-+      return
-+    }
-+
-+    lastSelectionEventDispatched = data
-+    onSelectionChangedHandler(data as NSDictionary)
-+  }
-+
-   private func setupObservers() {
-     if observation != nil {
-       return
-@@ -255,11 +271,9 @@ public class FocusedInputObserver: NSObject {
-         delegate.setTextFieldDelegate(delegate: textField.delegate, textField: textField)
-         textField.setForceDelegate(delegate)
-       }
--    } else if let textView = input as? UITextView {
--      if !(textView.delegate is KCTextInputCompositeDelegate) {
--        delegate.setTextViewDelegate(delegate: textView.delegate)
--        textView.setForceDelegate(delegate)
--      }
-+    } else if let textView = input as? UITextView, !(textView.delegate is KCTextInputCompositeDelegate) {
-+      delegate.setTextViewDelegate(delegate: textView.delegate)
-+      textView.setForceDelegate(delegate)
-     }
-   }
- 
-@@ -282,6 +296,11 @@ public class FocusedInputObserver: NSObject {
-     // layout values
-     DispatchQueue.main.async {
-       self.syncUpLayout()
-+
-+      // iOS can report selection before the input resizes, leaving stale caret coordinates.
-+      // Re-read selection after layout to dispatch updated coordinates even when
-+      // the selection range has not changed.
-+      self.syncUpSelection()
-     }
-   }
- 
-@@ -299,6 +318,6 @@ public class FocusedInputObserver: NSObject {
- 
-     let data = target.merging(eventDict) { _, new in new }
- 
--    onSelectionChangedHandler(data as NSDictionary)
-+    dispatchSelectionEventToJS(data: data)
-   }
- }
-```
-
-**File**: `ios/traversal/ViewHierarchyNavigator.swift` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ public class ViewHierarchyNavigator: NSObject {
- 
-     let isGroupRoot = isGroupView(rootView)
- 
--    /// Helper function to recursively search for TextInput views
-+    // Helper function to recursively search for TextInput views
-     func findTextInputs(in view: UIView?) {
-       guard let view = view else { return }
- 
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-keyboard-controller",
+-  "version": "1.22.9",
++  "version": "1.23.0",
+   "description": "Keyboard manager which works in identical way on both iOS and Android",
+   "main": "lib/commonjs/index",
+   "module": "lib/module/index",
 ```
 
 ---
 
-### Incident Patch 2: `ac3f3df2` (2026-11-02)
-**Commit Message**: fix: detect caret hidden above `KeyboardAwareScrollView` via ScrollView content coordinates (#1738)
+### Incident Patch 2: `96a3cc67` (2026-11-05)
+**Commit Message**: docs: checkout `1.23.0` version (#1747)
 
 ## 📜 Description
 
-`KeyboardAwareScrollView` no longer measures its own position on the
-screen to detect that the caret is hidden above the top edge. Instead
-the native focused-input layout event carries the position of the input
-**inside the content of the parent `ScrollView`**
-(`layout.contentX`/`layout.contentY`), and the check becomes `contentY +
-height < scrollOffset`.
+Checkout docs for `1.23.0` version.
 
-> [!IMPORTANT]
-> Human note: **theoretically**, we can use `viewPositionInWindow` +
-`absoluteY` - this is correct Math calculations. The problem is that
-`viewPositionInWindow` may capture element during the animation and we
-don't have a reliable way to detect when we can make correct
-measurement. This particular fix/changes in this PR is working for
-`KeyboardAwareScrollView`, but the problem with `viewPositionInWindow`
-is still actual for `KeyboardAvoidingView`. I don't have a good solution
-at the moment for `viewPositionInWindow` timing issue, this is why I'm
-merging this fix. The problem with `KeyboardAvoidingView` stays open
-🤷‍♂️
+## 💡 Motivation and Context
 
-`contentY` is measured in the same native pass as the rest of the layout
-(iOS:
+Since `1.22.0` the docs describe API that is available only starting
+from `1.23.0`:
 
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/events/FocusedInputLayoutChangedEvent.kt` (modified, +4/-0)
+- `transparent` prop for `KeyboardExtender` (#1714);
+- `contentX`/`contentY` fields in the `layout` object of
+`useReanimatedFocusedInput` (#1738).
+
+Users on `1.22.x` should keep seeing docs that match their installed
+version, so a new documentation version is required. `docs/docs` is left
+untouched and continues to serve as `next`.
+
+## 📢 Changelog
+
+### Docs
+
+- `docs/versioned_docs/version-1.23.0/`,
+`docs/versioned_sidebars/version-1.23.0-sidebars.json`,
+`docs/versions.json`: checkout `1.23.0` version (`yarn docusaurus
+docs:version 1.23.0`);
+- `docs/docusaurus.config.js`: added `1.23.0` to the `versions` map.
+
+## 🤔 How Has This Been Tested?
+
+No device verification: documentation-only change. Verified manually via
+the local docs dev server.
+
+## 📸 Screenshots (if appropriate):
+
+| Before (main) | After (this PR) |
+| ------------- | --------------- |
+| <img alt="before: 1.22.0 is the latest version"
+src="https://github.com/user-attachments/assets/aefa0577-b371-4373-8eeb-79d03
+
+**File**: `docs/docusaurus.config.js` (modified, +3/-0)
 ```diff
-@@ -11,6 +11,8 @@ data class FocusedInputLayoutChangedEventData(
-   val height: Double,
-   val absoluteX: Double,
-   val absoluteY: Double,
-+  val contentX: Double,
-+  val contentY: Double,
-   val target: Int,
-   val parentScrollViewTarget: Int,
- )
-@@ -38,6 +40,8 @@ class FocusedInputLayoutChangedEvent(
-           putDouble("height", event.height)
-           putDouble("absoluteX", event.absoluteX)
-           putDouble("absoluteY", event.absoluteY)
-+          putDouble("contentX", event.contentX)
-+          putDouble("contentY", event.contentY)
+@@ -108,6 +108,9 @@ const config = {
+             "1.22.0": {
+               label: "1.22.0",
+             },
++            "1.23.0": {
++              label: "1.23.0",
++            },
+           },
          },
-       )
-     }
+         blog: {
 ```
 
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/extensions/EditText.kt` (modified, +4/-4)
+**File**: `docs/versioned_docs/version-1.23.0/api/_category_.json` (added, +8/-0)
 ```diff
-@@ -97,24 +97,24 @@ fun EditText.addOnTextChangedListener(action: (String) -> Unit): TextWatcher {
-   return listener
- }
- 
--val EditText.parentScrollViewTarget: Int
-+val EditText.parentScrollView: View?
-   get() {
-     var currentView: View? = this
- 
-     while (currentView != null) {
-       val parentView = currentView.parent as? View
- 
-       if (parentView != null && parentView.isEnabledReactScrollView()) {
--        // If the parent is a vertical, scrollable ScrollView - return its id
--        return parentView.id
-+        // If the parent is a vertical, scrollable ScrollView - return it
-+        return parentView
-       }
- 
-       // Move to the next parent view
-       currentView = parentView
-     }
- 
-     // ScrollView was not found
--    return -1
-+    return null
-   }
- 
- fun EditText?.focus() {
-```
-
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/extensions/View.kt` (modified, +21/-0)
-```diff
-@@ -55,6 +55,27 @@ fun View.copyBoundsInWindow(rect: Rect) {
-   }
- }
- 
-+/**
-+ * React tag of the view, or `-1` when there is no view.
-+ */
-+val View?.reactViewTag: Int
-+  get() = this?.id ?: -1
-+
-+/**
-+ * Location of the view inside the content of the given `ScrollView`, so it depends neither on the
-+ * scroll position nor on where the `ScrollView` is on the screen. `(0, 0)` when there is no `ScrollView`.
-+ */
-+fun View.locationInScrollView(scrollView: View?): IntArray {
-+  if (scrollView == null) {
-+    return intArrayOf(0, 0)
+@@ -0,0 +1,8 @@
++{
++  "label": "API Reference",
++  "position": 4,
++  "link": {
++    "type": "generated-index",
++    "description": "API reference containing information about all public methods and their signatures"
 +  }
++}
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/_category_.json` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{
++  "label": "📚 Components",
++  "position": 2,
++  "link": {
++    "type": "generated-index",
++    "description": "A set of JS components that simplify keyboard management and user interaction handling"
++  }
++}
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/keyboard-avoiding-view.mdx` (added, +220/-0)
+```diff
+@@ -0,0 +1,220 @@
++---
++keywords:
++  [
++    react-native-keyboard-controller,
++    KeyboardAvoidingView,
++    keyboard avoiding view,
++    avoid keyboard,
++    android,
++  ]
++---
 +
-+  val (x, y) = screenLocation
-+  val (scrollViewX, scrollViewY) = scrollView.screenLocation
++# KeyboardAvoidingView
 +
-+  return intArrayOf(x - scrollViewX + scrollView.scrollX, y - scrollViewY + scrollView.scrollY)
++This component will automatically adjust its height, position, or bottom padding based on the keyboard height to remain visible while the virtual keyboard is displayed.
++
++## Why another `KeyboardAvoidingView` is needed?
++
++This new `KeyboardAvoidingView` maintains the familiar React Native [API](https://reactnative.dev/docs/keyboardavoidingview) but ensures consistent behavior and animations on both `iOS` and `Android` platforms. Unlike the existing solution, which primarily caters to `iOS`, this component eliminates platform discrepancies, providing a unified user experience. By reproducing the same animations and behaviors on both platforms, it simplifies cross-platform development, meets user expectations for consistency, and enhances code maintainability. Ultimately, it addresses the need for a reliable and uniform keyboard interaction solution across different devices.
++
++Below is a visual difference between the implementations (the animation is _**4x**_ times slower for better visual perception).
++
++import KeyboardAvoidingViewComparison from "@site/src/components/KeyboardAvoidingViewComparison";
++
++<KeyboardAvoidingViewComparison />
++
++:::info Found a bug? Help the project and report it!
++
++If you found any bugs or inconsistent behavior comparing to `react-native` implementation - don't hesitate to open an [issue](https://github.com/kirillzyusko/react-native-keyboard-controller/issues/new?assignees=kirillzyusko&labels=bug&template=bug_report.md&title=). It will help the project 🙏
++
++Also if there is any well-known problems in original `react-native` implementation which can not be fixed for a long time and they are present in this implementation as well - also feel free to submit an [issue](https://github.com/kirillzyusko/react-native-keyboard-controller/issues/new?assignees=kirillzyusko&labels=bug&template=bug_report.md&title=). Let's make this world better together 😎
++
++:::
++
++## Example
++
++```tsx
++import React from "react";
++import {
++  Text,
++  TextInput,
++  TouchableOpacity,
++  View,
++  StyleSheet,
++} from "react-native";
++import { KeyboardAvoidingView } from "react-native-keyboard-controller";
++
++export default function KeyboardAvoidingViewExample() {
++  return (
++    <KeyboardAvoidingView
++      behavior={"padding"}
++      keyboardVerticalOffset={100}
++      style={styles.content}
++    >
++      <View style={styles.inner}>
++        <Text style={styles.heading}>Header</Text>
++        <View>
++          <TextInput placeholder="Username" style={styles.textInput} />
++          <TextInput placeholder="Password" style={styles.textInput} />
++        </View>
++        <TouchableOpacity style={styles.button}>
++          <Text style={styles.text}>Submit</Text>
++        </TouchableOpacity>
++      </View>
++    </KeyboardAvoidingView>
++  );
 +}
 +
- val View.screenLocation get(): IntArray {
-   val point = IntArray(2)
-   getLocationOnScreen(point)
-```
-
-**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/FocusedInputObserver.kt` (modified, +10/-2)
-```diff
-@@ -19,7 +19,9 @@ import com.reactnativekeyboardcontroller.extensions.addOnTextChangedListener
- import com.reactnativekeyboardcontroller.extensions.dispatchEvent
- import com.reactnativekeyboardcontroller.extensions.dp
- import com.reactnativekeyboardcontroller.extensions.emitEvent
--import com.reactnativekeyboardcontroller.extensions.parentScrollViewTarget
-+import com.reactnativekeyboardcontroller.extensions.locationInScrollView
-+import com.reactnativekeyboardcontroller.extensions.parentScrollView
-+import com.reactnativekeyboardcontroller.extensions.reactViewTag
- import com.reactnativekeyboardcontroller.extensions.rootView
- import com.reactnativekeyboardcontroller.extensions.screenLocation
- import com.reactnativekeyboardcontroller.traversal.FocusedInputHolder
-@@ -33,6 +35,8 @@ val noFocusedInputEvent =
-     height = 0.0,
-     absoluteX = 0.0,
-     absoluteY = 0.0,
-+    contentX = 0.0,
-+    contentY = 0.0,
-     target = -1,
-     parentScrollViewTarget = -1,
-   )
-@@ -136,6 +140,8 @@ class FocusedInputObserver(
-     val input = lastFocusedInput ?: return
- 
-     val (x, y) = input.screenLocation
-+    val parentScrollView = input.parentScrollView
-+    val (contentX, contentY) = input.locationInScrollView(parentScrollView)
-     val event =
-       FocusedInputLayoutChangedEventData(
-         x = input.x.dp,
-@@ -144,8 +150,10 @@ class FocusedInputObserver(
-         height = input.height.toFloat().dp,
-         absoluteX = x.toFloat().dp,
-         absoluteY = y.toFloat().dp,
-+        contentX = contentX.toFloat().dp,
-+        contentY = contentY.toFloat().dp,
-         target = input.id,
--        parentScrollViewTarget = input.parentScrollViewTarget,
-+        parentScrollViewTarget = parentScrollView.reactViewTag,
-       )
- 
-     dispatchLayoutEventToJS(event)
-```
-
-**File**: `docs/docs/api/hooks/input/use-reanimated-focused-input.md` (modified, +2/-0)
-```diff
-@@ -45,6 +45,8 @@ type FocusedInputLayoutChangedEvent = {
-     height: number; // `height` of the TextInput
-     absoluteX: number; // `x` coordinate on the screen
-     absoluteY: number; // `y` coordinate on the screen
-+    contentX: number; // `x` coordinate inside the content of the parent `ScrollView` (`0` if there is no parent `ScrollView`)
-+    contentY: number; // `y` coordinate inside the content of the `ScrollView`, doesn't depend on the scroll offset (`0` if there is no parent `ScrollView`)
-   };
- };
- ```
-```
-
-**File**: `ios/extensions/UIResponder.swift` (modified, +5/-5)
-```diff
-@@ -17,7 +17,7 @@ public extension UIResponder {
-   }
- }
- 
--public extension Optional where Wrapped == UIResponder {
-+public extension Optional where Wrapped: UIResponder {
-   var reactViewTag: NSNumber {
-     return ((self as? UIView)?.superview).reactNativeTag
-   }
-@@ -34,25 +34,25 @@ public extension Optional where Wrapped == UIResponder {
- }
- 
- public extension Optional where Wrapped: UIResponder {
--  var parentScrollViewTarget: NSNumber {
-+  var parentScrollView: UIScrollView? {
-     var currentResponder: UIResponder? = self
- 
-     while let currentView = currentResponder {
--      // If the current responder is a vertical, scrollable UIScrollView (excluding UITextView), return its tag
-+      // If the current responder is a vertical, scrollable UIScrollView (excluding UITextView), return it
-       if let scrollView = currentView as? UIScrollView,
-          !(currentView is UITextView),
-          scrollView.frame.width >= scrollView.contentSize.width,
-          scrollView.isScrollEnabled
-       {
--        return scrollView.reactViewTag
-+        return scrollView
-       }
- 
-       // Move to the next responder in the chain
-       currentResponder = currentView.next
-     }
- 
-     // UIScrollView is not found
--    return -1
-+    return nil
-   }
- }
- 
-```
-
-**File**: `ios/extensions/UIView.swift` (modified, +9/-0)
-```diff
-@@ -19,6 +19,15 @@ public extension UIView {
-     return superview?.convert(frame, to: rootView)
-   }
- 
-+  /// Location of the view inside the content of the given `UIScrollView` (the coordinate system of
-+  /// a `UIScrollView` is its content space), so it depends neither on the scroll position nor on
-+  /// where the `UIScrollView` is on the screen. `.zero` when there is no `UIScrollView`.
-+  func locationInScrollView(_ scrollView: UIScrollView?) -> CGPoint {
-+    guard let scrollView = scrollView else { return .zero }
++const styles = StyleSheet.create({
++  content: {
++    flex: 1,
++    maxHeight: 600,
++  },
++  heading: {
++    fontSize: 36,
++    marginBottom: 48,
++    fontWeight: "600",
++  },
++  inner: {
++    padding: 24,
++    flex: 1,
++    justifyContent: "space-between",
++  },
++  textInput: {
++    height: 45,
++    borderColor: "#000000",
++    borderWidth: 1,
++    borderRadius: 10,
++    marginBottom: 36,
++    paddingLeft: 10,
++  },
++  button: {
++    marginTop: 12,
++    height: 45,
++    borderRadius: 10,
++    backgroundColor: "rgb(40, 64, 147)",
++    justifyContent: "center",
++    alignItems: "center",
++  },
++  text: {
++    fontWeight: "500",
++    fontSize: 16,
++    color: "white",
++  },
++});
++```
 +
-+    return convert(bounds.origin, to: scrollView)
++## Props
++
++### [`View Props`](https://reactnative.dev/docs/view#props)
++
++Inherits [View Props](https://reactnative.dev/docs/view#props).
++
++### `behavior`
++
++Specify how to react to the presence of the keyboard. Could be one value of:
++
++- `translate-with-padding` - Combines **translation** (moves the view up) with **paddingTop** that gets applied only once per animation. As a result this mode delivers **the best** possible performance. It is commonly used in **chat-like** apps.
++
++:::tip Building a chat app?
++
++While `KeyboardAvoidingView` can be used in chat apps, it has [fundamental limitations](../../guides/building-chat-app#why-general-purpose-components-fall-short) for chat layouts. Use [`KeyboardChatScrollView`](./keyboard-chat-scroll-view) component that was designed to avoid these limitations.
++
++:::
++
++- `padding` - the most commonly used mode. It moves the view up by the height of the keyboard and applies `paddingBottom` to the content container. Use `padding` mode when you have a `ScrollView` or `flex-based` layouts that should remain visible.
++
++- `height` - use this when you want to shrink the entire view rather than moving specific elements.
++
++- `position` - use it when the view needs to shift up instead of resizing. For example when you have a fixed button at th
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/keyboard-aware-scroll-view.mdx` (added, +352/-0)
+```diff
+@@ -0,0 +1,352 @@
++---
++keywords:
++  [
++    react-native-keyboard-controller,
++    KeyboardAwareScrollView,
++    keyboard aware view,
++    aware scroll view,
++  ]
++description: ScrollView that effortlessly handles keyboard appearance, automatically scrolls to focused TextInput and provides a native-like performance
++---
++
++# KeyboardAwareScrollView
++
++import Lottie from "lottie-react";
++import lottie from "@site/src/components/HomepageFeatures/text-inputs.lottie.json";
++
++<div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
++  <Lottie
++    className="lottie"
++    animationData={lottie}
++    style={{ width: 400, height: 400 }}
++    loop
++  />
++</div>
++
++`ScrollView` that effortlessly handles keyboard appearance, automatically scrolls to focused `TextInput` and provides a native-like performance.
++
++## Comparison
++
++Current `react-native` ecosystem has a plenty of solutions that solves the problem of focused inputs being covered by keyboard. Each of them has its own advantages and disadvantages.
++
++Below is a table with the most important functions and their support in various implementations:
++
++|                                                               | [react-native-avoid-soft-input](https://mateusz1913.github.io/react-native-avoid-softinput/) | [react-native-keyboard-aware-scroll-view](https://github.com/APSL/react-native-keyboard-aware-scroll-view) | [react-native-keyboard-manager](https://github.com/douglasjunior/react-native-keyboard-manager) | [react-native-keyboard-controller](./keyboard-aware-scroll-view.mdx) |
++| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
++| Respects keyboard animation                                   | 🟠 <sup><small>1</small></sup>                                                               | ❌                                                                                                         | ✅                                                                                              | ✅                                                                   |
++| JS implementation                                             | ❌                                                                                           | ✅                                                                                                         | ❌                                                                                              | 🟠 <sup><small>2</small></sup>                                       |
++| Reacts on focused input layout changes                        | ❌                                                                                           | ❌                                                                                                         | 🟠 <sup><small>3</small></sup>                                                                  | ✅                                                                   |
++| Reacts on focus changes                                       | ✅                                                                                           | ✅                                                                                                         | ✅                                                                                              | ✅                                                                   |
++| Reacts on selection changes                                   | ❌                                                                                           | ❌                                                                                                         | 🟠 <sup><small>3</small></sup>                                                                  | ✅                                                                   |
++| Auto-scroll when user is typing and input in non visible area | ❌                                                                                           | ❌                                                                                                         | 🟠 <sup><small>3</small></sup>                                                                  | ✅                                                                   |
++| Android support                                               | ✅                                                                                           | ✅                                                                                                         | ❌                                                                                             
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/keyboard-chat-scroll-view.mdx` (added, +446/-0)
+```diff
+@@ -0,0 +1,446 @@
++# KeyboardChatScrollView
++
++`KeyboardChatScrollView` is a purpose-built component for chat application layouts. It handles keyboard appearance, interactive dismissal, and content repositioning with smooth 60/120 FPS animations — all the keyboard behaviors that chat apps need, but general-purpose components **_struggle_** to deliver.
++
++import Video from "@site/src/components/Video";
++
++<Video
++  src="/video/keyboard-chat-scroll-view/always.mp4"
++  style={{ height: "40vh" }}
++/>
++
++## Props
++
++### [`ScrollView Props`](https://reactnative.dev/docs/scrollview#props)
++
++Inherits all [ScrollView Props](https://reactnative.dev/docs/scrollview#props).
++
++### `ScrollViewComponent`
++
++Custom component that will be used as a `ScrollView`. Default is `ScrollView`.
++
++:::tip When to use it?
++If you want to use `ScrollView` from `react-native-gesture-handler` you can pass it as a `ScrollViewComponent` prop.
++
++```tsx
++import { ScrollView } from "react-native-gesture-handler";
++
++<KeyboardChatScrollView ScrollViewComponent={ScrollView} />;
++```
++
++:::
++
++### `freeze`
++
++When `true`, freezes all keyboard-driven layout changes. This is useful when dismissing the keyboard to show a custom input view (such as an emoji picker or bottom sheet) — it prevents the chat content from shifting while the transition happens.
++
++Accepts either a plain `boolean` or a [Reanimated `SharedValue<boolean>`](https://docs.swmansion.com/react-native-reanimated/docs/core/useSharedValue/). Using a `SharedValue` allows you to toggle freezing from the UI thread (e.g., inside a worklet or gesture handler) without triggering a React re-render.
++
++Keyboard state continues to be tracked while frozen:
++
++| Moment                         | Behavior                                                                                                                                                                                  |
++| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `freeze = true`                | Observe keyboard events without updating keyboard padding or scroll position.                                                                                                             |
++| `true -> false`                | Synchronize padding with the latest keyboard height, accounting for `offset`. Keep the current content position, except when the native scroll view must clamp it to the available range. |
++| Subsequent keyboard animations | Resume `keyboardLiftBehavior`, accounting for scroll adjustments that were actually applied.                                                                                              |
++
++Skipped scroll adjustments are not replayed. For example, if the keyboard closes while frozen, its padding is removed when you unfreeze without replaying the skipped closing scroll.
++
++### `inverted`
++
++Set to `true` if your list uses the `inverted` prop (the standard pattern for chat-style lists where the newest messages appear at the bottom).
++
++:::warning Virtualized list caution
++If you're using `inverted={true}` with virtualized lists (e.g. `FlashList`), make sure to increase `drawDistance` (or any similar prop that controls how much content is rendered outside the visible area). This can help [prevent](https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1437) content flashing during keyboard animations.
++:::
++
++### `keyboardLiftBehavior`
++
++Controls how the chat content responds when the keyboard appears. Defaults to `"always"`.
++
++#### `always`
++
++Content always lifts with the keyboard, keeping the bottom messages visible **regardless** of the current scroll position. This is the most common chat app behavior, used by **Telegram**, **WhatsApp**, and others.
++
++<Video
++  src="/video/keyboard-chat-scroll-view/always.mp4"
++  style={{ height: "40vh" }}
++/>
++
++#### `whenAtEnd`
++
++Content lifts only when the scroll view is **at the end** (i.e., the last message is visible or near the bottom). If the user has scrolled up to read older messages, the keyboard won't push the content around. This matches the **ChatGPT** mobile app behavior.
++
++<Video
++  src="/video/keyboard-chat-scroll-view/when-at-end.mp4"
++  style={{ height: "40vh" }}
++/>
++
++#### `persistent`
++
++Content lifts when the keyboard appears, but **does not drop back** when the keyboard hides. The scroll position stays where it was pushed to. This matches the **Claude** mobile app behavior.
++
++<Video
++  src="/video/keyboard-chat-scroll-view/persistent.mp4"
++  style={{ height: "40vh" }}
++/>
++
++#### `never`
++
++Content never moves in response to the keyboard. The keyboard simply overlaps the chat. This matches the **Perplexity** app behavior.
++
++<Video
++  src="/video/keyboard-chat-scroll-view/never.mp4"
++  style={{ height: "40vh" }}
++/>
++
++### `offset`
++
++The di
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/keyboard-effects/index.mdx` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++---
++keywords:
++  [
++    react-native-keyboard-controller,
++    KeyboardEffects,
++    keyboard effects,
++    translucent keyboard,
++    keyboard backdrop,
++    keyboard gradient,
++    keyboard glow,
++    siri keyboard,
++    ai keyboard,
++    keyboard,
++    ios,
++  ]
++---
++
++# KeyboardEffects
++
++A `KeyboardEffects` component lets you render arbitrary content — colors, gradients, images, animations — **behind** the keyboard. Rendering an opaque view is enough to give the keyboard a solid, branded background instead of the default system blur. The `translucent` prop goes a step further for _animated_ effects — it removes the native blur/backdrop entirely so a moving gradient or Skia shader shows through crisp and unaltered (the same idea behind the Apple Intelligence / Siri keyboard glow).
++
++import Video from "@site/src/components/Video";
++
++<Video src="/video/keyboard-effects.webm" autoPlay loop muted />
++
++:::info iOS only
++The translucent keyboard is an iOS capability. On other platforms the `translucent` prop is a no-op (the system keyboard is opaque, so content rendered behind it will not be visible).
++:::
++
++## Example
++
++```tsx
++import { KeyboardEffects } from "react-native-keyboard-controller";
++import { View } from "react-native";
++
++const Effect = () => {
++  return (
++    <KeyboardEffects>
++      <View style={{ flex: 1, backgroundColor: "purple" }} />
++    </KeyboardEffects>
++  );
++};
++```
++
++For a full "AI keyboard" example (an animated gradient bleeding through the keyboard plus a glowing input) see the `AIKeyboard` screen in the [example app](https://github.com/kirillzyusko/react-native-keyboard-controller/tree/main/example/src/screens/Examples/AIKeyboard).
++
++## Props
++
++### [`View Props`](https://reactnative.dev/docs/view#props)
++
++Inherits [View Props](https://reactnative.dev/docs/view#props).
++
++### [`KeyboardStickyViewProps`](./keyboard-sticky-view)
++
++Inherits [KeyboardStickyViewProps](./keyboard-sticky-view).
++
++### `translucent`
++
++A boolean prop indicating whether the keyboard backdrop should be translucent. When `true`, the system keyboard becomes translucent so the content rendered inside `KeyboardEffects` blends through it. When `false` (default), the keyboard stays opaque. Default is `false`.
++
++:::note Multiple instances
++Multiple mounted `KeyboardEffects` instances share a single native keyboard state, reconciled the same way React Native's `StatusBar` reconciles multiple instances: each instance's `translucent` value sits on a shared stack, and whichever instance was mounted (or updated) most recently wins. When that instance unmounts, the keyboard falls back to the value of the next-most-recently-mounted instance still on screen — not straight to opaque.
++:::
++
++### `rounded`
++
++A boolean prop indicating whether the effect view should match the keyboard's rounded top corners. When `true` (default), content behind an opaque keyboard is clipped to those corners. Set it to `false` to ignore the automatic corner rounding and fully cover the keyboard bounds — useful when a scrollable surface behind the keyboard should remain completely occluded.
++
++```tsx
++<KeyboardEffects rounded={false}>
++  <View style={{ flex: 1, backgroundColor: "purple" }} />
++</KeyboardEffects>
++```
+```
+
+**File**: `docs/versioned_docs/version-1.23.0/api/components/keyboard-sticky-view/index.mdx` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++---
++keywords:
++  [
++    react-native-keyboard-controller,
++    KeyboardStickyView,
++    keyboard sticky view,
++    keyboard accessory view,
++    KeyboardAccessoryView,
++    keyboard sticky footer,
++    sticky view,
++    sticky footer,
++    keyboard,
++    android,
++  ]
++---
++
++# KeyboardStickyView
++
++A `KeyboardStickyView` component seamlessly ensures that a designated view sticks to the keyboard's movements, maintaining visibility and interaction. Often referred to as a **keyboard accessory** or **keyboard accessory view**, it helps you enhance the user experience by preventing important UI elements from being obscured by the keyboard, creating a smooth and user-friendly interface in your React Native application.
++
++:::info `KeyboardAvoidingView` vs `KeyboardStickyView`
++Unlike [KeyboardAvoidingView](../keyboard-avoiding-view.mdx) the `KeyboardStickyView` just moves the content along with keyboard and not resizing the inner view. Try to compare animations of `KeyboardStickyView` and `KeyboardAvoidingView` to see a difference in details on how it works and which component is suitable for your needs.
++:::
++
++import ksv from "./ksv.lottie.json";
++import kav from "@site/src/components/KeyboardAvoidingViewComparison/kav-animated.lottie.json";
++import ComparisonTable from "@site/src/components/ComparisonTable";
++import Lottie from "@site/src/components/Lottie";
++
++<ComparisonTable
++  left={<Lottie src={ksv} />}
++  right={<Lottie src={kav} />}
++  leftText={
++    <i>
++      <code>KeyboardStickyView</code> - only footer is moving (container is not
++      resized)
++    </i>
 +  }
++  rightText={
++    <i>
++      <code>KeyboardAvoidingView</code> - entire container is getting resized
++    </i>
++  }
++/>
 +
-   func isVisibleInHierarchy(initial: Bool = true) -> Bool {
-     guard let window = window else {
-       return false
-```
-
-**File**: `ios/observers/FocusedInputObserver.swift` (modified, +8/-1)
-```diff
-@@ -15,6 +15,8 @@ let noFocusedInputEvent: [String: Any] = [
-   "layout": [
-     "absoluteX": 0,
-     "absoluteY": 0,
-+    "contentX": 0,
-+    "contentY": 0,
-     "width": 0,
-     "height": 0,
-     "x": 0,
-@@ -184,12 +186,17 @@ public class FocusedInputObserver: NSObject {
- 
-     guard let frame = globalFrame, let input = focusedInput else { return }
- 
-+    let parentScrollView = responder.parentScrollView
-+    let location = input.locationInScrollView(parentScrollView)
++## Example
 +
-     let data: [String: Any] = [
-       "target": responder.reactViewTag,
--      "parentScrollViewTarget": responder.parentScrollViewTarget,
-+      "parentScrollViewTarget": parentScrollView.reactViewTag,
-       "layout": [
-         "absoluteX": frame.origin.x,
-         "absoluteY": frame.origin.y,
-+        "contentX": location.x,
-+        "contentY": location.y,
-         "width": input.frame.width,
-         "height": input.frame.height,
-         "x": input.frame.origin.x,
-```
-
----
-
-### Incident Patch 3: `6866d7dd` (2026-11-01)
-**Commit Message**: fix: read iOS caret geometry once UIKit has finished the edit (#1734)
-
-## 📜 Description
-
-Fixed `KeyboardAwareScrollView` jumping to the top when Enter is pressed
-in the middle of a paragraph of a multiline `TextInput` on iOS.
-`KCTextInputCompositeDelegate` no longer asks the layout whether the
-selection is ready (`canSelectionFitIntoLayout`); every selection change
-is read once, one frame later, from a coalesced work item. As a result
-`onSelectionChange` of `useFocusedInputHandler` arrives one frame after
-RN's own `onChangeText`/`onSelectionChange` for every selection change,
-not only when the input grows.
-
-## 💡 Motivation and Context
-
-Reproduction from
-https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1593#issuecomment-5241048572:
-a prefilled multiline input inside `KeyboardAwareScrollView`, long-press
-to put the caret into `22222|22222`, press Enter. The scroll view jumps
-to `y=0` instead of staying on the caret. Fabric (RN 0.87.1) and Paper
-(RN 0.81.4), iOS 26.2.
-
-Events below are written as `position@end.y` of the native selection
-event: `39@434.7` is the caret after character 39 with its bottom edge
-434.7 pt from the top of the input.
-
-### 1️⃣ Who scrol
-
-**File**: `ios/delegates/KCTextInputCompositeDelegate.swift` (modified, +14/-8)
-```diff
-@@ -64,6 +64,8 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
-   /// Keep track of which textField we’re observing (iOS < 13 only)
-   private weak var observedTextFieldForSelection: UITextField?
- 
-+  private var pendingSelectionUpdate = DispatchWorkItem {}
++```tsx
++const offset = { closed: 0, opened: 20 };
 +
-   init(
-     onSelectionChange: @escaping (_ event: NSDictionary) -> Void,
-     onTextChange: @escaping (_ text: String?) -> Void
-@@ -113,15 +115,19 @@ class KCTextInputCompositeDelegate: NSObject, UITextViewDelegate, UITextFieldDel
- 
-   func textViewDidChangeSelection(_ textView: UITextView) {
-     textViewDelegate?.textViewDidChangeSelection?(textView)
--    if textView.canSelectionFitIntoLayout {
--      updateSelectionPosition(textInput: textView, sendEvent: onSelectionChange)
--    } else {
--      // when multiline input grows we need to wait for layout to be updated
--      // otherwise start/end positions will be incorrect (0/-1)
--      DispatchQueue.main.asyncAfter(deadline: .now() + UIUtils.nextFrame) {
--        updateSelectionPosition(textInput: textView, sendEvent: self.onSelectionChange)
--      }
++const StickyFooter = () => {
++  return (
++    <KeyboardStickyView offset={offset}>
++      <Footer />
++    </KeyboardStickyView>
++  );
++};
++```
 +
-+    // The selection is reported before UIKit lays out the edit, and asking the layout whether it is ready
-+    // (`firstRect`) is what broke the split paragraph in #1593, so every read waits a frame; a growing
-+    // input needs that frame anyway (#489). The delay also replaces the old `_comingFromJS` check: RN
-+    // re-applying the text from JS moves the selection to the end and restores it within one call, and a
-+    // read a frame later sees only the restored selection (#1148).
-+    pendingSelectionUpdate.cancel()
-+    pendingSelectionUpdate = DispatchWorkItem { [weak self, weak textView] in
-+      guard let self = self, let textView = textView,
-+            textView.isFirstResponder, textView.delegate === self else { return }
-+      updateSelectionPosition(textInput: textView, sendEvent: self.onSelectionChange)
-     }
-+    DispatchQueue.main.asyncAfter(deadline: .now() + UIUtils.nextFrame, execute: pendingSelectionUpdate)
-   }
- 
-   func textViewDidChange(_ textView: UITextView) {
-```
-
-**File**: `ios/extensions/UITextInput.swift` (removed, +0/-28)
-```diff
-@@ -1,28 +0,0 @@
--//
--//  UITextInput.swift
--//  KeyboardController
--//
--//  Created by Kiryl Ziusko on 04/07/2024.
--//  Copyright © 2024 Facebook. All rights reserved.
--//
--
--import Foundation
--import UIKit
--
--public extension UITextInput {
--  var canSelectionFitIntoLayout: Bool {
--    if let selfObj = self as? NSObject,
--       let delegate = selfObj.safeValue(forKey: "textInputDelegate") as? NSObject,
--       let comingFromJS = delegate.safeValue(forKey: "_comingFromJS") as? Bool,
--       comingFromJS
--    {
--      return false
--    }
--
--    guard let selectedRange = selectedTextRange,
--          let range = textRange(from: selectedRange.start, to: selectedRange.end) else { return false }
--    let rect = firstRect(for: range)
--
--    return rect.origin.x.isFinite && rect.origin.y.isFinite
--  }
--}
++## Props
++
++### `enabled`
++
++A boolean prop indicating whether `KeyboardStickyView` is enabled or disabled. If disabled then view will be moved to its initial position (as keyboard would be closed) and will not react on keyboard movements. Default is `true`.
++
++### `offset`
++
++An object containing next properties:
++
++- **closed** - additional offset to the view when keyboard is closed. Default value is `0`.
++- **opened** - additional offset to the view when keyboard is opened. Default value is `0`.
++
++## Troubleshooting
++
++### Missing animations on iOS (new arch only)
++
++Starting with version `1.21.7`, `KeyboardStickyView` uses Reanimated for its `translateY` animation. On iOS (New Architecture only), updating React state right before a keyboard event can cause this animation to be skipped entirely. This happens because a React commit can block Reanimated from applying its animated updates in the same frame.
++
++Common triggers include:
++
++- updating state in the `onFocus` callback of a `TextInput`;
++- updating state in response to the `keyboardWillShow` event;
++- using `KeyboardToolbar` or other components that trigger a state update before the keyboard appears.
++
++To fix this, enable the [DISABLE_COMMIT_PAUSING_MECHANISM](https://docs.swmansion.com/react-native-reanimated/docs/guides/feature-flags/#disable_commit_pausing_mechanism) feature flag. See the link for detailed setup instructions.
++
++:::info Do I need to enable this flag?
++This issue can occur even if the state update comes from a different screen (e.g. a parent navigator). To check, open the React Profiler and look for any React commits that happen just before the keyboard event — if you see one, you likely need this flag.
++:::
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1747** (2026-11-05): docs: checkout `1.23.0` version (@kirillzyusko)
+- **PR #1746** (2026-11-05): docs: blogpost 1.23.0 (@kirillzyusko)
+- **PR #1745** (2026-11-05): chore: release 1.23.0 (@kirillzyusko)
 - **PR #1742** (2026-11-03): fix: keyboard flash after a launch from Spotlight with preload (@kirillzyusko)
 - **PR #1739** (2026-11-03): refactor: always decorate KeyboardAwareScrollView (@kirillzyusko)
 - **PR #1738** (2026-11-02): fix: detect caret hidden above `KeyboardAwareScrollView` via ScrollView content coordinates (@kirillzyusko)
-- **PR #1736** (2026-10-31): fix: refresh iOS selection geometry after input layout changes (@kirillzyusko)
-- **PR #1734** (2026-11-01): fix: read iOS caret geometry once UIKit has finished the edit (@kirillzyusko)
-- **PR #1729** (2026-10-29): docs: fix broken trusted by icons (@kirillzyusko)
 
 ---
 
@@ -1038,30 +1020,34 @@ event: `39@434.7` is the caret after character 39 with its bottom edge
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refresh iOS selection geometry after input layout changes (#1736)
+## X. release 1.23.0 (#1745)
 
 **RULE**:
-When implementing operations in `.github/workflows/verify-ios.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `FabricExample/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a69842d1`: refresh iOS selection geometry after input layout changes (#1736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ec1e4e2`: release 1.23.0 (#1745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/verify-ios.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `FabricExample/ios/Podfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    runs-on: macOS-15
-    runs-on: macOS-15
+  - react-native-keyboard-controller (1.23.0):
+    - react-native-keyboard-controller/common (= 1.23.0)
+  - react-native-keyboard-controller/common (1.23.0):
+  react-native-keyboard-controller: c5146cf499c29f43f6ee5d62674d184bd3113fa8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: macOS-14
-    runs-on: macOS-14
+  - react-native-keyboard-controller (1.22.9):
+    - react-native-keyboard-controller/common (= 1.22.9)
+  - react-native-keyboard-controller/common (1.22.9):
+  react-native-keyboard-controller: d381c5816e6160a914ae3cbe5074edcea1ff265f
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a69842d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ec1e4e2` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `22d46121`  
+> **Source Version**: `89d09f46`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:07:53.030Z  
+> **Timestamp**: 2026-11-05T22:40:16.245Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:07:53.023Z  
+> **Harvest Timestamp**: 2026-11-05T22:40:16.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13461 stars
+- **Stars / Engagement**: 13471 stars
 
 ---
 
@@ -1862,257 +1862,382 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36a97bde` (2026-11-04)
-**Commit Message**: Stop uploading product test build outputs
+### Incident Patch 1: `fde63530` (2026-11-05)
+**Commit Message**: Block spatial join probe until its index is built
 
-**File**: `.github/actions/process-test-results/action.yml` (modified, +0/-1)
+The operator did not expose the index future, so its driver looped
+without progress while the build side ran.
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java` (modified, +13/-0)
 ```diff
-@@ -26,7 +26,6 @@ runs:
-       path: |
-         **/target/surefire-reports
-         **/target/checkstyle-*
--        testing/trino-product-tests/target/*
-         logs/*
-       retention-days: 5
-   - name: Upload test report
+@@ -14,6 +14,7 @@
+ package io.trino.operator;
+ 
+ import com.google.common.collect.ImmutableList;
++import com.google.common.util.concurrent.Futures;
+ import com.google.common.util.concurrent.ListenableFuture;
+ import io.trino.memory.context.LocalMemoryContext;
+ import io.trino.spi.Page;
+@@ -143,6 +144,7 @@ public OperatorFactory duplicate()
+     private final Runnable onClose;
+ 
+     private ListenableFuture<PagesSpatialIndex> pagesSpatialIndexFuture;
++    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
+     private final PageBuilder pageBuilder;
+     @Nullable
+     private Page probe;
+@@ -178,6 +180,7 @@ public SpatialJoinOperator(
+         this.pagesSpatialIndexFactory = requireNonNull(pagesSpatialIndexFactory, "pagesSpatialIndexFactory is null");
+         this.onClose = requireNonNull(onClose, "onClose is null");
+         this.pagesSpatialIndexFuture = pagesSpatialIndexFactory.createPagesSpatialIndex();
++        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
+         this.pageBuilder = new PageBuilder(ImmutableList.<Type>builder()
+                 .addAll(probeOutputChannels.stream()
+                         .map(probeTypes::get)
+@@ -192,6 +195,16 @@ public OperatorContext getOperatorContext()
+         return operatorContext;
+     }
+ 
++    @Override
++    public ListenableFuture<Void> isBlocked()
++    {
++        // A finishing operator with no probe page completes without the spatial index.
++        if (finishing) {
++            return NOT_BLOCKED;
++        }
++        return pagesSpatialIndexBlocked;
++    }
++
+     @Override
+     public boolean needsInput()
+     {
+```
+
+**File**: `plugin/trino-geospatial/src/test/java/io/trino/plugin/geospatial/TestSpatialJoinOperator.java` (modified, +53/-0)
+```diff
+@@ -470,6 +470,59 @@ public void testDuplicateProbeFactory(boolean createSecondaryOperators)
+         assertOperatorEquals(firstFactory, probeDriver, probePages.build(), expected);
+     }
+ 
++    @Test
++    public void testProbeBlockedUntilIndexIsBuilt()
++            throws Exception
++    {
++        TaskContext taskContext = createTaskContext();
++        PipelineContext pipelineContext = taskContext.addPipelineContext(0, true, true, false);
++        DriverContext buildDriverContext = pipelineContext.addDriverContext();
++
++        RowPagesBuilder buildPages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR))
++                .row(POLYGON_A, "A");
++        ValuesOperator.ValuesOperatorFactory valuesOperatorFactory = new ValuesOperator.ValuesOperatorFactory(0, new PlanNodeId("test"), buildPages.build());
++        SpatialIndexBuilderOperatorFactory buildOperatorFactory = new SpatialIndexBuilderOperatorFactory(
++                1,
++                new PlanNodeId("test"),
++                buildPages.getTypes(),
++                Ints.asList(1),
++                0,
++                OptionalInt.empty(),
++                OptionalDouble.empty(),
++                OptionalInt.empty(),
++                (build, probe, _) -> build.contains(probe),
++                Optional.empty(),
++                Optional.empty(),
++                10_000,
++                new TestingFactory(false));
++        Driver buildDriver = Driver.createDriver(
++                buildDriverContext,
++                valuesOperatorFactory.createOperator(buildDriverContext),
++                buildOperatorFactory.createOperator(buildDriverContext));
++
++        RowPagesBuilder probePages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR));
++        OperatorFactory joinOperatorFactory = new SpatialJoinOperatorFactory(2, new PlanNodeId("test"), INNER, probePages.getTypes(), Ints.asList(1), 0, OptionalInt.empty(), buildOperatorFactory.getPagesSpatialIndexFactory());
++        try (Operator probeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext());
++                Operator finishingProbeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext())) {
++            ListenableFuture<Void> probeBlocked = probeOperator.isBlocked();
++            assertThat(probeBlocked.isDone()).isFalse();
++            assertThat(probeOperator.needsInput()).isFalse();
++
++            finishingProbeOperator.finish();
++            assertThat(finishingProbeOperator.isBlocked().isDone()).isTrue();
++            assertThat(finishingProbeOperator.getOutput()).isNull();
++            assertThat(finishingProbeOperator.isFinished()).isTrue();
++
++            while (!probeOperator.isBlocked().isDone()) {
++                buildDriver.processUntilBlocked();
++            }
++            assertThat(probeBlocked.isDone()).isTrue();
++            assertThat(probeOperator.needsInput()).isTrue();
++        }
++        joinOperatorFactory.noMoreOperators();
++        runDriverInThread(executor, buildDriver);
++    }
++
+     @Test
+     public void testDistanceQuery()
+     {
 ```
 
 ---
 
-### Incident Patch 2: `4eacd015` (2026-10-27)
-**Commit Message**: Fix AWS request signing in OpenSearch connector
+### Incident Patch 2: `f0883a69` (2026-11-01)
+**Commit Message**: Fix Iceberg statistics after column type change
 
-Signing broke in the 3.x client migration, so AWS rejected requests
-with 403.
-
-**File**: `plugin/trino-opensearch/src/main/java/io/trino/plugin/opensearch/client/AwsRequestSigner.java` (modified, +95/-16)
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplitSource.java` (modified, +11/-8)
 ```diff
-@@ -13,6 +13,7 @@
-  */
- package io.trino.plugin.opensearch.client;
+@@ -83,6 +83,7 @@
+ import org.apache.iceberg.metrics.ScanMetricsResult;
+ import org.apache.iceberg.metrics.ScanReport;
+ import org.apache.iceberg.types.Type;
++import org.apache.iceberg.types.Types.NestedField;
  
-+import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.ImmutableList;
- import io.trino.plugin.opensearch.AwsSecurityConfig.DeploymentType;
- import org.apache.hc.client5.http.async.AsyncExecCallback;
-@@ -22,24 +23,33 @@
- import org.apache.hc.core5.http.HttpException;
- import org.apache.hc.core5.http.HttpRequest;
- import org.apache.hc.core5.http.nio.AsyncEntityProducer;
-+import org.apache.hc.core5.http.nio.DataStreamChannel;
-+import org.apache.hc.core5.net.URIAuthority;
- import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-+import software.amazon.awssdk.http.ContentStreamProvider;
- import software.amazon.awssdk.http.SdkHttpMethod;
- import software.amazon.awssdk.http.SdkHttpRequest;
- import software.amazon.awssdk.http.auth.aws.signer.AwsV4HttpSigner;
- import software.amazon.awssdk.http.auth.spi.signer.SignedRequest;
- 
-+import java.io.ByteArrayOutputStream;
  import java.io.IOException;
- import java.net.URI;
- import java.net.URISyntaxException;
-+import java.net.URLDecoder;
-+import java.nio.ByteBuffer;
- import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
- import java.util.TreeMap;
-+import java.util.concurrent.atomic.AtomicBoolean;
+ import java.io.UncheckedIOException;
+@@ -105,6 +106,7 @@
+ import static com.google.common.base.Suppliers.memoize;
+ import static com.google.common.base.Verify.verify;
+ import static com.google.common.collect.ImmutableList.toImmutableList;
++import static com.google.common.collect.ImmutableMap.toImmutableMap;
+ import static com.google.common.collect.ImmutableSet.toImmutableSet;
+ import static com.google.common.collect.Sets.intersection;
+ import static com.google.common.math.LongMath.saturatedAdd;
+@@ -127,7 +129,6 @@
+ import static io.trino.plugin.iceberg.IcebergUtil.getPartitionKeys;
+ import static io.trino.plugin.iceberg.IcebergUtil.getPartitionValues;
+ import static io.trino.plugin.iceberg.IcebergUtil.getPathDomain;
+-import static io.trino.plugin.iceberg.IcebergUtil.primitiveFieldTypes;
+ import static io.trino.plugin.iceberg.StructLikeWrapperWithFieldIdToIndex.createStructLikeWrapper;
+ import static io.trino.plugin.iceberg.TypeConverter.toTrinoType;
+ import static io.trino.spi.StandardErrorCode.NOT_SUPPORTED;
+@@ -163,7 +164,6 @@ public class IcebergSplitSource
+     private final EncryptionManager encryptionManager;
+     private final Scan<?, FileScanTask, CombinedScanTask> tableScan;
+     private final OptionalLong maxScannedFileSizeInBytes;
+-    private final Map<Integer, Type.PrimitiveType> fieldIdToType;
+     private final PartitionConstraintMatcher partitionConstraintMatcher;
+     private final TypeManager typeManager;
+     @GuardedBy("closer")
+@@ -234,7 +234,6 @@ public IcebergSplitSource(
+         this.encryptionManager = requireNonNull(icebergTable.encryption(), "encryptionManager is null");
+         this.tableScan = requireNonNull(tableScan, "tableScan is null");
+         this.maxScannedFileSizeInBytes = maxScannedFileSize.isPresent() ? OptionalLong.of(maxScannedFileSize.orElseThrow().toBytes()) : OptionalLong.empty();
+-        this.fieldIdToType = primitiveFieldTypes(tableScan.schema());
+         this.partitionConstraintMatcher = new PartitionConstraintMatcher(constraint, evaluator, session);
+         this.typeManager = requireNonNull(typeManager, "typeManager is null");
+         this.recordScannedFiles = recordScannedFiles;
+@@ -644,9 +643,11 @@ private void closeInternal(boolean interruptIfRunning)
+     private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask wholeFileTask, Set<Integer> predicatedColumnIds)
+     {
+         verify(predicatedColumnIds != null, "predicatedColumnIds is null");
+-        List<IcebergColumnHandle> predicatedColumns = wholeFileTask.schema().columns().stream()
+-                .filter(column -> predicatedColumnIds.contains(column.fieldId()))
+-                .map(column -> getColumnHandle(column, typeManager))
++        List<NestedField> predicatedFields = wholeFileTask.schema().columns().stream()
++                .filter(field -> predicatedColumnIds.contains(field.fieldId()))
++                .collect(toImmutableList());
++        List<IcebergColumnHandle> predicatedColumns = predicatedFields.stream()
++                .map(field -> getColumnHandle(field, typeManager))
+                 .collect(toImmutableList());
+         List<DeleteFile> deleteFiles = wholeFileTask.deletes().stream()
+                 .peek(file -> verifyDeletionVectorReferencesDataFile(wholeFileTask, file))
+@@ -661,7 +662,9 @@ private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask whole
+         return new FileScanTaskWithContext(
+                 wholeFileTask,
+                 createFileStatisticsDomain(
+-                        fieldIdToType,
++                        // Read the bounds as the type of these columns rather than of the scan. Changing the type of a column creates no snapshot,
++                        // so until the next one the scan of the current snapshot keeps the older schema, while its tasks have the new one
++                        predicatedFields.stream().collect(toImmutableMap(NestedField::fieldId, NestedField::type)),
+                         wholeFileTask.file().lowerBounds(),
+                         wholeFileTask.file().upperBounds(),
+                         wholeFileTask.file().nullValueCounts(),
+@@ -760,7 +763,7 @@ public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
  
- import static com.google.common.collect.ImmutableMap.toImmutableMap;
- import static java.lang.String.CASE_INSENSITIVE_ORDER;
-+import static java.nio.charset.StandardCharsets.UTF_8;
- import static java.util.Arrays.stream;
--import static software.amazon.awssdk.http.auth.aws.signer.AwsV4FamilyHttpSigner.PAYLOAD_SIGNING_ENABLED;
-+import static org.apache.hc.core5.http.HttpHeaders.HOST;
-+import static software.amazon.awssdk.http.ContentStreamProvider.fromByteArrayUnsafe;
- import static software.amazon.awssdk.http.auth.aws.signer.AwsV4FamilyHttpSigner.SERVICE_SIGNING_NAME;
- import static software.amazon.awssdk.http.auth.aws.signer.AwsV4HttpSigner.REGION_NAME;
- 
-@@ -74,16 +84,7 @@ public void execute(HttpRequest request, AsyncEntityProducer entityProducer, Asy
-             throw new IOException("Invalid request URI", e);
-         }
- 
--        String query = uri.getRawQuery();
--        Map<String, List<String>> parameters = new TreeMap<>(CASE_INSENSITIVE_ORDER);
--        if (query != null) {
--            for (String param : query.split("&")) {
--                String[] parts = param.split("=", 2);
--                String name = parts[0];
--                String value = parts.length > 1 ? parts[1] : "";
--                parameters.computeIfAbsent(name, _ -> new ArrayList<>()).add(value);
--            }
--        }
-+        Map<String, List<String>> parameters = parseQueryParameters(uri.getRawQuery());
- 
-         Map<String, List<String>> headers = stream(request.getHeaders())
-                 .collect(toImmutableMap(Header::getName, header -> ImmutableList.of(header.getValue())));
-@@ -105,15 +106,15 @@ public void execute(HttpRequest request, AsyncEntityProducer entityProducer, Asy
-             }
-         }
- 
-+        // AWS OpenSearch Service rejects UNSIGNED-PAYLOAD, so the body must be hashed
-+        ContentStreamProvider payload = entityProducer == null ? null : fromByteArrayUnsafe(readContent(entityProducer));
-+
-         SignedRequest signedRequest = signer.sign(builder -> builder
-                 .identity(credentialsProvider.resolveCredentials())
-                 .request(awsRequest.build())
-+                .payload(payload)
-                 .putProperty(SERVICE_SIGNING_NAME, serviceName)
--                .putProperty(REGION_NAME, region)
--                // AsyncEntityProducer is a streaming API with no synchronous way to read content.
--                // Disable payload signing when body is present, which uses UNSIGNED-PAYLOAD.
--                // This is supported by both AWS OpenSearch Service and OpenSearch Serverless.
--                .putProperty(PAYLOAD_SIGNING_ENABLED, entityProducer == null));
-+                .putProperty(REGION_NAME, region));
- 
-         // Clear existing headers and set signed ones
-         for (Header existingHeader : request.getHeaders()) {
-@@ -123,6 +124,84 @@ public void execute(HttpRequest request, AsyncEntityProducer entityProducer, Asy
-             request.setHeader(entry.getKey(), entry.getValue().getFirst());
-         }
- 
-+        // HTTP/2 sends the authority (which may include the default port) instead of Host, so we must align it with the signed Host
-+        Header host = request.getFirstHeader(HOST);
-+        if (host != null) {
-+            try {
-+                request.setAuthority(URIAuthority.create(host.getValue()));
-+            }
-+            catch (URISyntaxException e) {
-+                throw new IOException("Invalid signed host: " + host.getValue(), e);
-+            }
-+        }
-+
-         chain.proceed(request, entityProducer, scope, asyncExecCallback);
-     }
-+
-+    @VisibleForTesting
-+    static Map<String, List<String>> parseQueryParameters(String rawQuery)
-+    {
-+        Map<Strin
+     @VisibleForTesting
+     static TupleDomain<IcebergColumnHandle> createFileStatisticsDomain(
+-            Map<Integer, Type.PrimitiveType> fieldIdToType,
++            Map<Integer, ? extends Type> fieldIdToType,
+             @Nullable Map<Integer, ByteBuffer> lowerBounds,
+             @Nullable Map<Integer, ByteBuffer> upperBounds,
+             @Nullable Map<Integer, Long> nullValueCounts,
 ```
 
-**File**: `plugin/trino-opensearch/src/test/java/io/trino/plugin/opensearch/client/TestAwsRequestSigner.java` (added, +118/-0)
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +17/-3)
 ```diff
-@@ -0,0 +1,118 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.plugin.opensearch.client;
-+
-+import com.google.common.collect.ImmutableList;
-+import com.google.common.collect.ImmutableMap;
-+import org.apache.hc.client5.http.async.AsyncExecChain;
-+import org.apache.hc.core5.http.HttpRequest;
-+import org.apache.hc.core5.http.io.entity.StringEntity;
-+import org.apache.hc.core5.http.message.BasicHttpRequest;
-+import org.apache.hc.core5.http.nio.AsyncEntityProducer;
-+import org.apache.hc.core5.net.URIAuthority;
-+import org.junit.jupiter.api.Test;
-+import org.opensearch.client.nio.HttpEntityAsyncEntityProducer;
-+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-+
-+import java.net.URI;
-+import java.util.concurrent.atomic.AtomicReference;
-+
-+import static com.google.common.hash.Hashing.sha256;
-+import static io.trino.plugin.opensearch.AwsSecurityConfig.DeploymentType.SERVERLESS;
-+import static io.trino.plugin.opensearch.client.AwsRequestSigner.parseQueryParameters;
-+import static io.trino.plugin.opensearch.client.AwsRequestSigner.readContent;
-+import static java.nio.charset.StandardCharsets.UTF_8;
-+import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+final class TestAwsRequestSigner
-+{
-+    private static final String EMPTY_PAYLOAD_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-+
-+    @Test
-+    void testAuthorityMatchesSignedHostForDefaultPort()
-+            throws Exception
-+    {
-+        HttpRequest request = sign("GET", "https://example.us-east-1.aoss.amazonaws.com:443/index/_search", null);
-+
-+        assertThat(request.getFirstHeader("Host").getValue()).isEqualTo("example.us-east-1.aoss.amazonaws.com");
-+        assertThat(request.getAuthority()).isEqualTo(new URIAuthority("example.us-east-1.aoss.amazonaws.com"));
+@@ -9479,11 +9479,25 @@ public void testSetTransformPartitionedColumnType()
+     @Test // regression test for https://github.com/trinodb/trino/issues/29802
+     public void testColumnTypeEvolutionWithStatistics()
+     {
+-        try (TestTable table = newTrinoTable("test_stats_type_change", "(x INT)", List.of("1", "2"))) {
+-            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE BIGINT");
++        testColumnTypeEvolutionWithStatistics("INT", "BIGINT");
++        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(10, 3)");
++        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(38, 3)");
++        testColumnTypeEvolutionWithStatistics("DECIMAL(28, 3)", "DECIMAL(38, 3)");
++        // The Parquet predicate cannot use the float statistics of an older file yet, see https://github.com/trinodb/trino/issues/30544
++        if (format != PARQUET) {
++            testColumnTypeEvolutionWithStatistics("REAL", "DOUBLE");
++        }
 +    }
 +
-+    @Test
-+    void testAuthorityMatchesSignedHostForCustomPort()
++    private void testColumnTypeEvolutionWithStatistics(String initialType, String newType)
++    {
++        try (TestTable table = newTrinoTable("test_stats_type_change", "(x %s)".formatted(initialType), List.of("1", "2"))) {
++            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE " + newType);
+ 
+             assertThat(query("SELECT * FROM " + table.getName() + " WHERE x IN (SELECT DISTINCT x FROM " + table.getName() + ")"))
+-                    .matches("VALUES BIGINT '1', 2");
++                    .matches("VALUES CAST(1 AS %1$s), CAST(2 AS %1$s)".formatted(newType));
++            assertThat(query("SELECT * FROM %s WHERE x = CAST(1 AS %s)".formatted(table.getName(), newType)))
++                    .matches("VALUES CAST(1 AS %s)".formatted(newType));
+         }
+     }
+ 
+```
+
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/TestIcebergSplitSource.java` (modified, +46/-1)
+```diff
+@@ -43,6 +43,7 @@
+ import io.trino.spi.predicate.Range;
+ import io.trino.spi.predicate.TupleDomain;
+ import io.trino.spi.predicate.ValueSet;
++import io.trino.spi.type.Int128;
+ import io.trino.testing.AbstractTestQueryFramework;
+ import io.trino.testing.QueryRunner;
+ import io.trino.testing.TestingConnectorSession;
+@@ -112,8 +113,10 @@
+ import static io.trino.spi.connector.Constraint.alwaysTrue;
+ import static io.trino.spi.predicate.FloatingPointValueSet.nanValue;
+ import static io.trino.spi.type.BigintType.BIGINT;
++import static io.trino.spi.type.DecimalType.createDecimalType;
+ import static io.trino.spi.type.DoubleType.DOUBLE;
+ import static io.trino.spi.type.RealType.REAL;
++import static io.trino.testing.TestingNames.randomNameSuffix;
+ import static io.trino.tpch.TpchTable.NATION;
+ import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
+ import static java.lang.Float.floatToRawIntBits;
+@@ -402,6 +405,48 @@ public void testNaNPruningWithFiniteBounds(String format)
+         }
+     }
+ 
++    /**
++     * Changing the type of a column creates no snapshot, so until the next one the scan of the current snapshot keeps the
++     * older schema, while its tasks have the new one.
++     */
++    @ParameterizedTest
++    @ValueSource(strings = {"PARQUET", "ORC"})
++    public void testFileStatisticsDomainAfterColumnTypeChange(String format)
 +            throws Exception
 +    {
-+        HttpRequest request = sign("GET", "https://example.us-east-1.aoss.amazonaws.com:9200/index/_search", null);
-+
-+        assertThat(request.getFirstHeader("Host").getValue()).isEqualTo("example.us-east-1.aoss.amazonaws.com:9200");
-+        assertThat(request.getAuthority()).isEqualTo(new URIAuthority("example.us-east-1.aoss.amazonaws.com", 9200));
++        assertFileStatisticsDomainAfterColumnTypeChange(format, "integer", BIGINT, 0L, 1L, 3L, 4L);
++        assertFileStatisticsDomainAfterColumnTypeChange(format, "real", DOUBLE, 0.0, 1.0, 3.0, 4.0);
++        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(10, 2), 0L, 100L, 300L, 400L);
++        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
++        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(28,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
 +    }
 +
-+    @Test
-+    void testParseQueryParametersDecodesValues()
-+    {
-+        assertThat(parseQueryParameters(null)).isEmpty();
-+        assertThat(parseQueryParameters("preference=_shards%3A0&scroll=60000ms&q=a%20b%2Bc&flag"))
-+                .containsExactlyInAnyOrderEntriesOf(ImmutableMap.of(
-+                        "preference", ImmutableList.of("_shards:0"),
-+                        "scroll", ImmutableList.of("60000ms"),
-+                        "q", ImmutableList.of("a b+c"),
-+                        "flag", ImmutableList.of("")));
-+    }
-+
-+    @Test
-+    void testSignsPayloadHash()
++    private void assertFileStatisticsDomainAfterColumnTypeChange(String format, String initialType, io.trino.spi.type.Type newType, Object belowMinimum, Object minimum, Object maximum, Object aboveMaximum)
 +            throws Exception
 +    {
-+        String body = "{\"query\":{\"match_all\":{}}}";
-+        AsyncEntityProducer entityProducer = new HttpEntityAsyncEntityProducer(new StringEntity(body, APPLICATION_JSON));
++        String tableName = "test_statistics_type_change_" + randomNameSuffix();
++        assertUpdate("CREATE TABLE %s WITH (format = '%s') AS SELECT CAST(x AS %s) x FROM (VALUES 1, 2, 3) t(x)".formatted(tableName, format, initialType), 3);
++        try {
++            assertUpdate("ALTER TABLE %s ALTER COLUMN x SET DATA TYPE %s".formatted(tableName, newType));
 +
-+        HttpRequest request = sign("POST", "https://example.us-east-1.aoss.amazonaws.com/index/_search", entityProducer);
++            SchemaTableName schemaTableName = new SchemaTableName("tpch", tableName);
++            Table table = catalog.loadTable(SESSION, schemaTableName);
++            IcebergColumnHandle column = IcebergColumnHandle.optional(new ColumnIdentity(table.schema().findField("x").fieldId(), "x", ColumnIdentity.TypeCategory.PRIMITIVE, ImmutableList.of()))
++                    .columnType(newType)
++                    .build();
++            IcebergTableHandle tableHandle = createTableHandle(schemaTableName, table, TupleDomain.withColumnDomains(ImmutableMap.of(column, Domain.notNull(newType))));
 +
-+        assertThat(request.getFirstHeader("x-amz-content-sha256").getValue()).isEqualTo(sha256().hashString(body, UTF_8).toString());
-+        // reading the body for signing must not consume it
-+        assertThat(new String(readContent(entityProducer), UTF_8)).isEqualTo(body);
++            Domain domain = generateSplit(table, tableHandle).fileStatisticsDomain().getDomains().orElseThrow().get(column);
++            assertThat(domain.includesNullableValue(minimum)).isTrue();
++            assertThat(domain.includesNullableValue(maximum)).isTrue();
++            assertThat(domain.includesNullableValue(aboveMaximum)).isFalse();
++            assertThat(domain.includesNullableValue(belowMinimum)).isFalse();
++        }
++        finally {
++            assertUpdate("DROP TABLE " + tableName);
++        }
 +    }
 +
-+    @Test
-+    void testSignsEmptyPayloadHash()
-+            throws Exception
-+    {
-+        HttpRequest request = sign("GET", "https://example.us-east-1.aoss.amazonaws.com/index/_mapping", null);
+     @Test
+     public void testNullStatisticsMaps()
+     {
+@@ -798,7 +843,7 @@ private List<IcebergSplit> generateSplits(ConnectorSession session, Table nation
+                 session,
+                 tableHandle,
+                 nationTable,
+-                nationTable.newScan().metricsReporter(metricsReporter),
++                nationTable.newScan().useSnapshot(nationTable.currentSnapshot().snapshotId()).metricsReporter(metricsReporter),
+                 Optional.empty(),
+                 alwaysTrue(),
+                 TESTING_TYPE_MANAGER,
+```
+
+---
+
+### Incident Patch 3: `e335dc13` (2026-11-03)
+**Commit Message**: Fix format_number precision for negative values
+
+format_number picked the number of decimals from the signed value, so
+every negative number was formatted with up to two decimals. For
+example, -12345 was formatted as -12.35K, while 12345 is 12.3K. Choose
+the precision from the absolute value instead.
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/FormatNumberFunction.java` (modified, +2/-1)
+```diff
+@@ -23,6 +23,7 @@
+ import java.text.DecimalFormat;
+ 
+ import static io.airlift.slice.Slices.utf8Slice;
++import static java.lang.Math.abs;
+ 
+ public final class FormatNumberFunction
+ {
+@@ -81,7 +82,7 @@ private String format(long count)
+             unit = "Q";
+         }
+ 
+-        return getFormat(fractional).format(fractional) + unit;
++        return getFormat(abs(fractional)).format(fractional) + unit;
+     }
+ 
+     private DecimalFormat getFormat(double value)
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestFormatNumberFunction.java` (modified, +13/-1)
+```diff
+@@ -141,7 +141,19 @@ public void testFormatNumber()
+ 
+         assertThat(assertions.function("format_number", "-9223372036854775808"))
+                 .hasType(VARCHAR)
+-                .isEqualTo("-9223.37Q");
++                .isEqualTo("-9223Q");
 +
-+        assertThat(request.getFirstHeader("x-amz-content-sha256").getValue()).isEqualTo(EMPTY_PAYLOAD_SHA256);
-+    }
++        assertThat(assertions.function("format_number", "SMALLINT '-12345'"))
++                .hasType(VARCHAR)
++                .isEqualTo("-12.3K");
 +
-+    private static HttpRequest sign(String method, String uri, AsyncEntityProducer entityProducer)
-+            throws Exception
-+    {
-+        AwsRequestSigner signer = new AwsRequestSigner(
-+                "us-east-1",
-+                SERVERLESS,
-+                StaticCredentialsProvider.create(AwsBasicCredentials.create("access-key", "secret-key")));
++        assertThat(assertions.function("format_number", "INTEGER '-123456789'"))
++                .hasType(VARCHAR)
++                .isEqualTo("-123M");
 +
-+        AtomicReference<HttpRequest> signedRequest = new AtomicReference<>();
-+        AtomicReference<AsyncEnti
++        assertThat(assertions.function("format_number", "DOUBLE '-1234.5'"))
++                .hasType(VARCHAR)
++                .isEqualTo("-1.23K");
+ 
+         assertThat(assertions.function("format_number", "0"))
+                 .hasType(VARCHAR)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31985** (2026-11-04): Hash resolved functions by function id (@raunaqmorarka)
-- **PR #31984** (2026-11-04): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 19 updates (@dependabot[bot])
-- **PR #31983** (2026-11-04): Bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
-- **PR #31982** (2026-11-04): Avoid runtime library downloads in product tests (@electrum)
-- **PR #31977** (2026-11-03): Update netty to 4.2.20 (@wendigo)
-- **PR #31971** (2026-11-03): Upgrade ClickHouse server to supported version (@krvikash)
+- **PR #31998** (2026-11-05): Block spatial join probe until its index is built (@raunaqmorarka)
+- **PR #31996** (2026-11-05): Bump com.amazon.redshift:redshift-jdbc42 from 2.2.9 to 2.3.0 (@dependabot[bot])
+- **PR #31995** (2026-11-05): Bump com.azure:azure-core-tracing-opentelemetry from 1.0.0-beta.67 to 1.0.0-beta.68 (@dependabot[bot])
+- **PR #31992** (2026-11-05): Speed up building SortedRangeSet from unordered integers (@wendigo)
+- **PR #31988** (2026-11-05): Use synchronized output for CLI status redraw  (@wendigo)
+- **PR #31987** (2026-11-05): Classify MongoDB network errors as external errors (@losipiuk)
 
 ---
 
@@ -2126,3 +2251,46 @@ with 403.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Block spatial join probe until its index is built
+
+**RULE**:
+When implementing operations in `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fde63530`: Block spatial join probe until its index is built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+import com.google.common.util.concurrent.Futures;
+    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
+        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
+    @Override
+    public ListenableFuture<Void> isBlocked()
+    {
+        // A finishing operator with no probe page completes without the spatial index.
+        if (finishing) {
+            return NOT_BLOCKED;
+        }
+        return pagesSpatialIndexBlocked;
+    }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fde63530` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `e1250f62`  
+> **Source Version**: `3ad9af7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:20:42.744Z  
+> **Timestamp**: 2026-11-05T17:57:28.929Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:20:42.605Z  
+> **Harvest Timestamp**: 2026-11-05T17:57:28.922Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12430 stars
+- **Stars / Engagement**: 12434 stars
 
 ---
 
@@ -967,567 +967,217 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1250f62` (2026-11-05)
-**Commit Message**: eval: store and retrieve call operands from pool (#9501)
+### Incident Patch 1: `73378137` (2026-11-05)
+**Commit Message**: eval: a few more fixes reducing allocations (#9514)
 
-This was now the number one source of allocations in Regal, but should
-be equally beneficial to pretty much all evaluations.
+Intended to go all in on int->uint but that turned out to be a bit too
+messy. I did however find a few places where we could eliminate a few
+more heap allocations:
 
-Also took a deep-dive in CPU profiling to see if there's anything to
-move the needle a little on the wall-time metric. It's really not as
-easy but a few tricks together did improve this at least by a little:
+- Group all items passed into the closure of every to have only a single
+allocation performed rather than many
+- Replace the `Until` calls in the evalTree `eval` with iteration that
+doesn't allocate
 
-- Avoid interface comparison with `==` in favor of comparing actual
-values (20% cheaper!)
-- "Early exit" of unification of scalar values already in `biunify`
-avoiding excessive interface type checks (and stack growth) in
-`biunifyValues`
-- Change eval index type `int` -> `uint` to help Go compiler identify
-places where bounds checks can be eliminated
-- Throw out custom bindings slice growth as it's pretty much identical
-to what the stdlib does
-- Throw out `n` count of bindings in favor of standard `len`
-
-```
-348654292 ns/op	820025240 B/op	17454057 allocs/op // OPA v1.22.0
-342811472 ns/op	805012312 B/op	16824305 allocs/op // ObjectKeysIterator pool
-334947014 ns/op	771351845 B/op	15413130 allocs/op // Eval operands pool
-```
+Also replaced a few "util.NumDigits__" functions with a single generic
+one. "Breaking change" I suppose but not really code meant to be used
+outside of OPA. I suppose I could add alias functions to call the
+generic one if someone wants that.
 
 Signed-off-by: Anders Eknert <[REDACTED_EMAIL]>
 
-**File**: `v1/ast/compare.go` (modified, +19/-9)
+**File**: `internal/semver/semver.go` (modified, +1/-1)
 ```diff
-@@ -264,21 +264,31 @@ func TermValueCompare(a, b *Term) int {
- }
+@@ -253,7 +253,7 @@ func isAllDecimals(s string) bool {
  
- func ValueEqual(a, b Value) bool {
--	switch v := a.(type) {
--	case Null, Boolean, String, Var:
--		return v == b
-+	switch av := a.(type) {
-+	case Null:
-+		_, ok := b.(Null)
-+		return ok
-+	case Boolean:
-+		bv, ok := b.(Boolean)
-+		return ok && av == bv
-+	case String:
-+		bv, ok := b.(String)
-+		return ok && av == bv
-+	case Var:
-+		bv, ok := b.(Var)
-+		return ok && av == bv
- 	case Number:
--		return v.Equal(b)
-+		return av.Equal(b)
- 	case Ref:
--		return v.Equal(b)
-+		return av.Equal(b)
- 	case *Array:
--		return v.Equal(b)
-+		return av.Equal(b)
- 	case *object:
--		return v.Equal(b)
-+		return av.Equal(b)
- 	case *Not:
--		return v.Equal(b)
-+		return av.Equal(b)
- 	case *TemplateString:
--		return v.Equal(b)
-+		return av.Equal(b)
+ // length allows calculating the length of the version for pre-allocation.
+ func length(v Version) int {
+-	n := util.NumDigitsInt64(v.Major) + util.NumDigitsInt64(v.Minor) + util.NumDigitsInt64(v.Patch) + 2
++	n := util.NumDigitsInt(v.Major) + util.NumDigitsInt(v.Minor) + util.NumDigitsInt(v.Patch) + 2
+ 	if v.PreRelease != "" {
+ 		n += len(v.PreRelease) + 1
  	}
- 
- 	return a.Compare(b) == 0
 ```
 
-**File**: `v1/ast/compare_test.go` (modified, +14/-0)
+**File**: `v1/ast/index_membership_test.go` (modified, +2/-1)
 ```diff
-@@ -807,3 +807,17 @@ func TestCompareAnnotations(t *testing.T) {
- 		})
- 	}
- }
-+
-+func BenchmarkValueEqualScalars(b *testing.B) {
-+	x, y := InternedTerm(499), InternedTerm(499)
-+	s1, s2 := InternedTerm("some string not too short"), InternedTerm("some string not too short")
-+	var v1 Value = Var("__local2304__")
-+	var v2 Value = Var("__local2304__")
-+	for b.Loop() {
-+		_ = ValueEqual(x.Value, y.Value)
-+		_ = ValueEqual(s1.Value, s2.Value)
-+		_ = ValueEqual(s1.Value, y.Value)
-+		_ = ValueEqual(v1, v2)
-+		_ = ValueEqual(v1, x.Value)
-+	}
-+}
-```
-
-**File**: `v1/ast/policy.go` (modified, +5/-5)
-```diff
-@@ -1354,11 +1354,11 @@ func (expr *Expr) OperatorTerm() *Term {
- // at least pos+1 terms, this function returns nil.
- func (expr *Expr) Operand(pos int) *Term {
- 	terms, ok := expr.Terms.([]*Term)
--	if !ok {
-+	if !ok || pos < 0 {
- 		return nil
- 	}
--	idx := pos + 1
--	if idx < len(terms) {
-+	idx, len := uint(pos+1), uint(len(terms))
-+	if idx < len {
- 		return terms[idx]
- 	}
- 	return nil
-@@ -1367,7 +1367,7 @@ func (expr *Expr) Operand(pos int) *Term {
- // Operands returns the built-in function operands.
- func (expr *Expr) Operands() []*Term {
- 	terms, ok := expr.Terms.([]*Term)
--	if !ok {
-+	if !ok || len(terms) == 0 {
- 		return nil
- 	}
- 	return terms[1:]
-@@ -1904,7 +1904,7 @@ func validEqAssignArgCount(expr *Expr) bool {
- // function like eq, gt, plus, etc.
- func isGlobalBuiltin(expr *Expr, name Var) bool {
- 	terms, ok := expr.Terms.([]*Term)
--	if !ok {
-+	if !ok || len(terms) == 0 {
- 		return false
- 	}
- 
-```
-
-**File**: `v1/rego/rego_bench_test.go` (modified, +3/-2)
-```diff
-@@ -110,9 +110,10 @@ func BenchmarkAciTestBuildAndEval(b *testing.B) {
- }
- 
- // BenchmarkAciTestOnlyEval-10    12752    92188 ns/op   50005 B/op    1062 allocs/op
--// BenchmarkAciTestOnlyEval-10    13521	   86647 ns/op   47448 B/op     967 allocs/op // ground-aware Copy
--// BenchmarkAciTestOnlyEval-16    24430	   48475 ns/op   32337 B/op     781 allocs/op
-+// BenchmarkAciTestOnlyEval-10    13521    86647 ns/op   47448 B/op     967 allocs/op // ground-aware Copy
-+// BenchmarkAciTestOnlyEval-16    24430    48475 ns/op   32337 B/op     781 allocs/op
- // BenchmarkAciTestOnlyEval-16    24780    47997 ns/op   32241 B/op     770 allocs/op // reuse tr.unordered
-+// BenchmarkAciTestOnlyEval-16    29727    40451 ns/op   25115 B/op     542 allocs/op
- func BenchmarkAciTestOnlyEval(b *testing.B) {
- 	ctx := b.Context()
- 
-```
-
-**File**: `v1/topdown/bindings.go` (modified, +54/-50)
-```diff
-@@ -93,7 +93,7 @@ func (u *bindings) size() int {
- func (u *bindings) plugNamespaced(a *ast.Term, caller *bindings) *ast.Term {
- 	switch v := a.Value.(type) {
- 	case ast.Var:
--		b, next := u.apply(a)
-+		b, next := u.applyVar(a)
- 		if a != b || u != next {
- 			return next.plugNamespaced(b, caller)
- 		}
-@@ -172,6 +172,19 @@ func (u *bindings) apply(a *ast.Term) (*ast.Term, *bindings) {
- 	return val.u.apply(val.v)
- }
- 
-+// NOTE(anders):
-+// applyVar does same thing apply does but for when a is known to carry
-+// a Var and doesn't need an extra interface lookup. This is called so
-+// frequently that this made a noticeable difference in my Regal benchmarks
-+// CPU profiling(!)
-+func (u *bindings) applyVar(a *ast.Term) (*ast.Term, *bindings) {
-+	val, ok := u.get(a)
-+	if !ok {
-+		return a, u
-+	}
-+	return val.u.apply(val.v)
-+}
-+
- func (u *bindings) delete(v *ast.Term) {
- 	u.values.Delete(v)
- }
-@@ -282,7 +295,8 @@ func (vis namespacingVisitor) namespaceTerm(a *ast.Term) *ast.Term {
- 		}
- 		cpy := *a
- 		arr := make([]*ast.Term, v.Len())
--		for i := range arr {
-+		// silly double check to prevent bounds check
-+		for i := 0; i < v.Len() && i < len(arr); i++ {
- 			arr[i] = vis.namespaceTerm(v.Elem(i))
- 		}
- 		cpy.Value = ast.NewArray(arr...)
-@@ -327,7 +341,6 @@ const maxLinearScan = 16
- // wasting memory when only a few bindings are used. This is critical for scenarios
- // like comprehensions and functions with few arguments that are called thousands of times.
- type bindingsArrayHashmap struct {
--	n int // Entries in the slice.
- 	a []bindingArrayKeyValue
- 	m map[ast.Var]bindingArrayKeyValue
- }
-@@ -375,88 +388,70 @@ func newBindingsArrayHashmapWithSize(sizeHint int) bindingsArrayHashmap {
- func (b *bindingsArrayHashmap) Put(key *ast.Term, value value) {
- 	if b.m == nil {
- 		// Check if key already exists and update value
--		if i := b.find(key); i >= 0 {
--			b.a[i].value = value
-+		if b.update(key, value) {
- 			return
- 		}
- 
- 		// Still room in slice mode (< maxLinearScan)
--		if b.n < maxLinearScan {
--			// Grow slice if needed using exponential growth strategy
--			if b.n == cap(b.a) {
--				newCap := cap(b.a) * 2
--				if newCap == 0 {
--					newCap = 2 // Start with 2 elements
--				}
--				if newCap > maxLinearScan {
--					newCap = maxLinearScan
--				}
--				newA := make([]bindingArrayKeyValue, b.n, newCap)
--				copy(newA, b.a)
--				b.a = newA
--			}
-+		if len(b.a) < maxLinearScan {
- 			b.a = append(b.a, bindingArrayKeyValue{key, value})
--			b.n++
- 			return
- 		}
- 
- 		// Slice is full (reached maxLinearScan), transition to map mode.
- 		b.m = make(map[ast.Var]bindingArrayKeyValue, maxLinearScan+1)
- 		for _, kv := range b.a {
--			b.m[kv.key.Value.(ast.Var)] = bindingArrayKeyValue{kv.key, kv.value}
-+			b.m[kv.key.Value.(ast.Var)] = kv
- 		}
- 		b.m[key.Value.(ast.Var)] = bindingArrayKeyValue{key, value}
- 
- 		// Clear slice to allow GC
- 		b.a = nil
--		b.n = 0
- 		return
- 	}
- 
- 	b.m[key.Value.(ast.Var)] = bindingArrayKeyValue{key, value}
- }
- 
- func (b *bindingsArrayHashmap) Get(key *ast.Term) (value, bool) {
-+	v := key.Value.(ast.Var)
- 	if b.m == nil {
--		if i := b.find(key); i >= 0 {
--			return b.a[i].value, true
-+		for i := range b.a {
-+			if b.a[i].key.Value.(ast.Var) == v {
-+				return b.a[i].value, true
-+			}
- 		}
--
--		return value{}, false
--	}
--
--	v, ok := b.m[key.Value.(ast.Var)]
--	if ok {
--		return v.value, true
-+	} else if bv, ok := b.m[v]; ok {
-+		return bv.value, true
- 	}
- 
- 	return value{}, false
- }
- 
- func (b *bindingsArrayHashmap) Delete(key *ast.Term) {
- 	if b.m == nil {
--		if i := b.find(key); i >= 0 {
--			n := b.n - 1
--			if i < n {
--				b.a[i] = b.a[n]
-+		if i, found := b.find(key); found {
-+			aLen := uint(len(b.a))
-+			lastIdx := aLen - 1
-+			if i < aLen && i < lastIdx {
-+				b.a[i] = b.a[lastIdx]
+@@ -476,7 +476,8 @@ func TestBaseDocEqIndexCollectionEarlyExit(t *testing.T) {
+ 			var sb strings.Builder
+ 			sb.WriteString("package test\n\n")
+ 			for i := range n {
+-				sb.WriteString(strings.ReplaceAll(tc.head, "IDX", strconv.Itoa(i)) + "\n")
++				sb.WriteString(strings.ReplaceAll(tc.head, "IDX", strconv.Itoa(i)))
++				sb.WriteByte('\n')
+ 				fmt.Fprintf(&sb, "\tdata.groups.g%d.members[input.subject]\n}\n\n", i)
  			}
- 			// Shrink slice to reflect deletion
--			b.a = b.a[:n]
--			b.n = n
-+			b.a = b.a[:lastIdx]
-+			clear(b.a[lastIdx:])
- 		}
-+
- 		return
- 	}
  
- 	delete(b.m, key.Value.(ast.Var))
- }
- 
--func (b *bindingsArrayHashmap) Iter(f func(k *ast.Term, v value) bool) {
-+func (b *bindingsArrayHashmap) Iter(f func(*ast.Term, value) bool) {
- 	if b.m == nil {
--		if b.a != nil {
--			for i := range b.n {
--				if f(b.a[i].key, b.a[i].value) {
--					return
--				}
-+		for _, v := range b.a {
-+			if f(v.key, v.value) {
-+				return
- 			}
- 		}
- 		return
-@@ -471,21 +466,30 @@ func (b *bindingsArrayHashmap) Iter(f func(k *ast.Term, v value) bool) {
- 
- func (b *bindingsArrayHashmap) size() int {
- 	if b.m == nil {
--		return b.n
-+		return len(b.a)
- 	}
- 	return len(b.m)
- }
- 
--func (b *bindingsArrayHashmap) find(key *ast.Term) int {
--	if b.a == nil || b.n == 0 {
--		return -1
-+func (b *bindingsArrayHashmap) find(key *ast.Term) (uint, bool) {
-+	v := key.Value.(ast.Var)
-+	for i := range b.a {
-+		if b.a[i].key.Value.(ast.Var) == v {
-+			return uint(i), true
-+		}
- 	}
-+
-+	return 0, false
-+}
-+
-+func (b *bindingsArrayHashmap) update(key *ast.Term, value value) bool {
- 	v := key.Value.(ast.Var)
--	for i := range b.n {
-+	for i := range b.a {
- 		if b.a[i].key.
 ```
 
-**File**: `v1/topdown/bindings_test.go` (modified, +1/-1)
+**File**: `v1/rego/collection_lookup_bench_test.go` (modified, +2/-1)
 ```diff
-@@ -113,7 +113,7 @@ func TestBindingsArrayHashmapDynamicGrowth(t *testing.T) {
- 		expectedCap  int // Expected final capacity
- 		shouldUseMap bool
- 	}{
--		{"1_binding", 1, 2, false},     // Should allocate cap=2
-+		{"1_binding", 1, 1, false},     // Should allocate cap=1
- 		{"2_bindings", 2, 2, false},    // Should use cap=2
- 		{"3_bindings", 3, 4, false},    // Should grow to cap=4
- 		{"4_bindings", 4, 4, false},    // Should use cap=4
+@@ -21,7 +21,8 @@ func collectionPolicy(n, members int, head string) (string, map[string]any) {
+ 	var sb strings.Builder
+ 	sb.WriteString("package test\n\n")
+ 	for i := range n {
+-		sb.WriteString(strings.ReplaceAll(head, "IDX", strconv.Itoa(i)) + " if {\n")
++		sb.WriteString(strings.ReplaceAll(head, "IDX", strconv.Itoa(i)))
++		sb.WriteString(" if {\n")
+ 		fmt.Fprintf(&sb, "\tdata.groups.g%d.members[input.subject]\n}\n\n", i)
+ 	}
+ 
 ```
 
-**File**: `v1/topdown/eval.go` (modified, +234/-170)
+**File**: `v1/topdown/bindings.go` (modified, +1/-1)
 ```diff
-@@ -130,7 +130,7 @@ type eval struct {
+@@ -216,7 +216,7 @@ func (u *bindings) namespaceVar(v *ast.Term, caller *bindings) *ast.Term {
+ 	if caller != nil && caller != u && !ast.RootDocumentNames.Contains(v) {
+ 		// Root documents (i.e., data, input) should never be namespaced
+ 		// because they are globally unique.
+-		len := len(name) + util.NumDigitsUint(u.id)
++		len := len(name) + util.NumDigitsInt(u.id)
+ 		buf := util.AppendInt(append(make([]byte, 0, len), name...), u.id)
+ 		return ast.VarTerm(util.ByteSliceToString(buf))
+ 	}
+```
+
+**File**: `v1/topdown/eval.go` (modified, +54/-56)
+```diff
+@@ -35,7 +35,7 @@ type biunifyArraysRecParams struct {
+ 	a, b    *ast.Array
+ 	b1, b2  *bindings
+ 	iter    unifyIterator
+-	idx     int
++	idx     uint64
+ 	inPlace bool // bind and compare elements without a continuation, see unifyInPlace
+ }
+ 
+@@ -130,8 +130,8 @@ type eval struct {
  	tracingOpts                 tracing.Options
  	queryID                     uint64
  	timeStart                   int64
--	index                       int
-+	index                       uint
- 	genvarid                    int
+-	index                       uint
+-	genvarid                    int
++	index                       uint64
++	genvarid                    uint64
  	everyUnrollDiv              int
  	indexing                    bool
-@@ -405,8 +405,8 @@ func (e *eval) traceEvent(op Op, x ast.Node, msg string, target *ast.Ref) {
- 		})
- 	}
- 
--	for i := range e.tracers {
--		e.tracers[i].TraceEvent(evt)
-+	for _, tracer := range e.tracers {
-+		tracer.TraceEvent(evt)
- 	}
- }
- 
+ 	earlyExit                   bool
 @@ -433,7 +433,7 @@ func (e *eval) evalExpr(iter evalIterator) error {
  		return cancelErr
  	}
  
--	if e.index >= len(e.query) {
-+	if e.index >= uint(len(e.query)) {
+-	if e.index >= uint(len(e.query)) {
++	if e.index >= uint64(len(e.query)) {
  		if err := iter(e); err != nil {
  			switch err := err.(type) {
  			case *deferredEarlyExitError, *earlyExitError:
-@@ -511,112 +511,7 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
- 	// this, but do make sure that the common non-tracing case doesn't pay in allocations
- 	// for something that is only needed when tracing is enabled.
- 	if e.traceEnabled {
--		var defined bool
--		switch terms := expr.Terms.(type) {
--		case []*ast.Term:
--			switch {
--			case expr.IsEquality():
--				err = e.unify(terms[1], terms[2], func() error {
--					defined = true
--					err := e.cont(iter, advance)
--					e.traceRedo(expr)
--					return err
--				})
--			default:
--				err = e.evalCall(terms, func() error {
--					defined = true
--					err := e.cont(iter, advance)
--					e.traceRedo(expr)
--					return err
--				})
--			}
--		case *ast.Term:
--			rterm := ast.VarTerm(e.fmtVar())
--
--			if e.partial() {
--				e.inliningControl.PushDisable(rterm.Value, true)
--			}
--
--			err = e.unify(terms, rterm, func() error {
--				if e.saveSet.Contains(rterm, e.bindings) {
--					return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
--						return e.cont(iter, advance)
--					})
--				}
--				if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
--					defined = true
--					err := e.cont(iter, advance)
--					e.traceRedo(expr)
--					return err
--				}
--				return nil
--			})
--
--			if e.partial() {
--				e.inliningControl.PopDisable()
--			}
--		case *ast.Every:
--			eval := evalEvery{
--				e:     e,
--				every: terms,
--				expr:  expr,
--			}
--			err = eval.eval(func() error {
--				defined = true
--				err := e.cont(iter, advance)
--				e.traceRedo(expr)
--				return err
--			})
--
--		case *ast.Not:
--			en := evalNot{
--				e:   e,
--				not: terms,
--			}
--			err = en.eval(func(e *eval) error {
--				defined = true
--				err := e.cont(iter, advance)
--				e.traceRedo(expr)
--				return err
--			})
--
--		case *ast.LogicalAnd:
--			ea := evalLogicalAnd{
--				e:   e,
--				and: terms,
--			}
--			err = ea.eval(func(e *eval) error {
--				defined = true
--				err := e.cont(iter, advance)
--				e.traceRedo(expr)
--				return err
--			})
--
--		case *ast.LogicalOr:
--			eo := evalLogicalOr{
--				e:  e,
--				or: terms,
--			}
--			err = eo.eval(func(e *eval) error {
--				defined = true
--				err := e.cont(iter, advance)
--				e.traceRedo(expr)
--				return err
--			})
--
--		default: // guard-rail for adding extra (Expr).Terms types
--			return fmt.Errorf("got %T terms: %[1]v", terms)
--		}
--
--		if err != nil {
--			return err
--		}
--
--		if !defined {
--			e.traceFail(expr)
--		}
--
--		return nil
-+		return e.evalStepTrace(iter, expr, advance)
- 	}
+@@ -711,7 +711,7 @@ func (e *eval) evalStepTrace(iter evalIterator, expr *ast.Expr, advance bool) (e
+ // Single-purpose fmt.Sprintf replacement for generating variable names with only
+ // one allocation performed instead of 4, and in 1/3 the time.
+ func (e *eval) fmtVar() string {
+-	buf := make([]byte, 0, len(e.genvarprefix)+util.NumDigitsUint(e.queryID)+util.NumDigitsUint(uint64(e.index))+7)
++	buf := make([]byte, 0, len(e.genvarprefix)+util.NumDigitsInt(e.queryID)+util.NumDigitsInt(e.index)+7)
  
- 	switch terms := expr.Terms.(type) {
-@@ -628,7 +523,8 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
- 		}
- 
- 		if expr.IsEquality() {
--			err = e.unify(terms[1], terms[2], c.fn)
-+			rhs, lhs := terms[2], terms[1]
-+			err = e.unify(lhs, rhs, c.fn)
- 		} else {
- 			err = e.evalCall(terms, c.fn)
- 		}
-@@ -662,9 +558,15 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
- 			e:   e,
- 			not: terms,
- 		}
--		err = en.eval(func(e *eval) error {
--			return e.cont(iter, advance)
--		})
-+		if e.unknownBody(en.not.Body, e.bindings) {
-+			err = en.evalPartial(func(e *eval) error {
-+				return e.cont(iter, advance)
-+			})
-+		} else {
-+			err = en.eval(func(e *eval) error {
-+				return e.cont(iter, advance)
-+			})
-+		}
- 
- 	case *ast.LogicalAnd:
- 		ea := evalLogicalAnd{
-@@ -691,10 +593,125 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
- 	return err
+ 	buf = append(buf, e.genvarprefix...)
+ 	buf = append(buf, "_term_"...)
+@@ -1331,15 +1331,13 @@ func (e *eval) biunify(a, b *ast.Term, b1, b2 *bindings, iter unifyIterator) err
  }
  
-+func (e *eval) evalStepTrace(iter evalIterator, expr *ast.Expr, advance bool) (err error) {
-+	var defined bool
-+	switch terms := expr.Terms.(type) {
-+	case []*ast.Term:
-+		switch {
-+		case expr.IsEquality():
-+			rhs, lhs := terms[2], terms[1]
-+			err = e.unify(lhs, rhs, func() error {
-+				defined = true
-+				err := e.cont(iter, advance)
-+				e.traceRedo(expr)
-+				return err
-+			})
-+		default:
-+			err = e.evalCall(terms, func() error {
-+				defined = true
-+				err := e.cont(iter, advance)
-+				e.traceRedo(expr)
-+				return err
-+			})
-+		}
-+	case *ast.Term:
-+		rterm := ast.VarTerm(e.fmtVar())
-+
-+		if e.partial() {
-+			e.inliningControl.PushDisable(rterm.Value, true)
-+		}
-+
-+		err = e.unify(terms, rt
+ func (e *eval) biunifyArraysRec(params *biunifyArraysRecParams) (err error) {
+-	n := params.a.Len()
+-
+ 	var undos [4]undo
+ 	var nu uint8 // uint to avoid bounds check in &undos[nu]
+ 
+ 	if params.inPlace {
+-		for params.idx < n && params.idx < params.b.Len() && nu < uint8(len(undos)) {
+-			lhs := params.a.Elem(params.idx)
+-			rhs := params.b.Elem(params.idx)
++		for params.idx < uint64(params.a.Len()) && params.idx < uint64(params.b.Len()) && nu < uint8(len(undos)) {
++			lhs := params.a.Elem(int(params.idx))
++			rhs := params.b.Elem(int(params.idx))
+ 
+ 			r := unifyInPlace(lhs, rhs, params.b1, params.b2, &undos[nu])
+ 			if r == unifyNeedsMore {
+@@ -1358,16 +1356,16 @@ func (e *eval) biunifyArraysRec(params *biunifyArraysRecParams) (err error) {
+ 	}
+ 
+ 	switch {
+-	case params.idx == n:
++	case int(params.idx) == params.a.Len():
+ 		err = params.iter()
+ 		arraysRecPool.Put(params)
+-	case params.idx == n-1: // nothing left to continue with after the last element
+-		a, b := params.a.Elem(params.idx), params.b.Elem(params.idx)
++	case int(params.idx) == params.a.Len()-1: // nothing left to continue with after the last element
++		a, b := params.a.Elem(int(params.idx)), params.b.Elem(int(params.idx))
+ 		b1, b2, iter := params.b1, params.b2, params.iter
+ 		arraysRecPool.Put(params)
+ 		err = e.biunify(a, b, b1, b2, iter)
+ 	default:
+-		err = e.biunify(params.a.Elem(params.idx), params.b.Elem(params.idx), params.b1, params.b2, func() error {
++		err = e.biunify(params.a.Elem(int(params.idx)), params.b.Elem(int(params.idx)), params.b1, params.b2, func() error {
+ 			params.idx++
+ 			return e.biunifyArraysRec(params)
+ 		})
+@@ -1512,7 +1510,6 @@ func (e *eval) biunifyValues(a, b *ast.Term, b1, b2 *bindings, iter unifyIterato
+ 	// enabled, then skip evaluation (and save the expression) if the term is
+ 	// in the save set. Currently, comprehensions are not evaluated during
+ 	// partial eval. This could be improved in the future.
+-
+ 	var saveA, saveB bool
+ 
+ 	if _, ok := a.Value.(ast.Set); ok {
+@@ -1653,9 +1650,7 @@ func (e *eval) biunifyComprehension(a, b *ast.Term, b1, b2 *bindings, swap bool,
+ 		return e.biunifyComprehensionPartial(a, b, b1, b2, swap, iter)
+ 	}
+ 
+-	value, err := e.buildComprehensionCache(a)
+-
+-	if err != nil {
++	if value, err := e.buildComprehensionCache(a); err != nil {
+ 		return err
+ 	} else if value != nil {
+ 		return e.biunify(value, b, b1, b2, iter)
+@@ -2888,7 +2883,6 @@ type evalTree struct {
+ }
+ 
+ func (e evalTree) eval(iter unifyIterator) error {
+-
+ 	if len(e.ref) == e.pos {
+ 		return e.finish(iter)
+ 	}
+@@ -4595,37 +4589,27 @@ func (e evalTerm) get(plugged *ast.Term) (*ast.Term, *bindings) {
+ 				return e.termbindings.apply(plugged)
+ 			}
+ 		} else {
+-			var t *ast.Term
+-			var b *bindings
+-			stop := v.Until(func(elem *ast.Term) bool {
++			for _, elem := range v.Slice() {
+ 				if e.termbindings.Plug(elem).Equal(plugged) {
+-					t, b = e.termbindings.apply(plugged)
+-					return true
++					return e.termbindings.apply(plugged)
+ 				}
+-				return false
+-			})
+-			if stop {
+-				return t, b
+ 			}
+ 		}
+ 	case ast.Object:
+ 		if v.IsGround() {
+-			term := v.Get(plugged)
+-			if term != nil {
++			if term := v.Get(plugged); term != nil {
+ 				return e.termbindings.apply(term)
+ 			}
+ 		} else {
+-			var t *ast.Term
+-			var b *bindings
+-			stop := v.Until(func(k, v *ast.Term) bool {
+-				if e.termbindings.Plug(k).Equal(plugged
 ```
 
 **File**: `v1/topdown/stacktrace.go` (modified, +1/-1)
@@ -1536,129 +1186,679 @@ Signed-off-by: Anders Eknert <[REDACTED_EMAIL]>
  	if len(e.query) == 0 {
  		return nil
  	}
--	return e.query[min(e.index, len(e.query)-1)]
-+	return e.query[min(e.index, uint(len(e.query)-1))]
+-	return e.query[min(e.index, uint(len(e.query)-1))]
++	return e.query[min(e.index, uint64(len(e.query)-1))]
  }
  
  // resolvedText renders the source of expr with the values its variables are
 ```
 
+**File**: `v1/topdown/topdown_bench_test.go` (modified, +7/-7)
+```diff
+@@ -550,7 +550,6 @@ func generatePartialEvalBenchmarkData(numRoles int) map[string]any {
+ }
+ 
+ func generatePartialEvalBenchmarkInput(numRoles int) *ast.Term {
+-
+ 	tmpl, err := template.New("Test").Parse(`{
+ 		"operation": "operation-{{ . }}",
+ 		"resource": "resource-{{ . }}",
+@@ -571,11 +570,10 @@ func generatePartialEvalBenchmarkInput(numRoles int) *ast.Term {
+ 	return ast.MustParseTerm(buf.String())
+ }
+ 
+-// BenchmarkWalk/100-16         	  319608	      3388 ns/op	    7862 B/op	      66 allocs/op
+-// BenchmarkWalk/1000-16        	   49064	     25721 ns/op	   53824 B/op	    1043 allocs/op
+-// BenchmarkWalk/2000-16        	   16743	     72156 ns/op	  114898 B/op	    3043 allocs/op
+-// BenchmarkWalk/3000-16        	   10000	    115028 ns/op	  175968 B/op	    5043 allocs/op
+-
++// BenchmarkWalk/100-16         	  383415	      3118 ns/op	    7526 B/op	      55 allocs/op
++// BenchmarkWalk/1000-16        	   50845	     23604 ns/op	   51928 B/op	     542 allocs/op
++// BenchmarkWalk/2000-16        	   19908	     60316 ns/op	  109059 B/op	    1542 allocs/op
++// BenchmarkWalk/3000-16        	   12272	     97774 ns/op	  166188 B/op	    2542 allocs/op
+ func BenchmarkWalk(b *testing.B) {
+ 	sizes := []int{100, 1000, 2000, 3000}
+ 
+@@ -597,9 +595,11 @@ func BenchmarkWalk(b *testing.B) {
+ 					WithCompiler(compiler).
+ 					WithTransaction(txn)
+ 
++				exp := ast.IntNumberTerm(n - 1)
++
+ 				for b.Loop() {
+ 					rs, err := q.Run(ctx)
+-					if err != nil || len(rs) != 1 || !rs[0][ast.Var("x")].Equal(ast.IntNumberTerm(n-1)) {
++					if err != nil || len(rs) != 1 || !rs[0][ast.Var("x")].Equal(exp) {
+ 						b.Fatal("Unexpected result:", rs, "err:", err)
+ 					}
+ 				}
+```
+
+**File**: `v1/util/performance.go` (modified, +1/-22)
+```diff
+@@ -131,13 +131,7 @@ func StringToByteSlice[T ~string](s T) []byte {
+ 
+ // NumDigitsInt returns the number of digits in n.
+ // This is useful for pre-allocating buffers for string conversion.
+-func NumDigitsInt(n int) int {
+-	return NumDigitsInt64(int64(n))
+-}
+-
+-// NumDigitsInt64 returns the number of digits in n.
+-// This is useful for pre-allocating buffers for string conversion.
+-func NumDigitsInt64(n int64) int {
++func NumDigitsInt[T Integer](n T) int {
+ 	if n == 0 {
+ 		return 1
+ 	}
+@@ -154,21 +148,6 @@ func NumDigitsInt64(n int64) int {
+ 	return count
+ }
+ 
+-// NumDigitsUint returns the number of digits in n.
+-// This is useful for pre-allocating buffers for string conversion.
+-func NumDigitsUint(n uint64) int {
+-	if n == 0 {
+-		return 1
+-	}
+-
+-	count := 0
+-	for n > 0 {
+-		n /= 10
+-		count++
+-	}
+-	return count
+-}
+-
+ // AppendInt is a less messy version of strconv.AppendInt for base 10 ints.
+ func AppendInt[T Integer](buf []byte, n T) []byte {
+ 	return strconv.AppendInt(buf, int64(n), 10)
+```
+
 ---
 
-### Incident Patch 2: `1b57f11c` (2026-11-04)
-**Commit Message**: topdown: cover time.date, clock, weekday and diff with small timestamps (#9498)
+### Incident Patch 2: `5fd9e07f` (2026-11-05)
+**Commit Message**: tester: add --strict-builtin-errors to opa test (#9462)
 
-The shared time cases only use timestamps of 1.5e18 ns and the like,
-never the epoch or anything near it. A timestamp that fits an int can be
-a different number representation than a large one in some
-implementations, and nothing checks that both are handled.
+Added `Runner.StrictBuiltinErrors` and an opa test
+`--strict-builtin-errors` flag, the test now stops at the first built-in
+error and reports it as the test's error, the same as `opa eval
+--strict-builtin-errors`. Without the flag the output and the exit
+status are unchanged.
 
-Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
+Fixes #6816
 
-**File**: `v1/test/cases/testdata/v1/time/test-time-epoch.yaml` (added, +92/-0)
+---------
+
+Signed-off-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
+Co-authored-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
+
+**File**: `cmd/test.go` (modified, +32/-29)
 ```diff
-@@ -0,0 +1,92 @@
-+---
-+cases:
-+  - note: "time/date: the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
+@@ -41,35 +41,36 @@ import (
+ )
+ 
+ type testCommandParams struct {
+-	verbose      bool
+-	explain      *util.EnumFlag
+-	errLimit     int
+-	outputFormat *util.EnumFlag
+-	coverage     bool
+-	coverageRuns []string
+-	threshold    float64
+-	timeout      time.Duration
+-	ignore       []string
+-	bundleMode   bool
+-	benchmark    bool
+-	benchMem     bool
+-	runRegex     string
+-	sortTests    *util.EnumFlag
+-	count        int
+-	target       *util.EnumFlag
+-	skipExitZero bool
+-	capabilities *capabilitiesFlag
+-	schema       *schemaFlags
+-	watch        bool
+-	stopChan     chan os.Signal
+-	output       io.Writer
+-	errOutput    io.Writer
+-	v0Compatible bool
+-	v1Compatible bool
+-	v2Compatible bool
+-	varValues    bool
+-	parallel     int
+-	failOnEmpty  bool
++	verbose             bool
++	explain             *util.EnumFlag
++	errLimit            int
++	outputFormat        *util.EnumFlag
++	coverage            bool
++	coverageRuns        []string
++	threshold           float64
++	timeout             time.Duration
++	ignore              []string
++	bundleMode          bool
++	benchmark           bool
++	benchMem            bool
++	runRegex            string
++	sortTests           *util.EnumFlag
++	count               int
++	target              *util.EnumFlag
++	skipExitZero        bool
++	capabilities        *capabilitiesFlag
++	schema              *schemaFlags
++	watch               bool
++	stopChan            chan os.Signal
++	output              io.Writer
++	errOutput           io.Writer
++	v0Compatible        bool
++	v1Compatible        bool
++	v2Compatible        bool
++	varValues           bool
++	parallel            int
++	failOnEmpty         bool
++	strictBuiltinErrors bool
+ }
+ 
+ func newTestCommandParams() testCommandParams {
+@@ -421,6 +422,7 @@ func compileAndSetupTests(ctx context.Context, testParams testCommandParams, sto
+ 		CapturePrintOutput(true).
+ 		EnableTracing(testParams.verbose || testParams.varValues).
+ 		StackTraces(true).
++		StrictBuiltinErrors(testParams.strictBuiltinErrors).
+ 		SetCoverageRuns(coverageRuns).
+ 		SetCoverageQueryTracer(coverTracer).
+ 		SetRuntime(runtimeInfo).
+@@ -602,6 +604,7 @@ recommended as some updates might cause them to be dropped by OPA.
+ 	testCommand.Flags().BoolVar(&testParams.varValues, "var-values", false, "show local variable values in test output")
+ 	testCommand.Flags().IntVarP(&testParams.parallel, "parallel", "p", goRuntime.NumCPU(), "the number of tests that can run in parallel, defaulting to the number of CPUs (explicitly set with 0). Benchmarks are always run sequentially.")
+ 	testCommand.Flags().BoolVar(&testParams.failOnEmpty, "fail-on-empty", false, "Whether to fail the test when no test was run")
++	testCommand.Flags().BoolVar(&testParams.strictBuiltinErrors, "strict-builtin-errors", false, "treat the first built-in function error encountered in a test as fatal and report the test as an error")
+ 	testCommand.Flags().Var(testParams.sortTests, "sort", "sort the JSON formatted test output")
+ 
+ 	// Shared flags
+```
+
+**File**: `cmd/test_jsonv2_test.go` (modified, +59/-0)
+```diff
+@@ -2325,6 +2325,26 @@ func testExitCodeWithFailOnEmpty(rego string, failOnEmpty bool) int {
+ 	return exitCode
+ }
+ 
++func testExitCodeWithStrictBuiltinErrors(rego string, strictBuiltinErrors bool) int {
++	files := map[string]string{
++		"test.rego": rego,
++	}
 +
-+        p := time.date(0)
-+    want_result:
-+      - x: [1970, 1, 1]
-+  - note: "time/date: one second after the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++	var exitCode int
++	test.WithTempFS(files, func(path string) {
++		regoFilePath := filepath.Join(path, "test.rego")
 +
-+        p := time.date(1000000000)
-+    want_result:
-+      - x: [1970, 1, 1]
-+  - note: "time/date: the epoch in a time zone"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++		testParams := newTestCommandParams()
++		testParams.count = 1
++		testParams.strictBuiltinErrors = strictBuiltinErrors
++		testParams.errOutput = io.Discard
++		testParams.output = io.Discard
 +
-+        p := time.date([0, "America/New_York"])
-+    want_result:
-+      - x: [1969, 12, 31]
-+  - note: "time/clock: the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++		exitCode = opaTest([]string{regoFilePath}, testParams)
++	})
++	return exitCode
++}
 +
-+        p := time.clock(0)
-+    want_result:
-+      - x: [0, 0, 0]
-+  - note: "time/clock: one second after the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
+ func TestExitCode(t *testing.T) {
+ 	testCases := map[string]struct {
+ 		Test              string
+@@ -3912,6 +3932,45 @@ func TestFailOnEmpty(t *testing.T) {
+ 	}
+ }
+ 
++func TestStrictBuiltinErrors(t *testing.T) {
++	testCases := map[string]struct {
++		Test                string
++		StrictBuiltinErrors bool
++		ExpectedExitCode    int
++	}{
++		"pass when builtin error is swallowed and strict-builtin-errors disabled": {
++			Test: `package foo
 +
-+        p := time.clock(1000000000)
-+    want_result:
-+      - x: [0, 0, 1]
-+  - note: "time/clock: the epoch in a time zone"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++			test_swallowed if {
++				to_number("not a number")
++			} else := true
++			`,
++			StrictBuiltinErrors: false,
++			ExpectedExitCode:    0,
++		},
++		"error when builtin error is swallowed and strict-builtin-errors enabled": {
++			Test: `package foo
 +
-+        p := time.clock([0, "America/New_York"])
-+    want_result:
-+      - x: [19, 0, 0]
-+  - note: "time/weekday: the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++			test_swallowed if {
++				to_number("not a number")
++			} else := true
++			`,
++			StrictBuiltinErrors: true,
++			ExpectedExitCode:    2,
++		},
++	}
 +
-+        p := time.weekday(0)
-+    want_result:
-+      - x: Thursday
-+  - note: "time/diff: equal timestamps at the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			exitCode := testExitCodeWithStrictBuiltinErrors(tc.Test, tc.StrictBuiltinErrors)
 +
-+        p := time.diff(0, 0)
-+    want_result:
-+      - x: [0, 0, 0, 0, 0, 0]
-+  - note: "time/diff: the epoch against one day later"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++			if exitCode != tc.ExpectedExitCode {
++				t.Errorf("Expected exit code to be %d but got %d", tc.ExpectedExitCode, exitCode)
++			}
++		})
++	}
++}
 +
-+        p := time.diff(0, 86400000000000)
-+    want_result:
-+      - x: [0, 0, 1, 0, 0, 0]
-+  - note: "time/diff: one second after the epoch against the epoch"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
+ type testPlugin struct {
+ 	target string
+ }
+```
+
+**File**: `cmd/test_test.go` (modified, +59/-0)
+```diff
+@@ -2358,6 +2358,26 @@ func testExitCodeWithFailOnEmpty(rego string, failOnEmpty bool) int {
+ 	return exitCode
+ }
+ 
++func testExitCodeWithStrictBuiltinErrors(rego string, strictBuiltinErrors bool) int {
++	files := map[string]string{
++		"test.rego": rego,
++	}
 +
-+        p := time.diff(1000000000, 0)
-+    want_result:
-+      - x: [0, 0, 0, 0, 0, 1]
++	var exitCode int
++	test.WithTempFS(files, func(path string) {
++		regoFilePath := filepath.Join(path, "test.rego")
++
++		testParams := newTestCommandParams()
++		testParams.count = 1
++		testParams.strictBuiltinErrors = strictBuiltinErrors
++		testParams.errOutput = io.Discard
++		testParams.output = io.Discard
++
++		exitCode = opaTest([]string{regoFilePath}, testParams)
++	})
++	return exitCode
++}
++
+ func TestExitCode(t *testing.T) {
+ 	testCases := map[string]struct {
+ 		Test              string
+@@ -4039,6 +4059,45 @@ func TestFailOnEmpty(t *testing.T) {
+ 	}
+ }
+ 
++func TestStrictBuiltinErrors(t *testing.T) {
++	testCases := map[string]struct {
++		Test                string
++		StrictBuiltinErrors bool
++		ExpectedExitCode    int
++	}{
++		"pass when builtin error is swallowed and strict-builtin-errors disabled": {
++			Test: `package foo
++
++			test_swallowed if {
++				to_number("not a number")
++			} else := true
++			`,
++			StrictBuiltinErrors: false,
++			ExpectedExitCode:    0,
++		},
++		"error when builtin error is swallowed and strict-builtin-errors enabled": {
++			Test: `package foo
++
++			test_swallowed if {
++				to_number("not a number")
++			} else := true
++			`,
++			StrictBuiltinErrors: true,
++			ExpectedExitCode:    2,
++		},
++	}
++
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			exitCode := testExitCodeWithStrictBuiltinErrors(tc.Test, tc.StrictBuiltinErrors)
++
++			if exitCode != tc.ExpectedExitCode {
++				t.Errorf("Expected exit code to be %d but got %d", tc.ExpectedExitCode, exitCode)
++			}
++		})
++	}
++}
++
+ type testPlugin struct {
+ 	target string
+ }
+```
+
+**File**: `docs/docs/policy-testing.md` (modified, +34/-7)
+```diff
+@@ -197,10 +197,13 @@ This is also useful in CI/CD pipelines to ensure that tests are actually being e
+ ## Test Results
+ 
+ If the test rule is undefined or generates a non-`true` value the test result
+-is reported as `FAIL`. If the test encounters a runtime error (e.g., a divide
+-by zero condition) the test result is marked as an `ERROR`. Tests prefixed with
+-`todo_` will be reported as `SKIPPED`. Otherwise, the test result is marked as
+-`PASS`.
++is reported as `FAIL`. If the test encounters a runtime error (e.g., conflicting
++values for a rule) the test result is marked as an `ERROR`. An error raised by a
++built-in function (e.g., a divide by zero condition) makes the expression
++undefined, so the test is reported as `FAIL`, unless `opa test` is run with
++`--strict-builtin-errors`, which reports the first such error as an `ERROR`.
++Tests prefixed with `todo_` will be reported as `SKIPPED`. Otherwise, the test
++result is marked as `PASS`.
+ 
+ ```rego title="pass_fail_error_test.rego"
+ package example_test
+@@ -226,7 +229,7 @@ By default, `opa test` reports the number of tests executed and displays all
+ of the tests that failed or errored.
+ 
+ ```console
+-$ opa test pass_fail_error_test.rego
++$ opa test --strict-builtin-errors pass_fail_error_test.rego
+ data.example_test.test_failure: FAIL (253ns)
+ data.example_test.test_error: ERROR (289ns)
+   pass_fail_error_test.rego:15: eval_builtin_error: div: divide by zero
+@@ -236,11 +239,15 @@ FAIL: 1/3
+ ERROR: 1/3
+ ```
+ 
++:::info
++`--strict-builtin-errors` has no effect when `opa test` runs with `--bench`. A built-in error still makes the expression undefined, so the test is reported as `FAIL`.
++:::
++
+ By default, OPA prints the test results in a human-readable format. If you
+ need to consume the test results programmatically, use the JSON output format.
+ 
+ ```bash
+-opa test --format=json pass_fail_error_test.rego
++opa test --strict-builtin-errors --format=json pass_fail_error_test.rego
+ ```
+ 
+ ```json
+@@ -275,7 +282,7 @@ opa test --format=json pass_fail_error_test.rego
+     "package": "data.example_test",
+     "name": "test_error",
+     "error": {
+-      "code": "eval_internal_error",
++      "code": "eval_builtin_error",
+       "message": "div: divide by zero",
+       "location": {
+         "file": "pass_fail_error_test.rego",
+@@ -428,6 +435,26 @@ data.example_test.test_sign_token: FAIL (1.214541ms)
+ FAIL: 1/1
+ ```
+ 
++With `--strict-builtin-errors`, a built-in error in any test case stops the whole test rule.
++The test is reported as a single `ERROR`, and none of its test cases are listed, including those that passed:
++
++```rego title="strict_cases_test.rego"
++package example_test
++
++test_divide_three[x] if {
++    some x in [1, 0]
++    3 / x == 3
++}
++```
++
++```console
++$ opa test --strict-builtin-errors strict_cases_test.rego
++data.example_test.test_divide_three: ERROR (373.268µs)
++  strict_cases_test.rego:5: eval_builtin_error: div: divide by zero
++--------------------------------------------------------------------------------
++ERROR: 1/1
++```
++
+ ## Data and Function Mocking
+ 
+ OPA's `with` keyword can be used to replace the data document or called functions with mocks.
+```
+
+**File**: `v1/tester/runner.go` (modified, +13/-2)
+```diff
+@@ -329,6 +329,7 @@ type Runner struct {
+ 	trace                 bool
+ 	enablePrintStatements bool
+ 	raiseBuiltinErrors    bool
++	strictBuiltinErrors   bool
+ 	stackTraces           bool
+ 	runtime               *ast.Term
+ 	timeout               time.Duration
+@@ -381,12 +382,20 @@ func (r *Runner) SetCompiler(compiler *ast.Compiler) *Runner {
+ }
+ 
+ // RaiseBuiltinErrors sets the runner to raise errors encountered by builtins
+-// such as parsing input.
++// such as parsing input. StrictBuiltinErrors takes precedence when both are set.
+ func (r *Runner) RaiseBuiltinErrors(enabled bool) *Runner {
+ 	r.raiseBuiltinErrors = enabled
+ 	return r
+ }
+ 
++// StrictBuiltinErrors sets the runner to stop a test at the first error
++// encountered by a builtin and report it as the test's error, the same as
++// rego.StrictBuiltinErrors. It takes precedence over RaiseBuiltinErrors.
++func (r *Runner) StrictBuiltinErrors(enabled bool) *Runner {
++	r.strictBuiltinErrors = enabled
++	return r
++}
++
+ // StackTraces sets the runner to record the stack of queries being evaluated
+ // when a test errors, reported as topdown.Error.StackTrace.
+ func (r *Runner) StackTraces(enabled bool) *Runner {
+@@ -1051,7 +1060,9 @@ func (r *Runner) runTest(ctx context.Context, txn storage.Transaction, mod *ast.
+ 	// Only collect built-in errors when they will be reported below. Supplying
+ 	// the list unconditionally makes the evaluator hold on to every error a test
+ 	// raises, and annotate each with a stack trace nothing reads.
+-	if r.raiseBuiltinErrors {
++	if r.strictBuiltinErrors {
++		opts = append(opts, rego.StrictBuiltinErrors(true))
++	} else if r.raiseBuiltinErrors {
+ 		opts = append(opts, rego.BuiltinErrorList(&builtinErrors))
+ 	}
+ 
+```
+
+**File**: `v1/tester/runner_test.go` (modified, +240/-5)
+```diff
+@@ -1032,10 +1032,11 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
+ 	}`
+ 
+ 	testCases := []struct {
+-		desc          string
+-		json          string
+-		builtinErrors bool
+-		wantErr       bool
++		desc                string
++		json                string
++		builtinErrors       bool
++		strictBuiltinErrors bool
++		wantErr             bool
+ 	}{
+ 		{
+ 			desc:          "Valid JSON with flag enabled does not raise an error",
+@@ -1052,6 +1053,17 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
+ 			desc: "Invalid JSON with flag disabled does not raise an error",
+ 			json: `test: 123`,
+ 		},
++		{
++			desc:                "Valid JSON with strict flag enabled does not raise an error",
++			json:                `{\"test\": 123}`,
++			strictBuiltinErrors: true,
++		},
++		{
++			desc:                "Invalid JSON with strict flag enabled raises an error",
++			json:                `test: 123`,
++			strictBuiltinErrors: true,
++			wantErr:             true,
++		},
+ 	}
+ 
+ 	for _, tc := range testCases {
+@@ -1069,7 +1081,8 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
+ 				NewRunner().
+ 				SetStore(store).
+ 				SetModules(modules).
+-				RaiseBuiltinErrors(tc.builtinErrors)
++				RaiseBuiltinErrors(tc.builtinErrors).
++				StrictBuiltinErrors(tc.strictBuiltinErrors)
+ 
+ 			ch, err := runner.RunTests(ctx, txn)
+ 			if err != nil {
+@@ -1084,6 +1097,228 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
+ 	}
+ }
+ 
++func TestRunnerStrictBuiltinErrorsTakesPrecedence(t *testing.T) {
++	files := map[string]string{
++		"/test.rego": `package test
++
++a if to_number("not a number")
++
++b if to_number("not a number either")
++
++test_both if {
++	not a
++	not b
++}`,
++	}
++
++	modules, store, err := tester.Load([]string{test.TempDir(t, files)}, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	ctx := t.Context()
++	txn := storage.NewTransactionOrDie(ctx, store)
++	defer store.Abort(ctx, txn)
++
++	ch, err := tester.NewRunner().
++		SetStore(store).
++		SetModules(modules).
++		RaiseBuiltinErrors(true).
++		StrictBuiltinErrors(true).
++		RunTests(ctx, txn)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	var results []*tester.Result
++	for r := range ch {
++		results = append(results, r)
++	}
++	if len(results) != 1 {
++		t.Fatalf("expected 1 result, got %d", len(results))
++	}
++
++	// Strict mode stops at the first error instead of collecting both as a list.
++	tdErr, ok := errors.AsType[*topdown.Error](results[0].Error)
++	if !ok {
++		t.Fatalf("expected *topdown.Error, got %v (%[1]T)", results[0].Error)
++	}
++	if tdErr.Code != topdown.BuiltinErr {
++		t.Fatalf("expected code %q, got %q", topdown.BuiltinErr, tdErr.Code)
++	}
++	if results[0].Fail {
++		t.Fatal("expected the test to be reported as an error, not a failure")
++	}
++}
++
++func TestRunnerStrictBuiltinErrorsParameterizedTest(t *testing.T) {
++	const failingCases = `package test
++
++test_3_divided_by[x] if {
++	some x in [3, 0]
++	3 / x != 1
++}`
++
++	const passingCase = `package test
++
++test_3_divided_by[x] if {
++	some x in [1, 0]
++	3 / x == 3
++}`
++
++	testCases := []struct {
++		note                string
++		module              string
++		strictBuiltinErrors bool
++		wantCaseFail        map[string]bool
++	}{
++		{
++			note:         "strict flag disabled reports each case",
++			module:       failingCases,
++			wantCaseFail: map[string]bool{"3": true, "0": true},
++		},
++		{
++			note:         "strict flag disabled reports a passing case",
++			module:       passingCase,
++			wantCaseFail: map[string]bool{"1": false, "0": true},
++		},
++		{
++			note:                "strict flag enabled reports the test as an error",
++			module:              failingCases,
++			strictBuiltinErrors: true,
++		},
++		{
++			note:                "strict flag enabled drops a passing case",
++			module:              passingCase,
++			strictBuiltinErrors: true,
++		},
++	}
++
++	for _, tc := range testCases {
++		t.Run(tc.note, func(t *testing.T) {
++			modules, store, err := tester.Load([]string{test.TempDir(t, map[string]string{"/test.rego": tc.module})}, nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			ctx := t.Context()
++			txn := storage.NewTransactionOrDie(ctx, store)
++			defer store.Abort(ctx, txn)
++
++			ch, err := tester.NewRunner().
++				SetStore(store).
++				SetModules(modules).
++				StrictBuiltinErrors(tc.strictBuiltinErrors).
++				RunTests(ctx, txn)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			var results []*tester.Result
++			for r := range ch {
++				results = append(results, r)
++			}
++			if len(results) != 1 {
++				t.Fatalf("expected 1 result, got %d", len(results))
++			}
++			r := results[0]
++
++			if !tc.strictBuiltinErrors {
++				if r.Error != nil || !r.Fail {
++					t.Fatalf("expected a failure without an error, got fail=%v err=%v", r.Fail, r.Error)
++				}
++				if len(r.SubResults) != len(tc.wantCaseFail) {
++					t.Fatalf("expected %d test cases, got %d", len(tc.wantCaseFail), len(r.SubResults))
++				}
++				for name, wantFail := range tc.wantCaseFail {
++					sr, ok := r.SubResults[name]
++					if !ok {
++						t.Fatalf("expected test case %q", name)
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9501** (2026-11-05): eval: store and retrieve call operands from pool (@anderseknert)
-- **PR #9500** (closed): build: Allow PR policy to comment on PRs (@charlieegan3)
-- **PR #9499** (2026-11-04): topdown: add compliance cases for empty and undefined inputs (@srenatus)
-- **PR #9498** (2026-11-04): topdown: cover time.date, clock, weekday and diff with small timestamps (@srenatus)
-- **PR #9496** (2026-11-04): cmd: replace --v2-compatible with --compatible=<version> (@sspaink)
-- **PR #9495** (2026-11-03): build(deps): bump jdx/mise-action from 5.2.3 to 5.2.4 in the gha-dependencies group (@dependabot[bot])
+- **PR #9514** (2026-11-05): eval: a few more fixes reducing allocations (@anderseknert)
+- **PR #9512** (2026-11-05): Integrate release 1.22.1 (@srenatus)
+- **PR #9511** (2026-11-05): ecosystem: Add formal.ai (@charlieegan3)
+- **PR #9510** (2026-11-05): Release v1.22.1 (@srenatus)
+- **PR #9509** (2026-11-05): topdown: cover the ordering of values of different types (@srenatus)
+- **PR #9507** (2026-11-05): ast: keep a rule indexed as "anything" for `in` with a var member (@srenatus)
 
 ---
 
@@ -1678,54 +1878,28 @@ Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. eval: store and retrieve call operands from pool (#9501)
+## X. eval: a few more fixes reducing allocations (#9514)
 
 **RULE**:
-When implementing operations in `v1/ast/compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/semver/semver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1250f62`: eval: store and retrieve call operands from pool (#9501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73378137`: eval: a few more fixes reducing allocations (#9514). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/compare.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/semver/semver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	switch av := a.(type) {
-	case Null:
-		_, ok := b.(Null)
-		return ok
-	case Boolean:
-		bv, ok := b.(Boolean)
-		return ok && av == bv
-	case String:
-		bv, ok := b.(String)
-		return ok && av == bv
-	case Var:
-		bv, ok := b.(Var)
-		return ok && av == bv
-		return av.Equal(b)
-		return av.Equal(b)
-		return av.Equal(b)
-		return av.Equal(b)
-		return av.Equal(b)
-		return av.Equal(b)
+	n := util.NumDigitsInt(v.Major) + util.NumDigitsInt(v.Minor) + util.NumDigitsInt(v.Patch) + 2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	switch v := a.(type) {
-	case Null, Boolean, String, Var:
-		return v == b
-		return v.Equal(b)
-		return v.Equal(b)
-		return v.Equal(b)
-		return v.Equal(b)
-		return v.Equal(b)
-		return v.Equal(b)
+	n := util.NumDigitsInt64(v.Major) + util.NumDigitsInt64(v.Minor) + util.NumDigitsInt64(v.Patch) + 2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1250f62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73378137` are properly handled with clean fallback behavior.

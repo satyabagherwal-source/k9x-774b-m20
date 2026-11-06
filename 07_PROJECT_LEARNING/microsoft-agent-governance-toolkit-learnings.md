@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `ade4d5af`  
+> **Source Version**: `ea260c54`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:29:26.737Z  
+> **Timestamp**: 2026-11-05T20:06:48.654Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:29:26.733Z  
+> **Harvest Timestamp**: 2026-11-05T20:06:48.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6519 stars
+- **Stars / Engagement**: 6521 stars
 
 ---
 
@@ -405,80 +405,87 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ade4d5af` (2026-11-05)
-**Commit Message**: fix(agent-rag-governance): reject a negative max_retrievals_per_minute (#4484)
+### Incident Patch 1: `ea260c54` (2026-11-05)
+**Commit Message**: fix(agent-lightning): count only accepted spans in emit_to_store (#4487)
 
-RateLimiter.check treats only 0 as "no limit", so a negative limit
-could never be met and every retrieval raised RateLimitExceededError.
-RAGPolicy accepted it without complaint. Raise ValueError when the
-policy is created, as RAGPolicy already does for a rate-limit window
-that is not positive.
+FlightRecorderEmitter.emit_to_store returned len(spans), the number of
+spans read from the recorder, even when a span's emit call raised or
+the store had no emit_span/add_span method and nothing was sent. Count
+the spans the store accepted and return that, as the docstring and the
+Fast-Path spec (section 12.1) say.
 
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-runtime` `DockerDeployer.logs` returns what the agent writes to stderr.** Containers are started without a TTY, so `docker logs` replays the agent's stderr on its own stderr, and `logs` returned only the captured stdout. An agent that logs through Python's `logging` (stderr by default) got an empty or partial result. `logs` now merges the two streams in the order Docker writes them. `KubernetesDeployer.logs` was not affected, since `kubectl logs` prints both streams on stdout.
+ - **`agent-rag-governance` audits a denied collection with the query's hash.** `RAGGovernor` wrote the `denied` audit entry for a blocked collection with the hash of an empty string, so every denied attempt carried the same `query_hash` and could not be tied to what the agent searched for. The `rate_limited` entry was fixed the same way earlier. The `denied` entry now hashes the actual query (salted by `AGENT_RAG_AUDIT_SALT` when set), for LangChain and LlamaIndex wrappers alike.
+ - **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
++- **`agent-lightning` `FlightRecorderEmitter.emit_to_store` returns the number of spans it emitted.** It returned the number of spans it read from the recorder, so a span whose `emit_span`/`add_span` call raised was still counted, and a store with neither method got nothing but the return value (and the "Emitted N spans" log line) reported every span as sent. It now counts only the spans the store accepted, as its docstring and the Agent Lightning Fast-Path spec (section 12.1) say.
  - **`agent-sre` `RunbookExecutor` reports a failed rollback.** When a step failed, the executor ran the rollback actions of the steps before it and then marked the execution `rolled_back` whenever any of them had a rollback action, even if that action raised, so an execution left half undone read as cleanly rolled back. The rolled-back steps also kept `success`, and `StepStatus.ROLLED_BACK` was never set. Each step whose rollback succeeds is now marked `rolled_back`; the execution is `rolled_back` only when every rollback succeeded, and otherwise stays `failed`, with the rollback error recorded on the step.
  - **`agent-discovery` saves reconciliation statuses and scan risk tags to the inventory file.** `Reconciler.reconcile` set each agent's status to `registered` or `shadow` but never wrote the inventory back, and `agent-discovery scan` added the `risk_level` and `risk_score` tags after the last save. With a storage path, both were lost when the process ended, so `agent-discovery inventory` showed every agent as `unknown` after `agent-discovery reconcile` and without risk tags after a scan. `AgentInventory.save()` now persists in-place changes, and `reconcile` and `scan` call it.
  - **`agent-sre` `AgentRollout` status matches the CRD schema.** `ResourceStatus.to_dict()` wrote each condition's `lastTransitionTime` as a Unix timestamp (a float), but the CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declares it as a string, so the API server rejects a status update that carries a condition. It also wrote `observedGeneration` and `message`, which the schema did not declare, so they were pruned from every status update. `lastTransitionTime` is now an RFC 3339 UTC time such as `2026-11-01T09:30:00Z`, as Kubernetes conditions use, and the schema declares `status.observedGeneration` (integer) and `status.message` (string).
-+- **`agent-rag-governance` rejects a negative `max_retrievals_per_minute`.** `RAGPolicy` accepted any value, and `RateLimiter.check` treats only `0` as "no limit", so a negative limit (such as `-1`, often used to mean "unlimited") could never be met and every retrieval raised `RateLimitExceededError` ("exceeded retrieval limit of -1 per 60s"). `RAGPolicy` now raises `ValueError` for a negative limit when it is created, as it already does for a `rate_limit_window_seconds` that is not positive.
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-rag-governance/src/agent_rag_governance/policy.py` (modified, +9/-1)
+**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/emitter.py` (modified, +8/-3)
 ```diff
-@@ -18,7 +18,8 @@ class RAGPolicy:
-         denied_collections: Collections that are always blocked, regardless
-             of the allow list.
-         max_retrievals_per_minute: Maximum retrieval calls per agent per
--            sliding window. ``0`` disables rate limiting. The window
-+            sliding window. ``0`` disables rate limiting; a negative
-+            value raises ``ValueError``. The window
-             length defaults to 60 seconds but can be overridden with
-             ``rate_limit_window_seconds``.
-         rate_limit_window_seconds: Length of the sliding rate-limit
-@@ -54,6 +55,13 @@ class RAGPolicy:
+@@ -265,9 +265,12 @@ def emit_to_store(self, store: Any) -> int:
+             store: Agent-Lightning LightningStore instance
  
-     def __post_init__(self) -> None:
-         """Validate rate-limit configuration."""
-+        if self.max_retrievals_per_minute < 0:
-+            # A negative limit is never met, so it would reject every
-+            # retrieval while looking like "no limit".
-+            raise ValueError(
-+                "max_retrievals_per_minute must be zero (no limit) or "
-+                f"positive; got {self.max_retrievals_per_minute!r}"
-+            )
-         if self.rate_limit_window_seconds <= 0:
-             raise ValueError(
-                 "rate_limit_window_seconds must be positive; got "
+         Returns:
+-            Number of spans emitted
++            Number of spans the store accepted. Spans whose emission
++            raised, and all spans when the store has no recognised span
++            emitter, are not counted.
+         """
+         spans = self.get_spans()
++        emitted = 0
+ 
+         for span in spans:
+             try:
+@@ -280,9 +283,11 @@ def emit_to_store(self, store: Any) -> int:
+                     break
+             except Exception as e:
+                 logger.error(f"Failed to emit span: {e}")
++            else:
++                emitted += 1
+ 
+-        logger.info(f"Emitted {len(spans)} spans to LightningStore")
+-        return len(spans)
++        logger.info(f"Emitted {emitted} of {len(spans)} spans to LightningStore")
++        return emitted
+ 
+     def export_to_file(self, filepath: str) -> int:
+         """
 ```
 
-**File**: `agent-governance-python/agent-rag-governance/tests/test_policy.py` (modified, +16/-0)
+**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +16/-0)
 ```diff
-@@ -46,3 +46,19 @@ def test_none_allow_list_permits_any_non_denied():
-     policy = RAGPolicy(allowed_collections=None, denied_collections=["financial_data"])
-     assert policy.is_collection_allowed("anything")[0] is True
-     assert policy.is_collection_allowed("financial_data")[0] is False
+@@ -1060,6 +1060,22 @@ def test_emit_to_store_add_span_fallback(self):
+         assert count == 1
+         store.add_span.assert_called_once()
+ 
++    def test_emit_to_store_counts_only_accepted_spans(self):
++        entries = [_FakeEntry(), _FakeEntry(id="e2"), _FakeEntry(id="e3")]
++        emitter = FlightRecorderEmitter(_make_recorder(entries))
++        store = MagicMock(spec=["emit_span"])
++        store.emit_span.side_effect = [None, RuntimeError("store down"), None]
++        count = emitter.emit_to_store(store)
++        # The failing span is logged and skipped; the next one is still sent.
++        assert store.emit_span.call_count == 3
++        assert count == 2
 +
++    def test_emit_to_store_without_span_emitter_emits_nothing(self):
++        entries = [_FakeEntry(), _FakeEntry(id="e2")]
++        emitter = FlightRecorderEmitter(_make_recorder(entries))
++        store = MagicMock(spec=[])
++        assert emitter.emit_to_store(store) == 0
 +
-+def test_zero_max_retrievals_disables_rate_limiting():
-+    from agent_rag_governance.rate_limiter import RateLimiter
-+
-+    policy = RAGPolicy(max_retrievals_per_minute=0)
-+    limiter = RateLimiter(window_seconds=policy.rate_limit_window_seconds)
-+    assert all(
-+        limiter.check("agent", policy.max_retrievals_per_minute) for _ in range(500)
-+    )
-+
-+
-+@pytest.mark.parametrize("limit", [-1, -100])
-+def test_negative_max_retrievals_rejected(limit):
-+    with pytest.raises(ValueError, match="max_retrievals_per_minute"):
-+        RAGPolicy(max_retrievals_per_minute=limit)
+     def test_export_to_file(self, tmp_path):
+         entries = [_FakeEntry()]
+         emitter = FlightRecorderEmitter(_make_recorder(entries))
 ```
 
 #### Recent Merged Pull Requests:
@@ -507,13 +514,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-rag-governance): reject a negative max_retrievals_per_minute (#4484)
+## X. agent-lightning): count only accepted spans in emit_to_store (#4487)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ade4d5af`: agent-rag-governance): reject a negative max_retrievals_per_minute (#4484). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea260c54`: agent-lightning): count only accepted spans in emit_to_store (#4487). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -521,7 +528,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-rag-governance` rejects a negative `max_retrievals_per_minute`.** `RAGPolicy` accepted any value, and `RateLimiter.check` treats only `0` as "no limit", so a negative limit (such as `-1`, often used to mean "unlimited") could never be met and every retrieval raised `RateLimitExceededError` ("exceeded retrieval limit of -1 per 60s"). `RAGPolicy` now raises `ValueError` for a negative limit when it is created, as it already does for a `rate_limit_window_seconds` that is not positive.
+- **`agent-lightning` `FlightRecorderEmitter.emit_to_store` returns the number of spans it emitted.** It returned the number of spans it read from the recorder, so a span whose `emit_span`/`add_span` call raised was still counted, and a store with neither method got nothing but the return value (and the "Emitted N spans" log line) reported every span as sent. It now counts only the spans the store accepted, as its docstring and the Agent Lightning Fast-Path spec (section 12.1) say.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -531,4 +538,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ade4d5af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea260c54` are properly handled with clean fallback behavior.

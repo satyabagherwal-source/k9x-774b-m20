@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `5d33d8ea`  
+> **Source Version**: `195ff5b6`  
 > **License**: ISC  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:32:12.237Z  
+> **Timestamp**: 2026-11-05T22:40:03.753Z  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:32:11.048Z  
+> **Harvest Timestamp**: 2026-11-05T22:40:02.741Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5254 stars
+- **Stars / Engagement**: 5260 stars
 
 ---
 
@@ -2505,57 +2505,69 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d33d8ea` (2026-11-02)
-**Commit Message**: Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21
+### Incident Patch 1: `195ff5b6` (2026-11-05)
+**Commit Message**: Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.4
 
-chore(deps): bump globset from 0.4.20 to 0.4.21
+chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -745,9 +745,9 @@ dependencies = [
+@@ -2308,9 +2308,9 @@ dependencies = [
  
  [[package]]
- name = "globset"
--version = "0.4.20"
-+version = "0.4.21"
+ name = "tree-sitter-scala"
+-version = "0.26.3"
++version = "0.26.4"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
-+checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
+-checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
++checksum = "47d1822e9eb3fef8d3ba868d2886138596330315bb467f7ffb1084491027313b"
  dependencies = [
-  "aho-corasick",
-  "bstr",
+  "cc",
+  "tree-sitter-language",
 ```
 
 ---
 
-### Incident Patch 2: `f6fa62e8` (2026-11-02)
-**Commit Message**: Merge pull request #256 from unhappychoice/dependabot/cargo/unicode-width-0.2.3
+### Incident Patch 2: `e6f0f8c2` (2026-11-05)
+**Commit Message**: chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4
 
-chore(deps): bump unicode-width from 0.2.2 to 0.2.3
+Bumps [tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) from 0.26.3 to 0.26.4.
+- [Release notes](https://github.com/tree-sitter/tree-sitter-scala/releases)
+- [Commits](https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.3...v0.26.4)
+
+---
+updated-dependencies:
+- dependency-name: tree-sitter-scala
+  dependency-version: 0.26.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2413,9 +2413,9 @@ dependencies = [
+@@ -2308,9 +2308,9 @@ dependencies = [
  
  [[package]]
- name = "unicode-width"
--version = "0.2.2"
-+version = "0.2.3"
+ name = "tree-sitter-scala"
+-version = "0.26.3"
++version = "0.26.4"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
-+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
- 
- [[package]]
- name = "unicode-xid"
+-checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
++checksum = "47d1822e9eb3fef8d3ba868d2886138596330315bb467f7ffb1084491027313b"
+ dependencies = [
+  "cc",
+  "tree-sitter-language",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #258** (2026-11-05): chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4 (@dependabot[bot])
 - **PR #256** (2026-11-02): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
 - **PR #255** (2026-11-02): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
 - **PR #254** (2026-10-30): chore(deps): bump tree-sitter-dart from 0.2.0 to 0.3.0 (@dependabot[bot])
 - **PR #253** (2026-10-29): chore(deps): bump tree-sitter-md from 0.5.3 to 0.5.4 (@dependabot[bot])
 - **PR #252** (2026-10-21): chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3 (@dependabot[bot])
-- **PR #251** (2026-10-12): fix(ui): ignore key release events so keys do not fire twice on Windows (@Naoki326)
 
 ---
 
@@ -2575,13 +2587,13 @@ chore(deps): bump unicode-width from 0.2.2 to 0.2.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21
+## X. Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d33d8ea`: Merge pull request #255 from unhappychoice/dependabot/cargo/globset-0.4.21. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `195ff5b6`: Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2589,16 +2601,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.4.21"
-checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
+version = "0.26.4"
+checksum = "47d1822e9eb3fef8d3ba868d2886138596330315bb467f7ffb1084491027313b"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.4.20"
-checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
+version = "0.26.3"
+checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d33d8ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `195ff5b6` are properly handled with clean fallback behavior.

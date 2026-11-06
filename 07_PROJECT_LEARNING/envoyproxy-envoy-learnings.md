@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `da11df74`  
+> **Source Version**: `ce49cf62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:00:43.266Z  
+> **Timestamp**: 2026-11-05T18:38:35.603Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:00:43.259Z  
+> **Harvest Timestamp**: 2026-11-05T18:38:35.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29181 stars
+- **Stars / Engagement**: 29185 stars
 
 ---
 
@@ -1058,8 +1058,8 @@ public:
   > Hi, I would like to work on this. Unless @nigham is already fixing it, could it be assigned to me?
   > I'm not working on this
 
-- **Issue #48627** (2026-10-28): **Compression being applied to bodyless responses**
-  *Symptoms*: Making an issue because explaining all this in the PR (#48604) would be a bit much, and for discoverability if someone else runs into "Safari is aborting connections" with a similar cause.  On upgrading from envoy 1.36 to envoy 1.38 we found (eventually) that 204 responses started acquiring a 20 byte `sent_bytes`, despite 0 bytes from upstream.  The reason is that the upgrade changed the default from oghttp2 back to nghttp2 (again), and nghttp2 strips the content-length header from 204 responses.  Envoy, on receiving http2 with no content-length header, apparently does decodeHeaders(..., end_stream=false) then decodeData(empty_buffer, end_stream=true).  The compression filter starts compression on headers end_stream=false, so in these conditions results in gzipping zero bytes, creating a 20-byte body.  This becomes a much more severe problem than wasting 20 bytes when these responses go to a Safari browser, which, as far as we can tell, goes "a body on a 204 response? Outrageous! I'm aborting the entire connection!"  Which meant that a telemetry 204 would cause much more important POST requests to suddenly abort mid-stream, just for Safari browsers.  This took a week to notice, by which point non-edge instances had also deployed, which led to an extremely confusing situation where we could see that the upgrade on edge had clearly caused the increase in aborted POSTs, but when we flipped flags and reverted things it wasn't fixed - because the further-in proxies were, by now, *
+- **Issue #48758** (2026-11-05): **Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`**
+  *Symptoms*: *Title*: Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`  *Description*: An Envoy with a QUIC listener using the `envoy.quic.connection_id_generator.quic_lb` connection ID generator, whose `encryption_parameters` come from SDS, crashes with SIGSEGV every time the process exits, whenever hot restart is enabled (the default). That covers SIGTERM, any normal shutdown, and the parent's shutdown at the end of every hot restart.  The cause is a use-after-free during teardown. `HotRestartingChild` holds the last reference to every UDP listener's config and is destroyed after the server instance. So the QUIC-LB generator's `SdsApi` is destroyed after the objects it uses are gone.  The crashing process has already stopped serving. The harm is to availability, through supervisors that treat the crash as fatal. With `restarter/hot-restarter.py`, the old epoch crashing at the end of a hot restart makes the restarter force-kill the serving new epoch and exit. Every hot restart therefore becomes a full outage at the end of the parent shutdown time (default 900 s), and we hit this in production.  There is no remote or data-plane trigger that I could find, and no confidentiality or integrity impact. Reproduced on 1.39.3, 1.40.0, 1.40.1 and an older 1.36.0-dev.  **Ownership chain** (v1.40.0 line numbers):  1. `ListenerImpl::addSocketFactory` (`source/common/listener_manager/listener_impl.cc:1204`) registers a UDP    listener with t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1076,588 +1076,293 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f54520db` (2026-11-04)
-**Commit Message**: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611)
+### Incident Patch 1: `ce49cf62` (2026-11-05)
+**Commit Message**: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
 
-Commit Message: composite: fix use-after-free when an ECDS update
-replaces the filter while a stream is paused
+Found by `decode_fuzz_test`
+([#49005](https://github.com/envoyproxy/envoy/pull/49005)), which checks
+that request decoding in `ai_protocol_manager` is invariant to HTTP body
+fragmentation.
 
-When `envoy.filters.http.composite` is delivered through ECDS
-(`config_discovery`), the dynamic filter config provider owns the only
-copies of the composite filter factory callback. The filter manager
-calls the provider's current callback when it creates a stream's filter
-chain, but it does not keep a copy. If an earlier filter pauses the
-stream, an ECDS update can destroy the callback before
-`Composite::Filter::decodeHeaders()` runs.
+[`WuffsJsonCursor::feed()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L205-L225)
+caps unread `NUMBER` bytes buffered in `pending_bytes_` on `short_read`
+at [`kMaxPendingBytes` (64
+bytes)](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.h#L249-L259),
+but
+[`handleNumberOrLiteralToken()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L367-L389)
+did not enforce this limit when a `NUMBER` token finished parsing.
 
-* `Filter` stored a `FilterStats&` that pointed into the stats owned by
-the callback, so `handleAction()` incremented
-`filter_delegation_success` / `filter_delegation_error` through a
-dangling reference when the paused stream resumed. Filters now share
-ownership of the stats (`FilterStatsSharedPtr`).
-* Once the callback was gone, the filter could drop the last reference
-to the match tree and named filter chains on a worker thread. That
-destroyed the delegated filter factories there, including
-`dynamic_config` providers and their TLS slot
+As a result, whether a JSON number over 64 bytes was rejected depended
+on where chunk boundaries landed:
+1. **Completed in one chunk**: Accepted by
+`handleNumberOrLiteralToken()` without checking the 64-byte cap.
+2. **Split across chunks**: Rejected on `short_read` only if the
+incomplete prefix in the first chunk exceeded 64 bytes, but accepted if
+the first chunk
 
-**File**: `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst` (added, +7/-0)
+**File**: `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst` (added, +3/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
-+filter when it is configured through
-+:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
-+and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
-+filter instances created from the previous configuration now share ownership of the filter stats,
-+and the match tree and named filter chains they hold are released on the main thread, so that the
-+delegated filter configurations are not destroyed on a worker thread.
+@@ -0,0 +1,3 @@
++Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
++is enforced when a number finishes parsing, rather than only when an incomplete number at the end
++of a chunk exceeds 64 bytes.
 ```
 
-**File**: `source/extensions/filters/http/composite/BUILD` (modified, +1/-0)
+**File**: `source/common/json/wuffs_json/wuffs_json_cursor.cc` (modified, +6/-4)
 ```diff
-@@ -50,6 +50,7 @@ envoy_cc_extension(
-     srcs = ["config.cc"],
-     hdrs = ["config.h"],
-     deps = [
-+        "//envoy/event:dispatcher_interface",
-         "//envoy/registry",
-         "//envoy/server:filter_config_interface",
-         "//source/extensions/filters/http/common:factory_base_lib",
+@@ -212,11 +212,10 @@ absl::Status WuffsJsonCursor::feed(absl::string_view chunk, bool closed) {
+       // keyword without advancing the cursor at all, so no rewind is needed.
+       if (source_buf.meta.ri < effective_chunk.size()) {
+         // LITERAL is always 4–5 bytes (null/true/false) — completely bounded.
+-        // For NUMBER split across chunks: cap pending_bytes_ to kMaxPendingBytes (see its
+-        // declaration). Numbers that arrive complete with their terminator in the same chunk
+-        // never reach this path and are bounded by the upstream max_body_bytes limit instead.
++        // For NUMBER split across chunks: cap pending_bytes_ to kMaxNumberBytes (see its
++        // declaration).
+         const size_t leftover = effective_chunk.size() - source_buf.meta.ri;
+-        if (leftover > kMaxPendingBytes) {
++        if (leftover > kMaxNumberBytes) {
+           return absl::InvalidArgumentError("wuffs json: number token too large");
+         }
+         pending_bytes_.assign(effective_chunk.data() + source_buf.meta.ri, leftover);
+@@ -371,6 +370,9 @@ absl::Status WuffsJsonCursor::handleNumberOrLiteralToken(int64_t token_category,
+                                           ? absl::string_view(key_stack_[depth_])
+                                           : absl::string_view();
+   if (token_category == WUFFS_BASE__TOKEN__VBC__NUMBER) {
++    if (raw.size() > kMaxNumberBytes) {
++      return absl::InvalidArgumentError("wuffs json: number token too large");
++    }
+     if (auto s = handler_.onNumber(value_key, raw, depth_, token_start, body_src_pos_); !s.ok()) {
+       return s;
+     }
 ```
 
-**File**: `source/extensions/filters/http/composite/config.cc` (modified, +33/-5)
+**File**: `source/common/json/wuffs_json/wuffs_json_cursor.h` (modified, +5/-11)
 ```diff
-@@ -1,6 +1,7 @@
- #include "source/extensions/filters/http/composite/config.h"
+@@ -246,17 +246,11 @@ class WuffsJsonCursor {
+   // (longest observed ~25B, e.g. "input_audio_transcription") while bounding
+   // per-key allocation and guarding against DoS via unbounded key lengths.
+   static constexpr size_t kMaxKeyBytes = 256;
+-  // kMaxPendingBytes is a hard limit against the byte-at-a-time DoS when a NUMBER token is split
+-  // across chunk boundaries, NUMBER tokens that arrive complete with their terminator in one chunk
+-  // bypass this path entirely — those are bounded by the max_body_bytes limit instead. A legitimate
+-  // number is at most ~25 chars (64-bit int ≤ 20 digits; float with sign/decimal/exponent ≤ ~25).
+-  // 64 bytes gives generous headroom.
+-  // TODO(penguingao): because the cap only fires on split NUMBER tokens, whether an over-long
+-  // number is rejected depends on where the body happened to be chunked, not on the payload.
+-  // Enforce the same limit on numbers that arrive complete within one chunk so acceptance is
+-  // deterministic, and return a distinct error (resource limit exceeded vs. malformed JSON) so
+-  // callers can map it to something clearer than a generic invalid-payload rejection.
+-  static constexpr size_t kMaxPendingBytes = 64;
++  // kMaxNumberBytes is a hard limit on NUMBER token length, guarding against the
++  // byte-at-a-time DoS when a NUMBER token is split across chunk boundaries. A
++  // legitimate number is at most ~25 chars (64-bit int ≤ 20 digits; float with
++  // sign/decimal/exponent ≤ ~25). 64 bytes gives generous headroom.
++  static constexpr size_t kMaxNumberBytes = 64;
+   int depth_{0};
+   bool is_dict_[kMaxTrackedDepth]{};
+   bool expecting_key_[kMaxTrackedDepth]{};
+```
+
+**File**: `test/common/json/wuffs_json/wuffs_json_cursor_fuzz_test.cc` (modified, +3/-4)
+```diff
+@@ -238,10 +238,9 @@ DEFINE_FUZZER(const uint8_t* buf, size_t len) {
+   // boundaries at other offsets within multi-byte tokens.
+   for (const size_t chunk_size : {size_t{1}, size_t{3}, size_t{7}}) {
+     const PassResult chunked = runPass(body, chunk_size, pattern, HandlerBehavior{});
+-    // A body that parses only one way is not a mismatch: splitting a number
+-    // across chunks routes it through the pending-bytes cap, which rejects
+-    // over-long numbers that a single feed accepts.
+-    if (reference.status.ok() && chunked.status.ok()) {
++    RELEASE_ASSERT(reference.status.ok() == chunked.status.ok(),
++                   absl::StrCat("chunked status diverged at chunk size ", chunk_size));
++    if (reference.status.ok()) {
+       RELEASE_ASSERT(reference.trace == chunked.trace,
+                      absl::StrCat("chunked parse diverged at chunk size ", chunk_size));
+     }
+```
+
+**File**: `test/common/json/wuffs_json/wuffs_json_cursor_test.cc` (modified, +34/-17)
+```diff
+@@ -763,32 +763,49 @@ TEST(WuffsJsonCursorTest, UnicodeEscapeSplitChunkCorrectValue) {
+   EXPECT_EQ(h.fields[0].str_val, "aAb"); // U+0041 = 'A'
+ }
  
- #include "envoy/common/exception.h"
-+#include "envoy/event/dispatcher.h"
- #include "envoy/registry/registry.h"
- #include "envoy/server/filter_config.h"
+-// A NUMBER token that straddles a chunk boundary causes Wuffs to rewind its
+-// read cursor and the cursor to save the unread bytes in pending_bytes_.
+-// If those bytes exceed kMaxPendingBytes the cursor must reject immediately.
++// Number-length enforcement tests
  
-@@ -12,6 +13,30 @@ namespace Extensions {
- namespace HttpFilters {
- namespace Composite {
- 
-+namespace {
-+
-+// Returns a pointer that shares ownership of `ptr` and releases it on the main thread once the
-+// last reference is dropped. The filter factory callback owns the match tree and the named filter
-+// chains, but the filters it creates hold references to them too. When the callback is destroyed
-+// first, e.g. by an ECDS update, the last reference is dropped by a filter on a worker thread,
-+// whereas the delegated filter factories they own must be destroyed on the main thread.
-+template <class T>
-+std::shared_ptr<T> releaseOnMainThread(std::shared_ptr<T> ptr, Event::Dispatcher& main_dispatcher) {
-+  if (ptr == nullptr) {
-+    return nullptr;
-+  }
-+  T* raw = ptr.get();
-+  return {raw, [owned = std::move(ptr), &main_dispatcher](T*) mutable {
-+            if (main_dispatcher.isThreadSafe()) {
-+              owned.reset();
-+              return;
-+            }
-+            main_dispatcher.post([owned = std::move(owned)]() mutable { owned.reset(); });
-+          }};
+-// A number whose in-flight byte count equals kMaxPendingBytes (64) must not
+-// trigger the cap: the next chunk completes it normally.
+-TEST(WuffsJsonCursorTest, NumberAtPendingCapAccepted) {
++// A number at kMaxNumberBytes (64) must be accepted.
++TEST(WuffsJsonCursorTest, NumberAtMaxBytesAccepted) {
++  CapturingHandler h;
++  const std::string num(64, '1');
++  ASSERT_OK(parse(absl::StrCat("{\"n\":", num, "}"), h));
++  ASSERT_EQ(h.fields.size(), 1u);
++  EXPECT_EQ(h.fields[0].raw_val, num);
 +}
 +
-+} // namespace
++// A number one byte over kMaxNumberBytes (65) must be rejected.
++TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejected) {
++  CapturingHandler h;
++  const std::string num(65, '1');
++  EXPECT_THAT(parse(absl::StrCat("{\"n\":", num, "}"), h), Not(IsOk()));
++}
 +
- class MatchTreeValidationVisitor
-     : public Matcher::MatchTreeValidationVisitor<Envoy::Http::HttpMatchingData> {
- public:
-@@ -89,7 +114,9 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
-   // Compile named filter chains with FactoryContext access.
-   auto named_chains_or_error = compileNamedFilterChains(proto_config, stats_prefix, context);
-   RETURN_IF_NOT_OK(named_chains_or_error.status());
--  auto named_chains = std::move(named_chains_or_error.value());
-+  Event::Dispatcher& main_dispatcher = context.serverFactoryContext().mainThreadDispatcher();
-+  auto named_chains =
-+      releaseOnMainThread(std::move(named_chains_or_error.value()), main_dispatcher);
- 
-   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr;
-   if (proto_config.has_matcher()) {
-@@ -101,15 +128,15 @@ absl::StatusOr<Http::FilterFactoryCb> CompositeFilterFactory::createFilterFactor
-         .server_factory_context_ = context.serverFactoryContext()};
-     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
-     RETURN_IF_NOT_OK(match_tree_or_error.status());
--    match_tree = std::move(match_tree_or_error.value());
-+    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()), main_dispatcher);
-   }
- 
-   const auto& prefix = stats_prefix + "composite.";
-   auto stats = std::make_shared<FilterStats>(
-       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
- 
-   return [stats, named_chains, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
--    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), false /* is_upstream */,
-+    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), false /* is_upstream */,
-                                            match_tree, named_chains);
-     callbacks.addStreamFilter(filter);
-     callbacks.addAccessLogHandler(filter);
-@@ -134,7 +161,8 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
- 
-     auto match_tree_or_error = createMatcherTree(proto_config.matcher(), action_context);
-     RETURN_IF_NOT_OK(match_tree_or_error.status());
--    match_tree = std::move(match_tree_or_error.value());
-+    match_tree = releaseOnMainThread(std::move(match_tree_or_error.value()),
-+                                     context.serverFactoryContext().mainThreadDispatcher());
-   }
- 
-   // This method is called for upstream filters.
-@@ -144,7 +172,7 @@ absl::StatusOr<Envoy::Http::FilterFactoryCb> CompositeFilterFactory::createFilte
-       FilterStats{ALL_COMPOSITE_FILTER_STATS(POOL_COUNTER_PREFIX(context.scope(), prefix))});
- 
-   return [stats, match_tree](Http::FilterChainFactoryCallbacks& callbacks) -> void {
--    auto filter = std::make_shared<Filter>(*stats, callbacks.dispatcher(), true /* is_upstream */,
-+    auto filter = std::make_shared<Filter>(stats, callbacks.dispatcher(), true /* is_upstream */,
-                                            match_tree, nullptr);
-     callbacks.addStreamFilter(filter);
-     callbacks.addAccessLogHandler(filter);
-```
-
-**File**: `source/extensions/filters/http/composite/filter.cc` (modified, +4/-4)
-```diff
-@@ -165,7 +165,7 @@ void Filter::handleAction(const Matcher::Action& action) {
-     }
- 
-     if (!wrapper.filters_to_inject_.empty()) {
--      stats_.filter_delegation_success_.inc();
-+      stats_->filter_delegation_success_.inc();
-       delegated_filter_ =
-           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
-       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
-@@ -184,7 +184,7 @@ void Filter::handleAction(const Matcher::Action& action) {
-   composite_action.createFilters(wrapper);
- 
-   if (!wrapper.errors_.empty()) {
--    stats_.filter_delegation_error_.inc();
-+    stats_->filter_delegation_error_.inc();
-     ENVOY_LOG(debug, "failed to create delegated filter {}",
-               accumulateToString<absl::Status>(
-                   wrapper.errors_, [](const auto& status) { return status.ToString(); }));
-@@ -196,7 +196,7 @@ void Filter::handleAction(const Matcher::Action& action) {
-   // Handle filter chain mode.
-   if (is_filter_chain) {
-     if (!wrapper.filters_to_inject_.empty()) {
--      stats_.filter_delegation_success_.inc();
-+      stats_->filter_delegation_success_.inc();
-       delegated_filter_ =
-           std::make_shared<DelegatedFilterChain>(std::move(wrapper.filters_to_inject_));
-       updateFilterState(decoder_callbacks_, std::string(decoder_callbacks_->filterConfigName()),
-@@ -211,7 +211,7 @@ void Filter::handleAction(const Matcher::Action& action) {
- 
-   // Handle single filter mode.
-   if (wrapper.filter_to_inject_.has_value()) {
--    stats_.filter_delegation_success_.inc();
-+    stats_->filter_delegation_success_.inc();
- 
-     auto createDelegatedFilterFn = Overloaded{
-         [this, action_name](Http::StreamDecoderFilterSharedPtr filter) {
-```
-
-**File**: `source/extensions/filters/http/composite/filter.h` (modified, +5/-3)
-```diff
-@@ -46,6 +46,7 @@ struct FactoryCallbacksWrapper;
- struct FilterStats {
-   ALL_COMPOSITE_FILTER_STATS(GENERATE_COUNTER_STRUCT)
- };
-+using FilterStatsSharedPtr = std::shared_ptr<FilterStats>;
- 
- class MatchedActionInfo : public StreamInfo::FilterState::Object {
- public:
-@@ -108,10 +109,10 @@ class Filter : public Http::StreamFilter,
-                public AccessLog::Instance,
-                Logger::Loggable<Logger::Id::filter> {
- public:
--  Filter(FilterStats& stats, Event::Dispatcher& dispatcher, bool is_upstream,
-+  Filter(FilterStatsSharedPtr stats, Event::Dispatcher& dispatcher, bool is_upstream,
-          Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree = nullptr,
-          NamedFilterChainFactoryMapSharedPtr named_filter_chains = nullptr)
--      : dispatcher_(dispatcher), stats_(stats), is_upstream_(is_upstream),
-+      : dispatcher_(dispatcher), stats_(std::move(stats)), is_upstream_(is_upstream),
-         match_tree_(std::move(match_tree)), named_filter_chains_(std::move(named_filter_chains)) {}
- 
-   // Http::StreamDecoderFilter
-@@ -218,7 +219,8 @@ class Filter : public Http::StreamFilter,
-   Http::StreamFilterSharedPtr delegated_filter_;
-   Http::StreamEncoderFilterCallbacks* encoder_callbacks_{};
-   Http::StreamDecoderFilterCallbacks* decoder_callbacks_{};
--  FilterStats& stats_;
-+  // Shared with the filter factory callback, which an ECDS update may destroy before this filter.
-+  const FilterStatsSharedPtr stats_;
-   // Filter in the upstream filter chain.
-   bool is_upstream_{false};
-   Matcher::MatchTreeSharedPtr<Envoy::Http::HttpMatchingData> match_tree_;
-```
-
-**File**: `test/extensions/filters/http/composite/BUILD` (modified, +3/-0)
-```diff
-@@ -17,6 +17,7 @@ envoy_extension_cc_test(
-     extension_names = ["envoy.filters.http.composite"],
-     rbe_pool = "linux_x64_small",
-     deps = [
-+        "//source/common/common:cleanup_lib",
-         "//source/common/http:header_map_lib",
-         "//source/common/http/matching:data_impl_lib",
-         "//source/common/matcher:matcher_lib",
-@@ -56,7 +57,9 @@ envoy_extension_cc_test(
-         "//test/integration/filters:server_factory_context_filter_lib",
-         "//test/integration/filters:set_response_code_filter_config_proto_cc_proto",
-         "//test/integration/filters:set_response_code_filter_lib",
-+        "//test/integration/filters:stop_in_headers_continue_in_data_filter_lib",
-         "//test/proto:helloworld_proto_cc_proto",
-+        "@envoy_api//envoy/config/core/v3:pkg_cc_proto",
-         "@envoy_api//envoy/extensions/common/matching/v3:pkg_cc_proto",
-         "@envoy_api//envoy/extensions/filters/http/composite/v3:pkg_cc_proto",
-         "@envoy_api//envoy/extensions/filters/network/http_connection_manager/v3:pkg_cc_proto",
-```
-
-**File**: `test/extensions/filters/http/composite/composite_filter_integration_test.cc` (modified, +177/-0)
-```diff
-@@ -1,6 +1,8 @@
- #include <optional>
- #include <string>
-+#include <tuple>
- 
-+#include "envoy/config/core/v3/extension.pb.h"
- #include "envoy/extensions/common/matching/v3/extension_matcher.pb.validate.h"
- #include "envoy/extensions/filters/http/composite/v3/composite.pb.h"
- #include "envoy/extensions/filters/network/http_connection_manager/v3/http_connection_manager.pb.h"
-@@ -1337,5 +1339,180 @@ TEST_P(NamedFilterChainIntegrationTest, TestMultipleNamedFilterChains) {
-   }
++// A 64-byte number split across two chunks must be accepted.
++TEST(WuffsJsonCursorTest, NumberAtMaxBytesAcceptedSplitAcrossChunks) {
+   CapturingHandler h;
+   WuffsJsonCursor cursor(h);
+-  // Feed structure first; no number in flight yet.
+-  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
+-  // Feed exactly 64 digit bytes with no terminator — pending_bytes_ = 64, not over cap.
+-  ASSERT_OK(cursor.feed(std::string(64, '1'), /*closed=*/false));
+-  // Close with '}': Wuffs now sees terminator and completes the NUMBER token.
+-  ASSERT_OK(cursor.feed("}", /*closed=*/true));
++  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
++  ASSERT_OK(cursor.feed(absl::StrCat(std::string(32, '1'), "}"), /*closed=*/true));
+   ASSERT_EQ(h.fields.size(), 1u);
+   EXPECT_EQ(h.fields[0].raw_val, std::string(64, '1'));
  }
  
-+// Delivers the composite filter itself through ECDS, behind a filter that pauses decoding until the
-+// request body arrives. This allows replacing the composite filter configuration while a stream
-+// that was created from the previous configuration is paused before the composite filter runs.
-+class CompositeFilterEcdsIntegrationTest
-+    : public testing::TestWithParam<Network::Address::IpVersion>,
-+      public HttpIntegrationTest {
-+public:
-+  CompositeFilterEcdsIntegrationTest() : HttpIntegrationTest(Http::CodecType::HTTP1, GetParam()) {}
+-// A number with 65 in-flight bytes (one over kMaxPendingBytes) must be rejected.
+-TEST(WuffsJsonCursorTest, NumberOverPendingCapRejected) {
++// A 65-byte number split across two chunks must be rejected once reassembled.
++TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedSplitAcrossChunks) {
++  CapturingHandler h;
++  WuffsJsonCursor cursor(h);
++  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
++  EXPECT_THAT(cursor.feed(absl::StrCat(std::string(33, '1'), "}"), /*closed=*/true), Not(IsOk()));
++}
 +
-+  void TearDown() override { cleanUpXdsConnection(); }
-+
-+  void createUpstreams() override {
-+    HttpIntegrationTest::createUpstreams();
-+    // The ECDS upstream.
-+    addFakeUpstream(Http::CodecType::HTTP2);
-+  }
-+
-+  void initialize() override {
-+    // The initial configuration delegates to a filter that is itself discovered dynamically, whose
-+    // configuration provider must be destroyed on the main thread.
-+    TestEnvironment::writeStringToFileForTest("set_response_code.yaml", R"EOF(
-+resources:
-+  - "@type": type.googleapis.com/envoy.config.core.v3.TypedExtensionConfig
-+    name: set-response-code
-+    typed_config:
-+      "@type": type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
-+      code: 403)EOF",
-+                                              false);
-+    const auto initial_config = compositeConfig(TestEnvironment::substitute(R"EOF(
-+                    dynamic_config:
-+                      name: set-response-code
-+                      config_discovery:
-+                        config_source:
-+                          path_config_source:
-+                            path: "{{ test_tmpdir }}/set_response_code.yaml"
-+                        type_urls:
-+                        - type.googleapis.com/test.integration.filters.SetResponseCodeFilterConfig
-+)EOF"));
-+
-+    config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
-+      auto* ecds_cluster = bootstrap.mutable_static_resources()->add_clusters();
-+      ecds_cluster->MergeFrom(bootstrap.static_resources().clusters()[0]);
-+      ecds_cluster->set_name("ecds_cluster");
-+      ecds_cluster->mutable_load_assignment()->set_cluster_name("ecds_cluster");
-+      ConfigHelper::setHttp2(*ecds_cluster);
-+    });
-+    config_helper_.addConfigModifier([initial_config](ConfigHelper::HttpConnectionManager& hcm) {
-+      auto* filter = hcm.add_http_filters();
-+      filter->set_name("composite");
-+      auto* discovery = filter->mutable_config_discovery();
-+      discovery->add_type_urls(
-+          "type.googleapis.com/envoy.extensions.filters.http.composite.v3.Composite");
-+      // Serve the initial configuration as the default configuration, so that the listener
-+      // does not have to wait for ECDS.
-+      std::ignore = discovery->mutable_default_config()->PackFrom(initial_config);
-+      discovery->set_apply_default_config_without_warming(true);
-+      auto* config_source = discovery->mutable_config_source();
-+      config_source->set_resource_api_version(envoy::config::core::v3::ApiVersion::V3);
-+      auto* api_config_source = config_source->mutable_api_config_source();
-+      api_config_source->set_api_type(envoy::config::core::v3::ApiConfigSource::GRPC);
-+      api_config_source->set_transport_api_version(envoy::config::core::v3::ApiVersion::V3);
-+      api_config_source->add_grpc_services()->mutable_envoy_grpc()->set_cluster_name(
-+          "ecds_cluster");
-+      // Keep the router last.
-+      const int size = hcm.http_filters_size();
-+      hcm.mutable_http_filters()->SwapElements(size - 2, size - 1);
-+    });
-+    // This is applied right away, ahead of the config modifiers, so it lands before the composite
-+    // filter.
-+    config_helper_.prependFilter(R"EOF(
-+      name: stop-in-headers-continue-in-body-filter
-+      typed_config:
-+        "@type": type.googleapis.com/test.integration.filters.StopInHeadersContinueInBodyFilterConfig
-+    )EOF");
-+    HttpIntegrationTest::initialize();
-+
-+    AssertionResult result =
-+        fake_upstreams_[1]->waitForHttpConnection(*dispatcher_, xds_connection_);
-+    RELEASE_ASSERT(result, result.message());
-+    result = xds_connection_->waitForNewStream(*dispatcher_, xds_stream_);
-+    RELEASE_ASSERT(result, result.message());
-+    xds_stream_->startGrpcStream();
-+  }
-+
-+  // Returns a composite filter configuration that runs the given action for requests carrying the
-+  // match header.
-+  static envoy::extensions
-```
-
-**File**: `test/extensions/filters/http/composite/filter_test.cc` (modified, +179/-3)
-```diff
-@@ -4,6 +4,7 @@
- #include "envoy/registry/registry.h"
- #include "envoy/server/filter_config.h"
- 
-+#include "source/common/common/cleanup.h"
- #include "source/common/http/matching/data_impl.h"
- #include "source/common/matcher/matcher.h"
- #include "source/extensions/filters/http/common/factory_base.h"
-@@ -103,7 +104,8 @@ class CompositeFilterTest : public ::testing::Test {
-   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks_;
-   Stats::MockCounter error_counter_;
-   Stats::MockCounter success_counter_;
--  FilterStats stats_{error_counter_, success_counter_};
-+  FilterStatsSharedPtr stats_{
-+      std::make_shared<FilterStats>(FilterStats{error_counter_, success_counter_})};
-   Filter filter_;
- 
-   Http::TestRequestHeaderMapImpl default_request_headers_{
-@@ -1761,7 +1763,7 @@ TEST(ConfigTest, CompileNamedFilterChainsFailsOnFactoryError) {
- TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispatcher) {
-   Stats::MockCounter error_counter;
-   Stats::MockCounter success_counter;
--  FilterStats stats{error_counter, success_counter};
-+  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
-   testing::NiceMock<Event::MockDispatcher> dispatcher;
-   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
-   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
-@@ -1792,7 +1794,7 @@ TEST(FilterCallbacksWrapperTest, SingleModeRejectsMultipleFiltersAndExposesDispa
- TEST(FilterCallbacksWrapperTest, ChainModeAcceptsMultipleFilters) {
-   Stats::MockCounter error_counter;
-   Stats::MockCounter success_counter;
--  FilterStats stats{error_counter, success_counter};
-+  auto stats = std::make_shared<FilterStats>(FilterStats{error_counter, success_counter});
-   testing::NiceMock<Event::MockDispatcher> dispatcher;
-   testing::NiceMock<Http::MockStreamDecoderFilterCallbacks> decoder_callbacks;
-   testing::NiceMock<Http::MockStreamEncoderFilterCallbacks> encoder_callbacks;
-@@ -2222,6 +2224,180 @@ TEST(CompositePerRouteConfigTest, ReleasedOnMainThreadIsDestroyedInPlace) {
-   config.reset();
++// An unterminated number chunk that already exceeds kMaxNumberBytes (65) must
++// be rejected immediately before buffering into pending_bytes_.
++TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedInPendingChunk) {
+   CapturingHandler h;
+   WuffsJsonCursor cursor(h);
+-  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
+-  // 65 digit bytes with no terminator — leftover = 65 > 64 → error.
+-  EXPECT_THAT(cursor.feed(std::string(65, '1'), /*closed=*/false), Not(IsOk()));
++  EXPECT_THAT(cursor.feed(absl::StrCat("{\"n\":", std::string(65, '1')), /*closed=*/false),
++              Not(IsOk()));
  }
  
-+// A filter factory used to observe how a composite filter configuration uses, and releases, the
-+// delegated filter factories it owns. Every callback it creates adds `filter_count` (default 1)
-+// pass-through filters, and `live_callbacks_` counts the callbacks that are still alive.
-+class TrackingFilterFactory : public Server::Configuration::NamedHttpFilterConfigFactory {
-+public:
-+  std::string name() const override { return "envoy.filters.http.test.tracking"; }
-+  ProtobufTypes::MessagePtr createEmptyConfigProto() override {
-+    return std::make_unique<Protobuf::Struct>();
-+  }
-+  bool isUnifiedFilter() override { return true; }
-+  absl::StatusOr<Http::FilterFactoryCb>
-+  createHttpFilterFactoryFromProto(const Protobuf::Message& config,
-+                                   Server::Configuration::ServerFactoryContext&,
-+                                   Server::Configuration::ExtraFactoryContext&) override {
-+    const auto& fields = dynamic_cast<const Protobuf::Struct&>(config).fields();
-+    const auto it = fields.find("filter_count");
-+    const int filter_count = it == fields.end() ? 1 : static_cast<int>(it->second.number_value());
-+    ++live_callbacks_;
-+    auto cleanup = std::make_shared<Cleanup>([this]() { --live_callbacks_; });
-+    return [cleanup, filter_count](Http::FilterChainFactoryCallbacks& callbacks) {
-+      for (int i = 0; i < filter_count; ++i) {
-+        callbacks.addStreamFilter(std::make_shared<Http::PassThroughFilter>());
-+      }
-+    };
-+  }
-+
-+  int live_callbacks_{};
-+};
-+
-+// When the composite filter is delivered through ECDS, its factory callback is owned by the
-+// dynamic filter config provider only. The filter manager creates the composite filter together
-+// with the rest of the stream's filter chain, but the composite filter evaluates its match tree
-+// only once decodeHeaders() runs. An ECDS update can destroy the factory callback in between, for
-+// instance while an earlier filter has paused the stream, so the filter must not depend on state
-+// that the callback owns.
-+class CompositeFilterFactoryLifetimeTest : public ::testing::Test {
-+public:
-+  CompositeFilterFactoryLifetimeTest() {
-+    ON_CALL(filter_chain_callbacks_, dispatcher())
-+        .WillByDefault(testing::ReturnRef(worker_dispatcher_));
-+  }
-+
-+  // Creates a composite filter factory callback whose inline matcher always delegates to
-+  // `filter_count` tracking filters, and which also has a named filter chain of a tracking filter.
-+  Http::FilterFactoryCb createFactoryCallback(int filter_count) {
-+    const std::string yaml = fmt::format(R"EOF(
-+      named_filter_chains:
-+        tracking-chain:
-+          typed_config:
-+          - name: envoy.filters.http.test.tracking
-+            typed_config:
-+              "@type": type.googleapis.com/google.protobuf.Struct
-+      matcher:
-+        on_no_match:
+ } // namespace
 ```
 
 ---
 
-### Incident Patch 2: `035297c4` (2026-11-05)
-**Commit Message**: quic: Fix `envoy.restart_features.defer_worker_routing_init` in validate mode (#48982)
+### Incident Patch 2: `36230011` (2026-11-05)
+**Commit Message**: hot restart: release udp listener configs during shutdown (#48782)
 
-Commit Message: quic: Fix
-`envoy.restart_features.defer_worker_routing_init` in config validation
-mode
-Additional Description:
+Commit Message: Release UDP forwarding's retained listener
+configurations during
+`HotRestartingChild::shutdown()`, after disabling its forwarding event.
+QUIC-LB
+listeners can own SDS providers that depend on the dispatcher and stats
+store.
+Previously those providers could be destroyed with `HotRestartImpl`,
+after the
+server and its resources had already been destroyed.
 
-`envoy.restart_features.defer_worker_routing_init` moves creation and
-application of quic worker routing sockopt to
-`ActiveQuicListenerFactory::initializeWorkerRouting`, which also runs in
-`--mode validate`, where listeners have no sockets. Debug builds assert,
-opt builds dereference a null socket at concurrency > 1. Return before
-touching sockets in validation mode.
+Additional Description: The fix preserves listener ownership and packet
+forwarding
+during operation, but clears the forwarding registry during the existing
+server
+shutdown path. The regression test relinquishes all other ownership of a
+listener
+config and checks that shutdown destroys it, removes its forwarding
+entry, and can
+be called repeatedly.
 
 Risk Level: Low
-Testing: Added unit test
-Docs Changes: N/A
-Release Notes: N/A
-Platform Specific Features: N/A
-Fixes commit #45504
 
-Signed-off-by: Filip Cacky <[REDACTED_EMAIL]>
+Testing: Repository formatting, spelling, proto-format, changelog, and
+code checks
+passed. The macOS hot-restart test target contains zero tests and is not
+counted as
+regression evidence. Linux red/green CI passed:
+https://github.com/gsalisbury/envoy/actions/runs/40528463607
+The shutdown regression failed with an assertion against upstream
+production code.
+With the fixes restored, all 15 
 
-**File**: `source/common/quic/active_quic_listener.cc` (modified, +5/-0)
+**File**: `changelogs/current/bug_fixes/server__hot_restart_udp_listener_shutdown.rst` (added, +3/-0)
 ```diff
-@@ -413,6 +413,11 @@ absl::Status ActiveQuicListenerFactory::initializeWorkerRouting(
- 
-   RETURN_IF_NOT_OK(initializeCidGeneratorAndWorkerRouting());
- 
-+  // Server validation creates no sockets.
-+  if (context_.serverFactoryContext().options().mode() == Server::Mode::Validate) {
-+    return absl::OkStatus();
-+  }
-+
-   for (const auto& factory : socket_factories) {
-     for (uint32_t i = 0; i < concurrency_; i++) {
-       auto socket = factory->getListenSocket(i);
+@@ -0,0 +1,3 @@
++Fixed a crash on process exit when a UDP listener owns server-dependent resources, such as a QUIC-LB
++connection ID generator using SDS. UDP forwarding now releases its retained listener configurations during server
++shutdown, before the server resources they depend on are destroyed.
 ```
 
-**File**: `test/common/quic/active_quic_listener_test.cc` (modified, +12/-0)
+**File**: `source/server/hot_restarting_child.cc` (modified, +6/-1)
 ```diff
-@@ -948,6 +948,18 @@ TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, PostsSocketOptionsF
-                           sockets.back()->connectionInfoProvider().localAddress()->asString())));
+@@ -110,7 +110,12 @@ void HotRestartingChild::initialize(Event::Dispatcher& dispatcher) {
+       Event::FileTriggerType::Edge, Event::FileReadyType::Read);
  }
  
-+TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, ValidateModeSkipsSockets) {
-+  ON_CALL(listener_context_.server_factory_context_.options_, mode())
-+      .WillByDefault(Return(Server::Mode::Validate));
+-void HotRestartingChild::shutdown() { socket_event_udp_forwarding_.reset(); }
++void HotRestartingChild::shutdown() {
++  socket_event_udp_forwarding_.reset();
++  // Listener configs can own SDS providers and other server-dependent resources. Release them
++  // while the server is still alive, rather than when the hot restart implementation is destroyed.
++  udp_forwarding_context_.clear();
++}
+ 
+ void HotRestartingChild::onForwardedUdpPacket(uint32_t worker_index,
+                                               const Network::Address::Instance& listener_address,
+```
+
+**File**: `source/server/hot_restarting_child.h` (modified, +2/-0)
+```diff
+@@ -41,6 +41,8 @@ class HotRestartingChild : public HotRestartingBase,
+     void registerListener(Network::Address::InstanceConstSharedPtr address,
+                           std::shared_ptr<Network::UdpListenerConfig> listener_config);
+ 
++    void clear() { listener_map_.clear(); }
 +
-+  const auto mock_option = std::make_shared<StrictMock<Network::MockSocketOption>>();
-+  makeCidGeneratorFactory(mock_option);
-+  std::ignore = makeListenSocketFactory({});
+   private:
+     // Builds the map key for an address string within a network namespace.
+     static std::string key(absl::string_view network_namespace, absl::string_view address);
+```
+
+**File**: `test/server/hot_restarting_child_test.cc` (modified, +16/-0)
+```diff
+@@ -290,6 +290,22 @@ MATCHER_P4(IsUdpWith, local_addr, peer_addr, buffer, timestamp, "") {
+   return local_matched && peer_matched && buffer_matched && timestamp_matched;
+ }
+ 
++TEST_F(HotRestartingChildTest, ShutdownReleasesUdpListenerConfigs) {
++  auto listener_config = std::make_shared<testing::StrictMock<Network::MockUdpListenerConfig>>();
++  std::weak_ptr<Network::UdpListenerConfig> weak_config = listener_config;
++  auto listener_addr = *Network::Utility::resolveUrl("udp://127.0.0.1:1234");
++  HotRestartUdpForwardingTestHelper helper(*hot_restarting_child_);
++  helper.registerUdpForwardingListener(listener_addr, listener_config);
++  listener_config.reset();
++  EXPECT_FALSE(weak_config.expired());
 +
-+  EXPECT_OK(factory_->initializeWorkerRouting(socket_factories_));
-+  EXPECT_EQ(ActiveQuicListenerFactoryPeer::cidGeneratorFactory(*factory_), cid_generator_factory_);
++  hot_restarting_child_->shutdown();
++
++  EXPECT_TRUE(weak_config.expired());
++  EXPECT_FALSE(helper.getListenerForDestination(*listener_addr).has_value());
++  hot_restarting_child_->shutdown();
 +}
 +
- TEST_F(ActiveQuicListenerFactoryInitializeWorkerRoutingTest, InitInCtorWhenFlagOff) {
-   TestScopedRuntime scoped_runtime;
-   scoped_runtime.mergeValues({{"envoy.restart_features.defer_worker_routing_init", "false"}});
-```
-
----
-
-### Incident Patch 3: `1dc66470` (2026-11-04)
-**Commit Message**: [quic] Reduce false ENVOY_BUG reports (#48785)
-
-Commit Message: [quic] Reduce false ENVOY_BUG reports
-Additional Description: Rarely but significantly, we get ENVOY_BUG in
-logs and metrics like
-```
-encodeData is called on write-closed stream. QUIC stream state: local_end_stream_ false, rst_received false, rst_sent true, fin_received true, fin_sent false, fin_buffered false, fin_outstanding false, stream_error QUIC_STREAM_CONNECTION_ERROR, connection_error QUIC_PACKET_WRITE_ERROR, connection connected: false.
-```
-It appears this is not actually a bug, just a race that is ~fine to play
-out this way.
-Risk Level: Negligible, only changes a path that was previously
-ENVOY_BUG, to no longer report.
-Testing: Covered.
-Docs Changes: n/a
-Release Notes: n/a
-Platform Specific Features: n/a
-
----------
-
-Signed-off-by: Raven Black <[REDACTED_EMAIL]>
-
-**File**: `source/common/quic/envoy_quic_stream.cc` (modified, +7/-0)
-```diff
-@@ -17,6 +17,13 @@ void EnvoyQuicStream::encodeData(Buffer::Instance& data, bool end_stream) {
-     return;
-   }
-   if (quic_stream_.write_side_closed()) {
-+    if (quic_stream_.rst_sent() || quic_stream_.rst_received() ||
-+        !quic_session_.connection()->connected()) {
-+      // A callback can already be in flight when a reset or connection close tears down
-+      // the stream. Drop the data in that case; it can no longer be delivered to the peer.
-+      data.drain(data.length());
-+      return;
-+    }
-     IS_ENVOY_BUG(fmt::format("encodeData is called on write-closed stream. {}", quicStreamState()));
-     return;
-   }
-```
-
-**File**: `test/common/quic/envoy_quic_client_stream_test.cc` (modified, +2/-2)
-```diff
-@@ -752,8 +752,8 @@ TEST_F(EnvoyQuicClientStreamTest, EncodeDataOnClosedStream) {
-   // messed up.
-   std::string body2(1024, 'a');
-   Buffer::OwnedImpl buffer2(body2);
--  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
--                   "encodeData is called on write-closed stream");
-+  quic_stream_->encodeData(buffer2, true);
-+  EXPECT_EQ(0u, buffer2.length());
-   EXPECT_EQ(0u, quic_session_.bytesToSend());
- }
- 
-```
-
-**File**: `test/common/quic/envoy_quic_server_stream_test.cc` (modified, +2/-2)
-```diff
-@@ -376,8 +376,8 @@ TEST_F(EnvoyQuicServerStreamTest, EncodeDataOnClosedStream) {
-   // messed up.
-   std::string response2(1024, 'a');
-   Buffer::OwnedImpl buffer2(response2);
--  EXPECT_ENVOY_BUG(quic_stream_->encodeData(buffer2, true),
--                   "encodeData is called on write-closed stream");
-+  quic_stream_->encodeData(buffer2, true);
-+  EXPECT_EQ(0u, buffer2.length());
-   EXPECT_EQ(0u, quic_session_.bytesToSend());
- }
- 
+ TEST_F(HotRestartingChildTest, ForwardsPacketToRegisteredListenerOnMatch) {
+   uint32_t worker_index = 12;
+   uint64_t packet_timestamp = 987654321;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49021** (2026-11-05): dynamic_modules: write HTTP metadata batch and bool entries in place (@agrawroh)
+- **PR #49020** (2026-11-05): wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (@chentianheng604)
+- **PR #49014** (2026-11-05): Datadog junit upload (@etruong42)
 - **PR #49013** (2026-11-05): dynamic_modules: add a bootstrap cluster writer and run_on_all_worker (@agrawroh)
 - **PR #49004** (2026-11-04): deps: Bump `bazel-compdb` -> 0.0.0-20220906-4086479.envoy.1 (@dependency-envoy[bot])
 - **PR #49001** (closed): network/udp_proxy: store filter chains in vectors instead of lists (@wbpcode)
-- **PR #49000** (closed): dubbo/thrift/sip: store filter chains in vectors instead of lists (@wbpcode)
-- **PR #48998** (2026-11-04): deps: Bump `bazel-registry` -> b21ef77 (@dependency-envoy[bot])
-- **PR #48995** (2026-11-04): codeowners: add wbpcode as adaptive_concurrency owner (@wbpcode)
 
 ---
 
@@ -1677,27 +1382,23 @@ Signed-off-by: Raven Black <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. composite: fix use-after-free when an ECDS update replaces the filter while a st
+## X. wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f54520db`: composite: fix use-after-free when an ECDS update replaces the filter while a stream is paused (#48611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce49cf62`: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/composite__ecds-update-while-stream-paused.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Fixed a use-after-free in the :ref:`composite <envoy_v3_api_msg_extensions.filters.http.composite.v3.Composite>`
-filter when it is configured through
-:ref:`config_discovery <envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpFilter.config_discovery>`
-and an ECDS update replaces its configuration while a stream is paused in an earlier filter. The
-filter instances created from the previous configuration now share ownership of the filter stats,
-and the match tree and named filter chains they hold are released on the main thread, so that the
-delegated filter configurations are not destroyed on a worker thread.
+Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
+is enforced when a number finishes parsing, rather than only when an incomplete number at the end
+of a chunk exceeds 64 bytes.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1707,4 +1408,4 @@ delegated filter configurations are not destroyed on a worker thread.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f54520db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce49cf62` are properly handled with clean fallback behavior.

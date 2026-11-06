@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `c310e5dc`  
+> **Source Version**: `120bc0ad`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:40:19.402Z  
+> **Timestamp**: 2026-11-05T23:09:26.049Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:40:19.143Z  
+> **Harvest Timestamp**: 2026-11-05T23:09:25.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4192 stars
+- **Stars / Engagement**: 4194 stars
 
 ---
 
@@ -1445,45 +1445,21 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c310e5dc` (2026-11-04)
-**Commit Message**: fix(auth): drop the CI hint from expired and rejected login errors (#4858)
+### Incident Patch 1: `120bc0ad` (2026-11-05)
+**Commit Message**: chore: Release v1.19.4 (#4857)
 
-Follow-up to #4787, which added 401 handling for `/resolve` in 1.19.0.
-Closes DEV-406.
-
-The `ResolveAuthError` messages each carried a transitional hint line,
-`For CI and automation, see https://go.flox.dev/auth`, to help while
-users adjusted to the auth change. DEV-406 schedules its removal two
-releases later, in 1.21.0, because it makes the errors too verbose once
-users are used to them.
-
-Triage decision: the line is removed from **Expired** and **Rejected**
-only. Those users have already logged in, so the CI hint is noise for
-them. **Required** keeps the line because it is the first error a
-logged-out CI user hits. The `flox-auth` man page and the catalog auth
-section still point CI users at the URL.
-
-Resulting messages:
-
-```
-✘ ERROR: Your FloxHub login has expired.
-Log in again with 'flox auth login'.
+**File**: `VERSION` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-1.19.3
++1.19.4
+\ No newline at end of file
 ```
 
-```
-✘ ERROR: Authentication rejected: Unable to verify token
-Log in again with 'flox auth login'.
-```
+---
 
-The expected output in `cli/tests/catalog-auth-required.bats` is updated
-to match.
-
-**Do not merge before 1.21.0.** Opened as a draft so it is ready when
-that release opens.
-
-## Release Notes
-
-The er
+### Incident Patch 2: `23b53d46` (2026-11-05)
+**Commit Message**: Merge branch 'main' into release-1.19.4
 
 **File**: `cli/floxhub-client/src/error.rs` (modified, +0/-2)
 ```diff
@@ -1525,71 +1501,6 @@ The er
  }
 ```
 
----
-
-### Incident Patch 2: `5a078339` (2026-11-04)
-**Commit Message**: fix(ld-floxlib): pass src dir to builtins.path without interpolation (#4810)
-
-Closes #4775, reported by @sciyoshi. Tracked as
-[DEV-409](https://linear.app/floxdotdev/issue/DEV-409).
-
-`pkgs/ld-floxlib/default.nix` interpolates the source directory into a
-string before handing it to `builtins.path`:
-
-```nix
-path = "${./../../ld-floxlib}";
-```
-
-That produces an intermediate store path (`...-ld-floxlib`) which
-`builtins.path` then reads to produce `...-ld-floxlib-src`. `nix flake
-check --no-build` evaluates with a read-only store, so the interpolation
-computes the intermediate path without materializing it and the read
-fails with `error: path /nix/store/...-ld-floxlib is not valid`. An
-ordinary evaluation can materialize that copy and mask the bug, which is
-why it looks intermittent; GC removing the copy exposes it again.
-
-This is the one-line fix proposed in the issue — pass the directory
-straight through, so no intermediate copy is involved.
-
-**Verified against the reporter's cold-store reproduction.** Their
-wrapper flake, pinned to each revision in turn and evaluated into a
-fresh `local?root=` store with `--no-build --all-systems --option
-eval-cache false`:
-
-| flox revision | result
-
-**File**: `pkgs/ld-floxlib/default.nix` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ stdenv.mkDerivation {
-   version = "1.0.0";
-   src = builtins.path {
-     name = "ld-floxlib-src";
--    path = "${./../../ld-floxlib}";
-+    path = ./../../ld-floxlib;
-   };
-   makeFlags = [ "PREFIX=$(out)" ];
-   doCheck = true;
-```
-
----
-
-### Incident Patch 3: `2fa8fe3a` (2026-10-12)
-**Commit Message**: fix(ld-floxlib): pass src dir to builtins.path without interpolation
-
-Interpolating the source directory into a string first produces an
-intermediate store path (`...-ld-floxlib`), which `builtins.path` then
-reads to produce `...-ld-floxlib-src`. Under `nix flake check --no-build`
-Nix evaluates with a read-only store, so the interpolation computes that
-intermediate path without materializing it and the subsequent read fails:
-
-    error: path '/nix/store/...-ld-floxlib' is not valid
-
-Passing the directory directly skips the intermediate copy.
-
-Fixes #4775
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
 **File**: `pkgs/ld-floxlib/default.nix` (modified, +1/-1)
 ```diff
 @@ -8,7 +8,7 @@ stdenv.mkDerivation {
@@ -1605,11 +1516,11 @@ Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
 #### Recent Merged Pull Requests:
 - **PR #4858** (2026-11-04): fix(auth): drop the CI hint from expired and rejected login errors (@tanjadev)
+- **PR #4857** (2026-11-05): chore: Release v1.19.4 (@ysndr)
 - **PR #4855** (2026-10-30): fix(cli): Drop the unused webpki-roots CA store (@dcarley)
 - **PR #4854** (2026-10-29): fix(nix): substitute CI builds from cache.floxsdlc.com (@devusb)
 - **PR #4853** (2026-10-29): chore: community CI (@mkenigs)
 - **PR #4851** (2026-10-28): chore: Release 1.19.3 (@mkenigs)
-- **PR #4843** (2026-10-26): fix(nix): skip AWS SDK unit tests on Intel macOS (@mkenigs)
 
 ---
 

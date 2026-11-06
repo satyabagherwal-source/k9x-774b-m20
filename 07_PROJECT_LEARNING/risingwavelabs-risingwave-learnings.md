@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `c407b590`  
+> **Source Version**: `0c03d749`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:47:47.295Z  
+> **Timestamp**: 2026-11-05T18:15:29.743Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:47:47.286Z  
+> **Harvest Timestamp**: 2026-11-05T18:15:29.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9396 stars
+- **Stars / Engagement**: 9399 stars
 
 ---
 
@@ -1077,1134 +1077,605 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34c424f2` (2026-11-04)
-**Commit Message**: chore(deps): bump dependencies with security advisories (#27706)
+### Incident Patch 1: `d603a76c` (2026-11-05)
+**Commit Message**: fix: return an error when a stored definition fails to parse (#27823)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +170/-100)
+**File**: `src/frontend/src/binder/relation/table_or_source.rs` (modified, +39/-2)
 ```diff
-@@ -934,7 +934,7 @@ dependencies = [
-  "ring",
-  "rustls-native-certs 0.8.1",
-  "rustls-pki-types",
-- "rustls-webpki 0.103.10",
-+ "rustls-webpki 0.103.15",
-  "serde",
-  "serde_json",
-  "serde_nanos",
-@@ -1653,7 +1653,7 @@ dependencies = [
-  "hyper-util",
-  "pin-project-lite",
-  "rustls 0.21.11",
-- "rustls 0.23.35",
-+ "rustls 0.23.46",
-  "rustls-native-certs 0.8.1",
-  "rustls-pki-types",
-  "tokio",
-@@ -2365,6 +2365,15 @@ dependencies = [
-  "alloc-stdlib",
- ]
+@@ -608,8 +608,14 @@ impl Binder {
+             )?;
+         }
  
-+[[package]]
-+name = "bs58"
-+version = "0.5.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "bf88ba1141d185c399bee5288d850d63b8369520c1eafc32a0430b5b6c287bf4"
-+dependencies = [
-+ "tinyvec",
-+]
-+
- [[package]]
- name = "bson"
- version = "2.15.0"
-@@ -2829,7 +2838,7 @@ dependencies = [
-  "hyper-util",
-  "lz4_flex 0.14.0",
-  "rand 0.9.5",
-- "rustls 0.23.35",
-+ "rustls 0.23.46",
-  "serde",
-  "serde_json",
-  "thiserror 2.0.17",
-@@ -3189,46 +3198,46 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "44f81cede359311706057b689b91b59f464926de0316f389898a2b028cb494fa"
-+checksum = "b3741b9ad77e89c710586b2fcdd619baf28482d92b70d88cecb2a081dd912ae6"
- dependencies = [
-  "cranelift-assembler-x64-meta",
- ]
- 
- [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fa6ca11305de425ea08884097b913ebe1a83875253b3c0063ce28411e226bfdc"
-+checksum = "8243e149085051b23faebd352ef7031aeebc5f45e63aaefd63ee7f810c22c7df"
- dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7537341a9a4ba9812141927be733e7254bf2318aab6597d567af9cad90609f27"
-+checksum = "c538af3aee13eb6aa8a85d2ef85b4d0aa41623dae8b19f59bbacfd5d6c114920"
- dependencies = [
-  "cranelift-entity",
- ]
- 
- [[package]]
- name = "cranelift-bitset"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d28a4ca5faf25ff821fcc768f26e68ffef505e9f71bb06e608862d941fa65086"
-+checksum = "2292ea3964d7d751031da1a1261d64feb09e89bd4fbebf3c78f43f9c34c20a11"
- dependencies = [
-  "serde",
-  "serde_derive",
- ]
- 
- [[package]]
- name = "cranelift-codegen"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d891057fe1b73910c41e73b32a70fa8454092fce65942b5fa6f72aa6d5487f8a"
-+checksum = "8967a699a4982d02c32246a00f2aa4cee5bccfaaa042608d5e151cb99cba210e"
- dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -3253,9 +3262,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c29a66028a78eedc534b3a94e5ebfbaeb4e1f6b09038afe41bb24afd614faa4b"
-+checksum = "e258eeeb6903b4e91e314a3667ab2a1e2924738ef2df08bdb50355e38decc749"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -3266,24 +3275,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "95809ad251fe9422087b4a72d61e584d6ab6eff44dee1335f93cfaea0bedc9ac"
-+checksum = "e1d36ff0de30460c01dad152ca2097bcabef2f16c659b9ffbca2f67e9bbdb321"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f79d0cacf063c297e5e8d5b73cb355b41b87f6d248e252d1b284e7a7b73673c2"
-+checksum = "acc880d91877efb6199031bda872726ca3287dc1e18ccf3f61c07bfdab62930b"
- dependencies = [
-  "arbitrary",
- ]
- 
- [[package]]
- name = "cranelift-entity"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b2d73297a195ce3be55997c6307142c4b1e58dd0c2f18ceaa0179444024e312a"
-+checksum = "5f7af321c4b6e5be4729e4a5b1ed0fc78fc31695c1ecd3c9b45b91908bf3d0a3"
- dependencies = [
-  "cranelift-bitset",
-  "serde",
-@@ -3292,9 +3301,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-frontend"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3be38d1ae29ef7c5d611fc6cb694f698dc4ca44152dcaa112ec0fef8d4d34858"
-+checksum = "3463f1b26faac3491008cede8e9cdf7ceb83139143bd92ba86c14b0882aaf1bb"
- dependencies = [
-  "cranelift-codegen",
-  "log",
-@@ -3304,15 +3313,15 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-isle"
--version = "0.123.9"
-+version = "0.123.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6761926f6636209de7ac568be28b206890f2181761375b9722e0a1e7a7e1637a"
-+checksum = "90b76554b329634c4241c5670a96058affca99a
-```
-
-**File**: `java/pom.xml` (modified, +4/-4)
-```diff
-@@ -65,12 +65,12 @@
-         <!-- dependency versions -->
-         <protobuf.version>3.25.8</protobuf.version> <!-- https://github.com/grpc/grpc-java/issues/11015 -->
-         <grpc.version>1.75.0</grpc.version>
--        <log4j.version>2.25.4</log4j.version>
-+        <log4j.version>2.25.5</log4j.version>
-         <slf4j.version>2.0.17</slf4j.version>
-         <debezium.version>3.2.4.Final-rw-SNAPSHOT</debezium.version>
-         <oracle.jdbc.version>21.15.0.0</oracle.jdbc.version>
-         <bouncycastle.version>1.84</bouncycastle.version>
--        <jackson.version>2.22.1</jackson.version>
-+        <jackson.version>2.22.4</jackson.version>
-         <hadoop.version>3.4.1</hadoop.version>
-         <!-- Iceberg's HiveCatalog is compiled against Hive 2.3.x. -->
-         <hive.version>2.3.10</hive.version>
-@@ -321,7 +321,7 @@
-             <dependency>
-                 <groupId>com.google.guava</groupId>
-                 <artifactId>guava</artifactId>
--                <version>33.4.8-jre</version>
-+                <version>33.7.2-jre</version>
-             </dependency>
-             <dependency>
-                 <groupId>org.apache.httpcomponents</groupId>
-@@ -388,7 +388,7 @@
-             <dependency>
-                 <groupId>org.xerial.snappy</groupId>
-                 <artifactId>snappy-java</artifactId>
--                <version>1.1.10.8</version>
-+                <version>1.1.10.12</version>
-             </dependency>
-             <dependency>
-                 <groupId>org.testcontainers</groupId>
-```
-
----
-
-### Incident Patch 2: `c407b590` (2026-11-04)
-**Commit Message**: fix(optimizer): fix wrong results and panic in scan range pushdown (#27767)
-
-Co-authored-by: Yuhao Su <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/backfill/snapshot_backfill/pk_predicate_pushdown.slt` (modified, +131/-1)
-```diff
-@@ -321,4 +321,134 @@ SELECT * FROM t_in WHERE a IN (2, 5, 8) EXCEPT SELECT * FROM mv_in;
- ----
- 
- statement ok
--DROP TABLE t_in cascade;
-\ No newline at end of file
-+DROP TABLE t_in cascade;
-+
-+# ---- Test 12: IS NULL branches keep the NULL rows ----
-+
-+statement ok
-+CREATE TABLE t_is_null(a INT, b INT, c INT, d INT, PRIMARY KEY(a, b, c));
-+
-+statement ok
-+INSERT INTO t_is_null VALUES (NULL, 1, 1, 1), (NULL, 2, 5, -1), (NULL, 3, 3, -1), (1, 1, 1, 0), (2, 1, 1, 0);
-+
-+statement ok
-+flush;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_is_null AS SELECT * FROM t_is_null WHERE a IS NULL OR a = 1;
-+
-+# The third arm is contained in the first one, so only eq ranges are left.
-+statement ok
-+CREATE MATERIALIZED VIEW mv_is_null_merged AS SELECT * FROM t_is_null WHERE a IS NULL OR a = 1 OR (a IS NULL AND b = 2 AND c > 3);
-+
-+query IIII rowsort
-+SELECT * FROM mv_is_null;
-+----
-+1 1 1 0
-+NULL 1 1 1
-+NULL 2 5 -1
-+NULL 3 3 -1
-+
-+query IIII rowsort
-+SELECT * FROM mv_is_null_merged;
-+----
-+1 1 1 0
-+NULL 1 1 1
-+NULL 2 5 -1
-+NULL 3 3 -1
-+
-+statement ok
-+INSERT INTO t_is_null VALUES (NULL, 4, 4, 4), (1, 2, 2, 2), (3, 1, 1, 1);
-+
-+statement ok
-+DELETE FROM t_is_null WHERE a IS NULL AND b = 1;
-+
-+statement ok
-+flush;
-+
-+query IIII rowsort
-+SELECT * FROM mv_is_null;
-+----
-+1 1 1 0
-+1 2 2 2
-+NULL 2 5 -1
-+NULL 3 3 -1
-+NULL 4 4 4
-+
-+query IIII rowsort
-+SELECT * FROM mv_is_null_merged;
-+----
-+1 1 1 0
-+1 2 2 2
-+NULL 2 5 -1
-+NULL 3 3 -1
-+NULL 4 4 4
-+
-+statement ok
-+DROP TABLE t_is_null cascade;
-+
-+# ---- Test 13: Nothing comes after the largest key of a descending pk ----
-+
-+statement ok
-+CREATE TABLE t_desc(a INT, b INT, c INT, PRIMARY KEY(a, b));
-+
-+statement ok
-+INSERT INTO t_desc VALUES (-2147483648, -2147483648, 1), (-2147483648, 0, 2), (0, 0, 3);
-+
-+statement ok
-+CREATE TABLE t_desc_str(a VARCHAR PRIMARY KEY);
-+
-+statement ok
-+INSERT INTO t_desc_str VALUES (''), ('a');
-+
-+statement ok
-+flush;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_desc AS SELECT a, b, c FROM t_desc ORDER BY a DESC, b DESC;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_desc_str AS SELECT a FROM t_desc_str ORDER BY a DESC;
-+
-+query III
-+SELECT * FROM mv_desc WHERE a < -2147483648;
-+----
-+
-+# OR arms merge into the same bound.
-+query III
-+SELECT * FROM mv_desc WHERE a < -2147483648 OR a < -2147483648::BIGINT;
-+----
-+
-+query III
-+SELECT * FROM mv_desc WHERE a = -2147483648 AND b < -2147483648;
-+----
-+
-+query T
-+SELECT * FROM mv_desc_str WHERE a < '';
-+----
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_desc_min AS SELECT * FROM mv_desc WHERE a < -2147483648;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_desc_min_or AS SELECT * FROM mv_desc WHERE a < -2147483648 OR a < -2147483648::BIGINT;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW mv_desc_min_prefix AS SELECT * FROM mv_desc WHERE a = -2147483648 AND b < -2147483648;
-+
-+query I
-+SELECT (SELECT count(*) FROM mv_desc_min) + (SELECT count(*) FROM mv_desc_min_or) + (SELECT count(*) FROM mv_desc_min_prefix);
-+----
-+0
-+
-+query III rowsort
-+SELECT * FROM mv_desc WHERE a <= -2147483648;
-+----
-+-2147483648 -2147483648 1
-+-2147483648 0 2
-+
-+statement ok
-+DROP TABLE t_desc cascade;
-+
-+statement ok
-+DROP TABLE t_desc_str cascade;
-```
-
-**File**: `e2e_test/batch/basic/range_scan.slt.part` (modified, +77/-0)
-```diff
-@@ -251,3 +251,80 @@ drop materialized view orders_count_by_user;
- 
- statement ok
- drop table orders;
-+
-+statement ok
-+create table range_scan_or (a int, b int, primary key (a, b));
-+
-+statement ok
-+insert into range_scan_or values (0, 0), (1, 3), (1, 5), (1, 6), (2, 0), (null, 1);
-+
-+# Overlapping OR arms must not return a row twice.
-+query II rowsort
-+select * from range_scan_or where (a = 1 and b > 5) or (a between 0 and 100);
-+----
-+0 0
-+1 3
-+1 5
-+1 6
-+2 0
-+
-+query II rowsort
-+select * from range_scan_or where (a between 0 and 5) or (a = 1 and b > 5);
-+----
-+0 0
-+1 3
-+1 5
-+1 6
-+2 0
-+
-+query II rowsort
-+select * from range_scan_or where (a, b) > (1, 5) or a >= 1;
-+----
-+1 3
-+1 5
-+1 6
-+2 0
-+
-+query II rowsort
-+select * from range_scan_or where a is null or a > 0;
-+----
-+1 3
-+1 5
-+1 6
-+2 0
-+NULL 1
-+
-+statement ok
-+drop table range_scan_or;
-+
-+statement ok
-+create table range_scan_smallint (a smallint primary key);
-+
-+statement ok
-+insert into range_scan_smallint values (-32768), (0), (32767);
-+
-+query I rowsort
-+select * from range_scan_smallint where a between -32768 and 32767;
-+----
-+-32768
-+0
-+32767
-+
-+statement ok
-+drop table range_scan_smallint;
-+
-+statement ok
-+create table range_scan_bigint (a bigint primary key);
-+
-+statement ok
-+insert into range_scan_bigint values (-9223372036854775808), (0), (9223372036854775807);
-+
-+query I rowsort
-+select * from range_scan_bigint where a between -9223372036854775808 and 9223372036854775807;
-+----
-+-9223372036854775808
-+0
-+9223372036854775807
-+
-+statement ok
-+drop table range_scan_bigint;
-```
-
-**File**: `e2e_test/batch/basic/row_filter.slt.part` (modified, +54/-0)
-```diff
-@@ -63,3 +63,57 @@ drop materialized view mv1;
- 
- statement ok
- drop table t1;
-+
-+statement ok
-+create table row_filter_short_pk (a int primary key, b int);
-+
-+statement ok
-+insert into row_filter_short_pk values (0, 9), (1, 4), (2, 0);
-+
-+query II
-+select * from row_filter_short_pk where (a, b) > (1, 3) order by a;
-+----
-+1 4
-+2 0
-+
-+query II
-+select * from row_filter_short_pk where (a, b) < (1, 5) order by a;
-+----
-+0 9
-+1 4
-+
-+statement ok
-+drop table row_filter_short_pk;
-+
-+statement ok
-+create table row_filter_null_field(a int, b int, c int, primary key(a, b));
-+
-+statement ok
-+insert into row_filter_null_field values (1, 3, 1), (1, null, 2), (2, 0, 3), (null, 1, 4);
-+
-+query II
-+select a, b from row_filter_null_field where (a, b) > (null::int, 1);
-+----
-+
-+query II
-+select a, b from row_filter_null_field where (a, b) > (1, null::int);
-+----
-+2 0
-+
-+statement ok
-+drop table row_filter_null_field;
-+
-+statement ok
-+create table row_filter_null_field_short_pk(a int primary key, b int, c int);
-+
-+statement ok
-+insert into row_filter_null_field_short_pk values (null, null, 1), (1, 4, 3);
-+
-+# The two IS NULL arms overlap, so the row must be returned once.
-+query III
-+select * from row_filter_null_field_short_pk where a is null or (a, b) > (null::int, 0) or (a is null and c > 0);
-+----
-+NULL NULL 1
-+
-+statement ok
-+drop table row_filter_null_field_short_pk;
-```
-
-**File**: `src/common/src/util/scan_range.rs` (modified, +251/-127)
-```diff
-@@ -15,7 +15,6 @@
- use std::cmp::Ordering;
- use std::ops::{Bound, RangeBounds};
- 
--use itertools::Itertools;
- use paste::paste;
- use risingwave_pb::batch_plan::ScanRange as PbScanRange;
- use risingwave_pb::batch_plan::scan_range::Bound as PbBound;
-@@ -130,120 +129,159 @@ impl ScanRange {
-         (new_left, new_right)
+-        let ast = Parser::parse_sql(&view_catalog.sql)
+-            .expect("a view's sql should be parsed successfully");
++        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
++        // secrets.
++        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
++            ErrorCode::BindError(format!(
++                "failed to parse the stored definition of view {}",
++                view_catalog.name
++            ))
++        })?;
+         let Statement::Query(query) = Itertools::exactly_one(ast.into_iter())
+             .expect("a view should contain only one statement")
+         else {
+@@ -738,3 +744,34 @@ impl Binder {
+         Ok(())
      }
- 
-+    /// Returns whether the two ranges may contain a common row.
-+    ///
-+    /// `order_types` are the pk order types with descending ones reversed, i.e. the order in which
-+    /// the range bounds are compared.
-     pub fn is_overlap(left: &ScanRange, right: &ScanRange, order_types: &[OrderType]) -> bool {
--        let range_left = left.convert_to_range();
--        let range_right = right.convert_to_range();
--        Self::range_overlap_check(range_left, range_right, order_types)
-+        cmp_cut(
-+            &left.start_cut(order_types),
-+            &right.end_cut(order_types),
-+            order_types,
-+        )
-+        .is_lt()
-+            && cmp_cut(
-+                &right.start_cut(order_types),
-+                &left.end_cut(order_types),
-+                order_types,
-+            )
-+            .is_lt()
-     }
- 
--    fn range_overlap_check(
--        left: (Bound<Vec<Datum>>, Bound<Vec<Datum>>),
--        right: (Bound<Vec<Datum>>, Bound<Vec<Datum>>),
--        order_types: &[OrderType],
--    ) -> bool {
--        let (left_start, left_end) = &left;
--        let (right_start, right_end) = &right;
--
--        let left_start_vec = match &left_start {
--            Bound::Included(vec) | Bound::Excluded(vec) => vec,
--            _ => &vec![],
--        };
--        let right_start_vec = match &right_start {
--            Bound::Included(vec) | Bound::Excluded(vec) => vec,
--            _ => &vec![],
--        };
-+    /// Compares where the two ranges start. See [`Self::is_overlap`] for `order_types`.
-+    pub fn cmp_start(left: &ScanRange, right: &ScanRange, order_types: &[OrderType]) -> Ordering {
-+        cmp_cut(
-+            &left.start_cut(order_types),
-+            &right.start_cut(order_types),
-+            order_types,
-+        )
+ }
++
++#[cfg(test)]
++mod tests {
++    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
++
++    use super::*;
++    use crate::binder::test_utils::mock_binder;
++
++    #[tokio::test]
++    async fn test_view_with_unparsable_sql() {
++        let view = ViewCatalog {
++            // A system view skips the privilege check.
++            id: (SYS_CATALOG_START_ID as u32).into(),
++            name: "v".to_owned(),
++            schema_id: 0.into(),
++            database_id: 0.into(),
++            owner: DEFAULT_SUPER_USER_ID,
++            properties: Default::default(),
++            sql: "SELECT 'secret' FROM".to_owned(),
++            columns: vec![],
++            created_at_epoch: None,
++            created_at_cluster_version: None,
++        };
++        let error = mock_binder()
++            .resolve_view_relation(&view)
++            .unwrap_err()
++            .to_report_string();
++        assert!(error.contains("view v"), "{error}");
++        assert!(!error.contains("secret"), "{error}");
 +    }
++}
+```
+
+**File**: `src/meta/src/controller/rename.rs` (modified, +40/-18)
+```diff
+@@ -12,6 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
--        if left_start_vec.is_empty() && right_start_vec.is_empty() {
--            return true;
-+    /// Returns a range covering two overlapping ranges. It is exact if one range contains the other
-+    /// or both have the same `eq_conds`. Otherwise, it is widened to the whole common prefix of
-+    /// their `eq_conds`. See [`Self::is_overlap`] for `order_types`.
-+    pub fn union(self, other: ScanRange, order_types: &[OrderType]) -> ScanRange {
-+        let cmp_start = Self::cmp_start(&self, &other, order_types);
-+        let cmp_end = cmp_cut(
-+            &self.end_cut(order_types),
-+            &other.end_cut(order_types),
-+            order_types,
-+        );
-+        if cmp_start.is_le() && cmp_end.is_ge() {
-+            return self;
++use anyhow::anyhow;
+ use itertools::Itertools;
+ use risingwave_pb::expr::expr_node::{self, RexNode};
+ use risingwave_pb::expr::{ExprNode, FunctionCall, UserDefinedFunction};
+@@ -24,20 +25,29 @@ use risingwave_sqlparser::ast::{
+ };
+ use risingwave_sqlparser::parser::Parser;
+ 
++use crate::MetaResult;
++
++/// A stored definition can come from an older version, so it may not parse anymore. The error leaves
++/// out the definition and the parser's message, which quotes it, because the connector options in a
++/// definition can have secrets.
++fn parse_definition(definition: &str) -> MetaResult<Statement> {
++    let ast = Parser::parse_sql(definition)
++        .map_err(|_| anyhow!("failed to parse the stored definition"))?;
++    Ok(Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement"))
++}
++
+ /// `alter_relation_rename` renames a relation to a new name in its `Create` statement, and returns
+ /// the updated definition raw sql. Note that the `definition` must be a `Create` statement and the
+ /// `new_name` must be a valid identifier, it should be validated before calling this function. To
+ /// update all relations that depend on the renamed one, use `alter_relation_rename_refs`.
+-pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
++pub fn alter_relation_rename(definition: &str, new_name: &str) -> MetaResult<String> {
+     // This happens when we try to rename a table that's created by `CREATE TABLE AS`. Remove it
+     // when we support `SHOW CREATE TABLE` for `CREATE TABLE AS`.
+     if definition.is_empty() {
+         tracing::warn!("found empty definition when renaming relation, ignored.");
+-        return definition.into();
++        return Ok(definition.into());
+     }
+-    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
+-    let mut stmt =
+-        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
++    let mut stmt = parse_definition(definition)?;
+ 
+     match &mut stmt {
+         Statement::CreateTable { name, .. }
+@@ -63,15 +73,13 @@ pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
+         _ => unreachable!(),
+     };
+ 
+-    stmt.to_string()
++    Ok(stmt.to_string())
+ }
+ 
+ /// `alter_relation_rename_refs` updates all references of renamed-relation in the definition of
+ /// target relation's `Create` statement.
+-pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> String {
+-    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
+-    let mut stmt =
+-        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
++pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> MetaResult<String> {
++    let mut stmt = parse_definition(definition)?;
+ 
+     match &mut stmt {
+         Statement::CreateTable {
+@@ -139,7 +147,7 @@ pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> Str
          }
--
--        let order_types = if order_types.iter().all(|o| o.is_ascending()) {
--            order_types
--        } else {
--            // reverse order types to ascending
--            &order_types
--                .iter()
--                .cloned()
--                .map(|o| if o.is_descending() { o.reverse() } else { o })
--                .collect_vec()
--        };
--
--        // Unbounded is always less than any other bound
--        if left_start_vec.is_empty() {
--            // pass
--        } else if right_start_vec.is_empty() {
--            return Self::range_overlap_check(right, left, order_types);
--        } else {
--            assert!(!left_start_vec.is_empty());
--            assert!(!right_start_vec.is_empty());
--            let cmp_column_len = left_start_vec.len().min(right_start_vec.len());
--            let cmp_start = cmp_rows(
--                &left_start_vec[0..cmp_column_len],
--                &right_start_vec[0..cmp_column_len],
--                &order_types[0..cmp_column_len],
--            );
--
--            let right_start_before_left_start = cmp_start.is_gt();
--
--            if right_start_before_left_start {
--                return Self::range_overlap_check(right, left, order_types);
-+        if cmp_start.is_ge() && cmp_end.is_le() {
-+            return other;
+         _ => unreachable!(),
+     };
+-    stmt.to_string()
++    Ok(stmt.to_string())
+ }
+ 
+ /// Replace the last ident in the `table_name` with the given name, the object name is ensured to be
+@@ -519,24 +527,38 @@ impl IndexItemRewriter {
+ 
+ #[cfg(test)]
+ mod tests {
++    use thiserror_ext::AsReport;
++
+     use super::*;
+ 
+     #[test]
+     fn test_alter_table_rename() {
+         let definition = "CREATE TABLE foo (a int, b int)";
+         let new_name = "bar";
+         let expected = "CREATE TABLE bar (a INT, b INT)";
+-        let actual = alter_relation_rename(definition, new_name);
++        let actual = alter_relation_rename(definition, new_name).unwrap();
+         assert_eq!(expected, actual);
+     }
+ 
++    #[test]
++    fn test_rename_with_unparsable_definition() {
++        let definition = "CREATE SINK s FROM t WITH (password = 'secret') AND";
++        for result in [
++            alter_relation_rename(definition, "s2"),
++            alter_relation_rename_refs(definition, "t", "t2"),
++        ] {
++            let error = result.unwrap_err().to_report_string();
++            assert!(!error.contains("secret"), "{error}");
 +        }
-+        if self.eq_conds == other.eq_conds {
-+            let start = if cmp_start.is_le() {
-+                self.range.0
-+            } else {
-+                other.range.0
-+            };
-+            let end = if cmp_end.is_ge() {
-+                self.range.1
-+            } else {
-+                other.range.1
-+            };
-+            ScanRange {
-+                eq_conds: self.eq_conds,
-+                range: (start, end),
++    }
++
+     #[test]
+     fn test_rename_index_refs() {
+         let definition = "CREATE INDEX idx1 ON foo(v1 DESC, v2)";
+         let from = "foo";
+         let to = "bar";
+         let expected = "CREATE INDEX idx1 ON bar(v1 DESC, v2)";
+-        let actual = alter_relation_rename_refs(definition, from, to);
++        let actual = alter_relation_rename_refs(definition, from, to).unwrap();
+         assert_eq!(expected, actual);
+     }
+ 
+@@ -548,7 +570,7 @@ mod tests {
+         let to = "bar";
+         let expected =
+             "CREATE SINK sink_t FROM bar WITH (connector = 'kafka', format = 'append_only')";
+-        let actual = alter_relation_rename_refs(definition, from, to);
++        le
+```
+
+**File**: `src/meta/src/controller/utils.rs` (modified, +7/-3)
+```diff
+@@ -2097,7 +2097,7 @@ pub fn extract_external_table_name_from_definition(table_definition: &str) -> Op
+                 error = %e.as_report(),
+                 "failed to parse table definition")
+         })
+-        .unwrap()
++        .ok()?
+         .try_into()
+         .unwrap();
+     if let SqlStatement::CreateTable { cdc_table_info, .. } = &mut definition {
+@@ -2134,7 +2134,8 @@ pub async fn rename_relation(
+             let old_name = relation.name.clone();
+             relation.name = object_name.into();
+             if obj.obj_type != ObjectType::View {
+-                relation.definition = alter_relation_rename(&relation.definition, object_name);
++                relation.definition = alter_relation_rename(&relation.definition, object_name)
++                    .with_context(|| format!("failed to rename {old_name}"))?;
              }
--
--            if cmp_start == Ordering::Equal
--                && let (Bound::Included(_), Bound::Included(_)) = (left_start, right_start)
--            {
--                return true;
-+        } else {
-+            let common_len = (0..self.eq_conds.len().min(other.eq_conds.len()))
-+                .take_while(|&i| self.eq_conds[i] == other.eq_conds[i])
-+    
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/backfill.yaml` (modified, +12/-0)
-```diff
-@@ -174,6 +174,18 @@
-     select * from t where a IN (1, 3, 5);
-   expected_outputs:
-     - stream_plan
-+- name: snapshot backfill IS NULL in an OR predicate produces an IS NULL branch
-+  sql: |
-+    create table t(a int, b int, c int, primary key(a, b));
-+    select * from t where a is null or a = 1;
-+  expected_outputs:
-+    - stream_plan
-+- name: snapshot backfill merged eq ranges produce an IS NULL branch
-+  sql: |
-+    create table t(a int, b int, c int, d int, primary key(a, b, c));
-+    select * from t where a is null or a = 1 or (a is null and b = 2 and c > 3);
-+  expected_outputs:
-+    - stream_plan
- - name: snapshot backfill covering index selection
-   sql: |
-     create table t(a int, b int, c int, primary key(a));
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/range_scan.yaml` (modified, +38/-0)
-```diff
-@@ -529,3 +529,41 @@
-     SELECT * FROM orders_count_by_user_desc WHERE (user_id < 20) or (user_id != 10);
-   expected_outputs:
-     - batch_plan
-+- name: When OR clauses with different eq prefixes overlap, the scan ranges are merged.
-+  before:
-+    - create_table_and_mv
-+  sql: |
-+    SELECT * FROM orders_count_by_user WHERE (user_id = 1 and date > 5) or (user_id between 0 and 100);
-+  expected_outputs:
-+    - batch_plan
-+- before:
-+    - create_table_and_mv
-+  sql: |
-+    SELECT * FROM orders_count_by_user WHERE (user_id between 0 and 5) or (user_id = 1 and date > 5);
-+  expected_outputs:
-+    - batch_plan
-+- name: A range with one side bounded skips NULLs, so it does not overlap with IS NULL.
-+  before:
-+    - create_table_and_mv
-+  sql: |
-+    SELECT * FROM orders_count_by_user WHERE user_id is null or user_id > 10;
-+  expected_outputs:
-+    - batch_plan
-+- name: A bound on a shorter pk prefix covers all the keys extending it.
-+  sql: |
-+    create table t(a int, b int, primary key(a, b));
-+    select * from t where (a, b) > (1, 5) or a >= 1;
-+  expected_outputs:
-+    - batch_plan
-+- name: The full range of a small integer type is not split into points.
-+  sql: |
-+    create table t(a smallint primary key);
-+    select * from t where a between -32768 and 32767;
-+  expected_outputs:
-+    - batch_plan
-+- name: A NULL field in a row must not produce an empty range between overlapping arms.
-+  sql: |
-+    create table t(a int primary key, b int, c int);
-+    select * from t where a is null or (a, b) > (null::int, 0) or (a is null and c > 0);
-+  expected_outputs:
-+    - batch_plan
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/row_filter.yaml` (modified, +18/-1)
-```diff
-@@ -28,4 +28,21 @@
-     create materialized view mv1 as select * from t1 order by v1 asc, v2 asc, v3 desc;
-     select * from mv1 where (v1,v2,v3) > (1,3,1);
-   expected_outputs:
--  - batch_plan
-\ No newline at end of file
-+  - batch_plan
-+- name: The row is longer than the pk, so only its pk prefix bounds the scan.
-+  sql: |
-+    create table t(v1 int, v2 int, v3 int, primary key(v1));
-+    select * from t where (v1,v2) > (1,2);
-+  expected_outputs:
-+  - batch_plan
-+- name: A NULL field in the row stops the scan range before it.
-+  sql: |
-+    create table t(v1 int, v2 int, primary key(v1, v2));
-+    select * from t where (v1,v2) > (1,null::int);
-+  expected_outputs:
-+  - batch_plan
-+- sql: |
-+    create table t(v1 int, v2 int, primary key(v1, v2));
-+    select * from t where (v1,v2) > (null::int,1);
-+  expected_outputs:
-+  - batch_plan
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/backfill.yaml` (modified, +30/-0)
-```diff
-@@ -379,6 +379,36 @@
-         └─StreamProject { exprs: [t.a, t.b, t.c, 2:Int32] }
-           └─StreamFilter { predicate: (t.a = 5:Int32) }
-             └─StreamTableScan { table: t, columns: [t.a, t.b, t.c], pk_scan_range: a = Some(Int32(5)), stream_scan_type: SnapshotBackfill, stream_key: [t.a, t.b], pk: [a, b], dist: UpstreamHashShard(t.a, t.b) }
-+- name: snapshot backfill IS NULL in an OR predicate produces an IS NULL branch
-+  sql: |
-+    create table t(a int, b int, c int, primary key(a, b));
-+    select * from t where a is null or a = 1;
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, b, c, $src(hidden)], stream_key: [a, b, $src], pk_columns: [a, b, $src], pk_conflict: NoCheck }
-+    └─StreamUnion { all: true }
-+      ├─StreamExchange { dist: HashShard(t.a, t.b, 0:Int32) }
-+      │ └─StreamProject { exprs: [t.a, t.b, t.c, 0:Int32] }
-+      │   └─StreamFilter { predicate: IsNull(t.a) }
-+      │     └─StreamTableScan { table: t, columns: [t.a, t.b, t.c], pk_scan_range: a = None, stream_scan_type: SnapshotBackfill, stream_key: [t.a, t.b], pk: [a, b], dist: UpstreamHashShard(t.a, t.b) }
-+      └─StreamExchange { dist: HashShard(t.a, t.b, 1:Int32) }
-+        └─StreamProject { exprs: [t.a, t.b, t.c, 1:Int32] }
-+          └─StreamFilter { predicate: (t.a = 1:Int32) }
-+            └─StreamTableScan { table: t, columns: [t.a, t.b, t.c], pk_scan_range: a = Some(Int32(1)), stream_scan_type: SnapshotBackfill, stream_key: [t.a, t.b], pk: [a, b], dist: UpstreamHashShard(t.a, t.b) }
-+- name: snapshot backfill merged eq ranges produce an IS NULL branch
-+  sql: |
-+    create table t(a int, b int, c int, d int, primary key(a, b, c));
-+    select * from t where a is null or a = 1 or (a is null and b = 2 and c > 3);
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, b, c, d, $src(hidden)], stream_key: [a, b, c, $src], pk_columns: [a, b, c, $src], pk_conflict: NoCheck }
-+    └─StreamUnion { all: true }
-+      ├─StreamExchange { dist: HashShard(t.a, t.b, t.c, 0:Int32) }
-+      │ └─StreamProject { exprs: [t.a, t.b, t.c, t.d, 0:Int32] }
-+      │   └─StreamFilter { predicate: (t.a = 1:Int32) AND ((IsNull(t.a) OR (t.a = 1:Int32)) OR ((IsNull(t.a) AND (t.b = 2:Int32)) AND (t.c > 3:Int32))) }
-+      │     └─StreamTableScan { table: t, columns: [t.a, t.b, t.c, t.d], pk_scan_range: a = Some(Int32(1)), stream_scan_type: SnapshotBackfill, stream_key: [t.a, t.b, t.c], pk: [a, b, c], dist: UpstreamHashShard(t.a, t.b, t.c) }
-+      └─StreamExchange { dist: HashShard(t.a, t.b, t.c, 1:Int32) }
-+        └─StreamProject { exprs: [t.a, t.b, t.c, t.d, 1:Int32] }
-+          └─StreamFilter { predicate: IsNull(t.a) AND ((IsNull(t.a) OR (t.a = 1:Int32)) OR ((IsNull(t.a) AND (t.b = 2:Int32)) AND (t.c > 3:Int32))) }
-+            └─StreamTableScan { table: t, columns: [t.a, t.b, t.c, t.d], pk_scan_range: a = None, stream_scan_type: SnapshotBackfill, stream_key: [t.a, t.b, t.c], pk: [a, b, c], dist: UpstreamHashShard(t.a, t.b, t.c) }
- - name: snapshot backfill covering index selection
-   sql: |
-     create table t(a int, b int, c int, primary key(a));
+             let active_model = $table::ActiveModel {
+                 $identity: Set(relation.$identity),
+@@ -2292,7 +2293,10 @@ pub async fn rename_relation_refer(
+                 .await?
+                 .unwrap();
+             relation.definition =
+-                alter_relation_rename_refs(&relation.definition, old_name, object_name);
++                alter_relation_rename_refs(&relation.definition, old_name, object_name)
++                    .with_context(|| {
++                        format!("failed to update the definition of {}", relation.name)
++                    })?;
+             let active_model = $table::ActiveModel {
+                 $identity: Set(relation.$identity),
+                 definition: Set(relation.definition.clone()),
 ```
 
 ---
 
-### Incident Patch 3: `2b7c2889` (2026-11-04)
-**Commit Message**: fix(sink): move the ClickHouse sink to clickhouse-rs 0.15.3 (#27622)
+### Incident Patch 2: `0c03d749` (2026-11-05)
+**Commit Message**: fix(observability): remove obsolete AWS retry logging layer (#27842)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +40/-36)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -2289,6 +2289,12 @@ dependencies = [
-  "serde-big-array",
- ]
- 
-+[[package]]
-+name = "bnum"
-+version = "0.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
-+
- [[package]]
- name = "bon"
- version = "3.8.1"
-@@ -2804,42 +2810,56 @@ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
- 
- [[package]]
- name = "clickhouse"
--version = "0.13.2"
--source = "git+https://github.com/risingwavelabs/clickhouse.rs?rev=f05029d2cb65164d61fa8699dd955f808375a618#f05029d2cb65164d61fa8699dd955f808375a618"
-+version = "0.15.3"
-+source = "git+https://github.com/risingwavelabs/clickhouse.rs?rev=dad4c6dd8a40aaeaa7534abf38155219f6fd73b5#dad4c6dd8a40aaeaa7534abf38155219f6fd73b5"
- dependencies = [
-+ "bnum 0.13.0",
-  "bstr",
-  "bytes",
-  "cityhash-rs",
-- "clickhouse-derive",
-- "futures",
-+ "clickhouse-macros",
-+ "clickhouse-types",
-  "futures-channel",
-+ "futures-util",
-+ "half 2.7.1",
-+ "hashbrown 0.17.1",
-  "http-body-util",
-  "hyper 1.12.0",
-  "hyper-rustls 0.27.5",
-  "hyper-util",
-- "lz4_flex 0.11.6",
-- "replace_with",
-+ "lz4_flex 0.14.0",
-+ "rand 0.9.5",
-  "rustls 0.23.35",
-- "sealed",
-  "serde",
-- "static_assertions",
-- "thiserror 1.0.63",
-+ "serde_json",
-+ "thiserror 2.0.17",
-  "time",
-  "tokio",
-+ "tracing",
-+ "twox-hash",
-  "url",
+@@ -14548,7 +14548,6 @@ dependencies = [
+  "tower-layer",
+  "tower-service",
+  "tracing",
+- "tracing-subscriber",
  ]
  
  [[package]]
--name = "clickhouse-derive"
--version = "0.2.0"
--source = "git+https://github.com/risingwavelabs/clickhouse.rs?rev=f05029d2cb65164d61fa8699dd955f808375a618#f05029d2cb65164d61fa8699dd955f808375a618"
-+name = "clickhouse-macros"
-+version = "0.3.0"
-+source = "git+https://github.com/risingwavelabs/clickhouse.rs?rev=dad4c6dd8a40aaeaa7534abf38155219f6fd73b5#dad4c6dd8a40aaeaa7534abf38155219f6fd73b5"
- dependencies = [
-  "proc-macro2",
-  "quote",
-  "serde_derive_internals",
-  "syn 2.0.117",
- ]
- 
-+[[package]]
-+name = "clickhouse-types"
-+version = "0.1.4"
-+source = "git+https://github.com/risingwavelabs/clickhouse.rs?rev=dad4c6dd8a40aaeaa7534abf38155219f6fd73b5#dad4c6dd8a40aaeaa7534abf38155219f6fd73b5"
-+dependencies = [
-+ "bytes",
-+ "thiserror 2.0.17",
-+]
-+
- [[package]]
- name = "cmake"
- version = "0.1.54"
-@@ -6269,7 +6289,7 @@ version = "0.7.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4089ab2dfd45d8ddc92febb5ca80644389d5ebb954f40231274a3f18341762e2"
- dependencies = [
-- "bnum",
-+ "bnum 0.12.1",
-  "num-integer",
-  "num-traits",
-  "serde",
-@@ -9730,12 +9750,6 @@ dependencies = [
-  "libc",
- ]
- 
--[[package]]
--name = "lz4_flex"
--version = "0.11.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "373f5eceeeab7925e0c1098212f2fbc4d416adec9d35051a6ab251e824c1854a"
--
- [[package]]
- name = "lz4_flex"
- version = "0.13.0"
-@@ -9745,6 +9759,12 @@ dependencies = [
-  "twox-hash",
- ]
- 
-+[[package]]
-+name = "lz4_flex"
-+version = "0.14.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ecbdfe44b1bd960b68170b417450a628c43f7cf56bb3c5317e61cb230ee7f226"
-+
- [[package]]
- name = "mach2"
- version = "0.4.3"
-@@ -13739,12 +13759,6 @@ dependencies = [
-  "bytecheck",
- ]
- 
--[[package]]
--name = "replace_with"
--version = "0.1.8"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "51743d3e274e2b18df81c4dc6caf8a5b8e15dbe799e0dca05c7617380094e884"
--
- [[package]]
- name = "reqsign-aliyun-oss"
- version = "3.1.4"
-@@ -14693,6 +14707,7 @@ dependencies = [
-  "chrono",
-  "chrono-tz",
-  "clickhouse",
-+ "clickhouse-types",
-  "criterion",
-  "csv",
-  "deltalake",
-@@ -16752,17 +16767,6 @@ version = "4.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1c107b6f4780854c8b126e228ea8869f4d7b71260f962fefb57b996b8959ba6b"
- 
--[[package]]
--name = "sealed"
--version = "0.6.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "22f968c5ea23d555e670b449c1c5e7b2fc399fdaec1d304a17cd48e288abc107"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.117",
--]
--
- [[package]]
- name = "sec1"
- version = "0.3.0"
 ```
 
-**File**: `ci/docker-compose.yml` (modified, +1/-1)
+**File**: `docs/metrics/inventory.tsv` (modified, +4/-5)
 ```diff
-@@ -576,7 +576,7 @@ services:
-       - 9201:9200
- 
-   clickhouse-server:
--    image: clickhouse/clickhouse-server:25.5
-+    image: clickhouse/clickhouse-server:26.9
-     ports:
-       - "8123:8123"
-       - "9000:9000"
+@@ -9,7 +9,6 @@ compute_batch_total_mem	gauge		Total number of memory usage for batch tasks.		sr
+ user_compute_error_cnt	counter	error_type,executor_name,fragment_id	Compute errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
+ user_sink_error_cnt	counter	error_type,sink_id,sink_name,fragment_id	Sink errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
+ user_source_error_cnt	counter	error_type,source_id,source_name,fragment_id	Source errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
+-aws_sdk_retry_counts	counter		Total number of aws sdk retry happens		src/common/metrics/src/lib.rs
+ connection_count	gauge	connection_type,uri	The number of current existing connection		src/common/metrics/src/monitor/connection.rs
+ connection_create_rate	counter	connection_type,uri	Rate on creating new connection		src/common/metrics/src/monitor/connection.rs
+ connection_err_rate	counter	connection_type,uri	Error rate on creating new connection		src/common/metrics/src/monitor/connection.rs
+@@ -294,12 +293,12 @@ object_store_operation_latency	histogram	media_type,type	Total latency of operat
+ object_store_read_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
+ object_store_request_retry_count	counter	type	The number of retry times of object store request		src/object_store/src/object/object_metrics.rs
+ object_store_write_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
+-refill_bytes	counter	type,op	refill bytes		src/storage/src/hummock/event_handler/refiller.rs
+-refill_duration	histogram	type,op	refill duration		src/storage/src/hummock/event_handler/refiller.rs
+-refill_queue_total	gauge		refill queue total		src/storage/src/hummock/event_handler/refiller.rs
+-refill_total	counter	type,op	refill total		src/storage/src/hummock/event_handler/refiller.rs
+ recent_filter_items	gauge		Item numbers of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
+ recent_filter_ops	counter	op	Ops of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
++refill_bytes	counter	type,op	refill bytes		src/storage/src/monitor/cache_refill_metrics.rs
++refill_duration	histogram	type,op	refill duration		src/storage/src/monitor/cache_refill_metrics.rs
++refill_queue_total	gauge		refill queue total		src/storage/src/monitor/cache_refill_metrics.rs
++refill_total	counter	type,op	refill total		src/storage/src/monitor/cache_refill_metrics.rs
+ compactor_compact_sst_duration	histogram		Total time of compact_key_range that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
+ compactor_compact_task_duration	histogram	group,level	Total time of compact that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
+ compactor_compaction_event_consumed_latency	histogram		The latency of each event being consumed		src/storage/src/monitor/compactor_metrics.rs
 ```
 
-**File**: `src/connector/Cargo.toml` (modified, +3/-2)
+**File**: `docs/metrics/reference.md` (modified, +6/-2)
 ```diff
-@@ -34,7 +34,7 @@ sink-deltalake = ["dep:deltalake"]
- sink-lancedb = ["dep:lancedb", "dep:lance", "dep:lance-table"]
- # TODO: pubsub source is not feature-gated, thus `google-cloud-pubsub` cannot be optional.
- sink-google_pubsub = ["dep:google-cloud-googleapis"]
--sink-clickhouse = ["dep:clickhouse"]
-+sink-clickhouse = ["dep:clickhouse", "dep:clickhouse-types"]
- sink-doris = []
- sink-starrocks = []
+@@ -77,6 +77,11 @@ Metric names are stable across releases unless explicitly called out. Histograms
+ follow Prometheus conventions — a histogram `foo_bar_duration_seconds` produces
+ `foo_bar_duration_seconds_bucket{le="..."}`, `_sum`, and `_count` series.
  
-@@ -68,10 +68,11 @@ cfg-if = "1"
- cfg-or-panic = "0.2"
- chrono = { workspace = true, features = ["clock", "std"] }
- chrono-tz = { version = "0.10", features = ["case-insensitive"] }
--clickhouse = { git = "https://github.com/risingwavelabs/clickhouse.rs", rev = "f05029d2cb65164d61fa8699dd955f808375a618", features = [
-+clickhouse = { git = "https://github.com/risingwavelabs/clickhouse.rs", rev = "dad4c6dd8a40aaeaa7534abf38155219f6fd73b5", features = [
-     "time",
-     "rustls-tls",
- ], optional = true }
-+clickhouse-types = { git = "https://github.com/risingwavelabs/clickhouse.rs", rev = "dad4c6dd8a40aaeaa7534abf38155219f6fd73b5", optional = true }
- csv = "1.4"
- deltalake = { workspace = true, optional = true }
- duration-str = "0.21.0"
-```
-
-**File**: `src/connector/src/sink/clickhouse.rs` (modified, +91/-79)
-```diff
-@@ -17,17 +17,18 @@ use core::num::NonZeroU64;
- use std::collections::{BTreeMap, HashMap, HashSet};
- 
- use anyhow::anyhow;
--use clickhouse::insert::Insert;
-+use bytes::{BufMut, BytesMut};
-+use clickhouse::insert_formatted::InsertFormatted;
- use clickhouse::{Client as ClickHouseClient, Row as ClickHouseRow};
-+use clickhouse_types::put_leb128;
- use itertools::Itertools;
- use phf::{Set, phf_set};
- use risingwave_common::array::{Op, StreamChunk};
- use risingwave_common::catalog::{FieldLike, Schema};
- use risingwave_common::row::Row;
- use risingwave_common::types::{DataType, Decimal, ScalarRefImpl, Serial};
- use risingwave_common::util::iter_util::ZipEqDebug;
--use serde::ser::{SerializeSeq, SerializeStruct};
--use serde::{Deserialize, Serialize};
-+use serde::Deserialize;
- use serde_with::{DisplayFromStr, serde_as};
- use thiserror_ext::AsReport;
- use tonic::async_trait;
-@@ -59,6 +60,9 @@ const OUTPUT_FORMAT_BINARY_WRITE_JSON_AS_STRING: &str = "output_format_binary_wr
- /// wire, while [`ClickHouseDecimal`] never writes more than 16.
- const MAX_ENCODABLE_DECIMAL_PRECISION: u8 = 38;
- 
-+/// Encoded rows are sent once they reach this size, each send compressed as one block.
-+const INSERT_CHUNK_SIZE: usize = 256 * 1024;
++`aws_sdk_retry_counts` is no longer emitted. Its collector depended on the
++obsolete `aws_smithy_client::retry` log target and did not track retries from the
++current AWS SDK. `object_store_request_retry_count` covers RisingWave wrapper
++retries only; it does not provide SDK-internal retry counts.
 +
- #[serde_as]
- #[derive(Deserialize, Debug, Clone, WithOptions)]
- pub struct ClickHouseCommon {
-@@ -321,9 +325,9 @@ impl ClickHouseCommon {
-             .with_user(&self.user)
-             .with_password(&self.password)
-             .with_database(&self.database)
--            .with_option(ALLOW_EXPERIMENTAL_JSON_TYPE, "1")
--            .with_option(INPUT_FORMAT_BINARY_READ_JSON_AS_STRING, "1")
--            .with_option(OUTPUT_FORMAT_BINARY_WRITE_JSON_AS_STRING, "1");
-+            .with_setting(ALLOW_EXPERIMENTAL_JSON_TYPE, "1")
-+            .with_setting(INPUT_FORMAT_BINARY_READ_JSON_AS_STRING, "1")
-+            .with_setting(OUTPUT_FORMAT_BINARY_WRITE_JSON_AS_STRING, "1");
-         Ok(client)
-     }
- }
-@@ -643,7 +647,9 @@ pub struct ClickHouseSinkWriter {
-     column_correct_map: HashMap<String, ClickHouseSchemaFeature>,
-     rw_fields_name_after_calibration: Vec<String>,
-     clickhouse_engine: ClickHouseEngine,
--    inserter: Option<Insert<ClickHouseColumn>>,
-+    inserter: Option<InsertFormatted>,
-+    /// `RowBinary` rows not sent to `inserter` yet.
-+    buf: BytesMut,
- }
- #[derive(Debug)]
- struct ClickHouseSchemaFeature {
-@@ -705,6 +711,7 @@ impl ClickHouseSinkWriter {
-             rw_fields_name_after_calibration,
-             clickhouse_engine,
-             inserter: None,
-+            buf: BytesMut::new(),
-         })
-     }
+ Every metric defined in the code is captured in `inventory.tsv` with:
  
-@@ -744,12 +751,14 @@ impl ClickHouseSinkWriter {
-     }
+ | Column        | Meaning                                                   |
+@@ -1043,10 +1048,9 @@ after a new version is installed:
+ | `object_store_operation_latency`  | histogram         | `media_type`, `type`                 | Per-operation latency histogram. `type` values follow `OperationType` (see §7.3). `media_type` identifies the backend — values include `mem`, `s3` (legacy direct S3), and the OpenDAL-backed names `Fs`, `S3`, `Minio`, `Gcs`, `Azblob`, `Obs`, `Oss`, `Webhdfs` (mixed case is intentional, matches OpenDAL `Scheme` names). |
+ | `object_store_operation_bytes`    | histogram         | `type`                               | Per-operation payload size, by operation `type`. |
+ | `object_store_failure_count`      | counter        | `type`                               | Failure count — §7.3 / alert in §3.3. |
+-| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Distinct from the underlying AWS SDK's own retry counter (`aws_sdk_retry_counts`). Non-zero sustained rate → degraded upstream. |
++| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Retries performed internally by the AWS SDK are not included. Non-zero sustained rate → degraded upstream. |
+ | `object_store_read_bytes`         | counter           | —                                    | Total bytes read by the compute/compactor process. |
+ | `object_store_write_bytes`        | counter           | —                                    | Total bytes written. |
+-| `aws_sdk_retry_counts`            | counter           | —                                    | Global AWS SDK retry counter, incremented by the logger's tracing-event hook on every `aws_smithy_client::retry` event. Covers all AWS SDK clients in the process (S3 / Kinesis / etc.), not S3 only. |
  
-     async fn write(&mut self, chunk: StreamChunk) -> Result<()> {
--        if self.inserter.is_none() {
--            self.inserter = Some(self.client.insert_with_fields_name(
--                &self.config.common.table,
--                self.rw_fields_name_after_calibration.clone(),
--            )?);
--        }
-+        let inserter = self.inserter.get_or_insert_with(|| {
-+            let sql = format!(
-+                "INSERT INTO {}({}) FORMAT RowBinary",
-+                self.config.common.table,
-+                self.rw_fields_name_after_calibration.join(",")
-+            );
-+            self.client.insert_formatted_with(sql)
-+        });
-         for (op, row) in chunk.rows() {
-             let mut clickhouse_filed_vec = vec![];
-             for (data, field) in row.iter().zip_eq_debug(self.schema.fields()) {
-@@ -793,14 +802,12 @@ impl ClickHouseSinkWriter {
-                     }
-                 }
-             }
--            let clickhouse_column = ClickHouseColumn {
--                row: clickhouse_filed_vec,
--            };
--            self.inserter
--                .as_mut()
--                .unwrap()
--                .write(&clickhouse_column)
--                .await?;
-+            for field in &clickhouse_filed_vec {
-+                field.write_row_binary(&mut self.buf);
-+            }
-+            if self.buf.len() >= INSERT_CHUNK_SIZE {
-+                inserter.send(self.buf.split().freeze()).await?;
-+            }
-         }
-         Ok(())
-     }
-@@ -821,7 +828,10 @@ impl SinkWriter for ClickHouseSinkWriter {
-     }
+ ### 10.5 Compactor
  
-     async fn barrier(&mut self, is_checkpoint: bool) -> Result<()> {
--        if is_checkpoint && let Some(inserter) = self.inserter.take() {
-+        if is_checkpoint && let Some(mut inserter) = self.inserter.take() {
-+            if !self.buf.is_empty() {
-+                inserter.send(self.buf.split().freeze()).await?;
-+            }
-             inserter.end().await?;
-         }
-         Ok(())
-@@ -916,12 +926,6 @@ async fn query_column_engine_from_ck(
-     Ok((clickhouse_column, clickhouse_engine))
- }
+```
+
+**File**: `src/common/metrics/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -30,7 +30,6 @@ tonic = { workspace = true }
+ tower-layer = "0.3.3"
+ tower-service = "0.3.3"
+ tracing = "0.1"
+-tracing-subscriber = "0.3.20"
  
--/// Serialize this structure to simulate the `struct` call clickhouse interface
--#[derive(ClickHouseRow, Debug)]
--struct ClickHouseColumn {
--    row: Vec<ClickHouseFieldWithNull>,
+ [target.'cfg(not(madsim))'.dependencies]
+ http-body = "1"
+```
+
+**File**: `src/common/metrics/src/lib.rs` (modified, +1/-47)
+```diff
+@@ -18,17 +18,9 @@
+ #![feature(trait_alias)]
+ #![register_tool(rw)]
+ 
+-use std::ops::Deref;
+-use std::sync::LazyLock;
+-
+ use hytra::TrAdder;
+-use prometheus::core::{Atomic, AtomicU64, GenericCounter, GenericGauge};
++use prometheus::core::{Atomic, GenericGauge};
+ use prometheus::proto::Metric;
+-use prometheus::register_int_counter_with_registry;
+-use tracing::Subscriber;
+-use tracing_subscriber::Layer;
+-use tracing_subscriber::layer::Context;
+-use tracing_subscriber::registry::LookupSpan;
+ 
+ mod error_metrics;
+ mod gauge_ext;
+@@ -74,44 +66,6 @@ impl Atomic for TrAdderAtomic {
+ 
+ pub type TrAdderGauge = GenericGauge<TrAdderAtomic>;
+ 
+-/// [`MetricsLayer`] is a struct used for monitoring the frequency of certain specific logs and
+-/// counting them using Prometheus metrics. Currently, it is used to monitor the frequency of retry
+-/// occurrences of aws sdk.
+-pub struct MetricsLayer {
+-    pub aws_sdk_retry_counts: GenericCounter<AtomicU64>,
 -}
 -
- /// Basic data types for use with the clickhouse interface
- #[derive(Debug)]
- enum ClickH
+-impl<S> Layer<S> for MetricsLayer
+-where
+-    S: Subscriber + for<'a> LookupSpan<'a>,
+-{
+-    fn on_event(&self, _event: &tracing::Event<'_>, _ctx: Context<'_, S>) {
+-        // Currently one retry will only generate one debug log,
+-        // so we can monitor the number of retry only through the metadata target.
+-        // Refer to <https://docs.rs/aws-smithy-client/0.55.3/src/aws_smithy_client/retry.rs.html>
+-        self.aws_sdk_retry_counts.inc();
+-    }
+-}
+-
+-impl MetricsLayer {
+-    #[expect(clippy::new_without_default)]
+-    pub fn new() -> Self {
+-        static AWS_SDK_RETRY_COUNTS: LazyLock<GenericCounter<AtomicU64>> = LazyLock::new(|| {
+-            let registry = crate::monitor::GLOBAL_METRICS_REGISTRY.deref();
+-            register_int_counter_with_registry!(
+-                "aws_sdk_retry_counts",
+-                "Total number of aws sdk retry happens",
+-                registry
+-            )
+-            .unwrap()
+-        });
+-
+-        Self {
+-            aws_sdk_retry_counts: AWS_SDK_RETRY_COUNTS.deref().clone(),
+-        }
+-    }
+-}
+-
+ #[derive(Debug, Default, Clone, Copy, serde::Serialize, serde::Deserialize)]
+ pub enum MetricLevel {
+     #[default]
+```
+
+**File**: `src/utils/runtime/src/logger.rs` (modified, +0/-7)
+```diff
+@@ -23,7 +23,6 @@ use opentelemetry::trace::TracerProvider;
+ use opentelemetry_otlp::SpanExporter;
+ use opentelemetry_sdk::Resource;
+ use opentelemetry_sdk::trace::TracerProviderBuilder;
+-use risingwave_common::metrics::MetricsLayer;
+ use risingwave_common::util::deployment::Deployment;
+ use risingwave_common::util::env_var::env_var_is_true;
+ use risingwave_common::util::query_log::*;
+@@ -598,12 +597,6 @@ pub fn init_risingwave_logger(settings: LoggerSettings) {
+         tracing::info!("opentelemetry exporter for fastrace is set at {endpoint}");
+     }
+ 
+-    // Metrics layer
+-    {
+-        let filter = filter::Targets::new().with_target("aws_smithy_client::retry", Level::DEBUG);
+-
+-        layers.push(Box::new(MetricsLayer::new().with_filter(filter)));
+-    }
+     tracing_subscriber::registry().with(layers).init();
+     // TODO: add file-appender tracing subscriber in the future
+ }
+```
+
+---
+
+### Incident Patch 3: `506c4092` (2026-11-05)
+**Commit Message**: fix(connector): quote Kafka kinit command and drop kinit.cmd option (#27608)
+
+**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +0/-3)
+```diff
+@@ -127,7 +127,6 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
+             "properties.sasl.kerberos.service.name".to_owned(),
+             "properties.sasl.kerberos.keytab".to_owned(),
+             "properties.sasl.kerberos.principal".to_owned(),
+-            "properties.sasl.kerberos.kinit.cmd".to_owned(),
+             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
+             "properties.sasl.oauthbearer.config".to_owned(),
+             "properties.sasl.oauthbearer.method".to_owned(),
+@@ -258,7 +257,6 @@ pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<Stri
+             "properties.sasl.kerberos.service.name".to_owned(),
+             "properties.sasl.kerberos.keytab".to_owned(),
+             "properties.sasl.kerberos.principal".to_owned(),
+-            "properties.sasl.kerberos.kinit.cmd".to_owned(),
+             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
+             "properties.sasl.oauthbearer.config".to_owned(),
+             "properties.sasl.oauthbearer.method".to_owned(),
+@@ -378,7 +376,6 @@ pub static CONNECTION_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSe
+             "properties.sasl.kerberos.service.name".to_owned(),
+             "properties.sasl.kerberos.keytab".to_owned(),
+             "properties.sasl.kerberos.principal".to_owned(),
+-            "properties.sasl.kerberos.kinit.cmd".to_owned(),
+             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
+             "properties.sasl.oauthbearer.config".to_owned(),
+             "properties.sasl.oauthbearer.method".to_owned(),
+```
+
+**File**: `src/connector/src/connector_common/common.rs` (modified, +61/-9)
+```diff
+@@ -270,19 +270,16 @@ pub struct KafkaConnectionProps {
+ 
+     /// Path to client's Kerberos keytab file under SASL/GSSAPI.
+     #[serde(rename = "properties.sasl.kerberos.keytab")]
++    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
+     #[with_option(allow_alter_on_fly)]
+     sasl_kerberos_keytab: Option<String>,
+ 
+     /// Client's Kerberos principal name under SASL/GSSAPI.
+     #[serde(rename = "properties.sasl.kerberos.principal")]
++    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
+     #[with_option(allow_alter_on_fly)]
+     sasl_kerberos_principal: Option<String>,
+ 
+-    /// Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
+-    #[serde(rename = "properties.sasl.kerberos.kinit.cmd")]
+-    #[with_option(allow_alter_on_fly)]
+-    sasl_kerberos_kinit_cmd: Option<String>,
+-
+     /// Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
+     #[serde(rename = "properties.sasl.kerberos.min.time.before.relogin")]
+     #[with_option(allow_alter_on_fly)]
+@@ -503,7 +500,6 @@ impl KafkaConnectionProps {
+             sasl_kerberos_service_name: None,
+             sasl_kerberos_keytab: None,
+             sasl_kerberos_principal: None,
+-            sasl_kerberos_kinit_cmd: None,
+             sasl_kerberos_min_time_before_relogin: None,
+             sasl_oathbearer_config: None,
+             sasl_oauthbearer_method: None,
+@@ -574,6 +570,9 @@ impl KafkaConnectionProps {
+         }
+ 
+         // SASL/GSSAPI
++        // Always override librdkafka's unquoted default. It is only run for GSSAPI, which is
++        // also librdkafka's default mechanism when `sasl.mechanism` is omitted.
++        config.set("sasl.kerberos.kinit.cmd", KINIT_CMD);
+         if let Some(sasl_kerberos_service_name) = self.sasl_kerberos_service_name.as_ref() {
+             config.set("sasl.kerberos.service.name", sasl_kerberos_service_name);
+         }
+@@ -583,9 +582,6 @@ impl KafkaConnectionProps {
+         if let Some(sasl_kerberos_principal) = self.sasl_kerberos_principal.as_ref() {
+             config.set("sasl.kerberos.principal", sasl_kerberos_principal);
+         }
+-        if let Some(sasl_kerberos_kinit_cmd) = self.sasl_kerberos_kinit_cmd.as_ref() {
+-            config.set("sasl.kerberos.kinit.cmd", sasl_kerberos_kinit_cmd);
+-        }
+         if let Some(sasl_kerberos_min_time_before_relogin) =
+             self.sasl_kerberos_min_time_before_relogin.as_ref()
+         {
+@@ -1367,10 +1363,66 @@ const fn default_tcp_keepalive_count() -> u32 {
+     3
+ }
+ 
++/// librdkafka's default `kinit` command, overridden to single-quote the keytab and principal.
++/// The default leaves them unquoted or double-quoted, so user-supplied values can inject shell
++/// commands.
++///
++/// Default: <https://github.com/confluentinc/librdkafka/blob/v2.10.0/src/rdkafka_conf.c#L950-L960>
++const KINIT_CMD: &str = "kinit -R -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}' \
++    || kinit -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}'";
++
++/// Rejects values that could escape the quotes in [`KINIT_CMD`] or be parsed as a `kinit` flag.
++fn deserialize_kinit_arg<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
++where
++    D: serde::Deserializer<'de>,
++{
++    let value = Option::<String>::deserialize(deserializer)?;
++    if let Some(v) = &value
++        && (v.contains('\'') || v.starts_with('-'))
++    {
++        return Err(serde::de::Error::custom(format!(
++            "invalid Kerberos value `{v}`: must not contain `'` or start with `-`"
++        )));
++    }
++    Ok(value)
++}
++
+ #[cfg(all(test, not(madsim)))]
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn test_kinit_cmd_quoted_and_args_validated() {
++        // The quoted command is set for every mechanism, including an omitted one, which
++        // librdkafka treats as GSSAPI.
++        for mechanism in [None, Some("GSSAPI"), Some("PLAIN")] {
++            let mut props = KafkaConnectionProps::test_default();
++            props.sasl_mechanism = mechanism.map(str::to_owned);
++            let mut config = rdkafka::ClientConfig::new();
++            props.set_security_properties(&mut config);
++            assert_eq!(
++                config.config_map().get("sasl.kerberos.kinit.cmd").unwrap(),
++                KINIT_CMD
++            );
++        }
++
++        // Values that could escape the quotes or be parsed as a `kinit` flag are rejected.
++        for key in [
++            "properties.sasl.kerberos.principal",
++            "properties.sasl.kerberos.keytab",
++        ] {
++            for bad in ["x'; id; '", "'", "-c/tmp/cache", "--help"] {
++                let map = BTreeMap::from([
++                    ("properties.bootstrap.server", "localhost:9092"),
++                    (key, bad),
++                ]);
++                let result: Result<KafkaConnectionProps, _> =
++                    serde_json::from_value(serde_json::to_value(map).unwrap());
++                assert!(result.is_err(), "{
+```
+
+**File**: `src/connector/with_options_connection.yaml` (modified, +0/-5)
+```diff
+@@ -289,11 +289,6 @@ KafkaConnection:
+     comments: Client's Kerberos principal name under SASL/GSSAPI.
+     required: false
+     allow_alter_on_fly: true
+-  - name: properties.sasl.kerberos.kinit.cmd
+-    field_type: String
+-    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
+-    required: false
+-    allow_alter_on_fly: true
+   - name: properties.sasl.kerberos.min.time.before.relogin
+     field_type: String
+     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
+```
+
+**File**: `src/connector/with_options_sink.yaml` (modified, +0/-5)
+```diff
+@@ -1005,11 +1005,6 @@ KafkaConfig:
+     comments: Client's Kerberos principal name under SASL/GSSAPI.
+     required: false
+     allow_alter_on_fly: true
+-  - name: properties.sasl.kerberos.kinit.cmd
+-    field_type: String
+-    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
+-    required: false
+-    allow_alter_on_fly: true
+   - name: properties.sasl.kerberos.min.time.before.relogin
+     field_type: String
+     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
+```
+
+**File**: `src/connector/with_options_source.yaml` (modified, +0/-5)
+```diff
+@@ -538,11 +538,6 @@ KafkaProperties:
+     comments: Client's Kerberos principal name under SASL/GSSAPI.
+     required: false
+     allow_alter_on_fly: true
+-  - name: properties.sasl.kerberos.kinit.cmd
+-    field_type: String
+-    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
+-    required: false
+-    allow_alter_on_fly: true
+   - name: properties.sasl.kerberos.min.time.before.relogin
+     field_type: String
+     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27808** (2026-11-04): cherry-pick fix(sink): move the ClickHouse sink to clickhouse-rs 0.15.3 (#27622) to release-3.0 (@yuhao-su)
-- **PR #27807** (2026-11-04): cherry-pick fix(sink): move the ClickHouse sink to clickhouse-rs 0.15.3 (#27622) to release-3.1 (@yuhao-su)
-- **PR #27801** (closed): refactor(frontend): derive scan ranges from a key set (@yuhao-su)
-- **PR #27798** (closed): chore(deps): bump the aws group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #27795** (2026-11-04): chore(deps): unpin `serde_json` with patched `zmij` for compatibility (@maybe-vibe)
-- **PR #27793** (2026-11-03): perf(storage): reduce SST metadata and block decode overhead (release-3.0) (#27761) (@Li0k)
+- **PR #27842** (2026-11-05): fix(observability): remove obsolete AWS retry logging layer (@Li0k)
+- **PR #27835** (closed): feat(ctl): add object-store and compactor read benchmarks (@Ad-Bean)
+- **PR #27833** (2026-11-05): fix(storage): honor missing TOML compaction settings (@wenym1)
+- **PR #27832** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
+- **PR #27831** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
+- **PR #27830** (2026-11-05): chore: update version to v3.1.1 (@cyliu0)
 
 ---
 
@@ -2224,83 +1695,62 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump dependencies with security advisories (#27706)
+## X. return an error when a stored definition fails to parse (#27823)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/frontend/src/binder/relation/table_or_source.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34c424f2`: deps): bump dependencies with security advisories (#27706). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d603a76c`: return an error when a stored definition fails to parse (#27823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/src/binder/relation/table_or_source.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rustls-webpki 0.103.15",
- "rustls 0.23.46",
-[[package]]
-name = "bs58"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf88ba1141d185c399bee5288d850d63b8369520c1eafc32a0430b5b6c287bf4"
-dependencies = [
- "tinyvec",
-]
+        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
+        // secrets.
+        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
+            ErrorCode::BindError(format!(
+                "failed to parse the stored definition of view {}",
+                view_catalog.name
+            ))
+        })?;
 
- "rustls 0.23.46",
-version = "0.123.19"
-checksum = "b3741b9ad77e89c710586b2fcdd619baf28482d92b70d88cecb2a081dd912ae6"
-version = "0.123.19"
-checksum = "8243e149085051b23faebd352ef7031aeebc5f45e63aaefd63ee7f810c22c7df"
-version = "0.123.19"
-checksum = "c538af3aee13eb6aa8a85d2ef85b4d0aa41623dae8b19f59bbacfd5d6c114920"
-version = "0.123.19"
-checksum = "2292ea3964d7d751031da1a1261d64feb09e89bd4fbebf3c78f43f9c34c20a11"
-version = "0.123.19"
-checksum = "8967a699a4982d02c32246a00f2aa4cee5bccfaaa042608d5e151cb99cba210e"
-version = "0.123.19"
-checksum = "e258eeeb6903b4e91e314a3667ab2a1e2924738ef2df08bdb50355e38decc749"
-version = "0.123.19"
-checksum = "e1d36ff0de30460c01dad152ca2097bcabef2f16c659b9ffbca2f67e9bbdb321"
-version = "0.123.19"
-checksum = "acc880d91877efb6199031bda872726ca3287dc1e18ccf3f61c07bfdab62930b"
-version = "0.123.19"
-checksum = "5f7af321c4b6e5be4729e4a5b1ed0fc78fc31695c1ecd3c9b45b91908bf3d0a3"
-version = "0.123.19"
-chec
+#[cfg(test)]
+mod tests {
+    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
+
+    use super::*;
+    use crate::binder::test_utils::mock_binder;
+
+    #[tokio::test]
+    async fn test_view_with_unparsable_sql() {
+        let view = ViewCatalog {
+            // A system view skips the privilege check.
+            id: (SYS_CATALOG_START_ID as u32).into(),
+            name: "v".to_owned(),
+            schema_id: 0.into(),
+            database_id: 0.into(),
+            owner: DEFAULT_SUPER_USER_ID,
+            properties: Default::default(),
+            sql: "SELECT 'secret' FROM".to_owned(),
+            columns: vec![],
+            created_at_epoch: None,
+            created_at_cluster_version: None,
+        };
+        let error = mock_binder()
+            .resolve_view_relation(&view)
+            .un
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "rustls-webpki 0.103.10",
- "rustls 0.23.35",
- "rustls 0.23.35",
-version = "0.123.9"
-checksum = "44f81cede359311706057b689b91b59f464926de0316f389898a2b028cb494fa"
-version = "0.123.9"
-checksum = "fa6ca11305de425ea08884097b913ebe1a83875253b3c0063ce28411e226bfdc"
-version = "0.123.9"
-checksum = "7537341a9a4ba9812141927be733e7254bf2318aab6597d567af9cad90609f27"
-version = "0.123.9"
-checksum = "d28a4ca5faf25ff821fcc768f26e68ffef505e9f71bb06e608862d941fa65086"
-version = "0.123.9"
-checksum = "d891057fe1b73910c41e73b32a70fa8454092fce65942b5fa6f72aa6d5487f8a"
-version = "0.123.9"
-checksum = "c29a66028a78eedc534b3a94e5ebfbaeb4e1f6b09038afe41bb24afd614faa4b"
-version = "0.123.9"
-checksum = "95809ad251fe9422087b4a72d61e584d6ab6eff44dee1335f93cfaea0bedc9ac"
-version = "0.123.9"
-checksum = "f79d0cacf063c297e5e8d5b73cb355b41b87f6d248e252d1b284e7a7b73673c2"
-version = "0.123.9"
-checksum = "b2d73297a195ce3be55997c6307142c4b1e58dd0c2f18ceaa0179444024e312a"
-version = "0.123.9"
-checksum = "3be38d1ae29ef7c5d611fc6cb694f698dc4ca44152dcaa112ec0fef8d4d34858"
-version = "0.123.9"
-checksum = "6761926f6636209de7ac568be28b206890f2181761375b9722e0a1e7a7e1637a"
+        let ast = Parser::parse_sql(&view_catalog.sql)
+            .expect("a view's sql should be parsed successfully");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34c424f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d603a76c` are properly handled with clean fallback behavior.

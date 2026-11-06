@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `d8039f36`  
+> **Source Version**: `469ff28e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:05:55.421Z  
+> **Timestamp**: 2026-11-05T18:24:33.709Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:05:53.690Z  
+> **Harvest Timestamp**: 2026-11-05T18:23:09.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4906 stars
+- **Stars / Engagement**: 4910 stars
 
 ---
 
@@ -1046,617 +1046,231 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3afe4870` (2026-11-03)
-**Commit Message**: feat(desktop): add GPUI tray app for macOS, Linux and Windows (#568)
+### Incident Patch 1: `7b5257a5` (2026-11-05)
+**Commit Message**: feat(desktop): recover CLIProxyAPI after crashes and hangs
 
-* feat(cli): add embedded server entry point
+An unexpected exit restarts the proxy up to three times, 2, 4 and 8
+seconds apart, then reports it and sends a notification. A health check
+every 30 seconds kills a proxy that stops answering so it restarts the
+same way. The running proxy's pid is saved, and the next start stops a
+proxy a killed Quotio left behind, but only when that pid still belongs
+to Quotio's proxy.
 
-run_embedded lets a desktop app host the /v2 server in-process: the caller supplies the bearer token, receives the bound address, and stops the server through a channel instead of a parent pipe.
-
-* feat(desktop): add GPUI tray popup and accounts window for Linux and Windows
-
-* feat(desktop): add dark theme that follows the system appearance
-
-The Wonder tokens follow AlignUI, so each one maps to its AlignUI dark counterpart. The component library's theme is kept in step so dialogs and inputs match.
-
-* refactor(desktop): split the settings window into page modules
-
-* feat(desktop): search accounts and act on them from settings
-
-Each row's menu refreshes, renames, replaces an API key, pauses, resumes or removes the account through the host's /v2 operations. Paused accounts stay listed in settings but leave the tray. Rows that need attention retry or grant access.
-
-* feat(desktop): add accounts from the settings window
-
-Add account and "Connect another provider" open a provider picker backed by /v2/providers. Each provider offers the ways the host supports on this platfor
-
-**File**: `.github/workflows/desktop-ci.yml` (added, +62/-0)
+**File**: `apps/desktop/src/proxy.rs` (modified, +179/-14)
 ```diff
-@@ -0,0 +1,62 @@
-+name: Desktop checks
-+
-+on:
-+  pull_request:
-+    paths:
-+      - 'apps/desktop/**'
-+      - 'apps/cli/**'
-+      - '.github/workflows/desktop-ci.yml'
-+  push:
-+    branches: [master]
-+    paths:
-+      - 'apps/desktop/**'
-+      - 'apps/cli/**'
-+      - '.github/workflows/desktop-ci.yml'
-+  workflow_dispatch:
-+
-+defaults:
-+  run:
-+    working-directory: apps/desktop
-+    shell: bash
-+
-+permissions: {}
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: true
-+
-+jobs:
-+  build:
-+    name: Desktop on ${{ matrix.os }}
-+    runs-on: ${{ matrix.os }}
-+    timeout-minutes: 30
-+    permissions:
-+      contents: read
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        os: [macos-15, ubuntu-24.04, windows-2025]
-+    env:
-+      CARGO_TERM_COLOR: never
-+      RUST_BACKTRACE: '1'
-+    steps:
-+      - name: Checkout repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      - name: Install Rust toolchain
-+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
-+      - name: Install Linux libraries
-+        if: runner.os == 'Linux'
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --no-install-recommends \
-+            libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb1-dev \
-+            libwayland-dev libvulkan-dev libfontconfig-dev libfreetype-dev
-+      - name: Check formatting
-+        if: runner.os == 'Linux'
-+        run: cargo +stable fmt --check
-+      - name: Lint
-+        run: cargo +stable clippy --locked --all-targets -- -D warnings
-+      - name: Test
-+        run: cargo +stable test --locked
-```
-
-**File**: `apps/cli/docs/openapi.json` (modified, +2/-1)
-```diff
-@@ -3994,7 +3994,8 @@
-               "type": "string",
-               "enum": [
-                 "macos",
--                "linux"
-+                "linux",
-+                "windows"
-               ]
-             },
-             "description": "Supported saved-account storage platforms. Linux requires a separately supplied vault master key."
-```
-
-**File**: `apps/cli/docs/provider-coverage.md` (modified, +44/-44)
-```diff
-@@ -19,50 +19,50 @@ all providers. Windows/Linux runtime checks are deferred.
- | Provider | Authentication | Sources (ownership) | Account storage OS |
- | --- | --- | --- | --- |
- | mock | — | — | — |
--| codex | oauth, native | codex_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| amp | api_key, native | amp_native (borrowed_native) | macos, linux |
--| antigravity | native, owned_token | antigravity_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| synthetic | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| openrouter | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| zai | api_key | quotio_custom_provider (borrowed_proxy), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| minimax | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| factory | api_key, owned_token, native | factory_native (borrowed_native) | macos, linux |
--| aiand | api_key | — | macos, linux |
--| alibabacodingplan | api_key | — | macos, linux |
-+| codex | oauth, native | codex_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| amp | api_key, native | amp_native (borrowed_native) | macos, linux, windows |
-+| antigravity | native, owned_token | antigravity_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| synthetic | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| openrouter | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| zai | api_key | quotio_custom_provider (borrowed_proxy), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| minimax | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| factory | api_key, owned_token, native | factory_native (borrowed_native) | macos, linux, windows |
-+| aiand | api_key | — | macos, linux, windows |
-+| alibabacodingplan | api_key | — | macos, linux, windows |
- | azureopenai | native | — | — |
--| chutes | api_key | — | macos, linux |
--| claude | oauth, native | claude_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| clawrouter | api_key | — | macos, linux |
--| clinepass | api_key | quotio_custom_provider (borrowed_proxy) | macos, linux |
--| codebuff | api_key | — | macos, linux |
--| copilot | oauth, native | copilot_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| crof | api_key | — | macos, linux |
--| cursor | native | cursor_native (borrowed_native) | macos, linux |
--| deepgram | api_key | — | macos, linux |
--| deepinfra | api_key | — | macos, linux |
--| deepseek | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| devin | api_key | — | macos, linux |
--| devin-desktop | api_key | devin_desktop_native (borrowed_native) | macos, linux |
--| doubao | api_key | — | macos, linux |
--| elevenlabs | api_key | — | macos, linux |
--| fireworks | api_key | — | macos, linux |
-+| chutes | api_key | — | macos, linux, windows |
-+| claude | oauth, native | claude_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| clawrouter | api_key | — | macos, linux, windows |
-+| clinepass | api_key | quotio_custom_provider (borrowed_proxy) | macos, linux, windows |
-+| codebuff | api_key | — | macos, linux, windows |
-+| copilot | oauth, native | copilot_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| crof | api_key | — | macos, linux, windows |
-+| cursor | native | cursor_native (borrowed_native) | macos, linux, windows |
-+| deepgram | api_key | — | macos, linux, windows |
-+| deepinfra | api_key | — | macos, linux, windows |
-+| deepseek | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux, windows |
-+| devin | api_key | — | macos, linux, windows |
-+| devin-desktop | api_key | devin_desktop_native (borrowed_native) | macos, linux, windows |
-+| doubao | api_key | — | macos, linux, windows |
-+| elevenlabs | api_key | — | macos, linux, windows |
-+| fireworks | api_key | — | macos, linux, windows |
- | gemini | native | cli_proxy_auth_file (borrowed_proxy) | — |
--| grok | native, owned_token | grok_native (borrowed_native) | macos, linux |
--| groq | api_key | — | macos, linux |
--| ibmbob | api_key | — | macos, linux |
--| kilo | api_key | — | macos, linux |
--| kimi | api_key | — | macos, linux |
--| kiro | native, owned_token | kiro_native (borrowed_native), cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| litellm | api_key | — | macos, linux |
--| llmproxy | api_key | — | macos, linux |
--| moonshot | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| neuralwatt | api_key | — | macos, linux |
--| openai | api_key | — | macos, linux |
--| opencodego | api_key | — | macos, linux |
--| poe | api_key | cli_proxy_auth_file (borrowed_proxy) | macos, linux |
--| sub2api | api_key | — | macos, linux |
--| venice | api_key | cli_proxy_auth_file (borrowed_pr
-```
-
-**File**: `apps/cli/src/providers/capabilities.rs` (modified, +5/-2)
-```diff
-@@ -418,7 +418,7 @@ pub fn capability(provider: Provider) -> ProviderCapability {
-         usage_platform: "all",
-         account_storage_platform: provider.supports_accounts().then_some("macos"),
-         account_storage_platforms: if provider.supports_accounts() {
--            vec!["macos", "linux"]
-+            vec!["macos", "linux", "windows"]
-         } else {
-             vec![]
-         },
-@@ -441,7 +441,10 @@ mod tests {
-     #[test]
-     fn registry_metadata_and_core_settings_are_exposed_without_environment_names() {
-         let factory = capability(Provider::Factory);
--        assert_eq!(factory.account_storage_platforms, vec!["macos", "linux"]);
-+        assert_eq!(
-+            factory.account_storage_platforms,
-+            vec!["macos", "linux", "windows"]
-+        );
-         assert_eq!(
-             factory.auth,
-             vec![
-```
-
-**File**: `apps/cli/src/server.rs` (modified, +38/-4)
-```diff
-@@ -1171,7 +1171,26 @@ async fn wait_for_next_refresh(state: &ApiState) {
-     }
-     state.status.lock().await.next_refresh_at = None;
- }
-+/// Host running inside a native application process instead of a child process.
-+/// The application supplies the management token, receives the bound address, and
-+/// stops the host by sending on or dropping `stop`.
-+pub struct Embedded {
-+    pub token: String,
-+    /// First-run values, as a native parent sends them over its pipe.
-+    pub preferences: Option<crate::settings::NativePreferences>,
-+    pub ready: tokio::sync::oneshot::Sender<std::net::SocketAddr>,
-+    pub stop: tokio::sync::oneshot::Receiver<()>,
-+}
- pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
-+    serve(args, None).await
-+}
-+pub async fn run_embedded(args: ServeArgs, embedded: Embedded) -> Result<(), ServerError> {
-+    if args.parent_pipe {
-+        return Err(ServerError::Security);
-+    }
-+    serve(args, Some(embedded)).await
-+}
-+async fn serve(args: ServeArgs, mut embedded: Option<Embedded>) -> Result<(), ServerError> {
-     if !args.listen.ip().is_loopback() {
-         return Err(ServerError::Listen);
-     }
-@@ -1203,10 +1222,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
-     } else {
-         None
-     };
--    let view = match parent
--        .as_mut()
--        .and_then(bootstrap::Parent::take_preferences)
--    {
-+    let preferences = match (&mut parent, &mut embedded) {
-+        (Some(parent), _) => parent.take_preferences(),
-+        (None, Some(embedded)) => embedded.preferences.take(),
-+        (None, None) => None,
-+    };
-+    let view = match preferences {
-         Some(preferences)
-             if config_adopted && adoption.as_ref().is_none_or(|source| !source.adopted()) =>
-         {
-@@ -1217,6 +1238,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
-     .map_err(|_| ServerError::Config)?;
-     let token = if let Some(parent) = &mut parent {
-         Some(parent.take_token())
-+    } else if let Some(embedded) = &mut embedded {
-+        // Do not silently select between two credentials.
-+        if std::env::var_os("QUOTIO_SERVER_TOKEN").is_some() {
-+            return Err(ServerError::Security);
-+        }
-+        Some(std::mem::take(&mut embedded.token))
-     } else {
-         match std::env::var("QUOTIO_SERVER_TOKEN") {
-             Ok(t) => Some(t),
-@@ -1312,8 +1339,12 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
-         vault,
-         oauth,
-     });
-+    let mut embedded_stop = None;
-     if args.parent_pipe {
-         bootstrap::announce(address)?;
-+    } else if let Some(Embedded { ready, stop, .. }) = embedded {
-+        ready.send(address).map_err(|_| ServerError::Initialize)?;
-+        embedded_stop = Some(stop);
-     } else {
-         eprintln!("Quotio API listening on http://{address}");
-     }
-@@ -1373,6 +1404,9 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
-         _=async {
-             if let Some(parent) = &mut parent {
-                 tokio::select! { _=shutdown_signal()=>(), _=parent.closed()=>() }
-+            } else if let Some(stop) = &mut embedded_stop {
-+                // The application owns process signals; a dropped sender also stops the host.
-+                let _ = stop.await;
-             } else {
-                 shutdown_signal().await;
-             }
-```
-
-**File**: `apps/desktop/.gitignore` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+/target/
-```
-
-**File**: `apps/desktop/Cargo.toml` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+[package]
-+name = "quotio-desktop"
-+version = "0.1.0"
-+edition = "2024"
-+license = "MIT"
-+publish = false
-+
-+[[bin]]
-+name = "quotio-desktop"
-+path = "src/main.rs"
-+
-+[dependencies]
-+anyhow = "1"
-+chrono = { version = "0.4", default-features = false, features = ["clock"] }
-+directories = "6"
-+env_logger = { version = "0.11", default-features = false, features = ["auto-color"] }
-+futures = "0.3"
-+gpui-kit = "=0.7.3"
-+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
-+quotio = { path = "../cli" }
-+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
-+ring = "0.17"
-+rust-embed = { version = "8.7", features = ["include-exclude"] }
-+serde = { version = "1", features = ["derive"] }
-+serde_json = "1"
-+time = { version = "=0.3.47", features = ["serde", "serde-well-known", "formatting"] }
-+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
-+
-+[target.'cfg(target_os = "linux")'.dependencies]
-+ksni = { version = "0.3", default-features = false, features = ["tokio"] }
-+raw-window-handle = "0.6"
-+x11rb = "0.13"
-+
-+[target.'cfg(any(windows, target_os = "macos"))'.dependencies]
-+tray-icon = "0.26"
-+
-+[target.'cfg(target_os = "macos")'.dependencies]
-+block2 = "0.6"
-+objc2 = "0.6"
-+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "block2", "objc2-core-foundation", "NSApplication", "NSAttributedString", "NSButton", "NSColor", "NSControl", "NSEvent", "NSFont", "NSFontDescriptor", "NSGraphics", "NSImage", "NSResponder", "NSStatusBarButton", "NSStatusItem", "NSStringDrawing", "NSView", "NSWindow"] }
-+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSGeometry", "NSString"] }
-+
-+[target.'cfg(windows)'.dependencies]
-+raw-window-handle = "0.6"
-+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_HiDpi", "Win32_UI_WindowsAndMessaging"] }
-```
-
-**File**: `apps/desktop/assets/fonts/OFL.txt` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+Inter 4.0 beta 7 (Regular, Medium, SemiBold), from the Debian fonts-inter package.
-+Copyright 2016-2022 The Inter Project Authors (https://github.com/rsms/inter).
-+
-+This Font Software is licensed under the SIL Open Font License, Version 1.1.
-+
-+PREAMBLE
-+The goals of the Open Font License (OFL) are to stimulate worldwide
-+development of collaborative font projects, to support the font
-+creation efforts of academic and linguistic communities, and to
-+provide a free and open framework in which fonts may be shared and
-+improved in partnership with others.
-+
-+The OFL allows the licensed fonts to be used, studied, modified and
-+redistributed freely as long as they are not sold by themselves. The
-+fonts, including any derivative works, can be bundled, embedded,
-+redistributed and/or sold with any software provided that any
-+reserved names are not used by derivative works. The fonts and
-+derivatives, however, cannot be released under any other type of
-+license. The requirement for fonts to remain under this license
-+does not apply to any document created using the fonts or their
-+derivatives.
-+
-+DEFINITIONS
-+Font Software refers to the set of files released by the
-+Copyright Holder(s) under this license and clearly marked as such.
-+This may include source files, build scripts and documentation.
-+
-+Reserved Font Name refers to any names specified as such after
-+the copyright statement(s).
-+
-+Original Version refers to the collection of Font Software
-+components as distributed by the Copyright Holder(s).
-+
-+Modified Version refers to any derivative made by adding to,
-+deleting, or substituting in part or in whole any of the components
-+of the Original Version, by changing formats or by porting the Font
-+Software to a new environment.
-+
-+Author refers to any designer, engineer, programmer, technical
-+writer or other person who contributed to the Font Software.
-+
-+PERMISSION & CONDITIONS
-+Permission is hereby granted, free of charge, to any person
-+obtaining a copy of the Font Software, to use, study, copy, merge,
-+embed, modify, redistribute, and sell modified and unmodified copies
-+of the Font Software, subject to the following conditions:
-+
-+1) Neither the Font Software nor any of its individual components,
-+   in Original or Modified Versions, may be sold by itself.
-+
-+2) Original or Modified Versions of the Font Software may be bundled,
-+   redistributed and/or sold with any software, provided that each
-+   copy contains the above copyright notice and this license. These
-+   can be included either as stand-alone text files, human-readable
-+   headers or in the appropriate machine-readable metadata fields
-+   within text or binary files as long as those fields can be easily
-+   viewed by the user.
-+
-+3) No Modified Version of the Font Software may use the Reserved Font
-+   Name(s) unless explicit written permission is granted by the
-+   corresponding Copyright Holder. This restriction only applies to
-+   the primary font name as presented to the users.
-+
-+4) The name(s) of the Copyright Holder(s) or the Author(s) of the
-+   Font Software shall not be used to promote, endorse or advertise
-+   any Modified Version, except to acknowledge the contribution(s)
-+   of the Copyright Holder(s) and the Author(s) or with their
-+   explicit written permission.
-+
-+5) The Font Software, modified or unmodified, in part or in whole,
-+   must be distributed entirely under this license, and must not be
-+   distributed under any other license. The requirement for fonts to
-+   remain under this license does not apply to any document created
-+   using the Font Software.
-+
-+TERMINATION
-+This license becomes null and void if any of the above conditions
-+are not met.
-+
-+DISCLAIMER
-+THE FONT SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND,
-+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
-+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
-+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
-+THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR
-+CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-+OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT
-+SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
-+
-```
-
----
-
-### Incident Patch 2: `d8039f36` (2026-11-03)
-**Commit Message**: ci(desktop): run release build steps in bash on Windows
-
-The job's run defaults replaced the workflow's shell: bash, so the
-Windows build ran PowerShell and $TARGET expanded to nothing.
-
-**File**: `.github/workflows/desktop-release.yml` (modified, +2/-0)
-```diff
-@@ -44,6 +44,8 @@ jobs:
-             asset: quotio-desktop-x86_64-unknown-linux-gnu
-     defaults:
-       run:
-+        # Job defaults replace the workflow's; without this Windows runs pwsh.
-+        shell: bash
-         working-directory: apps/desktop
-     env:
-       CARGO_TERM_COLOR: never
-```
-
----
-
-### Incident Patch 3: `212f1242` (2026-11-02)
-**Commit Message**: ci(desktop): publish signed Windows and Linux builds
-
-**File**: `.github/workflows/desktop-release.yml` (added, +126/-0)
-```diff
-@@ -0,0 +1,126 @@
-+name: Desktop release
-+
-+# Builds the Windows and Linux desktop app and, when dispatched, publishes a
-+# `desktop-v*` prerelease with Ed25519 signatures the in-app updater checks.
-+# macOS keeps shipping the Swift app through macos-release.yml.
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      version:
-+        description: Version matching apps/desktop/Cargo.toml, without desktop-v (for example 0.1.0)
-+        required: true
-+        type: string
-+  pull_request:
-+    paths:
-+      - '.github/workflows/desktop-release.yml'
-+
-+permissions: {}
-+concurrency:
-+  group: desktop-release-${{ github.ref }}
-+  cancel-in-progress: false
-+
-+defaults:
-+  run:
-+    shell: bash
-+
-+jobs:
-+  build:
-+    name: Build ${{ matrix.target }}
-+    runs-on: ${{ matrix.os }}
-+    timeout-minutes: 45
-+    permissions:
-+      contents: read
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - os: windows-2025
-+            target: x86_64-pc-windows-msvc
-+            binary: quotio-desktop.exe
-+            asset: quotio-desktop-x86_64-pc-windows-msvc.exe
-+          - os: ubuntu-24.04
-+            target: x86_64-unknown-linux-gnu
-+            binary: quotio-desktop
-+            asset: quotio-desktop-x86_64-unknown-linux-gnu
-+    defaults:
-+      run:
-+        working-directory: apps/desktop
-+    env:
-+      CARGO_TERM_COLOR: never
-+      VERSION: ${{ inputs.version }}
-+      TARGET: ${{ matrix.target }}
-+      BINARY: ${{ matrix.binary }}
-+      ASSET: ${{ matrix.asset }}
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      - name: Validate version
-+        if: github.event_name == 'workflow_dispatch' && runner.os == 'Linux'
-+        run: |
-+          python3 - <<'PY'
-+          import os, re, tomllib
-+          version = os.environ['VERSION']
-+          assert re.fullmatch(r'\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?', version)
-+          assert tomllib.load(open('Cargo.toml', 'rb'))['package']['version'] == version
-+          PY
-+      - name: Install Rust toolchain
-+        run: rustup toolchain install stable --profile minimal --target "$TARGET"
-+      - name: Install Linux libraries
-+        if: runner.os == 'Linux'
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --no-install-recommends \
-+            libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb1-dev \
-+            libwayland-dev libvulkan-dev libfontconfig-dev libfreetype-dev
-+      - name: Build
-+        run: |
-+          cargo +stable build --locked --release --target "$TARGET"
-+          mkdir -p artifacts
-+          cp "target/$TARGET/release/$BINARY" "artifacts/$ASSET"
-+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-+        with:
-+          name: desktop-${{ matrix.target }}
-+          path: apps/desktop/artifacts/*
-+          if-no-files-found: error
-+          retention-days: 7
-+  release:
-+    name: Publish signed prerelease
-+    if: github.event_name == 'workflow_dispatch'
-+    needs: build
-+    runs-on: ubuntu-24.04
-+    environment: release
-+    timeout-minutes: 10
-+    permissions:
-+      contents: write # Required to create the GitHub release.
-+    env:
-+      VERSION: ${{ inputs.version }}
-+      GH_TOKEN: ${{ github.token }}
-+    steps:
-+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-+        with:
-+          pattern: desktop-*
-+          path: artifacts
-+          merge-multiple: true
-+      - name: Sign executables
-+        env:
-+          DESKTOP_UPDATE_KEY: ${{ secrets.DESKTOP_UPDATE_KEY }}
-+        run: |
-+          : "${DESKTOP_UPDATE_KEY:?Set the DESKTOP_UPDATE_KEY secret to the Ed25519 private key PEM}"
-+          key=$(mktemp)
-+          trap 'rm -f "$key"' EXIT
-+          printf '%s\n' "$DESKTOP_UPDATE_KEY" > "$key"
-+          # Must match PUBLIC_KEY in apps/desktop/src/updater.rs, or every client rejects the update.
-+          public=$(openssl pkey -in "$key" -pubout -outform DER | tail -c 32 | od -An -tx1 | tr -d ' \n')
-+          test "$public" = f0b16f944f287150a3ddb80fadfd6fa70a28b849754ee353aaec9502d77b1b15
-+          cd artifacts
-+          for file in quotio-desktop-*; do
-+            openssl pkeyutl -sign -inkey "$key" -rawin -in "$file" -out "$file.sig"
-+          done
-+          sha256sum quotio-desktop-* > SHA256SUMS
-+      - name: Create GitHub prerelease
-+        run: |
-+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|rc)\.[0-9]+)?$ ]]
-+          gh release create "desktop-v$VERSION" artifacts/* --repo "$GITHUB_REPOSITORY" \
-+            --target "$GITHUB_SHA" --prerelease --latest=false \
-+            --title "Quotio Desktop v$VERSION" --generate-notes
-```
-
-**File**: `AGENTS.md` (modified, +4/-3)
-```diff
-@@ -25,6 +25,7 @@ xcodebuild -project apps/macos/Quotio.xcodeproj -scheme Quotio -configuration De
- cargo test --manifest-path apps/cli/Cargo.toml --locked --all-features
- ```
+@@ -3,16 +3,19 @@
+ //! Versions live in `<data dir>/proxy/v<version>/`; the active one is a preference.
+ use std::path::{Path, PathBuf};
+ use std::process::{Child, Command, Stdio};
+-use std::time::Duration;
++use std::time::{Duration, Instant};
  
--Use `v*` tags for macOS releases and `cli-v*` tags for CLI releases. Preserve
--both imported histories; never rewrite shared history or reuse one product's tag
--namespace for the other.
-+Use `v*` tags for macOS releases, `cli-v*` tags for CLI releases and
-+`desktop-v*` tags for the Windows and Linux desktop app. Preserve both imported
-+histories; never rewrite shared history or reuse one product's tag namespace for
-+another.
+ use anyhow::{Context as _, Result, anyhow, bail};
+-use gpui_kit::{App, Global};
++use gpui_kit::{App, Global, SystemNotification, Task};
+ use semver::Version;
+ use serde::{Deserialize, Serialize};
+ 
+ const RELEASES: &str = "https://api.github.com/repos/router-for-me/CLIProxyAPI/releases";
+ /// Installed versions kept on disk, the active one included.
+ const KEEP: usize = 3;
++/// The running proxy's process id, so a proxy left behind by a crashed Quotio can be
++/// stopped before the next start takes its port.
++const PID_FILE: &str = "proxy.pid";
+ const BINARY: &str = if cfg!(windows) {
+     "cli-proxy-api.exe"
+ } else {
+@@ -56,6 +59,13 @@ pub struct Proxy {
+     /// is written there again before every start.
+     pub key: String,
+     child: Option<Child>,
++    started: Instant,
++    /// Unexpected exits in a row; reset once the proxy has run for a minute.
++    crashes: u32,
++    /// The restart after a crash, cancelled when dropped.
++    restarting: Option<Task<()>>,
++    /// The health check killed the proxy because it stopped answering.
++    hung: bool,
+     /// What is in progress, such as "Downloading 8.0.56…".
+     pub busy: Option<String>,
+     pub error: Option<String>,
+@@ -109,6 +119,10 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
+         dir,
+         key,
+         child: None,
++        started: Instant::now(),
++        crashes: 0,
++        restarting: None,
++        hung: false,
+         busy: None,
+         error: None,
+         upgrade: None,
+@@ -120,18 +134,56 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
+         async {}
+     })
+     .detach();
+-    // Notice when the proxy exits on its own, such as when its port is taken.
++    // Notice when the proxy exits on its own, and bring it back.
+     cx.spawn(async move |cx| {
+         loop {
+             cx.background_executor().timer(Duration::from_secs(2)).await;
++            cx.update(exited);
++        }
++    })
++    .detach();
++    // A proxy that runs but no longer answers is killed, so the loop above restarts it.
++    cx.spawn(async move |cx| {
++        let mut failures = 0;
++        loop {
++            cx.background_executor()
++                .timer(Duration::from_secs(30))
++                .await;
++            let probe = cx.update(|cx| {
++                let proxy = get(cx);
++                (proxy.child.is_some() && proxy.started.elapsed() > Duration::from_secs(30)).then(
++                    || {
++                        (
++                            proxy.started,
++                            proxy
++                                .runtime
++                                .spawn(answers(proxy.http.clone(), endpoint(cx))),
++                        )
++                    },
++                )
++            });
++            let Some((started, probe)) = probe else {
++                failures = 0;
++                continue;
++            };
++            if probe.await.unwrap_or(false) {
++                failures = 0;
++                continue;
++            }
++            failures += 1;
++            if failures < 3 {
++                continue;
++            }
++            failures = 0;
+             cx.update(|cx| {
+                 let proxy = cx.global_mut::<Proxy>();
+-                let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
+-                    return;
+-                };
+-                proxy.child = None;
+-                proxy.error = Some(format!("CLIProxyAPI stopped ({status})."));
+-                cx.refresh_windows();
++                // Only the same run that failed three checks in a row.
++                if proxy.started == started
++                    && let Some(child) = proxy.child.as_mut()
++                {
++                    proxy.hung = true;
++                    let _ = child.kill();
++                }
+             });
+         }
+     })
+@@ -145,7 +197,65 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
+     }
+ }
+ 
++/// After an unexpected exit, restart up to three times, waiting 2, 4 and 8 seconds.
++fn exited(cx: &mut App) {
++    let proxy = cx.global_mut::<Proxy>();
++    let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
++        return;
++    };
++    proxy.child = None;
++    let _ = std::fs::remove_file(proxy.dir.join(PID_FILE));
++    let status = if std::mem::take(&mut proxy.hung) {
++        "it stopped responding".to_owned()
++    } else {
++        status.to_string()
++    };
++    if proxy.started.elapsed() > Duration::from_secs(60) {
++        proxy.crashes = 0;
++    }
++    proxy.crashes += 1;
++    if proxy.crashes <= 3 {
++        let delay = Duration::from_secs(1 << proxy.crashes);
++        proxy.error = Some(format!(
++   
+```
+
+---
+
+### Incident Patch 2: `5bb0e4d9` (2026-11-05)
+**Commit Message**: fix(desktop): name the Keychain in the macOS vault prompt
+
+The locked-vault banner and its retry hint named Windows Credential
+Manager on macOS.
+
+**File**: `apps/desktop/src/ui/settings/accounts.rs` (modified, +5/-1)
+```diff
+@@ -403,8 +403,10 @@ impl SettingsWindow {
+     fn vault_banner(&self, p: &Palette, cx: &mut Context<Self>) -> impl IntoElement {
+         let help = if cfg!(target_os = "linux") {
+             "Quotio keeps sign-ins in your keyring. Unlock it, or set QUOTIO_VAULT_KEY_FILE."
+-        } else {
++        } else if cfg!(windows) {
+             "Quotio keeps sign-ins in Windows Credential Manager."
++        } else {
++            "Quotio keeps sign-ins in your Keychain."
+         };
+         div()
+             .flex()
+@@ -1069,6 +1071,8 @@ impl SettingsWindow {
+                     if result["failures"].as_u64().unwrap_or(0) > 0 {
+                         let hint = if cfg!(windows) {
+                             "check Windows Credential Manager"
++                        } else if cfg!(target_os = "macos") {
++                            "allow Quotio in Keychain Access"
+                         } else {
+                             "unlock your keyring"
+                         };
+```
+
+---
+
+### Incident Patch 3: `74f9e5de` (2026-11-05)
+**Commit Message**: fix(desktop): keep popup metric tiles at the design height
+
+The pace tick now overhangs the bar instead of padding it, which made
+every tile 6 px taller than the design.
+
+**File**: `apps/desktop/src/ui/menu.rs` (modified, +5/-5)
+```diff
+@@ -736,14 +736,14 @@ fn metric_tile(metric: &MetricView, group: &SharedString, p: &Palette) -> impl I
+ fn paced_bar(metric: &MetricView, height: f32, p: &Palette) -> impl IntoElement {
+     div()
+         .relative()
+-        .py(px(3.))
+         .child(progress(metric.fill, metric.tone, px(height), p))
++        // The tick overhangs the bar instead of padding it, so tiles keep the design's height.
+         .when_some(metric.tick, |s, tick| {
+             s.child(
+                 div()
+                     .absolute()
+-                    .top_0()
+-                    .bottom_0()
++                    .top(px(-3.))
++                    .bottom(px(-3.))
+                     .left(relative(tick.clamp(0., 1.)))
+                     .ml(px(-1.))
+                     .w(px(2.))
+@@ -1196,11 +1196,11 @@ pub fn preferred_height_for(overview: Option<&Overview>, density: Density) -> f3
+                                 .iter()
+                                 .filter(|m| m.pace.is_some_and(|p| p.behind))
+                                 .count();
+-                            46. + n as f32 * 71. + burning as f32 * 110.
++                            46. + n as f32 * 65. + burning as f32 * 110.
+                         }
+                         (Density::Comfortable, None, n) => {
+                             let rows = n.div_ceil(2) as f32;
+-                            50. + rows * 68. + (rows - 1.) * 8.
++                            50. + rows * 62. + (rows - 1.) * 8.
+                         }
+                     },
+                 )
 ```
 
 #### Recent Merged Pull Requests:
@@ -1685,79 +1299,66 @@ Windows build ran PowerShell and $TARGET expanded to nothing.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): add GPUI tray app for macOS, Linux and Windows (#568)
+## X. desktop): recover CLIProxyAPI after crashes and hangs
 
 **RULE**:
-When implementing operations in `.github/workflows/desktop-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/proxy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3afe4870`: desktop): add GPUI tray app for macOS, Linux and Windows (#568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b5257a5`: desktop): recover CLIProxyAPI after crashes and hangs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/desktop-ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/proxy.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: Desktop checks
-
-on:
-  pull_request:
-    paths:
-      - 'apps/desktop/**'
-      - 'apps/cli/**'
-      - '.github/workflows/desktop-ci.yml'
-  push:
-    branches: [master]
-    paths:
-      - 'apps/desktop/**'
-      - 'apps/cli/**'
-      - '.github/workflows/desktop-ci.yml'
-  workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: apps/desktop
-    shell: bash
-
-permissions: {}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  build:
-    name: Desktop on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15, ubuntu-24.04, windows-2025]
-    env:
-      CARGO_TERM_COLOR: never
-      RUST_BACKTRACE: '1'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install Rust toolchain
-        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
-      - name: Install Linux libraries
-        if: runner.os == 'Linux'
-        run: |
-         
+use std::time::{Duration, Instant};
+use gpui_kit::{App, Global, SystemNotification, Task};
+/// The running proxy's process id, so a proxy left behind by a crashed Quotio can be
+/// stopped before the next start takes its port.
+const PID_FILE: &str = "proxy.pid";
+    started: Instant,
+    /// Unexpected exits in a row; reset once the proxy has run for a minute.
+    crashes: u32,
+    /// The restart after a crash, cancelled when dropped.
+    restarting: Option<Task<()>>,
+    /// The health check killed the proxy because it stopped answering.
+    hung: bool,
+        started: Instant::now(),
+        crashes: 0,
+        restarting: None,
+        hung: false,
+    // Notice when the proxy exits on its own, and bring it back.
+            cx.update(exited);
+        }
+    })
+    .detach();
+    // A proxy that runs but no longer answers is killed, so the loop above restarts it.
+    cx.spawn(async move |cx| {
+        let mut failures = 0;
+        loop {
+            cx.background_executor()
+                .timer(Duration::from_secs(30))
+                .await;
+            let probe = cx.update(|cx| {
+                let proxy = get(cx);
+                (proxy.child.is_some() && proxy.started.e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+use std::time::Duration;
+use gpui_kit::{App, Global};
+    // Notice when the proxy exits on its own, such as when its port is taken.
+                let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
+                    return;
+                };
+                proxy.child = None;
+                proxy.error = Some(format!("CLIProxyAPI stopped ({status})."));
+                cx.refresh_windows();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3afe4870` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b5257a5` are properly handled with clean fallback behavior.

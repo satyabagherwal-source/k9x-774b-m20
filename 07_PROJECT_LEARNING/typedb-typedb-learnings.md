@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `bcf3dc11`  
+> **Source Version**: `bcf527e4`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:46:35.377Z  
+> **Timestamp**: 2026-11-05T19:06:58.695Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:46:35.372Z  
+> **Harvest Timestamp**: 2026-11-05T19:06:58.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4500 stars
+- **Stars / Engagement**: 4502 stars
 
 ---
 
@@ -1834,11 +1834,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8046** (2026-11-04): **Prepare release 3.14.2**
-  *Symptoms*: ## Product change and motivation  Bump version and generate release notes.  ## Implementation
+- **Issue #8048** (2026-11-05): **Make NotInitialised error classified as Unavailable**
+  *Symptoms*: ## Product change and motivation  Make the `NotInitialised` error classified as `Unavailable`, which is specified in the gRPC error code and can be handled by TypeDB Drivers to retry automatically after a recovery (when the server may become initialised).  ## Implementation  Change one error's classification.
 
-- **Issue #8040** (2026-10-29): **Don't let transaction services excessively hold query manager refs**
-  *Symptoms*: ## Product change and motivation  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.  ## Implementation  The gRPC and HTTP transaction services kept a strong reference to the transaction's query manager, and with it the database's query cache, until the service ended, up to 500 ms after a commit or close while draining the request stream. `Database::delete` needs exclusive ownership of the query cache, so a delete in that window panicked.  The services now hold the query manager weakly, so it is released together with the transaction on every path.
+- **Issue #8047** (2026-11-05): **Update README to feature high availability**
+  *Symptoms*: ## Product change and motivation  Feature high availability and update the used open-source software in `README.md`.  ## Implementation  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1855,103 +1855,530 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcf3dc11` (2026-11-04)
-**Commit Message**: Prepare release 3.14.2 (#8046)
+### Incident Patch 1: `bcf527e4` (2026-11-05)
+**Commit Message**: Make NotInitialised error classified as Unavailable (#8048)
 
 ## Product change and motivation
 
-Bump version and generate release notes.
+Make the `NotInitialised` error classified as `Unavailable`, which is
+specified in the gRPC error code and can be handled by TypeDB Drivers to
+retry automatically after a recovery (when the server may become
+initialised).
 
 ## Implementation
 
-**File**: `RELEASE_NOTES_LATEST.md` (modified, +37/-200)
+Change one error's classification.
+
+**File**: `server/error.rs` (modified, +2/-3)
 ```diff
-@@ -1,244 +1,81 @@
- **Download from TypeDB Package Repository:**
+@@ -166,8 +166,7 @@ impl ServerStateError for LocalServerStateError {
  
--[Distributions for 3.14.1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.1)
-+[Distributions for 3.14.2](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2)
+             Self::ConceptReadError { .. } | Self::FunctionReadError { .. } => Internal,
  
- **Pull the Docker image:**
+-            Self::NotInitialised { .. }
+-            | Self::DatabaseSchemaCommitFailed { .. }
++            Self::DatabaseSchemaCommitFailed { .. }
+             | Self::DatabaseDataCommitFailed { .. }
+             | Self::DatabaseCommitRecordExistsFailed { .. }
+             | Self::FailedToOpenPrerequisiteTransaction { .. }
+@@ -183,7 +182,7 @@ impl ServerStateError for LocalServerStateError {
+             | Self::DatabaseImportPrepareFailed { .. }
+             | Self::DatabaseImportFinaliseFailed { .. }
+             | Self::DatabaseImportDiscardFailed { .. } => InvalidRequest,
+-            Self::ConcurrentImportLimitReached { .. } => Unavailable,
++            Self::NotInitialised { .. } | Self::ConcurrentImportLimitReached { .. } => Unavailable,
+         }
+     }
  
--```docker pull typedb/typedb:3.14.1```
-+```docker pull typedb/typedb:3.14.2```
- 
- 
- ## New Features
--- **Reject importing relations without roleplayers**
--  
--  TypeDB currently does not preserve relations without role players on disk, and it is impossible to export a database containing independent relations. However, external migration tools can produce migration streams with such relations, which will lead to future data loss, as these relations cannot exist after migration.
--  
--  To avoid this, we explicitly reject such relations until a possible analogue of explicit `@independent` is introduced for relations.
--  
--  
-+
- 
- ## Bugs Fixed
--- **Fix query planner memory leak**
--  Fix a memory leak in the query plan cache that made long write-only workloads grow without bound. While commits arrive and no queries run, as during database import, the cache kept a full copy of the database statistics for every commit. 
--  
--  Additionally, expose `start_importer` from `DatabaseOperator` as `pub` for external users.
--  
--  
--- **Checkpoint before serving imported databases**
--  
--  Finalising an import closed the staged database without a checkpoint, so the reopen replayed every commit since the last periodic checkpoint, all held in memory at once. During an import, that is up to a minute of the heaviest writes, and potentially several GB of memory, all to recover state the database already had.
--  
--  `DatabaseOpenError::StatisticsPersist` (DBO18) is removed: a statistics persistence failure at startup is now reported as `StatisticsInitialise` (DBO11).
--  
--  
--- **Fulfill all transaction requests on release**
--  
--  Fixed bug where statistics updater would block a concurrent schema transaction from opening indefinitely.
--  
--  
--- **Fix linux CI build**
--  
--  Update TypeDB Dependencies to fix all CI builds for Linux.
--  
--  
--- **Fix attribute equality regression**
--  
--  Equality lookups on long strings, such as `match $n isa name; $n == "fixed_prefix_with_unique_tail_1234"` were tweaked to do scan rather than point lookup in #7869.  Strings longer than 16 bytes are stored under a hash rather than inline, scanning the entire bucket even when looking for a specific value rather than a range. Equality now uses the value's exact key again, while range comparisons keep using the order-preserving prefix-based search.
--  
--  While fixing this, value comparisons on attribute variables were reworked so that all comparisons on a variable are combined before the storage lookup, which fixed several related bugs:
--  
--  - **Missed answers when seeking with a bound of another value type.** When several `has` constraints were joined on an owner, the seek used the comparison bound in its own value type. A bound of a different type, such as a double against an integer attribute, could skip valid answers: `$p has age $a; $p has name $n; $a > 10.5;` could drop `age 11`. The same seek could skip long strings that sort after a bound, and datetime-tz values at the same instant in another time zone.
--  - **Double bounds on decimal attributes** were converted incorrectly, so `match $x isa cost; $x == 10.5;` missed `10.5dec`.
--  - **Sorting by values that have no ordering** (duration, struct) panicked at runtime. It is now a compile-time error, `UnorderedValueTypeForSortVariable`, for both attribute and computed value variables.
--  - **Comparisons between attribute variables** are now type-checked per comparator: `<`, `<=`, `>`, `>=` only for value types that have an ordering, and `like`/`contains` only for strings. `contains` between non-string attributes could previously panic.
--  - **Contradictory comparisons** on one variable (`$x > 10; $x < 5;`) are recognised up front and return no answers without scanning, in most lookup paths.
-+- **Don't let transaction services excessively hold query manager refs**
-   
--  We also change the behaviour durations, which now compare as equal using `==`, but are not range-orderable or sortable.
-+  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.
-   
-   
--- **Avoid blocking the transaction reservation queue on lock timeouts**
-+- **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
-   
--  Fix a bug where a timed-out schema transaction opening request could get stuck in the queue, blocking new schema and write transactions from opening. 
-+  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endp
 ```
 
-**File**: `VERSION` (modified, +1/-1)
+---
+
+### Incident Patch 2: `45dbd86c` (2026-11-05)
+**Commit Message**: Avoid writing tombstones for keys deleted in concurrent commit (#8045)
+
+## Product change and motivation
+
+We add a check during concurrent commit dependency resolution to skip
+writing tombstones for a deleted concept or edge that was also deleted
+in parallel by another commit. This slightly reduces the number of dead
+keys in storage and prevents us from double counting deletes when
+calculating commit deltas.
+
+## Implementation
+
+Resolves #8026.
+
+**File**: `Cargo.lock` (modified, +11/-0)
 ```diff
-@@ -1 +1 @@
--3.14.1
-\ No newline at end of file
-+3.14.2
-\ No newline at end of file
+@@ -1278,6 +1278,7 @@ dependencies = [
+  "serde_json",
+  "storage",
+  "test_utils",
++ "test_utils_database",
+  "test_utils_storage",
+  "tokio",
+  "tracing",
+@@ -5427,6 +5428,16 @@ dependencies = [
+  "storage",
+ ]
+ 
++[[package]]
++name = "test_utils_database"
++version = "0.0.0"
++dependencies = [
++ "database",
++ "diagnostics",
++ "options",
++ "storage",
++]
++
+ [[package]]
+ name = "test_utils_encoding"
+ version = "0.0.0"
+```
+
+**File**: `Cargo.toml` (modified, +6/-1)
+```diff
+@@ -83,7 +83,7 @@
+ 		workspace = true
+ 
+ [workspace]
+-	members = ["admin", "admin/client", "answer", "common/bytes", "common/cache", "common/concurrency", "common/error", "common/fail_point", "common/iterator", "common/lending_iterator", "common/logger", "common/options", "common/primitive", "common/structural_equality", "compiler", "concept", "concept/tests", "database", "database/tools", "diagnostics", "durability", "durability/tests/common", "durability/tests/crash/recoverer", "durability/tests/crash/streamer", "encoding", "encoding/tests", "executor", "function", "ir", "query", "resource", "server", "server/service/admin/proto", "storage", "storage/tests", "system", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps", "tests/behaviour/steps/params", "user", "util/project", "util/test"]
++	members = ["admin", "admin/client", "answer", "common/bytes", "common/cache", "common/concurrency", "common/error", "common/fail_point", "common/iterator", "common/lending_iterator", "common/logger", "common/options", "common/primitive", "common/structural_equality", "compiler", "concept", "concept/tests", "database", "database/tests", "database/tools", "diagnostics", "durability", "durability/tests/common", "durability/tests/crash/recoverer", "durability/tests/crash/streamer", "encoding", "encoding/tests", "executor", "function", "ir", "query", "resource", "server", "server/service/admin/proto", "storage", "storage/tests", "system", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps", "tests/behaviour/steps/params", "user", "util/project", "util/test"]
+ 	resolver = "2"
+ 
+ 	[workspace.dependencies]
+@@ -483,6 +483,11 @@
+ 			features = []
+ 			path = "concept/tests"
+ 
++		[workspace.dependencies.test_utils_database]
++			default-features = false
++			features = []
++			path = "database/tests"
++
+ 		[workspace.dependencies.test_utils_encoding]
+ 			default-features = false
+ 			features = []
+```
+
+**File**: `concept/thing/statistics/deltas.rs` (modified, +10/-20)
+```diff
+@@ -14,6 +14,7 @@ use storage::{
+     durability_client::{DurabilityRecord, UnsequencedDurabilityRecord},
+     record::{CommitRecord, CommitType},
+     sequence_number::SequenceNumber,
++    snapshot::write::WriteIntent,
+ };
+ 
+ use crate::{
+@@ -148,42 +149,31 @@ impl CommitDeltas {
+         let mut links_index_deltas = DoubleHashMap::<_, _, Delta>::new();
+ 
+         for (key, write) in commit_record.operations().iterate_writes() {
+-            let update = |delta: &mut Delta| {
+-                if write.is_delete() {
+-                    delta.deletes += 1
+-                } else if write.intends_insert() {
+-                    delta.inserts += 1
+-                } else if write.is_overwrite() {
+-                    delta.overwrites += 1
+-                } else {
+-                    #[cfg(debug_assertions)]
+-                    match write {
+-                        storage::snapshot::write::Write::Put { action, .. }
+-                            if action.load(std::sync::atomic::Ordering::Relaxed)
+-                                == storage::snapshot::write::PutAction::Nop => {}
+-                        write => unreachable!("Not a delete, insert, an overwrite, or a no-op: {write:?}"),
+-                    }
+-                }
++            let update = |delta: &mut Delta| match write.intent() {
++                WriteIntent::NewKey => delta.inserts += 1,
++                WriteIntent::Overwrite => delta.overwrites += 1,
++                WriteIntent::Tombstone => delta.deletes += 1,
++                WriteIntent::Nop => (),
+             };
+ 
+             match DecodableKey::try_decode(key.bytes()) {
+                 Some(DecodableKey::VertexEntityType(entity_type)) => {
+-                    if write.is_delete() {
++                    if write.intent() == WriteIntent::Tombstone {
+                         undefined_entities.insert(EntityType::new(entity_type));
+                     }
+                 }
+                 Some(DecodableKey::VertexRelationType(relation_type)) => {
+-                    if write.is_delete() {
++                    if write.intent() == WriteIntent::Tombstone {
+                         undefined_relations.insert(RelationType::new(relation_type));
+                     }
+                 }
+                 Some(DecodableKey::VertexAttributeType(attribute_type)) => {
+-                    if write.is_delete() {
++                    if write.intent() == WriteIntent::Tombstone {
+                         undefined_attributes.insert(AttributeType::new(attribute_type));
+                     }
+                 }
+                 Some(DecodableKey::VertexRoleType(role_type)) => {
+-                    if write.is_delete() {
++                    if write.intent() == WriteIntent::Tombstone {
+                         undefined_roles.insert(RoleType::new(role_type));
+                     }
+                 }
+```
+
+**File**: `concept/thing/statistics/mod.rs` (modified, +1/-1)
+```diff
+@@ -815,7 +815,7 @@ fn write_to_delta<D>(
+ ) -> Result<i64, MVCCReadError> {
+     match write {
+         Write::Insert { .. } => Ok(1),
+-        Write::Delete => {
++        Write::Delete { .. } => {
+             if open_sequence_number.next() >= commit_sequence_number {
+                 // no concurrent commit could have occurred - this is a real DELETE
+                 Ok(-1)
+```
+
+**File**: `concept/thing/thing_manager.rs` (modified, +13/-12)
+```diff
+@@ -1798,7 +1798,7 @@ impl ThingManager {
+         snapshot.get_write(key).map(|write| match write {
+             Write::Insert { .. } => ConceptStatus::Inserted,
+             Write::Put { .. } => ConceptStatus::Put,
+-            Write::Delete => ConceptStatus::Deleted,
++            Write::Delete { .. } => ConceptStatus::Deleted,
+         })
+     }
+ 
+@@ -1826,7 +1826,7 @@ impl ThingManager {
+         );
+         snapshot.visit_writes_in_range(&objects, |snapshot, key, write| match write {
+             Write::Insert { .. } => visit(snapshot, Object::new(ObjectVertex::decode(key.bytes()))),
+-            Write::Delete => Ok(()),
++            Write::Delete { .. } => Ok(()),
+             Write::Put { .. } => unreachable!("Encountered a Put for an object"),
+         })
+     }
+@@ -1846,7 +1846,7 @@ impl ThingManager {
+             |snapshot, key, _| {
+                 let edge = ThingEdgeHas::decode(Bytes::Reference(key.byte_array()));
+                 let owner = Object::new(edge.from());
+-                if !group.as_ref().is_some_and(|modified| modified.owner == owner) {
++                if group.as_ref().is_none_or(|modified| modified.owner != owner) {
+                     flush(snapshot, group.take())?;
+                     group = Some(ModifiedOwnerHas { owner, modified_attribute_types: HashSet::new() });
+                 }
+@@ -1872,7 +1872,7 @@ impl ThingManager {
+             |snapshot, key, write| {
+                 let edge = ThingEdgeLinks::decode(Bytes::reference(key.bytes()));
+                 let relation = Relation::new(edge.relation());
+-                if !group.as_ref().is_some_and(|modified| modified.relation == relation) {
++                if group.as_ref().is_none_or(|modified| modified.relation != relation) {
+                     flush(snapshot, group.take())?;
+                     group = Some(ModifiedRelationLinks {
+                         relation,
+@@ -1884,7 +1884,7 @@ impl ThingManager {
+                 let role_type = RoleType::build_from_type_id(edge.role_id());
+                 let modified = group.as_mut().unwrap();
+                 modified.modified_role_types.insert(role_type);
+-                if matches!(write, Write::Delete) {
++                if write.is_delete() {
+                     modified.removed_role_players.insert((player, role_type));
+                 }
+                 Ok(())
+@@ -1908,7 +1908,7 @@ impl ThingManager {
+             |snapshot, key, _| {
+                 let edge = ThingEdgeLinks::decode(Bytes::reference(key.bytes()));
+                 let player = Object::new(edge.player());
+-                if !group.as_ref().is_some_and(|modified| modified.player == player) {
++                if group.as_ref().is_none_or(|modified| modified.player != player) {
+                     flush(snapshot, group.take())?;
+                     group = Some(ModifiedPlayerLinks { player, modified_role_types: HashSet::new() });
+                 }
+@@ -2133,7 +2133,7 @@ impl ThingManager {
+     fn collect_cleanup_intervals(snapshot: &impl ReadableSnapshot) -> CleanupIntervals {
+         let mut cleanup_intervals = CleanupIntervals::new();
+         for (key, write) in snapshot.iterate_writes() {
+-            if matches!(write, Write::Delete) {
++            if write.is_delete() {
+                 register_delete_in_cleanup_intervals(&mut cleanup_intervals, StorageKeyArray::from(key));
+             }
+         }
+@@ -2400,17 +2400,18 @@ impl ThingManager {
+                 TypeVertexProperty::build_prefix(),
+                 TypeVertexProperty::FIXED_WIDTH_ENCODING,
+             ))
+-            .filter_map(|(key, write)| match write {
+-                Write::Delete => {
++            .filter_map(|(key, write)| {
++                if write.is_delete() {
+                     let bytes = Bytes::reference(key.bytes());
+                     if <AnnotationIndependent as TypeVertexPropertyEncoding>::is_decodable_from(bytes.clone()) {
+                         let decoded = TypeVertexProperty::decode(bytes);
+                         AttributeType::from_vertex(decoded.type_vertex()).ok()
+                     } else {
+                         None
+                     }
++                } else {
++                    None
+                 }
+-                _ => None,
+             })
+         {
+             if !self.type_exists(snapshot, attribute_type, storage_counters.clone())? {
+@@ -3441,7 +3442,7 @@ impl ThingManager {
+     ) -> Option<ByteArray<BUFFER_VALUE_INLINE>> {
+         match snapshot.get_write(key).cloned()? {
+             Write::Put { value, .. } => Some(value),
+-            Write::Delete => None,
++            Write::Delete { .. } => None,
+             Write::Insert { .. } => {
+                 unreachable!("Encountered an `insert` while a `put` was expected in the snapshot.")
+             }
+@@ -3559,7 +3560,7 @@ impl ObjectOrigin {
+         snapshot.get_write(key.as_reference()).map_or(Self::UnknownTransaction, |write| match write {
+             Write::Insert { .. } => Self::ThisTransac
+```
+
+**File**: `concept/thing/thing_manager/validation/cardinality_validation.rs` (modified, +5/-5)
+```diff
+@@ -522,7 +522,7 @@ impl ModifiedCapabilityTypes {
+                 Write::Insert { .. } | Write::Put { .. } => {
+                     updated_attribute_types.insert(attribute_type);
+                 }
+-                Write::Delete => {
++                Write::Delete { .. } => {
+                     updated_attribute_types.extend(TypeAPI::chain_types(
+                         attribute_type,
+                         attribute_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
+@@ -542,7 +542,7 @@ impl ModifiedCapabilityTypes {
+                 Write::Insert { .. } | Write::Put { .. } => {
+                     updated_role_types.insert(role_type);
+                 }
+-                Write::Delete => {
++                Write::Delete { .. } => {
+                     updated_role_types.extend(TypeAPI::chain_types(
+                         role_type,
+                         role_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
+@@ -562,7 +562,7 @@ impl ModifiedCapabilityTypes {
+                 Write::Insert { .. } | Write::Put { .. } => {
+                     updated_role_types.insert(role_type);
+                 }
+-                Write::Delete => {
++                Write::Delete { .. } => {
+                     updated_role_types.extend(TypeAPI::chain_types(
+                         role_type,
+                         role_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
+@@ -591,7 +591,7 @@ impl ModifiedCapabilityTypes {
+                             updated_attribute_types.insert(attribute_subtype);
+                         }
+                     }
+-                    Write::Delete => {
++                    Write::Delete { .. } => {
+                         let attribute_supertype = AttributeType::new(supertype);
+                         for attribute_type in TypeAPI::chain_types(
+                             attribute_supertype,
+@@ -617,7 +617,7 @@ impl ModifiedCapabilityTypes {
+                             updated_role_types.insert(role_subtype);
+                         }
+                     }
+-                    Write::Delete => {
++                    Write::Delete { .. } => {
+                         let role_supertype = RoleType::new(supertype);
+                         for role_type in TypeAPI::chain_types(
+                             role_supertype,
+```
+
+**File**: `database/Cargo.toml` (modified, +7/-0)
+```diff
+@@ -92,6 +92,9 @@
+ 	[dev-dependencies.test_utils]
+ 		workspace = true
+ 
++	[dev-dependencies.test_utils_database]
++		workspace = true
++
+ 	[dev-dependencies.test_utils_storage]
+ 		workspace = true
+ 
+@@ -115,6 +118,10 @@
+ 	name = "test_migration"
+ 	path = "tests/migration.rs"
+ 
++[[test]]
++	name = "test_statistics_backwards_compatibility"
++	path = "tests/statistics_backwards_compatibility.rs"
++
+ [[test]]
+ 	name = "test_statistics_synchronization"
+ 	path = "tests/statistics_synchronization.rs"
+```
+
+**File**: `database/tests/BUILD` (modified, +52/-10)
+```diff
+@@ -3,23 +3,35 @@
+ # file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ 
+ load("@typedb_dependencies//tool/checkstyle:rules.bzl", "checkstyle_test")
+-load("@rules_rust//rust:defs.bzl", "rust_test", "rustfmt_test")
++load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test", "rustfmt_test")
+ package(default_visibility = ["//visibility:public",])
+ 
++rust_library(
++    name = "test_utils_database",
++    srcs = ["test_utils_database.rs"],
++    deps = [
++        "//common/options",
++        "//database",
++        "//diagnostics",
++        "//storage",
++    ]
++)
++
+ rust_test(
+     name = "test_database",
+     srcs = glob([
+         "database.rs",
+     ]),
+     deps = [
+-        "//common/logger",
+         "//common/options",
+         "//database",
+         "//diagnostics",
+         "//durability",
+         "//encoding",
+         "//storage",
+         "//storage/tests:test_utils_storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@crates//:rocksdb",
+@@ -33,10 +45,9 @@ rust_test(
+         "import.rs",
+     ]),
+     deps = [
+-        "//common/logger",
+-        "//common/options",
+         "//database",
+-        "//diagnostics",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@crates//:tracing",
+@@ -52,10 +63,11 @@ rust_test(
+         "//common/concurrency",
+         "//common/options",
+         "//database",
+-        "//diagnostics",
+         "//encoding",
+         "//resource",
+         "//storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@crates//:tokio",
+@@ -68,12 +80,13 @@ rust_test(
+         "transaction.rs",
+     ]),
+     deps = [
+-        "//common/logger",
+         "//common/options",
+         "//database",
+         "//diagnostics",
+         "//encoding",
+         "//storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@crates//:rocksdb",
+@@ -83,9 +96,9 @@ rust_test(
+ )
+ 
+ rust_test(
+-    name = "test_statistics_synchronization",
++    name = "test_statistics_backwards_compatibility",
+     srcs = glob([
+-        "statistics_synchronization.rs",
++        "statistics_backwards_compatibility.rs",
+     ]),
+     deps = [
+         "//common/options",
+@@ -96,6 +109,29 @@ rust_test(
+         "//executor",
+         "//query",
+         "//storage",
++
++        ":test_utils_database",
++        "//util/test:test_utils",
++
++        "@typeql//rust:typeql",
++    ]
++)
++
++rust_test(
++    name = "test_statistics_synchronization",
++    srcs = glob([
++        "statistics_synchronization.rs",
++    ]),
++    deps = [
++        "//common/options",
++        "//concept",
++        "//database",
++        "//executor",
++        "//query",
++        "//resource",
++        "//storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@typeql//rust:typeql",
+@@ -115,6 +151,8 @@ rust_test(
+         "//executor",
+         "//query",
+         "//storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@typeql//rust:typeql",
+@@ -129,11 +167,12 @@ rust_test(
+     deps = [
+         "//common/options",
+         "//database",
+-        "//diagnostics",
+         "//encoding",
+         "//executor",
+         "//query",
+         "//storage",
++
++        ":test_utils_database",
+         "//util/test:test_utils",
+ 
+         "@typeql//rust:typeql",
+@@ -169,5 +208,8 @@ rustfmt_test(
+ checkstyle_test(
+     name = "checkstyle",
+     include = glob(["*", "*/*", "*/*/*"]),
++    exclude = glob([
++        "Cargo.*",
++    ]),
+     license_type = "mpl-header",
+ )
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8048** (2026-11-05): Make NotInitialised error classified as Unavailable (@genovoselov)
+- **PR #8047** (2026-11-05): Update README to feature high availability (@genovoselov)
 - **PR #8046** (2026-11-04): Prepare release 3.14.2 (@dmitrii-ubskii)
+- **PR #8045** (2026-11-05): Avoid writing tombstones for keys deleted in concurrent commit (@dmitrii-ubskii)
+- **PR #8044** (2026-11-05): Type-inference & optional dereference safety improvements (@krishnangovindraj)
 - **PR #8040** (2026-10-29): Don't let transaction services excessively hold query manager refs (@genovoselov)
-- **PR #8039** (2026-10-28): Let the HTTP endpoint accept clients without a client certificate, matching gRPC (@genovoselov)
-- **PR #8037** (2026-10-24): Drop HTTP transaction service lock while handling request (@flyingsilverfin)
-- **PR #8036** (2026-10-24): Fix concurrent read queries within a transaction over HTTP (@flyingsilverfin)
-- **PR #8035** (2026-10-27): Bound the query caches by query size, not entry count (@caniko)
 
 ---
 
@@ -1971,51 +2398,31 @@ Bump version and generate release notes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare release 3.14.2 (#8046)
+## X. Make NotInitialised error classified as Unavailable (#8048)
 
 **RULE**:
-When implementing operations in `RELEASE_NOTES_LATEST.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcf3dc11`: Prepare release 3.14.2 (#8046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcf527e4`: Make NotInitialised error classified as Unavailable (#8048). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE_NOTES_LATEST.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[Distributions for 3.14.2](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2)
-```docker pull typedb/typedb:3.14.2```
-
-- **Don't let transaction services excessively hold query manager refs**
-  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.
-- **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
-  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endp
+            Self::DatabaseSchemaCommitFailed { .. }
+            Self::NotInitialised { .. } | Self::ConcurrentImportLimitReached { .. } => Unavailable,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-[Distributions for 3.14.1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.1)
-```docker pull typedb/typedb:3.14.1```
-- **Reject importing relations without roleplayers**
-  
-  TypeDB currently does not preserve relations without role players on disk, and it is impossible to export a database containing independent relations. However, external migration tools can produce migration streams with such relations, which will lead to future data loss, as these relations cannot exist after migration.
-  
-  To avoid this, we explicitly reject such relations until a possible analogue of explicit `@independent` is introduced for relations.
-  
-  
-- **Fix query planner memory leak**
-  Fix a memory leak in the query plan cache that made long write-only workloads grow without bound. While commits arrive and no queries run, as during database import, the cache kept a full copy of the database statistics for every commit. 
-  
-  Additionally, expose `start_importer` from `DatabaseOperator` as `pub` for external users.
-  
-  
-- **Checkpoint before serving imported databases**
-  
-  Finalising an import closed the staged database without a checkpoint, so 
+            Self::NotInitialised { .. }
+            | Self::DatabaseSchemaCommitFailed { .. }
+            Self::ConcurrentImportLimitReached { .. } => Unavailable,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcf3dc11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcf527e4` are properly handled with clean fallback behavior.

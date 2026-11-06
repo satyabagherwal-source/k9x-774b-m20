@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-05T15:37:38.224Z",
+  "last_updated": "2026-11-05T23:09:32.538Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3951,6 +3951,72 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-LEY6",
+      "directive_title": "NUC 83 Hypothetical Difference Selections",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "36aa86f4",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-KDEE",
+      "directive_title": "Merge pull request #1055 from oystersuki/docs/error-handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sfu-db/connector-x",
+      "source_commit": "45300870",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-sfu-db-connector-x"
+    },
+    {
+      "id": "CD-TVV7",
+      "directive_title": "NUC 84 List and Population Medians",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "491512db",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-UACS",
+      "directive_title": "proofs: Lean 4 proofs of the Rust engine, and a skill for working with them (#31",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "FalkorDB/FalkorDB",
+      "source_commit": "5d98077a",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-falkordb-falkordb"
+    },
+    {
+      "id": "CD-8DVJ",
+      "directive_title": "mcp-server): preserve SSE data priority with a no-space fallback (#5309)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "higress-group/higress",
+      "source_commit": "bfcd87d1",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-higress-group-higress"
+    },
+    {
+      "id": "CD-R3ZU",
+      "directive_title": "computer): retain input failure diagnostics and align recovery advice",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "makecindy/cindy",
+      "source_commit": "fc0d9c4c",
+      "date_staged": "2026-11-05",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-makecindy-cindy"
     }
   ]
 }

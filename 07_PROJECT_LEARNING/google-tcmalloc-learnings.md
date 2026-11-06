@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `e9779b6f`  
+> **Source Version**: `20d58d49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:58:52.468Z  
+> **Timestamp**: 2026-11-05T18:15:17.889Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:58:52.464Z  
+> **Harvest Timestamp**: 2026-11-05T18:15:16.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5394 stars
+- **Stars / Engagement**: 5393 stars
 
 ---
 
@@ -1230,11 +1230,13 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1850** (2026-11-04): **Enable releasing stale pages by default.**
-  *Symptoms*: Enable releasing stale pages by default.  Releasing stale pages from the HugePageFiller is now enabled by default. It can be disabled by setting the environment variable `TCMALLOC_DISABLE_RELEASE_STALE_PAGES` to 1 or by linking the binary against :want_disable_release_stale_pages. 
+- **Issue #1859** (2026-11-05): **No public description**
+  *Symptoms*: No public description 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1859/checks?check_run_id=127273568649) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1849** (2026-11-04): **Internal change**
-  *Symptoms*: Internal change 
+- **Issue #1854** (2026-11-05): **Update Bazel CI to 9.x and set a 60s RBE gRPC service timeout.**
+  *Symptoms*: Update Bazel CI to 9.x and set a 60s RBE gRPC service timeout.  Bazel's `--remote_timeout` flag covers remote cache, CAS, and ByteStream RPCs, but does not apply to `Execution` (`Execute` / `WaitExecution`) streams, which can still stall ~30 minutes on a wedged RBE connection until an intermediate proxy closes the stream.  Upgrade GitHub Actions CI from Bazel 8.x to 9.x (updating `.bazelversion` to 9.3.1 and pinning Bazel 9-compatible minimum `dev_dependency` versions for `fuzztest`'s transitive dependencies), and conditionally import `ci/bazel9.bazelrc` on Bazel 9.3+ to apply a 60s channel-wide gRPC timeout via `--remote_grpc_service_config` while keeping legacy test toolchain resolution enabled for custom test rules. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1251,105 +1253,218 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f246239d` (2026-11-03)
-**Commit Message**: Revert: Wire up release stale/free backend experiment.
+### Incident Patch 1: `259438e2` (2026-11-05)
+**Commit Message**: Use Bazel's default 60s timeout for remote cache and CAS RPCs.
 
-PiperOrigin-RevId: 1013197856
+Transient connection blackholes between CI runners and RBE can wedge in-flight gRPC calls. Setting `--remote_timeout=1200` leaves wedged `ActionCache`, `ContentAddressableStorage`, and `ByteStream` RPCs stalled for 20 minutes before Bazel retries them.
 
-**File**: `tcmalloc/experiment_config.h` (modified, +0/-2)
+Remove `--remote_timeout=1200` (along with the unused `--bes_timeout=600s` flag) from `.bazelrc` so remote cache and CAS operations fall back to Bazel's 60s default timeout and retry promptly.
+
+PiperOrigin-RevId: 1014347538
+
+**File**: `.bazelrc` (modified, +0/-1)
 ```diff
-@@ -26,7 +26,6 @@ enum class Experiment : int {
-   TCMALLOC_CFL_PRIORITIZATION_ABLATION,  // TODO: b/567166830 - Complete experiment.
-   TCMALLOC_PGHO_EXPERIMENT,  // TODO: b/460486507 - Complete experiment.
-   TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION,  // TODO: b/205153285 - Complete experiment.
--  TCMALLOC_RELEASE_FREE_STALE,  // TODO: b/527473378 - Complete experiment.
-   TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES,  // TODO: b/435718337 - Complete experiment.
-   TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION,  // TODO: b/577007348 - Complete experiment.
-   TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES,  // TODO: b/539704318 - Complete experiment.
-@@ -59,7 +58,6 @@ inline constexpr ExperimentConfig experiments[] = {
-     {Experiment::TCMALLOC_CFL_PRIORITIZATION_ABLATION, "TCMALLOC_CFL_PRIORITIZATION_ABLATION"},
-     {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
-     {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
--    {Experiment::TCMALLOC_RELEASE_FREE_STALE, "TCMALLOC_RELEASE_FREE_STALE"},
-     {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-     {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
-     {Experiment::TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES, "TCMALLOC_SONIC_PREFER_BACKED_FILLER_PAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+@@ -59,7 +59,6 @@ build:remote-base --define=EXECUTOR=remote
+ build:remote-base --remote_cache=grpcs://us-east1-remotebuildexecution.googleapis.com
+ build:remote-base --remote_executor=grpcs://us-east1-remotebuildexecution.googleapis.com
+ build:remote-base --remote_instance_name=projects/tcmalloc-94329/instances/ci-east
+-build:remote-base --remote_timeout=1200 --bes_timeout=600s
+ build:remote-base --jobs=100
+ build:remote-base --remote_download_minimal
+ # Retry up for up to 15 minutes under heavy load (exponential backoff).
 ```
 
-**File**: `tcmalloc/experiment_variants.bzl` (modified, +0/-6)
-```diff
-@@ -34,12 +34,6 @@ experiment_variants = [
-         "deps": ["//tcmalloc:common_8k_pages"],
-         "env": {"BORG_EXPERIMENTS": "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
-     },
--    {
--        "name": "tcmalloc_release_free_stale",
--        "malloc": "//tcmalloc",
--        "deps": ["//tcmalloc:common_8k_pages"],
--        "env": {"BORG_EXPERIMENTS": "TCMALLOC_RELEASE_FREE_STALE"},
--    },
-     {
-         "name": "tcmalloc_collapse_released_hugepages",
-         "malloc": "//tcmalloc",
-```
+---
 
-**File**: `tcmalloc/parameters.cc` (modified, +0/-5)
+### Incident Patch 2: `71858cbf` (2026-11-05)
+**Commit Message**: Update Bazel CI to 9.x and set a 60s RBE gRPC service timeout.
+
+Bazel's `--remote_timeout` flag covers remote cache, CAS, and ByteStream RPCs, but does not apply to `Execution` (`Execute` / `WaitExecution`) streams, which can still stall ~30 minutes on a wedged RBE connection until an intermediate proxy closes the stream.
+
+Upgrade GitHub Actions CI from Bazel 8.x to 9.x (updating `.bazelversion` to 9.3.1 and pinning Bazel 9-compatible minimum `dev_dependency` versions for `fuzztest`'s transitive dependencies), and conditionally import `ci/bazel9.bazelrc` on Bazel 9.3+ to apply a 60s channel-wide gRPC timeout via `--remote_grpc_service_config` while keeping legacy test toolchain resolution enabled for custom test rules.
+
+PiperOrigin-RevId: 1014223036
+
+**File**: `.bazelrc` (modified, +4/-0)
 ```diff
-@@ -150,11 +150,6 @@ void Parameters::InitializeFromExperiments() {
-                                       std::memory_order_relaxed);
-   }
+@@ -65,6 +65,10 @@ build:remote-base --remote_download_minimal
+ # Retry up for up to 15 minutes under heavy load (exponential backoff).
+ build:remote-base --remote_retries=20 --remote_retry_max_delay=60s
  
--  if (IsExperimentActive(Experiment::TCMALLOC_RELEASE_FREE_STALE)) {
--    release_stale_pages_.store(ReleaseStalePages::kEnabled,
--                               std::memory_order_relaxed);
--  }
--
-   if (IsExperimentActive(
-           Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION)) {
-     release_drained_slab_metadata_.store(false, std::memory_order_relaxed);
++# Apply Bazel 9.3+ settings (such as --remote_grpc_service_config and test
++# toolchain compatibility) when running on Bazel 9.3+.
++try-import-if-bazel-version >=9.3.0 %workspace%/ci/bazel9.bazelrc
++
+ build:remote --config=remote-base
+ build:remote --extra_execution_platforms=//ci:rbe
+ build:remote --host_platform=//ci:rbe
 ```
 
-**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +0/-16)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -327,15 +327,6 @@ function(tcmalloc_cc_test_variants)
-     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
-     ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"
-   )
--  tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_release_free_stale
--    ${EXTRA_ARGS}
--    SRCS ${TCMALLOC_SRCS}
--    HDRS ${TCMALLOC_HDRS}
--    COPTS ${TCMALLOC_COPTS}
--    LINKOPTS ${TCMALLOC_LINKOPTS}
--    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
--    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_RELEASE_FREE_STALE"
--  )
-   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_collapse_released_hugepages
-     ${EXTRA_ARGS}
-     SRCS ${TCMALLOC_SRCS}
-@@ -571,13 +562,6 @@ function(tcmalloc_cc_binary_variants)
-     LINKOPTS ${TCMALLOC_LINKOPTS}
-     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
-   )
--  tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_release_free_stale
--    SRCS ${TCMALLOC_SRCS}
--    HDRS ${TCMALLOC_HDRS}
--    COPTS ${TCMALLOC_COPTS}
--    LINKOPTS ${TCMALLOC_LINKOPTS}
--    DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
--  )
-   tcmalloc_cc_binary(NAME ${TCMALLOC_NAME}_tcmalloc_collapse_released_hugepages
-     SRCS ${TCMALLOC_SRCS}
-     HDRS ${TCMALLOC_HDRS}
+@@ -61,7 +61,7 @@ jobs:
+           - toolchain: libstdc++
+             extra-config: --config=clang
+     env:
+-      USE_BAZEL_VERSION: 8.x
++      USE_BAZEL_VERSION: 9.x
+     steps:
+       - name: Checkout
+         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
+```
+
+**File**: `MODULE.bazel` (modified, +8/-0)
+```diff
+@@ -44,3 +44,11 @@ local_path_override(
+     module_name = "docker_toolchain",
+     path = "ci/docker_toolchain",
+ )
++
++# Transitive dependencies of fuzztest (via flatbuffers and riegeli) declared
++# directly to force minimum versions compatible with Bazel 9.
++bazel_dep(name = "aspect_bazel_lib", version = "2.22.5", dev_dependency = True)
++bazel_dep(name = "aspect_rules_esbuild", version = "0.26.0", dev_dependency = True)
++bazel_dep(name = "brotli", version = "1.2.0.bcr.1", dev_dependency = True)
++bazel_dep(name = "highwayhash", version = "0.0.0-20240305-5ad3bf8.bcr.1", dev_dependency = True)
++bazel_dep(name = "snappy", version = "1.2.2.bcr.3", dev_dependency = True)
+```
+
+**File**: `ci/bazel9.bazelrc` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++# Copyright 2026 The TCMalloc Authors
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     https://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++# Custom test rules (_tcmalloc_env_test, _percpu_env_test) do not declare the
++# Bazel 9 default_test_toolchain_type; keep legacy test toolchain resolution.
++build --@bazel_tools//tools/test:incompatible_use_default_test_toolchain=false
++
++build:remote-base --remote_grpc_service_config=ci/rbe_grpc_service_config.json
+```
+
+**File**: `ci/rbe_grpc_service_config.json` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++{
++  "methodConfig": [
++    {
++      "name": [{}],
++      "timeout": "60s"
++    }
++  ]
++}
+```
+
+**File**: `tcmalloc/.bazelversion` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-9.1.0
++9.3.1
+```
+
+---
+
+### Incident Patch 3: `338b6982` (2026-11-05)
+**Commit Message**: Distinguish 0-byte alloc events in DeallocationProfiler.
+
+It previously signaled deallocation events in Mode::kEventTrace by zeroing
+allocated_size, which misclassified 0-byte guarded size-returning allocations as
+deallocations.  Track is_dealloc explicitly in DeallocationSampleRecord.
+
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1014265835
+
+**File**: `tcmalloc/deallocation_profiler.cc` (modified, +3/-3)
+```diff
+@@ -95,6 +95,7 @@ struct DeallocationSampleRecord {
+   int l3_id = -1;
+   int numa_id = -1;
+   pid_t thread_id = 0;
++  bool is_dealloc = false;
+ 
+   template <typename H>
+   friend H AbslHashValue(H h, const DeallocationSampleRecord& c) {
+@@ -679,6 +680,7 @@ void DeallocationProfiler::DeallocationStackTraceTable::AddTrace(
+         // - Left-censored events are only passed to ReportFree as
+         //   alloc_handle-s, i.e. we can't know the allocated_size.
+         events_.back().stack_trace.allocated_size = 0;
++        events_.back().is_dealloc = true;
+       }
+     }
+     return;
+@@ -748,9 +750,7 @@ void DeallocationProfiler::DeallocationStackTraceTable::Iterate(
+   if (mode_ == Mode::kEventTrace) {
+     for (const auto& r : events_) {
+       tcmalloc::Profile::Sample s = ToSample(r.stack_trace);
+-      // Allocations have allocated_size > 0;
+-      // Deallocations (matched and left-censored) have allocated_size == 0.
+-      s.count = r.stack_trace.allocated_size > 0 ? 1 : -1;
++      s.count = r.is_dealloc ? -1 : 1;
+       s.sum = r.stack_trace.allocated_size;
+       s.allocation_time = r.stack_trace.allocation_time;
+       s.alloc_handle = r.stack_trace.sampled_alloc_handle;
+```
+
+**File**: `tcmalloc/guarded_page_allocator_profile_test.cc` (modified, +31/-0)
+```diff
+@@ -386,6 +386,37 @@ TEST_F(GuardedPageAllocatorProfileTest, DynamicParamChange) {
+   }
+ }
+ 
++TEST_F(GuardedPageAllocatorProfileTest, EventTraceZeroByteSizeReturningNew) {
++  auto token = MallocExtension::StartEventTracing();
++
++  __sized_ptr_t res;
++  {
++    ScopedAlwaysSample always_sample;
++    AllocateUntilGuarded();
++    tc_globals.guardedpage_allocator().Reset();
++    res = __size_returning_new(0);
++  }
++  ASSERT_TRUE(tc_globals.guardedpage_allocator().PointerIsMine(res.p));
++  EXPECT_EQ(res.n, 0);
++  ::operator delete(res.p);
++
++  auto profile = std::move(token).Stop();
++  int alloc_events = 0;
++  int dealloc_events = 0;
++  profile.Iterate([&](const Profile::Sample& s) {
++    if (s.guarded_status == Profile::Sample::GuardedStatus::Guarded &&
++        s.requested_size == 0 && s.requested_size_returning) {
++      if (s.count > 0) {
++        ++alloc_events;
++      } else if (s.count < 0) {
++        ++dealloc_events;
++      }
++    }
++  });
++  EXPECT_EQ(alloc_events, 1);
++  EXPECT_EQ(dealloc_events, 1);
++}
++
+ }  // namespace
+ }  // namespace tcmalloc_internal
+ }  // namespace tcmalloc
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1859** (closed): No public description (@copybara-service[bot])
+- **PR #1854** (2026-11-05): Update Bazel CI to 9.x and set a 60s RBE gRPC service timeout. (@copybara-service[bot])
+- **PR #1852** (2026-11-05): Use Bazel's default 60s timeout for remote cache and CAS RPCs. (@copybara-service[bot])
 - **PR #1850** (2026-11-04): Enable releasing stale pages by default. (@copybara-service[bot])
 - **PR #1849** (closed): Internal change (@copybara-service[bot])
 - **PR #1848** (2026-11-04): Introduce an opt-out mechanism for releasing stale pages. (@copybara-service[bot])
-- **PR #1845** (closed): Internal change (@copybara-service[bot])
-- **PR #1830** (2026-11-03): Retry MADV_FREE after munlock in SystemAllocator::Release. (@copybara-service[bot])
-- **PR #1827** (2026-11-04): Replace CpuCache::Deactivate with ~CpuCache. (@copybara-service[bot])
 
 ---
 

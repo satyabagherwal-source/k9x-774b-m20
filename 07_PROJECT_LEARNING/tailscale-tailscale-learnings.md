@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `2993b5e6`  
+> **Source Version**: `8aa18b51`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:45:24.347Z  
+> **Timestamp**: 2026-11-05T19:22:22.280Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:45:24.232Z  
+> **Harvest Timestamp**: 2026-11-05T19:22:22.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38672 stars
+- **Stars / Engagement**: 38683 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22154** (2026-11-04): **Subnet router on UGREEN NAS (UGOS) cannot route traffic to other LAN hosts**
-  *Symptoms*: ### What is the issue?  ### Description I am running Tailscale as a subnet router on a UGREEN NAS (UGOS). The subnet route is properly advertised and approved, and the remote client successfully installs the route. However, the client can only access the NAS itself, but cannot reach any other hosts on the local network (LAN). The NAS can reach all LAN hosts locally.  ### Technical Details - **Device:** UGREEN NAS (UGOS) - **Tailscale Version:** 1.96.4 - **Subnet Route:** 192.168.2.0/24 (Approved: yes, PrimaryRoute: yes) - **Remote Client Route Installed:** 192.168.2.0/24 -> 100.100.100.100  ### Diagnostics & Traceroute Traceroute from remote client to a LAN host (192.168.2.1): 1 mynas.trex-ph.ts.net 2 * * * (timeout)  ### Connectivity Test - **Accessible remotely:** 192.168.2.8 (NAS IP) - **Not accessible remotely:** 192.168.2.1, 192.168.2.111, 192.168.2.197  ### Bugreport ID BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89   ### Steps to reproduce  _No response_  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Android, Windows  ### OS version  _No response_  ### Tailscale version  1.96.4  ### Other software  NAS Ugreen DXP2800 system version 1.20.0.0124  ### Bug report  BUG-9c60e945982956dbabdb869e686bb3c89b4b8088f771dd306bbc4ec676c04b40-20261103055834Z-b8e66fd6dcf5df89
+- **Issue #22185** (2026-11-05): **feature/conn25: client.reset() leaves stale address assignments in the send queue**
+  *Symptoms*:  `client.reset()` clears the client's internal state — IP pools, `assignments`, `byConnKey` — but leaves the `addrsCh` send queue untouched. That channel is buffered (64 entries) and is drained asynchronously by `extension.sendLoop`.  So any assignment queued but not yet sent at reset time survives the reset and gets delivered afterwards, describing state that no longer exists.  ### Why it matters  `reset()` is called from `extension.profileStateChange` only when `!sameNode`, i.e. the node switched profiles and identities. After the reset, `sendLoop` keeps draining the stale entries and, for each one: 1. POSTs `/v0/connector/transit-ip` to a connector from the *old* profile, registering a transit IP that this client has already forgotten about. The connector holds that mapping until it expires on its own. 2. Then fails in `addTransitIPForConnector` → `insertTransitConnMapping` with `"transit IP is not already known"`, because the assignment is gone from `c.assignments`. The error is logged by `sendLoop` and nothing else happens.  The send is both useless (step 2 can never succeed) and wrong (step 1 leaks a mapping to a connector under the previous identity). Worst case is one stale POST per buffered entry, up to the channel capacity.
 
-- **Issue #22144** (2026-11-03): **iPadOS 27.2: "MagicSock function not running" after device restart, tunnel shows connected but passes no traffic or DNS**
-  *Symptoms*: ### What is the issue?  On an iPad Air M4 (iPadOS 27.2), Tailscale repeatedly enters a state where the app shows "Connected" but displays the warning "MagicSock function not running". While in this state, no traffic passes through the tunnel: DNS (MagicDNS, global nameserver on a tailnet node) does not resolve, so Safari and all apps fail to load anything. Turning Tailscale off immediately restores internet access.  An iPhone (iOS 27.2) on the same Wi-Fi network, behind the same router and the same egress path, does not show the problem.  ### Steps to reproduce  Occurrences: - 2026-10-31: right after the iPadOS 27.2 update (which includes a restart). Fixed by deleting the VPN profile. - 2026-11-02: device fully powered off while away, powered on back at home; issue appeared immediately. Fixed by toggling Tailscale off and on. Bug report attached below (generated while the error was showing).  ### Are there any recent changes that introduced the issue?  Yes: the device was updated to iPadOS 27.2 on 2026-10-31, the same day the first occurrence happened.  ### OS  iOS  ### OS version  iPadOS 27.2  ### Tailscale version  1.104.4  ### Other software  Home router routes this device's traffic through a commercial OpenVPN tunnel (NordVPN). The admin console shows "Varies: Yes" (endpoint-dependent NAT) for this node, and its DERP home is New York. The iPhone that works correctly uses the same router tunnel.  ### Bug report  BUG-94caa859c8a9ae8eeb5f1189b7d83c8a95c44b839742f90c53a33a52f
+- **Issue #22173** (2026-11-05): **iOS 1.104.5: data plane still stops while app shows Connected; VPN toggle fixes it (follow-up to #19504, #21832)**
+  *Symptoms*: > [!NOTE] > 🤖 **Claude Opus 5.5 responding on behalf of Nick**  ### What is the issue?  On iOS 1.104.5 the iPhone still stops receiving tailnet traffic while the app shows Connected. Toggling the VPN fixes it within a second. This is the same failure as #19504 and #21832. In #21832 I was asked to file a new issue with a bug report if it still happens on 1.104.5, so here it is, with an iPhone report taken during the freeze, before the toggle.  Timeline for 2026-11-04, from the Linux peer bb-1 (UTC). Both devices are on the same home LAN:  | Time | Event | |---|---| | overnight to 11:19:50 | Healthy. A direct LAN path to the iPhone is confirmed repeatedly (`now using 10.10.10.114:41641`). | | 11:21:13 | From here on, only `new contact: peer=[7ATOf] ... via=derp` every 3-6 s, never completing | | 11:21:29 | The peer's watcher fires: `tailscale ping` times out 3/3. Peer report below. | | ~11:21 | On the iPhone, every tailnet host shows "did not answer" | | 11:22:00 | **iPhone bug report filed (still frozen)** | | 11:22:15 | `derp-16 does not know about peer [7ATOf], removing route` | | 11:22:17 | VPN toggled: new disco key, direct on the same LAN endpoint in under 1 s |  The network did not change. The phone was on the same Wi-Fi all night, and the freeze began at about the time it was picked up after sleeping.  ### Steps to reproduce  No deterministic repro. On 1.104.4 and 1.104.5 it happens several times a week: after network transitions (landing and joining cellular, cellular
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,254 +821,120 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2993b5e6` (2026-11-05)
-**Commit Message**: cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
+### Incident Patch 1: `01fa3caf` (2026-11-05)
+**Commit Message**: ipn/ipnlocal: fix redirect for nested directories in serve (#22118)
 
-Move the Recorder reconciler and its object specs into
-k8s-operator/reconciler/recorder, following the earlier ProxyClass,
-DNSConfig and nameserver moves, and switch it to the shared finalizer,
-resource tracker and CreateOrUpdate helpers.
+ipn/ipnlocal: resolve serve file redirects against the request path
 
-Hoist two duplicated helpers into tailscaled.PrefsFromStateSecret and
-reconciler.IsOptimisticLockError, and add
-k8s-operator/reconciler/reconcilertest for the test helpers each package
-had copied, including one fake Tailscale API client in place of four.
+http.FileServer sends a Location relative to the request URL, such as
+"nested/" or "../file". fixLocationHeaderResponseWriter prefixed that
+value with the mount point, which dropped every directory between the
+mount point and the target. A request for /doc/subdir/nested was
+redirected to /doc/nested/.
 
-No behaviour change; the Recorder's watches and labels are untouched.
+Resolve the relative Location against the original request path
+instead. Collapse leading slashes in the result so a request path like
+//host/dir cannot produce a protocol-relative Location.
 
-Fixes tailscale/corp#37086
+Fixes #22049
 
-Signed-off-by: David Bond <[REDACTED_EMAIL]>
+Signed-off-by: Alex Castillo González <[REDACTED_EMAIL]>
 
-**File**: `cmd/k8s-operator/api-server-proxy-pg.go` (modified, +3/-3)
+**File**: `ipn/ipnlocal/serve.go` (modified, +22/-1)
 ```diff
-@@ -12,7 +12,6 @@ import (
- 	"fmt"
- 	"maps"
- 	"slices"
--	"strings"
+@@ -1363,20 +1363,41 @@ func (b *LocalBackend) serveFileOrDirectory(w http.ResponseWriter, r *http.Reque
+ 	fs.ServeHTTP(&fixLocationHeaderResponseWriter{
+ 		ResponseWriter: w,
+ 		mountPoint:     mountPoint,
++		reqPath:        r.URL.Path,
+ 	}, r)
+ }
  
- 	"go.uber.org/zap"
- 	corev1 "k8s.io/api/core/v1"
-@@ -27,6 +26,7 @@ import (
+ // fixLocationHeaderResponseWriter is an http.ResponseWriter wrapper that, upon
+-// flushing HTTP headers, prefixes any Location header with the mount point.
++// flushing HTTP headers, rewrites any Location header to be under the mount
++// point. http.FileServer sends redirects relative to the (prefix-stripped)
++// request URL, so a relative Location is resolved against the original request
++// path.
+ type fixLocationHeaderResponseWriter struct {
+ 	http.ResponseWriter
+ 	mountPoint string
++	reqPath    string    // original request path, before the mount point is stripped
+ 	fixOnce    sync.Once // guards call to fix
+ }
  
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler"
- 	"tailscale.com/k8s-operator/tsclient"
- 	"tailscale.com/kube/k8s-proxy/conf"
- 	"tailscale.com/kube/kubetypes"
-@@ -85,7 +85,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
- 
- 	if markedForDeletion(pg) {
- 		logger.Debugf("ProxyGroup is being deleted, ensuring any created resources are cleaned up")
--		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
-+		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
- 			logger.Infof("optimistic lock error, retrying: %s", err)
- 			return res, nil
- 		}
-@@ -95,7 +95,7 @@ func (r *KubeAPIServerTSServiceReconciler) Reconcile(ctx context.Context, req re
- 
- 	err = r.maybeProvision(ctx, serviceName, pg, logger, tsClient)
- 	if err != nil {
--		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
-+		if reconciler.IsOptimisticLockError(err) {
- 			logger.Infof("optimistic lock error, retrying: %s", err)
- 			return reconcile.Result{}, nil
- 		}
-```
-
-**File**: `cmd/k8s-operator/api-server-proxy-pg_test.go` (modified, +2/-1)
-```diff
-@@ -20,6 +20,7 @@ import (
- 
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler/tailscaled"
- 	"tailscale.com/k8s-operator/tsclient"
- 	"tailscale.com/kube/k8s-proxy/conf"
- 	"tailscale.com/kube/kubetypes"
-@@ -199,7 +200,7 @@ func TestAPIServerProxyReconciler(t *testing.T) {
- 
- 	// Simulate Pod prefs updated with advertised services; should see Configured condition updated to true.
- 	mustUpdate(t, fc, ns, "test-pg-0", func(o *corev1.Secret) {
--		var p prefs
-+		var p tailscaled.Prefs
- 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
- 			t.Errorf("failed to unmarshal preferences: %v", err)
- 		}
-```
-
-**File**: `cmd/k8s-operator/connector.go` (modified, +2/-2)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"fmt"
- 	"net/netip"
- 	"slices"
--	"strings"
- 	"sync"
- 	"time"
- 
-@@ -28,6 +27,7 @@ import (
- 
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/net/netutil"
- 	"tailscale.com/net/tsaddr"
-@@ -146,7 +146,7 @@ func (a *ConnectorReconciler) Reconcile(ctx context.Context, req reconcile.Reque
- 	if err = a.maybeProvisionConnector(ctx, logger, cn); err != nil {
- 		reason := reasonConnectorCreationFailed
- 		message := fmt.Sprintf(messageConnectorCreationFailed, err)
--		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
-+		if reconciler.IsOptimisticLockError(err) {
- 			reason = reasonConnectorCreating
- 			message = fmt.Sprintf("optimistic lock error, retrying: %s", err)
- 			err = nil
-```
-
-**File**: `cmd/k8s-operator/depaware.txt` (modified, +1/-0)
-```diff
-@@ -774,6 +774,7 @@ tailscale.com/cmd/k8s-operator dependencies: (generated by github.com/tailscale/
-         tailscale.com/k8s-operator/reconciler/peerrelay              from tailscale.com/cmd/k8s-operator
-         tailscale.com/k8s-operator/reconciler/proxyclass             from tailscale.com/cmd/k8s-operator
-         tailscale.com/k8s-operator/reconciler/proxygrouppolicy       from tailscale.com/cmd/k8s-operator
-+        tailscale.com/k8s-operator/reconciler/recorder               from tailscale.com/cmd/k8s-operator
-         tailscale.com/k8s-operator/reconciler/staticendpoints        from tailscale.com/cmd/k8s-operator
-         tailscale.com/k8s-operator/reconciler/tailnet                from tailscale.com/cmd/k8s-operator
-         tailscale.com/k8s-operator/reconciler/tailscaled             from tailscale.com/k8s-operator/reconciler/peerrelay+
-```
-
-**File**: `cmd/k8s-operator/egress-services.go` (modified, +2/-1)
-```diff
-@@ -34,6 +34,7 @@ import (
- 
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler"
- 	"tailscale.com/kube/egressservices"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tstime"
-@@ -161,7 +162,7 @@ func (esr *egressSvcsReconciler) Reconcile(ctx context.Context, req reconcile.Re
+ func (w *fixLocationHeaderResponseWriter) fix() {
+ 	h := w.ResponseWriter.Header()
+ 	if v := h.Get("Location"); v != "" {
++		if ref, err := url.Parse(v); err == nil && ref.Scheme == "" && ref.Host == "" && !strings.HasPrefix(v, "/") && strings.HasPrefix(w.reqPath, w.mountPoint) {
++			// Resolve against the original request path, which keeps any
++			// parent directories below the mount point and removes dot
++			// segments. The query string, if any, is carried along.
++			u := (&url.URL{Path: w.reqPath}).ResolveReference(ref)
++			loc := u.EscapedPath()
++			if u.RawQuery != "" {
++				loc += "?" + u.RawQuery
++			}
++			// Collapse leading slashes so a request path like "//foo"
++			// can't produce a protocol-relative Location.
++			h.Set("Location", "/"+strings.TrimLeft(loc, "/"))
++			return
++		}
++		// Not expected from http.FileServer, which only sends relative
++		// Locations; kept as a safety net.
+ 		h.Set("Location", w.mountPoint+v)
  	}
- 
- 	if err := esr.maybeProvision(ctx, svc, lg); err != nil {
--		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
-+		if reconciler.IsOptimisticLockError(err) {
- 			lg.Infof("optimistic lock error, retrying: %s", err)
- 		} else {
- 			return reconcile.Result{}, err
+ }
 ```
 
-**File**: `cmd/k8s-operator/ingress-for-pg.go` (modified, +2/-1)
+**File**: `ipn/ipnlocal/serve_test.go` (modified, +11/-0)
 ```diff
-@@ -34,6 +34,7 @@ import (
- 	"tailscale.com/ipn"
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler/tailscaled"
- 	"tailscale.com/k8s-operator/tsclient"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tailcfg"
-@@ -851,7 +852,7 @@ func numberPodsAdvertising(ctx context.Context, cl client.Client, tsNamespace, p
+@@ -1424,9 +1424,11 @@ func TestServeFileOrDirectory(t *testing.T) {
+ 	writeFile("foo", "this is foo")
+ 	writeFile("bar", "this is bar")
+ 	os.MkdirAll(filepath.Join(td, "subdir"), 0o700)
++	os.MkdirAll(filepath.Join(td, "subdir", "nested"), 0o700)
+ 	writeFile("subdir/file-a", "this is A")
+ 	writeFile("subdir/file-b", "this is B")
+ 	writeFile("subdir/file-c", "this is C")
++	writeFile("subdir/nested/index.html", "this is nested index")
  
- 	var count int
- 	for _, secret := range secrets.Items {
--		prefs, ok, err := getDevicePrefs(&secret)
-+		prefs, ok, err := tailscaled.PrefsFromStateSecret(&secret)
- 		if err != nil {
- 			return 0, fmt.Errorf("error getting node metadata: %w", err)
- 		}
-```
-
-**File**: `cmd/k8s-operator/ingress-for-pg_test.go` (modified, +7/-6)
-```diff
-@@ -30,6 +30,7 @@ import (
- 	"tailscale.com/ipn"
- 	tsoperator "tailscale.com/k8s-operator"
- 	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/k8s-operator/reconciler/tailscaled"
- 	"tailscale.com/k8s-operator/tsclient"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/tailcfg"
-@@ -563,7 +564,7 @@ func TestIngressPGReconciler_HTTPEndpoint(t *testing.T) {
+ 	contains := func(subs ...string) func([]byte, *http.Response) error {
+ 		return func(resBody []byte, res *http.Response) error {
+@@ -1478,7 +1480,12 @@ func TestServeFileOrDirectory(t *testing.T) {
+ 		{"/bar/inside-file", "/", isStatus(404)},
+ 		{"/subdir", "/", isRedirect("/subdir/")},
+ 		{"/subdir/", "/", contains("file-a", "file-b", "file-c")},
++		{"/subdir/nested", "/", isRedirect("/subdir/nested/")},
++		{"//subdir/nested", "/", isRedirect("/subdir/nested/")},
++		{"/subdir/nested/index.html", "/", isRedirect("/subdir/nested/")},
++		{"/subdir/nested?x=1", "/", isRedirect("/subdir/nested/?x=1")},
+ 		{"/subdir/file-a", "/", contains("this is A")},
++		{"/subdir/file-a/", "/", isRedirect("/subdir/file-a")},
+ 		{"/subdir/file-z", "/", isStatus(404)},
  
- 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
- 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
--		var p prefs
-+		var p tailscaled.Prefs
- 		var err error
- 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
- 			t.Errorf("failed to unmarshal preferences: %v", err)
-@@ -689,7 +690,7 @@ func TestIngressPGReconciler_HTTPRedirect(t *testing.T) {
- 
- 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
- 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
--		var p prefs
-+		var p tailscaled.Prefs
- 		var err error
- 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
- 			t.Errorf("failed to unmarshal preferences: %v", err)
-@@ -824,7 +825,7 @@ func TestIngressPGReconciler_HTTPEndpointAndRedirectConflict(t *testing.T) {
- 
- 	// Add the Tailscale Service to prefs to have the Ingress recognised as ready.
- 	mustUpdate(t, fc, "operator-ns", "test-pg-0", func(o *corev1.Secret) {
--		var p prefs
-+		var p tailscaled.Prefs
- 		var err error
- 		if err = json.Unmarshal(o.Data["test"], &p); err != nil {
- 			t.Errorf("failed to unmarshal preferences: %v", err)
-@@ -1151,7 +1152,7 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
+ 		{"/doc", "/doc/", isRedirect("/doc/")},
+@@ -1489,7 +1496,11 @@ func TestServeFileOrDirectory(t *testing.T) {
+ 		{"/doc/bar/inside-file", "/doc/", isStatus(404)},
+ 		{"/doc/subdir", "/doc/", isRedirect("/doc/subdir/")},
+ 		{"/doc/subdir/", "/doc/", contains("file-a", "file-b", "file-c")},
++		{"/doc/subdir/nested", "/doc/", isRedirect("/doc/subdir/nested/")},
++		{"/doc/subdir/nested/index.html", "/doc/", isRedirect("/doc/subdir/nested/")},
++		{"/doc/subdir/nested?x=1", "/doc/", isRedirect("/doc/subdir/nested/?x=1")},
+ 		{"/doc/subdir/file-a", "/doc/", contains("this is A")},
++		{"/doc/subdir/file-a/", "/doc/", isRedirect("/doc/subdir/file-a")},
+ 		{"/doc/subdir/file-z", "/doc/", isStatus(404)},
  	}
- 	mustCreate(t, fc, pgCfgSecret)
- 
--	pr := prefs{}
-+	pr := tailscaled.Prefs{}
- 	pr.Config.UserProfile.LoginName = "test.ts.net"
- 	pr.Config.NodeID = "test"
- 
-@@ -1168,8 +1169,8 @@ func createPGResources(t *testing.T, fc client.Client, pgName string) {
- 			Labels:    pgSecretLabels(pgName, kubetypes.LabelSecretTypeState),
- 		},
- 		Data: map[string][]byte{
--			currentProfileKey: []byte("test"),
--			"test":            p,
-+			string(ipn.CurrentProfileStateKey): []byte("test"),
-+			"test":                             p,
- 		},
- 	}
- 	mustCreate(t, fc, pgStateSecret)
-```
-
-**File**: `cmd/k8s-operator/ingress.go` (modified, +2/-1)
-```diff
-@@ -25,6 +25,7 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
- 
- 	"tailscale.com/ipn"
-+	"tailscale.com/k8s-operator/reconciler"
- 	"tailscale.com/kube/kubetypes"
- 	"tailscale.com/types/opt"
- 	"tailscale.com/util/clientmetric"
-@@ -82,7 +83,7 @@ func (a *IngressReconciler) Reconcile(ctx context.Context, req reconcile.Request
- 	}
- 
- 	if err := a.maybeProvision(ctx, logger, ing); err != nil {
--		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
-+		if reconciler.IsOptimisticLockError(err) {
- 			logger.Infof("optimistic lock error, retrying: %s", err)
- 		} else {
- 			return reconcile.Result{}, err
+ 	for _, tt := range tests {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22186** (2026-11-05): feature/conn25: drain the address assignment queue in client.reset (@mazdakn)
+- **PR #22181** (2026-11-05): Requeue on optimistic lock errors in operator reconcilers (@ChaosInTheCRD)
+- **PR #22180** (2026-11-05): derp/derpserver: reduce setWriteDeadline calls (@mikeodr)
 - **PR #22176** (2026-11-04): derp/derpserver: increase pool size to batch writer flushes (@mikeodr)
 - **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
 - **PR #22165** (2026-11-04): feature/conn25: roll back the address assignment when the send queue is full (@mazdakn)
-- **PR #22164** (closed): derp/derpserver,cmd/derper: batch writer flushes, arm the write deadline per write (@mikeodr)
-- **PR #22163** (2026-11-03): types/appctype: remove Conn25Attr type (@tendstofortytwo)
-- **PR #22161** (2026-11-03): cmd/pgproxy: delete, leave README stub (@bradfitz)
 
 ---
 
@@ -1088,32 +954,49 @@ Signed-off-by: David Bond <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator: move Recorder reconciler into its own package (#20891)
+## X. ipn/ipnlocal: fix redirect for nested directories in serve (#22118)
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/api-server-proxy-pg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnlocal/serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2993b5e6`: cmd/k8s-operator: move Recorder reconciler into its own package (#20891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01fa3caf`: ipn/ipnlocal: fix redirect for nested directories in serve (#22118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/api-server-proxy-pg.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/serve.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"tailscale.com/k8s-operator/reconciler"
-		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); reconciler.IsOptimisticLockError(err) {
-		if reconciler.IsOptimisticLockError(err) {
+		reqPath:        r.URL.Path,
+// flushing HTTP headers, rewrites any Location header to be under the mount
+// point. http.FileServer sends redirects relative to the (prefix-stripped)
+// request URL, so a relative Location is resolved against the original request
+// path.
+	reqPath    string    // original request path, before the mount point is stripped
+		if ref, err := url.Parse(v); err == nil && ref.Scheme == "" && ref.Host == "" && !strings.HasPrefix(v, "/") && strings.HasPrefix(w.reqPath, w.mountPoint) {
+			// Resolve against the original request path, which keeps any
+			// parent directories below the mount point and removes dot
+			// segments. The query string, if any, is carried along.
+			u := (&url.URL{Path: w.reqPath}).ResolveReference(ref)
+			loc := u.EscapedPath()
+			if u.RawQuery != "" {
+				loc += "?" + u.RawQuery
+			}
+			// Collapse leading slashes so a request path like "//foo"
+			// can't produce a protocol-relative Location.
+			h.Set("Location", "/"+strings.TrimLeft(loc, "/"))
+			return
+		}
+		// Not expected from http.FileServer, which only sends relative
+		// Locations; kept as a safety net.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"strings"
-		if err = r.maybeCleanup(ctx, serviceName, pg, logger, tsClient); err != nil && strings.Contains(err.Error(), optimisticLockErrorMsg) {
-		if strings.Contains(err.Error(), optimisticLockErrorMsg) {
+// flushing HTTP headers, prefixes any Location header with the mount point.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2993b5e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01fa3caf` are properly handled with clean fallback behavior.

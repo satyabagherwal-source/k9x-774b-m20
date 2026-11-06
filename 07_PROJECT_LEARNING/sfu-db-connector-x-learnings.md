@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `8dcfc003`  
+> **Source Version**: `45300870`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:04:39.381Z  
+> **Timestamp**: 2026-11-05T21:40:18.954Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:04:39.376Z  
+> **Harvest Timestamp**: 2026-11-05T21:40:18.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2659 stars
+- **Stars / Engagement**: 2658 stars
 
 ---
 
@@ -787,82 +787,47 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b12b545` (2026-11-05)
-**Commit Message**: build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)
+### Incident Patch 1: `45300870` (2026-11-05)
+**Commit Message**: Merge pull request #1055 from oystersuki/docs/error-handling
 
-**File**: `connectorx-python/Cargo.lock` (modified, +13/-3)
+docs: describe error handling in read_sql
+
+**File**: `docs/api.md` (modified, +18/-0)
 ```diff
-@@ -1539,7 +1539,7 @@ dependencies = [
-  "rustc-hash 2.1.1",
-  "serde",
-  "serde_json",
-- "sqlparser 0.62.0",
-+ "sqlparser 0.63.0",
-  "thiserror 2.0.20",
-  "tiberius",
-  "tokio",
-@@ -4358,9 +4358,9 @@ dependencies = [
+@@ -19,6 +19,24 @@ connectorx.read_sql(conn: Union[str, Dict[str, str]], query: Union[List[str], st
+ - `pre_execution_query: Optional[Union[str, List[str]]]`: SQL query or list of SQL queries executed before main query. Can be used to set runtime configurations using SET statements. Only applicable for source "Postgres" and "MySQL"
+ - `batch_size: Optional[int]`: The maximum number of rows of each batch when `return_type=arrow_stream`.
  
- [[package]]
- name = "mssql-tds"
--version = "0.2.0"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b03612dd2098a7b98613b423414afaf3031ff080a24652941abfc1d2e13f6222"
-+checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
- dependencies = [
-  "async-trait",
-  "bigdecimal 0.4.10",
-@@ -6744,6 +6744,16 @@ dependencies = [
-  "recursive",
- ]
- 
-+[[package]]
-+name = "sqlparser"
-+version = "0.63.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
-+dependencies = [
-+ "log",
-+ "recursive",
-+]
++## Errors
++- Errors raised while reading the data, such as a failed connection, an invalid query or a value that cannot be converted, are raised as `RuntimeError` for every `return_type`. Invalid arguments are raised as `ValueError` before any query is sent.
++- With `return_type="arrow_stream"`, an error that happens after the stream has started is raised when the next batch is taken from the reader, not by `read_sql`. Batches received before the error stay valid, and the reader ends after the error.
 +
- [[package]]
- name = "sqlparser_derive"
- version = "0.3.0"
-```
-
----
-
-### Incident Patch 2: `8dcfc003` (2026-11-05)
-**Commit Message**: build(mssql): forward integrated-auth-gssapi to the enabled backend only (#1042)
-
-**File**: `connectorx/Cargo.toml` (modified, +7/-1)
-```diff
-@@ -206,7 +206,13 @@ src_clickhouse = [
- ]
- federation = ["j4rs"]
- fed_exec = ["datafusion", "tokio"]
--integrated-auth-gssapi = ["tiberius/integrated-auth-gssapi"]
-+# Unix Kerberos for `trusted_connection=true`. Weak (`?`) so it only forwards to
-+# whichever MSSQL backend is enabled, never pulls one in by itself. mssql-tds
-+# dlopens libgssapi_krb5 at runtime; Tiberius links it at build time.
-+integrated-auth-gssapi = [
-+  "tiberius?/integrated-auth-gssapi",
-+  "mssql-tds?/gssapi",
-+]
++  ```python
++  import connectorx as cx
++
++  reader = cx.read_sql(mysql_url, "SELECT * FROM events", return_type="arrow_stream")
++  try:
++      for batch in reader:
++          process(batch)
++  except RuntimeError as e:
++      ...  # the batches processed so far are complete
++  ```
++
++- A value that the database accepts but the result type cannot represent raises an error instead of being converted silently. For example, MySQL accepts the zero date `'0000-00-00'`, which has no Arrow or pandas equivalent. Convert such values in SQL, e.g. `NULLIF(col, '0000-00-00')` or `CAST(col AS CHAR)`.
++- A `pyo3_runtime.PanicException` is a bug in ConnectorX. Please report it on [GitHub](https://github.com/sfu-db/connector-x/issues) with the query and the column types.
++
+ ## Examples
+ - Read a DataFrame from a SQL using a single thread
  
- [package.metadata.docs.rs]
- features = ["all"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1055** (2026-11-05): docs: describe error handling in read_sql (@oystersuki)
 - **PR #1043** (2026-11-05): build(python): sync connectorx-python/Cargo.lock with connectorx (@tschm)
 - **PR #1042** (2026-11-05): build(mssql): forward integrated-auth-gssapi to the enabled backend only (@tschm)
 - **PR #1041** (2026-11-03): mssql: make src_mssql default to mssql-tds (step before Phase 4) (@tschm)
 - **PR #1040** (2026-11-01): build(rust): bump ureq from 2 to 3 (@tschm)
 - **PR #1039** (closed): build(rust): bump ureq from 2.12.1 to 3.4.2 (@dependabot[bot])
-- **PR #1038** (2026-11-02): build(deps): bump Gr1N/setup-poetry from 9 to 10 (@dependabot[bot])
 
 ---
 
@@ -882,42 +847,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(python): sync connectorx-python/Cargo.lock with connectorx (#1043)
+## X. Merge pull request #1055 from oystersuki/docs/error-handling
 
 **RULE**:
-When implementing operations in `connectorx-python/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/api.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b12b545`: build(python): sync connectorx-python/Cargo.lock with connectorx (#1043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45300870`: Merge pull request #1055 from oystersuki/docs/error-handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "sqlparser 0.63.0",
-version = "0.3.0"
-checksum = "c7a53513324677e601ca5b91e477840329ec6c244875fd55b155e5a8e8af7805"
-[[package]]
-name = "sqlparser"
-version = "0.63.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
-dependencies = [
- "log",
- "recursive",
-]
+## Errors
+- Errors raised while reading the data, such as a failed connection, an invalid query or a value that cannot be converted, are raised as `RuntimeError` for every `return_type`. Invalid arguments are raised as `ValueError` before any query is sent.
+- With `return_type="arrow_stream"`, an error that happens after the stream has started is raised when the next batch is taken from the reader, not by `read_sql`. Batches received before the error stay valid, and the reader ends after the error.
 
+  ```python
+  import connectorx as cx
+
+  reader = cx.read_sql(mysql_url, "SELECT * FROM events", return_type="arrow_stream")
+  try:
+      for batch in reader:
+          process(batch)
+  except RuntimeError as e:
+      ...  # the batches processed so far are complete
+  ```
+
+- A value that the database accepts but the result type cannot represent raises an error instead of being converted silently. For example, MySQL accepts the zero date `'0000-00-00'`, which has no Arrow or pandas equivalent. Convert such values in SQL, e.g. `NULLIF(col, '0000-00-00')` or `CAST(col AS CHAR)`.
+- A `pyo3_runtime.PanicException` is a bug in ConnectorX. Please report it on [GitHub](https://github.com/sfu-db
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "sqlparser 0.62.0",
-version = "0.2.0"
-checksum = "b03612dd2098a7b98613b423414afaf3031ff080a24652941abfc1d2e13f6222"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b12b545` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45300870` are properly handled with clean fallback behavior.

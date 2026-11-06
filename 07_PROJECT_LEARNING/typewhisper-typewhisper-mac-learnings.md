@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `bff57fd2`  
+> **Source Version**: `9852feb1`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:13:00.725Z  
+> **Timestamp**: 2026-11-05T20:00:10.568Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:11:07.571Z  
+> **Harvest Timestamp**: 2026-11-05T20:00:08.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1904 stars
+- **Stars / Engagement**: 1906 stars
 
 ---
 
@@ -86,7 +86,19 @@ enum AudioEngineRecoveryPolicy {
     private static let retryableOSStatusCodes: Set<OSStatus> = [
         kAudioUnitErr_FormatNotSupported,
         kAudioUnitErr_InvalidElement,
+        kAudioHardwareBadDeviceError,
     ]
+
+    /// AVFoundation reports CoreAudio failures in this domain with the OSStatus as the code.
+    static let avfAudioErrorDomain = "com.apple.coreaudio.avfaudio"
+
+    /// '!dev': the engine was bound to an audio device that no longer exists. Without an
+    /// explicit device, `AVAudioEngine` follows the system default route, and after an undock
+    /// or sleep that route can keep pointing at the vanished device until the app relaunches
+    /// (#1859). A retry should therefore bind the engine to the current default input itself.
+    static func isMissingDevice(error: Error) -> Bool {
+        extractOSStatus(from: error) == kAudioHardwareBadDeviceError
+    }
 
     static func isRetryable(error: Error) -> Bool {
         let nsError = error as NSError
@@ -113,8 +125,8 @@ enum AudioEngineRecoveryPolicy {
 
     static func extractOSStatus(from error: Error) -> OSStatus? {
         let nsError = error as NSError
-        if nsError.domain == NSOSStatusErrorDomain {
-            return OSStatus(nsError.code)
+        if nsError.domain == NSOSStatusErrorDomain || nsError.domain == avfAudioErrorDomain {
+            return OSStatus(truncatingIfNeeded: nsError.code)
         }
 
         let detail = nsError.localizedDescription
@@ -248,27 +260,7 @@ enum MicrophonePrerollRouteConsistencyPolicy {
     /// engine pre-roll (nil when none is).
     static func armedInputMatches(
         _ armedInput: ArmedInput,
-        route: AudioInputCaptureRoute,
-        currentEngineDeviceID: AudioDeviceID?
-    ) -> Bool {
-        switch (armedInput, route) {
-        case (.engine(let armedID), .avAudioEngine(let preferredDeviceID)):
-            return preferredDeviceID == nil && currentEngineDeviceID == armedID
-        case (.inputOnly(let armedID), .inputOnlyDevice(let routeID)):
-            return armedID == routeID
-        default:
-            return false
-        }
-    }
-
-    /// True when a prepared streaming input exists and does not match the selected route.
-    static func shouldInvalidate(
-        armedInput: ArmedInput?,
-        route: AudioInputCaptureRoute,
-        currentEngineDeviceID: AudioDeviceID?
-    ) -> Bool {
-        guard let armedInput else { return false }
-        return !armedInputMa
+        route: AudioInputCapture
 ```
 
 ### Core Architecture Module: `TypeWhisper/Services/ClamshellStateProvider.swift`
@@ -1969,11 +1961,11 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1791** (2026-10-31): **Apple SpeechAnalyzer: Hong Kong Cantonese (zh-HK, Traditional) can't be selected — "Cantonese" always loads yue-CN (Simplified)**
-  *Symptoms*: ### Platform  macOS  ### Description  With the Apple SpeechAnalyzer engine, Hong Kong users who speak Cantonese can only get Simplified Chinese output. Apple provides a Hong Kong Cantonese model that outputs Traditional Chinese (`zh-HK`), but TypeWhisper offers no way to select it from the UI.  On my Mac, `SpeechTranscriber.supportedLocales` returns these Chinese locales:  | Locale | Spoken language | Output script | |---|---|---| | `yue-CN` | Cantonese | Simplified | | `zh-HK` | Cantonese (Hong Kong) | Traditional | | `zh-TW` | Mandarin (Taiwan) | Traditional | | `zh-CN` | Mandarin | Simplified |  Apple's Hong Kong Cantonese model uses the identifier `zh-HK`, whose language code is `zh`, not `yue`.  `SpeechAnalyzerPlugin.supportedLanguages` reduces each locale to its language code:  ```swift return Locale(identifier: localeId).language.languageCode?.identifier ```  So the language picker only gets `yue` (which maps to `yue-CN`) and `zh` (which `AppleSpeechModelSelection.preferredModelId` resolves to one of `zh-CN` / `zh-TW` / `zh-HK`, depending on fallback order). A user who picks "Cantonese" always gets `speechanalyzer-yue_CN`, which produces Simplified Chinese.  ### Workaround (confirmed working)  Quit TypeWhisper, then:  ```bash defaults write com.typewhisper.mac selectedLanguage -string "zh-HK" defaults write com.typewhisper.mac plugin.com.typewhisper.speechanalyzer.loadedModel -string "speechanalyzer-zh_HK" ```  After relaunching, Cantonese dictation outputs Traditional
+- **Issue #1838** (2026-11-03): **[iOS] Email format keeps spoken self-corrections with the local writing models**
+  *Symptoms*: ### Platform  iOS app (Email format with the local writing models)  ### What happens  The Email format keeps spoken self-corrections and barely rewrites with the local models, while the Message format resolves them.  Dictation:  > Hi Lena, so quick update on the workshop. It moves to Wednesday, no sorry, Thursday at three pm, same room as last time. And could you bring the new budget and both contracts? Thanks.  - **LFM2.5 2.6B, Email:** subject "Workshop Rescheduled to Wednesday at 3 PM", body "It has been moved to Wednesday, no sorry. Thursday at 3 pm, …". The wrong day ends up in the subject. - **Gemma 4 E2B, Email:** subject "Update on the workshop schedule and requirements", body is the transcript almost word for word ("so quick update", "Wednesday, no sorry. Thursday"). - **Gemma 4 E2B, Message:** "Hi Lena, the workshop moves to Thursday at 3 pm in the same room as last time. …" The correction is resolved.  With a memo without a self-correction, Gemma 4 E2B in the Email format also only adds a subject and keeps the dictation as one paragraph, including fillers like "so" and "Oh, and". LFM2.5 writes greeting, paragraphs and sign-off. Same picture in German.  ### Expected  The Email format applies spoken corrections ("Wednesday, no sorry, Thursday" means Thursday) and drops fillers, like the Message format does, with both local models.  ### Notes  iOS 27.0 Simulator, current `main`, Fast Local speech recognition, same audio file run through File Transcription with each wr
 
-- **Issue #1778** (2026-10-28): **Google Meet calls at meet.google.com/meet/<code> are not detected**
-  *Symptoms*: Follow-up to #1700: a Google Meet call in Chrome Beta is again not recorded automatically, because Google now serves the meeting at `https://meet.google.com/meet/<code>`.  **What happened** - 27.10, 23:31 MSK: TypeWhisper 1.8.1-rc1, macOS 27.0.1 (26A434), Apple M4, Chrome Beta. Ad-hoc meeting detection on, Google Meet enabled. - I joined a Meet call. The tab URL was `https://meet.google.com/meet/fpk-vsmc-dju` (AppleScript `URL of active tab`). - The Recorder did not start within 2 minutes. My own fallback script started it at 23:33:15. - The same evening a Teams call was picked up 7 s after joining, so ad-hoc detection itself works.  **Why** (main as of today) - `MeetingLinkParser.parseGoogleMeetLink` takes `parts[0]` as the meeting code and matches `^[a-z]{3}-[a-z]{4}-[a-z]{3}$`. - For `/meet/fpk-vsmc-dju`, `parts[0]` is `meet`. The link is rejected, so `meetingLinks(in:)` is empty and no browser activity is created. - Calendar-matched Meet calls are probably affected too: the event holds `meet.google.com/<code>`, but the open tab never parses.  **How common** Chrome Beta history (Default profile), Meet call URLs: | first seen | URL shape | |---|---| | 23.09, 16.10 | `meet.google.com/<code>?…&adhoc=1` | | 22.10 | both: `meet/ujf-urwz-eyi?pli=1`, then `ujf-urwz-eyi` | | 27.10 | only `meet/fpk-vsmc-dju`, `meet/rby-hohw-jss` (2 of 2 calls) |  **Side note, minor** The first tab query timed out: macOS checked the Automation permission from 23:31:14.368 to 16.994 (2.6 s), over the
+- **Issue #1837** (2026-11-03): **[iOS] Email format with LFM2.5 writes the email as the recipient's reply**
+  *Symptoms*: ### Platform  iOS app (File Transcription and History, Email format, local writing model)  ### What happens  With the Email format and the local model **LFM2.5 2.6B**, a German dictation that ends with the speaker's name is written as the **recipient's reply**. The email greets the speaker and is signed by the person being addressed.  Dictation (transcript, unchanged under Original):  > Hallo Lena, also, kurzes Update zum Workshop. Der ist jetzt am Donnerstag um 15 Uhr, im selben Raum wie letztes Mal. Kannst du das neue Budget und beide Verträge mitbringen? Ach, und frag Tom, ob er auch dazukommen will. Danke, Marco.  Result:  > Betreff: Workshop-Update und Budgetanfrage > > Hallo Marco, > > vielen Dank für das Update zum Workshop. Der Workshop ist jetzt am Donnerstag um 15 Uhr im selben Raum wie letztes Mal. Kannst du bitte das neue Budget und beide Verträge mitbringen? … > > Viele Grüße, > Lena  ### Expected  The speaker is the sender: the email starts with "Hallo Lena" and is signed by Marco, as dictated.  ### Notes  - Reproduced twice with the same memo (iOS 27.0 Simulator, current `main`, Fast Local speech recognition). Gemma 4 E2B kept "Hallo Lena … Danke, Marco." for the same memo. - The English version of the same memo ("… Thanks, Marco.") came out right with LFM2.5. - When the memo ends with "Danke dir und bis Donnerstag!" instead, LFM2.5 writes the email correctly to Lena. - The Email prompt could state explicitly that the dictating person is the sender and that a n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1990,179 +1982,1065 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2007bc99` (2026-11-02)
-**Commit Message**: Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (#1821)
+### Incident Patch 1: `6ed91e6b` (2026-11-04)
+**Commit Message**: (bug) Keep input responsive when key events queue up behind a slow main thread (#1865)
 
-* Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag
+* (bug) Keep input responsive when key events queue up behind a slow main thread
 
-* Keep every waiting daily run so a scheduled run never cancels a manual one
+The hotkey tap gave the main thread 100 ms per event, counted from the
+start of its callback. Events wait in front of the tap while it waits for
+an earlier one, so a main thread that answered each event in 60 ms let
+input lag by seconds once keys arrived faster than that, and macOS then
+switched the tap off by timeout (#1513 on 1.8.2).
 
-**File**: `.github/workflows/release.yml` (modified, +10/-0)
+- Count the decision timeout from the event's own timestamp, so events
+  that already waited too long pass at once.
+- Keep the tap off during a timeout backoff. Switching it off makes macOS
+  report a user-input disable right away, and that report re-armed it.
+- Log when the watchdog finds the tap disabled. macOS drops the timeout
+  report once the tap is enabled again.
+- Add a lagging main thread to the input freeze smoke script.
+
+* (bug) Release a late tap event before the main thread can claim it
+
+An event that reaches the tap after its decision timeout passes at once.
+If the main thread claimed it first, its handler ran with a claimed
+deadline that had already expired, so the ev
+
+**File**: `TypeWhisper/Services/HotkeyService.swift` (modified, +78/-15)
 ```diff
-@@ -21,6 +21,16 @@ env:
- permissions:
-   contents: read
+@@ -524,9 +524,16 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+                 // A listen-only tap never holds input back, so re-arming it is always safe.
+                 let outcome = EventTapReenableBackoff.Outcome.reenable
+ #else
+-                let outcome = byTimeout
+-                    ? reenableBackoff.recordTimeout(at: DispatchTime.now().uptimeNanoseconds)
+-                    : .reenable
++                let now = DispatchTime.now().uptimeNanoseconds
++                guard byTimeout else {
++                    // Switching the tap off for a backoff makes macOS report a user-input disable
++                    // right away. Re-arming on that report ended every backoff within milliseconds.
++                    // The tap is already off, and switching it off again would trigger another report.
++                    guard reenableBackoff.allowsReenable(at: now) else { return .backingOff(seconds: nil) }
++                    if let tap = port { CGEvent.tapEnable(tap: tap, enable: true) }
++                    return .reenable
++                }
++                let outcome = reenableBackoff.recordTimeout(at: now)
+ #endif
+                 if let tap = port {
+                     // Also switch the tap off when backing off: a watchdog tick may already have
+@@ -636,6 +643,21 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+             }
+         }
  
-+# GitHub often starts the schedule hours late, sometimes while a manually started daily is
-+# still building the same tag. Daily runs therefore wait for each other; the later one then
-+# finds the day's tag and skips. Every waiting run is kept (queue: max), so a scheduled run
-+# never cancels a manual one. Tag pushes and runs for an explicit tag queue by tag and do not
-+# wait for a daily.
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.release_tag || 'daily' }}
-+  cancel-in-progress: false
-+  queue: max
++        /// Tap thread, before the main thread gets `decision`. Releases an event that already
++        /// waited past `timeout` in the queue, so the main thread never starts a handler for an
++        /// event the tap lets through. Handing the decision over afterwards ends the stall.
++        func releaseIfLate(
++            _ decision: Decision,
++            requestedAt: UInt64,
++            timeout: TimeInterval,
++            now: UInt64 = DispatchTime.now().uptimeNanoseconds
++        ) -> Bool {
++            guard DispatchTime(uptimeNanoseconds: now) >= DispatchTime(uptimeNanoseconds: requestedAt) + timeout else {
++                return false
++            }
++            return releaseIfStillIn(.pending, decision, requestedAt: requestedAt)
++        }
 +
- jobs:
-   prepare:
-     runs-on: ubuntu-latest
+         /// Main thread.
+         func claim(_ decision: Decision, now: UInt64 = DispatchTime.now().uptimeNanoseconds) -> Claim {
+             lock.withLock {
+@@ -1711,6 +1733,11 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+     private nonisolated func eventTapWatchdogTick(generation: UUID) {
+         let action = eventTapHandle.watchdogTick(generation: generation)
+         guard action != .none else { return }
++        if action == .recovered {
++            // macOS reports a timeout with the next input event, and not at all once the tap is
++            // back on, so this line is the only trace of an outage the watchdog ends first.
++            logger.warning("CGEventTap was found disabled, re-enabling")
++        }
+         DispatchQueue.main.async { [weak self] in
+             guard let self, self.eventTapHandle.isCurrentWatchdog(generation) else { return }
+             switch action {
+@@ -1890,7 +1917,7 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+     }
+ 
+     /// Tap thread. Asks the main thread whether to consume `event`, but lets it through if the
+-    /// main thread does not pick it up within `eventTapDecisionTimeout`.
++    /// main thread does not pick it up within `eventTapDecisionTimeout` of the event.
+     private nonisolated func decideEventTapEvent(_ event: CGEvent) -> Bool {
+         nonisolated(unsafe) let event = event
+ #if APPSTORE
+@@ -1904,7 +1931,14 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+         return false
+ #else
+         guard let decision = eventTapMainThreadGate.makeDecision() else { return false }
+-        let requestedAt = DispatchTime.now().uptimeNanoseconds
++        let now = DispatchTime.now().uptimeNanoseconds
++        let requestedAt = Self.eventTapDecisionStart(eventTimestamp: event.timestamp, now: now)
++        let late = eventTapMainThreadGate.releaseIfLate(
++            decision,
++            requestedAt: requestedAt,
++            timeout: Self.eventTapDecisionTimeout,
++            now: now
++        )
+         DispatchQueue.main.async { [self] in
+             switch eventTapMainThreadGate.claim(decision) {
+             case .handle:
+@@ -1916,31 +1950,50 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+                 if let stall { finishEventTapMainThreadStall(stall) }
+             }
+         }
+-        switch eventTapMainThreadGate.wait(
+-            for: decision,
+-            requestedAt: requestedAt,
+-            timeout: Self.eventTapDecisionTimeout,
+-            claimedTimeout: Self.eventTapClaimedDecisionTimeout
+-        ) {
++        let answer: EventTapMainThreadGate.Answer = late
++            ? .released(stallStarted: true)
++            : eventTapMainThreadGate.wait(
++                for: decision,
++        
 ```
 
-**File**: `scripts/test_release_tooling.py` (modified, +8/-0)
+**File**: `TypeWhisperTests/TypeWhisperIntegrationTests.swift` (modified, +85/-0)
 ```diff
-@@ -256,6 +256,14 @@ def test_homebrew_update_goes_through_a_pull_request(self):
-         self.assertTrue(merged)
-         self.assertLess(log.index("pr checks"), log.index("pr merge"))
- 
-+    def test_daily_runs_wait_for_each_other(self):
-+        # A late scheduled daily must not build the day's tag while a manual daily is running.
-+        self.assertEqual(self.workflow["concurrency"], {
-+            "group": "${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name"
-+                     " || inputs.release_tag || 'daily' }}",
-+            "cancel-in-progress": False,
-+            "queue": "max"})
+@@ -22363,6 +22363,60 @@ final class HotkeyServiceCompatibilityTests: XCTestCase {
+         RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+         XCTAssertEqual(cancelCount, 1)
+     }
 +
-     def test_homebrew_updates_for_one_release_never_overlap(self):
-         concurrency = self.workflow["jobs"]["update-homebrew"]["concurrency"]
-         self.assertEqual(concurrency, {"group": "homebrew-tap-${{ needs.prepare.outputs.tag }}",
++    func testEventTapReleasesAnEventThatAlreadyWaitedInTheQueue() throws {
++        let service = HotkeyService()
++        service.suspendMonitoring()
++        defer { service.suspendMonitoring() }
++        // In #1513 the main thread answered each event in time, but the events behind it queued up
++        // until input lagged for seconds and macOS switched the tap off.
++        nonisolated(unsafe) let keyDown = try XCTUnwrap(CGEvent(keyboardEventSource: nil, virtualKey: 0x00, keyDown: true))
++        keyDown.timestamp = DispatchTime.now().uptimeNanoseconds - 150_000_000
++        final class Answer: @unchecked Sendable {
++            var suppressed: Bool?
++            var duration: TimeInterval = 0
++        }
++        let answer = Answer()
++        let finished = DispatchSemaphore(value: 0)
++        DispatchQueue.global().async {
++            let start = Date()
++            answer.suppressed = service.decideEventTapEventForTesting(keyDown)
++            answer.duration = Date().timeIntervalSince(start)
++            finished.signal()
++        }
++        // Deliberately block the main thread: only a release without waiting finishes in time.
++        XCTAssertEqual(finished.wait(timeout: .now() + 2), .success)
++        XCTAssertEqual(answer.suppressed, false)
++        XCTAssertLessThan(answer.duration, 0.05, "An event that already waited past the decision timeout must pass at once")
++        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
++    }
++
++    @MainActor
++    func testReleasePassedByTheTapStillFindsItsPressInTheMonitor() throws {
++        let service = HotkeyService()
++        service.suspendMonitoring()
++        defer { service.suspendMonitoring() }
++        // A toggle Fn hotkey acts on the release, which the NSEvent monitor handles once the tap lets it through.
++        service.setHotkeyForTesting(fnHotkey(), for: .toggle)
++        service.modifierFlagsStateProvider = { [] }
++        var startCount = 0
++        service.onDictationStart = { _ in startCount += 1 }
++        _ = service.processEventForTesting(try makeFnEvent(isDown: true), source: .eventTap)
++
++        let keyUp = try makeFnEvent(isDown: false)
++        nonisolated(unsafe) let lateKeyUp = try XCTUnwrap(keyUp.cgEvent)
++        lateKeyUp.timestamp = DispatchTime.now().uptimeNanoseconds - 150_000_000
++        let finished = DispatchSemaphore(value: 0)
++        DispatchQueue.global().async {
++            _ = service.decideEventTapEventForTesting(lateKeyUp)
++            finished.signal()
++        }
++        XCTAssertEqual(finished.wait(timeout: .now() + 2), .success)
++        // The main thread ends the tap's stall before the global monitor delivers the release.
++        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
++        service.processGlobalEventForTesting(keyUp)
++        XCTAssertEqual(startCount, 1)
++    }
+     #endif
+ 
+     func testEventTapGateWaitsForClaimedHandlerWithinItsOwnBound() throws {
+@@ -22403,6 +22457,22 @@ final class HotkeyServiceCompatibilityTests: XCTestCase {
+         XCTAssertNotNil(gate.makeDecision(), "The late handler ends the stall")
+     }
+ 
++    func testEventTapGateReleasesALateEventBeforeTheMainThreadCanClaimIt() throws {
++        let gate = HotkeyService.EventTapMainThreadGate()
++        let now = DispatchTime.now().uptimeNanoseconds
++        let fresh = try XCTUnwrap(gate.makeDecision())
++        XCTAssertFalse(gate.releaseIfLate(fresh, requestedAt: now - 50_000_000, timeout: 0.1, now: now))
++        XCTAssertEqual(gate.claim(fresh), .handle)
++        gate.resolve(fresh, suppress: false)
++
++        // A handler acts on its own decision, so it must never start for an event the tap let through.
++        let late = try XCTUnwrap(gate.makeDecision())
++        XCTAssertTrue(gate.releaseIfLate(late, requestedAt: now - 700_000_000, timeout: 0.1, now: now))
++        guard case .skip(let stall) = gate.claim(late) else { return XCTFail("A late event must not reach its handler") }
++        XCTAssertNotNil(stall, "Handing the late event to the main thread ends the stall")
++        XCTAssertNotNil(gate.makeDecision())
++    }
++
+     func testEventTapReenableBackoffAfterRepeatedTimeouts() {
+         let second: UInt64 = 1_000_000_000
+         var backoff = HotkeyService.EventTapReenableBackoff()
+@@ -22435,6 +22505,21 @@ final class HotkeyServiceCompatibilityTests: XCTestCase {
+         XCTAssertEqual(lone.recordTimeout(at: 4_002 * second), .backingOff(seconds: 30))
+     }
+ 
++    #if !APPSTORE
++    func testEventTapBackoffIgnoresTheReportOfItsOwnDisable() {
++        let service = HotkeyService()
++        service.suspendMonitoring()
++        defer { service.suspendMonitoring() }
++        XCTAssertEqual(service.reportEventTapDisableForTesting(byTimeout: false), .reenable)
++        XCTAssertEqual(service.repo
+```
+
+**File**: `scripts/hotkey-input-freeze-smoke.sh` (modified, +50/-28)
+```diff
+@@ -1,7 +1,8 @@
+ #!/usr/bin/env bash
+ # Check that the real HotkeyService event tap keeps system input flowing while
+-# its main thread stalls. Needs a locally trusted terminal. For about eight
+-# seconds it posts F18 presses and repeatedly blocks the main thread for 1.5 s;
++# its main thread stalls or lags. Needs a locally trusted terminal. For about
++# fifteen seconds it posts F18 presses while it blocks the main thread, first for
++# 1.5 s at a time, then for 60 ms on each wake-up with events arriving every 20 ms;
+ # typing during that time may lag by up to the tap's decision timeout.
+ #   scripts/hotkey-input-freeze-smoke.sh [path/to/HotkeyService.swift]
+ set -euo pipefail
+@@ -33,8 +34,7 @@ source += workflow[start:end]
+ source += Path(sys.argv[2]).read_text()
+ source += '''
+ setvbuf(stdout, nil, _IONBF, 0)
+-alarm(30) // never leave a stalled filter tap behind
+-nonisolated(unsafe) let duration: TimeInterval = 8
++alarm(45) // never leave a stalled filter tap behind
+ nonisolated(unsafe) let probeTag: Int64 = 0x5A << 56
+ 
+ guard CGPreflightPostEventAccess(), AXIsProcessTrusted() else {
+@@ -87,40 +87,62 @@ service.setHotkeyForTesting(UnifiedHotkey(keyCode: 61, modifierFlags: 0, isFn: f
+ service.resumeMonitoring()
+ precondition(service.isEventTapEnabledForTesting, "The service did not install its event tap")
+ 
+-// Stall the main thread for 1.5 s with short responsive gaps in between.
+-Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in usleep(1_500_000) }
+-
+-nonisolated(unsafe) let posted = DispatchSemaphore(value: 0)
+ final class Counter: @unchecked Sendable { var value = 0 }
+ nonisolated(unsafe) let sentCount = Counter()
+-DispatchQueue.global(qos: .userInitiated).async {
+-    let deadline = Date().addingTimeInterval(duration)
+-    while Date() < deadline {
+-        for down in [true, false] {
+-            let event = CGEvent(keyboardEventSource: nil, virtualKey: 79 /* F18 */, keyDown: down)!
+-            event.setIntegerValueField(.eventSourceUserData, value: probeTag | uptimeMicros())
+-            event.post(tap: .cghidEventTap)
+-            sentCount.value += 1
++
++// Posts F18 presses `spacing` apart while `load` slows down the main thread.
++func runScenario(_ name: String, spacing: useconds_t, duration: TimeInterval, load: () -> () -> Void) -> Bool {
++    latencies.lock.withLock { latencies.values.removeAll() }
++    sentCount.value = 0
++    let stopLoad = load()
++    let posted = DispatchSemaphore(value: 0)
++    DispatchQueue.global(qos: .userInitiated).async {
++        let deadline = Date().addingTimeInterval(duration)
++        while Date() < deadline {
++            for down in [true, false] {
++                let event = CGEvent(keyboardEventSource: nil, virtualKey: 79 /* F18 */, keyDown: down)!
++                event.setIntegerValueField(.eventSourceUserData, value: probeTag | uptimeMicros())
++                event.post(tap: .cghidEventTap)
++                sentCount.value += 1
++                usleep(spacing)
++            }
+         }
+-        usleep(100_000)
++        Thread.sleep(forTimeInterval: 2)
++        posted.signal()
++    }
++    while posted.wait(timeout: .now()) == .timedOut {
++        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+     }
+-    Thread.sleep(forTimeInterval: 2)
+-    posted.signal()
++    stopLoad()
++    let values = latencies.lock.withLock { latencies.values.sorted() }
++    let maxLatency = values.last ?? .infinity
++    print(String(format: "%@: received %d/%d probe events, p50 %.1f ms, max %.1f ms", name,
++                 values.count, sentCount.value, values.isEmpty ? -1 : values[values.count / 2], maxLatency))
++    return values.count == sentCount.value && maxLatency < 500
+ }
+-while posted.wait(timeout: .now()) == .timedOut {
+-    RunLoop.main.run(until: Date().addingTimeInterval(0.05))
++
++let stalled = runScenario("1.5 s main-thread stalls", spacing: 50_000, duration: 8) {
++    // Long stalls with short responsive gaps in between.
++    let timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in usleep(1_500_000) }
++    return { timer.invalidate() }
++}
++let lagging = runScenario("60 ms per main-thread wake-up, an event every 20 ms", spacing: 20_000, duration: 3) {
++    // Each tap decision wakes the main thread, which then takes 60 ms: every event is answered
++    // within the decision timeout, but they arrive faster. Counted per event, their waits added
++    // up to seconds until macOS switched the tap off (#1513 on 1.8.2).
++    let observer = CFRunLoopObserverCreateWithHandler(nil, CFRunLoopActivity.afterWaiting.rawValue, true, 0) { _, _ in
++        usleep(60_000)
++    }
++    CFRunLoopAddObserver(CFRunLoopGetMain(), observer, .commonModes)
++    return { CFRunLoopRemoveObserver(CFRunLoopGetMain(), observer, .commonModes) }
+ }
+ service.suspendMonitoring()
+ 
+-let values = latencies.lock.withLock { latencies.values.sorted() }
+-let maxLatency = values.last ?? .infinity
+-print(String(format: "received %d/%d probe events, p50 %.1f ms, 
 ```
 
 ---
 
-### Incident Patch 2: `901a3865` (2026-11-01)
-**Commit Message**: Show the release channel in the About panel of Daily and Release Candidate builds (#1816)
+### Incident Patch 2: `9852feb1` (2026-11-05)
+**Commit Message**: (chore) Measure launch time and memory on every pull request and check PR descriptions (#1872)
 
-* Show the release channel in the About panel of Daily and Release Candidate builds
+The release-build job now also builds the base branch and compares the launch of both Release
+builds on one runner: the time to the Launch.firstIdle signpost, CPU time, memory after launch
+and peak memory, with a test profile of 3,000 history entries, 300 dictionary entries and 30
+snippets. A metric fails when its median change exceeds both limits and at least 80% of the
+rounds got worse, confirmed by a second pass; the perf-regression-accepted label lets an
+intended cost through. The Launch Benchmark Report workflow writes the table into the pull
+request description.
 
-* Compare the About panel version with the localized channel names
+The new PR description check enforces the title prefix, screenshots or a clip for visible
+changes unless "No visible UI change" is ticked, and a measurement table in (perf) pull
+requests.
 
-**File**: `TypeWhisper/App/AppConstants.swift` (modified, +12/-0)
+**File**: `.github/pull_request_template.md` (modified, +9/-1)
 ```diff
-@@ -292,6 +292,18 @@ enum AppConstants {
-         return channel
-     }
+@@ -1,9 +1,17 @@
+ ## Summary
  
-+    /// Version for the standard About panel. Daily and Release Candidate builds share the
-+    /// marketing version with the stable release, so they add their channel ("1.8.2 Daily").
-+    static func aboutPanelApplicationVersion(
-+        infoDictionary: [String: Any]? = Bundle.main.infoDictionary
-+    ) -> String {
-+        let version = infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
-+        guard let channel = bundledReleaseChannel(infoDictionary: infoDictionary).versionDisplayName else {
-+            return version
-+        }
-+        return "\(version) \(channel)"
+-<!-- What does this PR do? -->
++<!-- What does this PR do? For an issue, add its context and "Closes #123". Start the title with (feature), (bug), (perf) or (chore). -->
++
++## Screenshots
++
++<!-- Visible changes (views, settings, menus, assets, texts) need screenshots of the final interface in English, and changes in motion a short clip. Tick the box only if nothing visible changes. The "PR description" check enforces this. -->
++
++- [ ] No visible UI change
+ 
+ ## Test Plan
+ 
++<!-- (perf) PRs: add a table with the measured metric for main and this PR, and how you measured it. -->
++
+ - [ ] Ran `scripts/pr-preflight.sh`
+ - [ ] Built and ran locally
+ - [ ] Tested the changed functionality manually
+```
+
+**File**: `.github/workflows/build.yml` (modified, +116/-0)
+```diff
+@@ -53,6 +53,7 @@ jobs:
+     outputs:
+       plugin_sdk: ${{ steps.diff.outputs.plugin_sdk }}
+       app: ${{ steps.diff.outputs.app }}
++      launch_benchmark: ${{ steps.diff.outputs.launch_benchmark }}
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -92,15 +93,40 @@ jobs:
+           fi
+           echo "app=$app" | tee -a "$GITHUB_OUTPUT"
+ 
++          # The launch benchmark compares the app's launch with the base branch. Pull requests
++          # run it when they change the app's sources, its project or the benchmark itself.
++          launch_benchmark=false
++          if [ "$EVENT_NAME" = "pull_request" ]; then
++            status=0
++            git diff --quiet HEAD^1 HEAD -- TypeWhisper/ TypeWhisper.xcodeproj/ TypeWhisperICloudBridge/ \
++              TypeWhisperPluginSDK/ TypeWhisperTranscribeAction/ TypeWhisperWidgetExtension/ \
++              TypeWhisperWidgetShared/ typewhisper-cli/ ':(glob)*.xcconfig' \
++              scripts/performance/ .github/workflows/build.yml || status=$?
++            case "$status" in
++              0) ;;
++              1) launch_benchmark=true ;;
++              *) echo "::error::git diff failed with exit code $status"; exit "$status" ;;
++            esac
++          fi
++          echo "launch_benchmark=$launch_benchmark" | tee -a "$GITHUB_OUTPUT"
++
+   release-build:
+     needs: changes
+     if: needs.changes.outputs.app == 'true'
+     runs-on: xcode-27
++    timeout-minutes: 120
++    permissions:
++      contents: read
++      # The launch benchmark reads the pull request's labels.
++      issues: read
++      pull-requests: read
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
++          # The launch benchmark also builds the merge commit's first parent, the base branch.
++          fetch-depth: 2
+ 
+       - name: Setup Xcode
+         uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+@@ -204,6 +230,96 @@ jobs:
+           path: build/TypeWhisper-*.dmg
+           retention-days: 14
+ 
++      # Launch benchmark (docs/launch-performance.md): build the base branch into the same
++      # derived data, so only the targets the pull request changed compile again, then launch
++      # both Release builds alternately on this runner and compare them.
++      - name: Build the base branch for the launch benchmark
++        id: base-build
++        if: github.event_name == 'pull_request' && needs.changes.outputs.launch_benchmark == 'true'
++        run: |
++          # Spotlight would index the new build products and the benchmark's profile copies
++          # while the apps launch, and compete with them for the runner's few processors.
++          sudo mdutil -a -i off > /dev/null || echo "::warning::Could not turn off Spotlight indexing"
++          bench="$RUNNER_TEMP/launch-benchmark"
++          mkdir -p "$bench/head" "$bench/base"
++          ditto build/Build/Products/Release/TypeWhisper.app "$bench/head/TypeWhisper.app"
++          merge_commit="$(git rev-parse HEAD)"
++          git checkout --quiet --detach HEAD^1
++          # The same settings as "Build App" for a pull request.
++          if ! xcodebuild -skipPackagePluginValidation -project $PROJECT \
++            -scheme $SCHEME \
++            -configuration Release \
++            -derivedDataPath build \
++            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
++            -destination 'generic/platform=macOS' \
++            ENABLE_CODE_COVERAGE=NO \
++            CODE_SIGN_IDENTITY="-" \
++            CODE_SIGNING_REQUIRED=NO \
++            CODE_SIGNING_ALLOWED=NO \
++            ARCHS=arm64 > "$bench/base-build.log" 2>&1; then
++            grep -E ' error: ' "$bench/base-build.log" | sort -u | head -50
++            tail -n 40 "$bench/base-build.log"
++            exit 1
++          fi
++          ditto build/Build/Products/Release/TypeWhisper.app "$bench/base/TypeWhisper.app"
++          git checkout --quiet --detach "$merge_commit"
++
++      - name: Run the launch benchmark
++        id: benchmark
++        if: steps.base-build.outcome == 'success'
++        env:
++          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
++          PR_NUMBER: ${{ github.event.pull_request.number }}
++        run: |
++          bench="$RUNNER_TEMP/launch-benchmark"
++          python3 scripts/performance/launch_benchmark.py run --disposable-mac \
++            --base "$bench/base/TypeWhisper.app" --head "$bench/head/TypeWhisper.app" \
++            --base-sha "$(git rev-parse HEAD^1)" --head-sha "$HEAD_SHA" \
++            --base-source-ref HEAD^1 --head-source-ref HEAD \
++            --pull-request "$PR_NUMBER" \
++            --work "$bench/work" --output build/launch-benchmark/report.json
++
++      # A regression fails the job unless the pull request has the perf-regression-accepted
++      # label. The label is read now, so re
+```
+
+**File**: `.github/workflows/launch-benchmark-report.yml` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++name: Launch Benchmark Report
++
++# Writes the launch benchmark table from a pull request's "Build DMG" run into the pull
++# request description. This workflow runs from the default branch with write access, so it
++# also works for pull requests from forks. The report is untrusted data from the pull request:
++# scripts/performance/launch_benchmark.py validates it and renders the table from its numbers.
++on:
++  workflow_run:
++    workflows: [Build DMG]
++    types: [completed]
++
++permissions:
++  contents: read
++
++jobs:
++  description:
++    name: Update the pull request description
++    if: github.event.workflow_run.event == 'pull_request'
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    permissions:
++      actions: read
++      contents: read
++      pull-requests: write
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++
++      - name: Write the launch benchmark into the description
++        env:
++          GH_TOKEN: ${{ github.token }}
++          REPOSITORY: ${{ github.repository }}
++          RUN_ID: ${{ github.event.workflow_run.id }}
++          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
++          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
++          HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
++        run: |
++          set -euo pipefail
++          dir="$RUNNER_TEMP/launch-benchmark"
++          # Runs that skipped the benchmark (documentation, tests, CI only) have no report.
++          if ! gh run download "$RUN_ID" --repo "$REPOSITORY" --name launch-benchmark --dir "$dir"; then
++            echo "Run $RUN_ID has no launch benchmark report."
++            exit 0
++          fi
++          # The number comes from the pull request's own report, so the pull request it names must
++          # also have the run's head commit, branch and repository; another pull request with the
++          # same commit gets nothing.
++          number="$(python3 scripts/performance/launch_benchmark.py pr-number "$dir/report.json")"
++          head="$(gh api "repos/$REPOSITORY/pulls/$number" --jq '[.head.sha, .head.ref, (.head.repo.full_name // "")] | @tsv')"
++          if [ "$head" != "$(printf '%s\t%s\t%s' "$HEAD_SHA" "$HEAD_BRANCH" "$HEAD_REPOSITORY")" ]; then
++            echo "Pull request #$number does not match run $RUN_ID, or it has newer commits that its own run reports."
++            exit 0
++          fi
++          gh api "repos/$REPOSITORY/pulls/$number" --jq '.body // ""' > "$dir/body.md"
++          result="$(python3 scripts/performance/launch_benchmark.py update-description "$dir/report.json" \
++            --body "$dir/body.md" --output "$dir/payload.json")"
++          if [ "$result" = "changed" ]; then
++            gh api --method PATCH "repos/$REPOSITORY/pulls/$number" --input "$dir/payload.json" > /dev/null
++            echo "Updated the launch benchmark in the description of #$number."
++          else
++            echo "The description of #$number already shows this report."
++          fi
+```
+
+**File**: `.github/workflows/pr-description.yml` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++name: PR Description
++
++# Checks the title and description against AGENTS.md: the category prefix, screenshots for
++# visible changes and a measurement table for (perf) pull requests. Editing the description
++# runs the check again without the macOS jobs.
++on:
++  pull_request:
++    types: [opened, edited, reopened, synchronize, ready_for_review]
++    branches: [main, 'release/**']
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
++  cancel-in-progress: true
++
++permissions:
++  contents: read
++
++jobs:
++  description:
++    name: PR description
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++          # The pull request merge commit's first parent is the base branch.
++          fetch-depth: 2
++
++      - name: Check the title and description
++        env:
++          PR_TITLE: ${{ github.event.pull_request.title }}
++          PR_BODY: ${{ github.event.pull_request.body }}
++        run: python3 scripts/check_pr_description.py --base HEAD^1 --summary "$GITHUB_STEP_SUMMARY"
+```
+
+**File**: `AGENTS.md` (modified, +6/-0)
+```diff
+@@ -26,6 +26,12 @@ When a change shows in motion (a flow, an animation, live updates, text inserted
+ - attach it like a screenshot (GitHub CLI 2.103 or later), `gh pr edit <number> --body-file body.md --attach ./<name>.mp4` (a `![](./<name>.mp4)` reference becomes a video player), and include it in the user handoff; never commit clips to the repository
+ - static changes (texts, layout, settings) keep screenshots only
+ 
++## Checks on Pull Requests
++
++- The `PR description` check enforces the title prefix, screenshots or a clip for visible changes (or the template's `- [x] No visible UI change`) and a measurement table in `(perf)` descriptions. Editing the description runs it again.
++- The `release-build` job compares the launch time, CPU time and memory of the pull request's Release build with its base and writes the table into the description, between the `launch-benchmark` markers. Keep that block when you rewrite the description; CI replaces it after every push.
++- A launch regression fails CI. Find and fix the cause first; the folded launch phases show where the time goes. If the cost is intended, explain why in the description, add the `perf-regression-accepted` label and re-run the `release-build` job. Details: `docs/launch-performance.md`.
++
+ ## Mac App Store Edition
+ 
+ - `APPSTORE` code must keep the direct-distribution app unchanged; verify both builds when touching shared files.
+```
+
+**File**: `CONTRIBUTING.md` (modified, +6/-1)
+```diff
+@@ -31,9 +31,14 @@ echo 'DEVELOPMENT_TEAM = YOUR_TEAM_ID' > CodeSigning.local.xcconfig
+ 1. Create a feature branch from `main`
+ 2. Keep changes focused - one feature or fix per PR
+ 3. Test your changes manually and run the automated checks
+-4. Fill out the PR template (Summary + Test Plan)
++4. Start the title with `(feature)`, `(bug)`, `(perf)` or `(chore)` and fill out the PR template;
++   visible changes need screenshots, `(perf)` changes a measurement table
+ 5. PRs are squash-merged into `main`
+ 
++CI compares the launch time and memory of your build with `main` and adds the results to the
++description; a clear regression fails the build. See
++[docs/launch-performance.md](docs/launch-performance.md).
++
+ Recommended checks:
+ 
+ ```bash
+```
+
+**File**: `docs/launch-performance.md` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++# Launch performance checks
++
++Every pull request that changes the app compares how its Release build launches with the
++build of its base branch. The `release-build` job of the Build DMG workflow measures both, and
++the table appears in the pull request description.
++
++## What CI measures
++
++The job builds the base branch into the same derived data after the pull request build, so
++only the targets the pull request changed compile again. Then
++`scripts/performance/launch_benchmark.py` runs on the same runner:
++
++1. The base build imports a test profile through its local API: setup completed, update checks
++   and optional launch prompts off, and 3,000 history entries, 300 dictionary entries and 30
++   snippets. Each build then launches once on its own copy of that profile, which checks that
++   the data persisted and runs one-time work such as migrations and statistics backfills.
++2. The builds launch alternately from the same path, 10 rounds each, after the runner's
++   processors have gone idle and with Spotlight indexing off. Every launch starts from a copy of
++   the build's profile, without the local API, and records:
++   - **Time until ready:** from starting the process to the `Launch.firstIdle` signpost, the
++     first time the main thread waits after the service setup, the plugin scan and the model
++     restore.
++   - **CPU time**, **memory after launch** (physical footprint) and **peak memory**, read 6
++     seconds later.
++3. Each metric's change is the median of the paired differences, one pair per round, so a
++   runner that gets slower during the job affects both builds alike.
++
++The table also shows the app size and, folded, the launch phases from the app's signposts
++(`Launch.serviceContainer`, `Plugin.scan` and others) to find where a change comes from.
++
++The CI profile has no downloaded plugins or models, only the two plugins the app bundles, so
++the load times of other plugins do not show up here. Measure changes to plugin loading with
++plugins installed and add those numbers to the description.
++
++## When CI fails
++
++A metric fails when its change exceeds both limits and the pull request was worse in at least
++8 of the 10 rounds:
++
++| Metric | Fails above |
++| --- | --- |
++| Time until ready | +10% and +100 ms |
++| CPU time | +15% and +100 ms |
++| Memory after launch | +5% and +2 MB |
++| Peak memory | +10% and +4 MB |
++
++When the first 10 rounds show a regression, 10 more rounds confirm it; only a regression in
++both passes fails the job. App size never fails it.
++
++The limits come from comparing identical builds on the runner. The shared virtual Mac makes
++times noisy: depending on how busy its host is, the paired differences of one round spread by
++120 to 450 ms for the time until ready and 100 to 250 ms for CPU time, against 0.2 MB for
++memory. Noise moves rounds in both directions, while a real regression makes nearly all of
++them worse, which is what the 8-of-10 rule checks. So the job reliably stops memory growth of
++2 MB, and time or CPU regressions of roughly 20% on a quiet runner; on a busy one only larger
++ones. Smaller changes still show in the table, with the number of rounds that got worse.
++
++If the cost is intended, for example for a feature that has to load something at launch,
++explain why in the description, add the `perf-regression-accepted` label and re-run the
++`release-build` job. The job reads the label when it runs.
++
++Pull requests that only change documentation, tests, scripts or CI files skip the benchmark,
++unless they change the benchmark or `build.yml`.
++
++## Pull request descriptions
++
++The "PR description" check enforces the rules from `AGENTS.md`:
++
++- the title starts with `(feature)`, `(bug)`, `(perf)` or `(chore)`,
++- a pull request that changes something visible has screenshots or a clip, unless
++  `- [x] No visible UI change` is ticked,
++- a `(perf)` pull request has its own measurement table.
++
++The launch table lives between `<!-- launch-benchmark:start -->` and
++`<!-- launch-benchmark:end -->`. The Launch Benchmark Report workflow replaces it after every
++run, and it counts for none of the checks above.
++
++## Running it elsewhere
++
++`run` deletes the preferences of the app's bundle identifier, imports a test profile and
++launches the builds with their real identifier, so it refuses to run without
++`--disposable-mac`. Never run it on a Mac where TypeWhisper is installed. `render`, `check`
++and the tests (`scripts/test_launch_benchmark.py`) run anywhere.
+```
+
+**File**: `scripts/check_pr_description.py` (added, +184/-0)
+```diff
+@@ -0,0 +1,184 @@
++#!/usr/bin/env python3
++"""Check a pull request's title and description against the rules in AGENTS.md.
++
++    PR_TITLE=... PR_BODY=... check_pr_description.py [--base HEAD^1] [--summary FILE]
++
++The workflow sets PR_TITLE and PR_BODY from the event and checks out the merge commit, whose
++first parent is the base branch, so `git diff --base HEAD` holds the pull request's changes.
++
++- The title starts with its category: (feature), (bug), (perf) or (chore).
++- A pull request that changes something visible has a screenshot or a clip in its
++  description, unless "- [x] No visible UI change" is ticked. Visible changes are asset
++  catalogs, string catalogs, Interface Builder files, files under TypeWhisper/Views/ and the
++  widget extension, and changed lines that build views in other Swift files.
++- A (perf) pull request has a measurement table in its description.
++
++HTML comments and the launch performance section that CI writes into the description do not
++count for any rule.
++"""
++from __future__ import annotations
++
++import argparse
++import os
++import re
++import subprocess
++import sys
++
++CATEGORIES = ("feature", "bug", "perf", "chore")
++TITLE = re.compile(r"^\((?:" + "|".join(CATEGORIES) + r")\) \S")
++
++CI_SECTION = re.compile(r"<!-- launch-benchmark:start -->.*?<!-- launch-benchmark:end -->", re.S)
++HTML_COMMENT = re.compile(r"<!--.*?-->", re.S)
++MEDIA = (
++    re.compile(r"!\[[^\]]*\]\(\s*\S+?\s*\)"),
++    re.compile(r"<(?:img|video)\b", re.I),
++    re.compile(r"https://github\.com/user-attachments/assets/[0-9A-Za-z-]+"),
++    re.compile(r"https://(?:private-)?user-images\.githubusercontent\.com/\S+"),
++)
++NO_UI_CHANGE = re.compile(r"^\s*[-*]\s*\[[xX]\]\s*No visible UI change\b", re.M)
++LIST_ITEM = re.compile(r" {0,3}(?:[-*+]|\d{1,9}[.)])\s")
++
++UI_RESOURCES = re.compile(r"(?:\.xcassets/|\.icon/|\.xcstrings$|\.xib$|\.storyboard$)")
++UI_SWIFT_FOLDERS = ("TypeWhisper/Views/", "TypeWhisperWidgetExtension/")
++NOT_SHIPPED = re.compile(r"(?:^|/)[^/]*Tests?/|^(?:docs|scripts|fastlane|\.github)/")
++VIEW_CODE = re.compile(
++    r"\b(?:Text|Button|Toggle|Picker|Label|Image|TextField|SecureField|TextEditor|Slider|Stepper|Menu|"
++    r"Section|Form|List|ScrollView|VStack|HStack|ZStack|LazyVStack|LazyHStack|Grid|GridRow|Divider|"
++    r"ProgressView|DisclosureGroup|GroupBox|NavigationStack|NavigationSplitView|TabView|Link|"
++    r"ContentUnavailableView|NSAlert|NSMenuItem|NSButton|NSTextField|NSWindow|NSPanel)\s*[({]"
++    r"|\.(?:font|foregroundStyle|foregroundColor|padding|frame|background|overlay|help|tint|controlSize|"
++    r"buttonStyle|toggleStyle|pickerStyle|labelStyle|listStyle|formStyle|navigationTitle|toolbar|sheet|"
++    r"alert|confirmationDialog|popover|contextMenu|accessibilityLabel)\s*\("
++    r"|\bsome\s+View\b|:\s*View\b"
++)
++
++
++def visible_text(body):
++    """The description without HTML comments and without the CI section."""
++    return HTML_COMMENT.sub("", CI_SECTION.sub("", body or ""))
++
++
++def has_media(text):
++    return any(pattern.search(text) for pattern in MEDIA)
++
++
++def has_table(text):
++    """A Markdown table with at least two columns and a row that holds a number."""
++    lines = text.splitlines()
++    for index in range(1, len(lines)):
++        delimiter = lines[index].strip()
++        if not ("|" in lines[index - 1] and "---" in delimiter and set(delimiter) <= set("|:- \t")):
++            continue
++        if len([cell for cell in delimiter.strip("|").split("|") if cell.strip()]) < 2:
++            continue
++        # As in GitHub Markdown, a row needs no pipes; a blank line or a new block such as a
++        # heading, quote, code fence or list item ends the table.
++        for row in lines[index + 1:]:
++            if not row.strip() or row.lstrip().startswith(("#", ">", "```", "~~~")) or LIST_ITEM.match(row):
++                break
++            if re.search(r"\d", row):
++                return True
++    return False
++
++
++def changed_lines(diff):
++    """Added and removed lines per file from `git diff -U0` output, without comment-only lines."""
++    result = {}
++    current = old = None
++    in_header = False
++    for line in diff.splitlines():
++        if line.startswith("diff --git "):
++            current = old = None
++            in_header = True
++        elif in_header and line.startswith("--- "):
++            old = line[6:] if line.startswith("--- a/") else None
++        elif in_header and line.startswith("+++ "):
++            # A deleted file has no new path; its removed lines still count.
++            current = line[6:] if line.startswith("+++ b/") else old
++        elif line.startswith("@@"):
++            in_header = False
++        elif current and not in_header and line[:1] in ("+", "-"):
++            code = line[1:].split("//", 1)[0].strip()
++            if code:
++                result.setdefault(current, []).append(code)
++    return result
++
++
++def ui_files(paths, lines_by_file):
++    """The changed paths that show up in the interface."""
++    found
+```
+
+---
+
+### Incident Patch 3: `766451b2` (2026-11-04)
+**Commit Message**: (perf) Build the dictionary term prompt and hints once per load, and not at stop for a live result (#1847)
+
+* Build the dictionary term prompt and hints only once per load and only when needed
+
+Each recording start and each stop normalized every term four times for the
+term prompt and term hints, and the stop path did so even when the live session
+result was used. The normalized terms and hints and the prompt and hints
+clipped per budget are now kept until the entries are loaded again or the
+locale changes, and the stop path builds them only for a batch transcription.
+The plugin's capability and budget are still read on every request.
+
+* Drop the cached dictionary terms and vocabulary when entries change in place
+
+**File**: `TypeWhisper/Services/DictionaryService.swift` (modified, +91/-19)
+```diff
+@@ -72,6 +72,7 @@ final class DictionaryService: ObservableObject {
+     /// to rebuild.
+     private var entriesGeneration = 0
+     private var promptVocabularyCache: (generation: Int, localeIdentifier: String, limit: Int, vocabulary: [String])?
++    private var termsCache = TermsCache(generation: -1, localeIdentifier: "")
+ 
+     @Published private(set) var entries: [DictionaryEntry] = [] {
+         didSet { entriesByIdentity = nil }
+@@ -235,6 +236,15 @@ final class DictionaryService: ObservableObject {
+     /// entry in place, since a failed save keeps that change without reloading.
+     private var entriesByIdentity: [String: [DictionaryEntry]]?
+ 
++    /// The entries are about to change in place. A failed save keeps that
++    /// change without loading the entries again, so drop everything derived
++    /// from them: the identity index and the generation-keyed term and
++    /// vocabulary caches.
++    private func invalidateEntryDerivedCaches() {
++        entriesByIdentity = nil
++        entriesGeneration &+= 1
 +    }
 +
-     static func bundledPreviewRelease(
-         infoDictionary: [String: Any]? = Bundle.main.infoDictionary
-     ) -> PreviewRelease? {
-```
-
-**File**: `TypeWhisper/App/TypeWhisperApp.swift` (modified, +10/-0)
-```diff
-@@ -486,6 +486,16 @@ struct TypeWhisperApp<WindowConfiguration: ManagedAppWindowSceneConfiguration>:
+     func duplicateEntry(type: DictionaryEntryType, original: String, isRegex: Bool, excluding id: UUID? = nil) -> DictionaryEntry? {
+         let key = Self.entryIdentity(type: type, original: original, isRegex: isRegex)
+         let index = entriesByIdentity ?? Dictionary(grouping: entries) {
+@@ -299,7 +309,7 @@ final class DictionaryService: ObservableObject {
+         guard duplicateEntry(type: entry.type, original: original, isRegex: isRegex ?? entry.isRegex, excluding: entry.id) == nil else {
+             return false
          }
-         .menuBarExtraStyle(.menu)
-         .commands {
-+            // The standard About panel shows only the marketing version, which Daily and
-+            // Release Candidate builds share with the stable release; add their channel.
-+            CommandGroup(replacing: .appInfo) {
-+                Button(String(localized: "About TypeWhisper")) {
-+                    NSApp.orderFrontStandardAboutPanel(options: [
-+                        .applicationVersion: AppConstants.aboutPanelApplicationVersion()
-+                    ])
-+                    NSApp.activate()
-+                }
-+            }
-             CommandGroup(after: .appInfo) {
-                 ManagedWindowOpenerRegistrar()
-             }
-```
-
-**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +28/-0)
-```diff
-@@ -14870,6 +14870,34 @@
-         }
-       }
-     },
-+    "About TypeWhisper" : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Über TypeWhisper"
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Acerca de TypeWhisper"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "TypeWhisperについて"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "关于 TypeWhisper"
-+          }
-+        }
-+      }
-+    },
-     "Accessibility" : {
-       "localizations" : {
-         "de" : {
-```
-
-**File**: `TypeWhisperTests/AppFormatterServiceTests.swift` (modified, +16/-0)
-```diff
-@@ -45,6 +45,22 @@ final class AppFormatterServiceTests: XCTestCase {
-         XCTAssertEqual(channel, .releaseCandidate)
+-        entriesByIdentity = nil
++        invalidateEntryDerivedCaches()
+ 
+         let previous = (
+             original: entry.original,
+@@ -560,13 +570,21 @@ final class DictionaryService: ObservableObject {
+     /// Get all enabled terms as a comma-separated string for Whisper prompt.
+     /// Truncates at 600 characters to stay within the API's 224-token limit.
+     func enabledTerms() -> [String] {
+-        PluginDictionaryTerms.normalizedTerms(from: terms.map(\.original))
++        refreshTermsCacheIfStale()
++        if let terms = termsCache.terms { return terms }
++        let terms = enabledTermHints().map(\.text)
++        termsCache.terms = terms
++        return terms
      }
  
-+    func testAboutPanelVersionNamesTheChannelOfPreviewBuilds() throws {
-+        func version(_ channel: AppConstants.ReleaseChannel) -> String {
-+            AppConstants.aboutPanelApplicationVersion(infoDictionary: [
-+                "CFBundleShortVersionString": "1.8.2",
-+                "TypeWhisperReleaseChannel": channel.rawValue,
-+            ])
-+        }
+     func enabledTermHints() -> [PluginDictionaryTermHint] {
+-        PluginDictionaryTerms.normalizedTermHints(from: terms.map {
++        refreshTermsCacheIfStale()
++        if let hints = termsCache.hints { return hints }
++        let hints = PluginDictionaryTerms.normalizedTermHints(from: terms.map {
+             PluginDictionaryTermHint(text: $0.original, ctcMinSimilarity: $0.ctcMinSimilarity)
+         })
++        termsCache.hints = hints
++        return hints
+     }
+ 
+     func setTerms(_ rawTerms: [String], replaceExisting: Bool) {
+@@ -581,7 +599,7 @@ final class DictionaryService: ObservableObject {
+         guard let context = modelContext else {
+             throw DictionaryServiceMutationError.unavailable
+         }
+-        entriesByIdentity = nil
++        invalidateEntryDerivedCaches()
+ 
+         let normalized = PluginDictionaryTerms.normalizedTerms(from: rawTerms)
+         let normalizedByKey = Dictionary(uniqueKeysWithValues: normalized.map {
+@@ -625,7 +643,7 @@ final class DictionaryService: ObservableObject {
+         guard let context = modelContext else {
+             throw DictionaryServiceMutationError.unavailable
+         }
+-        entriesByIdentity = nil
++        invalidateEntryDerivedCaches()
+ 
+         let normalized = PluginDictionaryTerms.normalizedTermHints(from: rawTerms.map {
+             PluginDictionaryTermHint(
+@@ -727,12 +745,11 @@ final class DictionaryService: ObservableObject {
+     /// `modelId` is a per-request model override, for engines whose models differ in
+     /// dictionary terms support.
+     func getTermsForPrompt(providerId: String?, modelId: String? = nil) -> String? {
+-        let terms = enabledTerms()
+-        guard !terms.isEmpty else { return nil }
++        guard !enabledTerms().isEmpty else { return nil }
+ 
+         guard let providerId,
+               let plugin = PluginManager.shared?.transcriptionEngine(for: providerId) else {
+-            return PluginDictionaryTerms.prompt(from: terms)
++            return termsPrompt(budget: nil)
+         }
+ 
+         // An enforced engine and model replace any override, and the enforced model is
+@@ -752,26 +769,81 @@ final class DictionaryService: ObservableObject {
+         }
+ 
+         guard let budget = (plugin as? any DictionaryTermsBudgetProviding)?.dictionaryTermsBudget else {
+-            return PluginDictionaryTerms.prompt(from: terms)
++            return termsPrompt(budget: nil)
+         }
+ 
+-        return PluginDictionaryTerms.prompt(from: terms, budget: budget)
++        return termsPrompt(budget: budget)
+     }
+ 
+     func getTermHints(providerId: String?) -> [PluginDictionaryTermHint] {
+-        let hints = enabledTermHints()
+-        guard !hints.isEmpty else { retu
+```
+
+**File**: `TypeWhisper/ViewModels/DictationViewModel.swift` (modified, +14/-10)
+```diff
+@@ -3237,14 +3237,13 @@ final class DictationViewModel: ObservableObject {
+                 let translationTarget = effectiveTranslationTarget
+                 let primaryEngineId = engineOverride ?? modelManager.selectedProviderId
+                 let dictionaryProviderId = primaryEngineId
+-                let termsPrompt = dictionaryService.getTermsForPrompt(
+-                    providerId: dictionaryProviderId,
+-                    modelId: cloudModelOverride
+-                )
+-                let termHints = dictionaryService.getTermHints(providerId: dictionaryProviderId)
+ 
+-                let transcription = if let liveSessionResult {
+-                    FinalTranscriptionOutput(
++                let transcription: FinalTranscriptionOutput
++                // nil for a live result: its session got the terms when it started.
++                let primaryPromptChars: Int?
++                if let liveSessionResult {
++                    primaryPromptChars = nil
++                    transcription = FinalTranscriptionOutput(
+                         result: liveSessionResult,
+                         modelId: modelManager.resolvedModelId(
+                             engineOverrideId: engineOverride,
+@@ -3257,14 +3256,19 @@ final class DictationViewModel: ObservableObject {
+                         usedRecoveryFallback: false
+                     )
+                 } else {
+-                    try await transcribeFinalAudio(
++                    let termsPrompt = dictionaryService.getTermsForPrompt(
++                        providerId: dictionaryProviderId,
++                        modelId: cloudModelOverride
++                    )
++                    primaryPromptChars = termsPrompt?.count ?? 0
++                    transcription = try await transcribeFinalAudio(
+                         audioSamples: samples,
+                         languageSelection: languageSelection,
+                         task: task,
+                         primaryEngineId: primaryEngineId,
+                         primaryCloudModelOverride: cloudModelOverride,
+                         prompt: termsPrompt,
+-                        dictionaryTermHints: termHints,
++                        dictionaryTermHints: dictionaryService.getTermHints(providerId: dictionaryProviderId),
+                         normalizeNumbers: effectiveNumberNormalizationOverride
+                     )
+                 }
+@@ -3276,7 +3280,7 @@ final class DictationViewModel: ObservableObject {
+                     trace.model = transcription.modelId
+                     trace.usedLiveResult = usedLiveSessionResult
+                 }
+-                logger.info("Stop timing: final transcription ready elapsedMs=\(stopElapsedMs(), privacy: .public), usedLiveResult=\(usedLiveSessionResult, privacy: .public), engine=\(result.engineUsed, privacy: .public), model=\(transcription.modelId ?? "unknown", privacy: .public), usedRecoveryFallback=\(transcription.usedRecoveryFallback, privacy: .public), primaryPromptChars=\(termsPrompt?.count ?? 0, privacy: .public), \(diagnostics, privacy: .public)")
++                logger.info("Stop timing: final transcription ready elapsedMs=\(stopElapsedMs(), privacy: .public), usedLiveResult=\(usedLiveSessionResult, privacy: .public), engine=\(result.engineUsed, privacy: .public), model=\(transcription.modelId ?? "unknown", privacy: .public), usedRecoveryFallback=\(transcription.usedRecoveryFallback, privacy: .public), primaryPromptChars=\(primaryPromptChars.map(String.init) ?? "n/a", privacy: .public), \(diagnostics, privacy: .public)")
+ 
+                 // Bail out if a new recording started while we were transcribing
+                 guard !Task.isCancelled else { return }
+```
+
+**File**: `TypeWhisperTests/DictionaryServiceTests.swift` (modified, +42/-0)
+```diff
+@@ -1339,6 +1339,48 @@ final class DictionaryServiceTests: XCTestCase {
+         ])
+     }
+ 
++    @MainActor
++    func testTermPromptAndHintsFollowDictionaryAndBudgetChanges() throws {
++        let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
++        defer { TestSupport.remove(appSupportDirectory) }
 +
-+        // The channel names are localized; compare with them, not with English text.
-+        let daily = try XCTUnwrap(AppConstants.ReleaseChannel.daily.versionDisplayName)
-+        let releaseCandidate = try XCTUnwrap(AppConstants.ReleaseChannel.releaseCandidate.versionDisplayName)
-+        XCTAssertEqual(version(.stable), "1.8.2")
-+        XCTAssertEqual(version(.daily), "1.8.2 \(daily)")
-+        XCTAssertEqual(version(.releaseCandidate), "1.8.2 \(releaseCandidate)")
++        let service = DictionaryService(appSupportDirectory: appSupportDirectory)
++        service.setTerms(["Alpha", "BetaBeta", "Gamma"], replaceExisting: true)
++
++        let plugin = BudgetedDictionaryEnginePlugin()
++        plugin.providerIdValue = "budgeted"
++        plugin.budgetValue = DictionaryTermsBudget(maxTerms: 2)
++        installPlugins([plugin], appSupportDirectory: appSupportDirectory)
++
++        XCTAssertEqual(service.getTermsForPrompt(providerId: plugin.providerId), "Alpha, BetaBeta")
++        XCTAssertEqual(service.getTermHints(providerId: plugin.providerId).map(\.text), ["Alpha", "BetaBeta"])
++
++        plugin.budgetValue = DictionaryTermsBudget(maxCharsPerTerm: 5)
++        XCTAssertEqual(service.getTermsForPrompt(providerId: plugin.providerId), "Alpha, Gamma")
++        XCTAssertEqual(service.getTermHints(providerId: plugin.providerId).map(\.text), ["Alpha", "Gamma"])
++
++        service.addEntry(type: .term, original: "Delta", ctcMinSimilarity: 0.7)
++        XCTAssertEqual(service.getTermsForPrompt(providerId: plugin.providerId), "Alpha, Delta, Gamma")
++        XCTAssertEqual(service.getTermsForPrompt(providerId: nil), "Alpha, BetaBeta, Delta, Gamma")
++        XCTAssertEqual(service.getTermHints(providerId: plugin.providerId), [
++            PluginDictionaryTermHint(text: "Alpha", ctcMinSimilarity: nil),
++            PluginDictionaryTermHint(text: "Delta", ctcMinSimilarity: 0.7),
++            PluginDictionaryTermHint(text: "Gamma", ctcMinSimilarity: nil),
++        ])
++
++        let delta = try XCTUnwrap(service.terms.first { $0.original == "Delta" })
++        XCTAssertTrue(service.setCtcMinSimilarity(0.9, forTermEntryIDs: [delta.id]))
++        XCTAssertEqual(
++            service.getTermHints(providerId: nil).first { $0.text == "Delta" },
++            PluginDictionaryTermHint(text: "Delta", ctcMinSimilarity: 0.9)
++        )
++
++        service.setEntryEnabled(delta, enabled: false)
++        XCTAssertEqual(service.enabledTerms(), ["Alpha", "BetaBeta", "Gamma"])
++        XCTAssertEqual(service.getTermsForPrompt(providerId: nil), "Alpha, BetaBeta, Gamma")
++        XCTAssertEqual(service.getTermHints(providerId: plugin.providerId).map(\.text), ["Alpha", "Gamma"])
 +    }
 +
-     func testBundledPreviewReleaseUsesDailyTagAndURL() throws {
-         let release = try XCTUnwrap(AppConstants.bundledPreviewRelease(
-             infoDictionary: [
+     @MainActor
+     func testGetTermsForPromptFallsBackToLegacyBudgetForUnknownOrUnbudgetedEngines() throws {
+         let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1833** (2026-11-03): Stop toggle dictations sooner when the speaker finished a thought, with Reson8's turn detection (@SeoFood)
-- **PR #1824** (2026-11-03): Move the Soniox plugin to STT v6 and refresh model lists saved before it (1.2.15) (@SeoFood)
-- **PR #1823** (2026-11-03): Offer Rumble-2-Flash, live dictation, a dictionary custom model, pattern sets, filler words and speaker labels in Reson8 (1.1.0) (@yvos)
-- **PR #1821** (2026-11-02): Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (@SeoFood)
-- **PR #1820** (2026-11-02): Record short clips for pull requests whose change shows in motion (@SeoFood)
-- **PR #1819** (2026-11-02): Keep live text-field updates in Telegram when its AX write reports an error (#1818) (@SeoFood)
+- **PR #1872** (2026-11-05): (chore) Measure launch time and memory on every pull request and check PR descriptions (@SeoFood)
+- **PR #1870** (2026-11-04): (chore) Stop the Reson8 short-word test from repeating the word on slow runners (@SeoFood)
+- **PR #1867** (2026-11-04): (feature) Pass the calendar meeting's title, times and attendees to Recorder scripts (@SeoFood)
+- **PR #1865** (2026-11-04): (bug) Keep input responsive when key events queue up behind a slow main thread (@SeoFood)
+- **PR #1862** (2026-11-04): (bug) Recover from a missing audio device instead of failing every recording until relaunch (@SeoFood)
+- **PR #1861** (2026-11-04): (chore) Note why the live field does not write into Chrome's web text fields (@SeoFood)
 
 ---
 
@@ -2182,37 +3060,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Queue daily release runs so a late scheduled run skips instead of rebuilding the
+## X. (bug) Keep input responsive when key events queue up behind a slow main thread (
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TypeWhisper/Services/HotkeyService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2007bc99`: Queue daily release runs so a late scheduled run skips instead of rebuilding the day's tag (#1821). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ed91e6b`: (bug) Keep input responsive when key events queue up behind a slow main thread (#1865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/Services/HotkeyService.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-# GitHub often starts the schedule hours late, sometimes while a manually started daily is
-# still building the same tag. Daily runs therefore wait for each other; the later one then
-# finds the day's tag and skips. Every waiting run is kept (queue: max), so a scheduled run
-# never cancels a manual one. Tag pushes and runs for an explicit tag queue by tag and do not
-# wait for a daily.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.release_tag || 'daily' }}
-  cancel-in-progress: false
-  queue: max
+                let now = DispatchTime.now().uptimeNanoseconds
+                guard byTimeout else {
+                    // Switching the tap off for a backoff makes macOS report a user-input disable
+                    // right away. Re-arming on that report ended every backoff within milliseconds.
+                    // The tap is already off, and switching it off again would trigger another report.
+                    guard reenableBackoff.allowsReenable(at: now) else { return .backingOff(seconds: nil) }
+                    if let tap = port { CGEvent.tapEnable(tap: tap, enable: true) }
+                    return .reenable
+                }
+                let outcome = reenableBackoff.recordTimeout(at: now)
+        /// Tap thread, before the main thread gets `decision`. Releases an event that already
+        /// waited past `timeout` in the queue, so the main thread never starts a handler for an
+        /// event the tap lets through. Handing the decision over afterwards ends the stall.
+        func releaseIfLate(
+            _ decision: Decision,
+            requestedAt: UInt64,
+            timeout: TimeInterval,
+            now: UInt64 = DispatchTime.now().uptimeNanoseconds
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                let outcome = byTimeout
+                    ? reenableBackoff.recordTimeout(at: DispatchTime.now().uptimeNanoseconds)
+                    : .reenable
+    /// main thread does not pick it up within `eventTapDecisionTimeout`.
+        let requestedAt = DispatchTime.now().uptimeNanoseconds
+        switch eventTapMainThreadGate.wait(
+            for: decision,
+            requestedAt: requestedAt,
+            timeout: Self.eventTapDecisionTimeout,
+            claimedTimeout: Self.eventTapClaimedDecisionTimeout
+        ) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2007bc99` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ed91e6b` are properly handled with clean fallback behavior.

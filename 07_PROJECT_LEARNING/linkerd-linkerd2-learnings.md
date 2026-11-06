@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `59d4d4ca`  
+> **Source Version**: `73a365c0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:40:00.078Z  
+> **Timestamp**: 2026-11-05T18:15:23.620Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:40:00.071Z  
+> **Harvest Timestamp**: 2026-11-05T18:15:23.612Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11522 stars
+- **Stars / Engagement**: 11525 stars
 
 ---
 
@@ -1621,37 +1621,212 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59d4d4ca` (2026-11-04)
-**Commit Message**: build: keep apko outputs out of the repo root (#15766)
+### Incident Patch 1: `73a365c0` (2026-11-05)
+**Commit Message**: chore: bump k8s testing ref to 1.37 (#15740)
 
-`bin/docker-build-proxy` had apko write `proxy-runtime.tar` to the repo
-root, and apko writes its SBOMs (`sbom-*.spdx.json`) next to the image
-tarball by default. None of these were cleaned up or gitignored, so every
-proxy build left untracked files behind.
+Bump the testing version of k8s to 1.37.
 
-apko now writes the tarball and SBOMs into a temporary directory that is
-removed when the script exits. Also drop a stale comment about a
-`--local` flag that the script doesn't use.
+Disable installing the gateway api via k3s/k3d. Also set the k8s version when
+running cni-calico-deep tests.
 
-Signed-off-by: Alejandro Pedraza <[REDACTED_EMAIL]>
+Bump the gateway api version tested against to 1.6.1 (default with the latest
+version of kubernetes). Also bump to 1.6.1 in the error displayed when missing.
 
-**File**: `bin/docker-build-proxy` (modified, +5/-3)
+Bump the version of calico installed to the latest.
+
+Change the gateway api install flag for multi-cluster to include --server-side.
+
+**File**: `.github/workflows/integration.yml` (modified, +10/-8)
 ```diff
-@@ -33,9 +33,11 @@ get_extra_options() {
- # Build proxy base image with apko
- go install chainguard.dev/apko@$apko_version
- export PATH=$PATH:$(go env GOPATH)/bin
--# Add --local flag unless PUSH_RUNTIME_IMAGE is set
--apko build "$rootdir/proxy-runtime.yml" "$runtime_image" "$rootdir/proxy-runtime.tar"
--docker load < "$rootdir/proxy-runtime.tar"
-+apko_out=$(mktemp -d)
-+trap 'rm -rf "$apko_out"' EXIT
-+apko build --sbom-path "$apko_out" \
-+    "$rootdir/proxy-runtime.yml" "$runtime_image" "$apko_out/proxy-runtime.tar"
-+docker load < "$apko_out/proxy-runtime.tar"
- if [[ -n "${PUSH_RUNTIME_IMAGE:-}" ]]; then
-     for arch in "arm64" "amd64"; do
-         docker push "$runtime_image-$arch"
+@@ -160,7 +160,7 @@ jobs:
+         # Full k3s image tags are used, rather than release channels, so that
+         # cluster creation doesn't depend on update.k3s.io being reachable.
+         k8s:
+-          - v1.36.5-k3s1
++          - v1.37.1-k3s1
+         # 'tls-route' is the TLSRoute API version the bundle serves, and that
+         # the policy controller therefore negotiates, or 'none' when the bundle
+         # ships no TLSRoute CRD at all. TLSRoute only graduated to 'v1', and to
+@@ -170,10 +170,10 @@ jobs:
+           - version: linkerd
+             channel: experimental
+             tls-route: v1alpha2
+-          - version: v1.5.1
++          - version: v1.6.1
+             channel: experimental
+             tls-route: v1
+-          - version: v1.5.1
++          - version: v1.6.1
+             channel: standard
+             tls-route: v1
+         # Also test the Minimum Supported Kubernetes Version with the Minimum
+@@ -350,13 +350,15 @@ jobs:
+       fail-fast: false
+       matrix:
+         cases:
+-        # Full k3s image tags are used, rather than release channels, so that
+-        # cluster creation doesn't depend on update.k3s.io being reachable.
+-        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true}
++          # Full k3s image tags are used, rather than release channels, so that
++          # cluster creation doesn't depend on update.k3s.io being reachable.
++        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.5.1}
+         # for v1.34 onwards, gwapi gets installed by Traefik on the target cluster
+-        - {k8s: "v1.36.5-k3s1", manage-controllers: false, install-gwapi: false}
+-        - {k8s: "v1.36.5-k3s1", manage-controllers: true, install-gwapi: false}
++        - {k8s: "v1.37.1-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.6.1}
++        - {k8s: "v1.37.1-k3s1", manage-controllers: true,  install-gwapi: true, gwapi: v1.6.1}
+     name: "test-multicluster(${{ matrix.cases.k8s }}, ${{ matrix.cases.manage-controllers && 'managed-controllers' || 'unmanaged-controllers' }})"
++    env:
++      GWAPI_VERSION: ${{ matrix.cases.gwapi }}
+     steps:
+       - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3
+         env:
+```
+
+**File**: `bin/_test-helpers.sh` (modified, +4/-4)
+```diff
+@@ -5,7 +5,7 @@
+ set +e
+ 
+ k8s_version_min='docker.io/rancher/k3s:v1.31.14-k3s1'
+-k8s_version_max='docker.io/rancher/k3s:v1.36.5-k3s1'
++k8s_version_max='docker.io/rancher/k3s:v1.37.1-k3s1'
+ 
+ bindir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
+ testdir=$bindir/../test/integration
+@@ -310,16 +310,16 @@ start_test() {
+ 
+   case $name in
+     cluster-domain)
+-      config=("$name" "${config[@]}" --no-lb --k3s-arg --cluster-domain=custom.domain --k3s-arg '--disable=servicelb,traefik@server:0' --image "$k8s_version_max")
++      config=("$name" "${config[@]}" --no-lb --k3s-arg --cluster-domain=custom.domain --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
+       ;;
+     cni-calico-deep)
+-      config=("$name" "${config[@]}" --no-lb --k3s-arg --write-kubeconfig-mode=644 --k3s-arg --flannel-backend=none --k3s-arg --cluster-cidr=192.168.0.0/16 --k3s-arg '--disable=servicelb,traefik@server:0')
++      config=("$name" "${config[@]}" --no-lb --k3s-arg --write-kubeconfig-mode=644 --k3s-arg --flannel-backend=none --k3s-arg --cluster-cidr=192.168.0.0/16 --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
+       ;;
+     multicluster)
+       config=("${config[@]}" --network multicluster-test --image "$k8s_version_max")
+       ;;
+     *)
+-      config=("$name" "${config[@]}" --no-lb --k3s-arg '--disable=servicelb,traefik@server:0' --image "$k8s_version_max")
++      config=("$name" "${config[@]}" --no-lb --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
+       ;;
+   esac
+ 
+```
+
+**File**: `justfile` (modified, +5/-5)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ lint: action-lint action-dev-check md-lint sh-lint rs-fetch rs-clippy rs-check-fmt go-lint
+ 
+-export GWAPI_VERSION := "v1.2.0"
++export GWAPI_VERSION := env_var_or_default("GWAPI_VERSION", "v1.6.1")
+ 
+ ##
+ ## Go
+@@ -190,7 +190,7 @@ _k3d-image := if k3d-k8s =~ '^v[0-9]+\.[0-9]+\.[0-9]+' { "rancher/k3s:" + k3d-k8
+ k3d-agents := "0"
+ k3d-servers := "1"
+ 
+-_k3d-flags := "--no-lb --k3s-arg --disable='local-storage,traefik,servicelb,metrics-server@server:*'"
++_k3d-flags := "--no-lb --k3s-arg --disable='gateway-api-crd,local-storage,traefik,servicelb,metrics-server@server:*'"
+ 
+ _context := "--context=k3d-" + k3d-name
+ _kubectl := "kubectl " + _context
+@@ -300,7 +300,7 @@ proxy-image := DOCKER_REGISTRY + "/proxy"
+ # When GATEWAY_API_VERSION is 'linkerd' we use the CLI's vendored gateway API
+ # CRDs. Otherwise, we install the CRDs from the upstream release.
+ # This should be kept up-to-date with the latest stable release of the gateway API.
+-export GATEWAY_API_VERSION := env_var_or_default("GATEWAY_API_VERSION", "v1.5.1")
++export GATEWAY_API_VERSION := env_var_or_default("GATEWAY_API_VERSION", "v1.6.1")
+ 
+ # When GATEWAY_API_CHANNEL is 'experimental', we enable testing of experimental
+ # resource types (TCPRoute). Alternatively, the 'standard' channel may be used.
+@@ -486,7 +486,7 @@ _linkerd-viz-uninit:
+ ## linkerd multicluster
+ ##
+ 
+-_mc-target-k3d-flags := "--k3s-arg --disable='local-storage,metrics-server@server:*' --k3s-arg '--cluster-cidr=10.23.0.0/24@server:*'"
++_mc-target-k3d-flags := "--k3s-arg --disable='gateway-api-crd,local-storage,metrics-server@server:*' --k3s-arg '--cluster-cidr=10.23.0.0/24@server:*'"
+ 
+ linkerd-mc-install: _linkerd-init
+     {{ _linkerd }} mc install --set='linkerdVersion={{ linkerd-tag }}' \
+@@ -524,7 +524,7 @@ mc-target-load:
+         mc-load
+ 
+ mc-install-gwapi:
+-	{{ _kubectl }} apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GWAPI_VERSION}/experimental-install.yaml
++	{{ _kubectl }} apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GWAPI_VERSION}/experimental-install.yaml
+ 
+ mc-test-build:
+     go build --mod=readonly \
+```
+
+**File**: `pkg/healthcheck/healthcheck.go` (modified, +1/-1)
+```diff
+@@ -2271,7 +2271,7 @@ func CheckGatewayAPICRDsInstalled(ctx context.Context, k8sAPI *k8s.KubernetesAPI
+ func GatewayAPICRDsMissingError() error {
+ 	return errors.New(`The Gateway API CRDs must be installed prior to installing Linkerd. Run:
+ 
+-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
++kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.1/standard-install.yaml
+ 
+ or see https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api for more options.`)
+ }
+```
+
+**File**: `test/integration/deep/install_test.go` (modified, +11/-2)
+```diff
+@@ -13,6 +13,11 @@ import (
+ ///   TEST SETUP   ///
+ //////////////////////
+ 
++const (
++	// calicoVer installed by the test cases below.
++	calicoVer = "v3.33.0"
++)
++
+ var (
+ 	TestHelper *testutil.TestHelper
+ )
+@@ -34,7 +39,9 @@ func TestInstallCalico(t *testing.T) {
+ 	var out string
+ 	err := testutil.RetryFor(time.Minute, func() error {
+ 		var err error
+-		out, err = TestHelper.Kubectl("", []string{"apply", "-f", "https://raw.githubusercontent.com/projectcalico/calico/v3.31.0/manifests/tigera-operator.yaml"}...)
++		out, err = TestHelper.Kubectl("", []string{"apply", "-f", fmt.Sprintf(
++			"https://raw.githubusercontent.com/projectcalico/calico/%s/manifests/tigera-operator.yaml",
++			calicoVer)}...)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -47,7 +54,9 @@ func TestInstallCalico(t *testing.T) {
+ 		}
+ 		TestHelper.WaitRollout(t, deploys)
+ 
+-		out, err = TestHelper.Kubectl("", []string{"apply", "-f", "https://raw.githubusercontent.com/projectcalico/calico/v3.31.0/manifests/custom-resources.yaml"}...)
++		out, err = TestHelper.Kubectl("", []string{"apply", "-f", fmt.Sprintf(
++			"https://raw.githubusercontent.com/projectcalico/calico/%s/manifests/custom-resources.yaml",
++			calicoVer)}...)
+ 		if err != nil {
+ 			return err
+ 		}
+```
+
+**File**: `testutil/test_helper.go` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ import (
+ 	corev1 "k8s.io/api/core/v1"
+ )
+ 
+-const GATEWAY_API_VERSION = "v1.5.1"
++const GATEWAY_API_VERSION = "v1.6.1"
+ 
+ // TestHelper provides helpers for running the linkerd integration tests.
+ type TestHelper struct {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1680,34 +1855,44 @@ Signed-off-by: Alejandro Pedraza <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: keep apko outputs out of the repo root (#15766)
+## X. bump k8s testing ref to 1.37 (#15740)
 
 **RULE**:
-When implementing operations in `bin/docker-build-proxy`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/integration.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59d4d4ca`: build: keep apko outputs out of the repo root (#15766). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73a365c0`: bump k8s testing ref to 1.37 (#15740). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/docker-build-proxy`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/integration.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-apko_out=$(mktemp -d)
-trap 'rm -rf "$apko_out"' EXIT
-apko build --sbom-path "$apko_out" \
-    "$rootdir/proxy-runtime.yml" "$runtime_image" "$apko_out/proxy-runtime.tar"
-docker load < "$apko_out/proxy-runtime.tar"
+          - v1.37.1-k3s1
+          - version: v1.6.1
+          - version: v1.6.1
+          # Full k3s image tags are used, rather than release channels, so that
+          # cluster creation doesn't depend on update.k3s.io being reachable.
+        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.5.1}
+        - {k8s: "v1.37.1-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.6.1}
+        - {k8s: "v1.37.1-k3s1", manage-controllers: true,  install-gwapi: true, gwapi: v1.6.1}
+    env:
+      GWAPI_VERSION: ${{ matrix.cases.gwapi }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-# Add --local flag unless PUSH_RUNTIME_IMAGE is set
-apko build "$rootdir/proxy-runtime.yml" "$runtime_image" "$rootdir/proxy-runtime.tar"
-docker load < "$rootdir/proxy-runtime.tar"
+          - v1.36.5-k3s1
+          - version: v1.5.1
+          - version: v1.5.1
+        # Full k3s image tags are used, rather than release channels, so that
+        # cluster creation doesn't depend on update.k3s.io being reachable.
+        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true}
+        - {k8s: "v1.36.5-k3s1", manage-controllers: false, install-gwapi: false}
+        - {k8s: "v1.36.5-k3s1", manage-controllers: true, install-gwapi: false}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59d4d4ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73a365c0` are properly handled with clean fallback behavior.

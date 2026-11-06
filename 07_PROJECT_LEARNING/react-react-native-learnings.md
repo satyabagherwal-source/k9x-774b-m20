@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `edf2b86e`  
+> **Source Version**: `93019c44`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:32:16.939Z  
+> **Timestamp**: 2026-11-05T23:49:00.563Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:32:16.774Z  
+> **Harvest Timestamp**: 2026-11-05T23:48:53.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126853 stars
+- **Stars / Engagement**: 126861 stars
 
 ---
 
@@ -223,7 +223,8 @@ export class CLIError extends Error {
       this.stack =
         typeof originalError === 'string'
           ? originalError
-          : originalError.stack || ''.split('\n').slice(0, 2).join('\n');
+          : // $FlowFixMe[sketchy-null-string]
+            originalError.stack || ''.split('\n').slice(0, 2).join('\n');
     } else {
       // When the "originalError" is not passed, it means that we know exactly
       // what went wrong and provide means to fix it. In such cases showing the
@@ -617,664 +618,428 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `debaf42c` (2026-11-02)
-**Commit Message**: Fix iOS Fabric unmount assertions for zero-sized recycled views
+### Incident Patch 1: `45152f1f` (2026-11-04)
+**Commit Message**: Fix addViewAt crash for views held by startViewTransition on Android
+
+<!-- Thanks for submitting a pull request! We appreciate you spending the time to work on these changes. Please provide enough information so that others can review your pull request. The three fields below are mandatory. -->
 
 ## Summary:
 
-Related to #59166. This change addresses the unmount comparison; it does not reset container state during recycling.
+<!-- Explain the **motivation** for making this change. What existing problem does the pull request solve? -->
 
-Unmounting a zero-sized recycled `View` can fail with `Attempt to unmount a view which is mounted inside a different view`, even when the exception reports the parent's own tag as the existing parent.
+On Android, `SurfaceMountingManager.addViewAt` fails when it inserts a view that a parent still holds with `ViewGroup.startViewTransition`.
 
-A previous owner can leave the native view with a clipping container, for example when using `overflow: 'hidden'` with an outline. Fabric can mount descendants before applying the recycled parent's new props. If those props no longer require the container and the view has zero bounds, layer invalidation returns without migrating the children back.
-
-`currentContainerView` performs that migration lazily. The unmount assertion compares `childComponentView.superview == self.currentContainerView`, so evaluation can read the child's old superview before the getter moves it. By the time the exception message is formatted, the child can already belong to the expected parent.
-
-Resolve the container in a separate statement before reading `superview` in the assertions. The reconciliation also runs when
-
-**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm` (modified, +5/-2)
-```diff
-@@ -243,21 +243,24 @@ - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childCompo
-   if (_removeClippedSubviews) {
-     [_reactSubviews removeObjectAtIndex:index];
-   } else {
-+    // This getter can migrate children from a recycled clipping container.
-+    // Reconcile before reading superview, even when assertions are disabled.
-+    [[maybe_unused]] UIView *containerView = self.currentContainerView;
-     RCTAssert(
-         childComponentView.superview != nil,
-         @"Attempt to unmount a view which is not mounted. (parent: %@, child: %@, index: %@)",
-         self,
-         childComponentView,
-         @(index));
-     RCTAssert(
--        childComponentView.superview == self.currentContainerView,
-+        childComponentView.superview == containerView,
-         @"Attempt to unmount a view which is mounted inside a different view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-         self,
-         childComponentView,
-         @(index),
-         @([childComponentView.superview tag]));
- #ifndef NS_BLOCK_ASSERTIONS
--    NSArray<UIView *> *containerSubviews = self.currentContainerView.subviews;
-+    NSArray<UIView *> *containerSubviews = containerView.subviews;
-     BOOL isIndexInBounds = index >= 0 && (NSUInteger)index < containerSubviews.count;
-     RCTAssert(
-         isIndexInBounds && [containerSubviews objectAtIndex:index] == childComponentView,
-```
-
-**File**: `packages/react-native/React/Tests/Mounting/RCTViewComponentViewUnmountTests.mm` (modified, +53/-0)
-```diff
-@@ -8,6 +8,9 @@
- #import <React/RCTAssert.h>
- #import <React/RCTViewComponentView.h>
- #import <XCTest/XCTest.h>
-+#import <react/renderer/components/view/ViewProps.h>
-+
-+using namespace facebook::react;
- 
- @interface RCTViewComponentViewUnmountTests : XCTestCase
- @end
-@@ -83,4 +86,54 @@ - (void)testUnmountWithInBoundsMismatchStillReportsTagAtIndex
-   XCTAssertNotEqualObjects(thrownName, NSRangeException);
- }
- 
-+// A recycled view can receive children before its own props are updated. If
-+// the new owner is zero-sized, layer invalidation does not reconcile the old
-+// clipping container. Unmount must do so before checking the child's parent.
-+- (void)testUnmountReconcilesRecycledContainerAtZeroSize
-+{
-+  RCTViewComponentView *parent = [[RCTViewComponentView alloc] initWithFrame:CGRectZero];
-+  auto clippingProps = std::make_shared<ViewProps>();
-+  clippingProps->yogaStyle.setOverflow(facebook::yoga::Overflow::Hidden);
-+  clippingProps->outlineWidth = 1;
-+  [parent updateProps:clippingProps oldProps:parent.props];
-+  [parent finalizeUpdates:RNComponentViewUpdateMaskAll];
-+
-+  RCTViewComponentView *previousChild = [RCTViewComponentView new];
-+  [parent mountChildComponentView:previousChild index:0];
-+  UIView *previousContainer = previousChild.superview;
-+  XCTAssertNotEqual(previousContainer, parent);
-+  XCTAssertNotNil(previousContainer);
-+  [parent unmountChildComponentView:previousChild index:0];
-+  [parent prepareForRecycle];
-+
-+  // Fabric mounts descendants before applying the recycled parent's new props.
-+  RCTViewComponentView *child = [RCTViewComponentView new];
-+  [parent mountChildComponentView:child index:0];
-+  [parent updateProps:std::make_shared<ViewProps>() oldProps:parent.props];
-+  [parent finalizeUpdates:RNComponentViewUpdateMaskAll];
-+  XCTAssertTrue(CGSizeEqualToSize(parent.bounds.size, CGSizeZero));
-+  XCTAssertEqual(child.superview, previousContainer);
-+
-+  NSString *message = nil;
-+  NSString *thrownName = RCTUnmountAndReportAssert(parent, child, 0, &message);
-+
-+  XCTAssertNil(message, @"Container migration must precede the ownership check");
-+  XCTAssertNil(thrownName);
-+  XCTAssertNil(child.superview);
-+  XCTAssertNil(previousContainer.superview, @"The stale container must be removed");
-+}
-+
-+- (void)testUnmountStillReportsChildMountedUnderAnotherParent
-+{
-+  RCTViewComponentView *parent = [RCTViewComponentView new];
-+  RCTViewComponentView *otherParent = [RCTViewComponentView new];
-+  RCTViewComponentView *child = [RCTViewComponentView new];
-+  [otherParent mountChildComponentView:child index:0];
-+
-+  NSString *message = nil;
-+  RCTUnmountAndReportAssert(parent, child, 0, &message);
-+
-+  XCTAssertTrue([message containsString:@"mounted inside a different view"]);
-+}
-+
- @end
-```
-
----
-
-### Incident Patch 2: `edf2b86e` (2026-11-03)
-**Commit Message**: Reland iOS 27 StatusBar fix with tvOS guards (#59542)
-
-Summary:
-
-Fixes https://github.com/react/react-native/issues/58758.
-
-Apps built with the iOS 27 SDK can no longer change the status bar through the `UIApplication` setters. Restore the view-controller-based implementation: `RCTStatusBarAppearance` stores the requested style, hidden state and animation, and the default root and Fabric modal controllers return those values. The modal preserves the appearance captured before presentation until JavaScript changes it.
-
-Apps must set `UIViewControllerBasedStatusBarAppearance` to `YES` on iOS 27. Custom root view controllers must return the `RCTStatusBarAppearance` values. Apps using `NO` retain the legacy setters on older SDKs and receive a one-time warning where those setters are ineffective.
-
-Exclude the appearance helper and status-bar controller code on tvOS, where UIKit's status-bar types and APIs are unavailable. Guard the modal capture declaration and call as well as its state and implementation. The iOS code paths are unchanged.
-
-
-Test Plan:
-- Built the full `AirwaveBurbn` app and package for appletvos-arm64 with the Airwave mode, local build flavour, Pika 27 and Xcode 27.1. 
-
-**File**: `packages/react-native/Libraries/AppDelegate/RCTDefaultReactNativeFactoryDelegate.mm` (modified, +26/-1)
-```diff
-@@ -15,9 +15,34 @@
- #endif
- 
- #import <RCTAnimatedModuleProvider/RCTAnimatedModuleProvider.h>
-+#import <React/RCTStatusBarAppearance.h>
- #import <react/featureflags/ReactNativeFeatureFlags.h>
- #import <react/nativemodule/defaults/DefaultTurboModules.h>
- 
-+@interface RCTRootViewController : UIViewController
-+@end
-+
-+@implementation RCTRootViewController
-+
-+#if !TARGET_OS_TV
-+- (UIStatusBarStyle)preferredStatusBarStyle
-+{
-+  return RCTStatusBarAppearance.style;
-+}
-+
-+- (BOOL)prefersStatusBarHidden
-+{
-+  return RCTStatusBarAppearance.hidden;
-+}
-+
-+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-+{
-+  return RCTStatusBarAppearance.updateAnimation;
-+}
-+#endif
-+
-+@end
-+
- @implementation RCTDefaultReactNativeFactoryDelegate {
-   // C++ Native Animated provider, created once on first use (getTurboModule: may be called
-   // concurrently for different module names).
-@@ -29,7 +54,7 @@ @implementation RCTDefaultReactNativeFactoryDelegate {
- 
- - (UIViewController *)createRootViewController
- {
--  return [UIViewController new];
-+  return [RCTRootViewController new];
- }
- 
- - (void)setRootView:(UIView *)rootView toRootViewController:(UIViewController *)rootViewController
-```
-
-**File**: `packages/react-native/Libraries/AppDelegate/RCTUIConfiguratorProtocol.h` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
- 
- /**
-  * It creates the RootViewController.
-- * By default, it creates a new instance of a `UIViewController`.
-+ * By default, it creates a view controller that returns the `RCTStatusBarAppearance` values.
-  * You can override it to provide your own initial ViewController.
-  *
-  * @return: an instance of `UIViewController`.
-```
-
-**File**: `packages/react-native/React/Base/RCTStatusBarAppearance.h` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ */
-+
-+#import <UIKit/UIKit.h>
-+
-+#if !TARGET_OS_TV
-+NS_ASSUME_NONNULL_BEGIN
-+
-+/**
-+ * The status bar state set from JavaScript. Root view controllers return these values from their status bar methods.
-+ */
-+@interface RCTStatusBarAppearance : NSObject
-+
-+@property (class, nonatomic, readonly) UIStatusBarStyle style;
-+@property (class, nonatomic, readonly) BOOL hidden;
-+@property (class, nonatomic, readonly) UIStatusBarAnimation updateAnimation;
-+
-++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated;
-++ (void)setHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation;
-+
-+@end
-+
-+NS_ASSUME_NONNULL_END
-+#endif
-```
-
-**File**: `packages/react-native/React/Base/RCTStatusBarAppearance.mm` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ */
-+
-+#import "RCTStatusBarAppearance.h"
-+
-+#if !TARGET_OS_TV
-+#import "RCTAssert.h"
-+#import "RCTUtils.h"
-+
-+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-+static UIStatusBarStyle sStyle = UIStatusBarStyleDefault;
-+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-+static BOOL sHidden = NO;
-+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-+static UIStatusBarAnimation sUpdateAnimation = UIStatusBarAnimationNone;
-+
-+@implementation RCTStatusBarAppearance
-+
-++ (UIStatusBarStyle)style
-+{
-+  return sStyle;
-+}
-+
-++ (BOOL)hidden
-+{
-+  return sHidden;
-+}
-+
-++ (UIStatusBarAnimation)updateAnimation
-+{
-+  return sUpdateAnimation;
-+}
-+
-++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated
-+{
-+  RCTAssertMainQueue();
-+  sStyle = style;
-+  [self updateStatusBarAnimated:animated];
-+}
-+
-++ (void)setHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation
-+{
-+  RCTAssertMainQueue();
-+  sHidden = hidden;
-+  sUpdateAnimation = animation;
-+  [self updateStatusBarAnimated:animation != UIStatusBarAnimationNone];
-+}
-+
-++ (void)updateStatusBarAnimated:(BOOL)animated
-+{
-+  UIViewController *viewController = RCTPresentedViewController();
-+  if (animated) {
-+    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration
-+                     animations:^{
-+                       [viewController setNeedsStatusBarAppearanceUpdate];
-+                     }];
-+  } else {
-+    [viewController setNeedsStatusBarAppearanceUpdate];
-+  }
-+}
-+
-+@end
-+#endif
-```
-
-**File**: `packages/react-native/React/CoreModules/RCTStatusBarManager.mm` (modified, +34/-9)
-```diff
-@@ -11,6 +11,7 @@
- #import <React/RCTEventDispatcherProtocol.h>
- #import <React/RCTInitializing.h>
- #import <React/RCTLog.h>
-+#import <React/RCTStatusBarAppearance.h>
- #import <React/RCTUtils.h>
- 
- #import <FBReactNativeSpec/FBReactNativeSpec.h>
-@@ -68,6 +69,28 @@ static BOOL RCTViewControllerBasedStatusBarAppearance()
-   return value;
- }
- 
-+// UIKit makes the app-level setters no-ops only for apps built with the iOS 27 SDK.
-+static BOOL RCTAppLevelStatusBarIsNoOp()
-+{
-+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 270000
-+  if (@available(iOS 27.0, *)) {
-+    return YES;
-+  }
-+#endif
-+  return NO;
-+}
-+
-+static void RCTWarnAppLevelStatusBarUnavailable()
-+{
-+  static dispatch_once_t onceToken;
-+  dispatch_once(&onceToken, ^{
-+    RCTLogWarn(
-+        @"StatusBar has no effect because UIViewControllerBasedStatusBarAppearance is NO in Info.plist. "
-+        @"Apps built with the iOS 27 SDK cannot use the app-level status bar API that this setting uses. "
-+        @"Set UIViewControllerBasedStatusBarAppearance to YES to control the status bar from JavaScript.");
-+  });
-+}
-+
- RCT_EXPORT_MODULE()
- 
- + (BOOL)requiresMainQueueSetup
-@@ -147,30 +170,32 @@ - (void)setStyle:(NSString *)style animated:(BOOL)animated
- {
-   dispatch_async(dispatch_get_main_queue(), ^{
-     UIStatusBarStyle statusBarStyle = [RCTConvert UIStatusBarStyle:style];
--    if (RCTViewControllerBasedStatusBarAppearance()) {
--      RCTLogWarn(@"RCTStatusBarManager is a no-op when \
--                UIViewControllerBasedStatusBarAppearance is YES; set the status bar from your view controller instead");
--    } else {
-+    [RCTStatusBarAppearance setStyle:statusBarStyle animated:animated];
-+    if (!RCTViewControllerBasedStatusBarAppearance()) {
- #pragma clang diagnostic push
- #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-       [RCTSharedApplication() setStatusBarStyle:statusBarStyle animated:animated];
--    }
- #pragma clang diagnostic pop
-+      if (RCTAppLevelStatusBarIsNoOp()) {
-+        RCTWarnAppLevelStatusBarUnavailable();
-+      }
-+    }
-   });
- }
- 
- - (void)setHidden:(BOOL)hidden withAnimation:(NSString *)withAnimation
- {
-   dispatch_async(dispatch_get_main_queue(), ^{
-     UIStatusBarAnimation animation = [RCTConvert UIStatusBarAnimation:withAnimation];
--    if (RCTViewControllerBasedStatusBarAppearance()) {
--      RCTLogWarn(@"RCTStatusBarManager is a no-op when \
--                UIViewControllerBasedStatusBarAppearance is YES; set the status bar from your view controller instead");
--    } else {
-+    [RCTStatusBarAppearance setHidden:hidden withAnimation:animation];
-+    if (!RCTViewControllerBasedStatusBarAppearance()) {
- #pragma clang diagnostic push
- #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-       [RCTSharedApplication() setStatusBarHidden:hidden withAnimation:animation];
- #pragma clang diagnostic pop
-+      if (RCTAppLevelStatusBarIsNoOp()) {
-+        RCTWarnAppLevelStatusBarUnavailable();
-+      }
-     }
-   });
- }
-```
-
-**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/Modal/RCTFabricModalHostViewController.mm` (modified, +30/-2)
-```diff
-@@ -8,12 +8,18 @@
- #import "RCTFabricModalHostViewController.h"
- 
- #import <React/RCTLog.h>
-+#import <React/RCTStatusBarAppearance.h>
- #import <React/RCTSurfaceTouchHandler.h>
- 
- @implementation RCTFabricModalHostViewController {
-   CGRect _lastViewBounds;
- #if !TARGET_OS_TV
-   RCTSurfaceTouchHandler *_touchHandler;
-+  BOOL _hasCapturedStatusBar;
-+  UIStatusBarStyle _capturedStatusBarStyle;
-+  BOOL _capturedStatusBarHidden;
-+  UIStatusBarStyle _jsStatusBarStyleAtCapture;
-+  BOOL _jsStatusBarHiddenAtCapture;
- #endif
- }
- 
-@@ -47,14 +53,36 @@ - (void)loadView
- }
- 
- #if !TARGET_OS_TV
-+- (void)captureStatusBarAppearance
-+{
-+  UIStatusBarManager *statusBarManager = RCTUIStatusBarManager();
-+  _hasCapturedStatusBar = YES;
-+  _capturedStatusBarStyle = statusBarManager.statusBarStyle;
-+  _capturedStatusBarHidden = statusBarManager.isStatusBarHidden;
-+  _jsStatusBarStyleAtCapture = RCTStatusBarAppearance.style;
-+  _jsStatusBarHiddenAtCapture = RCTStatusBarAppearance.hidden;
-+}
-+
-+// Keep the status bar from before the modal until JS changes it.
- - (UIStatusBarStyle)preferredStatusBarStyle
- {
--  return [RCTUIStatusBarManager() statusBarStyle];
-+  if (_hasCapturedStatusBar && RCTStatusBarAppearance.style == _jsStatusBarStyleAtCapture) {
-+    return _capturedStatusBarStyle;
-+  }
-+  return RCTStatusBarAppearance.style;
- }
- 
- - (BOOL)prefersStatusBarHidden
- {
--  return [RCTUIStatusBarManager() isStatusBarHidden];
-+  if (_hasCapturedStatusBar && RCTStatusBarAppearance.hidden == _jsStatusBarHiddenAtCapture) {
-+    return _capturedStatusBarHidden;
-+  }
-+  return RCTStatusBarAppearance.hidden;
-+}
-+
-+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-+{
-+  return RCTStatusBarAppearance.updateAnimation;
- }
- #endif
- 
-```
-
-**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/Modal/RCTModalHostViewComponentView.mm` (modified, +9/-0)
-```diff
-@@ -17,6 +17,12 @@
- 
- #import "RCTFabricModalHostViewController.h"
- 
-+#if !TARGET_OS_TV
-+@interface RCTFabricModalHostViewController ()
-+- (void)captureStatusBarAppearance;
-+@end
-+#endif
-+
- using namespace facebook::react;
- 
- #if !TARGET_OS_TV
-@@ -173,6 +179,9 @@ - (void)ensurePresentedOnlyIfNeeded
-     [self saveAccessibilityFocusedView];
-     self.viewController.presentationController.delegate = self;
-     self.viewController.modalInPresentation = _modalInPresentation;
-+#if !TARGET_OS_TV
-+    [self.viewController captureStatusBarAppearance];
-+#endif
- 
-     _isPresented = YES;
-     [self presentViewController:self.viewController
-```
-
-**File**: `packages/rn-tester/RNTester/Info.plist` (modified, +1/-1)
-```diff
-@@ -81,6 +81,6 @@
- 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
- 	</array>
- 	<key>UIViewControllerBasedStatusBarAppearance</key>
--	<false/>
-+	<true/>
- </dict>
- </plist>
-```
-
----
-
-### Incident Patch 3: `856661ff` (2026-11-02)
-**Commit Message**: fix: disconnect `AnimatedProps` before attaching a new native view
-
-## Summary:
-
-When an animated component replaces its underlying native view, `AnimatedProps.setNativeView()` connects the existing animated props node to the replacement without disconnecting the previous view. On Android, this causes a crash:
+A held child can leave its old parent's child list while `child.parent` still points to that old parent:
 
 ```text
-Animated node X is already attached to a view: Y
+oldParent.indexOfChild(view) == -1
+view.parent == oldParent
 ```
 
-Disconnect the previous target before connecting the replacement.
+The existing recovery in `addViewAt` calls `removeView` on the old parent. That does nothing for a view that is no longer in the child list, so `addView` throws `addViewAt: failed to insert view ... into parent`. The recovery also adds the tag to `erroneouslyReaddedReactTags`, so a later Remove of that tag returns early and the view is never removed.
 
-## Changelog:
+React Native Screens holds the content of a removed screen this way during its exit animation ([`Screen.
 
-[ANDROID] [FIXED] - Prevent native Animated crashes when an animated component replaces its underlying native view.
-
-## Test Plan:
-
-You can use this code to reproduce a crash:
-
-```tsx
-import React, { forwardRef, useState } from "react";
-import { Animated, Button, StyleSheet, Text, View } from "react-native";
-
-import type { ViewProps } from "react-native";
-
-// Keep the Animated wrapper mounted while replacing its native View.
-const ReplacingView = Animated.createAnimatedComponent(
-  forwardRef<View, ViewProps & { generation: number }>(function ReplacingView(
-    { generation, ...props },
-    ref,
-  ) {
-    return <View {...props} key={generation} ref={ref} />;
-  }),
-);
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, padding: 
-
-**File**: `packages/react-native/Libraries/Animated/nodes/AnimatedProps.js` (modified, +3/-0)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt` (modified, +5/-1)
 ```diff
-@@ -268,6 +268,9 @@ export default class AnimatedProps extends AnimatedNode {
-     if (this._target?.instance === instance) {
-       return;
+@@ -335,7 +335,11 @@ internal constructor(
+       logViewHierarchy(parentView, false)
      }
-+    if (this.__isNative && this._target != null) {
-+      this.#disconnectAnimatedView(this._target);
+ 
+-    val currParentView = view.parent
++    var currParentView = view.parent
++    if (currParentView is ViewGroup && currParentView.indexOfChild(view) == -1) {
++      currParentView.endViewTransition(view)
++      currParentView = view.parent
 +    }
-     const target = (this._target = {instance, connectedViewTag: null});
-     if (this.__isNative) {
-       this.#connectAnimatedView(target);
+     if (currParentView != null) {
+       val actualParentId = if (currParentView is ViewGroup) currParentView.id else View.NO_ID
+       ReactSoftExceptionLogger.logSoftException(
 ```
 
-**File**: `packages/react-native/src/private/animated/__tests__/AnimatedNative-test.js` (modified, +93/-0)
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/SurfaceMountingManagerViewTransitionTest.kt` (added, +231/-0)
 ```diff
-@@ -31,6 +31,11 @@ describe('Native Animated', () => {
-     };
-   }
- 
-+  function createViewInstance(): React.ElementRef<React.ElementType> {
-+    // $FlowFixMe[incompatible-type]
-+    return {};
+@@ -0,0 +1,231 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++@file:Suppress("DEPRECATION")
++
++package com.facebook.react.fabric
++
++import android.app.Activity
++import android.view.View
++import android.view.ViewGroup
++import com.facebook.react.ReactRootView
++import com.facebook.react.bridge.JavaOnlyMap
++import com.facebook.react.bridge.ReactTestHelper
++import com.facebook.react.fabric.mounting.MountingManager
++import com.facebook.react.fabric.mounting.MountingManager.MountItemExecutor
++import com.facebook.react.fabric.mounting.SurfaceMountingManager
++import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsForTests
++import com.facebook.react.uimanager.ThemedReactContext
++import com.facebook.react.uimanager.ViewManager
++import com.facebook.react.uimanager.ViewManagerRegistry
++import com.facebook.react.views.view.ReactViewManager
++import com.facebook.testutils.shadows.ShadowSoLoader
++import org.assertj.core.api.Assertions.assertThat
++import org.junit.Before
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.robolectric.Robolectric
++import org.robolectric.RobolectricTestRunner
++import org.robolectric.annotation.Config
++
++/**
++ * Tests for [SurfaceMountingManager.addViewAt] with views that a parent still holds with
++ * [ViewGroup.startViewTransition] after their removal.
++ */
++@RunWith(RobolectricTestRunner::class)
++@Config(shadows = [ShadowSoLoader::class])
++class SurfaceMountingManagerViewTransitionTest {
++  private lateinit var mountingManager: MountingManager
++  private lateinit var themedReactContext: ThemedReactContext
++  private val surfaceId = 1
++
++  @Before
++  fun setUp() {
++    ReactNativeFeatureFlagsForTests.setUp()
++    val reactContext = ReactTestHelper.createTestReactApplicationContext()
++    themedReactContext = ThemedReactContext(reactContext, reactContext, null, -1)
++    mountingManager =
++        MountingManager(
++            ViewManagerRegistry(listOf<ViewManager<*, *>>(ReactViewManager())),
++            MountItemExecutor {},
++        )
 +  }
 +
-   beforeEach(() => {
-     jest.resetModules();
-     jest.restoreAllMocks();
-@@ -1620,6 +1625,94 @@ describe('Native Animated', () => {
-       );
-     });
++  @Test
++  fun addViewAt_movesHeldChildAndAllowsItsFinalRemoval() {
++    val smm = startSurface()
++    smm.createViews(SCREEN, CARRIER)
++    smm.addViewAt(surfaceId, SCREEN, 0)
++    smm.addViewAt(SCREEN, CARRIER, 0)
++    val screen = smm.viewGroup(SCREEN)
++    val carrier = smm.getView(CARRIER)
++
++    screen.startViewTransition(carrier)
++    smm.removeViewAt(CARRIER, SCREEN, 0)
++    assertThat(carrier.parent).isSameAs(screen)
++
++    smm.addViewAt(surfaceId, CARRIER, 1)
++    assertThat(carrier.parent).isSameAs(smm.viewGroup(surfaceId))
++
++    smm.removeViewAt(CARRIER, surfaceId, 1)
++    assertThat(carrier.parent).isNull()
++    assertThat(smm.viewGroup(surfaceId).indexOfChild(carrier)).isEqualTo(-1)
++  }
++
++  @Test
++  fun addViewAt_movesNestedHeldChildrenAndAllowsTheirFinalRemoval() {
++    val smm = startSurface()
++    smm.createViews(SCREEN, CONTENT, CARRIER, INNER_CARRIER)
++    smm.addViewAt(surfaceId, SCREEN, 0)
++    smm.addViewAt(SCREEN, CONTENT, 0)
++    smm.addViewAt(CONTENT, CARRIER, 0)
++    smm.addViewAt(CARRIER, INNER_CARRIER, 0)
++    val root = smm.viewGroup(surfaceId)
++    val carrier = smm.getView(CARRIER)
++    val innerCarrier = smm.getView(INNER_CARRIER)
++
++    repeat(2) {
++      smm.viewGroup(SCREEN).startViewTransition(smm.getView(CONTENT))
++      smm.viewGroup(CONTENT).startViewTransition(carrier)
++      smm.viewGroup(CARRIER).startViewTransition(innerCarrier)
++    }
++    smm.removeViewAt(INNER_CARRIER, CARRIER, 0)
++    smm.removeViewAt(CARRIER, CONTENT, 0)
++    assertThat(carrier.parent).isSameAs(smm.viewGroup(CONTENT))
++    assertThat(innerCarrier.parent).isSameAs(carrier)
++
++    smm.addViewAt(surfaceId, CARRIER, 1)
++    smm.addViewAt(surfaceId, INNER_CARRIER, 2)
++    assertThat(carrier.parent).isSameAs(root)
++    assertThat(innerCarrier.parent).isSameAs(root)
++
++    smm.removeViewAt(INNER_CARRIER, surfaceId, 2)
++    smm.removeViewAt(CARRIER, surfaceId, 1)
++    assertThat(innerCarrier.parent).isNull()
++    assertThat(carrier.parent).isNull()
++    assertThat(root.childCount).isEqualTo(1)
++  }
++
++  @Test
++  fun addViewAt_movesHeldChildOfRootAttachedToWindow() {
++    val smm = startSurface()
++    attachToWindow(smm.getView(surfaceId))
++    smm.createViews(SCREEN, CARRIER)
++    smm.addViewAt(surfaceId, SCREEN, 0)
++    smm.addViewAt(SCREEN, CARRIER, 0)
++    val carrier = smm.getView(CARRIER)
++
++    smm.viewGroup(SCREEN).startViewTransition(carrier)
++    smm.removeViewAt(CARRIER, SCREEN, 0)
++    assertThat(carrier.isAttachedToWindow).isTrue()
++
++    smm.addViewAt(surfaceId, CARRIER, 1)
++    assertThat(carrier.parent).isSameAs(smm.viewGroup(surfaceId))
++    assertThat(carrier.isAttachedToWindow).isTrue()
++
++    smm.removeViewAt(CARRIER, surfaceId, 1)
++    assertThat(carrier.parent).isNull()
++    assertThat(carrier.isAttachedToWindow).isFalse()
++  }
++
++  @Test
++
+```
+
+---
+
+### Incident Patch 2: `1f8cb8b3` (2026-11-05)
+**Commit Message**: Report the native memory of created shadow nodes to the JS GC
+
+## Summary:
+
+The JS object that `createNode` returns owns the new shadow node, so the shadow node (with its props, family and event emitter) is only freed when the GC collects that object. The GC doesn't know about this native memory: it only sees a small JS object. With Hermes, it can go a long time without a full collection, and the shadow nodes of trees that were already unmounted pile up in native memory.
+
+This change reports an estimate of that native memory with `setExternalMemoryPressure` when `createNode` returns, like the Blob module does for blob data (#44336). The GC then accounts for it and collects unmounted trees in time.
+
+The estimate is 2 KB per node. A `View` with a few style props takes about 2.4 KB on Android (shadow node, props, family and event emitter, measured with heapprofd), a bit less on iOS, which doesn't keep a `folly::dynamic` copy of the props. Only nodes from `createNode` are reported, not clones: that's where most of the memory is, and reporting clones too made no difference in the measurements below while it would make the GC run more often during frequent re-renders. JSC's `setExternalM
+
+**File**: `packages/react-native/ReactCommon/react/renderer/uimanager/UIManagerBinding.cpp` (modified, +22/-5)
+```diff
+@@ -23,6 +23,16 @@
  
-+    it('disconnects the previous native view before connecting a replacement', () => {
-+      const findNodeHandle = jest
-+        .fn()
-+        .mockReturnValueOnce(11)
-+        .mockReturnValueOnce(22);
-+      jest.setMock('../../../../Libraries/ReactNative/RendererProxy', {
-+        findNodeHandle,
-+      });
-+      const {Animated} = importModules();
-+      const AnimatedProps =
-+        require('../../../../Libraries/Animated/nodes/AnimatedProps').default;
-+      const firstView = createViewInstance();
-+      const secondView = createViewInstance();
-+      const opacity = new Animated.Value(1);
-+      const propsNode = new AnimatedProps({style: {opacity}}, jest.fn());
-+      propsNode.__attach();
-+      propsNode.setNativeView(firstView);
-+      propsNode.__makeNative();
-+      const propsTag = propsNode.__getNativeTag();
+ namespace facebook::react {
+ 
++namespace {
 +
-+      propsNode.setNativeView(secondView);
++// Native memory that the JS object returned by `createNode` keeps alive: the
++// shadow node with its props, family and event emitter. A View with a few
++// style props takes about 2.4 KB on Android (measured with heapprofd), a bit
++// less on iOS, which doesn't keep the props as `folly::dynamic`.
++constexpr size_t kCreatedShadowNodeNativeMemory = 2048;
 +
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).toHaveBeenNthCalledWith(1, propsTag, 11);
-+      expect(
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView,
-+      ).toHaveBeenCalledWith(propsTag, 11);
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).toHaveBeenNthCalledWith(2, propsTag, 22);
-+      expect(
-+        // $FlowFixMe[prop-missing]
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView.mock
-+          .invocationCallOrder[0],
-+      ).toBeLessThan(
-+        // $FlowFixMe[prop-missing]
-+        NativeAnimatedModule.connectAnimatedNodeToView.mock
-+          .invocationCallOrder[1],
++} // namespace
++
+ void UIManagerBinding::createAndInstallIfNeeded(
+     jsi::Runtime& runtime,
+     const std::shared_ptr<UIManager>& uiManager) {
+@@ -245,7 +255,7 @@ jsi::Value UIManagerBinding::get(
+               return jsi::Value::undefined();
+             }
+ 
+-            return valueFromShadowNode(
++            auto node = objectFromShadowNode(
+                 runtime,
+                 uiManager->createNode(
+                     tagFromValue(arguments[0]),
+@@ -254,6 +264,13 @@ jsi::Value UIManagerBinding::get(
+                     RawProps(runtime, arguments[3]),
+                     std::move(instanceHandle)),
+                 true);
++            // The shadow node is freed only when the GC collects this object,
++            // so tell the GC about the native memory it keeps alive. Without
++            // this, unmounted shadow trees can pile up until the JS heap
++            // itself grows enough for a full collection.
++            node.setExternalMemoryPressure(
++                runtime, kCreatedShadowNodeNativeMemory);
++            return node;
+           } catch (const std::logic_error& ex) {
+             LOG(FATAL) << "logic_error in createNode: " << ex.what();
+           }
+@@ -339,7 +356,7 @@ jsi::Value UIManagerBinding::get(
+           // rolled out
+           // validateArgumentCount(runtime, methodName, paramCount, count);
+ 
+-          return valueFromShadowNode(
++          return objectFromShadowNode(
+               runtime,
+               uiManager->cloneNode(
+                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
+@@ -365,7 +382,7 @@ jsi::Value UIManagerBinding::get(
+             size_t count) -> jsi::Value {
+           validateArgumentCount(runtime, methodName, paramCount, count);
+ 
+-          return valueFromShadowNode(
++          return objectFromShadowNode(
+               runtime,
+               uiManager->cloneNode(
+                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
+@@ -393,7 +410,7 @@ jsi::Value UIManagerBinding::get(
+           // validateArgumentCount(runtime, methodName, paramCount, count);
+ 
+           bool hasChildrenArg = count == 3;
+-          return valueFromShadowNode(
++          return objectFromShadowNode(
+               runtime,
+               uiManager->cloneNode(
+                   *Bridging<std::shared_ptr<const ShadowNode>>::fromJs(
+@@ -820,7 +837,7 @@ jsi::Value UIManagerBinding::get(
+             return jsi::Value::null();
+           }
+ 
+-          return valueFromShadowNode(runtime, shadowNode);
++          return objectFromShadowNode(runtime, shadowNode);
+         });
+   }
+ 
+```
+
+**File**: `packages/react-native/ReactCommon/react/renderer/uimanager/primitives.h` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ struct ShadowNodeListWrapper : public jsi::NativeState {
+   std::shared_ptr<std::vector<std::shared_ptr<const ShadowNode>>> shadowNodeList;
+ };
+ 
+-inline static jsi::Value valueFromShadowNode(
++inline static jsi::Object objectFromShadowNode(
+     jsi::Runtime &runtime,
+     std::shared_ptr<const ShadowNode> shadowNode,
+     bool assignRuntimeShadowNodeReference = false)
+```
+
+**File**: `packages/react-native/src/private/__tests__/ShadowNodeExternalMemory-itest.js` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @fantom_mode *
++ * @fantom_disable_coverage
++ * @flow strict-local
++ * @format
++ */
++
++import '@react-native/fantom/src/setUpDefaultReactNativeEnvironment';
++
++import * as Fantom from '@react-native/fantom';
++import nullthrows from 'nullthrows';
++import * as React from 'react';
++import {View} from 'react-native';
++
++// Must match `kCreatedShadowNodeNativeMemory` in UIManagerBinding.cpp.
++const CREATED_SHADOW_NODE_NATIVE_MEMORY = 2048;
++
++function getExternalMemoryAfterGC(): number {
++  global.gc();
++  const stats = nullthrows(
++    nullthrows(global.HermesInternal).getInstrumentedStats,
++  )();
++  const externalBytes = stats.js_externalBytes;
++  if (typeof externalBytes !== 'number') {
++    throw new Error('Expected js_externalBytes to be a number');
++  }
++  return externalBytes;
++}
++
++describe('shadow node external memory', () => {
++  it('reports the native memory of created shadow nodes to the GC until they are collected', () => {
++    const before = getExternalMemoryAfterGC();
++
++    let root: ?Fantom.Root = Fantom.createRoot();
++    Fantom.runTask(() => {
++      nullthrows(root).render(
++        <View>
++          {Array.from({length: 100}, (_, i) => (
++            <View key={i} />
++          ))}
++        </View>,
 +      );
-+
-+      propsNode.setNativeView(secondView);
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).toHaveBeenCalledTimes(2);
-+      expect(
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView,
-+      ).toHaveBeenCalledTimes(1);
-+
-+      propsNode.__detach();
-+      expect(
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView,
-+      ).toHaveBeenNthCalledWith(2, propsTag, 22);
-+      expect(findNodeHandle).toHaveBeenCalledTimes(2);
 +    });
 +
-+    it('only connects the latest view when switching to the native driver', () => {
-+      jest.setMock('../../../../Libraries/ReactNative/RendererProxy', {
-+        findNodeHandle: () => 22,
-+      });
-+      const {Animated} = importModules();
-+      const AnimatedProps =
-+        require('../../../../Libraries/Animated/nodes/AnimatedProps').default;
-+      const opacity = new Animated.Value(1);
-+      const propsNode = new AnimatedProps({style: {opacity}}, jest.fn());
-+      propsNode.__attach();
-+      propsNode.setNativeView(createViewInstance());
-+      propsNode.setNativeView(createViewInstance());
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).not.toHaveBeenCalled();
-+      expect(
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView,
-+      ).not.toHaveBeenCalled();
++    // The 100 children and their parent are alive, so their native memory
++    // stays reported after a GC.
++    expect(getExternalMemoryAfterGC() - before).toBeGreaterThanOrEqual(
++      101 * CREATED_SHADOW_NODE_NATIVE_MEMORY,
++    );
 +
-+      propsNode.__makeNative();
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).toHaveBeenCalledTimes(1);
-+      expect(
-+        NativeAnimatedModule.connectAnimatedNodeToView,
-+      ).toHaveBeenCalledWith(propsNode.__getNativeTag(), 22);
-+      expect(
-+        NativeAnimatedModule.disconnectAnimatedNodeFromView,
-+      ).not.toHaveBeenCalled();
-+      propsNode.__detach();
++    Fantom.runTask(() => {
++      nullthrows(root).destroy();
 +    });
++    root = null;
 +
-     it('creates new props, style and transform nodes at update', async () => {
-       const {Animated} = importModules();
++    // Once the tree is unmounted and collected, its memory isn't reported
++    // anymore.
++    expect(getExternalMemoryAfterGC() - before).toBeLessThan(
++      CREATED_SHADOW_NODE_NATIVE_MEMORY,
++    );
++  });
++});
+```
+
+---
+
+### Incident Patch 3: `4a851dde` (2026-11-05)
+**Commit Message**: Drop `PropertyDescriptor` type arguments that the upcoming non-generic builtin rejects
+
+Summary:
+Flow's builtin `PropertyDescriptor<T = unknown>` is becoming non-generic, as in TypeScript's `lib.es5.d.ts`: its `value`, `get` and `set` use `any`, and `Object.getOwnPropertyDescriptor` no longer takes a type argument. The new builtins reject `PropertyDescriptor<X>` annotations and `Object.getOwnPropertyDescriptor<X>(...)` calls.
+
+Remove those type arguments. Today's Flow accepts all of these sites without them.
+
+Nothing changes at runtime.
+
+Changelog: [Internal] Drop `PropertyDescriptor` type arguments.
+
+Differential Revision: D129956546
+
+Pull Request resolved: https://github.com/react/react-native/pull/59814
+
+**File**: `packages/react-native/Libraries/Utilities/PolyfillFunctions.js` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ export function polyfillObjectProperty<T>(
+   name: string,
+   getValue: () => T,
+ ): void {
+-  const descriptor = Object.getOwnPropertyDescriptor<$FlowFixMe>(object, name);
++  const descriptor = Object.getOwnPropertyDescriptor(object, name);
+   if (__DEV__ && descriptor) {
+     const backupName = `original${name[0].toUpperCase()}${name.slice(1)}`;
+     Object.defineProperty(object, backupName, descriptor);
+```
+
+**File**: `packages/react-native/src/private/webapis/dom/oldstylecollections/HTMLCollection.js` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ import {setPlatformObject} from '../../webidl/PlatformObjects';
+ // IMPORTANT: The type definition for this module is defined in `HTMLCollection.js.flow`
+ // because Flow only supports indexers in classes in declaration files.
  
+-const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor<unknown>, ...} = {
++const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor, ...} = {
+   value: {},
+   enumerable: true,
+   configurable: false,
+```
+
+**File**: `packages/react-native/src/private/webapis/dom/oldstylecollections/NodeList.js` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ import {setPlatformObject} from '../../webidl/PlatformObjects';
+ // IMPORTANT: The Flow type definition for this module is defined in `NodeList.js.flow`
+ // because Flow only supports indexers in classes in declaration files.
+ 
+-const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor<unknown>, ...} = {
++const REUSABLE_PROPERTY_DESCRIPTOR: {...PropertyDescriptor, ...} = {
+   value: {},
+   writable: false,
+ };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59780** (2026-11-03): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #59779** (closed): Support text updates in the shared animation backend (@bartlomiejbloniarz)
-- **PR #59777** (2026-11-03): Don't clone zeroed out `display: none` subtrees on every layout pass (#2055) (@javache)
-- **PR #59775** (2026-11-03): Babel preset: Remove jsx-source and jsx-self plugins (@robhogan)
-- **PR #59766** (2026-11-03): Include folly headers directly instead of via folly/dynamic.h (#59766) (@r-barnes)
-- **PR #59765** (2026-11-03): Remove $FlowExpectedError[sketchy-null-string] (utils.js) (#59765) (@jcperez-ch)
+- **PR #59815** (2026-11-05): xplat/js/react-native-github: opt in to fmt 12.2.0 (@r-barnes)
+- **PR #59814** (2026-11-05): Drop `PropertyDescriptor` type arguments that the upcoming non-generic builtin rejects (@SamChou19815)
+- **PR #59810** (2026-11-05): [RN][Changelog] Mark two v0.89.0-rc.0 entries as breaking (@fabriziocucci)
+- **PR #59803** (2026-11-04): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #59799** (2026-11-04): Make the conversions of `parseInt` and `isNaN` explicit (@SamChou19815)
+- **PR #59798** (closed): Fix LogBox inspector content under horizontal safe area insets (@huntie)
 
 ---
 
@@ -1294,33 +1059,32 @@ const styles = StyleSheet.create({
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS Fabric unmount assertions for zero-sized recycled views
+## X. addViewAt crash for views held by startViewTransition on Android
 
 **RULE**:
-When implementing operations in `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `debaf42c`: iOS Fabric unmount assertions for zero-sized recycled views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45152f1f`: addViewAt crash for views held by startViewTransition on Android. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/fabric/mounting/SurfaceMountingManager.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    // This getter can migrate children from a recycled clipping container.
-    // Reconcile before reading superview, even when assertions are disabled.
-    [[maybe_unused]] UIView *containerView = self.currentContainerView;
-        childComponentView.superview == containerView,
-    NSArray<UIView *> *containerSubviews = containerView.subviews;
+    var currParentView = view.parent
+    if (currParentView is ViewGroup && currParentView.indexOfChild(view) == -1) {
+      currParentView.endViewTransition(view)
+      currParentView = view.parent
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        childComponentView.superview == self.currentContainerView,
-    NSArray<UIView *> *containerSubviews = self.currentContainerView.subviews;
+    val currParentView = view.parent
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `debaf42c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45152f1f` are properly handled with clean fallback behavior.

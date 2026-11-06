@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `5390e472`  
+> **Source Version**: `e3e4f4eb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:44:49.303Z  
+> **Timestamp**: 2026-11-05T22:08:30.657Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:44:48.919Z  
+> **Harvest Timestamp**: 2026-11-05T22:08:29.580Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3746 stars
+- **Stars / Engagement**: 3749 stars
 
 ---
 
@@ -328,8 +328,9 @@ package com.swmansion.rnscreens.core.common.safearea
  * System insets (e.g. `systemBars`, `displayCutout`) are handled through Android inset
  * dispatch mechanism (via `onApplyWindowInsets`).
  *
- * Classes implementing this protocol are responsible for notifying the registered
+ * Classes implementing this protocol are responsible for notifying every registered
  * [OnInterfaceInsetsChangeListener] about changes to **interface** safe area insets.
+ * More than one listener can be registered at the same time.
  */
 interface SafeAreaProvider {
     /**
@@ -338,7 +339,7 @@ interface SafeAreaProvider {
      * @param listener listener that wants to receive notifications about changes
      * to **interface** safe area insets via `onInterfaceInsetsChange`.
      */
-    fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
+    fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 
     /**
      * Responsible for unregistering **interface** safe area insets listener.
@@ -364,13 +365,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5134** (2026-11-03): **[iOS] Large title drops into place on the first push onto a stack whose root hides its header**
-  *Symptoms*: ### Description  On iOS, the first push of a `headerLargeTitle` screen onto a native stack whose root screen has `headerShown: false` animates the large title from the collapsed bar state instead of the expanded one. For the whole push the inline (small) title is visible next to the back button and fades out, while the large title starts about 20pt too high and slides down into place. Every later push onto the same stack is correct.  Measured on the minimal repro below from a 60 fps screen recording (top of the large title in points from the top of the screen):  | | large title at push start | large title at rest | inline title | |---|---|---|---| | first push | about 46 | about 69 | visible, fades out over about 0.5s | | second push | about 69 | about 69 | not visible |  Instrumenting `-[RNSScreenStackView setPushViewControllers:]` (same setup, iOS 27.0) shows the navigation bar right before the first push is hidden (`navigationBarHidden == YES`, frame `{{0, -116}, {402, 54}}`) and `prefersLargeTitles == NO`. Right before the second push the bar has already been laid out at its large-title height (`{{402, 62}, {402, 106}}`, `prefersLargeTitles == YES`).  #### Root cause  Line numbers are for 4.30.1.   1. `prefersLargeTitles` and the bar's visibility are applied to the pushed screen only in `+[RNSScreenStackHeaderConfig updateViewController:withConfig:animated:]`, which for a push runs from `navigationController:willShowViewController:animated:` (`ios/RNSScreenStack.mm:340`),
+- **Issue #5145** (2026-11-05): **fix(Android, Tabs): notify every SafeAreaView registered on TabsContainer about interface insets**
+  *Symptoms*: ## Description  On Android, `TabsContainer` keeps only one interface insets listener. Every `SafeAreaView` in a tab registers itself through `setOnInterfaceInsetsChangeListener`, so each new view replaces the previous one. The earlier views stop receiving tab bar inset changes. When the current listener is removed, `TabsContainer` also removes its layout listener from the bottom navigation view, so a remaining view receives nothing until it is remounted.  `TabsContainer` is the only `SafeAreaProvider` on Android. iOS has no equivalent listener API and is not affected.  Closes #5127.  ## Changes  - `TabsContainer` keeps a set of `OnInterfaceInsetsChangeListener`s instead of one. - It adds the bottom navigation view's layout listener when the first listener registers, and removes it when the last listener is removed. - `updateInterfaceInsets` notifies every registered listener. It iterates over a copy, so a listener that unregisters during the callback does not modify the set while it is iterated. - The `SafeAreaProvider` KDoc now says that every registered listener is notified and that more than one can be registered.  The suggested fix in the issue ("keep a set of listeners and notify each one") is what this PR implements.  ## Before & after - visual documentation  Cold start with gesture navigation. Each probe is a view whose height is the bottom inset its `SafeAreaView` received. The red probe is the first `SafeAreaView`, the blue one the second.  | Before | After | | --- |
 
-- **Issue #5130** (2026-11-03): **fix(example): Allow undefined for optional SettingsSwitch props**
-  *Symptoms*: ## Description  The root `tsconfig.json` enables `exactOptionalPropertyTypes`, so passing a `string | undefined` value to `SettingsSwitch`'s `testID` prop (e.g. from a helper that forwards an optional `testID`) fails to type-check:  ``` error TS2375: Type '{ label: string; testID: string | undefined; ... }' is not assignable to type 'Props' with 'exactOptionalPropertyTypes: true'. ```  This widens the optional `testID` and `style` props to explicitly accept `undefined`, matching the `?: T | undefined` convention used across the codebase.  Spotted during review of #4624.  ## Changes  - `apps/src/shared/SettingsSwitch.tsx`: `style?: ViewStyle | undefined`, `testID?: string | undefined`  ## Test plan  - `cd apps && npx tsc --noEmit -p tsconfig.json --ignoreDeprecations 6.0` no longer reports the `SettingsSwitch` error for `test-stack-header-item-appearance-ios` - `yarn check-types`, eslint, prettier pass  ## Checklist  - [x] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [ ] For API changes, updated relevant public types. - [ ] Ensured that CI passes  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #5140** (2026-11-04): **refactor(v5): migrate SafeAreaView, ScrollToTopGuard and ScrollViewMarker to the docs conventions**
+  *Symptoms*: ## Description  Migrates `SafeAreaView`, `ScrollToTopGuard` and `ScrollViewMarker` to the documentation conventions (RFC-1960 for declarations, RFC-1947 for doc comments).  Closes https://github.com/software-mansion/react-native-screens-labs/issues/1991  ## Changes  ### Part 1 – declarations ([`da8ab7e2`](https://github.com/software-mansion/react-native-screens/commit/da8ab7e26f8bb97c05ef7d75d26e44bacbbf435a))  - Added `ScrollToTopGuardProps` in a new `ScrollToTopGuard.types.ts`, used by   both implementations and exported from the barrel. - Extracted the inline `scrollEdgeEffects` object of `ScrollViewMarkerProps`   into the exported `ScrollViewMarkerScrollEdgeEffectsIOS` interface. The shape   is unchanged.  ### Part 2 – existing doc comments ([`ec333740`](https://github.com/software-mansion/react-native-screens/commit/ec3337400178cb2d09c6945f1fe8e687535532f4))  - `ScrollToTopGuard`: rewrote the comment to the RFC-1947 tags, dropped the   "EXPERIMENTAL API" text in favour of `@experimental`, and removed the   duplicate comment from `ScrollToTopGuard.ios.tsx`. - `scrollEdgeEffects`: moved the list of values to `ScrollEdgeEffect` and   replaced `@default` and `@supported` with `@defaultValue` and `@platform`.  ### Part 3 – new doc comments ([`340e6df0`](https://github.com/software-mansion/react-native-screens/commit/340e6df00bea2631466d2887bb889992590888cf))  - Documented `SafeAreaView` and its props, `Edge`, `InsetType`,   `ScrollToTopGuardProps`, `ScrollViewMarker` and its 
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5130?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> 
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5140?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <de
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -387,147 +388,301 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f9b45ea` (2026-11-03)
-**Commit Message**: fix(example): Allow undefined for optional SettingsSwitch props (#5130)
+### Incident Patch 1: `e3e4f4eb` (2026-11-05)
+**Commit Message**: fix(Android, Tabs): notify every SafeAreaView registered on TabsContainer about interface insets (#5145)
 
 ## Description
 
-The root `tsconfig.json` enables `exactOptionalPropertyTypes`, so
-passing a `string | undefined` value to `SettingsSwitch`'s `testID` prop
-(e.g. from a helper that forwards an optional `testID`) fails to
-type-check:
+On Android, `TabsContainer` keeps only one interface insets listener.
+Every `SafeAreaView` in a tab registers itself through
+`setOnInterfaceInsetsChangeListener`, so each new view replaces the
+previous one. The earlier views stop receiving tab bar inset changes.
+When the current listener is removed, `TabsContainer` also removes its
+layout listener from the bottom navigation view, so a remaining view
+receives nothing until it is remounted.
 
-```
-error TS2375: Type '{ label: string; testID: string | undefined; ... }' is not assignable to type 'Props' with 'exactOptionalPropertyTypes: true'.
-```
+`TabsContainer` is the only `SafeAreaProvider` on Android. iOS has no
+equivalent listener API and is not affected.
 
-This widens the optional `testID` and `style` props to explicitly accept
-`undefined`, matching the `?: T | undefined` convention used across the
-codebase.
-
-Spotted during review of #4624.
+Closes #5127.
 
 ## Changes
 
-- `apps/src/shared/SettingsSwitch.tsx`: `style?: ViewStyle | undefined`,
-`testID?: string | undefined`
+- `TabsContainer` keeps a set of `OnInterfaceInsetsChangeListener`s
+instead of one.
+- It adds the bottom navigation view's layout listener when the first
+listener registers, and removes it when the last listener is removed.
+- `updateInterfaceInsets` notifies every registered listener. It
+iterates over a copy, so a listener that unregisters during the callback
+does not modify the set while it is iterated.
+- The `SafeAreaProvider` KDoc now says that every registered listener is
+notified a
 
-## Test plan
-
-- `cd apps && npx tsc --noEmit -p tsconfig.json --ignoreDeprecations
-6.0` no longer reports the `SettingsSwitch` error for
-`test-stack-header-item-appearance-ios`
-- `yarn check-types`, eslint, prettier pass
-
-## Checklist
-
-- [x] Included code example that can be used to test this change.
-- [ ] For visual changes, included screenshots / GIFs / recordings
-documenting the change.
-- [ ] For API changes, updated relevant 
-
-**File**: `apps/src/shared/SettingsSwitch.tsx` (modified, +2/-2)
+**File**: `android/src/main/java/com/swmansion/rnscreens/core/common/safearea/SafeAreaProvider.kt` (modified, +3/-2)
 ```diff
-@@ -7,8 +7,8 @@ type Props = {
-   label: string;
-   value: boolean;
-   onValueChange: (value: boolean) => void;
--  style?: ViewStyle;
--  testID?: string;
-+  style?: ViewStyle | undefined;
-+  testID?: string | undefined;
- };
+@@ -7,8 +7,9 @@ package com.swmansion.rnscreens.core.common.safearea
+  * System insets (e.g. `systemBars`, `displayCutout`) are handled through Android inset
+  * dispatch mechanism (via `onApplyWindowInsets`).
+  *
+- * Classes implementing this protocol are responsible for notifying the registered
++ * Classes implementing this protocol are responsible for notifying every registered
+  * [OnInterfaceInsetsChangeListener] about changes to **interface** safe area insets.
++ * More than one listener can be registered at the same time.
+  */
+ interface SafeAreaProvider {
+     /**
+@@ -17,7 +18,7 @@ interface SafeAreaProvider {
+      * @param listener listener that wants to receive notifications about changes
+      * to **interface** safe area insets via `onInterfaceInsetsChange`.
+      */
+-    fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
++    fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
  
- export const SettingsSwitch = ({
+     /**
+      * Responsible for unregistering **interface** safe area insets listener.
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/core/containers/tabs/container/TabsContainer.kt` (modified, +11/-12)
+```diff
+@@ -167,7 +167,7 @@ class TabsContainer internal constructor(
+ 
+     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView)
+ 
+-    private var interfaceInsetsChangeListener: OnInterfaceInsetsChangeListener? = null
++    private val interfaceInsetsChangeListeners = mutableListOf<OnInterfaceInsetsChangeListener>()
+ 
+     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+         if (newValue != oldValue) {
+@@ -377,21 +377,20 @@ class TabsContainer internal constructor(
+         }
+     }
+ 
+-    override fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
+-        if (interfaceInsetsChangeListener == null) {
++    override fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
++        if (interfaceInsetsChangeListeners.isEmpty()) {
+             bottomNavigationView.addOnLayoutChangeListener(this)
+         }
+-        interfaceInsetsChangeListener = listener
++        interfaceInsetsChangeListeners.add(listener)
+     }
+ 
+     override fun removeOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
+-        if (interfaceInsetsChangeListener == listener) {
+-            interfaceInsetsChangeListener = null
++        if (interfaceInsetsChangeListeners.remove(listener) && interfaceInsetsChangeListeners.isEmpty()) {
+             bottomNavigationView.removeOnLayoutChangeListener(this)
+         }
+     }
+ 
+-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
++    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight().toFloat())
+ 
+     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
+ 
+@@ -875,12 +874,12 @@ class TabsContainer internal constructor(
+             "[RNScreens] Requested fragment for key: $screenKey does not exist"
+         }
+ 
+-    private fun updateInterfaceInsets(newHeight: Int? = null) {
+-        val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
++    // A hidden tab bar is `GONE`, so `bottomNavigationView.height` keeps the last laid out value.
++    private fun currentTabBarHeight(newHeight: Int? = null): Int = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
+ 
+-        interfaceInsetsChangeListener?.apply {
+-            this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
+-        }
++    private fun updateInterfaceInsets(newHeight: Int? = null) {
++        val insets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight(newHeight).toFloat())
++        interfaceInsetsChangeListeners.forEach { it.onInterfaceInsetsChange(insets) }
+     }
+ 
+     private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/views/safearea/SafeAreaView.kt` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@ class SafeAreaView(
+             return
+         }
+ 
+-        newProvider.setOnInterfaceInsetsChangeListener(this)
++        newProvider.addOnInterfaceInsetsChangeListener(this)
+         provider = WeakReference(newProvider)
+ 
+         currentInterfaceInsets = newProvider.getInterfaceInsets()
+```
+
+**File**: `apps/src/tests/issue-tests/Test5127.tsx` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++import React, { useCallback, useState } from 'react';
++import {
++  Button,
++  StyleSheet,
++  Text,
++  View,
++  type LayoutChangeEvent,
++} from 'react-native';
++import { Tabs, type TabsHostNavStateRequest } from 'react-native-screens';
++import { SafeAreaView } from 'react-native-screens/experimental';
++
++const PROBE_HEIGHT = 120;
++
++function Probe({ label, color }: { label: string; color: string }) {
++  const [inset, setInset] = useState<number | null>(null);
++  const onLayout = useCallback((e: LayoutChangeEvent) => {
++    setInset(Math.round(PROBE_HEIGHT - e.nativeEvent.layout.height));
++  }, []);
++
++  return (
++    <View style={styles.probeBox}>
++      <SafeAreaView edges={{ bottom: true }} style={styles.probeSafeArea}>
++        <View
++          style={[styles.probeFill, { backgroundColor: color }]}
++          onLayout={onLayout}>
++          <Text style={styles.probeText}>
++            {label}: bottom inset {inset ?? '…'}
++          </Text>
++        </View>
++      </SafeAreaView>
++    </View>
++  );
++}
++
++function Screen({
++  tabBarHidden,
++  toggleTabBar,
++}: {
++  tabBarHidden: boolean;
++  toggleTabBar: () => void;
++}) {
++  const [firstKey, setFirstKey] = useState(0);
++  const [secondMounted, setSecondMounted] = useState(true);
++
++  return (
++    <View style={styles.screen}>
++      <Text style={styles.description}>
++        Expected: both probes read the same bottom inset, equal to the tab bar
++        height while it is shown and to the system inset while it is hidden,
++        after every button below.
++      </Text>
++      <Probe key={firstKey} label="first" color="#d9534f" />
++      {secondMounted && <Probe label="second" color="#428bca" />}
++      <Button title="Remount first" onPress={() => setFirstKey(k => k + 1)} />
++      <Button
++        title={secondMounted ? 'Unmount second' : 'Mount second'}
++        onPress={() => setSecondMounted(m => !m)}
++      />
++      <Button
++        title={tabBarHidden ? 'Show tab bar' : 'Hide tab bar'}
++        onPress={toggleTabBar}
++      />
++    </View>
++  );
++}
++
++export default function Test5127() {
++  const [nav, setNav] = useState<TabsHostNavStateRequest>({
++    selectedScreenKey: 'probes',
++    baseProvenance: 0,
++  });
++  const [tabBarHidden, setTabBarHidden] = useState(false);
++  const toggleTabBar = useCallback(() => setTabBarHidden(h => !h), []);
++
++  return (
++    <Tabs.Host
++      tabBarHidden={tabBarHidden}
++      navStateRequest={nav}
++      onTabSelected={e =>
++        setNav({
++          selectedScreenKey: e.nativeEvent.selectedScreenKey,
++          baseProvenance: e.nativeEvent.provenance,
++        })
++      }>
++      <Tabs.Screen
++        screenKey="probes"
++        title="Probes"
++        ios={{ icon: { type: 'sfSymbol', name: 'ruler' } }}>
++        <Screen tabBarHidden={tabBarHidden} toggleTabBar={toggleTabBar} />
++      </Tabs.Screen>
++      <Tabs.Screen
++        screenKey="other"
++        title="Other"
++        ios={{ icon: { type: 'sfSymbol', name: 'square' } }}>
++        <View style={styles.screen} />
++      </Tabs.Screen>
++    </Tabs.Host>
++  );
++}
++
++const styles = StyleSheet.create({
++  screen: { flex: 1, padding: 16, gap: 12, backgroundColor: '#fff' },
++  description: { fontSize: 14 },
++  probeBox: { height: PROBE_HEIGHT, backgroundColor: '#eee' },
++  probeSafeArea: { flex: 1 },
++  probeFill: { flex: 1, justifyContent: 'center', alignItems: 'center' },
++  probeText: { color: '#fff', fontWeight: '600' },
++});
+```
+
+**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
+```diff
+@@ -231,6 +231,7 @@ export { default as Test4872 } from './Test4872';
+ export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
+ export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
+ export { default as Test5092 } from './Test5092';
++export { default as Test5127 } from './Test5127';
+ export { default as TestScreenAnimation } from './TestScreenAnimation';
+ // The following test was meant to demo the "go back" gesture using Reanimated
+ // but the associated PR in react-navigation is currently put on hold
 ```
 
 ---
 
-### Incident Patch 2: `b352be65` (2026-11-03)
-**Commit Message**: fix(iOS): tolerate sub-pixel drift in the ContainedModal containment check (#5087)
+### Incident Patch 2: `e3f893db` (2026-11-04)
+**Commit Message**: feat(Android): update SDK versions in build.gradle to 24 for minimum SDK, and compile and target to 36 (#5138)
 
 ## Description
 
-The DEBUG containment check of `ContainedModal` compared the
-presentation container's frame with the provider's bounds exactly. The
-bounds come from Fabric's float layout metrics while UIKit autoresizes
-the container in double precision, so a rotation into a width that is
-not exactly representable (e.g. 85% of 874pt on iPhone 17) tripped the
-check on every layout pass while a modal was open, although the two were
-visually identical.
+This PR updates SDK versions in build.gradle to 24 for minimum SDK, and
+compile and target to 36, same as RN 0.84 does.
 
 ## Changes
 
-- Compare the two rects within one physical pixel
-(`react::floatEquality` with a `1 / screen scale` epsilon).
-
-## Test plan
-
-
-`apps/src/tests/single-feature-tests/contained-modal/test-contained-modal-comprehensive-ios`,
-rotation step with the modal open, iPhone 17 / iOS 27.0: no redbox,
-container still tracks the provider.
+- Update android/build.gradle
 
 ## Checklist
 
-- [x] Included code example that can be used to test this change.
+- [ ] Included code example that can be used to test this change.
 - [ ] For visual changes, included screenshots / GIFs / recordings
 documenting the change.
 - [ ] For API changes, updated relevant public types.
 - [ ] Ensured that CI passes
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-a
-
-**File**: `ios/react/modals/contained-modal/RNSContainedModalHostComponentView.mm` (modified, +15/-1)
+**File**: `android/build.gradle` (modified, +3/-3)
 ```diff
-@@ -13,6 +13,7 @@
- #import <React/RCTSurfaceTouchHandler.h>
- #import <react/renderer/components/rnscreens/Props.h>
- #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
-+#import <react/utils/FloatComparison.h>
- 
- namespace react = facebook::react;
- 
-@@ -122,6 +123,15 @@ - (void)modalControllerViewDidLayoutSubviews:(RNSContainedModalContentController
- }
- 
- #if DEBUG
-+static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale)
-+{
-+  const CGFloat tolerance = 1.0 / MAX(screenScale, 1.0);
-+  return react::floatEquality(lhs.origin.x, rhs.origin.x, tolerance) &&
-+      react::floatEquality(lhs.origin.y, rhs.origin.y, tolerance) &&
-+      react::floatEquality(lhs.size.width, rhs.size.width, tolerance) &&
-+      react::floatEquality(lhs.size.height, rhs.size.height, tolerance);
-+}
-+
- // The attach point is observed, not documented, UIKit behavior, and the
- // container's bounds are the modal's touch-blocking area - an escaped
- // container means dead touch zones, not just a misplaced view. Detection
-@@ -138,7 +148,11 @@ - (void)validateContainmentIntegrity
-     return;
-   }
- 
--  if (containerView.superview != providerView || !CGRectEqualToRect(containerView.frame, providerView.bounds)) {
-+  // The wrapper's bounds come from Fabric's float layout metrics while UIKit
-+  // autoresizes the container in double precision, so after a rotation the two
-+  // can differ by a sub-pixel fraction. Compare on the pixel grid.
-+  if (containerView.superview != providerView ||
-+      !RNSRectsEqualWithinPixel(containerView.frame, providerView.bounds, providerView.window.screen.scale)) {
-     RCTLogError(
-         @"[RNScreens] ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
-         NSStringFromCGRect(containerView.frame),
+@@ -1,8 +1,8 @@
+ buildscript {
+     ext {
+-        rnsDefaultTargetSdkVersion = 34
+-        rnsDefaultCompileSdkVersion = 34
+-        rnsDefaultMinSdkVersion = 21
++        rnsDefaultTargetSdkVersion = 36
++        rnsDefaultCompileSdkVersion = 36
++        rnsDefaultMinSdkVersion = 24
+         rnsDefaultKotlinVersion = '1.8.0'
+     }
+     ext.safeExtGet = {prop, fallback ->
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5145** (2026-11-05): fix(Android, Tabs): notify every SafeAreaView registered on TabsContainer about interface insets (@lassiecoder)
+- **PR #5140** (2026-11-04): refactor(v5): migrate SafeAreaView, ScrollToTopGuard and ScrollViewMarker to the docs conventions (@Loloekk)
+- **PR #5139** (closed): fix(iOS, Stack v4): animate header right items when their count changes on a visible bar (@sethwebster)
+- **PR #5138** (2026-11-04): feat(Android): update SDK versions in build.gradle to 24 for minimum SDK, and compile and target to 36 (@Loloekk)
 - **PR #5130** (2026-11-03): fix(example): Allow undefined for optional SettingsSwitch props (@kmichalikk)
 - **PR #5124** (2026-11-02): feat(iOS, Split): support native column hiding (@t0maboro)
-- **PR #5111** (2026-10-30): feat(iOS, FormSheet v5): add `backgroundEffect` prop (@t0maboro)
-- **PR #5110** (2026-11-02): refactor(v5): migrate platform icon types to the docs conventions (@Loloekk)
-- **PR #5109** (2026-11-02): refactor(v5): migrate common types and entry points to the docs conventions (@Loloekk)
-- **PR #5101** (2026-10-28): release: 4.30.1 (@t0maboro)
 
 ---
 
@@ -547,30 +702,31 @@ Co-a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. example): Allow undefined for optional SettingsSwitch props (#5130)
+## X. Android, Tabs): notify every SafeAreaView registered on TabsContainer about inte
 
 **RULE**:
-When implementing operations in `apps/src/shared/SettingsSwitch.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/swmansion/rnscreens/core/common/safearea/SafeAreaProvider.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f9b45ea`: example): Allow undefined for optional SettingsSwitch props (#5130). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3e4f4eb`: Android, Tabs): notify every SafeAreaView registered on TabsContainer about interface insets (#5145). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/shared/SettingsSwitch.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/swmansion/rnscreens/core/common/safearea/SafeAreaProvider.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  style?: ViewStyle | undefined;
-  testID?: string | undefined;
+ * Classes implementing this protocol are responsible for notifying every registered
+ * More than one listener can be registered at the same time.
+    fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  style?: ViewStyle;
-  testID?: string;
+ * Classes implementing this protocol are responsible for notifying the registered
+    fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f9b45ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3e4f4eb` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `f8e3bc7b`  
+> **Source Version**: `97b70a05`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:55:16.911Z  
+> **Timestamp**: 2026-11-05T17:29:04.471Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:55:16.904Z  
+> **Harvest Timestamp**: 2026-11-05T17:29:04.465Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14675 stars
+- **Stars / Engagement**: 14683 stars
 
 ---
 
@@ -1011,6 +1011,12 @@ func (m *baseMeta) emptyEntry(ctx Context, parent Ino, name string, inode Ino, s
 }
 
 func (m *baseMeta) Remove(ctx Context, parent Ino, name string, skipTrash bool, numThreads int, count *uint64) syscall.Errno {
+	switch name {
+	case ".":
+		return syscall.EINVAL
+	case "..":
+		return syscall.ENOTEMPTY
+	}
 	parent = m.checkRoot(parent)
 	if st := m.Access(ctx, parent, MODE_MASK_W|MODE_MASK_X, nil); st != 0 {
 		return st
@@ -1058,7 +1064,7 @@ func (m *baseMeta) GetSummary(ctx Context, inode Ino, summary *Summary, recursiv
 	return m.getDirSummary(ctx, inode, summary, recursive, strict, concurrent, nil)
 }
 
-func (m *baseMeta) getDirSummary(ctx Context, inode Ino, summary *Summary, recursive bool, strict bool, concurre
+func (m *baseMeta) g
 ```
 
 ### Core Architecture Module: `pkg/meta/utils_darwin.go`
@@ -1155,11 +1161,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7805** (2026-11-05): **sdk: prevent root group membership from granting superuser access**
-  *Symptoms*: The Python SDK passed root's group names (concatenated) to libjfs as `supergroup`. When root belongs only to the `root` group, every member of `root` was treated as superuser and could read root-only files.  Changes: - Python passes the same legacy string as `rootGroup` (used only to map that group to GID 0) and an empty `supergroup`. Existing file GIDs are unchanged; non-root members of `root` only get normal group permissions. - libjfs: `isSuperuser` ignores an empty supergroup; `lookupGid`/`gid2name` use `rootGroup`, falling back to `supergroup` so Java behavior is unchanged; `rootGroup` is excluded from the filesystem cache key.  Compatibility: libjfs is bundled with the Python SDK. If mixed manually, new Python with old libjfs loses the GID 0 mapping for `root`, and old Python with new libjfs keeps the old elevation. 
+- **Issue #7815** (2026-11-05): **宿主机juicefs文件系统已卸载，docker容器中挂载宿主机的juicefs mount路径，容器内文件写入juicefs导致文件没有正常存储**
+  *Symptoms*: <!-- STOP -- PLEASE READ!  GitHub issue is not the right place for support requests.  If you're looking for help, check the Discussions (https://github.com/juicedata/juicefs/discussions).  You can also post your question in Discussions or the JuiceFS Discord channel (https://go.juicefs.com/discord). --> # 问题描述： 宿主机juicefs文件系统已卸载docker容器中挂载宿主机的juicefs 路径还在导致容器内文件写入juicefs，其它节点读取文件失败，但问题是文件被成功计入到metadata  # 容器内挂载详情：    "HostConfig": {             "Binds": [                 "/lib/modules/:/lib/modules/",                 "/sys:/sys",                 "/home/models:/home/models",                 "/home/model_trim/:/home/model_trim/", # docker exec -ti b0d03cf31418 bash root@xxx-04:/home/admin# df -h Filesystem                   Size  Used Avail Use% Mounted on overlay                      7.0T  5.5T  1.2T  83% / tmpfs                         64M     0   64M   0% /dev efivarfs                     512K  212K  296K  42% /sys/firmware/efi/efivars /dev/sda3                    876G  740G   92G  90% /data JuiceFS:llm-models            50T   30T   21T  59% /home/models JuiceFS:model-trim            10T  408G  9.7T   4% /home/model_trim  #宿主机 对应/home/models ，/home/model_trim已卸载  # 预期结果 容器内要么不能写，要么可以写，不会造成metadata成功，chunk存储minio失败  # juicefs --verbose NAME:    juicefs - A POSIX file system built on Redis and object storage.  USAGE:    juicefs [global options] command [command options] [arguments...]  VERSION:    1.3.1+2025-12-02.e0032b2 
+  **Post-Mortem & Fix Analysis**:
+  > 找到原因了，这个时候容器内应该还是可以读写正常的，原因minio拒绝了这个宿主机IP写操作
 
-- **Issue #7804** (2026-11-04): **meta: resolve quota and forced paths relative to the subdir root**
-  *Symptoms*: After `Chroot`, `HandleQuota` resolves directory paths from the volume root, but `Mkdir`, `GetSummary` and `GetPaths` in the same flow are relative to the mounted root. With a client chrooted to `/sub`:  - Setting a quota on `/` stores it on the volume root, but usage is computed for `/sub`. - `--create /x` creates `/sub/x` but looks it up under the volume root, so a second run fails with EEXIST. - Paths returned by list cannot be used to get the quota back.  `Resolve(force=true)` also ignores both `parent` and the mounted root.  Fix: - `resolve` starts from `m.root`. - The forced `Resolve` starts from `checkRoot(parent)`. - Quota list reports the mounted root as `/` and skips quotas outside it.  Processes that do not chroot (`m.root == 1`), such as `juicefs quota`, `juicefs config` and tier, are unaffected. Tests are added in `pkg/meta/subdir_test.go`, and existing tests that used volume-root paths under chroot are updated. 
+- **Issue #7810** (2026-11-05): **meta: add --session-timeout to delay stale session cleanup**
+  *Symptoms*: ## Problem  A session is considered stale after 5 heartbeats (~60s by default) without refresh, and other clients then release its locks. The watchdog needs up to ~160s to kill a hung mount, so a frozen client may resume (or be killed much later) after its locks were granted to others. See #7462.  ## Changes  - Add `--session-timeout` (meta option, shared by mount/gateway/webdav). The effective timeout is `max(session-timeout, 5 × heartbeat)`. - Default `0` keeps the current behavior (5 × heartbeat). - The expire time is computed by each client and only compared by others, so no change is needed in the engines and mixed versions are safe. No metadata format change. - Docs: `reference/_common_options.mdx` (en/zh_cn).  Trade-off: a longer timeout also delays releasing locks held by a crashed client. It narrows the window but does not close it (VM pause, whole process group stopped, or network partition longer than the timeout).  Not covered: Java/Python SDKs use the default and do not expose this option yet.  ## Tests  - `TestExpireTime`: default, smaller-than-5-heartbeats and larger values; fails without the change. - `testMetaClient` checks the session expire time of a new session; passed on Redis, SQLite, MemKV and Badger.  Related to #7462 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7810?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 21.54%. Comparing base ([`db13db4`](https://app.codecov.io/gh/juicedata/juicefs/commit/db13db48ad46d7dbdb2ae275ffa44dad52875ebb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`7436e1f`](https://app.codecov.io/gh/juicedata/juicefs/commit/7436e1ff6304928934f96f24a70304fdc080c4a8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 7 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,166 +1186,127 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8e3bc7b` (2026-11-05)
-**Commit Message**: sdk: prevent root group membership from granting superuser access (#7805)
+### Incident Patch 1: `21c62205` (2026-11-05)
+**Commit Message**: meta: add --session-timeout to delay stale session cleanup (#7810)
 
-Signed-off-by: miyang <[REDACTED_EMAIL]>
-Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +37/-1)
+**File**: `cmd/flags.go` (modified, +5/-0)
 ```diff
-@@ -1,8 +1,10 @@
- import errno
- from array import array
- import fractions
-+import grp
- import io
- import unittest
-+from unittest.mock import patch
- import os
- import pwd
- import stat
-@@ -20,8 +22,11 @@
- 
- 
- class FileTests(unittest.TestCase):
-+    def open_client(self):
-+        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
-+
-     def setUp(self):
--        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
-+        self.v = self.open_client()
-         if not self.v.exists(TESTFN):
-             self.v.mkdir(TESTFN)
- 
-@@ -130,6 +135,37 @@ def test_makedir(self):
- 
- 
- class ChownFileTests(FileTests):
-+    def test_root_group_read_permissions(self):
-+        self.v.chmod(TESTFN, 0o755)
-+        self.create_file(TESTFILE)
-+        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
-+                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
-+        groups = {gid: grp.struct_group((name, "x", gid, []))
-+                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
-+        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
-+        legacy_gid = 2730912965
-+        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
-+            legacy_gid &= 0x7fffffff
-+        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
-+            with self.subTest(root_groups=root_groups):
-+                self.v.chown(TESTFILE, 0, file_gid)
-+                self.v.chmod(TESTFILE, denied_mode)
-+                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
-+                with patch.object(os, "geteuid", return_value=1001), \
-+                        patch.object(pwd, "getpwuid", side_effect=users.__getitem__), \
-+                        patch.object(grp, "getgrgid", side_effect=groups.__getitem__), \
-+                        patch.object(os, "getgrouplist", side_effect=lambda name, gid: memberships[name]):
-+                    member = self.open_client()
-+                self.addCleanup(member.close)
-+                with self.assertRaises(OSError) as denied:
-+                    with member.open(TESTFILE, "rb") as f:
-+                        f.read()
-+                self.assertEqual(denied.exception.errno, errno.EACCES)
-+
-+                self.v.chmod(TESTFILE, 0o440)
-+                with member.open(TESTFILE, "rb") as f:
-+                    self.assertEqual(f.read(), b"content")
-+
-     def test_chown_uid_gid_arguments_must_be_index(self):
-         stat = self.v.stat(TESTFN)
-         uid = stat.st_uid
+@@ -302,6 +302,11 @@ func metaFlags() []cli.Flag {
+ 			Value: "12s",
+ 			Usage: "interval to send heartbeat; it's recommended that all clients use the same heartbeat value",
+ 		},
++		&cli.StringFlag{
++			Name:  "session-timeout",
++			Value: "0",
++			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
++		},
+ 		&cli.BoolFlag{
+ 			Name:  "read-only",
+ 			Usage: "allow lookup/read operations only",
 ```
 
-**File**: `sdk/java/libjfs/main.go` (modified, +8/-3)
+**File**: `cmd/mount.go` (modified, +1/-0)
 ```diff
-@@ -270,7 +270,7 @@ func (w *wrapper) isSuperuser(name string, groups []string) bool {
+@@ -342,6 +342,7 @@ func getMetaConf(c *cli.Context, mp string, readOnly bool) *meta.Config {
+ 	conf.OpenCache = utils.Duration(c.String("open-cache"))
+ 	conf.OpenCacheLimit = c.Uint64("open-cache-limit")
+ 	conf.Heartbeat = utils.Duration(c.String("heartbeat"))
++	conf.SessionTimeout = utils.Duration(c.String("session-timeout"))
+ 	conf.MountPoint = mp
+ 	conf.Subdir = c.String("subdir")
+ 	conf.SkipDirMtime = utils.Duration(c.String("skip-dir-mtime"))
+```
+
+**File**: `docs/en/reference/_common_options.mdx` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@
+ |`--backup-meta=3600`|Interval (in seconds) to automatically backup metadata in the object storage (0 means disable backup) (default: "3600")|
+ |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash when backup metadata.|
+ |`--heartbeat=12`|Interval (in seconds) to send heartbeat; it's recommended that all clients use the same heartbeat value (default: "12")|
++|`--session-timeout=0`|A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `--heartbeat`. A longer timeout makes it less likely that a client which was frozen (and is then killed by the watchdog, or resumes) still holds locks that have been granted to others, but locks held by a crashed client are released later. `0` means 5 times `--heartbeat`. (default: 0)|
+ |`--read-only`|Read-only mode, i.e. allow only lookup/read operations. Note that this option implies `--no-bgjob`, so read-only clients do not execute background jobs.|
+ |`--no-bgjob`|Disable background jobs, default to false, which means clients by default carry out background jobs, including:<br/><ul><li>Clean up expired files in Trash (look for `cleanupDeletedFiles`, `cleanupTrash` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Delete slices that's not referenced (look for `cleanupSlices` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Clean up stale client sessions (look for `CleanStaleSessions` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li></ul>Note that compaction isn't affected by this option, it happens automatically with file reads and writes, client will check if compaction is in need, and run in background (take Redis for example, look for `compactChunk` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go)).|
+ |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd> |Control atime (last time the file was accessed) behavior, support the following modes:<br/><ul><li>`noatime` (default): set when the file is created or when `SetAttr` is explicitly called. Accessing and modifying the file will not affect atime, tracking atime comes at a performance cost, so this is the default behavior</li><li>`relatime`: update inode access times relative to mtime (last time when the file data was modified) or ctime (last time when file metadata was changed). Only update atime if atime was earlier than the current mtime or ctime, or the file's atime is more than 1 day old</li><li>`strictatime`: always update atime on access</li></ul>|
+```
+
+**File**: `docs/zh_cn/reference/_common_options.mdx` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@
+ |`--backup-meta=3600`|自动备份元数据到对象存储的间隔时间；单位秒，默认 3600，设为 0 表示不备份。|
+ |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|备份元数据时跳过回收站中的文件和目录。|
+ |`--heartbeat=12`|发送心跳的间隔（单位秒），建议所有客户端使用相同的心跳值 (默认：12)|
++|`--session-timeout=0`|客户端会话超过该时长未刷新即被视为失效，其他客户端会清理该会话并释放它持有的文件锁。实际生效值不小于 `--heartbeat` 的 5 倍。调大该值可以降低被冻结的客户端（之后被 watchdog 杀掉或恢复运行）的锁被他人获取的风险，但客户端异常退出后，它持有的锁也会更晚释放。`0` 表示 `--heartbeat` 的 5 倍 (默认：0)|
+ |`--read-only`|只读模式，只允许 lookup 和 read 请求。注意，只读模式隐含了 `--no-bgjob`，因此只读客户端不会运行后台任务。|
+ |`--no-bgjob`|禁用后台任务，默认为 false，也就是说客户端会默认运行后台任务。后台任务包含：<br/><ul><li>清理回收站中过期的文件（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupDeletedFiles` 和 `cleanupTrash`）</li><li>清理引用计数为 0 的 Slice（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupSlices`）</li><li>清理过期的客户端会话（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `CleanStaleSessions`）</li></ul>特别地，与[企业版](https://juicefs.com/docs/zh/cloud/guide/background-job)不同，社区版碎片合并（Compaction）不受该选项的影响，而是随着文件读写操作，自动判断是否需要合并，然后异步执行（以 Redis 为例，在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go) 中搜索 `compactChunk`）|
+ |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd>|控制如何更新 atime（文件最后被访问的时间）。支持以下模式：<br/><ul><li>`noatime`（默认）：仅在文件创建和主动调用 `SetAttr` 时设置，平时访问与修改文件不影响 atime 值。考虑到更新 atime 需要运行额外的事务，对性能有影响，因此默认关闭。</li><li>`relatime`：仅在 mtime（文件内容修改时间）或 ctime（文件元数据修改时间）比 atime 新，或者 atime 超过 24 小时没有更新时进行更新。</li><li>`strictatime`：持续更新 atime</li></ul>|
+```
+
+**File**: `pkg/meta/base.go` (modified, +1/-1)
+```diff
+@@ -900,7 +900,7 @@ func (m *baseMeta) stopDeleteSliceTasks() {
+ 
+ func (m *baseMeta) expireTime() int64 {
+ 	if m.conf.Heartbeat > 0 {
+-		return time.Now().Add(m.conf.Heartbeat * 5).Unix()
++		return time.Now().Add(max(m.conf.SessionTimeout, m.conf.Heartbeat*5)).Unix()
+ 	} else {
+ 		return time.Now().Add(time.Hour * 24 * 365).Unix()
  	}
- 	sg := w.getSuperGroup()
- 	for _, g := range groups {
--		if g == sg {
-+		if sg != "" && g == sg {
- 			return true
- 		}
- 	}
-@@ -285,7 +285,7 @@ func (w *wrapper) lookupUid(name string) uint32 {
+```
+
+**File**: `pkg/meta/base_test.go` (modified, +16/-0)
+```diff
+@@ -307,6 +307,19 @@ func (c *aclCacheWithMissCount) GetMissIds() []uint32 {
+ 	return c.Cache.GetMissIds()
  }
  
- func (w *wrapper) lookupGid(group string) uint32 {
--	if group == w.supergroup {
-+	if group == w.conf.RootGroup {
- 		return 0
- 	}
- 	return uint32(w.m.lookupGroup(group))
-@@ -308,7 +308,7 @@ func (w *wrapper) uid2name(uid uint32) string {
- }
- 
- func (w *wrapper) gid2name(gid uint32) string {
--	group := w.supergroup
-+	group := w.conf.RootGroup
- 	if gid > 0 {
- 		group = w.m.lookupGroupID(gid)
- 	}
-@@ -392,6 +392,7 @@ type javaConf struct {
- 	PushRemoteWriteAuth string `json:"pushRemoteWriteAuth"`
- 	GuidMask            string `json:"guidMask"`
- 	Caller              int    `json:"caller"`
-+	RootGroup           string `json:"rootGroup"` // Group name mapped to GID 0.
- 	Subdir              string `json:"subdir"`
- 
- 	AuthMethod string `json:"authMethod,omitempty"`
-@@ -404,6 +405,7 @@ func cleanConf(conf javaConf) javaConf {
- 	conf.AuthMethod = ""
- 	conf.RealUser = ""
- 	conf.SuperFS = false
-+	conf.RootGroup = ""
- 	return conf
- }
- 
-@@ -431,6 +433,9 @@ func getOrCreate(name, user, groups, superuser, supergroup string, conf javaConf
- 		}
- 		logger.Infof("JuiceFileSystem created for user:%s groups:%s", user, groups)
- 	}
-+	if conf.RootGroup == "" {
-+		conf.RootGroup = supergroup
++func TestExpireTime(t *testing.T) {
++	for _, c := range []struct{ heartbeat, timeout, expected time.Duration }{
++		{12 * time.Second, 0, time.Minute},
++		{12 * time.Second, 30 * time.Second, time.Minute},
++		{12 * time.Second, 5 * time.Minute, 5 * time.Minute},
++	} {
++		m := &baseMeta{conf: &Config{Heartbeat: c.heartbeat, SessionTimeout: c.timeout}}
++		if ttl := time.Until(time.Unix(m.expireTime(), 0)); ttl < c.expected-2*time.Second || ttl > c.expected {
++			t.Fatalf("heartbeat %s, session timeout %s: expires in %s, expected %s", c.heartbeat, c.timeout, ttl, c.expected)
++		}
 +	}
- 	w := &wrapper{jfs, name, nil, m, user, superuser, supergroup, conf}
- 	if formats[name] != nil && formats[name].KerbConf != "" {
- 		if _, ok := superuserChangedCb[name]; !ok {
++}
++
+ func TestMergeFacl(t *testing.T) {
+ 	minimal := &aclAPI.Rule{Owner: 6, Group: 4, Mask: 0xFFFF, Other: 0}
+ 	extended := &aclAPI.Rule{Owner: 7, Group: 7, Mask: 5, Other: 1, NamedUsers: aclAPI.Entries{{Id: 1001, Perm: 4}}}
+@@ -709,6 +722,9 @@ func testMetaClient(t *testing.T, m Meta) {
+ 	if base.sid != ses[0].Sid {
+ 		t.Fatalf("my sid %d != registered sid %d", base.sid, ses[0].Sid)
+ 	}
++	if ttl, expected := time.Until(ses[0].Expire), max(base.conf.SessionTimeout, base.conf.Heartbeat*5); ttl < expected-10*time.Second || ttl > expected {
++		t.Fatalf("session expires in %s, expected %s", ttl, expected)
++	}
+ 	if err = base.en.doCleanStaleSession(base.sid); err != nil {
+ 		t.Fatalf("clean session: %s", err)
+ 	}
 ```
 
-**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +5/-3)
+**File**: `pkg/meta/config.go` (modified, +1/-0)
 ```diff
-@@ -161,14 +161,16 @@ def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False,
-         kwargs["pushRemoteWriteAuth"] = push_remote_write_auth
-         kwargs["caller"] = 1
- 
--        jsonConf = json.dumps(kwargs, sort_keys=True)
-         self.umask = os.umask(0)
-         os.umask(self.umask)
-         user = pwd.getpwuid(os.geteuid())
-         groups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(user.pw_name, user.pw_gid)]
-         superuser = pwd.getpwuid(0)
--        supergroups = [grp.getgrgid(gid).gr_name for gid in os.getgrouplist(superuser.pw_name, superuser.pw_gid)]
--        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), ''.join(supergroups).encode())
-+        # Preserve the legacy GID mapping without granting superuser access to the group.
-+        supergids = os.getgrouplist(superuser.pw_name, superuser.pw_gid)
-+        kwargs["rootGroup"] = ''.join(grp.getgrgid(gid).gr_name for gid in supergids)
-+        jsonConf = json.dumps(kwargs, sort_keys=True)
-+        self.h = self.lib.jfs_init(0, 0, name.encode(), jsonConf.encode(), user.pw_name.encode(), ','.join(groups).encode(), superuser.pw_name.encode(), b'')
- 
-     def __del__(self):
-         self.close(terminate=False)
+@@ -46,6 +46,7 @@ type Config struct {
+ 	OpenCache          time.Duration
+ 	OpenCacheLimit     uint64 // max number of files to cache (soft limit)
+ 	Heartbeat          time.Duration
++	SessionTimeout     time.Duration
+ 	MountPoint         string
+ 	Subdir             string
+ 	AtimeMode          string
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
+- **PR #7808** (closed): meta: stop clients when the session lease expires (@jiefenghuang)
 - **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
 - **PR #7804** (closed): meta: resolve quota and forced paths relative to the subdir root (@jiefenghuang)
 - **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
 - **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
-- **PR #7800** (2026-11-04): meta: keep dumped nextInode and nextChunk when loading JSON dump (@jiefenghuang)
-- **PR #7799** (2026-11-04): meta: keep only subtree directory quotas in subdir dump (@jiefenghuang)
 
 ---
 
@@ -1355,50 +1326,32 @@ Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk: prevent root group membership from granting superuser access (#7805)
+## X. meta: add --session-timeout to delay stale session cleanup (#7810)
 
 **RULE**:
-When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/flags.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8e3bc7b`: sdk: prevent root group membership from granting superuser access (#7805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21c62205`: meta: add --session-timeout to delay stale session cleanup (#7810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/flags.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-import grp
-from unittest.mock import patch
-    def open_client(self):
-        return juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
-
-        self.v = self.open_client()
-    def test_root_group_read_permissions(self):
-        self.v.chmod(TESTFN, 0o755)
-        self.create_file(TESTFILE)
-        users = {0: pwd.struct_passwd(("root", "x", 0, 0, "", "/", "")),
-                 1001: pwd.struct_passwd(("sdk-member", "x", 1001, 1001, "", "/", ""))}
-        groups = {gid: grp.struct_group((name, "x", gid, []))
-                  for gid, name in [(0, "root"), (1, "adm"), (1001, "sdk-members")]}
-        # Legacy hash of "root" on "test-volume"; SQL engines use a 31-bit GID.
-        legacy_gid = 2730912965
-        if meta_url.startswith(("sqlite3://", "mysql://", "postgres://")):
-            legacy_gid &= 0x7fffffff
-        for root_groups, file_gid, denied_mode in [([0], 0, 0o400), ([0, 1], legacy_gid, 0o404)]:
-            with self.subTest(root_groups=root_groups):
-                self.v.chown(TESTFILE, 0, file_gid)
-                self.v.chmod(TESTFILE, denied_mode)
-                memberships = {"root": root_groups, "sdk-member": [1001, 0]}
-                w
+		&cli.StringFlag{
+			Name:  "session-timeout",
+			Value: "0",
+			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
+		},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        self.v = juicefs.Client("test-volume", meta=meta_url, access_log="/tmp/access.log")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8e3bc7b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21c62205` are properly handled with clean fallback behavior.

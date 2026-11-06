@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `7c69f415`  
+> **Source Version**: `ea53dbf8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:02:56.004Z  
+> **Timestamp**: 2026-11-05T17:36:39.386Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:02:55.998Z  
+> **Harvest Timestamp**: 2026-11-05T17:36:39.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13702 stars
+- **Stars / Engagement**: 13704 stars
 
 ---
 
@@ -1427,124 +1427,591 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c69f415` (2026-11-04)
-**Commit Message**: Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets
+### Incident Patch 1: `9886e5bf` (2026-11-05)
+**Commit Message**: Merge pull request #18648 from billyridgway/wridgway/system-user-fix
 
-test: summarize most Secrets in collected logs instead of dumping them
+rgw: create system user when zone has custom endpoints
 
-**File**: `tests/scripts/collect-logs.sh` (modified, +98/-3)
+**File**: `pkg/operator/ceph/object/objectstore.go` (modified, +27/-18)
 ```diff
-@@ -18,6 +18,91 @@ $CEPH_CMD osd dump >"${LOG_DIR}"/ceph-osd-dump.txt
- $CEPH_CMD report >"${LOG_DIR}"/ceph-report.txt
- $CEPH_CMD auth ls >"${LOG_DIR}"/ceph-auth-ls.txt
+@@ -493,7 +493,7 @@ func createNonMultisiteStore(objContext *Context, endpointArg string, store *cep
+ 	return nil
+ }
  
-+# collects_secret_content reports whether a Secret's values are collected in full. Everything
-+# else is summarized, so a Secret appearing later under an unmatched name is withheld without
-+# anyone deciding again. The two prefix patterns are open rather than anchored on -keyring, so
-+# a new Secret named under them would be collected; every name they match today is a keyring.
-+#
-+# These are the keys a cephx rotation problem shows up in, and a cluster in that state may be
-+# unreachable by other means: `ceph auth ls` is answered by the mon, so the mon Secret in
-+# particular has to stay legible on its own. Within the cluster namespace they disclose nothing
-+# further, since ceph-auth-ls.txt holds the same entities' keys -- but CEPH_CMD is bound to
-+# CLUSTER_NAMESPACE, so a second cluster collected through ADDITIONAL_NAMESPACE, as the
-+# multi-cluster-mirroring and rgw-multisite canaries do, has no auth dump of its own.
-+function collects_secret_content() {
-+  case "$1" in
-+  rook-ceph-mon | rook-ceph-mgr-* | rook-ceph-mds-*) return 0 ;;
-+  *) return 1 ;;
-+  esac
+-func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace string) error {
++func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints string) error {
+ 	log.NamedDebug(objContext.NsName(), logger, "joining zone %v", objContext.Zone)
+ 	realmArg := fmt.Sprintf("--rgw-realm=%s", objContext.Realm)
+ 	zoneGroupArg := fmt.Sprintf("--rgw-zonegroup=%s", objContext.ZoneGroup)
+@@ -503,21 +503,13 @@ func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace st
+ 	if err != nil {
+ 		return err
+ 	}
+-	zoneGroupIsMaster := false
+-
+ 	if zoneIsMaster {
+ 		// endpoints that are part of a master zone are supposed to be the endpoints for a zone group
+ 		_, err := RunAdminCommandNoMultisite(objContext, false, "zonegroup", "modify", realmArg, zoneGroupArg, endpointArg)
+ 		if err != nil {
+ 			return errorOrIsNotFound(err, "failed to add object store %q in rgw zone group %q", objContext.Name, objContext.ZoneGroup)
+ 		}
+ 		log.NamedDebug(objContext.NsName(), logger, "endpoints for zonegroup %q are now %q", objContext.ZoneGroup, zoneEndpoints)
+-
+-		// check if zone group is master only if zone is master for creating the system user
+-		zoneGroupIsMaster, err = checkZoneGroupIsMaster(objContext)
+-		if err != nil {
+-			return errors.Wrapf(err, "failed to find out whether zone group %q in is the master zone group", objContext.ZoneGroup)
+-		}
+ 	}
+ 	_, err = RunAdminCommandNoMultisite(objContext, false, "zone", "modify", realmArg, zoneGroupArg, zoneArg, endpointArg)
+ 	if err != nil {
+@@ -531,17 +523,26 @@ func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace st
+ 
+ 	log.NamedInfo(objContext.NsName(), logger, "added object store %q to realm %q, zonegroup %q, zone %q", objContext.Name, objContext.Realm, objContext.ZoneGroup, objContext.Zone)
+ 
+-	// create system user for realm for master zone in master zonegroup for multisite scenario
+-	if zoneIsMaster && zoneGroupIsMaster {
+-		err = createSystemUser(objContext, namespace)
+-		if err != nil {
+-			return err
+-		}
+-	}
+-
+ 	return nil
+ }
+ 
++// EnsureMultisiteSystemUser creates the realm system user if the zone is the master zone of the
++// master zone group. It is a no-op for any other zone.
++func EnsureMultisiteSystemUser(objContext *Context, namespace string) error {
++	zoneIsMaster, err := CheckZoneIsMaster(objContext)
++	if err != nil {
++		return errors.Wrapf(err, "failed to determine if zone %q is master", objContext.Zone)
++	}
++	zoneGroupIsMaster, err := checkZoneGroupIsMaster(objContext)
++	if err != nil {
++		return errors.Wrapf(err, "failed to determine if zone group %q is master", objContext.ZoneGroup)
++	}
++	if !zoneIsMaster || !zoneGroupIsMaster {
++		return nil
++	}
++	return createSystemUser(objContext, namespace)
 +}
 +
-+# SECRET_SUMMARY_TEMPLATE describes a Secret without exposing it: one
-+# "secret <name> <type> <number of data keys>" record, then one "key <name> <size in bytes>"
-+# record per data key. The decoding happens inside kubectl's template engine, which provides
-+# base64decode, and only the decoded length is ever printed, so no part of a value leaves
-+# kubectl.
-+# shellcheck disable=SC2016 # $key and $value are go-template variables, not shell expansions
-+SECRET_SUMMARY_TEMPLATE='secret {{.metadata.name}} {{.type}} {{if .data}}{{len .data}}{{else}}0{{end}}{{"\n"}}'\
-+'{{if .data}}{{range $key, $value := .data}}'\
-+'key {{$key}} {{len (base64decode $value)}}{{"\n"}}'\
-+'{{end}}{{end}}'
+ func createSystemUser(objContext *Context, namespace string) error {
+ 	uid := objContext.Realm + "-system-user"
+ 	uidArg := fmt.Sprintf("--uid=%s", uid)
+@@ -599,12 +600,20 @@ func configureObjectStore(objContext *Context, store *cephv1.CephObjectStore, zo
+ 				log.NamedDebug(objContext.NsName(), logger, "Endpoints for zone %q are: %q", objContext.Zone, zoneEndpoints)
+ 				endpointArg := fmt.Sprintf("--endpoints=%s", zoneEndpoints)
+ 
+-				err = JoinMultisite(objContext, endpointArg, zoneEndpoints, store.Namespace)
++				err = JoinMultisite(objContext, endpointArg, zoneEndpoints)
+ 				if err != nil {
+ 					return errors.Wrapf(err, "failed join ceph multisite in zone %q", objContext.Zone)
+ 				}
+ 			}
+ 		}
++		// When custom endpoints are defined the zone's endpoint list is managed by the
++		// CephObjectZone controller, so the endpoint block above is skipped. The realm system
++		// user must still exist for the master zone in the master zonegroup regardless.
++		if zone != nil {
++			if err := EnsureMultisiteSystemUser(objContext, store.Namespace); err != nil {
++				return err
++			}
++		}
+ 	} else {
+ 		var endpointArg string
+ 		if !store.Spec.Gateway.DisableMultisiteSyncTraffic {
+```
+
+**File**: `pkg/operator/ceph/object/objectstore_test.go` (modified, +93/-0)
+```diff
+@@ -253,6 +253,99 @@ func TestReconcileRealm(t *testing.T) {
+ 	assert.Nil(t, err)
+ }
+ 
++func TestConfigureObjectStoreWithCustomEndpoints(t *testing.T) {
++	// zonegroup get returns master zonegroup with master zone
++	zoneGroupJSON := `{
++		"id": "fg8ff110-d3fd-49b4-b24f-f6cd3dddfedf",
++		"name": "zonegroup-a",
++		"api_name": "zonegroup-a",
++		"is_master": true,
++		"endpoints": ["https://custom.endpoint:443"],
++		"master_zone": "6cb39d2c-3005-49da-9be3-c1a92a97d28a",
++		"zones": [
++			{
++				"id": "6cb39d2c-3005-49da-9be3-c1a92a97d28a",
++				"name": "zone-a",
++				"endpoints": ["https://custom.endpoint:443"]
++			}
++		],
++		"realm_id": "237e6250-5f7d-4b85-9359-8cb2b1848507"
++	}`
++	// zone get returns zone whose ID matches master_zone above (so it is master)
++	zoneJSON := `{"id": "6cb39d2c-3005-49da-9be3-c1a92a97d28a", "name": "zone-a"}`
 +
-+# format_secret_summary admits a line only if it has the exact shape of one of those records:
-+# the right number of fields, a name of the kind Kubernetes allows, and a size that is a number.
-+# The shape is what is checked, not the leading word, because kubectl's output cannot be trusted
-+# line by line. A template it cannot execute makes it write the error, the template text and the
-+# object's raw JSON to this same stream, and any Secret field holding a newline makes whatever
-+# follows look like the start of a record; either can begin with the word 'secret' or 'key'
-+# while the rest of the line is something else entirely.
-+#
-+# Anything else is dropped, as is a run whose key records do not account for every data key, and
-+# a single warning takes its place -- a summary that could not be produced must not be
-+# indistinguishable from a Secret that holds nothing.
-+function format_secret_summary() {
-+  # The tests below expand their input, and this script runs under `set -x`, so without this
-+  # the rejected lines -- which is where a payload would be -- reach the job log, which is
-+  # where the warning then sends the reader. `local -` restores both options on return.
-+  local -
-+  set +x
++	calledUserInfo := false
++	calledUserCreate := false
 +
-+  local name_re='^[-._a-zA-Z0-9]+$' type_re='^[-._a-zA-Z0-9/]+$' size_re='^[0-9]+$'
-+  local kind field1 field2 field3 extra
-+  local named=0 keys=0 expected=-1 rejected=0
++	ns := "rook-ceph"
++	realmName := "realm-a"
 +
-+  while read -r kind field1 field2 field3 extra; do
-+    if [[ -n "$extra" ]] || [[ ! "$field1" =~ $name_re ]]; then
-+      rejected=1
-+      continue
-+    fi
-+    case "$kind" in
-+    secret)
-+      if [[ "$named" -ne 0 ]] || [[ ! "$field2" =~ $type_re ]] || [[ ! "$field3" =~ $size_re ]]; then
-+        rejected=1
-+        continue
-+      fi
-+      named=1
-+      expected="$field3"
-+      printf 'name: %s\ntype: %s\ndata:\n' "$field1" "$field2"
-+      ;;
-+    key)
-+      if [[ "$named" -ne 1 ]] || [[ -n "$field3" ]] || [[ ! "$field2" =~ $size_re ]]; then
-+        rejected=1
-+        continue
-+      fi
-+      keys=$((keys + 1))
-+      printf '  %s: %s bytes\n' "$field1" "$field2"
-+      ;;
-+    *)
-+      rejected=1
-+      ;;
-+    esac
-+  done
++	ctx := t.Context()
++	secret := &v1.Secret{
++		ObjectMeta: metav1.ObjectMeta{
++			Namespace: ns,
++			Name:      realmName + "-keys",
++		},
++		//nolint:gosec // only test values
++		Data: map[string][]byte{
++			"access-key": []byte("testAccessKey"),
++			"secret-key": []byte("testSecretKey"),
++		},
++	}
++	clientset := k8sfake.NewClientset(secret)
 +
-+  if [[ "$named" -ne 1 ]] || [[ "$keys" -ne "$expected" ]] || [[ "$rejected" -ne 0 ]]; then
-+    printf 'WARNING: this summary is incomplete; see the job log for what kubectl reported\n'
-+  fi
++	executor := &exectest.MockExecutor{
++		MockExecuteCommandWithTimeout: func(timeout time.Duration, command string, args ...string) (string, error) {
++			logger.Infof("TestConfigureObjectStoreWithCustomEndpoints: %s %v", command, args)
++			switch args[0] {
++			case "zonegroup":
++				if args[1] == "get" {
++					return zoneGroupJSON, nil
++				}
++			case "zone":
++				if args[1] == "get" {
++					return zoneJSON, nil
++				}
++			case "user":
++				if args[1] == "info" {
++					calledUserInfo = true
++					// EINVAL signals user not found → triggers user create
++					return "", exectest.MockExecCommandReturns(t, "", "", int(syscall.EINVAL))
++				}
++				if args[1] == "create" {
++					calledUserCreate = true
++					return `{"user_id": "realm-a-system-user"}`, nil
++				}
++			}
++			return "", nil
++		},
++	}
++
++	clusterCtx := &clusterd.Context{Executor: executor, Clientset: clientset}
++	clusterInfo := &client.ClusterInfo{Namespace: ns, Context: ctx}
++	objContext := NewContext(clusterCtx, clusterInfo, "my-store")
++	objContext.Realm = realmName
++	objContext.ZoneGroup = "zonegroup-a"
++	objContext.Zone = "zone-a"
++
++	store := &cephv1.CephObjectStore{
++		ObjectMeta: metav1.ObjectMeta{Namespace: ns, Name: "my-store"},
++		Spec: cephv1.ObjectStoreSpec{
++			Zone: cephv1.ZoneSpec{Name: "zone-a"},
++		},
++	}
++	zone := &cephv1.CephObjectZone{
++		Spec: cephv1.ObjectZoneSpec{
++			CustomEndpoints: []string{"https://custom.endpoint:443"},
++		},
++	}
++
++	err := configureObjectStore(objContext, store, zone)
++	assert.NoError(t, err)
++	assert.True(t, calledUserInfo, "expected user info to be called for system user")
++	assert.True(t, calledUserCreate, "expected user create to be called for system user")
 +}
 +
- NAMESPACES=("$CLUSTER_NAMESPACE")
- if [[ "$OPERATOR_NAMESPACE" != "$CLUSTER_NAMESPACE" ]]; then
-   NAMESPACES+=("$OPERATOR_NAMESPACE")
-@@ -45,10 +130,20 @@ for NAMESPACE in "${NAMESPACES[@]}"; do
-     done
-   done
+ func TestConfigureStoreWithSharedPools(t *testing.T) {
+ 	sharedMetaPoolAlreadySet, sharedDataPoolAlreadySet := "", ""
+ 	zoneGetCalled := false
+```
+
+**File**: `pkg/operator/ceph/object/zone/controller.go` (modified, +5/-1)
+```diff
+@@ -337,7 +337,11 @@ func (r *ReconcileObjectZone) createZoneIfNotExists(objContext *object.Context,
+ 			zoneEndpoints := strings.Join(zone.Spec.CustomEndpoints, ",")
+ 			log.NamedDebug(objContext.NsName(), logger, "Updating endpoints for zone %q are: %q", objContext.Zone, zoneEndpoints)
+ 			endpointArg := fmt.Sprintf("--endpoints=%s", zoneEndpoints)
+-			err = object.JoinMultisite(objContext, endpointArg, zoneEndpoints, zone.Namespace)
++			err = object.JoinMultisite(objContext, endpointArg, zoneEndpoints)
++			if err != nil {
++				return err
++			}
++			err = object.EnsureMultisiteSystemUser(objContext, zone.Namespace)
+ 			if err != nil {
+ 				return err
+ 			}
+```
+
+**File**: `tests/scripts/github-action-helper.sh` (modified, +4/-1)
+```diff
+@@ -944,10 +944,13 @@ function nudge_multisite_secondary() {
+ # sync state machine wedged in "init" without ever erroring. Restarting the gateways once the
+ # join has settled makes sync initialize from the final period, mirroring ceph's own multisite
+ # QA, which restarts zone gateways after committing period changes.
++#
++# Restart the master first and wait for it: if the secondary starts while the master is down, its
++# metadata sync fails once at startup and never retries.
+ function restart_multisite_rgws() {
+   kubectl -n rook-ceph rollout restart deploy/rook-ceph-rgw-multisite-store-a
+-  kubectl -n rook-ceph-secondary rollout restart deploy/rook-ceph-rgw-zone-b-multisite-store-a
+   kubectl -n rook-ceph rollout status deploy/rook-ceph-rgw-multisite-store-a --timeout=120s
++  kubectl -n rook-ceph-secondary rollout restart deploy/rook-ceph-rgw-zone-b-multisite-store-a
+   kubectl -n rook-ceph-secondary rollout status deploy/rook-ceph-rgw-zone-b-multisite-store-a --timeout=120s
+ }
  
--  # secret need `-oyaml` to read the content instead of `describe` since secrets `describe` will be encrypted.
--  # so keeping it in a different block.
-+  # Secrets get a block of their own because no other kind needs this treatment. This directory
-+  # is published as a workflow artifact, so everything written here is readable by anyone who
-+  # can read the artifact, and base64 is encoding rather than protection. Most Secrets are
-+  # therefore summarized instead of dumped: what th
+```
+
+---
+
+### Incident Patch 2: `dd3750da` (2026-11-05)
+**Commit Message**: Merge pull request #18627 from taaahaaa/fix-cephnfs-bootstrap-overrides
+
+nfs: include cluster config overrides in client config
+
+**File**: `Documentation/Storage-Configuration/Advanced/ceph-configuration.md` (modified, +2/-1)
+```diff
+@@ -223,7 +223,7 @@ a number of very advanced settings that cannot be modified easily via the CLI or
+ dashboard. In order to set configurations before monitors are available or to set advanced
+ configuration settings, the `rook-config-override` ConfigMap exists, and the `config` field can be
+ set with the contents of a `ceph.conf` file. The contents will be propagated to all mon, mgr, OSD,
+-MDS, and RGW daemons as an `/etc/ceph/ceph.conf` file.
++MDS, RGW, and NFS daemons as an `/etc/ceph/ceph.conf` file.
+ 
+ !!! warning
+     Rook performs no validation on the config, so the  validity of the settings is the
+@@ -240,6 +240,7 @@ has been initialized, each daemon will need to be restarted where you want the s
+ between each restart to ensure the cluster goes back to "active/clean" state.
+ * RGW: the pods are stateless and can be restarted as needed.
+ * MDS: the pods are stateless and can be restarted as needed.
++* NFS: the pods are stateless and can be restarted as needed.
+ 
+ After the pod restart, the new settings should be in effect. Note that if the ConfigMap in the Ceph
+ cluster's namespace is created before the cluster is created, the daemons will pick up the settings
+```
+
+**File**: `pkg/operator/ceph/controller/spec.go` (modified, +25/-14)
+```diff
+@@ -131,9 +131,9 @@ done
+ `
+ )
+ 
+-// return the volume and matching volume mount for mounting the config override ConfigMap into
+-// containers as "/etc/ceph/ceph.conf".
+-func configOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
++// ConfigOverrideConfigMapVolumeAndMount returns the volume and matching mount for the optional
++// override ConfigMap as "/etc/ceph/ceph.conf".
++func ConfigOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
+ 	secretAndConfigMapVolumeProjections := []v1.VolumeProjection{}
+ 	name := k8sutil.ConfigOverrideName // configmap name and name of volume
+ 	dir := opconfig.EtcCephDir
+@@ -149,7 +149,10 @@ func configOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
+ 	// won't be able to read the ceph.conf and the container will die, the "restart" count will increase in k8s
+ 	// This will mislead users into thinking something went wrong, but it's a false positive
+ 	mode := int32(0o444)
+-	projectionConfigMap := &v1.ConfigMapProjection{Items: []v1.KeyToPath{{Key: k8sutil.ConfigOverrideVal, Path: file, Mode: &mode}}}
++	projectionConfigMap := &v1.ConfigMapProjection{
++		Items:    []v1.KeyToPath{{Key: k8sutil.ConfigOverrideVal, Path: file, Mode: &mode}},
++		Optional: ptr.To(true),
++	}
+ 	projectionConfigMap.Name = name
+ 	configMapProjection := v1.VolumeProjection{
+ 		ConfigMap: projectionConfigMap,
+@@ -199,7 +202,7 @@ func PodVolumes(dataPaths *opconfig.DataPathMap, dataDirHostPath string, exporte
+ 	}
+ 	hostPathType := v1.HostPathDirectoryOrCreate
+ 	sockDirSource := v1.VolumeSource{HostPath: &v1.HostPathVolumeSource{Path: path.Join(exporterHostPath, daemonSocketsSubPath), Type: &hostPathType}}
+-	configVolume, _ := configOverrideConfigMapVolumeAndMount()
++	configVolume, _ := ConfigOverrideConfigMapVolumeAndMount()
+ 	if confGeneratedInPod {
+ 		configVolume, _ = ConfGeneratedInPodVolumeAndMount()
+ 	}
+@@ -217,7 +220,7 @@ func PodVolumes(dataPaths *opconfig.DataPathMap, dataDirHostPath string, exporte
+ // CephVolumeMounts returns the common list of Kubernetes volume mounts for Ceph containers.
+ // This function is only used for OSDs.
+ func CephVolumeMounts(dataPaths *opconfig.DataPathMap, confGeneratedInPod bool) []v1.VolumeMount {
+-	_, configMount := configOverrideConfigMapVolumeAndMount()
++	_, configMount := ConfigOverrideConfigMapVolumeAndMount()
+ 	if confGeneratedInPod {
+ 		_, configMount = ConfGeneratedInPodVolumeAndMount()
+ 	}
+@@ -241,7 +244,7 @@ func RookVolumeMounts(dataPaths *opconfig.DataPathMap, confGeneratedInPod bool)
+ 
+ // DaemonVolumesBase returns the common / static set of volumes.
+ func DaemonVolumesBase(dataPaths *opconfig.DataPathMap, keyringResourceName string, dataDirHostPath string) []v1.Volume {
+-	configOverrideVolume, _ := configOverrideConfigMapVolumeAndMount()
++	configOverrideVolume, _ := ConfigOverrideConfigMapVolumeAndMount()
+ 	vols := []v1.Volume{
+ 		configOverrideVolume,
+ 	}
+@@ -313,7 +316,7 @@ func DaemonVolumes(dataPaths *opconfig.DataPathMap, keyringResourceName string,
+ // volume mounts are shared by most all Ceph daemon containers, both init and standard. If keyring
+ // resource name is empty, there will be no keyring mounted in the container.
+ func DaemonVolumeMounts(dataPaths *opconfig.DataPathMap, keyringResourceName string, dataDirHostPath string) []v1.VolumeMount {
+-	_, configOverrideMount := configOverrideConfigMapVolumeAndMount()
++	_, configOverrideMount := ConfigOverrideConfigMapVolumeAndMount()
+ 	mounts := []v1.VolumeMount{
+ 		configOverrideMount,
+ 	}
+@@ -594,8 +597,8 @@ func ChownCephDataDirsInitContainer(
+ }
+ 
+ // GenerateMinimalCephConfInitContainer returns an init container that will generate the most basic
+-// Ceph config for connecting non-Ceph daemons to a Ceph cluster (e.g., nfs-ganesha). Effectively
+-// what this means is that it generates '/etc/ceph/ceph.conf' with 'mon_host' populated and a
++// Ceph config for connecting non-Ceph daemons to a Ceph cluster (e.g., nfs-ganesha). It includes
++// cluster config overrides and generates '/etc/ceph/ceph.conf' with 'mon_host' populated and a
+ // keyring path associated with the user given. 'mon_host' is determined by the 'ROOK_CEPH_MON_HOST'
+ // env var present in other Ceph daemon pods, and the keyring is expected to be mounted into the
+ // container with a Kubernetes pod volume+mount.
+@@ -608,12 +611,22 @@ func GenerateMinimalCephConfInitContainer(
+ 	securityContext *v1.SecurityContext,
+ ) v1.Container {
+ 	cfgPath := client.DefaultConfigFilePath()
++	_, overrideMount := ConfigOverrideConfigMapVolumeAndMount()
++	// Keep the read-only overrides separate from the writable /etc/ceph emptyDir, where the
++	// init container combines them with the generated monitor endpoints and client keyring path.
++	overrideMount.MountPath = "/etc/rook-config-override"
+ 	// Note that parameters like $(PARAM) will be replaced by Kubernetes with env var content before
+ 	// container creation.
+ 	confScript := `
+ set -xEeuo pipefail
+ 
+-cat << EOF > ` + cfgPath + `
++if [ -s ` + overrideMount.
+```
+
+**File**: `pkg/operator/ceph/controller/spec_test.go` (modified, +125/-0)
+```diff
+@@ -20,9 +20,14 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"math"
++	"os"
++	"os/exec"
++	"path/filepath"
+ 	"reflect"
++	"strings"
+ 	"testing"
+ 
++	"github.com/go-ini/ini"
+ 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
+ 	rookclient "github.com/rook/rook/pkg/client/clientset/versioned/fake"
+ 	"github.com/rook/rook/pkg/clusterd"
+@@ -33,6 +38,7 @@ import (
+ 	"github.com/rook/rook/pkg/operator/test"
+ 	exectest "github.com/rook/rook/pkg/util/exec/test"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	v1 "k8s.io/api/core/v1"
+ 	discoveryv1 "k8s.io/api/discovery/v1"
+@@ -84,6 +90,44 @@ func TestMountsMatchVolumes(t *testing.T) {
+ 	volsMountsTestDef.TestMountsMatchVolumes(t)
+ }
+ 
++func TestConfigOverrideVolumeIsOptional(t *testing.T) {
++	dataPaths := config.NewDatalessDaemonDataPathMap("rook-ceph-test", "/var/lib/rook")
++	override, _ := ConfigOverrideConfigMapVolumeAndMount()
++
++	for _, tt := range []struct {
++		name    string
++		volumes []v1.Volume
++	}{
++		{name: "direct helper", volumes: []v1.Volume{override}},
++		{name: "OSD volumes", volumes: PodVolumes(dataPaths, "", "", false)},
++		{name: "daemon base volumes", volumes: DaemonVolumesBase(dataPaths, "", "")},
++		{name: "daemon volumes", volumes: DaemonVolumes(dataPaths, "", "")},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			found := false
++			for _, volume := range tt.volumes {
++				if volume.Name != k8sutil.ConfigOverrideName {
++					continue
++				}
++				found = true
++				require.NotNil(t, volume.Projected)
++				require.Len(t, volume.Projected.Sources, 1)
++				projection := volume.Projected.Sources[0].ConfigMap
++				require.NotNil(t, projection)
++				require.NotNil(t, projection.Optional)
++				assert.True(t, *projection.Optional)
++				assert.Equal(t, k8sutil.ConfigOverrideName, projection.Name)
++				require.Len(t, projection.Items, 1)
++				assert.Equal(t, k8sutil.ConfigOverrideVal, projection.Items[0].Key)
++				assert.Equal(t, "ceph.conf", projection.Items[0].Path)
++				require.NotNil(t, projection.Items[0].Mode)
++				assert.Equal(t, int32(0o444), *projection.Items[0].Mode)
++			}
++			assert.True(t, found)
++		})
++	}
++}
++
+ func TestCheckPodMemory(t *testing.T) {
+ 	// This value is in MB
+ 	const PodMinimumMemory uint64 = 1024
+@@ -822,3 +866,84 @@ func TestGetDaemonsToSkipReconcile(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestGenerateMinimalCephConfInitContainer(t *testing.T) {
++	const clientID = "client.nfs-ganesha.my-nfs.a"
++	const keyringPath = "/etc/ceph/keyring-store/keyring"
++	const monHost = "[v2:127.0.0.1:3300]"
++
++	for _, tt := range []struct {
++		name            string
++		overrides       string
++		missingOverride bool
++	}{
++		{
++			name: "empty overrides",
++		},
++		{
++			name:      "preserve RDMA settings without trailing newline",
++			overrides: "[global]\nms_public_type = async+rdma\nms_async_rdma_device_name = mlx5_bond_0\nms_async_rdma_gid_idx = 7\nms_async_rdma_roce_ver = 2",
++		},
++		{
++			name:      "generated values override stale client settings",
++			overrides: "[global]\nmon_host = stale-host\n[" + clientID + "]\nkeyring = stale-keyring",
++		},
++		{
++			name:      "generated values override stale global settings",
++			overrides: "[global]\nmon_host = stale-host\nkeyring = stale-keyring\n",
++		},
++		{
++			name:      "preserve literal shell content",
++			overrides: "[global]\nlog_file = $(touch injected) `touch injected` $HOME",
++		},
++		{
++			name:            "missing override file",
++			missingOverride: true,
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			container := GenerateMinimalCephConfInitContainer(clientID, keyringPath, "ceph", v1.PullIfNotPresent,
++				[]v1.VolumeMount{{Name: "generated-config", MountPath: "/etc/ceph"}}, v1.ResourceRequirements{}, nil)
++			require.Len(t, container.VolumeMounts, 2)
++			overrideMount := container.VolumeMounts[1]
++			assert.Equal(t, k8sutil.ConfigOverrideName, overrideMount.Name)
++			assert.True(t, overrideMount.ReadOnly)
++			assert.NotEqual(t, "/etc/ceph", overrideMount.MountPath)
++
++			dir := t.TempDir()
++			overrideDir := filepath.Join(dir, "overrides")
++			require.NoError(t, os.Mkdir(overrideDir, 0o700))
++			if !tt.missingOverride {
++				require.NoError(t, os.WriteFile(filepath.Join(overrideDir, "ceph.conf"), []byte(tt.overrides), 0o600))
++			}
++			cfgPath := filepath.Join(dir, "ceph.conf")
++			script := strings.ReplaceAll(container.Command[2], cephclient.DefaultConfigFilePath(), cfgPath)
++			script = strings.ReplaceAll(script, overrideMount.MountPath, overrideDir)
++			// Kubernetes expands this reference before starting the container.
++			script = strings.ReplaceAll(script, "$(ROOK_CEPH_MON_HOST)", monHost)
++			cmd := exec.Command("bash", "-c", script)
++			cmd.Dir = dir
++			out, err := cmd.CombinedOutput()
++			require.NoError(t, err, string(out))
++
++			cfg, err := ini.Load(cfgPath)
++			require.NoError(t, err)
++			assert.Equal(t, monHost, cfg.Section("global").Key("mon_host").String())
++			assert.Equal(t, keyringPath, cfg.Section(clientID
+```
+
+**File**: `pkg/operator/ceph/nfs/spec.go` (modified, +3/-4)
+```diff
+@@ -121,6 +121,7 @@ func (r *ReconcileCephNFS) makeDeployment(nfs *cephv1.CephNFS, cfg daemonConfig)
+ 	nfs.Spec.Server.Labels.ApplyToObjectMeta(&deployment.ObjectMeta)
+ 
+ 	cephConfigVol, _ := cephConfigVolumeAndMount()
++	cephOverrideVol, _ := controller.ConfigOverrideConfigMapVolumeAndMount()
+ 	nfsConfigVol, _ := nfsConfigVolumeAndMount(cfg.ConfigConfigMap)
+ 	dbusVol, _ := dbusVolumeAndMount()
+ 	podSpec := v1.PodSpec{
+@@ -133,11 +134,9 @@ func (r *ReconcileCephNFS) makeDeployment(nfs *cephv1.CephNFS, cfg daemonConfig)
+ 		},
+ 		RestartPolicy: v1.RestartPolicyAlways,
+ 		Volumes: []v1.Volume{
+-			// do not mount usual daemon volumes, as no data is stored for this daemon, and the ceph
+-			// config file is generated by the init container. we don't need to worry about missing
+-			// override configs, because nfs-ganesha is not a Ceph daemon; it wouldn't observe any
+-			// overrides anyway
++			// The init container combines cluster overrides with NFS client connection settings.
+ 			cephConfigVol,
++			cephOverrideVol,
+ 			keyring.Volume().Resource(resourceName),
+ 			nfsConfigVol,
+ 			dbusVol,
+```
+
+**File**: `pkg/operator/ceph/nfs/spec_test.go` (modified, +41/-0)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	optest "github.com/rook/rook/pkg/operator/test"
+ 	exectest "github.com/rook/rook/pkg/util/exec/test"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 	v1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/api/resource"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -582,3 +583,43 @@ func TestGetGaneshaConfigNFSPort(t *testing.T) {
+ 	cfg = getGaneshaConfig(nfs, cephver.Squid, "a")
+ 	assert.Contains(t, cfg, "NFS_Port = 12049;")
+ }
++
++func TestDeploymentConfigOverrides(t *testing.T) {
++	r, cfg := newDeploymentSpecTest(t)
++	nfs := baseCephNFS("my-nfs", "rook-ceph-test-ns")
++	d, err := r.makeDeployment(nfs, cfg)
++	require.NoError(t, err)
++
++	var overrideVolume *v1.Volume
++	for i := range d.Spec.Template.Spec.Volumes {
++		volume := &d.Spec.Template.Spec.Volumes[i]
++		if volume.Name == k8sutil.ConfigOverrideName {
++			overrideVolume = volume
++		}
++	}
++	require.NotNil(t, overrideVolume)
++	require.NotNil(t, overrideVolume.Projected)
++	require.Len(t, overrideVolume.Projected.Sources, 1)
++	projection := overrideVolume.Projected.Sources[0].ConfigMap
++	require.NotNil(t, projection)
++	require.NotNil(t, projection.Optional)
++	assert.True(t, *projection.Optional)
++	assert.Equal(t, k8sutil.ConfigOverrideName, projection.Name)
++	require.Len(t, projection.Items, 1)
++	assert.Equal(t, k8sutil.ConfigOverrideVal, projection.Items[0].Key)
++	assert.Equal(t, "ceph.conf", projection.Items[0].Path)
++
++	init := d.Spec.Template.Spec.InitContainers[0]
++	assert.Equal(t, "generate-minimal-ceph-conf", init.Name)
++	var overrideMount *v1.VolumeMount
++	for i := range init.VolumeMounts {
++		mount := &init.VolumeMounts[i]
++		if mount.Name == overrideVolume.Name {
++			overrideMount = mount
++		}
++	}
++	require.NotNil(t, overrideMount)
++	assert.True(t, overrideMount.ReadOnly)
++	assert.NotEqual(t, cephclient.DefaultConfigDir, overrideMount.MountPath)
++	optest.NewPodSpecTester(t, &d.Spec.Template.Spec).AssertVolumesAndMountsMatch()
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18688** (closed): Wrong repo D: (@BlaineEXE)
 - **PR #18685** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
 - **PR #18684** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
+- **PR #18683** (2026-11-05): object: add VAULT_TRANSIT_BACKEND_PATH for the RGW SSE-S3 transit mount (backport #18598) (@mergify[bot])
 - **PR #18680** (2026-11-03): operator: disable msgr1 on osd, mgr, and mds when msgr2 is required (backport #18557) (@mergify[bot])
-- **PR #18674** (2026-11-04): kms: migrate IBM Key Protect client to v1.0.1 (backport #18488) (@mergify[bot])
-- **PR #18668** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (@jhoblitt)
-- **PR #18667** (2026-11-03): ci: scan the shipped Go minor in govulncheck (backport #18615) (@mergify[bot])
+- **PR #18678** (2026-11-05): build: bump golang.org/x/net to v0.62.0 (@jhoblitt)
 
 ---
 
@@ -1564,48 +2031,70 @@ test: summarize most Secrets in collected logs instead of dumping them
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets
+## X. Merge pull request #18648 from billyridgway/wridgway/system-user-fix
 
 **RULE**:
-When implementing operations in `tests/scripts/collect-logs.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/operator/ceph/object/objectstore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c69f415`: Merge pull request #18668 from jhoblitt/ci-summarize-collected-secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9886e5bf`: Merge pull request #18648 from billyridgway/wridgway/system-user-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/scripts/collect-logs.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/object/objectstore.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# collects_secret_content reports whether a Secret's values are collected in full. Everything
-# else is summarized, so a Secret appearing later under an unmatched name is withheld without
-# anyone deciding again. The two prefix patterns are open rather than anchored on -keyring, so
-# a new Secret named under them would be collected; every name they match today is a keyring.
-#
-# These are the keys a cephx rotation problem shows up in, and a cluster in that state may be
-# unreachable by other means: `ceph auth ls` is answered by the mon, so the mon Secret in
-# particular has to stay legible on its own. Within the cluster namespace they disclose nothing
-# further, since ceph-auth-ls.txt holds the same entities' keys -- but CEPH_CMD is bound to
-# CLUSTER_NAMESPACE, so a second cluster collected through ADDITIONAL_NAMESPACE, as the
-# multi-cluster-mirroring and rgw-multisite canaries do, has no auth dump of its own.
-function collects_secret_content() {
-  case "$1" in
-  rook-ceph-mon | rook-ceph-mgr-* | rook-ceph-mds-*) return 0 ;;
-  *) return 1 ;;
-  esac
+func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints string) error {
+// EnsureMultisiteSystemUser creates the realm system user if the zone is the master zone of the
+// master zone group. It is a no-op for any other zone.
+func EnsureMultisiteSystemUser(objContext *Context, namespace string) error {
+	zoneIsMaster, err := CheckZoneIsMaster(objContext)
+	if err != nil {
+		return errors.Wrapf(err, "failed to determine if zone %q is master", objContext.Zone)
+	}
+	zoneGroupIsMaster, err := checkZoneGroupIsMaster(objContext)
+	if err != nil {
+		return errors.Wrapf(err, "failed to determine if zone group %q is master", objContext.ZoneGroup)
+	}
+	if !zoneIsMaster || !zoneGroupIsMaster {
+		return nil
+	}
+	return createSystemUser(objContext, namespace)
 }
 
-# SECRET_SUMMARY_TEMPLATE describes a Secret without exposing it: one
-# "secret <name> <type> <number of data keys>" record, then o
+				err = JoinMultisite(objContext, endpointArg, zoneEndpoints)
+		// When custom endpoints are defined the zone's endpoint list is managed by the
+		// CephObjectZone controller, so the endpoint block above is skipped. The realm system
+		// user must still exist for the master zone in the master zonegroup regardless.
+		if zone != nil {
+			if err := EnsureMultisiteSystemUser(objContext, store.Namespace); err != nil {
+				return err
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  # secret need `-oyaml` to read the content instead of `describe` since secrets `describe` will be encrypted.
-  # so keeping it in a different block.
+func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace string) error {
+	zoneGroupIsMaster := false
+
+
+		// check if zone group is master only if zone is master for creating the system user
+		zoneGroupIsMaster, err = checkZoneGroupIsMaster(objContext)
+		if err != nil {
+			return errors.Wrapf(err, "failed to find out whether zone group %q in is the master zone group", objContext.ZoneGroup)
+		}
+	// create system user for realm for master zone in master zonegroup for multisite scenario
+	if zoneIsMaster && zoneGroupIsMaster {
+		err = createSystemUser(objContext, namespace)
+		if err != nil {
+			return err
+		}
+	}
+
+				err = JoinMultisite(objContext, endpointArg, zoneEndpoints, store.Namespace)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c69f415` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9886e5bf` are properly handled with clean fallback behavior.

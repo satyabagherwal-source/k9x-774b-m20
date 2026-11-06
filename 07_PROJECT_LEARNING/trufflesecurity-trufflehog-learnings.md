@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `6ced18b7`  
+> **Source Version**: `f8221ca5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:06:11.130Z  
+> **Timestamp**: 2026-11-05T19:15:17.990Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:06:11.122Z  
+> **Harvest Timestamp**: 2026-11-05T19:15:05.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28875 stars
+- **Stars / Engagement**: 28887 stars
 
 ---
 
@@ -1140,204 +1140,140 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ced18b7` (2026-11-05)
-**Commit Message**: Time detector_execution_duration per detector run (#5526)
+### Incident Patch 1: `f8221ca5` (2026-11-05)
+**Commit Message**: fix(sqlserver): use driver's default port in pre-dial check (#5527)
 
-detectChunk observed the histogram with time.Since(start), but start is
-only set when --print-avg-detector-time is on. With the option off, start
-is the zero time, so every observation saturated to roughly 292 years and
-landed in the +Inf bucket. With it on, start is taken once per chunk, so
-each match's observation also included every earlier match in the chunk.
-
-Time each FromData call with its own start and observe the histogram from
-that. The --print-avg-detector-time report keeps its existing timing.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `pkg/engine/engine.go` (modified, +9/-1)
+**File**: `pkg/detectors/sqlserver/sqlserver.go` (modified, +24/-9)
 ```diff
-@@ -1215,6 +1215,10 @@ func (e *Engine) detectorWorker(ctx context.Context) {
+@@ -126,19 +126,34 @@ func shouldIgnore(uri string, ignorePatterns []*regexp.Regexp) bool {
+ 	return false
  }
  
- func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
-+	// start feeds only the printAvgDetectorTime report, so it is left at its zero value when that option is off and
-+	// must not be read outside that report's code. It is taken once per chunk, so each duration the report records
-+	// spans every match processed so far. detectorExecutionDuration times each match on its own instead; see
-+	// matchStart below.
- 	var start time.Time
- 	if e.printAvgDetectorTime {
- 		start = time.Now()
-@@ -1251,12 +1255,16 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
- 		t := time.AfterFunc(detectionTimeout+1*time.Second, func() {
- 			ctx.Logger().Error(nil, "a detector ignored the context timeout")
- 		})
-+		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
-+		// regardless of printAvgDetectorTime.
-+		matchStart := time.Now()
- 		results, err := e.verificationCache.FromData(
- 			ctx,
- 			data.detector.Detector,
- 			data.verify,
- 			data.chunk.SecretID != 0,
- 			matchBytes)
-+		matchElapsed := time.Since(matchStart)
- 		t.Stop()
- 		cancel()
- 		if err != nil {
-@@ -1285,7 +1293,7 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
- 		).Inc()
- 		detectorExecutionDuration.WithLabelValues(
- 			detectorNameStr,
--		).Observe(float64(time.Since(start).Milliseconds()))
-+		).Observe(float64(matchElapsed.Milliseconds()))
++const defaultSQLServerPort = 1433
++
++// preDialAddress returns the host:port the driver will dial, or false when the
++// port is resolved through SQL Browser and can't be checked ahead of time.
++func preDialAddress(config msdsn.Config) (string, bool) {
++	port := config.Port
++	if port == 0 {
++		if config.Instance != "" {
++			return "", false
++		}
++		port = defaultSQLServerPort
++	}
++	return net.JoinHostPort(config.Host, strconv.Itoa(int(port))), true
++}
++
+ var ping = func(ctx context.Context, config msdsn.Config) (bool, error) {
+ 	// TCP connectivity check to prevent indefinite hangs
+-	address := net.JoinHostPort(config.Host, strconv.Itoa(int(config.Port)))
+-
+-	dialer := &net.Dialer{
+-		Timeout: 3 * time.Second,
+-	}
++	if address, ok := preDialAddress(config); ok {
++		dialer := &net.Dialer{
++			Timeout: 3 * time.Second,
++		}
  
- 		if e.printAvgDetectorTime && len(results) > 0 {
- 			elapsed := time.Since(start)
+-	tcpConn, err := dialer.DialContext(ctx, "tcp", address) // respects context timeout
+-	if err != nil {
+-		return false, err
++		tcpConn, err := dialer.DialContext(ctx, "tcp", address) // respects context timeout
++		if err != nil {
++			return false, err
++		}
++		defer func() { _ = tcpConn.Close() }()
+ 	}
+-	defer func() { _ = tcpConn.Close() }()
+ 
+ 	cleanConfig := msdsn.Config{}
+ 	cleanConfig.Host = config.Host
 ```
 
-**File**: `pkg/engine/engine_test.go` (modified, +93/-0)
+**File**: `pkg/detectors/sqlserver/sqlserver_test.go` (modified, +61/-0)
 ```diff
-@@ -9,19 +9,22 @@ import (
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
-+	"strings"
- 	"sync"
- 	"sync/atomic"
+@@ -6,6 +6,8 @@ import (
  	"testing"
- 	"time"
  
  	"github.com/google/go-cmp/cmp"
- 	lru "github.com/hashicorp/golang-lru/v2"
-+	"github.com/prometheus/client_golang/prometheus"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"google.golang.org/protobuf/testing/protocmp"
- 	"pgregory.net/rapid"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/cache/simple"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/config"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/custom_detectors"
-@@ -2040,6 +2043,96 @@ func TestEngine_DetectChunk_CacheHitIsNotVerificationSkipped(t *testing.T) {
++	"github.com/microsoft/go-mssqldb/msdsn"
++
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
+ )
+@@ -108,3 +110,62 @@ func TestSqlServer_FromDataWithIgnorePattern(t *testing.T) {
+ 		t.Errorf("expected no results, but got %d", len(got))
  	}
  }
- 
-+// slowDetectorType is used only by slowDetector, so its detectorExecutionDuration series isn't shared with other tests.
-+const slowDetectorType = detector_typepb.DetectorType(-1001)
 +
-+// slowDetector takes a fixed time on every FromData call and returns no results, so tests can check what
-+// detectorExecutionDuration records for each detector run.
-+type slowDetector struct {
-+	delay time.Duration
-+}
-+
-+func (d slowDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
-+	time.Sleep(d.delay)
-+	return nil, nil
-+}
-+func (d slowDetector) Keywords() []string                 { return []string{"keyword"} }
-+func (d slowDetector) Type() detector_typepb.DetectorType { return slowDetectorType }
-+func (d slowDetector) Description() string                { return "slow detector for testing" }
-+
-+// detectorExecutionDurationSnapshot reads one detector's detectorExecutionDuration series from the default gatherer.
-+// It returns the observation count and the cumulative count for each bucket upper bound.
-+func detectorExecutionDurationSnapshot(t *testing.T, detectorName string) (uint64, map[float64]uint64) {
-+	t.Helper()
-+
-+	families, err := prometheus.DefaultGatherer.Gather()
-+	require.NoError(t, err)
-+
-+	name := prometheus.BuildFQName(common.MetricsNamespace, common.MetricsSubsystem, "detector_execution_duration")
-+	buckets := map[float64]uint64{}
-+	for _, family := range families {
-+		if family.GetName() != name {
-+			continue
-+		}
-+		for _, metric := range family.GetMetric() {
-+			for _, label := range metric.GetLabel() {
-+				if label.GetName() != "detector_name" || label.GetValue() != detectorName {
-+					continue
-+				}
-+				for _, bucket := range metric.GetHistogram().GetBucket() {
-+					buckets[bucket.GetUpperBound()] = bucket.GetCumulativeCount()
-+				}
-+				return metric.GetHistogram().GetSampleCount(), buckets
-+			}
-+		}
++func TestSqlServer_PreDialAddress(t *testing.T) {
++	tests := []struct {
++		name        string
++		connStr     string
++		wantAddress string
++		wantOK      bool
++	}{
++		{
++			name:        "server without port uses default port",
++			connStr:     "Server=db01;Database=master;User ID=sa;Password=P@ssw0rd!;",
++			wantAddress: "db01:1433",
++			wantOK:      true,
++		},
++		{
++			name:        "data source without port uses default port",
++			connStr:     "Data Source=db01;Database=master;User ID=sa;Password=P@ssw0rd!;",
++			wantAddress: "db01:1433",
++			wantOK:      true,
++		},
++		{
++			name:        "port in server value",
++			connStr:     "Server=db01,1444;Database=master;User ID=sa;Password=P@ssw0rd!;",
++			wantAddress: "db01:1444",
++			wantOK:      true,
++		},
++		{
++			name:        "port parameter",
++			connStr:     "Server=db01;Port=1444;Database=master;User ID=sa;Password=P@ssw0rd!;",
++			wantAddress: "db01:1444",
++			wantOK:      true,
++		},
++		{
++			name:    "named instance without port is resolved by the driver",
++			connStr: `Server=db01\SALES;Database=master;User ID=sa;Password=P@ssw0rd!;`,
++			wantOK:  false,
++		},
++		{
++			name:        "named instance with port",
++			connStr:     `Server=db01\SALES,1444;Database=master;User ID=sa;Password=P@ssw0rd!;`,
++			wantAddress: "db01:1444",
++			wantOK:      true,
++		},
 +	}
-+	return 0, buckets
-+}
 +
-+// TestEngine_DetectChunk_RecordsDurationPerDetectorRun validates that detectorExecutionDuration records one
-+// observation per keyword match, each timing only that match's FromData call, whether or not the
-+// printAvgDetectorTime report is enabled.
-+func TestEngine_DetectChunk_RecordsDurationPerDetectorRun(t *testing.T) {
-+	ctx := context.Background()
-+	const delay = 80 * time.Millisecond
-+
-+	for _, printAvgDetectorTime := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("printAvgDetectorTime=%v", printAvgDetectorTime), func(t *testing.T) {
-+			// Arrange: Create a minimal engine with a passthrough verification cache.
-+			e := &Engine{
-+				verificationCache:    verificationcache.New(nil, &verificationcache.InMemoryMetrics{}),
-+				printAvgDetectorTime: printAvgDetectorTime,
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			config, err := msdsn.Parse(test.connStr)
++			if err != nil {
++				t.Fatalf("msdsn.Parse() error = %v", err)
 +			}
 +
-+			// Arrange: Place two keywords far enough apart that their match windows don't merge, so the detector runs
-+			// twice on one chunk.
-+			data := []byte("keyword" + strings.Repeat(" ", 4096) + "keyword")
-+			ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{slowDetector{delay: delay}})
-+			detectorMatches := ahcore.FindDetectorMatches(data)
-+			require.Len(t, detectorMatches, 1)
-+			require.Len(t, detectorMatches[0].Matches(), 2)
-+
-+			detectorName := slowDetectorType.String()
-+			countBefore, bucketsBefore := detectorExecutionDurationSnapshot(t, detectorName)
-+
-+			// Act
-+			e.detectChunk(ctx, detectableChunk{
-+				detector: detectorMatches[0],
-+				verify:   true,
-+				wgDoneFn: func() {},
-+			})
-+
-+			// Assert: Each run takes about 80ms, so per-run timing puts both observations above the 25ms bound and at
-+			// or below the 125ms bound. Timing from the start of the chunk would put the second run near 160ms, and
-+			// an unset start time would put both past the largest bound.
-+			countAfter, bucketsAfter := detectorExecutionDurationSnapshot(t, detectorName)
-+			assert.Equal(t, uint64(2), countAfter-countBefore)
-+			assert.Equal(t, uint64(0), bucketsAfter[25]-bucketsBefore[25])
-+			assert.Equal(t, uint64(2), bucketsAfter[125]-bucketsBefore[125])
++			address, ok := preDialAddress(config)
++			if ok != test.wantOK || address != test.wantAddress {
++				t.Errorf("preDialAddress() = (%q, %v), want (%q, %v)", address, ok, test.wantAddress, test.wantOK)
++			}
 +		})
 +	}
 +}
-+
- // TestEngine_ScannerWorker_DetectableChunkHasCorrectVerifyFlag validates that scannerWorker generates detectableChunk
- // structs that have the correct verify flag set. I
-```
-
-**File**: `pkg/engine/metrics.go` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ var (
- 		[]string{"detector_name", "source_type", "source_name"},
- 	)
- 
--	// Note this is the time taken to call FromData on each detector, not necessarily the time taken
-+	// Note this is the time taken by one FromData call, made once per keyword match, not necessarily the time taken
- 	// to verify a credential via an API call. If the regex match within FromData does not match, the
- 	// detector will return early. For now this is a good proxy for the time taken to verify a credential.
- 	// TODO (ahrav)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5527** (2026-11-05): fix(sqlserver): use driver's default port in pre-dial check (@jordanTunstill)
 - **PR #5526** (2026-11-05): Time detector_execution_duration per detector run (@unsmith)
 - **PR #5520** (2026-11-04): Clean up Jenkins source logging for per-source debug (@kashifkhan0771)
 - **PR #5519** (2026-11-03): Use shared logtest helpers in source debug logging tests (@kashifkhan0771)
 - **PR #5510** (2026-11-03): Clean up Postman source logging for per-source debug (@kashifkhan0771)
 - **PR #5509** (2026-11-03): Clean up GCS source logging for per-source debug (@kashifkhan0771)
-- **PR #5505** (2026-11-03): Update module go.mongodb.org/mongo-driver to v1.17.10 (@renovate[bot])
 
 ---
 
@@ -1357,36 +1293,59 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Time detector_execution_duration per detector run (#5526)
+## X. sqlserver): use driver's default port in pre-dial check (#5527)
 
 **RULE**:
-When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/sqlserver/sqlserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ced18b7`: Time detector_execution_duration per detector run (#5526). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8221ca5`: sqlserver): use driver's default port in pre-dial check (#5527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/sqlserver/sqlserver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// start feeds only the printAvgDetectorTime report, so it is left at its zero value when that option is off and
-	// must not be read outside that report's code. It is taken once per chunk, so each duration the report records
-	// spans every match processed so far. detectorExecutionDuration times each match on its own instead; see
-	// matchStart below.
-		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
-		// regardless of printAvgDetectorTime.
-		matchStart := time.Now()
-		matchElapsed := time.Since(matchStart)
-		).Observe(float64(matchElapsed.Milliseconds()))
+const defaultSQLServerPort = 1433
+
+// preDialAddress returns the host:port the driver will dial, or false when the
+// port is resolved through SQL Browser and can't be checked ahead of time.
+func preDialAddress(config msdsn.Config) (string, bool) {
+	port := config.Port
+	if port == 0 {
+		if config.Instance != "" {
+			return "", false
+		}
+		port = defaultSQLServerPort
+	}
+	return net.JoinHostPort(config.Host, strconv.Itoa(int(port))), true
+}
+
+	if address, ok := preDialAddress(config); ok {
+		dialer := &net.Dialer{
+			Timeout: 3 * time.Second,
+		}
+		tcpConn, err := dialer.DialContext(ctx, "tcp", address) // respects context timeout
+		if err != nil {
+			return false, err
+		}
+		defer func() { _ = tcpConn.Close() }()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		).Observe(float64(time.Since(start).Milliseconds()))
+	address := net.JoinHostPort(config.Host, strconv.Itoa(int(config.Port)))
+
+	dialer := &net.Dialer{
+		Timeout: 3 * time.Second,
+	}
+	tcpConn, err := dialer.DialContext(ctx, "tcp", address) // respects context timeout
+	if err != nil {
+		return false, err
+	defer func() { _ = tcpConn.Close() }()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ced18b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8221ca5` are properly handled with clean fallback behavior.
