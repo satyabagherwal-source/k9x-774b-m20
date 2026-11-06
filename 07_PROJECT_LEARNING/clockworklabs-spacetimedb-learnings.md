@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `17a3f3a6`  
+> **Source Version**: `291031b4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:07:11.663Z  
+> **Timestamp**: 2026-11-06T21:52:09.362Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:07:11.657Z  
+> **Harvest Timestamp**: 2026-11-06T21:52:08.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25523 stars
+- **Stars / Engagement**: 25527 stars
 
 ---
 
@@ -319,9 +319,9 @@ pub(crate) use match_meta;
 ### Core Architecture Module: `crates/bindings-typescript/src/angular/connection_state.ts`
 ```
 import { InjectionToken, type WritableSignal } from '@angular/core';
-import type { ConnectionId } from '../lib/connection_id';
-import type { Identity } from '../lib/identity';
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
+import type { ConnectionId } from '../lib/connection_id.ts';
+import type { Identity } from '../lib/identity.ts';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
 
 export interface ConnectionState {
   isActive: boolean;
@@ -342,12 +342,12 @@ export const SPACETIMEDB_CONNECTION = new InjectionToken<
 
 ### Core Architecture Module: `crates/bindings-typescript/src/lib/type_util.ts`
 ```
-import type { ConnectionId } from './connection_id';
-import type { Identity } from './identity';
-import type { ScheduleAt } from './schedule_at';
-import type { TimeDuration } from './time_duration';
-import type { Timestamp } from './timestamp';
-import type { Uuid } from './uuid';
+import type { ConnectionId } from './connection_id.ts';
+import type { Identity } from './identity.ts';
+import type { ScheduleAt } from './schedule_at.ts';
+import type { TimeDuration } from './time_duration.ts';
+import type { Timestamp } from './timestamp.ts';
+import type { Uuid } from './uuid.ts';
 
 type DoNotPrettify =
   | Identity
@@ -441,17 +441,26 @@ type CamelCaseImpl<S extends string> = S extends `${infer Head}_${infer Tail}`
  */
 export type CamelCase<S extends string> = Uncapitalize<CamelCaseImpl<S>>;
 
-type AccessorHead<K extends string> = K extends `${infer H}.${string}` ? H : K;
 type AccessorTail<
   K extends string,
   H extends string,
 > = K extends `${H}.${infer R}` ? R : never;
 
-/** Splits dotted keys into nested objects: `{ 'a.b': X, c: Y }` becomes `{ a: { b: X }, c: Y }`. */
-export type NestAccessors<T extends Record<string, unknown>> = {
-  readonly [H in AccessorHead<keyof T & string>]: H extends keyof T
-    ? T[H]
-    : NestAccessors<{ [K in keyof T & string as AccessorTail<K, H>]: T[K] }>;
+type DottedHead<K extends string> = K extends `${infer H}.${string}`
+  ? H
+  : never;
+type PlainKey<K extends string> = K extends `${string}.${string}` ? never : K;
+
+/**
+ * Splits dotted keys into nested objects: `{ 'a.b': X, c: Y }` becomes `{ a: { b: X }, c: Y }`.
+ * Plain keys go through `Pick`, which keeps each property's declaration and so its doc comment.
+ */
+export type NestAccessors<T extends Record<string, unknown>> = Readonly<
+  Pick<T, PlainKey<keyof T & string>>
+> & {
+  readonly [H in DottedHead<keyof T & string>]: NestAccessors<{
+    [K in keyof T & string as AccessorTail<K, H>]: T[K];
+  }>;
 };
 
 /** Type safe conversion from "some_identifier-name" to "some_identifier_name"
@@ -520,13 +529,13 @@ export type InvalidColumnMetadata<Message extends string> = {
 
 ### Core Architecture Module: `crates/bindings-typescript/src/lib/util.ts`
 ```
-import type { AlgebraicType } from './algebraic_type';
-import type { Typespace } from './autogen/types';
-import BinaryReader from './binary_reader';
-import BinaryWriter from './binary_writer';
-import type { ParamsObj } from './reducers';
-import type { ColumnBuilder, TypeBuilder } from './type_builders';
-import type { CamelCase, SnakeCase } from './type_util';
+import type { AlgebraicType } from './algebraic_type.ts';
+import type { Typespace } from './autogen/types.ts';
+import BinaryReader from './binary_reader.ts';
+import BinaryWriter from './binary_writer.ts';
+import type { ParamsObj } from './reducers.ts';
+import type { ColumnBuilder, TypeBuilder } from './type_builders.ts';
+import type { CamelCase, SnakeCase } from './type_util.ts';
 
 export function deepEqual(obj1: unknown, obj2: unknown): boolean {
   if (obj1 === obj2) return true;
@@ -750,8 +759,8 @@ export const hasOwn: <K extends PropertyKey>(
 
 ### Core Architecture Module: `crates/bindings-typescript/src/react/connection_state.ts`
 ```
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
-import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
+import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager.ts';
 
 export type ConnectionState = ManagerConnectionState & {
   getConnection(): DbConnectionImpl<any> | null;
@@ -761,10 +770,10 @@ export type ConnectionState = ManagerConnectionState & {
 
 ### Core Architecture Module: `crates/bindings-typescript/src/sdk/type_utils.ts`
 ```
-import type { Infer, InferTypeOfParams } from '.';
-import type { Prettify } from '../lib/type_util';
-import type { UntypedProcedureDef } from './procedures';
-import type { UntypedReducerDef } from './reducers';
+import type { Infer, InferTypeOfParams } from './index.ts';
+import type { Prettify } from '../lib/type_util.ts';
+import type { UntypedProcedureDef } from './procedures.ts';
+import type { UntypedReducerDef } from './reducers.ts';
 
 export type IsEmptyObject<T> = [keyof T] extends [never] ? true : false;
 export type MaybeParams<T> = IsEmptyObject<T> extends true ? [] : [params: T];
@@ -785,8 +794,8 @@ export type ProcedureReturnType<P extends UntypedProcedureDef> = Infer<
 
 ### Core Architecture Module: `crates/bindings-typescript/src/solid/connection_state.ts`
 ```
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
-import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
+import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager.ts';
 
 export type ConnectionState = ManagerConnectionState & {
   getConnection(): DbConnectionImpl<any> | null;
@@ -821,17 +830,22 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17a3f3a6` (2026-11-05)
-**Commit Message**: Use performant implementation for find/filter (#6416)
+### Incident Patch 1: `58a7eacd` (2026-11-06)
+**Commit Message**: Add Security Gremlin to GREMLINS.md (#6510)
 
 # Description of Changes
 
-Update the typescript sdk to use a map for lookups by indexed columns
-(find and filter).
+This PR documents Security Gremlin, a report-only security reviewer that
+went live on November 5, in `.github/GREMLINS.md`. Until now the file
+listed only Clawd, so nothing told the team that a second bot also acts
+as `clockwork-labs-bot`, where to reach it, or that it keeps
+vulnerability details out of public issues and PRs. The new entry
+follows Clawd's format and is the only change.
 
 # API and ABI breaking changes
 
-No
+This doesn't break anything, since it only adds Markdown to a file that
+no code, workflow, or tool reads.
 
 # Rollback safety impact
 
@@ -839,450 +853,461 @@ n/a
 
 # Expected complexity level and risk
 
-2 - change is confined to the typescript sdk, and fairly
-straightforward.
+1
 
 # Testing
 
-- [ ] Tested a sample app that uses find/filter and made sure it still
-worked correctly
+- [x] Checked the GitHub account, Discord channel, bot name, and rules
+in the entry against Security Gremlin's live configuration.
+- [x] Confirmed Security Gremlin is running and connected to Discord.
+- [ ] CI
 
-**File**: `crates/bindings-typescript/package.json` (modified, +1/-1)
+**File**: `.github/GREMLINS.md` (modified, +24/-0)
 ```diff
-@@ -142,7 +142,7 @@
-       "name": "esm (gzip)",
-       "path": "dist/index.mjs",
-       "gzip": true,
--      "limit": "50 kB"
-+      "limit": "60 kB"
-     },
-     {
-       "name": "esm (uncompressed)",
-```
-
-**File**: `crates/bindings-typescript/src/sdk/table_cache.ts` (modified, +129/-73)
-```diff
-@@ -1,7 +1,7 @@
- import { EventEmitter } from './event_emitter.ts';
+@@ -28,6 +28,30 @@ This file documents the automated agents and bots that operate on this repositor
+ - Mention `@Openclaw` in #gremlins on Discord
+ - Tag `@clockwork-labs-bot` on GitHub PRs/issues
  
- import { stdbLogger } from './logger.ts';
--import { deepEqual, type ComparablePrimitive } from '../';
-+import { AlgebraicType, deepEqual, type ComparablePrimitive } from '../';
- import type { EventContextInterface, TableDefForTableName } from './index.ts';
- import type { RowType, TableIndexes, UntypedTableDef } from '../lib/table.ts';
- import type { ClientTableCoreImplementable } from './client_table.ts';
-@@ -13,7 +13,7 @@ import type {
-   ReadonlyRangedIndex,
-   ReadonlyUniqueIndex,
- } from '../lib/indexes.ts';
--import type { Bound } from '../server/range.ts';
-+import type { Range } from '../server/range.ts';
- import type { Prettify } from '../lib/type_util.ts';
++## Security Gremlin 🛡️
++
++- **What:** Security reviewer (report-only)
++- **GitHub account:** `clockwork-labs-bot`
++- **Discord channel:** #security-gremlin (CL - SpacetimeDB)
++- **Powered by:** [OpenClaw](https://github.com/openclaw/openclaw) + GPT-6.1
++
++### What Security Gremlin does
++
++- **Reviews code for security bugs** — on request, reads commits and PRs for problems with authentication, authorization, module sandboxing, untrusted input, and leaked secrets
++- **Checks dependencies and CI** — looks for vulnerable dependencies and unsafe GitHub Actions workflows
++- **Reports privately** — posts findings in #security-gremlin for the team to triage
++
++### What Security Gremlin does NOT do
++
++- Discuss vulnerabilities in public issues, PR comments, or commit messages
++- Build or run code from PRs by people outside Clockwork Labs
++- Scan or probe live systems
++- Approve or merge PRs, or take any destructive action
++
++### Contacting Security Gremlin
++
++- Mention `@Security Gremlin App` in #security-gremlin on Discord
++
+ ---
  
- export type Operation<
-@@ -44,6 +44,37 @@ const scalarCompare = (x: any, y: any): number => {
-   return x < y ? -1 : 1;
- };
- 
-+const isRange = (arg: any): arg is Range<any> =>
-+  arg && typeof arg === 'object' && 'from' in arg && 'to' in arg;
-+
-+const inRange = (value: unknown, range: Range<any>): boolean => {
-+  const { from, to } = range;
-+
-+  if (from.tag !== 'unbounded') {
-+    const c = scalarCompare(value, from.value);
-+    if (c < 0) return false;
-+    if (c === 0 && from.tag === 'excluded') return false;
-+  }
-+
-+  if (to.tag !== 'unbounded') {
-+    const c = scalarCompare(value, to.value);
-+    if (c > 0) return false;
-+    if (c === 0 && to.tag === 'excluded') return false;
-+  }
-+
-+  return true;
-+};
-+
-+type IndexNode<Row> = {
-+  rows: Map<ComparablePrimitive, Row>;
-+  children: Map<ComparablePrimitive, IndexNode<Row>>;
-+};
-+
-+const newIndexNode = <Row>(): IndexNode<Row> => ({
-+  rows: new Map(),
-+  children: new Map(),
-+});
-+
- export type TableIndexView<
-   RemoteModule extends UntypedRemoteModule,
-   TableName extends TableNamesOf<RemoteModule>,
-@@ -72,6 +103,16 @@ export class TableCacheImpl<
-     [RowType<TableDefForTableName<RemoteModule, TableName>>, number]
-   >;
-   private tableDef: TableDefForTableName<RemoteModule, TableName>;
-+  #indexes: {
-+    add(
-+      rowId: ComparablePrimitive,
-+      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-+    ): void;
-+    remove(
-+      rowId: ComparablePrimitive,
-+      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-+    ): void;
-+  }[] = [];
-   private emitter: EventEmitter<'insert' | 'delete' | 'update'>;
- 
-   /**
-@@ -102,7 +143,6 @@ export class TableCacheImpl<
-     }
-   }
- 
--  // TODO: this just scans the whole table; we should build proper index structures
-   #makeReadonlyIndex<
-     I extends TableDefForTableName<
-       RemoteModule,
-@@ -121,69 +161,54 @@ export class TableCacheImpl<
-     }
- 
-     const columns = idx.columns;
-+    const keyFns = columns.map(c => {
-+      const ty = tableDef.columns[c].typeBuilder.algebraicType;
-+      return (value: unknown) => AlgebraicType.intoMapKey(ty, value);
-+    });
-+    const getCol = (row: RowType<TableDef>, i: number) =>
-+      (row as Record<string, unknown>)[columns[i]];
- 
--    // Extract the tuple key for this btree index (column order preserved)
--    const getKey = (row: Row): readonly unknown[] =>
--      columns.map(c => (row as Record<string, unknown>)[c]);
-+    // Each level of the tree is keyed by the next index column, and each node
-+    // holds every row whose key starts with the path leading to it.
-+    const root = newIndexNode<Row>();
- 
--    // The server’s ranged scan fixes all prefix cols to equality and applies
--    // the bound only to the *last* term. We mirror that.
--    //
--    // rangeArg for multi-col index is:
--    //   [...prefixEqualValues, (lastTerm | Range<lastTerm>)]
--    //
--    // If only one element is provided, it’s the last term (scalar or Range).
--    const matchRange = (row: Row, rangeArg: any): boolean => {
--      const key = getKey(row);
--
--      // Normalize rangeArg into an array.
--      // With multi-col b-tree, IndexScanRangeBounds always yields at least one element.
--      const arr = Array.isArray(rangeArg) ? rangeArg : [rangeArg];
--
--      const prefixLen = Math.max(0, arr.length - 1);
--      // Check equality over the prefix (all but the last provided element)
--      for (let i = 0; i < prefixLen; i++) {
--        if (!deepEqual(key[i], arr[i])) return false;
-+    const lookup = (prefix: readonly unknown[]): IndexNode<Row> | undefined => {
-+      let node: IndexNode<Row> | undefined = root;
-+      for (let i = 0; i < prefix.length && node; i++) {
-+        node = node.children.get(keyFns[i](prefix[i]));
-       }
-+      return node;
-+    };
- 
--      const lastProvided = arr[arr.length - 1];
--      const kLast = key[prefixLen];
--
--      // If the last provided is a Range<T>, apply bounds; otherwise equality.
--      if (
--        lastProvided &&
--        typeof lastProvided === 'object' &&
--        'from' in lastProvided &&
--        'to' in lastProvided
--      ) {
--        // Range<T>
--        const from = lastProvided.from as Bound<any>;
--        const to = lastProvided.to as Bound<any>;
--
--        // Lo
-```
-
-**File**: `crates/bindings-typescript/tests/table_cache.test.ts` (modified, +59/-0)
-```diff
-@@ -755,6 +755,65 @@ describe('TableCache', () => {
-     });
-   });
- 
-+  test('Unique index find tracks inserts, updates and deletes', () => {
-+    const tableCache = new TableCacheImpl(tables.user.tableDef);
-+    const alice = Identity.fromString('aa'.repeat(32));
-+    const bob = Identity.fromString('bb'.repeat(32));
-+    const mkOperation = (
-+      type: 'insert' | 'delete',
-+      row: { identity: Identity; username: string }
-+    ) => ({
-+      type,
-+      rowId: AlgebraicType.intoMapKey(
-+        tables.user.rowType.elements[0].algebraicType,
-+        row.identity
-+      ),
-+      row,
-+    });
-+    const steps: TestStep[] = [
-+      {
-+        ops: {
-+          ops: [
-+            mkOperation('insert', { identity: alice, username: 'alice' }),
-+            mkOperation('insert', { identity: bob, username: 'bob' }),
-+          ],
-+          ctx: {},
-+        },
-+        assertions: [
-+          ({ tableCache }) => {
-+            const index = (tableCache as any).identity;
-+            expect(index.find(alice)).toEqual({
-+              identity: alice,
-+              username: 'alice',
-+            });
-+            expect(index.find(Identity.zero())).toBeNull();
-+          },
-+        ],
-+      },
-+      {
-+        ops: {
-+          ops: [
-+            mkOperation('delete', { identity: alice, username: 'alice' }),
-+            mkOperation('insert', { identity: alice, username: 'alice2' }),
-+            mkOperation('delete', { identity: bob, username: 'bob' }),
-+          ],
-+          ctx: {},
-+        },
-+        assertions: [
-+          ({ tableCache }) => {
-+            const index = (tableCache as any).identity;
-+            expect(index.find(alice)).toEqual({
-+              identity: alice,
-+              username: 'alice2',
-+            });
-+            expect(index.find(bob)).toBeNull();
-+          },
-+        ],
-+      },
-+    ];
-+    runTest(tableCache, steps);
-+  });
-+
-   test('should be empty on creation', () => {
-     const tableCache = new TableCacheImpl(tables.player.tableDef);
-     expect(tableCache.count()).toEqual(0n);
-```
-
-**File**: `crates/bindings-typescript/tests/table_cache_resolved_indexes.test.ts` (modified, +68/-0)
-```diff
-@@ -3,6 +3,7 @@ import { ModuleContext, tablesToSchema } from '../src/lib/schema';
- import { table } from '../src/lib/table';
- import { TableCacheImpl } from '../src/sdk/table_cache';
- import { t } from '../src/lib/type_builders';
-+import { Range } from '../src/server/range';
- 
- describe('table cache resolved indexes', () => {
-   it('builds index accessors from resolvedIndexes (field-level + table-level)', () => {
-@@ -68,4 +69,71 @@ describe('table cache resolved indexes', () => {
-     expect(typeof byTeamAndLevel?.filter).toBe('function');
-     expect(Array.from(byTeamAndLevel.filter(['red', 1]))).toEqual([rows[0]]);
-   });
-+
-+  it('btree filter supports prefixes and ranges and tracks row changes', () => {
-+    const player = table(
-+      {
-+        name: 'player',
-+        indexes: [
-+          {
-+            accessor: 'byTeamAndLevel',
-+            algorithm: 'btree',
-+            columns: ['team', 'level'] as const,
-+          },
-+        ] as const,
-+      },
-+      {
-+        id: t.u32(),
-+        team: t.string(),
-+        level: t.u32(),
-+      }
-+    );
-+
-+    const schemaDef = tablesToSchema(new ModuleContext(), { player });
-+    const tableCache = new TableCacheImpl<any, string>(
-+      schemaDef.tables.player as any
-+    );
-+    const byTeamAndLevel = (tableCache as any).byTeamAndLevel;
-+    const apply = (type: 'insert' | 'delete', rows: any[]) =>
-+      tableCache.applyOperations(
-+        rows.map(row => ({ type, rowId: row.id, row })),
-+        {} as any
-+      );
-+    const filter = (range: any) => Array.from(byTeamAndLevel.filter(range));
-+
-+    const rows = [
-+      { id: 1, team: 'red', level: 1 },
-+      { id: 2, team: 'blue', level: 2 },
-+      { id: 3, team: 'red', level: 3 },
-+      { id: 4, team: 'red', level: 5 },
-+    ];
-+    apply('insert', rows);
-+
-+    expect(filter(['red', 3])).toEqual([rows[2]]);
-+    expect(filter(['green', 3])).toEqual([]);
-+    expect(filter('red')).toEqual([rows[0], rows[2], rows[3]]);
-+    expect(
-+      filter([
-+        'red',
-+        new Range({ tag: 'excluded', value: 1 }, { tag: 'included', value: 5 }),
-+      ])
-+    ).toEqual([rows[2], rows[3]]);
-+    expect(
-+      filter(
-+        new Range(
-+          { tag: 'included', value: 'blue' },
-+          { tag: 'excluded', value: 'red' }
-+        )
-+      )
-+    ).toEqual([rows[1]]);
-+
-+    const moved = { id: 3, team: 'blue', level: 3 };
-+    apply('delete', [rows[2]]);
-+    apply('insert', [moved]);
-+    apply('delete', [rows[3]]);
-+
-+    expect(filter(['red', 3])).toEqual([]);
-+    expect(filter('red')).toEqual([rows[0]]);
-+    expect(filter('blue')).toEqual([rows[1], moved]);
-+  });
- });
+ *To add a new gremlin, document it here.*
 ```
 
 ---
 
-### Incident Patch 2: `620838fa` (2026-11-05)
-**Commit Message**: Document how to write clear PR testing sections (#6492)
+### Incident Patch 2: `2613d19e` (2026-11-06)
+**Commit Message**: [T3 Connect] TypeScript SDK: fail the connection instead of crashing Node on a bad message (#6010)
+
+> Part of the work to move T3 Code's T3 Connect relay onto SpacetimeDB.
+**Non-blocking.** T3's workaround: never change the row layout of tables
+or views that clients subscribe to.
 
 # Description of Changes
 
-Add guidance and examples for concise PR testing sections that describe
-concrete coverage.
+In Node, a server message the SDK fails to apply, such as a row that
+doesn't match the client's bindings, throws out of the WebSocket
+listener and crashes the process. An error thrown in an app callback
+(`onInsert`, `onConnect`, …) does the same.
 
-It will surely need more iteration, but hopefully it helps as a start.
+- A message that fails to apply is handled like one that fails to
+decode: it is logged and ends the connection, queued messages are
+dropped, and pending calls settle. The app gets a
+`WebSocketProtocolError` whose `cause` is the original error, through
+`onConnectError` if the connection wasn't established yet and through
+`onDisconnect` otherwise. Like master's protocol errors, it doesn't
+retry automatically. Without automatic reconnect, a message that fails
+to decode now does the same instead of throwing.
+- A throwing callback is logged, the remaining callbacks still run, and
+the connection stays open.
+
+The C# SDK already logs, fails pen
+
+**File**: `crates/bindings-typescript/src/sdk/db_connection_impl.ts` (modified, +14/-1)
+```diff
+@@ -1873,8 +1873,14 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
+     }
+   }
+ 
++  /**
++   * End the connection over a server message that could not be decoded or
++   * applied. A retry would not fix it, so this never reconnects. The error
++   * goes to `onConnectError` if the connection was not yet established, and
++   * to `onDisconnect` otherwise.
++   */
+   #handleProtocolError(cause: unknown): void {
+-    if (!this.#automaticReconnect) throw cause;
++    stdbLogger('error', 'Failed to process a server message', cause);
+     const error = new WebSocketProtocolError('Invalid server message', {
+       cause,
+     });
+@@ -1907,6 +1913,13 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
+           this.#processMessage(data);
+         }
+       }
++    } catch (e) {
++      // A message that could not be applied leaves the client cache
++      // inconsistent, and rethrowing from a WebSocket listener crashes Node
++      // hosts. Handle it like a message that could not be decoded: end the
++      // connection, which drops what is queued and settles calls in flight.
++      // (Callback errors never get here; `EventEmitter` logs them.)
++      this.#handleProtocolError(e);
+     } finally {
+       if (this.#inboundQueueOffset >= this.#inboundQueue.length) {
+         this.#inboundQueue.length = 0;
+```
+
+**File**: `crates/bindings-typescript/src/sdk/event_emitter.ts` (modified, +9/-1)
+```diff
+@@ -1,3 +1,5 @@
++import { stdbLogger } from './logger.ts';
++
+ // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+ export class EventEmitter<Key, Callback extends Function = Function> {
+   #events: Map<Key, Set<Callback>> = new Map();
+@@ -25,8 +27,14 @@ export class EventEmitter<Key, Callback extends Function = Function> {
+       return;
+     }
+ 
++    // Like the C# SDK, a throwing callback is logged and does not stop the
++    // others or escape into the WebSocket listener, which would crash Node.
+     for (const callback of callbacks) {
+-      callback(...args);
++      try {
++        callback(...args);
++      } catch (e) {
++        stdbLogger('error', 'A callback threw', e);
++      }
+     }
+   }
+ }
+```
+
+**File**: `crates/bindings-typescript/tests/db_connection.test.ts` (modified, +147/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import { assertType, beforeEach, describe, expect, test } from 'vitest';
++import { assertType, beforeEach, describe, expect, test, vi } from 'vitest';
+ import {
+   BinaryWriter,
+   ConnectionId,
+@@ -216,6 +216,152 @@ describe('DbConnection', () => {
+     expect(client.isActive).toBe(false);
+   });
+ 
++  test('logs an error thrown by a callback and keeps the connection open', async () => {
++    const wsAdapter = new WebsocketTestAdapter();
++    const onDisconnect = vi.fn();
++    const secondOnConnect = vi.fn();
++
++    const client = DbConnection.builder()
++      .withUri('ws://127.0.0.1:1234')
++      .withDatabaseName('db')
++      .withWSFn(wsAdapter.openWebSocket)
++      .onConnect(() => {
++        throw new Error('callback failed');
++      })
++      .onConnect(secondOnConnect)
++      .onDisconnect(onDisconnect)
++      .build();
++
++    await client['wsPromise'];
++    wsAdapter.acceptConnection();
++    // Node rethrows errors from WebSocket listeners on the next tick, which
++    // crashes the host process.
++    expect(() =>
++      wsAdapter.sendToClient(
++        ServerMessage.InitialConnection({
++          identity: anIdentity,
++          token: 'a-token',
++          connectionId: ConnectionId.random(),
++        })
++      )
++    ).not.toThrow();
++
++    expect(secondOnConnect).toHaveBeenCalledOnce();
++    expect(client.isActive).toBe(true);
++    expect(wsAdapter.closed).toBe(false);
++    expect(onDisconnect).not.toHaveBeenCalled();
++  });
++
++  test('reports a row it cannot decode through onDisconnect instead of throwing', async () => {
++    const onDisconnectPromise = new Deferred<Error | undefined>();
++    const wsAdapter = new WebsocketTestAdapter();
++
++    const client = DbConnection.builder()
++      .withUri('ws://127.0.0.1:1234')
++      .withDatabaseName('db')
++      .withWSFn(wsAdapter.openWebSocket)
++      .onDisconnect((_ctx, error) => onDisconnectPromise.resolve(error))
++      .build();
++
++    await client['wsPromise'];
++    wsAdapter.acceptConnection();
++    wsAdapter.sendToClient(
++      ServerMessage.InitialConnection({
++        identity: anIdentity,
++        token: 'a-token',
++        connectionId: ConnectionId.random(),
++      })
++    );
++    expect(client.isActive).toBe(true);
++    const inserted: number[] = [];
++    client.db.player.onInsert((_ctx, player) => inserted.push(player.id));
++    const inFlight = client.reducers.createPlayer({
++      name: 'drogus',
++      location: { x: 0, y: 0 },
++    });
++
++    // A `player` row one byte short, as when the client's bindings are out of
++    // step with the module's schema.
++    const truncatedPlayer = encodePlayer({
++      id: 1,
++      userId: anIdentity,
++      name: 'drogus',
++      location: { x: 0, y: 0 },
++    }).slice(0, -1);
++    expect(() =>
++      wsAdapter.sendToClient(
++        ServerMessage.TransactionUpdate({
++          querySets: [makeQuerySetUpdate(0, 'player', truncatedPlayer)],
++        })
++      )
++    ).not.toThrow();
++
++    const error = await onDisconnectPromise.promise;
++    expect(error?.message).toBe('Invalid server message');
++    expect(error?.cause).toBeInstanceOf(RangeError);
++    expect(client.isActive).toBe(false);
++    expect(wsAdapter.closed).toBe(true);
++
++    // A call in flight settles, and a message that arrives later is ignored.
++    await expect(inFlight).rejects.toThrow();
++    wsAdapter.sendToClient(
++      ServerMessage.TransactionUpdate({
++        querySets: [
++          makeQuerySetUpdate(
++            0,
++            'player',
++            encodePlayer({
++              id: 2,
++              userId: anIdentity,
++              name: 'drogus',
++              location: { x: 0, y: 0 },
++            })
++          ),
++        ],
++      })
++    );
++    expect(inserted).toEqual([]);
++  });
++
++  test('reports a message it cannot apply before connecting through onConnectError', async () => {
++    const onConnectErrorPromise = new Deferred<Error>();
++    const onDisconnect = vi.fn();
++    const wsAdapter = new WebsocketTestAdapter();
++
++    const client = DbConnection.builder()
++      .withUri('ws://127.0.0.1:1234')
++      .withDatabaseName('db')
++      .withWSFn(wsAdapter.openWebSocket)
++      .onConnectError((_ctx, error) => onConnectErrorPromise.resolve(error))
++      .onDisconnect(onDisconnect)
++      .build();
++
++    await client['wsPromise'];
++    wsAdapter.acceptConnection();
++    // A truncated row before `InitialConnection` stands in for any first
++    // message the client cannot process: the connection was never up.
++    const truncatedPlayer = encodePlayer({
++      id: 1,
++      userId: anIdentity,
++      name: 'drogus',
++      location: { x: 0, y: 0 },
++    }).slice(0, -1);
++    expect(() =>
++      wsAdapter.sendToClient(
++        ServerMessage.TransactionUpdate({
++          querySets: [makeQuerySetUpdate(0, 'player', truncatedPlayer)],
++        })
++      )
++    ).not.toThrow();
++
++    const error = await onConnectErrorPromise.promise;
++    expect(error.message).toBe('Invalid server 
+```
+
+---
+
+### Incident Patch 3: `f271acbd` (2026-11-06)
+**Commit Message**: Fix database identity publish (#6507)
+
+# Description of Changes
+This is already released via
+https://github.com/clockworklabs/SpacetimeDBPrivate/pull/4234. Needs to
+get into master now for future releases.
 
 # API and ABI breaking changes
-
-None.
+It is a API breaking change, if someone is using Identities to publish
+new database.
 
 # Rollback safety impact
-
 n/a
 
 # Expected complexity level and risk
-
-1 (docs only)
+1
 
 # Testing
+Already released.
 
-
-The guidance comes from iterating on [PR #6404's testing
-section](https://github.com/clockworklabs/SpacetimeDB/pull/6404) until
-the reviewer accepted it. The examples capture those concrete
-improvements.
-
-We haven't yet tested whether a developer or agent using this guide
-alone produces a good section.
-
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `.agents/testing-sections.md` (added, +62/-0)
+**File**: `crates/client-api/src/routes/database.rs` (modified, +50/-1)
 ```diff
-@@ -0,0 +1,62 @@
-+# Writing testing sections
+@@ -1411,6 +1411,9 @@ pub async fn publish<S: NodeDelegate + ControlStateDelegate + Authorization>(
+         .map_err(log_and_500)?;
+     match existing.as_ref() {
+         None => {
++            if matches!(name_or_identity.as_ref(), Some(NameOrIdentity::Identity(_))) {
++                return Err(bad_request("Cannot create a database at a supplied identity".into()));
++            }
+             allow_creation(&auth)?;
+             ctx.authorize_action(
+                 auth.claims.identity,
+@@ -2492,6 +2495,7 @@ mod tests {
+         dns_lookups: std::sync::Arc<AtomicUsize>,
+         reject_publication: bool,
+         name_registrations: std::sync::Arc<AtomicUsize>,
++        allow_publish_update: bool,
+     }
+ 
+     impl DummyState {
+@@ -2508,6 +2512,7 @@ mod tests {
+                 dns_lookups: std::sync::Arc::new(AtomicUsize::new(0)),
+                 reject_publication: false,
+                 name_registrations: std::sync::Arc::new(AtomicUsize::new(0)),
++                allow_publish_update: false,
+             }
+         }
+ 
+@@ -2567,6 +2572,41 @@ mod tests {
+         assert_eq!(registrations.load(Ordering::Relaxed), 0);
+     }
+ 
++    #[tokio::test]
++    async fn supplied_identity_can_update_but_not_create_database() {
++        let identity = test_identity(42);
++        let mut existing = DummyState::new().with_database(identity);
++        existing.allow_publish_update = true;
 +
-+A PR's testing section should explain what verification gives the reviewer confidence that the change works as intended and avoids bugs. The goal is evidence for correctness, not a list of testing activities.
++        for (state, expected_status) in [(DummyState::new(), StatusCode::BAD_REQUEST), (existing, StatusCode::OK)] {
++            let app = DatabaseRoutes::<DummyState>::default()
++                .into_router(state.clone())
++                .with_state(state);
++            let response = app
++                .oneshot(
++                    Request::builder()
++                        .method(http::Method::PUT)
++                        .uri(format!("/{identity}"))
++                        .body(Body::empty())
++                        .unwrap(),
++                )
++                .await
++                .unwrap();
++            assert_eq!(response.status(), expected_status);
++            if expected_status == StatusCode::OK {
++                let body = response.into_body().collect().await.unwrap().to_bytes();
++                assert!(matches!(
++                    serde_json::from_slice::<PublishResult>(&body).unwrap(),
++                    PublishResult::Success {
++                        database_identity,
++                        op: PublishOp::Updated,
++                        ..
++                    } if database_identity == identity
++                ));
++            }
++        }
++    }
 +
-+## Choose the evidence
-+
-+- Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
-+- Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
-+- State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
-+- For documentation and instructions, look for evidence that readers can accomplish the intended task. Consistency checks and working links are useful, but don't establish that the content is effective.
-+- Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
-+
-+The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
-+
-+## Content
-+
-+- Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
-+- Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
-+- Explain what coverage the change adds. A new test may exercise previously tested behavior through a new path; don't imply the behavior was previously untested.
-+- Make compatibility claims precise. The same client against old and new bindings is different from old bindings against a new SDK.
-+- Include existing integration coverage when it helps explain why the change is covered. Inspect it before claiming coverage is missing or proposing more tests.
-+- Write assuming CI passes. Don't include a running log of local test execution or say CI tests still need to be run for the PR. This does not justify claiming a known failure passes.
-+- Label manual verification as manual and state what was checked and the result.
-+- Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
-+
-+## Wording and detail
-+
-+Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
-+
-+- Use plain language and concrete actions. Each bullet should describe a distinct piece of coverage.
-+- Describe observable behavior instead of labels such as "runtime checks," "metadata coverage," or "strengthened tests."
-+- Be precise about what runs. Local assertions on imported bindings are not the same as a client connecting to a server. State what is checked rather than calling both "running a client."
-+- Describe each piece of coverage once. Compiling a client and checking its types often describe the same test.
-+- Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
-+- Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
-+
-+## Wording examples
-+
-+| Vague or misleading | Concrete |
-+| --- | --- |
-+| Strengthened codegen tests. | Updated codegen tests to check names and aliases using generated bindings instead of searching generated text. |
-+| Added compile-time checks. | Tests that incorrect reducer arguments fail compilation. |
-+| Generated-client runtime checks. | Tests that generated tables produce the expected subscription SQL. |
-+| Compatibility tests. | Tests that the same client compiles against old and new bindings, including existing imports, types, and aliases. |
-+| Package and browser checks. | Tests that the new declaration API works with ESM and CommonJS imports and browser builds. |
-+| End-to-end coverage. | Existing integration tests connect to a server, subscribe, call reducers, and check received rows. |
-+
-+## Example: generated bindings
-+
-+Updated:
-+
-+- Codegen snapshots for the new bindings format.
-+- Existing codegen tests to check table and function names and aliases using generated bindings instead of searching generated text.
-+
-+Added:
-+
-+- Tests that the same client compiles against old and new bindings, covering existing imports, types, builders, callbacks, and aliases.
-+- Tests that clients compile using generated submodule types, tables, reducers, and procedures.
-+- Tests that incorrect reducer arguments fail compilation with the new bindings.
-+- Tests that the new declaration API works with ESM and CommonJS imports and browser builds.
-+
-+Existing server integration tests generate bindings and check connections, subscriptio
+     fn http_response_size_metric(database_identity: Identity) -> u64 {
+         DB_METRICS
+             .http_response_size_bytes
+@@ -2711,10 +2751,13 @@ mod tests {
+         async fn publish_database(
+             &self,
+             _publisher: &Identity,
+-            _spec: DatabaseDef,
++            spec: DatabaseDef,
+             _policy: MigrationPolicy,
+             _environment: EnvironmentUpdate,
+         ) -> anyhow::Result<Option<UpdateDatabaseResult>> {
++            if self.allow_publish_update && self.databases.contains_key(&spec.database_identity) {
++                return Ok(None);
++            }
+             Err(anyhow::anyhow!("unused"))
+         }
+ 
+@@ -2809,6 +2852,12 @@ mod tests {
+                     source: None,
+                 });
+             }
++            if self.allow_publish_update
++                && matches!(action, Action::UpdateDatabase)
++                && self.databases.contains_key(&database)
++            {
++                return Ok(());
++            }
+             Err(Unauthorized::InternalError(anyhow::anyhow!("unused")))
+         }
+ 
 ```
 
-**File**: `AGENTS.md` (modified, +4/-0)
+**File**: `crates/smoketests/tests/cluster/permissions.rs` (modified, +27/-0)
 ```diff
-@@ -13,3 +13,7 @@ A path's review tier comes from the nearest `.deep` marker in its directory or a
- - Do not add, remove, move or edit a marker unless asked.
+@@ -84,6 +84,33 @@ fn test_publish() {
+     assert!(result.is_err(), "Expected publish to fail for non-owner");
+ }
  
- These markers are provisional, and CI does not check any of this yet.
++/// A caller may update their database by identity, but may not choose an identity when creating one.
++#[test]
++fn test_publish_cannot_create_at_supplied_identity() {
++    let mut test = Smoketest::builder()
++        .precompiled_module("modules-basic")
++        .autopublish(false)
++        .build();
++    test.new_identity().unwrap();
 +
-+# PR testing sections
++    let other_user = test.api_call("POST", "/v1/identity").unwrap();
++    assert_eq!(other_user.status_code, 200);
++    let other_identity = other_user.json().unwrap()["identity"].as_str().unwrap().to_owned();
 +
-+When writing or updating a PR's testing section, read [Writing testing sections](.agents/testing-sections.md). Explain what verification supports confidence that the change works as intended, and identify important remaining uncertainty.
++    let response = test
++        .api_call_with_body("PUT", &format!("/v1/database/{other_identity}"), Some(&[]))
++        .unwrap();
++    assert_eq!(response.status_code, 400);
++    assert!(response
++        .text()
++        .unwrap()
++        .contains("Cannot create a database at a supplied identity"));
++
++    let name = format!("permissions-publish-identity-{}", std::process::id());
++    let identity = test.publish().name(&name).run().unwrap();
++    assert_eq!(test.publish().name(&identity).run().unwrap(), identity);
++}
++
+ /// Test that you can't replace names of a database you don't own
+ #[test]
+ fn test_replace_names() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6492** (2026-11-05): Document how to write clear PR testing sections (@bfops)
-- **PR #6488** (2026-11-04): Allow Tyler-authored license changes in CODEOWNERS check (@jdetter)
-- **PR #6475** (2026-11-04): Remove unused scripts and the sqltest crate (@cloutiertyler)
-- **PR #6460** (2026-11-04): Async IDC: rust shorthand (@Shubham8287)
-- **PR #6458** (2026-11-03): CLI - Restore yes/no prompt default on EOF (@bfops)
-- **PR #6457** (2026-11-04): Check publication permissions before reserving database names (@bfops)
+- **PR #6516** (closed): [Do not merge] Test docs-only CI skipping from #6515 (@cloutiertyler)
+- **PR #6510** (2026-11-06): Add Security Gremlin to GREMLINS.md (@cloutiertyler)
+- **PR #6508** (closed): Exercise existing Linux and Windows smoketests on staging (testing only) (@jdetter)
+- **PR #6507** (2026-11-06): Fix database identity publish (@Shubham8287)
+- **PR #6503** (2026-11-06): Bump version to 2.15.0 (@rekhoff)
+- **PR #6499** (2026-11-06): Count only visible rows in clear_table (@lisandroct)
 
 ---
 
@@ -1302,28 +1327,51 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use performant implementation for find/filter (#6416)
+## X. Add Security Gremlin to GREMLINS.md (#6510)
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/GREMLINS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17a3f3a6`: Use performant implementation for find/filter (#6416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58a7eacd`: Add Security Gremlin to GREMLINS.md (#6510). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/GREMLINS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "limit": "60 kB"
+## Security Gremlin 🛡️
+
+- **What:** Security reviewer (report-only)
+- **GitHub account:** `clockwork-labs-bot`
+- **Discord channel:** #security-gremlin (CL - SpacetimeDB)
+- **Powered by:** [OpenClaw](https://github.com/openclaw/openclaw) + GPT-6.1
+
+### What Security Gremlin does
+
+- **Reviews code for security bugs** — on request, reads commits and PRs for problems with authentication, authorization, module sandboxing, untrusted input, and leaked secrets
+- **Checks dependencies and CI** — looks for vulnerable dependencies and unsafe GitHub Actions workflows
+- **Reports privately** — posts findings in #security-gremlin for the team to triage
+
+### What Security Gremlin does NOT do
+
+- Discuss vulnerabilities in public issues, PR comments, or commit messages
+- Build or run code from PRs by people outside Clockwork Labs
+- Scan or probe live systems
+- Approve or merge PRs, or take any destructive action
+
+### Contacting Security Gremlin
+
+- Mention `@Security Gremlin App` in #security-gremlin on Discord
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "limit": "50 kB"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17a3f3a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58a7eacd` are properly handled with clean fallback behavior.

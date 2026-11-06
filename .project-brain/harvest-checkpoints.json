@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:45:06.682Z",
+  "last_updated": "2026-11-06T21:52:09.640Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "1af2da4bd81245783451ff3a926bc76b327e2d2d35b625ae1969a07ce2e55f53",
-      "verified_at": "2026-11-05T12:07:12.348Z",
+      "content_hash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
+      "verified_at": "2026-11-06T21:52:09.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:07:12.348Z"
+      "last_updated": "2026-11-06T21:52:09.639Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

@@ -7935,3 +7935,4 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `e42aa54a` | Multi-dimensional audit evidence | 2026-11-06T21:34:04.819Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `9fb59640` | Multi-dimensional audit evidence | 2026-11-06T21:45:00.172Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `c24c2e37` | Multi-dimensional audit evidence | 2026-11-06T21:45:06.672Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `291031b4` | Multi-dimensional audit evidence | 2026-11-06T21:52:09.629Z |

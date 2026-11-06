@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T20:38:18.898Z",
+  "last_updated": "2026-11-06T21:52:09.634Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4039,6 +4039,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-FG6A",
+      "directive_title": "Add Security Gremlin to GREMLINS.md (#6510)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "clockworklabs/SpacetimeDB",
+      "source_commit": "291031b4",
+      "date_staged": "2026-11-06",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-clockworklabs-spacetimedb"
     }
   ]
 }

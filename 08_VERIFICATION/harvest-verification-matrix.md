@@ -7926,3 +7926,4 @@
 | `CYCLE-20261106-S74F` | `2026-11-06T21:34:04.815Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31d90de1...`) |
 | `CYCLE-20261106-68SN` | `2026-11-06T21:45:00.167Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d89e08ae...`) |
 | `CYCLE-20261106-6DT1` | `2026-11-06T21:45:06.661Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f422a81...`) |
+| `CYCLE-20261106-FG61` | `2026-11-06T21:52:09.625Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`fd7e3f17...`) |

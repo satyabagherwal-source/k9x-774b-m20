@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T21:45:06.678Z",
-  "total_cycles_completed": 7891,
-  "total_learnings_persisted": 7891,
+  "last_updated": "2026-11-06T21:52:09.636Z",
+  "total_cycles_completed": 7892,
+  "total_learnings_persisted": 7892,
   "total_rules_promoted": 7539,
   "history": [
-    {
-      "timestamp": "2026-11-05T16:06:05.791Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T16:52:37.523Z",
       "repository": "oxc-project/oxc",
@@ -1403,6 +1396,13 @@
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T21:52:09.636Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

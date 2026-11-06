@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:45:06.566Z",
+  "last_updated": "2026-11-06T21:52:09.531Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8024,8 +8024,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "17a3f3a6",
-      "content_hash": "1af2da4bd81245783451ff3a926bc76b327e2d2d35b625ae1969a07ce2e55f53",
+      "source_version": "291031b4",
+      "content_hash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -8125,7 +8125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:07:12.239Z",
+      "verified_at": "2026-11-06T21:52:09.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
