@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GCBN",
-    "timestamp": "2026-11-04T23:13:29.699Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "733e2aa3e72092e02111f7d3ace3aed604bc9ee66dd48f7a45755108d778d534",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-PS4C",
-    "timestamp": "2026-11-04T23:20:50.076Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-PV5J",
     "timestamp": "2026-11-04T23:20:54.007Z",
     "repository": "infiniflow/infinity",
@@ -7490,6 +7460,36 @@
     "repository": "callstack/react-native-paper",
     "learningId": "learn-github-callstack-react-native-paper",
     "contentHash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-4O6X",
+    "timestamp": "2026-11-06T19:23:48.729Z",
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-4SXG",
+    "timestamp": "2026-11-06T19:23:54.868Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

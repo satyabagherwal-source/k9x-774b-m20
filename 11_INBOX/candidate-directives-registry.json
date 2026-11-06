@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T09:10:11.003Z",
+  "last_updated": "2026-11-06T19:23:48.739Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4017,6 +4017,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-makecindy-cindy"
+    },
+    {
+      "id": "CD-4O77",
+      "directive_title": "release 3.4.2 - point users to @kesha-antonov/react-native-chat after install",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "FaridSafi/react-native-gifted-chat",
+      "source_commit": "8f4d2140",
+      "date_staged": "2026-11-06",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-faridsafi-react-native-gifted-chat"
     }
   ]
 }

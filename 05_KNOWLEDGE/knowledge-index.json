@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T19:16:48.250Z",
+  "last_updated": "2026-11-06T19:23:54.792Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13968,8 +13968,8 @@
       "slug": "faridsafi-react-native-gifted-chat",
       "platform": "github",
       "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
-      "source_version": "4ff184b1",
-      "content_hash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
+      "source_version": "8f4d2140",
+      "content_hash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
       "dossier_path": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "promoted_rules": [
@@ -13984,7 +13984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:41:51.638Z",
+      "verified_at": "2026-11-06T19:23:48.601Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64025,11 +64025,16 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "823a3916",
-      "content_hash": "ff2761d1cbdf10de9f3839c6bfce5a98c45c217edcc31b726855a380f79a18cb",
+      "source_version": "8f9133b3",
+      "content_hash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "hpu): improving backend perf for hpu on DMA + fix some fw issues (#4041)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1820,
           "title": "integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc",
@@ -64126,7 +64131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:45:44.892Z",
+      "verified_at": "2026-11-06T19:23:54.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

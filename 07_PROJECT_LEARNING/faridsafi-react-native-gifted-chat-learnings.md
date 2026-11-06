@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source**: github ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
-> **Source Version**: `4ff184b1`  
+> **Source Version**: `8f4d2140`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:41:51.497Z  
+> **Timestamp**: 2026-11-06T19:23:48.446Z  
 > **Learning ID**: `learn-github-faridsafi-react-native-gifted-chat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:41:51.492Z  
+> **Harvest Timestamp**: 2026-11-06T19:23:47.465Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 💬 The most complete chat UI for React Native
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14443 stars
+- **Stars / Engagement**: 14448 stars
 
 ---
 
@@ -289,504 +289,205 @@ export function useUpdateLayoutEffect (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44802f32` (2026-06-18)
-**Commit Message**: chore(deps): refresh lockfiles to pull in-range security patches (#2744)
+### Incident Patch 1: `8f4d2140` (2026-11-06)
+**Commit Message**: chore: release 3.4.2 - point users to @kesha-antonov/react-native-chat after install
 
-Regenerate root and example lockfiles so transitive dependencies resolve
-to their highest in-range (patched) versions, clearing Dependabot alerts
-for ws, minimatch (3/8/9/10.x), picomatch (2/4.x), node-forge,
-@xmldom/xmldom, flatted, js-yaml 4.x, @isaacs/brace-expansion and @babel/core.
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -2,6 +2,15 @@
+ 
+ > **Maintenance notice:** Active development has moved to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. This package is now in maintenance mode and won't receive new features. See the fork for streaming AI messages and ongoing updates. Migrating is mostly a rename - see the fork's [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md).
+ 
++## [3.4.2] - 2026-11-06
++
++### ✨ Features
++- Dev-only notice: in development builds `GiftedChat` logs a one-time `console.warn` pointing to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**, since the install-time notice is hidden by npm 7+ and skipped by pnpm 10 and bun. Never shown in production or under Jest. Turn it off with the new `disableMaintenanceNotice()` export.
++
++### 🗒️ Maintenance
++- Added links to the maintained fork **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)** in the README (installation, AI chat, questions, contributing), the issue template, the stale-bot comment and the Expo Snack README.
++- The npm package description and the install-time notice now point to the fork and its [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md). No API or runtime changes.
++
+ ## [3.4.1] - 2026-06-19
+ 
+ ### ✨ Features
+```
 
-All are dev / example transitive dependencies; none are runtime
-dependencies of the published package (which ships only `lib`).
-
-js-yaml 3.x and uuid 7.x are not bumped: their parents pin a major below
-the patched release, so they can't be upgraded without breaking them.
-
-
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-gifted-chat",
+-  "version": "3.4.1",
++  "version": "3.4.2",
+   "description": "The most complete chat UI for React Native. Maintenance mode - active development continues in @kesha-antonov/react-native-chat",
+   "keywords": [
+     "android",
+```
 
 ---
 
-### Incident Patch 2: `a769b7c1` (2026-06-19)
-**Commit Message**: refactor: tidy the animated day header (DRY + reusable debug)
+### Incident Patch 2: `9ec9c937` (2026-11-06)
+**Commit Message**: feat: one-time dev notice pointing to @kesha-antonov/react-native-chat
 
-Behavior-preserving cleanup of the animated day header.
+The postinstall notice is rarely seen: npm 7+ hides dependency script
+output, pnpm 10 and bun skip untrusted scripts. Log it once per session
+in dev builds instead, never in production or tests. Can be turned off
+with disableMaintenanceNotice().
 
-- DRY the geometry: dayLayout owns dayPositionScreenTop() and findDayPosition()
-  worklet helpers, so the separatorScreenTop formula lives in one place instead
-  of being duplicated across DayAnimated and Item.
-- Simplify Item: drop the two legacy position hooks
-  (useAbsolute/useRelativeScrolledPositionToBottomOfDay) and their
-  dayTopOffset/dayBottomMargin/onLayout machinery in favour of one direct
-  separatorScreenTop derived value.
-- Extract the scroll-gated fade into useScrollGatedOpacity, and the debug
-  switches + on-screen overlay into a DAY_DEBUG config and a useDayDebugOverlay
-  hook so future animation work has one place to flip.
-- Remove the dead DAY_HANDOFF_FADE constant and fix stale comments.
-- Fix DayAnimated.test.tsx, which was missing the now-required isScrollActive
-  and floatingRenderedDate props.
-
-**File**: `src/MessagesContainer/components/DayAnimated/debug.tsx` (added, +47/-0)
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,47 @@
-+import React, { useState } from 'react'
-+import { StyleSheet, Text } from 'react-native'
-+import { runOnJS, useAnimatedReaction } from 'react-native-reanimated'
-+
-+// Debug switches for the animated day header. All OFF/1 for production - flip them
-+// here when working on the animation.
-+export const DAY_DEBUG = {
-+  // Multiply the fade durations/delay so the fades can be captured frame-by-frame.
-+  timeScale: 1,
-+  // Keep the floating header at full opacity (ignore the scroll fade) so the
-+  // slide/push geometry can be studied independently of the fade.
-+  forceOpacity: false,
-+  // Render an on-screen readout of the sticky worklet values.
-+  overlay: false,
-+}
-+
-+// On-screen readout for the header, driven by a worklet `select` that returns the
-+// readout string. Returns null (and runs nothing) when DAY_DEBUG.overlay is off.
-+export function useDayDebugOverlay (select: () => string, deps: unknown[]): React.ReactElement | null {
-+  const [text, setText] = useState('')
-+
-+  useAnimatedReaction(
-+    () => (DAY_DEBUG.overlay ? select() : ''),
-+    value => {
-+      if (value)
-+        runOnJS(setText)(value)
-+    },
-+    deps
-+  )
-+
-+  if (!DAY_DEBUG.overlay)
-+    return null
-+
-+  return <Text style={styles.overlay}>{text}</Text>
-+}
-+
-+const styles = StyleSheet.create({
-+  overlay: {
-+    position: 'absolute',
-+    top: 2,
-+    left: 4,
-+    fontSize: 11,
-+    color: 'red',
-+    zIndex: 9999,
-+    backgroundColor: 'rgba(255,255,255,0.8)',
-+  },
-+})
+@@ -21,6 +21,8 @@
+ 
+ > [!NOTE]
+ > **Active development has moved.** This package is now in maintenance mode and isn't receiving new features. Development continues - including streaming AI messages and the latest fixes - in a maintained fork: **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. New projects are encouraged to use it; migrating is mostly a rename ([migration guide with a codemod](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md)).
++>
++> In development builds, `GiftedChat` logs this notice once per session (never in production). To hide it, call `disableMaintenanceNotice()` (exported from `react-native-gifted-chat`) before the first render.
+ 
+ ---
+ 
 ```
 
-**File**: `src/MessagesContainer/components/DayAnimated/index.tsx` (modified, +34/-102)
+**File**: `src/GiftedChat/index.tsx` (modified, +5/-0)
 ```diff
-@@ -1,35 +1,24 @@
--import React, { useCallback, useEffect, useMemo, useState } from 'react'
--import { LayoutChangeEvent, Text } from 'react-native'
--import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue, useAnimatedReaction, withTiming, runOnJS } from 'react-native-reanimated'
-+import React, { useEffect, useMemo, useState, useCallback } from 'react'
-+import { LayoutChangeEvent } from 'react-native'
-+import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue, useAnimatedReaction, runOnJS } from 'react-native-reanimated'
- import { Day } from '../../../Day'
- import stylesCommon from '../../../styles'
--import { DAY_HANDOFF_OFFSET, DAY_MARGIN_TOP, DAY_PIN_OFFSET, DAY_PUSH_GAP } from '../dayLayout'
-+import { DAY_HANDOFF_OFFSET, DAY_MARGIN_TOP, DAY_PIN_OFFSET, DAY_PUSH_GAP, dayPositionScreenTop } from '../dayLayout'
-+import { DAY_DEBUG, useDayDebugOverlay } from './debug'
- import styles from './styles'
- import { DayAnimatedProps } from './types'
-+import { useScrollGatedOpacity } from './useScrollGatedOpacity'
- 
- export * from './types'
- 
--// --- Debug switches (all OFF/1 for production) ---------------------------------
--// Multiply fade durations/delay so the fades can be captured frame-by-frame.
--const DEBUG_TIME_SCALE = 1
--// Keep the floating header at full opacity (ignore the scroll fade) so the push
--// geometry can be studied independently of the fade.
--const DEBUG_FORCE_OPACITY = false
--// Render an on-screen readout of the sticky worklet values.
--const DEBUG_OVERLAY = false
--// -------------------------------------------------------------------------------
--
--const FADE_IN_DURATION = 150 * DEBUG_TIME_SCALE
--const FADE_OUT_DURATION = 300 * DEBUG_TIME_SCALE
--const FADE_OUT_DELAY = 600 * DEBUG_TIME_SCALE
--
- export const DayAnimated = ({ scrolledY, daysPositions, listHeight, isScrollActive, floatingRenderedDate, renderDay, isLoading, ...rest }: DayAnimatedProps) => {
--  const opacity = useSharedValue(0)
--  const fadeOutOpacityTimeoutId = useSharedValue<ReturnType<typeof setTimeout> | undefined>(undefined)
-   const containerHeight = useSharedValue(0)
--
-   const isLoadingAnim = useSharedValue(isLoading)
- 
-+  // Telegram only shows the floating date while scrolling; this opacity fades in on
-+  // scroll start and out after the gesture fully ends.
-+  const opacity = useScrollGatedOpacity(isScrollActive)
-+
-   // Sort newest day first. Sorting by createdAt (stable) rather than measured y
-   // keeps the order deterministic even while cells are (re)measured mid-scroll, so
-   // the stuck-day selection below can't briefly jump to the wrong day.
-@@ -44,23 +33,19 @@ export const DayAnimated = ({ scrolledY, daysPositions, listHeight, isScrollActi
-   // Telegram-style sticky day header (iOS section-header behaviour).
-   //
-   // The list is inverted: older days sit higher on screen, newer days lower.
--  // `daysPositionsArray` is sorted ascending by y, so index 0 is the newest day.
--  //
--  // For each day separator the on-screen Y of its top edge is:
--  //   separatorScreenTop = (listHeight + scrolledY) - (day.y + day.height)
--  // and the separator's pill renders DAY_MARGIN_TOP below that (Day's container
--  // marginTop). The floating header overrides that margin to 0, so when it is
--  // pinned at DAY_PIN_OFFSET its pill lines up with an inline separator whose
--  // separatorScreenTop === DAY_HANDOFF_OFFSET (= DAY_PIN_OFFSET - DAY_MARGIN_TOP).
-+  // `daysPositionsArray` is sorted by createdAt (newest first), so index 0 is the
-+  // newest day. Each separator's on-screen top edge is `dayPositionScreenTop`; the
-+  // separator's pill renders DAY_MARGIN_TOP below that, and the floating header
-+  // overrides that margin to 0, so its pinned pill (top = DAY_PIN_OFFSET) lines up
-+  // with an inline separator at separatorScreenTop === DAY_HANDOFF_OFFSET.
-   //
-   // A day becomes "stuck" (shown by the floating header) the instant its separator
--  // reaches the handoff line (separatorScreenTop <= DAY_HANDOFF_OFFSET). At that same
--  // pixel the inline separator hard-cuts off (see Item) and the floating hard-cuts
--  // on, so the date hands off floating<->inline with no fade and no duplicate. The
--  // floating is then positioned by the next (newer) day's separator so it slides
--  // pixel by pixel:
--  //   top = min(DAY_PIN_OFFSET, nextSeparatorScreenTop + DAY_MARGIN_TOP - headerHeight - DAY_PUSH_GAP)
--  // so the outgoing pill keeps a DAY_PUSH_GAP margin above the rising pill.
-+  // reaches the handoff line. At that same pixel the inline separator hard-cuts off
-+  // (see Item) and the floating hard-cuts on - the date hands off floating<->inline
-+  // with no fade and no duplicate. The floating is then positioned off the next
-+  // (newer) day's separator so it slides pixel by pixel: down from the top edge as
-+  // an older day takes over (scrolling up), or up and off as a newer day rises
-+  // (scrolling down), keeping a DAY_PUSH_GAP margin between the two pills.
-   const sticky = useDerivedValu
-```
-
-**File**: `src/MessagesContainer/components/DayAnimated/useScrollGatedOpacity.ts` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+import { useCallback } from 'react'
-+import { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from 'react-native-reanimated'
-+import { DAY_DEBUG } from './debug'
-+
-+const FADE_IN_DURATION = 150
-+const FADE_OUT_DURATION = 300
-+const FADE_OUT_DELAY = 600
-+
-+// Opacity (0..1) that follows the scroll gesture, Telegram-style: the floating date
-+// header is hidden at rest, fades in fast when scrolling starts, stays fully opaque
-+// for the whole gesture (drag + momentum, including slow drags and short pauses),
-+// and fades out a short delay after scrolling fully stops. Driven by the
-+// `isScrollActive` flag (begin/end drag + momentum) rather than per-scroll-delta
-+// idle timers, so a pause mid-drag doesn't flicker it out and back in.
-+export function useScrollGatedOpacity (isScrollActive: { value: boolean }) {
-+  const opacity = useSharedValue(0)
-+  const fadeOutTimeoutId = useSharedValue<ReturnType<typeof setTimeout> | undefined>(undefined)
-+
-+  const fadeOut = useCallback(() => {
-+    'worklet'
-+
-+    opacity.value = withTiming(0, { duration: FADE_OUT_DURATION * DAY_DEBUG.timeScale })
-+  }, [opacity])
-+
-+  const scheduleFadeOut = useCallback(() => {
-+    clearTimeout(fadeOutTimeoutId.value)
-+
-+    fadeOutTimeoutId.value = setTimeout(fadeOut, FADE_OUT_DELAY * DAY_DEBUG.timeScale)
-+  }, [fadeOut, fadeOutTimeoutId])
-+
-+  useAnimatedReaction(
-+    () => isScrollActive.value,
-+    (active, prevActive) => {
-+      if (active === prevActive)
-+        return
-+
-+      if (active) {
-+        clearTimeout(fadeOutTimeoutId.value)
-+        opacity.value = withTiming(1, { duration: FADE_IN_DURATION * DAY_DEBUG.timeScale })
-+      } else {
-+        runOnJS(scheduleFadeOut)()
-+      }
-+    },
-+    [isScrollActive, scheduleFadeOut, fadeOutTimeoutId]
-+  )
-+
-+  return opacity
-+}
-```
-
-**File**: `src/MessagesContainer/components/Item/index.tsx` (modified, +17/-86)
-```diff
-@@ -1,81 +1,15 @@
--import React, { useCallback, useMemo } from 'react'
--import { LayoutChangeEvent, View } from 'react-native'
--import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated'
-+import React, { useMemo } from 'react'
-+import { View } from 'react-native'
-+import Animated, { useAnimatedStyle, useDerivedValue } from 'react-native-reanimated'
- import { Day } from '../../../Day'
- import { Message, MessageProps } from '../../../Message'
- import { IMessage } from '../../../Models'
- import { isSameDay } from '../../../utils'
--import { DaysPositions } from '../../types'
--import { DAY_HANDOFF_OFFSET, DAY_MARGIN_TOP } from '../dayLayout'
-+import { DAY_HANDOFF_OFFSET, dayPositionScreenTop, findDayPosition } from '../dayLayout'
- import { ItemProps } from './types'
- 
- export * from './types'
- 
--// y-position of current scroll position relative to the bottom of the day container. (since we have inverted list it is bottom)
--export const useAbsoluteScrolledPositionToBottomOfDay = (listHeight: { value: number }, scrolledY: { value: number }, containerHeight: { value: number }, dayBottomMargin: number, dayTopOffset: number) => {
--  const absoluteScrolledPositionToBottomOfDay = useDerivedValue(() =>
--    listHeight.value + scrolledY.value - containerHeight.value - dayBottomMargin - dayTopOffset
--  , [listHeight, scrolledY, containerHeight, dayBottomMargin, dayTopOffset])
--
--  return absoluteScrolledPositionToBottomOfDay
--}
--
--export const useRelativeScrolledPositionToBottomOfDay = (
--  listHeight: { value: number },
--  scrolledY: { value: number },
--  daysPositions: { value: DaysPositions },
--  containerHeight: { value: number },
--  dayBottomMargin: number,
--  dayTopOffset: number,
--  createdAt?: number
--) => {
--  const dayMarginTop = useMemo(() => DAY_MARGIN_TOP, [])
--
--  const absoluteScrolledPositionToBottomOfDay = useAbsoluteScrolledPositionToBottomOfDay(listHeight, scrolledY, containerHeight, dayBottomMargin, dayTopOffset)
--
--  // find current day position by scrolled position
--  const currentDayPosition = useDerivedValue(() => {
--    'worklet'
--
--    // When createdAt is provided (called from AnimatedDayWrapper for a specific message),
--    // directly find the day position by createdAt without sorting the entire array.
--    // This avoids O(n log n) sorting and O(n) search for each message item.
--    if (createdAt != null) {
--      const values = Object.values(daysPositions.value)
--      for (let i = 0; i < values.length; i++)
--        if (values[i].createdAt === createdAt)
--          return values[i]
--    }
--
--    // Fallback: sort and search when createdAt is not provided (e.g., from DayAnimated)
--    const sortedArray = Object.values(daysPositions.value).sort((a, b) => {
--      'worklet'
--
--      return a.y - b.y
--    })
--    for (let i = 0; i < sortedArray.length; i++) {
--      const day = sortedArray[i]
--      const dayPosition = day.y + day.height
--      if (absoluteScrolledPositionToBottomOfDay.value < dayPosition || i === sortedArray.length - 1)
--        return day
--    }
--
--    return undefined
--  }, [daysPositions, absoluteScrolledPositionToBottomOfDay, createdAt])
--
--  const relativeScrolledPositionToBottomOfDay = useDerivedValue(() => {
--    const scrolledBottomY = listHeight.value + scrolledY.value - (
--      (currentDayPosition.value?.y ?? 0) +
--      (currentDayPosition.value?.height ?? 0) +
--      dayMarginTop
--    )
--
--    return scrolledBottomY
--  }, [listHeight, scrolledY, currentDayPosition, dayMarginTop])
--
--  return relativeScrolledPositionToBottomOfDay
--}
--
- const DayWrapper = <TMessage extends IMessage>(props: MessageProps<TMessage>) => {
-   const {
-     renderDay: renderDayProp,
-@@ -114,22 +48,23 @@ const AnimatedDayWrapper = <TMessage extends IMessage>(props: ItemProps<TMessage
+@@ -24,6 +24,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
+ import { TEST_ID } from '../Constant'
+ import { GiftedChatContext } from '../GiftedChatContext'
+ import { InputToolbar } from '../InputToolbar'
++import { showMaintenanceNotice } from '../maintenanceNotice'
+ import { MessagesContainer, AnimatedList } from '../MessagesContainer'
+ import { IMessage, ReplyMessage } from '../Models'
+ import stylesCommon from '../styles'
+@@ -351,6 +352,10 @@ function GiftedChatWrapper<TMessage extends IMessage = IMessage> (props: GiftedC
      ...rest
    } = props
  
--  const dayContainerHeight = useSharedValue(0)
--  const dayTopOffset = useMemo(() => 10, [])
--  const dayBottomMargin = useMemo(() => 10, [])
--
-   const createdAt = useMemo(() =>
-     new Date(props.currentMessage.createdAt).getTime()
-   , [props.currentMessage.createdAt])
- 
--  const relativeScrolledPositionToBottomOfDay = useRelativeScrolledPositionToBottomOfDay(listHeight, scrolledY, daysPositions, dayContainerHeight, dayBottomMargin, dayTopOffset, createdAt)
-+  // On-screen Y of this day's separator. Infinity (treated as below the pin, i.e.
-+  // visible) until the day has been measured.
-+  const separatorScreenTop = useDerivedValue(() => {
-+    'worklet'
++  useEffect(() => {
++    showMaintenanceNotice()
++  }, [])
 +
-+    const day = findDayPosition(daysPositions.value, createdAt)
-+    if (!day)
-+      return Infinity
+   const chat = <GiftedChat<TMessage> {...rest} />
  
--  const handleLayoutDayContainer = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
--    dayContainerHeight.value = nativeEvent.layout.height
--  }, [dayContainerHeight])
-+    return dayPositionScreenTop(listHeight.value + scrolledY.value, day)
-+  }, [daysPositions, listHeight, scrolledY, createdAt])
- 
-   const style = useAnimatedStyle(() => {
--    // rel = separatorScreenTop 
+   return (
 ```
 
-**File**: `src/MessagesContainer/components/dayLayout.ts` (modified, +36/-16)
+**File**: `src/__tests__/maintenanceNotice.test.ts` (added, +47/-0)
 ```diff
-@@ -1,29 +1,49 @@
--// Shared layout constants so the inline day separators (rendered inside the
--// list) and the floating sticky day header (the DayAnimated overlay) hand off
-+import { DaysPositions } from '../types'
+@@ -0,0 +1,47 @@
++describe('maintenance notice', () => {
++  const env = { ...process.env }
 +
-+// Shared layout constants and math so the inline day separators (rendered inside
-+// the list) and the floating sticky day header (the DayAnimated overlay) hand off
- // at exactly the same screen line. Keeping these in sync is what makes the
--// Telegram-style "push" read as a single sticky header with no duplicate badge
--// and no gap at the day boundary.
-+// Telegram-style sticky push read as a single header with no duplicate badge and
-+// no gap at the day boundary.
- 
--// Screen-Y (px from the top of the list) where a day header sticks and where
--// the inline separator hands over to the floating header.
-+// Screen-Y (px from the top of the list) where a day header sticks and where the
-+// inline separator hands over to the floating header.
- export const DAY_PIN_OFFSET = 10
- 
--// Vertical margin baked into the inline separator's relative-scroll math
--// (see useRelativeScrolledPositionToBottomOfDay). rel = separatorScreenTop - DAY_MARGIN_TOP.
-+// Vertical margin baked into the inline separator's pill position (Day's container
-+// marginTop). The inline pill renders this far below its separatorScreenTop.
- export const DAY_MARGIN_TOP = 5
- 
--// Px range over which the inline separator cross-fades around the pin line as
--// the floating header takes over, to avoid a one-frame pop at the handoff.
--export const DAY_HANDOFF_FADE = 10
--
- // Vertical gap kept between the outgoing floating header and the incoming
- // separator's pill during the push, so the two dates don't touch.
- export const DAY_PUSH_GAP = 8
- 
- // The separatorScreenTop value at which an inline separator's pill reaches the
--// floating header's pinned pill position, so they hand off at the exact same
--// spot. The inline pill sits `DAY_MARGIN_TOP` below its separatorScreenTop
--// (Day's container marginTop); the floating header overrides that margin to 0,
--// so its pinned pill sits `DAY_MARGIN_TOP` higher. They coincide at
-+// floating header's pinned pill. The inline pill sits DAY_MARGIN_TOP below its
-+// separatorScreenTop; the floating header overrides that margin to 0, so its
-+// pinned pill sits DAY_MARGIN_TOP higher. They coincide - and hand off - at
- // separatorScreenTop = DAY_PIN_OFFSET - DAY_MARGIN_TOP.
- export const DAY_HANDOFF_OFFSET = DAY_PIN_OFFSET - DAY_MARGIN_TOP
++  beforeEach(() => {
++    jest.resetModules()
++    // Pretend we're in an app dev build, not under Jest
++    process.env = { ...env, NODE_ENV: 'development' }
++    delete process.env.JEST_WORKER_ID
++    ;(global as any).__DEV__ = true
++  })
 +
-+type DayPosition = DaysPositions[string]
++  afterEach(() => {
++    process.env = env
++    jest.restoreAllMocks()
++  })
 +
-+// On-screen Y of a day separator's top edge. `scrolledTop` is `listHeight + scrolledY`.
-+// (Inverted list: a separator is above the pin when this is <= DAY_HANDOFF_OFFSET.)
-+export const dayPositionScreenTop = (scrolledTop: number, day: DayPosition) => {
-+  'worklet'
++  it('warns once per session and points to the fork', () => {
++    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
++    const { showMaintenanceNotice } = require('../maintenanceNotice')
 +
-+  return scrolledTop - (day.y + day.height)
++    showMaintenanceNotice()
++    showMaintenanceNotice()
++
++    expect(warn).toHaveBeenCalledTimes(1)
++    expect(warn.mock.calls[0][0]).toContain('https://github.com/kesha-antonov/react-native-chat')
++  })
++
++  it('stays quiet after disableMaintenanceNotice()', () => {
++    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
++    const { showMaintenanceNotice, disableMaintenanceNotice } = require('../maintenanceNotice')
++
++    disableMaintenanceNotice()
++    showMaintenanceNotice()
++
++    expect(warn).not.toHaveBeenCalled()
++  })
++
++  it('stays quiet in production builds', () => {
++    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
++    ;(global as any).__DEV__ = false
++    const { showMaintenanceNotice } = require('../maintenanceNotice')
++
++    showMaintenanceNotice()
++
++    expect(warn).not.toHaveBeenCalled()
++  })
++})
+```
+
+**File**: `src/index.ts` (modified, +2/-1)
+```diff
+@@ -29,4 +29,5 @@ export { MessageAudio } from './MessageAudio'
+ export { MessageVideo } from './MessageVideo'
+ export { MessageReply } from './components/MessageReply'
+ export { ReplyPreview } from './components/ReplyPreview'
+-export { useColorScheme } from './hooks/useColorScheme'
+\ No newline at end of file
++export { useColorScheme } from './hooks/useColorScheme'
++export { disableMaintenanceNotice } from './maintenanceNotice'
+\ No newline at end of file
+```
+
+**File**: `src/maintenanceNotice.ts` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++// Dev-only, once-per-session notice that this package is in maintenance mode.
++// The postinstall notice is often hidden (npm 7+ hides dependency script
++// output, pnpm 10 and bun skip untrusted scripts), so this is the place most
++// developers actually see it. Never shown in production builds or under Jest.
++
++const FORK = 'https://github.com/kesha-antonov/react-native-chat'
++const MIGRATION_GUIDE = `${FORK}/blob/main/docs/MIGRATION.md`
++
++let isShown = false
++
++declare const __DEV__: boolean | undefined
++declare const process: { env?: Record<string, string | undefined> } | undefined
++
++const isDev = () => typeof __DEV__ !== 'undefined' && __DEV__
++
++const isTest = () =>
++  typeof process !== 'undefined' &&
++  (process.env?.NODE_ENV === 'test' || process.env?.JEST_WORKER_ID !== undefined)
++
++/**
++ * Turns off the dev-only maintenance notice. Call it once, before the first
++ * GiftedChat render (for example next to your app's root component).
++ */
++export function disableMaintenanceNotice () {
++  isShown = true
 +}
 +
-+// The measured position of the day with the given createdAt (ms), or undefined if
-+// that day hasn't been laid out yet.
-+export const findDayPosition = (positions: DaysPositions, createdAt: number): DayPosition | undefined => {
-+  'worklet'
++export function showMaintenanceNotice () {
++  if (isShown || !isDev() || isTest())
++    return
 +
-+  const values = Object.values(positions)
-+  for (let i = 0; i < values.length; i++)
-+    if (values[i].createdAt === createdAt)
-+      return values[i]
++  isShown = true
 +
-+  return undefined
++  console.warn(
++    '[react-native-gifted-chat] This package is in maintenance mode and won\'t get new features. ' +
++    'Active development continues in @kesha-antonov/react-native-chat ' +
++    '(same API, streaming AI messages, latest fixes): ' + FORK + '\n' +
++    'Migrating is mostly a rename (GiftedChat to Chat): ' + MIGRATION_GUIDE + '\n' +
++    'Hide this message with disableMaintenanceNotice() from react-native-gifted-chat.'
++  )
 +}
-```
-
-**File**: `src/__tests__/DayAnimated.test.tsx` (modified, +6/-3)
-```diff
-@@ -3,11 +3,12 @@ import { View, Text } from 'react-native'
- import { render } from '@testing-library/react-native'
- import { DayProps } from '../Day'
- import { DayAnimated } from '../MessagesContainer/components/DayAnimated'
--import { DEFAULT_TEST_MESSAGE } from './data'
- 
- const mockDaysPositions = { value: {} }
- const mockScrolledY = { value: 0 }
- const mockListHeight = { value: 800 }
-+const mockIsScrollActive = { value: false }
-+const mockFloatingRenderedDate = { value: undefined }
- 
- describe('DayAnimated', () => {
-   it('should render DayAnimated with default Day component', () => {
-@@ -16,7 +17,8 @@ describe('DayAnimated', () => {
-         scrolledY={mockScrolledY}
-         daysPositions={mockDaysPositions}
-         listHeight={mockListHeight}
--        messages={[DEFAULT_TEST_MESSAGE]}
-+        isScrollActive={mockIsScrollActive}
-+        floatingRenderedDate={mockFloatingRenderedDate}
-         isLoading={false}
-       />
-     )
-@@ -35,7 +37,8 @@ describe('DayAnimated', () => {
-         scrolledY={mockScrolledY}
-         daysPositions={mockDaysPositions}
-         listHeight={mockListHeight}
--        messages={[DEFAULT_TEST_MESSAGE]}
-+        isScrollActive={mockIsScrollActive}
-+        floatingRenderedDate={mockFloatingRenderedDate}
-         isLoading={false}
-         renderDay={customRenderDay}
-       />
-```
-
----
-
-### Incident Patch 3: `5fefcfcc` (2026-06-19)
-**Commit Message**: docs: flesh out 3.4.1 changelog (emoji reactions, day-header fixes, deps/CI)
-
-**File**: `CHANGELOG.md` (modified, +21/-1)
-```diff
-@@ -4,7 +4,27 @@
- 
- ## [3.4.1] - 2026-06-19
- 
--### 🔧 Changes
-+### ✨ Features
-+- **Emoji message reactions** (#2725): long-press a message to react with emojis; reactions render as toggleable pills below the bubble. Adds the `reactions` prop on `<GiftedChat>`, the `MessageReactions` display and a lightweight `ReactionPicker`, the `MessageReaction` model, and `IMessage.reactions`. A full emoji browser can be supplied via `renderReactionPicker`.
-+- **Animated day header `isAnimated` flag** (#2721, #2748): `renderDay` now receives an `isAnimated` flag so custom day renderers can style the floating/sticky header differently from inline day separators.
-+
-+### 🐛 Bug Fixes
-+- Animated day header showed the wrong date while scrolling (#2709, #2746).
-+- Duplicate day badge produced by the animated header (#2709, #2747).
-+- Reworked the animated day header into a Telegram-style sticky push for smoother transitions.
-+- Auto-scroll to the newest message when `inverted` is `false` (#2612, #2745).
-+- Composer not resizing after send; added a `disableKeyboardProvider` opt-out for custom keyboard setups.
-+
-+### 🔧 Improvements
-+- Refactored the animated day header (DRY, with a reusable debug helper).
-+- Added a **Day Animated** example screen and tidied the example chat header.
-+- Refreshed lockfiles to pull in-range security patches (#2744) and bumped transitive deps (launch-editor, brace-expansion, yaml, flatted, lodash, shell-quote, @babel/core).
-+- CI: dropped EOL Node 20 (now tests on Node 22 and 24), install example deps so lint can resolve example imports, and stopped tracking `example/ios`.
-+
-+### 📝 Documentation
-+- Documented emoji reactions in the README with screenshots and linked the Features list to their sections.
-+
-+### 🗒️ Maintenance
- - Entered maintenance mode. Added an install-time notice pointing to the maintained fork **[@kesha-antonov/react-native-chat](https://www.npmjs.com/package/@kesha-antonov/react-native-chat)** (printed once on install; silence with `GIFTED_CHAT_NO_NOTICE=1`). No API or runtime changes.
- 
- ## [3.4.0] - 2026-06-16
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2762** (closed): chore(deps): bump joi from 17.13.4 to 17.13.7 (@dependabot[bot])
+- **PR #2759** (closed): chore(deps): bump js-yaml from 3.14.2 to 3.15.1 in /example (@dependabot[bot])
 - **PR #2758** (closed): chore(deps): bump brace-expansion from 1.1.15 to 1.1.18 in /example (@dependabot[bot])
 - **PR #2757** (closed): chore(deps): bump shell-quote from 1.8.4 to 1.10.0 (@dependabot[bot])
 - **PR #2756** (closed): 🐛 [Fix] Today label is not translated and hardcoded (@kevinhuang78)
 - **PR #2753** (closed): chore(deps): bump js-yaml from 3.14.2 to 3.15.0 in /example (@dependabot[bot])
-- **PR #2752** (2026-06-19): docs: document and link the remaining Features (@kesha-antonov)
-- **PR #2751** (2026-06-19): docs: link Features list to their README sections (@kesha-antonov)
 
 ---
 
@@ -806,54 +507,29 @@ Behavior-preserving cleanup of the animated day header.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tidy the animated day header (DRY + reusable debug)
+## X. release 3.4.2 - point users to @kesha-antonov/react-native-chat after install
 
 **RULE**:
-When implementing operations in `src/MessagesContainer/components/DayAnimated/debug.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a769b7c1`: tidy the animated day header (DRY + reusable debug). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f4d2140`: release 3.4.2 - point users to @kesha-antonov/react-native-chat after install. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/MessagesContainer/components/DayAnimated/debug.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import React, { useState } from 'react'
-import { StyleSheet, Text } from 'react-native'
-import { runOnJS, useAnimatedReaction } from 'react-native-reanimated'
+## [3.4.2] - 2026-11-06
 
-// Debug switches for the animated day header. All OFF/1 for production - flip them
-// here when working on the animation.
-export const DAY_DEBUG = {
-  // Multiply the fade durations/delay so the fades can be captured frame-by-frame.
-  timeScale: 1,
-  // Keep the floating header at full opacity (ignore the scroll fade) so the
-  // slide/push geometry can be studied independently of the fade.
-  forceOpacity: false,
-  // Render an on-screen readout of the sticky worklet values.
-  overlay: false,
-}
+### ✨ Features
+- Dev-only notice: in development builds `GiftedChat` logs a one-time `console.warn` pointing to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**, since the install-time notice is hidden by npm 7+ and skipped by pnpm 10 and bun. Never shown in production or under Jest. Turn it off with the new `disableMaintenanceNotice()` export.
 
-// On-screen readout for the header, driven by a worklet `select` that returns the
-// readout string. Returns null (and runs nothing) when DAY_DEBUG.overlay is off.
-export function useDayDebugOverlay (select: () => string, deps: unknown[]): React.ReactElement | null {
-  const [text, setText] = useState('')
+### 🗒️ Maintenance
+- Added links to the maintained fork **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)** in the README (installation, AI chat, questions, contributing), the issue template, the stale-bot comment and the Expo Snack README.
+- The npm package description and the install-time notice now point to the fork and its [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md). No API or runtime changes.
 
-  useAnimatedReaction(
-    () => (DAY_DEBUG.overlay ? select() : ''),
-    value => {
-      if (value)
-        runOnJS(setText)(value)
-    },
-    deps
-  )
-
-  if (!DAY_DEBUG.overlay)
-    return null
-
-  return <Text style={styles.ov
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -863,4 +539,4 @@ export function useDayDebugOverlay (select: () => string, deps: unknown[]): Reac
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a769b7c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f4d2140` are properly handled with clean fallback behavior.

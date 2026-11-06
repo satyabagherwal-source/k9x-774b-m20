@@ -7913,3 +7913,5 @@ Every entry in this ledger must capture:
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `27b7f518` | Multi-dimensional audit evidence | 2026-11-06T19:09:43.209Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `308b2766` | Multi-dimensional audit evidence | 2026-11-06T19:09:51.043Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `c8d8bab5` | Multi-dimensional audit evidence | 2026-11-06T19:16:48.327Z |
+| `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `8f4d2140` | Multi-dimensional audit evidence | 2026-11-06T19:23:48.732Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `8f9133b3` | Multi-dimensional audit evidence | 2026-11-06T19:23:54.872Z |

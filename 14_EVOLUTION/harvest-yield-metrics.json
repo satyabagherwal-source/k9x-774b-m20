@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T19:16:48.332Z",
-  "total_cycles_completed": 7869,
-  "total_learnings_persisted": 7869,
-  "total_rules_promoted": 7518,
+  "last_updated": "2026-11-06T19:23:54.877Z",
+  "total_cycles_completed": 7871,
+  "total_learnings_persisted": 7871,
+  "total_rules_promoted": 7519,
   "history": [
-    {
-      "timestamp": "2026-11-05T14:30:06.876Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T14:30:13.041Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:43:24.016Z",
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-06T19:16:48.332Z",
       "repository": "callstack/react-native-paper",
       "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:23:48.741Z",
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:23:54.877Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

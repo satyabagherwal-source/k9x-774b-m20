@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T19:16:48.336Z",
+  "last_updated": "2026-11-06T19:23:54.881Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4746,14 +4746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
-      "content_hash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
-      "verified_at": "2026-10-18T22:41:51.688Z",
+      "content_hash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
+      "verified_at": "2026-11-06T19:23:48.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:41:51.688Z"
+      "last_updated": "2026-11-06T19:23:48.744Z"
     },
     "taubyte/tau": {
       "repository": "taubyte/tau",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "ff2761d1cbdf10de9f3839c6bfce5a98c45c217edcc31b726855a380f79a18cb",
-      "verified_at": "2026-11-05T18:45:45.024Z",
+      "content_hash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
+      "verified_at": "2026-11-06T19:23:54.880Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:45:45.024Z"
+      "last_updated": "2026-11-06T19:23:54.880Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",

@@ -3083,10 +3083,10 @@
     "repository": "FaridSafi/react-native-gifted-chat",
     "platform": "github",
     "sourceUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
-    "sourceVersion": "4ff184b1",
+    "sourceVersion": "8f4d2140",
     "license": "MIT",
-    "contentHash": "6ca396c2cae0c80cbede9cbdb1c868bd71cfe8ad659c3ec03ab872bcd5946482",
-    "lastHarvestedAt": "2026-10-18T22:41:51.685Z",
+    "contentHash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
+    "lastHarvestedAt": "2026-11-06T19:23:48.732Z",
     "learningId": "learn-github-faridsafi-react-native-gifted-chat"
   },
   "taubyte-tau": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "823a3916",
+    "sourceVersion": "8f9133b3",
     "license": "NOASSERTION",
-    "contentHash": "ff2761d1cbdf10de9f3839c6bfce5a98c45c217edcc31b726855a380f79a18cb",
-    "lastHarvestedAt": "2026-11-05T18:45:45.016Z",
+    "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
+    "lastHarvestedAt": "2026-11-06T19:23:54.872Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {

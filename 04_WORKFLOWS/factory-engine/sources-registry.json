@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T19:16:51.077Z",
-    "lastVerified": "2026-11-06T19:16:51.077Z",
+    "lastChecked": "2026-11-06T19:23:57.447Z",
+    "lastVerified": "2026-11-06T19:23:57.447Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -339,8 +339,8 @@
     "officialUrl": "https://github.com/pathwaycom/llm-app",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T10:43:46.965Z",
-    "lastVerified": "2026-11-05T10:43:46.965Z",
+    "lastChecked": "2026-11-06T19:23:51.196Z",
+    "lastVerified": "2026-11-06T19:23:51.196Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
@@ -355,9 +355,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T18:54:43.390Z",
+    "lastChecked": "2026-11-06T19:23:53.636Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T18:54:43.390Z"
+    "lastVerified": "2026-11-06T19:23:53.636Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1766,22 +1766,21 @@
     "lastVerified": "2026-11-05T22:25:05.921Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T23:17:07.264Z",
-    "lastVerified": "2026-11-05T23:17:07.264Z",
+    "lastChecked": "2026-11-06T19:23:53.412Z",
+    "lastVerified": "2026-11-06T19:23:53.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "ff2761d1cbdf10de9f3839c6bfce5a98c45c217edcc31b726855a380f79a18cb",
-    "promotedRulesCount": 0,
+    "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "823a3916"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2218,11 +2217,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "faridsafi-react-native-gifted-chat": {
-    "name": "react-native-gifted-chat",
+    "name": "FaridSafi/react-native-gifted-chat",
     "officialUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
-    "lastChecked": "2026-11-04T02:33:08.133Z",
-    "revisionIdentifier": "4ff184b1",
-    "lastVerified": "2026-11-04T02:33:08.133Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-06T19:23:47.465Z",
+    "lastVerified": "2026-11-06T19:23:47.465Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "fission-fission": {
     "name": "fission",
@@ -4078,8 +4087,8 @@
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T06:14:52.842Z",
-    "lastVerified": "2026-11-05T06:14:52.842Z",
+    "lastChecked": "2026-11-06T19:23:38.629Z",
+    "lastVerified": "2026-11-06T19:23:38.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mufeedvh-code2prompt",
@@ -4118,9 +4127,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-05T11:38:01.696Z",
+    "lastChecked": "2026-11-06T19:23:46.090Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-05T11:38:01.696Z"
+    "lastVerified": "2026-11-06T19:23:46.090Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -10251,9 +10260,9 @@
   "crawlcove-crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "lastChecked": "2026-11-03T16:25:14.818Z",
+    "lastChecked": "2026-11-06T19:23:41.201Z",
     "revisionIdentifier": "0d91d23a",
-    "lastVerified": "2026-11-03T16:25:14.818Z"
+    "lastVerified": "2026-11-06T19:23:41.201Z"
   },
   "shifthackz-stable-diffusion-kmp": {
     "name": "Stable-Diffusion-KMP",
