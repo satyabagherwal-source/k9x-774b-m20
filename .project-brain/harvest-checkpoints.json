@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T19:23:54.881Z",
+  "last_updated": "2026-11-06T20:30:52.849Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18179,6 +18179,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-06T14:40:35.583Z"
+    },
+    "baidu/ERNIE-5.5-Flash-Base": {
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-base",
+      "content_hash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
+      "verified_at": "2026-11-06T20:30:52.848Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-06T20:30:52.848Z"
     }
   },
   "repos": {

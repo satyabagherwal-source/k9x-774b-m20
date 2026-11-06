@@ -20518,5 +20518,17 @@
     "downloads": 1309045,
     "qualityScore": 16430,
     "discoveredAt": "2026-11-06T14:38:13.868Z"
+  },
+  {
+    "name": "baidu/ERNIE-5.5-Flash-Base",
+    "fullName": "baidu/ERNIE-5.5-Flash-Base",
+    "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Base (209 likes, 526 downloads)",
+    "likes": 209,
+    "downloads": 526,
+    "qualityScore": 2616,
+    "discoveredAt": "2026-11-06T20:28:18.941Z"
   }
 ]

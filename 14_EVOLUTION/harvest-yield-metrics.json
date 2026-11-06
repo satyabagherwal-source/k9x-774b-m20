@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T19:23:54.877Z",
-  "total_cycles_completed": 7871,
-  "total_learnings_persisted": 7871,
-  "total_rules_promoted": 7519,
+  "last_updated": "2026-11-06T20:30:52.837Z",
+  "total_cycles_completed": 7872,
+  "total_learnings_persisted": 7872,
+  "total_rules_promoted": 7522,
   "history": [
-    {
-      "timestamp": "2026-11-05T14:43:24.016Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:50:59.553Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -1403,6 +1396,13 @@
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T20:30:52.837Z",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

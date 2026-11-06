@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T19:23:54.792Z",
-  "total_verified_learnings": 1226,
+  "last_updated": "2026-11-06T20:30:52.751Z",
+  "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -184507,6 +184507,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-06T14:40:35.467Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-baidu-ernie-5-5-flash-base": {
+      "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "baidu/ERNIE-5.5-Flash-Base",
+      "repository": "baidu/ERNIE-5.5-Flash-Base",
+      "slug": "hf-baidu-ernie-5.5-flash-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+      "source_version": "hf-baidu-ernie-5.5-flash-base",
+      "content_hash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Heterogeneous Attention Sparsity Configuration Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MoE Latent Normalization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Long-Context RoPE Extrapolation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-06T20:30:52.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

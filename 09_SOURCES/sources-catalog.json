@@ -12078,5 +12078,15 @@
     "contentHash": "dad55ccf239eb9c3be791c7ea8f0409a0ca0ba2784bd883d5f14c40d15b73d8c",
     "lastHarvestedAt": "2026-11-06T14:40:35.577Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf"
+  },
+  "hf-baidu-ernie-5.5-flash-base": {
+    "repository": "baidu/ERNIE-5.5-Flash-Base",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base",
+    "sourceVersion": "hf-baidu-ernie-5.5-flash-base",
+    "license": "Open-Source",
+    "contentHash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
+    "lastHarvestedAt": "2026-11-06T20:30:52.832Z",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base"
   }
 }

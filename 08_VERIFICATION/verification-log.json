@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-PV5J",
-    "timestamp": "2026-11-04T23:20:54.007Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "606397a173c4ebde1dd3139307511635d71c834fb167a7e5c4bbd85ef63f13fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-PWUS",
     "timestamp": "2026-11-04T23:20:56.212Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "d4505db56be19d336f4e01e5973e3c056f15c8d891a38819aec07413c001ff3f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-IX7H",
+    "timestamp": "2026-11-06T20:30:52.829Z",
+    "repository": "baidu/ERNIE-5.5-Flash-Base",
+    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
+    "contentHash": "e0706cc37de5e68b07e08e95b36cf9f3bcc31307e7b4083c4c460aeffe1596f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

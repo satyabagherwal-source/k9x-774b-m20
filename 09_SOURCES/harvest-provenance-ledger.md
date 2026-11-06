@@ -7915,3 +7915,4 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `c8d8bab5` | Multi-dimensional audit evidence | 2026-11-06T19:16:48.327Z |
 | `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `8f4d2140` | Multi-dimensional audit evidence | 2026-11-06T19:23:48.732Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `8f9133b3` | Multi-dimensional audit evidence | 2026-11-06T19:23:54.872Z |
+| `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-06T20:30:52.832Z |

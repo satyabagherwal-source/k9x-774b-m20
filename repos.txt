@@ -4906,3 +4906,7 @@ https://huggingface.co/webAI-Official/TwIL-8B
 # --- Automatically Discovered by AI Scout Engine [2026-11-06T14:40:21.811Z] ---
 # [HUGGINGFACE-AI-MODELS] unsloth/Qwen3.8-Flash-Next-GGUF (16430 score) - Verified Hugging Face Model: unsloth/Qwen3.8-Flash-Next-GGUF (1443 likes, 130904
 https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T20:30:27.454Z] ---
+# [HUGGINGFACE-AI-MODELS] baidu/ERNIE-5.5-Flash-Base (2616 score) - Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Base (209 likes, 526 download
+https://huggingface.co/baidu/ERNIE-5.5-Flash-Base
