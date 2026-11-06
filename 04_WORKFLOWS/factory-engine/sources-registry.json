@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T22:06:33.821Z",
-    "lastVerified": "2026-11-06T22:06:33.821Z",
+    "lastChecked": "2026-11-06T22:13:59.614Z",
+    "lastVerified": "2026-11-06T22:13:59.614Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T21:45:08.107Z",
-    "lastVerified": "2026-11-06T21:45:08.107Z",
+    "lastChecked": "2026-11-06T22:13:52.891Z",
+    "lastVerified": "2026-11-06T22:13:52.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -628,12 +628,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T14:25:35.929Z",
-    "lastVerified": "2026-11-06T14:25:35.929Z",
+    "lastChecked": "2026-11-06T22:13:47.843Z",
+    "lastVerified": "2026-11-06T22:13:47.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -642,7 +642,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e9796cca"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -1527,14 +1528,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:29:30.536Z",
-    "lastVerified": "2026-11-05T12:29:30.536Z",
+    "lastChecked": "2026-11-06T22:13:54.866Z",
+    "lastVerified": "2026-11-06T22:13:54.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
+    "contentHash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3244,9 +3245,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-11-04T07:18:44.415Z",
+    "lastChecked": "2026-11-06T22:13:42.872Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-11-04T07:18:44.415Z"
+    "lastVerified": "2026-11-06T22:13:42.872Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -4930,14 +4931,14 @@
     "officialUrl": "https://github.com/embassy-rs/embassy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T08:00:37.242Z",
-    "lastVerified": "2026-11-05T08:00:37.242Z",
+    "lastChecked": "2026-11-06T22:13:41.924Z",
+    "lastVerified": "2026-11-06T22:13:41.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
+    "contentHash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5055,22 +5056,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
-    "name": "terraform",
+    "name": "hashicorp/terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T13:20:21.740Z",
-    "lastVerified": "2026-11-05T13:20:21.740Z",
+    "lastChecked": "2026-11-06T22:13:49.678Z",
+    "lastVerified": "2026-11-06T22:13:49.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
+    "contentHash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "eb097071"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
@@ -10554,9 +10554,9 @@
   "joshcarty-google-searchconsole": {
     "name": "google-searchconsole",
     "officialUrl": "https://github.com/joshcarty/google-searchconsole",
-    "lastChecked": "2026-11-03T18:22:35.906Z",
+    "lastChecked": "2026-11-06T22:13:40.303Z",
     "revisionIdentifier": "9ab5a265",
-    "lastVerified": "2026-11-03T18:22:35.906Z"
+    "lastVerified": "2026-11-06T22:13:40.303Z"
   },
   "joreilly-confetti": {
     "name": "Confetti",

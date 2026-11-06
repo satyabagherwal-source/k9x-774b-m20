@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "eb097071",
+    "sourceVersion": "aa716fca",
     "license": "NOASSERTION",
-    "contentHash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
-    "lastHarvestedAt": "2026-11-04T23:20:50.080Z",
+    "contentHash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
+    "lastHarvestedAt": "2026-11-06T22:13:51.830Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "cf9beb71",
+    "sourceVersion": "ddc51e35",
     "license": "Apache-2.0",
-    "contentHash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
-    "lastHarvestedAt": "2026-11-05T08:03:34.121Z",
+    "contentHash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
+    "lastHarvestedAt": "2026-11-06T22:13:44.237Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "202384a1",
+    "sourceVersion": "01b5452f",
     "license": "Apache-2.0",
-    "contentHash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
-    "lastHarvestedAt": "2026-11-05T12:29:31.073Z",
+    "contentHash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
+    "lastHarvestedAt": "2026-11-06T22:13:56.992Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

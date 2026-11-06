@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T22:06:25.256Z",
+  "last_updated": "2026-11-06T22:13:57.011Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
-      "verified_at": "2026-11-04T23:20:50.096Z",
+      "content_hash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
+      "verified_at": "2026-11-06T22:13:51.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:20:50.096Z"
+      "last_updated": "2026-11-06T22:13:51.848Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
-      "verified_at": "2026-11-05T08:03:34.138Z",
+      "content_hash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
+      "verified_at": "2026-11-06T22:13:44.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:03:34.138Z"
+      "last_updated": "2026-11-06T22:13:44.247Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
-      "verified_at": "2026-11-05T12:29:31.088Z",
+      "content_hash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
+      "verified_at": "2026-11-06T22:13:57.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:29:31.088Z"
+      "last_updated": "2026-11-06T22:13:57.010Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

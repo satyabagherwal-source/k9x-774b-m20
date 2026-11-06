@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:06:25.163Z",
+  "last_updated": "2026-11-06T22:13:56.896Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12423,11 +12423,16 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "cf9beb71",
-      "content_hash": "cd02347e0cd7395c81d2d2a29162d4453ed6189aadd51345a3eb12b757d1ccc1",
+      "source_version": "ddc51e35",
+      "content_hash": "f98625a0d0b2e84f59b865977f455d41b7e2ed62a0b67efc5c9edefc301aedb8",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #7352 from kumbung01/fix-nrf-timer-frequency",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2076,
           "title": "use process_block inside process_blocks_padded",
@@ -12504,7 +12509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:03:34.005Z",
+      "verified_at": "2026-11-06T22:13:44.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17883,11 +17888,16 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "eb097071",
-      "content_hash": "a692ad3ef5bb9664e5fe456dc4f92bb69cbde601b60b5393da70499ec7761793",
+      "source_version": "aa716fca",
+      "content_hash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update .changes/v1.17/BUG FIXES-20261106-082655.yaml",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1984,
           "title": "Make `version` command show diagnostics in JSON format when `-json` is supplied.",
@@ -17964,7 +17974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:20:49.962Z",
+      "verified_at": "2026-11-06T22:13:51.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57379,11 +57389,16 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "202384a1",
-      "content_hash": "6920cba920d6970d4f864934e57c556bb08140e4fca5ed3864baeccc32f3f523",
+      "source_version": "01b5452f",
+      "content_hash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2357,
           "title": "Reusable Single-Instance Editor Tab Isolation",
@@ -57480,7 +57495,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:29:30.995Z",
+      "verified_at": "2026-11-06T22:13:56.871Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

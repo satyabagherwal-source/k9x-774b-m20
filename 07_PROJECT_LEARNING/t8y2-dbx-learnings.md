@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `202384a1`  
+> **Source Version**: `01b5452f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:29:30.541Z  
+> **Timestamp**: 2026-11-06T22:13:55.114Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:29:30.536Z  
+> **Harvest Timestamp**: 2026-11-06T22:13:54.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29186 stars
+- **Stars / Engagement**: 29373 stars
 
 ---
 
@@ -223,6 +223,8 @@ pub fn build_dsn(params: &ConnectParams) -> Result<BuiltDsn> {
     if !params.ca_cert_path.trim().is_empty() {
         set_query_param(&mut url, "tls_mode", "verify_identity");
         set_query_param(&mut url, "tls_ca", params.ca_cert_path.trim());
+    } else if params.ssl && !has_query_param(&url, "tls_version") {
+        set_query_param(&mut url, "tls_version", "tlsv1.2,tlsv1.3");
     }
     let database = url
         .path_segments()
@@ -340,6 +342,10 @@ fn set_query_param(url: &mut Url, key: &str, value: &str) {
     }
 }
 
+fn has_query_param(url: &Url, key: &str) -> bool {
+    url.query_pairs().any(|(existing, _)| existing.eq_ignore_ascii_case(key))
+}
+
 fn is_control_param(key: &str) -> bool {
     key.eq_ignore_ascii_case("transport") || key.eq_ignore_ascii_case("dbx.transport")
 }
@@ -424,14 +430,7 @@ mod tests {
     fn rejects_mutual_tls_paths_instead_of_ignoring_them() {
         let error =
             build_dsn(&ConnectParams { client_cert_path: "/tmp/client.pem".into(), ..Default::default() }).unwrap_err();
-        assert!(error.to_string().contains("client certificate"));
-    }
-
-    #[test]
-    fn ca_certificate_enables_tls_and_replaces_conflicting_query_values() {
-        let dsn = build_dsn(&ConnectParams {
-            connection_string: "ws://td.example.com:6041/db?tls_mode=verify_ca&tls_ca=old.pem".into(),
-          
+        assert!(error.to_string().contains("client 
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/driver.rs`
@@ -515,6 +514,10 @@ struct QueryCursor {
     last_accessed_at: Instant,
 }
 
+pub fn ensure_crypto_provider() {
+    let _ = rustls::crypto::ring::default_provider().install_default();
+}
+
 impl TdengineDriver {
     pub fn new() -> Self {
         Self {
@@ -528,6 +531,7 @@ impl TdengineDriver {
     }
 
     pub async fn connect(&mut self, params: ConnectParams) -> Result<()> {
+        ensure_crypto_provider();
         self.disconnect().await;
         let dsn = build_dsn(&params)?;
         let builder =
@@ -694,8 +698,7 @@ impl TdengineDriver {
         let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
         let include_databases = allowed.contains("database") || allowed.contains("schema");
         let include_tables = allowed.is_empty() || allowed.contains("table") || allowed.contains("view");
-        let include_columns = allowed.contains("column");
-        let max_results = if request.max_results == 0 { 100 } else { request.max_results.min(1000
+        let 
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -1075,6 +1078,7 @@ impl AgentSession {
 }
 
 pub async fn run() -> Result<()> {
+    crate::driver::ensure_crypto_provider();
     let runtime = Arc::new(RuntimeServer::new());
     let (responses, mut response_rx) = mpsc::unbounded_channel::<RpcResponse>();
     let writer = tokio::spawn(async move {
@@ -1263,8 +1267,7 @@ impl RuntimeServer {
         Ok(())
     }
 
-    async fn session(&self, id: &str) -> Result<Arc<AgentSession>> {
-        self.sessions.read().awa
+    async fn session(&self, id: &str) -> Result<Arc<Agen
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/value.rs`
@@ -1988,14 +1991,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14360** (2026-11-05): **[Bug] 创建连接，选择Duckdb文件时不应该有这个文件扩展名的限制**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  duckdb  ### 问题描述 / Problem description  <img width="929" height="145" alt="Image" src="https://github.com/user-attachments/assets/3a555806-19e3-4d9f-8043-4e065c32eefe" />  ### 支持信息 / Support information  dbx: 0.6.66 操作系统：windows  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14455** (2026-11-06): **[Bug] DBX SQL 文件执行：单条语句超过 262144 字节被截断后仍发送到 MySQL，导致 ERROR 1064 语法错误**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySql8.0  ### 问题描述 / Problem description  使用 DBX 执行大型 SQL 文件时，文件中第 735 条语句：  ```sql INSERT INTO rdm_device_online VALUES (...),(...),...; ```  超过 DBX 的 per-statement 限制 `262144 bytes`。DBX 将该语句截断后仍然发送到 MySQL 执行，导致 MySQL 返回 `ERROR 1064 (42000)` 语法错误。  从日志看，这不是 SQL 文件本身的语法错误，而是 **DBX 在执行前截断了超长 statement，并把截断后的不完整 SQL 发送给了数据库**。  建议 DBX 在发送前检测 statement 大小：  - 超限时明确报错并指出语句编号、实际字节数、限制值；或 - 支持自动拆分超长多值 INSERT；或 - 支持配置提高 per-statement limit。  不应将截断后的 SQL 发送到数据库执行。  ### 支持信息 / Support information  DBX 版本: v0.6.67 (0.6.67-beta.20261105.1) 运行环境: 桌面端 操作系统: Windows 11 (10.0.26300.9711) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0 数据库类型: mqtt, mysql, redis  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  ## 复现步骤  1. 准备一个大型 `.sql` 文件，其中包含单条多值 `INSERT` 语句，例如：     ```sql    INSERT INTO rdm_device_online VALUES (...),(...),(...), ...;    ```     该单条语句总大小超过 DBX 的 per-statement limit：`262144 bytes`。  2. 使用 DBX 连接 MySQL 并执行该 SQL 文件。  3. 观察执行日志和失败信息。  本次实际执行中，失败发生在文件中的第 735 条语句：  ```text #735  rdm-cloud-v2_20261106_000501.sql  (statement #735 in file) INSERT INTO `rdm_device_online` VALUES (693850,154,22570,...),(693851,...),... ```  ---  ## 实际结果  DBX 日志显示：  ```text limits: statement 262144 bytes, log 209715200 bytes ... #735  rdm-cloud-v2_20261106_000501.sql  (statement #735 i
 
-- **Issue #14338** (2026-11-05): **[Bug] 编辑框表名右键-结构工具-查看DDL语句-其中字段注释COMMENT ON COLUMN与表名粘连**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  GaussDB驱动  ### 问题描述 / Problem description  <img width="1331" height="991" alt="Image" src="https://github.com/user-attachments/assets/b0b02122-e4e7-43f2-8a06-7c96b9973d0a" />  <img width="237" height="320" alt="Image" src="https://github.com/user-attachments/assets/256baa61-420d-48f3-9322-76ff7e110c51" />  ### 支持信息 / Support information  DBX：0.6.65-beta.20261103.1 Windows11  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #14422** (2026-11-06): **[Bug] CTE 和派生表里的未知表别名不报语义诊断**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL 8.0、PostgreSQL 16。凡启用该检查的方言都复现：MySQL / PostgreSQL / SQLite / SQL Server / ClickHouse / DuckDB / Spark。  ### 问题描述 / Problem description  **1. 复现步骤 / Steps** 1. 连接 MySQL 8.0 或 PostgreSQL 16（SQLite 等本地库同样），打开 SQL 编辑器； 2. 打开工具栏的「SQL 语义诊断」开关（默认关闭，打开后按钮变绿）； 3. 粘贴下面任一语句（只需停在编辑器里，不用执行）： ```sql -- MySQL / PostgreSQL：CTE 引用 WITH demo AS (SELECT id FROM t) SELECT zz.id FROM demo d; -- MySQL / PostgreSQL：派生表 SELECT zz.id FROM (SELECT id FROM t) AS x; -- PostgreSQL：括号 join 带别名 SELECT zz.id FROM (t1 a JOIN t2 b ON a.id = b.id) ab; ``` 4. `zz` 既不是表名也不是别名，服务端会拒绝这三种写法（MySQL 报 `1054 Unknown column`，PostgreSQL 报 `missing FROM-clause entry`）。 **2. 期望结果 / Expected** `zz` 上出现红色波浪线，提示 `Unknown table alias zz`，与 #14240 修复后的普通表作用域一致——`SELECT zz.id FROM t a` 现在会报。 **3. 实际结果 / Actual** 一条诊断都不出。看起来像「语义诊断对 CTE / 子查询不生效」。 **4. 截图和错误日志 / Screenshots and logs** 这个缺陷的表现就是「该出现的波浪线没有出现」，截图只能证明没有，因此改为附下面的实测矩阵。   ### 支持信息 / Support information  DBX 版本: v0.6.66-beta.20261104.1 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.7291) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0 数据库类型: clickhouse, dameng/dm, influxdb, kingbase, mongodb, mq/kafka, mq/rabbitmq, mysql, nacos, oracle, postgres, redis, sqlite, sqlserver, tdengine, vastbase 本地驱动版本: dameng 0.1.103, highgo 0.1.90, kafka 0.1.24, kingbase 0.1.71, rabbitmq 0.1.18, tdengine 0.1.56, vastbase 0.1.57 AI 供应商: Custom  ### 优先级
   **Post-Mortem & Fix Analysis**:
-  > 你好，正在尝试复现这个问题。截图中的 `COMMENT ON COLUMN` 与表名粘连已看到，但目前还不能确定发生在服务端 DDL 输出还是 DBX 显示处理环节。方便补充以下信息吗？  1. 执行 `SELECT version();` 的结果，以及连接配置里选择的具体驱动类型/配置（GaussDB、openGauss 或 JDBC；若是 JDBC，请提供驱动名称和版本，无需连接地址或账号密码）。 2. 一个能复现的最小建表 SQL，包含表/字段注释；并提供通过「编辑器右键表名 → 结构工具 → 查看 DDL」得到的**完整文本**，不要只截取注释行。表名、注释及业务信息可脱敏，但请保留引号、空格、换行和表选项。 3. 如果当前数据库支持，请提供 `SELECT pg_get_tabledef('实际schema.实际表名');` 返回的完整文本，便于与上面的 DDL 对比；若执行失败，提供报错即可。 4. 设置中「生成 SQL 是否带标识符引号」「是否带数据库名」的开关状态，以及 SQL 格式化风格（默认 DBX / 经典或自定义）。另外，从侧边栏查看同一张表的 DDL 是否也会粘连？  暂时还没有确认根因，这些信息有助于区分服务端生成、格式化和引号处理。谢谢！ 
-  > 1.(openGauss 5.0.0 build a07d57c3) compiled at 2023-03-29 03:07:56 commit 0 last mr   on x86_64-unknown-linux-gnu, compiled by g++ (GCC) 7.3.0, 64-bit postgresql://XXX@XX.XX.XX.XX:15400/XXX 2. SET search_path = yt;  CREATE TABLE test_table (a character varying(20),                          b  CHARACTER VARYING(20),                          c  CHARACTER VARYING(20),                          d  CHARACTER VARYING(20),                          e  CHARACTER VARYING(20),                          f  CHARACTER VARYING(20),                          g  CHARACTER VARYING(20),                          h  CHARACTER VARYING(20),                          i  CHARACTER VARYING(20),                          j character varying(20)) WITH (orientation = ROW, compression = no);  COMMENT ON TABLE test_table IS '测试表';  COMMENT ON COLUMN test_table.a IS '测试字段';  COMMENT ON COLUMN test_table.b IS '测试字段';  COMMENT ON COLUMN test_table.c IS '测试字段';  COMMENT ON COLUMN test_table.d IS '测试字段';  COMMENT ON COLUMN te
+  > /claim
+  > ✅ @Gaiokane 已认领 #14422，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,295 +2015,535 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `997c8b74` (2026-11-05)
-**Commit Message**: fix(jdbc): run DDL outside the paged query transaction (#14368)
+### Incident Patch 1: `a8671a8a` (2026-11-05)
+**Commit Message**: fix(txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)
 
-Paged execution wraps PostgreSQL statements in an explicit transaction so
-the cursor survives between pages. DDL has no cursor: the transaction only
-changes how the engine executes it. A CREATE TABLE AS may be committed by
-the engine on its own while the selected rows stay inside the transaction,
-so a retry reports 42P07 and an empty table is left behind (#14243).
+执行 future 被前端取消、窗口重载或驱动 panic 时，session.busy 之后的清理
+代码不会运行，会话永久 busy，之后每次执行都报
+"Transaction session is already executing"，只能新建窗口。
 
-Statements that can never return rows now run in auto-commit, matching psql
-and DBeaver. Queries, INSERT/UPDATE/DELETE (including RETURNING) and CALL
-keep the cursor transaction unchanged.
+- 批量执行与流式导出两条路径加 RAII guard：future 被丢弃时尝试把 busy
+  清回 false；正常路径的清理逻辑保持不变
+- guard 用 try_write 最多重试 100 次（取消路径不能 await）
+- fake agent 改为每请求独立线程，可让单条语句延迟而不阻塞后续请求
+- 回归测试：延迟语句执行中 abort 任务，busy 必须清除；重试不得再次报
+  already executing；若重试失败则断言会话已拆除，交给前端自愈
 
-**File**: `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java` (modified, +32/-1)
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +228/-55)
 ```diff
-@@ -1881,7 +1881,10 @@ private static JsonNode executeQueryPage(
-         boolean preserveOracleDateTime = isOracleUrl(jdbcUrl(connection));
-         ZoneId timestampZone = tdengineTimestampZone(connection, conn);
-         boolean bitStringColumns = usesBitStringColumns(connection);
--        boolean restoreAutoCommit = beginPagedQueryTransaction(connection, conn);
-+        // DDL has no cursor to keep alive across pages, and wrapping it in the
-+        // paged transaction changes how PostgreSQL-compatible engines execute
-+        // it (see pagedQueryCannotReturnRows).
-+        boolean restoreAutoCommit = !pagedQueryCannotReturnRows(sql) && beginPagedQueryTransaction(connection, conn);
-         Statement statement;
-         try {
-             statement = createPagedQueryStatement(conn);
-@@ -1963,6 +1966,34 @@ private static Statement createPagedQueryStatement(Connection connection) throws
-         }
-     }
+@@ -6912,6 +6912,43 @@ pub async fn keep_manual_transaction_alive(
+     Ok(ManualTransactionKeepAlive { task, sessions: keep_alive_sessions, txn_session_id })
+ }
  
-+    /**
-+     * Keywords for statements that never leave a result-set cursor behind.
-+     * The paged transaction exists only to keep a cursor readable across pages;
-+     * for these statements it changes engine semantics instead of adding value
-+     * (issue #14243: PostgreSQL-compatible engines may commit a `CREATE TABLE AS`
-+     * on their own while the selected rows stay inside the transaction, so the
-+     * client sees 42P07 on a retry and an empty table is left behind). Running
-+     * them in auto-commit matches psql and DBeaver.
-+     */
-+    private static final Set<String> NO_RESULT_SET_KEYWORDS = Set.of(
-+        "ALTER",
-+        "ANALYZE",
-+        "CLUSTER",
-+        "COMMENT",
-+        "CREATE",
-+        "DROP",
-+        "GRANT",
-+        "REINDEX",
-+        "REFRESH",
-+        "REVOKE",
-+        "TRUNCATE",
-+        "VACUUM"
-+    );
-+
-+    private static boolean pagedQueryCannotReturnRows(String sql) {
-+        return NO_RESULT_SET_KEYWORDS.contains(firstSqlKeyword(sql));
-+    }
-+
-     private static boolean beginPagedQueryTransaction(JsonNode connectionConfig, Connection connection)
-         throws SQLException {
-         if (!isPostgresConnection(connectionConfig) || !connection.getAutoCommit()) {
-```
-
-**File**: `plugins/jdbc/src/test/java/app/dbx/jdbc/DbxJdbcPluginTest.java` (modified, +29/-5)
-```diff
-@@ -735,7 +735,7 @@ void executeQueryPageKeepsCursorForNextPages() throws Exception {
-     }
- 
-     @Test
--    void executeQueryPageCommitsStatementWithoutResultSet() throws Exception {
-+    void executeQueryPageRunsCtasInAutoCommitWithoutPagedTransaction() throws Exception {
-         List<String> calls = new ArrayList<>();
-         Driver driver = testDriver("jdbc:postgresql:dbx-ctas", scriptedPostgresConnection(calls, false, 2, false));
-         DriverManager.registerDriver(driver);
-@@ -755,16 +755,40 @@ void executeQueryPageCommitsStatementWithoutResultSet() throws Exception {
-             assertFalse(response.has("error"), response.toString());
-             assertEquals(2, response.path("result").path("affected_rows").asInt());
-             assertEquals(true, response.path("result").path("session_id").isNull());
--            int begin = callIndex(calls, call -> call.equals("setAutoCommit:false"));
--            int commit = callIndex(calls, call -> call.equals("commit"));
--            int restore = callIndex(calls, call -> call.equals("setAutoCommit:true"));
--            assertTrue(begin >= 0 && begin < commit && commit < restore, calls.toString());
-+            // DDL runs in auto-commit: no paged transaction, hence no
-+            // commit/rollback of it. See #14243.
-+            assertEquals(-1, callIndex(calls, call -> call.equals("setAutoCommit:false")), calls.toString());
-+            assertFalse(calls.contains("commit"), calls.toString());
-             assertFalse(calls.contains("rollback"), calls.toString());
-         } finally {
-             closeAndDeregister(connection, driver);
-         }
-     }
- 
-+    @Test
-+    void pagedQueryCannotReturnRowsSkipsLeadingCommentsAndKeepsQueriesInTheTransaction() throws Exception {
-+        Method method = DbxJdbcPlugin.class.getDeclaredMethod("pagedQueryCannotReturnRows", String.class);
-+        method.setAccessible(true);
-+
-+        for (String sql : new String[] {
-+            "create table t as select 1",
-+            "  \n-- note\n/* block */ truncate table t",
-+            "ALTER TABLE t ADD COLUMN c int",
-+        }) {
-+            assertTrue((boolean) method.invoke(null, sql), sql);
-+        }
-+        for (String sql : new String[] {
-+            "select 1",
-+            "with x as (select 1) select * from x",
-+            "explain analyze select 1",
-+            "(select 1)",
-+            "insert into t(a) values (1) returning a",
-+            "call refresh_stats()",
-+        }) {
-+            assertFalse((boolean) method.invoke(null, sql), sql);
-+        }
-+    }
-+
-     @Test
-     void executeQueryPageCommitsEffectfulCursorWhenSessionDrains() throws Exception {
-         List<String> calls = new ArrayList<>();
-```
-
----
-
-### Incident Patch 2: `dc41ee21` (2026-11-05)
-**Commit Message**: fix(duckdb): allow any extension in the database file picker (#14366)
-
-Leave the save dialog and other database file filters unchanged.
-
-Refs #14360
-
-Co-authored-by: ThugKd <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/components/connection/ConnectionDialog.vue` (modified, +1/-1)
-```diff
-@@ -7393,7 +7393,7 @@ async function browseKafkaTlsFile(target: "ca" | "clientCert" | "clientKey") {
- async function browseDbFilePath() {
-   if (isTauriRuntime()) {
-     const { open } = await import("@tauri-apps/plugin-dialog");
--    const filters = form.value.db_type === "duckdb" ? [{ name: "DuckDB", extensions: ["duckdb", "db"] }] : form.value.db_type === "access" ? [{ name: "Microsoft Access", extensions: ["accdb", "mdb"] }] : form.value.db_type === "h2" ? [{ name: "H2", extensions: ["db"] }] : undefined;
-+    const filters = form.value.db_type === "access" ? [{ name: "Microsoft Access", extensions: ["accdb", "mdb"] }] : form.value.db_type === "h2" ? [{ name: "H2", extensions: ["db"] }] : undefined;
-     const selected = await open({
-       title: "Select Database File",
-       multiple: false,
-```
-
----
-
-### Incident Patch 3: `202384a1` (2026-11-05)
-**Commit Message**: fix(sqlserver): 导出脚本用 GO 分隔视图/例程/触发器批次 (#14314)
-
-SQL Server 要求 CREATE VIEW/PROCEDURE/FUNCTION/TRIGGER 是批次的第一条语句，
-原导出统一用分号和换行拼接，前面有表结构或 INSERT 时回放会报
-"CREATE VIEW 必须是查询批次中的第一个语句"。
-
-- 仅 SQL Server 的这四类对象在导出源前后写 GO，自成批次
-- 其它语句与方言保持不变；GO 是客户端批分隔符，DBX 的 SQL 文件执行器已用
-  split_sql_batches 支持 SQL Server 的 GO
-- 单测覆盖四类对象被包裹、非批对象不受影响，并用 split_sql_batches 验证
-  view/trigger 各自批次的首语句
-
-**File**: `crates/dbx-core/src/data/database_export.rs` (modified, +103/-0)
-```diff
-@@ -6433,6 +6433,47 @@ fn build_database_export_object_source_sql(
-     source: &str,
-     schema: &str,
-     drop_if_exists: bool,
-+) -> String {
-+    let source = build_database_export_object_source_sql_unwrapped(
-+        database_type,
-+        object_type,
-+        object_name,
-+        source,
-+        schema,
-+        drop_if_exists,
-+    );
-+    wrap_sqlserver_export_batch(database_type, object_type, source)
++/// Clears a manual transaction session's `busy` flag when the execution that
++/// claimed it goes away without reaching its own cleanup: the command future was
++/// dropped (frontend cancelled the invoke, the window reloaded) or a driver
++/// panicked. Without it the session stays busy forever and every later run fails
++/// with "Transaction session is already executing" until a new window is opened
++/// (#14184). Normal paths already clear the flag themselves; the guard is a
++/// best-effort `try_write` fallback for exactly the exits nobody owns.
++struct ManualTransactionBusyGuard<'a> {
++    state: &'a AppState,
++    txn_session_id: &'a str,
 +}
 +
-+/// SQL Server requires `CREATE VIEW` / `PROCEDURE` / `FUNCTION` / `TRIGGER` to be
-+/// the first statement in a batch. `;` only ends a statement, so an exported
-+/// script that places one of these after a table DDL or INSERT fails with
-+/// "CREATE VIEW must be the first statement in a query batch". `GO` is the
-+/// client-side batch separator; the exporter emits it around exactly those
-+/// objects, while every other statement keeps `;` (#14295).
-+fn wrap_sqlserver_export_batch(database_type: DatabaseType, object_type: &ObjectSourceKind, source: String) -> String {
-+    if source.is_empty()
-+        || database_type != DatabaseType::SqlServer
-+        || !matches!(
-+            object_type,
-+            ObjectSourceKind::View
-+                | ObjectSourceKind::Procedure
-+                | ObjectSourceKind::Function
-+                | ObjectSourceKind::Trigger
-+        )
-+    {
-+        return source;
++impl<'a> ManualTransactionBusyGuard<'a> {
++    fn new(state: &'a AppState, txn_session_id: &'a str) -> Self {
++        Self { state, txn_session_id }
 +    }
-+    format!("GO\n{source}\nGO")
 +}
 +
-+fn build_database_export_object_source_sql_unwrapped(
-+    database_type: DatabaseType,
-+    object_type: &ObjectSourceKind,
-+    object_name: &str,
-+    source: &str,
-+    schema: &str,
-+    drop_if_exists: bool,
- ) -> String {
-     let wrapped_source;
-     let source = if matches!(object_type, ObjectSourceKind::View | ObjectSourceKind::MaterializedView)
-@@ -7387,6 +7428,68 @@ mod tests {
++impl Drop for ManualTransactionBusyGuard<'_> {
++    fn drop(&mut self) {
++        // A dropped future cannot await, so retry the non-blocking lock briefly
++        // instead of leaving the session wedged when a poller happens to hold it.
++        for _ in 0..100 {
++            if let Ok(mut sessions) = self.state.transaction_sessions.try_write() {
++                if let Some(session) = sessions.get_mut(self.txn_session_id) {
++                    if session.busy {
++                        session.busy = false;
++                        session.last_activity = std::time::Instant::now();
++                    }
++                }
++                return;
++            }
++            std::thread::yield_now();
++        }
++    }
++}
++
+ /// Execute SQL within an existing manual transaction session.
+ pub async fn execute_in_manual_transaction(
+     state: &AppState,
+@@ -7097,6 +7134,12 @@ pub async fn execute_in_manual_transaction_with_options(
+         release_manual_txn_session_pool(state, &session.connection_id, &mut conn).await;
+         return Err(MANUAL_TRANSACTION_IDLE_ROLLBACK_ERROR.to_string());
+     }
++    // If this future is dropped mid-execution — the frontend cancels the invoke,
++    // the window reloads, or a driver panics — the code below never runs and the
++    // session would stay busy forever ("Transaction session is already
++    // executing" until a new window). The guard clears the flag on every exit
++    // path, including cancellation and unwinding (#14184).
++    let _busy_guard = ManualTransactionBusyGuard::new(state, txn_session_id);
+ 
+     let connection = {
+         let sessions = state.transaction_sessions.read().await;
+@@ -7315,6 +7358,9 @@ where
+         let _ = rollback_manual_txn_connection(&mut conn).await;
+         return Err(MANUAL_TRANSACTION_IDLE_ROLLBACK_ERROR.to_string());
+     }
++    // Same busy-stuck protection as the batch executor: if this streaming
++    // future is dropped mid-run the guard clears the flag (#14184).
++    let _busy_guard = ManualTransactionBusyGuard::new(state, txn_session_id);
+ 
+     let (connection, pool_key, connection_id, mysql_data_charset) = {
+         let sessions = state.transaction_sessions.read().await;
+@@ -13217,36 +13263,33 @@ done
          );
      }
  
-+    #[test]
-+    fn sqlserver_export_wraps_batch_scoped_objects_with_go() {
-+        let cases = [
-+            (ObjectSourceKind::View, "CREATE VIEW [dbo].[v] AS SELECT 1;"),
-+            (ObjectSourceKind::Procedure, "CREATE PROCEDURE [dbo].[p] AS SELECT 1;"),
-+            (ObjectSourceKind::Function, "CREATE FUNCTION [dbo].[f]() RETURNS INT AS BEGIN RETURN 1 END;"),
-+            (ObjectSourceKind::Trigger, "CREATE TRIGGER [dbo].[trg] ON [dbo].[orders] AFTER INSERT AS SELECT 1;"),
-+        ];
-+        for (kind, source) in cases {
-+            let ddl =
-+                build_database_export_object_source_sql(DatabaseType::SqlServer, &kind, "obj", source, "dbo", false);
-+            assert_eq!(ddl, format!("GO\n{source}\nGO"), "{kind:?}");
-+        }
-+    }
+-    /// Spawns a fake Python agent and registers a manual transaction session in
+-    /// the app state so `execute_in_manual_transaction_with_options` can run
+-    /// end to end without a live database.
+-    async fn manual_transaction_test_state(db_type: DatabaseType) -> (AppState, String, std::path::PathBuf) {
+-        use std::io::Write;
+-
+-        let mut script = tempfile::NamedTempFile::new().unwrap();
+-        write!(
+-            script,
+-            r#"import json
++    /// Fake JSON-RPC agent used by the manual-transaction tests. Requests are
++    /// answered from their own thread so a deliberately stalled statement cannot
++    /// block later requests; `HANG_MANUAL_TXN` in the SQL stalls only that reply.
++    const MANUAL_TRANSACTION_FAKE_AGENT_SCRIPT: &str = r#"import json
+ import sys
++import threading
++import time
+ 
+-print(json.dumps({{"ready": True}}), flush=True)
+-cursor_ids = {{"cursor-1"}}
+-for line in sys.stdin:
+-    request = json.loads(line)
++print(json.dumps({"ready": True}), flush=True)
++print_lock = threading.Lock()
++cursor_ids = {"cursor-1"}
 +
-+    #[test]
-+    fn sqlserver_export_keeps_non_batch_scoped_objects_unchanged() {
-+        let source = "CREATE SEQUENCE [dbo].[s] START WITH 1;";
-+        let ddl = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::Sequence,
-+            "s",
-+            source,
-+            "dbo",
-+            false,
-+        );
-+        assert_eq!(ddl, source);
-+    }
++def respond(request):
+     method = request.get("method")
+     if method == "close_query_session":
+-        cursor_id = request.get("params", {{}}).get("sessionId")
++        cursor_id = request.get("params", {}).get("sessionId")
+         closed = cursor_id in cursor_ids
+         cursor_ids.discard(cursor_id)
+-        print(json.dumps({{"jsonrpc": "2.0", "id": request["id"], "result": closed}}), flush=True)
+-        continue
++        result = closed
++        with print_lock:
++            print(json.dumps({"jsonrpc": "2.0", "id": request["id"], "result": result}), flush=True)
++        return
+     if method == "execute_query_page":
+-        # First cursor page: t
+```
+
+---
+
+### Incident Patch 2: `60da8419` (2026-11-05)
+**Commit Message**: fix(sql): report unknown table aliases in semantic diagnostics (#14363)
+
+* fix(sql): report unknown table aliases in semantic diagnostics
+
+The semantic diagnostics never reported a qualifier that names no table or
+alias. The reference analyzer resolves `b.id` to a column with qualifier
+`b`, and the diagnostic builder skipped every column whose qualifier could
+not be resolved, so a statement such as
+
+    SELECT a.id, a.v, b.id FROM t_tx_demo a JOIN t_tx_demo qb ON a.id = b.id
+
+produced no diagnostics at all even though `b` is neither a table nor an
+alias and MySQL rejects it with 1054 Unknown column 'b.id'.
+
+The analyzer now collects two-part qualifiers and matches them against the
+tables and aliases of the reference scope and of every enclosing scope, so a
+correlated subquery can still refer to an outer alias. An unresolved
+qualifier travels back as `unknown_qualifiers` and is rendered as
+`Unknown table alias <qualifier>`, with the marker on the qualifier itself.
+
+Only two-part references take part in the check: three or more parts are
+qualified object names (`db.schema.table.col`), never aliases. Scopes
+holding a CTE reference, a derived table, a table function or a
+parenthesized 
+
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlDiagnosticKeywordRecovery.spec.ts` (modified, +17/-0)
+```diff
+@@ -68,6 +68,23 @@ describe("SQL diagnostic keyword recovery", () => {
+     expect(analyze).toHaveBeenCalledOnce();
+   });
+ 
++  it("remaps unknown qualifier spans after a keyword repair", async () => {
++    const sql = "SELECT * FRO rules WHERE b.id = 1";
++    const repaired = sql.replace("FRO", "FROM");
++    const analyze = vi.fn(async (statement: string) => {
++      if (statement !== repaired) throw parserError(sql, "rules");
++      return {
++        tables: [{ name: "rules", span: span(repaired, "rules") }],
++        columns: [],
++        unknown_qualifiers: [{ qualifier: "b", span: span(repaired, "b") }],
++      };
++    });
++    const result = await analyzeSqlDiagnosticReferences(sql, "mysql", analyze);
++    // The repair makes the text one character longer, so the qualifier span
++    // has to move back to the original position.
++    expect(result.analysis.unknown_qualifiers?.[0]?.span).toEqual(span(sql, "b"));
++  });
 +
-+    #[test]
-+    fn sqlserver_export_batches_place_each_create_first() {
-+        let view = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::View,
-+            "v",
-+            "CREATE VIEW [dbo].[v] AS SELECT 1;",
-+            "dbo",
-+            false,
-+        );
-+        let trigger = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::Trigger,
-+            "trg",
-+            "CREATE TRIGGER [dbo].[trg] ON [dbo].[orders] AFTER INSERT AS SELECT 1;",
-+            "dbo",
-+            false,
-+        );
-+        let script = format!(
-+            "CREATE TABLE [dbo].[orders] ([id] int);\nINSERT INTO [dbo].[orders] VALUES (1);\n{view}\n{trigger}\n"
-+        );
+   it("keeps the original parser error when no candidate parses", async () => {
+     const sql = "SELECT * FRO rules WHERE";
+     const error = parserError(sql, "rules");
+```
+
+**File**: `apps/desktop/src/lib/sql/semantic/diagnostics.ts` (modified, +11/-0)
+```diff
+@@ -288,6 +288,17 @@ export function buildSqlSemanticDiagnostics(analysis: SqlReferenceAnalysis, sche
+     });
+   }
+ 
++  // A two-part qualifier that names neither a table nor an alias in scope
++  // (`b.id` when only `a` is declared) is an error on its own: the column
++  // itself cannot be checked, because no relation owns it.
++  for (const unknown of analysis.unknown_qualifiers ?? []) {
++    diagnostics.push({
++      span: trimSqlTextSpanWhitespace(schema.sql, unknown.span),
++      message: `Unknown table alias ${unknown.qualifier}`,
++      severity: "error",
++    });
++  }
 +
-+        let batches = crate::sql::split_sql_batches(&script);
-+        assert!(
-+            batches.iter().any(|batch| batch.trim_start().starts_with("CREATE VIEW [dbo].[v]")),
-+            "view must start its own batch: {batches:?}"
-+        );
-+        assert!(
-+            batches.iter().any(|batch| batch.trim_start().starts_with("CREATE TRIGGER [dbo].[trg]")),
-+            "trigger must start its own batch: {batches:?}"
-+        );
+   for (const column of analysis.columns) {
+     if (isUnquotedOracleBuiltinReference(column, schema)) continue;
+     const table = resolveColumnTable(column, tables, knownTables, schema.sql, scopesById);
+```
+
+**File**: `apps/desktop/src/lib/sql/sqlDiagnosticKeywordRecovery.ts` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ export async function analyzeSqlDiagnosticReferences(sql: string, dialect: strin
+             tables: analysis.tables.map((table) => ({ ...table, span: remap(table.span) })),
+             columns: analysis.columns.map((column) => ({ ...column, span: remap(column.span) })),
+             ...(analysis.group_by_violations && { group_by_violations: analysis.group_by_violations.map((violation) => ({ ...violation, span: remap(violation.span) })) }),
++            ...(analysis.unknown_qualifiers && { unknown_qualifiers: analysis.unknown_qualifiers.map((unknown) => ({ ...unknown, span: remap(unknown.span) })) }),
+           },
+           keywordDiagnostic: {
+             message: `${token.text} → ${keyword}\n${diagnostic.message}`,
+```
+
+**File**: `apps/desktop/src/types/database.ts` (modified, +11/-0)
+```diff
+@@ -2096,6 +2096,16 @@ export interface SqlGroupByViolation {
+   qualifier?: string | null;
+ }
+ 
++/**
++ * A two-part column qualifier that names neither a table nor an alias visible
++ * in the statement, e.g. `b.id` when only `a` and `qb` are declared.
++ * The span covers the qualifier itself.
++ */
++export interface SqlUnknownQualifier {
++  qualifier: string;
++  span: SqlTextSpan;
++}
++
+ export interface SqlReferenceScope {
+   id: number;
+   parent_id?: number | null;
+@@ -2106,6 +2116,7 @@ export interface SqlReferenceAnalysis {
+   columns: SqlColumnReference[];
+   scopes?: SqlReferenceScope[];
+   group_by_violations?: SqlGroupByViolation[];
++  unknown_qualifiers?: SqlUnknownQualifier[];
+ }
+ 
+ export type TreeNodeType =
+```
+
+**File**: `crates/dbx-core/tests/sql_analysis.rs` (modified, +19/-0)
+```diff
+@@ -13,6 +13,25 @@ fn extracts_tables_aliases_and_qualified_columns() {
+     assert_eq!(columns, vec![(Some("u"), "missing"), (Some("u"), "id")]);
+ }
+ 
++#[test]
++fn reports_qualifiers_that_name_no_table_or_alias() {
++    let analysis = analyze_sql_references(
++        "SELECT a.id, a.v, b.id FROM t_tx_demo a JOIN t_tx_demo qb ON a.id = b.id",
++        Some("mysql"),
++    )
++    .unwrap();
++
++    // The projection and the join condition both reference the missing alias.
++    let qualifiers: Vec<_> = analysis.unknown_qualifiers.iter().map(|unknown| unknown.qualifier.as_str()).collect();
++    assert_eq!(qualifiers, vec!["b", "b"]);
++    // Each span covers the qualifier itself: "b" starts at column 19 in the
++    // projection and at column 69 in the join condition.
++    let mut columns: Vec<_> = analysis.unknown_qualifiers.iter().map(|unknown| unknown.span.start_column).collect();
++    columns.sort_unstable();
++    assert_eq!(columns, vec![19, 69]);
++    assert!(analysis.unknown_qualifiers.iter().all(|unknown| unknown.span.end_column == unknown.span.start_column));
++}
++
+ #[test]
+ fn extracts_nested_query_scopes_for_correlated_subqueries() {
+     let sql = "select aa.house_id from mds_base_house aa where exists (select 1 from mds_base_owner where HOUSE_ID = aa.HOUSE_ID)";
+```
+
+**File**: `crates/dbx-sql-core/src/sql_analysis.rs` (modified, +283/-24)
+```diff
+@@ -48,6 +48,10 @@ pub struct SqlReferenceAnalysis {
+     /// SELECT projection columns that are neither aggregated nor listed in GROUP BY.
+     #[serde(default)]
+     pub group_by_violations: Vec<SqlGroupByViolation>,
++    /// Two-part qualifiers (`alias.column`) that name no table or alias visible
++    /// in the reference scope.
++    #[serde(default)]
++    pub unknown_qualifiers: Vec<SqlUnknownQualifier>,
+ }
+ 
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+@@ -79,12 +83,32 @@ pub struct SqlGroupByViolation {
+     pub qualifier: Option<String>,
+ }
+ 
++/// A two-part column qualifier that matches neither a table nor an alias
++/// visible in the statement, e.g. `b.id` when only `a` and `qb` are declared.
++/// The span covers the qualifier token itself (quotes included when the
++/// identifier is quoted), not the whole reference.
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++pub struct SqlUnknownQualifier {
++    pub qualifier: String,
++    pub span: SqlTextSpan,
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+ pub struct SqlReferenceScope {
+     pub id: usize,
+     pub parent_id: Option<usize>,
+ }
+ 
++/// A two-part qualified column reference (`alias.column`) captured for the
++/// unknown-qualifier check. Only the qualifier is kept: the column name and
++/// its own span are already recorded as a column reference.
++#[derive(Clone)]
++struct QualifiedColumnRef {
++    qualifier: String,
++    span: SqlTextSpan,
++    scope_id: usize,
++}
++
+ /// 1-based line and column range in SQL text.
+ /// Both `start_column` and `end_column` are 1-based and inclusive.
+ /// For example, a 1-character token at line 1, column 5 has
+@@ -158,6 +182,12 @@ struct Analyzer {
+     is_sqlserver: bool,
+     is_spark: bool,
+     group_by_violations: Vec<SqlGroupByViolation>,
++    /// Two-part column references, kept for the unknown-qualifier check.
++    qualified_columns: Vec<QualifiedColumnRef>,
++    /// Scopes holding a relation the analyzer does not model as a physical
++    /// table (CTE references, derived tables, table functions). Their aliases
++    /// stay invisible here, so the unknown-qualifier check skips them.
++    non_plain_scopes: HashSet<usize>,
+     projection_items: Vec<ProjectionItemAcc>,
+     current_projection_item: Option<ProjectionItemAcc>,
+     aggregate_depth: usize,
+@@ -167,29 +197,31 @@ struct Analyzer {
+ 
+ pub fn analyze_sql_references(sql: &str, dialect: Option<&str>) -> Result<SqlReferenceAnalysis, String> {
+     let normalized_dialect = normalize_dialect(dialect);
+-    if normalized_dialect == "duckdb" && starts_with_duckdb_parser_gap_sql(sql) {
++    if normalized_dialect.id == "duckdb" && starts_with_duckdb_parser_gap_sql(sql) {
+         return Ok(SqlReferenceAnalysis {
+             tables: vec![],
+             columns: vec![],
+             scopes: vec![],
+             group_by_violations: vec![],
++            unknown_qualifiers: vec![],
+         });
+     }
+-    if normalized_dialect == "postgres" && starts_with_postgres_parser_gap_sql(sql) {
++    if normalized_dialect.id == "postgres" && starts_with_postgres_parser_gap_sql(sql) {
+         return Ok(SqlReferenceAnalysis {
+             tables: vec![],
+             columns: vec![],
+             scopes: vec![],
+             group_by_violations: vec![],
++            unknown_qualifiers: vec![],
+         });
+     }
+-    let parser_sql = if normalized_dialect == "clickhouse" {
++    let parser_sql = if normalized_dialect.id == "clickhouse" {
+         normalize_clickhouse_join_order_for_parser(sql)
+     } else {
+         sql.to_string()
+     };
+ 
+-    let parsed_statements = match normalized_dialect.as_str() {
++    let parsed_statements = match normalized_dialect.id {
+         "postgres" => Parser::parse_sql(&PostgreSqlDialect {}, &parser_sql),
+         "mysql" => parse_mysql(&parser_sql),
+         "sqlite" => Parser::parse_sql(&SQLiteDialect {}, &parser_sql),
+@@ -201,19 +233,20 @@ pub fn analyze_sql_references(sql: &str, dialect: Option<&str>) -> Result<SqlRef
+     };
+     let statements = match parsed_statements {
+         Ok(statements) => {
+-            if normalized_dialect == "postgres" && postgres_create_procedure_is_missing_body(&parser_sql) {
++            if normalized_dialect.id == "postgres" && postgres_create_procedure_is_missing_body(&parser_sql) {
+                 return Err("Expected: procedure body after AS, found: EOF".to_string());
+             }
+             statements
+         }
+         Err(error)
+-            if normalized_dialect == "postgres" && is_postgres_create_procedure_parser_gap(&parser_sql, &error) =>
++            if normalized_dialect.id == "postgres" && is_postgres_create_procedure_parser_gap(&parser_sql, &error) =>
+         {
+             return Ok(SqlReferenceAnalysis {
+                 tables: vec![],
+                 columns: vec![],
+                 scopes: vec![],
+                 group_by_violations: vec![],
++                unknown_qualifiers: vec![],
+             });
+      
+```
+
+**File**: `packages/app-tests/sqlSemanticDiagnostics.test.ts` (modified, +25/-0)
+```diff
+@@ -51,6 +51,31 @@ test("flags confirmed missing tables", () => {
+   assert.equal(diagnostics[0]?.severity, "error");
+ });
+ 
++test("flags a table alias that names no relation in scope", () => {
++  const sql = "SELECT a.id, b.id FROM t_tx_demo a";
++  const aliasStart = sql.indexOf("b.id");
++  const analysis: SqlReferenceAnalysis = {
++    tables: [{ name: "t_tx_demo", alias: "a", span: span(sql.indexOf("t_tx_demo") + 1, sql.indexOf("t_tx_demo") + "t_tx_demo".length) }],
++    columns: [{ name: "id", qualifier: "b", span: span(aliasStart + 2, aliasStart + 4) }],
++    unknown_qualifiers: [{ qualifier: "b", span: span(aliasStart + 1, aliasStart + 1) }],
++  };
++
++  const diagnostics = buildSqlSemanticDiagnostics(analysis, {
++    tables: [{ name: "t_tx_demo", type: "table" }],
++    columnsByTable: new Map([["t_tx_demo", [{ name: "id", table: "t_tx_demo" }]]]),
++    sql,
++    databaseType: "mysql",
++  });
++
++  assert.deepEqual(
++    diagnostics.map((diagnostic) => diagnostic.message),
++    ["Unknown table alias b"],
++  );
++  assert.equal(diagnostics[0]?.severity, "error");
++  // The span covers the alias itself, not the whole `b.id` reference.
++  assert.deepEqual(diagnostics[0]?.span, span(aliasStart + 1, aliasStart + 1));
++});
++
+ test("does not flag MySQL DUAL as a missing physical table", () => {
+   const analysis: SqlReferenceAnalysis = {
+     tables: [{ name: "DUAL", span: span(24, 27) }],
+```
+
+---
+
+### Incident Patch 3: `01b5452f` (2026-11-06)
+**Commit Message**: fix(desktop): route Linux compositor close through tray settings
+
+**File**: `src-tauri/src/lib.rs` (modified, +43/-6)
+```diff
+@@ -285,6 +285,23 @@ fn should_confirm_app_exit_request(target_os: &str, exit_code: Option<i32>, conf
+     should_hide_window_on_close(target_os) && exit_code != Some(tauri::RESTART_EXIT_CODE) && !confirmed_exit
+ }
+ 
++/// Route a Linux compositor close request (Wayland `xdg_toplevel.close`, X11
++/// `WM_DELETE_WINDOW`) through the tray-aware close flow instead of the default
++/// window destroy, which would bypass the "minimize to tray on close" setting.
++/// Requires the main window, a ready frontend listener, and a registered tray.
++/// The tray is only created when the tray setting is on with AppIndicator
++/// available and is never destroyed or hidden at runtime, so its presence is a
++/// sound proxy for the window being restorable; any missed premise keeps the
++/// native close.
++fn should_route_linux_close_through_tray(
++    target_os: &str,
++    window_label: &str,
++    frontend_ready: bool,
++    tray_registered: bool,
++) -> bool {
++    target_os == "linux" && window_label == "main" && frontend_ready && tray_registered
++}
++
+ fn should_fallback_to_native_quit(target: &str, frontend_ready: bool) -> bool {
+     target == "quit" && !frontend_ready
+ }
+@@ -1212,9 +1229,9 @@ mod tests {
+         linux_webkit_rendering_workarounds, native_window_decorations_override, run_shutdown_on_dedicated_thread,
+         should_confirm_app_exit_request, should_enable_linux_floating_frame, should_enable_single_instance,
+         should_fallback_to_native_quit, should_hide_window_before_exit, should_hide_window_on_close,
+-        should_setup_desktop_tray, should_show_main_window_after_setup, should_show_main_window_before_setup_tasks,
+-        startup_data_dir_mode, tray_menu_labels_for_locale, uses_application_level_icon, LinuxDrmRenderDevice,
+-        LinuxNvidiaDriver,
++        should_route_linux_close_through_tray, should_setup_desktop_tray, should_show_main_window_after_setup,
++        should_show_main_window_before_setup_tasks, startup_data_dir_mode, tray_menu_labels_for_locale,
++        uses_application_level_icon, LinuxDrmRenderDevice, LinuxNvidiaDriver,
+     };
+     use crate::data_dir::DataDirMode;
+     use std::ffi::OsStr;
+@@ -1434,6 +1451,17 @@ mod tests {
+         assert!(!should_hide_window_on_close("linux"));
+     }
+ 
++    #[test]
++    fn routes_linux_close_through_tray_only_with_main_window_frontend_and_tray() {
++        assert!(should_route_linux_close_through_tray("linux", "main", true, true));
++        assert!(!should_route_linux_close_through_tray("linux", "main", true, false));
++        assert!(!should_route_linux_close_through_tray("linux", "main", false, true));
++        assert!(!should_route_linux_close_through_tray("linux", "detached-tab-1", true, true));
++        assert!(!should_route_linux_close_through_tray("linux", "plugin-floating-audio", true, true));
++        assert!(!should_route_linux_close_through_tray("macos", "main", true, true));
++        assert!(!should_route_linux_close_through_tray("windows", "main", true, true));
 +    }
 +
      #[test]
-     fn postgres_extension_ddl_uses_target_default_version_and_source_schema() {
-         let extension = PostgresExportExtension { name: "pg_trgm".to_string(), schema: "addons".to_string() };
+     fn hides_window_before_exit_only_on_macos() {
+         assert!(should_hide_window_before_exit("macos"));
+@@ -2312,11 +2340,20 @@ pub fn run() {
+                     let _ = window.emit("dbx:detached-tab-close-requested", serde_json::json!({ "tabId": tab_id }));
+                     return;
+                 }
+-                if !should_hide_window_on_close(std::env::consts::OS) {
++                let app = window.app_handle();
++                let close_behavior = app.try_state::<CloseBehaviorState>();
++                // Only intercept Linux close requests when the tray can restore
++                // the main window and the frontend can handle the close event.
++                let linux_tray_close = should_route_linux_close_through_tray(
++                    std::env::consts::OS,
++                    window.label(),
++                    close_behavior.as_ref().is_some_and(|state| state.is_frontend_ready()),
++                    app.tray_by_id(DESKTOP_TRAY_ID).is_some(),
++                );
++                if !should_hide_window_on_close(std::env::consts::OS) && !linux_tray_close {
+                     return;
+                 }
+-                let app = window.app_handle();
+-                if app.try_state::<CloseBehaviorState>().is_none() {
++                if close_behavior.is_none() {
+                     api.prevent_close();
+                     hide_main_window_for_close(app, window);
+                     return;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14394** (2026-11-05): fix(sql): 修复自定义格式化中限定标识符前的空格丢失 (@CN-Scars)
-- **PR #14368** (2026-11-05): fix(jdbc): run DDL outside the paged query transaction (@hongshuo-wang)
-- **PR #14366** (2026-11-05): fix(duckdb): allow any extension in the database file picker (@ThugKd)
-- **PR #14362** (2026-11-05): fix(mysql): restore Doris compatible handshake (@zipg)
-- **PR #14343** (2026-11-05): feat(tabs): distinguish duplicate titles by connection (@javalover123)
-- **PR #14337** (2026-11-05): test(sql): cover the SQL Server three-part table reference (@xiaou61)
+- **PR #14498** (2026-11-06): fix(schema-diff): 修复 MySQL 生成默认值的 SQL 渲染 (@adminkk)
+- **PR #14491** (2026-11-06): Honor tray settings for Linux compositor close requests (@ThugKd)
+- **PR #14485** (closed): fix(schema-diff): 修复 MySQL 生成默认值的 SQL 渲染 (@adminkk)
+- **PR #14483** (2026-11-06): fix(sql-file): 拆分超长 INSERT 并在发送前拦截被截断的语句 (#14455) (@Evvvvvvvan)
+- **PR #14450** (2026-11-06): fix(completion): 隐式连接在 WHERE/ORDER BY/GROUP BY 后恢复列补全 (@dienaso)
+- **PR #14448** (2026-11-06): fix(schema-diff): honor charset comparison settings in MySQL sync SQL (@adminkk)
 
 ---
 
@@ -2320,56 +2563,69 @@ SQL Server 要求 CREATE VIEW/PROCEDURE/FUNCTION/TRIGGER 是批次的第一条�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jdbc): run DDL outside the paged query transaction (#14368)
+## X. txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386)
 
 **RULE**:
-When implementing operations in `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-core/src/query/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `997c8b74`: jdbc): run DDL outside the paged query transaction (#14368). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8671a8a`: txn): 手动事务执行中断后清理 busy 标记，避免会话永久卡死 (#14386). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-core/src/query/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // DDL has no cursor to keep alive across pages, and wrapping it in the
-        // paged transaction changes how PostgreSQL-compatible engines execute
-        // it (see pagedQueryCannotReturnRows).
-        boolean restoreAutoCommit = !pagedQueryCannotReturnRows(sql) && beginPagedQueryTransaction(connection, conn);
-    /**
-     * Keywords for statements that never leave a result-set cursor behind.
-     * The paged transaction exists only to keep a cursor readable across pages;
-     * for these statements it changes engine semantics instead of adding value
-     * (issue #14243: PostgreSQL-compatible engines may commit a `CREATE TABLE AS`
-     * on their own while the selected rows stay inside the transaction, so the
-     * client sees 42P07 on a retry and an empty table is left behind). Running
-     * them in auto-commit matches psql and DBeaver.
-     */
-    private static final Set<String> NO_RESULT_SET_KEYWORDS = Set.of(
-        "ALTER",
-        "ANALYZE",
-        "CLUSTER",
-        "COMMENT",
-        "CREATE",
-        "DROP",
-        "GRANT",
-        "REINDEX",
-        "REFRESH",
-        "REVOKE",
-        "TRUNCATE",
-        "VACUUM"
-    );
+/// Clears a manual transaction session's `busy` flag when the execution that
+/// claimed it goes away without reaching its own cleanup: the command future was
+/// dropped (frontend cancelled the invoke, the window reloaded) or a driver
+/// panicked. Without it the session stays busy forever and every later run fails
+/// with "Transaction session is already executing" until a new window is opened
+/// (#14184). Normal paths already clear the flag themselves; the guard is a
+/// best-effort `try_write` fallback for exactly the exits nobody owns.
+struct ManualTransactionBusyGuard<'a> {
+    state: &'a AppState,
+    txn_session_id: &'a str,
+}
 
-    private static boolean pag
+impl<'a> ManualTransactionBusyGuard<'a> {
+    fn new(state: &'a AppState, txn_session_id: &'a str) -> Self {
+        Self { state, txn_session_id }
+    }
+}
+
+impl Drop for ManualTransactionBusyGuard<'_> {
+    fn drop(&mut self) {
+        // A dropped future cannot await, so retry the non-blocking lock briefly
+        // instead of leaving the session wedged when a poller happens to hold it.
+        for _ in 0..100 {
+            if let Ok(mut sessions) = self.state.transaction_sessions.try_write() {
+                if let Some(session) = sessions.get
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        boolean restoreAutoCommit = beginPagedQueryTransaction(connection, conn);
+    /// Spawns a fake Python agent and registers a manual transaction session in
+    /// the app state so `execute_in_manual_transaction_with_options` can run
+    /// end to end without a live database.
+    async fn manual_transaction_test_state(db_type: DatabaseType) -> (AppState, String, std::path::PathBuf) {
+        use std::io::Write;
+
+        let mut script = tempfile::NamedTempFile::new().unwrap();
+        write!(
+            script,
+            r#"import json
+print(json.dumps({{"ready": True}}), flush=True)
+cursor_ids = {{"cursor-1"}}
+for line in sys.stdin:
+    request = json.loads(line)
+        cursor_id = request.get("params", {{}}).get("sessionId")
+        print(json.dumps({{"jsonrpc": "2.0", "id": request["id"], "result": closed}}), flush=True)
+        continue
+        # First cursor page: t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `997c8b74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8671a8a` are properly handled with clean fallback behavior.

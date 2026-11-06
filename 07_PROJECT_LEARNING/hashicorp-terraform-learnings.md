@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `eb097071`  
+> **Source Version**: `aa716fca`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T23:20:49.295Z  
+> **Timestamp**: 2026-11-06T22:13:49.900Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T23:20:48.522Z  
+> **Harvest Timestamp**: 2026-11-06T22:13:49.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50143 stars
+- **Stars / Engagement**: 50150 stars
 
 ---
 
@@ -2260,11 +2260,11 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39501** (2026-11-06): **`Error: Cycle` when forgetting a resource with `destroy = false` if a provider configuration depends on it**
+  *Symptoms*: ### Terraform Version  ```shell Terraform v1.17.1                                                                                                                                                                                                                                             on linux_amd64                                                                                                                                                                                                                                                + provider registry.terraform.io/hashicorp/tls v4.4.2 ```  ### Terraform Configuration Files  ```terraform terraform {   required_version = "1.17.1"   required_providers {     tls = {       version = "4.4.2"     }   } }  resource "terraform_data" "test" {   input = null    lifecycle {     destroy = false   } }  provider "tls" {   proxy {     url = terraform_data.test.output   } }  # The issue does not occur if the provider does not define any resources resource "tls_private_key" "test" {   algorithm = "ED25519" } ```   ### Debug Output  https://gist.github.com/zanecodes/35d1f0b073dd3a07f0dbb6456fb00a7e  ### Expected Behavior  `terraform destroy` should work when `destroy = false` lifecycle meta-argument is specified on a resource upon which a provider configuration depends, as it does when `destroy = true`  ### Actual Behavior  `terraform destroy` fails validation with the following error:  ``` Error: Cycle:   terraform_data.test (forget)   tls_p
+
 - **Issue #39468** (2026-11-03): **terraform show of a saved plan fails with "Module source has changed" when a const variable comes from a var-file**
   *Symptoms*: ### Terraform Version  ```shell Terraform v1.16.7 on darwin_arm64 ```  ### Terraform Configuration Files  ```terraform # main.tf variable "ref" {   type    = string   const   = true   default = "a" }  module "m" {   source = "./mod_${var.ref}" }  output "n" {   value = module.m.n } ```  ```terraform # mod_a/main.tf output "n" { value = "a" }  # mod_b/main.tf output "n" { value = "b" } ```  ```terraform # dev.tfvars ref = "b" ```    ### Debug Output  ``` 2026-10-28T13:13:26.360-0400 [INFO]  Terraform version: 1.16.7 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/go-tfe v1.110.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/hcl/v2 v2.24.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/terraform-svchost v0.2.1 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/zclconf/go-cty v1.18.1 2026-10-28T13:13:26.360-0400 [INFO]  Go runtime version: go1.26.10 2026-10-28T13:13:26.360-0400 [INFO]  CLI args: []string{"terraform", "show", "-json", "p.bin"} 2026-10-28T13:13:26.360-0400 [TRACE] Stdout is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stderr is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stdin is not a terminal 2026-10-28T13:13:26.360-0400 [INFO]  Checkpoint disabled. Not running. 2026-10-28T13:13:26.360-0400 [INFO]  CLI command args: []string{"show", "-json", "p.bin"} 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: starting 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: complete 2026-10-28
-
-- **Issue #39444** (2026-10-26): **backend/s3: trim download buffer to bytes written to fix trailing NUL padding**
-  *Symptoms*: Fixes #39440.  ### What  `RemoteClient.get` in `internal/backend/remote-state/s3/client.go` sizes its buffer from the `HeadObject` `ContentLength`, then fills it with `manager.Downloader`. If the object is overwritten by a **smaller** one between the HEAD and the download, the buffer is larger than the downloaded content, so `w.Bytes()` returns the new content followed by `\x00` padding. The byte count returned by `Download` was discarded.  The padded buffer then fails to parse:  ``` Error: Unsupported state file format The state file could not be parsed as JSON: syntax error at byte offset <newsize+1>. ```  This hits any `terraform_remote_state` read of an S3 state while another run applies a smaller version of that state.  ### Fix  Slice the buffer to the number of bytes `Download` reports it wrote before computing the MD5 and building the payload.  ### Tests  Added `TestRemoteClientGet_objectShrinksBetweenHeadAndDownload` (no AWS account needed): a local fake S3 endpoint serves a >5 MiB object, then swaps in a smaller one right after answering the HEAD, so the multipart download fills only part of the pre-sized buffer. The test asserts the returned payload is valid JSON and exactly the downloaded object's length.  Validation (go1.26.10, linux/amd64), run in `internal/backend/remote-state/s3`:  ``` # with the fix $ go test -run TestRemoteClientGet_objectShrinksBetweenHeadAndDownload ./ -count=1 ok  github.com/hashicorp/terraform/internal/backend/remote-state/s3  0.224s  # w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,932 +2281,213 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb097071` (2026-11-04)
-**Commit Message**: refactor: Make `state` subcommands use diagnostics more when returning errors (#39490)
+### Incident Patch 1: `14ced2ad` (2026-11-06)
+**Commit Message**: Update .changes/v1.17/BUG FIXES-20261106-082655.yaml
 
-This change:
+Co-authored-by: Kristin Laemmert <[REDACTED_EMAIL]>
 
-* Makes all `state` subcommands declare a `diags` var at start of commands
-* Refactors use of `errStateNotFound` and `errStateLoadingState` constants so that errors made from them are rendered as diagnostics
-* Makes the affected commands use diagnostics when: logging errors from refreshing the state, logging errors from selecting the workspace, and logging errors from writing and persisting state
-* Makes `state replace-provider` use an error diagnostic to report that a user didn't confirm the action
-
-**File**: `internal/command/state_identities.go` (modified, +6/-3)
+**File**: `.changes/v1.17/BUG FIXES-20261106-082655.yaml` (modified, +1/-1)
 ```diff
-@@ -22,21 +22,24 @@ type StateIdentitiesCommand struct {
- }
- 
- func (c *StateIdentitiesCommand) Run(rawArgs []string) int {
-+	var diags tfdiags.Diagnostics
-+
- 	// Parse and apply global view arguments
- 	common, rawArgs := arguments.ParseView(rawArgs)
- 	c.View.Configure(common)
- 
- 	// Parse command-specific arguments
- 	args, argDiags := arguments.ParseStateIdentities(rawArgs)
-+	diags = diags.Append(argDiags)
- 
- 	if args.StatePath != "" {
- 		c.Meta.statePath = args.StatePath
- 	}
- 
- 	view := views.NewStateIdentities(args.ViewType, c.View)
- 
--	if argDiags.HasErrors() {
--		view.Diagnostics(argDiags)
-+	if diags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -104,7 +107,7 @@ to point the command to a specific state location.`,
- 	} else {
- 		addrs, rDiags = c.lookupResourceInstanceAddrs(state, args.Addrs...)
- 	}
--	diags = append(diags, rDiags...)
-+	diags = diags.Append(rDiags)
- 	if diags.HasErrors() {
- 		view.Diagnostics(diags)
- 		return 1
-```
-
-**File**: `internal/command/state_list.go` (modified, +24/-7)
-```diff
-@@ -4,12 +4,14 @@
- package command
- 
- import (
-+	"errors"
- 	"fmt"
- 	"strings"
- 
- 	"github.com/hashicorp/terraform/internal/addrs"
- 	"github.com/hashicorp/terraform/internal/command/arguments"
- 	"github.com/hashicorp/terraform/internal/states"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
- )
- 
- // StateListCommand is a Command implementation that lists the resources
-@@ -20,7 +22,10 @@ type StateListCommand struct {
- }
- 
- func (c *StateListCommand) Run(args []string) int {
--	parsedArgs, diags := arguments.ParseStateList(c.Meta.process(args))
-+	var diags tfdiags.Diagnostics
-+
-+	parsedArgs, parseDiags := arguments.ParseStateList(c.Meta.process(args))
-+	diags = diags.Append(parseDiags)
- 	if diags.HasErrors() {
- 		c.showDiagnostics(diags)
- 		return 1
-@@ -43,22 +48,34 @@ func (c *StateListCommand) Run(args []string) int {
- 	// Get the state
- 	env, err := c.Workspace()
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to select workspace",
-+			fmt.Sprintf("Error selecting workspace: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 	stateMgr, sDiags := b.StateMgr(env)
- 	if sDiags.HasErrors() {
--		c.Ui.Error(fmt.Sprintf(errStateLoadingState, sDiags.Err()))
-+		diags = diags.Append(fmt.Errorf(errStateLoadingState, sDiags.Err()))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
- 	state := stateMgr.State()
- 	if state == nil {
--		c.Ui.Error(errStateNotFound)
-+		diags = diags.Append(errStateNotFound)
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -131,8 +148,8 @@ Please ensure that your Terraform state exists and that you've
- configured it properly. You can use the "-state" flag to point
- Terraform at another state file.`
- 
--const errStateNotFound = `No state file was found!
-+var errStateNotFound = errors.New(`No state file was found!
- 
- State management commands require a state file. Run this command
- in a directory where Terraform has been run or use the -state flag
--to point the command to a specific state location.`
-+to point the command to a specific state location.`)
-```
-
-**File**: `internal/command/state_migrate.go` (modified, +9/-2)
-```diff
-@@ -38,11 +38,14 @@ type StateMigrateCommand struct {
- }
- 
- func (c *StateMigrateCommand) Run(rawArgs []string) int {
-+	var diags tfdiags.Diagnostics
-+
- 	// Parse and apply global view arguments
- 	common, rawArgs := arguments.ParseView(rawArgs)
- 	c.Meta.View.Configure(common)
- 
--	args, diags := arguments.ParseStateMigrate(rawArgs)
-+	args, argsDiags := arguments.ParseStateMigrate(rawArgs)
-+	diags = diags.Append(argsDiags)
- 
- 	view := views.NewStateMigrate(args.ViewType, c.View)
- 
-@@ -490,7 +493,11 @@ func (c *StateMigrateCommand) updateBackendStateFile(s *workdir.BackendStateFile
- 	statePath := filepath.Join(c.DataDir(), DefaultStateFilename)
- 	sMgr := &clistate.LocalState{Path: statePath}
- 	if err := sMgr.RefreshState(); err != nil {
--		diags = diags.Append(fmt.Errorf("Failed to load the backend state file when preparing to update it: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Failed to load the backend state file when preparing to update it: %s", err),
-+		))
- 		return diags
- 	}
- 
-```
-
-**File**: `internal/command/state_mv.go` (modified, +20/-7)
-```diff
-@@ -25,6 +25,8 @@ type StateMvCommand struct {
- }
- 
- func (c *StateMvCommand) Run(args []string) int {
-+	var diags tfdiags.Diagnostics
-+
- 	parsedArgs, parseDiags := arguments.ParseStateMv(c.Meta.process(args))
- 	if parseDiags.HasErrors() {
- 		c.showDiagnostics(parseDiags)
-@@ -39,7 +41,6 @@ func (c *StateMvCommand) Run(args []string) int {
- 
- 	loader, err := c.initConfigLoader()
- 	if err != nil {
--		var diags tfdiags.Diagnostics
- 		diags = diags.Append(err)
- 		c.showDiagnostics(diags)
- 		return 1
-@@ -100,7 +101,8 @@ func (c *StateMvCommand) Run(args []string) int {
- 	view := arguments.ViewHuman
- 	stateFromMgr, err := c.State(view)
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf(errStateLoadingState, err))
-+		diags = diags.Append(fmt.Errorf(errStateLoadingState, err))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -118,13 +120,19 @@ func (c *StateMvCommand) Run(args []string) int {
- 	}
- 
- 	if err := stateFromMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to refresh source state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the source state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
- 	stateFrom := stateFromMgr.State()
- 	if stateFrom == nil {
--		c.Ui.Error(errStateNotFound)
-+		diags = diags.Append(errStateNotFound)
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -138,7 +146,8 @@ func (c *StateMvCommand) Run(args []string) int {
- 
- 		stateToMgr, err = c.State(view)
- 		if err != nil {
--			c.Ui.Error(fmt.Sprintf(errStateLoadingState, err))
-+			diags = diags.Append(fmt.Errorf(errStateLoadingState, err))
-+			c.showDiagnostics(diags)
- 			return 1
- 		}
- 
-@@ -156,7 +165,12 @@ func (c *StateMvCommand) Run(args []string) int {
- 		}
- 
- 		if err := stateToMgr.RefreshState(); err != nil {
--			c.Ui.Error(fmt.Sprintf("Failed to refresh destination state: %s", err))
-+			diags = diags.Append(tfdiags.Sourceless(
-+				tfdiags.Error,
-+				"Failed to refresh the state",
-+				fmt.Sprintf("Error refreshing the destination state: %s", err),
-+			))
-+			c.showDiagnostics(diags)
- 			return 1
- 		}
- 
-@@ -166,7 +180,6 @@ func (c *StateMvCommand) Run(args []string) int {
- 		}
- 	}
- 
--	var diags tfdiags.Diagnostics
- 	sourceAddr, moreDiags := c.lookupSingleStateObjectAddr(stateFrom, parsedArgs.SourceAddr)
- 	diags = diags.Append(moreDiags)
- 	destAddr, moreDiags := c.lookupSingleStateObjectAddr(stateFrom, parsedArgs.DestAddr)
-```
-
-**File**: `internal/command/state_pull.go` (modified, +19/-6)
-```diff
-@@ -22,9 +22,11 @@ type StatePullCommand struct {
- }
- 
- func (c *StatePullCommand) Run(args []string) int {
--	parsedArgs, diags := arguments.ParseStatePull(c.Meta.process(args))
--	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+	var diags tfdiags.Diagnostics
-+
-+	parsedArgs, parseDiags := arguments.ParseStatePull(c.Meta.process(args))
-+	if parseDiags.HasErrors() {
-+		c.showDiagnostics(parseDiags)
- 		return 1
- 	}
- 
-@@ -63,16 +65,27 @@ func (c *StatePullCommand) Run(args []string) int {
- 	// Get the state manager for the current workspace
- 	env, err := c.Workspace()
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to select workspace",
-+			fmt.Sprintf("Error selecting workspace: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 	stateMgr, sDiags := b.StateMgr(env)
- 	if sDiags.HasErrors() {
--		c.Ui.Error(fmt.Sprintf(errStateLoadingState, sDiags.Err()))
-+		diags = diags.Append(fmt.Errorf(errStateLoadingState, sDiags.Err()))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to refresh state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-```
-
-**File**: `internal/command/state_push.go` (modified, +29/-7)
-```diff
-@@ -26,9 +26,11 @@ type StatePushCommand struct {
- }
- 
- func (c *StatePushCommand) Run(args []string) int {
--	parsedArgs, diags := arguments.ParseStatePush(c.Meta.process(args))
--	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+	var diags tfdiags.Diagnostics
-+
-+	parsedArgs, parseDiags := arguments.ParseStatePush(c.Meta.process(args))
-+	if parseDiags.HasErrors() {
-+		c.showDiagnostics(parseDiags)
- 		return 1
- 	}
- 
-@@ -95,7 +97,12 @@ func (c *StatePushCommand) Run(args []string) int {
- 	// Determine the workspace name
- 	workspace, err := c.Workspace()
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to select workspace",
-+			fmt.Sprintf("Error selecting workspace: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -127,7 +134,12 @@ func (c *StatePushCommand) Run(args []string) int {
- 	}
- 
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to refresh destination state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the destination state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -149,11 +161,21 @@ func (c *StatePushCommand) Run(args []string) int {
- 	}
- 
- 	if err := stateMgr.WriteState(srcStateFile.State); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to write state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to save the state",
-+			fmt.Sprintf("Terraform encountered an error when saving state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 	if err := stateMgr.PersistState(schemas); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to persist state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to save the state",
-+			fmt.Sprintf("Terraform encountered an error when saving state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-```
-
-**File**: `internal/command/state_replace_provider.go` (modified, +18/-6)
-```diff
-@@ -26,6 +26,8 @@ type StateReplaceProviderCommand struct {
- }
- 
- func (c *StateReplaceProviderCommand) Run(args []string) int {
-+	var diags tfdiags.Diagnostics
-+
- 	parsedArgs, parseDiags := arguments.ParseStateReplaceProvider(c.Meta.process(args))
- 	if parseDiags.HasErrors() {
- 		c.showDiagnostics(parseDiags)
-@@ -60,8 +62,6 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
- 		return 1
- 	}
- 
--	var diags tfdiags.Diagnostics
--
- 	// Parse from/to arguments into providers
- 	from, fromDiags := addrs.ParseProviderSourceString(parsedArgs.FromProviderAddr)
- 	if fromDiags.HasErrors() {
-@@ -88,7 +88,8 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
- 	view := arguments.ViewHuman
- 	stateMgr, err := c.State(view)
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf(errStateLoadingState, err))
-+		diags = diags.Append(fmt.Errorf(errStateLoadingState, err))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -108,13 +109,19 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
- 
- 	// Refresh and load state
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to refresh source state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the source state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
- 	state := stateMgr.State()
- 	if state == nil {
--		c.Ui.Error(errStateNotFound)
-+		diags = diags.Append(errStateNotFound)
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -160,7 +167,12 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
- 		))
- 		v, err := c.Ui.Ask("Enter a value:")
- 		if err != nil {
--			c.Ui.Error(fmt.Sprintf("Error asking for approval: %s", err))
-+			diags = diags.Append(tfdiags.Sourceless(
-+				tfdiags.Error,
-+				"Failed to confirm provider replacement",
-+				fmt.Sprintf("Error asking for approval: %s", err),
-+			))
-+			c.showDiagnostics(diags)
- 			return 1
- 		}
- 		if v != "yes" {
-```
-
-**File**: `internal/command/state_rm.go` (modified, +14/-4)
-```diff
-@@ -22,7 +22,10 @@ type StateRmCommand struct {
- }
- 
- func (c *StateRmCommand) Run(args []string) int {
--	parsedArgs, diags := arguments.ParseStateRm(c.Meta.process(args))
-+	var diags tfdiags.Diagnostics
-+
-+	parsedArgs, parseDiags := arguments.ParseStateRm(c.Meta.process(args))
-+	diags = diags.Append(parseDiags)
- 	if diags.HasErrors() {
- 		c.showDiagnostics(diags)
- 		return 1
-@@ -59,7 +62,8 @@ func (c *StateRmCommand) Run(args []string) int {
- 	view := arguments.ViewHuman
- 	stateMgr, err := c.State(view)
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf(errStateLoadingState, err))
-+		diags = diags.Append(fmt.Errorf(errStateLoadingState, err))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
-@@ -77,13 +81,19 @@ func (c *StateRmCommand) Run(args []string) int {
- 	}
- 
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to refresh state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Failed to refresh the state",
-+			fmt.Sprintf("Error refreshing the state: %s", err),
-+		))
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
- 	state := stateMgr.State()
- 	if state == nil {
--		c.Ui.Error(errStateNotFound)
-+		diags = diags.Append(errStateNotFound)
-+		c.showDiagnostics(diags)
- 		return 1
- 	}
- 
+@@ -1,5 +1,5 @@
+ kind: BUG FIXES
+-body: Providers referncing a managed resource with detroy=false can cause a cycle
++body: Providers referencing a managed resource with detroy=false can cause a cycle
+ time: 2026-11-06T08:26:55.560863-05:00
+ custom:
+     Issue: "39507"
 ```
 
 ---
 
-### Incident Patch 2: `df4d2eda` (2026-11-04)
-**Commit Message**: refactor: Split up the views used for `show` and `state show` commands (#39483)
+### Incident Patch 2: `aa716fca` (2026-11-06)
+**Commit Message**: refactor: Make `state replace-provider` use a `terraform.UIInput` to ask for input, instead of the `Ask` method from the cli library
 
-This change makes the views.Show interface specific to the `show` command, and introduces a new views.StateShow interface that is specific to the `state show` command.
+This has the benefit of removing an instance of using the `Output` method, which we'll replace with a view method soon.
 
-Motivations for this change are:
-* Allowing the JSON outputs of these two commands to be versioned independently in future.
-* Allowing refactoring to use JSONViewStatic to produce static JSON logs
-
-**File**: `internal/command/state_show.go` (modified, +1/-1)
+**File**: `internal/command/state_replace_provider.go` (modified, +5/-4)
 ```diff
-@@ -41,7 +41,7 @@ func (c *StateShowCommand) Run(args []string) int {
+@@ -4,6 +4,7 @@
+ package command
  
- 	c.Meta.statePath = parsedArgs.StatePath
- 	c.viewType = parsedArgs.ViewType
--	view := views.NewShow(parsedArgs.ViewType, c.View)
-+	view := views.NewStateShow(parsedArgs.ViewType, c.View)
+ import (
++	"context"
+ 	"fmt"
+ 	"strings"
  
- 	// Check for user-supplied plugin path
- 	var err error
-```
-
-**File**: `internal/command/views/show.go` (modified, +0/-84)
-```diff
-@@ -14,7 +14,6 @@ import (
- 	"github.com/hashicorp/terraform/internal/command/jsonplan"
- 	"github.com/hashicorp/terraform/internal/command/jsonprovider"
- 	"github.com/hashicorp/terraform/internal/command/jsonstate"
--	viewsjson "github.com/hashicorp/terraform/internal/command/views/json"
- 	"github.com/hashicorp/terraform/internal/configs"
- 	"github.com/hashicorp/terraform/internal/plans"
- 	"github.com/hashicorp/terraform/internal/states/statefile"
-@@ -28,9 +27,6 @@ type Show interface {
+@@ -161,11 +162,11 @@ func (c *StateReplaceProviderCommand) Run(args []string) int {
  
- 	// Diagnostics renders early diagnostics, resulting from argument parsing.
- 	Diagnostics(diags tfdiags.Diagnostics)
--
--	// DisplayResourceInstanceState displays the state for a single resource instance. Diagnostics from the state show command are included in the json output.
--	DisplayResourceInstanceState(jsonformat.State, tfdiags.Diagnostics) int
- }
- 
- func NewShow(vt arguments.ViewType, view *View) Show {
-@@ -50,22 +46,6 @@ type ShowHuman struct {
- 
- var _ Show = (*ShowHuman)(nil)
- 
--func (v *ShowHuman) DisplayResourceInstanceState(state jsonformat.State, diags tfdiags.Diagnostics) int {
--	renderer := jsonformat.Renderer{
--		Streams:             v.view.streams,
--		Colorize:            v.view.colorize,
--		RunningInAutomation: v.view.runningInAutomation,
--	}
--
--	if diags.HasErrors() {
--		v.Diagnostics(diags)
--		return 1
--	}
--
--	renderer.RenderHumanState(state)
--	return 0
--}
--
- func (v *ShowHuman) Display(config *configs.Config, plan *plans.Plan, planJSON *cloudplan.RemotePlanJSON, stateFile *statefile.File, schemas *terraform.Schemas) int {
- 	renderer := jsonformat.Renderer{
- 		Colorize:            v.view.colorize,
-@@ -188,67 +168,3 @@ func (v *ShowJSON) Display(config *configs.Config, plan *plans.Plan, planJSON *c
- func (v *ShowJSON) Diagnostics(diags tfdiags.Diagnostics) {
- 	v.view.Diagnostics(diags)
- }
--
--func (v *ShowJSON) DisplayResourceInstanceState(jsonState jsonformat.State, diags tfdiags.Diagnostics) int {
--	// FormatVersion represents the version of the json format and will be
--	// incremented for any change to this format that requires changes to a
--	// consuming parser.
--	const FormatVersion = "1.0"
--
--	type Output struct {
--		FormatVersion string                  `json:"format_version"`
--		Resource      jsonstate.Resource      `json:"resource"`
--		Diagnostics   []*viewsjson.Diagnostic `json:"diagnostics"`
--	}
--
--	output := Output{
--		FormatVersion: FormatVersion,
--	}
--
--	for _, diag := range diags {
--		output.Diagnostics = append(output.Diagnostics, viewsjson.NewDiagnostic(diag, v.view.configSources()))
--	}
--	if output.Diagnostics == nil {
--		// Make sure this always appears as an array in our output, since
--		// this is easier to consume for dynamically-typed languages.
--		output.Diagnostics = []*viewsjson.Diagnostic{}
--	}
--
--	var rs jsonstate.Resource
--	if !jsonState.Empty() {
--		// we know there's only one resource instance, but we need to find it.
--		if len(jsonState.RootModule.Resources) > 0 {
--			rs = jsonState.RootModule.Resources[0]
--		} else {
--			rs = findResourceInChildModules(jsonState.RootModule)
--		}
--	}
--
--	output.Resource = rs
--
--	j, err := json.MarshalIndent(&output, "", "  ")
--	if err != nil {
--		// Should never happen because we fully-control the input here
--		panic(err)
--	}
--	v.view.streams.Println(string(j))
--
--	if diags.HasErrors() {
--		return 1
--	}
--	return 0
--}
--
--func findResourceInChildModules(mod jsonstate.Module) jsonstate.Resource {
--	for _, cm := range mod.ChildModules {
--		if len(cm.Resources) == 1 {
--			return cm.Resources[0]
--		}
--	}
--	for _, child := range mod.ChildModules {
--		return findResourceInChildModules(child)
--	}
--	// this shouldn't be possible; we would have returned an error earlier if
--	// the resource wasn't found.
--	panic("resource not found in state")
--}
-```
-
-**File**: `internal/command/views/state_show.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"fmt"
-+
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/command/jsonformat"
-+	"github.com/hashicorp/terraform/internal/command/jsonstate"
-+	viewsjson "github.com/hashicorp/terraform/internal/command/views/json"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+type StateShow interface {
-+	// Diagnostics renders early diagnostics, resulting from argument parsing.
-+	Diagnostics(diags tfdiags.Diagnostics)
-+
-+	// DisplayResourceInstanceState displays the state for a single resource instance. Diagnostics from the state show command are included in the json output.
-+	DisplayResourceInstanceState(jsonformat.State, tfdiags.Diagnostics) int
-+}
-+
-+func NewStateShow(vt arguments.ViewType, view *View) StateShow {
-+	// FormatVersion represents the version of the json format and will be
-+	// incremented for any change to this format that requires changes to a
-+	// consuming parser.
-+	const formatVersion = "1.0"
-+
-+	switch vt {
-+	case arguments.ViewJSON:
-+		return &StateShowJSON{
-+			view:          NewJSONStaticView[StateShowOutput](view),
-+			formatVersion: formatVersion,
-+		}
-+	case arguments.ViewHuman:
-+		return &StateShowHuman{view: view}
-+	default:
-+		panic(fmt.Sprintf("unknown view type %v", vt))
-+	}
-+}
-+
-+type StateShowHuman struct {
-+	view *View
-+}
-+
-+var _ StateShow = (*StateShowHuman)(nil)
-+
-+func (v *StateShowHuman) DisplayResourceInstanceState(state jsonformat.State, diags tfdiags.Diagnostics) int {
-+	renderer := jsonformat.Renderer{
-+		Streams:             v.view.streams,
-+		Colorize:            v.view.colorize,
-+		RunningInAutomation: v.view.runningInAutomation,
-+	}
-+
-+	if diags.HasErrors() {
-+		v.Diagnostics(diags)
-+		return 1
-+	}
-+
-+	renderer.RenderHumanState(state)
-+	return 0
-+}
-+
-+func (v *StateShowHuman) Diagnostics(diags tfdiags.Diagnostics) {
-+	v.view.Diagnostics(diags)
-+}
-+
-+type StateShowJSON struct {
-+	view *JSONStaticView[StateShowOutput]
-+
-+	formatVersion string
-+}
-+
-+var _ StateShow = (*StateShowJSON)(nil)
-+
-+// JSON output from the `state show` command
-+type StateShowOutput struct {
-+	FormatVersion string                  `json:"format_version"`
-+	Resource      jsonstate.Resource      `json:"resource"`
-+	Diagnostics   []*viewsjson.Diagnostic `json:"diagnostics"`
-+}
-+
-+// Diagnostics should only be called if show cannot be executed.
-+// In this case, we choose to render human-readable diagnostic output,
-+// primarily for backwards compatibility.
-+func (v *StateShowJSON) Diagnostics(diags tfdiags.Diagnostics) {
-+	output := StateShowOutput{
-+		FormatVersion: v.formatVersion,
-+		Diagnostics:   v.view.prepareDiagnostics(diags),
-+	}
-+
-+	v.view.Print(output)
-+}
-+
-+func (v *StateShowJSON) DisplayResourceInstanceState(jsonState jsonformat.State, diags tfdiags.Diagnostics) int {
-+	output := StateShowOutput{
-+		FormatVersion: v.formatVersion,
-+		Diagnostics:   v.view.prepareDiagnostics(diags),
-+	}
-+
-+	var rs jsonstate.Resource
-+	if !jsonState.Empty() {
-+		// we know there's only one resource instance, but we need to find it.
-+		if len(jsonState.RootModule.Resources) > 0 {
-+			rs = jsonState.RootModule.Resources[0]
-+		} else {
-+			rs = findResourceInChildModules(jsonState.RootModule)
-+		}
-+	}
-+	output.Resource = rs
-+
-+	v.view.Print(output)
-+
-+	if diags.HasErrors() {
-+		return 1
-+	}
-+	return 0
-+}
-+
-+func findResourceInChildModules(mod jsonstate.Module) jsonstate.Resource {
-+	for _, cm := range mod.ChildModules {
-+		if len(cm.Resources) == 1 {
-+			return cm.Resources[0]
-+		}
-+	}
-+	for _, child := range mod.ChildModules {
-+		return findResourceInChildModules(child)
-+	}
-+	// this shouldn't be possible; we would have returned an error earlier if
-+	// the resource wasn't found.
-+	panic("resource not found in state")
-+}
-```
-
-**File**: `internal/command/views/state_show_test.go` (added, +333/-0)
-```diff
-@@ -0,0 +1,333 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/google/go-cmp/cmp"
-+	"github.com/hashicorp/terraform/internal/addrs"
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/command/jsonformat"
-+	"github.com/hashicorp/terraform/internal/command/jsonprovider"
-+	"github.com/hashicorp/terraform/internal/command/jsonstate"
-+	"github.com/hashicorp/terraform/internal/configs/configschema"
-+	"github.com/hashicorp/terraform/internal/providers"
-+	"github.com/hashicorp/terraform/internal/terminal"
-+	"github.com/hashicorp/terraform/internal/terraform"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+// The DisplayResourceInstanceState method in the human view is just a wrapper for logic defined in the jsonformat package.
-+// The tests here only test handling empty values and one example of handling non-empty data.
-+func TestStateShowHuman_DisplayResourceInstanceState(t *testing.T) {
-+	testCases := map[string]struct {
-+		jsonState  jsonformat.State
-+		diags      tfdiags.Diagnostics
-+		wantStdout string
-+		wantStderr string
-+	}{
-+		"empty state": {
-+			jsonformat.State{},
-+			nil,
-+			"The state file is empty. No resources are represented.",
-+			"",
-+		},
-+		"empty state 2": {
-+			jsonformat.State{
-+				StateFormatVersion:    jsonstate.FormatVersion,
-+				ProviderFormatVersion: jsonprovider.FormatVersion,
-+				RootModule:            jsonstate.Module{},
-+				RootModuleOutputs:     map[string]jsonstate.Output{},
-+				ProviderSchemas:       jsonprovider.MarshalForRenderer(&terraform.Schemas{}),
-+			},
-+			nil,
-+			"The state file is empty. No resources are represented.",
-+			"",
-+		},
-+		"individual resource in state": {
-+			jsonformat.State{
-+				StateFormatVersion:    jsonstate.FormatVersion,
-+				ProviderFormatVersion: jsonprovider.FormatVersion,
-+				RootModule: jsonstate.Module{
-+					Resources: []jsonstate.Resource{
-+						{
-+							Address:       "example_resource.foobar",
-+							Name:          "foobar",
-+							ProviderName:  addrs.NewDefaultProvider("example").String(),
-+							SchemaVersion: 0,
-+							Mode:          "managed",
-+							Type:          "example_resource",
-+						},
-+					},
-+				},
-+				RootModuleOutputs: map[string]jsonstate.Output{},
-+				ProviderSchemas: jsonprovider.MarshalForRenderer(&terraform.Schemas{
-+					Providers: map[addrs.Provider]providers.ProviderSchema{
-+						addrs.NewDefaultProvider("example"): {
-+							ResourceTypes: map[string]providers.Schema{
-+								"example_resource": {
-+									Body: &configschema.Block{
-+										Attributes: map[string]*configschema.Attribute{},
-+									},
-+								},
-+							},
-+						},
-+					},
-+				}),
-+			},
-+			nil,
-+			`# example_resource.foobar:
-+resource "example_resource" "foobar" {}
-+`,
-+			"",
-+		},
-+	}
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			streams, done := terminal.StreamsForTesting(t)
-+			view := NewView(streams)
-+			view.Configure(&arguments.View{NoColor: true})
-+			v := NewStateShow(arguments.ViewHuman, view)
-+
-+			v.DisplayResourceInstanceState(tc.jsonState, tc.diags)
-+
-+			output := done(t)
-+
-+			// Assert contents
-+			// This must be done separately for stdout and stderr due to
-+			// the interleaving of output caused in tests by (TestOutput).All()
-+			gotStdout := strings.TrimSpace(output.Stdout())
-+			wantStdout := strings.TrimSpace(tc.wantStdout)
-+			if diff := cmp.Diff(wantStdout, gotStdout); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
-+			gotStderr := strings.TrimSpace(output.Stderr())
-+			wantStderr := strings.TrimSpace(tc.wantStderr)
-+			if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
+ 	// Confirm
+ 	if !parsedArgs.AutoApprove {
+-		c.Ui.Output(colorize.Color(
+-			"\n[bold]Do you want to make these changes?[reset]\n" +
++		v, err := c.UIInput().Input(context.Background(), &terraform.InputOpts{
++			Id: "replace-provider",
++			Query: "\n[bold]Do you want to make these changes?[reset]\n" +
+ 				"Only 'yes' will be accepted to continue.\n",
+-		))
+-		v, err := c.Ui.Ask("Enter a value:")
 +		})
-+	}
-+}
+ 		if err != nil {
+ 			diags = diags.Append(tfdiags.Sourceless(
+ 				tfdiags.Error,
+```
+
+**File**: `internal/command/state_replace_provider_test.go` (modified, +32/-21)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/hashicorp/terraform/internal/addrs"
+ 	"github.com/hashicorp/terraform/internal/backend"
+ 	backendInit "github.com/hashicorp/terraform/internal/backend/init"
++	tfui "github.com/hashicorp/terraform/internal/command/ui"
+ 	"github.com/hashicorp/terraform/internal/providers"
+ 	testing_provider "github.com/hashicorp/terraform/internal/providers/testing"
+ 	"github.com/hashicorp/terraform/internal/states"
+@@ -79,14 +80,17 @@ func TestStateReplaceProvider(t *testing.T) {
+ 				Meta: Meta{
+ 					Ui:   ui,
+ 					View: view,
++					testingOverrides: &testingOverrides{
++						// Respond to the interactive approval prompt
++						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
++							Reader: bytes.NewBufferString("yes\n"),
++							Writer: ui.OutputWriter,
++						}, nil, nil),
++					},
+ 				},
+ 			},
+ 		}
+ 
+-		inputBuf := &bytes.Buffer{}
+-		ui.InputReader = inputBuf
+-		inputBuf.WriteString("yes\n")
+-
+ 		args := []string{
+ 			"-state", statePath,
+ 			"hashicorp/aws",
+@@ -120,7 +124,8 @@ Changing 2 resources:
+ Do you want to make these changes?
+ Only 'yes' will be accepted to continue.
+ 
+-Enter a value:
++  Enter a value: 
 +
-+func TestStateShowHuman_Diagnostics(t *testing.T) {
-+	testCases := map[string]struct {
-+		diags      tfdiags.Diagnostics
-+		wantStdout string
-+		wantStderr string
-+	}{
-+		"error": {
-+			tfdiags.Diagnostics{
-+				tfdiags.Sourceless(
-+					tfdiags.Error,
-+					"Example error",
-+					"This is an example error message.",
-+				),
-+			},
-+			"",
-+			"Error: Example error\n\nThis is an example error message.\n\n",
-+		},
-+	}
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			streams, done := terminal.StreamsForTesting(t)
-+			view := NewView(streams)
-+			view.Configure(&arguments.View{NoColor: true})
-+			v := NewStateShow(arguments.ViewHuman, view)
+ Successfully replaced provider for 2 resources.
+ `
+ 		if diff := cmp.Diff(expectedOutput, ui.OutputWriter.String()); diff != "" {
+@@ -142,9 +147,6 @@ Successfully replaced provider for 2 resources.
+ 			},
+ 		}
+ 
+-		inputBuf := &bytes.Buffer{}
+-		ui.InputReader = inputBuf
+-
+ 		args := []string{
+ 			"-state", statePath,
+ 			"-auto-approve",
+@@ -193,14 +195,17 @@ Successfully replaced provider for 2 resources.
+ 				Meta: Meta{
+ 					Ui:   ui,
+ 					View: view,
++					testingOverrides: &testingOverrides{
++						// Respond to the interactive approval prompt
++						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
++							Reader: bytes.NewBufferString("no\n"),
++							Writer: ui.OutputWriter,
++						}, nil, nil),
++					},
+ 				},
+ 			},
+ 		}
+ 
+-		inputBuf := &bytes.Buffer{}
+-		ui.InputReader = inputBuf
+-		inputBuf.WriteString("no\n")
+-
+ 		args := []string{
+ 			"-state", statePath,
+ 			"hashicorp/aws",
+@@ -233,7 +238,8 @@ Changing 2 resources:
+ Do you want to make these changes?
+ Only 'yes' will be accepted to continue.
+ 
+-Enter a value:Cancelled replacing providers.
++  Enter a value: 
++Cancelled replacing providers.
+ `
+ 		if diff := cmp.Diff(expectedOutput, ui.OutputWriter.String()); diff != "" {
+ 			t.Fatalf("unexpected diff in output:\n%s", diff)
+@@ -423,16 +429,18 @@ func TestStateReplaceProvider_stateStore(t *testing.T) {
+ 					Providers: map[addrs.Provider]providers.Factory{
+ 						mockProviderAddress: providers.FactoryFixed(mockProvider),
+ 					},
 +
-+			v.Diagnostics(tc.diags)
-+
-+			output := done(t)
-+
-+			// Assert contents
-+			// This must be done separately for stdout and stderr due to
-+			// the interleaving of output caused in tests by (TestOutput).All()
-+			gotStdout := strings.TrimSpace(output.Stdout())
-+			wantStdout := strings.TrimSpace(tc.wantStdout)
-+			if diff := cmp.Diff(wantStdout, gotStdout); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
-+			gotStderr :
++					// Respond to the interactive approval prompt
++					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
++						Reader: bytes.NewBufferString("yes\n"),
++						Writer: ui.OutputWriter,
++					}, nil, nil),
+ 				},
+ 				Ui: ui,
+ 			},
+ 		},
+ 	}
+ 
+-	inputBuf := &bytes.Buffer{}
+-	ui.InputReader = inputBuf
+-	inputBuf.WriteString("yes\n")
+-
+ 	args := []string{
+ 		"hashicorp/test",
+ 		"testing-corp/test",
+@@ -648,14 +656,17 @@ func TestStateReplaceProvider_checkRequiredVersion(t *testing.T) {
+ 			Meta: Meta{
+ 				Ui:   ui,
+ 				View: view,
++				testingOverrides: &testingOverrides{
++					// Respond to the interactive approval prompt
++					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
++						Reader: bytes.NewBufferString("yes\n"),
++						Writer: ui.OutputWriter,
++					}, nil, nil),
++				},
+ 			},
+ 		},
+ 	}
+ 
+-	inputBuf := &bytes.Buffer{}
+-	ui.InputReader = inputBuf
+-	inputBuf.WriteString("yes\n")
+-
+ 	args := []string{
+ 		"-state", statePath,
+ 		"hashicorp/aws",
+```
+
+---
+
+### Incident Patch 3: `c2792418` (2026-11-06)
+**Commit Message**: fix: Ensure that `state replace-provider` produces deterministic output
+
+**File**: `internal/command/state_meta.go` (modified, +3/-0)
+```diff
+@@ -261,5 +261,8 @@ func (c *StateMeta) lookupAllResources(state *states.State) ([]*states.Resource,
+ 			ret = append(ret, resource)
+ 		}
+ 	}
++	sort.Slice(ret, func(i, j int) bool {
++		return ret[i].Addr.Less(ret[j].Addr)
++	})
+ 	return ret, diags
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39490** (2026-11-04): refactor: Make `state` subcommands use diagnostics more when returning errors (@SarahFrench)
-- **PR #39487** (2026-11-04): command/state mv: Refactor how output is produced (@SarahFrench)
-- **PR #39486** (2026-11-03): refactor: Make `state` subcommands use diagnostics to report errors to users (@SarahFrench)
-- **PR #39485** (closed): backend/remote-state/s3: trim state download to bytes actually read (@zichen0116)
-- **PR #39483** (2026-11-04): refactor: Split up the views used for `show` and `state show` commands (@SarahFrench)
-- **PR #39482** (2026-11-04): command/logout: Refactor to use views for terminal output (@SarahFrench)
+- **PR #39509** (2026-11-06): Backport of forget-resource nodes are not referenceable into v1.17 (@github-actions[bot])
+- **PR #39508** (2026-11-06): command/state replace-provider: Make output deterministic, refactor how confirmation input is requested. (@SarahFrench)
+- **PR #39507** (2026-11-06): forget-resource nodes are not referenceable (@jbardin)
+- **PR #39506** (2026-11-06): Backport of: Bump klauspost/compress from v1.19.1 to v1.20.2 (@SarahFrench)
+- **PR #39505** (2026-11-06): Backport of Add variable flags to `show` help text into v1.17 (@github-actions[bot])
+- **PR #39504** (closed): Backport of: Bump klauspost/compress from v1.19.1 to v1.19.2 (@SarahFrench)
 
 ---
 
@@ -3226,35 +2507,28 @@ Motivations for this change are:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make `state` subcommands use diagnostics more when returning errors (#39490)
+## X. Update .changes/v1.17/BUG FIXES-20261106-082655.yaml
 
 **RULE**:
-When implementing operations in `internal/command/state_identities.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.17/BUG FIXES-20261106-082655.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb097071`: Make `state` subcommands use diagnostics more when returning errors (#39490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14ced2ad`: Update .changes/v1.17/BUG FIXES-20261106-082655.yaml. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/state_identities.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.17/BUG FIXES-20261106-082655.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	var diags tfdiags.Diagnostics
-
-	diags = diags.Append(argDiags)
-	if diags.HasErrors() {
-		view.Diagnostics(diags)
-	diags = diags.Append(rDiags)
+body: Providers referencing a managed resource with detroy=false can cause a cycle
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if argDiags.HasErrors() {
-		view.Diagnostics(argDiags)
-	diags = append(diags, rDiags...)
+body: Providers referncing a managed resource with detroy=false can cause a cycle
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb097071` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14ced2ad` are properly handled with clean fallback behavior.

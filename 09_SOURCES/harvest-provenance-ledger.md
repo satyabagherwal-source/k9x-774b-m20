@@ -7939,3 +7939,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `ea12300d` | Multi-dimensional audit evidence | 2026-11-06T21:59:28.883Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `65a31536` | Multi-dimensional audit evidence | 2026-11-06T21:59:35.999Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `d140e69f` | Multi-dimensional audit evidence | 2026-11-06T22:06:25.247Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `ddc51e35` | Multi-dimensional audit evidence | 2026-11-06T22:13:44.237Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `aa716fca` | Multi-dimensional audit evidence | 2026-11-06T22:13:51.830Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `01b5452f` | Multi-dimensional audit evidence | 2026-11-06T22:13:56.992Z |

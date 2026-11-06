@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `cf9beb71`  
+> **Source Version**: `ddc51e35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:03:33.317Z  
+> **Timestamp**: 2026-11-06T22:13:42.813Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:00:37.242Z  
+> **Harvest Timestamp**: 2026-11-06T22:13:41.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10070 stars
+- **Stars / Engagement**: 10075 stars
 
 ---
 
@@ -1435,11 +1435,13 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7438** (2026-11-05): **stm32/vrefbuf: enable the G0x1 clock**
-  *Symptoms*: ## Summary - Enable the VREFBUF clock on STM32G0x1, including G0B1, before `VoltageReferenceBuffer::new` waits for `VRR`. - On this family the buffer has no clock bit of its own. RM0444 5.4.16 clocks it through `SYSCFGEN` in `RCC_APBENR2`, shared with SYSCFG and COMP. - Related to embassy-rs/embassy#3398: driving VREF+ on a G0B1 requires this path. `Adc::enable_vrefint()` only connects the internal bandgap to an ADC channel.
+- **Issue #7443** (2026-11-06): **stm32/cordic: fix the q1.15 result length check**
+  *Symptoms*: The q1.15 blocking_calc and async_calc functions in the CORDIC driver use size_of_val(arg) instead of size_of_val(res) to build the result slice. As a result the arg.len() > res.len() check can never fail. If the result buffer is shorter than the argument buffer, the driver writes past its end through a safe API.  This change sizes the result slice from the result buffer in both functions and adds a changelog entry.  I tested blocking_calc on a NUCLEO-H723ZG with Function::Cos, 8 q1.15 arguments and a result buffer for 4 values, followed by a canary in a repr(C) struct. Before the change, it returned Ok(8) and overwrote the two words after the result buffer with results. After the change, it returns Err(ResultLengthNotEnough) and leaves the canary untouched. A buffer of the right size still returns 8 with the expected values (cos 0 at modulus 0.5 gives 0x4000).  I did not run async_calc on hardware; it gets the same one line change.
+  **Post-Mortem & Fix Analysis**:
+  > 👋 Welcome, @emincan2000, and thanks for opening your first pull request here!  If you haven't already, please give the [contributor guide](https://github.com/embassy-rs/embassy/blob/main/CONTRIBUTING.md) a read.
 
-- **Issue #7437** (2026-11-05): **stm32/lptim: pick a prescaler whose reload fits in 16 bits**
-  *Symptoms*: ## Summary - `Prescaler::from_ticks` rounded `(ticks >> 16)` up to a power of two. That divider is too small when the shift is 1, 2, or already a power of two, and `scale_down` then panicked because the reload did not fit in `u16`. At a 16 MHz kernel clock, 100 Hz is 160000 ticks: `/2` is 80000. - The prescaler is now the smallest of `/1`, `/2`, ..., `/128` for which `ticks / prescaler` fits in 16 bits. Periods that already fitted keep the same divider. A period that does not fit even at `/128` still panics, with an explicit message. - Separate from #7393, which only changes when `CFGR` and `ARR` are written.
+- **Issue #7441** (2026-11-06): **stm32/usb: add optional VBUS detection**
+  *Symptoms*: ## Summary  The full-speed USB peripheral (`usb_v1`, `usb_v3`, `usb_v4`, including the STM32G0B1) has no VBUS input — RM0444 §37.4.2 lists only `USB_DP`, `USB_DM` and `USB_NOE` — and its suspend event only means the host stopped traffic for 3 ms (RM0444 §37.5.7). Without a VBUS-sense GPIO, a self-powered device cannot distinguish "suspended" from "unplugged", so endpoint transfers block until a timeout instead of returning an error.  This adds optional VBUS detection through an `ExtiInput`:  - `Driver::new_with_vbus(usb, dp, dm, vbus, irq)` and `new_with_sof_and_vbus(...)`, gated on the `exti` feature. `Driver::new` is unchanged. - `Bus::poll` reports `PowerDetected` / `PowerRemoved` from the pin level and arms the EXTI line for edges. - On `PowerRemoved`, all endpoints are disabled, waking pending transfers with `EndpointError::Disabled`, and `DPPU` is cleared to signal disconnect to the host (RM0444 §37.6.6). On L1, `SYSCFG.PMC.USB_PU` is used instead. - On `PowerDetected`, `DPPU` is restored and the host reset re-enumerates.  This follows the direction from #3629 and the review of #3944: suspend is not disconnect, and the correct signal is VBUS via a GPIO.  Fixes #3740.  ## Usage  ```rust bind_interrupts!(struct Irqs {     USB_UCPD1_2 => usb::InterruptHandler<peripherals::USB>;     EXTI4_15 => exti::InterruptHandler<interrupt::typelevel::EXTI4_15>; });  // GPIO wired to VBUS through the board's divider. let vbus = ExtiInput::new(p.PA9, p.EXTI9, Pull::None, Irqs); let drive
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,932 +1458,234 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `508c2c06` (2026-11-04)
-**Commit Message**: Merge pull request #7408 from tobymurray/stm32-lptim-now-ue-race
+### Incident Patch 1: `e5cde5cc` (2026-11-06)
+**Commit Message**: Merge pull request #7352 from kumbung01/fix-nrf-timer-frequency
 
-stm32/time-driver-lptim: retry now() if the update event changes during the read
+embassy-nrf: Timer: fix incorrect Frequcncy representation
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
+**File**: `embassy-nrf/src/chips/nrf54l05_app.rs` (modified, +7/-7)
 ```diff
-@@ -19,6 +19,7 @@ Time driver:
- - fix: stm32/low-power, stm32/time-driver-lptim: compile with the `log` feature
- - fix: stm32/time-driver-lptim: the interrupt handler clears only the flags it read; it also cleared every enabled flag, so an overflow that arrived during the handler was lost and time fell back one counter period
- - fix: stm32/time-driver-lptim: on U5, U3 and WBA, wait for `DIEROK` after each `DIER` change; a `CCIE` write still in flight when entering Stop lost the alarm wakeup until the next overflow
-+- fix: stm32/time-driver-lptim: `now()` retries if the update event flag changes while it reads the counter; a wrap between the two reads returned a time one counter period ahead, then time went backwards
+@@ -654,13 +654,13 @@ impl_ppi_group!(PPI20_GROUP5, DPPIC20, 5);
+ impl_ppi_group!(PPI30_GROUP0, DPPIC30, 0);
+ impl_ppi_group!(PPI30_GROUP1, DPPIC30, 1);
  
- I2C:
- - fix: stm32/i2c v2: disable own-address recognition before changing an enabled OA1/OA2 address, addressing mode, or OA2 mask.
+-impl_timer!(TIMER00, TIMER00, TIMER00, 6);
+-impl_timer!(TIMER10, TIMER10, TIMER10, 8);
+-impl_timer!(TIMER20, TIMER20, TIMER20, 6);
+-impl_timer!(TIMER21, TIMER21, TIMER21, 6);
+-impl_timer!(TIMER22, TIMER22, TIMER22, 6);
+-impl_timer!(TIMER23, TIMER23, TIMER23, 6);
+-impl_timer!(TIMER24, TIMER24, TIMER24, 6);
++impl_timer!(TIMER00, TIMER00, TIMER00, 6, F128MHz);
++impl_timer!(TIMER10, TIMER10, TIMER10, 8, F32MHz);
++impl_timer!(TIMER20, TIMER20, TIMER20, 6, F16MHz);
++impl_timer!(TIMER21, TIMER21, TIMER21, 6, F16MHz);
++impl_timer!(TIMER22, TIMER22, TIMER22, 6, F16MHz);
++impl_timer!(TIMER23, TIMER23, TIMER23, 6, F16MHz);
++impl_timer!(TIMER24, TIMER24, TIMER24, 6, F16MHz);
+ 
+ impl_twim!(SERIAL20, TWIM20, SERIAL20);
+ impl_twim!(SERIAL21, TWIM21, SERIAL21);
 ```
 
-**File**: `embassy-stm32/src/time_driver/lptim.rs` (modified, +25/-16)
+**File**: `embassy-nrf/src/chips/nrf54l10_app.rs` (modified, +7/-7)
 ```diff
-@@ -403,25 +403,34 @@ impl Driver for RtcDriver {
-         // a whole period in the past, causing time to go backwards, and any
-         // `Instant::duration_since` spanning that window panics.
-         critical_section::with(|_| {
--            // RM0456 says: "When the LPTIM is running, reading the LPTIM_CNT register may return
--            // unreliable values. In this case it is necessary to perform consecutive reads until
--            // two returned values are identical."
--            let mut counter = r.cnt().read().cnt();
-             loop {
--                let again = r.cnt().read().cnt();
--                if again == counter {
--                    break;
-+                // With the period-incrementing, a pending update event unambiguously means
-+                // the counter has wrapped and `next_period` has not yet accounted for it. NB: we DO
-+                // NOT clear the ue bit, that (and consequently incrementing self.period) is for the
-+                // ISR to do once we release this CS.
-+                //
-+                // The CS masks the interrupt but not the flag: the counter can still wrap between
-+                // reading LPTIM_CNT and LPTIM_ISR, pairing 0xFFFF with a pending update event, a
-+                // whole period in the future. Sample the flag on both sides and retry if it changed.
-+                let pending = r.isr().read().ue();
-+
-+                // RM0456 says: "When the LPTIM is running, reading the LPTIM_CNT register may return
-+                // unreliable values. In this case it is necessary to perform consecutive reads until
-+                // two returned values are identical."
-+                let mut counter = r.cnt().read().cnt();
-+                loop {
-+                    let again = r.cnt().read().cnt();
-+                    if again == counter {
-+                        break;
-+                    }
-+                    counter = again;
-                 }
--                counter = again;
--            }
--
--            // With the period-incrementing, a pending update event unambiguously means
--            // the counter has wrapped and `next_period` has not yet accounted for it. NB: we DO
--            // NOT clear the ue bit, that (and consequently incrementing self.period) is for the
--            // ISR to do once we release this CS.
--            let period = self.period.load(Ordering::Relaxed) + r.isr().read().ue() as u32;
+@@ -654,13 +654,13 @@ impl_ppi_group!(PPI20_GROUP5, DPPIC20, 5);
+ impl_ppi_group!(PPI30_GROUP0, DPPIC30, 0);
+ impl_ppi_group!(PPI30_GROUP1, DPPIC30, 1);
  
--            ((period as u64) << 16) + counter as u64
-+                if r.isr().read().ue() == pending {
-+                    let period = self.period.load(Ordering::Relaxed) + pending as u32;
-+                    break ((period as u64) << 16) + counter as u64;
-+                }
-+            }
-         })
-     }
+-impl_timer!(TIMER00, TIMER00, TIMER00, 6);
+-impl_timer!(TIMER10, TIMER10, TIMER10, 8);
+-impl_timer!(TIMER20, TIMER20, TIMER20, 6);
+-impl_timer!(TIMER21, TIMER21, TIMER21, 6);
+-impl_timer!(TIMER22, TIMER22, TIMER22, 6);
+-impl_timer!(TIMER23, TIMER23, TIMER23, 6);
+-impl_timer!(TIMER24, TIMER24, TIMER24, 6);
++impl_timer!(TIMER00, TIMER00, TIMER00, 6, F128MHz);
++impl_timer!(TIMER10, TIMER10, TIMER10, 8, F32MHz);
++impl_timer!(TIMER20, TIMER20, TIMER20, 6, F16MHz);
++impl_timer!(TIMER21, TIMER21, TIMER21, 6, F16MHz);
++impl_timer!(TIMER22, TIMER22, TIMER22, 6, F16MHz);
++impl_timer!(TIMER23, TIMER23, TIMER23, 6, F16MHz);
++impl_timer!(TIMER24, TIMER24, TIMER24, 6, F16MHz);
  
+ impl_twim!(SERIAL20, TWIM20, SERIAL20);
+ impl_twim!(SERIAL21, TWIM21, SERIAL21);
 ```
 
----
-
-### Incident Patch 2: `0886d40f` (2026-11-04)
-**Commit Message**: Merge pull request #7425 from OueslatiGhaith/wpan-fix-stack-configs
-
-wpan: fix build for non-full BLE stacks
-
-**File**: `embassy-stm32-wpan/Cargo.toml` (modified, +3/-0)
+**File**: `embassy-nrf/src/chips/nrf54l15_app.rs` (modified, +7/-7)
 ```diff
-@@ -15,6 +15,9 @@ publish = false
- build = [
-     {target = "thumbv7em-none-eabi", features = ["stm32wb55rg"]},
-     {target = "thumbv8m.main-none-eabihf", features = ["stm32wba65ri", "wba-ble", "ble-stack-full", "linklayer-ble-full", "direct"]},
-+    # The smaller stack profiles hide commands the full one has: build them too.
-+    {target = "thumbv8m.main-none-eabihf", features = ["stm32wba65ri", "wba-ble", "ble-stack-basic", "linklayer-ble-basic", "direct", "defmt"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["stm32wba65ri", "wba-ble", "ble-stack-po", "linklayer-ble-peripheral-only", "direct", "defmt"]},
- ]
+@@ -654,13 +654,13 @@ impl_ppi_group!(PPI20_GROUP5, DPPIC20, 5);
+ impl_ppi_group!(PPI30_GROUP0, DPPIC30, 0);
+ impl_ppi_group!(PPI30_GROUP1, DPPIC30, 1);
  
- [package.metadata.embassy_docs]
+-impl_timer!(TIMER00, TIMER00, TIMER00, 6);
+-impl_timer!(TIMER10, TIMER10, TIMER10, 8);
+-impl_timer!(TIMER20, TIMER20, TIMER20, 6);
+-impl_timer!(TIMER21, TIMER21, TIMER21, 6);
+-impl_timer!(TIMER22, TIMER22, TIMER22, 6);
+-impl_timer!(TIMER23, TIMER23, TIMER23, 6);
+-impl_timer!(TIMER24, TIMER24, TIMER24, 6);
++impl_timer!(TIMER00, TIMER00, TIMER00, 6, F128MHz);
++impl_timer!(TIMER10, TIMER10, TIMER10, 8, F32MHz);
++impl_timer!(TIMER20, TIMER20, TIMER20, 6, F16MHz);
++impl_timer!(TIMER21, TIMER21, TIMER21, 6, F16MHz);
++impl_timer!(TIMER22, TIMER22, TIMER22, 6, F16MHz);
++impl_timer!(TIMER23, TIMER23, TIMER23, 6, F16MHz);
++impl_timer!(TIMER24, TIMER24, TIMER24, 6, F16MHz);
+ 
+ impl_twim!(SERIAL20, TWIM20, SERIAL20);
+ impl_twim!(SERIAL21, TWIM21, SERIAL21);
 ```
 
-**File**: `embassy-stm32-wpan/src/bluetooth/gap/aci_gap.rs` (modified, +12/-158)
+**File**: `embassy-nrf/src/chips/nrf54lm20_app.rs` (modified, +7/-7)
 ```diff
-@@ -6,24 +6,27 @@
- //! Every command is declared by `stm32wb-hci` and executed through the
- //! [`ControllerAdapter`], which calls the same BLE stack functions.
+@@ -733,13 +733,13 @@ impl_ppi_group!(PPI20_GROUP5, DPPIC20, 5);
+ impl_ppi_group!(PPI30_GROUP0, DPPIC30, 0);
+ impl_ppi_group!(PPI30_GROUP1, DPPIC30, 1);
  
--use bt_hci::cmd::{AsyncCmd, SyncCmd};
-+use bt_hci::cmd::SyncCmd;
- use bt_hci::param::BdAddr;
--use stm32wb_hci::aci::durations::{
--    AdvInterval, DirectAdvInterval, ExtScanInterval, ExtScanWindow, ScanDuration, ScanPeriod,
--};
--use stm32wb_hci::aci::flags::ScanningPhys;
-+use stm32wb_hci::aci::durations::{AdvInterval, DirectAdvInterval};
- use stm32wb_hci::aci::gap::{
--    GapExtStartScan, GapGetOobData, GapSetDirectConnectable, GapSetDiscoverable, GapSetNonDiscoverable, GapSetOobData,
--    GapSetUndirectedConnectable, GapTerminateGapProc, GapUpdateAdvData, ScanParamPhy,
-+    GapGetOobData, GapSetDirectConnectable, GapSetDiscoverable, GapSetNonDiscoverable, GapSetOobData,
-+    GapSetUndirectedConnectable, GapUpdateAdvData,
- };
- use stm32wb_hci::aci::values::{
--    AddressType, AdvertisingType, ConnectableOwnAddressType, DirectedAdvertisingType, FilterDuplicates, GapProcedure,
--    OobDataType, OobDevice, OwnAddressType, ScanProcedure, ScanType, ScanningFilterPolicy, UndirectedAdvFilterPolicy,
-+    AddressType, AdvertisingType, ConnectableOwnAddressType, DirectedAdvertisingType, OobDataType, OobDevice,
-+    OwnAddressType, UndirectedAdvFilterPolicy,
- };
+-impl_timer!(TIMER00, TIMER00, TIMER00, 6);
+-impl_timer!(TIMER10, TIMER10, TIMER10, 8);
+-impl_timer!(TIMER20, TIMER20, TIMER20, 6);
+-impl_timer!(TIMER21, TIMER21, TIMER21, 6);
+-impl_timer!(TIMER22, TIMER22, TIMER22, 6);
+-impl_timer!(TIMER23, TIMER23, TIMER23, 6);
+-impl_timer!(TIMER24, TIMER24, TIMER24, 6);
++impl_timer!(TIMER00, TIMER00, TIMER00, 6, F128MHz);
++impl_timer!(TIMER10, TIMER10, TIMER10, 8, F32MHz);
++impl_timer!(TIMER20, TIMER20, TIMER20, 6, F16MHz);
++impl_timer!(TIMER21, TIMER21, TIMER21, 6, F16MHz);
++impl_timer!(TIMER22, TIMER22, TIMER22, 6, F16MHz);
++impl_timer!(TIMER23, TIMER23, TIMER23, 6, F16MHz);
++impl_timer!(TIMER24, TIMER24, TIMER24, 6, F16MHz);
  
- use crate::bluetooth::error::BleError;
- use crate::controller::ControllerAdapter;
- 
-+// Scanning: not available in the peripheral-only stack.
-+#[cfg(not(feature = "ble-stack-po"))]
-+mod scan;
-+#[cfg(not(feature = "ble-stack-po"))]
-+pub use scan::*;
-+
- // Advertising types for aci_gap_set_discoverable
- #[allow(dead_code)]
- pub const ADV_IND: u8 = 0x00; // Connectable undirected
-@@ -36,56 +39,6 @@ pub const ADV_NONCONN_IND: u8 = 0x03; // Non-connectable undirected
- #[allow(dead_code)]
- pub const ADV_DIRECT_IND_LOW_DUTY: u8 = 0x04; // Connectable directed low duty cycle
- 
--const HCI_SCAN_TYPE_ACTIVE: u8 = 0x01;
--
--/// Run a GAP discovery procedure through `ACI_GAP_START_SCAN`.
--///
--/// CubeWBA 1.10.0 dropped the legacy `aci_gap_start_{observation,limited,general}_discovery_proc`
--/// commands, so the discovery procedures go through `aci_gap_start_scan` now
--/// (declared as [`GapExtStartScan`] by `stm32wb-hci`, same opcode and layout).
--#[allow(clippy::too_many_arguments)]
--async fn start_scan(
--    controller: &ControllerAdapter<'_>,
--    procedure: ScanProcedure,
--    scan_interval: u16,
--    scan_window: u16,
--    scan_type: u8,
--    own_address_type: u8,
--    filter_duplicates: bool,
--    filter_policy: u8,
--) -> Result<(), BleError> {
--    let phy_param = |scan_type| -> Result<ScanParamPhy, BleError> {
--        Ok(ScanParamPhy {
--            scan_type: ScanType::try_from(scan_type).map_err(|_| BleError::InvalidParameter)?,
--            scan_interval: ExtScanInterval::from_units(scan_interval).ok_or(BleError::InvalidParameter)?,
--            scan_window: ExtScanWindow::from_units(scan_window).ok_or(BleError::InvalidParameter)?,
--        })
--    };
--    // ACI_GAP_START_SCAN requires two PHY parameter records even when only
--    // LE 1M is selected. The second record is ignored in that configuration.
--    let scan_params = [phy_param(scan_type)?, phy_param(scan_type)?];
--
--    GapExtStartScan::new(
--        0,
--        procedure,
--        OwnAddressType::try_from(own_address_type).map_err(|_| BleError::InvalidParameter)?,
--        if filter_duplicates {
--            FilterDuplicates::Enabled
--        } else {
--            FilterDuplicates::Disabled
--        },
--        ScanDuration::CONTINUOUS,
--        ScanPeriod::CONTINUOUS,
--        ScanningFilterPolicy::try_from(filter_policy).map_err(|_| BleError::InvalidParameter)?,
--        ScanningPhys::LE_1M,
--        scan_params,
--    )
--    .exec(controller)
--    .await?;
--
--    Ok(())
--}
--
- /// Start advertising using `aci_gap_set_discoverable`
- ///
- /// This is the proper way to start advertising on ST's BLE stack.
-@@ -173,105 +126,6 @@ pub async fn set_direct_connectable(
-     .map_err(BleError::from)
+ impl_twim!(SERIAL20, TWIM20, SERIAL20);
+ impl_twim!(SERIAL21, TWIM21, SERIAL21);
+```
+
+**File**: `embassy-nrf/src/timer.rs` (modified, +42/-6)
+```diff
+@@ -17,6 +17,7 @@ use crate::ppi::{Event, Task};
+ pub(crate) trait SealedInstance {
+     /// The number of CC registers this instance has.
+     const CCS: usize;
++    const INPUT_FREQUENCY: Frequency;
+     fn regs() -> pac::timer::Timer;
  }
  
--/// Start the GAP observation procedure (passive or active scanning).
--///
--/// Advertising reports arrive as standard `HCI_LE_Advertising_Report` events
--/// via `BLECB_Indication`.  This is the correct way to scan on the WBA BLE
--/// stack — raw `HCI_LE_SET_SCAN_ENABLE` starts the radio but does not route
--/// reports through the host layer.
--///
--/// CubeWBA 1.10.0 renamed the observation procedure `GAP_GENERIC_SCAN_PROC`;
--/// `stm32wb-hci` models that as [`ScanProcedure::GenericScan`].
--#[allow(clippy::too_many_arguments)]
--pub async fn start_observation(
--    controller: &ControllerAdapter<'_>,
--    scan_interval: u16,
--    scan_window: u16,
--    scan_type: u8,
--    own_address_type: u8,
--    filter_duplicates: bool,
--    filter_policy: u8,
--) -> Result<(), BleError> {
--    start_scan(
--        controller,
--        ScanProcedure::GenericScan,
--        scan_interval,
--        scan_window,
--        scan_type,
--        own_address_type,
--   
-```
-
-**File**: `embassy-stm32-wpan/src/bluetooth/gap/aci_gap/scan.rs` (added, +164/-0)
-```diff
-@@ -0,0 +1,164 @@
-+//! GAP scanning ACI commands (observer and central roles).
-+//!
-+//! The peripheral-only BLE stack has no scanning, so this module is only
-+//! built for the other stacks.
+@@ -31,20 +32,32 @@ pub trait Instance: SealedInstance + PeripheralType + 'static + Send {
+ pub trait ExtendedInstance: Instance {}
+ 
+ macro_rules! impl_timer {
+-    ($type:ident, $pac_type:ident, $irq:ident, $ccs:literal) => {
++    (
++        $type:ident, $pac_type:ident, $irq:ident,
++        $ccs:literal, $freq:ident
++    ) => {
+         impl crate::timer::SealedInstance for peripherals::$type {
+             const CCS: usize = $ccs;
++            const INPUT_FREQUENCY: crate::timer::Frequency = crate::timer::Frequency::$freq;
 +
-+use bt_hci::cmd::{AsyncCmd, SyncCmd};
-+use stm32wb_hci::aci::durations::{ExtScanInterval, ExtScanWindow, ScanDuration, ScanPeriod};
-+use stm32wb_hci::aci::flags::ScanningPhys;
-+use stm32wb_hci::aci::gap::{GapExtStartScan, GapTerminateGapProc, ScanParamPhy};
-+use stm32wb_hci::aci::values::{
-+    FilterDuplicates, GapProcedure, OwnAddressType, ScanProcedure, ScanType, ScanningFilterPolicy,
-+};
+             fn regs() -> pac::timer::Timer {
+                 unsafe { pac::timer::Timer::from_ptr(pac::$pac_type.as_ptr()) }
+             }
+         }
 +
-+use crate::bluetooth::error::BleError;
-+use crate::controller::ControllerAdapter;
+         impl crate::timer::Instance for peripherals::$type {
+             type Interrupt = crate::interrupt::typelevel::$irq;
+         }
+     };
 +
-+const HCI_SCAN_TYPE_ACTIVE: u8 = 0x01;
-+
-+/// Run a GAP discovery procedure through `ACI_GAP_START_SCAN`.
-+///
-+/// CubeWBA 1.10.0 dropped the legacy `aci_gap_start_{observation,limited,general}_discovery_proc`
-+/// commands, so the discovery procedures go through `aci_gap_start_scan` now
-+/// (declared as [`GapExtStartScan`] by `stm32wb-hci`, same opcode and layout).
-+#[allow(clippy::too_many_arguments)]
-+async fn start_scan(
-+    controller: &ControllerAdapter<'_>,
-+    procedure: ScanProcedure,
-+    scan_interval: u16,
-+    scan_window: u16,
-+    scan_type: u8,
-+    own_address_type: u8,
-+    filter_duplicates: bool,
-+    filter_policy: u8,
-+) -> Result<(), BleError> {
-+    let phy_param = |scan_type| -> Result<ScanParamPhy, BleError> {
-+        Ok(ScanParamPhy {
-+            scan_type: ScanType::try_from(scan_type).map_err(|_| BleError::InvalidParameter)?,
-+            scan_interval: ExtScanInterval::from_units(scan_interval).ok_or(BleError::InvalidParameter)?,
-+            scan_window: ExtScanWindow::from_units(scan_window).ok_or(BleError::InvalidParameter)?,
-+        })
++    ($type:ident, $pac_type:ident, $irq:ident, $ccs:literal) => {
++        impl_timer!($type, $pac_type, $irq, $ccs, F16MHz);
 +    };
-+    // ACI_GAP_START_SCAN requires two PHY parameter records even when only
-+    // LE 1M is selected. The second record is ignored in that configuration.
-+    let scan_params = [phy_param(scan_type)?, phy_param(scan_type)?];
 +
-+    GapExtStartScan::new(
-+        0,
-+        procedure,
-+        OwnAddressType::try_from(own_address_type).map_err(|_| BleError::InvalidParameter)?,
-+        if filter_duplicates {
-+            FilterDuplicates::Enabled
+     ($type:ident, $pac_type:ident, $irq:ident) => {
+         impl_timer!($type, $pac_type, $irq, 4);
+     };
++
+     ($type:ident, $pac_type:ident, $irq:ident, extended) => {
+         impl_timer!($type, $pac_type, $irq, 6);
+         impl crate::timer::ExtendedInstance for peripherals::$type {}
+@@ -54,6 +67,15 @@ macro_rules! impl_timer {
+ /// Timer frequency
+ #[repr(u8)]
+ pub enum Frequency {
++    /// 128MHz
++    #[cfg(feature = "_nrf54l")]
++    F128MHz = (-3i8) as u8,
++    /// 64MHz
++    #[cfg(feature = "_nrf54l")]
++    F64MHz = (-2i8) as u8,
++    /// 32MHz
++    #[cfg(feature = "_nrf54l")]
++    F32MHz = (-1i8) as u8,
+     /// 16MHz
+     F16MHz = 0,
+     /// 8MHz
+@@ -76,6 +98,19 @@ pub enum Frequency {
+     F31250Hz = 9,
+ }
+ 
++impl Frequency {
++    /// Returns the frequency in Hz.
++    pub const fn as_hz(self) -> u32 {
++        // Discriminants encode signed divider exponents relative to 16 MHz.
++        let step = self as u8 as i8;
++        if step < 0 {
++            16_000_000u32 << (-step as u32)
 +        } else {
-+            FilterDuplicates::Disabled
-+        },
-+        ScanDuration::CONTINUOUS,
-+        ScanPeriod::CONTINUOUS,
-+        ScanningFilterPolicy::try_from(filter_policy).map_err(|_| BleError::InvalidParameter)?,
-+        ScanningPhys::LE_1M,
-+        scan_params,
-+    )
-+    .exec(controller)
-+    .await?;
-+
-+    Ok(())
-+}
-+
-+/// Start the GAP observation procedure (passive or active scanning).
-+///
-+/// Advertising reports arrive as standard `HCI_LE_Advertising_Report` events
-+/// via `BLECB_Indication`.  This is the correct way to scan on the WBA BLE
-+/// stack — raw `HCI_LE_SET_SCAN_ENABLE` starts the radio but does not route
-+/// reports through the host layer.
-+///
-+/// CubeWBA 1.10.0 renamed the observation procedure `GAP_GENERIC_SCAN_PROC`;
-+/// `stm32wb-hci` models that as [`ScanProcedure::GenericScan`].
-+#[allow(clippy::too_many_arguments)]
-+pub async fn start_observation(
-+    controller: &ControllerAdapter<'_>,
-+    scan_interval: u16,
-+    scan_window: u16,
-+    scan_type: u8,
-+    own_address_type: u8,
-+    filter_duplicates: bool,
-+    filter_policy: u8,
-+) -> Result<(), BleError> {
-+    start_scan(
-+        controller,
-+        ScanProcedure::GenericScan,
-+        scan_interval,
-+        scan_window,
-+        scan_type,
-+        own_address_type,
-+        filter_duplicates,
-+        filter_policy,
-+    )
-+    .await
-+}
-+
-+/// Start the GAP limited discovery procedure.
-+///
-+/// This uses active scanning and reports only peripherals in limited
-+/// discoverable mode.
-+pub async fn start_limited_discovery(
-+    controller: &ControllerAdapter<'_>,
-+    scan_interval: u16,
-+    scan_window: u16,
-+    own_address_type: u8,
-+    filter_duplicates: bool,
-+) -> Result<(), BleError> {
-+    start_scan(
-+        controller,
-+        ScanProcedure::LimitedDiscovery,
-+        scan_interval,
-+        scan_window,
-+        HCI_SCAN_TYPE_ACTIVE,
-+        own_address_type,
-+        filter_duplicates,
-+        0,
-+    )
-+    .await
-+}
-+
-+/// Start the GAP general discovery procedure.
-+///
-+/// This uses active scanning and reports all discovered peripherals.
-+pub async fn start_general_discovery(
-+    controller: &ControllerAdapter<'_>,
-+    scan_interval: u16,
-+    scan_window: u16,
-+    own_address_type: u8,
-+    filter_duplicates: bool,
-+) -> Result<(), BleError> {
-+    start_scan(
-+        controller,
-+        ScanProcedure::GeneralDiscovery,
-+        scan_interval,
-+        scan_window,
-+        HCI_SCAN_TYPE_ACTIVE,
-+        own_address_type,
-+        filter_duplicates,
-+        0,
-+    )
-+    .await
-+}
-+
-+/// Terminate a running GAP procedure.
-+pub async fn terminate_gap_proc(controller: &ControllerAdapter<'_>, procedure: GapProcedure) -> Result<(), BleError> {
-+    GapTerminateGapProc::new(p
-```
-
-**File**: `embassy-stm32-wpan/src/bluetooth/gap/scanner.rs` (modified, +16/-13)
-```diff
-@@ -5,10 +5,9 @@
- 
- pub use stm32wb_hci::aci::values::{ScanProcedure, ScanType, ScanningFilterPolicy};
- 
--use crate::bluetooth::error::BleError;
--use crate::bluetooth::gap::aci_gap;
- use crate::bluetooth::gap::types::OwnAddressType;
--use crate::controller::ControllerAdapter;
-+#[cfg(not(feature = "ble-stack-po"))]
-+use crate::{bluetooth::error::BleError, bluetooth::gap::aci_gap, controller::ControllerAdapter};
- 
- /// Scan parameters
- #[derive(Debug, Clone)]
-@@ -124,6 +123,20 @@ impl Scanner {
-         Self { active_proc: None }
-     }
- 
-+    /// Check if currently scanning
-+    pub fn is_scanning(&self) -> bool {
-+        self.active_proc.is_some()
-+    }
-+
-+    /// Return the currently active GAP scan procedure.
-+    pub fn active_procedure(&self) -> Option<ScanProcedure> {
-+        self.active_proc
++            16_000_000u32 >> (step as u32)
++        }
 +    }
 +}
 +
-+// Scanning: not available in the peripheral-only stack.
-+#[cfg(not(feature = "ble-stack-po"))]
-+impl Scanner {
-     /// Start scanning with the given parameters
-     ///
-     /// Advertising reports will be received as `LeAdvertisingReport` events
-@@ -231,16 +244,6 @@ impl Scanner {
-         }
-         Ok(())
-     }
--
--    /// Check if currently scanning
--    pub fn is_scanning(&self) -> bool {
--        self.active_proc.is_some()
--    }
--
--    /// Return the currently active GAP scan procedure.
--    pub fn active_procedure(&self) -> Option<ScanProcedure> {
--        self.active_proc
--    }
- }
- 
- /// Parsed advertising data from a scan report
-```
-
-**File**: `embassy-stm32-wpan/src/bluetooth/gatt/mod.rs` (modified, +3/-0)
-```diff
-@@ -3,11 +3,14 @@
- //! This module provides a Rust wrapper around ST's GATT implementation,
- //! including server functionality and event handling.
- 
-+// GATT client: not available in the peripheral-only stack.
-+#[cfg(not(feature = "ble-stack-po"))]
- pub mod client;
- pub mod events;
- pub mod server;
- pub mod types;
- 
-+#[cfg(not(feature = "ble-stack-po"))]
- pub use client::GattClient;
- pub use events::{
-     CHAR_CCCD_HANDLE_OFFSET, CHAR_VALUE_HANDLE_OFFSET, CccdValue, GattClientEvent, GattEvent, aci_event_code,
-```
-
-**File**: `embassy-stm32-wpan/src/bluetooth/mod.rs` (modified, +350/-270)
-```diff
-@@ -10,42 +10,56 @@ pub mod security;
- use bt_hci::cmd::controller_baseband::{Reset, SetEventMask};
- use bt_hci::cmd::info::ReadLocalVersionInformation;
- use bt_hci::cmd::le::{
--    LeConnCteRequestEnable, LeConnCteResponseEnable, LeConnUpdate, LeCreateConn, LeCreateConnCancel,
--    LeReadAntennaInformation, LeReadBufferSizeV2, LeReadLocalSupportedFeatures, LeReadPhy, LeReceiverTest,
--    LeReceiverTestV2, LeRemoteConnectionParameterRequestReply, LeSetConnCteReceiveParams, LeSetConnCteTransmitParams,
--    LeSetDataLength, LeSetEventMask, LeSetPhy, LeSetRandomAddr, LeTestEnd, LeTransmitterTest, LeTransmitterTestV2,
-+    LeReadPhy, LeReceiverTest, LeReceiverTestV2, LeRemoteConnectionParameterRequestReply, LeSetDataLength,
-+    LeSetEventMask, LeSetPhy, LeTestEnd, LeTransmitterTest, LeTransmitterTestV2,
- };
--use bt_hci::cmd::link_control::Disconnect;
-+// HCI commands only the full BLE stack provides.
- use bt_hci::cmd::{AsyncCmd, SyncCmd};
- use bt_hci::controller::Controller as _;
- use bt_hci::event::le::{
-     LeConnectionComplete, LeConnectionUpdateComplete, LeDataLengthChange, LeEnhancedConnectionComplete, LeEvent,
-     LePhyUpdateComplete, LeRemoteConnectionParameterRequest,
- };
- use bt_hci::event::{DisconnectionComplete, Event, EventKind, EventPacket};
--use bt_hci::param::{
--    AddrKind, BdAddr, ConnHandle, CteKind, CteMask, DisconnectReason as HciDisconnectReason, Duration, EventMask,
--    LeEventMask, PhyOptions,
--};
-+use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
- use bt_hci::{ControllerToHostPacket, FromHciBytes};
- use embassy_futures::yield_now;
- use embassy_stm32::interrupt;
-+use stm32wb_hci::aci::durations::{CeLength, ConnInterval, SupervisionTimeout};
- use stm32wb_hci::aci::flags::{RadioActivityMask, Role};
-+use stm32wb_hci::aci::gap::{GapStartConnectionUpdate, GapTerminate};
- use stm32wb_hci::aci::gatt::GattInit;
- use stm32wb_hci::aci::hal::{HalLeTxTestPacketNumber, HalReadRssi, HalRssi, HalSetRadioActivityMask};
- use stm32wb_hci::aci::l2cap::L2capConnectionParameterUpdateReq;
-+use stm32wb_hci::aci::ranges::ConnLatency;
-+use stm32wb_hci::aci::values::DisconnectReason as AciDisconnectReason;
- pub use stm32wb_hci::event::BleEvent;
-+#[cfg(not(feature = "ble-stack-po"))]
-+use {
-+    crate::bluetooth::{gap::connection::ConnectionInitParams, gap::scanner::ScanParams, gatt::GattClient},
-+    bt_hci::param::BdAddr,
-+    stm32wb_hci::aci::durations::{ExtScanInterval, ExtScanWindow},
-+    stm32wb_hci::aci::gap::{GapCreateConnection, GapTerminateGapProc},
-+    stm32wb_hci::aci::values::{AddressType, ConnectableOwnAddressType, GapProcedure},
-+};
-+#[cfg(feature = "ble-stack-full")]
-+use {
-+    bt_hci::cmd::le::{
-+        LeConnCteRequestEnable, LeConnCteResponseEnable, LeReadAntennaInformation, LeReadBufferSizeV2,
-+        LeReadLocalSupportedFeatures, LeSetConnCteReceiveParams, LeSetConnCteTransmitParams,
-+    },
-+    bt_hci::param::{CteKind, CteMask},
-+};
- 
- use crate::bluetooth::error::BleError;
- use crate::bluetooth::gap::connection::{
--    Connection, ConnectionInitParams, ConnectionInterval, ConnectionManager, DisconnectReason, GapEvent,
--    MAX_CONNECTIONS, PhyKind,
-+    Connection, ConnectionInterval, ConnectionManager, DisconnectReason, GapEvent, MAX_CONNECTIONS, PhyKind,
- };
--use crate::bluetooth::gap::scanner::{ScanParams, ScanProcedure, Scanner};
-+use crate::bluetooth::gap::scanner::{ScanProcedure, Scanner};
- use crate::bluetooth::gap::types::{AdvData, AdvParams, BdAddrType};
- use crate::bluetooth::gap_init::{GapInitParams, init_gap_and_hal};
- use crate::bluetooth::gatt::{
--    GattClient, GattClientEvent, GattEvent, GattServer, client_events_from_vendor_event, from_vendor_event,
-+    GattClientEvent, GattEvent, GattServer, client_events_from_vendor_event, from_vendor_event,
- };
- use crate::bluetooth::hci::types::DtmPacketPayload;
- use crate::bluetooth::hci::{DtmRxPhy, DtmTxPhy, all_phys_from_raw, phy_mask_from_raw};
-@@ -228,31 +242,36 @@ impl<'d> HCI<'d, Normal> {
-             info!("le_set_event_mask OK");
-         }
- 
--        // 4. Read buffer sizes (optional - skip if not available)
--        info!("Calling le_read_buffer_size...");
--        match LeReadBufferSizeV2::new().exec(&self.controller).await {
--            Ok(r) => {
--                // The return parameters are packed: copy them out before
--                // borrowing the fields to log them.
--                let (acl_len, acl_packets, iso_len, iso_packets) = (
--                    r.le_acl_data_packet_length,
--                    r.total_num_le_acl_data_packets,
--                    r.iso_data_packet_length,
--                    r.total_num_iso_data_packets,
--                );
--                info!(
--                    "Buffer sizes - ACL: {} bytes x {} packets, ISO: {} bytes x {} packets",
--                    acl_len, acl_packets, iso_len, iso_packets
--                );
-+        // 4-5. Read buffer sizes and supported features, for the log only.
-+        // These HCI commands are only in the f
-```
-
-**File**: `embassy-stm32-wpan/src/bluetooth/security/mod.rs` (modified, +156/-149)
-```diff
-@@ -22,13 +22,13 @@
- //! security.set_authentication_requirements(ble.controller(), params).await?;
- //! ```
- 
--use bt_hci::cmd::le::{
--    LeClearFilterAcceptList, LeClearResolvingList, LeSetAddrResolutionEnable, LeSetResolvablePrivateAddrTimeout,
--};
-+use bt_hci::cmd::le::LeSetResolvablePrivateAddrTimeout;
-+#[cfg(feature = "ble-stack-full")]
-+use bt_hci::cmd::le::{LeClearFilterAcceptList, LeClearResolvingList, LeSetAddrResolutionEnable};
- // Reading the resolving list back is what the `defmt` diagnostics do; the
- // `not(defmt)` stubs of the `log_*` helpers skip it.
- #[cfg(feature = "defmt")]
--use bt_hci::cmd::le::{LeReadLocalResolvableAddr, LeReadPeerResolvableAddr, LeReadResolvingListSize};
-+use bt_hci::cmd::le::{LeReadLocalResolvableAddr, LeReadPeerResolvableAddr};
- use bt_hci::cmd::{AsyncCmd, SyncCmd};
- #[cfg(feature = "defmt")]
- use bt_hci::param::AddrKind;
-@@ -37,8 +37,8 @@ use stm32wb_hci::aci::AciEvent;
- use stm32wb_hci::aci::gap::{
-     GapAddDevicesToList, GapAllowRebond, GapAuthorizationResp, GapCheckBondedDevice, GapClearSecurityDb,
-     GapGetBondedDevices, GapNumericComparisonValueConfirmYesno, GapPairingRequestReply, GapPassKeyResp,
--    GapPasskeyInput, GapPeripheralSecurityReq, GapRemoveBondedDevice, GapSendPairingReq,
--    GapSetAuthenticationRequirement, GapSetIoCapability, ListEntry,
-+    GapPasskeyInput, GapPeripheralSecurityReq, GapRemoveBondedDevice, GapSetAuthenticationRequirement,
-+    GapSetIoCapability, ListEntry,
- };
- use stm32wb_hci::aci::general::AciWriteConfigData;
- use stm32wb_hci::aci::ranges::Passkey;
-@@ -520,23 +520,6 @@ impl SecurityManager {
-         Ok(())
-     }
- 
--    /// Request pairing/encryption from the central side.
--    ///
--    /// Sends a pairing request to the peer peripheral. Set `force_rebond` to
--    /// restart pairing even when a bond entry exists.
--    pub async fn request_pairing_central(
--        &self,
--        controller: &ControllerAdapter<'_>,
--        conn_handle: u16,
--        force_rebond: bool,
--    ) -> Result<(), BleError> {
--        GapSendPairingReq::new(ConnHandle::new(conn_handle), force_rebond)
--            .exec(controller)
--            .await?;
--
--        Ok(())
--    }
--
-     /// Reply to a pairing request signaled via `SecurityEvent::PairingRequest`.
-     ///
-     /// Set `accept` to `true` to continue pairing, or `false` to reject it.
-@@ -574,30 +557,6 @@ impl SecurityManager {
-         Ok(())
-     }
- 
--    /// Drop the controller-side copies of every bond: address resolution, the
--    /// resolving list and the Filter Accept List.
--    ///
--    /// [`clear_security_database`](Self::clear_security_database) only empties
--    /// the host bond database. The controller keeps its own IRK table, accept
--    /// list and per-peer privacy modes, and
--    /// [`configure_filter_and_resolving_list`](Self::configure_filter_and_resolving_list)
--    /// returns early once the database is empty, so nothing ever tells the
--    /// controller to forget them. Call this alongside `clear_security_database`
--    /// to leave the stack in the same state a reset would.
--    ///
--    /// Address resolution is disabled first because the Core Spec forbids
--    /// clearing the resolving list while translation is enabled and the radio is
--    /// active (Vol 4, Part E, 7.8.40).
--    ///
--    /// Must NOT be called while advertising, scanning, or initiating is active.
--    pub async fn clear_bond_lists(&self, controller: &ControllerAdapter<'_>) -> Result<(), BleError> {
--        LeSetAddrResolutionEnable::new(false).exec(controller).await?;
--        LeClearResolvingList::new().exec(controller).await?;
--        LeClearFilterAcceptList::new().exec(controller).await?;
--
--        Ok(())
--    }
--
-     /// Remove a specific bonded device
-     pub async fn remove_bonded_device(
-         &self,
-@@ -710,20 +669,6 @@ impl SecurityManager {
-         Ok(bonded)
-     }
- 
--    /// Enable or disable address resolution
--    ///
--    /// When enabled, the controller will automatically resolve resolvable
--    /// private addresses (RPA) using stored IRKs.
--    pub async fn set_address_resolution_enable(
--        &self,
--        controller: &ControllerAdapter<'_>,
--        enable: bool,
--    ) -> Result<(), BleError> {
--        LeSetAddrResolutionEnable::new(enable).exec(controller).await?;
--
--        Ok(())
--    }
--
-     /// Set RPA (Resolvable Private Address) timeout
-     ///
-     /// Sets the time interval after which a new RPA is generated.
-@@ -743,47 +688,6 @@ impl SecurityManager {
-         Ok(())
-     }
- 
--    /// Populate the controller's resolving list with bonded peer identities so
--    /// that reconnections from RPA-using peers (e.g. iOS) can be recognised as
--    /// the bonded peer.
--    ///
--    /// Without this, `set_address_resolution_enable(true)` only enables resolution
--    /// in the controller — there are no IRKs to resolve against. Incoming
--    /// `LL_ENC_REQ` from a bonded peer will fail with "SMP unexpected LTK request"
--    /// because the host 
-```
-
-**File**: `examples/stm32wba/src/bin/ble_central.rs` (modified, +4/-1)
-```diff
-@@ -32,6 +32,7 @@ use embassy_stm32_wpan::bluetooth::gap_init::GapInitParams;
- use embassy_stm32_wpan::bluetooth::{BleEvent, EventBuffer, HCI};
- use embassy_stm32_wpan::{HighInterruptHandler, LowInterruptHandler, Platform, new_platform};
- use panic_probe as _;
-+use stm32wb_hci::aci::flags::Role;
- use stm32wb_hci::aci::values::AddressType;
- 
- bind_interrupts!(struct Irqs {
-@@ -74,11 +75,13 @@ async fn main(spawner: Spawner) {
-             let gap_params = GapInitParams {
-                 bd_addr: [0x01, 0x00, 0x00, 0xE1, 0x80, 0x00],
-                 address_type: AddressType::Public,
-+                // `connect` needs the GAP central role.
-+                role: Role::CENTRAL,
-                 ..GapInitParams::default()
-             };
-             HCI::new_with_gap_params(platform, runtime, Irqs, gap_params).await
-         }
--        _ => HCI::new(platform, runtime, Irqs).await,
-+        _ => HCI::new_with_role(platform, runtime, Irqs, Role::CENTRAL).await,
-     }
-     .expect("BLE initialization failed");
- 
-```
-
----
-
-### Incident Patch 3: `ee435a8f` (2026-11-04)
-**Commit Message**: Merge pull request #7389 from lennlouisgeek/feature/stm32c5-dac-v9
-
-stm32: add DAC v9 support for STM32C5
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -255,6 +255,7 @@ DAC:
- - feat: stm32/dac: add HRTIM DAC triggers
- - feat: stm32/dac: type-erase DAC
- - feat: stm32/dac: add trigger trait impl
-+- feat: stm32/dac: add DAC v9 (STM32C5) support. DMA, triggered output, and ring-buffered output have not been hardware tested.
- 
- OPAMP:
- - feat: stm32/opamp: allow VINM0 as bias input
-```
-
-**File**: `embassy-stm32/build.rs` (modified, +2/-6)
-```diff
-@@ -1914,9 +1914,7 @@ fn main() {
-         let mut adc_pairs: BTreeMap<u8, (Option<Ident>, Option<Ident>)> = BTreeMap::new();
-         let mut seen_lcd_seg_pins = HashSet::new();
- 
--        if (matches!(regs.kind, "hash" | "opamp") || (regs.kind == "dac" && regs.version == "v9"))
--            && chip_name.starts_with("stm32c5")
--        {
-+        if matches!(regs.kind, "hash" | "opamp") && chip_name.starts_with("stm32c5") {
-             continue;
-         }
- 
-@@ -2333,9 +2331,7 @@ fn main() {
- 
-     let mut has_dfsdm_adc = false;
-     for (p, regs) in &peripheral_list {
--        if (matches!(regs.kind, "hash" | "opamp") || (regs.kind == "dac" && regs.version == "v9"))
--            && chip_name.starts_with("stm32c5")
--        {
-+        if matches!(regs.kind, "hash" | "opamp") && chip_name.starts_with("stm32c5") {
-             continue;
-         }
- 
-```
-
-**File**: `embassy-stm32/src/dac/mod.rs` (modified, +53/-29)
-```diff
-@@ -15,7 +15,7 @@ pub use ringbuffered::RingBufferedDacChannel;
- 
- use crate::dma::{ChannelAndRequest, Packing, word as dma};
- use crate::mode::{Async, Blocking, Mode as PeriMode};
--#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
- use crate::pac::dac;
- use crate::pac::dac::Dac as Regs;
- use crate::rcc::{self, RccInfo, RccPeripheral, SealedRccPeripheral};
-@@ -81,7 +81,7 @@ impl<T: Instance> ChannelTrigger<T> for SOFTWARE {
- }
- 
- /// Operating mode for DAC channel
--#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
- #[derive(Debug, Copy, Clone, Eq, PartialEq)]
- #[cfg_attr(feature = "defmt", derive(defmt::Format))]
- pub enum Mode {
-@@ -106,7 +106,7 @@ pub enum Mode {
-     SampleHoldInternalUnbuffered,
- }
- 
--#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+#[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
- impl Mode {
-     fn mode(&self) -> dac::vals::Mode {
-         match self {
-@@ -159,8 +159,8 @@ impl State {
- }
- /// Driver for a single DAC channel.
+ /// nRF Timer driver.
  ///
--/// If you want to use both channels, either together or independently,
--/// create a [`Dac`] first and use it to access each channel.
-+/// On devices with two DAC channels, create a `Dac` first to use both channels,
-+/// either together or independently.
- pub struct DacChannel<'d, M: PeriMode> {
-     phantom: PhantomData<&'d mut M>,
-     #[allow(unused)]
-@@ -188,7 +188,7 @@ impl<'d> DacChannel<'d, Async> {
-             Some(peri),
-             None,
-             new_dma!(dma, _irq),
--            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
-             Mode::NormalExternalBuffered,
-             #[cfg(stm32g4)]
-             vals::Wave::Disabled,
-@@ -214,7 +214,7 @@ impl<'d> DacChannel<'d, Async> {
-             Some(peri),
-             Some(trigger.signal()),
-             new_dma!(dma, _irq),
--            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
-             Mode::NormalExternalBuffered,
-             #[cfg(stm32g4)]
-             vals::Wave::Disabled,
-@@ -230,7 +230,10 @@ impl<'d> DacChannel<'d, Async> {
-     /// The channel is set to [`Mode::NormalInternalUnbuffered`] and enabled on creation.
-     /// Note that some methods, such as `set_trigger()` and `set_mode()`, will disable the
-     /// channel; you must re-enable it with `enable()`.
--    #[cfg(all(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8), not(any(stm32h56x, stm32h57x))))]
-+    #[cfg(all(
-+        any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9),
-+        not(any(stm32h56x, stm32h57x))
-+    ))]
-     pub fn new_internal<T: Instance, C: Channel, D: Dma<T, C>>(
-         peri: Peri<'d, T>,
-         dma: Peri<'d, D>,
-@@ -255,7 +258,10 @@ impl<'d> DacChannel<'d, Async> {
-     /// The channel is set to [`Mode::NormalInternalUnbuffered`] and enabled on creation.
-     /// Note that some methods, such as `set_trigger()` and `set_mode()`, will disable the
-     /// channel; you must re-enable it with `enable()`.
--    #[cfg(all(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8), not(any(stm32h56x, stm32h57x))))]
-+    #[cfg(all(
-+        any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9),
-+        not(any(stm32h56x, stm32h57x))
-+    ))]
-     pub fn new_triggered_internal<T: Instance, C: Channel, D: Dma<T, C>>(
-         peri: Peri<'d, T>,
-         dma: Peri<'d, D>,
-@@ -389,7 +395,7 @@ impl<'d> DacChannel<'d, Blocking> {
-             Some(peri),
-             None,
-             None,
--            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))]
-+            #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))]
-             Mode::NormalExternalBuffered,
-             #[cfg(stm32g4)]
-             vals::Wave::Disabled,
-@@ -408,7 +414,10 @@ impl<'d> DacChannel<'d, Blocking> {
-     ///
-     /// By default, triggering is disabled, but it can be enabled using
-     /// [`DacChannel::set_trigger()`].
--    #[cfg(all(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8), not(any(stm32h56x, stm32h57x))))]
-+    #[cfg(all(
-+        any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9),
-+        not(any(stm32h56x, stm32h57x))
-+    ))]
-     pub fn new_internal_blocking<T: Instance, C: Channel>(peri: Peri<'d, T>) -> Self {
-         Self::new_inner::<T, C>(
-             Some(peri),
-@@ -476,7 +485,7 @@ impl<'d, M: PeriMode> DacChannel<'d, M> {
-         peri: Option<Peri<'d, T>>,
-         trigger: Option<u8>,
-         dma: Option<ChannelAndRequest<'d>>,
--        #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8))] mode: Mode,
-+        #[cfg(any(dac_v3, dac_v4, dac_v5, dac_v6, dac_v7, dac_v8, dac_v9))] mode: Mode,
-         #[cfg(stm32g4)] wave: dac::vals::Wave,
-         #[cfg(stm32g4)] inc_trigger
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ pub mod crc;
- pub mod cryp;
- #[cfg(csi)]
- pub mod csi;
--#[cfg(all(dac, not(dac_v9)))]
-+#[cfg(dac)]
- pub mod dac;
- #[cfg(dcmi)]
- pub mod dcmi;
-```
-
-**File**: `examples/stm32c5/src/bin/dac.rs` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+#![no_std]
-+#![no_main]
+ /// The timer has an internal counter, which is incremented for every tick of the timer.
+@@ -86,6 +121,7 @@ pub enum Frequency {
+ pub struct Timer<'d> {
+     r: pac::timer::Timer,
+     ccs: usize,
++    input_frequency: u8,
+     _p: PhantomData<&'d ()>,
+ }
+ 
+@@ -112,6 +148,7 @@ impl<'d> Timer<'d> {
+         let this = Self {
+             r: regs,
+             ccs: T::CCS,
++            input_frequency: T::INPUT_FREQUENCY as u8,
+             _p: PhantomData,
+         };
+ 
+@@ -207,13 +244,12 @@ impl<'d> Timer<'d> {
+     /// This will stop the timer if it isn't already stopped,
+     /// because the timer may exhibit 'unpredictable behaviour' if it's frequency is changed while it's running.
+     pub fn set_frequency(&self, frequency: Frequency) {
++        let prescaler = (frequency as u8 as i8) - (self.input_frequency as i8);
++        debug_assert!((0..=9).contains(&prescaler), "unsupported timer frequency");
 +
-+// Tested on STM32C562RE. Measure PA4 relative to GND with a DC voltmeter.
-+// With VREF+ = 3.3 V, the output steps through approximately 0, 0.825, 1.65,
-+// 2.475 and 3.3 V, holding each level for two seconds before repeating.
-+
-+use defmt::*;
-+use defmt_rtt as _;
-+use embassy_executor::Spawner;
-+use embassy_stm32::Config;
-+use embassy_stm32::dac::{DacChannel, u12r};
-+use embassy_time::Timer;
-+use panic_probe as _;
-+
-+#[embassy_executor::main]
-+async fn main(_spawner: Spawner) {
-+    let mut config = Config::default();
-+
-+    // Configure the shared ADC/DAC kernel clock before initializing DAC1.
-+    config.rcc.mux.adcdacsel = embassy_stm32::rcc::mux::Adcdacsel::Hclk1;
-+    config.rcc.adcdac_pre = embassy_stm32::pac::rcc::vals::Adcdacpre::Div2;
-+
-+    let p = embassy_stm32::init(config);
-+
-+    // DAC1 channel 1 drives PA4 with the output buffer enabled.
-+    let mut dac = DacChannel::new_blocking(p.DAC1, p.PA4);
-+
-+    loop {
-+        dac.set(u12r(0));
-+        info!("DAC: 0 / 4095");
-+        Timer::after_secs(2).await;
-+
-+        dac.set(u12r(1024));
-+        info!("DAC: 1024 / 4095");
-+        Timer::after_secs(2).await;
-+
-+        dac.set(u12r(2048));
-+        info!("DAC: 2048 / 4095");
-+        Timer::after_secs(2).await;
-+
-+        dac.set(u12r(3072));
-+        info!("DAC: 3072 / 4095");
-+        Timer::after_secs(2).await;
-+
-+        dac.set(u12r(4095));
-+        info!("DAC: 4095 / 4095");
-+        Timer::after_secs(2).await;
-+    }
-+}
+         self.stop();
+ 
+-        self.r
+-            .prescaler()
+-            // SAFETY: `frequency` is a variant of `Frequency`,
+-            // whose values are all in the range of 0-9 (the valid range of `prescaler`).
+-            .write(|w| w.set_prescaler(frequency as u8))
++        self.r.prescaler().write(|w| w.set_prescaler(prescaler as u8));
+     }
+ 
+     /// Returns this timer's `n`th CC register.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7443** (2026-11-06): stm32/cordic: fix the q1.15 result length check (@emincan2000)
+- **PR #7441** (2026-11-06): stm32/usb: add optional VBUS detection (@leftger)
+- **PR #7439** (2026-11-06): stm32/usb: apply the OTG_HS PHY tuning on U5 (@tobymurray)
 - **PR #7438** (2026-11-05): stm32/vrefbuf: enable the G0x1 clock (@leftger)
 - **PR #7437** (2026-11-05): stm32/lptim: pick a prescaler whose reload fits in 16 bits (@leftger)
 - **PR #7436** (2026-11-05): stm32/spi: stop rejecting a slave's frequency (@Sandvoxel)
-- **PR #7435** (2026-11-05): stm32: add TrustZone secure helpers and a WBA65 example (@leftger)
-- **PR #7432** (2026-11-04): [MCXA]: add MBC driver (@felipebalbi)
-- **PR #7431** (2026-11-04): stm32/i2c v2: interrupt-driven async transfers for drivers without DMA channels (@Sandvoxel)
 
 ---
 
@@ -2401,28 +1705,40 @@ stm32: add DAC v9 support for STM32C5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7408 from tobymurray/stm32-lptim-now-ue-race
+## X. Merge pull request #7352 from kumbung01/fix-nrf-timer-frequency
 
 **RULE**:
-When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-nrf/src/chips/nrf54l05_app.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `508c2c06`: Merge pull request #7408 from tobymurray/stm32-lptim-now-ue-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5cde5cc`: Merge pull request #7352 from kumbung01/fix-nrf-timer-frequency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-nrf/src/chips/nrf54l05_app.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- fix: stm32/time-driver-lptim: `now()` retries if the update event flag changes while it reads the counter; a wrap between the two reads returned a time one counter period ahead, then time went backwards
+impl_timer!(TIMER00, TIMER00, TIMER00, 6, F128MHz);
+impl_timer!(TIMER10, TIMER10, TIMER10, 8, F32MHz);
+impl_timer!(TIMER20, TIMER20, TIMER20, 6, F16MHz);
+impl_timer!(TIMER21, TIMER21, TIMER21, 6, F16MHz);
+impl_timer!(TIMER22, TIMER22, TIMER22, 6, F16MHz);
+impl_timer!(TIMER23, TIMER23, TIMER23, 6, F16MHz);
+impl_timer!(TIMER24, TIMER24, TIMER24, 6, F16MHz);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+impl_timer!(TIMER00, TIMER00, TIMER00, 6);
+impl_timer!(TIMER10, TIMER10, TIMER10, 8);
+impl_timer!(TIMER20, TIMER20, TIMER20, 6);
+impl_timer!(TIMER21, TIMER21, TIMER21, 6);
+impl_timer!(TIMER22, TIMER22, TIMER22, 6);
+impl_timer!(TIMER23, TIMER23, TIMER23, 6);
+impl_timer!(TIMER24, TIMER24, TIMER24, 6);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `508c2c06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5cde5cc` are properly handled with clean fallback behavior.
