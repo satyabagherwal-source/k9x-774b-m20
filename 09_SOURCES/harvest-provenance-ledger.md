@@ -7855,3 +7855,8 @@ Every entry in this ledger must capture:
 | `learn-cd-357` | `local_workspace` | `local` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:10.971Z |
 | `learn-dom-h-120d806f` | `project://local_workspace` | `1.0.0` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:11.002Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `155fa931` | Multi-dimensional audit evidence | 2026-11-06T13:13:04.159Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `5820aa27` | Multi-dimensional audit evidence | 2026-11-06T13:20:17.016Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `bfbdbbf1` | Multi-dimensional audit evidence | 2026-11-06T13:20:22.096Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `a55ed393` | Multi-dimensional audit evidence | 2026-11-06T13:20:25.362Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `5974def3` | Multi-dimensional audit evidence | 2026-11-06T13:20:26.601Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `b95e2408` | Multi-dimensional audit evidence | 2026-11-06T13:20:30.602Z |

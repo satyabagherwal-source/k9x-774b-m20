@@ -7846,3 +7846,8 @@
 | `CYCLE-2026-11-06-STAGED` | `2026-11-06T09:10:10.970Z` | `local` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | Pending |
 | `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:10:11.002Z` | `local_workspace` | UNIT_TEST_REPRODUCTION | `VERIFIED` | `DOM-H-120D806F` [Domain H] | Yes (`92bff619...`) |
 | `CYCLE-20261106-VW64` | `2026-11-06T13:13:04.156Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5052c260...`) |
+| `CYCLE-20261106-565W` | `2026-11-06T13:20:17.012Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e0fbb93e...`) |
+| `CYCLE-20261106-5A30` | `2026-11-06T13:20:22.092Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fb041a3b...`) |
+| `CYCLE-20261106-5CLQ` | `2026-11-06T13:20:25.358Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1b4b441...`) |
+| `CYCLE-20261106-5DK4` | `2026-11-06T13:20:26.596Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7380383...`) |
+| `CYCLE-20261106-5GNA` | `2026-11-06T13:20:30.598Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70e82a0d...`) |

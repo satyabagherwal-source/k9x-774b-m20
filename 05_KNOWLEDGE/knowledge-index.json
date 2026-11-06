@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T13:13:04.043Z",
+  "last_updated": "2026-11-06T13:20:30.507Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2903,11 +2903,16 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "8f4601d2",
-      "content_hash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
+      "source_version": "bfbdbbf1",
+      "content_hash": "fb041a3bcc072b984d3cc27b95cb48530925171d1c8ad69dfa1f0bcf0878ba47",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3057,
           "title": "tests): give Sites e2e builds room to finish under the lane's load",
@@ -2944,7 +2949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:10:49.582Z",
+      "verified_at": "2026-11-06T13:20:21.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36102,11 +36107,16 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "d218233a",
-      "content_hash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
+      "source_version": "a55ed393",
+      "content_hash": "c1b4b4419dbdda5e73832973fbef8ab5849739d83abcac91d70a1aaff380b554",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
@@ -36183,7 +36193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:57:35.439Z",
+      "verified_at": "2026-11-06T13:20:25.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47557,11 +47567,16 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "42758592",
-      "content_hash": "f41be11f267b7ee2ecadb96da7314f818bd2fce5de179ed39e2659e150bffe31",
+      "source_version": "5820aa27",
+      "content_hash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Compare JSON String/Template",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1876,
           "title": "hurlfmt panic when importing curl commands without a URL",
@@ -47633,7 +47648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:00:35.062Z",
+      "verified_at": "2026-11-06T13:20:16.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63453,11 +63468,16 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "822e884f",
-      "content_hash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
+      "source_version": "b95e2408",
+      "content_hash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Cypress proxy crash on explicit lock with prerequisites",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2108,
           "title": "CHYT-1479: Fix CHYT abort on unordered key ranges",
@@ -63539,7 +63559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:10:05.554Z",
+      "verified_at": "2026-11-06T13:20:30.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73337,13 +73357,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "9baea576",
-      "content_hash": "df6a0285a8ae77348e74afe1256bd8491b8cde66589b51f981c1657583f75fd2",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "5974def3",
+      "content_hash": "f73803833cf9ac195b205caf355f9ae0166fd9d1b9dd9985c1730f565b0a86aa",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -73353,6 +73373,11 @@
         {
           "number": null,
           "title": "Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-arti",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -73481,7 +73506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:25:15.149Z",
+      "verified_at": "2026-11-06T13:20:26.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

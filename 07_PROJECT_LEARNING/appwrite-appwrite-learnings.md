@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `8f4601d2`  
+> **Source Version**: `bfbdbbf1`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:10:48.872Z  
+> **Timestamp**: 2026-11-06T13:20:20.180Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:10:48.362Z  
+> **Harvest Timestamp**: 2026-11-06T13:20:20.172Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57861 stars
+- **Stars / Engagement**: 57874 stars
 
 ---
 
@@ -1926,355 +1926,206 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e38d4cfc` (2026-11-03)
-**Commit Message**: docs(blog): add Firewall screenshots and fix Free-plan rule advice
+### Incident Patch 1: `0bcd059e` (2026-11-06)
+**Commit Message**: Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain
 
-Phone OTP is not on the Free plan, so the OTP rule moves to the Pro section.
-The sign-in limit becomes 10 per 600 seconds, which is stricter than the
-built-in failed-login limit. The two Free rules now depend on where users
-sign in: client SDK, server code on Sites, or server code elsewhere.
+fix(console): stop locking paid projects over included usage
 
-**File**: `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc` (modified, +177/-79)
+**File**: `apps/console/src/lib/billing/billing-limits.ts` (modified, +19/-0)
 ```diff
-@@ -1,7 +1,7 @@
- ---
- layout: post
- title: "Add your first Appwrite Firewall rules to a new project"
--description: "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules."
-+description: "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do."
- date: 2026-11-03
- cover: /images/blog/add-your-first-appwrite-firewall-rules/cover.avif
- timeToRead: 9
-@@ -12,27 +12,26 @@ faqs:
-   - question: "How many Firewall rules can I create on the Appwrite Free plan?"
-     answer: "Free organizations can create 2 Firewall rules per project, and Pro and Scale organizations can create 50. Disabled rules count toward the limit, every rule a preset creates counts, and the rule Attack mode creates keeps counting after you turn Attack mode off. See [Plan limits](/docs/products/firewall/rules#plan-limits)."
-   - question: "Which two Firewall rules should a new project on the Free plan add?"
--    answer: "Spend the first slot on a rate limit for sign-in: an API rule on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST`, at 10 requests per 60 seconds per IP address. If your server signs users in with an API key, put the limit on your site's login route instead. If your frontend runs on Appwrite Sites, spend the second on a challenge rule for your sign-up page. Otherwise, use the **Rate limit project API** preset and give it priority `200` so the sign-in rule runs first."
-+    answer: "If users sign in from the browser or a mobile app with an Appwrite client SDK, add an API rate limit on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST` at 10 requests per 600 seconds per IP address, then the **Rate limit project API** preset at priority `200`. If server code on Appwrite Sites signs users in, put both rules on the site: a rate limit on the login route and a challenge on the sign-up page. If server code hosted elsewhere signs users in, limit sign-in in that code, because Firewall sees only your server's address."
-   - question: "What does Appwrite protect without any Firewall rules?"
--    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos) on layers 3, 4, and 7, and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints such as sign-in, but only to client SDK traffic, and you cannot change their values."
-+    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos), and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints. Sign-in, for example, blocks an address after 100 failed attempts in an hour and an email address after 10. These limits apply only to client SDK traffic, and you cannot change them."
-   - question: "Why does my Appwrite Firewall rate limit block all my users at once?"
--    answer: "Your server probably creates sessions with an API key, so Appwrite sees your server's IP address for every user and counts them all as one client. API keys skip Appwrite's built-in rate limits, but Firewall rules still apply to them. Limit the login route on your Appwrite Site instead, or limit sign-in attempts in your server code."
-+    answer: "Your server probably calls Appwrite with an API key, so Appwrite sees your server's IP address for every user and counts them all as one client. API keys skip Appwrite's built-in rate limits, but Firewall rules still apply to them. Put the limit on your Appwrite Site's login route instead, or limit sign-in attempts in your server code."
-   - question: "Can an Appwrite Firewall rule lock me out of the Console?"
-     answer: "No. Firewall never blocks the Appwrite Console, so you can always disable a rule that is too strict. Your own SDK calls and API key requests do go through your rules, and a challenge on a Site, including Attack mode, challenges you too."
-   - question: "How do I know which Firewall rule blocked a request?"
--    answer: "When a rule stops a request, the response includes `X-Appwrite-WAF-Rule` with the rule ID and `X-Appwrite-WAF-Action` with the action, such as `deny` or `rateLimit`. A `429` response without these headers came from Appwrite's built-in rate limits, not from your Firewall rules."
-+    answer: "Read the response headers. `X-Appwrite-WAF-Rule` holds the rule ID and `X-Appwrite-WAF-Action` holds the action, such as `deny` or `rateLimit`. API rules add them to every request they match, even ones they let through. A `429` that carries `X-RateLimit-*` headers and no Firewall headers came from Appwrite's built-in rate limits."
- ---
- 
--A new Appwrite Cloud project is not wide open, but none of its built-in pr
-```
-
-**File**: `apps/console/src/lib/blog/generated/manifest.ts` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ export const BLOG_POSTS: BlogPostMeta[] = [
-     "slug": "add-your-first-appwrite-firewall-rules",
-     "href": "/blog/post/add-your-first-appwrite-firewall-rules",
-     "title": "Add your first Appwrite Firewall rules to a new project",
--    "description": "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules.",
-+    "description": "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do.",
-     "date": "2026-11-03",
-     "lastUpdated": "2026-11-03",
-     "timeToRead": 9,
-```
-
----
-
-### Incident Patch 2: `8f4601d2` (2026-11-03)
-**Commit Message**: Merge pull request #15268 from appwrite/fix/migrations-export-link-scope
-
-fix(migrations): hide the export download link from a data-blind key
-
-**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/Action.php` (modified, +35/-0)
-```diff
-@@ -121,6 +121,41 @@ protected function authorize(Request $request, array $resources, array $required
-         return \array_values($scopes);
-     }
- 
-+    /**
-+     * An export's download link streams the full collection, so a read that cannot read that collection's
-+     * data must not receive it: the creation gate is otherwise reached through links other callers left on
-+     * export migrations. The scope demanded is the one the family's creation gate demands, so a read grant
-+     * for one database family does not expose another's dump. A console session carries no API key on the
-+     * request and keeps the link.
-+     */
-+    protected function redactExportLink(Document $migration, Request $request): Document
-+    {
-+        if ($request->getHeaderLine('x-appwrite-key') === '') {
-+            return $migration;
-+        }
-+
-+        $options = $migration->getAttribute('options', []);
-+
-+        if (!isset($options['downloadUrl'])) {
-+            return $migration;
-+        }
-+
-+        $dataRead = match ($migration->getAttribute('parentResourceType')) {
-+            Resource::TYPE_DATABASE_DOCUMENTSDB => ['documentsdb.documents.read'],
-+            Resource::TYPE_DATABASE_VECTORSDB => ['vectorsdb.documents.read'],
-+            default => ['rows.read', 'documents.read'],
-+        };
-+
-+        if (!empty(\array_intersect($dataRead, $request->getScopes()))) {
-+            return $migration;
-+        }
-+
-+        unset($options['downloadUrl']);
-+        $migration->setAttribute('options', $options);
-+
-+        return $migration;
-+    }
-+
-     protected static function transferGroupForDatabaseType(string $databaseType): string
-     {
-         return match ($databaseType) {
-```
-
-**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/Get.php` (modified, +4/-6)
-```diff
-@@ -6,16 +6,13 @@
- use Appwrite\SDK\AuthType;
- use Appwrite\SDK\Method;
- use Appwrite\SDK\Response as SDKResponse;
-+use Appwrite\Utopia\Request;
- use Appwrite\Utopia\Response;
- use Utopia\Database\Database;
- use Utopia\Database\Validator\UID;
--use Utopia\Platform\Action;
--use Utopia\Platform\Scope\HTTP;
- 
- class Get extends Action
- {
--    use HTTP;
--
-     public static function getName(): string
-     {
-         return 'getMigration';
-@@ -43,19 +40,20 @@ public function __construct()
-                 ]
-             ))
-             ->param('migrationId', '', fn (Database $dbForProject) => new UID($dbForProject->getMaxUidLength()), 'Migration unique ID.', false, ['dbForProject'])
-+            ->inject('request')
-             ->inject('response')
-             ->inject('dbForProject')
-             ->callback($this->action(...));
-     }
- 
--    public function action(string $migrationId, Response $response, Database $dbForProject): void
-+    public function action(string $migrationId, Request $request, Response $response, Database $dbForProject): void
-     {
-         $migration = $dbForProject->getDocument('migrations', $migrationId);
- 
-         if ($migration->isEmpty()) {
-             throw new Exception(Exception::MIGRATION_NOT_FOUND);
-         }
- 
--        $response->dynamic($migration, Response::MODEL_MIGRATION);
-+        $response->dynamic($this->redactExportLink($migration, $request), Response::MODEL_MIGRATION);
-     }
+@@ -98,6 +98,25 @@ export function isProjectLockedByPlanUsage(
+   )
  }
+ 
++/**
++ * True when a project's own `billingLimits` lock it. Cloud writes these for
++ * plans that meter usage per project (Pro, Scale), where overage is billed and
++ * only bandwidth suspends the API. Free plans lock through the organization's
++ * `billingLimits`, checked with {@link isProjectLockedByPlanUsage}.
++ */
++export function isProjectLockedByProjectUsage(
++  resource:
++    | {
++        billingLimits?: BillingLimitsMap | null
++      }
++    | null
++    | undefined,
++): boolean {
++  return getReachedPlanUsageLimitKeys(resource?.billingLimits).includes(
++    'bandwidth',
++  )
++}
++
+ /**
+  * English recovery sentence after "reached its plan limit for {resource}".
+  */
 ```
 
-**File**: `src/Appwrite/Platform/Modules/Migrations/Http/Migrations/XList.php` (modified, +5/-5)
+**File**: `apps/console/src/lib/react-query/hooks/organizations.ts` (modified, +1/-0)
 ```diff
-@@ -7,22 +7,19 @@
- use Appwrite\SDK\Method;
- use Appwrite\SDK\Response as SDKResponse;
- use Appwrite\Utopia\Database\Validator\Queries\Migrations;
-+use Appwrite\Utopia\Request;
- use Appwrite\Utopia\Response;
- use Utopia\Database\Database;
- use Utopia\Database\Document;
- use Utopia\Database\Exception\Order as OrderException;
- use Utopia\Database\Exception\Query as QueryException;
- use Utopia\Database\Query;
- use Utopia\Database\Validator\Query\Cursor;
--use Utopia\Platform\Action;
--use Utopia\Platform\Scope\HTTP;
- use Utopia\Validator\Boolean;
- use Utopia\Validator\Text;
+@@ -105,6 +105,7 @@ export function isBudgetLimitReached(
+ export {
+   isPlanUsageLimitReached,
+   isProjectLockedByPlanUsage,
++  isProjectLockedByProjectUsage,
+ } from '@/lib/billing/billing-limits'
  
- class XList extends Action
- {
--    use HTTP;
--
-     public static function getName(): string
-     {
-         return 'listMigrations';
-@@ -52,12 +49,13 @@ public function __construct()
-             ->param('queries', [], new Migrations(), 'Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' queries are allowed, each ' . APP_LIMIT_ARRAY_ELEMENT_SIZE . ' characters long. You may filter on the following attributes: ' . implode(', ', Migrations::ALLOWED_ATTRIBUTES), true)
-             ->param('search', '', new Text(256), 'Search term to filter your list results. Max length: 256 chars.', true)
-             ->param('total', true, new Boolean(true), 'When set to false, the total count returned will be 0 and will not be calculated.', true)
-+            ->inject('request')
-             ->inject('response')
-             ->inject('dbForProject')
-             ->callback($this->action(...));
-     }
- 
--    public function action(array $queries, string $search, bool $includeTotal, Response $response, Database $dbForProject): void
-+    public function action(array $queries, string $search, bool $includeTotal, Request $request, Response $response, Database $dbForProject): void
-     {
-         try {
-             $queries = Query::parseQueries($queries);
-@@ -96,6 +94,8 @@ public function action(array $queries, string $search, bool $includeTotal, Respo
-             throw new Exception(Exception::DATABASE_QUERY_ORDER_NULL, "The order attribute '{$e->getAttribute()}' had a null value. Cursor pagination requires all documents order attribute values are non-null.");
-         }
- 
-+        $migrations = \array_map(fn (Document $migration): Document => $this->redactExportLink($migration, $request), $migrations);
-+
-         $response->dynamic(new Document([
-             'migrations' => $migrations,
-             'total' => $total,
+ /**
 ```
 
-**File**: `tests/e2e/Services/Migrations/MigrationsBase.php` (modified, +67/-0)
+**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +15/-10)
 ```diff
-@@ -8241,6 +8241,73 @@ public function testCreateJSONExport(): void
-         $this->assertArrayHasKey('email', $decoded[0], 'JSON documents should contain email field');
-         $this->assertStringContainsString('Test User', $decoded[0]['name'], 'JSON should contain test data');
+@@ -38,6 +38,7 @@ import {
+   isBudgetLimitReached,
+   isPlanUsageLimitReached,
+   isProjectLockedByPlanUsage,
++  isProjectLockedByProjectUsage,
+   resolveProjectTeamIdFromConsole,
+   useOrganizationById,
+ } from '@/lib/react-query/hooks'
+@@ -356,7 +357,7 @@ export const Route = createFileRoute('/_public/projects/$projectId')({
+       // leave the project open so customers can delete resources.
+       const planUsageLimitReached =
+         !budgetLimitReached &&
+-        (isProjectLockedByPlanUsage(projectData) ||
++        (isProjectLockedByProjectUsage(projectData) ||
+           isProjectLockedByPlanUsage(organization))
  
-+        // The download link streams the whole collection, so a key that cannot read the data must not
-+        // receive it, even though the export already exists (it was created by the full project key above).
-+        $migrationsOnly = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $this->getProject()['$id'],
-+            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'migrations.write']),
-+        ]);
-+        $this->assertEquals(200, $migrationsOnly['headers']['status-code']);
-+        $this->assertEquals('completed', $migrationsOnly['body']['status']);
-+        $this->assertArrayNotHasKey('downloadUrl', (array) $migrationsOnly['body']['options']);
-+
-+        // A key that can read the collection's data still receives the link.
-+        $dataReader = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $this->getProject()['$id'],
-+            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documents.read', 'rows.read']),
-+        ]);
-+        $this->assertEquals(200, $dataReader['headers']['status-code']);
-+        $this->assertArrayHasKey('downloadUrl', (array) $dataReader['body']['options']);
-+
-+        // A read grant for another database family must not expose this family's dump: the gate
-+        // demands the scope its own family's export creation demanded, not any data read scope.
-+        $otherFamily = $this->client->call(Client::METHOD_GET, '/migrations/' . $migrationId, [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $this->getProject()['$id'],
-+            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documentsdb.documents.read']),
-+        ]);
-+        $this->assertEquals(200, $otherFamily['headers']['status-code']);
-+        $this->assertArrayNotHasKey('downloadUrl', (array) $otherFamily['body']['options']);
-+
-+        // The list endpoint redacts on the same rule as the single read.
-+        $listAsMigrationsOnly = $this->client->call(Client::METHOD_GET, '/migrations', [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $this->getProject()['$id'],
-+            'x-appwrite-key' => $this->getNewKey(['migrations.read']),
-+        ], [
-+            'queries' => [Query::limit(100)->toString()],
-+        ]);
-+        $this->assertEquals(200, $listAsMigrationsOnly['headers']['status-code']);
-+        $listed = null;
-+        foreach ($listAsMigrationsOnly['body']['migrations'] as $candidate) {
-+            if ($candidate['$id'] === $migrationId) {
-+                $listed = $candidate;
-+                break;
-+            }
-+        }
-+        $this->assertNotNull($listed);
-+        $this->assertArrayNotHasKey('downloadUrl', (array) $listed['options']);
-+
-+        $listAsDataReader = $this->client->call(Client::METHOD_GET, '/migrations', [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $this->getProject()['$id'],
-+            'x-appwrite-key' => $this->getNewKey(['migrations.read', 'documents.read', 'rows.read']),
-+        ], [
-+            'queries' => [Query::limit(100)->toString()],
-+        ]);
-+        $this->assertEquals(200, $listAsDataReader['headers']['status-code']);
-+        $listedForReader = null;
-+        foreach ($listAsDataReader['body']['migrations'] as $candidate) {
-+            if ($candidate['$id'] === $migrationId) {
-+                $listedForReader = $candidate;
-+                break;
-+            }
-+        }
-+        $this->assertNotNull($listedForReader);
-+        $this->assertArrayHasKey('downloadUrl', (array) $listedForReader['options']);
-+
-         // Cleanup
-         $this->client->call(Client::METHOD_DELETE, '/databases/' . $databaseId, [
-             'x-appwrite-project' => $this->getProject()['$id'],
+       if (budgetLimitReached || planUsageLimitReached) {
+@@ -638,7 +639,7 @@ function ProjectLayout() {
+       (routeContext.planUsageLimitReached === true ||
+         loaderData?.planUsageLimitReached === true ||
+         isProjectLockedByPlanUsage(billingOrganization) ||
+-        isProjectLockedByPlanUsage(project)),
++        isProjectLockedByProjectUsage(project)),
+   )
+ 
+   const projectBlocked = Boolean(
+@@ -648,17 +649,21 @@ function ProjectLayout() {
+         loaderData?.projectBlocked === true ||
+         hasActiveProjectBlock(projectData, projectId)),
+   )
+-  const planUsageBillingLimits =
+-    billingOrganization?.billingLimits &&
+-    isPlanUsageLimitReached(billingOrganization)
+-      ? billingOrganization.billingLimits
+-      : project?.billingLimits
++  // The curtain names whichever limit locked the project: the organization's,
++  // or the project's own bandwidth on plans that bill other overage.
++  const planUsageCurtainLimits = isProjectLockedByPlanUsage(
++    billingOrganization,
++  )
++    ? billingOrganization?.billingLimits
++    : project?.billingLimits
++  // A project's own limits come from plans that bill overage, so only the
++  // organization's limits mean API access is suspended.
++  const planUsageBillingLimits = billingOrganization?.billingLimits
+   const showPlanUsageLimitBanner =
+     !budgetLimitReached &&
+     !planUsageLimitReached &&
+     features.billing &&
+-    (isPlanUsageLimitReached(billingOrganization) ||
+-      isPlanUsageLimitReached(project))
++    isPlanUsageLimitReached(billingOrganization)
+ 
+   const skipInvoiceBanners =
+     budgetLimitReached || planUsageLimitReached || projectBlocked
+@@ -883,7 +888,7 @@ function ProjectLayout() {
+       ) : planUsageLimitReached ? (
+         <PlanUsageLimitProjectCurtain
+           teamId={budgetCurtainTeamId}
+-          billingLimits={planUsageBillingLimits}
++          billingLimits={planUsageCurtainLimits}
+         />
+       ) : projectBlocked && projectForPaused?.teamId ? (
+         <BlockedProjectCurtain teamId={projectForPaused.teamId} />
 ```
 
 ---
 
-### Incident Patch 3: `579ba961` (2026-11-03)
-**Commit Message**: Merge pull request #15259 from appwrite/fix/schedule-strip-ephemeral-credentials
+### Incident Patch 2: `c28fbef5` (2026-11-06)
+**Commit Message**: fix(console): keep the project's limits for the plan limit curtain
 
-fix(functions): keep server credentials out of client-readable schedules
+The curtain names the limit that locked the project, which on paid plans
+is the project's own bandwidth, while the banner keeps the organization's.
 
-**File**: `src/Appwrite/Platform/Modules/Functions/Http/Executions/Create.php` (modified, +10/-1)
+**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +10/-3)
 ```diff
-@@ -327,8 +327,17 @@ functionId: $function->getId(),
-                     method: $method,
-                 ));
-             } else {
-+                // The worker re-mints every reserved header when the schedule fires, so the ephemeral API key and
-+                // user JWT must not sit in the client-readable schedule. Keep the client IP, the one it reads back.
-+                $storedHeaders = \array_filter(
-+                    $headers,
-+                    fn (string $name): bool => \strtolower($name) === 'x-appwrite-client-ip'
-+                        || !\str_starts_with(\strtolower($name), 'x-appwrite-'),
-+                    ARRAY_FILTER_USE_KEY
-+                );
-+
-                 $data = [
--                    'headers' => $headers,
-+                    'headers' => $storedHeaders,
-                     'path' => $path,
-                     'method' => $method,
-                     'body' => $body,
+@@ -649,8 +649,15 @@ function ProjectLayout() {
+         loaderData?.projectBlocked === true ||
+         hasActiveProjectBlock(projectData, projectId)),
+   )
+-  // Only the organization's limits suspend anything: a project's own limits
+-  // come from plans that bill overage (see isProjectLockedByProjectUsage).
++  // The curtain names whichever limit locked the project: the organization's,
++  // or the project's own bandwidth on plans that bill other overage.
++  const planUsageCurtainLimits = isProjectLockedByPlanUsage(
++    billingOrganization,
++  )
++    ? billingOrganization?.billingLimits
++    : project?.billingLimits
++  // A project's own limits come from plans that bill overage, so only the
++  // organization's limits mean API access is suspended.
+   const planUsageBillingLimits = billingOrganization?.billingLimits
+   const showPlanUsageLimitBanner =
+     !budgetLimitReached &&
+@@ -881,7 +888,7 @@ function ProjectLayout() {
+       ) : planUsageLimitReached ? (
+         <PlanUsageLimitProjectCurtain
+           teamId={budgetCurtainTeamId}
+-          billingLimits={planUsageBillingLimits}
++          billingLimits={planUsageCurtainLimits}
+         />
+       ) : projectBlocked && projectForPaused?.teamId ? (
+         <BlockedProjectCurtain teamId={projectForPaused.teamId} />
 ```
 
-**File**: `tests/e2e/Services/FunctionsSchedule/FunctionsScheduleTest.php` (modified, +19/-0)
+---
+
+### Incident Patch 3: `50d81db9` (2026-11-06)
+**Commit Message**: fix(console): stop locking paid projects over included usage
+
+A Pro project over its included database reads showed the plan limit
+curtain while its API kept working. Lock on the project's own limits
+only for bandwidth; free plans still lock through the organization.
+
+**File**: `apps/console/src/routes/_public/projects.$projectId.tsx` (modified, +3/-2)
 ```diff
-@@ -367,6 +367,25 @@ public function testCreateScheduledAtExecution(): void
-         $this->assertEquals('x-appwrite-client-ip', $execution['body']['requestHeaders'][0]['name']);
-         $this->assertNotEmpty($execution['body']['requestHeaders'][0]['value']);
+@@ -38,6 +38,7 @@ import {
+   isBudgetLimitReached,
+   isPlanUsageLimitReached,
+   isProjectLockedByPlanUsage,
++  isProjectLockedByProjectUsage,
+   resolveProjectTeamIdFromConsole,
+   useOrganizationById,
+ } from '@/lib/react-query/hooks'
+@@ -356,7 +357,7 @@ export const Route = createFileRoute('/_public/projects/$projectId')({
+       // leave the project open so customers can delete resources.
+       const planUsageLimitReached =
+         !budgetLimitReached &&
+-        (isProjectLockedByPlanUsage(projectData) ||
++        (isProjectLockedByProjectUsage(projectData) ||
+           isProjectLockedByPlanUsage(organization))
  
-+        // The stored schedule is client-readable, so it must not carry the server-minted ephemeral API key or
-+        // user JWT. The worker re-mints both when the schedule fires; only the client IP is kept.
-+        $schedules = $this->client->call(Client::METHOD_GET, '/projects/' . $this->getProject()['$id'] . '/schedules', [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => 'console',
-+            'cookie' => 'a_session_console=' . $this->getRoot()['session'],
-+        ]);
-+        $this->assertEquals(200, $schedules['headers']['status-code']);
-+        $scheduled = \array_values(\array_filter(
-+            $schedules['body']['schedules'],
-+            fn (array $schedule): bool => ($schedule['resourceId'] ?? '') === $executionId,
-+        ));
-+        $this->assertCount(1, $scheduled);
-+        $storedHeaders = $scheduled[0]['data']['headers'] ?? [];
-+        $this->assertArrayNotHasKey('x-appwrite-key', $storedHeaders);
-+        $this->assertArrayNotHasKey('x-appwrite-user-jwt', $storedHeaders);
-+        $this->assertArrayHasKey('x-appwrite-client-ip', $storedHeaders);
-+        $this->assertEquals('custom-value', $storedHeaders['x-custom-header'] ?? null);
-+
-         $this->assertEventually(function () use ($functionId, $executionId) {
-             $execution = $this->getExecution($functionId, $executionId);
+       if (budgetLimitReached || planUsageLimitReached) {
+@@ -638,7 +639,7 @@ function ProjectLayout() {
+       (routeContext.planUsageLimitReached === true ||
+         loaderData?.planUsageLimitReached === true ||
+         isProjectLockedByPlanUsage(billingOrganization) ||
+-        isProjectLockedByPlanUsage(project)),
++        isProjectLockedByProjectUsage(project)),
+   )
  
+   const projectBlocked = Boolean(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15271** (2026-11-03): feat(sites): stream and compress site responses by default (@HarshMN2345)
-- **PR #15269** (2026-11-03): Carry the run's usage on the agents structured output exception (@TorstenDittmann)
-- **PR #15268** (2026-11-03): fix(migrations): hide the export download link from a data-blind key (@ChiragAgg5k)
-- **PR #15267** (2026-11-03): docs(blog): add six welcome-series onboarding guides (@atharvadeosthale)
-- **PR #15264** (2026-11-03): feat(alerts): push alerts to Android devices through FCM (@ChiragAgg5k)
-- **PR #15262** (2026-11-03): fix(certificates): keep retrying a failed renewal (@ChiragAgg5k)
+- **PR #15365** (2026-11-06): Fix adding an appwrite.network subdomain to a site (@HarshMN2345)
+- **PR #15364** (2026-11-06): test(proxy): reach robots and humans with a real Host header (@ChiragAgg5k)
+- **PR #15362** (2026-11-06): fix(router): return 404 for robots and humans on API domains (@ChiragAgg5k)
+- **PR #15361** (2026-11-06): fix(console): stop locking paid projects over included usage (@HarshMN2345)
+- **PR #15360** (2026-11-06): feat(console): add a JSON changelog feed (@ChiragAgg5k)
+- **PR #15359** (2026-11-06): feat(console): page, search and toggle review repositories in place (@TorstenDittmann)
 
 ---
 
@@ -2294,33 +2145,46 @@ fix(functions): keep server credentials out of client-readable schedules
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(blog): add Firewall screenshots and fix Free-plan rule advice
+## X. Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain
 
 **RULE**:
-When implementing operations in `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/lib/billing/billing-limits.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e38d4cfc`: docs(blog): add Firewall screenshots and fix Free-plan rule advice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bcd059e`: Merge pull request #15361 from appwrite/fix-console-pro-usage-curtain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/content/blog/posts/add-your-first-appwrite-firewall-rules.markdoc`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/lib/billing/billing-limits.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-description: "Pick the two Appwrite Firewall rules a new Free project needs: rate limit sign-in, cap API traffic or challenge sign-ups, test them, and watch what they do."
-    answer: "If users sign in from the browser or a mobile app with an Appwrite client SDK, add an API rate limit on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST` at 10 requests per 600 seconds per IP address, then the **Rate limit project API** preset at priority `200`. If server code on Appwrite Sites signs users in, put both rules on the site: a rate limit on the login route and a challenge on the sign-up page. If server code hosted elsewhere signs users in, limit sign-in in that code, because Firewall sees only your server's address."
-    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos), and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints. Sign-in, for example, blocks an address after 100 failed attempts in an hour and an email address after 10. These limits apply only to client SDK traffic, and you cannot chang
+/**
+ * True when a project's own `billingLimits` lock it. Cloud writes these for
+ * plans that meter usage per project (Pro, Scale), where overage is billed and
+ * only bandwidth suspends the API. Free plans lock through the organization's
+ * `billingLimits`, checked with {@link isProjectLockedByPlanUsage}.
+ */
+export function isProjectLockedByProjectUsage(
+  resource:
+    | {
+        billingLimits?: BillingLimitsMap | null
+      }
+    | null
+    | undefined,
+): boolean {
+  return getReachedPlanUsageLimitKeys(resource?.billingLimits).includes(
+    'bandwidth',
+  )
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-description: "Pick your first Appwrite Firewall rules for a new project: rate limit sign-in, challenge bots, preview impact, and fit them inside the Free plan's two rules."
-    answer: "Spend the first slot on a rate limit for sign-in: an API rule on **Path** **Starts with** `/v1/account/sessions` and **Method** **Equals** `POST`, at 10 requests per 60 seconds per IP address. If your server signs users in with an API key, put the limit on your site's login route instead. If your frontend runs on Appwrite Sites, spend the second on a challenge rule for your sign-up page. Otherwise, use the **Rate limit project API** preset and give it priority `200` so the sign-in rule runs first."
-    answer: "Every Appwrite Cloud plan includes always-on [DDoS mitigation](/docs/products/network/ddos) on layers 3, 4, and 7, and blocked attack traffic does not count toward your usage. Appwrite also applies built-in [rate limits](/docs/advanced/security/rate-limits) to sensitive endpoints such as sign-in, but only to client SDK traffic, and you cannot change their values."
-    answer: "Your server probably creates sessions with an API key, so Appwrite sees your server's IP address for every user and c
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e38d4cfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bcd059e` are properly handled with clean fallback behavior.

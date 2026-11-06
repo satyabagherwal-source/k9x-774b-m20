@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `42758592`  
+> **Source Version**: `5820aa27`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:00:34.393Z  
+> **Timestamp**: 2026-11-06T13:20:15.537Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:00:34.384Z  
+> **Harvest Timestamp**: 2026-11-06T13:20:14.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19304 stars
+- **Stars / Engagement**: 19305 stars
 
 ---
 
@@ -1866,231 +1866,279 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42758592` (2026-11-04)
-**Commit Message**: Update crates
+### Incident Patch 1: `5820aa27` (2026-11-06)
+**Commit Message**: Compare JSON String/Template
 
-**File**: `Cargo.lock` (modified, +22/-29)
+**File**: `packages/hurl/src/runner/assert/json_compare.rs` (modified, +165/-27)
 ```diff
-@@ -180,9 +180,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+@@ -15,8 +15,9 @@
+  * limitations under the License.
+  *
+  */
+-use crate::runner::Number;
+-use crate::runner::Value;
++use crate::runner::expr;
++use crate::runner::template::eval_template;
++use crate::runner::{Number, RunnerError, Value, VariableSet};
+ use hurl_core::ast::{JsonValue, JsonValueKind, SourceInfo};
+ use serde_json;
  
- [[package]]
- name = "cc"
--version = "1.10.0"
-+version = "1.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
-+checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
- dependencies = [
-  "find-msvc-tools",
-  "shlex",
-@@ -308,9 +308,9 @@ dependencies = [
+@@ -64,28 +65,40 @@ fn value_from_json(value: &serde_json::Value) -> Value {
+         serde_json::Value::Null => Value::Null,
+         serde_json::Value::Bool(value) => Value::Bool(*value),
+         serde_json::Value::Number(value) => Value::Number(number_from_str(&value.to_string())),
++        serde_json::Value::String(value) => Value::String(value.clone()),
+         _ => todo!(),
+     }
+ }
  
- [[package]]
- name = "crc32fast"
--version = "1.5.3"
-+version = "1.5.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
-+checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
- dependencies = [
-  "cfg-if",
- ]
-@@ -384,9 +384,9 @@ dependencies = [
+-fn value_from_expected(expected: &JsonValue) -> Value {
+-    match expected.kind() {
++fn value_from_expected(
++    expected: &JsonValue,
++    variables: &VariableSet,
++) -> Result<Value, RunnerError> {
++    let value = match expected.kind() {
++        JsonValueKind::Placeholder(placeholder) => expr::eval(&placeholder.expr, variables)?,
++        JsonValueKind::String(template) => Value::String(eval_template(template, variables)?),
+         JsonValueKind::Number(number) => Value::Number(number_from_str(number)),
+         JsonValueKind::Boolean(value) => Value::Bool(*value),
+         JsonValueKind::Null => Value::Null,
+         _ => todo!(),
+-    }
++    };
++    Ok(value)
+ }
  
- [[package]]
- name = "encoding_rs"
--version = "0.8.42"
-+version = "0.8.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
- dependencies = [
-  "cfg-if",
-  "core_detect",
-@@ -686,9 +686,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+-fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
+-    Mismatch::new(
++fn mismatch(
++    path: &str,
++    expected: &JsonValue,
++    actual: &serde_json::Value,
++    variables: &VariableSet,
++) -> Result<Mismatch, RunnerError> {
++    Ok(Mismatch::new(
+         path.to_string(),
+         *expected.source_info(),
+         MismatchKind::Value {
+             actual: value_from_json(actual),
+-            expected: value_from_expected(expected),
++            expected: value_from_expected(expected, variables)?,
+         },
+-    )
++    ))
+ }
  
- [[package]]
- name = "js-sys"
--version = "0.3.106"
-+version = "0.3.107"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
-+checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
- dependencies = [
-  "cfg-if",
-  "futures-util",
-@@ -737,9 +737,9 @@ dependencies = [
+ /// Compares a JSON value against an expected JSON value and returns a list of mismatches.
+@@ -94,11 +107,17 @@ fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mis
+ /// * `path` - The JSON path to the value being compared.
+ /// * `expected` - The expected JSON value.
+ /// * `actual` - The actual JSON value.
++/// * `variables` - The variables used to evaluate placeholders and string templates.
+ ///
+ /// # Returns
+-/// A vector of `Mismatch` instances representing the differences between the expected and actual JSON values.
+-pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Vec<Mismatch> {
+-    match (expected.kind(), actual) {
++/// A vector of mismatches, or an error if evaluating the expected value fails.
++pub fn compare(
++    path: &str,
++    expected: &JsonValue,
++    actual: &serde_json::Value,
++    variables: &VariableSet,
++) -> Result<Vec<Mismatch>, RunnerError> {
++    let mismatches = match (expected.kind(), actual) {
+         (JsonValueKind::Number(expected_number), serde_json::Value::Number(actual_number)) => {
+             // TODO: avoid f64 equality
+             let expected_number_value = expected_number
+@@ -108,30 +127,51 @@ pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) ->
+                 .as_f64()
+                 .expect("actual JSON number is representable as f64");
  
- [[package]]
- name = "libxml"
--version = "0.3.22"
-+version = "0.3.23"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
-+checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
- dependencies = [
-  "bindgen",
-  "libc",
-@@ -773,9 +773,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+-            if expected_number_value != actual_number_value {
+-                return vec![mismatch(path, expected, actual)];
++            if expected_number_value == actual_number_value {
++                vec![]
++            } else {
++                vec![mismatch(path, expected, actual, variables)?]
+             }
+-            vec![]
+         }
+         (JsonValueKind::Boolean(expected_boolean), serde_json::Value::Bool(actual_boolean)) => {
+             if expected_boolean == actual_boolean {
+                 vec![]
+             } else {
+-                vec![mismatch(path, expected, actual)]
++                vec![mismatch(path, expected, actual, variables)?]
+             }
+         }
+         (JsonValueKind::Null, serde_json::Value::Null) => {
+             vec![]
+         }
+-        _ => todo!("Mismatch at path {}", path),
+-    }
++        (JsonValueKind::String(expected_string), serde_json::Value::String(actual_string)) => {
++            let expected_string = eval_template(expected_string, variables)?;
++            if expected_string == *actual_string {
++                vec![]
++            } else {
++                vec![Mismatch::new(
++                    path.to_string(),
++                    *expected.source_info(),
++                    MismatchKind::Value {
++                        actual: Value::String(actual_string.clone()),
++                        expected: Value::String(expected_string),
++                    },
++                )]
++            }
++        }
++        _ => vec![mismatch(path, expected, actual, variables)?],
++    };
++    Ok(mismatches)
+ }
  
- [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
- 
- [[package]]
- name = "md5"
-@@ -829,12 +829,6 @@ dependencies = [
-  "autocfg",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "once_cell_polyfill"
- version = "1.70.2"
-@@ -858,9 +852,9 @@ dependencies = [
- 
- [[package]]
- name = "openssl-sys"
--version = "0.9.117"
-+version = "0.9.118"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
-+checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
- dependencies = [
-  "cc",
-  "libc",
-@@ -1248,32 +1242,31 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
- 
- [[package]]
- name = "wasm-bindgen"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
-+checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
- dependencies = [
-  "cfg-if",
-- "once_cell",
-  "rustversion",
-  "wasm-bindgen-macro",
-  "wasm-bindgen-shared",
- ]
- 
- [[package]]
- name = "wasm-bindgen-macro"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
-+checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
- dependencies = [
-  "quote",
-  "wasm-bindgen-macro-support",
- ]
- 
- [[package]]
- name = "wasm-bindgen-macro-support"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
-+checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
- dependencies = [
-  "bumpalo",
-  "proc-macro2",
-@@ -1284,9 +1277,9 @@ dependencies = [
- 
- [[package]]
- name = "wasm-bindgen-shared"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
-+checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
- dependencies = [
-  "unicode-ident",
- ]
-```
-
-**File**: `packages/hurl/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -25,11 +25,11 @@ chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
- clap = { version = "4.6.7", features = ["string", "wrap_help"] }
- curl = "0.4.51"
- curl-sys = "0.4.91"
--encoding_rs = "0.8.42"
-+encoding_rs = "0.8.44"
- glob = "0.3.4"
- hurl_core = { version = "9.0.0", path = "../hurl_core" }
- libflate = "2.3.2"
--libxml = "0.3.22"
-+libxml = "0.3.23"
- md5 = "0.8.1"
- percent-encoding = "2.3.2"
- regex = "1.13.1"
-@@ -47,7 +47,7 @@ terminal_size = "0.4.4"
- winres = "0.1.12"
- 
- [build-dependencies]
--cc = "1.10.0"
-+cc = "1.11.0"
- 
- [lints]
- workspace = true
-```
-
-**File**: `packages/hurl_core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ repository = "https://github.com/Orange-OpenSource/hurl"
- 
- [dependencies]
- colored = "3.1.1"
--libxml = "0.3.22"
-+libxml = "0.3.23"
- regex = "1.13.1"
- 
- [lints]
+ #[cfg(test)]
+ mod t
 ```
 
 ---
 
-### Incident Patch 2: `cb0a84e2` (2026-11-04)
-**Commit Message**: Install libxml 2.13 on Fedora if supported (Hurl Ubuntu package uses libxml 2.13 soname)
+### Incident Patch 2: `ac1d3935` (2026-11-06)
+**Commit Message**: Compare JSON scalar values
 
-**File**: `bin/install_prerequisites_fedora.sh` (modified, +7/-0)
+**File**: `packages/hurl/src/runner/assert/json_compare.rs` (modified, +84/-8)
 ```diff
-@@ -16,6 +16,13 @@ yum install -y \
-     jq
- ln -sf /usr/bin/python3.11 /usr/bin/python3
+@@ -59,6 +59,35 @@ fn number_from_str(number: &str) -> Number {
+     }
+ }
  
-+# libxml2 >= 2.14 bumps soname to libxml2.so.16; install libxml2.so.2 compat
-+# package (if available) so that binaries linked against libxml2.so.2 still run
-+# (for instance, generic linux package built on Ubuntu).
-+if yum info libxml2_2.13 >/dev/null 2>&1; then
-+    yum install -y libxml2_2.13
-+fi
++fn value_from_json(value: &serde_json::Value) -> Value {
++    match value {
++        serde_json::Value::Null => Value::Null,
++        serde_json::Value::Bool(value) => Value::Bool(*value),
++        serde_json::Value::Number(value) => Value::Number(number_from_str(&value.to_string())),
++        _ => todo!(),
++    }
++}
 +
- "$(dirname "$0")"/install_mitmproxy.sh
++fn value_from_expected(expected: &JsonValue) -> Value {
++    match expected.kind() {
++        JsonValueKind::Number(number) => Value::Number(number_from_str(number)),
++        JsonValueKind::Boolean(value) => Value::Bool(*value),
++        JsonValueKind::Null => Value::Null,
++        _ => todo!(),
++    }
++}
++
++fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
++    Mismatch::new(
++        path.to_string(),
++        *expected.source_info(),
++        MismatchKind::Value {
++            actual: value_from_json(actual),
++            expected: value_from_expected(expected),
++        },
++    )
++}
++
+ /// Compares a JSON value against an expected JSON value and returns a list of mismatches.
+ ///
+ /// # Arguments
+@@ -80,17 +109,20 @@ pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) ->
+                 .expect("actual JSON number is representable as f64");
  
- # libxml crate >= 0.3.4 uses bindgen
+             if expected_number_value != actual_number_value {
+-                return vec![Mismatch::new(
+-                    path.to_string(),
+-                    *expected.source_info(),
+-                    MismatchKind::Value {
+-                        actual: Value::Number(number_from_str(&actual_number.to_string())),
+-                        expected: Value::Number(number_from_str(expected_number)),
+-                    },
+-                )];
++                return vec![mismatch(path, expected, actual)];
+             }
+             vec![]
+         }
++        (JsonValueKind::Boolean(expected_boolean), serde_json::Value::Bool(actual_boolean)) => {
++            if expected_boolean == actual_boolean {
++                vec![]
++            } else {
++                vec![mismatch(path, expected, actual)]
++            }
++        }
++        (JsonValueKind::Null, serde_json::Value::Null) => {
++            vec![]
++        }
+         _ => todo!("Mismatch at path {}", path),
+     }
+ }
+@@ -108,6 +140,10 @@ mod tests {
+         )
+     }
+ 
++    fn json_value(kind: JsonValueKind) -> JsonValue {
++        JsonValue::new(SourceInfo::new(Pos::new(1, 1), Pos::new(1, 10)), kind)
++    }
++
+     #[test]
+     fn test_compare_number_as_equal() {
+         assert!(compare("$.age", &json_number("22"), &serde_json::json!(22)).is_empty());
+@@ -140,4 +176,44 @@ mod tests {
+             )]
+         );
+     }
++
++    #[test]
++    fn test_compare_boolean() {
++        assert!(
++            compare(
++                "$.enabled",
++                &json_value(JsonValueKind::Boolean(true)),
++                &serde_json::json!(true)
++            )
++            .is_empty()
++        );
++
++        assert_eq!(
++            compare(
++                "$.enabled",
++                &json_value(JsonValueKind::Boolean(true)),
++                &serde_json::json!(false)
++            ),
++            vec![Mismatch::new(
++                "$.enabled".to_string(),
++                SourceInfo::new(Pos::new(1, 1), Pos::new(1, 10)),
++                MismatchKind::Value {
++                    actual: Value::Bool(false),
++                    expected: Value::Bool(true),
++                }
++            )]
++        );
++    }
++
++    #[test]
++    fn test_compare_null() {
++        assert!(
++            compare(
++                "$.value",
++                &json_value(JsonValueKind::Null),
++                &serde_json::Value::Null
++            )
++            .is_empty()
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5416** (2026-11-06): Compare JSON String/Template (@fabricereix)
+- **PR #5415** (2026-11-06): Compare JSON scalar value (@fabricereix)
 - **PR #5413** (2026-11-04): Update crates (@hurl-bot)
 - **PR #5412** (2026-11-04): Disable ntml test on Fedora (md4 removed from openssl) (@jcamiel)
 - **PR #5411** (closed): Update crates (except openssl) (@jcamiel)
 - **PR #5410** (closed): Update crates (@hurl-bot)
-- **PR #5409** (2026-11-03): Use latest alpine v3 for Docker build (@lepapareil)
-- **PR #5408** (closed): Update crates (@hurl-bot)
 
 ---
 
@@ -2110,76 +2158,76 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update crates
+## X. Compare JSON String/Template
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/runner/assert/json_compare.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42758592`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5820aa27`: Compare JSON String/Template. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/runner/assert/json_compare.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.11.0"
-checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
-version = "1.5.4"
-checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
-version = "0.8.44"
-checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
-version = "0.3.107"
-checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
-version = "0.3.23"
-checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
-version = "0.4.35"
-checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
-version = "0.9.118"
-checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
-version = "0.2.130"
-checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
-version = "0.2.130"
-checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
-version = "0.2.130"
-checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
-version = "0.2.130"
-checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
+use crate::runner::expr;
+use crate::runner::template::eval_template;
+use crate::runner::{Number, RunnerError, Value, VariableSet};
+        serde_json::Value::String(value) => Value::String(value.clone()),
+fn value_from_expected(
+    expected: &JsonValue,
+    variables: &VariableSet,
+) -> Result<Value, RunnerError> {
+    let value = match expected.kind() {
+        JsonValueKind::Placeholder(placeholder) => expr::eval(&placeholder.expr, variables)?,
+        JsonValueKind::String(template) => Value::String(eval_template(template, variables)?),
+    };
+    Ok(value)
+fn mismatch(
+    path: &str,
+    expected: &JsonValue,
+    actual: &serde_json::Value,
+    variables: &VariableSet,
+) -> Result<Mismatch, RunnerError> {
+    Ok(Mismatch::new(
+            expected: value_from_expected(expected, variables)?,
+    ))
+/// * `variables` - The variables used to evaluate placeholders and string templates.
+/// A vector of mismatches, or an error if evaluating the expected value fails.
+pub fn compare(
+    path: &str,
+    expected: &JsonValue,
+    actual: &serde_json::Value,
+    variables: &VariableSet,
+) -> Result<Vec<Mismatch>, RunnerError> {
+    let mismatches = match (expected.kind(), actual) {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.10.0"
-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
-version = "1.5.3"
-checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
-version = "0.8.42"
-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-version = "0.3.106"
-checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
-version = "0.3.22"
-checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
-version = "0.4.34"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-[[package]]
-name = "once_cell"
-version = "1.21.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-version = "0.9.117"
-checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
-version = "0.2.129"
-checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
- "once_cell",
-version = "0.2.129"
-checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
-version = "0.2.129"
-checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
-version = "0.2.129
+use crate::runner::Number;
+use crate::runner::Value;
+fn value_from_expected(expected: &JsonValue) -> Value {
+    match expected.kind() {
+    }
+fn mismatch(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Mismatch {
+    Mismatch::new(
+            expected: value_from_expected(expected),
+    )
+/// A vector of `Mismatch` instances representing the differences between the expected and actual JSON values.
+pub fn compare(path: &str, expected: &JsonValue, actual: &serde_json::Value) -> Vec<Mismatch> {
+    match (expected.kind(), actual) {
+            if expected_number_value != actual_number_value {
+                return vec![mismatch(path, expected, actual)];
+            vec![]
+                vec![mismatch(path, expected, actual)]
+        _ => todo!("Mismatch at path {}", path),
+    }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42758592` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5820aa27` are properly handled with clean fallback behavior.

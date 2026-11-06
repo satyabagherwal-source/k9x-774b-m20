@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "c250f749",
+    "sourceVersion": "5974def3",
     "license": "Apache-2.0",
-    "contentHash": "e8d49f67161e790727076b0df1ff1f3acc2dab0d9a5b5c6a60685507839b18cc",
-    "lastHarvestedAt": "2026-11-05T19:38:11.698Z",
+    "contentHash": "f73803833cf9ac195b205caf355f9ae0166fd9d1b9dd9985c1730f565b0a86aa",
+    "lastHarvestedAt": "2026-11-06T13:20:26.601Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "d218233a",
+    "sourceVersion": "a55ed393",
     "license": "Apache-2.0",
-    "contentHash": "c41669fc4a69dd645c4a03516e810a9881e5fff4e5d44bcc1a3ed19621f90ead",
-    "lastHarvestedAt": "2026-11-04T18:57:35.551Z",
+    "contentHash": "c1b4b4419dbdda5e73832973fbef8ab5849739d83abcac91d70a1aaff380b554",
+    "lastHarvestedAt": "2026-11-06T13:20:25.362Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "42758592",
+    "sourceVersion": "5820aa27",
     "license": "Apache-2.0",
-    "contentHash": "f41be11f267b7ee2ecadb96da7314f818bd2fce5de179ed39e2659e150bffe31",
-    "lastHarvestedAt": "2026-11-05T04:00:35.174Z",
+    "contentHash": "e0fbb93e618a95f1b6d100942ba7a96975eee21c5f08827ee186cd9b47213616",
+    "lastHarvestedAt": "2026-11-06T13:20:17.016Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "822e884f",
+    "sourceVersion": "b95e2408",
     "license": "Apache-2.0",
-    "contentHash": "319c5543c67e09925321d94f9673f3179ada086610190b72e708778ba02e89b4",
-    "lastHarvestedAt": "2026-11-04T17:10:05.666Z",
+    "contentHash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
+    "lastHarvestedAt": "2026-11-06T13:20:30.602Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "8f4601d2",
+    "sourceVersion": "bfbdbbf1",
     "license": "BSD-3-Clause",
-    "contentHash": "7dbd33ecdd89958fcd1895e53751e11ff4a53d77f335d5a5395b9834d6beb81c",
-    "lastHarvestedAt": "2026-11-04T00:10:49.736Z",
+    "contentHash": "fb041a3bcc072b984d3cc27b95cb48530925171d1c8ad69dfa1f0bcf0878ba47",
+    "lastHarvestedAt": "2026-11-06T13:20:22.096Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

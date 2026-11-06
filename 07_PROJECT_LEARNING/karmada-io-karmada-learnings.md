@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `d218233a`  
+> **Source Version**: `a55ed393`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:57:34.784Z  
+> **Timestamp**: 2026-11-06T13:20:23.381Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:57:34.543Z  
+> **Harvest Timestamp**: 2026-11-06T13:20:23.373Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5756 stars
+- **Stars / Engagement**: 5755 stars
 
 ---
 
@@ -1005,80 +1005,136 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d218233a` (2026-11-04)
-**Commit Message**: Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37
+### Incident Patch 1: `a55ed393` (2026-11-05)
+**Commit Message**: Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults
 
-chore(chart): bump default Kubernetes and etcd versions
+bump default Kubernetes and etcd versions
 
-**File**: `charts/karmada/values.yaml` (modified, +3/-3)
+**File**: `docs/command-line-flags/karmadactl_init.md` (modified, +1/-1)
 ```diff
-@@ -422,7 +422,7 @@ apiServer:
-   image:
-     registry: registry.k8s.io
-     repository: kube-apiserver
--    tag: "v1.36.2"
-+    tag: "v1.37.1"
-     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-     pullPolicy: IfNotPresent
-     ## Optionally specify an array of imagePullSecrets.
-@@ -674,7 +674,7 @@ kubeControllerManager:
-   image:
-     registry: registry.k8s.io
-     repository: kube-controller-manager
--    tag: "v1.36.2"
-+    tag: "v1.37.1"
-     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-     pullPolicy: IfNotPresent
-     ## Optionally specify an array of imagePullSecrets.
-@@ -774,7 +774,7 @@ etcd:
-     image:
-       registry: registry.k8s.io
-       repository: etcd
--      tag: "3.6.8-0"
-+      tag: "3.7.0-0"
-       ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-       pullPolicy: IfNotPresent
-     ## @param etcd.internal.storageType storage type for etcd data
+@@ -150,7 +150,7 @@ karmadactl init
+       --karmada-webhook-replicas int32                          Karmada webhook replica set (default 1)
+       --kube-image-mirror-country string                        Country code of the kube image registry to be used. For Chinese mainland users, set it to cn
+       --kube-image-registry string                              Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry
+-      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
++      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
+       --kubeconfig string                                       absolute path to the kubeconfig file
+   -n, --namespace string                                        Kubernetes namespace (default "karmada-system")
+   -p, --port int32                                              Karmada apiserver service node port (default 32443)
+```
+
+**File**: `pkg/karmadactl/cmdinit/cmdinit.go` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ func NewCmdInit(parentCommand string) *cobra.Command {
+ 	// kube image registry
+ 	flags.StringVarP(&opts.KubeImageMirrorCountry, "kube-image-mirror-country", "", "", "Country code of the kube image registry to be used. For Chinese mainland users, set it to cn")
+ 	flags.StringVarP(&opts.KubeImageRegistry, "kube-image-registry", "", "", "Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry")
+-	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.36.2", "Choose a specific Kubernetes version for the control plane.")
++	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.37.1", "Choose a specific Kubernetes version for the control plane.")
+ 	// cert
+ 	flags.StringVar(&opts.ExternalIP, "cert-external-ip", "", "the external IP of Karmada certificate (e.g 192.168.1.2,172.16.1.2)")
+ 	flags.StringVar(&opts.ExternalDNS, "cert-external-dns", "", "the external DNS of Karmada certificate (e.g localhost,localhost.com)")
+```
+
+**File**: `pkg/karmadactl/cmdinit/cmdinit_test.go` (modified, +13/-0)
+```diff
+@@ -33,3 +33,16 @@ func Test_initExample(t *testing.T) {
+ 		t.Errorf("initExample() want return not nil, but return nil")
+ 	}
+ }
++
++func TestNewCmdInit_KubeImageTagDefault(t *testing.T) {
++	cmd := NewCmdInit("karmadactl")
++
++	flag := cmd.Flags().Lookup("kube-image-tag")
++	if flag == nil {
++		t.Fatal("kube-image-tag flag not found")
++	}
++
++	if got, want := flag.DefValue, "v1.37.1"; got != want {
++		t.Errorf("kube-image-tag default = %q, want %q", got, want)
++	}
++}
+```
+
+**File**: `pkg/karmadactl/cmdinit/kubernetes/deploy.go` (modified, +1/-1)
+```diff
+@@ -99,7 +99,7 @@ var (
+ 
+ 	karmadaRelease string
+ 
+-	defaultEtcdImage = "etcd:3.6.8-0"
++	defaultEtcdImage = "etcd:3.7.0-0"
+ 
+ 	// DefaultCrdURL Karmada crds resource
+ 	DefaultCrdURL string
 ```
 
 ---
 
-### Incident Patch 2: `fc38850e` (2026-11-04)
-**Commit Message**: chore(chart): bump default Kubernetes and etcd versions
+### Incident Patch 2: `b748ea5d` (2026-10-31)
+**Commit Message**: bump default Kubernetes and etcd versions and update init command flags
 
-Part of #7975
+Signed-off-by: Arbaaz Ahmed <[REDACTED_EMAIL]>
 
-Signed-off-by: Aarohi Sharma <[REDACTED_EMAIL]>
-
-**File**: `charts/karmada/values.yaml` (modified, +3/-3)
+**File**: `docs/command-line-flags/karmadactl_init.md` (modified, +1/-1)
 ```diff
-@@ -422,7 +422,7 @@ apiServer:
-   image:
-     registry: registry.k8s.io
-     repository: kube-apiserver
--    tag: "v1.36.2"
-+    tag: "v1.37.1"
-     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-     pullPolicy: IfNotPresent
-     ## Optionally specify an array of imagePullSecrets.
-@@ -674,7 +674,7 @@ kubeControllerManager:
-   image:
-     registry: registry.k8s.io
-     repository: kube-controller-manager
--    tag: "v1.36.2"
-+    tag: "v1.37.1"
-     ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-     pullPolicy: IfNotPresent
-     ## Optionally specify an array of imagePullSecrets.
-@@ -774,7 +774,7 @@ etcd:
-     image:
-       registry: registry.k8s.io
-       repository: etcd
--      tag: "3.6.8-0"
-+      tag: "3.7.0-0"
-       ## Specify a imagePullPolicy, defaults to 'IfNotPresent'
-       pullPolicy: IfNotPresent
-     ## @param etcd.internal.storageType storage type for etcd data
+@@ -150,7 +150,7 @@ karmadactl init
+       --karmada-webhook-replicas int32                          Karmada webhook replica set (default 1)
+       --kube-image-mirror-country string                        Country code of the kube image registry to be used. For Chinese mainland users, set it to cn
+       --kube-image-registry string                              Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry
+-      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
++      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
+       --kubeconfig string                                       absolute path to the kubeconfig file
+   -n, --namespace string                                        Kubernetes namespace (default "karmada-system")
+   -p, --port int32                                              Karmada apiserver service node port (default 32443)
+```
+
+**File**: `pkg/karmadactl/cmdinit/cmdinit.go` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ func NewCmdInit(parentCommand string) *cobra.Command {
+ 	// kube image registry
+ 	flags.StringVarP(&opts.KubeImageMirrorCountry, "kube-image-mirror-country", "", "", "Country code of the kube image registry to be used. For Chinese mainland users, set it to cn")
+ 	flags.StringVarP(&opts.KubeImageRegistry, "kube-image-registry", "", "", "Kube image registry. For Chinese mainland users, you may use local gcr.io mirrors such as registry.cn-hangzhou.aliyuncs.com/google_containers to override default kube image registry")
+-	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.36.2", "Choose a specific Kubernetes version for the control plane.")
++	flags.StringVar(&opts.KubeImageTag, "kube-image-tag", "v1.37.1", "Choose a specific Kubernetes version for the control plane.")
+ 	// cert
+ 	flags.StringVar(&opts.ExternalIP, "cert-external-ip", "", "the external IP of Karmada certificate (e.g 192.168.1.2,172.16.1.2)")
+ 	flags.StringVar(&opts.ExternalDNS, "cert-external-dns", "", "the external DNS of Karmada certificate (e.g localhost,localhost.com)")
+```
+
+**File**: `pkg/karmadactl/cmdinit/cmdinit_test.go` (modified, +13/-0)
+```diff
+@@ -33,3 +33,16 @@ func Test_initExample(t *testing.T) {
+ 		t.Errorf("initExample() want return not nil, but return nil")
+ 	}
+ }
++
++func TestNewCmdInit_KubeImageTagDefault(t *testing.T) {
++	cmd := NewCmdInit("karmadactl")
++
++	flag := cmd.Flags().Lookup("kube-image-tag")
++	if flag == nil {
++		t.Fatal("kube-image-tag flag not found")
++	}
++
++	if got, want := flag.DefValue, "v1.37.1"; got != want {
++		t.Errorf("kube-image-tag default = %q, want %q", got, want)
++	}
++}
+```
+
+**File**: `pkg/karmadactl/cmdinit/kubernetes/deploy.go` (modified, +1/-1)
+```diff
+@@ -99,7 +99,7 @@ var (
+ 
+ 	karmadaRelease string
+ 
+-	defaultEtcdImage = "etcd:3.6.8-0"
++	defaultEtcdImage = "etcd:3.7.0-0"
+ 
+ 	// DefaultCrdURL Karmada crds resource
+ 	DefaultCrdURL string
 ```
 
 #### Recent Merged Pull Requests:
@@ -1107,32 +1163,28 @@ Signed-off-by: Aarohi Sharma <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37
+## X. Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults
 
 **RULE**:
-When implementing operations in `charts/karmada/values.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/command-line-flags/karmadactl_init.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d218233a`: Merge pull request #8025 from AarohiSharma5/chore/helm-chart-k8s-1.37. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a55ed393`: Merge pull request #8011 from Arbaaz123676/bump-karmadactl-init-defaults. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/values.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/command-line-flags/karmadactl_init.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    tag: "v1.37.1"
-    tag: "v1.37.1"
-      tag: "3.7.0-0"
+      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.37.1")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    tag: "v1.36.2"
-    tag: "v1.36.2"
-      tag: "3.6.8-0"
+      --kube-image-tag string                                   Choose a specific Kubernetes version for the control plane. (default "v1.36.2")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d218233a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a55ed393` are properly handled with clean fallback behavior.

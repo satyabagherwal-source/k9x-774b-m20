@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `c250f749`  
+> **Source Version**: `5974def3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:38:09.834Z  
+> **Timestamp**: 2026-11-06T13:20:24.589Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:38:09.826Z  
+> **Harvest Timestamp**: 2026-11-06T13:20:24.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4528 stars
+- **Stars / Engagement**: 4530 stars
 
 ---
 
@@ -1987,170 +1987,369 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cad420b6` (2026-11-05)
-**Commit Message**: Add a devnet entry that crashes all validators with SIGKILL
+### Incident Patch 1: `5974def3` (2026-11-06)
+**Commit Message**: Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd
 
-Validators must be crash safe. The `chaotic-restart-all` entry stops them
-with SIGTERM, which lets each node save its proposal cache, so no CI job
-covers a crash of the whole committee.
+**File**: `Cargo.lock` (modified, +36/-0)
+```diff
+@@ -962,6 +962,8 @@ dependencies = [
+  "compression-core",
+  "flate2",
+  "memchr",
++ "zstd",
++ "zstd-safe",
+ ]
+ 
+ [[package]]
+@@ -5661,6 +5663,7 @@ dependencies = [
+  "tokio",
+  "tokio-test",
+  "tracing",
++ "zstd",
+ ]
+ 
+ [[package]]
+@@ -7602,12 +7605,17 @@ version = "0.6.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
+ dependencies = [
++ "async-compression",
+  "bitflags 2.13.1",
+  "bytes",
++ "futures-core",
+  "futures-util",
+  "http 1.5.0",
+  "http-body 1.1.0",
++ "http-body-util",
+  "pin-project-lite",
++ "tokio",
++ "tokio-util",
+  "tower",
+  "tower-layer",
+  "tower-service",
+@@ -8649,3 +8657,31 @@ dependencies = [
+  "log",
+  "simd-adler32",
+ ]
++
++[[package]]
++name = "zstd"
++version = "0.14.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
++dependencies = [
++ "zstd-safe",
++]
++
++[[package]]
++name = "zstd-safe"
++version = "8.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
++dependencies = [
++ "zstd-sys",
++]
++
++[[package]]
++name = "zstd-sys"
++version = "2.1.2+zstd.1.5.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
++dependencies = [
++ "cc",
++ "pkg-config",
++]
+```
 
-Add a `crash` stop mode to `test_restart_all.sh`, and run it as the new
-`chaotic-crash-all` entry of `devnet-release`. The default mode keeps its
-behavior.
+**File**: `node/cdn/Cargo.toml` (modified, +5/-2)
+```diff
+@@ -58,7 +58,7 @@ workspace = true
+ 
+ [dependencies.reqwest]
+ workspace = true
+-features = [ "rustls" ]
++features = [ "rustls", "zstd" ]
+ 
+ [dependencies.serde]
+ workspace = true
+@@ -83,10 +83,13 @@ workspace = true
+ 
+ [dev-dependencies.tokio]
+ workspace = true
+-features = [ "rt", "rt-multi-thread" ]
++features = [ "io-util", "macros", "net", "rt", "rt-multi-thread" ]
+ 
+ [dev-dependencies.tokio-test]
+ version = "0.4"
+ 
++[dev-dependencies.zstd]
++version = "0.14"
++
+ [package.metadata.cargo-machete]
+ ignored = ["serde"]
+```
 
-`stop_nodes` sends SIGKILL. Bash logs a "Killed" line for each node, which
-is the evidence of the signal. The bare `wait` in `stop_nodes` discards the
-exit statuses, so the script cannot check them.
+**File**: `node/cdn/src/blocks.rs` (modified, +66/-3)
+```diff
+@@ -59,6 +59,11 @@ const fn cdn_user_agent() -> &'static str {
+     concat!("snarkos/", env!("SNARKOS_VERSION"))
+ }
+ 
++/// Builds a client for CDN requests.
++fn cdn_client() -> reqwest::Result<Client> {
++    Client::builder().use_rustls_tls().zstd(true).user_agent(cdn_user_agent()).build()
++}
++
+ /// Updates the metrics during CDN sync.
+ #[cfg(feature = "metrics")]
+ fn update_block_metrics<N: Network>(height: u32) {
+@@ -171,7 +176,7 @@ impl CdnBlockSync {
+     }
+ 
+     pub async fn get_cdn_height(&self) -> anyhow::Result<u32> {
+-        let client = Client::builder().use_rustls_tls().user_agent(cdn_user_agent()).build()?;
++        let client = cdn_client()?;
+         cdn_height::<BLOCKS_PER_FILE>(&client, &self.base_url).await
+     }
+ }
+@@ -188,7 +193,7 @@ pub async fn load_blocks<N: Network>(
+     process: impl FnMut(Block<N>) -> Result<()> + Clone + Send + Sync + 'static,
+ ) -> Result<u32, (u32, anyhow::Error)> {
+     // Create a Client to maintain a connection pool throughout the sync.
+-    let client = match Client::builder().use_rustls_tls().user_agent(cdn_user_agent()).build() {
++    let client = match cdn_client() {
+         Ok(client) => client,
+         Err(error) => {
+             return Err((start_height.saturating_sub(1), anyhow!("Failed to create a CDN request client - {error}")));
+@@ -574,7 +579,7 @@ fn log_progress<const OBJECTS_PER_FILE: u32>(
+ 
+ #[cfg(test)]
+ mod tests {
+-    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_height, load_blocks, log_progress};
++    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress};
+ 
+     use snarkos_utilities::SimpleStoppable;
+ 
+@@ -586,6 +591,64 @@ mod tests {
+ 
+     type CurrentNetwork = MainnetV0;
+ 
++    /// Serves one HTTP/1.1 response with the given extra headers and body.
++    ///
++    /// Returns the URL to request and a handle that yields the raw request head.
++    async fn serve_once(headers: &'static str, body: Vec<u8>) -> (String, tokio::task::JoinHandle<String>) {
++        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let url = format!("http://{}/0.50.blocks", listener.local_addr().unwrap());
++        let handle = tokio::spawn(async move {
++            let (mut stream, _) = listener.accept().await.unwrap();
++            let mut request = Vec::new();
++            let mut buf = [0u8; 1024];
++            while !request.ends_with(b"\r\n\r\n") {
++                let n = stream.read(&mut buf).await.unwrap();
++                assert!(n > 0, "the client closed the connection before sending a request");
++                request.extend_from_slice(&buf[..n]);
++            }
++            let head =
++                format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n{headers}\r\n", body.len());
++            stream.write_all(head.as_bytes()).await.unwrap();
++            stream.write_all(&body).await.unwrap();
++            String::from_utf8(request).unwrap().to_ascii_lowercase()
++        });
++        (url, handle)
++    }
++
++    /// Returns a bincode payload that compresses well.
++    fn sample_payload() -> (Vec<u64>, Vec<u8>) {
++        let values: Vec<u64> = (0..10_000).map(|i| i % 7).collect();
++        let bytes = bincode::serialize(&values).unwrap();
++        (values, bytes)
++    }
++
++    #[tokio::test]
++    async fn test_cdn_get_decodes_zstd() {
++        let (expected, bytes) = sample_payload();
++        let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
++        assert!(compressed.len() < bytes.len());
++        let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
++
++        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
++        assert_eq!(values, expected);
++
++        let request = request.await.unwrap();
++        let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
++        assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
++    }
++
++    #[tokio::test]
++    async fn test_cdn_get_reads_identity() {
++        let (expected, bytes) = sample_payload();
++        let (url, request) = serve_once("", bytes).await;
++
++        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
++        assert_eq!(values, expected);
++        request.await.unwrap();
++    }
++
+     fn check_load_blocks(start: u32, end: Option<u32>, expected: usize) {
+         let blocks = Arc::new(RwLock::new(Vec::new()));
+         let blocks_clone = blocks.clone();
+```
 
-A height check alone passes if nodes restart from genesis and sync, or if
-they fork. So crash mode also fails if a validator serves a lower height
-after a restart than it served before the crash, or if validators hold
-different blocks at the final height.
+---
+
+### Incident Patch 2: `36c0a22f` (2026-11-06)
+**Commit Message**: Drop the CDN body size limit and use #[tokio::test]
+
+The node applies CDN blocks with unchecked deserialization and no
+check_next_block, so it already trusts the CDN with ledger contents. A
+decoded-size bound guards nothing against such a source. It could also
+reject a legitimate file: mainnet limits allow a 50-block file far above
+256 MiB, which would stall CDN sync until the retries run out.
+
+Switch the remaining zstd and identity tests to #[tokio::test].
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmMTdukLnvrVLzi4rE7
 
-**File**: `.ci/test_restart_all.sh` (modified, +63/-2)
+**File**: `node/cdn/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -20,13 +20,21 @@ network_id=$2
- restart_interval=$3
- final_height=$4
- num_restarts=$5
-+# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-+stop_mode=$6
+@@ -83,7 +83,7 @@ workspace = true
  
- # Default values if not provided.
- : "${total_validators:=7}"
- : "${network_id:=0}"
- : "${restart_interval:=10}"
- : "${final_height:=100}"
- : "${num_restarts:=3}"
-+: "${stop_mode:=graceful}"
-+
-+if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-+  log "❌ Unknown stop mode '$stop_mode'."
-+  exit 1
-+fi
+ [dev-dependencies.tokio]
+ workspace = true
+-features = [ "io-util", "net", "rt", "rt-multi-thread" ]
++features = [ "io-util", "macros", "net", "rt", "rt-multi-thread" ]
  
- # The time that is used to determine the total timeout for the test.
- max_wait_per_block=10
-@@ -53,6 +61,48 @@ common_flags=(
-   "--dev-num-validators=$total_validators"
- )
- 
-+# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-+function crash_validators() {
-+  local index
-+  for index in "${!PIDS[@]}"; do
-+    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    if ! is_integer "${crash_heights[index]}"; then
-+      log "❌ Test failed! Validator $index did not report its height before the crash."
-+      exit 1
-+    fi
-+  done
-+  log "Heights before the crash: ${crash_heights[*]}"
-+  stop_nodes
-+}
-+
-+# Fails unless each validator serves at least the height it held before the crash.
-+function check_resumed_from_ledger() {
-+  local index resumed_height
-+  for index in "${!PIDS[@]}"; do
-+    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-+    if ! is_integer "$resumed_height" || (( resumed_height < crash_heights[index] )); then
-+      log "❌ Test failed! Validator $index did not resume from its ledger."
-+      exit 1
-+    fi
-+  done
-+}
-+
-+# Fails unless all validators hold the same block at height $1.
-+function check_same_block() {
-+  local block_height=$1
-+  local index block_hash first_hash=""
-+  for index in "${!PIDS[@]}"; do
-+    block_hash=$(curl -s --max-time 5 "http://$localhost:$((3030 + index))/v2/$network_name/block/$block_height" | jq -r '.block_hash // empty' 2>/dev/null || true)
-+    log "Validator $index holds block '$block_hash' at height $block_height"
-+    : "${first_hash:=$block_hash}"
-+    if [[ -z "$block_hash" || "$block_hash" != "$first_hash" ]]; then
-+      log "❌ Test failed! Validators disagree on the block at height $block_height."
-+      exit 1
-+    fi
-+  done
-+}
-+
- # Start all validator nodes in the background
- for validator_index in $(seq 0 $((total_validators-1))); do
-   snarkos clean "--dev=$validator_index" "--network=$network_id"
-@@ -79,8 +129,12 @@ for iter in $(seq 1 "$num_restarts"); do
-   fi
-   log "All nodes reached restart height $restart_height. Restarting all validators (iteration $iter/$num_restarts)..."
- 
--  # Gracefully shut down all validators
--  stop_some_nodes "${!PIDS[@]}"
-+  if [[ "$stop_mode" == crash ]]; then
-+    crash_validators
-+  else
-+    # Gracefully shut down all validators
-+    stop_some_nodes "${!PIDS[@]}"
-+  fi
- 
-   # Wait briefly before restarting
-   sleep 5
-@@ -100,10 +154,17 @@ for iter in $(seq 1 "$num_restarts"); do
-     log "❌ Test failed! Not all nodes became ready within $max_restart_wait seconds after restart #$iter."
-     exit 1
-   fi
-+
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_resumed_from_ledger
-+  fi
- done
- 
- # Wait for final height
- if wait_for_heights 0 "$total_validators" "$final_height" "$network_name" "$max_wait"; then
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_same_block "$final_height"
-+  fi
-  log "SUCCESS!"
-   exit 0
- else
+ [dev-dependencies.tokio-test]
+ version = "0.4"
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `node/cdn/src/blocks.rs` (modified, +22/-65)
 ```diff
-@@ -367,6 +367,10 @@ jobs:
-             timeout: 45
-             delay: true
-             runs: ./.ci/test_restart_all.sh
-+          - name: chaotic-crash-all
-+            timeout: 45
-+            delay: true
-+            runs: ./.ci/test_restart_all.sh 7 0 10 100 3 crash
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
+@@ -29,7 +29,7 @@ use anyhow::{Context, Result, anyhow, bail};
+ use locktick::{parking_lot::Mutex, tokio::Mutex as TMutex};
+ #[cfg(not(feature = "locktick"))]
+ use parking_lot::Mutex;
+-use reqwest::{Client, Response};
++use reqwest::Client;
+ use std::{
+     cmp,
+     sync::{
+@@ -50,10 +50,6 @@ const CONCURRENT_REQUESTS: u32 = 16;
+ const MAXIMUM_PENDING_BLOCKS: u32 = BLOCKS_PER_FILE * CONCURRENT_REQUESTS * 2;
+ /// Maximum number of attempts for a request to the CDN.
+ const MAXIMUM_REQUEST_ATTEMPTS: u8 = 10;
+-/// Maximum decoded size of a block file from the CDN.
+-const MAXIMUM_FILE_BYTES: usize = 256 << 20;
+-/// Maximum decoded size of the `latest.json` file from the CDN.
+-const MAXIMUM_LATEST_JSON_BYTES: usize = 64 << 10;
  
-```
-
-**File**: `CI.md` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ marked "release" only on the third. The other jobs run on every event.
- | `devnet (upgrade)` | `cpu` | merge | 90 | `test_full_upgrade.sh`, `test_partial_upgrade.sh` |
- | `devnet (upgrade-required)` | `cpu` | release | 30 | `test_upgrade_required.sh` |
- | `devnet (chaotic-restart-all)` | `cpu` | release | 45 | `test_restart_all.sh`, with delays |
-+| `devnet (chaotic-crash-all)` | `cpu` | release | 45 | `test_restart_all.sh` with SIGKILL, with delays |
- | `machete` | hosted | all | | `cargo machete` |
- | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
- | `ci-ok` | hosted | all | | fails unless every job a pull request runs succeeded |
+ /// The CDN base url.
+ pub const CDN_BASE_URL: &str = "https://cdn.provable.com/v0/blocks";
+@@ -461,7 +457,7 @@ async fn cdn_height<const BLOCKS_PER_FILE: u32>(client: &Client, base_url: &http
+         Err(error) => bail!("Failed to fetch the CDN height - {error}"),
+     };
+     // Parse the response.
+-    let bytes = match read_body(response, MAXIMUM_LATEST_JSON_BYTES).await {
++    let bytes = match response.bytes().await {
+         Ok(bytes) => bytes,
+         Err(error) => bail!("Failed to parse the CDN height response - {error}"),
+     };
+@@ -492,7 +488,7 @@ async fn cdn_get<T: 'static + DeserializeOwned + Send>(client: Client, url: &str
+         Err(error) => bail!("Failed to fetch {ctx} - {error}"),
+     };
+     // Parse the response.
+-    let bytes = match read_body(response, MAXIMUM_FILE_BYTES).await {
++    let bytes = match response.bytes().await {
+         Ok(bytes) => bytes,
+         Err(error) => bail!("Failed to parse {ctx} - {error}"),
+     };
+@@ -510,19 +506,6 @@ async fn cdn_get<T: 'static + DeserializeOwned + Send>(client: Client, url: &str
+     }
+ }
+ 
+-/// Reads the decoded body of a response, failing once it exceeds `max_bytes`.
+-async fn read_body(mut response: Response, max_bytes: usize) -> Result<Vec<u8>> {
+-    let capacity = response.content_length().and_then(|len| usize::try_from(len).ok()).unwrap_or(0).min(max_bytes);
+-    let mut body = Vec::with_capacity(capacity);
+-    while let Some(chunk) = response.chunk().await? {
+-        if body.len().saturating_add(chunk.len()) > max_bytes {
+-            bail!("the response body exceeds {max_bytes} bytes");
+-        }
+-        body.extend_from_slice(&chunk);
+-    }
+-    Ok(body)
+-}
+-
+ /// Converts a duration into a string that humans can read easily.
+ ///
+ /// # Output
+@@ -596,7 +579,7 @@ fn log_progress<const OBJECTS_PER_FILE: u32>(
+ 
+ #[cfg(test)]
+ mod tests {
+-    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress, read_body};
++    use super::{BLOCKS_PER_FILE, CDN_BASE_URL, cdn_client, cdn_get, cdn_height, load_blocks, log_progress};
+ 
+     use snarkos_utilities::SimpleStoppable;
+ 
+@@ -641,55 +624,29 @@ mod tests {
+         (values, bytes)
+     }
+ 
+-    #[test]
+-    fn test_cdn_get_decodes_zstd() {
+-        let rt = tokio::runtime::Runtime::new().unwrap();
+-        rt.block_on(async {
+-            let (expected, bytes) = sample_payload();
+-            let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
+-            assert!(compressed.len() < bytes.len());
+-            let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
++    #[tokio::test]
++    async fn test_cdn_get_decodes_zstd() {
++        let (expected, bytes) = sample_payload();
++        let compressed = zstd::encode_all(bytes.as_slice(), 1).unwrap();
++        assert!(compressed.len() < bytes.len());
++        let (url, request) = serve_once("Content-Encoding: zstd\r\n", compressed).await;
+ 
+-            let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
+-            assert_eq!(values, expected);
++        let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
++        assert_eq!(values, expected);
+ 
+-            let request = request.await.unwrap();
+-            let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
+-            assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
+-        });
++        let request = request.await.unwrap();
++        let accept_encoding = request.lines().find_map(|line| line.strip_prefix("accept-encoding:"));
++        assert!(accept_encoding.is_some_and(|value| value.contains("zstd")), "request: {request}");
+     }
+ 
+-    #[test]
+-    fn test_cdn_get_reads_identity() {
+-        let rt = tokio::runtime::Runtime::new().unwrap();
+-        rt.block_on(async {
+-            let (expected, bytes) = sample_payload();
+-            let (url, request) = serve_once("", bytes).await;
+-
+-            let values: Vec<u64> = cdn_get(cdn_client().unwrap(), &url, "test blocks").await.unwrap();
+-            assert_eq!(values, expected);
+-            request.await.unwrap();
+-        });
+-    }
++    #[tokio::tes
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4638** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@7e48bc69c (@aleo-labs-merge-bot[bot])
+- **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
 - **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
 - **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
 - **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
 - **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
-- **PR #4630** (2026-11-05): Run the telemetry tests in CI (@cbeck88)
-- **PR #4629** (2026-11-05): Run the upgrade and restart-all devnets in a release-only CI job (@cbeck88)
 
 ---
 
@@ -2170,57 +2369,63 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a devnet entry that crashes all validators with SIGKILL
+## X. Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd
 
 **RULE**:
-When implementing operations in `.ci/test_restart_all.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cad420b6`: Add a devnet entry that crashes all validators with SIGKILL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5974def3`: Merge pull request #4608 from aleo-labs-protocol/feat/cdn-zstd. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_restart_all.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-stop_mode=$6
-: "${stop_mode:=graceful}"
+ "zstd",
+ "zstd-safe",
+ "zstd",
+ "async-compression",
+ "futures-core",
+ "http-body-util",
+ "tokio",
+ "tokio-util",
 
-if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-  log "❌ Unknown stop mode '$stop_mode'."
-  exit 1
-fi
-# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-function crash_validators() {
-  local index
-  for index in "${!PIDS[@]}"; do
-    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    if ! is_integer "${crash_heights[index]}"; then
-      log "❌ Test failed! Validator $index did not report its height before the crash."
-      exit 1
-    fi
-  done
-  log "Heights before the crash: ${crash_heights[*]}"
-  stop_nodes
-}
+[[package]]
+name = "zstd"
+version = "0.14.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
+dependencies = [
+ "zstd-safe",
+]
 
-# Fails unless each validator serves at least the height it held before the crash.
-function check_resumed_from_ledger() {
-  local index resumed_height
-  for index in "${!PIDS[@]}"; do
-    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-    if ! is_integer "$resumed_height" || (( resumed_height < crash_heigh
+[[package]]
+name = "zstd-safe"
+version = "8.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
+dependencies = [
+ "zstd-sys",
+]
+
+[[package]]
+name = "zstd-sys"
+version = "2.1.2+zstd.1.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+dependencies = [
+ "cc",
+ "pkg-config",
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  # Gracefully shut down all validators
-  stop_some_nodes "${!PIDS[@]}"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cad420b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5974def3` are properly handled with clean fallback behavior.
