@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "46e80093",
+    "sourceVersion": "6a1e71d6",
     "license": "AGPL-3.0",
-    "contentHash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
-    "lastHarvestedAt": "2026-11-04T01:20:36.603Z",
+    "contentHash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
+    "lastHarvestedAt": "2026-11-06T14:47:46.987Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "36823919",
+    "sourceVersion": "1f1e0719",
     "license": "Apache-2.0",
-    "contentHash": "0c99b35dc2d45685d08333f50849089e7e5534360cb54f001f440b7d093a2481",
-    "lastHarvestedAt": "2026-11-05T10:16:07.609Z",
+    "contentHash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
+    "lastHarvestedAt": "2026-11-06T14:47:44.689Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "e15e8959",
+    "sourceVersion": "467d1ca5",
     "license": "MIT",
-    "contentHash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
-    "lastHarvestedAt": "2026-11-05T09:12:33.414Z",
+    "contentHash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
+    "lastHarvestedAt": "2026-11-06T14:47:51.030Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {

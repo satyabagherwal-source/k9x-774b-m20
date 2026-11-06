@@ -7888,3 +7888,6 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `5752f709` | Multi-dimensional audit evidence | 2026-11-06T14:40:41.791Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `e17756e7` | Multi-dimensional audit evidence | 2026-11-06T14:40:44.388Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `2cb963b6` | Multi-dimensional audit evidence | 2026-11-06T14:40:46.210Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `1f1e0719` | Multi-dimensional audit evidence | 2026-11-06T14:47:44.689Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `6a1e71d6` | Multi-dimensional audit evidence | 2026-11-06T14:47:46.987Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `467d1ca5` | Multi-dimensional audit evidence | 2026-11-06T14:47:51.030Z |

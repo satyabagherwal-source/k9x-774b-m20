@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `36823919`  
+> **Source Version**: `1f1e0719`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:16:06.887Z  
+> **Timestamp**: 2026-11-06T14:47:43.394Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:16:06.881Z  
+> **Harvest Timestamp**: 2026-11-06T14:47:41.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4044 stars
+- **Stars / Engagement**: 4061 stars
 
 ---
 
@@ -1164,6 +1164,27 @@ type ConnectionStatus struct {
 	Error       string          `json:"error,omitempty"`
 	ErrorType   string          `json:"errorType,omitempty"` // config, auth, auth-rejected, auth-plugin-stuck, rbac, network, timeout, tls, unknown
 	ProgressMsg string          `json:"progressMessage,omitempty"`
+	// DisconnectedAt is when this context stopped working (RFC 3339, UTC).
+	// It survives retries and their changing errors, and clears on connect,
+	// so the UI can say how long the cluster has been down. Set by
+	// SetConnectionStatus; callers leave it empty.
+	DisconnectedAt string `json:"disconnectedAt,omitempty"`
+}
+
+// outageStart carries DisconnectedAt from one status to the next: it starts
+// when a context first reports disconnected and holds through retries until
+// the context connects or another context takes over.
+func outageStart(prev, next ConnectionStatus, now time.Time) string {
+	if next.State == StateConnected {
+		return ""
+	}
+	if prev.DisconnectedAt != "" && prev.Context == next.Context {
+		return prev.DisconnectedAt
+	}
+	if next.State == StateDisconnected {
+		return now.UTC().Format(time.RFC3339)
+	}
+	return ""
 }
 
 // ConnectionChangeCallback is called when the connection status changes
@@ -1187,6 +1208,7 @@ func GetConnectionStatus() ConnectionStatus {
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
 	connectionStatusMu.Lock()
+	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
 		return
@@ -1433,36 +1455,7 @@ func isRBACErrorMessage(lower string) bool {
 
 func isConfigErrorMessage(lower string) bool {
 	configMarkers := []string{
-		"no context configured",
-		"no current context",
-		"current-context is not set",
-		"context was not found for specified context",
-		"no configuration has been provided",
-		"failed to build kubeconfig",
-		"no valid kubeconfig files found",
-		"no usable context found",
-		"no contexts found",
-		"k8s config not initialized",
-		"kubernetes client is not initialized",
-		"kubernetes discovery client is not initialized",
-		"failed to load kubeconfig",
-		"kubeconfig source for context",
-		"selected context not found",
-		"selected context client setup failed",
-		"no auth provider found for name",
-	}
-	for _, marker := range configMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTLSCertificateMessage(lower string) bool {
-	return strings.Contains(lower, "x509:") ||
-		strings.Contains(lower, "certificate signed by unknown authority") ||
-		strings.Contains(lower, "certificate is valid
+		"no context con
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -1715,6 +1708,247 @@ func containerRestartLoop(cs *corev1.ContainerStatus, now time.Time) (restartLoo
 	}
 	// A run that lasted longer than the window was not part of a loop: a
 	// container that served for days and restarted once
+```
+
+### Core Architecture Module: `internal/kueuequeues/membership.go`
+```
+// Package kueuequeues decides which Kueue Workloads belong to a queue, from
+// what the Workloads and LocalQueues say now. It reads no cache and checks no
+// access: callers hand it the objects the caller could read, and say where
+// the LocalQueues were read.
+//
+// A Workload belongs to a ClusterQueue in two independent ways. Submission:
+// its spec.queueName names a LocalQueue in its namespace whose current
+// spec.clusterQueue is the ClusterQueue. Reservation: its
+// status.admission.clusterQueue names the ClusterQueue. Submission is a join
+// through the LocalQueue as it is now, by name; it says nothing about which
+// LocalQueue the Workload was submitted through, nor where it pointed then.
+// A Workload belongs to a LocalQueue by submission only: its spec.queueName
+// names it, in its namespace.
+//
+// The cases the two ways disagree on are answered as they are reported:
+//   - A LocalQueue re-created to point at another ClusterQueue while a
+//     Workload still reports its reservation in the old one: the Workload
+//     belongs to the old ClusterQueue by reservation and to the new one by
+//     submission, and its row in either names both.
+//   - A finished Workload still reporting its admission belongs by
+//     reservation: the record names the ClusterQueue, though Kueue released
+//     the quota and leaves it out of its own counts.
+//   - A Workload being deleted keeps its membership until it is gone: Kueue
+//     holds its quota until its finalizer runs.
+//   - A Workload belonging both ways is one member with both kinds.
+package kueuequeues
+
+import (
+	"cmp"
+	"slices"
+	"strings"
+
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+)
+
+type Kind string
+
+const (
+	Submission  Kind = "submission"
+	Reservation Kind = "reservation"
+)
+
+type Member struct {
+	Workload  *unstructured.Unstructured
+	Kinds     []Kind
+	QueueName string
+	// SubmittedTo is the ClusterQueue the Workload's LocalQueue points at now,
+	// when Radar read that LocalQueue, and LocalQueueUID that LocalQueue's
+	// UID: a LocalQueue re-created under the same name is another one.
+	SubmittedTo   string
+	LocalQueueUID string
+	// LocalQueueUnread: the Workload names a LocalQueue in a namespace whose
+	// LocalQueues Radar didn't read, so whether it was submitted here is
+	// unknown.
+	LocalQueueUnread bool
+	ReservedIn       string
+	// Finished members sort after the others (see Key).
+	Finished bool
+}
+
+func (m Member) Has(kind Kind) bool { return slices.Contains(m.Kinds, kind) }
+
+type LocalQueues interface {
+	// Get returns LocalQueue namespace/name, nil when it doesn't exist, and
+	// whether Radar read the LocalQueues in namespace at all.
+	Get(namespace, name string) (localQueue *unstructured.Unstructured, read bool)
+}
+
+func QueueName(w *unstructured.Unstructured) string {
+	name, _, _ := unstructured.NestedString(w.Object, "spec", "queueName")
+	return name
+}
+
+func ReservedIn(w *unstructured.Unstructured) string {
+	name, _, _ := unstructured.NestedString(w.Object, "status", "admission", "clusterQueue")
+	return name
+}
+
+func LocalQueueTarget(lq *unstructured.Unstructured) string {
+	name, _, _ := unstructured.NestedString(lq.Object, "spec", "clusterQueue")
+	return name
+}
+
+// ClusterQueueMembers returns the workloads that belong to clusterQueue,
+// each once, in no particular order: set Finished, then Sort. workloads may hold any Workloads, members or not,
+// and the same Workload more than once.
+func ClusterQueueMembers(clusterQueue string, workloads []*unstructured.Unstructured, localQueues LocalQueues) []Member {
+	members := make([]Member, 0, len(workloads))
+	seen := make(map[string]bool, len(workloads))
+	for _, w := range workloads {
+		if w == nil || seen[identity(w)] {
+			continue
+		}
+		seen[identity(w)] = true
+		m := Member{Workload: w, QueueName: QueueName(w), ReservedIn: ReservedIn(w)}
+		if m.QueueName != "" {
+			lq, read := localQueues.Get(w.GetNamespace(), m.QueueName)
+			m.LocalQueueUnread = !read
+			if lq != nil {
+				m.SubmittedTo, m.LocalQueueUID = LocalQueueTarget(lq), string(lq.GetUID())
+			}
+		}
+		if clusterQueue != "" && m.SubmittedTo == clusterQueue {
+			m.Kinds = append(m.Kinds, Submission)
+		}
+		if clusterQueue != "" && m.ReservedIn == clusterQueue {
+			m.Kinds = append(m.Kinds, Reservation)
+		}
+		if len(m.Kinds) > 0 {
+			members = append(members, m)
+		}
+	}
+	return members
+}
+
+// LocalQueueMembers returns the workloads submitted to localQueue, each
+// once, in no particular order: set Finished, then Sort.
+func LocalQueueMembers(localQueue *unstructured.Unstructured, workloads []*unstructured.Unstructured) []Member {
+	namespace, name := localQueue.GetNamespace(), localQueue.GetName()
+	members := make([]Member, 0, len(workloads))
+	seen := make(map[string]bool, len(workloads))
+	for _, w := range workloads {
+		if w == nil || seen[identity(w)] || w.GetNamespace() != namespace || QueueName(w) != name || name == "" {
+			continue
+		}
+		seen[identity(w)] = true
+		members = append(members, Member{Workload: w, Kinds: []Kind{Submission}, QueueName: name, SubmittedTo: LocalQueueTarget(localQueue), LocalQueueUID: string(localQueue.GetUID()), ReservedIn: ReservedIn(w)})
+	}
+	return members
+}
+
+// identity tells Workloads apart: by UID, or by name for an object without
+// one.
+func identity(w *unstructured.Unstructured) string {
+	if uid := string(w.GetUID()); uid != "" {
+		return uid
+	}
+	return w.GetNamespace() + "/" + w.GetName()
+}
+
+// Key orders members: unfinished before finished, then namespace, name and
+// UID. Alphabetical on purpose within each, so that no order of the list is
+// mistaken for the order Kueue admits Workloads in; by default Kueue keeps
+// finished Workloads until their owner goes, so they would otherwise bury
+// the rest.
+func Key(m Member) string {
+	rank := "0"
+	if m.Finished {
+		rank = "1"
+	}
+	return strings.Join([]string{rank, m.Workload.GetNamespace(), m.Workload.GetName(), string(m.Workload.GetUID())}, "\x00")
+}
+
+// Sort orders members by Key, after their Finished flags are set. Each key
+// is built once.
+func Sort(members []Member) {
+	type keyed struct {
+		key    string
+		member Member
+	}
+	sorted := make([]keyed, len(members))
+	for i, m := range members {
+		sorted[i] = keyed{Key(m), m}
+	}
+	slices.SortFunc(sorted, func(a, b keyed) int { return cmp.Compare(a.key, b.key) })
+	for i, k := range sorted {
+		members[i] = k.member
+	}
+}
+
+// Counts are the numbers of members, each way. A member that belongs both
+// ways counts once in Members and once in each of the others, so Submission
+// and Reservation don't add up to Members. States counts members by the
+// state stateOf gives them; a member without one isn't counted there.
+type Counts struct {
+	Members     int            `json:"members"`
+	Submission  int            `json:"submission"`
+	Reservation int            `json:"reservation"`
+	States      map[string]int `json:"states"`
+}
+
+func Count(members []Member, stateOf func(Member) string) Counts {
+	c := Counts{Members: len(members), States: map[string]int{}}
+	for _, m := range members {
+		if m.Has(Submission) {
+			c.Submission++
+		}
+		if m.Has(Reservation) {
+			c.Reservation++
+		}
+		if stateOf == nil {
+			continue
+		}
+		if state := stateOf(m); state != "" {
+			c.States[state]++
+		}
+	}
+	return c
+}
+
+// Filter keeps the members that belong in kind's way ("" for any) and whose
+// state stateOf gives is state ("" for any).
+func Filter(members []Member, kind Kind, state string, stateOf func(Member) string) []Member {
+	if kind == "" && state == "" {
+		return members
+	}
+	out := make([]Member, 0, len(members))
+	for _, m := range members {
+		if (kind == "" || m.Has(kind)) && (state == "" || stateOf(m) == state) {
+			out = append(out, m)
+		}
+	}
+	return out
+}
+
+// Page returns up to limit of members (sorted by Key) whose key sorts after
+// after ("" for the first page), and whether more follow. Paging by key
+// rather than position keeps a member from appearing twice while its key
+// stays the same; a member that joins before the key of a page already read
+// is missed until the list is read again from the start. A member's key
+// changes once, when it finishes: one returned among the unfinished members
+// that finishes before the traversal reaches the finished ones is returned
+// again there, so readers merge pages by UID, keeping the later row.
+func Page(members []Member, after string, limit int) (page []Member, more bool) {
+	start := 0
+	if after != "" {
+		start, _ = slices.BinarySearchFunc(members, after, func(m Member, key string) int {
+			if Key(m) <= key {
+				return -1
+			}
+			return 1
+		})
+	}
+	end := min(start+limit, len(members))
+	return members[start:end], end < len(members)
+}
+
 ```
 
 ### Core Architecture Module: `internal/search/score.go`
@@ -2190,159 +2424,6 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ```
 
-### Core Architecture Module: `packages/k8s-ui/src/components/kueue/QueueEvidence.tsx`
-```
-import type { ReactNode } from 'react'
-import { Badge } from '../ui/Badge'
-import { ResourceLink } from '../ui/drawer-components'
-import { TimeValue } from '../ui/ScheduleValue'
-import { FactGrid, FactRow, FactValue, type Fact } from '../facts'
-import type { StatusBadge } from '../resources/resource-utils'
-import { getAdmissionCheckStatus, getClusterQueueStatus, getKueueQueueCondition, isKueueConditionStale } from '../resources/resource-utils-kueue'
-import { describeKueuePolicy } from './policy'
-import { isDenied, unreadReason, type RelatedRead } from './related-read'
-import { namespaceEligibility } from './eligibility'
-import { KUEUE_GROUP } from './constants'
-
-export type Navigate = (ref: { kind: string; namespace: string; name: string; group?: string }) => void
-
-/** One related object's name with what Radar's read of it found. Without a read, the name alone. */
-export function ReadState({ read, found }: { read?: RelatedRead; found?: ReactNode }) {
-  if (!read) return null
-  if (read.state === 'found') return <>{found ?? <Badge severity="neutral" size="sm">Found</Badge>}</>
-  if (read.state === 'not_found') return <Badge severity="error" size="sm">Not found</Badge>
-  if (read.state === 'unconfirmed') return <span className="text-xs text-theme-text-tertiary">This Radar can’t confirm whether it exists</span>
-  return <span className={isDenied(read) ? 'text-xs text-theme-text-secondary' : 'text-xs text-theme-text-tertiary'}>{read.state === 'loading' ? 'Checking…' : `Not read: ${unreadReason(read)}`}</span>
-}
-
-export function StatusPill({ status }: { status: StatusBadge }) {
-  return <Badge colorClass={status.color} size="sm">{status.text}</Badge>
-}
-
-export function ReportedActive({ data, status, children }: { data: any; status: StatusBadge; children?: ReactNode }) {
-  const condition = getKueueQueueCondition(data)
-  const generation = data?.metadata?.generation
-  if (!condition) {
-    return <div className="space-y-2 text-sm">
-      <div className="flex flex-wrap items-center gap-2"><StatusPill status={status} /></div>
-      <p className="text-theme-text-secondary">No Active condition reported.</p>
-      {children}
-    </div>
-  }
-  return <div className="space-y-2 text-sm">
-    <div className="flex flex-wrap items-center gap-2">
-      <StatusPill status={status} />
-      {condition.reason && !status.text.startsWith(condition.reason) && <code className="break-all text-xs text-theme-text-secondary">{condition.reason}</code>}
-    </div>
-    {condition.message && <p className="whitespace-pre-wrap break-words text-theme-text-primary">{condition.message}</p>}
-    <p className="text-xs text-theme-text-tertiary">
-      Active={condition.status}
-      {condition.lastTransitionTime && <> since <TimeValue timestamp={condition.lastTransitionTime} /></>}
-      {' · '}
-      {condition.observedGeneration ? `observed generation ${condition.observedGeneration} of ${generation ?? '?'}` : 'observed generation not reported'}
-    </p>
-    {children}
-  </div>
-}
-
-function count(value: unknown, source: string): Fact {
-  return typeof value === 'number'
-    ? { text: String(value), tone: 'neutral', source }
-    : { text: 'Not reported', tone: 'unknown', source }
-}
-
-/** Controller-reported Workload counts. Reserving includes admitted, so they never add up. */
-export function QueueCounts({ data, kind }: { data: any; kind: 'ClusterQueue' | 'LocalQueue' }) {
-  const source = `Reported in the ${kind}'s status`
-  return <div className="space-y-2">
-    <FactGrid>
-      <FactRow label="Pending"><FactValue fact={count(data?.status?.pendingWorkloads, source)} /></FactRow>
-      <FactRow label="Reserving quota"><FactValue fact={count(data?.status?.reservingWorkloads, source)} /></FactRow>
-      <FactRow label="Admitted"><FactValue fact={count(data?.status?.admittedWorkloads, source)} /></FactRow>
-    </FactGrid>
-    <p className="text-xs text-theme-text-tertiary">Reserving includes admitted Workloads, so these counts are not additive. Admission does not establish that Pods are running.</p>
-  </div>
-}
-
-export function ConfiguredStop({ data }: { data: any }) {
-  const raw = data?.spec?.stopPolicy
-  const policy = describeKueuePolicy(data?.apiVersion, 'stopPolicy', raw ?? 'None')
-  return <div className="space-y-1 text-sm">
-    <div className="flex flex-wrap items-baseline gap-2">
-      <span className="text-theme-text-tertiary">Stop policy</span>
-      <code className="text-theme-text-primary">{policy.raw}</code>
-      {raw == null && <span className="text-xs text-theme-text-tertiary">(not set)</span>}
-    </div>
-    <p className="text-theme-text-secondary">{policy.meaning ?? `Radar has no description of this value for ${data?.apiVersion ?? 'this API version'}.`}</p>
-  </div>
-}
-
-function ReportedMessage({ condition, generation }: { condition: any; generation?: number }) {
-  return <p className="whitespace-pre-wrap break-words text-xs text-theme-text-secondary">
-    {isKueueConditionStale(condition, generation) && <span className="text-theme-text-tertiary">Reported for generation {condition.observedGeneration} (now {generation}): </span>}
-    {condition.message}
-  </p>
-}
-
-export function ClusterQueueReadSummary({ name, read, onNavigate }: { name: string; read?: RelatedRead; onNavigate?: Navigate }) {
-  const parent = read?.state === 'found' ? read.object : undefined
-  const condition = parent ? getKueueQueueCondition(parent) : undefined
-  return <div className="min-w-0 space-y-1 text-sm">
-    <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
-      <ResourceLink name={name} kind="clusterqueues" group={KUEUE_GROUP} onNavigate={onNavigate} />
-      <ReadState read={read} found={parent ? <StatusPill status={getClusterQueueStatus(parent)} /> : undefined} />
-    </div>
-    {parent && <p className="text-xs text-theme-text-secondary">
-      Read from the ClusterQueue{condition?.reason && condition.status !== 'True' ? `: ${condition.reason}${isKueueConditionStale(condition, parent.metadata?.generation) ? ' (stale)' : ''}` : ''}{parent.spec?.stopPolicy && parent.spec.stopPolicy !== 'None' ? ` · stop policy ${parent.spec.stopPolicy}` : ''}
-    </p>}
-    {parent && condition?.message && condition.status !== 'True' && <ReportedMessage condition={condition} generation={parent.metadata?.generation} />}
-  </div>
-}
-
-/**
- * Whether a namespace matches a ClusterQueue's namespaceSelector. The
- * selector is only known from a ClusterQueue that was read; the namespace's
- * labels are needed only when the selector has terms.
- */
-export function namespaceEligibilityFact({ clusterQueue, parent, namespaceRead }: { clusterQueue: string; parent?: RelatedRead; namespaceRead?: RelatedRead }): Fact {
-  const source = `ClusterQueue ${clusterQueue} namespaceSelector`
-  if (parent?.state !== 'found') {
-    const why = !parent ? 'Unknown: the ClusterQueue was not read'
-      : parent.state === 'loading' ? 'Checking the ClusterQueue…'
-        : parent.state === 'not_found' ? 'Unknown: the ClusterQueue was not found'
-          : `Unknown: ClusterQueue not read (${unreadReason(parent)})`
-    return { text: why, tone: 'unknown', source }
-  }
-  const selector = parent.object?.spec?.namespaceSelector
-  const labels = namespaceRead?.state === 'found' ? (namespaceRead.object?.metadata?.labels ?? {}) : undefined
-  const result = namespaceEligibility(selector, labels)
-  switch (result.state) {
-    case 'eligible':
-      return { text: result.basis === 'all' ? 'Eligible: the selector is empty ({}), so every namespace matches' : 'Eligible: its labels match the selector', tone: 'healthy', source }
-    case 'not_eligible':
-      return { text: result.basis === 'none' ? 'Not eligible: the ClusterQueue sets no namespaceSelector, so no namespace matches' : 'Not eligible: its labels don’t match the selector', tone: 'unhealthy', source }
-    default:
-      if (result.why === 'unsupported_operator') return { text: `Unknown: the selector uses operator ${result.operator || '(none)'}, which Radar doesn't evaluate`, tone: 'unknown', source }
-      if (namespaceRead?.state === 'loading') return { text: 'Checking the namespace…', tone: 'unknown', source }
-      return { text: namespaceRead?.state === 'not_found' ? 'Unknown: the Namespace was not found' : `Unknown: its labels weren’t read (${unreadReason(namespaceRead)})`, tone: 'unknown', source }
-  }
-}
-
-export function AdmissionCheckRow({ name, onFlavors, read, onNavigate }: { name: string; onFlavors?: string[]; read?: RelatedRead; onNavigate?: Navigate }) {
-  const check = read?.state === 'found' ? read.object : undefined
-  const condition = check ? getKueueQueueCondition(check) : undefined
-  return <div className="min-w-0 space-y-1 text-sm">
-    <div className="flex flex-wrap items-center gap-2 break-all [&_button]:text-left">
-      <ResourceLink name={name} kind="admissionchecks" group={KUEUE_GROUP} onNavigate={onNavigate} />
-      <ReadState read={read} found={check ? <StatusPill status={getAdmissionCheckStatus(check)} /> : undefined} />
-    </div>
-    <p className="break-words text-xs text-theme-text-secondary">{onFlavors?.length ? `Applies to flavors: ${onFlavors.join(', ')}` : 'Applies to all flavors'}</p>
-    {condition?.message && condition.status !== 'True' && <ReportedMessage condition={condition} generation={check.metadata?.generation} />}
-  </div>
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2370,164 +2451,369 @@ export function AdmissionCheckRow({ name, onFlavors, read, onNavigate }: { name:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e8307a8` (2026-11-04)
-**Commit Message**: fix(traffic): keep the Hubble connection error when the relay is reachable
+### Incident Patch 1: `3c21eb0f` (2026-11-05)
+**Commit Message**: Install into a listed namespace without creating it, and require Radar 1.19.1
 
-With automatic port-forwarding off, a relay that accepts TCP but fails the
-gRPC or TLS check was reported as missing a network route. Report the
-connection error instead; keep the routing advice for an unreachable relay.
+Helm sends a namespace create whenever "create namespace" is on, and only
+ignores "already exists". Under rbac.namespaces nobody can be granted
+namespace create, so installs into a listed namespace failed with 403. Skip
+the create for listed namespaces, which exist by construction.
 
-**File**: `internal/traffic/auto_port_forward_test.go` (modified, +12/-0)
+1.19.0 shipped without --rbac-namespaces, so the image check now starts at
+1.19.1.
+
+**File**: `deploy/helm/radar/templates/deployment.yaml` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,7 @@ package traffic
+@@ -20,8 +20,8 @@
+ {{- end }}
+ {{- end }}
+ {{- $tag := toString $.Values.image.tag }}
+-{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.0-0" $tag) }}
+-{{- fail (printf "rbac.namespaces requires Radar 1.19.0 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.0 or later." $tag) }}
++{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.1-0" $tag) }}
++{{- fail (printf "rbac.namespaces requires Radar 1.19.1 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.1 or later." $tag) }}
+ {{- end }}
+ {{- end }}
+ {{- $basePath := include "radar.basePath" . -}}
+```
+
+**File**: `deploy/helm/radar/tests/rbac_namespaces_test.yaml` (modified, +12/-2)
+```diff
+@@ -219,7 +219,17 @@ tests:
+     template: deployment.yaml
+     set:
+       rbac.namespaces: [app]
+-      image.tag: 1.18.3
++      image.tag: 1.19.0
+     asserts:
+       - failedTemplate:
+-          errorPattern: requires Radar 1.19.0 or later
++          errorPattern: requires Radar 1.19.1 or later
++
++  - it: accepts the first image with the flag
++    template: deployment.yaml
++    set:
++      rbac.namespaces: [app]
++      image.tag: 1.19.1
++    asserts:
++      - contains:
++          path: spec.template.spec.containers[0].args
++          content: --rbac-namespaces=app
+```
+
+**File**: `internal/helm/client.go` (modified, +1/-1)
+```diff
+@@ -3865,7 +3865,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
+ 	switch mode {
+ 	case installFresh:
+ 		sendProgress("installing", fmt.Sprintf("Installing %s to namespace %s...", req.ReleaseName, req.Namespace), "")
+-		if req.CreateNamespace {
++		if createsNamespace(req) {
+ 			sendProgress("installing", fmt.Sprintf("Creating namespace %s if needed...", req.Namespace), "")
+ 		}
+ 	case installReplace:
+```
+
+**File**: `internal/helm/install_preflight.go` (modified, +12/-1)
+```diff
+@@ -6,13 +6,16 @@ import (
+ 	"log"
+ 	"net/http"
+ 	"regexp"
++	"slices"
+ 	"time"
  
- import (
- 	"context"
-+	"errors"
- 	"strings"
- 	"testing"
+ 	"helm.sh/helm/v3/pkg/action"
+ 	"helm.sh/helm/v3/pkg/chart"
+ 	"helm.sh/helm/v3/pkg/release"
+ 	"helm.sh/helm/v3/pkg/storage/driver"
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
++
++	"github.com/skyhook-io/radar/internal/k8s"
+ )
  
-@@ -26,6 +27,17 @@ func TestHubbleConnectWithAutoPortForwardDisabled(t *testing.T) {
- 	}
+ // ReleasePendingError is returned when a prior install/upgrade left the release
+@@ -219,7 +222,7 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
+ 	install := action.NewInstall(actionConfig)
+ 	install.ReleaseName = req.ReleaseName
+ 	install.Namespace = req.Namespace
+-	install.CreateNamespace = req.CreateNamespace
++	install.CreateNamespace = createsNamespace(req)
+ 	install.Timeout = 120 * time.Second
+ 	install.Version = req.Version
+ 	install.Replace = mode == installReplace
+@@ -230,6 +233,14 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
+ 	return install.Run(ch, req.Values)
  }
  
-+func TestComposeConnectErrorWithAutoPortForwardDisabled(t *testing.T) {
-+	route := composeConnectError("10.0.0.1:80", errDirectUnreachable, portforward.ErrAutoDisabled)
-+	if !strings.Contains(route, "needs a network route") {
-+		t.Errorf("unreachable relay = %q, want routing advice", route)
++// createsNamespace reports whether the install asks Helm to create its
++// namespace. Not for a namespace in --rbac-namespaces: it exists, since the
++// install's RoleBindings live there, and those bindings cannot grant namespace
++// create, so Helm's create would be refused before the apiserver found it.
++func createsNamespace(req *InstallRequest) bool {
++	return req.CreateNamespace && !slices.Contains(k8s.RBACNamespaces(), req.Namespace)
++}
++
+ // rbacPreflightRe matches Helm's wrapped pre-flight RBAC error. Helm formats
+ // it as: `could not get information about the resource <Kind> "<name>" in
+ // namespace "<ns>": <gvr> "<name>" is forbidden: User "<u>" cannot <verb>
+```
+
+**File**: `internal/helm/install_rbac_namespaces_test.go` (added, +123/-0)
+```diff
+@@ -0,0 +1,123 @@
++package helm
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"slices"
++	"sync"
++	"testing"
++
++	"helm.sh/helm/v3/pkg/action"
++	"helm.sh/helm/v3/pkg/chart"
++	"helm.sh/helm/v3/pkg/kube"
++	"helm.sh/helm/v3/pkg/release"
++	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/meta"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/rest"
++
++	"github.com/skyhook-io/radar/internal/k8s"
++)
++
++// An install limited by --rbac-namespaces holds no namespace create, and Helm
++// sends that create even for a namespace that exists. Installing into a listed
++// namespace with "create namespace" on must still succeed.
++func TestInstallIntoRBACNamespaceSkipsNamespaceCreate(t *testing.T) {
++	cases := []struct {
++		name          string
++		rbac          []string
++		mode          installMode
++		wantNSCreate  bool
++		wantInstalled bool
++	}{
++		{name: "listed namespace", rbac: []string{"app"}, mode: installFresh, wantInstalled: true},
++		{name: "listed namespace, replacing an uninstalled release", rbac: []string{"app"}, mode: installReplace, wantInstalled: true},
++		{name: "namespace outside the list", rbac: []string{"billing"}, mode: installFresh, wantNSCreate: true},
++		{name: "no list", mode: installFresh, wantNSCreate: true},
 +	}
-+	tlsFailed := composeConnectError("10.0.0.1:80", errors.New("TLS gRPC connection test failed"), portforward.ErrAutoDisabled)
-+	if strings.Contains(tlsFailed, "network route") || !strings.Contains(tlsFailed, "TLS gRPC connection test failed") {
-+		t.Errorf("reachable relay with a failed connection = %q, want the connection error, not routing advice", tlsFailed)
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			k8s.SetRBACNamespaces(tc.rbac)
++			t.Cleanup(func() { k8s.SetRBACNamespaces(nil) })
++			cfg, requests := namespaceLimitedActionConfig(t)
++			if tc.mode == installReplace {
++				seedUninstalledRelease(t, cfg)
++			}
++			ch := &chart.Chart{
++				Metadata:  &chart.Metadata{APIVersion: "v2", Name: "demo", Version: "1.0.0"},
++				Templates: []*chart.File{{Name: "templates/cm.yaml", Data: []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: demo\ndata:\n  a: b\n")}},
++			}
++			_, err := runInstallOrUpgrade(cfg, &InstallRequest{ReleaseName: "demo", Namespace: "app", CreateNamespace: true, Values: map[string]any{}}, ch, tc.mode)
++			if got := slices.Contains(*requests, "POST /api/v1/namespaces"); got != tc.wantNSCreate {
++				t.Fatalf("namespace create sent = %v, want %v (requests %v)", got, tc.wantNSCreate, *requests)
++			}
++			if installed := slices.Contains(*requests, "POST /api/v1/namespaces/app/configmaps"); installed != tc.wantInstalled {
++				t.Fatalf("installed = %v, want %v (err %v)", installed, tc.wantInstalled, err)
++			}
++			if tc.wantInstalled && err != nil {
++				t.Fatalf("install failed: %v", err)
++			}
++		})
 +	}
 +}
 +
- func TestCarettaConnectWithAutoPortForwardDisabled(t *testing.T) {
- 	portforward.SetAutoDisabled(true)
- 	t.Cleanup(func() { portforward.SetAutoDisabled(false) })
-```
-
-**File**: `internal/traffic/hubble.go` (modified, +5/-1)
-```diff
-@@ -644,7 +644,11 @@ var errDirectUnreachable = errors.New("tcp dial failed (unreachable or blocked)"
- // picture; an RBAC-denied port-forward additionally names the real fixes.
- func composeConnectError(directAddr string, directErr, pfErr error) string {
- 	if errors.Is(pfErr, portforward.ErrAutoDisabled) {
--		return "Radar can't reach hubble-relay directly from this machine, and automatic port-forwarding is turned off. Live traffic needs a network route to the hubble-relay Service."
-+		if errors.Is(directErr, errDirectUnreachable) {
-+			return "Radar can't reach hubble-relay directly from this machine, and automatic port-forwarding is turned off. Live traffic needs a network route to the hubble-relay Service."
++func seedUninstalledRelease(t *testing.T, cfg *action.Configuration) {
++	t.Helper()
++	seedRelease(t, cfg, "demo", release.StatusUninstalled, 1)
++}
++
++// namespaceLimitedActionConfig serves an apiserver where the caller may write
++// ConfigMaps in "app" and is refused any namespace create.
++func namespaceLimitedActionConfig(t *testing.T) (*action.Configuration, *[]string) {
++	t.Helper()
++	cfg := memoryActionConfig(t)
++	var mu sync.Mutex
++	var requests []string
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		if r.URL.Path == "/version" {
++			writeTestJSON(t, w, map[string]string{"gitVersion": "v1.36.2"})
++			return
 +		}
-+		// The route works; the connection itself failed, so that is what to fix.
-+		return fmt.Sprintf("Radar reached hubble-relay directly, but the connection failed: %v. Automatic port-forwarding is turned off, so there is no other way to connect.", directErr)
- 	}
- 	msg := fmt.Sprintf("direct connection to %s (%s) failed (%v); port-forward fallback failed: %v", hubbleRelayService, directAddr, directErr, pfErr)
- 	if isForbiddenPortForward(pfErr) {
++		switch r.URL.Path {
++		case "/openapi/v3":
++			writeRaw(t, w, `{"paths":{"api/v1":{"serverRelativeURL":"/openapi/v3/api/v1"}}}`)
++			return
++		case "/openapi/v3/api/v1":
++			writeRaw(t, w, `{"openapi":"3.0.0","info":{"title":"fixture","version":"v1"},"paths":{"/api/v1/namespaces/{namespace}/configmaps/{name}":{"patch":{"x-kubernetes-group-version-kind":{"group":"","version":"v1","kind":"ConfigMap"},"parameters":[{"name":"fieldValidation","in":"query","schema":{"type":"string"}}],"responses":{"200":{"description":"ok"}}}},"/api/v1/namespaces/{name}":{"patch":{"x-kubernetes-group-version-kind":{"group":"","version":"v1","kind":"Namespace"},"parameters":[{"name":"fieldValidation","in":"query","schema":{"type":"string"}}],"responses":{"200":{"description":"ok"}}}}}}`)
++			return
++		}
++		mu.Lock()
++		if r.Method != http.MethodGet {
++			requests = append(requests, r.Method+" "+r.URL.Path)
++		}
++		mu.Unlock()
++		switch {
++		case r.Method == http.MethodPost && r.URL.Path == "/api/v1/namespaces":
++			writeK8sStatus(t, w, http.StatusForbidden, "Forbidden", `namespaces is forbidden: cannot create resource "namespaces" at the cluster scope`)
++		case r.URL.Path == "/api/v1/namespaces/app/configmaps" && r.Method == http.MethodPost:
++			w.WriteHeader(http.StatusCreated)
++			writeTestJSON(t, w, corev1.ConfigMap{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "ConfigMap"}, ObjectMeta: metav1.ObjectMeta{Name: "demo", Namespace: "app"}})
++		default:
++			writeK8sStatus(t, w, http.StatusNotFound, "NotFound", "absent")
++		}
++	}))
++	t.Cleanup(srv.Close)
++	getter := newRESTConfigGetter(&rest.Config{Host: srv.URL}, "app", nil)
++	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{{Version: "v1"}})
++	mapper.Add(schema.Grou
 ```
 
 ---
 
-### Incident Patch 2: `cc8ed1ba` (2026-11-03)
-**Commit Message**: fix(prometheus): retain config across context retirement
+### Incident Patch 2: `b618f366` (2026-11-01)
+**Commit Message**: Require every cached kind to be readable in each listed namespace
 
-**File**: `internal/prometheus/client.go` (modified, +18/-4)
+A namespace that lost one kind's grant (StatefulSets, say) while pods,
+deployments and services stayed readable still counted as fully
+readable, so its cache could miss that kind while namespace-scope
+reported authoritative.
+
+**File**: `deploy/helm/radar/README.md` (modified, +1/-1)
 ```diff
-@@ -140,8 +140,10 @@ func (c *Client) headersRequireURLLocked() bool {
+@@ -553,7 +553,7 @@ Limits:
+ - `edit` and `admin` in a listed namespace let people run pods as any ServiceAccount there, so a privileged ServiceAccount in a listed namespace reaches beyond the list.
+ - Prometheus, OpenCost, Kubecost and Hubble are not limited by RBAC. Radar shows what those backends return, which can cover the whole cluster.
+ - Set the list at install. Narrowing an install that already reported to Radar Cloud does not remove what Radar Cloud holds: people with access to every listed namespace can still see history from namespaces that left the list, and alerts there resolve.
+-- If Radar's ServiceAccount cannot read a listed namespace when Radar starts (its RoleBinding is missing, say), Radar reports its view as incomplete and Radar Cloud stops evaluating alerts for the cluster. As with any grant change, Radar notices a removed grant only when it restarts.
++- If Radar's ServiceAccount cannot read a listed namespace when Radar starts (its RoleBinding is missing, say), or cannot read a kind there that it reads in the other listed namespaces, Radar reports its view as incomplete and Radar Cloud stops evaluating alerts for the cluster. As with any grant change, Radar notices a removed grant only when it restarts.
+ - Radar's ServiceAccount must not be able to list namespaces cluster-wide. If a binding added outside the chart lets it, Radar logs a warning and is not limited.
  
- // Global client instance
- var (
--	globalClient *Client
--	clientMu     sync.RWMutex
-+	globalClient     *Client
-+	clientMu         sync.RWMutex
-+	retiredManualURL string
-+	retiredHeaders   map[string]string
- )
- 
- // discoveryGate serializes Prometheus discovery across the whole process. Per-
-@@ -177,6 +179,11 @@ func discoveryDiagnosticsSuppressed(ctx context.Context) bool {
- func Initialize(client kubernetes.Interface, config *rest.Config, contextName string) {
- 	clientMu.Lock()
- 	defer clientMu.Unlock()
-+	// Initialize starts a fresh application client. Context-switch recovery uses
-+	// Reinitialize instead, so settings retained by Retire must not leak into a
-+	// new initialization.
-+	retiredManualURL = ""
-+	retiredHeaders = nil
- 
- 	globalClient = &Client{
- 		k8sClient:     client,
-@@ -404,6 +411,11 @@ func Retire() {
- 	defer clientMu.Unlock()
- 	if globalClient != nil {
- 		globalClient.mu.Lock()
-+		// Retire removes the context-bound client, but the manual endpoint and
-+		// headers are process configuration (for example --prometheus-url). Keep
-+		// a detached copy so a later Reinitialize cannot fall back to discovery.
-+		retiredManualURL = globalClient.manualURL
-+		retiredHeaders = copyHeaders(globalClient.headers)
- 		if globalClient.workloadScope != nil {
- 			log.Print("[prometheus] Workload metrics scope cleared: connection retired; restart with a fresh scope assertion")
- 		}
-@@ -423,8 +435,8 @@ func Reinitialize(client kubernetes.Interface, config *rest.Config, contextName
- 	clientMu.Lock()
- 	defer clientMu.Unlock()
- 
--	manualURL := ""
--	var headers map[string]string
-+	manualURL := retiredManualURL
-+	headers := copyHeaders(retiredHeaders)
- 	var workloadScope *prom.WorkloadMetricsScope
- 	var connectedIdentity string
- 	var workloadScopeEverSet bool
-@@ -455,6 +467,8 @@ func Reinitialize(client kubernetes.Interface, config *rest.Config, contextName
- 		globalClient.cancelWorkloadAttributionsLocked()
- 		globalClient.mu.Unlock()
- 	}
-+	retiredManualURL = ""
-+	retiredHeaders = nil
- 	if oldCancel != nil {
- 		oldCancel() // stop the outgoing client's detached discovery, if any
- 	}
+ The chart refuses Radar's own namespace in the list when auth or Radar Cloud is on, since people with access there could use Radar's ServiceAccount, which can impersonate anyone. It also refuses `cloud.defaultRbac.nodeOps`, and `--namespace-scope` or `--rbac-namespaces` in `extraArgs`. To clear the list on an existing release, use `--set-json 'rbac.namespaces=[]'`: `--set rbac.namespaces={}` sets a list holding one empty name, which the chart rejects.
 ```
 
-**File**: `internal/prometheus/retire_test.go` (added, +26/-0)
+**File**: `internal/k8s/visibility.go` (modified, +29/-0)
 ```diff
-@@ -0,0 +1,26 @@
-+package prometheus
-+
-+import (
-+	"maps"
-+	"testing"
-+)
-+
-+func TestRetirePreservesManualConfigurationForReinitialize(t *testing.T) {
-+	Initialize(nil, nil, "before")
-+	t.Cleanup(func() { Initialize(nil, nil, "") })
-+
-+	wantURL := "http://127.0.0.1:9"
-+	wantHeaders := map[string]string{"Authorization": "Bearer test-token"}
-+	Configure(wantURL, wantHeaders)
-+
-+	Retire()
-+	Reinitialize(nil, nil, "after")
-+
-+	gotURL, gotHeaders := CurrentConfig()
-+	if gotURL != wantURL {
-+		t.Fatalf("manual URL after Retire/Reinitialize = %q, want %q", gotURL, wantURL)
+@@ -88,6 +88,35 @@ func BuildVisibilitySummary(result *PermissionCheckResult, namespace string) *Vi
+ 	return out
+ }
+ 
++// ReadableInEvery reports whether Radar's startup probe can read pods,
++// deployments and services, and every other kind it caches, in each of
++// namespaces. A kind cached in one of them but not another means a grant is
++// missing there, so the cache for that namespace is incomplete.
++func (r *PermissionCheckResult) ReadableInEvery(namespaces []string) bool {
++	if r == nil {
++		return false
 +	}
-+	if !maps.Equal(gotHeaders, wantHeaders) {
-+		t.Fatalf("headers after Retire/Reinitialize = %v, want %v", gotHeaders, wantHeaders)
++	readable := func(key string) bool {
++		for _, namespace := range namespaces {
++			if visibilityStatus(r, key, namespace) != "allowed" {
++				return false
++			}
++		}
++		return true
 +	}
++	for key, scope := range r.Scopes {
++		if scope.Enabled && !readable(key) {
++			return false
++		}
++	}
++	for _, key := range []string{k8score.Pods, k8score.Deployments, k8score.Services} {
++		if !readable(key) {
++			return false
++		}
++	}
++	return true
 +}
++
+ func visibilityStatus(result *PermissionCheckResult, key string, namespace string) string {
+ 	scope, ok := result.Scopes[key]
+ 	if !ok || !scope.Enabled {
+```
+
+**File**: `internal/server/namespace_pick_failure_test.go` (modified, +9/-5)
+```diff
+@@ -113,12 +113,14 @@ func TestGetAccessibleNamespacesWithSource_RBACNamespaces(t *testing.T) {
+ // let those callers treat the namespace's issues as gone.
+ func TestNamespaceScope_RBACNamespacesAuthoritative(t *testing.T) {
+ 	cases := []struct {
+-		name     string
+-		readable []string
+-		want     bool
++		name        string
++		readable    []string
++		statefulSet []string
++		want        bool
+ 	}{
+-		{"every listed namespace readable", []string{"alpha", "beta"}, true},
+-		{"grant missing in one namespace", []string{"alpha"}, false},
++		{"every listed namespace readable", []string{"alpha", "beta"}, []string{"alpha", "beta"}, true},
++		{"grant missing in one namespace", []string{"alpha"}, []string{"alpha"}, false},
++		{"one cached kind missing in one namespace", []string{"alpha", "beta"}, []string{"alpha"}, false},
+ 	}
+ 	for _, tc := range cases {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -133,6 +135,8 @@ func TestNamespaceScope_RBACNamespacesAuthoritative(t *testing.T) {
+ 				scopes[kind] = k8score.ResourceScope{Enabled: true, Namespace: tc.readable[0]}
+ 				fanout[kind] = tc.readable
+ 			}
++			scopes[k8score.StatefulSets] = k8score.ResourceScope{Enabled: true, Namespace: tc.statefulSet[0]}
++			fanout[k8score.StatefulSets] = tc.statefulSet
+ 			restore := k8s.SetTestPermissionResult(&k8s.PermissionCheckResult{Perms: &k8s.ResourcePermissions{}, Scopes: scopes, ScopeNamespaces: fanout})
+ 			t.Cleanup(restore)
+ 
+```
+
+**File**: `internal/server/namespace_scope.go` (modified, +1/-19)
+```diff
+@@ -436,24 +436,6 @@ func deniedNamespaces(namespaces []string, permissions *k8s.PermissionCheckResul
+ 	return denied
+ }
+ 
+-// namespacesFullyReadable reports whether Radar's own probe could list every
+-// core workload kind in each namespace.
+-func namespacesFullyReadable(namespaces []string, permissions *k8s.PermissionCheckResult) bool {
+-	if permissions == nil {
+-		return false
+-	}
+-	for _, namespace := range namespaces {
+-		if visibility := k8s.BuildVisibilitySummary(permissions, namespace); visibility != nil {
+-			for _, status := range visibility.Core {
+-				if status != "allowed" {
+-					return false
+-				}
+-			}
+-		}
+-	}
+-	return true
+-}
+-
+ func (s *Server) handleGetNamespaceScope(w http.ResponseWriter, r *http.Request) {
+ 	if !s.requireConnected(w) {
+ 		return
+@@ -478,7 +460,7 @@ func (s *Server) handleGetNamespaceScope(w http.ResponseWriter, r *http.Request)
+ 	// every listed namespace. Callers that resolve what they no longer see
+ 	// (Radar Cloud alerts) would otherwise close issues in a namespace whose
+ 	// grant was removed.
+-	if source == k8s.NamespaceListRBAC && !namespacesFullyReadable(saAccessible, k8s.GetCachedPermissionResult()) {
++	if source == k8s.NamespaceListRBAC && !k8s.GetCachedPermissionResult().ReadableInEvery(saAccessible) {
+ 		authoritative = false
+ 	}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2547** (2026-11-06): feat(chart): add disableExec to turn off pod exec (@nadaverell)
+- **PR #2540** (2026-11-06): Nodes table: show an unknown Pod count as a dash, not zero (@nadaverell)
+- **PR #2539** (2026-11-06): Show a deleting Job with no active Pods as Deleting, not Pending (@nadaverell)
+- **PR #2538** (2026-11-06): Logs: show the line when a structured log has no message to summarize (@nadaverell)
+- **PR #2537** (2026-11-06): Capacity Demand: name GPU and Pod requests, and give no verdict while a pool is unknown (@nadaverell)
 - **PR #2535** (2026-11-04): Show CRD definitions with a searchable schema explorer and Schema tab (@nadaverell)
-- **PR #2534** (2026-11-04): feat: add --disable-auto-port-forward to stop automatic pods/portforward (@hisco)
-- **PR #2532** (2026-11-04): deps: batch eight vetted dependency updates (@nadaverell)
-- **PR #2531** (closed): deps(go): bump modernc.org/sqlite from 1.61.0 to 1.61.1 (@dependabot[bot])
-- **PR #2530** (closed): deps(go): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
-- **PR #2529** (closed): deps(go): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
 
 ---
 
@@ -2547,39 +2833,30 @@ connection error instead; keep the routing advice for an unreachable relay.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. traffic): keep the Hubble connection error when the relay is reachable
+## X. Install into a listed namespace without creating it, and require Radar 1.19.1
 
 **RULE**:
-When implementing operations in `internal/traffic/auto_port_forward_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/helm/radar/templates/deployment.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e8307a8`: traffic): keep the Hubble connection error when the relay is reachable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c21eb0f`: Install into a listed namespace without creating it, and require Radar 1.19.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/traffic/auto_port_forward_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/helm/radar/templates/deployment.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-func TestComposeConnectErrorWithAutoPortForwardDisabled(t *testing.T) {
-	route := composeConnectError("10.0.0.1:80", errDirectUnreachable, portforward.ErrAutoDisabled)
-	if !strings.Contains(route, "needs a network route") {
-		t.Errorf("unreachable relay = %q, want routing advice", route)
-	}
-	tlsFailed := composeConnectError("10.0.0.1:80", errors.New("TLS gRPC connection test failed"), portforward.ErrAutoDisabled)
-	if strings.Contains(tlsFailed, "network route") || !strings.Contains(tlsFailed, "TLS gRPC connection test failed") {
-		t.Errorf("reachable relay with a failed connection = %q, want the connection error, not routing advice", tlsFailed)
-	}
-}
-
+{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.1-0" $tag) }}
+{{- fail (printf "rbac.namespaces requires Radar 1.19.1 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.1 or later." $tag) }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.0-0" $tag) }}
+{{- fail (printf "rbac.namespaces requires Radar 1.19.0 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.0 or later." $tag) }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e8307a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c21eb0f` are properly handled with clean fallback behavior.

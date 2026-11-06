@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T14:40:46.128Z",
+  "last_updated": "2026-11-06T14:47:50.948Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11663,11 +11663,16 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "e15e8959",
-      "content_hash": "c574433550a85ade0bceb15d374e391f3646cba676c4a728d834dae158e28d1c",
+      "source_version": "467d1ca5",
+      "content_hash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Do not wrap the total list length statistic on overflow (#28457)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2176,
           "title": "Correctly tag memory for blocks of the database file (#26517)",
@@ -11754,7 +11759,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T09:12:33.301Z",
+      "verified_at": "2026-11-06T14:47:50.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36109,11 +36114,16 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "46e80093",
-      "content_hash": "845b82ba60e7b3f9165f387690c0b83ad126748fb6a48c4431634e255c689e92",
+      "source_version": "6a1e71d6",
+      "content_hash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docker): bump karakeep-chrome to Google Chrome 157.0.8103.38",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1736,
           "title": "web): upgrade next to 16.4.1 for the October security release (#3196)",
@@ -36145,7 +36155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:20:36.537Z",
+      "verified_at": "2026-11-06T14:47:46.879Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55006,11 +55016,16 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "36823919",
-      "content_hash": "0c99b35dc2d45685d08333f50849089e7e5534360cb54f001f440b7d093a2481",
+      "source_version": "1f1e0719",
+      "content_hash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Install into a listed namespace without creating it, and require Radar 1.19.1",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1834,
           "title": "MCP instructions: route suspect resources to diagnose, conclude on the cause, fi",
@@ -55102,7 +55117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:16:07.494Z",
+      "verified_at": "2026-11-06T14:47:44.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

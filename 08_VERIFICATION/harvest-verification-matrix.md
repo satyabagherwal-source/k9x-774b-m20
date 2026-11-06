@@ -7879,3 +7879,6 @@
 | `CYCLE-20261106-0KZG` | `2026-11-06T14:40:41.788Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`02bcdb6f...`) |
 | `CYCLE-20261106-0MZM` | `2026-11-06T14:40:44.386Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f8717d26...`) |
 | `CYCLE-20261106-0OE1` | `2026-11-06T14:40:46.201Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0d5945e9...`) |
+| `CYCLE-20261106-9NAM` | `2026-11-06T14:47:44.686Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b9f4aae...`) |
+| `CYCLE-20261106-9P2G` | `2026-11-06T14:47:46.984Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4411569f...`) |
+| `CYCLE-20261106-9S6R` | `2026-11-06T14:47:51.027Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8f9b8869...`) |

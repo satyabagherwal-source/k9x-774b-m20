@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-AB6M",
-    "timestamp": "2026-11-04T22:12:49.054Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8f9f0f76583698fd432909e1ba7c7d90bfdab307efd1fa4b86da9e403fa20955",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-JM7H",
-    "timestamp": "2026-11-04T22:20:03.245Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "5986e129ecfdbd47cb8280d43fcbfc6bf3f1e0ad16a000244c8ad2fb79fb8f3f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-JPDG",
-    "timestamp": "2026-11-04T22:20:07.348Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "50de829d661300f4bda062b954b19367ff13c4aeb8edcbd85907dcec083087a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-JXLH",
     "timestamp": "2026-11-04T22:20:18.005Z",
     "repository": "langchain4j/langchain4j",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-9NAM",
+    "timestamp": "2026-11-06T14:47:44.686Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-9P2G",
+    "timestamp": "2026-11-06T14:47:46.984Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "4411569ffda35435b282c59de7c03526be4c81f701d6c28bf4220c6dfb8f5d5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-9S6R",
+    "timestamp": "2026-11-06T14:47:51.027Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "8f9b8869d79156aa415ef1a44864e8b0da394c46f5e097b1dd5b69f0dcc31ec4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
