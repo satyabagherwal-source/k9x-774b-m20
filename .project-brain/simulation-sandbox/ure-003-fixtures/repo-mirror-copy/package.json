@@ -1,0 +1,11 @@
+{
+  "name": "payment-gateway-mirror",
+  "version": "1.2.0",
+  "description": "High reliability financial transaction microservice with Fastify (Fork)",
+  "type": "module",
+  "main": "src/index.mjs",
+  "dependencies": {
+    "fastify": "^4.26.0"
+  },
+  "license": "MIT"
+}

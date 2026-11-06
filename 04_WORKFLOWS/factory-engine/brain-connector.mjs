@@ -131,6 +131,69 @@ export {
   verifyReportIntegrity
 };
 
+// Universal Repository Learning Engine (URE v0.1) Exports
+import {
+  analyzeRepository,
+  executeRepositoryLearningPipeline,
+  scanRepositoryFiles,
+  extractRepositoryManifest,
+  extractTechnologyInventory,
+  extractComponentInventory,
+  buildArchitectureMap,
+  extractWorkflowInventory,
+  extractTestInventory,
+  extractReusableConstructionPatterns,
+  URE_VERSION,
+  COMPONENT_TYPES,
+  WORKFLOW_TYPES,
+  ARCHITECTURE_STYLES,
+  detectCircularDependencies,
+  extractProductDomainIntelligence,
+  getAllAdapters,
+  getSupportedLanguages
+} from './universal-repository-learning-engine.mjs';
+export {
+  analyzeRepository,
+  executeRepositoryLearningPipeline,
+  scanRepositoryFiles,
+  extractRepositoryManifest,
+  extractTechnologyInventory,
+  extractComponentInventory,
+  buildArchitectureMap,
+  extractWorkflowInventory,
+  extractTestInventory,
+  extractReusableConstructionPatterns,
+  URE_VERSION,
+  COMPONENT_TYPES,
+  WORKFLOW_TYPES,
+  ARCHITECTURE_STYLES,
+  detectCircularDependencies,
+  extractProductDomainIntelligence,
+  getAllAdapters,
+  getSupportedLanguages
+};
+
+
+// Cross-Repository Corroboration Engine (URE v0.3) Exports
+import {
+  corroborateMultiRepositoryPatterns,
+  executeCrossRepositoryLearningPipeline,
+  clusterCrossRepositoryPatterns,
+  computePatternSemanticSimilarity,
+  normalizePatternForComparison,
+  CORROBORATION_STATUS,
+  CORROBORATION_ENGINE_VERSION
+} from './cross-repository-corroboration-engine.mjs';
+export {
+  corroborateMultiRepositoryPatterns,
+  executeCrossRepositoryLearningPipeline,
+  clusterCrossRepositoryPatterns,
+  computePatternSemanticSimilarity,
+  normalizePatternForComparison,
+  CORROBORATION_STATUS,
+  CORROBORATION_ENGINE_VERSION
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');

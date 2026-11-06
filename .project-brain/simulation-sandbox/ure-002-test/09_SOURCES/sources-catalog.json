@@ -1,0 +1,12 @@
+{
+  "ure-user-analytics-service": {
+    "repository": "local/user-analytics-service",
+    "platform": "local",
+    "sourceUrl": "C:\\AI-Builder-Brain\\.project-brain\\simulation-sandbox\\ure-002-fixtures\\js-app",
+    "sourceVersion": "master",
+    "license": "MIT",
+    "contentHash": "8d1a0f32315b2c8e7fe622a70e67c2139de2bc46846127d747a1ba911eab3dcf",
+    "lastHarvestedAt": "2026-11-05T18:25:46.045Z",
+    "learningId": "learn-local-ure-user-analytics-service"
+  }
+}

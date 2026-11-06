@@ -545,7 +545,20 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         if (fs.existsSync(p.cacheIndexFile)) {
           try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
         }
-        await fs.promises.rename(tmpFile, p.cacheIndexFile);
+        try {
+          await fs.promises.rename(tmpFile, p.cacheIndexFile);
+        } catch (r2Err) {
+          try {
+            await fs.promises.copyFile(tmpFile, p.cacheIndexFile);
+            try { await fs.promises.unlink(tmpFile); } catch (u2Err) {}
+          } catch (cErr) {
+            await new Promise(res => setTimeout(res, 50));
+            try {
+              await fs.promises.copyFile(tmpFile, p.cacheIndexFile);
+              try { await fs.promises.unlink(tmpFile); } catch (u3Err) {}
+            } catch (c2Err) {}
+          }
+        }
       }
       const diskWriteMs = performance.now() - tDiskStart;
       const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;
@@ -607,7 +620,14 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         if (fs.existsSync(p.cacheIndexFile)) {
           try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
         }
-        fs.renameSync(tmpFile, p.cacheIndexFile);
+        try {
+          fs.renameSync(tmpFile, p.cacheIndexFile);
+        } catch (r2Err) {
+          try {
+            fs.copyFileSync(tmpFile, p.cacheIndexFile);
+            try { fs.unlinkSync(tmpFile); } catch (u2Err) {}
+          } catch (cErr) {}
+        }
       }
       const diskWriteMs = performance.now() - tDiskStart;
       const totalReadinessMs = indexPackage.buildDurationMs + serializationMs + diskWriteMs;

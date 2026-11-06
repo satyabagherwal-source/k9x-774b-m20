@@ -569,7 +569,9 @@ export function promoteValidatedRules(learningPackage, options = {}) {
     // HIQV Quality Validation Gate Barrier
     let valReport = rule.quality_validation || options.validationReport;
     if (valReport) {
-      const integrity = verifyReportIntegrity(rule, evidenceList, valReport, options);
+      const sanitizedOptions = { ...options };
+      delete sanitizedOptions.secret;
+      const integrity = verifyReportIntegrity(rule, evidenceList, valReport, sanitizedOptions);
       if (!integrity.valid) {
         console.warn(`🛡️ [GATEWAY QUALITY GATE REJECT] Rule "${rule.title}" has untrusted validation report: ${integrity.reason}`);
         promotedList.push({

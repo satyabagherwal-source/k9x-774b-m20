@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-05T18:25:45.910Z",
+  "total_verified_learnings": 1,
+  "total_promoted_rules": 0,
+  "items": {
+    "learn-local-ure-user-analytics-service": {
+      "learning_id": "learn-local-ure-user-analytics-service",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "local/user-analytics-service",
+      "repository": "local/user-analytics-service",
+      "slug": "ure-user-analytics-service",
+      "platform": "local",
+      "source_url": "C:\\AI-Builder-Brain\\.project-brain\\simulation-sandbox\\ure-002-fixtures\\js-app",
+      "source_version": "master",
+      "content_hash": "8d1a0f32315b2c8e7fe622a70e67c2139de2bc46846127d747a1ba911eab3dcf",
+      "dossier_path": "07_PROJECT_LEARNING/ure-user-analytics-service-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ure-user-analytics-service-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Graceful Process Shutdown Signal Coordination",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Phase Health Check Probe Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-05T18:25:45.909Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    }
+  }
+}

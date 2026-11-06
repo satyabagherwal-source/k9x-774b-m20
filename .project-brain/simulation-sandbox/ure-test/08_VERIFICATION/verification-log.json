@@ -1,0 +1,17 @@
+[
+  {
+    "cycleId": "CYCLE-20261105-MDR3",
+    "timestamp": "2026-11-05T18:25:55.743Z",
+    "repository": "local/microtelemetry-service",
+    "learningId": "learn-local-ure-microtelemetry-service",
+    "contentHash": "f472813e15c08fffb2c090464a92ccd5a847b5d003c8427e3a780bf826d453db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  }
+]

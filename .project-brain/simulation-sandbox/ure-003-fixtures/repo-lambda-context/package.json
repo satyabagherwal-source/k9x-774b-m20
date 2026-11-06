@@ -1,0 +1,8 @@
+{
+  "name": "image-resizer-lambda",
+  "version": "1.0.0",
+  "description": "Serverless AWS Lambda image transformation function",
+  "type": "module",
+  "main": "src/handler.mjs",
+  "license": "MIT"
+}

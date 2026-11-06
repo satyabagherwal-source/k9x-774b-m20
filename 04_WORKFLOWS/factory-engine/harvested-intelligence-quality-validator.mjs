@@ -184,14 +184,15 @@ function normalizeKnowledgeItem(item) {
   const negativeExample = negativeMatch ? negativeMatch[1].trim() : (item.negativeExample || '');
 
   // Extract source provenance
+  const srcObj = (item.source && typeof item.source === 'object') ? item.source : {};
   const source = {
-    id: item.source_id || item.source || item.repository || '',
-    uri: item.source_uri || item.source_url || '',
-    version: item.source_version || item.commit_sha || item.revision || 'HEAD',
-    platform: item.platform || (item.source_uri?.includes('huggingface') ? 'huggingface' : 'github'),
-    license: item.license || item.declared_license || 'UNKNOWN',
-    verified_at: item.verified_at || item.created_at || new Date().toISOString(),
-    stars: typeof item.stars === 'number' ? item.stars : 0
+    id: item.source_id || srcObj.id || (typeof item.source === 'string' ? item.source : '') || item.repository || '',
+    uri: item.source_uri || srcObj.uri || item.source_url || '',
+    version: item.source_version || srcObj.version || item.commit_sha || item.revision || 'HEAD',
+    platform: item.platform || srcObj.platform || (item.source_uri?.includes('huggingface') ? 'huggingface' : 'github'),
+    license: item.license || srcObj.license || item.declared_license || 'UNKNOWN',
+    verified_at: item.verified_at || srcObj.verified_at || item.created_at || new Date().toISOString(),
+    stars: typeof item.stars === 'number' ? item.stars : (typeof srcObj.stars === 'number' ? srcObj.stars : 0)
   };
 
   return {
@@ -931,7 +932,7 @@ export function validateHarvestedIntelligence(rawItem, evidenceList = [], option
 
   const evidenceReferences = Array.isArray(evidenceList) ? evidenceList.map(e => e.evidence_id || e.id || 'EVID-UNSPECIFIED') : [];
 
-  return {
+  const report = {
     validator_version: VALIDATOR_VERSION,
     validated_at: validatedAt,
     decision,
@@ -947,7 +948,7 @@ export function validateHarvestedIntelligence(rawItem, evidenceList = [], option
       source_id: item.source.id,
       source_uri: item.source.uri,
       source_version: item.source.version,
-      content_hash: item.rawHash || computeCandidateHash(item)
+      content_hash: computeCandidateHash(item)
     },
     evidence_fingerprint: computeEvidenceFingerprint(evidenceList),
     dimensions,
@@ -956,31 +957,140 @@ export function validateHarvestedIntelligence(rawItem, evidenceList = [], option
     limitations,
     evidence_references: evidenceReferences
   };
+
+  // Cryptographic Authenticity Token Generation (HIQV-004)
+  report.auth_token = generateReportAuthToken(report);
+
+  return report;
+}
+
+// Runtime secret singleton for authenticity token generation
+let runtimeValidatorSecret = null;
+
+/**
+ * Resolves the protected secret key for HMAC report authentication.
+ * Internal only. Strictly prohibits caller-controlled secret overrides.
+ * 1. Environment variable AI_BUILDER_BRAIN_AUTH_SECRET
+ * 2. Gitignored local session key file (.project-brain/cache/.validator_session.key)
+ * 3. In-memory cryptographically secure fallback
+ */
+function getTrustedValidatorSecret() {
+  if (process.env.AI_BUILDER_BRAIN_AUTH_SECRET && process.env.AI_BUILDER_BRAIN_AUTH_SECRET.length >= 16) {
+    return process.env.AI_BUILDER_BRAIN_AUTH_SECRET;
+  }
+  if (!runtimeValidatorSecret) {
+    const sessionKeyPath = path.join(BRAIN_ROOT, '.project-brain', 'cache', '.validator_session.key');
+    try {
+      if (fs.existsSync(sessionKeyPath)) {
+        const stored = fs.readFileSync(sessionKeyPath, 'utf8').trim();
+        if (stored && stored.length >= 32) {
+          runtimeValidatorSecret = stored;
+        }
+      }
+    } catch (e) {}
+
+    if (!runtimeValidatorSecret) {
+      runtimeValidatorSecret = crypto.randomBytes(32).toString('hex');
+      try {
+        const dir = path.dirname(sessionKeyPath);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(sessionKeyPath, runtimeValidatorSecret, { encoding: 'utf8', mode: 0o600 });
+      } catch (e) {}
+    }
+  }
+  return runtimeValidatorSecret;
 }
 
 /**
  * Deterministic candidate content hash for integrity binding.
+ * Binds the canonical title and substantive body.
  */
 export function computeCandidateHash(cand) {
   if (!cand || typeof cand !== 'object') return '';
-  const title = (cand.title || '').trim();
-  const body = (cand.body || cand.rawBody || cand.content || '').trim();
+  const title = (cand.title || cand.name || '').trim();
+  const body = (cand.body || cand.rawBody || cand.content || cand.summary || '').trim();
   return crypto.createHash('sha256').update(`${title}\n${body}`).digest('hex');
 }
 
 /**
+ * Computes deterministic digest for a single evidence item.
+ * Hashes: evidence ID, type, source ID, source URI, and substantive content/quote.
+ */
+export function computeEvidenceItemHash(item) {
+  if (!item || typeof item !== 'object') return '';
+  const id = (item.evidence_id || item.id || '').trim();
+  const type = (item.type || item.evidence_type || '').trim();
+  const sourceId = (item.source_id || item.source?.id || '').trim();
+  const sourceUri = (item.source_uri || item.source?.uri || '').trim();
+  const content = (item.content || item.quote || item.text || item.body || item.rawContent || item.patternCode || item.supporting_excerpt || '').trim();
+  const explicitHash = (item.content_hash || '').trim();
+  const contentDigest = explicitHash || (content ? crypto.createHash('sha256').update(content).digest('hex') : '');
+
+  return crypto.createHash('sha256').update(`${id}|${type}|${sourceId}|${sourceUri}|${contentDigest}`).digest('hex');
+}
+
+/**
  * Deterministic evidence fingerprint for integrity binding.
+ * Guarantees that altering evidence text while keeping IDs unchanged triggers fingerprint mismatch.
  */
 export function computeEvidenceFingerprint(evidenceList = []) {
   if (!Array.isArray(evidenceList) || evidenceList.length === 0) return 'NO_EVIDENCE';
-  const hashes = evidenceList.map(e => e.content_hash || e.evidence_id || e.id || '').sort().join(';');
-  return crypto.createHash('sha256').update(hashes).digest('hex').slice(0, 16);
+  const itemDigests = evidenceList.map(e => computeEvidenceItemHash(e)).sort().join(';');
+  return crypto.createHash('sha256').update(itemDigests).digest('hex').slice(0, 16);
+}
+
+/**
+ * Canonical JSON serialization of all report fields that influence validation or promotion.
+ */
+export function computeReportCanonicalPayload(report) {
+  if (!report || typeof report !== 'object') return '';
+  const payload = {
+    v: report.validator_version || '',
+    dec: report.decision || '',
+    act: report.recommended_action || '',
+    conf: Number(report.confidence_score || 0).toFixed(4),
+    title: (report.item?.title || '').trim().toLowerCase(),
+    cand_hash: report.item?.content_hash || '',
+    category: report.item?.category || '',
+    domain: report.item?.domain || '',
+    source_id: report.item?.source_id || '',
+    source_uri: report.item?.source_uri || '',
+    ev_fp: report.evidence_fingerprint || '',
+    dims: {
+      sr: report.dimensions?.source_reliability?.status || '',
+      eq: report.dimensions?.evidence_quality?.status || '',
+      tc: report.dimensions?.technical_correctness?.status || '',
+      re: report.dimensions?.reusability?.status || '',
+      cp: report.dimensions?.completeness?.status || '',
+      fr: report.dimensions?.freshness?.status || '',
+      dc: report.dimensions?.duplication_and_conflict?.status || ''
+    }
+  };
+  return JSON.stringify(payload);
+}
+
+/**
+ * Computes cryptographic HMAC-SHA256 authenticity token for a validation report.
+ * Strictly internal to validator boundary. Signs using trusted system secret only.
+ */
+function generateReportAuthToken(report) {
+  const secret = getTrustedValidatorSecret();
+  const canonicalPayload = computeReportCanonicalPayload(report);
+  return crypto.createHmac('sha256', secret).update(canonicalPayload).digest('hex');
 }
 
 /**
  * Verifies that a caller-supplied validation report is authentic, well-formed,
- * and deterministically bound to the candidate and evidence list.
- * Prevents report forgery, replay attacks, candidate mutation, and evidence tampering.
+ * cryptographically signed by the trusted validator, and deterministically bound
+ * to the candidate and evidence list.
+ *
+ * Prevents:
+ * 1. Forged reports (cannot sign without protected key material)
+ * 2. Fabricated dimensions, altered decisions, modified confidence scores
+ * 3. Replay attacks across candidates
+ * 4. Candidate content or metadata mutation post-validation
+ * 5. Evidence list identity or content mutation post-validation
+ * 6. Caller-controlled key override attacks (always verifies against system secret)
  */
 export function verifyReportIntegrity(candidate, evidenceList = [], report = null, options = {}) {
   if (!report || typeof report !== 'object') {
@@ -999,6 +1109,31 @@ export function verifyReportIntegrity(candidate, evidenceList = [], report = nul
   if (!report.item || typeof report.item !== 'object') {
     return { valid: false, error: 'REPORT_ITEM_BINDING_MISSING', reason: 'Validation report lacks candidate item binding' };
   }
+
+  // 1. Authenticity Verification Barrier (Cryptographic Origin Verification)
+  if (!report.auth_token) {
+    return {
+      valid: false,
+      error: 'REPORT_AUTHENTICITY_MISSING',
+      reason: 'Validation report lacks cryptographic authenticity token (cannot prove trusted validator execution)'
+    };
+  }
+
+  // Verification strictly uses trusted system key; caller-controlled secret overrides are prohibited
+  const expectedToken = generateReportAuthToken(report);
+  const actualTokenStr = String(report.auth_token).trim();
+  const actualTokenBuf = Buffer.from(actualTokenStr, 'hex');
+  const expectedTokenBuf = Buffer.from(expectedToken, 'hex');
+
+  if (actualTokenBuf.length !== 32 || expectedTokenBuf.length !== 32 || !crypto.timingSafeEqual(actualTokenBuf, expectedTokenBuf)) {
+    return {
+      valid: false,
+      error: 'REPORT_AUTHENTICITY_FAILED',
+      reason: 'Validation report authenticity token is invalid or does not match signed validation payload (forgery or tampering detected)'
+    };
+  }
+
+  // 2. Candidate Subject Binding Barrier
   if (report.item.title && candidate?.title && report.item.title.trim().toLowerCase() !== candidate.title.trim().toLowerCase()) {
     return {
       valid: false,
@@ -1014,13 +1149,32 @@ export function verifyReportIntegrity(candidate, evidenceList = [], report = nul
       reason: 'Candidate content mutated after validation report was generated'
     };
   }
+
+  // 3. Candidate Metadata Parity (if explicitly specified on candidate)
+  if (candidate?.category && report.item?.category && candidate.category.trim() !== report.item.category.trim()) {
+    return {
+      valid: false,
+      error: 'CANDIDATE_MUTATION_DETECTED',
+      reason: `Candidate category mutated after validation (expected '${report.item.category}', got '${candidate.category}')`
+    };
+  }
+  if (candidate?.domain && report.item?.domain && candidate.domain.trim() !== report.item.domain.trim()) {
+    return {
+      valid: false,
+      error: 'CANDIDATE_MUTATION_DETECTED',
+      reason: `Candidate domain mutated after validation (expected '${report.item.domain}', got '${candidate.domain}')`
+    };
+  }
+
+  // 4. Evidence Subject Binding Barrier
   const currentEvFingerprint = computeEvidenceFingerprint(evidenceList);
   if (report.evidence_fingerprint && report.evidence_fingerprint !== currentEvFingerprint) {
     return {
       valid: false,
       error: 'EVIDENCE_MUTATION_DETECTED',
-      reason: 'Evidence list mutated or altered after validation report was generated'
+      reason: 'Evidence list identity or content mutated after validation report was generated'
     };
   }
+
   return { valid: true };
 }

@@ -1,0 +1,8 @@
+{
+  "name": "legacy-crash-service",
+  "version": "0.0.1",
+  "description": "Legacy service with anti-pattern immediate abort",
+  "type": "module",
+  "main": "src/index.mjs",
+  "license": "UNLICENSED"
+}

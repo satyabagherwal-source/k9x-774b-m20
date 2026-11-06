@@ -967,7 +967,9 @@ export function promoteToCanonicalPatterns(candidate, learningPackage = {}, opti
 
   // Trust-Boundary Audit: Verify caller-supplied validation report integrity
   if (validationReport) {
-    const integrity = verifyReportIntegrity(candidate, evidenceList, validationReport, options);
+    const sanitizedOptions = { ...options };
+    delete sanitizedOptions.secret;
+    const integrity = verifyReportIntegrity(candidate, evidenceList, validationReport, sanitizedOptions);
     if (!integrity.valid) {
       return {
         promoted: false,

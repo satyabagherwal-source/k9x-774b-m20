@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-11-05T18:25:46.049Z",
+  "total_cycles_completed": 1,
+  "total_learnings_persisted": 1,
+  "total_rules_promoted": 2,
+  "history": [
+    {
+      "timestamp": "2026-11-05T18:25:46.049Z",
+      "repository": "local/user-analytics-service",
+      "learningId": "learn-local-ure-user-analytics-service",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    }
+  ]
+}

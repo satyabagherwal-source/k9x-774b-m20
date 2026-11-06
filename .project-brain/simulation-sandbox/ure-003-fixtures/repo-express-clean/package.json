@@ -1,0 +1,11 @@
+{
+  "name": "order-processing-api",
+  "version": "3.1.0",
+  "description": "Order routing and order status REST API with Express",
+  "type": "module",
+  "main": "src/server.mjs",
+  "dependencies": {
+    "express": "^4.19.0"
+  },
+  "license": "Apache-2.0"
+}

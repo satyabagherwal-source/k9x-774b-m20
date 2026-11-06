@@ -1,0 +1,17 @@
+[
+  {
+    "cycleId": "CYCLE-20261105-M69J",
+    "timestamp": "2026-11-05T18:25:46.039Z",
+    "repository": "local/user-analytics-service",
+    "learningId": "learn-local-ure-user-analytics-service",
+    "contentHash": "8d1a0f32315b2c8e7fe622a70e67c2139de2bc46846127d747a1ba911eab3dcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  }
+]
