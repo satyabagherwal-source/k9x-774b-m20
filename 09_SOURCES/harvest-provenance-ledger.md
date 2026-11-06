@@ -7942,3 +7942,4 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `ddc51e35` | Multi-dimensional audit evidence | 2026-11-06T22:13:44.237Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `aa716fca` | Multi-dimensional audit evidence | 2026-11-06T22:13:51.830Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `01b5452f` | Multi-dimensional audit evidence | 2026-11-06T22:13:56.992Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `c22582a1` | Multi-dimensional audit evidence | 2026-11-06T22:21:16.977Z |

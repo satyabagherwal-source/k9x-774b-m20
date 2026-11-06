@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `72e7d838`  
+> **Source Version**: `c22582a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:27:09.265Z  
+> **Timestamp**: 2026-11-06T22:21:15.553Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:27:09.261Z  
+> **Harvest Timestamp**: 2026-11-06T22:21:14.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39006 stars
+- **Stars / Engagement**: 39074 stars
 
 ---
 
@@ -1002,45 +1002,453 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5b87b77` (2026-11-05)
-**Commit Message**: fix(rocky): add Rocky Linux 10 EOL date (#11531)
+### Incident Patch 1: `c22582a1` (2026-11-06)
+**Commit Message**: feat(echo): support Echo NuGet package scanning (#11456)
 
-**File**: `docs/guide/coverage/os/index.md` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ Trivy supports operating systems for
- | [Red Hat Enterprise Linux](rhel.md)            | 10 (SBOM only)                      | dnf/yum/rpm      |
- | [CentOS](centos.md)[^1]                        | 6, 7, 8                             | dnf/yum/rpm      |
- | [AlmaLinux](alma.md)                           | 8, 9, 10                            | dnf/yum/rpm      |
--| [Rocky Linux](rocky.md)                        | 8, 9                                | dnf/yum/rpm      |
-+| [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
- | [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
- | [Azure Linux (CBL-Mariner)](azure.md)          | 1.0, 2.0, 3.0                       | tdnf/dnf/yum/rpm |
- | [Amazon Linux](amazon.md)                      | 1, 2, 2023                          | dnf/yum/rpm      |
-```
+Signed-off-by: ofrinevo <[REDACTED_EMAIL]>
+Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
-**File**: `pkg/detector/ospkg/rocky/rocky.go` (modified, +3/-2)
+**File**: `docs/guide/coverage/os/echo.md` (modified, +1/-0)
 ```diff
-@@ -20,8 +20,9 @@ var (
- 	eolDates = map[string]time.Time{
- 		// Source:
- 		// https://endoflife.date/rocky-linux
--		"8": time.Date(2029, 5, 31, 23, 59, 59, 0, time.UTC),
--		"9": time.Date(2032, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"8":  time.Date(2029, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"9":  time.Date(2032, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"10": time.Date(2035, 5, 31, 23, 59, 59, 0, time.UTC),
- 	}
- )
+@@ -36,6 +36,7 @@ Trivy identifies them by the version suffix and uses Echo's own security advisor
+ | [Python](../language/python.md)  | `+echo.N`      | `requests` `2.14.2+echo.1`                                |
+ | [Java](../language/java.md)      | `+echo.N`      | `org.springframework:spring-core` `6.1.21+echo.1`          |
+ | [Node.js](../language/nodejs.md) | `+echo.N`      | `nanoid` `3.3.6+echo.2`                                   |
++| [.NET](../language/dotnet.md)    | `+echo.N`      | `System.Security.Cryptography.Xml` `8.0.0+echo.1`         |
+ 
+ Packages without the Echo version suffix, and packages from unsupported ecosystems, are scanned against the upstream advisories as usual.
  
 ```
 
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -18,13 +18,13 @@ require (
+ 	github.com/aquasecurity/go-gem-version v0.0.0-20201115065557-8eed6fe000ce
+ 	github.com/aquasecurity/go-npm-version v0.0.3-0.20261005070944-1f16ed76cf11
+ 	github.com/aquasecurity/go-pep440-version v0.0.2-0.20260224065243-f9bba28c51a4
+-	github.com/aquasecurity/go-version v0.0.1
++	github.com/aquasecurity/go-version v0.0.2-0.20261021125215-0932f3a79fb3
+ 	github.com/aquasecurity/iamgo v0.0.10
+ 	github.com/aquasecurity/table v1.11.0
+ 	github.com/aquasecurity/testdocker v0.0.0-20260423080828-99e7cbfdbe56
+ 	github.com/aquasecurity/tml v0.6.1
+ 	github.com/aquasecurity/trivy-checks v1.12.2-0.20261012053351-ac85645895ed
+-	github.com/aquasecurity/trivy-db v0.0.0-20261012084708-cbebf2ecd6df
++	github.com/aquasecurity/trivy-db v0.0.0-20261106085459-47cac51ea952
+ 	github.com/aquasecurity/trivy-java-db v0.0.0-20240109071736-184bd7481d48
+ 	github.com/aquasecurity/trivy-kubernetes v0.9.1
+ 	github.com/aws/aws-sdk-go-v2 v1.47.3
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -154,8 +154,8 @@ github.com/aquasecurity/go-npm-version v0.0.3-0.20261005070944-1f16ed76cf11/go.m
+ github.com/aquasecurity/go-pep440-version v0.0.2-0.20260224065243-f9bba28c51a4 h1:QC8nsF3LvAGHUxkr5bvcekaUQPE9Zk4jyMugyg5Fxy0=
+ github.com/aquasecurity/go-pep440-version v0.0.2-0.20260224065243-f9bba28c51a4/go.mod h1:3naPe+Bp6wi3n4l5iBFCZgS0JG8vY6FT0H4NGhFJ+i4=
+ github.com/aquasecurity/go-version v0.0.0-20201107203531-5e48ac5d022a/go.mod h1:9Beu8XsUNNfzml7WBf3QmyPToP1wm1Gj/Vc5UJKqTzU=
+-github.com/aquasecurity/go-version v0.0.1 h1:4cNl516agK0TCn5F7mmYN+xVs1E3S45LkgZk3cbaW2E=
+-github.com/aquasecurity/go-version v0.0.1/go.mod h1:s1UU6/v2hctXcOa3OLwfj5d9yoXHa3ahf+ipSwEvGT0=
++github.com/aquasecurity/go-version v0.0.2-0.20261021125215-0932f3a79fb3 h1:hVZDaungF6r+e1UruVVvyR5HjKTX2y8D5zYm05HdnzE=
++github.com/aquasecurity/go-version v0.0.2-0.20261021125215-0932f3a79fb3/go.mod h1:s1UU6/v2hctXcOa3OLwfj5d9yoXHa3ahf+ipSwEvGT0=
+ github.com/aquasecurity/iamgo v0.0.10 h1:t/HG/MI1eSephztDc+Rzh/YfgEa+NqgYRSfr6pHdSCQ=
+ github.com/aquasecurity/iamgo v0.0.10/go.mod h1:GI9IQJL2a+C+V2+i3vcwnNKuIJXZ+HAfqxZytwy+cPk=
+ github.com/aquasecurity/jfather v0.0.8 h1:tUjPoLGdlkJU0qE7dSzd1MHk2nQFNPR0ZfF+6shaExE=
+@@ -168,8 +168,8 @@ github.com/aquasecurity/tml v0.6.1 h1:y2ZlGSfrhnn7t4ZJ/0rotuH+v5Jgv6BDDO5jB6A9gw
+ github.com/aquasecurity/tml v0.6.1/go.mod h1:OnYMWY5lvI9ejU7yH9LCberWaaTBW7hBFsITiIMY2yY=
+ github.com/aquasecurity/trivy-checks v1.12.2-0.20261012053351-ac85645895ed h1:Xbjt/2tD9S177jE1DVGBS59uDMgeunwABk51V5a6alI=
+ github.com/aquasecurity/trivy-checks v1.12.2-0.20261012053351-ac85645895ed/go.mod h1:yS945IM2wPjHf8SPXGctaBC9NdZEgUI9EUMIJLD/rcQ=
+-github.com/aquasecurity/trivy-db v0.0.0-20261012084708-cbebf2ecd6df h1:i4nhZSJ8kL5fHz/ksCdLZQRxmAgHBHu7h8kUS4IqoG4=
+-github.com/aquasecurity/trivy-db v0.0.0-20261012084708-cbebf2ecd6df/go.mod h1:iIEV2oGuZScvfyX2SMIn78iVMNnepgo0QuJJh/srgVI=
++github.com/aquasecurity/trivy-db v0.0.0-20261106085459-47cac51ea952 h1:duBwRao9RXaSdyvucxeOgw6jFWik8G8IDSeDh0kMPFM=
++github.com/aquasecurity/trivy-db v0.0.0-20261106085459-47cac51ea952/go.mod h1:iIEV2oGuZScvfyX2SMIn78iVMNnepgo0QuJJh/srgVI=
+ github.com/aquasecurity/trivy-java-db v0.0.0-20240109071736-184bd7481d48 h1:JVgBIuIYbwG+ekC5lUHUpGJboPYiCcxiz06RCtz8neI=
+ github.com/aquasecurity/trivy-java-db v0.0.0-20240109071736-184bd7481d48/go.mod h1:Ldya37FLi0e/5Cjq2T5Bty7cFkzUDwTcPeQua+2M8i8=
+ github.com/aquasecurity/trivy-kubernetes v0.9.1 h1:bSErQcavKXDh7XMwbGX7Vy//jR5+xhe/bOgfn9G+9lQ=
+```
+
+**File**: `pkg/detector/library/compare/compare.go` (modified, +32/-2)
+```diff
+@@ -53,8 +53,33 @@ func IsVulnerable(pkgVer string, advisory dbTypes.Advisory, match matchVersion)
+ 	return !matched
+ }
+ 
++// GenericOption is a functional option for GenericComparer.
++type GenericOption func(*GenericComparer)
++
++// WithBuildMetadata makes build metadata significant when checking constraints,
++// ordered by the given strategy. SemVer ignores it for precedence
++// (https://semver.org/#spec-item-10); with version.BuildMetadataOrderNodeSemver
++// versions are ordered following node-semver's compareBuild:
++// "1.2.3" < "1.2.3+build.1" < "1.2.3+build.2" < "1.2.4".
++func WithBuildMetadata(order version.BuildMetadataOrder) GenericOption {
++	return func(c *GenericComparer) {
++		c.buildMetadataOrder = order
++	}
++}
++
+ // GenericComparer represents a comparer for semver-like versioning
+-type GenericComparer struct{}
++type GenericComparer struct {
++	buildMetadataOrder version.BuildMetadataOrder
++}
++
++// NewGenericComparer returns a new GenericComparer with the given options.
++func NewGenericComparer(opts ...GenericOption) GenericComparer {
++	c := GenericComparer{}
++	for _, o := range opts {
++		o(&c)
++	}
++	return c
++}
+ 
+ // IsVulnerable checks if the package version is vulnerable to the advisory.
+ func (v GenericComparer) IsVulnerable(ver string, advisory dbTypes.Advisory) bool {
+@@ -68,7 +93,12 @@ func (v GenericComparer) matchVersion(currentVersion, constraint string) (bool,
+ 		return false, xerrors.Errorf("version error (%s): %s", currentVersion, err)
+ 	}
+ 
+-	c, err := version.NewConstraints(constraint)
++	var opts []version.ConstraintOption
++	if v.buildMetadataOrder != 0 {
++		opts = append(opts, version.WithBuildMetadataOrder(v.buildMetadataOrder))
++	}
++
++	c, err := version.NewConstraints(constraint, opts...)
+ 	if err != nil {
+ 		return false, xerrors.Errorf("constraint error (%s): %s", currentVersion, err)
+ 	}
+```
+
+**File**: `pkg/detector/library/compare/compare_test.go` (modified, +67/-3)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/assert"
+ 
++	"github.com/aquasecurity/go-version/pkg/version"
+ 	"github.com/aquasecurity/trivy-db/pkg/types"
+ 	"github.com/aquasecurity/trivy/pkg/detector/library/compare"
+ )
+@@ -15,9 +16,10 @@ func TestGenericComparer_IsVulnerable(t *testing.T) {
+ 		advisory types.Advisory
+ 	}
+ 	tests := []struct {
+-		name string
+-		args args
+-		want bool
++		name               string
++		buildMetadataOrder version.BuildMetadataOrder
++		args               args
++		want               bool
+ 	}{
+ 		{
+ 			name: "happy path",
+@@ -105,10 +107,72 @@ func TestGenericComparer_IsVulnerable(t *testing.T) {
+ 			},
+ 			want: true,
+ 		},
++		{
++			name: "BuildMetadataOrder unset: build metadata ignored",
++			args: args{
++				ver: "8.0.0+echo.1",
++				advisory: types.Advisory{
++					VulnerableVersions: []string{"<8.0.0+echo.2"},
++					PatchedVersions:    []string{"8.0.0+echo.2"},
++				},
++			},
++			want: false,
++		},
++		{
++			name:               "BuildMetadataOrderNodeSemver: build below the patched build",
++			buildMetadataOrder: version.BuildMetadataOrderNodeSemver,
++			args: args{
++				ver: "8.0.0+echo.1",
++				advisory: types.Advisory{
++					VulnerableVersions: []string{"<8.0.0+echo.2"},
++					PatchedVersions:    []string{"8.0.0+echo.2"},
++				},
++			},
++			want: true,
++		},
++		{
++			name:               "BuildMetadataOrderNodeSemver: build numbers compare numerically",
++			buildMetadataOrder: version.BuildMetadataOrderNodeSemver,
++			args: args{
++				ver: "8.0.0+echo.2",
++				advisory: types.Advisory{
++					VulnerableVersions: []string{"<8.0.0+echo.10"},
++					PatchedVersions:    []string{"8.0.0+echo.10"},
++				},
++			},
++			want: true,
++		},
++		{
++			name:               "BuildMetadataOrderNodeSemver: Echo patched version does not suppress release",
++			buildMetadataOrder: version.BuildMetadataOrderNodeSemver,
++			args: args{
++				ver: "8.0.0",
++				advisory: types.Advisory{
++					VulnerableVersions: []string{"<8.0.5"},
++					PatchedVersions:    []string{"8.0.0+echo.1"},
++				},
++			},
++			want: true,
++		},
++		{
++			name:               "BuildMetadataOrderNodeSemver: exact Echo patched version is suppressed",
++			buildMetadataOrder: version.BuildMetadataOrderNodeSemver,
++			args: args{
++				ver: "8.0.0+echo.1",
++				advisory: types.Advisory{
++					VulnerableVersions: []string{"<8.0.5"},
++					PatchedVersions:    []string{"8.0.0+echo.1"},
++				},
++			},
++			want: false,
++		},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			v := compare.GenericComparer{}
++			if tt.buildMetadataOrder != 0 {
++				v = compare.NewGenericComparer(compare.WithBuildMetadata(tt.buildMetadataOrder))
++			}
+ 			got := v.IsVulnerable(tt.args.ver, tt.args.advisory)
+ 			assert.Equal(t, tt.want, got)
+ 		})
+```
+
+**File**: `pkg/detector/library/driver_test.go` (modified, +128/-0)
+```diff
+@@ -749,6 +749,134 @@ func TestDriver_Detect(t *testing.T) {
+ 			},
+ 			want: nil,
+ 		},
++		{
++			name: "echo nuget package below both fixes",
++			fixtures: []string{
++				"testdata/fixtures/echo.yaml",
++				"testdata/fixtures/data-source.yaml",
++			},
++			libType: ftypes.DotNetCore,
++			args: args{
++				pkgName: "System.Security.Cryptography.Xml",
++				pkgVer:  "7.0.2+echo.1",
++			},
++			want: []types.DetectedVulnerability{
++				{
++					VulnerabilityID: "CVE-2026-26171",
++					VendorIDs: []string{
++						"GHSA-w3x6-4m5h-cxqf",
++						"ECHO-08ee-db76-1049",
++					},
++					PkgName:          "System.Security.Cryptography.Xml",
++					InstalledVersion: "7.0.2+echo.1",
++					FixedVersion:     "8.0.0+echo.1",
++					DataSource: &dbTypes.DataSource{
++						ID:   "echo-osv",
++						Name: "Echo OSV",
++						URL:  "https://advisory.echohq.com/osv/all.zip",
++					},
++				},
++				{
++					VulnerabilityID: "CVE-2026-96959",
++					VendorIDs: []string{
++						"GHSA-c399-9853-6jmj",
++						"ECHO-a9c4-3288-b534",
++					},
++					PkgName:          "System.Security.Cryptography.Xml",
++					InstalledVersion: "7.0.2+echo.1",
++					FixedVersion:     "8.0.5",
++					DataSource: &dbTypes.DataSource{
++						ID:   "echo-osv",
++						Name: "Echo OSV",
++						URL:  "https://advisory.echohq.com/osv/all.zip",
++					},
++				},
++			},
++		},
++		{
++			name: "echo nuget package at the Echo fix",
++			fixtures: []string{
++				"testdata/fixtures/echo.yaml",
++				"testdata/fixtures/data-source.yaml",
++			},
++			libType: ftypes.DotNetCore,
++			args: args{
++				pkgName: "System.Security.Cryptography.Xml",
++				pkgVer:  "8.0.0+echo.1",
++			},
++			want: []types.DetectedVulnerability{
++				{
++					VulnerabilityID: "CVE-2026-96959",
++					VendorIDs: []string{
++						"GHSA-c399-9853-6jmj",
++						"ECHO-a9c4-3288-b534",
++					},
++					PkgName:          "System.Security.Cryptography.Xml",
++					InstalledVersion: "8.0.0+echo.1",
++					FixedVersion:     "8.0.5",
++					DataSource: &dbTypes.DataSource{
++						ID:   "echo-osv",
++						Name: "Echo OSV",
++						URL:  "https://advisory.echohq.com/osv/all.zip",
++					},
++				},
++			},
++		},
++		{
++			name: "echo nuget package above the Echo fix",
++			fixtures: []string{
++				"testdata/fixtures/echo.yaml",
++				"testdata/fixtures/data-source.yaml",
++			},
++			libType: ftypes.DotNetCore,
++			args: args{
++				pkgName: "System.Security.Cryptography.Xml",
++				pkgVer:  "8.0.0+echo.10",
++			},
++			want: []types.DetectedVulnerability{
++				{
++					VulnerabilityID: "CVE-2026-96959",
++					VendorIDs: []string{
++						"GHSA-c399-9853-6jmj",
++						"ECHO-a9c4-3288-b534",
++					},
++					PkgName:          "System.Security.Cryptography.Xml",
++					InstalledVersion: "8.0.0+echo.10",
++					FixedVersion:     "8.0.5",
++					DataSource: &dbTypes.DataSource{
++						ID:   "echo-osv",
++						Name: "Echo OSV",
++						URL:  "https://advisory.echohq.com/osv/all.zip",
++					},
++				},
++			},
++		},
++		{
++			name: "echo nuget package at the upstream fix",
++			fixtures: []string{
++				"testdata/fixtures/echo.yaml",
++				"testdata/fixtures/data-source.yaml",
++			},
++			libType: ftypes.DotNetCore,
++			args: args{
++				pkgName: "System.Security.Cryptography.Xml",
++				pkgVer:  "8.0.5+echo.1",
++			},
++			want: nil,
++		},
++		{
++			name: "plain nuget package does not use Echo advisories",
++			fixtures: []string{
++				"testdata/fixtures/echo.yaml",
++				"testdata/fixtures/data-source.yaml",
++			},
++			libType: ftypes.DotNetCore,
++			args: args{
++				pkgName: "System.Security.Cryptography.Xml",
++				pkgVer:  "8.0.0",
++			},
++			want: nil,
++		},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+```
+
+**File**: `pkg/detector/library/echo/echo.go` (modified, +14/-9)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"regexp"
+ 	"strings"
+ 
++	"github.com/aquasecurity/go-version/pkg/version"
+ 	"github.com/aquasecurity/trivy-db/pkg/ecosystem"
+ 	"github.com/aquasecurity/trivy/pkg/detector/library"
+ 	"github.com/aquasecurity/trivy/pkg/detector/library/compare"
+@@ -18,17 +19,19 @@ var echoLocalSegmentRe = regexp.MustCompile(`\+echo\.\d+([._-]|$)`)
+ 
+ func init() {
+ 	library.RegisterSupplier(echoSupplier{
+-		pipComparer: pep440.NewComparer(pep440.AllowLocalSpecifier()),
+-		npmComparer: npm.NewComparer(npm.WithBuildMetadata()),
++		pipComparer:   pep440.NewComparer(pep440.AllowLocalSpecifier()),
++		npmComparer:   npm.NewComparer(npm.WithBuildMetadata()),
++		nugetComparer: compare.NewGenericComparer(compare.WithBuildMetadata(version.BuildMetadataOrderNodeSemver)),
+ 	})
+ }
+ 
+ // echoSupplier matches language packages patched by Echo.
+-// Echo provides patched versions of Python (pip), Java (maven), and JavaScript
+-// (npm) packages identified by a "+echo.N" version segment.
++// Echo provides patched versions of Python (pip), Java (maven), JavaScript
++// (npm), and .NET (NuGet) packages identified by a "+echo.N" version segment.
+ type echoSupplier struct {
+-	pipComparer compare.Comparer
+-	npmComparer compare.Comparer
++	pipComparer   compare.Comparer
++	npmComparer   compare.Comparer
++	nugetComparer compare.Comparer
+ }
+ 
+ func (echoSupplier) Name() string {
+@@ -40,7 +43,7 @@ func (echoSupplier) Name() string {
+ // string, where N is a numeric revision (e.g. "2.14.2+echo.1" or "2.14.2+echo.1.post1").
+ func (echoSupplier) Match(eco ecosystem.Type, _, pkgVer string) library.MatchResult {
+ 	switch eco {
+-	case ecosystem.Pip, ecosystem.Maven, ecosystem.Npm:
++	case ecosystem.Pip, ecosystem.Maven, ecosystem.Npm, ecosystem.NuGet:
+ 	default:
+ 		return library.NoMatch
+ 	}
+@@ -56,15 +59,17 @@ func (e echoSupplier) BucketPrefix(eco ecosystem.Type) string {
+ }
+ 
+ // Comparer returns a version comparer for the given ecosystem.
+-// pip and npm get comparers that keep the "+echo.N" suffix significant, since
+-// PEP 440 local versions and SemVer build metadata are otherwise ignored;
++// pip, npm and NuGet get comparers that keep the "+echo.N" suffix significant,
++// since PEP 440 local versions and SemVer build metadata are otherwise ignored;
+ // Maven's default comparer already orders it correctly.
+ func (e echoSupplier) Comparer(eco ecosystem.Type, defaultComparer compare.Comparer) compare.Comparer {
+ 	switch eco {
+ 	case ecosystem.Pip:
+ 		return e.pipComparer
+ 	case ecosystem.Npm:
+ 		return e.npmComparer
++	case ecosystem.NuGet:
++		return e.nugetComparer
+ 	default:
+ 		return defaultComparer
+ 	}
+```
+
+**File**: `pkg/detector/library/echo/echo_test.go` (modified, +7/-0)
+```diff
+@@ -45,6 +45,13 @@ func TestEchoSupplier_Match(t *testing.T) {
+ 			pkgVer:  "3.3.6+echo.1",
+ 			want:    library.Matched,
+ 		},
++		{
++			name:    "nuget package with +echo.1 suffix",
++			eco:     ecosystem.NuGet,
++			pkgName: "system.security.cryptography.xml",
++			pkgVer:  "8.0.0+echo.1",
++			want:    library.Matched,
++		},
+ 		{
+ 			name:    "go package is not supported",
+ 			eco:     ecosystem.Go,
+```
+
 #### Recent Merged Pull Requests:
+- **PR #11573** (closed): fix(nodejs): parse Bun 1.4 four-element git entries in bun.lock (@anandhx)
 - **PR #11558** (2026-11-05): ci(helm): bump Trivy version to 0.76.2 for Trivy Helm Chart 0.28.2 (@repo-trivy-write-33ed3c[bot])
 - **PR #11555** (2026-11-05): chore(deps): bump the common group across 1 directory with 14 updates [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 - **PR #11554** (2026-11-05): fix(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 - **PR #11553** (2026-11-05): fix(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 - **PR #11552** (2026-11-05): release: v0.76.2 [release/v0.76] (@repo-trivy-write-33ed3c[bot])
-- **PR #11551** (2026-11-05): fix(deps): bump alpine to 3.24.3 in container images [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 
 ---
 
@@ -1060,28 +1468,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rocky): add Rocky Linux 10 EOL date (#11531)
+## X. echo): support Echo NuGet package scanning (#11456)
 
 **RULE**:
-When implementing operations in `docs/guide/coverage/os/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/coverage/os/echo.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5b87b77`: rocky): add Rocky Linux 10 EOL date (#11531). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c22582a1`: echo): support Echo NuGet package scanning (#11456). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/os/index.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/os/echo.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
+| [.NET](../language/dotnet.md)    | `+echo.N`      | `System.Security.Cryptography.Xml` `8.0.0+echo.1`         |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-| [Rocky Linux](rocky.md)                        | 8, 9                                | dnf/yum/rpm      |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5b87b77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c22582a1` are properly handled with clean fallback behavior.

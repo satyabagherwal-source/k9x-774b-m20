@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-69BG",
-    "timestamp": "2026-11-05T00:29:38.092Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "44229ed7ecc5df97b4d948676de297e4bc8e94c899cdf533a3c958bcffb7266f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-6E1Q",
     "timestamp": "2026-11-05T00:29:44.222Z",
     "repository": "pointfreeco/swift-composable-architecture",
@@ -7490,6 +7475,21 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "690bee15654d5d7fa0c3d7c4487621078d51eb0d08bccc40dbc8e8687b12803a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-GWFH",
+    "timestamp": "2026-11-06T22:21:16.973Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

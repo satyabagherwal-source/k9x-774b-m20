@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T22:13:59.614Z",
-    "lastVerified": "2026-11-06T22:13:59.614Z",
+    "lastChecked": "2026-11-06T22:21:19.565Z",
+    "lastVerified": "2026-11-06T22:21:19.565Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:52:05.627Z",
-    "lastVerified": "2026-11-06T21:52:05.627Z",
+    "lastChecked": "2026-11-06T22:21:18.686Z",
+    "lastVerified": "2026-11-06T22:21:18.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -733,9 +733,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-06T14:33:56.311Z",
+    "lastChecked": "2026-11-06T22:21:13.592Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-06T14:33:56.311Z"
+    "lastVerified": "2026-11-06T22:21:13.592Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1601,8 +1601,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:36:38.472Z",
-    "lastVerified": "2026-11-05T12:36:38.472Z",
+    "lastChecked": "2026-11-06T22:21:16.056Z",
+    "lastVerified": "2026-11-06T22:21:16.056Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -3311,9 +3311,9 @@
   "jhen0409-react-native-debugger": {
     "name": "react-native-debugger",
     "officialUrl": "https://github.com/jhen0409/react-native-debugger",
-    "lastChecked": "2026-11-04T07:25:50.678Z",
+    "lastChecked": "2026-11-06T22:21:08.551Z",
     "revisionIdentifier": "bd3435a4",
-    "lastVerified": "2026-11-04T07:25:50.678Z"
+    "lastVerified": "2026-11-06T22:21:08.551Z"
   },
   "sorintlab-stolon": {
     "name": "stolon",
@@ -5008,8 +5008,8 @@
     "officialUrl": "https://github.com/telemt/telemt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T08:13:49.095Z",
-    "lastVerified": "2026-11-05T08:13:49.095Z",
+    "lastChecked": "2026-11-06T22:21:03.564Z",
+    "lastVerified": "2026-11-06T22:21:03.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-telemt-telemt",
@@ -5126,14 +5126,14 @@
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T13:27:09.261Z",
-    "lastVerified": "2026-11-05T13:27:09.261Z",
+    "lastChecked": "2026-11-06T22:21:14.632Z",
+    "lastVerified": "2026-11-06T22:21:14.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
+    "contentHash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10579,9 +10579,9 @@
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",
     "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
-    "lastChecked": "2026-11-03T18:30:04.371Z",
+    "lastChecked": "2026-11-06T22:21:06.073Z",
     "revisionIdentifier": "a7fc287e",
-    "lastVerified": "2026-11-03T18:30:04.371Z"
+    "lastVerified": "2026-11-06T22:21:06.073Z"
   },
   "touchlab-kermit": {
     "name": "touchlab/Kermit",

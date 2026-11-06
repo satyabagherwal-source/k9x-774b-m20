@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T22:13:56.896Z",
+  "last_updated": "2026-11-06T22:21:16.883Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3041,11 +3041,16 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "72e7d838",
-      "content_hash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
+      "source_version": "c22582a1",
+      "content_hash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "echo): support Echo NuGet package scanning (#11456)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1988,
           "title": "vex): avoid panic on CSAF advisory without a CVE (#10990)",
@@ -3127,7 +3132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:27:09.685Z",
+      "verified_at": "2026-11-06T22:21:16.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -7933,3 +7933,4 @@
 | `CYCLE-20261106-773E` | `2026-11-06T22:13:44.234Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f98625a0...`) |
 | `CYCLE-20261106-7CYA` | `2026-11-06T22:13:51.826Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`27efc893...`) |
 | `CYCLE-20261106-7GXO` | `2026-11-06T22:13:56.988Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`690bee15...`) |
+| `CYCLE-20261106-GWFH` | `2026-11-06T22:21:16.973Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`35762a72...`) |

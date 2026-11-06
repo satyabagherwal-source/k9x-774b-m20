@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "72e7d838",
+    "sourceVersion": "c22582a1",
     "license": "Apache-2.0",
-    "contentHash": "7ad1a6f3730d67e4d08516790ad2c2248bb9d4a97c15db56c8011f9453b0cc04",
-    "lastHarvestedAt": "2026-11-05T13:27:09.755Z",
+    "contentHash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
+    "lastHarvestedAt": "2026-11-06T22:21:16.977Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {

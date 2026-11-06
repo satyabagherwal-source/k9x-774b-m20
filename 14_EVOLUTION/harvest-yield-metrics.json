@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T22:13:57.007Z",
-  "total_cycles_completed": 7898,
-  "total_learnings_persisted": 7898,
-  "total_rules_promoted": 7544,
+  "last_updated": "2026-11-06T22:21:16.984Z",
+  "total_cycles_completed": 7899,
+  "total_learnings_persisted": 7899,
+  "total_rules_promoted": 7545,
   "history": [
-    {
-      "timestamp": "2026-11-05T17:07:19.421Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T17:07:33.412Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-06T22:13:57.007Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T22:21:16.984Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
