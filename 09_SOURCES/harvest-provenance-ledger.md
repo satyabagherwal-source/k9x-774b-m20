@@ -7881,3 +7881,6 @@ Every entry in this ledger must capture:
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `4cee4138` | Multi-dimensional audit evidence | 2026-11-06T14:25:42.460Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1889115d` | Multi-dimensional audit evidence | 2026-11-06T14:25:42.661Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e9796cca` | Multi-dimensional audit evidence | 2026-11-06T14:25:58.291Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `f06f106b` | Multi-dimensional audit evidence | 2026-11-06T14:33:55.501Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-06T14:33:58.551Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `7eb750ee` | Multi-dimensional audit evidence | 2026-11-06T14:34:06.612Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T14:25:58.198Z",
+  "last_updated": "2026-11-06T14:34:06.498Z",
   "total_verified_learnings": 1225,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15652,11 +15652,16 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "641aca38",
-      "content_hash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
+      "source_version": "f06f106b",
+      "content_hash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Drain credential helper fixture requests before exiting",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1916,
           "title": "Update `rustls` to 0.23.46 to resolve security advisories",
@@ -15723,7 +15728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:43:35.648Z",
+      "verified_at": "2026-11-06T14:33:55.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51494,11 +51499,16 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "05de5692",
-      "content_hash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
+      "source_version": "7eb750ee",
+      "content_hash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[MOD-20101] Add the query memory checkpoint helper (#12100)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2157,
           "title": "[MOD-17680] Fix crashes in CONTAINS and suffix TAG queries on macOS x86_64 (#119",
@@ -51575,7 +51585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T08:50:22.675Z",
+      "verified_at": "2026-11-06T14:34:06.474Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158575,10 +158585,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
       "source_version": "hf-liconstudio-minimax-h3-vbvr",
-      "content_hash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
+      "content_hash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
       "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "LoRA Weight Compatibility & Rank Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Video Generation Temporal Consistency Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5572,
           "title": "Modular Weight Injection via Low-Rank Adaptation (LoRA)",
@@ -158605,7 +158625,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:06:24.671Z",
+      "verified_at": "2026-11-06T14:33:58.427Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

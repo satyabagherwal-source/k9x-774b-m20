@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T14:26:00.907Z",
-    "lastVerified": "2026-11-06T14:26:00.907Z",
+    "lastChecked": "2026-11-06T14:34:09.239Z",
+    "lastVerified": "2026-11-06T14:34:09.239Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,9 +354,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T13:52:03.874Z",
+    "lastChecked": "2026-11-06T14:34:01.286Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T13:52:03.874Z"
+    "lastVerified": "2026-11-06T14:34:01.286Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -729,9 +729,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-05T21:47:33.785Z",
+    "lastChecked": "2026-11-06T14:33:56.311Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-05T21:47:33.785Z"
+    "lastVerified": "2026-11-06T14:33:56.311Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3389,14 +3389,14 @@
     "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T04:43:34.923Z",
-    "lastVerified": "2026-11-05T04:43:34.923Z",
+    "lastChecked": "2026-11-06T14:33:53.679Z",
+    "lastVerified": "2026-11-06T14:33:53.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
+    "contentHash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3428,9 +3428,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-05T09:57:43.484Z",
+    "lastChecked": "2026-11-06T14:33:53.750Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-05T09:57:43.484Z"
+    "lastVerified": "2026-11-06T14:33:53.750Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -7352,14 +7352,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T08:50:21.937Z",
-    "lastVerified": "2026-11-05T08:50:21.937Z",
+    "lastChecked": "2026-11-06T14:34:04.324Z",
+    "lastVerified": "2026-11-06T14:34:04.324Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
+    "contentHash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10030,12 +10030,12 @@
     "officialUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-03T12:06:13.624Z",
-    "lastVerified": "2026-11-03T12:06:13.624Z",
+    "lastChecked": "2026-11-06T14:33:48.890Z",
+    "lastVerified": "2026-11-06T14:33:48.890Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
+    "contentHash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -12725,8 +12725,8 @@
     "officialUrl": "https://github.com/krishhgg/Insomnia",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-04T01:07:31.387Z",
-    "lastVerified": "2026-11-04T01:07:31.387Z",
+    "lastChecked": "2026-11-06T14:33:51.167Z",
+    "lastVerified": "2026-11-06T14:33:51.167Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krishhgg-insomnia",

@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "641aca38",
+    "sourceVersion": "f06f106b",
     "license": "Apache-2.0",
-    "contentHash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
-    "lastHarvestedAt": "2026-11-05T04:43:35.775Z",
+    "contentHash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
+    "lastHarvestedAt": "2026-11-06T14:33:55.501Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "05de5692",
+    "sourceVersion": "7eb750ee",
     "license": "NOASSERTION",
-    "contentHash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
-    "lastHarvestedAt": "2026-11-05T08:50:22.793Z",
+    "contentHash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
+    "lastHarvestedAt": "2026-11-06T14:34:06.612Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
-    "lastHarvestedAt": "2026-11-03T12:06:24.778Z",
+    "contentHash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
+    "lastHarvestedAt": "2026-11-06T14:33:58.551Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

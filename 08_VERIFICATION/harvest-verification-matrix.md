@@ -7872,3 +7872,6 @@
 | `CYCLE-20261106-HB20` | `2026-11-06T14:25:42.456Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3f46b1d1...`) |
 | `CYCLE-20261106-HB7L` | `2026-11-06T14:25:42.657Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8fcf5e6b...`) |
 | `CYCLE-20261106-HN9S` | `2026-11-06T14:25:58.288Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85d2ca5a...`) |
+| `CYCLE-20261106-RVHL` | `2026-11-06T14:33:55.497Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6aa1b4ff...`) |
+| `CYCLE-20261106-RXUB` | `2026-11-06T14:33:58.547Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`f560ac9e...`) |
+| `CYCLE-20261106-S428` | `2026-11-06T14:34:06.608Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6e88714d...`) |

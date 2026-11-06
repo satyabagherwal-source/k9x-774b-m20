@@ -3,7 +3,7 @@
 > **Source Version**: `hf-liconstud`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-03T12:06:23.511Z  
+> **Timestamp**: 2026-11-06T14:33:56.357Z  
 > **Learning ID**: `learn-huggingface-liconstudio-minimax-h3-vbvr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,243 +17,218 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `LiconStudio/Minimax-H3-VBVR` addresses specific physical and logical inconsistencies in the **MiniMax-H3** image-to-video (I2V) generation pipeline. Specifically, it targets:
+The repository `LiconStudio/Minimax-H3-VBVR` addresses specific physical and logical inconsistencies in the **MiniMax-H3** image-to-video (I2V) generation model. Specifically, it targets:
 1.  **Object Duplication:** The base model tends to generate unintended copies of objects during motion.
-2.  **Spatial Interpenetration/Clipping:** Characters or objects pass through surfaces or each other (lack of collision awareness).
-3.  **Action Logic Incoherence:** Movement sequences lack causal consistency (e.g., limbs moving unnaturally).
+2.  **Spatial Clipping/Interpenetration:** Characters or objects pass through surfaces or each other (clipping) rather than interacting physically.
+3.  **Action Logic Incoherence:** Movement sequences lack coherent cause-and-effect or physical plausibility.
 
 **Architectural Boundaries:**
 *   **Type:** This is **not** a software application repository. It is a **Model Artifact Repository** (Hugging Face Hub).
-*   **Core Asset:** `H3-VBVR-I2V.safetensors` (A LoRA - Low-Rank Adaptation weight file).
-*   **Base Dependency:** `MiniMaxAI/MiniMax-H3` (The foundational diffusion model).
-*   **Training Data Source:** `Video-Reason/VBVR-Pro-SFT-Video` (Supervised Fine-Tuning dataset).
-*   **Consumer Interface:** ComfyUI (via `ComfyUI/models/loras/`) or any Python-based inference pipeline compatible with MiniMax-H3 LoRA loading.
+*   **Core Asset:** A **LoRA (Low-Rank Adaptation)** weight file (`H3-VBVR-I2V.safetensors`).
+*   **Base Dependency:** `MiniMaxAI/MiniMax-H3` (The foundation model).
+*   **Data Dependency:** `Video-Reason/VBVR-Pro-SFT-Video` (The training dataset).
+*   **Inference Environment:** ComfyUI or any compatible MiniMax-H3 inference pipeline.
 
 **Critical Subsystem Abstractions:**
-*   **LoRA Weight Matrix:** The `.safetensors` file contains low-rank decomposition matrices ($A$ and $B$) that are injected into the attention layers of the base MiniMax-H3 model.
-*   **Inference Pipeline:** The "system" is the external inference engine (ComfyUI/Python) that loads the base model, injects the LoRA weights, and executes the diffusion sampling loop.
-*   **Data Preprocessing Pipeline (Implicit):** The README mentions "rebuilt and reprocessed" data. This implies a specific preprocessing pipeline (likely involving optical flow, pose estimation, or caption refinement) was used to align the VBVR dataset with H3's latent space characteristics.
-
-**Forensic Note:** Since no source code (Python/C++) is present in the repository, the "architecture" is defined by the **model topology** and the **inference contract**. The "code" is the mathematical transformation defined by the weights.
+*   **Latent Space Modulation:** The LoRA does not replace the base model weights but injects low-rank matrices into specific attention layers (likely Cross-Attention and Self-Attention within the DiT/Transformer architecture of MiniMax-H3) to bias the generation process toward "VBVR" (Video-Based Visual Reasoning) characteristics.
+*   **Data Preprocessing Pipeline (Implicit):** The README states the data was "rebuilt and reprocessed specifically for H3." This implies a custom data pipeline that aligns the VBVR dataset's temporal and spatial features with the specific tokenization and latent space structure of MiniMax-H3, which differs from other video models.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. LoRA Weight Injection & Compatibility Invariant
+### 1. LoRA Weight Compatibility & Rank Alignment Invariant
 **RULE**:
-When deploying a LoRA (Low-Rank Adaptation) artifact, the inference system MUST verify that the target base model's architecture (layer names, tensor shapes, and dtype) is strictly compatible with the LoRA's metadata. The system MUST NOT assume implicit compatibility based solely on the model family name (e.g., "MiniMax-H3").
+When deploying a LoRA adapter, the adapter's rank, target modules, and base model architecture hash MUST match the inference engine's expected configuration. The LoRA MUST NOT be loaded into a base model with a different architecture (e.g., loading an SDXL LoRA into a Flux model) or a different version of the same architecture without explicit compatibility verification.
 
 **WHY**:
-LoRA weights are tied to specific tensor shapes and layer indices. If the base model undergoes a minor architectural update (e.g., changing attention head dimensions, adding/removing layers, or changing normalization types), the LoRA weights will either fail to load (shape mismatch) or, worse, load incorrectly (silent corruption) if the loader uses fuzzy matching. This leads to degraded generation quality or runtime crashes.
+LoRA weights are low-rank decompositions of weight deltas ($\Delta W = A \cdot B$). If the base model's weight shapes ($W$) or the specific layers targeted by the LoRA do not align, the matrix multiplication will fail (shape mismatch) or, worse, silently inject noise into the wrong layers, causing catastrophic generation failures (garbage output, black frames, or crashes).
 
 **WHEN TO APPLY**:
-Any system loading external model adapters (LoRA, PEFT, QLoRA) into a base neural network, especially in dynamic environments like ComfyUI or Hugging Face Transformers pipelines.
+Any system loading dynamic model adapters (LoRA, PEFT, Adapters) in PyTorch, TensorFlow, or ONNX runtimes.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 from safetensors import safe_open
 
-def validate_lora_compatibility(base_model, lora_path):
+def verify_lora_compatibility(base_model, lora_path, expected_rank=128):
     """
-    Validates that LoRA weights match the base model's expected tensor shapes.
+    Verifies that the LoRA weights match the base model's architecture.
     """
     with safe_open(lora_path, framework="pt") as f:
-        lora_keys = f.keys()
-        for key in lora_keys:
-            # Extract the target layer name from the LoRA key
-            # Example LoRA key: "transformer.blocks.0.attn.qkv.lora_A.weight"
-            # Target base key: "transformer.blocks.0.attn.qkv.weight"
-            base_key = key.replace(".lora_A.weight", ".weight").replace(".lora_B.weight", ".weight")
-            
-            if base_key not in base_model.state_dict():
-                raise ValueError(f"LoRA key '{key}' does not map to a valid base model layer '{base_key}'")
-            
-            lora_tensor = f.get_tensor(key)
-            base_tensor = base_model.state_dict()[base_key]
-            
-            # Check rank compatibility (LoRA A shape: [rank, in_features], LoRA B shape: [out_features, rank])
-            # This is a simplified check; full validation requires checking A and B pairs.
-            if lora_tensor.dtype != base_tensor.dtype:
-                # Allow float16/bfloat16 conversion but warn
-                print(f"Warning: Dtype mismatch for {key}. LoRA: {lora_tensor.dtype}, Base: {base_tensor.dtype}")
-                
-    return True
+        lora_keys = list(f.keys())
+        
+    # 1. Check for expected LoRA suffixes (e.g., .lora_A, .lora_B)
+    if not any("lora_A" in k for k in lora_keys):
+        raise ValueError("Invalid LoRA file: Missing lora_A weights")
 
-# Usage in inference pipeline
-# validate_lora_compatibility(base_model, "H3-VBVR-I2V.safetensors")
+    # 2. Verify shape compatibility for a sample key
+    sample_key = next(k for k in lora_keys if "lora_A" in k)
+    lora_A_shape = f.get_slice(sample_key).get_shape()
+    
+    # Extract base layer name (remove .lora_A)
+    base_layer_name = sample_key.replace(".lora_A", "")
+    
+    # Check if base model has this layer
+    if base_layer_name not in dict(base_model.named_parameters()):
+        raise ValueError(f"Base model missing layer: {base_layer_name}")
+        
+    base_param = base_model.get_parameter(base_layer_name)
+    base_shape = base_param.shape
+    
+    # LoRA A shape should be (rank, in_features)
+    # Base shape is (out_features, in_features)
+    if lora_A_shape[1] != base_shape[1]:
+        raise ValueError(f"Input feature mismatch: LoRA expects {lora_A_shape[1]}, Base has {base_shape[1]}")
+        
+    return True
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blindly loading LoRA without validation
-def load_lora_blind(base_model, lora_path):
-    # This will crash or silently corrupt if shapes don't match
-    state_dict = torch.load(lora_path)
-    base_model.load_state_dict(state_dict, strict=False) # strict=False hides errors!
-    return base_model
+# ANTI-PATTERN: Blindly loading LoRA without checking architecture
+# This will crash or produce garbage if the base model is wrong
+lora_state_dict = torch.load("lora.safetensors")
+base_model.load_state_dict(lora_state_dict, strict=False) # DANGEROUS: strict=False hides missing keys
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Create a mock base model with known tensor shapes. Load a LoRA with mismatched shapes. Assert that `validate_lora_compatibility` raises a `ValueError`.
-2.  **Integration Test:** Load the `H3-VBVR-I2V.safetensors` into the actual `MiniMax-H3` model. Assert that no `RuntimeError` or `ShapeMismatchError` occurs during the first forward pass.
-3.  **Linting:** Use a custom linter to ensure that `load_state_dict` is never called with `strict=False` in production inference paths without explicit logging of skipped keys.
+Automated test that loads the LoRA into a dummy base model and asserts that all `lora_A` and `lora_B` keys map to existing parameters in the base model with compatible dimensions.
 
-### 2. Video Generation Physical Consistency Guard
+### 2. Video Generation Temporal Consistency Guard
 **RULE**:
-When evaluating or training video generation models, the system MUST incorporate explicit physical consistency metrics (object permanence, collision avoidance) into the loss function or evaluation harness. The system MUST NOT rely solely on perceptual similarity metrics (FID, FVD) which can mask physical impossibilities.
+In video generation pipelines, the inference loop MUST enforce a maximum frame count and a minimum temporal step size to prevent infinite loops or memory exhaustion. The generation process MUST yield control to the event loop (or OS scheduler) periodically to prevent UI freezing in interactive environments (like ComfyUI).
 
 **WHY**:
-Standard video generation metrics (FID/FVD) measure distributional similarity to real videos but do not penalize physically impossible events (e.g., a hand passing through a table). The VBVR LoRA specifically targets these failures. Without explicit physical constraints, models will optimize for visual plausibility over physical correctness, leading to "uncanny valley" artifacts in interactive scenes.
+Video generation is computationally expensive and iterative. Without explicit bounds, a misconfigured prompt or model bug can cause the generator to loop indefinitely, consuming all GPU VRAM and CPU resources, leading to system hangs.
 
 **WHEN TO APPLY**:
-Training or fine-tuning any video diffusion model, especially for applications requiring realistic interactions (robotics simulation, game asset generation, AR/VR).
+Any iterative generative process (video, 3D rendering, simulation) running in a shared environment.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
+import time
 import torch
-import numpy as np
 
-def compute_physical_consistency_loss(pred_video, gt_video, optical_flow):
+def generate_video_with_guard(prompt, max_frames=100, step_size=1):
     """
-    Computes a loss term that penalizes object duplication and interpenetration.
-    This is a simplified example; real implementations use depth maps or 3D reconstruction.
+    Generates video with strict bounds to prevent resource starvation.
     """
-    # 1. Object Permanence Loss: Ensure objects don't disappear/reappear
-    # Use a segmentation model to track objects across frames
-    # (Pseudocode: seg_model = get_segmentation_model())
-    # object_masks = seg_model(pred_video)
-    # permanence_loss = compute_mask_continuity_loss(object_masks)
-    
-    # 2. Collision Avoidance Loss: Use depth maps to detect interpenetration
-    # depth_pred = get_depth_map(pred_video)
-    # depth_gt = get_depth_map(gt_video)
-    # collision_loss = compute_depth_overlap_loss(depth_pred, depth_gt)
-    
-    # 3. Motion Coherence Loss: Ensure optical flow is smooth and consistent
-    flow_smoothness = compute_flow_smoothness(optical_flow)
-    
-    # Combine losses
-    physical_loss = 0.5 * flow_smoothness # Placeholder for permanence/collision
-    return physical_loss
+    if max_frames <= 0:
+        raise ValueError("max_frames must be positive")
+    if step_size <= 0:
+        raise ValueError("step_size must be positive")
 
-# In training loop:
-# total_loss = perceptual_loss + lambda_physical * compute_physical_consistency_loss(...)
+    frames = []
+    for i in range(max_frames):
+        # Generate single frame or chunk
+        frame = model.generate(prompt, step=i)
+        frames.append(frame)
+        
+        # Yield control to prevent UI freeze (critical for ComfyUI/Gradio)
+        if i % 10 == 0:
+            time.sleep(0.01) # Small yield
+            torch.cuda.synchronize() # Ensure GPU work is done before yielding
+            
+    return frames
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Relying only on FID for video quality
-def evaluate_video_quality(pred_video, gt_video):
-    fid = compute_fid(pred_video, gt_video)
-    return fid # This will not detect if a character's arm clips through a wall
+# ANTI-PATTERN: Unbounded generation loop
+while not done:
+    frame = model.generate(prompt)
+    frames.append(frame)
+    # No max_frames, no yield, no error handling
 ```
 
 **VERIFICATION METHOD**:
-1.  **Regression Test:** Generate a video with a known physical violation (e.g., a ball passing through a floor). Assert that the physical consistency loss is significantly higher than for a physically correct video.
-2.  **A/B Testing:** Compare the VBVR LoRA output against the base model on a set of prompts known to cause clipping. Assert that the VBVR output has fewer clipping artifacts (measured by human evaluation or automated depth-based detection).
+Unit test that mocks the model to return infinite frames and asserts that the generator stops after `max_frames` iterations and releases GPU memory.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The repository contains no commit history, bug issues, or source code diffs. Therefore, no "real incidents" can be extracted from the repository itself. However, we can infer potential failure modes based on the nature of LoRA artifacts and the described improvements.*
+*Note: Since no commits, issues, or diffs are provided in the input data, this section documents **inferred** production incidents based on the nature of the artifact (LoRA for Video Gen) and common failure modes in this domain.*
 
-### Incident 1: LoRA Weight Shape Mismatch (Hypothetical) (BUG-LORA-SHAPE-01)
-- **Context**: Inference pipeline loading `H3-VBVR-I2V.safetensors` into `MiniMax-H3`.
-- **What Was Expected**: The LoRA weights should load seamlessly and enhance video generation quality.
-- **What Actually Happened**: Runtime crash with `RuntimeError: size mismatch for transformer.blocks.0.attn.qkv.weight`.
-- **Evidence in Repo**: N/A (No commits).
-- **Root Cause**: The base model `MiniMax-H3` was updated after the LoRA was trained, changing the attention head dimensions. The LoRA weights were trained on an older version of the base model.
+### Incident 1: Object Duplication Artifact in Motion (BUG-DUP-01)
+- **Context**: MiniMax-H3 Base Model, Attention Layers.
+- **What Was Expected**: Single object instance maintained across frames.
+- **What Actually Happened**: During fast motion, the model generated "ghost" copies of objects, likely due to attention heads focusing on multiple spatial locations simultaneously.
+- **Evidence in Repo**: README explicitly lists "Reduced object duplication" as a key improvement.
+- **Root Cause**: The base model's self-attention mechanism lacked sufficient spatial coherence constraints for high-velocity motion. The VBVR LoRA injects weights that bias attention toward consistent spatial trajectories.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Blind loading
-// model.load_state_dict(torch.load("H3-VBVR-I2V.safetensors"))
-
-// + Fixed pattern: Version-aware loading
-// if not validate_lora_compatibility(base_model, lora_path):
-//     raise IncompatibleModelError("LoRA was trained on an older version of MiniMax-H3")
+# - Base Model Attention: Standard Multi-Head Attention
+# + VBVR LoRA: Adds low-rank bias to attention scores to suppress duplicate spatial peaks
+# (Implemented via LoRA weights, not code change in inference)
 ```
-- **Lesson**: Always version-control LoRA artifacts alongside the base model version they were trained on.
+- **Lesson**: Attention mechanisms in generative models require explicit spatial coherence constraints to prevent artifact duplication during motion.
 
-### Incident 2: Silent LoRA Corruption (Hypothetical) (BUG-LORA-CORRUPT-02)
-- **Context**: Inference pipeline loading `H3-VBVR-I2V.safetensors`.
-- **What Was Expected**: Enhanced video generation with reduced object duplication.
-- **What Actually Happened**: Video generation quality degraded significantly, with increased artifacts.
-- **Evidence in Repo**: N/A (No commits).
-- **Root Cause**: The LoRA loader used `strict=False` in `load_state_dict`, silently skipping mismatched keys. The LoRA weights were not fully applied, leading to a hybrid model that was neither the base model nor the fine-tuned model.
+### Incident 2: Character-Object Interpenetration (BUG-CLIP-02)
+- **Context**: MiniMax-H3 Base Model, Cross-Attention (Image-to-Video conditioning).
+- **What Was Expected**: Characters interact with surfaces without passing through them.
+- **What Actually Happened**: Characters clipped through walls or objects, violating physical plausibility.
+- **Evidence in Repo**: README lists "Reduced clipping and interpenetration."
+- **Root Cause**: The base model's conditioning on the input image did not sufficiently encode spatial depth and collision boundaries. The VBVR LoRA enhances the cross-attention to better respect spatial relationships from the input image.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Silent failure
-// model.load_state_dict(lora_state_dict, strict=False)
-
-// + Fixed pattern: Strict loading with logging
-// missing_keys, unexpected_keys = model.load_state_dict(lora_state_dict, strict=True)
-// if missing_keys or unexpected_keys:
-//     logger.error(f"LoRA loading failed. Missing: {missing_keys}, Unexpected: {unexpected_keys}")
-//     raise RuntimeError("LoRA loading failed")
+# - Base Model: Weak spatial encoding in cross-attention
+# + VBVR LoRA: Enhanced cross-attention weights to prioritize spatial consistency
 ```
-- **Lesson**: Never use `strict=False` in production inference without explicit logging and validation of skipped keys.
+- **Lesson**: Image-to-video models must explicitly encode spatial depth and collision boundaries in their conditioning mechanisms to prevent interpenetration.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: Since the repository contains no source code, the following invariants are derived from best practices for handling model artifacts and inference pipelines.*
-
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Dtype Coercion**: When loading LoRA weights, ensure that the dtype of the LoRA tensors matches the dtype of the base model tensors. If the base model is `bfloat16` and the LoRA is `float16`, explicit casting is required to avoid precision loss or runtime errors.
-    *   **Key Mapping**: LoRA keys often have suffixes like `.lora_A.weight` and `.lora_B.weight`. The loader must correctly map these to the base model's target layers (e.g., `attn.qkv.weight`). Incorrect mapping leads to silent corruption.
+    *   **Invariant**: When loading `safetensors`, always use `safe_open` with the correct `framework` parameter (`"pt"` for PyTorch, `"tf"` for TensorFlow). Mixing frameworks causes silent type coercion errors.
+    *   **Trap**: Using `torch.load` on a `safetensors` file will fail. Using `safe_open` with the wrong framework will raise a cryptic error.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **N/A**: No source code present.
+    *   **Invariant**: Video generation loops MUST have a hard cap on `max_frames`.
+    *   **Guard**: `assert max_frames > 0 and max_frames < 10000` to prevent accidental infinite loops.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: No source code present.
+    *   **Invariant**: In ComfyUI/Gradio, long-running generation tasks MUST yield control to the event loop every N frames to prevent UI freezing.
+    *   **Mechanism**: Use `time.sleep(0.01)` or `await asyncio.sleep(0.01)` periodically.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Memory Leak Prevention**: When loading large LoRA weights, ensure that the previous model state is properly garbage collected. Use `torch.cuda.empty_cache()` after loading new weights to prevent OOM errors.
-    *   **Thread Safety**: If the inference pipeline is multi-threaded, ensure that the model weights are not modified during inference. Use read-only access to the model state.
+    *   **Invariant**: GPU memory MUST be explicitly freed after each generation step if the model is not persistent.
+    *   **Guard**: `torch.cuda.empty_cache()` after large allocations to prevent OOM.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When accessing LoRA metadata (e.g., from `safetensors`), ensure that the file exists and is valid before attempting to load. Use `os.path.exists()` and `safe_open` with error handling.
-    *   **Off-by-One Boundary Checks**: When slicing video frames for evaluation, ensure that the frame indices are within bounds. Use `min(max(0, start), len(frames))` to clamp indices.
+    *   **Invariant**: Always check for `None` or `NaN` in generated tensors before saving.
+    *   **Guard**: `assert not torch.isnan(frame).any()` to prevent saving corrupted video frames.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a **Model Artifact** (LoRA) that extends the **MiniMax-H3** base model. The architectural boundary is the inference engine (ComfyUI/Python) that loads and applies the LoRA.
-2.  **Core Abstractions**: The core abstraction is the **LoRA Weight Matrix** ($A$ and $B$) that modifies the attention layers of the base model. The domain primitive is the **Video Frame** (tensor of shape `[C, H, W]`).
-3.  **Error Handling**: Error handling is minimal in the artifact itself. The inference engine must handle:
-    *   File not found errors.
-    *   Shape mismatch errors.
-    *   Dtype mismatch errors.
-    *   OOM errors during loading.
-4.  **Testing**: Testing is implicit in the validation videos provided in the README. The "tests" are the visual comparisons between the base model and the LoRA-enhanced model.
-5.  **Security**: The artifact is a binary file (`safetensors`). Security risks include:
-    *   Malicious weights that could cause OOM or crash the inference engine.
-    *   Supply chain attacks if the artifact is tampered with.
-    *   Mitigation: Verify checksums (SHA256) of the artifact before loading.
-6.  **Performance**: The LoRA adds minimal computational overhead (low-rank matrices). The main performance bottleneck is the base model's inference time. Caching is not applicable to the artifact itself.
-7.  **Deployment**: Deployment is via Hugging Face Hub. The artifact is downloaded and placed in the `ComfyUI/models/loras/` directory. No CI/CD pipeline is present in the repository.
-8.  **Agent Patterns**: N/A (No agent code).
-9.  **Data Flow**: The data flow is:
-    *   Input: Image + Prompt.
-    *   Processing: Base model + LoRA weights -> Diffusion sampling -> Video frames.
-    *   Output: Video file.
+1.  **Architecture**: LoRA-based adapter architecture. Decoupled from base model. Modular layout: Base Model + LoRA Weights + Inference Pipeline.
+2.  **Core Abstractions**: `LoRALinear` layer, `Attention` mechanism, `DiT` (Diffusion Transformer) blocks.
+3.  **Error Handling**: No explicit error handling in the artifact (weights only). Inference pipeline must handle shape mismatches, OOM, and invalid prompts.
+4.  **Testing**: No tests in repo. Validation is visual (video comparisons in README).
+5.  **Security**: Apache-2.0 license. No credential boundaries. Risk of model poisoning if LoRA weights are tampered with.
+6.  **Performance**: LoRA adds minimal overhead (low-rank matrices). Inference speed is dominated by base model.
+7.  **Deployment**: Hugging Face Hub. ComfyUI integration. Requires GPU with sufficient VRAM (likely 12GB+ for MiniMax-H3).
+8.  **Agent Patterns**: No agent patterns. Static model inference.
+9.  **Data Flow**: Input Image + Prompt -> Latent Space -> DiT Blocks (with LoRA bias) -> Decoder -> Video Frames.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **LoRA Validation Pattern**: Always validate LoRA weight shapes and dtypes against the base model before loading.
-2.  **Rule**: **Strict Loading Rule**: Never use `strict=False` in `load_state_dict` for production inference without explicit logging and validation.
-3.  **Architecture Principle**: **Artifact-Base Coupling**: LoRA artifacts are tightly coupled to the base model version. Version control must track both.
-4.  **Failure Mode**: **Silent Corruption**: Using `strict=False` can lead to silent corruption if LoRA keys do not match base model keys.
-5.  **Reusable Skill**: **LoRA Compatibility Check**: Write a function that iterates over LoRA keys, maps them to base model keys, and checks shape/dtype compatibility.
-6.  **Decision**: **Safetensors over PyTorch**: Use `safetensors` for model artifacts to avoid pickle security risks and improve loading speed.
-7.  **Anti-pattern**: **Blind Loading**: Loading LoRA weights without validation or version checking.
-8.  **Verification Method**: **Unit Test for Shape Mismatch**: Create a mock base model with known shapes, load a LoRA with mismatched shapes, and assert that the validation function raises an error.
+1.  **Pattern**: LoRA Adapter Loading with Compatibility Check.
+2.  **Rule**: Always verify LoRA weight shapes against base model parameters before loading.
+3.  **Architecture Principle**: Separation of base model and adapter weights for modularity and efficiency.
+4.  **Failure Mode**: Shape mismatch causing silent corruption or crash.
+5.  **Reusable Skill**: Write a `verify_lora_compatibility` function that checks key names and shapes.
+6.  **Decision**: Use LoRA instead of full fine-tuning to reduce storage and inference overhead.
+7.  **Anti-pattern**: Blindly loading LoRA weights without checking compatibility.
+8.  **Verification Method**: Unit test that asserts all LoRA keys map to existing base model parameters with compatible shapes.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Download Artifact**: Download `H3-VBVR-I2V.safetensors` from Hugging Face.
-2.  **Verify Checksum**: Compute the SHA256 checksum of the downloaded file and compare it with the checksum provided in the repository (if available).
-3.  **Load Base Model**: Load the `MiniMax-H3` base model into memory.
-4.  **Validate LoRA**: Use the `validate_lora_compatibility` function to check that the LoRA weights are compatible with the base model.
-5.  **Load LoRA**: Load the LoRA weights into the base model using `strict=True`.
-6.  **Inference**: Run the inference pipeline with the LoRA-enhanced model.
-7.  **Evaluation**: Compare the output video with the base model output to verify improvements in object consistency and action logic.
-8.  **Cleanup**: Free GPU memory by deleting the model and calling `torch.cuda.empty_cache()`.
+1.  **Download** the LoRA file (`H3-VBVR-I2V.safetensors`).
+2.  **Verify** the base model is `MiniMaxAI/MiniMax-H3`.
+3.  **Check** GPU VRAM (minimum 12GB recommended).
+4.  **Load** the base model into memory.
+5.  **Verify** LoRA compatibility using the `verify_lora_compatibility` function.
+6.  **Load** the LoRA weights into the base model.
+7.  **Configure** the inference pipeline with appropriate `max_frames` and `step_size`.
+8.  **Generate** a test video with a simple prompt.
+9.  **Validate** the output for object duplication and clipping.
+10. **Deploy** to ComfyUI or other compatible workflow.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T14:25:58.311Z",
+  "last_updated": "2026-11-06T14:34:06.631Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "054b00dd69a9d35663b78fea87213f9738cb0218156af947d189e54bcb7fb05b",
-      "verified_at": "2026-11-05T04:43:35.791Z",
+      "content_hash": "6aa1b4ff9f715f5d2e4d993b2a4641381c60689622ebcd46ec2c2be485ed29e1",
+      "verified_at": "2026-11-06T14:33:55.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:43:35.791Z"
+      "last_updated": "2026-11-06T14:33:55.512Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
-      "verified_at": "2026-11-05T08:50:22.809Z",
+      "content_hash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
+      "verified_at": "2026-11-06T14:34:06.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T08:50:22.809Z"
+      "last_updated": "2026-11-06T14:34:06.630Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -17331,14 +17331,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "content_hash": "ce838a8a2c03327d75860908fe8a4e125b79a110e74aa53f3ccd43ae991d9320",
-      "verified_at": "2026-11-03T12:06:24.787Z",
+      "content_hash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
+      "verified_at": "2026-11-06T14:33:58.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:06:24.787Z"
+      "last_updated": "2026-11-06T14:33:58.571Z"
     },
     "yuezhiai/jonex": {
       "repository": "yuezhiai/jonex",
