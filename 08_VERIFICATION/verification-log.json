@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-MILR",
-    "timestamp": "2026-11-04T21:26:19.311Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "4cba16ee714727a68e5183e0ed9408b2b59aee6f24d3921c6171666757b03b3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-MKVJ",
-    "timestamp": "2026-11-04T21:26:22.255Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "9b79d23c0b9da50de971fca7d254948d24eabc1dbb065f1aa94b09c5ddeef015",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261104-MPDZ",
-    "timestamp": "2026-11-04T21:26:28.103Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "64fd6ba15293afab2a8d71d1849d1b247fba4b30153c8631e64c2dc93781df71",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-V4HZ",
     "timestamp": "2026-11-04T21:33:00.935Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "f86e01e04e232e4d3c5d45fdd9b1b6e7607b45cc1ef5b549f0c8d773362df004",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NT6G",
+    "timestamp": "2026-11-06T13:34:46.648Z",
+    "repository": "asciinema/asciinema",
+    "learningId": "learn-github-asciinema-asciinema",
+    "contentHash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-NX5X",
+    "timestamp": "2026-11-06T13:34:51.813Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-O0F7",
+    "timestamp": "2026-11-06T13:34:56.035Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7857,3 +7857,6 @@
 | `CYCLE-20261106-E8PU` | `2026-11-06T13:27:20.226Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`009c2c98...`) |
 | `CYCLE-20261106-EB9C` | `2026-11-06T13:27:23.520Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bf930d4b...`) |
 | `CYCLE-20261106-EDOH` | `2026-11-06T13:27:26.657Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f86e01e0...`) |
+| `CYCLE-20261106-NT6G` | `2026-11-06T13:34:46.648Z` | `asciinema/asciinema` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ace48a1a...`) |
+| `CYCLE-20261106-NX5X` | `2026-11-06T13:34:51.813Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`238f4e4a...`) |
+| `CYCLE-20261106-O0F7` | `2026-11-06T13:34:56.035Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c4e2c88f...`) |

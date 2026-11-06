@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T13:27:26.666Z",
+  "last_updated": "2026-11-06T13:34:56.057Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
-      "verified_at": "2026-11-05T12:14:36.709Z",
+      "content_hash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
+      "verified_at": "2026-11-06T13:34:56.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:14:36.709Z"
+      "last_updated": "2026-11-06T13:34:56.056Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -5811,14 +5811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-asciinema-asciinema",
-      "content_hash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
-      "verified_at": "2026-10-28T01:06:54.745Z",
+      "content_hash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
+      "verified_at": "2026-11-06T13:34:46.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:06:54.746Z"
+      "last_updated": "2026-11-06T13:34:46.661Z"
     },
     "software-mansion/react-native-reanimated": {
       "repository": "software-mansion/react-native-reanimated",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "65c91f724cef751ed2df69908890d21f47fd22a5d8182521482081b34a3d1064",
-      "verified_at": "2026-11-04T00:24:25.922Z",
+      "content_hash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
+      "verified_at": "2026-11-06T13:34:51.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:24:25.922Z"
+      "last_updated": "2026-11-06T13:34:51.835Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",

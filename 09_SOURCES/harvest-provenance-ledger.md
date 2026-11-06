@@ -7866,3 +7866,6 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `119488a5` | Multi-dimensional audit evidence | 2026-11-06T13:27:20.228Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0d7f9b32` | Multi-dimensional audit evidence | 2026-11-06T13:27:23.523Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7a0908ae` | Multi-dimensional audit evidence | 2026-11-06T13:27:26.659Z |
+| `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `f0775199` | Multi-dimensional audit evidence | 2026-11-06T13:34:46.652Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `e81a7d08` | Multi-dimensional audit evidence | 2026-11-06T13:34:51.817Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `51c1838b` | Multi-dimensional audit evidence | 2026-11-06T13:34:56.039Z |

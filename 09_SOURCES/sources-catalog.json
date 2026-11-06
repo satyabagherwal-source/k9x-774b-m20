@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "9b9bd5ef",
+    "sourceVersion": "51c1838b",
     "license": "NOASSERTION",
-    "contentHash": "f8c5a65ef5c131f1c16a520da855fdb520d0b1068ea85fa7178ee74fd56bba7a",
-    "lastHarvestedAt": "2026-11-05T12:14:36.693Z",
+    "contentHash": "c4e2c88fad49db786bb54fc8cbc15bdc7149f3b77043a190f0b411e24ee3f35f",
+    "lastHarvestedAt": "2026-11-06T13:34:56.039Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -3793,10 +3793,10 @@
     "repository": "asciinema/asciinema",
     "platform": "github",
     "sourceUrl": "https://github.com/asciinema/asciinema",
-    "sourceVersion": "cf66ef4c",
+    "sourceVersion": "f0775199",
     "license": "GPL-3.0",
-    "contentHash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
-    "lastHarvestedAt": "2026-10-28T01:06:54.737Z",
+    "contentHash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
+    "lastHarvestedAt": "2026-11-06T13:34:46.652Z",
     "learningId": "learn-github-asciinema-asciinema"
   },
   "software-mansion-react-native-reanimated": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "3dfa4626",
+    "sourceVersion": "e81a7d08",
     "license": "MIT",
-    "contentHash": "65c91f724cef751ed2df69908890d21f47fd22a5d8182521482081b34a3d1064",
-    "lastHarvestedAt": "2026-11-04T00:24:25.913Z",
+    "contentHash": "238f4e4a066e7eb0276f27cceab3624e76e46898aed1494bad9a795c74646b29",
+    "lastHarvestedAt": "2026-11-06T13:34:51.817Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

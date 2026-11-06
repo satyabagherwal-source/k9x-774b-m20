@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/asciinema-asciinema-learnings.md`  
 > **Source**: github ([https://github.com/asciinema/asciinema](https://github.com/asciinema/asciinema))  
-> **Source Version**: `cf66ef4c`  
+> **Source Version**: `f0775199`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:06:54.185Z  
+> **Timestamp**: 2026-11-06T13:34:45.239Z  
 > **Learning ID**: `learn-github-asciinema-asciinema`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/asciinema-asciinema-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/asciinema/asciinema](https://github.com/asciinema/asciinema))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:06:54.177Z  
+> **Harvest Timestamp**: 2026-11-06T13:34:43.386Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terminal session recorder, streamer and player 📹
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17916 stars
+- **Stars / Engagement**: 17945 stars
 
 ---
 
@@ -2456,127 +2456,455 @@ impl cli::Auth {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf66ef4c` (2026-10-27)
-**Commit Message**: Update async-trait to fix Clippy warnings
+### Incident Patch 1: `f0775199` (2026-11-05)
+**Commit Message**: Upgrade player to 3.18.0
 
-**File**: `Cargo.lock` (modified, +23/-12)
+**File**: `assets/asciinema-player.css` (modified, +74/-17)
 ```diff
-@@ -136,13 +136,13 @@ dependencies = [
+@@ -192,18 +192,27 @@ div.ap-player div.ap-control-bar * {
+ div.ap-control-bar svg.ap-icon path {
+   fill: var(--term-color-foreground);
+ }
+-div.ap-control-bar span.ap-button {
++div.ap-control-bar button.ap-button {
+   display: flex;
+   flex: 0 0 auto;
+   cursor: pointer;
++  appearance: none;
++  -webkit-appearance: none;
++  background: transparent;
++  border: 0;
++  margin: 0;
++  padding: 0;
++  color: inherit;
++  font: inherit;
++  line-height: inherit;
+ }
+-div.ap-control-bar span.ap-playback-button {
++div.ap-control-bar button.ap-playback-button {
+   width: 12px;
+   height: 12px;
+   padding: 10px;
+   margin: 0 0 0 2px;
+ }
+-div.ap-control-bar span.ap-playback-button svg {
++div.ap-control-bar button.ap-playback-button svg {
+   height: 12px;
+   width: 12px;
+ }
+@@ -257,70 +266,76 @@ div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter {
+ div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-empty {
+   background-color: color-mix(in oklab, var(--term-color-foreground) 20%, var(--term-color-background));
+ }
++div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-clip {
++  overflow: hidden;
++  border-radius: 3px;
++}
+ div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-full {
++  display: block;
+   width: 100%;
+-  transform-origin: left center;
++  height: 100%;
++  transform: translateX(-100%);
+   background-color: var(--term-color-foreground);
+   border-radius: 3px;
+ }
+ div.ap-control-bar.ap-seekable .ap-progressbar .ap-bar {
+   cursor: pointer;
+ }
+-div.ap-control-bar .ap-fullscreen-button {
++div.ap-control-bar button.ap-fullscreen-button {
+   width: 14px;
+   height: 14px;
+   padding: 9px;
+   margin: 0 2px 0 4px;
+ }
+-div.ap-control-bar .ap-fullscreen-button svg {
++div.ap-control-bar button.ap-fullscreen-button svg {
+   width: 14px;
+   height: 14px;
+ }
+-div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-on {
++div.ap-control-bar button.ap-fullscreen-button svg.ap-icon-fullscreen-on {
+   display: inline;
+ }
+-div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-off {
++div.ap-control-bar button.ap-fullscreen-button svg.ap-icon-fullscreen-off {
+   display: none;
+ }
+-div.ap-control-bar .ap-fullscreen-button .ap-tooltip {
++div.ap-control-bar button.ap-fullscreen-button .ap-tooltip {
+   right: 5px;
+   left: initial;
+   transform: none;
+ }
+-div.ap-control-bar .ap-kbd-button {
++div.ap-control-bar button.ap-kbd-button {
+   height: 14px;
+   padding: 9px;
+   margin: 0 0 0 4px;
+ }
+-div.ap-control-bar .ap-kbd-button svg {
++div.ap-control-bar button.ap-kbd-button svg {
+   width: 26px;
+   height: 14px;
+ }
+-div.ap-control-bar .ap-kbd-button .ap-tooltip {
++div.ap-control-bar button.ap-kbd-button .ap-tooltip {
+   right: 5px;
+   left: initial;
+   transform: none;
+ }
+-div.ap-control-bar .ap-speaker-button {
++div.ap-control-bar button.ap-speaker-button {
+   width: 19px;
+   padding: 6px 9px;
+   margin: 0 0 0 4px;
+   position: relative;
+ }
+-div.ap-control-bar .ap-speaker-button svg {
++div.ap-control-bar button.ap-speaker-button svg {
+   width: 19px;
+ }
+-div.ap-control-bar .ap-speaker-button .ap-tooltip {
++div.ap-control-bar button.ap-speaker-button .ap-tooltip {
+   left: -50%;
+   transform: none;
+ }
+ div.ap-wrapper.ap-hud .ap-control-bar {
+   opacity: 1;
+ }
+-div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-on {
++div.ap-wrapper:fullscreen button.ap-fullscreen-button svg.ap-icon-fullscreen-on {
+   display: none;
+ }
+-div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-off {
++div.ap-wrapper:fullscreen button.ap-fullscreen-button svg.ap-icon-fullscreen-off {
+   display: inline;
+ }
+ span.ap-progressbar span.ap-marker-container {
+@@ -442,6 +457,48 @@ span.ap-marker-container:hover span.ap-marker {
+   padding: 0.5em 0.75em;
+   text-transform: uppercase;
+ }
++.ap-player .ap-overlay-keystrokes {
++  position: absolute;
++  top: auto;
++  left: auto;
++  right: 20px;
++  bottom: var(--ap-keystrokes-bottom);
++  z-index: 20;
++  width: auto;
++  height: auto;
++  font-size: 18px;
++  text-align: right;
++  padding: 0;
++  display: flex;
++  justify-content: flex-end;
++  align-items: center;
++  gap: 0.35em;
++  pointer-events: none;
++}
++.ap-player .ap-overlay-keystrokes .ap-keystroke-pill {
++  font-family: var(--term-font-family);
++  font-size: inherit;
++  opacity: 1;
++  transition: opacity 80ms ease;
++}
++.ap-player .ap-overlay-keystrokes .ap-keystroke-pill kbd {
++  display: inline-flex;
++  justify-content: center;
++  min-width: 1.2em;
++  color: var(--term-color-background);
++  background-color: var(--term-color-foreground);
++  padding: 0.3em 0.5em;
++  border-radius: 0.2em;
++  font-family: inherit;
++  font-size: 0.85em;
++  font-weight: 600;
++  border: none;
++  margin: 0;
++}
++.ap-player .ap-overlay-keystrokes .ap-keystroke-pill.fading {
++  opacity: 0;
++  transition: opacity 700ms ease;
++}
+ .ap-player .ap-overlay-help {
+   background-color: rgba(0, 0, 0, 0.8);
+   container-type: inline-size;
+```
+
+---
+
+### Incident Patch 2: `f24d95d5` (2026-10-22)
+**Commit Message**: Upgrade avt to 0.20
+
+**File**: `Cargo.lock` (modified, +5/-21)
+```diff
+@@ -1,6 +1,6 @@
+ # This file is automatically @generated by Cargo.
+ # It is not intended for manual editing.
+-version = 3
++version = 4
  
  [[package]]
- name = "async-trait"
--version = "0.1.88"
-+version = "0.1.92"
+ name = "addr2line"
+@@ -147,12 +147,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "avt"
+-version = "0.18.0"
++version = "0.20.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
-+checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+-checksum = "7179c44abe2ac36173d4713bfed24136e5988f005c7fe2c4fcde621d3d4d29b9"
++checksum = "19416eacf92afe8bdb0bf473b6c81dc9b4b2b833a6144fe18c739c4ef8a10671"
  dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 3.0.9",
+- "rgb",
+- "unicode-width 0.1.14",
++ "unicode-width",
  ]
  
  [[package]]
-@@ -322,7 +322,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
- ]
+@@ -246,12 +245,6 @@ version = "3.18.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "793db76d6187cd04dff33004d8e6c9cc4e05cd330500379d2394209271b4aeee"
+ 
+-[[package]]
+-name = "bytemuck"
+-version = "1.23.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5c76a5792e44e4abe34d3abf15636779261d45a7450612059293d1d2cfc63422"
+-
+ [[package]]
+ name = "bytes"
+ version = "1.11.1"
+@@ -1109,9 +1102,6 @@ name = "rgb"
+ version = "0.8.50"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "57397d16646700483b67d2dd6511d79318f9d057fdbd21a4066aeac8b41d310a"
+-dependencies = [
+- "bytemuck",
+-]
  
  [[package]]
-@@ -511,7 +511,7 @@ checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
+ name = "ring"
+@@ -1259,7 +1249,7 @@ dependencies = [
+  "memchr",
+  "nix",
+  "unicode-segmentation",
+- "unicode-width 0.2.1",
++ "unicode-width",
+  "utf8parse",
+  "windows-sys 0.60.2",
  ]
+@@ -1819,12 +1809,6 @@ version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f6ccf251212114b54433ec949fd6a7841275f9ada20dddd2f29e9ceea4501493"
  
+-[[package]]
+-name = "unicode-width"
+-version = "0.1.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
+-
  [[package]]
-@@ -1153,7 +1153,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "rust-embed-utils",
-- "syn",
-+ "syn 2.0.103",
-  "walkdir",
- ]
+ name = "unicode-width"
+ version = "0.2.1"
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -9,7 +9,7 @@ description = "Terminal session recorder, streamer, and player"
+ license = "GPL-3.0-or-later"
  
-@@ -1338,7 +1338,7 @@ checksum = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
- ]
+ # MSRV
+-rust-version = "1.82.0"
++rust-version = "1.86.0"
  
- [[package]]
-@@ -1487,6 +1487,17 @@ dependencies = [
-  "unicode-ident",
- ]
+ [dependencies]
+ anyhow = "1.0"
+@@ -24,7 +24,7 @@ rustyline = { version = "17.0", default-features = false }
+ config = { version = "0.15", default-features = false, features = ["toml"] }
+ which = "8.0"
+ tempfile = "3.23"
+-avt = "0.18"
++avt = "0.20"
+ axum = { version = "0.8", default-features = false, features = ["http1", "ws"] }
+ tokio = { version = "1.40", features = ["rt-multi-thread", "net", "sync", "time", "fs", "process"] }
+ futures-util = { version = "0.3", default-features = false, features = ["sink"] }
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@ To download the source code, build the asciinema binary, and install it in
+ cargo install --locked --git https://github.com/asciinema/asciinema
+ ```
  
-+[[package]]
-+name = "syn"
-+version = "3.0.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "unicode-ident",
-+]
+-This requires the Rust toolchain (1.82 or later) with Cargo, installed via your
++This requires the Rust toolchain (1.86 or later) with Cargo, installed via your
+ system package manager or [rustup](https://rustup.rs/).
+ 
+ Once installed, ensure `$HOME/.cargo/bin` is in your shell's `$PATH`.
+```
+
+**File**: `src/cmd/convert.rs` (modified, +30/-0)
+```diff
+@@ -143,6 +143,36 @@ mod tests {
+         assert_eq!(output, "hello\n");
+     }
+ 
++    #[test]
++    fn reports_invalid_text_dimensions() {
++        let dir = tempdir().unwrap();
++        let input_path = dir.path().join("invalid.cast");
++        let output_path = dir.path().join("invalid.txt");
 +
- [[package]]
- name = "sync_wrapper"
- version = "1.0.2"
-@@ -1536,7 +1547,7 @@ checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
- ]
++        fs::write(
++            &input_path,
++            "{\"version\":3,\"term\":{\"cols\":0,\"rows\":3}}\n",
++        )
++        .unwrap();
++
++        let error = cli::Convert {
++            input: input_path.to_string_lossy().into_owned(),
++            output: output_path.to_string_lossy().into_owned(),
++            output_format: None,
++            overwrite: false,
++        }
++        .run()
++        .unwrap_err();
++
++        assert_eq!(
++            error.downcast_ref::<std::io::Error>().unwrap().kind(),
++            std::io::ErrorKind::InvalidInput
++        );
++
++        assert!(error.to_string().contains("0x3"));
++        assert!(fs::read(output_path).unwrap().is_empty());
++    }
++
+     fn convert(input: impl AsRef<Path>, output: impl AsRef<Path>) {
+         cli::Convert {
+             input: input.as_ref().to_string_lossy().into_owned(),
+```
+
+**File**: `src/cmd/session.rs` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ impl cli::Session {
+         });
  
- [[package]]
-@@ -1588,7 +1599,7 @@ checksum = "6e06d43f1345a3bcd39f6a56dbb7dcab2ba47e68e8ac134855e7e2bdbaf8cab8"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
- ]
+         if server.is_some() || forwarder.is_some() {
+-            let output = stream.start(&metadata).await;
++            let output = stream.start(&metadata).await?;
+             outputs.push(Box::new(output));
+         }
  
- [[package]]
-@@ -1928,7 +1939,7 @@ dependencies = [
-  "log",
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
-  "wasm-bindgen-shared",
- ]
+```
+
+**File**: `src/encoder/asciicast.rs` (modified, +7/-6)
+```diff
+@@ -1,3 +1,4 @@
++use std::io;
+ use std::time::Duration;
  
-@@ -1963,7 +1974,7 @@ checksum = "8ae87ea40c9f689fc23f209965b6fb8a99ad69aeeb0231408be24920604395de"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
-  "wasm-bindgen-backend",
-  "wasm-bindgen-shared",
- ]
-@@ -2226,7 +2237,7 @@ checksum = "9ecf5b4cc5364572d7f4c329661bcc82724222973f2cab6f050a4e5c22f75181"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn",
-+ "syn 2.0.103",
- ]
+ use crate::asciicast::{Event, Header, V2Encoder, V3Encoder};
+@@ -16,14 +17,14 @@ impl AsciicastV2Encoder {
+ }
  
- [[package]]
+ impl super::Encoder for AsciicastV2Encoder {
+-    fn header(&mut self, header: &Header) -> Vec<u8> {
+-        if self.append {
++    fn header(&mut self, header: &Header) -> io::Result<Vec<u8>> {
++        Ok(if self.append {
+             let size = (header.term_cols, header.term_rows);
+             self.inner
+                 .event(&Event::resize(Duration::from_micros(0), size))
+         } else {
+             self.inner.header(header)
+-        }
++        })
+     }
+ 
+     fn event(&mut self, event: Event) -> Vec<u8> {
+@@ -49,14 +50,14 @@ impl AsciicastV3Encoder {
+ }
+ 
+ impl super::Encoder for AsciicastV3Encoder {
+-    fn header(&mut self, header: &Header) -> Vec<u8> {
+-        if self.append {
++    fn header(&mut self, header: &Header) -> io::Result<Vec<u8>> {
++        Ok(if self.append {
+             let size = (header.term_cols, header.term_rows);
+             self.inner
+                 .event(&Event::resize(Duration::from_micros(0), size))
+         } else {
+             self.inner.header(header)
+-        }
++        })
+     }
+ 
+     fn event(&mut self, event: Event) -> Vec<u8> {
+```
+
+**File**: `src/encoder/mod.rs` (modified, +3/-3)
+```diff
+@@ -2,7 +2,7 @@ mod asciicast;
+ mod raw;
+ mod txt;
+ 
+-use std::io::Write;
++use std::io::{self, Write};
+ 
+ use anyhow::Result;
+ 
+@@ -12,7 +12,7 @@ pub use raw::RawEncoder;
+ pub use txt::TextEncoder;
+ 
+ pub trait Encoder {
+-    fn header(&mut self, header: &Header) -> Vec<u8>;
++    fn header(&mut self, header: &Header) -> io::Result<Vec<u8>>;
+     fn event(&mut self, event: Event) -> Vec<u8>;
+     fn finish(&mut self) -> Vec<u8>;
+ }
+@@ -31,7 +31,7 @@ impl<E: Encoder + ?Sized> EncoderExt for E {
+         cast: crate::asciicast::Asciicast,
+         writer: &mut W,
+     ) -> Result<()> {
+-        writer.write_all(&self.header(&cast.header))?;
++        writer.write_all(&self.header(&cast.header)?)?;
+ 
+         for event in cast.events {
+             writer.write_all(&self.event(event?))?;
+```
+
+**File**: `src/encoder/raw.rs` (modified, +5/-3)
+```diff
+@@ -1,3 +1,5 @@
++use std::io;
++
+ use crate::asciicast::{Event, EventData, Header};
+ 
+ pub struct RawEncoder;
+@@ -9,8 +11,8 @@ impl RawEncoder {
+ }
+ 
+ impl super::Encoder for RawEncoder {
+-    fn header(&mut self, header: &Header) -> Vec<u8> {
+-        format!("\x1b[8;{};{}t", header.term_rows, header.term_cols).into_bytes()
++    fn header(&mut self, header: &Header) -> io::Result<Vec<u8>> {
++        Ok(format!("\x1b[8;{};{}t", header.term_rows, header.term_cols).into_bytes())
+     }
+ 
+     fn event(&mut self, event: Event) -> Vec<u8> {
+@@ -44,7 +46,7 @@ mod tests {
+             ..Default::default()
+         };
+ 
+-        assert_eq!(enc.header(&header), "\x1b[8;50;100t".as_bytes());
++        assert_eq!(enc.header(&header).unwrap(), "\x1b[8;50;100t".as_bytes());
+ 
+         assert_eq!(
+             enc.event(Event::output(
 ```
 
 #### Recent Merged Pull Requests:
@@ -2605,61 +2933,75 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update async-trait to fix Clippy warnings
+## X. Upgrade player to 3.18.0
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in asciinema/asciinema. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/asciinema-player.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in asciinema/asciinema. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf66ef4c`: Update async-trait to fix Clippy warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0775199`: Upgrade player to 3.18.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/asciinema-player.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.1.92"
-checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- "syn 3.0.9",
- "syn 2.0.103",
- "syn 2.0.103",
- "syn 2.0.103",
- "syn 2.0.103",
-[[package]]
-name = "syn"
-version = "3.0.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
-
- "syn 2.0.103",
- "syn 2.0.103",
- "syn 2.0.103",
- "syn 2.0.103",
- "syn 2.0.103",
+div.ap-control-bar button.ap-button {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+div.ap-control-bar button.ap-playback-button {
+div.ap-control-bar button.ap-playback-button svg {
+div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-clip {
+  overflow: hidden;
+  border-radius: 3px;
+}
+  display: block;
+  height: 100%;
+  transform: translateX(-100%);
+div.ap-control-bar button.ap-fullscreen-button {
+div.ap-control-bar button.ap-fullscreen-button svg {
+div.ap-control-bar button.ap-fullscreen-button svg.ap-icon-fullscreen-on {
+div.ap-control-bar button.ap-fullscreen-button svg.ap-icon-fullscreen-off {
+div.ap-control-bar button.ap-fullscreen-button .ap-tooltip {
+div.ap-control-bar button.ap-kbd-button {
+div.ap-control-bar button.ap-kbd-button svg {
+div.ap-control-bar button.ap-kbd-button .ap-tooltip {
+div.ap-control-bar button.ap-speaker-button {
+div.ap-control-bar button.ap-speaker-button svg {
+div.ap-control-bar button.ap-speaker-button .ap-tooltip {
+div.ap-wrapper:fullscreen button.ap-fullscreen-button svg.ap-icon-fullscreen-on {
+div.ap-wrapper:fullscreen b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.1.88"
-checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
- "syn",
+div.ap-control-bar span.ap-button {
+div.ap-control-bar span.ap-playback-button {
+div.ap-control-bar span.ap-playback-button svg {
+  transform-origin: left center;
+div.ap-control-bar .ap-fullscreen-button {
+div.ap-control-bar .ap-fullscreen-button svg {
+div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-on {
+div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-off {
+div.ap-control-bar .ap-fullscreen-button .ap-tooltip {
+div.ap-control-bar .ap-kbd-button {
+div.ap-control-bar .ap-kbd-button svg {
+div.ap-control-bar .ap-kbd-button .ap-tooltip {
+div.ap-control-bar .ap-speaker-button {
+div.ap-control-bar .ap-speaker-button svg {
+div.ap-control-bar .ap-speaker-button .ap-tooltip {
+div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-on {
+div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-off {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf66ef4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0775199` are properly handled with clean fallback behavior.

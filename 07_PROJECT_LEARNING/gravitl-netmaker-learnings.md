@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `9b9bd5ef`  
+> **Source Version**: `51c1838b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:14:35.842Z  
+> **Timestamp**: 2026-11-06T13:34:54.211Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:14:35.835Z  
+> **Harvest Timestamp**: 2026-11-06T13:34:53.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1017,252 +1017,519 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b9bd5ef` (2026-11-05)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4217)
+### Incident Patch 1: `51c1838b` (2026-11-06)
+**Commit Message**: NM-356: mark extclients offline when their ingress gateway is unreachable (#4213)
 
-* fix(go): validate traffic public key;
+* NM-356: add username filter to nodes api
 
-* feat(go): rekey tenant idp sync hook;
+* NM-356: disconnect user devices and force Desktop logout on disable/delete
 
-* feat(go): check if membership exists before creating;
+When a user is disabled or deleted (including IdP sync), disconnect their
+nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
-* feat(go): parse node addr without cidr as well;
+* NM-356: rm force logout from delete user path
 
-* feat(go): only check for orphans before the cursor;
+* NM-356: keep AllowAll when both default ACL policies are open
 
-* feat(go): normalize usernames in idp synced users;
+Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
+Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
+rules. Short-circuit on open defaults only, and document the constraint.
 
-* feat(go): allow patch method;
+* fix: enrich topology and connections with location, is_gw, and egresses
 
-* feat(go): allow master user to list all tenants;
+Add location/country and is_gw on topology vertices and connection peers,
+with egresses listing egress vs internet_gateway (exit). Also classify paths
+through a peer's RelayedBy as relayed even when that relay is an exit router.
 
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+* add update fallback ns error
 
-* feat(go): add before peer can be skipped;
+* fix: require network query on network-scoped mutations for network admins
 
-* feat(go): ignore vendor dir;
+ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
+after NM-378, so auth fell t
 
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-**File**: `controllers/middleware.go` (modified, +3/-0)
+**File**: `logic/bypass_egress_routes_test.go` (modified, +62/-23)
 ```diff
-@@ -144,6 +144,9 @@ func userMiddleWare(handler http.Handler) http.Handler {
- 		}
- 		if strings.Contains(route, "flows") {
- 			r.Header.Set("TARGET_RSRC", schema.TrafficFlow.String())
-+			if netID := r.URL.Query().Get("network_id"); netID != "" {
-+				r.Header.Set("NET_ID", netID)
-+			}
- 		}
- 		if keyID, ok := params["keyID"]; ok {
- 			r.Header.Set("TARGET_RSRC_ID", keyID)
-```
-
-**File**: `logic/egress.go` (modified, +34/-21)
-```diff
-@@ -12,6 +12,7 @@ import (
+@@ -271,19 +271,31 @@ func TestAuthorizedEgressDetailsDropsUnauthorizedRanges(t *testing.T) {
+ func TestPeerRidesRetainedInternetExit(t *testing.T) {
+ 	originalGetNodeByID := getNodeByID
+ 	originalIsPeerAllowed := IsPeerAllowed
++	originalUserAllowed := IsUserAllowedToCommunicate
+ 	t.Cleanup(func() {
+ 		getNodeByID = originalGetNodeByID
+ 		IsPeerAllowed = originalIsPeerAllowed
++		IsUserAllowedToCommunicate = originalUserAllowed
+ 	})
  
- 	"github.com/google/uuid"
- 	"github.com/gravitl/netmaker/db"
-+	dbtypes "github.com/gravitl/netmaker/db/types"
- 	"github.com/gravitl/netmaker/models"
- 	"github.com/gravitl/netmaker/schema"
- 	"github.com/gravitl/netmaker/scope"
-@@ -74,10 +75,15 @@ func validateEgressReq(ctx context.Context, e *schema.Egress) error {
- 
- 	if len(e.Nodes) > 0 {
- 		for k := range e.Nodes {
--			node, err := GetNodeByID(k)
-+			_node := &schema.Node{ID: k}
-+			err := _node.Get(ctx, dbtypes.WithAllPreloads())
- 			if err != nil {
- 				return errors.New("invalid routing node " + err.Error())
- 			}
-+			if _node.Host == nil {
-+				return fmt.Errorf("host not found for routing node %s", _node.ID)
-+			}
-+			node := *ConvertSchemaNodeToModelsNode(_node)
- 			if err := ErrUserOwnedNodeInfrastructureRole(&node); err != nil {
- 				return err
- 			}
-@@ -88,10 +94,14 @@ func validateEgressReq(ctx context.Context, e *schema.Egress) error {
- 				if err := ValidateInternetEgressRoutingNode(&node); err != nil {
- 					return err
- 				}
-+			} else {
-+				if err := ValidateEgressHostFirewall(_node.Host); err != nil {
-+					return err
-+				}
-+			}
-+			if err := ValidateHostEgressNATMode(*e, _node.Host); err != nil {
-+				return err
- 			}
--		}
--		if err := ValidateWindowsEgressNATMode(*e); err != nil {
--			return err
- 		}
+ 	exitA := uuid.New()
+ 	exitB := uuid.New()
+-	client := &models.Node{
++	userClient := &models.Node{
+ 		CommonNode: models.CommonNode{ID: uuid.New(), Network: "testnet"},
++		OwnerID:    "abhi",
  	}
- 	if IsEgressInternetGateway(*e) && len(e.Tags) > 0 {
-@@ -321,6 +331,22 @@ func ValidateInternetEgressRoutingNode(node *models.Node) error {
- 	return nil
+-	client.InternetGwID = exitA.String()
+-	client.RelayedBy = exitA.String()
+-	client.IsRelayed = true
++	userClient.InternetGwID = exitA.String()
++	userClient.RelayedBy = exitA.String()
++	userClient.IsRelayed = true
++	require.True(t, IsUserOwnedDevice(userClient))
++
++	serverClient := &models.Node{
++		CommonNode: models.CommonNode{ID: uuid.New(), Network: "testnet"},
++	}
++	serverClient.InternetGwID = exitA.String()
++	serverClient.RelayedBy = exitA.String()
++	serverClient.IsRelayed = true
++	require.False(t, IsUserOwnedDevice(serverClient))
+ 
+ 	siteOnB := &models.Node{
+ 		CommonNode: models.CommonNode{ID: uuid.New(), Network: "testnet"},
+@@ -301,24 +313,29 @@ func TestPeerRidesRetainedInternetExit(t *testing.T) {
+ 	IsPeerAllowed = func(ctx context.Context, node, peer models.Node, checkDefaultPolicy bool) bool {
+ 		return peer.ID == exitB
+ 	}
++	// User devices use user policies via PeerAllowed, not resource IsPeerAllowed.
++	IsUserAllowedToCommunicate = func(_ context.Context, userName string, peer models.Node) (bool, []models.Acl) {
++		return userName == "abhi" && peer.ID == exitB, nil
++	}
+ 
+ 	inetExits := map[string]struct{}{exitA.String(): {}, exitB.String(): {}}
+-	// defaultPolicyEnabled=false so PeerAllowed consults IsPeerAllowed.
+-	assert.True(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnB, exitA.String(), inetExits, false),
+-		"site RelayedBy another ACL-allowed exit must ride that exit, not the client's")
++	assert.True(t, peerRidesRetainedInternetExit(context.Background(), userClient, siteOnB, exitA.String(), inetExits, false),
++		"user device: site RelayedBy another ACL-allowed exit must ride that exit, not the client's")
++	assert.False(t, peerRidesRetainedInternetExit(context.Background(), serverClient, siteOnB, exitA.String(), inetExits, false),
++		"server exit client does not retain alternate exits — hairpin via selected exit")
+ 
+ 	siteOnA := &models.Node{
+ 		CommonNode: models.CommonNode{ID: uuid.New(), Network: "testnet"},
+ 	}
+ 	siteOnA.IsRelayed = true
+ 	siteOnA.RelayedBy = exitA.String()
+-	assert.False(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnA, exitA.String(), inetExits, false),
++	assert.False(t, peerRidesRetainedInternetExit(context.Background(), userClient, siteOnA, exitA.String(), inetExits, false),
+ 		"site RelayedBy the client's own exit still rides GetAllowedIpsForRelayed on that exit")
+ 
+-	IsPeerAllowed = func(ctx context.Context, node, peer models.Node, checkDefaultPolicy bool) bool {
+-		return false
++	IsUserAllowedToCommunicate = func(context.Context, string, models.Node) (bool, []models.Acl) {
++		return false, nil
+ 	}
+-	assert.False(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnB, exitA.String(), inetExits, false),
++	assert.False(t, peerRidesRetainedInternetExit(context.Background(), userClient, siteOnB, exitA.String(), inetExits, false),
+ 		"ACL-denied RelayedBy exit is not retained — keep hairpin via client's exit")
  }
  
-+// ValidateEgressHostFirewall rejects Linux hosts without iptables/nftables and Windows
-+// hosts without NetNat, since they cannot install egress forwarding/NAT rules.
-+func ValidateEgressHostFirewall(host *schema.Host) error {
-+	switch host.OS {
-+	case models.OS_Types.Linux:
-+		if !isSupportedEgressFirewall(host.FirewallInUse, host.OS) {
-+			return fmt.Errorf("host %s cannot be an egress routing node: iptables or nftables needs to be installed", host.Name)
-+		}
-+	case models.OS_Types.Windows:
-+		if !isSupportedEgressFirewall(host.FirewallInUse, host.OS) {
-+			return fmt.Errorf("host %s cannot be an egress routing node: windows netclient must report NetNat firewall support (upgrade netclient)", host.Name)
-+		}
+@@ -381,15 +398,28 @@ func TestShouldRetainPeerDespiteRelay_UnfilteredSpecificNeedsBypass(t *testing.T
+ func TestShouldRetainPeerDespiteRelay_AlternateExitsNeedACL(t *testing.T) {
+ 	selectedExitID := uuid.New()
+ 	otherExitID := uuid.New()
+-	client := &models.Node{
++	userClient := &models.Node{
+ 		CommonNode: models.CommonNode{
+ 			ID:      uuid.New(),
+ 			Network: "testnet",
+ 		},
++		OwnerID: "abhi",
+ 	}
+-	client.IsRelayed = true
+-	client.RelayedBy = selectedExitID.String()
+-	client.InternetGwID = selectedExitID.String()
++	userClient.IsRelayed = true
++	userClient.RelayedBy = selectedExitID.String()
++	userClient.InternetGwID = selectedExitID.String()
++	require.True(t, IsUserOwnedDevice(userClient))
++
++	serverClient := &models.Node{
++		CommonNode: models.CommonNode{
++			ID:      uuid.New(),
++			Network: "testnet",
++		},
 +	}
++	serverClient.IsRelayed = true
++	serverClient.RelayedBy = selectedExitID.String()
++	serverClient.InternetGwID = selectedExitID.String()
++	require.False(t, IsUserOwnedDevice(serverClient))
+ 
+ 	selectedExit := &models.Node{
+ 		CommonNode: models.CommonNode{
+@@ -407,18 +437,27 @@ func TestShouldRetainPeerDespiteRelay_AlternateExitsNeedACL(t *testing.T) {
+ 		selectedExitID.String(): {},
+ 		otherExitID.String():    {},
+ 	}
+-	assert.True(t, shouldRetainPeerDespiteRelay(client, selectedExit, false, false, exitIDs),
++	assert.True(t, shouldRetainPeerDespiteRelay(
+```
+
+**File**: `logic/device.go` (modified, +48/-12)
+```diff
+@@ -47,6 +47,36 @@ func DefaultCleanupDeviceHostForOwnershipTransfer(ctx context.Context, host *sch
+ 	return DisassociateAllNodesFromHost(ctx, host.ID.String())
+ }
+ 
++// RebindDeviceHostToTenant moves a Desktop host UUID onto a new MSP tenant and
++// owner. Used when RegisterDevice finds the machine still enrolled under a
++// previous tenant that the new user cannot leave themselves.
++func RebindDeviceHostToTenant(ctx context.Context, host *schema.Host, newOwner, newTenantID string) error {
++	if host == nil || newOwner == "" || newTenantID == "" {
++		return errors.New("host, new owner, and tenant are required")
++	}
++	prevTenant := host.TenantID
++	prevOwner := host.OwnerUsername
++	if err := CleanupDeviceHostForOwnershipTransfer(ctx, host); err != nil {
++		return fmt.Errorf("failed to cleanup host for tenant rebind: %w", err)
++	}
++	host.TenantID = newTenantID
++	host.OwnerUsername = newOwner
++	if err := host.Upsert(ctx); err != nil {
++		return err
++	}
++	if prevOwner != "" && prevOwner != newOwner {
++		logDeviceOwnershipTransfer(ctx, newOwner, host, prevOwner)
++	}
++	slog.Info("rebound device host to tenant",
++		"host", host.ID.String(),
++		"from_tenant", prevTenant,
++		"to_tenant", newTenantID,
++		"from_owner", prevOwner,
++		"to_owner", newOwner,
++	)
 +	return nil
 +}
 +
- // isSupportedEgressFirewall reports whether the host's reported firewall can do egress NAT.
- func isSupportedEgressFirewall(firewallInUse, osName string) bool {
- 	switch firewallInUse {
-@@ -338,23 +364,10 @@ func IsSupportedEgressFirewall(firewallInUse, osName string) bool {
- 	return isSupportedEgressFirewall(firewallInUse, osName)
+ // TransferDeviceHostOwnership re-binds a shared desktop host to a new user, cleaning up the prior owner's network state.
+ // RegisterDevice calls this when a different user logs in on the same machine.
+ func TransferDeviceHostOwnership(ctx context.Context, host *schema.Host, newOwner string) error {
+@@ -488,20 +518,26 @@ func RegisterDevice(ctx context.Context, user *schema.User, newHost *schema.Host
+ 			return empty, err
+ 		}
+ 		if existing.TenantID != "" && existing.TenantID != tenantID {
+-			return empty, errors.New("host already registered to another tenant")
+-		}
+-		if existing.OwnerUsername == "" {
+-			EnsureHostOwner(existing, user.Username)
+-		}
+-		if existing.OwnerUsername != "" && existing.OwnerUsername != user.Username {
+-			// Same machine, next person at the keyboard. Re-bind the host
+-			// instead of leaving it owned by whoever logged in first.
+-			if err := TransferDeviceHostOwnership(ctx, existing, user.Username); err != nil {
++			// Same Desktop machine moving to another MSP tenant (and often another
++			// user). Previous leave may have failed (new user cannot DELETE the
++			// old owner's host). Rebind instead of hard-failing register.
++			if err := RebindDeviceHostToTenant(ctx, existing, user.Username, tenantID); err != nil {
+ 				return empty, err
+ 			}
+-		}
+-		if existing.TenantID == "" {
+-			existing.TenantID = tenantID
++		} else {
++			if existing.OwnerUsername == "" {
++				EnsureHostOwner(existing, user.Username)
++			}
++			if existing.OwnerUsername != "" && existing.OwnerUsername != user.Username {
++				// Same machine, next person at the keyboard. Re-bind the host
++				// instead of leaving it owned by whoever logged in first.
++				if err := TransferDeviceHostOwnership(ctx, existing, user.Username); err != nil {
++					return empty, err
++				}
++			}
++			if existing.TenantID == "" {
++				existing.TenantID = tenantID
++			}
+ 		}
+ 		endpointChanged, _ := UpdateHostFromClient(ctx, newHost, existing)
+ 		if endpointChanged {
+```
+
+**File**: `logic/device_test.go` (modified, +17/-5)
+```diff
+@@ -625,7 +625,7 @@ func TestRegisterDevice_requiresTenantScope(t *testing.T) {
+ 	assert.Contains(t, err.Error(), "tenant id is required")
  }
  
--// ValidateWindowsEgressNATMode rejects virtual NAT when any routing node is Windows.
--func ValidateWindowsEgressNATMode(e schema.Egress) error {
--	if e.Mode != schema.VirtualNAT {
--		return nil
--	}
--	for nodeID := range e.Nodes {
--		node, err := GetNodeByID(nodeID)
--		if err != nil {
--			continue
--		}
--		host := &schema.Host{ID: node.HostID}
--		if err := host.Get(db.WithContext(context.TODO())); err != nil {
--			continue
--		}
--		if host.OS == models.OS_Types.Windows {
--			return errors.New("virtual NAT is not supported on Windows routing nodes; use direct NAT")
--		}
-+// ValidateHostEgressNATMode rejects virtual NAT when the routing node's host is Windows.
-+func ValidateHostEgressNATMode(e schema.Egress, host *schema.Host) error {
-+	if e.Mode == schema.VirtualNAT && host.OS == models.OS_Types.Windows {
-+		return errors.New("virtual NAT is not supported on Windows routing nodes; use direct NAT")
+-func TestRegisterDevice_rejectsCrossTenantHost(t *testing.T) {
++func TestRegisterDevice_rebindsCrossTenantHost(t *testing.T) {
+ 	ctx := scopedTestContext(t)
+ 	tenantID := scope.ID(ctx)
+ 	require.NotEmpty(t, tenantID)
+@@ -650,7 +650,13 @@ func TestRegisterDevice_rejectsCrossTenantHost(t *testing.T) {
+ 	assert.Equal(t, tenantID, resp.RequestedHost.TenantID)
+ 	t.Cleanup(func() { _ = (&schema.Host{ID: hostID}).Delete(ctx) })
+ 
+-	otherCtx := scope.WithContext(db.WithContext(context.TODO()), scope.TenantScope, "other-tenant-"+uuid.NewString())
++	otherTenant := "other-tenant-" + uuid.NewString()
++	otherCtx := scope.WithContext(db.WithContext(context.TODO()), scope.TenantScope, otherTenant)
++	otherOwner := "reg-xt2-" + uuid.NewString()[:8]
++	otherUser := &schema.User{Username: otherOwner, PlatformRoleID: schema.AdminRole}
++	require.NoError(t, otherUser.Create(otherCtx))
++	t.Cleanup(func() { _ = otherUser.Delete(otherCtx) })
++
+ 	dup := &schema.Host{
+ 		ID:               hostID,
+ 		Name:             "cross-tenant-host",
+@@ -659,9 +665,15 @@ func TestRegisterDevice_rejectsCrossTenantHost(t *testing.T) {
+ 		TrafficKeyPublic: []byte{1, 2, 3},
+ 		HostPass:         "test-host-pass",
  	}
- 	return nil
+-	_, err = RegisterDevice(otherCtx, user, dup)
+-	require.Error(t, err)
+-	assert.Equal(t, "host already registered to another tenant", err.Error())
++	resp2, err := RegisterDevice(otherCtx, otherUser, dup)
++	require.NoError(t, err)
++	assert.Equal(t, otherTenant, resp2.RequestedHost.TenantID)
++	assert.Equal(t, otherOwner, resp2.RequestedHost.OwnerUsername)
++
++	reloaded := &schema.Host{ID: hostID}
++	require.NoError(t, reloaded.Get(otherCtx))
++	assert.Equal(t, otherTenant, reloaded.TenantID)
++	assert.Equal(t, otherOwner, reloaded.OwnerUsername)
+ }
+ 
+ func TestJoinDeviceNetworkBlocksReconnectOnPostureViolation(t *testing.T) {
+```
+
+**File**: `logic/nodes.go` (modified, +1/-0)
+```diff
+@@ -884,6 +884,7 @@ func ConvertSchemaNodeToModelsNodeWithContext(ctx context.Context, _node *schema
+ 		Location:                           _node.Host.Location,
+ 		CountryCode:                        _node.Host.CountryCode,
+ 		HostHasEndpointIPv6:                len(_node.Host.EndpointIPv6) > 0,
++		CreatedAt:                          _node.CreatedAt,
+ 	}
+ 
+ 	// User-registered devices: attach owner metadata for API Active Users listing.
+```
+
+**File**: `logic/peers.go` (modified, +17/-9)
+```diff
+@@ -455,14 +455,16 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 				// is a different retained internet exit, emit EgressRoutes with
+ 				// that RelayedBy PeerKey so routes do not hang on the client's exit.
+ 				clientExitID := InternetExitRoutingNodeID(&node)
++				// Only user devices retain alternate exits as separate peers; server
++				// exit clients hairpin site egress via their selected exit instead.
+ 				ridesOtherRetainedExit := false
+-				if !forceDirect && peer.IsRelayed && peer.RelayedBy != "" &&
++				if IsUserOwnedDevice(&node) && !forceDirect && peer.IsRelayed && peer.RelayedBy != "" &&
+ 					peer.RelayedBy != node.ID.String() && peer.RelayedBy != clientExitID {
+ 					if _, ok := inetExitRouterIDs[peer.RelayedBy]; ok {
+ 						ridesOtherRetainedExit = true
+ 					}
+ 				}
+-				if !forceDirect && isAutoRelayPeer && peerAutoRelayID != "" &&
++				if IsUserOwnedDevice(&node) && !forceDirect && isAutoRelayPeer && peerAutoRelayID != "" &&
+ 					peerAutoRelayID != node.ID.String() && peerAutoRelayID != clientExitID {
+ 					if _, ok := inetExitRouterIDs[peerAutoRelayID]; ok {
+ 						ridesOtherRetainedExit = true
+@@ -526,7 +528,9 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 				// CIDRs do not hairpin through the exit. Relayed/auto-relayed site
+ 				// egress is not forced direct — AllowedIPs go via the client's exit
+ 				// on both legs (client→exit and site→client's exit).
+-				// Exit clients keep ACL-allowed internet exits as direct peers.
++				// User-device exit clients keep ACL-allowed internet exits as
++				// direct peers (probe/switch). Server exit clients do not —
++				// only the selected exit stays, plus bypass site egress below.
+ 				// A user device relayed from the UI does not keep other gateways
+ 				// direct — those overlays ride RelayedBy. Keeping both duplicates
+ 				// AllowedIPs and leaves peers with an empty list.
+@@ -1233,22 +1237,26 @@ func PeerAdvertisesSpecificEgress(peer *models.Node) bool {
+ // cleared must not keep the peer or put those CIDRs in AllowedIPs.
+ // allowedToComm is PeerAllowed for this node/peer pair; inetExitRouterIDs lists
+ // active internet-egress routing node IDs. ACL-denied exits are never retained.
++// Alternate internet exits are retained as separate peers only for user devices.
+ func shouldRetainPeerDespiteRelay(node, peer *models.Node, isAutoRelayPeer bool, allowedToComm bool, inetExitRouterIDs map[string]struct{}) bool {
+ 	// Selected exit (and reverse leg) always stays — clients need 0.0.0.0/0 even
+ 	// when RelayedBy is stale after gateway teardown.
+ 	if usesPeerAsInternetExit(node, peer) || usesPeerAsInternetExit(peer, node) {
+ 		return true
+ 	}
+-	// ACL-allowed internet exit routers stay as direct peers for exit clients
+-	// (probe/switch exits). Relayed infra nodes that are not exit clients must
+-	// not keep exits as separate peers — those overlays ride RelayedBy.
+-	if allowedToComm && peer != nil && nodeIsInternetExitClient(node) {
++	// User devices keep ACL-allowed internet exits as separate peers (probe/switch).
++	// Server/infra exit clients do not — all mesh rides the selected exit except
++	// bypass site-egress peers below. Relayed non-exit nodes never keep exits
++	// as separate peers either.
++	if allowedToComm && peer != nil && IsUserOwnedDevice(node) && nodeIsInternetExitClient(node) {
+ 		if _, ok := inetExitRouterIDs[peer.ID.String()]; ok {
+ 			return true
+ 		}
+ 	}
+-	// Reverse: exit routers keep ACL-allowed clients that use an exit so handshakes work.
+-	if allowedToComm && node != nil && peer != nil {
++	// Reverse: exit routers keep ACL-allowed user-device exit clients so alternate
++	// exits can handshake for probe/switch. Server exit clients are only kept by
++	// their selected exit (usesPeerAsInternetExit above).
++	if allowedToComm && node != nil && peer != nil && IsUserOwnedDevice(peer) {
+ 		if _, ok := inetExitRouterIDs[node.ID.String()]; ok {
+ 			if nodeIsInternetExitClient(peer) {
+ 				return true
+```
+
+**File**: `logic/relay.go` (modified, +8/-5)
+```diff
+@@ -377,8 +377,9 @@ func allowedIPsFromRelayedNode(relayedNode *models.Node) []net.IPNet {
+ // peerRidesRetainedInternetExit reports whether peer is relayed (or auto-relayed)
+ // by a different internet-exit routing node that the viewer keeps as a direct peer.
+ // Those overlays must hang on that RelayedBy exit, not on the viewer's selected exit.
++// Only user devices retain alternate exits; server exit clients hairpin via theirs.
+ func peerRidesRetainedInternetExit(ctx context.Context, viewer, peer *models.Node, relayID string, inetExitRouterIDs map[string]struct{}, defaultPolicyEnabled bool) bool {
+-	if viewer == nil || peer == nil || !nodeIsInternetExitClient(viewer) || len(inetExitRouterIDs) == 0 {
++	if viewer == nil || peer == nil || !IsUserOwnedDevice(viewer) || !nodeIsInternetExitClient(viewer) || len(inetExitRouterIDs) == 0 {
+ 		return false
+ 	}
+ 	otherExitID := ""
+@@ -446,10 +447,12 @@ func GetAllowedIpsForRelayed(ctx context.Context, g *PeerGraph, relayed, relay *
+ 		GetNodeEgressInfo(&peer, eli, acls)
+ 		unfilteredSpecific := PeerAdvertisesSpecificEgress(&peer)
+ 		AddEgressInfoToPeerByAccess(ctx, relayed, &peer, eli, acls, defaultPolicy.Enabled)
+-		// Exit clients keep internet exit routers as direct peers — do not also
+-		// advertise those overlays under RelayedBy. Non-exit relayed nodes do not
+-		// retain exits as separate peers, so exit overlays must ride this relay.
+-		if _, ok := inetExitRouterIDs[peer.ID.String()]; ok && nodeIsInternetExitClient(relayed) {
++		// User-device exit clients keep internet exit routers as direct peers —
++		// do not also advertise those overlays under RelayedBy. Server exit
++		// clients and non-exit relayed nodes do not retain exits as separate
++		// peers, so exit overlays must ride this relay.
++		if _, ok := inetExitRouterIDs[peer.ID.String()]; ok &&
++			IsUserOwnedDevice(relayed) && nodeIsInternetExitClient(relayed) {
+ 			continue
+ 		}
+ 		// Peers relayed by another retained internet exit ride that exit peer —
+```
+
+**File**: `logic/status.go` (modified, +32/-1)
+```diff
+@@ -19,6 +19,22 @@ var GetNodeStatus = func(ctx context.Context, node *models.Node, t bool) {
+ 	getNodeCheckInStatus(node, t)
+ }
+ 
++// IngressGatewayIsReachable reports whether an ingress gateway can currently
++// forward traffic for its extclients. Offline/disconnected gateways leave
++// stale peer metrics that would otherwise keep clients marked online.
++func IngressGatewayIsReachable(gw *models.Node) bool {
++	if gw == nil {
++		return false
++	}
++	if !gw.Connected {
++		return false
++	}
++	if time.Since(gw.LastCheckIn) > models.LastCheckInThreshold {
++		return false
++	}
++	return true
++}
++
+ func getNodeCheckInStatus(node *models.Node, t bool) {
+ 	// On CE check only last check-in time
+ 	if node.IsStatic {
+@@ -27,6 +43,12 @@ func getNodeCheckInStatus(node *models.Node, t bool) {
+ 			node.StaticNode.Status = schema.OfflineSt
+ 			return
+ 		}
++		ingNode, err := GetNodeByID(node.StaticNode.IngressGatewayID)
++		if err != nil || !IngressGatewayIsReachable(&ingNode) {
++			node.Status = schema.OfflineSt
++			node.StaticNode.Status = schema.OfflineSt
++			return
++		}
+ 		node.Status = schema.OnlineSt
+ 		node.StaticNode.Status = schema.OnlineSt
+ 		return
+@@ -67,15 +89,24 @@ func MarkStaleNodesOffline(ctx context.Context) {
+ 		case <-ctx.Done():
+ 			return
+ 		case <-ticker.C:
++			dbCtx := db.WithContext(ctx)
+ 			threshold := time.Now().UTC().Add(-models.LastCheckInThreshold)
+-			n, err := (&schema.Node{}).MarkStaleOffline(db.WithContext(ctx), threshold)
++			n, err := (&schema.Node{}).MarkStaleOffline(dbCtx, threshold)
+ 			if err != nil {
+ 				slog.Error("mark stale nodes offline failed", "error", err)
+ 				continue
+ 			}
+ 			if n > 0 {
+ 				slog.Info("marked stale nodes offline", "count", n, "threshold", threshold)
+ 			}
++			clients, cErr := (&schema.Extclient{}).MarkOfflineForOfflineGateways(dbCtx)
++			if cErr != nil {
++				slog.Error("mark extclients of offline gateways failed", "error", cErr)
++				continue
++			}
++			if clients > 0 {
++				slog.Info("marked extclients offline for offline gateways", "count", clients)
++			}
+ 		}
+ 	}
  }
 ```
 
-**File**: `pro/logic/egress.go` (modified, +27/-14)
+**File**: `logic/status_test.go` (added, +50/-0)
 ```diff
-@@ -10,7 +10,9 @@ import (
- 	"net"
- 	"strings"
- 
-+	"github.com/google/uuid"
- 	"github.com/gravitl/netmaker/db"
-+	dbtypes "github.com/gravitl/netmaker/db/types"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/logic"
- 	"github.com/gravitl/netmaker/models"
-@@ -73,10 +75,15 @@ func ValidateEgressReq(ctx context.Context, e *schema.Egress) error {
- 
- 	if len(e.Nodes) > 0 {
- 		for k := range e.Nodes {
--			node, err := logic.GetNodeByID(k)
-+			_node := &schema.Node{ID: k}
-+			err := _node.Get(ctx, dbtypes.WithAllPreloads())
- 			if err != nil {
- 				return errors.New("invalid routing node " + err.Error())
- 			}
-+			if _node.Host == nil {
-+				return fmt.Errorf("host not found for routing node %s", _node.ID)
+@@ -0,0 +1,50 @@
++package logic
++
++import (
++	"testing"
++	"time"
++
++	"github.com/gravitl/netmaker/models"
++)
++
++func TestIngressGatewayIsReachable(t *testing.T) {
++	now := time.Now()
++	tests := []struct {
++		name string
++		gw   *models.Node
++		want bool
++	}{
++		{name: "nil", want: false},
++		{
++			name: "online",
++			gw: &models.Node{
++				CommonNode:  models.CommonNode{Connected: true},
++				LastCheckIn: now,
++			},
++			want: true,
++		},
++		{
++			name: "disconnected",
++			gw: &models.Node{
++				CommonNode:  models.CommonNode{Connected: false},
++				LastCheckIn: now,
++			},
++			want: false,
++		},
++		{
++			name: "stale check-in",
++			gw: &models.Node{
++				CommonNode:  models.CommonNode{Connected: true},
++				LastCheckIn: now.Add(-2 * models.LastCheckInThreshold),
++			},
++			want: false,
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if got := IngressGatewayIsReachable(tt.gw); got != tt.want {
++				t.Fatalf("IngressGatewayIsReachable = %v, want %v", got, tt.want)
 +			}
-+			node := *logic.ConvertSchemaNodeToModelsNode(_node)
- 			if err := logic.ErrUserOwnedNodeInfrastructureRole(&node); err != nil {
- 				return err
- 			}
-@@ -87,10 +94,14 @@ func ValidateEgressReq(ctx context.Context, e *schema.Egress) error {
- 				if err := logic.ValidateInternetEgressRoutingNode(&node); err != nil {
- 					return err
- 				}
-+			} else {
-+				if err := logic.ValidateEgressHostFirewall(_node.Host); err != nil {
-+					return err
-+				}
-+			}
-+			if err := logic.ValidateHostEgressNATMode(*e, _node.Host); err != nil {
-+				return err
- 			}
--		}
--		if err := logic.ValidateWindowsEgressNATMode(*e); err != nil {
--			return err
- 		}
- 	}
- 	if len(e.Tags) > 0 {
-@@ -109,20 +120,22 @@ func ValidateEgressReq(ctx context.Context, e *schema.Egress) error {
- 		}
- 		// Tag-based egress clears e.Nodes above; resolve tag members and reject
- 		// Windows + virtual NAT the same way as explicit routing nodes.
--		resolved := make(datatypes.JSONMap)
- 		for tagID := range e.Tags {
--			for nodeID, tagged := range GetNodesWithTag(ctx, models.TagID(tagID)) {
-+			for _, tagged := range GetNodesWithTag(ctx, models.TagID(tagID)) {
- 				if err := logic.ErrUserOwnedNodeInfrastructureRole(&tagged); err != nil {
- 					return err
- 				}
--				resolved[nodeID] = true
--			}
--		}
--		if len(resolved) > 0 {
--			check := *e
--			check.Nodes = resolved
--			if err := logic.ValidateWindowsEgressNATMode(check); err != nil {
--				return err
-+				// static (ext client) members have no host.
-+				if e.Mode != schema.VirtualNAT || tagged.HostID == uuid.Nil {
-+					continue
-+				}
-+				host := &schema.Host{ID: tagged.HostID}
-+				if err := host.Get(db.WithContext(ctx)); err != nil {
-+					continue
-+				}
-+				if err := logic.ValidateHostEgressNATMode(*e, host); err != nil {
-+					return err
-+				}
- 			}
- 		}
- 	}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4217** (2026-11-05): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4216** (2026-11-03): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
+- **PR #4213** (2026-11-06): NM-356: mark extclients offline when their ingress gateway is unreachable (@abhishek9686)
 - **PR #4212** (2026-10-30): NM-356: network-role API access and user-device host auth , Reject host-password JWTs for user-owned devices; AuthorizeHost accepts a user session plus X-Host-ID instead. (@abhishek9686)
 - **PR #4211** (2026-10-30): NM-356: enrich topology and connections with location, is_gw, and egresses  (@abhishek9686)
 - **PR #4210** (2026-10-30): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4208** (2026-10-29): List Auto Relayed Peers for a Node API (@VishalDalwadi)
 
 ---
 
@@ -1282,30 +1549,66 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-Release Fixes v1.8.0 (#4217)
+## X. NM-356: mark extclients offline when their ingress gateway is unreachable (#4213
 
 **RULE**:
-When implementing operations in `controllers/middleware.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `logic/bypass_egress_routes_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b9bd5ef`: Pre-Release Fixes v1.8.0 (#4217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51c1838b`: NM-356: mark extclients offline when their ingress gateway is unreachable (#4213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/middleware.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `logic/bypass_egress_routes_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if netID := r.URL.Query().Get("network_id"); netID != "" {
-				r.Header.Set("NET_ID", netID)
-			}
+	originalUserAllowed := IsUserAllowedToCommunicate
+		IsUserAllowedToCommunicate = originalUserAllowed
+	userClient := &models.Node{
+		OwnerID:    "abhi",
+	userClient.InternetGwID = exitA.String()
+	userClient.RelayedBy = exitA.String()
+	userClient.IsRelayed = true
+	require.True(t, IsUserOwnedDevice(userClient))
+
+	serverClient := &models.Node{
+		CommonNode: models.CommonNode{ID: uuid.New(), Network: "testnet"},
+	}
+	serverClient.InternetGwID = exitA.String()
+	serverClient.RelayedBy = exitA.String()
+	serverClient.IsRelayed = true
+	require.False(t, IsUserOwnedDevice(serverClient))
+	// User devices use user policies via PeerAllowed, not resource IsPeerAllowed.
+	IsUserAllowedToCommunicate = func(_ context.Context, userName string, peer models.Node) (bool, []models.Acl) {
+		return userName == "abhi" && peer.ID == exitB, nil
+	}
+	assert.True(t, peerRidesRetainedInternetExit(context.Background(), userClient, siteOnB, exitA.String(), inetExits, false),
+		"user device: site RelayedBy another ACL-allowed exit must ride that exit, not the client's")
+	assert.False(t, peerRidesRetainedInternetExit(context.Background(), serverClient, siteOnB, exitA.String(), inetExits, false),
+		"server exit client d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	client := &models.Node{
+	client.InternetGwID = exitA.String()
+	client.RelayedBy = exitA.String()
+	client.IsRelayed = true
+	// defaultPolicyEnabled=false so PeerAllowed consults IsPeerAllowed.
+	assert.True(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnB, exitA.String(), inetExits, false),
+		"site RelayedBy another ACL-allowed exit must ride that exit, not the client's")
+	assert.False(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnA, exitA.String(), inetExits, false),
+	IsPeerAllowed = func(ctx context.Context, node, peer models.Node, checkDefaultPolicy bool) bool {
+		return false
+	assert.False(t, peerRidesRetainedInternetExit(context.Background(), client, siteOnB, exitA.String(), inetExits, false),
+	client := &models.Node{
+	client.IsRelayed = true
+	client.RelayedBy = selectedExitID.String()
+	client.InternetGwID = selectedExitID.String()
+	assert.True(t, shouldRetainPeerDespiteRelay(client, selectedExit, false, false, exitIDs),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b9bd5ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51c1838b` are properly handled with clean fallback behavior.

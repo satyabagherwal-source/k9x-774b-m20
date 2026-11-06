@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `3dfa4626`  
+> **Source Version**: `e81a7d08`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:24:25.186Z  
+> **Timestamp**: 2026-11-06T13:34:50.004Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:24:24.683Z  
+> **Harvest Timestamp**: 2026-11-06T13:34:48.941Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53326 stars
+- **Stars / Engagement**: 53371 stars
 
 ---
 
@@ -674,745 +674,339 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `931df666` (2026-11-03)
-**Commit Message**: [docs] Land reviewed external-contributor docs fixes (#52842)
+### Incident Patch 1: `46e555c4` (2026-11-06)
+**Commit Message**: fix(cli): Stop OSC 7501 program status from failing commands when it throws (#53057)
 
 # Why
 
-Consolidates the open external-contributor docs PRs that should land
-into one PR, with review fixes applied and conflicts with `main`
-resolved. Each original PR is one commit authored by its contributor.
-The commits after them apply review fixes and suggestions.
+As a precautionary measure I want to add a guard around the program
+status write method so that the status is never the cause of a failure.
 
 # How
 
-| PR | Change | Edits made here |
-| --- | --- | --- |
-| expo/expo#52032 | Keyboard guide: set a `KeyboardAvoidingView`
-`behavior` on Android too (edge-to-edge stops `adjustResize`) |
-Shortened the paragraph; follow-up sentence now describes `padding`.
-Says Expo apps are edge-to-edge on every Android version, not only
-Android 15 and later. Removes the advice to set
-`softwareKeyboardLayoutMode` to `pan` for bottom tabs, warns against
-`pan` with `padding`, and points to `useHeaderHeight()` for
-`keyboardVerticalOffset` |
-| expo/expo#52691 | Vercel guide: fix pnpm 12 lockfile parsing | Removes
-the `@vercel/node@5.1.8` runtime pin instead of pinning newer
-`@vercel/node` and `VERCEL_CLI_VERSION`, so the hosted CLI's own builder
-is used |
-| expo/expo#52751 | SDK 58 router migration: `CommonActions.reset` needs
-complete state | Reduced to a link to the exi
+I wrapped the write in a try/catch block so that we now just skip the
+status report when it throws.
 
-**File**: `docs/pages/config-plugins/development-and-debugging.mdx` (modified, +1/-1)
+# Test Plan
+
+All tests pass.
+
+**File**: `.changeset/cli-osc-7501-status-guard.md` (added, +5/-0)
 ```diff
-@@ -498,7 +498,7 @@ The Expo CLI `npx expo prebuild` command uses [`@expo/prebuild-config`](https://
- 
- For example, say you wanted to add support for managing the `ios/*/AppDelegate.h` file, you could do this by adding a `ios.appDelegateHeader` modifier.
- 
--> This example uses `tsx` for simple local TypeScript support, this isn't strictly necessary. See [using TypeScript with `app.config.js`](/guides/typescript/#appconfigjs).
-+> This example uses `tsx` for simple local TypeScript support, but `tsx` isn't strictly necessary. See [using TypeScript with app config](/guides/typescript/#app-config).
- 
- ```ts withAppDelegateHeaderBaseMod.ts
- import { ConfigPlugin, IOSConfig, Mod, withMod, BaseMods } from 'expo/config-plugins';
+@@ -0,0 +1,5 @@
++---
++'@expo/cli': patch
++---
++
++Stop OSC 7501 program status from failing a command when reporting it throws.
 ```
 
-**File**: `docs/pages/guides/keyboard-handling.mdx` (modified, +6/-16)
+**File**: `packages/@expo/cli/src/utils/__tests__/programStatus-test.ts` (added, +18/-0)
 ```diff
-@@ -31,35 +31,25 @@ The following sections explain how to handle keyboard interactions with common A
+@@ -0,0 +1,18 @@
++import { isInteractive } from '../interactive';
++import { withProgramStatus } from '../programStatus';
++
++jest.mock('../interactive', () => ({
++  isInteractive: jest.fn(),
++}));
++
++describe(withProgramStatus, () => {
++  it('still runs the action when reporting the status throws', async () => {
++    jest.mocked(isInteractive).mockImplementation(() => {
++      throw new Error('Invalid value');
++    });
++
++    await expect(
++      withProgramStatus({ state: 'blocked', kind: 'auth' }, async () => 'result')
++    ).resolves.toBe('result');
++  });
++});
+```
+
+**File**: `packages/@expo/cli/src/utils/programStatus.ts` (modified, +9/-6)
+```diff
+@@ -7,10 +7,13 @@ export type ProgramStatus = {
+   msg?: string;
+ };
  
- The `KeyboardAvoidingView` is a component that automatically adjusts a view's height, position, or bottom padding based on the keyboard height to remain visible while it is displayed.
- 
--Android and iOS interact with the `behavior` property differently. On iOS, `padding` is usually what works best, and for Android, just having the `KeyboardAvoidingView` prevents covering the input. This is why the following example uses `undefined` for Android. Playing around with the `behavior` is a good practice since a different option could work best for your app.
-+Set a `behavior` on both platforms. On Android, Expo apps are edge-to-edge, so the window no longer resizes for the keyboard. A view without a `behavior` stays under the keyboard. On iOS, the keyboard covers the app. `padding` usually works best. If the view is under a navigation header, pass `useHeaderHeight()` from `expo-router/react-navigation` as `keyboardVerticalOffset`. The value includes the status bar height.
- 
- ```tsx home-screen.tsx
- import { KeyboardAvoidingView, TextInput } from 'react-native';
- 
- export default function HomeScreen() {
-   return (
--    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-       <TextInput placeholder="Type here..." />
--    </KeyboardAvoidingView>;
-+    </KeyboardAvoidingView>
-   );
- }
- ```
- 
--In the above example, the height of the `KeyboardAvoidingView` automatically adjusts based on the device's keyboard height, which ensures that the input is always visible.
-+In the above example, the `KeyboardAvoidingView` adds bottom padding equal to the keyboard height, which keeps the input visible.
- 
--When using a Bottom Tab navigator on Android, you might notice that focusing on an input field causes the bottom tabs to be pushed above the keyboard. To address this issue, add the `softwareKeyboardLayoutMode` property to your Android configuration in [app config](/workflow/configuration/) and set it to `pan`.
-+On Android, do not set `softwareKeyboardLayoutMode` to `pan` with `behavior="padding"`. The window pans and the view adds padding, so the input moves up twice.
- 
--```json app.json
--"expo" {
--  "android": {
--    "softwareKeyboardLayoutMode": "pan"
+-function writeProgramStatus(body: string) {
+-  if (isInteractive()) {
+-    process.stdout.write(`\x1b]7501;${body}\x1b\\`);
 -  }
--}
--```
--
--After adding this property, restart the development server and reload your app to apply the changes.
--
--It's also possible to hide the bottom tab when the keyboard opens using [`tabBarHideOnKeyboard`](https://reactnavigation.org/docs/bottom-tab-navigator/#tabbarhideonkeyboard). It is an option with the Bottom Tab Navigator. If set to `true`, it will hide the bar when the keyboard opens.
-+To hide the bottom tab bar while the keyboard is open, set the Bottom Tab Navigator's [`tabBarHideOnKeyboard`](https://reactnavigation.org/docs/bottom-tab-navigator/#tabbarhideonkeyboard) option to `true`.
- 
- ```tsx src/app/_layout.tsx
- import { Tabs } from 'expo-router';
-```
-
-**File**: `docs/pages/guides/typescript.mdx` (modified, +27/-32)
-```diff
-@@ -220,9 +220,23 @@ Some Expo libraries provide both static types and type generation capabilities.
- 
- ## TypeScript for project's config files
- 
--Additional setup is required to use TypeScript for configuration files such as **metro.config.js** or **app.config.js**.
-+### Metro config
- 
--Install [`tsx`](https://tsx.is/) as a dev dependency and utilize its [`tsx/cjs` require hook](https://tsx.is/dev-api/entry-point#commonjs-mode-only) to import TypeScript files within your JS configuration file. This hook allows TypeScript imports while keeping the root file as JavaScript. The command below adds `tsx` so `import 'tsx/cjs'` works in the following sub-section examples.
-+In SDK 57 and later, Expo CLI loads **metro.config.ts** without extra setup. Rename **metro.config.js** to **metro.config.ts**, because Expo CLI uses **metro.config.js** when both exist:
-+
-+```ts metro.config.ts
-+import { getDefaultConfig } from 'expo/metro-config';
-+
-+const config = getDefaultConfig(import.meta.dirname);
-+
-+export default config;
-+```
-+
-+### App config
-+
-+**app.config.ts** works without extra setup. However, it doesn't support external TypeScript modules or **tsconfig.json** customization.
-+
-+For a more comprehensive TypeScript setup, install [`tsx`](https://tsx.is/) as a dev dependency:
- 
- <Tabs>
- 
-@@ -254,25 +268,22 @@ Install [`tsx`](https://tsx.is/) as a dev dependency and utilize its [`tsx/cjs`
- 
- </Tabs>
- 
--### metro.config.js
-+Then utilize its [`tsx/cjs` require hook](https://tsx.is/dev-api/entry-point#commonjs-mode-only) in your app config to enable importing external TypeScript modules.
- 
--Update **metro.config.js** to require **metro.config.ts** file:
--
--```js metro.config.js
--require('tsx/cjs'); // Add this to import TypeScript files
--module.exports = require('./metro.config.ts');
--```
--
--Update **metro.config.ts** file with your project's metro configuration:
--
--```ts metro.config.ts
--import { getDefaultConfig } from 'expo/metro-config';
-+```ts app.config.ts
-+import 'tsx/cjs'; // Add this to import TypeScript files
-+import { ExpoConfig } from 'expo/config';
- 
--const config = getDefaultConfig(__dirname);
-+const config: ExpoConfig = {
-+  name: 'my-app',
-+  slug: 'my-app',
-+};
- 
--module.exports = config;
-+export default config;
- ```
- 
-+### Webpack config
-+
- <Collapsible summary="Deprecated: webpack.config.js">
- 
- Install the `@expo/webpack-config` package.
-@@ -295,22 +306,6 @@ module.exports = async function (env: Environment, argv: Arguments) {
- 
- </Collapsible>
- 
--### app.config.js
--
--**app.config.ts** is supported by default. However, it doesn't support external TypeScript modules, or **tsconfig.json** customization. You can use the following approach to get a more comprehensive TypeScript setup:
--
--```ts app.config.ts
--import 'tsx/cjs'; // Add this to import TypeScript files
--import { ExpoConfig } from 'expo/config';
--
--const config: ExpoConfig = {
--  name: 'my-app',
--  slug: 'my-app',
--};
--
--export default config;
--```
--
- ## Other TypeScript features
- 
- Some language features may require additional configuration. For example, if you want to use decorators you'll need to add the `experimentalDecorators` option. For more information on the available properties see the [TypeScript compiler options](https://www.typescriptlang.org/docs/handbook/compiler-options.html) documentation.
-```
-
-**File**: `docs/pages/router/migrate/sdk-57-to-58.mdx` (modified, +1/-1)
-```diff
-@@ -490,7 +490,7 @@ Dispatch functions are no longer supported. Read the state first, compute an act
- 
- The read and deferred dispatch are not atomic. Use `dispatchSync(action)` deliberately if other navigation work cannot happen between them.
- 
--`CommonActions.reset` now requires a complete navigation state. A partial payload, such as `{ index: 0, routes: [...] }`, is no longer completed during render and the reset is silently ignored in production (development builds log a warning). Spread `navigation.getState()` into the payload, as in the diff above, whenever you reset.
-+`CommonActions.reset` needs a state with `stale: false` and the navigator's current `routeNames`. See [Include `routeKeySeq` in complete state](#include-routekeyseq-in-complete-state).
- 
- ### Replace `navigationKey`
- 
-```
-
-**File**: `docs/pages/router/web/api-routes.mdx` (modified, +0/-1)
-```diff
-@@ -918,7 +918,6 @@ Create a Vercel configuration file (**vercel.json**) at the root of your project
-   "outputDirectory": "dist/client",
-   "functions": {
-     "api/index.ts": {
--      "runtime": "@vercel/node@5.1.8",
-       "includeFiles": "dist/server/**"
-     }
-   },
-```
-
-**File**: `docs/pages/tutorial/add-navigation.mdx` (modified, +2/-0)
-```diff
-@@ -271,6 +271,8 @@ export default function TabLayout() {
- 
- Native tabs don't add a header to the screens, so the Home and About screens no longer have one. On web, the tabs appear as a list of labels at the top of the page.
- 
-+> **info** On web, the browser console may log a hydration error ("A tree hydrated but some attributes of the server rendered HTML didn't match the client properties"). This is a known Expo Router issue with server rendering ([expo/expo#52249](https://github.com/expo/expo/issues/52249)), not a problem in the tutorial code. The tabs still work.
-+
- Let's take a look at our app now to see the new bottom tabs:
- 
- <ContentSpotlight
-```
-
-**File**: `docs/pages/versions/unversioned/sdk/filesystem.mdx` (modified, +7/-5)
-```diff
-@@ -143,8 +143,10 @@ Using the built-in `pickFileAsync` or `pickDirectoryAsync` method on Android:
- import { File } from 'expo-file-system';
- 
- try {
--  const file = new File.pickFileAsync();
--  console.log(file.textSync());
-+  const result = await File.pickFileAsync();
-+  if (!result.canceled) {
-+    console.log(result.result.textSync());
-+  }
- } catch (error) {
-   console.error(error);
++function writeProgramStatus(status: ProgramStatus | 'clear') {
++  try {
++    if (isInteractive()) {
++      const body = status === 'clear' ? 'state=clear' : formatProgramStatus(status);
++      process.stdout.write(`\x1b]7501;${body}\x1b\\`);
++    }
++  } catch {}
  }
-@@ -303,11 +305,11 @@ try {
-   file.create();
-   console.log(file.uri); // '${documentDirectory}/example.txt'
-   const copiedFile = new File(Paths.cache, 'example-copy.txt');
--  file.copy(copiedFile);
-+  await file.copy(copiedFile); // or `file.copySync(copiedFile);` for synchronous call
-   console.log(copiedFile.uri); // '${cacheDirectory}/example-copy.txt'
--  file.move(Paths.cache);
-+  await file.move(Paths.cache); // or `file.moveSync(Paths.cache);` for synchronous call
-   console.log(file.uri); // '${cacheDirectory}/example.txt'
--  file.move(new Directory(Paths.cache, 'newFolder'));
-+  await file.move(new Directory(Paths.cache, 'newFolder'));
-   console.log(file.uri); // '${cacheDirectory}/newFolder/example.txt'
- } catch (error) {
-   console.error(error);
+ 
+ function formatProgramStatus({ state, kind, msg }: ProgramStatus): string {
+@@ -26,8 +29,8 @@ export async function withProgramStatus<T>(
+   status: ProgramStatus,
+   action: () => Promise<T>
+ ): Promise<T> {
+-  const clear = () => writeProgramStatus('state=clear');
+-  writeProgramStatus(formatProgramStatus(status));
++  const clear = () => writeProgramStatus('clear');
++  writeProgramStatus(status);
+   process.on('exit', clear);
+   try {
+     return await action();
 ```
 
-**File**: `docs/pages/versions/unversioned/sdk/map-view.mdx` (modified, +66/-4)
+---
+
+### Incident Patch 2: `999a6442` (2026-11-05)
+**Commit Message**: [docs] Document idle timeouts for Simulator web preview sessions (#52662)
+
+# Why
+
+Eight Simulators pages say that `web-preview-only` sessions have no idle
+timeout and that browser activity never resets the timer. Since [eas-cli
+#4731](https://github.com/expo/eas-cli/pull/4731) reached the workers,
+iOS `web-preview-only` sessions enforce the idle timeout, and EAS
+rejects it for Android `web-preview-only` sessions. #52157 updates the
+session lifetime page to the same rules.
+
+# How
+
+Update the idle timer note on these pages: CLI and REST API references,
+session types, limitations, usage and billing, Appium, hand off a
+session, drive the device, and troubleshooting. All pages now say that
+on iOS, browser input resets the timer, and that watching the preview
+and Android browser input do not. Also state the idle timeout limit as
+"at most the maximum duration" in the REST API reference and on the
+session lifetime page.
+
+# Test Plan
+
+Claude Code ran these on 2026-10-30:
+
+- Docs checks with Node 24.22.1: oxfmt, Vale, lint, production lint,
+worker tests, and unit tests (740 passed). After the review fixes in
+`f059316`, oxfmt, Vale, and lint ran again and passed.
+- Hosted sessions with eas-cl
+
+**File**: `docs/pages/preview/simulators/how-it-works/session-lifetime.mdx` (modified, +1/-1)
 ```diff
-@@ -108,7 +108,13 @@ const styles = StyleSheet.create({
- <Step label="4">
- #### Add the API key to your project
+@@ -31,7 +31,7 @@ Pass `--max-idle-time-minutes` to stop the session after that many minutes witho
+ | Activity that resets the timer         | Controller activity from agent-device, Argent, or Appium. On iOS, browser input and some `simulator:control` actions, such as app launches and screenshots, also reset the timer. |
+ | Activity that does not reset the timer | Watching the preview, or browser input on Android                                                                                                                                 |
+ | `web-preview-only` sessions            | Supported on iOS. On Android, Expo Simulators rejects an idle timeout and does not create the session.                                                                            |
+-| Allowed values                         | A positive number smaller than the session's maximum duration: the value of `--max-duration-minutes`, or the plan limit when you do not set one.                                  |
++| Allowed values                         | A positive number up to the session's maximum duration: the value of `--max-duration-minutes`, or the plan limit when you do not set one.                                         |
  
--Since you are using Google as the map provider, you need to add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/). Copy your **API Key** into your project to either a **.env** file or copy it directly and then add it to your app config under the `plugins.react-native-maps.androidGoogleMapsApiKey` field like:
-+Since you are using Google as the map provider, add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/) under `plugins.react-native-maps.androidGoogleMapsApiKey`.
-+
-+Paste the key into **app.json**, or store it in a **.env** file and read it from **app.config.js**. **app.json** cannot read environment variables, so a value such as `"process.env.GOOGLE_MAPS_API_KEY"` reaches the native project as that literal string.
-+
-+<Tabs>
-+
-+<Tab label="app.json">
+ For a session that a person uses in the browser preview, limit the session with the maximum duration. The idle timeout can stop the session while the person only watches it, or while they use it on Android.
  
- ```json app.json
- {
-@@ -117,14 +123,39 @@ Since you are using Google as the map provider, you need to add the API key to t
-       [
-         "react-native-maps",
-         {
--          "androidGoogleMapsApiKey": "process.env.YOUR_GOOGLE_MAPS_API_KEY"
-+          "androidGoogleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
-         }
-       ]
-     ]
-   }
- }
- ```
+```
+
+**File**: `docs/pages/preview/simulators/how-to/drive-the-device.mdx` (modified, +1/-1)
+```diff
+@@ -130,7 +130,7 @@ Every session type includes a live browser preview. Open the browser preview URL
  
-+</Tab>
-+
-+<Tab label="app.config.js">
-+
-+```js app.config.js
-+export default ({ config }) => ({
-+  ...config,
-+  plugins: [
-+    ...(config.plugins ?? []),
-+    [
-+      'react-native-maps',
-+      {
-+        androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-+      },
-+    ],
-+  ],
-+});
-+```
-+
-+The `config` argument holds the values from **app.json**. If **app.json** already lists `react-native-maps`, remove that entry.
-+
-+</Tab>
-+
-+</Tabs>
-+
- > **info** If Expo Build does not pick up the API key, make sure your project contains a [.easignore](/build-reference/easignore/) file. This file should mirror your **.gitignore** but must not exclude **.env**, so that Expo Build can access your environment variables.
+ The session page on expo.dev shows an **Open preview** button that opens the browser preview in a new tab.
  
- - In your code, import `{ PROVIDER_GOOGLE }` from `react-native-maps` and add the property `provider={PROVIDER_GOOGLE}` to your `<MapView>`. This property works on both Android and iOS.
-@@ -159,7 +190,13 @@ Since you are using Google as the map provider, you need to add the API key to t
- <Step label="3">
- #### Add the API key to your project
+-Browser preview activity does not reset the idle timer. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
++On iOS, browser input in the preview resets the idle timer. Watching the preview does not reset it. Browser input on Android does not reset it. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
  
--Since you are using Google as the map provider, you need to add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/). Copy your **API Key** into your project to either a **.env** file or copy it directly and then add it to your app config under the `plugins.react-native-maps.iosGoogleMapsApiKey` field like:
-+Since you are using Google as the map provider, add the API key to the `react-native-maps` [config plugin](/config-plugins/introduction/) under `plugins.react-native-maps.iosGoogleMapsApiKey`.
-+
-+Paste the key into **app.json**, or store it in a **.env** file and read it from **app.config.js**. **app.json** cannot read environment variables, so a value such as `"process.env.GOOGLE_MAPS_API_KEY"` reaches the native project as that literal string.
-+
-+<Tabs>
-+
-+<Tab label="app.json">
+ ## Common questions
  
- ```json app.json
- {
-@@ -168,14 +205,39 @@ Since you are using Google as the map provider, you need to add the API key to t
-       [
-         "react-native-maps",
-         {
--          "iosGoogleMapsApiKey": "process.env.YOUR_GOOGLE_MAPS_API_KEY"
-+          "iosGoogleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
-         }
-       ]
-     ]
-   }
- }
- ```
+```
+
+**File**: `docs/pages/preview/simulators/how-to/hand-off-a-session.mdx` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ If you plan to share a session, set a maximum duration when you start it, so tha
  
-+</Tab>
-+
-+<Tab label="app.config.js">
-+
-+```js app.config.js
-+export default ({ config }) => ({
-+  ...config,
-+  plugins: [
-+    ...(config.plugins ?? []),
-+    [
-+      'react-native-maps',
-+      {
-+        iosGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-+      },
-+    ],
-+  ],
-+});
-+```
-+
-+The `config` argument holds the values from **app.json**. If **app.json** already lists `react-native-maps`, remove that entry.
-+
-+</Tab>
-+
-+</Tabs>
-+
- - In your code, import `{ PROVIDER_GOOGLE }` from `react-native-maps` and add the property `provider={PROVIDER_GOOGLE}` to your `<MapView>`. This property works on both Android and iOS.
- - Rebuild the app binary. An easy way to test if the configuration was successful is to do a [simulator build](/develop/development-builds/introduction/#how-would-you-like-to-build-your-development-build).
+ Add `--public-link` to this command when the person does not have access to the project.
+ 
+-To share a session that is already running, share the browser preview URL or session page URL that it already has. The session page URL always requires an Expo login with access to the project. The browser preview URL also requires one, unless the session started with `--public-link`. Tell the person when the session stops. Activity in the browser preview does not reset the idle timer, so use `--max-duration-minutes`, not `--max-idle-time-minutes`, to limit a session that a person controls. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
++To share a session that is already running, share the browser preview URL or session page URL that it already has. The session page URL always requires an Expo login with access to the project. The browser preview URL also requires one, unless the session started with `--public-link`. Tell the person when the session stops. On iOS, browser input in the preview resets the idle timer. Watching the preview, or browser input on Android, does not reset it. To limit a session that a person uses, prefer `--max-duration-minutes` over `--max-idle-time-minutes`. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
+ 
+ To show a running session on a web page that you own, instead of sharing a link, see [Show an Expo Simulators session on your own web page](/preview/simulators/how-to/embed-a-session/).
+ 
+```
+
+**File**: `docs/pages/preview/simulators/limitations.mdx` (modified, +6/-6)
+```diff
+@@ -26,12 +26,12 @@ Expo Simulators is an experimental preview. Its commands, flags, and behavior ca
+ 
+ ## Session lifetime
+ 
+-| Limit                                                                                 | Alternative                                                                                   |
+-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+-| A session runs for at most 40 minutes on the Free plan and 115 minutes on paid plans. | Start a new session when the old one stops.                                                   |
+-| A session started with `--non-interactive` does not stop when the command returns.    | Run `eas simulator:stop`, and set `--max-duration-minutes`.                                   |
+-| Browser preview activity does not reset the idle timer.                               | Use `--max-duration-minutes` to limit sessions that a person controls in the browser preview. |
+-| `web-preview-only` sessions do not support an idle timeout.                           | Use `--max-duration-minutes`.                                                                 |
++| Limit                                                                                 | Alternative                                                                                                               |
++| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
++| A session runs for at most 40 minutes on the Free plan and 115 minutes on paid plans. | Start a new session when the old one stops.                                                                               |
++| A session started with `--non-interactive` does not stop when the command returns.    | Run `eas simulator:stop`, and set `--max-duration-minutes`.                                                               |
++| Watching the preview, or browser input on Android, does not reset the idle timer.     | Use `--max-duration-minutes` to limit a session that a person only watches, or an Android session that a person controls. |
++| Android `web-preview-only` sessions do not support an idle timeout.                   | Use `--max-duration-minutes`.                                                                                             |
+ 
+ See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
+ 
+```
+
+**File**: `docs/pages/preview/simulators/reference/cli.mdx` (modified, +1/-1)
+```diff
+@@ -123,7 +123,7 @@ Important flags:
+ | `--egress-allow`            | Exact `host:port` on this machine or its network that the simulator can reach through local egress, such as `localhost:3000`. Repeat for multiple destinations. Requires `--egress local`                                                                                                                                                                     |
+ | `--network-capture`         | Record HTTP(S) traffic from apps on an iOS device as an HTTP Archive (HAR). iOS only. Not compatible with `--egress local`. See [Record network traffic](/preview/simulators/how-it-works/network-inspection/#record-network-traffic)                                                                                                                         |
+ | `--network-capture-field`   | What a recording also keeps: `header`, `query`, `request-body`, or `response-body`. Repeat the flag or pass a comma-separated list. Requires `--network-capture`                                                                                                                                                                                              |
+-| `--max-idle-time-minutes`   | Stop after this many minutes without session activity. When omitted, the session has no idle timeout and runs until its maximum duration. Not supported for `web-preview-only`                                                                                                                                                                                |
++| `--max-idle-time-minutes`   | Stop after this many minutes without session activity. When omitted, the session has no idle timeout and runs until its maximum duration. Not supported for Android `web-preview-only`                                                                                                                                                                        |
+ | `--out-config-type`         | `dotenv` (default) to write **.env.eas-simulator**, or `env` to print shell exports                                                                                                                                                                                                                                                                           |
+ | `--[no-]force`              | Whether to create a new session when a session ID already exists in the environment. Defaults to `true`                                                                                                                                                                                                                                                       |
+ | `--non-interactive`         | Return after the session is ready instead of staying attached                                                                                                                                                                                                                                                                                                 |
+```
+
+**File**: `docs/pages/preview/simulators/reference/rest-api.mdx` (modified, +2/-2)
+```diff
+@@ -54,7 +54,7 @@ UUID means universally unique identifier.
+ | `packageVersion`        | string        | No       | Version of the package for the selected session type. Omit to use the service default.                                                                                                                                                                                                                                                                       |
+ | `deviceIdentifier`      | string        | No       | Android virtual device hardware profile, or iOS Simulator name or unique device identifier (UDID). The runner chooses a device when omitted.                                                                                                                                                                                                                 |
+ | `maxDurationMinutes`    | integer       | No       | Automatic session stop time in minutes. Must be between 0 and 115 inclusive, and within the account's duration limit. The job that runs the session has a hard limit of this value plus five minutes. Omit to use the account maximum.                                                                                                                       |
+-| `maxIdleTimeMinutes`    | integer       | No       | Stop after this many minutes without session activity. Must be positive and less than 115. It must be smaller than `maxDurationMinutes` when both are set. Omit to disable the idle timeout. Not supported for `web-preview-only`.                                                                                                                           |
++| `maxIdleTimeMinutes`    | integer       | No       | Stop after this many minutes without session activity. Must be positive and at most `maxDurationMinutes`, or the account maximum if that field is not set. Omit to disable the idle timeout. Not supported for Android `web-preview-only`.                                                                                                                   |
+ | `buildId`               | string (UUID) | No       | An Expo Build to download, install, and launch. Use an Android **.apk** or an iOS Simulator build.                                                                                                                                                                                                                                                           |
+ | `applicationArchiveUrl` | string        | No       | An HTTP or HTTPS URL for an installable application archive, up to 2,048 characters. On iOS, use a **.tar.gz** or **.tgz** file that contains the **.app**. On Android, use an **.apk**.                                                                                                                                                                     |
+ | `expoGo`                | boolean       | No       | Set to `true` to install and launch Expo Go.                                                                                                                                                                                                                                                                                                                 |
+@@ -69,7 +69,7 @@ The application source options install and launch the app for every session type
+ 
+ The REST API ignores fields that it does not list here. Build fingerprint matching, local egress, and network capture are available only through EAS CLI: `--build-fingerprint`, `--egress local`, and `--network-capture`.
+ 
+-A `web-preview-only` session provides the browser preview without a controller. It does not support an idle timeout. Other session types provide a controller and include a browser preview. Sessions created before Expo Simulators removed `serve-sim` still return `"type": "serve-sim"`.
++A `web-preview-only` session provides the browser preview without a controller. On Android, it does not support an idle timeout. Other session types provide a controller and include a browser preview. Sessions created before Expo Simulators removed `serve-sim` still return `"type": "serve-sim"`.
+ 
+ ### Example
+ 
+```
+
+**File**: `docs/pages/preview/simulators/reference/session-types.mdx` (modified, +3/-3)
+```diff
+@@ -45,14 +45,14 @@ The tokens in these values give access to the remote device. Keep them secret. S
+ | ------------------------------------------ | -------------- | -------- | -------- | ------------------ |
+ | Start flags install and launch the app     | Yes            | Yes      | Yes      | Yes                |
+ | Controller activity resets the idle timer  | Yes            | Yes      | Yes      | No                 |
+-| Supports `--max-idle-time-minutes`         | Yes            | Yes      | Yes      | No                 |
++| Supports `--max-idle-time-minutes`         | Yes            | Yes      | Yes      | iOS only           |
+ | Activity appears in `eas simulator:events` | Yes            | Yes      | Yes      | No                 |
+ 
+ Notes:
+ 
+ - The start flags are `--build-id`, `--build-fingerprint`, `--application-archive-url`, `--expo-go`, `--launch-arg`, and `--open-url`. To connect an Appium client, see [Run Appium tests on a remote Android Emulator or iOS Simulator](/preview/simulators/works-with/appium/).
+-- Controller activity from agent-device, Argent, or Appium resets the idle timer. Browser preview activity does not. For sessions that a person controls in the browser preview, use `--max-duration-minutes` to limit the session. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
+-- A `web-preview-only` session does not report activity, so it does not support an idle timeout.
++- Controller activity from agent-device, Argent, or Appium resets the idle timer. On iOS, browser input in the preview also resets it. Watching the preview does not reset it. For a session that a person only watches, or an Android session that a person controls, use `--max-duration-minutes` to limit the session. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
++- An Android `web-preview-only` session does not report activity, so it does not support an idle timeout.
+ 
+ ## Choose a session type
+ 
+```
+
+**File**: `docs/pages/preview/simulators/reference/usage-and-billing.mdx` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ Use these methods to keep usage low:
+ | Stop idle sessions                | `--max-idle-time-minutes`, or `maxIdleTimeMinutes`                                       |
+ | Find sessions that still run      | `eas simulator:list --status new --status queued --status starting --status in-progress` |
+ 
+-Controller activity from agent-device, Argent, or Appium resets the idle timer. Browser preview activity does not. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
++Controller activity from agent-device, Argent, or Appium resets the idle timer. On iOS, browser input and some `simulator:control` actions, such as app launches and screenshots, also reset it. Watching the preview does not reset it. See [How long an Expo Simulators session runs](/preview/simulators/how-it-works/session-lifetime/).
+ 
+ > **warning** `--non-interactive` does not stop the session when the command returns, and a CI job that ends does not stop the session. A session that you do not stop runs until its maximum duration, or until its idle limit if you set one.
  
 ```
 
 ---
 
-### Incident Patch 2: `75c68093` (2026-11-03)
-**Commit Message**: [ios][router] Fix crash when NativeTabs.Trigger role changes to or from search (#52816)
+### Incident Patch 3: `755f7253` (2026-11-05)
+**Commit Message**: fix(cli): Return null from get() when a section on the path is not an object (#52975)
 
 # Why
 
-Fixes https://github.com/expo/expo/issues/52654
+`get()` in `@expo/cli/src/utils/obj.ts` uses the `in` operator on every
+step of the path, and `in` throws a `TypeError` when the value is
+`null`, `undefined` or a primitive. A path whose parent is missing is
+handled (`get({}, 'android.package')` returns `null`), but a parent that
+exists and is empty is not:
 
-`react-native-screens` does not accept changes to `role` starting from
-`4.30.0` and iOS 27.
+get({ splash: null }, 'splash.image') // TypeError: Cannot use 'in'
+operator to search for 'image' in null
+get({ splash: undefined }, 'splash.image') // same, for undefined
+get({ ios: 'oops' }, 'ios.bundleIdentifier') // same, for a string
 
-This should not affect many apps, since tabs should not change when they
-are visible according to HIG. The same already happens when someone
-wants to show/hide tab dynamically.
+`get()` is used with config paths in two places: `AppIdResolver`
+(`android.package`, `ios.bundleIdentifier`) and
+`getAssetFieldPathsForManifestAsync` in `resolveAssets.ts`, which calls
+it for every asset field (`splash.image`, `notification.icon`,
+`android.adaptiveIcon.foregroundImage`, ...) inside a single `try`. From
+reading the code, one `null` or `undefined` section (for example from an
+`app.config.js` that sets `splash: someCondition ? {...} : undefined`)
+makes that call throw, and `resolveManifestAssets` then logs "Unable to
+resolve manifest a
 
-# How
-
-Remount the tab (change the `key`), when the role changes from or to
-`search`.
-
-# Test Plan
-
-<!--
-Say what you ran, on which device or simulator, and the result.
-If this pull request has no automated test, give the steps a reviewer
-can repeat.
-If you did not run a test, say that and mark the pull request as a
-draft.
-Delete this comment when you fill the section.
--->
-
-# Screenshots
-
-<!--
-If this change affects what a person sees, copy the shape below out of
-this comment.
-Add one Before and After pair for each platform the change affects:
-Android, iOS, or web.
-An Android-only change needs Android screenshots. Do the same for an
-iOS-only or web-only change.
-Shared code needs a pair for every platform that runs it. That can be
-Android, iOS, and web.
-Do not use an iOS Sim
-
-**File**: `.changeset/native-tabs-role-remount.md` (added, +5/-0)
+**File**: `.changeset/cli-get-null-config-sections.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'expo-router': patch
++'@expo/cli': patch
 +---
 +
-+[iOS] Fix a crash when a `NativeTabs.Trigger` `role` changes to or from `"search"` on a mounted tab.
++Fix `expo start` skipping all manifest assets (icons, splash images) when a config section on an asset path, such as `splash`, is `null` or `undefined`.
 ```
 
-**File**: `docs/pages/router/advanced/native-tabs.mdx` (modified, +2/-0)
+**File**: `packages/@expo/cli/src/utils/__tests__/obj-test.ts` (modified, +16/-0)
 ```diff
-@@ -1057,6 +1057,8 @@ export default function TabLayout() {
- }
- ```
- 
-+> **warning** If `role` changes to or from `"search"` while the tab is rendered, Expo Router remounts the tab and resets its local state.
-+
- </Tab>
- 
- <Tab label="SDK 55–57">
-```
-
-**File**: `docs/pages/router/migrate/sdk-57-to-58.mdx` (modified, +2/-0)
-```diff
-@@ -456,6 +456,8 @@ export default function TabLayout() {
- 
- On iOS 27, this prop also removes the separate placement of the search tab.
- 
-+> **warning** If `role` changes to or from `"search"` while the tab is rendered, Expo Router remounts the tab and resets its local state.
-+
- ## Advanced migrations
- 
- ### Update `navigation.dispatch`
-```
-
-**File**: `packages/expo-router/src/native-tabs/NativeTabsView.ios.tsx` (modified, +2/-1)
-```diff
-@@ -79,8 +79,9 @@ export function NativeTabsView(props: NativeTabsViewProps) {
-   }
- 
-   const children = tabs.map((tab, index) => (
-+    // react-native-screens picks UISearchTab vs UITab once at creation, so remount when the search role changes.
-     <Screen
--      key={tab.name}
-+      key={tab.options.role === 'search' ? `${tab.name}:search` : tab.name}
-       name={tab.name}
-       routeKey={tab.routeKey}
-       options={tab.options}
-```
-
-**File**: `packages/expo-router/src/native-tabs/__tests__/render.test.ios.tsx` (modified, +51/-0)
-```diff
-@@ -166,6 +166,57 @@ it('does not remount the focused screen while preloading other tabs after a deep
-   expect(unmount).not.toHaveBeenCalled();
+@@ -23,6 +23,22 @@ describe(get, () => {
+   it(`returns null`, () => {
+     expect(get({ a: { b: { c: 'd' } } }, 'a.b.d')).toEqual(null);
+   });
++  it(`returns null when a section on the path is null or undefined`, () => {
++    expect(get({ splash: null }, 'splash.image')).toEqual(null);
++    expect(get({ splash: undefined }, 'splash.image')).toEqual(null);
++    expect(
++      get({ android: { adaptiveIcon: null } }, 'android.adaptiveIcon.foregroundImage')
++    ).toEqual(null);
++  });
++  it(`returns null when a section on the path is a primitive`, () => {
++    expect(get({ ios: 'oops' }, 'ios.bundleIdentifier')).toEqual(null);
++    expect(get({ a: 1 }, 'a.b')).toEqual(null);
++  });
++  it(`still returns a falsy value that is set`, () => {
++    expect(get({ a: { b: 0 } }, 'a.b')).toEqual(0);
++    expect(get({ a: { b: '' } }, 'a.b')).toEqual('');
++    expect(get({ a: { b: null } }, 'a.b')).toEqual(null);
++  });
  });
  
-+it('remounts a tab\'s screen when its role toggles to and from "search"', async () => {
-+  const mount = jest.fn();
-+  const unmount = jest.fn();
-+
-+  function Probe() {
-+    React.useEffect(() => {
-+      mount();
-+      return unmount;
-+    }, []);
-+
-+    return <View testID="index" />;
-+  }
-+
-+  function Layout() {
-+    const [isSearch, setIsSearch] = React.useState(false);
-+    return (
-+      <>
-+        <Button
-+          title="toggle role"
-+          testID="toggle-role"
-+          onPress={() => setIsSearch((value) => !value)}
-+        />
-+        <NativeTabs>
-+          <NativeTabs.Trigger name="index" role={isSearch ? 'search' : undefined} />
-+        </NativeTabs>
-+      </>
-+    );
-+  }
-+
-+  await renderRouter({
-+    _layout: Layout,
-+    index: Probe,
-+  });
-+
-+  expect(screen.getByTestId('index')).toBeVisible();
-+  expect(mount).toHaveBeenCalledTimes(1);
-+  expect(unmount).not.toHaveBeenCalled();
-+  jest.clearAllMocks();
-+
-+  await act(() => fireEvent.press(screen.getByTestId('toggle-role')));
-+
-+  expect(unmount).toHaveBeenCalledTimes(1);
-+  expect(mount).toHaveBeenCalledTimes(1);
-+  jest.clearAllMocks();
-+
-+  await act(() => fireEvent.press(screen.getByTestId('toggle-role')));
-+
-+  expect(unmount).toHaveBeenCalledTimes(1);
-+  expect(mount).toHaveBeenCalledTimes(1);
-+});
-+
- describe('Tabs visibility', () => {
-   it('does not render tab, when not specified', async () => {
-     await renderRouter({
+ describe(pickBy, () => {
 ```
 
-**File**: `packages/expo-router/src/native-tabs/types.ts` (modified, +1/-1)
+**File**: `packages/@expo/cli/src/utils/obj.ts` (modified, +1/-1)
 ```diff
-@@ -716,7 +716,7 @@ export interface NativeTabTriggerProps {
-    *
-    * The `"search"` role makes this tab the system search tab
-    * ([`UISearchTab`](https://developer.apple.com/documentation/uikit/uisearchtab)) on iOS 26.1 and later.
--   * Do not change `role` after the tab renders.
-+   * Changing `role` to or from `"search"` remounts the tab and resets its state.
-    *
-    * @see The supported values correspond to the official [Apple documentation](https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem).
-    * @platform ios
-```
-
----
-
-### Incident Patch 3: `703cedf8` (2026-11-03)
-**Commit Message**: [observe] Add `errorSampleRate` to sample errors and crashes separately (#51930)
-
-# Why
-
-To allow people to report all errors, while only sending portion of logs
-
-# How
-
-1. Add `errorSampleRate` property
-2. When app falls under `errorSampleRate`, but not under `sampleRate`,
-only send the error logs
-3. When `errorSampleRate` is lower then `sampleRate`, use `sampleRate`
-for all logs and display a warning
-
-# Test Plan
-
-1. CI
-2. Observe-tester - limited testing possible - sampleRate: 0,
-errorSampleRate: 1
-
-# Screenshots
-
-<!--
-If this change affects what a person sees, copy the shape below out of
-this comment.
-Add one Before and After pair for each platform the change affects:
-Android, iOS, or web.
-An Android-only change needs Android screenshots. Do the same for an
-iOS-only or web-only change.
-Shared code needs a pair for every platform that runs it. That can be
-Android, iOS, and web.
-Do not use an iOS Simulator screenshot for a platform you did not run.
-Take the before screenshot first. Then make the change. Then take the
-after screenshot.
-Put each image under its heading. Name the device, simulator, or browser
-on the next line.
-Use a full-width image. Do not put the images in a table
-
-**File**: `.changeset/app-metrics-exception-log-names.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo-app-metrics': patch
-+---
-+
-+[Internal] Export the `js.exception` and `native.exception` log names as constants.
-```
-
-**File**: `.changeset/observe-error-sample-rate.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo-observe': patch
-+---
-+
-+Add the `errorSampleRate` config option. It sets the fraction of installations that dispatch errors and crash reports separately from `sampleRate`.
-```
-
-**File**: `apps/observe-tester/app/_layout.tsx` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ Observe.configure({
-   environment: 'custom-env',
-   dispatchingEnabled: true,
-   dispatchInDebug: true,
-+  sampleRate: 1,
-+  errorSampleRate: 1,
-   integrations: {
-     'expo-router': { filteredParams: ['accountId', 'firstName'] },
-     'expo-image': {
-```
-
-**File**: `docs/pages/eas/observe/configuration.mdx` (modified, +17/-1)
-```diff
-@@ -29,6 +29,22 @@ A few details worth knowing:
- - Out-of-sample devices drop pending metrics rather than accumulating them. Lowering the rate later does not retroactively send earlier sessions.
- - Sampling depends on [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig). If `dispatchingEnabled` is `false`, nothing is dispatched regardless of `sampleRate`.
- 
-+### Sample errors separately
-+
-+To keep more errors than other events, set `errorSampleRate`. Errors include unhandled JavaScript errors, errors from `reportError` and `ObserveErrorBoundary`, and native crash reports. All other events follow `sampleRate`:
-+
-+```tsx
-+import { Observe } from 'expo-observe';
-+
-+// Dispatch metrics from ~3% of installations, and errors from all installations.
-+Observe.configure({
-+  sampleRate: 0.03,
-+  errorSampleRate: 1,
-+});
-+```
-+
-+`errorSampleRate` is a minimum. Installations in-sample for `sampleRate` always send errors. A lower value has no effect, and `configure()` prints a warning. An unset `sampleRate` counts as `1`.
-+
- ## Enable metrics in development
- 
- By default, metrics collected from debug builds are not dispatched. To dispatch them anyway (for example, while testing your Expo Observe integration), set `dispatchInDebug` to `true` when calling `configure()`:
-@@ -43,7 +59,7 @@ Observe.configure({
- 
- A build is treated as a debug build if either the native app is a debug build or the JS bundle is a development bundle (`__DEV__` is `true`). This detection is independent of the `environment` value (see [Environments](#environments)).
- 
--`dispatchInDebug` has no effect on release builds, which always dispatch (subject to [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig) and [`sampleRate`](#sampling)). If `dispatchingEnabled` is `false` or this installation is out-of-sample, nothing dispatches regardless of `dispatchInDebug`.
-+`dispatchInDebug` has no effect on release builds, which always dispatch (subject to [`dispatchingEnabled`](/versions/latest/sdk/observe/#observeconfig) and [`sampleRate`](#sampling)). If `dispatchingEnabled` is `false`, nothing dispatches regardless of `dispatchInDebug`. `sampleRate` and `errorSampleRate` also apply in debug builds.
- 
- > **warning** Enable this only when testing your Expo Observe integration. Development/debug performance differs significantly from production, so collecting development/debug metrics may distort the results shown in your dashboard.
- 
-```
-
-**File**: `packages/expo-app-metrics/android/src/main/java/expo/modules/appmetrics/crashreporting/CrashReport.kt` (modified, +3/-1)
-```diff
-@@ -8,6 +8,8 @@ import kotlinx.serialization.Serializable
- import kotlinx.serialization.encodeToString
- import kotlinx.serialization.json.Json
- 
-+const val NATIVE_EXCEPTION_LOG_NAME = "native.exception"
-+
- @Serializable
- data class CrashReport(
-   /** Unix signal number (e.g. SIGSEGV = 11), from `ApplicationExitInfo.getStatus()` for native crashes. */
-@@ -48,7 +50,7 @@ data class CrashReport(
-     return LogRecord(
-       sessionId = sessionId,
-       timestamp = timestampBegin,
--      name = "native.exception",
-+      name = NATIVE_EXCEPTION_LOG_NAME,
-       severity = Severity.FATAL.rawValue,
-       attributes = JsonAny.encodeMapToJsonString(attributes)
-     )
-```
-
-**File**: `packages/expo-app-metrics/android/src/main/java/expo/modules/appmetrics/jserrors/ErrorReport.kt` (modified, +3/-1)
-```diff
-@@ -9,6 +9,8 @@ import expo.modules.kotlin.records.Record
- import expo.modules.kotlin.types.Enumerable
- import expo.modules.kotlin.types.OptimizedRecord
- 
-+const val JS_EXCEPTION_LOG_NAME = "js.exception"
-+
- /**
-  * An unhandled JavaScript error forwarded from the JS-side `global.ErrorUtils` handler. Recorded as
-  * a `js.exception` log event following OpenTelemetry's exception conventions.
-@@ -110,7 +112,7 @@ private fun makeExceptionLogRecord(
-   return LogRecord(
-     sessionId = sessionId,
-     timestamp = timestamp,
--    name = "js.exception",
-+    name = JS_EXCEPTION_LOG_NAME,
-     severity = (
-       if (isFatal) {
-         Severity.FATAL
-```
-
-**File**: `packages/expo-app-metrics/ios/CrashReporting/CrashReport.swift` (modified, +3/-1)
-```diff
-@@ -1,5 +1,7 @@
- // Copyright 2025-present 650 Industries. All rights reserved.
- 
-+public let nativeExceptionLogName = "native.exception"
-+
- /// Structured crash report extracted from MetricKit's `MXCrashDiagnostic`.
- ///
- /// This is the native-crash shape: a Mach exception, signal, and native call-stack tree over a
-@@ -141,7 +143,7 @@ public struct CrashReport: Codable, Sendable {
-       }
+@@ -4,7 +4,7 @@ export function get(obj: any, key: string): any | null {
+   let current: any = obj;
+   let branch: string | undefined;
+   while ((branch = branches.shift())) {
+-    if (!(branch in current)) {
++    if (current == null || typeof current !== 'object' || !(branch in current)) {
+       return null;
      }
-     return LogRecord(
--      name: "native.exception",
-+      name: nativeExceptionLogName,
-       attributes: attributes,
-       severity: .fatal,
-       // MetricKit gives a time window; its end is the tightest crash-time bound and matches Android.
-```
-
-**File**: `packages/expo-app-metrics/ios/LogEvents/ErrorReport.swift` (modified, +3/-1)
-```diff
-@@ -2,6 +2,8 @@
- 
- import ExpoModulesCore
- 
-+public let jsExceptionLogName = "js.exception"
-+
- /// An unhandled JavaScript error forwarded from the JS-side `global.ErrorUtils` handler. Recorded as
- /// a `js.exception` log event following OpenTelemetry's exception conventions.
- @Record
-@@ -95,7 +97,7 @@ private func makeExceptionLogRecord(
-     attributes["expo.error.component_stack"] = componentStack
-   }
-   return LogRecord(
--    name: "js.exception",
-+    name: jsExceptionLogName,
-     attributes: attributes,
-     severity: isFatal ? .fatal : .error,
-     timestamp: timestamp
+     current = current[branch];
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #52891** (2026-11-03): [docs] Sync Japanese tutorial translations (@expo-bot)
-- **PR #52882** (2026-11-03): [docs] Add ignored metrics and events to Expo Observe configuration (@Ubax)
-- **PR #52877** (2026-11-03): [observe] Fix flaky `cold_ttr` test in expo-router integration (@tsapeta)
-- **PR #52858** (closed): chore(deps): bump glob from 13.0.6 to 14.0.2 (@dependabot[bot])
-- **PR #52857** (closed): chore(deps): bump minimatch from 10.2.5 to 11.0.1 (@dependabot[bot])
-- **PR #52856** (closed): chore(deps): bump node-forge from 1.4.0 to 1.4.1 (@dependabot[bot])
+- **PR #53091** (2026-11-06): chore(fingerprint): Drop `glob` and add `minimatch@^10` usage note (@kitten)
+- **PR #53080** (2026-11-06): [docs] Sync upstream reference content (EAS CLI reference, other) (@expo-bot)
+- **PR #53063** (2026-11-06): [ios][android][updates] Fix the log test race and clear every log entry (@douglowder)
+- **PR #53057** (2026-11-06): fix(cli): Stop OSC 7501 program status from failing commands when it throws (@ramonclaudio)
+- **PR #53051** (2026-11-06): [ci] Skip unrelated workflows for native test-only changes (@tsapeta)
+- **PR #53050** (2026-11-05): [jsi] Make JSI function, BigInt, symbol and buffer types conform to `JavaScriptCodable` (@tsapeta)
 
 ---
 
@@ -1432,28 +1026,32 @@ Use a full-width image. Do not put the images in a table
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [docs] Land reviewed external-contributor docs fixes (#52842)
+## X. cli): Stop OSC 7501 program status from failing commands when it throws (#53057)
 
 **RULE**:
-When implementing operations in `docs/pages/config-plugins/development-and-debugging.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/cli-osc-7501-status-guard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `931df666`: [docs] Land reviewed external-contributor docs fixes (#52842). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46e555c4`: cli): Stop OSC 7501 program status from failing commands when it throws (#53057). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/config-plugins/development-and-debugging.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/cli-osc-7501-status-guard.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-> This example uses `tsx` for simple local TypeScript support, but `tsx` isn't strictly necessary. See [using TypeScript with app config](/guides/typescript/#app-config).
+---
+'@expo/cli': patch
+---
+
+Stop OSC 7501 program status from failing a command when reporting it throws.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-> This example uses `tsx` for simple local TypeScript support, this isn't strictly necessary. See [using TypeScript with `app.config.js`](/guides/typescript/#appconfigjs).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `931df666` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46e555c4` are properly handled with clean fallback behavior.
