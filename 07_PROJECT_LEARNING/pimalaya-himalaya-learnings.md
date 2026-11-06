@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `8196891f`  
+> **Source Version**: `7bfaaa09`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:44:07.280Z  
+> **Timestamp**: 2026-11-06T20:52:08.359Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:44:06.004Z  
+> **Harvest Timestamp**: 2026-11-06T20:52:06.672Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7582 stars
+- **Stars / Engagement**: 7599 stars
 
 ---
 
@@ -1536,11 +1536,11 @@ impl Account {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #800** (2026-11-01): **fix(cli): delimit config paths with $PATH's own separator**
-  *Symptoms*: ## Problem  On Windows, `-c/--config` splits its value on `:`, the separator `$PATH` uses on Unix. An absolute Windows path carries a colon of its own, so the argument is cut at the drive letter:  ``` $ himalaya -c C:\Users\me\config.toml account list Error: No configuration found, run bare `himalaya` to launch the wizard, or write one by hand: ... ```  The parsed value is `["C", "\Users\me\config.toml"]`, neither of which exists, so the configuration is never read even though the file is right there. `HIMALAYA_CONFIG` feeds the same argument and fails the same way, and so does `-c` repeated with absolute paths. A relative path (`-c config.toml`) works, which is why this stays hidden.  ## Change  `src/cli.rs` picks the delimiter per platform: `;` on Windows, as `$PATH` and `std::env::split_paths` spell it, and `:` everywhere else, so Unix behaves exactly as before. A single path is never split, and several may still be given at once, or by repeating `-c`.  Two trade-offs are worth naming, both Windows-only. A colon-joined list (`-c a.toml:b.toml`, `HIMALAYA_CONFIG=a.toml:b.toml`) is no longer split there; `;` or repeated `-c` is the spelling now, which is also what `cairn/spec/config.md` already described. And a relative path that itself contains `;` is now split where it used to be one path. Keeping `:` splitting while reading absolute paths whole is not expressible through clap's `value_delimiter`; the README, the sample configuration, the changelog and the config spec now 
+- **Issue #804** (2026-11-06): **mcp: serve several accounts from one server**
+  *Symptoms*: I want to drive several mailboxes from one agent. cairn/changes/mcp-server settled on one account per server, with several accounts being several entries in the client's configuration. I tried that and the cost is on the agent's side:  - Three accounts give the model three copies of envelope_list, message_read and so on, told apart only by the prefix the client adds. The model picks among near-identical tools and every list takes context on each turn. - A task across accounts ("find the invoice wherever it landed") cannot name the account in a single call. There is no shared word for it. Each server is one more process to keep in step with a configuration that already names every account.  Proposed scope, kept opt-in so an agent only reaches accounts the operator wrote down:  - A repeatable flag naming the accounts to serve (--serve work --serve home, name open). Without it the server behaves as today. No flag serves every account. - When more than one account is served, every tool gains an account property whose enum is the served names, default the first. With one account the schema does not change. - One Session per account, built lazily and kept as the REPL keeps it, so a failure on one account drops no other account's client. All named accounts resolve at start. - The tool list is the union of what the served accounts' transports serve. A call naming an account that cannot serve the tool answers capability-missing, as a server-decided capability does today. - --allow-wri
 
-- **Issue #798** (2026-10-27): **message compose still nests display names: `--from "Name <addr>"` stores `From: > <Name <addr>>` (also To/Cc/Bcc)**
-  *Symptoms*: ## Problem  `message compose` still corrupts addresses that carry a display name, for `From` and for `To`/`Cc`/`Bcc`. The store round-trip makes it worse: what ends up in the mailbox is not even the double-wrapped form.  ``` $ himalaya -a zoho message compose --from "support <support@cryptoquant.dev>" \     --to jozef.rudy@gmail.com --subject t --body hi | head -2 From: <support <support@cryptoquant.dev>> To: <jozef.rudy@gmail.com> ```  Piped into `message add -m drafts -f draft`, the stored draft reads:  ``` From: > <support <support@cryptoquant.dev> To: jozef.rudy@gmail.com ```  and the envelope parser agrees the address itself is malformed — `himalaya envelope list -m drafts --json` reports:  ```json {"from":[{"name":null,"email":"support <support@cryptoquant.dev>"},{"name":null,"email":">"}]} ```  `To` is broken identically:  ``` $ ... --from support@cryptoquant.dev --to "Jozef Rudy <jozef.rudy@gmail.com>" ... To: > <Jozef Rudy <jozef.rudy@gmail.com> ```  Bare addresses are fine (`From: <support@cryptoquant.dev>` → stored as `support@cryptoquant.dev`), so only the display-name path is affected.  This matters beyond cosmetics: per #727 the same malformed header fails at send time with `SMTP MAIL FROM failed: rejected 501 5.1.7 Bad sender address syntax`.  ## Why this looks like a regression / incomplete fix  - #727 ("`--from \"Name <email>\"` breaks the composed From header") was closed 2026-08-16. - commit `48f00e3` (2026-09-26) is titled "fix: parse display names in To, 
+- **Issue #803** (2026-11-05): **fix(envelope): one rule for hasAttachment across the MIME backends**
+  *Symptoms*: Closes #802.  IMAP, Maildir, m2dir and mbox now answer `hasAttachment` by one rule, on `envelope list` and `envelope search`.  ## One thing to decide  Your comment on #802 gave the rule as "a non-text, non-multipart part without an `inline` disposition counts, as `attachment list` does", and said pimdir's mark would follow it. The next day 925b8a1 pinned a finer pimdir rule. I followed that one, so all these backends give the same answer as pimdir. The mark therefore differs from `attachment list` on these rows:  | Message | `hasAttachment` here | pimdir | `attachment list` | |---|---|---|---| | Image with a `Content-ID`, no disposition | false | false | 1 | | Signature in `multipart/signed`, with or without `attachment` | false | false | 1 | | Parts of `multipart/encrypted` | false | false | 2 | | `text/plain` with an unknown disposition | true | true | 0 |  My own mail supports the finer rule. Over 65,000 local messages, your sentence read literally marks 558 new messages; the finer rule marks 169 of those. It also unmarks 168 that the old IMAP rule marked. These counts come from a small Python script that applies each rule to the headers, not from Himalaya itself.  If you prefer the sentence as written, the change is small: `marks_attachment` and four test rows.  ## Result  Each backend gave the same answer on 19 messages, read through the built binary, with IMAP against Dovecot 2.4.5. The first five are the rows of #802:  | Message | Before, IMAP | Before, local | Now | |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1557,348 +1557,255 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `529d2119` (2026-11-01)
-**Commit Message**: fix(cli): delimit config paths with $PATH's own separator (#800)
+### Incident Patch 1: `bf217e85` (2026-11-05)
+**Commit Message**: fix(envelope): one rule for hasAttachment across the MIME backends (#803)
 
-* fix(cli): delimit config paths with $PATH's own separator
+The same message read differently per backend (#802). IMAP counted only
+a disposition of attachment, so a lone PDF part looked like no
+attachment, while Maildir, m2dir and mbox used attachment_count(), which
+counts inline parts.
 
-On Windows an absolute path carries a colon of its own, so `-c
-C:\Users\me\config.toml` was split on it and read as the two paths `C` and
-`\Users\me\config.toml`. Neither exists, so the configuration was never
-found and every command failed with "No configuration found", even though
-the file was there. The same held for HIMALAYA_CONFIG, which feeds the
-same argument.
+All four now follow the rule of the pimdir mark (io-pimdir 925b8a1). Any
+disposition but inline counts. With none, a part counts unless text,
+multipart or named by a Content-ID. An RFC 1847 protocol part never
+counts. m2dir envelope search now fills the mark as well, and the mbox
+cache gets a version, since it would otherwise keep the old answer for
+every message it has seen.
 
-The separator is now `;` on Windows, as `$PATH` and `std::env::split_paths`
-spell it, and stays `:` elsewhere, so nothing changes on Unix. Several
-paths can still be given at once, and a single one is never split.
+Rebased onto the mime-rs reader (a53eab3): the local walk runs over the
+mime-rs tree in envelope::from_raw, shared by Maildir, m2dir and mbox,
+and the local attachment search clause reads the same mark.
 
-* docs(config): state the platform config path separator
-
-The loader now splits -c on \'s own separator, so the README, the sample configuration and the config spec say so, and an Unreleased entry records the Windows fix and the colon-joined trade-off that comes with it.
-
-* test(cli): pin the config path delimiter to the platform
-
-The two splitting tests build their input from the constant, so an unconditional semicolon would pass them on Unix while breaking every colon-joined path 
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
+@@ -108,6 +108,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Fixed `flag add|set|remove` with `answered` or `draft` on Gmail and Microsoft Graph reporting every message flagged while changing nothing: neither has a field for them, so the command fails with `capability-missing`.
+ - Fixed Gmail date clauses being off by a day: Gmail reads a bare date as midnight in PST, so `after 2026-09-08` kept that day's mail and `date 2026-09-08` spanned two days. Each bound is now sent as Unix seconds of the UTC day.
+ - Fixed a JMAP search whose date clause sits under `not` or `or` checking the date as if it stood alone: `not after 2026-01-01` listed nothing, and `date 2026-01-01 or subject x` only that day's mail. Such a clause now reads the server's received date; a date clause joined to the rest by `and` alone keeps its exact sent-date check.
++- Fixed `hasAttachment` reading differently per backend ([#802]).
++
++  IMAP missed a PDF or an attached message without a `Content-Disposition`, and Maildir, m2dir and mbox counted parts marked `inline`. All four, and the local `attachment` search clause, now follow the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; the signature of a signed message and the parts of an encrypted one never count. `attachment list` still lists those. An mbox cache written by an older version is rebuilt once.
+ - Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
  - Fixed `account check` refusing an account declaring only a pimdir block as configuring no backend: the store is opened, its mailboxes listed, and a producer probed without writing anything, so a store whose staging lock a collector holds fails the check at once with `store-busy`.
  - Fixed `account check` exiting 0 when a backend failed: it now fails with one error naming each failed backend and why.
- - Fixed `pimdir queue cancel` reshaping the store's schema to Himalaya's io-pimdir revision, which dropped the tables and columns another app's revision keeps: the store is opened as it stands, and one of another draft is refused with `store-version`.
+@@ -1528,6 +1531,7 @@ Few major concepts changed:
+ [#781]: https://github.com/pimalaya/himalaya/issues/781
+ [#786]: https://github.com/pimalaya/himalaya/issues/786
+ [#790]: https://github.com/pimalaya/himalaya/issues/790
++[#802]: https://github.com/pimalaya/himalaya/issues/802
+ 
+ [core#1]: https://github.com/pimalaya/core/issues/1
+ [core#10]: https://github.com/pimalaya/core/issues/10
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `cairn/changes/has-attachment-one-rule/delta.md` (added, +25/-0)
 ```diff
-@@ -178,7 +178,7 @@ A persistent configuration is loaded from the first valid path among:
- 
- These are the same paths the [himalaya-tui](https://github.com/pimalaya/himalaya-tui) TUI looks at: one TOML file backs both binaries. CLI-only fields and TUI-only sections coexist without errors. See [config.sample.toml](./config.sample.toml) for a documented template.
- 
--Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `:`. The first one is the base and the rest are deep-merged on top.
-+Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or by repeating `-c`. The first one is the base and the rest are deep-merged on top.
- 
- To add or reconfigure an account, run the bare `himalaya` wizard again and redirect its printed TOML into (or merge it with) your config file. There is no in-place edit subcommand; `himalaya account list` and `himalaya account check` inspect and validate the accounts already declared.
- 
+@@ -0,0 +1,25 @@
++---
++cairn: delta
++change: has-attachment-one-rule
++---
++
++# Delta
++
++## ADDED Requirements
++
++### Requirement: Backends reading the MIME structure mark attachments by the pimdir rule
++IMAP, Maildir, m2dir and mbox SHALL answer `hasAttachment` by the rule of the pimdir mark (STORAGE Annex A.1) over the leaf parts of a message. A part SHALL mark the message when its `Content-Disposition` is any but `inline`. A part stating none SHALL mark it unless it is text, multipart or named by a `Content-ID`. An RFC 1847 protocol part SHALL never mark it: any child of a `multipart/encrypted`, any child but the first of a `multipart/signed`. A `Content-Type` that is no pair of RFC 2045 tokens SHALL read as `text/plain`. A `message/rfc822` part is a leaf, the parts of the attached message being its own. The `attachment` search clause SHALL read the same mark on the backends that search locally. JMAP and Graph SHALL relay what the server says; Gmail SHALL leave it `null`.
++
++`attachment list` SHALL stay wider than this mark: it also lists signatures and images named by a `Content-ID`, and some text parts.
++
++#### Scenario: A PDF without a disposition
++- WHEN a message holds a single `application/pdf` part with no `Content-Disposition`
++- THEN `envelope list --has-attachment` reports `hasAttachment: true` on IMAP, Maildir, m2dir and mbox
++
++#### Scenario: An inline PDF
++- WHEN a `multipart/mixed` message holds a text part and an `application/pdf` part with `Content-Disposition: inline`
++- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
++
++#### Scenario: A signed message
++- WHEN a `multipart/signed` message holds a text part and its signature, marked `attachment` or not
++- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
 ```
 
-**File**: `cairn/log/2026-10-31-config-path-separator.md` (added, +34/-0)
+**File**: `cairn/changes/has-attachment-one-rule/proposal.md` (added, +22/-0)
 ```diff
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,22 @@
++---
++cairn: change
++id: has-attachment-one-rule
++status: landed
++created: 2026-11-02
++---
++
++# One rule for hasAttachment across the backends that read MIME
++
++## Why
++
++The same message reads differently per backend (himalaya#802). IMAP counts only a `Content-Disposition: attachment`, so an order sent as one PDF part lists as having no attachment while `attachment list` shows the PDF. Maildir, m2dir and mbox used mail-parser's `attachment_count()`, which includes `inline` parts; since the move to mime-rs they read RFC 8621 `hasAttachment`, which counts signatures, encrypted parts and images named by a `Content-ID`, and misses a bare image. pimdir has since gained its own rule (io-pimdir 925b8a1).
++
++## What
++
++- One predicate, the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; an RFC 1847 protocol part never counts.
++- IMAP applies it to `BODYSTRUCTURE`; Maildir, m2dir and mbox to the mime-rs tree through their shared envelope reader, on `envelope list` and `envelope search`, and the local `attachment` search clause reads the same mark.
++- The mbox envelope cache gets a version, since it would otherwise keep the old answer for every message it has seen.
++
++## Out of scope
++
++`attachment list` stays as it is, and wider than the mark: it also lists signatures, images named by a `Content-ID`, and text parts that name a file. JMAP, Graph and pimdir answer for themselves, and Gmail metadata cannot tell.
+```
+
+**File**: `cairn/changes/has-attachment-one-rule/tasks.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++---
++cairn: tasks
++change: has-attachment-one-rule
++---
++
++# Tasks
++
++- [x] Add `part::marks_attachment` and `part::has_attachment`
++- [x] Apply the rule to `BODYSTRUCTURE` on IMAP
++- [x] Apply the rule in `envelope::from_raw`, shared by Maildir, m2dir and mbox, and in the local `attachment` search clause
++- [x] Version the mbox cache so an older one is rebuilt
++- [x] Fill the mark on m2dir `envelope search`
++- [x] One test per row of the #802 table on IMAP and through `envelope::from_raw`, with the rows the rule adds
++- [x] Fold the delta into the spec, write the log entry, add the changelog line
+```
+
+**File**: `cairn/log/2026-11-05-has-attachment-one-rule.md` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
 +---
 +cairn: log
-+change: config-path-separator
-+landed: 2026-10-31
++change: has-attachment-one-rule
++landed: 2026-11-05
 +---
 +
-+# Took the config path separator from the platform
++# One rule for hasAttachment across the backends that read MIME
 +
-+A Windows absolute path carries a colon of its own. `ConfigPathsArg` declared
-+`value_delimiter = ':'`, so clap split every `-c` value at the drive letter:
-+`-c C:\Users\me\config.toml` reached the loader as `C` and
-+`\Users\me\config.toml`, neither of which exists, and the configuration was
-+never read even though the file was right there. `HIMALAYA_CONFIG` feeds the
-+same argument and failed the same way, and so did repeated `-c` flags with
-+absolute paths. A relative path worked, which is why it stayed hidden.
++`part::marks_attachment` holds the rule of the pimdir mark (STORAGE Annex A.1): any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; an RFC 1847 protocol part never counts. IMAP reads these from `BODYSTRUCTURE`. Maildir, m2dir and mbox read them off the mime-rs tree through `part::has_attachment`, called by `envelope::from_raw`, replacing RFC 8621 `hasAttachment`; the local `attachment` search clause falls back to the same function. m2dir `envelope search` now fills the mark, as the other two did.
 +
-+The delimiter now follows `$PATH` on the platform: `;` on Windows and `:` on
-+every other target. A single path is never split, the help text says which
-+separator applies, and several paths can still be given at once or by
-+repeating `-c`. On Windows a colon-joined list is no longer split, and a path
-+that itself contains `;` now is; both are the price of reading absolute paths
-+whole, and the documented spelling on Windows is `;` or repeated flags.
++The rule went beyond the sentence in #802, a non-text part without `inline`, because that sentence named the pimdir mark as following the same rule and io-pimdir 925b8a1 then refined it. So the mark and `attachment list` differ on signatures, on images named by a `Content-ID` and on some text parts.
 +
-+Verified: `cargo build`, `cargo fmt --check` and `cargo test --all-features`
-+run on Windows before and after. The failures already present there, the
-+pimdir, mbox and tilde-expansion ones, are unchanged by name; one integration
-+test passing `-c` an absolute path now passes instead of failing on the
-+missing configuration. Two new tests parse the CLI: an absolute path yields one
-+path (before the change it yielded `["C", "\Users\...\config.toml"]`), and two
-+paths joined with the platform separator yield two. A third pins the constant
-+to `;` on Windows and `:` elsewhere, so dropping the platform gate cannot pass
-+unnoticed.
++The mbox cache gained a `version`: it keeps envelopes by content id, so without one every message already seen would keep its old answer. A cache without the current version is rebuilt once.
 +
-+Spec updated: config (MODIFIED: Config loading and merge).
++The contribution was written against mail-parser and rebased by the maintainer onto the mime-rs reader (a53eab3): the predicate is unchanged, the local walk now runs over the mime-rs tree, and the shared rows run once through `envelope::from_raw` instead of once per backend. Seven of the sixteen rows fail against the RFC 8621 rule. The IMAP tests decode `BODYSTRUCTURE` answers captured from Dovecot 2.4.5, except the ones without extension data and the single-part multipart, which it does not send.
++
++Left as they are, each rare: a duplicate `Content-Type`, which Dovecot reads by its first; a quoted `Content-Disposition`, which Dovecot answers as an empty type; a disposition on a nested multipart, which pimdir reads and this leaf walk does not; a `Content-Type` holding one `/` but no RFC 2045 tokens, which pimdir reads as given and himalaya as `text/plain`.
++
++Capabilities moved: **backends** (Backends reading the MIME structure mark attachments by the pimdir rule: added).
 ```
 
-**File**: `cairn/spec/config.md` (modified, +1/-1)
+**File**: `cairn/spec/backends.md` (modified, +17/-0)
 ```diff
-@@ -18,7 +18,7 @@ A bare authority SHALL resolve to `sieve://`, where the `imap` and `smtp` blocks
- A mechanism disclosing a reusable credential SHALL be refused over a cleartext connection unless `sieve.allow-cleartext-auth` is set, which is the configuration RFC 5804 section 5 asks for.
+@@ -23,6 +23,23 @@ An IMAP flag write SHALL refuse, under `capability-missing` and before the `STOR
+ ### Requirement: Shared outputs carry no backend details
+ The output of a shared command SHALL NOT carry a field that only one backend fills. A backend detail worth showing SHALL be logged by that backend's adapter or shown by its own namespace.
  
- ### Requirement: Config loading and merge
--The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, colon-free as repeated flags: the first is the base and the rest are deep-merged on top.
-+The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, delimited like `$PATH` (`;` on Windows, `:` elsewhere) or repeated as flags: the first is the base and the rest are deep-merged on top.
- 
- ### Requirement: Missing account is an error
- When the config exists but lacks the requested account, the command SHALL fail with a hard error, not fall back to the wizard. The wizard is proposed only when no config is found at all.
-```
-
-**File**: `config.sample.toml` (modified, +2/-1)
-```diff
-@@ -7,7 +7,8 @@
- #   - $HOME/.himalayarc
- #
- # Override with `himalaya -c <PATH>`. Multiple paths can be passed at once,
--# separated by `:`; the first one is the base and the rest are deep-merged on
-+# separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or
-+# by repeating `-c`; the first one is the base and the rest are deep-merged on
- # top of it.
- #
- # Bare `himalaya` launches the wizard, which discovers an account from your
-```
-
-**File**: `src/cli.rs` (modified, +69/-4)
-```diff
-@@ -165,6 +165,14 @@ pub enum Command {
-     JsonSchema(JsonSchemaCommand),
- }
- 
-+/// The character separating several configuration paths, `$PATH`'s own: `;`
-+/// on Windows, where a colon belongs to the drive letter of an absolute path,
-+/// and `:` elsewhere.
-+#[cfg(windows)]
-+const CONFIG_PATH_DELIMITER: char = ';';
-+#[cfg(not(windows))]
-+const CONFIG_PATH_DELIMITER: char = ':';
++### Requirement: Backends reading the MIME structure mark attachments by the pimdir rule
++IMAP, Maildir, m2dir and mbox SHALL answer `hasAttachment` by the rule of the pimdir mark (STORAGE Annex A.1) over the leaf parts of a message. A part SHALL mark the message when its `Content-Disposition` is any but `inline`. A part stating none SHALL mark it unless it is text, multipart or named by a `Content-ID`. An RFC 1847 protocol part SHALL never mark it: any child of a `multipart/encrypted`, any child but the first of a `multipart/signed`. A `Content-Type` that is no pair of RFC 2045 tokens SHALL read as `text/plain`. A `message/rfc822` part is a leaf, the parts of the attached message being its own. The `attachment` search clause SHALL read the same mark on the backends that search locally. JMAP and Graph SHALL relay what the server says; Gmail SHALL leave it `null`.
 +
- /// Path(s) to the TOML configuration file(s).
++`attachment list` SHALL stay wider than this mark: it also lists signatures and images named by a `Content-ID`, and some text parts.
++
++#### Scenario: A PDF without a disposition
++- WHEN a message holds a single `application/pdf` part with no `Content-Disposition`
++- THEN `envelope list --has-attachment` reports `hasAttachment: true` on IMAP, Maildir, m2dir and mbox
++
++#### Scenario: An inline PDF
++- WHEN a `multipart/mixed` message holds a text part and an `application/pdf` part with `Content-Disposition: inline`
++- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
++
++#### Scenario: A signed message
++- WHEN a `multipart/signed` message holds a text part and its signature, marked `attachment` or not
++- THEN `envelope list --has-attachment` reports `hasAttachment: false` on IMAP, Maildir, m2dir and mbox
++
+ ### Requirement: The envelope carries its threading pointers
+ The shared `Envelope` SHALL carry `message_id` and `in_reply_to`, the RFC 5322 §3.6.4 identity of a message and of the message(s) it replies to, so a client can pair a reply with its parent from a listing rather than by reading bodies.
+ 
+```
+
+**File**: `src/email/envelope.rs` (modified, +8/-4)
+```diff
+@@ -111,8 +111,9 @@ pub fn normalize_message_id(raw: &str) -> Option<String> {
+ /// flags left empty for the backend to fill.
  ///
- /// Declared here rather than taken from pimalaya-cli, so the environment
-@@ -174,11 +182,11 @@ pub struct ConfigPathsArg {
-     /// Override the default configuration file path.
-     ///
-     /// Paths are shell-expanded then canonicalized, and several may be given
--    /// at once, delimited by `:` like `$PATH`. The first is the base and the
--    /// rest are merged on top, which is how a public configuration stays
--    /// separate from the private ones.
-+    /// at once, delimited like `$PATH` (`;` on Windows, `:` elsewhere). The
-+    /// first is the base and the rest are merged on top, which is how a public
-+    /// configuration stays separate from the private ones.
-     #[arg(long = "config", short = 'c', global = true, env = "HIMALAYA_CONFIG")]
--    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = ':')]
-+    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = CONFIG_PATH_DELIMITER)]
-     pub paths: Vec<PathBuf>,
- }
+ /// `with_attachment` also splits the body, to say whether it holds an
+-/// attachment (RFC 8621 §4.1.4); left `None` otherwise. The subject is
+-/// read as the read view reads it, raw 8-bit bytes included.
++/// attachment ([`crate::shared::message::part::has_attachment`]); left
++/// `None` otherwise. The subject is read as the read view reads it, raw
++/// 8-bit bytes included.
+ #[cfg(any(feature = "maildir", feature = "m2dir", feature = "mbox"))]
+ pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
+     use chrono::TimeZone;
+@@ -121,7 +122,10 @@ pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
+         tree::cst::MimeCst,
+     };
  
-@@ -411,3 +419,60 @@ impl Command {
-         }
+-    use crate::{email::address, shared::message::header};
++    use crate::{
++        email::address,
++        shared::message::{header, part},
++    };
+ 
+     let message = match with_attachment {
+         true => MimeCst::parse(raw),
+@@ -159,7 +163,7 @@ pub fn from_raw(raw: &[u8], with_attachment: bool) -> Envelope {
+         to: addresses(root.header::<TO>()),
+         date,
+         size: raw.len() as u64,
+-        has_attachment: with_attachment.then(|| root.body_lists().has_attachment()),
++        has_attachment: with_attachment.then(|| part::has_attachment(&message)),
      }
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::{env, path::PathBuf, process};
-+
-+    use clap::Parser;
-+
-+    use super::{CONFIG_PATH_DELIMITER, Cli};
-+
-+    /// A directory that is never created, so the paths below it keep the
-+    /// spelling they were given instead of being canonicalized.
-+    fn absent_dir() -> PathBuf {
-+        env::temp_dir().join(format!("himalaya-config-paths-{}", process::id()))
-+    }
-+
-+    fn paths(args: &[&str]) -> Vec<PathBuf> {
-+        Cli::try_parse_from([&["himalaya"], args].concat())
-+            .expect("parse")
-+            .config
-+            .paths
-+    }
-+
-+    #[test]
-+    fn a_config_path_is_never_split() {
-+        // NOTE: an absolute Windows path holds a colon of its own, so splitting
-+        // on it would read `C:\dir\config.toml` as two paths and find neither.
-+        let path = absent_dir().join("config.toml");
-+
-+        assert_eq!(
-+            paths(&["-c", path.to_str().unwrap(), "account", "list"]),
-+            [path]
-+        );
-+    }
-+
-+    #[test]
-+    fn several_config_paths_split_on_the_platform_delimiter() {
-+        let dir = absent_dir();
-+        let (one, two) = (dir.join("one.toml"), dir.join("two.toml"));
-+        let given = format!(
-+            "{}{}{}",
-+            one.display(),
-+            CONFIG_PATH_DELIMITER,
-+            two.display()
-+        );
-+
-+        assert_eq!(paths(&["-c", &given, "account", "list"]), [one, two]);
-+    }
-+
-+    #[test]
-+    fn the_delimiter_is_the_platform_one() {
-+        // NOTE: `$PATH` separates with `;` on Windows, where a colon belongs to
-+        // the drive letter of an absolute path, and with `:` elsewhere.
-+        let expected = if cfg!(windows) { ';' } else { ':' };
-+
-+        assert_eq!(CONFIG_PATH_DELIMITER, expected);
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `5d54dd51` (2026-11-01)
-**Commit Message**: build: pin io-pimdir to fd0c060
-
-pimdir 3d6a04e: a queued update over a conflict parks unless it names
-the conflict it resolves (`resolves`); a blob name held by bytes that
-fail it is verified and quarantined.
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1371,7 +1371,7 @@ dependencies = [
- [[package]]
- name = "io-pimdir"
- version = "0.8.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=09d2d1c5cf8c157cf9b558a715e42af77fc284e9#09d2d1c5cf8c157cf9b558a715e42af77fc284e9"
-+source = "git+https://github.com/pimalaya/io-pimdir?rev=fd0c06059dfb947f536bb0b72d55b2603fd2456a#fd0c06059dfb947f536bb0b72d55b2603fd2456a"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -94,6 +94,6 @@ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec6
- io-imap = { git = "https://github.com/pimalaya/io-imap", rev = "5d83c49a832310cf83b2432ed57fc8093647fbe3" }
- io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
- io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "09d2d1c5cf8c157cf9b558a715e42af77fc284e9" }
-+io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "fd0c06059dfb947f536bb0b72d55b2603fd2456a" }
- pimalaya-cli = { git = "https://github.com/pimalaya/cli", rev = "55b66933950f02541892407667e5e0b254245871" }
- pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "48c8c63a6fb917175f4c684e709ce659055c5338" }
-```
-
----
-
-### Incident Patch 3: `8196891f` (2026-11-03)
-**Commit Message**: build: pin io-pimdir 0c70144, pimalaya-cli and pimalaya-config 0.3
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -93,6 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Changed `flag add`, `flag set`, `flag remove`, `message move`, `message copy` and `message delete` (when it moves to the trash) to fail, exit code 1, when none of the given ids exists in the mailbox. Over IMAP the flag commands reported a success for such an id, and `message move` and `message copy` exited 0 on "no id matched". The flag commands now report how many messages they found, as `count` under `--json` ([#777]).
- - Bumped io-pimdir to 0.8, io-msgraph to 0.6, io-jmap to 0.6 and io-gmail to 0.5, the unreleased ones and io-http and io-imap taken from git until they are published, whose fixes bound what a server can make the client hold: an HTTP response head is capped at 64 KiB and a body at 256 MiB, failing with a typed error rather than buffering without end, an IMAP greeting carrying a literal fails rather than panicking, a `STARTTLS` response line is capped, and `LOGIN` and `AUTHENTICATE` no longer log credentials at trace level. A JMAP submission refused as `tooLarge`, `forbidden`, `overQuota` or `rateLimit` now names that type rather than `unknown`. The pimdir reads take no date floor; outputs are unchanged.
- - Changed the `pimdir` cargo feature to enable io-pimdir's `search` feature, which brings ical-rs and vcard-rs.
-+- Changed `message copy` and `message move` on a pimdir account to fail for a message whose body is not downloaded when the account does not sync the target mailbox yet, no copy being able to reach it (io-pimdir 0c70144, pimdir SYNC §7).
-+- Bumped pimalaya-cli and pimalaya-config to 0.3, taken from crates.io rather than git.
- - Changed the pimdir backend to follow pimdir storage-draft-08, sync-draft-07 and search-draft-08 (io-pimdir bff5737). A store or a search index an earlier neverest wrote is refused, never migrated (`store-version`, `index-version`): reinstall it as neverest's MIGRATION.md says. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
- - Changed a pimdir send to name its performer in the queued `submit` whatever the sources declare, the one source syncing the mailbox when none declares capabilities; a mailbox no source syncs yet is refused with `no-performer`, staging nothing.
- - Changed `pimdir flag` and `pimdir tag` to refuse a flag the store cannot hold (empty, or holding whitespace, a control or a non-ASCII character) with the code `flag-invalid`.
-```
-
-**File**: `Cargo.lock` (modified, +8/-5)
-```diff
-@@ -1380,7 +1380,7 @@ dependencies = [
- [[package]]
- name = "io-pimdir"
- version = "0.8.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=908db2ba74e40cccb89281e797d1807dbf0b7d9b#908db2ba74e40cccb89281e797d1807dbf0b7d9b"
-+source = "git+https://github.com/pimalaya/io-pimdir?rev=0c701447473a03e5cf9effcd0039a49a78419c4d#0c701447473a03e5cf9effcd0039a49a78419c4d"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-@@ -1972,7 +1972,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
  
- [[package]]
- name = "pimalaya-cli"
--version = "0.2.6"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3fe9eda0c6d281d896f4bbb0e88fa2b88f5ae3bfc8daab083de922959e5d549f"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1997,11 +1999,12 @@ dependencies = [
- 
- [[package]]
- name = "pimalaya-config"
--version = "0.2.1"
--source = "git+https://github.com/pimalaya/config?rev=5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d#5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8ea46595a4484b0a6e8af89ee9597d5d10cd7ccec39442137aafc969f0a5587a"
- dependencies = [
-  "anyhow",
-- "dirs 6.0.0",
-+ "dirs 7.0.0",
-  "log",
-  "secrecy",
-  "serde",
 ```
 
-**File**: `Cargo.toml` (modified, +4/-6)
+**File**: `src/email/search/eval.rs` (modified, +10/-7)
 ```diff
-@@ -36,7 +36,7 @@ strip = "symbols"
- panic = "abort"
+@@ -18,13 +18,16 @@ use mime::{
+     tree::{cst::MimeCst, parse::MimeParseOptions},
+ };
  
- [build-dependencies]
--pimalaya-cli = { version = "0.2.6", default-features = false, features = ["build"] }
-+pimalaya-cli = { version = "0.3", default-features = false, features = ["build"] }
+-use crate::email::{
+-    address::{self, Address},
+-    envelope::Envelope,
+-    search::{
+-        filter::query::SearchEmailsFilterQuery,
+-        sort::query::{SearchEmailsSorter, SearchEmailsSorterKind, SearchEmailsSorterOrder},
++use crate::{
++    email::{
++        address::{self, Address},
++        envelope::Envelope,
++        search::{
++            filter::query::SearchEmailsFilterQuery,
++            sort::query::{SearchEmailsSorter, SearchEmailsSorterKind, SearchEmailsSorterOrder},
++        },
+     },
++    shared::message::part,
+ };
  
- [dev-dependencies]
- rusqlite = { version = "0.41", default-features = false, features = ["bundled"] }
-@@ -71,8 +71,8 @@ mime-rs = { version = "0.0.1", git = "https://github.com/pimalaya/mime-rs", rev
- mime_guess = "2"
- open = "5"
- percent-encoding = "2"
--pimalaya-cli = { version = "0.2.6", default-features = false, features = ["terminal", "table", "prompt"] }
--pimalaya-config = { version = "0.2.1", default-features = false, features = ["toml", "secret"] }
-+pimalaya-cli = { version = "0.3", default-features = false, features = ["terminal", "table", "prompt"] }
-+pimalaya-config = { version = "0.3", default-features = false, features = ["toml", "secret"] }
- pimalaya-stream = { version = "0.3", default-features = false, features = ["std"] }
- rfc2047-decoder = { version = "1", optional = true }
- schemars = { version = "1", features = ["chrono04"] }
-@@ -93,6 +93,4 @@ ical-rs = { git = "https://github.com/pimalaya/ical", rev = "99b92736a6a076c7293
- io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec65a86b77256d46c33241d3038" }
- io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
- io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "908db2ba74e40cccb89281e797d1807dbf0b7d9b" }
--pimalaya-cli = { path = "../cli" }
--pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d" }
-+io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "0c701447473a03e5cf9effcd0039a49a78419c4d" }
+ /// The copy recipients of a message, which an [`Envelope`] does not carry.
+@@ -145,7 +148,7 @@ fn has_attachment(envelope: &Envelope, raw: &[u8]) -> bool {
+         return has_attachment;
+     }
+ 
+-    !raw.is_empty() && MimeCst::parse(raw).root.body_lists().has_attachment()
++    !raw.is_empty() && part::has_attachment(&MimeCst::parse(raw))
+ }
+ 
+ fn body_contains(raw: &[u8], pattern: &str) -> bool {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #803** (2026-11-05): fix(envelope): one rule for hasAttachment across the MIME backends (@snrmwg)
 - **PR #800** (2026-11-01): fix(cli): delimit config paths with $PATH's own separator (@Omair-Asdaq)
 - **PR #796** (2026-10-29): docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (@xiaolinstar)
 - **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
 - **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
 - **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
-- **PR #791** (2026-10-14): feat(message): reply to all recipients with message reply --all (@jadhavgaurav)
 
 ---
 
@@ -1918,13 +1825,13 @@ fail it is verified and quarantined.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): delimit config paths with $PATH's own separator (#800)
+## X. envelope): one rule for hasAttachment across the MIME backends (#803)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `529d2119`: cli): delimit config paths with $PATH's own separator (#800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf217e85`: envelope): one rule for hasAttachment across the MIME backends (#803). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1932,7 +1839,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
+- Fixed `hasAttachment` reading differently per backend ([#802]).
+
+  IMAP missed a PDF or an attached message without a `Content-Disposition`, and Maildir, m2dir and mbox counted parts marked `inline`. All four, and the local `attachment` search clause, now follow the rule of the pimdir mark: any disposition but `inline` counts; with none, a part counts unless text, multipart or named by a `Content-ID`; the signature of a signed message and the parts of an encrypted one never count. `attachment list` still lists those. An mbox cache written by an older version is rebuilt once.
+[#802]: https://github.com/pimalaya/himalaya/issues/802
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1942,4 +1852,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `529d2119` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf217e85` are properly handled with clean fallback behavior.

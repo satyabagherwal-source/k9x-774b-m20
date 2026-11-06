@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T20:45:40.213Z",
+  "last_updated": "2026-11-06T20:52:21.444Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
-      "verified_at": "2026-11-04T03:00:16.927Z",
+      "content_hash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
+      "verified_at": "2026-11-06T20:52:13.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:00:16.927Z"
+      "last_updated": "2026-11-06T20:52:13.924Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
-      "verified_at": "2026-11-04T22:05:19.737Z",
+      "content_hash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
+      "verified_at": "2026-11-06T20:52:15.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:05:19.737Z"
+      "last_updated": "2026-11-06T20:52:15.590Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
-      "verified_at": "2026-11-04T03:44:07.836Z",
+      "content_hash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
+      "verified_at": "2026-11-06T20:52:09.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:44:07.836Z"
+      "last_updated": "2026-11-06T20:52:09.367Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
-      "verified_at": "2026-11-04T20:25:14.044Z",
+      "content_hash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
+      "verified_at": "2026-11-06T20:52:21.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:25:14.044Z"
+      "last_updated": "2026-11-06T20:52:21.443Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",

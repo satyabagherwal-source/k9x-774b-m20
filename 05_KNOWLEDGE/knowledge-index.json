@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T20:45:40.091Z",
+  "last_updated": "2026-11-06T20:52:21.354Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -811,11 +811,16 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "118b90ba",
-      "content_hash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
+      "source_version": "c4813968",
+      "content_hash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "sdk): honor generation defaults in TypeScript tool calls (#1154)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1948,
           "title": "sdk/python): make memory exists() detect a missing key (#1106)",
@@ -857,7 +862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:05:19.629Z",
+      "verified_at": "2026-11-06T20:52:15.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47374,11 +47379,16 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "a3ca96f3",
-      "content_hash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
+      "source_version": "8a18313e",
+      "content_hash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Patch/bcknd security fixes (#5129)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1826,
           "title": "cli): use MinIO client image for RustFS cleanup (#4998)",
@@ -47430,7 +47440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:00:16.821Z",
+      "verified_at": "2026-11-06T20:52:13.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48863,11 +48873,16 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "8196891f",
-      "content_hash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
+      "source_version": "7bfaaa09",
+      "content_hash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "envelope): one rule for hasAttachment across the MIME backends (#803)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2001,
           "title": "message): sanitize the human-readable message view (#783)",
@@ -48894,7 +48909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:44:07.766Z",
+      "verified_at": "2026-11-06T20:52:09.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61262,11 +61277,16 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "4876e026",
-      "content_hash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
+      "source_version": "2ac8694b",
+      "content_hash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "summaries think the least each model takes, indexing stops paying for cache writ",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2234,
           "title": "claude): keep the cloud API key off the Claude Code command line (#594)",
@@ -61333,7 +61353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:25:13.938Z",
+      "verified_at": "2026-11-06T20:52:21.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -7912,3 +7912,7 @@
 | `CYCLE-20261106-SISK` | `2026-11-06T20:38:20.708Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5b1ec118...`) |
 | `CYCLE-20261106-1WDP` | `2026-11-06T20:45:38.221Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f4cfd87c...`) |
 | `CYCLE-20261106-1XWF` | `2026-11-06T20:45:40.191Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3143` | Yes (`038b235d...`) |
+| `CYCLE-20261106-AA6M` | `2026-11-06T20:52:09.358Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dac8b4cf...`) |
+| `CYCLE-20261106-ADP0` | `2026-11-06T20:52:13.908Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3db6c46d...`) |
+| `CYCLE-20261106-AEZB` | `2026-11-06T20:52:15.575Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e98f3da0...`) |
+| `CYCLE-20261106-AJHV` | `2026-11-06T20:52:21.427Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e46c56b8...`) |

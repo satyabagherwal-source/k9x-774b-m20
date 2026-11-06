@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "a3ca96f3",
+    "sourceVersion": "8a18313e",
     "license": "NOASSERTION",
-    "contentHash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
-    "lastHarvestedAt": "2026-11-04T03:00:16.919Z",
+    "contentHash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
+    "lastHarvestedAt": "2026-11-06T20:52:13.911Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "118b90ba",
+    "sourceVersion": "c4813968",
     "license": "Apache-2.0",
-    "contentHash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
-    "lastHarvestedAt": "2026-11-04T22:05:19.722Z",
+    "contentHash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
+    "lastHarvestedAt": "2026-11-06T20:52:15.577Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "8196891f",
+    "sourceVersion": "7bfaaa09",
     "license": "Apache-2.0",
-    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
-    "lastHarvestedAt": "2026-11-04T03:44:07.830Z",
+    "contentHash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
+    "lastHarvestedAt": "2026-11-06T20:52:09.360Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "4876e026",
+    "sourceVersion": "2ac8694b",
     "license": "MIT",
-    "contentHash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
-    "lastHarvestedAt": "2026-11-04T20:25:14.030Z",
+    "contentHash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
+    "lastHarvestedAt": "2026-11-06T20:52:21.430Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {

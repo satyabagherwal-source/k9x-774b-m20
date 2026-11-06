@@ -7921,3 +7921,7 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `41584c75` | Multi-dimensional audit evidence | 2026-11-06T20:38:20.713Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `bbebeba8` | Multi-dimensional audit evidence | 2026-11-06T20:45:38.224Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5b908ef4` | Multi-dimensional audit evidence | 2026-11-06T20:45:40.194Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `7bfaaa09` | Multi-dimensional audit evidence | 2026-11-06T20:52:09.360Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `8a18313e` | Multi-dimensional audit evidence | 2026-11-06T20:52:13.911Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `c4813968` | Multi-dimensional audit evidence | 2026-11-06T20:52:15.577Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `2ac8694b` | Multi-dimensional audit evidence | 2026-11-06T20:52:21.430Z |

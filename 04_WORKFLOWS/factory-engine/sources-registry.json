@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T20:45:42.752Z",
-    "lastVerified": "2026-11-06T20:45:42.752Z",
+    "lastChecked": "2026-11-06T20:52:24.034Z",
+    "lastVerified": "2026-11-06T20:52:24.034Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -353,9 +353,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T19:23:53.636Z",
+    "lastChecked": "2026-11-06T20:52:16.598Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T19:23:53.636Z"
+    "lastVerified": "2026-11-06T20:52:16.598Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -641,22 +641,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
-    "name": "PageIndex",
+    "name": "VectifyAI/PageIndex",
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T11:16:47.067Z",
-    "lastVerified": "2026-11-05T11:16:47.067Z",
+    "lastChecked": "2026-11-06T20:52:19.222Z",
+    "lastVerified": "2026-11-06T20:52:19.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "3f3c9ab8da87c93d837804911b07c1980a4b18717e3d3c2b6b4a05f491cb2eff",
+    "contentHash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4876e026"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "iii-hq-iii": {
     "name": "iii-hq/iii",
@@ -2150,8 +2149,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T23:55:30.753Z",
-    "lastVerified": "2026-11-05T23:55:30.753Z",
+    "lastChecked": "2026-11-06T20:52:11.676Z",
+    "lastVerified": "2026-11-06T20:52:11.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2546,14 +2545,14 @@
     "officialUrl": "https://github.com/openreplay/openreplay",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T03:00:15.081Z",
-    "lastVerified": "2026-11-04T03:00:15.081Z",
+    "lastChecked": "2026-11-06T20:52:11.860Z",
+    "lastVerified": "2026-11-06T20:52:11.860Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "f56a0c56959f260b190b40dec9b1775f38f4a8c738ccbea8783b5a8603cdaa4d",
+    "contentHash": "3db6c46da4c6e686d1023a03312ec8cd8f100c23b823ba75479ca7c84f39d945",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4271,22 +4270,21 @@
     "revisionIdentifier": "87375562"
   },
   "pimalaya-himalaya": {
-    "name": "himalaya",
+    "name": "pimalaya/himalaya",
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T06:36:19.683Z",
-    "lastVerified": "2026-11-05T06:36:19.683Z",
+    "lastChecked": "2026-11-06T20:52:06.672Z",
+    "lastVerified": "2026-11-06T20:52:06.672Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "261a3aac29cae34614b36e6af3f94eeeeebc95898ca5da664a6e3ec1b807efa1",
+    "contentHash": "dac8b4cf237fe8dcefa1d7082ab8cb8691416318976786b275640f7f0a72eaba",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8196891f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "name": "CompVis/stable-diffusion-v1-4",
@@ -4399,22 +4397,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "agent-field-agentfield": {
-    "name": "agentfield",
+    "name": "Agent-Field/agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T12:07:03.228Z",
-    "lastVerified": "2026-11-05T12:07:03.228Z",
+    "lastChecked": "2026-11-06T20:52:13.777Z",
+    "lastVerified": "2026-11-06T20:52:13.777Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "367ff5212288b114c82730fe159593fc8524a249395b70ee4018c6814d938c1f",
+    "contentHash": "e98f3da0a76b72100aceef53916a9047a79517aeee24781251ad78b4169c9d90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "118b90ba"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -10352,9 +10349,9 @@
   "tmolavi-siteprobe": {
     "name": "siteprobe",
     "officialUrl": "https://github.com/tmolavi/siteprobe",
-    "lastChecked": "2026-11-03T16:58:34.844Z",
+    "lastChecked": "2026-11-06T20:52:04.034Z",
     "revisionIdentifier": "c27bffc3",
-    "lastVerified": "2026-11-03T16:58:34.844Z"
+    "lastVerified": "2026-11-06T20:52:04.034Z"
   },
   "yshrsmz-buildkonfig": {
     "name": "BuildKonfig",
