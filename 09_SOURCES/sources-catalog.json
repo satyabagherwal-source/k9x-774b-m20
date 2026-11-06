@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "7dc4e9ca",
+    "sourceVersion": "155fa931",
     "license": "NOASSERTION",
-    "contentHash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
-    "lastHarvestedAt": "2026-11-05T12:58:37.238Z",
+    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
+    "lastHarvestedAt": "2026-11-06T13:13:04.159Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {

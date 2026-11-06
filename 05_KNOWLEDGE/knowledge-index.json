@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T00:02:58.247Z",
+  "last_updated": "2026-11-06T13:13:04.043Z",
   "total_verified_learnings": 1222,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9727,11 +9727,16 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "7dc4e9ca",
-      "content_hash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
+      "source_version": "155fa931",
+      "content_hash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (#5000)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1719,
           "title": "deps: pin plotly.rs fork to plotly/plotly.rs#442 head (full plotly.js 3.7 traces",
@@ -10083,7 +10088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:58:37.145Z",
+      "verified_at": "2026-11-06T13:13:04.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

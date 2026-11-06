@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T00:03:00.927Z",
-    "lastVerified": "2026-11-06T00:03:00.927Z",
+    "lastChecked": "2026-11-06T13:13:06.735Z",
+    "lastVerified": "2026-11-06T13:13:06.735Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -241,22 +241,21 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T23:39:59.949Z",
-    "lastVerified": "2026-11-05T23:39:59.949Z",
+    "lastChecked": "2026-11-06T13:07:59.377Z",
+    "lastVerified": "2026-11-06T13:07:59.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "3c3dec7c6cf0f221120f9f05734c71bc9bde37ee8529e41448e30feb10746172",
+    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7dc4e9ca"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -386,9 +385,9 @@
   "enaqx-awesome-react": {
     "name": "awesome-react",
     "officialUrl": "https://github.com/enaqx/awesome-react",
-    "lastChecked": "2026-11-03T23:59:10.780Z",
+    "lastChecked": "2026-11-06T13:07:45.997Z",
     "revisionIdentifier": "e6fd973e",
-    "lastVerified": "2026-11-03T23:59:10.780Z"
+    "lastVerified": "2026-11-06T13:07:45.997Z"
   },
   "nginx-kubernetes-ingress": {
     "name": "kubernetes-ingress",
@@ -2301,8 +2300,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T19:29:34.179Z",
-    "lastVerified": "2026-11-05T19:29:34.179Z",
+    "lastChecked": "2026-11-06T13:07:51.034Z",
+    "lastVerified": "2026-11-06T13:07:51.035Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2826,12 +2825,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "easegress-io-easegress": {
-    "name": "easegress-io/easegress",
+    "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T08:30:23.353Z",
-    "lastVerified": "2026-11-05T08:30:23.353Z",
+    "lastChecked": "2026-11-06T13:07:48.500Z",
+    "lastVerified": "2026-11-06T13:07:48.500Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-easegress-io-easegress",
@@ -2840,7 +2839,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b8d95290"
   },
   "ontos-ai-knowhere": {
     "name": "knowhere",
@@ -2863,9 +2863,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-05T03:53:18.368Z",
+    "lastChecked": "2026-11-06T13:07:40.983Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-05T03:53:18.368Z"
+    "lastVerified": "2026-11-06T13:07:40.983Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -6711,9 +6711,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-05T07:20:31.881Z",
+    "lastChecked": "2026-11-06T13:07:53.505Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-05T07:20:31.881Z"
+    "lastVerified": "2026-11-06T13:07:53.505Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -9874,9 +9874,9 @@
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
     "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
-    "lastChecked": "2026-11-03T10:52:34.605Z",
+    "lastChecked": "2026-11-06T13:07:43.493Z",
     "revisionIdentifier": "9b22241e56",
-    "lastVerified": "2026-11-03T10:52:34.605Z"
+    "lastVerified": "2026-11-06T13:07:43.493Z"
   },
   "leetcode-mafia-cheetah": {
     "name": "cheetah",

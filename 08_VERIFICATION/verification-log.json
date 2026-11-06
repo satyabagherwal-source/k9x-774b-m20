@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-G3H3",
-    "timestamp": "2026-11-04T20:53:20.151Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "d7a4adf1a516b421fd64881e745abb158c5e96a44c538a92f3bccc04db404e58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-G5GW",
     "timestamp": "2026-11-04T20:53:22.736Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "359c59eaf93e0bd8b9ea6f572d945e16c03574d391aca569fc7ba840d07cf47e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-VW64",
+    "timestamp": "2026-11-06T13:13:04.156Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "5052c260ff4c1a28f06b463f9755aa3dfcad9e9a98e47369ee13a10b521f907d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

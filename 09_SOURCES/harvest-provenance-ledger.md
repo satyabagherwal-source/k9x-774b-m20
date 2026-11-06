@@ -7854,3 +7854,4 @@ Every entry in this ledger must capture:
 | `learn-dom-h-feda7fc6` | `project://colinhacks-zod` | `1.0.0` | `C:\AI-Builder-Brain\07_PROJECT_LEARNING\colinhacks-zod-learnings.md` | 2026-11-06T09:10:08.572Z |
 | `learn-cd-357` | `local_workspace` | `local` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:10.971Z |
 | `learn-dom-h-120d806f` | `project://local_workspace` | `1.0.0` | `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | 2026-11-06T09:10:11.002Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `155fa931` | Multi-dimensional audit evidence | 2026-11-06T13:13:04.159Z |

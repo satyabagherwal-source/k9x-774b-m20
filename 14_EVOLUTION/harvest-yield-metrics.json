@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T00:02:58.332Z",
-  "total_cycles_completed": 7810,
-  "total_learnings_persisted": 7810,
-  "total_rules_promoted": 7452,
+  "last_updated": "2026-11-06T13:13:04.165Z",
+  "total_cycles_completed": 7811,
+  "total_learnings_persisted": 7811,
+  "total_rules_promoted": 7453,
   "history": [
-    {
-      "timestamp": "2026-11-05T11:30:50.799Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T11:30:55.673Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-06T00:02:58.332Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T13:13:04.165Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

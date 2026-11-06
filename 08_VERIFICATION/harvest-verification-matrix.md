@@ -7845,3 +7845,4 @@
 | `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:10:08.572Z` | `colinhacks-zod` | FORENSIC_REPO_COMMIT_EVIDENCE | `VERIFIED` | `DOM-H-FEDA7FC6` [Domain H] | Yes (`b494df04...`) |
 | `CYCLE-2026-11-06-STAGED` | `2026-11-06T09:10:10.970Z` | `local` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-357-deterministic-stream-backpressure-i.md` | Pending |
 | `CYCLE-2026-11-06-PROJ-EVOLVE` | `2026-11-06T09:10:11.002Z` | `local_workspace` | UNIT_TEST_REPRODUCTION | `VERIFIED` | `DOM-H-120D806F` [Domain H] | Yes (`92bff619...`) |
+| `CYCLE-20261106-VW64` | `2026-11-06T13:13:04.156Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5052c260...`) |
