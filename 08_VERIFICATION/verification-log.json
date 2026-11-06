@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261104-GBS3",
-    "timestamp": "2026-11-04T23:13:28.995Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "96b031261148aafc4ceec59e3c2deb1a014ddd9458fd85d49b9bbf032114f3fc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261104-GCBN",
     "timestamp": "2026-11-04T23:13:29.699Z",
     "repository": "tw93/Pake",
@@ -7490,6 +7475,21 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-VNT0",
+    "timestamp": "2026-11-06T19:16:48.324Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

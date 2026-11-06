@@ -7903,3 +7903,4 @@
 | `CYCLE-20261106-D406` | `2026-11-06T19:02:22.854Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26a2a333...`) |
 | `CYCLE-20261106-MJS5` | `2026-11-06T19:09:43.205Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26d4f35a...`) |
 | `CYCLE-20261106-MPTR` | `2026-11-06T19:09:51.039Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b2458236...`) |
+| `CYCLE-20261106-VNT0` | `2026-11-06T19:16:48.324Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7382675...`) |

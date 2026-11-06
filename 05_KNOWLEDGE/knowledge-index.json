@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T19:09:50.948Z",
+  "last_updated": "2026-11-06T19:16:48.250Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6344,11 +6344,16 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "61d935b6",
-      "content_hash": "a383a7edb1ebcc52fd3e40526c90d0500c70128b7957b0e40ce9a5586557db39",
+      "source_version": "c8d8bab5",
+      "content_hash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "chip): prevent label from overflowing close icon (#5169)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1790,
           "title": "portal): replay queued portal operations in order (#5048)",
@@ -6370,7 +6375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:26:10.543Z",
+      "verified_at": "2026-11-06T19:16:48.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -7912,3 +7912,4 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `b8e88959` | Multi-dimensional audit evidence | 2026-11-06T19:02:22.858Z |
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `27b7f518` | Multi-dimensional audit evidence | 2026-11-06T19:09:43.209Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `308b2766` | Multi-dimensional audit evidence | 2026-11-06T19:09:51.043Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `c8d8bab5` | Multi-dimensional audit evidence | 2026-11-06T19:16:48.327Z |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-06T19:09:51.058Z",
-  "total_cycles_completed": 7868,
-  "total_learnings_persisted": 7868,
-  "total_rules_promoted": 7517,
+  "last_updated": "2026-11-06T19:16:48.332Z",
+  "total_cycles_completed": 7869,
+  "total_learnings_persisted": 7869,
+  "total_rules_promoted": 7518,
   "history": [
-    {
-      "timestamp": "2026-11-05T14:22:52.698Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T14:30:06.876Z",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-06T19:09:51.058Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-06T19:16:48.332Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

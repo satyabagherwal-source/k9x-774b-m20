@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "61d935b6",
+    "sourceVersion": "c8d8bab5",
     "license": "MIT",
-    "contentHash": "a383a7edb1ebcc52fd3e40526c90d0500c70128b7957b0e40ce9a5586557db39",
-    "lastHarvestedAt": "2026-11-04T02:26:10.662Z",
+    "contentHash": "f7382675f779e18fe189a474ac8966066cfdd447d1f0802f9f2025bb791713fa",
+    "lastHarvestedAt": "2026-11-06T19:16:48.327Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
