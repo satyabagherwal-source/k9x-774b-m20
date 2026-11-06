@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `7e97594b`  
+> **Source Version**: `85bd085e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:45:27.340Z  
+> **Timestamp**: 2026-11-06T21:21:12.680Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:45:27.332Z  
+> **Harvest Timestamp**: 2026-11-06T21:21:12.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16938 stars
+- **Stars / Engagement**: 16940 stars
 
 ---
 
@@ -1732,1054 +1732,599 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e97594b` (2026-11-05)
-**Commit Message**: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
+### Incident Patch 1: `39bf2b1b` (2026-11-06)
+**Commit Message**: security(deps): bump golang.org/x/net to v0.62.0
 
-Merge stable/v1.40 into main
-
-**File**: `adapters/clients/license/client.go` (added, +133/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,133 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package license
-+
-+import (
-+	"bytes"
-+	"context"
-+	"crypto/ed25519"
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"strings"
-+	"time"
-+
-+	protocol "github.com/weaviate/weaviate/entities/license"
-+)
-+
-+// DefaultServerURL is the production license service.
-+const DefaultServerURL = "https://license.weaviate.io"
-+
-+// Client performs signed verify calls against the license service. It is the
-+// piece Weaviate embeds.
-+type Client struct {
-+	ServerURL   string // defaults to DefaultServerURL
-+	LicenseID   string // from protocol.ParseKey
-+	PrivateKey  ed25519.PrivateKey
-+	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
-+	HTTPClient  *http.Client          // defaults to a 10s-timeout client
-+	UserAgent   string
-+}
-+
-+// NewClient parses a customer license key and returns a client for it.
-+func NewClient(key string, trusted protocol.ServerKeySet) (*Client, error) {
-+	id, priv, err := protocol.ParseKey(key)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if len(trusted) == 0 {
-+		return nil, errors.New("license: no trusted server keys")
-+	}
-+	return &Client{LicenseID: id, PrivateKey: priv, TrustedKeys: trusted}, nil
-+}
-+
-+// Error is a structured error returned by the service.
-+type Error struct {
-+	HTTPStatus int
-+	Code       string `json:"error"`
-+	Message    string `json:"message"`
-+}
-+
-+func (e *Error) Error() string {
-+	return fmt.Sprintf("license: server returned %d %s: %s", e.HTTPStatus, e.Code, e.Message)
-+}
-+
-+// Verify signs a challenge for this node and returns the server's answer.
-+// The response signature is checked against TrustedKeys and the nonce is
-+// checked against the request, so a non-nil result can be trusted.
-+func (c *Client) Verify(ctx context.Context, clusterID, instanceID, weaviateVersion string) (protocol.VerifyResponse, error) {
-+	req := protocol.VerifyRequest{
-+		LicenseID:       c.LicenseID,
-+		ClusterID:       clusterID,
-+		InstanceID:      instanceID,
-+		WeaviateVersion: weaviateVersion,
-+	}
-+	if err := req.Sign(c.PrivateKey); err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	body, err := json.Marshal(req)
-+	if err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+
-+	base := c.ServerURL
-+	if base == "" {
-+		base = DefaultServerURL
-+	}
-+	// A trailing slash on a configured ServerURL must not produce
-+	// "//v1/verify": servers may answer that with a redirect, which would
-+	// turn this POST into a GET.
-+	base = strings.TrimRight(base, "/")
-+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, base+"/v1/verify", bytes.NewReader(body))
-+	if err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	httpReq.Header.Set("Content-Type", "application/json")
-+	httpReq.Header.Set("Accept", "application/json")
-+	if c.UserAgent != "" {
-+		httpReq.Header.Set("User-Agent", c.UserAgent)
-+	}
-+	hc := c.HTTPClient
-+	if hc == nil {
-+		hc = &http.Client{Timeout: 10 * time.Second}
-+	}
-+	res, err := hc.Do(httpReq)
-+	if err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: verify request: %w", err)
-+	}
-+	defer res.Body.Close()
-+	raw, err := io.ReadAll(io.LimitReader(res.Body, 64<<10))
-+	if err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: read response: %w", err)
-+	}
-+	if res.StatusCode != http.StatusOK {
-+		e := &Error{HTTPStatus: res.StatusCode}
-+		if json.Unmarshal(raw, e) != nil || e.Code == "" {
-+			e.Code = "http_error"
-+			e.Message = http.StatusText(res.StatusCode)
-+		}
-+		return protocol.VerifyResponse{}, e
-+	}
-+	var resp protocol.VerifyResponse
-+	if err := json.Unmarshal(raw, &resp); err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: decode response: %w", err)
-+	}
-+	if err := c.TrustedKeys.Verify(resp); err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	if !resp.Matches(req) {
-+		return protocol.VerifyResponse{}, errors.New("license: response does not match request")
-+	}
-+	return resp, nil
-+}
+@@ -98,7 +98,7 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.44.0
+ 	go.opentelemetry.io/otel/trace v1.44.0
+ 	go.uber.org/automaxprocs v1.6.0
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+ 	golang.org/x/sync v0.24.0
+ 	golang.org/x/sys v0.49.0
 ```
 
-**File**: `adapters/clients/license/client_test.go` (added, +196/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,196 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package license
-+
-+import (
-+	"context"
-+	"crypto/ed25519"
-+	"crypto/rand"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"reflect"
-+	"testing"
-+	"time"
-+
-+	"github.com/weaviate/weaviate/entities/license"
-+)
-+
-+func TestNewClientRejectsEmptyTrustedKeys(t *testing.T) {
-+	lic, err := license.Generate()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	tests := []struct {
-+		name    string
-+		trusted license.ServerKeySet
-+	}{
-+		{name: "nil", trusted: nil},
-+		{name: "empty", trusted: license.ServerKeySet{}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			client, err := NewClient(lic.Key(), tt.trusted)
-+			if err == nil {
-+				t.Fatal("NewClient() accepted an empty trusted-key set")
-+			}
-+			if client != nil {
-+				t.Fatal("NewClient() returned a client with an empty trusted-key set")
-+			}
-+		})
-+	}
-+}
-+
-+func TestVerifyToleratesTrailingSlashServerURL(t *testing.T) {
-+	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
-+	key := license.ServerKey{ID: "k", PrivateKey: priv}
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.URL.Path != "/v1/verify" {
-+			t.Errorf("unexpected request path %q", r.URL.Path)
-+		}
-+		var req license.VerifyRequest
-+		json.NewDecoder(r.Body).Decode(&req)
-+		now := time.Now().UTC().Truncate(time.Second)
-+		resp := license.VerifyResponse{
-+			LicenseID: req.LicenseID, Status: license.StatusValid,
-+			ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
-+		}
-+		key.Sign(&resp)
-+		json.NewEncoder(w).Encode(resp)
-+	}))
-+	defer srv.Close()
-+
-+	lic, _ := license.Generate()
-+	client, err := NewClient(lic.Key(), license.ServerKeySet{"k": pub})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	client.ServerURL = srv.URL + "/"
-+	resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if resp.Status != license.StatusValid {
-+		t.Fatalf("unexpected status %q", resp.Status)
-+	}
-+}
-+
-+// TestVerifyTrustChecks covers the two checks that make an answer
-+// trustworthy: the server signature against the trusted key set, and the
-+// echo of this request's license ID and nonce. Every bad row must produce an
-+// error and a zero response; each row fails if its corresponding check is
-+// removed.
-+func TestVerifyTrustChecks(t *testing.T) {
-+	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
-+	_, roguePriv, _ := ed25519.GenerateKey(rand.Reader)
-+
-+	lic, err := license.Generate()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	trusted := license.ServerKeySet{"k": pub}
-+
-+	cases := []struct {
-+		name             string
-+		signKey          ed25519.PrivateKey
-+		mutateBeforeSign func(*license.VerifyResponse) // signature stays valid
-+		mutateAfterSign  func(*license.VerifyResponse) // breaks the signature
-+		wantErr          bool
-+	}{
-+		{"valid answer", priv, nil, nil, false},
-+		{"signed by an untrusted key", roguePriv, nil, nil, true},
-+		{"different nonce, valid signature", priv, func(r *license.VerifyResponse) { r.Nonce = "other-nonce" }, nil, true},
-+		{"different license id, valid signature", priv, func(r *license.VerifyResponse) { r.LicenseID = "lic_01ARZ3NDEKTSV4RRFFQ69G5FAV" }, nil, true},
-+		{"field tampered after signing", priv, nil, func(r *license.VerifyResponse) { r.Status = license.StatusRevoked }, true},
-+	}
-+	for _, tt := range cases {
-+		t.Run(tt.name, func(t *testing.T) {
-+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				var req license.VerifyRequest
-+				json.NewDecoder(r.Body).Decode(&req)
-+				now := time.Now().UTC().Truncate(time.Second)
-+				resp := license.VerifyResponse{
-+					LicenseID: req.LicenseID, Status: license.StatusValid,
-+					ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
-+				}
-+				if tt.mutateBeforeSign != nil {
-+					tt.mutateBeforeSign(&resp)
-+				}
-+				key := license.ServerKey{ID: "k", PrivateKey: tt.signKey}
-+				key.Sign(&resp)
-+				if tt.mutateAfterSign != nil {
-+					tt.mutateAfterSign(&resp)
-+				}
-+				json.NewEncoder(w).Encode(resp)
-+			}))
-+			defer srv.Close()
-+
-+			client, err := NewClient(lic.Key(), trusted)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			client.ServerURL = srv.URL
-+			resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
-+			if tt.wantErr {
-+				if err == nil {
-+					t.Fatal("expected an error")
-+				}
-+				if !reflect.DeepEqual(resp, license.VerifyResponse{}) {
-+					t.Fatalf("expected a zero response on error, got %+v", resp)
-+				}
-+				return
-+			}
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if 
+@@ -802,8 +802,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.1.0/go.mod h1:Cx3nUiGt4eDBEyega/BKRp+/AlGL8hYe7U9odMt2Cco=
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
 ```
 
-**File**: `adapters/handlers/grpc/v1/batch/handler_test.go` (modified, +28/-3)
+**File**: `test/acceptance_with_go_client/go.mod` (modified, +1/-1)
 ```diff
-@@ -24,12 +24,13 @@ import (
- 	restCtx "github.com/weaviate/weaviate/adapters/handlers/rest/context"
- 	"github.com/weaviate/weaviate/entities/models"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
- )
- 
--// Drives BatchObjects with a request carrying no objects, which returns before
--// the batch manager is touched. The namespace is recorded before class
--// resolution and authorization, so a rejected batch is still attributed.
-+// Drives BatchObjects with requests that return before the batch manager is
-+// touched. The namespace is recorded before class resolution and authorization,
-+// so a rejected batch is still attributed.
- // docs/metrics.md lists the residuals.
- func TestHandler_BatchObjects(t *testing.T) {
- 	t.Run("records the caller's namespace in the slot", func(t *testing.T) {
-@@ -87,4 +88,28 @@ func TestHandler_BatchObjects(t *testing.T) {
- 		require.Error(t, err)
- 		assert.Empty(t, slot.Namespace)
- 	})
-+
-+	t.Run("every object with an empty collection fails alone", func(t *testing.T) {
-+		logger, _ := test.NewNullLogger()
-+		authenticator := auth.NewHandler(false, func(string, []string) (*models.Principal, error) {
-+			return &models.Principal{Username: "ns_a:alice", Namespace: "ns_a"}, nil
-+		})
-+		// The nil authorizer, batch manager and schema manager panic if the handler reaches them.
-+		h := NewHandler(nil, nil, logger, authenticator, nil, wlnamespaces.NewPrefixing())
-+
-+		ctx, _ := restCtx.WithBatchNamespaceSlot(context.Background())
-+		reply, err := h.BatchObjects(ctx, &pb.BatchObjectsRequest{Objects: []*pb.BatchObject{
-+			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a62"},
-+			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a63"},
-+		}})
-+
-+		require.NoError(t, err)
-+		require.Len(t, reply.Errors, 2)
-+		var indexes []int32
-+		for _, batchErr := range reply.Errors {
-+			assert.Contains(t, batchErr.Error, objects.ErrEmptyClass.Error())
-+			indexes = append(indexes, batchErr.Index)
-+		}
-+		assert.ElementsMatch(t, []int32{0, 1}, indexes)
-+	})
- }
+@@ -222,7 +222,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
 ```
 
-**File**: `adapters/handlers/grpc/v1/batch/parse.go` (modified, +8/-0)
+**File**: `test/acceptance_with_go_client/go.sum` (modified, +2/-2)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
- )
- 
-@@ -45,6 +46,13 @@ func BatchObjectsFromProto(req *pb.BatchObjectsRequest, authorizedGetClass func(
- 		var props map[string]interface{}
- 
- 		collection := schema.UppercaseClassName(obj.Collection)
-+		// An empty collection fails this object alone, before anything is parsed.
-+		// Resolving it would qualify it to "<namespace>:" for a namespaced caller,
-+		// and authorizing it would check every collection for anyone else.
-+		if collection == "" {
-+			objectErrors[i] = objects.ErrEmptyClass
-+			continue
-+		}
- 		resolved, class, err := authorizedGetClass(collection, obj.Tenant)
- 		if err != nil {
- 			objectErrors[i] = err
+@@ -628,8 +628,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.1.0/go.mod h1:Cx3nUiGt4eDBEyega/BKRp+/AlGL8hYe7U9odMt2Cco=
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
 ```
 
-**File**: `adapters/handlers/grpc/v1/batch/parse_test.go` (modified, +31/-12)
+**File**: `test/benchmark_bm25/go.mod` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
- 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
- 	"google.golang.org/protobuf/encoding/protojson"
-@@ -557,21 +558,39 @@ func TestGRPCBatchRequest_MultiTargetNamespace(t *testing.T) {
- 	})
- }
- 
--// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins the auto-schema branch
--// (class not yet in schema): the parsed object must carry the resolver's
--// qualified name, not the bare request collection.
-+// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins that an object whose
-+// class is not yet in schema carries the resolver's qualified name, and that an
-+// empty collection fails that object alone without reaching the resolver.
- func TestGRPCBatchRequest_AutoSchemaQualifiesNamespace(t *testing.T) {
--	getClass := func(class, shard string) (string, *models.Class, error) {
--		// resolver qualifies the short name; class is nil (auto-schema creates it).
--		return "ns1:Movies", nil, nil
--	}
--	req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
-+	t.Run("short name", func(t *testing.T) {
-+		getClass := func(class, shard string) (string, *models.Class, error) {
-+			// The resolver qualifies the short name, and the class is nil because auto-schema creates it.
-+			return "ns1:" + class, nil, nil
-+		}
-+		req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
- 
--	out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
-+		out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
- 
--	require.Len(t, batchErrors, 0)
--	require.Len(t, out, 1)
--	require.Equal(t, "ns1:Movies", out[0].Class)
-+		require.Len(t, batchErrors, 0)
-+		require.Len(t, out, 1)
-+		require.Equal(t, "ns1:Movies", out[0].Class)
-+	})
-+
-+	t.Run("empty name beside a short name", func(t *testing.T) {
-+		getClass := func(class, shard string) (string, *models.Class, error) {
-+			require.NotEmpty(t, class, "resolver called with an empty collection")
-+			return "ns1:" + class, nil, nil
-+		}
-+		req := []*pb.BatchObject{{Collection: "", Uuid: UUID4}, {Collection: "Movies", Uuid: UUID4}}
-+
-+		out, originalIndex, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
-+
-+		require.Len(t, batchErrors, 1)
-+		require.ErrorIs(t, batchErrors[0], objects.ErrEmptyClass)
-+		require.Len(t, out, 1)
-+		require.Equal(t, "ns1:Movies", out[0].Class)
-+		require.Equal(t, map[int]int{0: 1}, originalIndex)
-+	})
- }
- 
- // The worker re-sends the same pointers on retry; a parse that rewrites the
+@@ -97,7 +97,7 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.3 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
 ```
 
-**File**: `adapters/handlers/rest/authz/handlers_authz_alias_pattern_test.go` (modified, +57/-31)
+**File**: `test/benchmark_bm25/go.sum` (modified, +2/-2)
 ```diff
-@@ -29,37 +29,63 @@ import (
- 	"github.com/weaviate/weaviate/usecases/config"
- )
- 
--// TestAliasPatternCheckedAsStored checks that create and add refuse an alias
--// pattern that stops compiling once conv uppercases it, and checkLookup doesn't.
--func TestAliasPatternCheckedAsStored(t *testing.T) {
--	perm := &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}}
--	wantErr := "'[[:alpha:]]+' is not a valid alias name"
--	require.NoError(t, validatePermissions(false, checkLookup, perm))
--
--	t.Run("create role", func(t *testing.T) {
--		logger, _ := test.NewNullLogger()
--		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
--		res := h.createRole(authz.CreateRoleParams{
--			HTTPRequest: req,
--			Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{perm}},
--		}, &models.Principal{Username: "user1"})
--		parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
--		require.True(t, ok, "got %T", res)
--		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
--	})
--
--	t.Run("add permissions", func(t *testing.T) {
--		logger, _ := test.NewNullLogger()
--		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
--		res := h.addPermissions(authz.AddPermissionsParams{
--			ID:          "someRole",
--			HTTPRequest: req,
--			Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{perm}},
--		}, &models.Principal{Username: "user1"})
--		parsed, ok := res.(*authz.AddPermissionsBadRequest)
--		require.True(t, ok, "got %T", res)
--		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
--	})
-+// TestPatternCheckedAsStored checks that create and add refuse a pattern that
-+// stops compiling once conv stores it, and checkLookup doesn't, so a row already
-+// stored stays removable.
-+func TestPatternCheckedAsStored(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		perm    *models.Permission
-+		wantErr string
-+	}{
-+		{
-+			name:    "alias uppercased",
-+			perm:    &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}},
-+			wantErr: "'[[:alpha:]]+' is not a valid alias name",
-+		},
-+		{
-+			// conv stores X|\Q as (X|\Q), and \Q quotes the closing ')'.
-+			name:    "alternation wrapped in a group",
-+			perm:    &models.Permission{Action: String(authorization.ReadData), Data: &models.PermissionData{Collection: String(`X|\Q`)}},
-+			wantErr: "is not a valid pattern: error parsing regexp: missing closing )",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			require.NoError(t, validatePermissions(false, checkLookup, tt.perm))
-+
-+			t.Run("create role", func(t *testing.T) {
-+				logger, _ := test.NewNullLogger()
-+				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
-+				res := h.createRole(authz.CreateRoleParams{
-+					HTTPRequest: req,
-+					Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{tt.perm}},
-+				}, &models.Principal{Username: "user1"})
-+				parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
-+				require.True(t, ok, "got %T", res)
-+				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
-+			})
-+
-+			t.Run("add permissions", func(t *testing.T) {
-+				logger, _ := test.NewNullLogger()
-+				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
-+				res := h.addPermissions(authz.AddPermissionsParams{
-+					ID:          "someRole",
-+					HTTPRequest: req,
-+					Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{tt.perm}},
-+				}, &models.Principal{Username: "user1"})
-+				parsed, ok := res.(*authz.AddPermissionsBadRequest)
-+				require.True(t, ok, "got %T", res)
-+				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
-+			})
-+		})
-+	}
-+}
-+
-+// TestValidateStorablePoliciesBraceRewrite checks that the stored-form compile
-+// rewrites "{...}" as KeyMatch5 does, so a target the matcher accepts is not refused.
-+func TestValidateStorablePoliciesBraceRewrite(t *testing.T) {
-+	require.NoError(t, validateStorablePolicies([]authorization.Policy{{Resource: "users/x{1001}"}}))
- }
- 
- // TestValidatePermissionsAliasRule checks that create and add apply the
-```
-
-**File**: `adapters/handlers/rest/authz/validation.go` (modified, +10/-5)
-```diff
-@@ -34,9 +34,8 @@ const maxTargetLength = 256
- // validateRegexTarget rejects a permission target that would not survive being
- // stored as a casbin resource pattern: it is over-long, contains a '/' (which
- // shifts the segment boundaries used on read-back), or does not compile as a
--// regex (which panics the matcher at enforce time). It reproduces exactly what
--// the matcher compiles — the '*' wildcard expanded and KeyMatch5's "{...}"
--// rewrite applied — so constructs the rewrite would break (e.g. "\p{L}",
-+// regex. It compiles the target with the '*' wildcard expanded and KeyMatch5's
-+// "{...}" rewrite applied, so constructs the rewrite would break (e.g. "\p{L}",
- // "\x{263a}") are caught here, not at enforce.
- func validateRegexTarget(field, value string) error {
- 	if len(value) > maxTargetLength {
-@@ -90,8 +89,8 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
- 		}
- 		// aliasName checks the pattern as conv stores it, uppercased, against the
- 		// class-name rule. That refuses "ålias.*", which matches no alias, and
--		// "[[:alpha:]]", stored as "[[:Alpha:]]", which panics casbin on every alias
--		// check. checkLookup skips the rule so remove can drop such stored rows.
-+		// "[[:alpha:]]", stored as "[[:Alpha:]]", which does not compile. checkLookup
-+		// skips the rule so remove can drop such stored rows.
- 		aliasName := func(name string) {
- 			if check == checkLookup {
- 				return
-@@ -170,11 +169,17 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
- // validateStorablePolicies rejects a permission whose resource would corrupt the
- // policy file. It skips the length check because a resource joins several
- // targets, and validatePermissions already caps each one at maxTargetLength.
-+// It also compiles each resource as KeyMatch5 does, since conv stores a target
-+// such as "X|\Q" as "(X|\Q)", and there "\Q" quotes the closing ')'.
- func validateStorablePolicies(policies []authorization.Policy) error {
- 	for _, p := range policies {
- 		if err := conv.ValidateStorableCharacters(p.Resource); err != nil {
- 			return fmt.Errorf("permission %q %w", p.Resource, err)
- 		}
-+		pattern := "^" + keyMatch5BraceRe.ReplaceAllString(strings.ReplaceAll(p.Resource, "/*", "/.*"), "[^/]+") + "$"
-+		if _, err := regexp.Compile(pattern); err != nil {
-+			return fmt.Errorf("permission %q is not a valid pattern: %w", p.Resource, err)
-+		}
- 	}
- 	return nil
- }
-```
-
-**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +8/-8)
-```diff
-@@ -1866,13 +1866,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -2007,13 +2007,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No restore of this backup was started at this backend, bucket and path.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -14690,13 +14690,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -14831,13 +14831,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No restore of this backup was started at this backend, bucket and path.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
+@@ -334,8 +334,8 @@ golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73r
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200625001655-4c5254603344/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
 ```
 
 ---
 
-### Incident Patch 2: `9e219cb0` (2026-11-05)
-**Commit Message**: Merge pull request #13773 from weaviate/vector-index-update-queue-rewind
+### Incident Patch 2: `c59cf436` (2026-11-05)
+**Commit Message**: Merge pull request #13796 from weaviate/fix/backup-dedupe-default-budget
 
-vector index update: a queue can rewind to where it started retaining
+backup: lower the dedupe convergence default to 15s and make it configurable
 
-**File**: `adapters/repos/db/queue/queue.go` (modified, +233/-55)
+**File**: `adapters/handlers/rest/configure_api.go` (modified, +5/-1)
 ```diff
-@@ -37,6 +37,8 @@ import (
+@@ -1741,7 +1741,11 @@ func startBackupScheduler(appState *state.State) *backup.Scheduler {
+ 	dedupeMode := dedupeModeFor(appState.ServerConfig.Config)
+ 	logUnlicensedDedupe(appState.Logger, dedupeMode)
+ 	dedupePlanner, err := dedupePlannerFor(dedupeMode, func() (backup.DedupePlanner, error) {
+-		p, err := backupdedupe.New(backupdedupe.Config{Checkpointer: appState.DB, Logger: appState.Logger})
++		p, err := backupdedupe.New(backupdedupe.Config{
++			Checkpointer:  appState.DB,
++			Logger:        appState.Logger,
++			DefaultBudget: appState.ServerConfig.Config.Backup.DedupeConvergenceTimeout.Get,
++		})
+ 		if err != nil {
+ 			return nil, err
+ 		}
+```
+
+**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +4/-4)
+```diff
+@@ -8337,9 +8337,9 @@ func init() {
+           "type": "string"
+         },
+         "dedupeConvergenceTimeoutSeconds": {
+-          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
++          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
+           "type": "integer",
+-          "default": 60,
++          "default": 15,
+           "maximum": 600,
+           "minimum": 1,
+           "x-nullable": false
+@@ -21176,9 +21176,9 @@ func init() {
+           "type": "string"
+         },
+         "dedupeConvergenceTimeoutSeconds": {
+-          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
++          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
+           "type": "integer",
+-          "default": 60,
++          "default": 15,
+           "maximum": 600,
+           "minimum": 1,
+           "x-nullable": false
+```
+
+**File**: `entities/models/backup_config.go` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ type BackupConfig struct {
+ 	// Path or key within the bucket.
+ 	Path string `json:"Path,omitempty"`
  
- 	"github.com/pkg/errors"
- 	"github.com/sirupsen/logrus"
+-	// How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.
++	// How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.
+ 	// Maximum: 600
+ 	// Minimum: 1
+ 	DedupeConvergenceTimeoutSeconds int64 `json:"dedupeConvergenceTimeoutSeconds,omitempty"`
+```
+
+**File**: `openapi-specs/schema.json` (modified, +2/-2)
+```diff
+@@ -2264,9 +2264,9 @@
+           "x-nullable": false
+         },
+         "dedupeConvergenceTimeoutSeconds": {
+-          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
++          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
+           "type": "integer",
+-          "default": 60,
++          "default": 15,
+           "minimum": 1,
+           "maximum": 600,
+           "x-nullable": false
+```
+
+**File**: `test/acceptance/backup_dedupe_replicas/dedupe_default_budget_test.go` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+	"github.com/weaviate/weaviate/entities/diskio"
- )
++package backup_dedupe_replicas_test
++
++import (
++	"context"
++	"fmt"
++	"io"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/test/docker"
++	"github.com/weaviate/weaviate/test/helper"
++)
++
++func TestBackupDedupeDefaultBudget(t *testing.T) {
++	const className = "DefaultBudgetArticles"
++	cases := []struct {
++		name          string
++		env           string
++		requestBudget int64
++		wantBudget    string
++	}{
++		{name: "built-in default", wantBudget: "15s"},
++		{name: "env sets the default", env: "7s", wantBudget: "7s"},
++		{name: "request overrides the env default", env: "7s", requestBudget: 9, wantBudget: "9s"},
++	}
++	for i, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx := context.Background()
++			builder := docker.New().
++				WithBackendFilesystem().
++				WithWeaviate().
++				WithWeaviateEnv("BACKUP_DEDUPE_ENABLED", "true").
++				WithWeaviateLicense()
++			if tc.env != "" {
++				builder = builder.WithWeaviateEnv("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT", tc.env)
++			}
++			compose, err := builder.Start(ctx)
++			require.NoError(t, err)
++			defer func() {
++				require.NoError(t, compose.Terminate(ctx))
++			}()
++
++			helper.SetupClient(compose.GetWeaviate().URI())
++			defer helper.ResetClient()
++			helper.CreateClass(t, &models.Class{Class: className, Vectorizer: "none"})
++
++			cfg := helper.DefaultBackupConfig()
++			cfg.DedupeReplicas = true
++			cfg.DedupeConvergenceTimeoutSeconds = tc.requestBudget
++			backupID := fmt.Sprintf("default-budget-%d", i)
++			resp, err := helper.CreateBackup(t, cfg, className, "filesystem", backupID)
++			require.NoError(t, err)
++			require.NotNil(t, resp.Payload)
++
++			needle := fmt.Sprintf(`"budget":"%s"`, tc.wantBudget)
++			require.EventuallyWithT(t, func(ct *assert.CollectT) {
++				logs, err := compose.GetWeaviate().Container().Logs(ctx)
++				require.NoError(ct, err)
++				buf, err := io.ReadAll(logs)
++				if cerr := logs.Close(); cerr != nil {
++					t.Logf("close logs: %v", cerr)
++				}
++				require.NoError(ct, err)
++				require.Contains(ct, string(buf), needle)
++			}, time.Minute, time.Second)
++		})
++	}
++}
+```
+
+**File**: `usecases/config/config_handler.go` (modified, +13/-0)
+```diff
+@@ -857,6 +857,15 @@ const DefaultBackupSplitFileSize = 50 * 1024 * 1024 * 1024 // 50GB
+ // DefaultBackupMaxIndividualFiles is the default number of files per shard targeted to get their own chunk
+ const DefaultBackupMaxIndividualFiles = 100
  
- const (
-@@ -712,14 +714,26 @@ func (q *DiskQueue) EnableMaintenanceMode() {
- // tombstone files and their corresponding chunk files left from the freeze
- // period, unless a retention still keeps them.
- func (q *DiskQueue) DisableMaintenanceMode() error {
-+	tombstones, err := q.endMaintenanceMode()
-+	if err != nil {
++const (
++	// DefaultBackupDedupeConvergenceTimeout keeps planning, with its 10s cutoff lead and hard-stop slack, under the server's default 60s write timeout.
++	DefaultBackupDedupeConvergenceTimeout = 15 * time.Second
++	// MinBackupDedupeConvergenceTimeout mirrors the API minimum of dedupeConvergenceTimeoutSeconds.
++	MinBackupDedupeConvergenceTimeout = time.Second
++	// MaxBackupDedupeConvergenceTimeout mirrors the API maximum of dedupeConvergenceTimeoutSeconds.
++	MaxBackupDedupeConvergenceTimeout = 600 * time.Second
++)
++
+ // Backup contains backup-related configuration
+ type Backup struct {
+ 	MinChunkSize    int64 `json:"min_chunk_size" yaml:"min_chunk_size"`
+@@ -871,6 +880,10 @@ type Backup struct {
+ 	// Env: BACKUP_MAX_INDIVIDUAL_FILES, runtime config: backup_max_individual_files.
+ 	MaxIndividualFiles *runtime.DynamicValue[int] `json:"max_individual_files" yaml:"max_individual_files"`
+ 
++	// DedupeConvergenceTimeout bounds a dedupeReplicas create's convergence wait when the request sets none.
++	// Env: BACKUP_DEDUPE_CONVERGENCE_TIMEOUT, runtime config: backup_dedupe_convergence_timeout.
++	DedupeConvergenceTimeout *runtime.DynamicValue[time.Duration] `json:"dedupe_convergence_timeout" yaml:"dedupe_convergence_timeout"`
++
+ 	// SkipAccessCheck disables the write+delete probe the backup client runs on
+ 	// initialize, deferring write/permission errors to backup time. Use it for
+ 	// least-privilege credentials that can write but lack DeleteObject.
+```
+
+**File**: `usecases/config/environment.go` (modified, +14/-0)
+```diff
+@@ -830,6 +830,13 @@ func FromEnv(config *Config) error {
+ 		return err
+ 	}
+ 
++	if err := parser.ParseDynamicDurationWithValidation("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT",
++		DefaultBackupDedupeConvergenceTimeout,
++		validateBackupDedupeConvergenceTimeout,
++		func(val *configRuntime.DynamicValue[time.Duration]) { config.Backup.DedupeConvergenceTimeout = val }); err != nil {
 +		return err
 +	}
-+	// without rmLock, as in ReleaseRetention
-+	q.logRemoveProcessedChunks(tombstones)
++
+ 	if entcfg.Enabled(os.Getenv("BACKUP_SKIP_ACCESS_CHECK")) {
+ 		config.Backup.SkipAccessCheck = true
+ 	}
+@@ -2627,3 +2634,10 @@ func validateBackupGCSConnPool(val int, setting string) error {
+ 	}
+ 	return nil
+ }
++
++func validateBackupDedupeConvergenceTimeout(val time.Duration) error {
++	if val < MinBackupDedupeConvergenceTimeout || val > MaxBackupDedupeConvergenceTimeout {
++		return fmt.Errorf("duration between %s and %s expected, got %s", MinBackupDedupeConvergenceTimeout, MaxBackupDedupeConvergenceTimeout, val)
++	}
 +	return nil
 +}
-+
-+// endMaintenanceMode turns maintenance mode off and lists the tombstones of
-+// the chunks nothing keeps anymore.
-+func (q *DiskQueue) endMaintenanceMode() ([]string, error) {
- 	q.rmLock.Lock()
- 	defer q.rmLock.Unlock()
- 
- 	q.maintenanceMode.Store(false)
- 	if q.retained {
--		return q.cleanupProcessedChunksBefore(q.retainedFrom)
-+		return q.processedChunks(q.retainedFrom)
- 	}
--	return q.cleanupProcessedChunks()
-+	return q.processedChunks(math.MaxInt64)
- }
- 
- // keepsProcessed reports whether a processed chunk is kept rather than
-@@ -728,93 +742,221 @@ func (q *DiskQueue) keepsProcessed() bool {
- 	return q.maintenanceMode.Load() || q.retained
- }
- 
--// Retain keeps every chunk from the returned mark on, processed or not,
--// until ReleaseRetention: a replacement index replays them while the current
--// consumer carries on. Processed chunks are kept as a backup keeps them,
--// behind a .processed tombstone, so a restart deletes them: a replacement is
--// never resumed after one.
--//
--// The mark is the path of the first chunk to replay, and every chunk named
--// at or after it replays: the oldest chunk not processed yet, or on a queue
--// with none a name reserved below every chunk created next. The file may not
--// exist yet. Chunks a backup kept from before the mark go when the backup
--// ends. A queue is retained once at a time.
--func (q *DiskQueue) Retain() (mark string, err error) {
-+// Retain keeps everything queued from now on or not processed yet, processed
-+// or not, until ReleaseRetention: a replacement index replays it, see Rewind,
-+// while the current consumer carries on. Processed chunks are kept as a backup
-+// keeps them, behind a .processed tombstone, so a restart deletes them unless
-+// Rewind runs before Init. Chunks a backup kept from before Retain go when the
-+// backup ends. A queue is retained once at a time.
-+func (q *DiskQueue) Retain() error {
- 	q.rmLock.Lock()
- 	defer q.rmLock.Unlock()
- 
- 	if q.r == nil || q.w == nil {
--		return "", errors.New("queue not initialized")
-+		return errors.New("queue not initialized")
- 	}
- 	if q.retained {
--		return "", errors.New("queue already retained")
-+		return errors.New("queue already retained")
- 	}
- 
- 	// under the writer's lock, so no chunk is created in between
- 	q.m.Lock()
- 	defer q.m.Unlock()
--	mark = q.r.firstUnprocessed()
--	if mark == "" && q.w.f != nil {
--		mark = q.w.f.Name()
-+	first := q.r.firstUnprocessed()
-+	if first == "" && q.w.f != nil {
-+		first = q.w.f.Name()
- 	}
--	if mark == "" {
--		mark = chunkPath(q.dir, q.w.nextSeq())
-+	if first == "" {
-+		first = chunkPath(q.dir, q.w.nextSeq())
- 	}
--	from, ok := chunkSeq(mark)
-+	from, ok := chunkSeq(first)
- 	if !ok {
--		return "", fmt.Errorf("unexpected chunk name %q", mark)
-+		return fmt.Errorf("unexpected chunk name %q", first)
- 	}
- 	q.retained = true
- 	q.retainedFrom = from
--	return mark, nil
-+	return nil
-+}
-+
-+// Rewind serves every kept chunk again, in order, ahead of what is still
-+// queued. A running queue must be retained, not held by a backup, and paused
-+// with no batch left: a batch finishing after the rewind would tombstone its
-+// chunk out of the replay. On a queue not initialized yet it only
-+// makes the kept chunks ordinary ones for Init, which would delete them
-+// otherwise; that is how a restart resumes one. Doing it twice replays at most
-+// what a backup kept in between. The retention stays until ReleaseRetention,
-+// which must not overlap it: a release deleting would take what it re-queues,
-+// so the retention's one owner calls them in sequence.
-+func (q *DiskQueue) Rewind() error {
-+	// not q.m around the disk work: Push and the scheduler's Size need it
-+	q.rmLock.Lock()
-+	defer q.rmLock.Unlock()
-+
-+	live := q.r != nil
-+	if live && !q.retained {
-+		return errors.New("queue not retained")
-+	}
-+	if live && !q.scheduler.IsQueueIdle(q.id) {
-+		return errors.New("queue not paused, or a batch is still running")
-+	}
-+	// a backup may be copying the chunks this would move or re-queue
-+	if live && q.maintenanceMode.Load() {
-+		return errors.New("queue in maintenance mode")
-+	}
-+
-+	entries, err := os.ReadDir(q.dir)
-+	if err != nil {
-+		if stderrors.Is(err, fs.ErrNotExist) {
-+			return nil
-+		}
-+		return errors.Wrap(err, "failed to read directory during rewind")
-+	}
-+
-+	var refs []chunkRef
-+	var errs []error
-+	for _, entry := range entries {
-+		if !processedChunkFilePattern.MatchString(entry.Name()) {
-+	
 ```
 
-**File**: `adapters/repos/db/queue/queue_test.go` (modified, +477/-29)
+**File**: `usecases/config/environment_test.go` (modified, +36/-0)
 ```diff
-@@ -24,6 +24,7 @@ import (
- 	"path/filepath"
- 	"runtime/debug"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -2338,6 +2339,11 @@ func chunksOf(t *testing.T, q *DiskQueue) (chunks []string, tombstoned map[strin
- 	return chunks, tombstoned
+@@ -3099,3 +3099,39 @@ func TestEnvironmentReindexVectorDimensions(t *testing.T) {
+ 		})
+ 	}
  }
- 
-+// retainedStart is the path of the first chunk q's retention keeps.
-+func retainedStart(q *DiskQueue) string {
-+	return chunkPath(q.dir, q.retainedFrom)
-+}
 +
- // processNext dequeues the next batch and marks it done.
- func processNext(t *testing.T, q *DiskQueue) {
- 	t.Helper()
-@@ -2347,7 +2353,7 @@ func processNext(t *testing.T, q *DiskQueue) {
- 	batch.Done()
- }
- 
--// A retention keeps every processed chunk from its mark on, while the
-+// A retention keeps every processed chunk from where it started, while the
- // consumer moves past it, and its release deletes them.
- func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
- 	s := makeScheduler(t)
-@@ -2357,9 +2363,9 @@ func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
- 	chunks, _ := chunksOf(t, q)
- 	require.Len(t, chunks, 3)
- 
--	mark, err := q.Retain()
-+	err := q.Retain()
- 	require.NoError(t, err)
--	assert.Equal(t, chunks[0], mark)
-+	assert.Equal(t, chunks[0], retainedStart(q))
- 
- 	processNext(t, q)
- 	processNext(t, q)
-@@ -2392,7 +2398,7 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
- 		pushMany(t, q, 1, 1, 2, 3, 4)
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 2)
--		_, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		q.EnableMaintenanceMode()
- 		processNext(t, q)
-@@ -2422,9 +2428,9 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
- 	})
- }
- 
--// The mark is the oldest chunk not processed when the retention starts, or
-+// A retention starts at the oldest chunk not processed yet, or
- // the next chunk the queue creates.
--func TestRetention_Mark(t *testing.T) {
-+func TestRetention_Start(t *testing.T) {
- 	t.Run("the oldest chunk not processed yet", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
-@@ -2433,9 +2439,9 @@ func TestRetention_Mark(t *testing.T) {
- 		require.Len(t, chunks, 3)
- 		processNext(t, q)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		assert.Equal(t, chunks[1], mark)
-+		assert.Equal(t, chunks[1], retainedStart(q))
- 	})
- 
- 	t.Run("the chunk being written", func(t *testing.T) {
-@@ -2445,12 +2451,12 @@ func TestRetention_Mark(t *testing.T) {
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 1)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		assert.Equal(t, chunks[0], mark)
-+		assert.Equal(t, chunks[0], retainedStart(q))
- 	})
- 
--	t.Run("an empty queue marks the next chunk name", func(t *testing.T) {
-+	t.Run("an empty queue starts at the next chunk name", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
- 		pushMany(t, q, 1, 1, 2, 3, 4)
-@@ -2460,12 +2466,12 @@ func TestRetention_Mark(t *testing.T) {
- 		chunks, _ := chunksOf(t, q)
- 		require.Empty(t, chunks)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		pushMany(t, q, 1, 5, 6, 7, 8)
- 		chunks, _ = chunksOf(t, q)
- 		require.Len(t, chunks, 2)
--		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[0]),
-+		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[0]),
- 			"every chunk created after Retain replays")
- 	})
- 
-@@ -2481,26 +2487,26 @@ func TestRetention_Mark(t *testing.T) {
- 		require.Len(t, kept, 2)
- 		require.Len(t, tombstoned, 2, "precondition: the queue is empty but a backup keeps its chunks")
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		pushMany(t, q, 1, 5)
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 3)
- 		for _, c := range kept {
--			assert.Less(t, filepath.Base(c), filepath.Base(mark), "a chunk processed before Retain")
-+			assert.Less(t, filepath.Base(c), filepath.Base(retainedStart(q)), "a chunk processed before Retain")
- 		}
--		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[2]), "a chunk created after Retain")
-+		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[2]), "a chunk created after Retain")
- 	})
- 
- 	t.Run("one retention at a time", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
--		_, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		_, err = q.Retain()
-+		err = q.Retain()
- 		require.ErrorContains(t, err, "already retained")
- 		require.NoError(t, q.ReleaseRetention())
--		_, err = q.Retain()
-+		err = q.Retain()
- 		require.NoError(t, err)
- 	})
- }
-@@ -2517,7 +2523,7 @@ func TestRetention_KeepsAChunkWhoseTombstoneFails(t *testing.T) {
- 	q.m.Unlock()
- 	chunks, _ := chunksOf(t, q)
- 	require.Len(t, chunks, 1)
--	_, err := q.Retain()
-+	err := q.Retain()
- 	require.NoError(t, err)
- 	t.Cleanup(func() { _ = q.ReleaseRetention() })
- 
-@@ -2537,7 +2543,7 @@ func
++func TestEnvironmentBackupDedupeConvergenceTimeout(t *testing.T) {
++	tests := []struct {
++		name     string
++		value    string
++		expected time.Duration
++		wantErr  bool
++	}{
++		{name: "unset uses the default", value: "", expected: DefaultBackupDedupeConvergenceTimeout},
++		{name: "valid value is parsed", value: "30s", expected: 30 * time.Second},
++		{name: "API minimum is accepted", value: "1s", expected: time.Second},
++		{name: "API maximum is accepted", value: "600s", expected: 600 * time.Second},
++		{name: "below the API minimum is rejected", value: "500ms", wantErr: true},
++		{name: "above the API maximum is rejected", value: "601s", wantErr: true},
++		{name: "zero is rejected", value: "0s", wantErr: true},
++		{name: "negative is rejected", value: "-5s", wantErr: true},
++		{name: "unitless is rejected", value: "15", wantErr: true},
++		{name: "non-duration is rejected", value: "soon", wantErr: true},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Setenv("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT", tc.value)
++
++			conf := Config{}
++			err := FromEnv(&conf)
++			if tc.wantErr {
++				require.Error(t, err)
++				assert.Contains(t, err.Error(), "BACKUP_DEDUPE_CONVERGENCE_TIMEOUT")
++				return
++			}
++			require.NoError(t, err)
++			assert.Equal(t, tc.expected, conf.Backup.DedupeConvergenceTimeout.Get())
++		})
++	}
++}
 ```
 
-**File**: `adapters/repos/db/queue/scheduler.go` (modified, +27/-5)
+---
+
+### Incident Patch 3: `d5e5f81b` (2026-11-05)
+**Commit Message**: Merge pull request #13794 from weaviate/fix/backup-dedupe-random-tie-break
+
+backup: break dedupe designation ties at random
+
+**File**: `wl/backupdedupe/planner.go` (modified, +36/-9)
 ```diff
-@@ -290,6 +290,22 @@ func (s *Scheduler) ResumeQueue(id string) {
- 	s.Logger.WithField("id", id).Debug("queue resumed")
+@@ -17,6 +17,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"math/rand/v2"
+ 	"reflect"
+ 	"slices"
+ 	"sort"
+@@ -94,6 +95,7 @@ type Planner struct {
+ 	convergenceBudget time.Duration
+ 	planningSlack     time.Duration
+ 	cleanupTimeout    time.Duration
++	pickTie           func(n int) int
  }
  
-+// IsQueueIdle returns true if the queue is paused and none of its work is
-+// scheduled or running.
-+func (s *Scheduler) IsQueueIdle(id string) bool {
-+	if s.ctx == nil {
-+		// scheduler not started
-+		return false
-+	}
-+
-+	q := s.getQueue(id)
-+	if q == nil {
-+		return false
-+	}
-+
-+	return q.Paused() && !q.Scheduled() && q.activeTasks.Count() == 0
-+}
-+
- func (s *Scheduler) updatePausedMetric() {
- 	if s.Metrics == nil {
- 		return
-@@ -446,10 +462,7 @@ func (s *Scheduler) scheduleQueues() (nothingScheduled bool) {
- 		}
+ // New returns a Planner, or an error instead of a Planner that would panic on its first call.
+@@ -112,6 +114,7 @@ func New(cfg Config) (*Planner, error) {
+ 		convergenceBudget: orDefault(cfg.ConvergenceBudget, _DefaultDedupeConvergenceBudget),
+ 		planningSlack:     orDefault(cfg.PlanningSlack, _DedupePlanningSlack),
+ 		cleanupTimeout:    orDefault(cfg.CleanupTimeout, _DedupeCleanupTimeout),
++		pickTie:           rand.IntN,
+ 	}, nil
+ }
  
- 		// mark it as scheduled
--		q.MarkAsScheduled()
--
--		if q.Paused() {
--			q.MarkAsUnscheduled()
-+		if !q.MarkAsScheduled() {
+@@ -299,7 +302,7 @@ func (p *Planner) PlanDesignatedShards(ctx context.Context, classes []string, bu
+ 	}
+ 	sort.Strings(classNames)
+ 	for _, class := range classNames {
+-		designations, sticky := assignDesignations(converged[class], loads, participants, preferred[class])
++		designations, sticky := assignDesignations(converged[class], loads, participants, preferred[class], p.pickTie)
+ 		plan.Designations[class] = designations
+ 		p.log.WithField("action", backup.OpCreate).WithField("class", class).
+ 			WithField("designated", len(designations)).
+@@ -752,9 +755,9 @@ func missingReplicasAtCutoff(entries []replica.AsyncCheckpointNodeStatus, replic
+ 	return missing
+ }
+ 
+-// assignDesignations picks one archiving node per shard: an eligible preferred (base) designee outranks balance since only it can skip unchanged files, the rest go least-loaded (lexicographic ties, loads shared across classes).
++// assignDesignations picks one archiving node per shard: an eligible preferred (base) designee outranks balance since only it can skip unchanged files, the rest go least-loaded (random ties, loads shared across classes).
+ // Shards with fewer than two participant replicas get no designation: naming a non-participant would orphan the shard, and a lone participant gains nothing.
+-func assignDesignations(shardReplicas map[string][]string, loads map[string]int, participants map[string]struct{}, preferred map[string]string) (map[string]string, int) {
++func assignDesignations(shardReplicas map[string][]string, loads map[string]int, participants map[string]struct{}, preferred map[string]string, pick func(n int) int) (map[string]string, int) {
+ 	shards := make([]string, 0, len(shardReplicas))
+ 	for shard := range shardReplicas {
+ 		shards = append(shards, shard)
+@@ -796,18 +799,42 @@ func assignDesignations(shardReplicas map[string][]string, loads map[string]int,
+ 		if _, done := out[shard]; done {
  			continue
  		}
- 
-@@ -744,8 +757,17 @@ func (qs *queueState) Scheduled() bool {
- 	return qs.scheduled.Count() > 0
+-		best := nodes[0]
+-		for _, node := range nodes[1:] {
+-			if loads[node] < loads[best] {
+-				best = node
+-			}
+-		}
++		best := leastLoaded(nodes, loads, pick)
+ 		loads[best]++
+ 		out[shard] = best
+ 	}
+ 	return out, sticky
  }
  
--func (qs *queueState) MarkAsScheduled() {
-+// MarkAsScheduled marks the queue unless it is paused, under the lock
-+// PauseQueue takes, so a pause sees the mark or the scheduler sees the pause.
-+func (qs *queueState) MarkAsScheduled() bool {
-+	qs.m.RLock()
-+	defer qs.m.RUnlock()
-+
-+	if qs.paused {
-+		return false
++// leastLoaded returns the node with the lowest load, consulting pick only when several share it.
++func leastLoaded(nodes []string, loads map[string]int, pick func(n int) int) string {
++	minLoad, tied := loads[nodes[0]], 1
++	for _, node := range nodes[1:] {
++		switch load := loads[node]; {
++		case load < minLoad:
++			minLoad, tied = load, 1
++		case load == minLoad:
++			tied++
++		}
 +	}
- 	qs.scheduled.Incr()
-+	return true
- }
- 
- func (qs *queueState) MarkAsUnscheduled() {
++	skip := 0
++	if tied > 1 {
++		skip = pick(tied)
++	}
++	var best string
++	for _, node := range nodes {
++		if loads[node] != minLoad {
++			continue
++		}
++		best = node
++		if skip == 0 {
++			break
++		}
++		skip--
++	}
++	return best
++}
++
+ func uniqueNonEmpty(nodes []string) map[string]struct{} {
+ 	set := make(map[string]struct{}, len(nodes))
+ 	for _, n := range nodes {
 ```
 
-**File**: `adapters/repos/db/queue/scheduler_test.go` (modified, +18/-0)
+**File**: `wl/backupdedupe/planner_test.go` (modified, +264/-8)
 ```diff
-@@ -899,3 +899,21 @@ func TestStreamExecutorTaskDoesNotBlockClose(t *testing.T) {
- 
- 	require.NoError(t, s.Close(t.Context()))
+@@ -14,6 +14,7 @@ package backupdedupe
+ import (
+ 	"context"
+ 	"fmt"
++	"math/rand/v2"
+ 	"slices"
+ 	"strings"
+ 	"sync"
+@@ -237,7 +238,7 @@ func (f *fakeCheckpointer) GetAsyncCheckpointNodeStatuses(ctx context.Context, c
+ 	return out, nil
  }
-+
-+// A queue is marked scheduled only when not paused, in one step with the
-+// check, so a pause sees the mark or the scheduler sees the pause.
-+func TestMarkAsScheduled_SkipsAPausedQueue(t *testing.T) {
-+	s := makeScheduler(t)
-+	s.Start()
-+	defer s.Close(t.Context())
-+	q := makeQueue(t, s, discardExecutor())
-+	state := s.getQueue(q.id)
-+
-+	require.NoError(t, q.Pause(t.Context()))
-+	require.False(t, state.MarkAsScheduled())
-+	require.True(t, s.IsQueueIdle(q.id))
-+
-+	q.Resume()
-+	require.True(t, state.MarkAsScheduled())
-+	state.MarkAsUnscheduled()
+ 
+-func newTestPlanner(f *fakeCheckpointer) *Planner {
++func newRandomTiePlanner(f *fakeCheckpointer) *Planner {
+ 	logger, _ := test.NewNullLogger()
+ 	p, err := New(Config{
+ 		Checkpointer:      f,
+@@ -254,6 +255,16 @@ func newTestPlanner(f *fakeCheckpointer) *Planner {
+ 	return p
+ }
+ 
++func newTestPlanner(f *fakeCheckpointer) *Planner {
++	p := newRandomTiePlanner(f)
++	p.pickTie = firstTie
++	return p
 +}
++
++func firstTie(int) int { return 0 }
++
++func lastTie(n int) int { return n - 1 }
++
+ func newWideFakeCheckpointer(n int, delay time.Duration) (*fakeCheckpointer, []string) {
+ 	f := newFakeCheckpointer()
+ 	f.callDelay = delay
+@@ -345,23 +356,23 @@ func TestAssignDesignations(t *testing.T) {
+ 
+ 	all := parts("n1", "n2", "n3", "n9")
+ 	loads := map[string]int{}
+-	got, sticky := assignDesignations(shardReplicas, loads, all, nil)
++	got, sticky := assignDesignations(shardReplicas, loads, all, nil, firstTie)
+ 	assert.Zero(t, sticky)
+ 	assert.Equal(t, map[string]string{"s1": "n1", "s2": "n2", "s3": "n1", "s4": "n3"}, got)
+ 	assert.Equal(t, map[string]int{"n1": 2, "n2": 1, "n3": 1}, loads)
+ 
+-	again, _ := assignDesignations(shardReplicas, map[string]int{}, all, nil)
++	again, _ := assignDesignations(shardReplicas, map[string]int{}, all, nil, firstTie)
+ 	assert.Equal(t, got, again)
+ 
+-	crossClass, _ := assignDesignations(map[string][]string{"t1": {"n1", "n9"}}, loads, all, nil)
++	crossClass, _ := assignDesignations(map[string][]string{"t1": {"n1", "n9"}}, loads, all, nil, firstTie)
+ 	assert.Equal(t, map[string]string{"t1": "n9"}, crossClass)
+ 
+-	onlyParticipants, _ := assignDesignations(map[string][]string{"u1": {"n1", "n2", "x"}, "u2": {"n1", "x"}}, map[string]int{"n1": 9}, parts("n1", "n2"), nil)
++	onlyParticipants, _ := assignDesignations(map[string][]string{"u1": {"n1", "n2", "x"}, "u2": {"n1", "x"}}, map[string]int{"n1": 9}, parts("n1", "n2"), nil, firstTie)
+ 	assert.Equal(t, map[string]string{"u1": "n2"}, onlyParticipants)
+ 
+ 	t.Run("preferred designee outranks load and seeds it", func(t *testing.T) {
+ 		loads := map[string]int{"n1": 9}
+-		got, sticky := assignDesignations(shardReplicas, loads, all, map[string]string{"s1": "n1", "s2": "n1"})
++		got, sticky := assignDesignations(shardReplicas, loads, all, map[string]string{"s1": "n1", "s2": "n1"}, firstTie)
+ 		assert.Equal(t, 2, sticky)
+ 		assert.Equal(t, map[string]string{"s1": "n1", "s2": "n1", "s3": "n2", "s4": "n3"}, got)
+ 		assert.Equal(t, map[string]int{"n1": 11, "n2": 1, "n3": 1}, loads)
+@@ -371,19 +382,212 @@ func TestAssignDesignations(t *testing.T) {
+ 		got, sticky := assignDesignations(
+ 			map[string][]string{"s1": {"n1", "n2", "n3"}, "s2": {"n1", "n2"}, "lone": {"n1", "x"}},
+ 			map[string]int{}, parts("n1", "n2"),
+-			map[string]string{"s1": "n3", "s2": "ghost", "lone": "n1"})
++			map[string]string{"s1": "n3", "s2": "ghost", "lone": "n1"}, firstTie)
+ 		assert.Zero(t, sticky)
+ 		assert.Equal(t, map[string]string{"s1": "n1", "s2": "n2"}, got)
+ 	})
+ 
+ 	t.Run("tenant-named shards stick", func(t *testing.T) {
+ 		reps := map[string][]string{"tenant-a": {"n1", "n2"}, "tenant-b": {"n1", "n2"}}
+-		got, sticky := assignDesignations(reps, map[string]int{}, parts("n1", "n2"), map[string]string{"tenant-b": "n2"})
++		got, sticky := assignDesignations(reps, map[string]int{}, parts("n1", "n2"), map[string]string{"tenant-b": "n2"}, firstTie)
+ 		assert.Equal(t, 1, sticky)
+ 		assert.Equal(t, map[string]string{"tenant-a": "n1", "tenant-b": "n2"}, got)
+ 	})
+ }
+ 
++func TestAssignDesignationsTieBreak(t *testing.T) {
++	rf3 := []string{"n3", "n1", "n2"}
++	fourShards := map[string][]string{"s1": rf3, "s2": rf3, "s3": rf3, "s4": rf3}
++
++	tests := []struct {
++		name          string
++		shardReplicas map[string][]string
++		loads         map[string]int
++		participants  map[string]struct{}
++		preferred     map[string]string
++		pick          func(int) int
++		want          map[string]string
++		wantSticky    int
++		wantPicks     []int
++		wantLoads     map[string]int
++	}{
++		{
++			name:          "first tie follows name order and skips the forced shard",
++			shardReplicas: fourShards,
++			loads:         map[string]int{},
++			participants:  parts("n1", "n2", "n3"),
++			pick:          firstTie,
++			want:          map[string]string{"s1": "n1", "s2": "n2", "s3": "n3", "s4": "n1"},
++			wantPicks:     []int{3, 2, 3},
++			wantLoads:     map[string]int{"n1": 2, "n2": 1, "n3": 1},
++		},
++		{
++			name:          "last tie follows pick rather than name order",
++			shardReplicas: fourShards,
++			loads:         map[string]int{},
++			participants:  parts("n1", "n2", "n3"),
++			pick:          lastTie,
++			want:          map[string]string{"s1": "n3", "s2": "n2", "s3": "n1", "s4": "n3"},
++			wantPicks:     []int{3, 2, 3},
++			wantLoads:     map[string]int{"n1": 1, "n2"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13785** (2026-11-05): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13776** (2026-11-05): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13775** (2026-11-05): Require every verb of a manage permission before assigning its role (@dirkkul)
-- **PR #13774** (2026-11-05): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13773** (2026-11-05): vector index update: a queue can rewind to where it started retaining (@asdine)
-- **PR #13767** (2026-11-05): Answer an empty class in a batch with the per-object error (@dirkkul)
+- **PR #13812** (2026-11-06): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13811** (2026-11-06): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13810** (closed): security(deps): bump golang.org/x/net to v0.62.0 (@abdelr)
+- **PR #13808** (2026-11-06): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13806** (2026-11-06): security(deps): bump golang.org/x/net to v0.62.0 (@antas-marcin)
+- **PR #13798** (closed): test(reindex): pin correct filters after a restart between a replica's swap and the schema flip (@etiennedi)
 
 ---
 
@@ -2799,71 +2344,28 @@ vector index update: a queue can rewind to where it started retaining
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
+## X. security(deps): bump golang.org/x/net to v0.62.0
 
 **RULE**:
-When implementing operations in `adapters/clients/license/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e97594b`: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39bf2b1b`: security(deps): bump golang.org/x/net to v0.62.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/clients/license/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//                           _       _
-// __      _____  __ ___   ___  __ _| |_ ___
-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-//
-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-//
-//  CONTACT: hello@weaviate.io
-//
-
-package license
-
-import (
-	"bytes"
-	"context"
-	"crypto/ed25519"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"net/http"
-	"strings"
-	"time"
-
-	protocol "github.com/weaviate/weaviate/entities/license"
-)
-
-// DefaultServerURL is the production license service.
-const DefaultServerURL = "https://license.weaviate.io"
-
-// Client performs signed verify calls against the license service. It is the
-// piece Weaviate embeds.
-type Client struct {
-	ServerURL   string // defaults to DefaultServerURL
-	LicenseID   string // from protocol.ParseKey
-	PrivateKey  ed25519.PrivateKey
-	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
-	HTTPClient  *http.Client          // defaults to a 10s-timeout client
-	UserAgent   string
-}
-
-// NewClient parses a customer license key and returns a client for it.
-func NewClient(key string, trusted protocol.ServerKeySet) (*Clien
+	golang.org/x/net v0.62.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/net v0.61.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e97594b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39bf2b1b` are properly handled with clean fallback behavior.

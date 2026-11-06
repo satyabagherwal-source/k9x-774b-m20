@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T21:13:53.928Z",
+  "last_updated": "2026-11-06T21:21:14.498Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
-      "verified_at": "2026-11-04T03:30:37.051Z",
+      "content_hash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
+      "verified_at": "2026-11-06T21:21:06.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:30:37.051Z"
+      "last_updated": "2026-11-06T21:21:06.574Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
-      "verified_at": "2026-11-05T12:36:40.846Z",
+      "content_hash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
+      "verified_at": "2026-11-06T21:21:09.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:36:40.846Z"
+      "last_updated": "2026-11-06T21:21:09.793Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
-      "verified_at": "2026-11-05T11:45:28.151Z",
+      "content_hash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
+      "verified_at": "2026-11-06T21:21:14.497Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:45:28.151Z"
+      "last_updated": "2026-11-06T21:21:14.497Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

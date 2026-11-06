@@ -7920,3 +7920,6 @@
 | `CYCLE-20261106-SXW1` | `2026-11-06T21:06:39.889Z` | `aome510/spotify-player` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a0e60b5...`) |
 | `CYCLE-20261106-T7YU` | `2026-11-06T21:06:52.950Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e6480d7a...`) |
 | `CYCLE-20261106-28SB` | `2026-11-06T21:13:53.915Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`076ddf65...`) |
+| `CYCLE-20261106-BIM8` | `2026-11-06T21:21:06.560Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | Yes (`a0271bd9...`) |
+| `CYCLE-20261106-BL3M` | `2026-11-06T21:21:09.778Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83a1c8a9...`) |
+| `CYCLE-20261106-BOQ5` | `2026-11-06T21:21:14.477Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ed9dff2...`) |

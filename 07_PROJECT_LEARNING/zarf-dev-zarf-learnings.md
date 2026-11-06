@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `be6d4c52`  
+> **Source Version**: `6c2e879e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:36:40.110Z  
+> **Timestamp**: 2026-11-06T21:21:08.427Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:36:40.103Z  
+> **Harvest Timestamp**: 2026-11-06T21:21:08.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2085 stars
+- **Stars / Engagement**: 2086 stars
 
 ---
 
@@ -1459,16 +1459,16 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5613** (2026-11-06): **feat!: removed deprecated k8s api migration**
+  *Symptoms*: ## Description  I find this functionality to be scope creep for the Zarf project, I think v1 is a good time to remove it  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | f4744e3f53af08e598cff46dac32a1d3d43190e5 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aecbc11a258a9266a4564f1 |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5613?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5613?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Coverage Δ | | |---|---|---| | [src/internal/packager/helm/chart.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5613?src=pr&el=tree&filepath=src%2Finternal%2Fpackager%2Fhelm%2Fchart.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2ludGVybmFsL3BhY2thZ2VyL2hlbG0vY2hhcnQuZ28=) | `18.09% <ø> (+3.84%)` | :arrow_up: | <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.cod
+
 - **Issue #5611** (2026-11-05): **chore(deps): bump the k8s group across 1 directory with 6 updates**
   *Symptoms*: Bumps the k8s group with 6 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [k8s.io/api](https://github.com/kubernetes/api) | `0.37.1` | `0.37.2` | | [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.1` | `0.37.2` | | [k8s.io/client-go](https://github.com/kubernetes/client-go) | `0.37.1` | `0.37.2` | | [k8s.io/kubectl](https://github.com/kubernetes/kubectl) | `0.37.1` | `0.37.2` | | [k8s.io/cli-runtime](https://github.com/kubernetes/cli-runtime) | `0.37.1` | `0.37.2` | | [k8s.io/component-helpers](https://github.com/kubernetes/component-helpers) | `0.37.1` | `0.37.2` |   Updates `k8s.io/api` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/api/commit/1bc0c529309723075aed339d50f16d4b311d908d"><code>1bc0c52</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/api/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/apimachinery/commit/97adf147c7378229d45db0fc7511af84d0c3c092"><code>97adf14</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/client-go` from 0.37.1 to 0.37.2 <details> <summary>Commits</
   **Post-Mortem & Fix Analysis**:
   > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | c1324a63606ed99506e76582c8b7d65478e23bd4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aebd1cfb32502a76deaa441 |
-
-- **Issue #5607** (2026-11-04): **docs: update custom init package tutorial**
-  *Symptoms*: ## Description  Refresh the Custom Init Packages tutorial for current Zarf behavior and structured logging.  The tutorial now uses the current `packages/init/v1alpha1` package definition, documents the supported image and registry override configuration, and removes obsolete package-creation confirmation and pre-v0.26 guidance.  The troubleshooting example is shared with Tutorial 0 through `package_create_error.html` and was updated in the earlier package-creation tutorial PR, so it is unchanged here.  ## Screenshots <img width="867" height="687" alt="create-custom-init" src="https://github.com/user-attachments/assets/a8638996-a81e-4eff-ae1e-78cd3025006f" /> <img width="850" height="189" alt="customize" src="https://github.com/user-attachments/assets/31dfe114-6a88-4b7a-a4c9-a551a9ecdff6" /> <img width="852" height="556" alt="swapping-images-01" src="https://github.com/user-attachments/assets/57ce6763-99df-4e39-8017-b69e0e3cb8e6" /> <img width="829" height="740" alt="swapping-images-02" src="https://github.com/user-attachments/assets/a2503cc8-246f-4d83-99c0-8c7b4f3ed727" /> <img width="831" height="582" alt="swapping-images-03" src="https://github.com/user-attachments/assets/4180d694-4945-4452-a67f-45ea08447841" /> <img width="846" height="122" alt="removing-components" src="https://github.com/user-attachments/assets/b40ac6fa-5a8c-4f2f-8b29-25c8ea418498" />   ## Related Issue  Relates to #4057  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x]
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 1cb060b5bde4c094d93f5fc5c247785f32b01da8 |
-  > Hi @shaversj appreciate the PR, but I actually stood up a PR yesterday to update this https://github.com/zarf-dev/zarf/pull/5598 as it should now reflect v1beta1, so I am closing this out. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1485,346 +1485,332 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be6d4c52` (2026-11-05)
-**Commit Message**: chore(deps): bump the k8s group across 1 directory with 6 updates (#5611)
+### Incident Patch 1: `88025928` (2026-11-05)
+**Commit Message**: fix: deep copy values on merge so a chart mapping can't leak into later components (#5585)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Allen Conlon <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +8/-8)
+**File**: `src/pkg/packager/packager_test.go` (modified, +64/-0)
 ```diff
-@@ -50,11 +50,11 @@ require (
- 	golang.org/x/crypto v0.57.0
- 	golang.org/x/sync v0.24.0
- 	helm.sh/helm/v4 v4.3.0
--	k8s.io/api v0.37.1
--	k8s.io/apimachinery v0.37.1
--	k8s.io/client-go v0.37.1
-+	k8s.io/api v0.37.2
-+	k8s.io/apimachinery v0.37.2
-+	k8s.io/client-go v0.37.2
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/kubectl v0.37.1
-+	k8s.io/kubectl v0.37.2
- 	k8s.io/streaming v0.37.2
- 	oras.land/oras-go/v2 v2.6.2
- 	sigs.k8s.io/cli-utils v0.37.2
-@@ -253,7 +253,7 @@ require (
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	helm.sh/helm/v3 v3.21.3 // indirect
- 	howett.net/plist v1.0.1 // indirect
--	k8s.io/component-base v0.37.1 // indirect
-+	k8s.io/component-base v0.37.2 // indirect
- 	modernc.org/gc/v3 v3.1.4 // indirect
- 	modernc.org/strutil v1.2.1 // indirect
- 	modernc.org/token v1.1.0 // indirect
-@@ -631,10 +631,10 @@ require (
- 	gorm.io/gorm v1.31.1 // indirect
- 	k8s.io/apiextensions-apiserver v0.37.0 // indirect
- 	k8s.io/apiserver v0.37.0 // indirect
--	k8s.io/cli-runtime v0.37.1
--	k8s.io/component-helpers v0.37.1
-+	k8s.io/cli-runtime v0.37.2
-+	k8s.io/component-helpers v0.37.2
- 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
--	k8s.io/metrics v0.37.1 // indirect
-+	k8s.io/metrics v0.37.2 // indirect
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	modernc.org/libc v1.74.4 // indirect
- 	modernc.org/mathutil v1.7.1 // indirect
-```
-
-**File**: `go.sum` (modified, +16/-16)
-```diff
-@@ -2403,30 +2403,30 @@ honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9
- honnef.co/go/tools v0.0.1-2020.1.4/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
- howett.net/plist v1.0.1 h1:37GdZ8tP09Q35o9ych3ehygcsL+HqKSwzctveSlarvM=
- howett.net/plist v1.0.1/go.mod h1:lqaXoTrLY4hg8tnEzNru53gicrbv7rrk+2xJA/7hw9g=
--k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
--k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
-+k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
-+k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
- k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
- k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
--k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
--k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
-+k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
-+k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
- k8s.io/apiserver v0.37.0 h1:TXg7OxsOWrAH8J4Zi/gBAZuMw1Dfdd+6cca2h4qjRqo=
- k8s.io/apiserver v0.37.0/go.mod h1:OddHDF4gy9qyIb8o/3+qaeP6S0vEObWLgOygVqXksv0=
--k8s.io/cli-runtime v0.37.1 h1:3mir5bM4XjMJHW3SMRk++3Ylf4YQne0XFFsW+IGT85U=
--k8s.io/cli-runtime v0.37.1/go.mod h1:g3VQOm71f//aNbp79g0az9jBRTrvPjAHz7WxVysbZ4M=
--k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
--k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
--k8s.io/component-base v0.37.1 h1:93DMmlENnK7gNLkL4pMqLO5M/HVf3p3sM4q/GasLveY=
--k8s.io/component-base v0.37.1/go.mod h1:bBrdziT4dreQG5lzTaPVxBwsZe1oxphG+ZVdD56dQWQ=
--k8s.io/component-helpers v0.37.1 h1:V6ueiH2SBqpZil1X9+uMK8GAwsGYPVfoRN9eA5vY2G8=
--k8s.io/component-helpers v0.37.1/go.mod h1:Ib5+txJA7lG9/xCdRrPshX8GnRRTXPElxtxo+bFQ0Y8=
-+k8s.io/cli-runtime v0.37.2 h1:EpE50B2FmXz8SxkYqoS2q0piDk1qe7g9dGZGIW+apws=
-+k8s.io/cli-runtime v0.37.2/go.mod h1:0IDMrrzVnj1cqBlCll8oGSOb2js6mSy0ALtbh0MsYyc=
-+k8s.io/client-go v0.37.2 h1:sgFtyRZukGkOrsu+QgS7LYnbFFJ5ut3MchdBNduD//E=
-+k8s.io/client-go v0.37.2/go.mod h1:bo3LFC8YbCtKFPX21Yj8puMsoJLAv/+SvuOODma0s54=
-+k8s.io/component-base v0.37.2 h1:Ia9IKTg1yWrUntJU5lVetapkC9pXlLg9L6P3R1IkbcY=
-+k8s.io/component-base v0.37.2/go.mod h1:qq+ueHZyLfzRJzxyDoyxHWNhF1JPv4zm3hcaddXWDvY=
-+k8s.io/component-helpers v0.37.2 h1:TQBsmHFs8gpfiyPFvyMaxqTgojtcXR2mVj+knnycln0=
-+k8s.io/component-helpers v0.37.2/go.mod h1:HZMT6lvkix4wkgYYXZJ/45BbYM1TZoOlANisHn7FoVY=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
--k8s.io/kubectl v0.37.1 h1:n1VCIntOJiX943uByXCThSZQmE+4v9jGS8S9u94/aHU=
--k8s.io/kubectl v0.37.1/go.mod h1:66cc4Bz8PxBTxlrHzBuzXEzGIytAnNasKQPeEcpuaV8=
--k8s.io/metrics v0.37.1 h1:5lc7WH6ljoxaJ4dK6UHwskVsyH7aNdt/ajo6CLQ1l8Q=
--k8s.io/metrics v0.37.1/go.mod h1:mpnoLxJYJdBQoxPlgi1Y+gk/bxIuXf5SbS/8jkYzqEo=
-+k8s.io/kubectl v0.37.2 h1:AGGIhrGSsXtrL6BZWf7Hp2K9yB+2qdx7wovsOP1MiCg=
-+k8s.io/kubectl v0.37.2/go.mod h1:0nyX9up426PgGMcGkWjF1DeipLkd41eKZHoLDgop20k=
-+k8s.io/metrics v0.37.2 h1:CeIZd07BO8vuraDyd0ooQmsLi2Rutj76zThEf72rcWU=
-+k8s.io/metrics v0.37.2/go.mod h1:9HzCbIyPruAmoKmjoBjLEYAlLhAapAj1vvzkbhBDg6E=
- k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
- k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
-```
-
-**File**: `vendor/modules.txt` (modified, +8/-8)
-```diff
-@@ -4108,7 +4108,7 @@ helm.sh/helm/v4/pkg/uploader
- # howett.net/plist v1.0.1
- ## explicit; go 1.12
- howett.net/plist
--# k8s.io/api v0.37.1
-+# k8s.io/api v0.37.2
- ## explicit; go 1.26.0
- k8s.io/api/admission/v1
- k8s.io/api/admission/v1beta1
-@@ -4174,7 +4174,7 @@ k8s.io/api/storagemigration/v1beta1
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1
--# k8s.io/apimachinery v0.37.1
-+# k8s.io/apimachinery v0.37.2
- ## explicit; go 1.26.0
- k8s.io/apimachinery/pkg/api/equality
- k8s.io/apimachinery/pkg/api/errors
-@@ -4247,13 +4247,13 @@ k8s.io/apimachinery/third_party/forked/golang/reflect
- # k8s.io/apiserver v0.37.0
- ## explicit; go 1.26.0
- k8s.io/apiserver/pkg/endpoints/deprecation
--# k8s.io/cli-runtime v0.37.1
-+# k8s.io/cli-runtime v0.37.2
- ## explicit; go 1.26.0
- k8s.io/cli-runtime/pkg/genericclioptions
- k8s.io/cli-runtime/pkg/genericiooptions
- k8s.io/cli-runtime/pkg/printers
- k8s.io/cli-runtime/pkg/resource
--# k8s.io/client-go v0.37.1
-+# k8s.io/client-go v0.37.2
- ## explicit; go 1.26.0
- k8s.io/client-go/applyconfigurations
- k8s.io/client-go/applyconfigurations/admissionregistration/v1
-@@ -4616,11 +4616,11 @@ k8s.io/client-go/util/keyutil
- k8s.io/client-go/util/retry
- k8s.io/client-go/util/watchlist
- k8s.io/client-go/util/workqueue
--# k8s.io/component-base v0.37.1
-+# k8s.io/component-base v0.37.2
- ## explicit; go 1.26.0
- k8s.io/component-base/cli/flag
- k8s.io/component-base/version
--# k8s.io/component-helpers v0.37.1
-+# k8s.io/component-helpers v0.37.2
- ## explicit; go 1.26.0
- k8s.io/component-helpers/auth/rbac/reconciliation
- k8s.io/component-helpers/auth/rbac/validation
-@@ -4654,7 +4654,7 @@ k8s.io/kube-openapi/pkg/util
- k8s.io/kube-openapi/pkg/util/proto
- k8s.io/kube-openapi/pkg/util/proto/validation
- k8s.io/kube-openapi/pkg/validation/spec
--# k8s.io/kubectl v0.37.1
-+# k8s.io/kubectl v0.37.2
- ## explicit; go 1.26.0
- k8s.io/kubectl/pkg/apps
- k8s.io/kubectl/pkg/cmd
-@@ -4738,7 +4738,7 @@ k8s.io/kubectl/pkg/util/storage
- k8s.io/kubectl/pkg/util/templates
- k8s.io/kubectl/pkg/util/term
- k8s.io/kubectl/pkg/validation
--# k8s.io/metrics v0.37.1
-+# k8s.io/metrics v0.37.2
- ## explicit; go 1.26.0
- k8s.io/metrics/pkg/apis/metrics
- k8s.io/metrics/pkg/apis/metrics/v1
-```
-
----
-
-### Incident Patch 2: `8e854f4f` (2026-11-05)
-**Commit Message**: feat!: error when variables are used with v1beta1 (#5606)
-
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-
-**File**: `AGENTS.md` (modified, +2/-0)
-```diff
-@@ -18,6 +18,8 @@ Zarf is a Go CLI (`main.go`, `go.mod`). Application code under `src/`. Unit test
- 
- Write idiomatic Go; `golangci-lint fmt` applies `gofmt` and `goimports`. Keep packages and files lowercase and descriptive; use `PascalCase` for exported identifiers and `camelCase` otherwise. New Go files need the SPDX header. Keep comments concise and focused on intent, not a restatement of code. Handle errors and justify every `//nolint:<linter>` comment.
- 
-+Keep CLI-specific validation and flag names in `src/cmd`. Validation errors outside of `src/cmd` should describe configuration options in API-neutral terms.
-+
- Install hooks with `pre-commit install`; they enforce formatting, linting, credentials checks, and generated schema/docs consistency.
- 
- ## Testing Guidelines
-```
-
-**File**: `src/cmd/package.go` (modified, +3/-0)
-```diff
-@@ -541,6 +541,9 @@ func (o *packageDeployOptions) run(cmd *cobra.Command, args []string) (err error
+@@ -509,3 +509,67 @@ func Test_generateValuesOverrides_ExcludeDoesNotAffectOtherCharts(t *testing.T)
+ 		"image":    map[string]any{"repository": "grafana/loki"},
+ 	}, bResult)
  }
- 
- func deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts packager.DeployOptions, setVariables map[string]string, optionalComponents string) ([]state.DeployedComponent, error) {
-+	if err := opts.Validate(pkgLayout.Definition()); err != nil {
-+		return nil, err
-+	}
- 	// Intentionally duplicate the deploy override logic here to allow us to render the updated package in confirm below
- 	if opts.NamespaceOverride != "" {
- 		if err := pkgLayout.OverrideNamespace(opts.NamespaceOverride); err != nil {
-```
-
-**File**: `src/pkg/packager/deploy.go` (modified, +17/-6)
-```diff
-@@ -16,6 +16,7 @@ import (
- 
- 	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
-+	"github.com/zarf-dev/zarf/src/api/v1beta1"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/config/lang"
- 	"github.com/zarf-dev/zarf/src/internal/checksum"
-@@ -97,6 +98,20 @@ type DeployOptions struct {
- 	SkipVersionCheck bool
- }
- 
-+// Validate checks whether the deployment options are supported by the package.
-+func (opts DeployOptions) Validate(pkg api.Package) error {
-+	if pkg.GetAPIVersion() == v1beta1.APIVersion && len(opts.SetVariables) > 0 {
-+		return fmt.Errorf("variables are not supported in v1beta1 packages; use package values instead")
-+	}
-+	if opts.Connected && pkg.IsInitConfig() {
-+		return fmt.Errorf("connected mode is not supported for init packages")
-+	}
-+	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
-+		return fmt.Errorf("skipping architecture checks is not supported for init packages")
-+	}
-+	return nil
-+}
 +
- // deployer tracks mutable fields across deployments. Because components can create a cluster and create state
- // any of these fields are subject to change from one component to the next
- type deployer struct {
-@@ -120,12 +135,8 @@ type DeployResult struct {
- func Deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) (DeployResult, error) {
- 	start := time.Now()
- 	pkg := pkgLayout.Definition()
--	if opts.Connected && pkg.IsInitConfig() {
--		return DeployResult{}, fmt.Errorf("--connected is not supported for init packages")
--	}
--
--	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
--		return DeployResult{}, fmt.Errorf("skipping architecture checks is not supported for init packages")
-+	if err := opts.Validate(pkg); err != nil {
-+		return DeployResult{}, err
- 	}
- 
- 	// Validate operational requirements before proceeding
-```
-
-**File**: `src/pkg/packager/deploy_test.go` (modified, +55/-1)
-```diff
-@@ -31,13 +31,63 @@ import (
- 	"github.com/zarf-dev/zarf/src/pkg/packager/load"
- 	"github.com/zarf-dev/zarf/src/pkg/pki"
- 	"github.com/zarf-dev/zarf/src/pkg/state"
-+	"github.com/zarf-dev/zarf/src/pkg/value"
- 	"github.com/zarf-dev/zarf/src/test/testutil"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes/fake"
- 	"sigs.k8s.io/cli-utils/pkg/kstatus/status"
- )
- 
-+func TestDeployVariablesByAPIVersion(t *testing.T) {
++// comp-a maps two source paths onto the same chart root, comp-b maps
++// only the first. Mapping comp-a must not rewrite the shared package values tree, or comp-b
++// receives comp-a's values and the result depends on which components are in the command.
++func Test_generateValuesOverrides_MappingDoesNotLeakIntoLaterComponents(t *testing.T) {
 +	t.Parallel()
-+	for _, tt := range []struct {
-+		name       string
-+		apiVersion string
-+		kind       api.PackageKind
-+		variables  map[string]string
-+		values     value.Values
-+		wantError  bool
-+	}{
-+		{name: "legacy", variables: map[string]string{"INPUT": "supplied"}},
-+		{name: "alpha", apiVersion: v1alpha1.APIVersion, variables: map[string]string{"INPUT": "supplied"}},
-+		{name: "beta without variables", apiVersion: v1beta1.APIVersion},
-+		{name: "beta empty variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{}},
-+		{name: "beta variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
-+		{name: "beta empty variable value", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": ""}, wantError: true},
-+		{name: "beta init variables", apiVersion: v1beta1.APIVersion, kind: api.ZarfInitConfig, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
-+		{name: "beta values", apiVersion: v1beta1.APIVersion, values: value.Values{"input": "supplied"}},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := testutil.TestContext(t)
-+			kind := tt.kind
-+			if kind == "" {
-+				kind = api.ZarfPackageConfig
-+			}
-+			pkg := api.Package{
-+				APIVersion: tt.apiVersion,
-+				Kind:       kind,
-+				Metadata:   api.PackageMetadata{Name: "deploy-variables"},
-+			}
-+			pkgLayout, err := assemble.AssemblePackage(ctx, &load.ResolvedPackage{Definition: pkg, Resources: load.NewResourceSet(t.TempDir())}, assemble.AssembleOptions{SkipSBOM: true})
-+			require.NoError(t, err)
-+			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
++	ctx := testutil.TestContext(t)
 +
-+			result, err := Deploy(ctx, pkgLayout, DeployOptions{SetVariables: tt.variables, Values: tt.values})
-+			if tt.wantError {
-+				require.ErrorContains(t, err, "variables are not supported in v1beta1 packages")
-+				require.ErrorContains(t, err, "use package values instead")
-+				return
-+			}
-+			require.NoError(t, err)
-+			if tt.values != nil {
-+				require.Equal(t, tt.values, result.Values)
-+			}
-+		})
++	vals := value.Values{
++		"shared": map[string]any{
++			"fromShared": "shared-value",
++			"nested":     map[string]any{"both": "from-shared"},
++		},
++		"extra": map[string]any{
++			"nested": map[string]any{"both": "from-extra"},
++		},
 +	}
++	newOpts := func() overrideOpts {
++		return overrideOpts{
++			variableConfig:     variables.New("", nil, nil),
++			values:             vals,
++			valuesOverridesMap: ValuesOverrides{},
++		}
++	}
++
++	compAChart := v1alpha1.ZarfChart{
++		Name: "demo",
++		Values: []v1alpha1.ZarfChartValue{
++			{SourcePath: ".shared", TargetPath: "."},
++			{SourcePath: ".extra", TargetPath: "."},
++		},
++	}
++	compBChart := v1alpha1.ZarfChart{
++		Name: "demo",
++		Values: []v1alpha1.ZarfChartValue{
++			{SourcePath: ".shared", TargetPath: "."},
++		},
++	}
++
++	aResult, err := generateValuesOverrides(ctx, genericChart(compAChart), "comp-a", newOpts())
++	require.NoError(t, err)
++	require.Equal(t, map[string]any{
++		"fromShared": "shared-value",
++		"nested":     map[string]any{"both": "from-extra"},
++	}, aResult)
++
++	// The shared package values tree must be untouched by comp-a's mapping.
++	require.Equal(t, value.Values{
++		"shared": map[string]any{
++			"fromShared": "shared-value",
++			"nested":     map[string]any{"both": "from-shared"},
++		},
++		"extra": map[string]any{
++			"nested": map[string]any{"both": "from-extra"},
++		},
++	}, vals)
++
++	bResult, err := generateValuesOverrides(ctx, genericChart(compBChart), "comp-b", newOpts())
++	require.NoError(t, err)
++	require.Equal(t, map[string]any{
++		"fromShared": "shared-value",
++		"nested":     map[string]any{"both": "from-shared"},
++	}, bResult)
++}
+```
+
+**File**: `src/pkg/value/value.go` (modified, +18/-4)
+```diff
+@@ -172,6 +172,10 @@ func InferType(s string) any {
+ 
+ // DeepMerge merges one or more Values maps recursively into the receiver via mutation.
+ // Later maps in the variadic arguments take precedence over earlier ones.
++// Values taken from the sources are deep copied, so the sources are never mutated.
++//
++// TODO: Extend deep copying to other map and slice types, such as map[string]string
++// and []string, so modifying merged values cannot mutate the sources.
+ func (v Values) DeepMerge(sources ...Values) {
+ 	if v == nil {
+ 		return
+@@ -190,18 +194,19 @@ func (v Values) DeepMerge(sources ...Values) {
+ 					Values(dstMap).DeepMerge(srcMap)
+ 				} else {
+ 					// Not both maps, src overwrites dst
+-					v[key] = srcVal
++					v[key] = deepCopyValue(srcVal)
+ 				}
+ 			} else {
+ 				// Key only in src
+-				v[key] = srcVal
++				v[key] = deepCopyValue(srcVal)
+ 			}
+ 		}
+ 	}
+ }
+ 
+ // Extract retrieves a value from a nested Values map using dot notation path.
+ // Path format: ".key.subkey.value" where each dot represents a map level.
++// The result is a live reference into v, not a copy, so callers must not mutate it.
+ func (v Values) Extract(path Path) (any, error) {
+ 	if err := path.Validate(); err != nil {
+ 		return nil, err
+@@ -241,6 +246,8 @@ func (v Values) Extract(path Path) (any, error) {
+ 
+ // Set takes a Values, a Path to a new or existing key, and any value and stores the newVal at the path.
+ // Special case: path "." merges the newVal's map contents directly into v (at the root).
++// newVal is deep copied, with the same type limits as DeepMerge: only map[string]any, []any and
++// scalars are copied, any other map or slice type is stored by reference.
+ func (v Values) Set(path Path, newVal any) error {
+ 	if err := path.Validate(); err != nil {
+ 		return err
+@@ -267,7 +274,7 @@ func (v Values) Set(path Path, newVal any) error {
+ 			if newIsMap && currIsMap {
+ 				Values(currMap).DeepMerge(newMap)
+ 			} else {
+-				current[part] = newVal
++				current[part] = deepCopyValue(newVal)
+ 			}
+ 		} else {
+ 			if _, exists := current[part]; !exists {
+@@ -317,7 +324,8 @@ func (v Values) Delete(path Path) error {
+ }
+ 
+ // DeepCopy returns a recursive copy of v so the result can be mutated without
+-// affecting the original maps or slices.
++// affecting the original maps or slices. Only map[string]any, []any and scalars are
++// copied; any other map or slice type is shared with v.
+ func (v Values) DeepCopy() Values {
+ 	cp := make(Values, len(v))
+ 	for k, val := range v {
+@@ -329,6 +337,9 @@ func (v Values) DeepCopy() Values {
+ func deepCopyValue(val any) any {
+ 	switch t := val.(type) {
+ 	case map[string]any:
++		if t == nil {
++			return t
++		}
+ 		cp := make(map[string]any, len(t))
+ 		for k, sub := range t {
+ 			cp[k] = deepCopyValue(sub)
+@@ -338,6 +349,9 @@ func deepCopyValue(val any) any {
+ 	case Values:
+ 		return deepCopyValue(map[string]any(t))
+ 	case []any:
++		if t == nil {
++			return t
++		}
+ 		cp := make([]any, len(t))
+ 		for i, sub := range t {
+ 			cp[i] = deepCopyValue(sub)
+```
+
+**File**: `src/pkg/value/value_test.go` (modified, +47/-0)
+```diff
+@@ -795,6 +795,53 @@ func TestDeepMerge(t *testing.T) {
+ 	}
+ }
+ 
++// A merge must not hand the destination a live reference into the
++// source, or a later write through the destination silently rewrites the source tree.
++func TestDeepMergeDoesNotShareNestedValuesWithSource(t *testing.T) {
++	t.Parallel()
++	src := Values{
++		"nested": map[string]any{
++			"keep": "original",
++			"list": []any{map[string]any{"deep": "original"}},
++		},
++	}
++	snapshot := Values{
++		"nested": map[string]any{
++			"keep": "original",
++			"list": []any{map[string]any{"deep": "original"}},
++		},
++	}
++
++	dst := Values{}
++	dst.DeepMerge(src)
++	require.Equal(t, snapshot, dst)
++
++	// Writing through the destination must leave the source alone.
++	dst.DeepMerge(Values{"nested": map[string]any{"keep": "mutated"}})
++	nested, ok := dst["nested"].(map[string]any)
++	require.True(t, ok)
++	list, ok := nested["list"].([]any)
++	require.True(t, ok)
++	deepMap, ok := list[0].(map[string]any)
++	require.True(t, ok)
++	deepMap["deep"] = "mutated"
++
++	require.Equal(t, snapshot, src)
 +}
 +
- func TestDeploySuccessHooksPersistStatusByAPIVersion(t *testing.T) {
- 	t.Parallel()
++func TestSetDoesNotShareNestedValuesWithNewVal(t *testing.T) {
++	t.Parallel()
++	newVal := map[string]any{"keep": "original"}
++	snapshot := map[string]any{"keep": "original"}
++
++	dst := Values{}
++	require.NoError(t, dst.Set(".target", newVal))
++	require.Equal(t, snapshot, dst["target"])
++
++	require.NoError(t, dst.Set(".target.keep", "mutated"))
++	require.Equal(t, snapshot, newVal)
++}
++
+ func TestValidate(t *testing.T) {
+ 	tests := []struct {
+ 		name       string
+```
+
+**File**: `src/test/e2e/42_values_test.go` (modified, +44/-0)
+```diff
+@@ -7,6 +7,7 @@ package test
+ import (
+ 	"fmt"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
  
-@@ -439,7 +489,11 @@ func TestDeployFileTemplatesByAPIVersion(t *testing.T) {
- 			definitionPath := filepath.Join(pkgLayout.DirPath(), layout.ZarfYAML)
- 			originalDefinition, err := os.ReadFile(definitionPath)
- 			require.NoError(t, err)
--			_, err = Deploy(ctx, pkgLayout, DeployOptions{SetVariables: map[string]string{"INPUT": "supplied"}})
-+			opts := DeployOptions{}
-+			if tt.apiVersion == v1alpha1.APIVersion {
-+				opts.SetVariables = map[string]string{"INPUT": "supplied"}
-+			}
-+			_, err = Deploy(ctx, pkgLayout, opts)
- 			if tt.fail {
- 				require.ErrorContains(t, err, `command "exit 1" failed`)
- 			} else {
+ 	"github.com/stretchr/testify/require"
+@@ -237,3 +238,46 @@ func TestStateTemplates(t *testing.T) {
+ 		require.Contains(t, stdErr, "PushPassword", "error should identify the inaccessible field")
+ 	})
+ }
++
++// comp-a maps .shared and .extra onto the chart root, comp-b maps only
++// .shared. Rendering comp-a must not rewrite the shared package values tree, so comp-b must
++// resolve nested.both to from-shared whether or not comp-a is in the same command.
++func TestValuesMappingDoesNotLeakBetweenComponents(t *testing.T) {
++	t.Log("E2E: Values mapping isolation")
++
++	src := filepath.Join("src", "test", "packages", "42-values", "values-leak")
++	tmpdir := t.TempDir()
++
++	stdOut, stdErr, err := e2e.Zarf(t, "package", "create", src, "-o", tmpdir, "--skip-sbom", "--confirm")
++	require.NoError(t, err, stdOut, stdErr)
++
++	packageName := fmt.Sprintf("zarf-package-test-values-leak-%s.tar.zst", e2e.Arch)
++	path := filepath.Join(tmpdir, packageName)
++
++	fullOut, stdErr, err := e2e.Zarf(t, "package", "inspect", "values-files", path)
++	require.NoError(t, err, fullOut, stdErr)
++
++	docs := splitValuesFileDocs(fullOut)
++	require.Len(t, docs, 2, "expected one values file per component:\n%s", fullOut)
++	require.Contains(t, docs[0], "both: from-extra", "comp-a maps .extra and must win for itself")
++	require.Contains(t, docs[1], "both: from-shared", "comp-b does not map .extra and must not inherit it from comp-a")
++
++	// The same component must render identically on its own.
++	soloOut, stdErr, err := e2e.Zarf(t, "package", "inspect", "values-files", path, "--components", "comp-b")
++	require.NoError(t, err, soloOut, stdErr)
++
++	soloDocs := splitValuesFileDocs(soloOut)
++	require.Len(t, soloDocs, 1, "expected one values file:\n%s", soloOut)
++	require.Equal(t, docs[1], soloDocs[0], "comp-b's values must not depend on which components are in the command")
++}
++
++// splitValuesFileDocs splits `inspect values-files` output into its per-chart YAML documents.
++func splitValuesFileDocs(out string) []string {
++	var docs []string
++	for _, doc := range strings.Split(out, "---") {
++		if trimmed := strings.TrimSpace(doc); trimmed != "" {
++			docs = append(docs, trimmed)
++		}
++	}
++	return docs
++}
+```
+
+**File**: `src/test/packages/42-values/values-leak/chart/Chart.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++apiVersion: v2
++name: values-leak-chart
++version: 0.1.0
++description: Minimal chart proving a chart values mapping does not leak between components
+```
+
+**File**: `src/test/packages/42-values/values-leak/chart/templates/configmap.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++apiVersion: v1
++kind: ConfigMap
++metadata:
++  name: values-leak-configmap
++data:
++  both: {{ .Values.nested.both | quote }}
+```
+
+**File**: `src/test/packages/42-values/values-leak/chart/values.yaml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++fromShared: ""
++nested:
++  both: ""
+```
+
+**File**: `src/test/packages/42-values/values-leak/values/values.yaml` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++shared:
++  fromShared: shared-value
++  nested:
++    both: from-shared
++extra:
++  nested:
++    both: from-extra
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5613** (2026-11-06): feat!: removed deprecated k8s api migration (@AustinAbro321)
 - **PR #5611** (2026-11-05): chore(deps): bump the k8s group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5607** (closed): docs: update custom init package tutorial (@shaversj)
 - **PR #5606** (2026-11-05): feat!: error when variables are used with v1beta1 (@AustinAbro321)
 - **PR #5605** (2026-11-04): feat!: remove deprecated commands and flags (@AustinAbro321)
 - **PR #5599** (closed): feat!: respect component ordering (@brandtkeller)
-- **PR #5597** (2026-11-04): feat(oci): added chuncked retryable resumable blob pulls (@sgettys)
 
 ---
 
@@ -1844,42 +1830,67 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the k8s group across 1 directory with 6 updates (#5611)
+## X. deep copy values on merge so a chart mapping can't leak into later components (#
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/packager/packager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be6d4c52`: deps): bump the k8s group across 1 directory with 6 updates (#5611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88025928`: deep copy values on merge so a chart mapping can't leak into later components (#5585). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/packager/packager_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	k8s.io/api v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
-	k8s.io/kubectl v0.37.2
-	k8s.io/component-base v0.37.2 // indirect
-	k8s.io/cli-runtime v0.37.2
-	k8s.io/component-helpers v0.37.2
-	k8s.io/metrics v0.37.2 // indirect
+
+// comp-a maps two source paths onto the same chart root, comp-b maps
+// only the first. Mapping comp-a must not rewrite the shared package values tree, or comp-b
+// receives comp-a's values and the result depends on which components are in the command.
+func Test_generateValuesOverrides_MappingDoesNotLeakIntoLaterComponents(t *testing.T) {
+	t.Parallel()
+	ctx := testutil.TestContext(t)
+
+	vals := value.Values{
+		"shared": map[string]any{
+			"fromShared": "shared-value",
+			"nested":     map[string]any{"both": "from-shared"},
+		},
+		"extra": map[string]any{
+			"nested": map[string]any{"both": "from-extra"},
+		},
+	}
+	newOpts := func() overrideOpts {
+		return overrideOpts{
+			variableConfig:     variables.New("", nil, nil),
+			values:             vals,
+			valuesOverridesMap: ValuesOverrides{},
+		}
+	}
+
+	compAChart := v1alpha1.ZarfChart{
+		Name: "demo",
+		Values: []v1alpha1.ZarfChartValue{
+			{SourcePath: ".shared", TargetPath: "."},
+			{SourcePath: ".extra", TargetPath: "."},
+		},
+	}
+	compBChart := v1alpha1.ZarfChart{
+		Name: "demo",
+		Values: []v1alpha1.ZarfChartValue{
+			{SourcePath: ".shared", TargetPath: "."},
+		},
+	}
+
+	aResult, err := generateValuesOverrides(ctx, genericChart(compA
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	k8s.io/api v0.37.1
-	k8s.io/apimachinery v0.37.1
-	k8s.io/client-go v0.37.1
-	k8s.io/kubectl v0.37.1
-	k8s.io/component-base v0.37.1 // indirect
-	k8s.io/cli-runtime v0.37.1
-	k8s.io/component-helpers v0.37.1
-	k8s.io/metrics v0.37.1 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be6d4c52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88025928` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T21:13:53.830Z",
+  "last_updated": "2026-11-06T21:21:14.384Z",
   "total_verified_learnings": 1227,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34668,8 +34668,8 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "cac23b87",
-      "content_hash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
+      "source_version": "2927a473",
+      "content_hash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
@@ -34694,7 +34694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:30:36.954Z",
+      "verified_at": "2026-11-06T21:21:06.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62417,11 +62417,16 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "7e97594b",
-      "content_hash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
+      "source_version": "85bd085e",
+      "content_hash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "security(deps): bump golang.org/x/net to v0.62.0",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2260,
           "title": "Test that unflushed writes of a suspended namespace survive a crash",
@@ -62463,7 +62468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T11:45:28.014Z",
+      "verified_at": "2026-11-06T21:21:14.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64198,11 +64203,16 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "be6d4c52",
-      "content_hash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
+      "source_version": "6c2e879e",
+      "content_hash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deep copy values on merge so a chart mapping can't leak into later components (#",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1968,
           "title": "ensure chart order is preserved in state (#5477)",
@@ -64279,7 +64289,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:36:40.725Z",
+      "verified_at": "2026-11-06T21:21:09.663Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

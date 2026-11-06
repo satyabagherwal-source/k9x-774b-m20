@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `cac23b87`  
+> **Source Version**: `2927a473`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:30:36.409Z  
+> **Timestamp**: 2026-11-06T21:21:06.237Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:30:35.748Z  
+> **Harvest Timestamp**: 2026-11-06T21:21:04.716Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12325 stars
+- **Stars / Engagement**: 12327 stars
 
 ---
 
@@ -1569,14 +1569,11 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9411** (2026-11-02): **fix(crashlytics, ios): name the dSYM input after the executable**
-  *Symptoms*: ### Description  The `[RNFB] Crashlytics Configuration` script phase declared its dSYM input as `${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}`. The DWARF file inside a dSYM is named after the binary, so in any app whose target name differs from its executable name, the declared input pointed at a file that doesn't exist. `pod install` regenerates the phase, so fixing it in Xcode didn't stick.  Changes:  - **The input now uses `${EXECUTABLE_NAME}`.** In Xcode's build-setting specs, app targets (`com.apple.package-type.wrapper.application`, based on `com.apple.package-type.wrapper`) default to `EXECUTABLE_NAME = $(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)`, and the prefix and both suffixes default to empty. So by default this resolves to the same path Firebase documents (`.../DWARF/${PRODUCT_NAME}`, in their docs and in `CrashlyticsInputFiles.xcfilelist`). It also covers apps that set a custom executable name. - **The test app's regenerated script phase** in `tests/ios/testing.xcodeproj` is updated to match, so `pod install` leaves no diff.  Apps whose target and product names match resolve to the same file as before, so nothing changes for them. Symbol uploads didn't depend on this input: `ios_config.sh` uploads from the dSYM folder. The wrong input affected Xcode's dependency analysis and script sandboxing.  ### Related issues  - Fixes #9404  ### Release Summary  Crashlytics (iOS): the dSYM i
+- **Issue #9442** (2026-11-06): **chore: remove accidentally committed .agents/reports/pr-9093**
+  *Symptoms*: ### Description  Remove `.agents/reports/pr-9093` agent scratch that was force-added despite `.agents/.gitignore` (`reports`).  ### Related issues  N/A  ### Release Summary  N/A — no package changes.  ### Checklist  - I read the [Contributor Guide](https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md) and followed the process outlined there for submitting PRs.   - [x] Yes - My change supports the following platforms;   - [ ] `Android`   - [ ] `iOS`   - [ ] `Other` (macOS, web) - My change includes tests;   - [ ] `e2e` tests added or updated in `packages/\*\*/e2e`   - [ ] `jest` tests added or updated in `packages/\*\*/__tests__` - [ ] I have updated TypeScript types that are affected by my change. - This is a breaking change;   - [ ] Yes   - [x] No  ### Test Plan  `git ls-files .agents/reports` is empty; path remains gitignored via `.agents/.gitignore`.
 
-- **Issue #9409** (2026-11-02): **chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0**
-  *Symptoms*: Bumps [ruby/setup-ruby](https://github.com/ruby/setup-ruby) from 1.329.0 to 1.334.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ruby/setup-ruby/releases">ruby/setup-ruby's releases</a>.</em></p> <blockquote> <h2>v1.334.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-3.3.13,ruby-3.4.12,ruby-4.0.9 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/956">ruby/setup-ruby#956</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0">https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0</a></p> <h2>v1.333.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-4.0.8 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/955">ruby/setup-ruby#955</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0">https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0</a></p> <h2>v1.332.0</h2> <h2>What's Changed</h2> <ul> <li>Update CRuby releases on Windows (CVE-2026-111943) by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/952">ruby/setup-ruby#952</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9409) it.</sub>
-  > Superseded by #9420.
+- **Issue #9436** (2026-11-05): **[🐛] Android: NativeRNFBTurboApp is not registered on RN 0.88 — packages still use legacy ReactPackage**
+  *Symptoms*: ### Environment - @react-native-firebase/app + analytics 27.1.0 - react-native 0.88.1, Expo SDK 58 (New Architecture, dev client) - Android (iOS works)  ### Issue The app crashes at startup on Android with:      Native module NativeRNFBTurboApp is not registered  (expo-router surfaces it as "Cannot read property 'ErrorBoundary' of undefined").  Firebase initializes natively (`FirebaseInitProvider: FirebaseApp initialization successful`), and the Java classes and C++ specs are in the APK, but `TurboModuleRegistry.get('NativeRNFBTurboApp')` returns null.  ### Cause `ReactNativeFirebaseAppPackage` and `ReactNativeFirebaseAnalyticsPackage` implement the legacy `ReactPackage.createNativeModules`. On RN 0.88 those modules are no longer resolved as TurboModules. `react-native-google-mobile-ads`, which uses `BaseReactPackage`, works in the same app.  ### Workaround Patching both packages to extend `BaseReactPackage` (`getModule` + `getReactModuleInfoProvider` with `isTurboModule = true`) fixes it. Analytics events reach DebugView. Happy to open a PR if that's the preferred direction.  <details><summary>Patch (app)</summary>  (paste patches/@react-native-firebase__app@27.1.0.patch) </details>  Not a duplicate of #9354: same error message, but that one is iOS with static linkage (fixed by `useFrameworks: "dynamic"`, which we already use). This one is Android-only and caused by the package registration.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1593,110 +1590,218 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cac23b87` (2026-11-02)
-**Commit Message**: fix(crashlytics, ios): name the dSYM input after the executable (#9411)
+### Incident Patch 1: `2927a473` (2026-11-06)
+**Commit Message**: chore: remove accidentally committed .agents/reports/pr-9093
 
-**File**: `packages/crashlytics/__tests__/reactNativeConfig.test.ts` (modified, +50/-0)
+**File**: `.agents/reports/pr-9093/coverage-evidence-m1.md` (removed, +0/-42)
 ```diff
-@@ -5,6 +5,32 @@ import { describe, expect, it } from '@jest/globals';
- 
- const config = require('../react-native.config.js');
- 
-+function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
-+  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
-+    expandFlatBuildSettings(settings[name] ?? '', settings),
-+  );
-+}
-+
-+const appBuildSettings: Record<string, string> = {
-+  DWARF_DSYM_FOLDER_PATH: '/dsyms',
-+  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
-+  TARGET_NAME: 'ExampleApp',
-+  PRODUCT_NAME: 'Example Development',
-+  EXECUTABLE_PREFIX: '',
-+  EXECUTABLE_VARIANT_SUFFIX: '',
-+  EXECUTABLE_SUFFIX: '',
-+  EXECUTABLE_NAME:
-+    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
-+};
-+
-+function declaredDwarfInput(): string {
-+  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
-+    file.includes('/DWARF/'),
-+  );
-+  expect(typeof input).toBe('string');
-+  return input;
-+}
-+
- describe('Crashlytics react-native.config.js', function () {
-   it('declares the iOS script phase that uploads dSYMs', function () {
-     // Without this entry `pod install` silently drops the
-@@ -18,6 +44,30 @@ describe('Crashlytics react-native.config.js', function () {
-     expect(scriptPhases[0].execution_position).toBe('after_compile');
-   });
- 
-+  it('declares the dSYM DWARF input by executable name', function () {
-+    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
-+
-+    expect(inputFiles).toContain(
-+      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
-+    );
-+    expect(inputFiles.some((file: string) => file.includes('${TARGET_NAME}'))).toBe(false);
-+  });
-+
-+  it('resolves the dSYM DWARF input to the product name for an app by default', function () {
-+    expect(expandFlatBuildSettings(declaredDwarfInput(), appBuildSettings)).toBe(
-+      '/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/Example Development',
-+    );
-+  });
-+
-+  it('resolves the dSYM DWARF input to a custom executable name when overridden', function () {
-+    expect(
-+      expandFlatBuildSettings(declaredDwarfInput(), {
-+        ...appBuildSettings,
-+        EXECUTABLE_NAME: 'CustomBinary',
-+      }),
-+    ).toBe('/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/CustomBinary');
-+  });
-+
-   it('points the script phase at a script that exists', function () {
-     const scriptPath = join(__dirname, '..', config.dependency.platforms.ios.scriptPhases[0].path);
- 
+@@ -1,42 +0,0 @@
+-# Coverage evidence — M1 (perf duplicate id collision)
+-
+-**Verdict:** `100% on reachable touched lines`
+-
+-**Item:** CPRN-365 / PR #9093 — M1 perf duplicate trace/http/screen id collision semantics
+-
+-**Decision:** silent last-wins via `putReplacing` + stop displaced outside HandleMap lock ([m1-perf-collision-decision.md](./m1-perf-collision-decision.md))
+-
+-## Touched regions
+-
+-| File | Change | Unit coverage |
+-|------|--------|---------------|
+-| `packages/perf/android/.../UniversalFirebasePerfModule.java` | `registerStartedTrace` / `registerStartedHttpMetric` / `registerRecordedScreenTrace` (`putReplacing` + stop displaced) | Registry JVM test mirrors module pattern (D12 — no Firebase types in JVM) |
+-| `packages/perf/ios/RNFBPerf/RNFBPerfModule.mm` | `startTrace` / `startHttpMetric` last-wins + stop displaced | Registry XCTest mirrors module pattern |
+-| `packages/perf/android/.../RNFBPerfHandleRegistry.java` | Javadoc — module uses `putReplacing` | Existing + new collision-pattern test |
+-| `packages/perf/ios/RNFBPerf/RNFBPerfHandleRegistry.h` | Javadoc — module uses `putReplacing` | Existing + new collision-pattern test |
+-
+-## Branch map
+-
+-| Branch | Test |
+-|--------|------|
+-| `putReplacing` when free → store, no displaced | `putReplacing_whenFree_stores` / implicit in occupied test setup |
+-| `putReplacing` when occupied → return displaced, last wins | `putReplacing_whenOccupied_returnsDisplaced` / `testPutReplacing_whenOccupied_returnsDisplaced` |
+-| Module pattern: stop displaced outside lock | `putReplacing_moduleCollisionPattern_stopsDisplacedOutsideLock` / `testPutReplacing_moduleCollisionPattern_stopsDisplacedOutsideLock` |
+-| `putOrDiscard` first-wins (registry API, not module path) | `putOrDiscard_collision_*` / `testPutOrDiscard_collision_*` |
+-
+-## Gaps
+-
+-| Gap | Disposition |
+-|-----|-------------|
+-| TurboModule `startTrace` / `startHttpMetric` wiring lines in `UniversalFirebasePerfModule` / `RNFBPerfModule.mm` | **User-accepted exception** — [coverage design](../../okf-bundle/testing/coverage-design.md): HandleMap TurboModule delegate lines may stay uncovered; collision lifecycle proven on Registry + documented module pattern |
+-
+-No dead or intractable gaps.
+-
+-## Artifacts
+-
+-| Platform | Command | Result |
+-|----------|---------|--------|
+-| Android perf | `./gradlew :react-native-firebase_perf:testDebugUnitTest --tests RNFBPerfHandleRegistryTest` | exit 0 (15 tests) |
+-| iOS perf | `xcodebuild test -scheme RNFBPerfUnitTests -destination 'platform=macOS'` | exit 0 (8 tests) |
+-
+-Timestamp: 2026-08-26T17:01:00Z
 ```
 
-**File**: `packages/crashlytics/react-native.config.js` (modified, +1/-1)
+**File**: `.agents/reports/pr-9093/coverage-evidence-r6.md` (removed, +0/-43)
 ```diff
-@@ -12,7 +12,7 @@ module.exports = {
-             path: './ios_config.sh',
-             execution_position: 'after_compile',
-             input_files: [
--              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
-+              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
-               '$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)',
-             ],
-           },
+@@ -1,43 +0,0 @@
+-# Coverage evidence — R6 (database takeIfIdle atomic)
+-
+-**Verdict:** `100% on reachable touched lines`
+-
+-**Item:** CPRN-365 / PR #9093 — R6 database `takeIfIdle` atomicity
+-
+-## Touched regions
+-
+-| File | Change | Unit coverage |
+-|------|--------|---------------|
+-| `packages/app/android/.../RNFBHandleMap.java` | `takeIf(id, predicate)` | `RNFBHandleMapTest` — predicate true/false/missing |
+-| `packages/app/ios/RNFBApp/RNFBHandleMap.{h,m}` | `takeIf:when:` | `RNFBHandleMapTests` — condition yes/no/missing |
+-| `packages/database/android/.../RNFBDatabaseQueryRegistry.java` | `takeIfIdle` via `map.takeIf` | `RNFBDatabaseQueryRegistryTest` — idle/active/missing + concurrent |
+-| `packages/database/ios/.../RNFBDatabaseQueryRegistry.m` | `takeIfIdle` via `takeIf:when:` | `RNFBDatabaseQueryRegistryTests` — same branches + concurrent |
+-
+-## Branch map
+-
+-| Branch | Test |
+-|--------|------|
+-| `takeIf` / `takeIf:when:` predicate true → remove | `RNFBHandleMapTest.takeIf_whenPredicateTrue_*` / `RNFBHandleMapTests testTakeIf_whenConditionYes_*` |
+-| Predicate false → keep mapping | `takeIf_whenPredicateFalse_*` / `testTakeIf_whenConditionNo_*` |
+-| Missing key → nil | `takeIf_whenMissing_*` / `testTakeIf_whenMissing_*` |
+-| `takeIfIdle` no listeners → take | `takeIfIdle_whenNoListeners_takes` / `testTakeIfIdle_whenNoListeners_takes` |
+-| Has listeners → keep | `takeIfIdle_whenHasListeners_*` / `testTakeIfIdle_whenHasListeners_*` |
+-| No `hasListeners` selector → keep | `testTakeIfIdle_objectWithoutHasListeners_*` |
+-| Concurrent off/on: listener added during `hasListeners` under lock | `takeIfIdle_concurrentOffOnRace_retainsMappingWhenListenersAddedDuringCheck` / iOS equivalent |
+-| Concurrent off/on stress with listeners active | `takeIfIdle_concurrentOffOnRace_stressRetainsWhenListenersAlreadyActive` / iOS equivalent |
+-| Concurrent dual `takeIfIdle` on idle query | `takeIfIdle_concurrentTakeIfIdle_onIdleQuery_leavesMapEmpty` / iOS equivalent |
+-
+-## Gaps
+-
+-None — all reachable lines in touched production methods exercised by JVM / XCTest.
+-
+-## Artifacts
+-
+-| Platform | Command | Result |
+-|----------|---------|--------|
+-| Android database | `./gradlew :react-native-firebase_database:testDebugUnitTest --tests RNFBDatabaseQueryRegistryTest` | exit 0 (12 tests) |
+-| Android app (HandleMap) | `./gradlew :react-native-firebase_app:testDebugUnitTest --tests RNFBHandleMapTest` | exit 0 (14 tests) |
+-| iOS database | `xcodebuild test … RNFBDatabaseUnitTests` | exit 0 (21 tests) |
+-| iOS app (HandleMap) | `xcodebuild test … RNFBAppUnitTests` | exit 0 (14 tests) |
+-
+-Timestamp: 2026-08-26T15:48:39Z
 ```
 
-**File**: `tests/ios/testing.xcodeproj/project.pbxproj` (modified, +1/-1)
+**File**: `.agents/reports/pr-9093/m1-perf-collision-decision.md` (removed, +0/-84)
 ```diff
-@@ -410,7 +410,7 @@
- 			files = (
- 			);
- 			inputPaths = (
--				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}",
- 				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
- 			);
- 			name = "[CP-User] [RNFB] Crashlytics Configuration";
+@@ -1,84 +0,0 @@
+-# M1 — Perf duplicate trace/http/screen id collision semantics
+-
+-**Item:** CPRN-365 / PR #9093 — M1 (Russell review)  
+-**Date:** 2026-08-26
+-
+-## Pre-PR `main` behavior
+-
+-| Platform | Container | Duplicate `start*` with same numeric id |
+-|----------|-----------|----------------------------------------|
+-| Android | `SparseArray.put(id, handle)` | **Silent last-wins overwrite.** Old handle dropped from map; SDK object keeps running as orphan until GC. `stopTrace(id)` affects the **latest** mapping only. |
+-| iOS | `NSMutableDictionary` subscript assign | **Silent last-wins overwrite.** Same orphan semantics as Android. |
+-
+-Neither platform stopped the displaced handle. Neither surfaced an error to JS.
+-
+-## Interim PR branch (pre-M1 fix)
+-
+-| Platform | Mechanism | Duplicate id on `startTrace` / `startHttpMetric` / `startScreenTrace` |
+-|----------|-----------|-----------------------------------------------------------------------|
+-| Android | `putOrDiscard` then throw | **`IllegalStateException`** when id occupied — crashes/fails the TurboModule call. Trace/metric **already started** before registration, so collision also orphans the incoming SDK object. |
+-| iOS | `putOrDiscard` | **Silent first-wins discard** — incoming started trace/metric orphaned, existing mapping kept. |
+-
+-Platform mismatch + both differ from main's last-wins overwrite.
+-
+-## Firebase Performance SDK expectations
+-
+-- `newTrace(name)` / `traceWithName:` and `newHttpMetric` / `HTTPMetric` create **independent** SDK objects; duplicate **names** are allowed.
+-- RNFB's numeric id is an **internal bridge handle** (from JS `MetricWithAttributes` auto-increment), not a Firebase trace name.
+-- The SDK does not define duplicate-handle semantics for RNFB ids; RNFB owns registry policy.
+-
+-## JS / RNFB API expectations
+-
+-- `Trace.start()`, `HttpMetric.start()`, `ScreenTrace.start()` call native `start*(id, …)` once per instance (`_started` guard).
+-- JS assigns **unique** ids via module-level `id++` in `MetricWithAttributes.ts` — duplicate ids are not produced by normal API use.
+-- Collisions are **programmer-error / race** territory (direct native calls, hot reload edge cases, concurrent misuse).
+-- Native `start*` methods are **`void`** (TurboModule spec) — no promise rejection path. Throwing on Android is a hard native crash, not a documented JS contract.
+-- Developers expect **`stop()` on their object** to finalize the trace they started; last-wins overwrite on main meant the **last** `start` won `stop(id)` — first object's `stop()` could no-op or finalize the wrong native handle.
+-
+-## Options considered
+-
+-| Policy | Pros | Cons |
+-|--------|------|------|
+-| **Silent last-wins** (`putReplacing` + stop displaced) | Matches main `stop(id)` target; stops orphaned SDK work; consistent Android/iOS; no JS throw | First trace stopped without JS metrics (same class of loss as main orphan, but cleanly finalized) |
+-| Silent discard incoming (`putIfAbsent`, register before start) | First wins; no duplicate SDK objects if register-before-start | **Breaks** main last-wins; `stop()` on second JS object would no-op |
+-| Throw to JS | Surfaces misuse | `void` TurboModule — not viable without API change; Android-only today |
+-
+-## Decision
+-
+-**Adopt silent last-wins: `putReplacing` + stop displaced handle outside the HandleMap lock.**
+-
+-Applies consistently to **traces**, **HTTP metrics**, and **screen traces** on Android and iOS:
+-
+-1. Create and start the new SDK metric.
+-2. `displaced = registry.putReplacing(id, newHandle)`.
+-3. If `displaced != null`, finalize displaced (`Trace.stop()` / `HttpMetric.stop()` / `ScreenTrace.sendScreenTrace()`).
+-
+-Rationale:
+-
+-- Restores main's last-wins `stop(id)` semantics.
+-- Improves on main by stopping displaced metrics instead of leaking them.
+-- Aligns Android with iOS (removes `IllegalStateException` vs silent-discard split).
+-- Avoids JS-visible throws on a void native method.
+-
+-`putOrDiscard` remains on the registry for tests and future callers but is **not** used by perf module start paths.
+-
+-## Implementation scope
+-
+-- `UniversalFirebasePerfModule.java` — async + sync start paths
+-- `RNFBPerfModule.mm` — `startTrace`, `startHttpMetric`
+-- Registry javadoc (already documents `putReplacing` contract)
+-- Unit tests: collision last-wins pattern with fake stoppable handles (Android JVM + iOS XCTest)
+-- Coverage evidence: `.agents/reports/pr-9093/coverage-evidence-m1.md`
+-
+-## YAML verdict
+-
+-```yaml
+-item: M1
+-decision: silent_last_wins_putReplacing_stop_displaced
+-pre_main_behavior: silent_overwrite_orphan
+-interim_android: throw_IllegalStateException_after_start
+-interim_ios: silent_discard_incoming_orphan
+-platforms_aligned: true
+-js_throw: false
+-verdict: remediated
+-```
+```
+
+---
+
+### Incident Patch 2: `d6bdab87` (2026-11-05)
+**Commit Message**: ci(android): bump remove-unwanted-software to v5.1 for the ubuntu-26.04 runner (#9427)
+
+**File**: `.github/workflows/tests_e2e_android.yml` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ jobs:
+     steps:
+       - name: Free Disk Space (Ubuntu)
+         # https://github.com/AdityaGarg8/remove-unwanted-software/releases
+-        uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793 # v5
++        uses: AdityaGarg8/remove-unwanted-software@36765610732de8ee2e81a5c6c231506e2b5cabcf # v5.1
+         with:
+           remove-dotnet: true
+           remove-haskell: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9442** (2026-11-06): chore: remove accidentally committed .agents/reports/pr-9093 (@mikehardy)
+- **PR #9427** (2026-11-05): ci(android): bump remove-unwanted-software to v5.1 for the ubuntu-26.04 runner (@Mastersam07)
+- **PR #9420** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.335.0 (@dependabot[bot])
+- **PR #9415** (closed): chore(deps): bump rubocop from 1.91.0 to 1.92.1 (@dependabot[bot])
 - **PR #9411** (2026-11-02): fix(crashlytics, ios): name the dSYM input after the executable (@Mastersam07)
 - **PR #9409** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0 (@dependabot[bot])
-- **PR #9406** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.332.0 (@dependabot[bot])
-- **PR #9400** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.331.0 (@dependabot[bot])
-- **PR #9396** (2026-10-23): fix(ci): branch-aware publish (docs gate, dist-tag, recovery) (@mikehardy)
-- **PR #9393** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 12.19.3 (@russellwheatley)
 
 ---
 
@@ -1710,66 +1815,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. crashlytics, ios): name the dSYM input after the executable (#9411)
-
-**RULE**:
-When implementing operations in `packages/crashlytics/__tests__/reactNativeConfig.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `cac23b87`: crashlytics, ios): name the dSYM input after the executable (#9411). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/crashlytics/__tests__/reactNativeConfig.test.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
-  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
-    expandFlatBuildSettings(settings[name] ?? '', settings),
-  );
-}
-
-const appBuildSettings: Record<string, string> = {
-  DWARF_DSYM_FOLDER_PATH: '/dsyms',
-  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
-  TARGET_NAME: 'ExampleApp',
-  PRODUCT_NAME: 'Example Development',
-  EXECUTABLE_PREFIX: '',
-  EXECUTABLE_VARIANT_SUFFIX: '',
-  EXECUTABLE_SUFFIX: '',
-  EXECUTABLE_NAME:
-    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
-};
-
-function declaredDwarfInput(): string {
-  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
-    file.includes('/DWARF/'),
-  );
-  expect(typeof input).toBe('string');
-  return input;
-}
-
-  it('declares the dSYM DWARF input by executable name', function () {
-    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
-
-    expect(inputFiles).toContain(
-      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
-    );
-    expect(inputFiles.some((fil
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cac23b87` are properly handled with clean fallback behavior.

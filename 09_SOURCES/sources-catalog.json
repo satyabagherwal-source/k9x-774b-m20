@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "cac23b87",
+    "sourceVersion": "2927a473",
     "license": "NOASSERTION",
-    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
-    "lastHarvestedAt": "2026-11-04T03:30:37.044Z",
+    "contentHash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
+    "lastHarvestedAt": "2026-11-06T21:21:06.564Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "be6d4c52",
+    "sourceVersion": "6c2e879e",
     "license": "Apache-2.0",
-    "contentHash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
-    "lastHarvestedAt": "2026-11-05T12:36:40.831Z",
+    "contentHash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
+    "lastHarvestedAt": "2026-11-06T21:21:09.782Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "7e97594b",
+    "sourceVersion": "85bd085e",
     "license": "NOASSERTION",
-    "contentHash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
-    "lastHarvestedAt": "2026-11-05T11:45:28.133Z",
+    "contentHash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
+    "lastHarvestedAt": "2026-11-06T21:21:14.480Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

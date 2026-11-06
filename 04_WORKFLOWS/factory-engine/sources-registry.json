@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T13:27:22.129Z",
-    "lastVerified": "2026-11-06T13:27:22.129Z",
+    "lastChecked": "2026-11-06T21:21:05.145Z",
+    "lastVerified": "2026-11-06T21:21:05.145Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0d7f9b32"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T21:13:56.492Z",
-    "lastVerified": "2026-11-06T21:13:56.492Z",
+    "lastChecked": "2026-11-06T21:21:17.094Z",
+    "lastVerified": "2026-11-06T21:21:17.094Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T20:52:16.598Z",
+    "lastChecked": "2026-11-06T21:21:10.291Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T20:52:16.598Z"
+    "lastVerified": "2026-11-06T21:21:10.291Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1007,14 +1008,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T11:45:27.332Z",
-    "lastVerified": "2026-11-05T11:45:27.332Z",
+    "lastChecked": "2026-11-06T21:21:12.425Z",
+    "lastVerified": "2026-11-06T21:21:12.425Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
+    "contentHash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2828,14 +2829,14 @@
     "officialUrl": "https://github.com/invertase/react-native-firebase",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T03:30:35.748Z",
-    "lastVerified": "2026-11-04T03:30:35.748Z",
+    "lastChecked": "2026-11-06T21:21:04.716Z",
+    "lastVerified": "2026-11-06T21:21:04.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "a10fba1e33ba8cdf54b3d589039a9176db2748a9b7e5c1a0564afaf0ee11da56",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "a0271bd98120716ca2eab56d8e9008fa56ace4af78478f79862d3e103ad5d5fe",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4543,9 +4544,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-05T07:12:56.590Z",
+    "lastChecked": "2026-11-06T21:20:55.173Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-11-05T07:12:56.590Z"
+    "lastVerified": "2026-11-06T21:20:55.173Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -4652,14 +4653,14 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T12:36:40.103Z",
-    "lastVerified": "2026-11-05T12:36:40.103Z",
+    "lastChecked": "2026-11-06T21:21:08.194Z",
+    "lastVerified": "2026-11-06T21:21:08.194Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "631644b518d8dcec4249c667373d928a1d7266dc70fd871a4db4b8b20f45b078",
+    "contentHash": "83a1c8a911675e4801d12b15f9cbd08f0cf1122e9583f852052c33710a3843b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10437,9 +10438,9 @@
   "nometria-sitemap-generator": {
     "name": "sitemap-generator",
     "officialUrl": "https://github.com/nometria/sitemap-generator",
-    "lastChecked": "2026-11-03T17:30:03.868Z",
+    "lastChecked": "2026-11-06T21:20:57.688Z",
     "revisionIdentifier": "6d8cae81",
-    "lastVerified": "2026-11-03T17:30:03.868Z"
+    "lastVerified": "2026-11-06T21:20:57.688Z"
   },
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
