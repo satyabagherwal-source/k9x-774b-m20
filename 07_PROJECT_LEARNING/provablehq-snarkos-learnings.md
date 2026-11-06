@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `84ccee7a`  
+> **Source Version**: `6f0ab313`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:13:14.913Z  
+> **Timestamp**: 2026-11-06T23:12:05.322Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:13:14.261Z  
+> **Harvest Timestamp**: 2026-11-06T23:12:05.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,1144 +1987,105 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84ccee7a` (2026-11-06)
-**Commit Message**: Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding
+### Incident Patch 1: `6f0ab313` (2026-11-06)
+**Commit Message**: Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal
 
-**File**: `cli/src/commands/start.rs` (modified, +1/-1)
+**File**: `.github/workflows/mirror-staging.yml` (added, +31/-0)
 ```diff
-@@ -1005,7 +1005,7 @@ impl Start {
-             NodeType::Validator => Node::new_validator(node_ip, self.bft, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, &trusted_validators, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), dev_txs, self.dev, dev_hotswap_config, self.proposal_spent_limit_multiplier, signal_handler.clone()).await,
-             NodeType::Prover => Node::new_prover(node_ip, account, &trusted_peers, genesis, node_data_dir, self.trusted_peers_only, self.dev, signal_handler.clone()).await,
-             NodeType::Client => Node::new_client(node_ip, rest_ip, self.rest_rps, rest_verification_limits, history_api_url.clone(), self.history_json, account, &trusted_peers, genesis, cdn, storage_mode, node_data_dir, self.trusted_peers_only, self.auto_db_checkpoints.clone(), self.dev, signal_handler.clone()).await,
--            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), self.dev).await,
-+            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), genesis.hash(), self.dev).await,
-         }?;
- 
-         if !self.nodisplay {
-```
-
-**File**: `node/bft/events/src/disconnect.rs` (modified, +5/-0)
-```diff
-@@ -45,6 +45,8 @@ pub enum DisconnectReason {
-     InvalidChallengeRequest = 9,
-     /// The peer is not an authorized validator.
-     UnauthorizedValidator = 10,
-+    /// The peer is on a network with a different genesis block.
-+    GenesisMismatch = 11,
-     /// The disconnect reason is not known. This is used for when the peers sends a disconnect reason that is not known to us.
-     UnknownReason = u8::MAX,
- }
-@@ -65,6 +67,7 @@ impl std::fmt::Display for DisconnectReason {
-             Self::AlreadyConnectedToAleoAddress => write!(f, "already connected to the given Aleo address"),
-             Self::InvalidChallengeRequest => write!(f, "invalid challenge request"),
-             Self::UnauthorizedValidator => write!(f, "unauthorized validator"),
-+            Self::GenesisMismatch => write!(f, "genesis mismatch"),
-             Self::UnknownReason => write!(f, "unknown"),
-         }
-     }
-@@ -129,6 +132,7 @@ impl FromBytes for Disconnect {
-             8 => DisconnectReason::AlreadyConnectedToAleoAddress,
-             9 => DisconnectReason::InvalidChallengeRequest,
-             10 => DisconnectReason::UnauthorizedValidator,
-+            11 => DisconnectReason::GenesisMismatch,
-             val => {
-                 warn!("received unknown disconnect reason (id={val})");
-                 DisconnectReason::UnknownReason
-@@ -162,6 +166,7 @@ mod tests {
-             DisconnectReason::AlreadyConnectedToAleoAddress,
-             DisconnectReason::InvalidChallengeRequest,
-             DisconnectReason::UnauthorizedValidator,
-+            DisconnectReason::GenesisMismatch,
-         ];
- 
-         for reason in all_reasons.iter() {
-```
-
-**File**: `node/bft/events/src/helpers/handshake.rs` (modified, +21/-6)
-```diff
-@@ -253,23 +253,29 @@ impl FromBytes for ConsensusSchedule {
- pub struct HandshakeTrailer {
-     /// The consensus schedule of the sender's build.
-     pub schedule: Option<ConsensusSchedule>,
-+    /// The little-endian bytes of the hash of the sender's genesis block, if it sent one. Bytes of
-+    /// the wrong length are kept as sent, so that they fail the genesis check instead of reading as none.
-+    pub genesis_hash: Option<Vec<u8>>,
- }
- 
- impl HandshakeTrailer {
-     /// The first event version whose handshake messages 2 and 3 must carry a trailer with a schedule.
-     pub const FIRST_VERSION: u32 = 11;
-+    /// The first event version whose handshake trailer must carry the genesis hash.
-+    pub const GENESIS_VERSION: u32 = 12;
- 
-     /// Returns the trailer that this build sends.
-     pub fn of<N: Network>() -> Self {
--        Self { schedule: Some(ConsensusSchedule::of::<N>()) }
-+        Self { schedule: Some(ConsensusSchedule::of::<N>()), genesis_hash: None }
-     }
- 
-     /// Parses a trailer, or returns `None` if it is malformed.
-     fn parse(bytes: &[u8]) -> Option<Self> {
-         let (length, rest) = bytes.split_first_chunk::<2>()?;
--        let fields = rest.get(..usize::from(u16::from_le_bytes(*length)))?;
--        let schedule = ConsensusSchedule::read_le(fields).ok()?;
--        Some(Self { schedule: Some(schedule) })
-+        let mut fields = rest.get(..usize::from(u16::from_le_bytes(*length)))?;
-+        let schedule = ConsensusSchedule::read_le(&mut fields).ok()?;
-+        let genesis_hash = (!fields.is_empty()).then(|| fields[..fields.len().min(32)].to_vec());
-+        Some(Self { schedule: Some(schedule), genesis_hash })
-     }
- }
- 
-@@ -279,7 +285,10 @@ impl ToBytes for HandshakeTrailer {
-         let Some(schedule) = &self.schedule else {
-             return Ok(());
-         };
--        let fields = schedule.to_bytes_le().map_err(io_error)?;
-+        let mut fields = schedule.to_bytes_le().map_err(io_error)?;
-+        if let Some(genesis_hash) = &self.genesis_hash {
-+            fields.extend_from_slice(genesis_hash);
-+        }
-         u16::try_from(fields.len()).map_err(io_error)?.write_le(&mut writer)?;
-         writer.write_all(&fields)
-     }
-@@ -420,7 +429,13 @@ pub mod prop_tests {
-     }
- 
-     pub fn any_trailer() -> BoxedStrategy<HandshakeTrailer> {
--        proptest::option::of(any_schedule()).prop_map(|schedule| HandshakeTrailer { schedule }).boxed()
-+        // A genesis hash is only sent after a schedule, and may be cut short.
-+        (proptest::option::of(any_schedule()), proptest::option::of(collection::vec(any::<u8>(), 1..=32)))
-+            .prop_map(|(schedule, genesis_hash)| {
-+                let genesis_hash = genesis_hash.filter(|_| schedule.is_some());
-+                HandshakeTrailer { schedule, genesis_hash }
-+            })
-+            .boxed()
-     }
- 
-     pub fn any_peer_info() -> BoxedStrategy<PeerInfo<CurrentNetwork>> {
-```
-
-**File**: `node/bft/events/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -175,7 +175,7 @@ impl<N: Network> Event<N> {
-     /// order to force users to update.
-     pub const MINIMUM_VERSION: u32 = 10;
-     /// The version of the event protocol this node speaks.
--    pub const VERSION: u32 = 11;
-+    pub const VERSION: u32 = 12;
- 
-     /// Serializes the event's [`Data`] payload, if it holds one that is not already serialized.
-     ///
-@@ -462,6 +462,7 @@ pub mod prop_tests {
-                     DisconnectReason::AlreadyConnectedToAleoAddress,
-                     DisconnectReason::InvalidChallengeRequest,
-                     DisconnectReason::UnauthorizedValidator,
-+                    DisconnectReason::GenesisMismatch,
-                 ]),
-                 any::<Selector>()
-             )
-```
-
-**File**: `node/bft/src/gateway.rs` (modified, +45/-6)
-```diff
-@@ -1642,18 +1642,32 @@ impl<N: Network> Handshake for Gateway<N> {
- 
-         // Retrieve the restrictions ID.
-         let restrictions_id = self.ledger.latest_restrictions_id();
-+        // Retrieve the hash of our genesis block, which the peer must share.
-+        let genesis_hash = self.ledger.get_block_hash(0).map_err(ConnectError::other)?;
-+        let genesis_hash: [u8; 32] = genesis_hash
-+            .to_bytes_le()
-+            .ok()
-+            .and_then(|bytes| bytes.try_into().ok())
-+            .ok_or_else(|| ConnectError::other(anyhow!("Failed to encode the genesis hash")))?;
- 
-         // Perform the handshake; we pass on a mutable reference to peer_ip in case the process is broken at any point in time.
-         //
-         // Validators speak only the Noise handshake. A peer that opens with anything else is turned
-         // away before any key is derived.
-         let handshake_result = if peer_side == ConnectionSide::Responder {
-             write_noise_magic(stream).await?;
--            self.handshake_inner_initiator_noise(peer_addr, restrictions_id, stream).await
-+            self.handshake_inner_initiator_noise(peer_addr, restrictions_id, genesis_hash, stream).await
-         } else {
-             match detect_handshake_protocol(stream).await? {
-                 (HandshakeProtocol::Noise, _) => {
--                    self.handshake_inner_responder_noise(peer_addr, &mut listener_addr, restrictions_id, stream).await
-+                    self.handshake_inner_responder_noise(
-+                        peer_addr,
-+                        &mut listener_addr,
-+                        restrictions_id,
-+                        genesis_hash,
-+                        stream,
-+                    )
-+                    .await
-                 }
-                 (HandshakeProtocol::Legacy, _) => {
-                     Err(ConnectError::other(format!("'{peer_addr}' did not offer the Noise handshake")))
-@@ -1834,6 +1848,7 @@ impl<N: Network> Gateway<N> {
-         &'a self,
-         peer_addr: SocketAddr,
-         restrictions_id: Field<N>,
-+        genesis_hash: [u8; 32],
-         stream: &'a mut TcpStream,
-     ) -> Result<(PeerInfo<N>, Option<ConsensusSchedule>), ConnectError> {
-         // Note who answered here last time, before the pool entry becomes a connecting one and stops
-@@ -1869,7 +1884,8 @@ impl<N: Network> Gateway<N> {
-         let binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
- 
-         // Check the peer over before signing anything for it.
--        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id) {
-+        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id, genesis_hash)
-+        {
-             return Err(reason.into_connect_error(peer_addr));
-         }
- 
-@@ -1891,7 +1907,7 @@ impl<N: Network> Gateway<N> {
-         let our_message = InitiatorInfo {
-             info: our_info,
-             signature: Data::Object(our_signature),
--            trailer: HandshakeTrailer::of::<N>(),
-+            trailer: HandshakeTrailer { genesis_hash: Some(genesis_hash.to_vec()), ..HandshakeTrailer::of::<N>() },
-         };
-         noise.send(&encode_payload(&our_message)?).await?;
- 
-@@ -1941,6 +1957,7 @@ impl<N: Network> Gateway<N> {
-         peer_addr: SocketAddr,
-         peer_ip: &mut Option<SocketAddr>,
-         restrictions_id: Field<N>,
-+        genesis_hash: [u8; 32],
-         stream: &'a mut TcpStream,
-     ) -> Result<(PeerInfo<N>, Option<ConsensusSchedule>), ConnectError> {
-         /* Message 1: the peer's cleartext hint. Everything it claims is re-checked in message 3. */
-@@ -1977,7 +1994,12 @@ impl<N: Network> Gateway<N> {
- 
-         let our_info =
-             PeerInfo::new(self.local_ip().port(), self.account.address(), restrictions_id, self.snarkos_sha());
--        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer: HandshakeTrailer::of::<N>() })?).await?;
-+        noise
-+            .send(&encode_payload(&ResponderInfo {
-+                info: our_info,
-+                trailer: HandshakeTrailer { genesis_hash: Some(genesis_hash.to_vec()), ..HandshakeTrailer::of::<N>() },
-+            })?)
-+            .await?;
- 
-         // The binding the initiator is expected to have signed.
-         let peer_binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
-@@ -2003,7 +2025,8 @@ impl<N: Network> Gateway<N> {
- 
-         // Everything below is a lookup or a comparison; only once all of it passes is the peer
-         // worth the cost of a signature verification.
--        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id) {
-+        if let Some(reason) = self.verify_peer_info(peer_addr, &peer_info, &peer_trailer, restrictions_id, genesis_hash)
-+        {
-             return self.reject_noise_handshake(peer_addr, noise, reason).await;
-         }
- 
-@@ -2049,6 +207
-```
-
-**File**: `node/bft/tests/gateway_noise.rs` (modified, +193/-20)
-```diff
-@@ -20,6 +20,7 @@ mod common;
- 
- use crate::common::{
-     CurrentNetwork,
-+    TranslucentLedgerService,
-     primary::new_test_committee,
-     utils::{sample_gateway, sample_ledger, sample_storage},
- };
-@@ -45,11 +46,11 @@ use snarkos_node_network::{
- };
- use snarkos_node_tcp::P2P;
- use snarkvm::{
--    ledger::narwhal::Data,
-+    ledger::{narwhal::Data, store::helpers::memory::ConsensusMemory},
-     prelude::{FromBytes, TestRng, ToBytes},
- };
- 
--use std::{io, net::SocketAddr, time::Duration};
-+use std::{io, net::SocketAddr, sync::Arc, time::Duration};
- 
- use deadline::deadline;
- use futures::{SinkExt, TryStreamExt};
-@@ -84,19 +85,27 @@ async fn new_test_gateways(
- 
-     let mut gateways = Vec::with_capacity(n);
-     for account in accounts.iter().take(n) {
--        let storage = sample_storage(ledger.clone());
--        let gateway = sample_gateway(account.clone(), storage, ledger.clone());
--
--        // Set up primary channels; the rx is discarded as these tests exercise the gateway alone.
--        let (primary_tx, _primary_rx) = init_primary_channels();
--        gateway.run(primary_tx, [].into(), None).await;
--
--        gateways.push(gateway);
-+        gateways.push(run_test_gateway(account.clone(), ledger.clone()).await);
-     }
- 
-     (accounts, gateways)
- }
- 
-+/// Builds and runs a gateway for `account` on the given ledger.
-+async fn run_test_gateway(
-+    account: Account<CurrentNetwork>,
-+    ledger: Arc<TranslucentLedgerService<CurrentNetwork, ConsensusMemory<CurrentNetwork>>>,
-+) -> Gateway<CurrentNetwork> {
-+    let storage = sample_storage(ledger.clone());
-+    let gateway = sample_gateway(account, storage, ledger);
+@@ -0,0 +1,31 @@
++name: Mirror staging to snarkOS-internal
 +
-+    // Set up primary channels; the rx is discarded as these tests exercise the gateway alone.
-+    let (primary_tx, _primary_rx) = init_primary_channels();
-+    gateway.run(primary_tx, [].into(), None).await;
++# snarkOS-internal is a private copy of this repository. Its staging follows this
++# staging and nothing else: the bot only fast-forwards it, and a mirror that has
++# diverged fails the run.
++on:
++  push:
++    branches: [staging]
++  # Catches a push whose run failed or never started.
++  schedule:
++    - cron: '41 * * * *'
++  workflow_dispatch:
 +
-+    gateway
-+}
++permissions: {}
 +
- #[tokio::test(flavor = "multi_thread")]
- async fn two_gateways_complete_a_noise_handshake() {
-     let mut rng = TestRng::default();
-@@ -126,7 +135,7 @@ async fn a_noise_handshake_leaves_the_connection_usable() {
-     let peer = accounts[1].clone();
- 
-     let sign = honest_signer(peer.clone());
--    let (verdict, mut stream) = handshake_with_gateway(dial_addr(&gateway), &peer, 4140, sign).await.unwrap();
-+    let (verdict, mut stream) = handshake_with_gateway(&gateway, &peer, 4140, sign).await.unwrap();
-     assert!(matches!(verdict, ResponderProof::Accepted { .. }), "the handshake should have been accepted");
- 
-     // Now speak events over the same stream, through a codec built from scratch as `Reading` does.
-@@ -215,21 +224,28 @@ fn honest_signer(account: Account<CurrentNetwork>) -> impl Fn(&[u8]) -> Vec<u8>
-     move |binding| account.sign_bytes(binding, &mut rand::rng()).unwrap().to_bytes_le().unwrap()
- }
- 
-+/// Returns the little-endian bytes of the hash of the gateway's genesis block.
-+fn genesis_hash(gateway: &Gateway<CurrentNetwork>) -> Vec<u8> {
-+    gateway.ledger().get_block_hash(0).unwrap().to_bytes_le().unwrap()
-+}
++concurrency: mirror-staging
 +
- /// Drives a Noise handshake against a gateway by hand, up to and including the verdict, and hands the
- /// stream back so that a test can carry on speaking events over it.
- ///
- /// The signature over the binding is produced by `sign`, so that a test can decide whether to
--/// authenticate honestly or not. It announces the current event version and this build's schedule,
--/// and reads the gateway's metadata in the original layout, skipping its trailer.
-+/// authenticate honestly or not. It announces the current event version, this build's schedule and
-+/// the gateway's genesis hash, and reads the gateway's metadata in the original layout, skipping its
-+/// trailer.
- async fn handshake_with_gateway(
--    gateway_addr: SocketAddr,
-+    gateway: &Gateway<CurrentNetwork>,
-     account: &Account<CurrentNetwork>,
-     listener_port: u16,
-     sign: impl Fn(&[u8]) -> Vec<u8>,
- ) -> io::Result<(ResponderProof<CurrentNetwork>, TcpStream)> {
-     let version = Event::<CurrentNetwork>::VERSION;
--    let trailer = HandshakeTrailer::of::<CurrentNetwork>();
--    handshake_with_gateway_sending(gateway_addr, account, listener_port, version, trailer, sign).await
-+    let trailer =
-+        HandshakeTrailer { genesis_hash: Some(genesis_hash(gateway)), ..HandshakeTrailer::of::<CurrentNetwork>() };
-+    handshake_with_gateway_sending(dial_addr(gateway), account, listener_port, version, trailer, sign).await
- }
- 
- /// Drives a Noise handshake like [`handshake_with_gateway`], announcing the event `version` and
-@@ -307,7 +323,7 @@ async fn a_committee_member_that_cannot_prove_its_identity_is_rejected() {
-     let impostor = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-     let sign = move |binding: &[u8]| impostor.sign_bytes(binding, &mut rand::rng()).unwrap().to_bytes_le().unwrap();
- 
--    let (verdict, _stream) = handshake_with_gateway(dial_addr(&gateway), &accounts[1], 4131, sign).await.unwrap();
-+    let (verdict, _stream) = handshake_w
-```
-
-**File**: `node/src/bootstrap_client/handshake.rs` (modified, +4/-2)
-```diff
-@@ -47,7 +47,7 @@ use snarkos_node_network::{
- };
- use snarkvm::{
-     ledger::narwhal::Data,
--    prelude::{Address, Network, io_error},
-+    prelude::{Address, Network, ToBytes, io_error},
- };
- 
- use futures_util::sink::SinkExt;
-@@ -224,7 +224,9 @@ impl<N: Network> BootstrapClient<N> {
-         let mut noise = pending.into_session()?;
-         // The bootstrap client does not track the block height, so it discloses no commit hash.
-         let our_info = PeerInfo::new(self.local_ip().port(), self.account.address(), self.restrictions_id, None);
--        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer: HandshakeTrailer::of::<N>() })?).await?;
-+        let genesis_hash = self.genesis_hash.to_bytes_le().map_err(ConnectError::other)?;
-+        let trailer = HandshakeTrailer { genesis_hash: Some(genesis_hash), ..HandshakeTrailer::of::<N>() };
-+        noise.send(&encode_payload(&ResponderInfo { info: our_info, trailer })?).await?;
- 
-         let peer_binding = binding_message(HANDSHAKE_DOMAIN, Role::Initiator, &noise.handshake_hash()?);
- 
-```
-
-**File**: `node/src/bootstrap_client/mod.rs` (modified, +3/-0)
-```diff
-@@ -64,6 +64,7 @@ pub struct InnerBootstrapClient<N: Network> {
-     resolver: RwLock<Resolver<N>>,
-     account: Account<N>,
-     genesis_header: Header<N>,
-+    genesis_hash: N::BlockHash,
-     restrictions_id: Field<N>,
-     http_client: reqwest::Client,
-     latest_committee: TMutex<(HashSet<Address<N>>, Instant)>,
-@@ -82,6 +83,7 @@ impl<N: Network> BootstrapClient<N> {
-         listener_addr: SocketAddr,
-         account: Account<N>,
-         genesis_header: Header<N>,
-+        genesis_hash: N::BlockHash,
-         dev: Option<u16>,
-     ) -> anyhow::Result<Self> {
-         // Initialize the TCP stack.
-@@ -107,6 +109,7 @@ impl<N: Network> BootstrapClient<N> {
-             resolver,
-             account,
-             genesis_header,
-+            genesis_hash,
-             restrictions_id,
-             http_client,
-             latest_committee,
++jobs:
++  mirror:
++    # snarkOS-internal holds this file too. Without this, the bot's push there
++    # would start a run in the mirror.
++    if: github.repository == 'aleo-labs-protocol/snarkOS'
++    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
++    permissions: { contents: read }
++    with:
++      mirror: snarkOS-internal
++      branches: staging
++    # Lives in the merge-bot environment, which admits only staging. The called
++    # workflow's job sets that environment and receives the value.
++    secrets:
++      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
 ```
 
 ---
 
-### Incident Patch 2: `2b3c6570` (2026-11-05)
-**Commit Message**: Merge remote-tracking branch 'origin/staging' into fix/gateway-genesis-binding
+### Incident Patch 2: `110e10ba` (2026-11-06)
+**Commit Message**: ci: fast-forward snarkOS-internal's staging whenever staging moves
 
-**File**: `.ci/test_restart_all.sh` (modified, +76/-3)
-```diff
-@@ -20,17 +20,30 @@ network_id=$2
- restart_interval=$3
- final_height=$4
- num_restarts=$5
-+# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-+stop_mode=$6
- 
- # Default values if not provided.
- : "${total_validators:=7}"
- : "${network_id:=0}"
- : "${restart_interval:=10}"
- : "${final_height:=100}"
- : "${num_restarts:=3}"
-+: "${stop_mode:=graceful}"
-+
-+if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-+  log "❌ Unknown stop mode '$stop_mode'."
-+  exit 1
-+fi
- 
- # The time that is used to determine the total timeout for the test.
- max_wait_per_block=10
- 
-+# How long a restarted node may take to become ready again.
-+# Loading an existing ledger is dominated by deserializing the cached block tree,
-+# which has been observed to take over two minutes on CI.
-+max_restart_wait=300
-+
- network_name=$(get_network_name "$network_id")
- 
- # Keep verbosity low as we are running many nodes.
-@@ -48,6 +61,48 @@ common_flags=(
-   "--dev-num-validators=$total_validators"
- )
- 
-+# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-+function crash_validators() {
-+  local index
-+  for index in "${!PIDS[@]}"; do
-+    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    if ! is_integer "${crash_heights[index]}"; then
-+      log "❌ Test failed! Validator $index did not report its height before the crash."
-+      exit 1
-+    fi
-+  done
-+  log "Heights before the crash: ${crash_heights[*]}"
-+  stop_nodes
-+}
-+
-+# Fails unless each validator serves at least the height it held before the crash.
-+function check_resumed_from_ledger() {
-+  local index resumed_height
-+  for index in "${!PIDS[@]}"; do
-+    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-+    if ! is_integer "$resumed_height" || (( resumed_height < crash_heights[index] )); then
-+      log "❌ Test failed! Validator $index did not resume from its ledger."
-+      exit 1
-+    fi
-+  done
-+}
-+
-+# Fails unless all validators hold the same block at height $1.
-+function check_same_block() {
-+  local block_height=$1
-+  local index block_hash first_hash=""
-+  for index in "${!PIDS[@]}"; do
-+    block_hash=$(curl -s --max-time 5 "http://$localhost:$((3030 + index))/v2/$network_name/block/$block_height" | jq -r '.block_hash // empty' 2>/dev/null || true)
-+    log "Validator $index holds block '$block_hash' at height $block_height"
-+    : "${first_hash:=$block_hash}"
-+    if [[ -z "$block_hash" || "$block_hash" != "$first_hash" ]]; then
-+      log "❌ Test failed! Validators disagree on the block at height $block_height."
-+      exit 1
-+    fi
-+  done
-+}
-+
- # Start all validator nodes in the background
- for validator_index in $(seq 0 $((total_validators-1))); do
-   snarkos clean "--dev=$validator_index" "--network=$network_id"
-@@ -74,8 +129,12 @@ for iter in $(seq 1 "$num_restarts"); do
-   fi
-   log "All nodes reached restart height $restart_height. Restarting all validators (iteration $iter/$num_restarts)..."
- 
--  # Gracefully shut down all validators
--  stop_nodes
-+  if [[ "$stop_mode" == crash ]]; then
-+    crash_validators
-+  else
-+    # Gracefully shut down all validators
-+    stop_some_nodes "${!PIDS[@]}"
-+  fi
- 
-   # Wait briefly before restarting
-   sleep 5
-@@ -88,10 +147,24 @@ for iter in $(seq 1 "$num_restarts"); do
-     # Add 1-second delay between starting nodes to avoid hitting rate limits
-     sleep 1
-   done
-+
-+  # Block until the restarted nodes serve their REST API again, so that the startup time
-+  # is not deducted from the time budget of the next `wait_for_heights`.
-+  if ! wait_for_nodes "$total_validators" 0 "$network_name" "$max_restart_wait"; then
-+    log "❌ Test failed! Not all nodes became ready within $max_restart_wait seconds after restart #$iter."
-+    exit 1
-+  fi
-+
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_resumed_from_ledger
-+  fi
- done
- 
- # Wait for final height
--if wait_for_heights 0 "$total_validators" "$final_height" "$network_name"; then
-+if wait_for_heights 0 "$total_validators" "$final_height" "$network_name" "$max_wait"; then
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_same_block "$final_height"
-+  fi
-  log "SUCCESS!"
-   exit 0
- else
-```
+snarkOS-internal is a private copy of this repository, whose staging should
+follow this one and nothing else. This calls gh-actions' mirror-branches.yml
+on every push to staging, with an hourly run to catch a missed one. It pushes
+as the merge-bot App from the merge-bot environment, never forces, and fails
+if the mirror has diverged.
 
-**File**: `.ci/test_simple_node.sh` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+#!/bin/bash
-+
-+####################################################
-+# Runs the simple_node example in each of its modes
-+####################################################
-+
-+set -eo pipefail # error on any command failure
-+
-+# The example's public balances only add up to the starting supply if the node count divides it
-+# evenly. For example, 7 or 9 nodes panic at genesis.
-+num_nodes=4
-+
-+# Set parameters directly
-+min_round=$1
-+timeout_secs=$2
-+
-+# Default values if not provided
-+# The target must stay below round 102. The example's ledger stays at genesis, so at that round the
-+# committee lookback asks for a committee the ledger does not have, and the nodes stop proposing.
-+: "${min_round:=40}"
-+: "${timeout_secs:=300}"
-+
-+# shellcheck source=SCRIPTDIR/utils.sh
-+. ./.ci/utils.sh
-+
-+init_log_dir
-+
-+run_dir=$(mktemp -d)
-+PIDS=()
-+
-+# Print the end of each node's log if the script fails, and clean up in any case.
-+# shellcheck disable=SC2329
-+function exit_handler() {
-+  local status=$?
-+  stop_nodes
-+  if [ "$status" -ne 0 ]; then
-+    for node_log in "$log_dir"/*-node-*.log; do
-+      [ -f "$node_log" ] || continue
-+      echo "--- $node_log"
-+      tail -n 20 "$node_log"
-+    done
-+  fi
-+  rm -rf "$run_dir"
-+}
-+trap exit_handler EXIT
-+
-+# Exits if a process already listens on a node's port, as its responses would count as the node's.
-+function check_ports_free() {
-+  local port
-+  for ((i = 0; i < num_nodes; i++)); do
-+    for port in $((3000 + i)) $((5000 + i)); do
-+      if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
-+        log "⛔️ Another process listens on port $port"
-+        exit 1
-+      fi
-+    done
-+  done
-+}
-+
-+# Starts the nodes for the given mode.
-+function start_nodes() {
-+  local mode="$1"
-+  check_ports_free
-+  PIDS=()
-+  for ((i = 0; i < num_nodes; i++)); do
-+    # A node keeps its data in its working directory.
-+    local node_dir="$run_dir/$mode-$i"
-+    mkdir -p "$node_dir"
-+    (
-+      cd "$node_dir"
-+      exec "$simple_node" --mode "$mode" --id "$i" --num-nodes "$num_nodes" --fire-transmissions
-+    ) > "$log_dir/$mode-node-$i.log" 2>&1 &
-+    PIDS+=($!)
-+  done
-+}
-+
-+# Waits until every node reaches the target round. Exits if a node stops or the timeout elapses.
-+function wait_for_round() {
-+  local mode="$1"
-+  local start
-+  start=$(now)
-+  while true; do
-+    for pid in "${PIDS[@]}"; do
-+      if ! kill -0 "$pid" 2>/dev/null; then
-+        log "⛔️ A $mode node (pid=$pid) exited early"
-+        exit 1
-+      fi
-+    done
-+
-+    local lowest_round=$min_round
-+    for ((i = 0; i < num_nodes; i++)); do
-+      local round
-+      round=$(curl -sf -m 2 "127.0.0.1:$((3000 + i))/round/current") || round=0
-+      # A longer or zero-padded number does not compare correctly below.
-+      [[ "$round" =~ ^(0|[1-9][0-9]{0,8})$ ]] || round=0
-+      if ((round < lowest_round)); then
-+        lowest_round=$round
-+      fi
-+    done
-+
-+    if ((lowest_round >= min_round)); then
-+      log "✅ All $mode nodes reached round $min_round after $(elapsed_since "$start")s"
-+      return 0
-+    fi
-+
-+    if (($(elapsed_since "$start") >= timeout_secs)); then
-+      log "⛔️ The lowest $mode node is at round $lowest_round after ${timeout_secs}s, below round $min_round"
-+      exit 1
-+    fi
-+
-+    sleep 5
-+  done
-+}
-+
-+log "Building the simple_node example"
-+CARGO_PROFILE_RELEASE_LTO=off \
-+CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16 \
-+CARGO_PROFILE_RELEASE_OPT_LEVEL=2 \
-+CARGO_PROFILE_RELEASE_DEBUG=0 \
-+  cargo build --release --locked -p snarkos-node-bft --example simple_node
-+simple_node="$(realpath "${CARGO_TARGET_DIR:-target}")/release/examples/simple_node"
-+
-+for mode in bft narwhal; do
-+  log "Starting $num_nodes $mode nodes"
-+  start_nodes "$mode"
-+  wait_for_round "$mode"
-+
-+  # Nodes with different genesis blocks can still reach consensus, and report the fork in their logs.
-+  if grep -l "Detected fork" "$log_dir/$mode"-node-*.log; then
-+    log "⛔️ The $mode nodes do not share a genesis block"
-+    exit 1
-+  fi
-+
-+  # Narwhal mode has no BFT layer, so its nodes do not commit.
-+  if [ "$mode" = bft ]; then
-+    for ((i = 0; i < num_nodes; i++)); do
-+      if ! grep -q "Committing a subDAG" "$log_dir/$mode-node-$i.log"; then
-+        log "⛔️ BFT node $i reached round $min_round without a commit"
-+        exit 1
-+      fi
-+    done
-+  fi
-+
-+  stop_nodes
-+  PIDS=()
-+done
-+
-+log "✅ simple_node ran in every mode"
-```
+Needs gh-actions' v2 to include mirror-branches.yml, and the merge-bot App
+installed on snarkOS-internal.
 
-**File**: `.github/dependabot.yml` (modified, +5/-1)
-```diff
-@@ -29,9 +29,13 @@ updates:
-       - dependency-name: "snarkvm*"
-       # `metrics` must match the version snarkVM's metrics crate uses, and a
-       # bump past 0.22 also requires moving node/metrics to a matching
--      # metrics-exporter-prometheus. Bump it by hand together with snarkVM.
-+      # metrics-exporter-prometheus. Bump both by hand together with snarkVM.
-+      # An exporter built on a different `metrics` installs its recorder for
-+      # that version, and every metric snarkVM records is silently dropped.
-       - dependency-name: "metrics"
-         update-types: [ "version-update:semver-minor" ]
-+      - dependency-name: "metrics-exporter-prometheus"
-+        update-types: [ "version-update:semver-minor" ]
- 
-   - package-ecosystem: "github-actions"
-     directory: "/"
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmKn7cZAEoLkokZcypG
 
-**File**: `.github/workflows/bump-snarkvm.yml` (modified, +65/-10)
+**File**: `.github/workflows/mirror-staging.yml` (added, +31/-0)
 ```diff
-@@ -1,7 +1,7 @@
- name: Bump snarkVM
- on:
-   schedule:
--    - cron: '0 6 * * 1'
-+    - cron: '0 6 * * 1,4'
-   workflow_dispatch:
- 
- concurrency:
-@@ -18,14 +18,17 @@ jobs:
-   bump:
-     name: Bump snarkVM to latest staging
-     runs-on: ubuntu-latest
-+    # Admits only runs on staging, so a workflow on any other branch cannot read
-+    # the app key.
-+    environment: merge-bot
-     permissions:
--      contents: write
--      pull-requests: write
-+      contents: read
-     steps:
-       - name: Checkout
--        uses: actions/checkout@v7
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           ref: ${{ env.BASE_BRANCH }}
-+          persist-credentials: false
- 
-       - name: Find current and latest snarkVM revisions
-         id: revs
-@@ -51,13 +54,62 @@ jobs:
-           sed -i "/^\[workspace\.dependencies\.snarkvm\]/,/^\[/ s|^rev = .*|rev = \"$LATEST\" #$SNARKVM_BRANCH|" Cargo.toml
-           cargo update -p snarkvm
- 
-+      # A push made with github.token starts no workflows, so CI would never run
-+      # on the pull request. Actions also cannot create pull requests in this
-+      # organization with github.token.
-+      - name: Create app token
-+        if: steps.revs.outputs.current != steps.revs.outputs.latest
-+        id: app
-+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-+        with:
-+          client-id: ${{ vars.MERGE_BOT_CLIENT_ID }}
-+          private-key: ${{ secrets.MERGE_BOT_APP_KEY }}
-+          permission-contents: write
-+          permission-pull-requests: write
-+          # The rebuilt branch can carry staging's own workflow changes.
-+          permission-workflows: write
+@@ -0,0 +1,31 @@
++name: Mirror staging to snarkOS-internal
 +
-       - name: Open or update pull request
-         if: steps.revs.outputs.current != steps.revs.outputs.latest
-         env:
--          GH_TOKEN: ${{ github.token }}
-+          GH_TOKEN: ${{ steps.app.outputs.token }}
-+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
-           CURRENT: ${{ steps.revs.outputs.current }}
-           LATEST: ${{ steps.revs.outputs.latest }}
-         run: |
-+          set -euo pipefail
-+          bot="${APP_SLUG}[bot]"
-+
-+          # --head matches a fork's branch of the same name too.
-+          pr=$(gh pr list --head "$PR_BRANCH" --base "$BASE_BRANCH" --state open --json number,isCrossRepository \
-+                 --jq 'map(select(.isCrossRepository | not)) | .[0].number // empty')
-+          if [ -n "$pr" ]; then
-+            # A new commit on the same revision would only restart CI.
-+            pinned=$(gh api -H 'Accept: application/vnd.github.raw+json' "repos/$GITHUB_REPOSITORY/contents/Cargo.toml?ref=$PR_BRANCH" \
-+                       | sed -n '/^\[workspace\.dependencies\.snarkvm\]/,/^\[/ s/^rev = "\([0-9a-f]*\)".*/\1/p')
-+            if [ "$pinned" = "$LATEST" ]; then
-+              echo "#$pr already pins ${LATEST:0:9}"
-+              exit 0
-+            fi
-+            # The workflow pushes one commit of its own. A tip that someone else
-+            # wrote or committed hands the branch to them: a force-push here
-+            # would delete their work.
-+            theirs=$(BOT=$bot gh api "repos/$GITHUB_REPOSITORY/commits/$PR_BRANCH" \
-+                       --jq 'select(.author.login != env.BOT or .committer.login != env.BOT) | .sha')
-+            if [ -n "$theirs" ]; then
-+              marker="<!-- bump-snarkvm: $LATEST -->"
-+              # Not piped: grep -q exits at the first match, and under pipefail
-+              # gh's SIGPIPE would read as no match.
-+              comments=$(gh api "repos/$GITHUB_REPOSITORY/issues/$pr/comments" --paginate --jq '.[].body')
-+              if ! grep -qxF -- "$marker" <<< "$comments"; then
-+                gh pr comment "$pr" --body "snarkVM \`$SNARKVM_BRANCH\` is now at $SNARKVM_REPO@${LATEST:0:9}. Someone else has pushed to this branch, so the workflow does not rebuild it. Close this pull request, and the next run rebuilds the branch and opens a new one.
-+
-+          $marker"
-+              fi
-+              exit 0
-+            fi
-+          fi
-+
-           # Commits in the current pin that are missing from snarkVM's branch
-           # (e.g. a pin on a merge of staging and a release branch) are dropped
-           # by this bump.
-@@ -66,22 +118,25 @@ jobs:
-           title="Bump snarkVM to $SNARKVM_REPO@${LATEST:0:9}"
-           body="Bumps snarkVM to the latest commit on \`$SNARKVM_BRANCH\`.
- 
--          Changes: https://github.com/$SNARKVM_REPO/compare/$CURRENT...$LATEST"
-+          Changes: https://github.com/$SNARKVM_REPO/compare/$CURRENT...$LATEST
-+
-+          Each run that finds a newer snarkVM commit rebuilds this branch from \`$BASE_BRANCH\` and force-pushes it. Once someone else pushes to the branch, the workflow comments instead."
-           if [ "$dropped" != "0" ]; then
-             body="$body
- 
-           > [!WARNING]
-           > The current pin \`${CURRENT:0:9}\` contains $dropped commit(s) that are not on snar
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +54/-12)
-```diff
-@@ -111,13 +111,14 @@ jobs:
-       - run: cargo check -p snarkos-node-metrics --all-features
-       - run: cargo check -p snarkos-display --all-features
- 
--  # Each entry is one build. `cargo test -p a -p b` unifies the features of
--  # a and b, and several crates enable features on their dependencies that
--  # change what those dependencies do: `snarkos-node-router/test`,
--  # `snarkos-node-network/test` and `snarkvm-ledger-block/test` skip checks,
--  # and `rocks` and `metrics` select other code paths. Crates share an entry
--  # only where that unification enables none of these on any crate. Helper
--  # features such as `test-helpers` and `mock` can still be unified.
-+  # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
-+  # features of a and b, and several crates enable features on their
-+  # dependencies that change what those dependencies do:
-+  # `snarkos-node-router/test`, `snarkos-node-network/test` and
-+  # `snarkvm-ledger-block/test` skip checks, and `rocks` and `metrics` select
-+  # other code paths. Crates share a line only where that unification enables
-+  # none of these on any crate. Helper features such as `test-helpers` and
-+  # `mock` can still be unified.
-   #
-   # Cheap entries run on free hosted runners and do not wait for the fleet.
-   test-hosted:
-@@ -163,7 +164,8 @@ jobs:
-           key: aleo-resources-${{ matrix.name }}-${{ hashFiles('Cargo.lock') }}
-       - uses: taiki-e/install-action@v2
-         with: { tool: cargo-nextest@0.9.114 }
--      # Each line of `runs` is one cargo command.
-+      # Each line of `runs` is one cargo command, split on whitespace with no
-+      # shell parsing, so its arguments can hold neither quotes nor spaces.
-       - name: Test
-         env:
-           RUNS: ${{ matrix.runs }}
-@@ -211,8 +213,12 @@ jobs:
-             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
-           - name: node
-             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
-+          # `helpers::telemetry` compiles only under `metrics`. `--no-tests=fail`
-+          # overrides NEXTEST_NO_TESTS, so a filter that stops matching fails.
-           - name: bft
--            runs: nextest run -p snarkos-node-bft
-+            runs: |
-+              nextest run -p snarkos-node-bft
-+              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
-           - name: router
-             runs: nextest run -p snarkos-node-router
-           - name: sync
-@@ -271,16 +277,22 @@ jobs:
-             runs: |
-               ./.ci/test_db_backup.sh
-               ./.ci/test_devnet.sh
-+          # Clippy and `cargo check` only compile the examples, so this is the one
-+          # job that runs one. It builds the example itself.
-+          - name: simple-node
-+            timeout: 60
-+            delay: false
-+            runs: ./.ci/test_simple_node.sh
-     name: devnet (${{ matrix.name }})
-     steps: &devnet-steps
-       - uses: actions/checkout@v7
-         with: { persist-credentials: false }
-       - uses: aleo-labs-protocol/gh-actions/.github/actions/runner-job-setup@v2
-       - name: Stop leftover nodes
-         run: &stop-nodes |
--          pkill -x snarkos || true
--          for _ in $(seq 20); do pgrep -x snarkos > /dev/null || break; sleep 1; done
--          pkill -9 -x snarkos || true
-+          pkill -x 'snarkos|simple_node' || true
-+          for _ in $(seq 20); do pgrep -x 'snarkos|simple_node' > /dev/null || break; sleep 1; done
-+          pkill -9 -x 'snarkos|simple_node' || true
-           sudo -n /usr/local/sbin/runner-netem clear
-       - uses: actions/download-artifact@v8
-         with:
-@@ -338,6 +350,36 @@ jobs:
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
- 
-+  # Devnets for releases only. On every push to `canary`, `testnet` or
-+  # `mainnet`, and on demand.
-+  devnet-release:
-+    needs: [start-cpu-runners, build-snarkos]
-+    runs-on: [self-hosted, linux, x64, cpu]
-+    timeout-minutes: ${{ matrix.timeout }}
-+    if: >-
-+      github.event_name == 'workflow_dispatch' ||
-+      (github.event_name == 'push' &&
-+       (github.ref == 'refs/heads/canary' ||
-+        github.ref == 'refs/heads/testnet' ||
-+        github.ref == 'refs/heads/mainnet'))
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - name: upgrade-required
-+            timeout: 30
-+            runs: ./.ci/test_upgrade_required.sh
-+          - name: chaotic-restart-all
-+            timeout: 45
-+            delay: true
-+            runs: ./.ci/test_restart_all.sh
-+          - name: chaotic-crash-all
-+            timeout: 45
-+            delay: true
-+            runs: ./.ci/test_restart_all.sh 7 0 10 100 3 crash
-+    name: devnet (${{ matrix.name }})
-+    steps: *devnet-steps
-+
-   machete:
-     runs-on: ubuntu-latest
-     steps:
-```
-
-**File**: `.github/workflows/load-test.yml` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+# Copy to aleo-labs-protocol/snarkOS as .github/workflows/load-test.yml.
-+#
-+# A form for the replay_stockpile test. stress-test.yml does the rest: approval in
-+# the stress-test environment, the run, and the "stress-test" check on the commit.
-+# Gauntlet owns the defaults: this sends only what's filled in.
-+name: Load test
-+
++# snarkOS-internal is a private copy of this repository. Its staging follows this
++# staging and nothing else: the bot only fast-forwards it, and a mirror that has
++# diverged fails the run.
 +on:
++  push:
++    branches: [staging]
++  # Catches a push whose run failed or never started.
++  schedule:
++    - cron: '41 * * * *'
 +  workflow_dispatch:
-+    inputs:
-+      commit:
-+        description: "snarkOS commit (full SHA). Empty: the commit this is run from."
-+        required: false
-+        default: ""
-+      validators:
-+        description: "Network size, in validators"
-+        type: choice
-+        options: ["5", "10", "16"]
-+        default: "5"
-+      stockpile:
-+        description: "Stockpile to replay. Its network is the devnet's."
-+        type: choice
-+        options:
-+          - testnet-V22-h25-p1000x20-stockpile-1
-+          - testnet-V22-h25-p10000x20-stockpile-2
-+          - testnet-V22-h25-p10000x10-stockpile-3
-+        default: testnet-V22-h25-p1000x20-stockpile-1
-+      rate:
-+        description: "Transactions per second. Empty: Gauntlet's default."
-+        required: false
-+        default: ""
-+      duration:
-+        description: "Seconds to send for. 0 sends the whole stockpile. Empty: Gauntlet's default."
-+        required: false
-+        default: ""
-+      ramp:
-+        description: "FROM:TO:STEP tx/s, instead of rate and duration. Lower min_inclusion with it."
-+        required: false
-+        default: ""
-+      targets:
-+        description: "Nodes to send to"
-+        type: choice
-+        options: [default, clients, validators, both]
-+        default: default
-+      replay_mode:
-+        description: "per-payer for a build with input locks"
-+        type: choice
-+        options: [default, open, per-payer]
-+        default: default
-+      min_inclusion:
-+        description: "Share of the transactions sent that must land. Empty: Gauntlet's default."
-+        required: false
-+        default: ""
++
++permissions: {}
++
++concurrency: mirror-staging
 +
 +jobs:
-+  load:
-+    permissions:
-+      id-token: write
-+      checks: write
-+      actions: write
-+      contents: read
-+    uses: ./.github/workflows/stress-test.yml
-+    secrets: inherit
++  mirror:
++    # snarkOS-internal holds this file too. Without this, the bot's push there
++    # would start a run in the mirror.
++    if: github.repository == 'aleo-labs-protocol/snarkOS'
++    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
++    permissions: { contents: read }
 +    with:
-+      commit: ${{ inputs.commit }}
-+      tests: replay_stockpile
-+      validators: ${{ inputs.validators }}
-+      network: ${{ startsWith(inputs.stockpile, 'mainnet-') && 'mainnet' || 'testnet' }}
-+      params: >-
-+        ${{ format('stockpile={0}{1}{2}{3}{4}{5}{6}', inputs.stockpile,
-+        inputs.rate && format(',rate={0}', inputs.rate) || '',
-+        inputs.duration && format(',duration={0}', inputs.duration) || '',
-+        inputs.ramp && format(',ramp={0}', inputs.ramp) || '',
-+        inputs.targets != 'default' && format(',targets={0}', inputs.targets) || '',
-+        inputs.replay_mode != 'default' && format(',replay_mode={0}', inputs.replay_mode) || '',
-+        inputs.min_inclusion && format(',min_inclusion={0}', inputs.min_inclusion) || '') }}
-```
-
-**File**: `.github/workflows/merge-into-staging.yml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ name: Merge testnet and mainnet into staging
- # commits that staging lacks. Promotion in the other direction stays manual.
- on:
-   schedule:
--    - cron: '17 * * * *'
-+    - cron: '17 2,14 * * *'
-   workflow_dispatch:
- 
- permissions: {}
-```
-
-**File**: `.github/workflows/stress-test.yml` (modified, +119/-30)
-```diff
-@@ -4,8 +4,8 @@
- # "stress-test" check on the commit, so anyone looking at the commit or its PR
- # sees the result.
- #
--#   start   "Run workflow" (or a release whose CI passed): approval in the
--#           stress-test environment, then queue the run on the Gauntlet host.
-+#   start   "Run workflow", load-test.yml, or a release whose CI passed: approval
-+#           in the stress-test environment, then queue the run on the Gauntlet host.
- #   follow  poll the Gauntlet host every 5 minutes and keep the check up to date.
- #           GitHub stops a job at 6h, so a longer run hands off to a fresh
- #           dispatch of this workflow, which follows the same run without
-@@ -19,7 +19,7 @@
- #   environment secret  STRESS_MANAGER_INSTANCE_ID   the Gauntlet host
- #   secret              ANTHROPIC_API_KEY            optional: the comparison summary
- #   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
--#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_MODE   what a release runs
-+#   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_VALIDATORS   what a release runs
- name: Stress test
- 
- on:
-@@ -30,27 +30,39 @@ on:
-         required: false
-         default: ""
-       tests:
--        description: "Tests, sets (prerelease, network, sync) or all, comma separated"
-+        description: "Tests, sets (prerelease, network) or all, comma separated"
-         default: prerelease
--      mode:
--        description: "Network size"
-+      validators:
-+        description: "Network size, in validators"
-         type: choice
--        options: [light, heavy, prerelease]
--        default: light
-+        options: ["5", "10", "16"]
-+        default: "5"
-       network:
-         description: "snarkOS network"
-         type: choice
-         options: [testnet, mainnet]
-         default: testnet
-       params:
--        description: "Test parameter overrides, e.g. target_tps=50,exec_tx_count=40"
-+        description: "Test parameter overrides, e.g. rate=50,duration=300"
-         default: ""
-       follow_run_id:
-         description: "Internal: keep following this run"
-         default: ""
-       check_run_id:
-         description: "Internal: the check to update"
-         default: ""
-+  workflow_call:
-+    inputs:
-+      commit:
-+        type: string
-+      tests:
-+        type: string
-+      validators:
-+        type: string
-+      network:
-+        type: string
-+      params:
-+        type: string
-   workflow_run:
-     workflows: [CI]
-     types: [completed]
-@@ -61,7 +73,7 @@ permissions:
- 
- jobs:
-   stress:
--    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository)
-+    if: github.repository == 'aleo-labs-protocol/snarkOS' && (github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository))
-     runs-on: ubuntu-latest
-     # Approval gates starting a run; following one needs none.
-     environment: ${{ inputs.follow_run_id == '' && 'stress-test' || 'stress-test-status' }}
-@@ -85,21 +97,21 @@ jobs:
-           EVENT: ${{ github.event_name }}
-           IN_COMMIT: ${{ inputs.commit }}
-           IN_TESTS: ${{ inputs.tests }}
--          IN_MODE: ${{ inputs.mode }}
-+          IN_VALIDATORS: ${{ inputs.validators }}
-           IN_NETWORK: ${{ inputs.network }}
-           IN_PARAMS: ${{ inputs.params }}
-           IN_FOLLOW: ${{ inputs.follow_run_id }}
-           IN_CHECK: ${{ inputs.check_run_id }}
-           RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
-           RELEASE_TESTS: ${{ vars.STRESS_RELEASE_TESTS }}
--          RELEASE_MODE: ${{ vars.STRESS_RELEASE_MODE }}
-+          RELEASE_VALIDATORS: ${{ vars.STRESS_RELEASE_VALIDATORS }}
-           ACTOR: ${{ github.triggering_actor }}
-         run: |
-           if [[ "$EVENT" == workflow_run ]]; then
--            commit="$RELEASE_SHA"; tests="${RELEASE_TESTS:-prerelease}"; mode="${RELEASE_MODE:-light}"
-+            commit="$RELEASE_SHA"; tests="${RELEASE_TESTS:-prerelease}"; validators="${RELEASE_VALIDATORS:-5}"
-             network=testnet; params=""
-           else
--            commit="${IN_COMMIT:-$GITHUB_SHA}"; tests="$IN_TESTS"; mode="$IN_MODE"; network="$IN_NETWORK"; params="$IN_PARAMS"
-+            commit="${IN_COMMIT:-$GITHUB_SHA}"; tests="$IN_TESTS"; validators="$IN_VALIDATORS"; network="$IN_NETWORK"; params="$IN_PARAMS"
-           fi
-           [[ "$commit" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::commit must be a full 40-character SHA"; exit 1; }
-           run_id="${IN_FOLLOW:-gh-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}}"
-@@ -112,14 +124,14 @@ jobs:
-           else
-             [[ -z "$IN_CHECK" ]] || exit 1
-           fi
--          for value in "$commit" "$tests" "$mode" "$network" "$params" "$run_id" "$
++      mirror: snarkOS-internal
++      branches: staging
++    # Lives in the merge-bot environment, which admits only staging. The called
++    # workflow's job sets that environment and receives the value.
++    secrets:
++      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4640** (2026-11-06): ci: fast-forward snarkOS-internal's staging whenever staging moves (@cbeck88)
 - **PR #4638** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@7e48bc69c (@aleo-labs-merge-bot[bot])
 - **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
 - **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
 - **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
 - **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
-- **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
 
 ---
 
@@ -3144,28 +2105,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding
+## X. Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal
 
 **RULE**:
-When implementing operations in `cli/src/commands/start.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/mirror-staging.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84ccee7a`: Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f0ab313`: Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/commands/start.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/mirror-staging.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), genesis.hash(), self.dev).await,
+name: Mirror staging to snarkOS-internal
+
+# snarkOS-internal is a private copy of this repository. Its staging follows this
+# staging and nothing else: the bot only fast-forwards it, and a mirror that has
+# diverged fails the run.
+on:
+  push:
+    branches: [staging]
+  # Catches a push whose run failed or never started.
+  schedule:
+    - cron: '41 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency: mirror-staging
+
+jobs:
+  mirror:
+    # snarkOS-internal holds this file too. Without this, the bot's push there
+    # would start a run in the mirror.
+    if: github.repository == 'aleo-labs-protocol/snarkOS'
+    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
+    permissions: { contents: read }
+    with:
+      mirror: snarkOS-internal
+      branches: staging
+    # Lives in the merge-bot environment, which admits only staging. The called
+    # workflow's job sets that environment and receives the value.
+    secrets:
+      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            NodeType::BootstrapClient => Node::new_bootstrap_client(node_ip, account, *genesis.header(), self.dev).await,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84ccee7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f0ab313` are properly handled with clean fallback behavior.

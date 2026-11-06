@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "84ccee7a",
+    "sourceVersion": "6f0ab313",
     "license": "Apache-2.0",
-    "contentHash": "ce35c3581a62c92c0de741e8a47e83bd34f87a00997e3efcc6bc391a46c4867c",
-    "lastHarvestedAt": "2026-11-06T15:13:16.776Z",
+    "contentHash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
+    "lastHarvestedAt": "2026-11-06T23:12:07.121Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "e755a8b6",
+    "sourceVersion": "12053961",
     "license": "MPL-2.0",
-    "contentHash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
-    "lastHarvestedAt": "2026-11-04T01:51:20.927Z",
+    "contentHash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
+    "lastHarvestedAt": "2026-11-06T23:12:03.080Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "066ea4e4",
+    "sourceVersion": "e29dbf75",
     "license": "Apache-2.0",
-    "contentHash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
-    "lastHarvestedAt": "2026-11-04T08:57:33.409Z",
+    "contentHash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
+    "lastHarvestedAt": "2026-11-06T23:11:55.616Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
-    "lastHarvestedAt": "2026-11-03T19:14:49.205Z",
+    "contentHash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
+    "lastHarvestedAt": "2026-11-06T23:12:02.563Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {

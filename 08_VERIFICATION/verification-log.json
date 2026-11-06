@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-AASP",
-    "timestamp": "2026-11-05T01:00:46.249Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "70c3b9359e1db10cdb9768bd0ee06d21265600e23f9c5595fbde5e7b4040f3d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JESS",
-    "timestamp": "2026-11-05T01:07:51.340Z",
-    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-    "contentHash": "15835dbba0a9fe108f476d66bc12a9b9c5f409a1748430d0c68e7bb9dd248542",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JH29",
-    "timestamp": "2026-11-05T01:07:54.273Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "4ba046dc7077372090f3c24cf9b91d70df2b7d3964d0fbfa21008881a792b4a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JK10",
-    "timestamp": "2026-11-05T01:07:58.116Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "241ded5705ec728854c4f5a1233b2ccfdfce8ebefcde5e032ebcf685cfd66548",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-SQUV",
     "timestamp": "2026-11-05T01:15:06.871Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7492,6 +7432,66 @@
     "contentHash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-A124",
+    "timestamp": "2026-11-06T23:11:55.612Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-A6F3",
+    "timestamp": "2026-11-06T23:12:02.559Z",
+    "repository": "Pika-Labs/Pika-H3-Flex",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+    "contentHash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-A6TG",
+    "timestamp": "2026-11-06T23:12:03.076Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261106-A9XP",
+    "timestamp": "2026-11-06T23:12:07.117Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

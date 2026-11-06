@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T23:04:49.970Z",
+  "last_updated": "2026-11-06T23:12:07.029Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12768,8 +12768,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "e755a8b6",
-      "content_hash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
+      "source_version": "12053961",
+      "content_hash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -12839,7 +12839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:51:20.836Z",
+      "verified_at": "2026-11-06T23:12:02.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53277,11 +53277,16 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "066ea4e4",
-      "content_hash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
+      "source_version": "e29dbf75",
+      "content_hash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "charset assertion and use LLVM coverage in CI (#1839)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2090,
           "title": "oapi): release the METADATA_REGISTRY read guard before recursing (#1714)",
@@ -53333,7 +53338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:57:33.283Z",
+      "verified_at": "2026-11-06T23:11:55.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73737,13 +73742,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "84ccee7a",
-      "content_hash": "076ddf650a549a61696bd92bd5b9b6fb0971a45c70f651a91b9c4f1765dd638b",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "6f0ab313",
+      "content_hash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -73763,6 +73768,11 @@
         {
           "number": null,
           "title": "Merge pull request #4618 from exocognosis/fix/gateway-genesis-binding",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -73891,7 +73901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:13:53.810Z",
+      "verified_at": "2026-11-06T23:12:07.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160334,10 +160344,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
+      "content_hash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
       "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Artifact Versioning & Dependency Locking",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Prompt Engineering as Code: Structured Temporal Constraints",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5667,
           "title": "Temporal Video Pipeline LoRA State Mutation Contract",
@@ -160354,7 +160374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T19:14:49.084Z",
+      "verified_at": "2026-11-06T23:12:02.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

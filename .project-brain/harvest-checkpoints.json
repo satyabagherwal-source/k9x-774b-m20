@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T23:04:50.061Z",
+  "last_updated": "2026-11-06T23:12:07.139Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "076ddf650a549a61696bd92bd5b9b6fb0971a45c70f651a91b9c4f1765dd638b",
-      "verified_at": "2026-11-06T21:13:53.927Z",
+      "content_hash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
+      "verified_at": "2026-11-06T23:12:07.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:13:53.927Z"
+      "last_updated": "2026-11-06T23:12:07.138Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "0a914872def1bc57df3d9f3334c34a5a7cafeaca2b28961bd6ba6046843433ac",
-      "verified_at": "2026-11-04T01:51:20.935Z",
+      "content_hash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
+      "verified_at": "2026-11-06T23:12:03.089Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:51:20.935Z"
+      "last_updated": "2026-11-06T23:12:03.089Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "63e6062cfc983be77ea8987a9b5c5b077de27955eb3742d279d5f4c7c0f878d6",
-      "verified_at": "2026-11-04T08:57:33.417Z",
+      "content_hash": "16dd977ef6daac435416d3844c1baad93432649d0bf38785ad456ec8b980c049",
+      "verified_at": "2026-11-06T23:11:55.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:57:33.417Z"
+      "last_updated": "2026-11-06T23:11:55.626Z"
     },
     "react/metro": {
       "repository": "react/metro",
@@ -17376,14 +17376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
-      "content_hash": "905904d61b44ebe4aa2b1a4b950da0dd0c97e23150ed18d6e733581e468195e1",
-      "verified_at": "2026-11-03T19:14:49.214Z",
+      "content_hash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
+      "verified_at": "2026-11-06T23:12:02.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T19:14:49.214Z"
+      "last_updated": "2026-11-06T23:12:02.582Z"
     },
     "LiquidAI/LFM3-Audio-2B": {
       "repository": "LiquidAI/LFM3-Audio-2B",

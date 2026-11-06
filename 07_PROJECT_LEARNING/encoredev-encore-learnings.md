@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `e755a8b6`  
+> **Source Version**: `12053961`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:20.302Z  
+> **Timestamp**: 2026-11-06T23:12:02.748Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:19.840Z  
+> **Harvest Timestamp**: 2026-11-06T23:12:02.601Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12688 stars
+- **Stars / Engagement**: 12696 stars
 
 ---
 
@@ -1768,230 +1768,766 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e755a8b6` (2026-11-03)
-**Commit Message**: v2/internals/pkginfo: resolve nested modules missing from the module cache
+### Incident Patch 1: `12053961` (2026-11-06)
+**Commit Message**: sqldb: replace the lifetime config fields with a default jitter
 
-loadModuleDirs dropped every module that `go list -m -e -json all` reported
-without a Dir, i.e. every module whose source isn't in the module cache yet.
-A package of such a module then matched its parent module instead when the
-parent was on disk, and parsing failed looking for a directory that doesn't
-exist, e.g.
+Drop MaxConnLifetime and MaxConnLifetimeJitter from DatabaseConfig,
+since pool settings belong to the workload rather than the database.
+Instead, every pool adds a random extra of up to 10 minutes to pgx's
+one-hour connection lifetime, so connections opened together after a
+deploy don't all reconnect at the same moment.
 
-  parse package "cloud.google.com/go/bigquery": open
-  .../cloud.google.com/go@v0.123.0/bigquery: no such file or directory
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_013iMhj82aGvK9n96FctgTGy
 
-It happens with a module cache restored from an earlier build, which can
-have the parent module but not a nested module the app has since come to
-depend on. With an empty cache neither module has a Dir, so both were
-dropped and resolution fell back to packages.Load, which downloads.
-
-Keep those modules, with an empty Dir. buildListModuleDir already treats an
-empty Dir as a miss, so their packages now take the packages.Load path too.
-Errored modules are kept the same way rather than dropped.
-
-**File**: `v2/internals/pkginfo/modresolve.go` (modified, +11/-3)
+**File**: `runtimes/go/appruntime/exported/config/config.go` (modified, +0/-11)
 ```diff
-@@ -125,11 +125,19 @@ func (l *Loader) loadModuleDirs() {
- 			l.c.Log.Warn().Err(err).Msg("failed to decode go list module output; using partial module list")
- 			break
- 		}
--		// Skip errored modules and any without a resolved directory.
--		if m.Error != nil || m.Path == "" || m.Dir == "" || !paths.ValidModPath(m.Path) {
-+		if m.Path == "" || !paths.ValidModPath(m.Path) {
- 			continue
- 		}
--		l.moduleDirs[paths.MustModPath(m.Path)] = m.Dir
-+		// Keep modules that aren't on disk yet (or failed to load), with an
-+		// empty Dir: dropping them would match their packages to a parent
-+		// module that is on disk, e.g. cloud.google.com/go/bigquery to
-+		// cloud.google.com/go. An empty Dir makes buildListModuleDir report
-+		// a miss, so resolution falls back to packages.Load, which downloads.
-+		dir := m.Dir
-+		if m.Error != nil {
-+			dir = ""
-+		}
-+		l.moduleDirs[paths.MustModPath(m.Path)] = dir
- 	}
+@@ -18,10 +18,6 @@ type Static struct {
+ 	CORSExposeHeaders []string // Headers to be exposed by cors
+ 	PubsubTopics      map[string]*StaticPubsubTopic
  
- 	l.sortedModulePaths = make([]paths.Mod, 0, len(l.moduleDirs))
+-	// SQLDatabases holds the pool settings set in sqldb.DatabaseConfig,
+-	// keyed by database name. Databases without any are left out.
+-	SQLDatabases map[string]*StaticSQLDatabase `json:",omitempty"`
+-
+ 	Testing         bool
+ 	TestServiceMap  map[string]string // map of service names to their filesystem root
+ 	TestAppRootPath string            // the root path of the app when running tests
+@@ -334,13 +330,6 @@ type StaticPubsubSubscription struct {
+ 	ScrubPaths []scrub.Path
+ }
+ 
+-// StaticSQLDatabase is the connection pool configuration an app sets in code
+-// for one SQL database. Zero values mean "use the default".
+-type StaticSQLDatabase struct {
+-	MaxConnLifetime       time.Duration `json:",omitempty"`
+-	MaxConnLifetimeJitter time.Duration `json:",omitempty"`
+-}
+-
+ type SQLServer struct {
+ 	// Host is the host to connect to.
+ 	// Valid formats are "hostname", "hostname:port", and "/path/to/unix.socket".
 ```
 
-**File**: `v2/internals/pkginfo/modresolve_cache_test.go` (added, +166/-0)
+**File**: `runtimes/go/storage/sqldb/db.go` (modified, +5/-17)
 ```diff
-@@ -0,0 +1,166 @@
-+package pkginfo_test
+@@ -11,6 +11,7 @@ import (
+ 	"net"
+ 	"strings"
+ 	"sync"
++	"time"
+ 
+ 	"github.com/jackc/pgx/v5"
+ 	"github.com/jackc/pgx/v5/pgxpool"
+@@ -122,9 +123,6 @@ func (db *Database) Stdlib() *sql.DB {
+ 			db.stdlib.SetMaxOpenConns(maxConns)
+ 			db.stdlib.SetConnMaxIdleTime(cfg.MaxConnIdleTime)
+ 			db.stdlib.SetMaxIdleConns(maxConns)
+-			if s := db.mgr.staticConf(db.origName); s != nil && s.MaxConnLifetime > 0 {
+-				db.stdlib.SetConnMaxLifetime(s.MaxConnLifetime)
+-			}
+ 		}
+ 		openErr = err
+ 	})
+@@ -181,6 +179,10 @@ func dbConf(srv *config.SQLServer, db *config.SQLDatabase, dbNameOverride string
+ 		cfg.MaxConns = int32(n)
+ 	}
+ 
++	// Spread out connection retirement so connections opened together,
++	// such as after a deploy, don't all reconnect at the same moment.
++	cfg.MaxConnLifetimeJitter = 10 * time.Minute
++
+ 	// If we have a server CA, set it in the TLS config.
+ 	if srv.ServerCACert != "" {
+ 		caCertPool := x509.NewCertPool()
+@@ -203,20 +205,6 @@ func dbConf(srv *config.SQLServer, db *config.SQLDatabase, dbNameOverride string
+ 	return cfg, nil
+ }
+ 
+-// applyStaticConf applies the pool settings the app set in sqldb.DatabaseConfig.
+-// Zero values keep pgx's defaults.
+-func applyStaticConf(cfg *pgxpool.Config, s *config.StaticSQLDatabase) {
+-	if s == nil {
+-		return
+-	}
+-	if s.MaxConnLifetime > 0 {
+-		cfg.MaxConnLifetime = s.MaxConnLifetime
+-	}
+-	if s.MaxConnLifetimeJitter > 0 {
+-		cfg.MaxConnLifetimeJitter = s.MaxConnLifetimeJitter
+-	}
+-}
+-
+ // Exec executes a query without returning any rows.
+ // The args are for any placeholder parameters in the query.
+ //
+```
+
+**File**: `runtimes/go/storage/sqldb/manager_internal.go` (modified, +1/-13)
+```diff
+@@ -16,7 +16,6 @@ import (
+ 
+ // Manager manages database connections.
+ type Manager struct {
+-	static     *config.Static
+ 	runtime    *config.Runtime
+ 	rt         *reqtrack.RequestTracker
+ 	ts         *testsupport.Manager
+@@ -26,9 +25,8 @@ type Manager struct {
+ 	dbs map[string]*Database
+ }
+ 
+-func NewManager(static *config.Static, runtime *config.Runtime, rt *reqtrack.RequestTracker, ts *testsupport.Manager, rootLogger zerolog.Logger) *Manager {
++func NewManager(runtime *config.Runtime, rt *reqtrack.RequestTracker, ts *testsupport.Manager, rootLogger zerolog.Logger) *Manager {
+ 	return &Manager{
+-		static:     static,
+ 		runtime:    runtime,
+ 		rt:         rt,
+ 		ts:         ts,
+@@ -97,7 +95,6 @@ func (mgr *Manager) getPool(encoreName, dbNameOverride string, hooks *hookList)
+ 	if err != nil {
+ 		panic("sqldb: " + err.Error())
+ 	}
+-	applyStaticConf(cfg, mgr.staticConf(encoreName))
+ 
+ 	cfg.ConnConfig.Tracer = &pgxTracer{mgr: mgr}
+ 	cfg.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+@@ -111,15 +108,6 @@ func (mgr *Manager) getPool(encoreName, dbNameOverride string, hooks *hookList)
+ 	return pool, true
+ }
+ 
+-// staticConf returns the pool settings the app set in code for the database,
+-// or nil if it set none. Test clones share the original's encoreName.
+-func (mgr *Manager) staticConf(encoreName string) *config.StaticSQLDatabase {
+-	if mgr.static == nil {
+-		return nil
+-	}
+-	return mgr.static.SQLDatabases[encoreName]
+-}
+-
+ func (mgr *Manager) Shutdown(p *shutdown.Process) error {
+ 	// Wait for all user code to finish before shutting down databases.
+ 	<-p.ServicesShutdownCompleted.Done()
+```
+
+**File**: `runtimes/go/storage/sqldb/pkgfn.go` (modified, +0/-15)
+```diff
+@@ -4,7 +4,6 @@ package sqldb
+ 
+ import (
+ 	"context"
+-	"time"
+ )
+ 
+ // NewDatabase declares a new SQL database.
+@@ -34,20 +33,6 @@ type DatabaseConfig struct {
+ 	//
+ 	// Migrations are an ordered sequence of sql files of the format <number>_<description>.up.sql.
+ 	Migrations string
+-
+-	// MaxConnLifetime is the age at which the pool retires a connection, checked
+-	// when it is released or idle; for example 30 * time.Minute. If zero, the pool
+-	// keeps pgx's default of one hour and (*Database).Stdlib sets no maximum age.
+-	// PostgreSQL connections cache metadata for each table and partition they
+-	// touch, so a shorter lifetime limits that memory. It also applies to Stdlib(),
+-	// sqldb.Named, and sql.Open pools made with RegisterStdlibDriver.
+-	MaxConnLifetime time.Duration
+-
+-	// MaxConnLifetimeJitter adds a random extra duration, up to this value, to
+-	// each connection's lifetime, so connections opened together (after a deploy,
+-	// say) don't all close together. If zero there is no jitter.
+-	// (*Database).Stdlib ignores it, as database/sql has no jitter.
+-	MaxConnLifetimeJitter time.Duration
+ }
+ 
+ // Exec executes a query without returning any rows.
+```
+
+**File**: `runtimes/go/storage/sqldb/sqldb_test.go` (modified, +4/-46)
+```diff
+@@ -7,9 +7,6 @@ import (
+ 	"time"
+ 	_ "unsafe" // for go:linkname
+ 
+-	"github.com/jackc/pgx/v5/pgxpool"
+-	"github.com/rs/zerolog"
+-
+ 	"encore.dev/appruntime/exported/config"
+ )
+ 
+@@ -92,49 +89,10 @@ func TestDBConf(t *testing.T) {
+ 			t.Fatalf("test %d: got user %s, want %q", i, cfg.ConnConfig.User, test.DB.User)
+ 		} else if cfg.ConnConfig.Password != test.DB.Password {
+ 			t.Fatalf("test %d: got password %s, want %q", i, cfg.ConnConfig.Password, test.DB.Password)
+-		}
+-	}
+-}
+-
+-func TestPoolLifetimeFromStaticConfig(t *testing.T) {
+-	runtime := &config.Runtime{
+-		SQLServers: []*config.SQLServer{{Host: "localhost:1"}},
+-		SQLDatabases: []*config.SQLDatabase{
+-			{EncoreName: "tuned", DatabaseName: "tuned", User: "u", Password: "p"},
+-			{EncoreName: "jitter-only", DatabaseName: "jitter-only", User: "u", Password: "p"},
+-			{EncoreName: "plain", DatabaseName: "plain", User: "u", Password: "p"},
+-		},
+-	}
+-	static := &config.Static{
+-		SQLDatabases: map[string]*config.StaticSQLDatabase{
+-			"tuned":       {MaxConnLifetime: 30 * time.Minute, MaxConnLifetimeJitter: 10 * time.Minute},
+-			"jitter-only": {MaxConnLifetimeJitter: 5 * time.Minute},
+-		},
+-	}
+-	mgr := NewManager(static, runtime, nil, nil, zerolog.Nop())
+-
+-	// A test clone, as made by NewTestDatabase, must pick up the original's settings.
+-	tuned := mgr.GetDB("tuned")
+-	clone := &Database{name: "tuned_clone", origName: "tuned", mgr: mgr, hooks: tuned.hooks}
+-
+-	tests := []struct {
+-		DB           *Database
+-		WantLifetime time.Duration
+-		WantJitter   time.Duration
+-	}{
+-		{DB: tuned, WantLifetime: 30 * time.Minute, WantJitter: 10 * time.Minute},
+-		{DB: clone, WantLifetime: 30 * time.Minute, WantJitter: 10 * time.Minute},
+-		{DB: mgr.GetDB("jitter-only"), WantLifetime: time.Hour, WantJitter: 5 * time.Minute},
+-		{DB: mgr.GetDB("plain"), WantLifetime: time.Hour, WantJitter: 0},
+-	}
+-	for _, test := range tests {
+-		cfg := Driver[*pgxpool.Pool](test.DB).Config()
+-		t.Cleanup(test.DB.shutdown)
+-		if cfg.MaxConnLifetime != test.WantLifetime {
+-			t.Errorf("%s: got MaxConnLifetime %s, want %s", test.DB.name, cfg.MaxConnLifetime, test.WantLifetime)
+-		}
+-		if cfg.MaxConnLifetimeJitter != test.WantJitter {
+-			t.Errorf("%s: got MaxConnLifetimeJitter %s, want %s", test.DB.name, cfg.MaxConnLifetimeJitter, test.WantJitter)
++		} else if cfg.MaxConnLifetime != time.Hour {
++			t.Fatalf("test %d: got max conn lifetime %v, want %v", i, cfg.MaxConnLifetime, time.Hour)
++		} else if cfg.MaxConnLifetimeJitter != 10*time.Minute {
++			t.Fatalf("test %d: got max conn lifetime jitter %v, want %v", i, cfg.MaxConnLifetimeJitter, 10*time.Minute)
+ 		}
+ 	}
+ }
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib.go` (modified, +1/-16)
+```diff
+@@ -19,10 +19,6 @@ import (
+ //
+ // The main use case is to support libraries that expect to call sql.Open
+ // themselves without exposing the underlying database credentials.
+-//
+-// The *sql.DB that sql.Open returns is a separate pool owned by the caller.
+-// It retires connections after DatabaseConfig.MaxConnLifetime (plus jitter) when
+-// they are reused or returned, but Encore's other pool settings don't apply to it.
+ func RegisterStdlibDriver(db *Database) string {
+ 	if db == nil {
+ 		panic("sqldb.StdlibDriver: received nil db")
+@@ -119,18 +115,7 @@ func (adapterDriver) OpenConnector(ident string) (driver.Connector, error) {
+ 	} else if db.noopDB {
+ 		return nil, errNoopDB
+ 	}
+-	c, err := registerStdlibDriver(db.mgr).OpenConnector(db.connStr)
+-	if err != nil {
+-		return nil, err
+-	}
+-	// The caller owns this pool, so apply the app's lifetime through the connections.
+-	if wc, ok := c.(wrappedConnector); ok {
+-		if s := db.mgr.staticConf(db.origName); s != nil {
+-			wc.maxLifetime, wc.maxLifetimeJitter = s.MaxConnLifetime, s.MaxConnLifetimeJitter
+-		}
+-		c = wc
+-	}
+-	return c, nil
++	return registerStdlibDriver(db.mgr).OpenConnector(db.connStr)
+ }
+ 
+ var (
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib_lifetime_test.go` (removed, +0/-111)
+```diff
+@@ -1,111 +0,0 @@
+-package sqldb
+-
+-import (
+-	"context"
+-	"database/sql/driver"
+-	"errors"
+-	"testing"
+-	"time"
+-
+-	"github.com/rs/zerolog"
+-
+-	"encore.dev/appruntime/exported/config"
+-)
+-
+-type fakeConn struct{ driver.Conn }
+-
+-type fakeConnector struct{}
+-
+-func (fakeConnector) Connect(context.Context) (driver.Conn, error) { return fakeConn{}, nil }
+-func (fakeConnector) Driver() driver.Driver                        { return nil }
+-
+-func TestWrappedConnExpiry(t *testing.T) {
+-	past, future := time.Now().Add(-time.Second), time.Now().Add(time.Hour)
+-	tests := []struct {
+-		Name      string
+-		Conn      wrappedConn
+-		WantValid bool
+-	}{
+-		{Name: "no_lifetime", Conn: wrappedConn{parent: fakeConn{}}, WantValid: true},
+-		{Name: "not_expired", Conn: wrappedConn{parent: fakeConn{}, expiresAt: future}, WantValid: true},
+-		{Name: "expired", Conn: wrappedConn{parent: fakeConn{}, expiresAt: past}, WantValid: false},
+-		// sql.Open("encore", ...) wraps the connection twice; the outer one must pass the answer on.
+-		{Name: "expired_inner", Conn: wrappedConn{parent: wrappedConn{parent: fakeConn{}, expiresAt: past}}, WantValid: false},
+-	}
+-	for _, test := range tests {
+-		t.Run(test.Name, func(t *testing.T) {
+-			if got := test.Conn.IsValid(); got != test.WantValid {
+-				t.Errorf("IsValid() = %v, want %v", got, test.WantValid)
+-			}
+-			err := test.Conn.ResetSession(context.Background())
+-			if test.WantValid && err != nil {
+-				t.Errorf("ResetSession() = %v, want nil", err)
+-			} else if !test.WantValid && !errors.Is(err, driver.ErrBadConn) {
+-				t.Errorf("ResetSession() = %v, want driver.ErrBadConn", err)
+-			}
+-		})
+-	}
+-}
+-
+-func TestWrappedConnectorSetsExpiry(t *testing.T) {
+-	c := wrappedConnector{
+-		parent:            fakeConnector{},
+-		driverRef:         &wrappedDriver{},
+-		maxLifetime:       20 * time.Second,
+-		maxLifetimeJitter: 10 * time.Second,
+-	}
+-	for i := 0; i < 100; i++ {
+-		before := time.Now()
+-		conn, err := c.Connect(context.Background())
+-		if err != nil {
+-			t.Fatal(err)
+-		}
+-		expiresAt := conn.(wrappedConn).expiresAt
+-		if expiresAt.Before(before.Add(20*time.Second)) || expiresAt.After(time.Now().Add(30*time.Second)) {
+-			t.Fatalf("expiresAt is %s after connecting, want between 20s and 30s", expiresAt.Sub(before))
+-		}
+-	}
+-
+-	c.maxLifetime = 0
+-	conn, _ := c.Connect(context.Background())
+-	if !conn.(wrappedConn).expiresAt.IsZero() {
+-		t.Errorf("with no lifetime, expiresAt = %v, want zero", conn.(wrappedConn).expiresAt)
+-	}
+-}
+-
+-func TestRegisterStdlibDriverLifetime(t *testing.T) {
+-	runtime := &config.Runtime{
+-		SQLServers: []*config.SQLServer{{Host: "localhost:1"}},
+-		SQLDatabases: []*config.SQLDatabase{
+-			{EncoreName: "adapter-tuned", DatabaseName: "adapter-tuned", User: "u", Password: "p"},
+-			{EncoreName: "adapter-plain", DatabaseName: "adapter-plain", User: "u", Password: "p"},
+-		},
+-	}
+-	static := &config.Static{
+-		SQLDatabases: map[string]*config.StaticSQLDatabase{
+-			"adapter-tuned": {MaxConnLifetime: 20 * time.Second, MaxConnLifetimeJitter: 10 * time.Second},
+-		},
+-	}
+-	mgr := NewManager(static, runtime, nil, nil, zerolog.Nop())
+-
+-	tests := []struct {
+-		DB                       string
+-		WantLifetime, WantJitter time.Duration
+-	}{
+-		{DB: "adapter-tuned", WantLifetime: 20 * time.Second, WantJitter: 10 * time.Second},
+-		{DB: "adapter-plain"},
+-	}
+-	for _, test := range tests {
+-		db := mgr.GetDB(test.DB)
+-		t.Cleanup(db.shutdown)
+-		c, err := adapterDriver{}.OpenConnector(RegisterStdlibDriver(db))
+-		if err != nil {
+-			t.Fatal(err)
+-		}
+-		wc := c.(wrappedConnector)
+-		if wc.maxLifetime != test.WantLifetime || wc.maxLifetimeJitter != test.WantJitter {
+-			t.Errorf("%s: got lifetime %s and jitter %s, want %s and %s",
+-				test.DB, wc.maxLifetime, wc.maxLifetimeJitter, test.WantLifetime, test.WantJitter)
+-		}
+-	}
+-}
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib_wrapper_internal.go` (modified, +1/-34)
+```diff
+@@ -34,8 +34,6 @@ import (
+ 	"context"
+ 	"database/sql/driver"
+ 	"errors"
+-	"math/rand/v2"
+-	"time"
+ 
+ 	"encore.dev/appruntime/exported/model"
+ 	"encore.dev/appruntime/exported/stack"
+@@ -317,10 +315,6 @@ func (d wrappedDriver) OpenConnector(name string) (driver.Connector, error) {
+ type wrappedConnector struct {
+ 	parent    driver.Connector
+ 	driverRef *wrappedDriver
+-
+-	// If maxLifetime is set, connections report themselves unusable to
+-	// database/sql once older than maxLifetime plus up to maxLifetimeJitter.
+-	maxLifetime, maxLifetimeJitter time.Duration
+ }
+ 
+ var (
+@@ -333,12 +327,7 @@ func (c wrappedConnector) Connect(ctx context.Context) (conn driver.Conn, err er
+ 		return nil, err
+ 	}
+ 
+-	wc := wrappedConn{mw: c.driverRef.mw, parent: conn}
+-	if c.maxLifetime > 0 {
+-		jitter := time.Duration(rand.Float64() * float64(c.maxLifetimeJitter))
+-		wc.expiresAt = time.Now().Add(c.maxLifetime).Add(jitter)
+-	}
+-	return wc, nil
++	return wrappedConn{mw: c.driverRef.mw, parent: conn}, nil
+ }
+ 
+ func (c wrappedConnector) Driver() driver.Driver {
+@@ -363,8 +352,6 @@ func (t dsnConnector) Driver() driver.Driver {
+ type wrappedConn struct {
+ 	mw     middleware
+ 	parent driver.Conn
+-
+-	expiresAt time.Time // zero means no maximum age
+ }
+ 
+ // Compile time validation that our types implement the expected interfaces
+@@ -376,7 +363,6 @@ var (
+ 	_ driver.Pinger             = wrappedConn{}
+ 	_ driver.QueryerContext     = wrappedConn{}
+ 	_ driver.SessionResetter    = wrappedConn{}
+-	_ driver.Validator          = wrappedConn{}
+ 	_ driver.NamedValueChecker  = wrappedConn{}
+ )
+ 
+@@ -450,31 +436,12 @@ func (c wrappedConn) QueryContext(ctx context.Context, query string, args []driv
+ }
+ 
+ func (c wrappedConn) ResetSession(ctx context.Context) error {
+-	// database/sql calls this before reusing a connection, and discards it on ErrBadConn.
+-	if c.expired() {
+-		return driver.ErrBadConn
+-	}
+ 	if conn, ok := c.parent.(driver.SessionResetter); ok {
+ 		return conn.ResetSession(ctx)
+ 	}
+ 	return nil
+ }
+ 
+-// IsValid is called when a connection is returned to the pool; false discards it.
+-func (c wrappedConn) IsValid() bool {
+-	if c.expired() {
+-		return false
+-	}
+-	if v, ok := c.parent.(driver.Validator); ok {
+-		return v.IsValid()
+-	}
+-	return true
+-}
+-
+-func (c wrappedConn) expired() bool {
+-	return !c.expiresAt.IsZero() && time.Now().After(c.expiresAt)
+-}
+-
+ func defaultCheckNamedValue(nv *driver.NamedValue) (err error) {
+ 	nv.Value, err = driver.DefaultParameterConverter.ConvertValue(nv.Value)
+ 	return err
+```
+
+---
+
+### Incident Patch 2: `18a6b845` (2026-11-02)
+**Commit Message**: sqldb: retire old connections in sql.Open pools from RegisterStdlibDriver
+
+A *sql.DB from sql.Open("encore", ...) belongs to the caller, so Encore
+can't call SetConnMaxLifetime on it. Instead, the adapter's connector
+gives each connection an expiry (MaxConnLifetime plus up to
+MaxConnLifetimeJitter), and the wrapped connection reports itself
+unusable once past it: ResetSession returns driver.ErrBadConn before
+reuse, and IsValid returns false when it's put back. database/sql then
+closes it and opens a new one. Connections without an expiry behave as
+before.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_013iMhj4pDYPUbpbxTSRCVQH
+
+**File**: `runtimes/go/storage/sqldb/pkgfn.go` (modified, +2/-2)
+```diff
+@@ -39,8 +39,8 @@ type DatabaseConfig struct {
+ 	// when it is released or idle; for example 30 * time.Minute. If zero, the pool
+ 	// keeps pgx's default of one hour and (*Database).Stdlib sets no maximum age.
+ 	// PostgreSQL connections cache metadata for each table and partition they
+-	// touch, so a shorter lifetime limits that memory. It also applies to Stdlib()
+-	// and sqldb.Named, but not to a sql.Open pool made with RegisterStdlibDriver.
++	// touch, so a shorter lifetime limits that memory. It also applies to Stdlib(),
++	// sqldb.Named, and sql.Open pools made with RegisterStdlibDriver.
+ 	MaxConnLifetime time.Duration
+ 
+ 	// MaxConnLifetimeJitter adds a random extra duration, up to this value, to
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib.go` (modified, +15/-4)
+```diff
+@@ -20,9 +20,9 @@ import (
+ // The main use case is to support libraries that expect to call sql.Open
+ // themselves without exposing the underlying database credentials.
+ //
+-// The *sql.DB that sql.Open returns is a separate pool owned by the caller, so
+-// Encore's pool settings, including DatabaseConfig.MaxConnLifetime, don't apply
+-// to it. Set them on it directly, for example db.SetConnMaxLifetime(30 * time.Minute).
++// The *sql.DB that sql.Open returns is a separate pool owned by the caller.
++// It retires connections after DatabaseConfig.MaxConnLifetime (plus jitter) when
++// they are reused or returned, but Encore's other pool settings don't apply to it.
+ func RegisterStdlibDriver(db *Database) string {
+ 	if db == nil {
+ 		panic("sqldb.StdlibDriver: received nil db")
+@@ -119,7 +119,18 @@ func (adapterDriver) OpenConnector(ident string) (driver.Connector, error) {
+ 	} else if db.noopDB {
+ 		return nil, errNoopDB
+ 	}
+-	return registerStdlibDriver(db.mgr).OpenConnector(db.connStr)
++	c, err := registerStdlibDriver(db.mgr).OpenConnector(db.connStr)
++	if err != nil {
++		return nil, err
++	}
++	// The caller owns this pool, so apply the app's lifetime through the connections.
++	if wc, ok := c.(wrappedConnector); ok {
++		if s := db.mgr.staticConf(db.origName); s != nil {
++			wc.maxLifetime, wc.maxLifetimeJitter = s.MaxConnLifetime, s.MaxConnLifetimeJitter
++		}
++		c = wc
++	}
++	return c, nil
+ }
+ 
+ var (
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib_lifetime_test.go` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++package sqldb
 +
 +import (
-+	"encoding/json"
-+	"go/token"
-+	"net/url"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"runtime"
-+	"strings"
++	"context"
++	"database/sql/driver"
++	"errors"
 +	"testing"
++	"time"
 +
-+	qt "github.com/frankban/quicktest"
-+	"golang.org/x/mod/module"
-+	modzip "golang.org/x/mod/zip"
++	"github.com/rs/zerolog"
 +
-+	"encr.dev/pkg/paths"
-+	"encr.dev/v2/internals/pkginfo"
-+	"encr.dev/v2/internals/testutil"
++	"encore.dev/appruntime/exported/config"
 +)
 +
-+// TestLoader_NestedModuleNotDownloaded covers a module cache holding a
-+// module's source but not that of a module nested in it, as a module cache
-+// restored from an earlier build can. `go list -m all` reports the nested
-+// module without a Dir; its packages must still resolve to it (and get
-+// downloaded), not to the parent module that is on disk.
-+func TestLoader_NestedModuleNotDownloaded(t *testing.T) {
-+	proxy := writeModuleProxy(t, map[string]map[string]string{
-+		"example.com/a": {
-+			"go.mod": "module example.com/a\n",
-+			"a.go":   "package a\n",
-+		},
-+		"example.com/a/b": {
-+			"go.mod":       "module example.com/a/b\n",
-+			"b.go":         "package b\n",
-+			"blah/blah.go": "package blah\n",
-+		},
-+		// Sorts between example.com/a/b and example.com/a/b/blah.
-+		"example.com/a/b.x": {
-+			"go.mod": "module example.com/a/b.x\n",
-+			"bx.go":  "package bx\n",
-+		},
-+	})
++type fakeConn struct{ driver.Conn }
 +
++type fakeConnector struct{}
++
++func (fakeConnector) Connect(context.Context) (driver.Conn, error) { return fakeConn{}, nil }
++func (fakeConnector) Driver() driver.Driver                        { return nil }
++
++func TestWrappedConnExpiry(t *testing.T) {
++	past, future := time.Now().Add(-time.Second), time.Now().Add(time.Hour)
 +	tests := []struct {
-+		name    string
-+		cached  []string // modules downloaded before parsing
-+		pkg     paths.Pkg
-+		wantDir string // relative to the module cache
++		Name      string
++		Conn      wrappedConn
++		WantValid bool
 +	}{
-+		{
-+			name:    "nested_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a/b",
-+			wantDir: "example.com/a/b@v1.0.0",
-+		},
-+		{
-+			name:    "package_in_nested_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a/b/blah",
-+			wantDir: "example.com/a/b@v1.0.0/blah",
-+		},
-+		{
-+			name:    "sibling_module_sorted_in_between",
-+			cached:  []string{"example.com/a", "example.com/a/b.x"},
-+			pkg:     "example.com/a/b/blah",
-+			wantDir: "example.com/a/b@v1.0.0/blah",
-+		},
-+		{
-+			name:    "parent_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a",
-+			wantDir: "example.com/a@v1.0.0",
-+		},
++		{Name: "no_lifetime", Conn: wrappedConn{parent: fakeConn{}}, WantValid: true},
++		{Name: "not_expired", Conn: wrappedConn{parent: fakeConn{}, expiresAt: future}, WantValid: true},
++		{Name: "expired", Conn: wrappedConn{parent: fakeConn{}, expiresAt: past}, WantValid: false},
++		// sql.Open("encore", ...) wraps the connection twice; the outer one must pass the answer on.
++		{Name: "expired_inner", Conn: wrappedConn{parent: wrappedConn{parent: fakeConn{}, expiresAt: past}}, WantValid: false},
 +	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			c := qt.New(t)
-+			modCache := t.TempDir()
-+			t.Setenv("GOPROXY", proxy)
-+			t.Setenv("GOSUMDB", "off")
-+			t.Setenv("GOWORK", "off")
-+			t.Setenv("GOMODCACHE", modCache)
-+			// -mod=mod fills in go.sum; -modcacherw lets t.TempDir clean up.
-+			t.Setenv("GOFLAGS", "-mod=mod -modcacherw")
-+
-+			tc := testutil.NewContext(c, false, testutil.ParseTxtar(`
-+-- go.mod --
-+module app
-+
-+go 1.22
-+
-+require (
-+	example.com/a v1.0.0
-+	example.com/a/b v1.0.0
-+	example.com/a/b.x v1.0.0
-+)
-+`))
-+			tc.FailTestOnErrors()
-+			defer tc.FailTestOnBailout()
-+
-+			goModDownload(c, tc, tt.cached...)
-+
-+			l := pkginfo.New(tc.Context)
-+			pkg, ok := l.LoadPkg(token.NoPos, tt.pkg)
-+			c.Assert(ok, qt.IsTrue)
-+			c.Check(pkg.FSPath.ToIO(), qt.Equals, filepath.Join(modCache, filepath.FromSlash(tt.wantDir)))
++	for _, test := range tests {
++		t.Run(test.Name, func(t *testing.T) {
++			if got := test.Conn.IsValid(); got != test.WantValid {
++				t.Errorf("IsValid() = %v, want %v", got, test.WantValid)
++			}
++			err := test.Conn.ResetSession(context.Background())
++			if test.WantValid && err != nil {
++				t.Errorf("ResetSession() = %v, want nil", err)
++			} else if !test.WantValid && !errors.Is(err, driver.ErrBadConn) {
++				t.Errorf("ResetSession() = %v, want driver.ErrBadConn", err)
++			}
 +		})
 +	}
 +}
 +
-+// writeModuleProxy writes a file:// GOPROXY serving each module, with the
-+// given files, at v1.0.0, and returns its URL.
-+func writeModuleProxy(t *testing.T, modules map[string]map[string]string) string {
-+	t.Helper()
-+	c := qt.New(t)
-+	root := t.TempDir()
-+	for modPath, files := range modules {
-+		src := t.TempDir()
-+		for name, data := range files {
-+			p := filepath.Join(src, filepath.FromSlash(name))
-+			c.Assert(os.MkdirAll(filepath.Dir(p), 0o755), qt.IsNil)
-+			c.Assert(os.WriteFile(p, []byte(data), 0o644), qt.IsNil)
++func TestWrappedConnectorSetsExpiry(t *testing.T) {
++	c := wrappedConnector{
++		parent:            fakeConnector{},
++		driverRef:         &wrappedDriver{},
++		maxLifetime:       20 * time.Second,
++		maxLifetimeJitter: 10 * time.Second,
++	}
++	for i := 0; i < 100; i++ {
++		before := time.Now()
++		conn, err := c.Connect(context.Background())
++		if err != nil {
++			t.Fatal(err)
 +		}
-+
-+		mv := module.Version{Path: modPath, Version: "v1.0.0"}
-+		dir := filepath.Join(root, filepath.FromSlash(modPath), "@v")
-+		c.Assert(os.MkdirAll(dir, 0o755), qt.IsNil)
-+
-+		info, err := json.Marshal(map[string]string{"Version": mv.Version, "Time": "2024-01-01T00:00:00Z"})
-+		c.Assert(err, qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, "list"), []byte(mv.Version+"\n"), 0o644), qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, mv.Version+".info"), info, 0o644), qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, mv.Version+".mod"), []byte(files["go.mod"]), 0o644), qt.IsNil)
-+
-+		zf, err := os.Create(filepath.Join(dir, mv.Version+".zip"))
-+		c.Assert(err, qt.IsNil)
-+		c.Assert(modzip.CreateFromDir(zf, mv, src), qt.IsNil)
-+		c.Assert(zf.Close(), qt.IsNil)
++		expiresAt := conn.(wrappedConn).expiresAt
++		if expiresAt.Before(before.Add(20*time.Second)) || expiresAt.After(time.Now().Add(30*time.Second)) {
++			t.Fatalf("expiresAt is %s after connecting, want between 20s and 30s", expiresAt.Sub(before))
++		}
 +	}
 +
-+	p := filepath.ToSlash(root)
-+	if !strings.HasPrefix(p, "/") {
-+		p = "/" + p // a Windows drive path
++	c.maxLifetime = 0
++	conn, _ := c.Connect(context.Background())
++	if !conn.(wrappedConn).expiresAt.IsZero() {
++		t.Errorf("with no lifetime, expiresAt = %v, want zero", conn.(wrappedConn).expiresAt)
 +	}
-+	return (&url.URL{Scheme: "file", Path: p}).String()
 +}
 +
-+// goModDownload downloads the given modules into the module cache.
-+func goModDownload(c *qt.C, tc *testutil.Context, mods ...string) {
-+	if len(mods) == 0 {
-+		return
++func TestRegisterStdlibDriverLifetime(t *testing.T) {
++	runtime := &config.Runtime{
++		SQLServers: []*config.SQLServer{{Host: "localhost:1"}},
++		SQLDatabases: []*config.SQLDatabase{
++			{EncoreName: "adapter-tuned", DatabaseName: "adapter-tuned", User: "u", Password: "p"},
++			{EncoreName: "adapter-plain", DatabaseName: "adapter-plain", User: "u", Password: "p"},
++		},
 +	}
-+	goBin := tc.Build.GOROOT.Join("bin", "go").ToIO()
-+	if runtime.GOOS == "windows" {
-+		goBin += ".exe"
++	static := &config.Static{
++		SQLDatabases: map[string]*config.StaticSQLDatabase{
++			"adapter-tuned": {MaxConnLifetime: 20 * time.Second, MaxConnLifetimeJitter: 10 * time.Second},
++		},
 +	}
-+	// nosemgrep go.lang.security.audit.dangerous-exec-command.dangerous-exec-command
-+	cmd := exec.Command(goBin, append([]string{"mod", "download"}, mods...)...)
-+	cmd.Dir = tc.MainModuleDir.ToIO()
-+	// nosemgrep
-+	out, err :=
++	mgr := NewManager(static, runtime, nil, nil, zerolog.Nop())
++
++	tests := []struct {
++		DB                       string
++		WantLifetime, WantJitter time.Duration
++	}{
++		{DB: "adapter-tuned", WantLifetime: 20 * time.Second, WantJitter: 10 * time.Second},
++		{DB: "adapter-plain"},
++	}
++	for _, test := range tests {
++		db := mgr.GetDB(test.DB)
++		t.Cleanup(db.shutdown)
++		c, err := adapterDriver{}.OpenConnector(RegisterStdlibDriver(db))
++		if err != nil {
++			t.Fatal(err)
++		}
++		wc := c.(wrappedConnector)
++		if wc.maxLifetime != test.WantLifetime || wc.maxLifetimeJitter != test.WantJitter {
++			t.Errorf("%s: got lifetime %s and jitter %s, want %s and %s",
++				test.DB, wc.maxLifetime, wc.maxLifetimeJitter, test.WantLifetime, test.WantJitter)
++		}
++	}
++}
+```
+
+**File**: `runtimes/go/storage/sqldb/stdlib_wrapper_internal.go` (modified, +34/-1)
+```diff
+@@ -34,6 +34,8 @@ import (
+ 	"context"
+ 	"database/sql/driver"
+ 	"errors"
++	"math/rand/v2"
++	"time"
+ 
+ 	"encore.dev/appruntime/exported/model"
+ 	"encore.dev/appruntime/exported/stack"
+@@ -315,6 +317,10 @@ func (d wrappedDriver) OpenConnector(name string) (driver.Connector, error) {
+ type wrappedConnector struct {
+ 	parent    driver.Connector
+ 	driverRef *wrappedDriver
++
++	// If maxLifetime is set, connections report themselves unusable to
++	// database/sql once older than maxLifetime plus up to maxLifetimeJitter.
++	maxLifetime, maxLifetimeJitter time.Duration
+ }
+ 
+ var (
+@@ -327,7 +333,12 @@ func (c wrappedConnector) Connect(ctx context.Context) (conn driver.Conn, err er
+ 		return nil, err
+ 	}
+ 
+-	return wrappedConn{mw: c.driverRef.mw, parent: conn}, nil
++	wc := wrappedConn{mw: c.driverRef.mw, parent: conn}
++	if c.maxLifetime > 0 {
++		jitter := time.Duration(rand.Float64() * float64(c.maxLifetimeJitter))
++		wc.expiresAt = time.Now().Add(c.maxLifetime).Add(jitter)
++	}
++	return wc, nil
+ }
+ 
+ func (c wrappedConnector) Driver() driver.Driver {
+@@ -352,6 +363,8 @@ func (t dsnConnector) Driver() driver.Driver {
+ type wrappedConn struct {
+ 	mw     middleware
+ 	parent driver.Conn
++
++	expiresAt time.Time // zero means no maximum age
+ }
+ 
+ // Compile time validation that our types implement the expected interfaces
+@@ -363,6 +376,7 @@ var (
+ 	_ driver.Pinger             = wrappedConn{}
+ 	_ driver.QueryerContext     = wrappedConn{}
+ 	_ driver.SessionResetter    = wrappedConn{}
++	_ driver.Validator          = wrappedConn{}
+ 	_ driver.NamedValueChecker  = wrappedConn{}
+ )
+ 
+@@ -436,12 +450,31 @@ func (c wrappedConn) QueryContext(ctx context.Context, query string, args []driv
+ }
+ 
+ func (c wrappedConn) ResetSession(ctx context.Context) error {
++	// database/sql calls this before reusing a connection, and discards it on ErrBadConn.
++	if c.expired() {
++		return driver.ErrBadConn
++	}
+ 	if conn, ok := c.parent.(driver.SessionResetter); ok {
+ 		return conn.ResetSession(ctx)
+ 	}
+ 	return nil
+ }
+ 
++// IsValid is called when a connection is returned to the pool; false discards it.
++func (c wrappedConn) IsValid() bool {
++	if c.expired() {
++		return false
++	}
++	if v, ok := c.parent.(driver.Validator); ok {
++		return v.IsValid()
++	}
++	return true
++}
++
++func (c wrappedConn) expired() bool {
++	return !c.expiresAt.IsZero() && time.Now().After(c.expiresAt)
++}
++
+ func defaultCheckNamedValue(nv *driver.NamedValue) (err error) {
+ 	nv.Value, err = driver.DefaultParameterConverter.ConvertValue(nv.Value)
+ 	return err
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2638** (2026-11-03): v2/internals/pkginfo: resolve nested modules missing from the module cache (@eandre)
+- **PR #2637** (2026-11-06): sqldb: add 10 minutes of jitter to connection lifetimes by default (@gmtuca)
 - **PR #2630** (2026-10-29): v2/app/legacymeta: stop metadata keeping the parsed app alive (@twindebank)
 - **PR #2628** (2026-10-29): runtime: keep pubsub topics and buckets from all infra config providers (@jaglyserx)
 - **PR #2623** (2026-10-26): Fix LLM rules setup and update LLM instructions (@marcuskohlberg)
 - **PR #2622** (2026-10-22): Update README.md (@marcuskohlberg)
-- **PR #2620** (2026-10-21): cli: fix WorkspaceRoot looping forever on a .git file (@pujitha24)
 
 ---
 
@@ -2005,46 +2541,3 @@ Errored modules are kept the same way rather than dropped.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. v2/internals/pkginfo: resolve nested modules missing from the module cache
-
-**RULE**:
-When implementing operations in `v2/internals/pkginfo/modresolve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e755a8b6`: v2/internals/pkginfo: resolve nested modules missing from the module cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v2/internals/pkginfo/modresolve.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-		if m.Path == "" || !paths.ValidModPath(m.Path) {
-		// Keep modules that aren't on disk yet (or failed to load), with an
-		// empty Dir: dropping them would match their packages to a parent
-		// module that is on disk, e.g. cloud.google.com/go/bigquery to
-		// cloud.google.com/go. An empty Dir makes buildListModuleDir report
-		// a miss, so resolution falls back to packages.Load, which downloads.
-		dir := m.Dir
-		if m.Error != nil {
-			dir = ""
-		}
-		l.moduleDirs[paths.MustModPath(m.Path)] = dir
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-		// Skip errored modules and any without a resolved directory.
-		if m.Error != nil || m.Path == "" || m.Dir == "" || !paths.ValidModPath(m.Path) {
-		l.moduleDirs[paths.MustModPath(m.Path)] = m.Dir
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e755a8b6` are properly handled with clean fallback behavior.

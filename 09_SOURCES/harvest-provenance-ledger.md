@@ -7954,3 +7954,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf` | `https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-06T23:02:42.515Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `ee8fd5f1` | Multi-dimensional audit evidence | 2026-11-06T23:02:49.033Z |
 | `learn-github-github-squad` | `https://github.com/github/squad` | `7b731ec9` | Multi-dimensional audit evidence | 2026-11-06T23:04:50.054Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `e29dbf75` | Multi-dimensional audit evidence | 2026-11-06T23:11:55.616Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-06T23:12:02.563Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `12053961` | Multi-dimensional audit evidence | 2026-11-06T23:12:03.080Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6f0ab313` | Multi-dimensional audit evidence | 2026-11-06T23:12:07.121Z |
