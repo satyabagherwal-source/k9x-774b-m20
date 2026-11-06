@@ -7904,3 +7904,6 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2a25eecd` | Multi-dimensional audit evidence | 2026-11-06T15:20:46.988Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `eb7d93e0` | Multi-dimensional audit evidence | 2026-11-06T15:20:49.234Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a41e019a` | Multi-dimensional audit evidence | 2026-11-06T15:20:53.687Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `6c5828f3` | Multi-dimensional audit evidence | 2026-11-06T15:27:36.291Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `487676ec` | Multi-dimensional audit evidence | 2026-11-06T15:27:36.818Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `4194a203` | Multi-dimensional audit evidence | 2026-11-06T15:27:39.593Z |

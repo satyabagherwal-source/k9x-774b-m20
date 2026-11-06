@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T15:20:56.301Z",
-    "lastVerified": "2026-11-06T15:20:56.301Z",
+    "lastChecked": "2026-11-06T15:27:42.196Z",
+    "lastVerified": "2026-11-06T15:27:42.196Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,14 +243,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T14:56:35.821Z",
-    "lastVerified": "2026-11-06T14:56:35.821Z",
+    "lastChecked": "2026-11-06T15:27:36.621Z",
+    "lastVerified": "2026-11-06T15:27:36.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
+    "contentHash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1352,8 +1352,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T22:40:09.159Z",
-    "lastVerified": "2026-11-05T22:40:09.159Z",
+    "lastChecked": "2026-11-06T15:27:26.820Z",
+    "lastVerified": "2026-11-06T15:27:26.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1744,14 +1744,14 @@
     "officialUrl": "https://github.com/pubkey/rxdb",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T01:58:21.900Z",
-    "lastVerified": "2026-11-04T01:58:21.900Z",
+    "lastChecked": "2026-11-06T15:27:26.755Z",
+    "lastVerified": "2026-11-06T15:27:26.755Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
+    "contentHash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3764,12 +3764,12 @@
     "lastVerified": "2026-11-05T16:59:52.347Z"
   },
   "mfontanini-presenterm": {
-    "name": "mfontanini/presenterm",
+    "name": "presenterm",
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T05:39:04.064Z",
-    "lastVerified": "2026-11-05T05:39:04.064Z",
+    "lastChecked": "2026-11-06T15:27:16.821Z",
+    "lastVerified": "2026-11-06T15:27:16.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
@@ -3778,7 +3778,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bb069c2f"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -7814,22 +7815,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "opencode-mem",
+    "name": "tickernelz/opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T09:57:48.415Z",
-    "lastVerified": "2026-11-05T09:57:48.415Z",
+    "lastChecked": "2026-11-06T15:27:33.674Z",
+    "lastVerified": "2026-11-06T15:27:33.674Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
+    "contentHash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5b05e1f5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "str4d-rage": {
     "name": "rage",
@@ -9385,12 +9385,12 @@
     "lastVerified": "2026-11-05T04:00:34.383Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T10:58:07.762Z",
-    "lastVerified": "2026-11-05T10:58:07.762Z",
+    "lastChecked": "2026-11-06T15:27:24.303Z",
+    "lastVerified": "2026-11-06T15:27:24.303Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -9399,7 +9399,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "375fbc47"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -10168,9 +10169,9 @@
   "crawlcove-crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "lastChecked": "2026-11-03T15:46:30.302Z",
+    "lastChecked": "2026-11-06T15:27:19.291Z",
     "revisionIdentifier": "3e8c680f",
-    "lastVerified": "2026-11-03T15:46:30.302Z"
+    "lastVerified": "2026-11-06T15:27:19.291Z"
   },
   "kdchang-reactjs101": {
     "name": "reactjs101",

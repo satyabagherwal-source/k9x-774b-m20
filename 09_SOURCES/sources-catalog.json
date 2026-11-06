@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "5b05e1f5",
+    "sourceVersion": "6c5828f3",
     "license": "MIT",
-    "contentHash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
-    "lastHarvestedAt": "2026-11-04T19:15:37.697Z",
+    "contentHash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
+    "lastHarvestedAt": "2026-11-06T15:27:36.291Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "76004d06",
+    "sourceVersion": "4194a203",
     "license": "NOASSERTION",
-    "contentHash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
-    "lastHarvestedAt": "2026-11-06T14:58:31.912Z",
+    "contentHash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
+    "lastHarvestedAt": "2026-11-06T15:27:39.593Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "b41fd6bd",
+    "sourceVersion": "487676ec",
     "license": "Apache-2.0",
-    "contentHash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
-    "lastHarvestedAt": "2026-11-04T01:58:23.324Z",
+    "contentHash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
+    "lastHarvestedAt": "2026-11-06T15:27:36.818Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {

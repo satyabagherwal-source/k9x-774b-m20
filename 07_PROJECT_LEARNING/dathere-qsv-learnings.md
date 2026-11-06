@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `76004d06`  
+> **Source Version**: `4194a203`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:58:30.064Z  
+> **Timestamp**: 2026-11-06T15:27:38.341Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:56:35.821Z  
+> **Harvest Timestamp**: 2026-11-06T15:27:36.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,13 +2203,31 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76004d06` (2026-11-06)
-**Commit Message**: docs(changelog): cat with empty stdin succeeds with empty output (#5006)
+### Incident Patch 1: `4194a203` (2026-11-06)
+**Commit Message**: fix(cat): error on empty stdin when no input is given (#5007)
 
-The #5005 entry claimed `cat` with an empty or closed stdin still
-errors. It doesn't: `qsv cat rows < /dev/null` exits 0 with no output,
-as `headers` does (roborev 6305). The earlier check ran a binary left
-unfixed by a mutation check.
+* fix(cat): error on empty stdin when no input is given
+
+Since #5005 `cat` defaults to stdin when no input is given, which made
+an empty or closed stdin succeed with empty output. 28.0.0 failed with
+"No data on stdin" there, and scripts whose file list comes up empty
+(cron, CI, xargs) relied on that. Restore the error for the implicit
+case; an explicit `-` with empty stdin still succeeds, as in 28.0.0.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cat errors on empty stdin again (#5007)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(cat): assert the full no-data-on-stdin message
+
+Codacy on #5007: a substring check would miss a reworded message.
+Assert the complete 28.0.0 text instead.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2219,20 +2237,84 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  
  ### Fixed
  - **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
--- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
-+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
+-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
++- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
  - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
  - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
  - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
 ```
 
+**File**: `src/cmd/cat.rs` (modified, +12/-1)
+```diff
+@@ -202,14 +202,25 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let tmpdir = tempfile::tempdir()?;
+ 
+     // If no input is provided, default to stdin
+-    if args.arg_input.is_empty() {
++    let implicit_stdin = args.arg_input.is_empty();
++    if implicit_stdin {
+         args.arg_input.push(PathBuf::from("-"));
+     }
+ 
+     (args.arg_input, args.input_sources) =
+         util::process_input_with_sources(args.arg_input, &tmpdir, "")?
+             .into_iter()
+             .unzip();
++
++    // With no input given, empty stdin is an error (as before stdin became the default), so a
++    // script whose file list came up empty fails instead of silently writing nothing. An
++    // explicit `-` with empty stdin still succeeds.
++    if implicit_stdin && std::fs::metadata(&args.arg_input[0])?.len() == 0 {
++        return fail_clierror!(
++            "No data on stdin. Please provide at least one input file or pipe data to stdin."
++        );
++    }
++
+     if args.cmd_rows {
+         args.cat_rows()
+     } else if args.cmd_rowskey {
+```
+
+**File**: `tests/test_cat.rs` (modified, +25/-0)
+```diff
+@@ -1590,3 +1590,28 @@ fn cat_stdin_without_dash() {
+         );
+     }
+ }
++
++#[test]
++fn cat_empty_stdin_without_dash_errors() {
++    // with no input given, empty stdin errors (as in 28.0.0), so a script whose file list came
++    // up empty fails instead of silently writing nothing; an explicit `-` still succeeds
++    let wrk = Workdir::new("cat_empty_stdin_without_dash_errors");
++    for subcmd in ["rows", "rowskey", "columns"] {
++        let mut cmd = wrk.command("cat");
++        cmd.arg(subcmd).stdin(std::process::Stdio::null());
++        let output = cmd.output().unwrap();
++        assert!(!output.status.success(), "cat {subcmd}: {output:?}");
++        assert!(
++            // the full 28.0.0 message, so a rewording is caught
++            String::from_utf8_lossy(&output.stderr).trim()
++                == "No data on stdin. Please provide at least one input file or pipe data to \
++                    stdin.",
++            "cat {subcmd}: {output:?}"
++        );
++
++        let mut cmd = wrk.command("cat");
++        cmd.args([subcmd, "-"]).stdin(std::process::Stdio::null());
++        let output = cmd.output().unwrap();
++        assert!(output.status.success(), "cat {subcmd} -: {output:?}");
++    }
++}
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5007** (2026-11-06): fix(cat): error on empty stdin when no input is given (@jqnatividad)
 - **PR #5006** (2026-11-06): docs(changelog): cat with empty stdin succeeds with empty output (@jqnatividad)
 - **PR #5005** (2026-11-06): fix(cat, applydp, to): read stdin consistently (@jqnatividad)
 - **PR #5004** (2026-11-06): docs(sample): stdin works for all methods that read CSV, not --sketch-in (@jqnatividad)
 - **PR #5003** (2026-11-06): fix(sample): spool stdin so --cluster, --weighted, --systematic and fractional sizes work from stdin (@jqnatividad)
 - **PR #5002** (2026-11-06): test(template): use Etc/GMT+5 instead of legacy "EST" alias (@jqnatividad)
-- **PR #5001** (2026-11-06): build(deps): bump anthropics/claude-code-action from 1.0.266 to 1.0.267 (@dependabot[bot])
 
 ---
 
@@ -2252,13 +2334,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): cat with empty stdin succeeds with empty output (#5006)
+## X. cat): error on empty stdin when no input is given (#5007)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76004d06`: docs(changelog): cat with empty stdin succeeds with empty output (#5006). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4194a203`: cat): error on empty stdin when no input is given (#5007). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2266,14 +2348,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for stdin instead of erroring; with an empty or closed stdin (cron, CI, `xargs`) it still errors.
+- **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input now reads stdin instead of erroring: in an interactive terminal it waits for input, and with an empty or closed stdin (cron, CI, `xargs`) it succeeds with empty output. Scripts that relied on the error to catch an empty file list should check the list themselves.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76004d06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4194a203` are properly handled with clean fallback behavior.

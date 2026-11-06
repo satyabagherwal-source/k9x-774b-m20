@@ -7895,3 +7895,6 @@
 | `CYCLE-20261106-G4UG` | `2026-11-06T15:20:46.984Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8e516164...`) |
 | `CYCLE-20261106-G6KU` | `2026-11-06T15:20:49.230Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fadbdc5c...`) |
 | `CYCLE-20261106-GA0A` | `2026-11-06T15:20:53.674Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5631f6df...`) |
+| `CYCLE-20261106-OWNJ` | `2026-11-06T15:27:36.271Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5369f96...`) |
+| `CYCLE-20261106-OX2M` | `2026-11-06T15:27:36.814Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`88901350...`) |
+| `CYCLE-20261106-OZ7Q` | `2026-11-06T15:27:39.590Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cc553ade...`) |

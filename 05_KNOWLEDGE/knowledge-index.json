@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T15:20:53.578Z",
+  "last_updated": "2026-11-06T15:27:39.532Z",
   "total_verified_learnings": 1226,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9747,8 +9747,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "76004d06",
-      "content_hash": "aade0c5bc4181eb6144c2438ba099fe2d73c4fb44e587f8cf9d6fdd08dfccc7e",
+      "source_version": "4194a203",
+      "content_hash": "cc553ade0ab0a68b912379a7457735a82f8ae4d473017e7f4079f48c406a82e2",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9765,6 +9765,11 @@
         {
           "number": null,
           "title": "docs(changelog): cat with empty stdin succeeds with empty output (#5006)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cat): error on empty stdin when no input is given (#5007)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10118,7 +10123,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:58:31.797Z",
+      "verified_at": "2026-11-06T15:27:39.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50147,11 +50152,16 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "b41fd6bd",
-      "content_hash": "cb18770784ba0d5d2315cd0b0b352b2093fc171c278b8883258c993b70ae5e23",
+      "source_version": "487676ec",
+      "content_hash": "889013507fae303c182038bc636d597302463eaf9fbb92c94b89c6e8b7678d7e",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "CouchDB replication crash on error responses (#9406)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1764,
           "title": "incrementalModify() writing the unchanged document when the modifier throws (#92",
@@ -50193,7 +50203,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:58:23.205Z",
+      "verified_at": "2026-11-06T15:27:36.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71479,11 +71489,16 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "5b05e1f5",
-      "content_hash": "8a3fa0eacb4b7efd7d9299923499954f9015b9605e52858ed757e558a1eb5991",
+      "source_version": "6c5828f3",
+      "content_hash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "config): deprecate unused profile limits (#498)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 736,
           "title": "re-raise SIGINT/SIGTERM after plugin cleanup (#409)",
@@ -71555,7 +71570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:15:37.621Z",
+      "verified_at": "2026-11-06T15:27:36.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
