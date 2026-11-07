@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:53:02.938Z",
+  "last_updated": "2026-11-07T23:06:23.316Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -80593,11 +80593,16 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "8bd11143",
-      "content_hash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
+      "source_version": "a4fb2094",
+      "content_hash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Expose debugging state in test.meta.debugMode",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3028,
           "title": "Full ESM internals; bias away from CJS; require @ava/typescript@7",
@@ -80619,7 +80624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:33:20.117Z",
+      "verified_at": "2026-11-07T23:06:23.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

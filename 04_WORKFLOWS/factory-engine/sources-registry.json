@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T22:53:07.565Z",
-    "lastVerified": "2026-11-07T22:53:07.565Z",
+    "lastChecked": "2026-11-07T23:06:29.463Z",
+    "lastVerified": "2026-11-07T23:06:29.463Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -119,8 +119,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T19:04:31.596Z",
-    "lastVerified": "2026-11-07T19:04:31.596Z",
+    "lastChecked": "2026-11-07T23:06:24.544Z",
+    "lastVerified": "2026-11-07T23:06:24.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T22:23:43.254Z",
-    "lastVerified": "2026-11-07T22:23:43.254Z",
+    "lastChecked": "2026-11-07T23:06:29.452Z",
+    "lastVerified": "2026-11-07T23:06:29.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -168,12 +168,12 @@
     "revisionIdentifier": "fe15ee33"
   },
   "sxyazi-yazi": {
-    "name": "sxyazi/yazi",
+    "name": "yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T18:53:35.121Z",
-    "lastVerified": "2026-11-05T18:53:35.121Z",
+    "lastChecked": "2026-11-07T23:06:14.464Z",
+    "lastVerified": "2026-11-07T23:06:14.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -182,7 +182,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6882e1ac"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -3333,9 +3334,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-06T14:05:26.923Z",
+    "lastChecked": "2026-11-07T23:06:21.955Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-06T14:05:26.923Z"
+    "lastVerified": "2026-11-07T23:06:21.955Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -6798,9 +6799,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-06T13:07:53.505Z",
+    "lastChecked": "2026-11-07T23:06:26.975Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-06T13:07:53.505Z"
+    "lastVerified": "2026-11-07T23:06:26.975Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -8175,9 +8176,9 @@
   "jordanbaird-ice": {
     "name": "Ice",
     "officialUrl": "https://github.com/jordanbaird/Ice",
-    "lastChecked": "2026-11-04T22:58:53.083Z",
+    "lastChecked": "2026-11-07T23:06:19.453Z",
     "revisionIdentifier": "11edd391",
-    "lastVerified": "2026-11-04T22:58:53.083Z"
+    "lastVerified": "2026-11-07T23:06:19.453Z"
   },
   "agent-of-empires-agent-of-empires": {
     "name": "agent-of-empires/agent-of-empires",
@@ -12276,14 +12277,14 @@
     "officialUrl": "https://github.com/avajs/ava",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T07:33:18.093Z",
-    "lastVerified": "2026-11-04T07:33:18.093Z",
+    "lastChecked": "2026-11-07T23:06:20.325Z",
+    "lastVerified": "2026-11-07T23:06:20.325Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-avajs-ava",
-    "contentHash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
+    "contentHash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

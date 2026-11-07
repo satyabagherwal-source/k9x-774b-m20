@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T22:53:03.004Z",
-  "total_cycles_completed": 8094,
-  "total_learnings_persisted": 8094,
-  "total_rules_promoted": 7764,
+  "last_updated": "2026-11-07T23:06:23.418Z",
+  "total_cycles_completed": 8095,
+  "total_learnings_persisted": 8095,
+  "total_rules_promoted": 7765,
   "history": [
-    {
-      "timestamp": "2026-11-06T22:06:25.252Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:13:44.244Z",
       "repository": "embassy-rs/embassy",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T22:53:03.004Z",
       "repository": "tw93/Mole",
       "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:06:23.418Z",
+      "repository": "avajs/ava",
+      "learningId": "learn-github-avajs-ava",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

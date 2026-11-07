@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T22:53:03.006Z",
+  "last_updated": "2026-11-07T23:06:23.431Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
-      "verified_at": "2026-11-04T07:33:20.312Z",
+      "content_hash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
+      "verified_at": "2026-11-07T23:06:23.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:33:20.312Z"
+      "last_updated": "2026-11-07T23:06:23.430Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",

@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "8bd11143",
+    "sourceVersion": "a4fb2094",
     "license": "MIT",
-    "contentHash": "1b7c5393c1d429be2159e225acf02615fd8d44889e4630d06fa37ed11b95861f",
-    "lastHarvestedAt": "2026-11-04T07:33:20.303Z",
+    "contentHash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
+    "lastHarvestedAt": "2026-11-07T23:06:23.411Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {
