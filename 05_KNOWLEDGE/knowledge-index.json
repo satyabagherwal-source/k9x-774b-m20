@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T05:50:56.302Z",
+  "last_updated": "2026-11-07T05:58:17.004Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36198,11 +36198,16 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "f5cba99a",
-      "content_hash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
+      "source_version": "dca306c8",
+      "content_hash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update rancher/klipper-lb image versions (#14968)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2198,
           "title": "build(deps): bump the action-deps group across 1 directory with 9 updates (#1462",
@@ -36264,7 +36269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:07:19.550Z",
+      "verified_at": "2026-11-07T05:58:16.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41070,11 +41075,16 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "1f0c0fec",
-      "content_hash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
+      "source_version": "b7bd8dc7",
+      "content_hash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Fixing scrape streaming input",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2269,
           "title": "Unchecked Stdout Macro-Level Broken Pipe Trap",
@@ -41116,7 +41126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:57:26.885Z",
+      "verified_at": "2026-11-07T05:58:08.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -175749,7 +175759,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
-      "content_hash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
+      "content_hash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "promoted_rules": [
@@ -175774,7 +175784,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:10:50.594Z",
+      "verified_at": "2026-11-07T05:58:06.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

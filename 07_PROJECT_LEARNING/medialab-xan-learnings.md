@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `1f0c0fec`  
+> **Source Version**: `b7bd8dc7`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:57:26.187Z  
+> **Timestamp**: 2026-11-07T05:58:07.187Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:57:25.898Z  
+> **Harvest Timestamp**: 2026-11-07T05:58:07.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4548 stars
+- **Stars / Engagement**: 4552 stars
 
 ---
 
@@ -1947,14 +1947,14 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1225** (2026-11-06): **xan search replace does not respect left etc.**
+  *Symptoms*: See if it's actually possible to check if replacement was done without comparing cell before and after.  This can be dealt with by using `replace_all_with`
+
 - **Issue #1211** (2026-10-21): **xan select incorrectly parses the number of arguments?**
   *Symptoms*: I'm using `xan select` with `fmt` function to convert the format of an input file:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid={}", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid, Ensembl_tsid)' ```  This gives the error:  ``` xan select: got 9 arguments. Cannot exceed 8. ```  If I remove one of the interpolated strings, it works. E.g removing Ensembl_tsid:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid=", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid)'  chr10 47061 10:47061:G:A G A . . ESM1b_proteomics_variant_classification=Intermediate;Ensembl_geneid=ENSG00000261456;Ensembl_tsid= ```  Is this a bug or expected?   xan v0.61.0
   **Post-Mortem & Fix Analysis**:
   > So, this is not a bug of the `select` bug per-se but a limitation of the evaluation language itself (under the hood, function arguments remain stack allocated and so are limited to 8, which I thought was large enough for most use-cases, but evidently you just showed me that is not the case ;) ). So it's not a bug, it is expected, but we can still discuss the issue.  Now I could do things to improve the situation:  * This fact should be clearly documented (I don't think it is) * The error message should be clearer so people understand it is not the command itself which is the culprit but the expression language * I should be able to mitigate this by unfolding calls to variadic functions like `fmt` when parsing the expression so you can actually use it with more than 8 args. (As a workaround I think fmt is also able to accept a list of arguments as variables to use in the interpolated string `fmt("{}", something)` and `fmt("{}", [something])` are in fact semantically equivalent (albeit n
   > @dariober a batch of commits made the following changes:  - the fmt function should be more robust - the fmt function should be faster - the fmt function should now accept more than 8 arguments if required - error messages have been made clearer
-
-- **Issue #1202** (2026-10-16): **cat rows --intersection has a different behavior depending on file order**
-  *Symptoms*: Hello !  Here is what I get when I use several wildcards (*) with xan cat rows:  `xan cat rows fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_*  --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 original_index 38 resolved_url 39 http_status 40 datetime_utc 41 fetch_error 42 path 43 mimetype 44 encoding 45 body_size  `xan cat rows fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_* fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 year 38 original_index 39 resolved_url 40 http_status 41 datetime_utc 42 fetch_error 43 path 44 mimetype 45 encoding 46 body_size  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1971,62 +1971,29 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `471628cd` (2026-11-04)
-**Commit Message**: Fixing xan enum -A
+### Incident Patch 1: `41ce5e04` (2026-11-06)
+**Commit Message**: Fixing scrape streaming input
+Fix #1139
 
-**File**: `src/cmd/enumerate.rs` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -75,7 +75,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+@@ -45,6 +45,7 @@
+ * Fixing temporal functions when working on zero spans.
+ * Fixing case-sensitive `xan search -R/--replace & --replacement-column` with multiple patterns.
+ * Fixing parallel `xan search -R/--replace & --replacement-column`.
++* Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
  
-     if !conf.no_headers {
-         let column_name = args.flag_column_name.unwrap_or(
--            (if args.flag_byte_offset {
-+            (if args.flag_byte_offset || args.flag_accumulate {
-                 "byte_offset"
-             } else {
-                 "index"
-```
-
-**File**: `tests/test_enumerate.rs` (modified, +25/-0)
-```diff
-@@ -96,3 +96,28 @@ fn enumerate_byte_offset() {
-     ];
-     assert_eq!(got, expected);
- }
-+
-+#[test]
-+fn enumerate_byte_offset_accumulate() {
-+    let wrk = Workdir::new("enumerate_byte_offset_accumulate");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["a"],
-+            svec!["1452"],
-+            svec!["23497694986"],
-+            svec!["34087056085685"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("enum");
-+    cmd.arg("data.csv").arg("-A");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    let expected = vec![
-+        svec!["byte_offset", "a"],
-+        svec!["14", "1452"],
-+        svec!["22", "23497694986"],
-+        svec!["37", "34087056085685"],
-+    ];
-+    assert_eq!(got, expected);
-+}
+ *Performance*
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
 - **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 - **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 - **PR #1204** (2026-10-19): Corrected bug #1190 : hist option -m "sum" now obey given scale (@clothilde-ml)
 - **PR #1203** (closed): Fixing xan cat rows -I header intersection (@paoValle)
-- **PR #1199** (2026-10-16): `view` env override  controls (@solesby)
 
 ---
 
@@ -2046,28 +2013,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing xan enum -A
+## X. Fixing scrape streaming input
 
 **RULE**:
-When implementing operations in `src/cmd/enumerate.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `471628cd`: Fixing xan enum -A. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41ce5e04`: Fixing scrape streaming input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/enumerate.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            (if args.flag_byte_offset || args.flag_accumulate {
+* Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            (if args.flag_byte_offset {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `471628cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41ce5e04` are properly handled with clean fallback behavior.

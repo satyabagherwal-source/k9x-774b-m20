@@ -8025,3 +8025,6 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `e4e3b80f` | Multi-dimensional audit evidence | 2026-11-07T05:50:49.667Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `348b2064` | Multi-dimensional audit evidence | 2026-11-07T05:50:52.953Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `082be7be` | Multi-dimensional audit evidence | 2026-11-07T05:50:56.359Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-07T05:58:07.118Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `b7bd8dc7` | Multi-dimensional audit evidence | 2026-11-07T05:58:08.623Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `dca306c8` | Multi-dimensional audit evidence | 2026-11-07T05:58:17.111Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T05:50:56.372Z",
+  "last_updated": "2026-11-07T05:58:17.120Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
-      "verified_at": "2026-11-05T04:07:19.633Z",
+      "content_hash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
+      "verified_at": "2026-11-07T05:58:17.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:07:19.633Z"
+      "last_updated": "2026-11-07T05:58:17.119Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
-      "verified_at": "2026-11-04T18:57:27.012Z",
+      "content_hash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
+      "verified_at": "2026-11-07T05:58:08.633Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T18:57:27.012Z"
+      "last_updated": "2026-11-07T05:58:08.633Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "d1520966cb96710ff931fce269774c569d369c8bcd1c0733597f019fcd216bdb",
-      "verified_at": "2026-11-05T14:06:54.580Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "content_hash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
+      "verified_at": "2026-11-07T05:58:07.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:06:54.580Z"
+      "last_updated": "2026-11-07T05:58:07.127Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

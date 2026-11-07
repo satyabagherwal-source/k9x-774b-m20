@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "f5cba99a",
+    "sourceVersion": "dca306c8",
     "license": "Apache-2.0",
-    "contentHash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
-    "lastHarvestedAt": "2026-11-05T04:07:19.619Z",
+    "contentHash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
+    "lastHarvestedAt": "2026-11-07T05:58:17.111Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "1f0c0fec",
+    "sourceVersion": "b7bd8dc7",
     "license": "Unlicense",
-    "contentHash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
-    "lastHarvestedAt": "2026-11-04T18:57:26.995Z",
+    "contentHash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
+    "lastHarvestedAt": "2026-11-07T05:58:08.623Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -11835,8 +11835,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
     "license": "Open-Source",
-    "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
-    "lastHarvestedAt": "2026-11-04T00:10:50.710Z",
+    "contentHash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
+    "lastHarvestedAt": "2026-11-07T05:58:07.118Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
   },
   "agentlas-ai-agentlas-os": {

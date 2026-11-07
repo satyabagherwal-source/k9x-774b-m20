@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T05:50:56.369Z",
-  "total_cycles_completed": 7981,
-  "total_learnings_persisted": 7981,
-  "total_rules_promoted": 7630,
+  "last_updated": "2026-11-07T05:58:17.116Z",
+  "total_cycles_completed": 7984,
+  "total_learnings_persisted": 7984,
+  "total_rules_promoted": 7632,
   "history": [
-    {
-      "timestamp": "2026-11-05T22:40:13.003Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:40:17.800Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:47:51.228Z",
-      "repository": "a2ui-project/a2ui",
-      "learningId": "learn-github-a2ui-project-a2ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T22:47:57.442Z",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T05:50:56.369Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T05:58:07.124Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T05:58:08.629Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T05:58:17.116Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

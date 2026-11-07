@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T05:50:58.953Z",
-    "lastVerified": "2026-11-07T05:50:58.953Z",
+    "lastChecked": "2026-11-07T05:58:19.682Z",
+    "lastVerified": "2026-11-07T05:58:19.682Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T05:28:21.324Z",
-    "lastVerified": "2026-11-07T05:28:21.324Z",
+    "lastChecked": "2026-11-07T05:58:18.232Z",
+    "lastVerified": "2026-11-07T05:58:18.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1448,9 +1448,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-06T23:40:10.110Z",
+    "lastChecked": "2026-11-07T05:58:13.200Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-06T23:40:10.110Z"
+    "lastVerified": "2026-11-07T05:58:13.200Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4157,9 +4157,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-05T17:47:53.462Z",
+    "lastChecked": "2026-11-07T05:58:15.753Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-05T17:47:53.462Z"
+    "lastVerified": "2026-11-07T05:58:15.753Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -5599,9 +5599,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-11-04T17:52:16.733Z",
+    "lastChecked": "2026-11-07T05:58:08.257Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-11-04T17:52:16.733Z"
+    "lastVerified": "2026-11-07T05:58:08.257Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -7339,22 +7339,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "medialab-xan": {
-    "name": "xan",
+    "name": "medialab/xan",
     "officialUrl": "https://github.com/medialab/xan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:20:14.177Z",
-    "lastVerified": "2026-11-05T13:20:14.177Z",
+    "lastChecked": "2026-11-07T05:58:07.180Z",
+    "lastVerified": "2026-11-07T05:58:07.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-medialab-xan",
-    "contentHash": "20b9baad600712b50862bd70e8be892c4672c20ad90d9cddabbbcb7e8088a958",
+    "contentHash": "3cff1c548364434a48e3749b0926d8641783e8f40d89173c560cfacf70a27119",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1f0c0fec"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -7552,22 +7551,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "k3s-io-k3s": {
-    "name": "k3s",
+    "name": "k3s-io/k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T18:45:37.338Z",
-    "lastVerified": "2026-11-05T18:45:37.338Z",
+    "lastChecked": "2026-11-07T05:58:15.319Z",
+    "lastVerified": "2026-11-07T05:58:15.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
+    "contentHash": "6eee219c57e557657a59fe1bbe34da645cf05322ac2871640d70590160f5bbed",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f5cba99a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -13599,13 +13597,13 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T00:10:36.805Z",
-    "lastVerified": "2026-11-04T00:10:36.805Z",
+    "lastChecked": "2026-11-07T05:58:05.854Z",
+    "lastVerified": "2026-11-07T05:58:05.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-    "contentHash": "13da1d70a817c106c647bd465c0edb88bad839698ec9670c4056e591bfda2996",
-    "promotedRulesCount": 3,
+    "contentHash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
