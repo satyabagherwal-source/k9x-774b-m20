@@ -8119,3 +8119,6 @@
 | `CYCLE-20261107-Q1YR` | `2026-11-07T22:16:04.467Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f939d3f7...`) |
 | `CYCLE-20261107-Q4JH` | `2026-11-07T22:16:07.805Z` | `joreilly/PeopleInSpace` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31c72508...`) |
 | `CYCLE-20261107-QB1E` | `2026-11-07T22:16:16.226Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`67f654e7...`) |
+| `CYCLE-20261107-ZPSL` | `2026-11-07T22:23:35.253Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03b7a0d1...`) |
+| `CYCLE-20261107-ZX5L` | `2026-11-07T22:23:44.793Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6ef9bf2b...`) |
+| `CYCLE-20261107-009A` | `2026-11-07T22:23:48.814Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e254a726...`) |

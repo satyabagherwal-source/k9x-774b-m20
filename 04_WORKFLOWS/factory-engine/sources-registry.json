@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T22:16:18.823Z",
-    "lastVerified": "2026-11-07T22:16:18.823Z",
+    "lastChecked": "2026-11-07T22:23:51.399Z",
+    "lastVerified": "2026-11-07T22:23:51.399Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T21:43:58.768Z",
-    "lastVerified": "2026-11-07T21:43:58.768Z",
+    "lastChecked": "2026-11-07T22:23:43.254Z",
+    "lastVerified": "2026-11-07T22:23:43.254Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2258,12 +2258,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T18:17:09.591Z",
-    "lastVerified": "2026-11-07T18:17:09.591Z",
+    "lastChecked": "2026-11-07T22:23:42.694Z",
+    "lastVerified": "2026-11-07T22:23:42.694Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
+    "contentHash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -3080,9 +3080,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-06T13:34:46.013Z",
+    "lastChecked": "2026-11-07T22:23:35.825Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-06T13:34:46.013Z"
+    "lastVerified": "2026-11-07T22:23:35.825Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -6559,14 +6559,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T23:40:02.602Z",
-    "lastVerified": "2026-11-05T23:40:02.602Z",
+    "lastChecked": "2026-11-07T22:23:46.663Z",
+    "lastVerified": "2026-11-07T22:23:46.663Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "e285a283f10c85461b8d5efa1f7774f4ec9c96c186c8fbcd9633e00dae4c6eb9",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 5,
+    "contentHash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7988,9 +7988,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-11-04T22:27:29.272Z",
+    "lastChecked": "2026-11-07T22:23:33.208Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-11-04T22:27:29.272Z"
+    "lastVerified": "2026-11-07T22:23:33.208Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -8936,14 +8936,14 @@
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T18:23:09.842Z",
-    "lastVerified": "2026-11-05T18:23:09.842Z",
+    "lastChecked": "2026-11-07T22:23:32.436Z",
+    "lastVerified": "2026-11-07T22:23:32.436Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
+    "contentHash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12187,9 +12187,9 @@
   "testing-library-react-testing-library": {
     "name": "react-testing-library",
     "officialUrl": "https://github.com/testing-library/react-testing-library",
-    "lastChecked": "2026-11-04T04:04:40.675Z",
+    "lastChecked": "2026-11-07T22:23:30.739Z",
     "revisionIdentifier": "20ce75f2",
-    "lastVerified": "2026-11-04T04:04:40.675Z"
+    "lastVerified": "2026-11-07T22:23:30.739Z"
   },
   "signerlabs-klee": {
     "name": "Klee",

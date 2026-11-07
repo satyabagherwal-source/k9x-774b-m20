@@ -8128,3 +8128,6 @@ Every entry in this ledger must capture:
 | `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `9bbfe99c` | Multi-dimensional audit evidence | 2026-11-07T22:16:04.470Z |
 | `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `9f9e8336` | Multi-dimensional audit evidence | 2026-11-07T22:16:07.813Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6bea62d6` | Multi-dimensional audit evidence | 2026-11-07T22:16:16.234Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `21af52d1` | Multi-dimensional audit evidence | 2026-11-07T22:23:35.258Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `50301083` | Multi-dimensional audit evidence | 2026-11-07T22:23:44.804Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2fefad6a` | Multi-dimensional audit evidence | 2026-11-07T22:23:48.818Z |

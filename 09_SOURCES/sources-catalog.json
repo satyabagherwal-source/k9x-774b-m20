@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "469ff28e",
+    "sourceVersion": "21af52d1",
     "license": "MIT",
-    "contentHash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
-    "lastHarvestedAt": "2026-11-05T18:24:35.502Z",
+    "contentHash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
+    "lastHarvestedAt": "2026-11-07T22:23:35.258Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "6183501e",
+    "sourceVersion": "50301083",
     "license": "BSD-3-Clause",
-    "contentHash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
-    "lastHarvestedAt": "2026-11-07T18:17:11.664Z",
+    "contentHash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
+    "lastHarvestedAt": "2026-11-07T22:23:44.804Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "5bcb576b",
+    "sourceVersion": "2fefad6a",
     "license": "Apache-2.0",
-    "contentHash": "e285a283f10c85461b8d5efa1f7774f4ec9c96c186c8fbcd9633e00dae4c6eb9",
-    "lastHarvestedAt": "2026-11-05T23:40:02.932Z",
+    "contentHash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
+    "lastHarvestedAt": "2026-11-07T22:23:48.818Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `6183501e`  
+> **Source Version**: `50301083`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:17:09.822Z  
+> **Timestamp**: 2026-11-07T22:23:42.903Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:17:09.591Z  
+> **Harvest Timestamp**: 2026-11-07T22:23:42.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38760 stars
+- **Stars / Engagement**: 38769 stars
 
 ---
 
@@ -821,85 +821,84 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b31eb1c9` (2026-11-07)
-**Commit Message**: ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus
+### Incident Patch 1: `dc46358e` (2026-11-07)
+**Commit Message**: go.mod: fix duplicate handshake response in wireguard-go (#22221)
 
-The test resumed a live session, so notifications already
-on the wire (notably, spurious health change notifications)
-could arrive ahead of the initial status.
+Updates tailscale/corp#50867
+Updates tailscale/tailscale#21884
 
-In this PR, we add LocalBackend.SuspendWatchNotifications,
-which suspends a session as if it had fallen behind,
-and update the test to suspend the session and drain
-pending notifications before resuming it.
+Change-Id: If04dcde13681fc27e0e756ed465f165c6a6a6964
+Signed-off-by: Alex Valiushko <[REDACTED_EMAIL]>
 
-Updates tailscale/corp#51067
-Updates tailscale/corp#50256
-Updates tailscale/corp#50907
-
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/local.go` (modified, +20/-0)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -4110,6 +4110,26 @@ func (b *LocalBackend) buildInitialNotifyLocked(sb *ipnstate.StatusBuilder, sess
- 	return ini
+@@ -173,4 +173,4 @@
+     });
+   };
  }
- 
-+// SuspendWatchNotifications suspends the watch session with the given
-+// [ipn.Notify.SessionID] as if it had fallen behind; see
-+// [ipn.NotifySuspendWhenBehind]. It returns an error if the session
-+// doesn't exist or didn't ask for that mode.
-+func (b *LocalBackend) SuspendWatchNotifications(sessionID string) error {
-+	b.mu.Lock()
-+	defer b.mu.Unlock()
-+	sess, ok := b.notifyWatchers[sessionID]
-+	if !ok {
-+		return fmt.Errorf("no IPN bus watch session %q", sessionID)
-+	}
-+	if sess.mask&ipn.NotifySuspendWhenBehind == 0 {
-+		return fmt.Errorf("IPN bus watch session %q did not ask for NotifySuspendWhenBehind", sessionID)
-+	}
-+	if !sess.suspended {
-+		b.suspendLaggingWatchSessionLocked(sess)
-+	}
-+	return nil
-+}
-+
- // ResumeWatchNotifications resumes the watch session with the given
- // [ipn.Notify.SessionID] after it was suspended for falling behind (see
- // [ipn.NotifySuspendWhenBehind]). Whatever is still queued for the session
+-# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
++# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
 ```
 
-**File**: `ipn/localapi/ipnbus_test.go` (modified, +12/-0)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -28,6 +28,18 @@ func TestResumeIPNBus(t *testing.T) {
- 		t.Fatal("initial notification has no SessionID")
- 	}
- 
-+	if err := s.Backend().SuspendWatchNotifications(ini.SessionID); err != nil {
-+		t.Fatalf("SuspendWatchNotifications: %v", err)
-+	}
-+
-+	// What was already on the wire still arrives, then the suspension.
-+	n, err := w.Next()
-+	for ; err == nil && !n.Suspended; n, err = w.Next() {
-+	}
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
- 	// Resuming replays the initial notification.
- 	if err := c.ResumeIPNBus(ctx, ini.SessionID); err != nil {
- 		t.Fatalf("ResumeIPNBus: %v", err)
+@@ -4,7 +4,7 @@
+     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
+   },
+   "vendor": {
+-    "goModSum": "sha256-dApQ2AxHOwZQIHeOmaDEkKT5vfZN1FY7XRiqK3XzU40=",
+-    "sri": "sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4="
++    "goModSum": "sha256-fY5/kwYNwUr/WUhki7WhKxjO0u/PeBHY9iauefNCJvI=",
++    "sri": "sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU="
+   }
+ }
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -126,7 +126,7 @@ require (
+ 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
+ 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
+ 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
+-	github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8
++	github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a
+ 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
+ 	github.com/tc-hib/winres v0.3.1
+ 	github.com/tcnksm/go-httpstat v0.2.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1154,8 +1154,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
+ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
+-github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8 h1:bzkevp32ugVKkbzw4ctS7Iou+FUsIPGSbojnHzbATV4=
+-github.com/tailscale/wireguard-go v0.0.0-20261102205419-b884e294b6d8/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
++github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a h1:bxmkuenopCCc4jbWxUkZ26NZHq4sYdfPdVNB2XX+nV8=
++github.com/tailscale/wireguard-go v0.0.0-20261105205217-79ead109a81a/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
+ github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
++# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22239** (2026-11-07): net/{netmon,tstun},tsconst: avoid enumerating all interfaces when retrieving the default (@nickkhyl)
 - **PR #22234** (2026-11-07): flake.nix: resolve deprecation warning (@mikeodr)
 - **PR #22227** (2026-11-07): ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus (@nickkhyl)
 - **PR #22225** (2026-11-06): go.mod: bump github.com/klauspost/compress for govulncheck (@nickkhyl)
 - **PR #22222** (2026-11-06): ipn,client/local: let IPN bus watchers be suspended instead of disconnected (@nickkhyl)
-- **PR #22211** (2026-11-06): net/dns,tstest/natlab/vmtest: accept openresolv exit 1 as no snippets (@bcreane)
-- **PR #22210** (2026-11-06): feature/conn25: drop address assignments queued before a client.reset (@mazdakn)
+- **PR #22221** (2026-11-07): go.mod: fix duplicate handshake response in wireguard-go (@illotum)
 
 ---
 
@@ -919,47 +918,28 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus
+## X. go.mod: fix duplicate handshake response in wireguard-go (#22221)
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b31eb1c9`: ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc46358e`: go.mod: fix duplicate handshake response in wireguard-go (#22221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// SuspendWatchNotifications suspends the watch session with the given
-// [ipn.Notify.SessionID] as if it had fallen behind; see
-// [ipn.NotifySuspendWhenBehind]. It returns an error if the session
-// doesn't exist or didn't ask for that mode.
-func (b *LocalBackend) SuspendWatchNotifications(sessionID string) error {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	sess, ok := b.notifyWatchers[sessionID]
-	if !ok {
-		return fmt.Errorf("no IPN bus watch session %q", sessionID)
-	}
-	if sess.mask&ipn.NotifySuspendWhenBehind == 0 {
-		return fmt.Errorf("IPN bus watch session %q did not ask for NotifySuspendWhenBehind", sessionID)
-	}
-	if !sess.suspended {
-		b.suspendLaggingWatchSessionLocked(sess)
-	}
-	return nil
-}
-
+# nix-direnv cache busting line: sha256-M7jMKZAikFtuHU7GZ1TBUme1cHrgKcg3LQObcXoXImU=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b31eb1c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc46358e` are properly handled with clean fallback behavior.

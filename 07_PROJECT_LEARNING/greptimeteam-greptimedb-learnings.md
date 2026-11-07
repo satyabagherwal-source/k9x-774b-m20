@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `5bcb576b`  
+> **Source Version**: `2fefad6a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:40:02.609Z  
+> **Timestamp**: 2026-11-07T22:23:46.921Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:40:02.602Z  
+> **Harvest Timestamp**: 2026-11-07T22:23:46.663Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6789 stars
+- **Stars / Engagement**: 6793 stars
 
 ---
 
@@ -1651,11 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10203** (2026-11-05): **Region migration and WAL prune can deadlock on the remote WAL topic lock, leaving procedures stuck in Running**
-  *Symptoms*: ### What type of bug is this?  Locking issue (deadlock), Unexpected error  ### What subsystems are affected?  Metasrv (procedure framework, region migration / failover, remote WAL pruning)  ### What happened?  In a distributed cluster with Kafka remote WAL, a rolling restart of datanodes left several regions stuck in `DOWNGRADING` for hours. The cluster was not queryable for those regions.  - Some `RegionMigration` (failover) procedures and the `WalPrune` procedures for two topics stayed in `Running` indefinitely. - Region migrations never finished or timed out. New migrations for the affected regions were rejected with "Another migration procedure is running for region ...". - WAL pruning for the affected topics stopped. - Restarting metasrv cleared the hung procedures. After that, manual `migrate_region` calls completed normally, so the datanodes, Kafka and object storage were fine.  ### Root cause  It is a deadlock between the upgrade step of region migration and `WalPruneProcedure`. Both use the dynamic lock on the remote WAL topic (`RemoteWalLock`):  - [`UpgradeCandidateRegion::upgrade_region_with_retry`](https://github.com/GreptimeTeam/greptimedb/blob/v1.3.0-beta.2/src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs#L303-L345) acquires a **shared** `RemoteWalLock` for each topic **inside its retry loop**. It pushes each guard into a `Vec` that is not cleared between attempts, so attempt N holds N−1 shared guards and requests another. The `Vec` came i
+- **Issue #10227** (2026-11-06): **feat(query): read a split-series table through a raw source**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #10150; sibling of #10226 (which removes the deployment flag from the multi-selector decision).  ## What's changed and what's your intention?  A table partitioned on a column that is not a tag splits one series across regions. A bare scan inside one region therefore holds a fragment, and a window evaluated there sees part of the series: a five-minute range that straddles the boundary has fewer than two samples in each region and produces no value at all. The single-selector route declined that shape in process, so the existing planner answered it.  Read it through a raw source instead:  - `prepare_one_scan` reports whether the declared partition splits a series (partition columns that are not all tags), and that occurrence is wrapped in a `RawSeriesSource` like any other source-backed input. - The segmentation boundary keeps that source (`self_contained || any_split_series`), so a prefix runs above the reconciliation rather than over one region's fragment. - A partition on tags keeps every series whole in one region and keeps the bare-scan path, so nothing changes for the common case.  The last in-process-only refusal keyed on the deployment flag disappears with this change; what remains is the shape.  Tests: an integration regression puts the two samples of one series on either side of a time-partition
 
-- **Issue #10194** (2026-11-05): **docs: tighten README facts and move quick start up**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem The README had a dead link (`contributor-guide/overview.html` returns 404), linked a nightly docs page for "support windows" it does not describe, and ranked a March 2025 JSONBench result as current. The quick start sat after six evaluation sections, and the Troubleshooting tip ran `docker logs` on a container started with `--rm`.  ### Change - Move Try GreptimeDB after the cross-signal SQL example; fold Getting Started into it; drop Troubleshooting. - Drop the blockquote under the tagline; drop "We invite you to engage and contribute!". - Fold Commercial Support into Limitations and Edition Boundary. The License section stays separate. - Fix the contributor guide link; point the version link at the stable Semantic Versioning page; point the 2026 roadmap link at #7685, matching the header. - Remove index creation from the list of manual operations in the Apache-2.0 build. - Benchmarks: add the Agent RCA Bench scope (168 investigations per interface across six models) and say "estimated cost"; date the JSONBench result. - What's Supported: add native histograms over Remote Write 2.0 and log pipelines. - Architecture: drop the Frontend protocol list duplicated from What's Supported, drop "Elastic.", and replace "security" in Metasrv with the coordination work i
+- **Issue #10226** (2026-11-06): **feat(query): match a partitioned multi-selector tree above its sources**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Supersedes #10209 and #10211, which are semantically coupled: the admission change makes a partitioned pair report the duplicate match group natively, and that expectation lives in #10209's test changes. Landing them separately would leave `narthex` red in between.  ## What's changed and what's your intention?  A multi-selector native PromQL tree over a partitioned table had no region-local placement — one node over the bare scans reads neither the other scans nor the fragments another region holds — so it was refused in process and pushed through the frontend hybrid route. The hybrid route copies a matcher into the other operand's scan, which its own documentation says can hide a duplicate that Prometheus reports.  The shape now runs natively on both routes:  - **Every selector occurrence reads its own source.** Wrapping follows the shape (`cross_table || (multi_input && (any_partitioned || required_placement))`). `cross_table` remains one of the terms — what is gone is the deployment flag as an alternative for a multi-input tree, and the in-process refusal for a partitioned multi-selector tree. - **A cut keeps those sources.** A table split into regions now keeps the raw source under the cut in process as well as over the wire (`self_contained || (per_source_inputs && any_partitioned)`), so a window evaluates abov
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,1086 +1672,905 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec1ad1f1` (2026-11-05)
-**Commit Message**: fix(datatypes): escape object keys when rendering jsonb as text (#10112)
+### Incident Patch 1: `c9acb55a` (2026-11-06)
+**Commit Message**: fix(meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)
 
-* fix(datatypes): escape object keys when rendering jsonb as text
+UpgradeCandidateRegion acquired RemoteWalLock::Read for each topic on every
+retry attempt while keeping the guards from earlier attempts. If a
+WalPruneProcedure queued RemoteWalLock::Write on the same topic during the first
+attempt, the retry's second read acquire waited behind the writer (the lock is a
+fair tokio RwLock), and the writer waited on the first read guard. The region
+migration and the WAL prune then hung until metasrv restarted.
 
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
+Acquire the read guards once before the retry loop and hold them until the
+function returns.
 
-* fix(datatypes): skip unicode normalization for escaped jsonb keys
+Fixes #10204
 
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
-
-* refactor(datatypes): serialize jsonb to text directly with serde_json
-
-Serialize the binary jsonb with serde_json::to_string(&RawJsonb) so that
-both object keys and string values are escaped by serde_json. This drops
-fix_unicode_point, its regex and the hand-written key escaping. Errors are
-propagated instead of falling back to lossy raw bytes.
-
-Characters such as U+2028 are now emitted as-is, which is still valid
-JSON, so the affected sqlness result lines are regenerated.
-
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
-
-* fix(datatypes): accept JSON text bytes in jsonb_to_string
-
-Some write paths (COPY FROM csv/json/parquet, JSON bound as text via
-MySQL) store JSON text instead of binary jsonb in JSON columns. Re-encode
-such bytes as jsonb before serializing with serde_json, so they still
-render (properly escaped) instead of failing with InvalidJsonb.
-
-Signed-off-by: Yvan Wang <[REDACTED
-
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs` (modified, +214/-10)
 ```diff
-@@ -4613,7 +4613,6 @@ dependencies = [
-  "parquet-variant-compute",
-  "parquet-variant-json",
-  "paste",
-- "regex",
-  "serde",
-  "serde_json",
-  "snafu 0.8.6",
-```
-
-**File**: `src/datatypes/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@ parquet-variant.workspace = true
- parquet-variant-compute.workspace = true
- parquet-variant-json.workspace = true
- paste.workspace = true
--regex.workspace = true
- serde.workspace = true
- serde_json.workspace = true
- snafu.workspace = true
-```
-
-**File**: `src/datatypes/src/types/json_type.rs` (modified, +112/-107)
-```diff
-@@ -14,12 +14,11 @@
+@@ -309,19 +309,21 @@ impl UpgradeCandidateRegion {
+         let mut retry = 0;
+         let mut upgraded = false;
  
- use std::collections::BTreeMap;
- use std::fmt::{Debug, Display, Formatter};
--use std::sync::{Arc, LazyLock};
-+use std::sync::Arc;
- 
- use arrow::datatypes::DataType as ArrowDataType;
- use arrow_schema::{Field, Fields};
- use common_base::bytes::Bytes;
--use regex::{Captures, Regex};
- use serde::{Deserialize, Serialize};
- 
- use crate::Error;
-@@ -389,16 +388,35 @@ impl Display for JsonType {
++        // If using Kafka WAL, hold a read lock on each topic for all attempts to prevent WAL
++        // pruning during the upgrade. Acquire once: re-acquiring a held read lock on retry
++        // queues behind a waiting `WalPruneProcedure` writer, which waits on the first guard.
+         let mut guards = Vec::with_capacity(topics.len());
++        for topic in &topics {
++            guards.push(
++                procedure_ctx
++                    .provider
++                    .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
++                    .await,
++            );
++        }
++
+         loop {
+             let timer = Instant::now();
+-            // If using Kafka WAL, acquire a read lock on the topic to prevent WAL pruning during the upgrade.
+-            for topic in &topics {
+-                guards.push(
+-                    procedure_ctx
+-                        .provider
+-                        .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
+-                        .await,
+-                );
+-            }
+-
+             if let Err(err) = self.upgrade_region(ctx).await {
+                 retry += 1;
+                 ctx.update_operations_elapsed(timer);
+@@ -856,3 +858,205 @@ mod tests {
+         assert_matches!(update_metadata, UpdateMetadata::Rollback);
+     }
  }
- 
- /// Converts a json type value to string
++
++/// Regression tests for a deadlock between the upgrade step's per-retry `RemoteWalLock::Read`
++/// (now acquired once before the retry loop) and `WalPruneProcedure`'s `RemoteWalLock::Write`
++/// on the same topic.
 +///
-+/// The binary jsonb is serialized directly with `serde_json`, so both object keys and
-+/// string values are escaped by `serde_json`. `RawJsonb::to_string()` is deliberately
-+/// avoided, since it falls back to the lossy raw bytes when serialization fails.
++/// Mirrors a datanode rolling restart: failover sends the upgrade instruction to a candidate
++/// datanode that never answers, the mailbox times out (retryable), and the periodic WAL prune
++/// for the region's topic starts while the upgrade is waiting. Both procedures share one
++/// `ContextProvider`, as they do inside metasrv's procedure manager.
 +///
-+/// Some write paths (e.g. `COPY FROM` csv/json/parquet files, or a JSON parameter bound
-+/// as text through the MySQL protocol) currently store the JSON *text* as the column
-+/// bytes instead of binary jsonb, and such data may already be persisted. When the bytes
-+/// are not valid jsonb but are valid JSON text, they are re-encoded as jsonb and then
-+/// serialized the same way, so the output is still escaped by `serde_json`. Anything else
-+/// is reported as an error.
- pub fn jsonb_to_string(val: &[u8]) -> Result<String> {
-     if val.is_empty() {
-         return Ok("".to_string());
-     }
--    match jsonb::from_slice(val) {
--        Ok(jsonb_value) => {
--            let serialized = jsonb_value.to_string();
--            fix_unicode_point(&serialized)
--        }
--        Err(e) => InvalidJsonbSnafu { error: e }.fail(),
-+    match serde_json::to_string(&jsonb::RawJsonb::new(val)) {
-+        Ok(s) => Ok(s),
-+        Err(e) => match jsonb::parse_value_standard_mode(val) {
-+            Ok(json) => serde_json::to_string(&jsonb::RawJsonb::new(&json.to_vec())).map_err(|e| {
-+                InvalidJsonSnafu {
-+                    value: e.to_string(),
-+                }
-+                .build()
-+            }),
-+            Err(_) => InvalidJsonSnafu {
-+                value: e.to_string(),
-+            }
-+            .fail(),
-+        },
-     }
- }
- 
-@@ -409,59 +427,6 @@ pub fn jsonb_to_serde_json(val: &[u8]) -> Result<serde_json::Value> {
-         .map_err(|error| InvalidJsonbSnafu { error }.build())
- }
- 
--/// Normalizes a JSON string by converting Rust-style Unicode escape sequences to JSON-compatible format.
--///
--/// The input is scanned for Rust-style Unicode code
--/// point escapes of the form `\\u{H...}` (a backslash, `u`, an opening brace,
--/// followed by 1–6 hexadecimal digits, and a closing brace). Each such escape is
--/// converted into JSON-compatible UTF‑16 escape sequences:
--///
--/// - For code points in the Basic Multilingual Plane (≤ `0xFFFF`), the escape is
--///   converted to a single JSON `\\uXXXX` sequence with four uppercase hex digits.
--/// - For code points above `0xFFFF` and less than Unicode max code point `0x10FFFF`,
--///   the code point is encoded as a UTF‑16 surrogate pair and emitted as two consecutive
--///   `\\uXXXX` sequences (as JSON format required).
--///
--/// After this normalization, the function returns the normalized string
--fn fix_unicode_point(json: &str) -> Result<String> {
--    static UNICODE_CODE_POINT_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
--        // Match literal "\u{...}" sequences, capturing 1–6 (code point range) hex digits
--        // inside braces.
--        Regex::new(r"\\u\{([0-9a-fA-F]{1,6})}").unwrap_or_else(|e| panic!("{}", e))
--    });
--
--    let v = UNICODE_CODE_POINT_PATTERN.replace_all(json, |caps: &Captures| {
--        // Extract the hex payload (without braces) and parse to a code point.
--        let hex = &caps[1];
--        let Ok(code) = u32::from_str_radix(hex, 16) else {
--            // On parse failure, leave the original escape sequence unchanged.
--            return caps[0].to_string();
--        };
--
--        if code <= 0xFFFF {
--            // Basic Multilingual Plane: JSON can represent this directly as \uXXXX.
--            format!("\\u{:04X}", code)
--        } else if code > 0x10FFFF {
--            // Beyond max Unicode code point
--            caps[0].to_string()
--        } else {
--            // Supplementary planes: JSON needs UTF-16 surrogate pairs.
--            // Convert the code point to a 20-bit value.
--            let code = code - 0x10000;
--
--            // High surrogate: top 10 bits, offset by 0xD800.
--            let high = 0xD800 + ((code >> 10) & 0x3FF);
--
--            // Low surrogate: bottom 10 bits, offset by 0xDC00.
--            let low = 0xDC00 + (code & 0x3FF);
--
--            // Emit two \uXXXX escapes in sequence.
--            format!("\\u{:04X}\\u{:04X}", high, low)
--        }
--    });
--    Ok(v.to_string())
--}
--
- /// Parses a string to a json type value
- pub fn parse_string_to_jsonb(s: &str) -> Result<Vec<u8>> {
-     jsonb::parse_value_standard_mode(s.as_bytes())
-@@ -488,60 +453,100 @@ mod tests {
-         Ok(())
-     }
- 
--    use super::*;
-+    #[test]
-+    fn test_jsonb_to_string_escapes_ob
-```
-
-**File**: `tests/cases/standalone/common/types/json/json.result` (modified, +2/-2)
-```diff
-@@ -99,7 +99,7 @@ SELECT json_to_string(j), t FROM jsons;
- | {"a":null,"foo":"bar"}                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:00.009 |
- | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.010 |
- | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:00.011 |
--| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.012 |
-+| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:00.012 |
- | [null]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01     |
- | [true]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01.001 |
- | [false]                                                                                                                                                                                                                                                                                                                   | 1970-01-01T00:00:01.002 |
-@@ -113,7 +113,7 @@ SELECT json_to_string(j), t FROM jsons;
- | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.010 |
- | [-2147483648]                                                                                                                                                                                                                                                                                                             | 1970-01-01T00:00:01.011 |
- | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:01.012 |
--| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.013 |
-+| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:01.013 |
- +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
- 
- --Insert invalid json strings--
++/// Requires a Kafka broker: `GT_KAFKA_ENDPOINTS=127.0.0.1:9092`.
++#[cfg(test)]
++mod wal_prune_deadlock_tests {
++    use std::assert_matches;
++    use std::sync::Arc;
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    use common_meta::key::table_route::TableRouteValue;
++    use common_meta::key::test_utils::new_test_table_info;
++    use common_meta::peer::Peer;
++    use common_meta::region_registry::LeaderRegionRegistry;
++    use common_meta::rpc::router::{Region, RegionRoute};
++    use common_meta::wal_provider::{RegionWalOptions, build_kafka_client};
++    use common_procedure::Procedure;
++    use common_wal::config::kafka::common::KafkaConnectionConfig;
++    use common_wal::maybe_skip_kafka_integration_test;
++    use common_wal::options::KafkaWalOptions;
++    use common_wal::test_util::get_kafka_endpoints;
++    use store_api::storage::RegionId;
++    use tokio::time::timeout;
++
++    use super::*;
++    use crate::procedure::region_migration::test_util::{TestingEnv, new_procedure_context};
++    use crate::procedure::region_migration::{
++        ContextFactory, PersistentContext, RegionMigrationTriggerReason,
++    };
++    use crate::procedure::wal_prune::{Context as WalPruneContext, WalPruneProcedure};
++
++    struct Scenario {
++        env: TestingEnv,
++        ctx: Context,
++        topic: String,
++        upgrade_instructions: Arc<AtomicUsize>,
++    }
++
++    /// One region on a Kafka topic, failing over to a datanode that receives the upgrade
++    /// instruction but never replies (it is restarting).
++    async fn setup(name: &str) -> Scenario {
++        let topic = format!("{name}_{}", uuid::Uuid::new_v4());
++        let region_id = RegionId::new(1024, 1);
++        let persistent_ctx = PersistentContext::new(
++            vec![("greptime".into(), "public".into())],
++            Peer::empty(1),
++            Peer::empty(2),
++            vec![region_id],
++            // The migration timeout; the first upgrade attempt consumes all of it.
++            Duration::from_millis(1000),
++            RegionMigrationTriggerReason::Failover,
++        );
++        let to_peer_id = persistent_ctx.to_peer.id;
++
++        let mut env = TestingEnv::new();
++        let ctx = env.context_factory().new_context(persistent_ctx);
++        let region_routes = vec![RegionRoute {
++            region: Region::new_test(region_id),
++            leader_peer: Some(ctx.persistent_ctx.from_peer.clone()),
++            follower_peers: vec![ctx.persistent_ctx.to_peer.clone()],
++            ..Default::default()
++        }];
++        let wal_options = RegionWalOptions::from([(
++            region_id.region_number(),
++            WalOptions::Kafka(KafkaWalOptions::new(topic.clone())),
++        )]);
++        ctx.table_metadata_manager
++            .create_table_metadata(
++                new_test_table_info(region_id.table_id()),
++                TableRouteValue::physical(region_routes),
++                wal_options,
++            )
++            .await
++    
 ```
 
 ---
 
-### Incident Patch 2: `4263f5fc` (2026-11-05)
-**Commit Message**: fix(mito): decode cached manifest payloads (#10179)
+### Incident Patch 2: `bba6818c` (2026-11-06)
+**Commit Message**: fix(ci): honor configured region in metric snapshot benchmark (#10157)
 
-* test(mito2): cover compressed manifest cache recovery
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(mito2): decode cached manifest object payloads
+* fix(ci): honor configured region in metric snapshot benchmark
 
 Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(mito2): address manifest cache review feedback
+* docs(ci): clarify AWS runner region configuration
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+Include the documentation changes from #10158 alongside the region fix.
+
+Signed-off-by: Weny Xu <[REDACTED_EMAIL]>
 
 ---------
 
 Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+Signed-off-by: Weny Xu <[REDACTED_EMAIL]>
 
-**File**: `src/mito2/src/cache/manifest_cache.rs` (modified, +2/-2)
+**File**: `.github/scripts/ci-runners.md` (modified, +6/-2)
 ```diff
-@@ -237,7 +237,7 @@ impl ManifestCache {
-         join_path(MANIFEST_DIR, key)
+@@ -13,8 +13,12 @@ AWS uses `aws-ec2-runner-provision.py` and `aws-ec2-runner-teardown.py` directly
+ Repository variables supply `EC2_RUNNER_REGION`, `EC2_RUNNER_SUBNET_ID`, and
+ `EC2_RUNNER_SECURITY_GROUP_ID`; credentials use `AWS_ACCESS_KEY_ID`,
+ `AWS_SECRET_ACCESS_KEY`, and `GH_PERSONAL_ACCESS_TOKEN` secrets.
+-The current region is Singapore (`ap-southeast-1`). By default the script selects
+-the newest available Canonical Ubuntu 24.04 amd64 server AMI in that region
++The runner region comes from `EC2_RUNNER_REGION` (currently `us-east-1`).
++The subnet and security group must belong to the selected AWS account and region.
++For benchmarks using real S3, `AWS_CI_TEST_BUCKET_REGION` must match the runner
++region; `AWS_CI_TEST_BUCKET` must be accessible with the configured credentials.
++By default the script selects the newest available Canonical Ubuntu 24.04 amd64
++server AMI in that region
+ (owner `099720109477`) and logs its ID. Set `BENCHMARK_EC2_IMAGE_ID` to pin a
+ prepared Ubuntu AMI. Existing build CI's `EC2_RUNNER_LINUX_AMD64_IMAGE_ID` is
+ unaffected. Both workflows default `system_disk_gib` to `auto` (also accepting
+```
+
+**File**: `.github/scripts/metric-snapshot-s3-bench.py` (modified, +4/-3)
+```diff
+@@ -105,8 +105,9 @@ def __init__(self, local_smoke):
+         self.endpoint = os.environ.get("S3_ENDPOINT", "")
+         if self.endpoint and not local_smoke:
+             raise ValueError("Custom S3 endpoints are restricted to local smoke")
+-        if not local_smoke and os.environ["S3_REGION"] != "ap-southeast-1":
+-            raise ValueError("Cloud benchmark requires ap-southeast-1")
++        if not local_smoke and (not os.environ["S3_REGION"].strip()
++                                or os.environ["S3_REGION"] != os.environ["RUNNER_REGION"]):
++            raise ValueError("Cloud benchmark requires the same nonempty bucket and runner region")
+         self.containers = set()
+         self.network_created = False
+         self.phases = []
+@@ -324,7 +325,7 @@ def summary(self):
+         lines = ["# Metric packed snapshot benchmark", "", f"Image: `{self.image}`",
+                  f"Source commit: `{self.commit}`", "",
+                  "Local smoke only; timings are not AWS results." if self.local_smoke else
+-                 "AWS S3 in ap-southeast-1; source and target use local File storage.", "",
++                 f"S3 in {os.environ['S3_REGION']}; source and target use local File storage.", "",
+                  "| Round | Phase | Seconds | Result |", "| --- | --- | ---: | --- |"]
+         for phase in self.phases:
+             lines.append(f"| {phase['round']} | {phase['phase']} | {phase['wall_seconds']:.3f} | {phase['outcome']} |")
+```
+
+**File**: `.github/scripts/metric-snapshot-s3-ops.py` (modified, +25/-12)
+```diff
+@@ -21,16 +21,16 @@
+ """Budget preflight and strictly scoped S3 operations for the metric snapshot benchmark."""
+ 
+ import argparse
+-from decimal import Decimal
++from decimal import Decimal, InvalidOperation
+ import json
+ import os
+ from pathlib import Path
+ import re
+ import time
+ import urllib.request
+ 
+-REGION = "ap-southeast-1"
+-HOURLY_USD = Decimal("0.9408")
++# Historical budget estimate; dispatch can supply a rate for the configured region.
++DEFAULT_HOURLY_USD = "0.9408"
+ OTHER_RESERVE_USD = Decimal("1.50")
+ 
+ 
+@@ -40,6 +40,16 @@ def owned_prefix(prefix):
+     return prefix
+ 
+ 
++def hourly_estimate(env):
++    try:
++        estimate = Decimal(env.get("EC2_HOURLY_USD", DEFAULT_HOURLY_USD))
++    except InvalidOperation as error:
++        raise ValueError("EC2_HOURLY_USD must be a positive finite estimate") from error
++    if not estimate.is_finite() or estimate <= 0:
++        raise ValueError("EC2_HOURLY_USD must be a positive finite estimate")
++    return estimate
++
++
+ def plan(env):
+     image = env["GREPTIMEDB_IMAGE"]
+     if not re.fullmatch(r"greptime/greptimedb(?:-nightly)?@sha256:[0-9a-f]{64}", image):
+@@ -49,30 +59,31 @@ def plan(env):
+     tables, minutes = int(env["LOGICAL_TABLES_PER_GROUP"]), int(env["BENCHMARK_TIMEOUT_MINUTES"])
+     if not 50 <= tables <= 10_000 or not 30 <= minutes <= 240:
+         raise ValueError("logical tables per group must be 50..10000; timeout must be 30..240 minutes")
+-    if env["S3_REGION"] != REGION or env["RUNNER_REGION"] != REGION:
+-        raise ValueError("bucket and runner must both use ap-southeast-1")
++    if not env["S3_REGION"].strip() or env["S3_REGION"] != env["RUNNER_REGION"]:
++        raise ValueError("bucket and runner must use the same nonempty region")
+     if not env["S3_BUCKET"]:
+         raise ValueError("S3 bucket is required")
+     prior = Decimal(env["PRIOR_SPEND_USD"])
+     # Reserve 45m provision, 10m queue allowance and 20m cleanup beyond the job timeout.
+-    reservation = HOURLY_USD * Decimal(minutes + 75) / 60 + OTHER_RESERVE_USD
++    hourly = hourly_estimate(env)
++    reservation = hourly * Decimal(minutes + 75) / 60 + OTHER_RESERVE_USD
+     if not prior.is_finite() or prior < 0 or prior >= 15 or prior + reservation > 20:
+         raise ValueError("campaign budget exhausted: prior spend must be below $15 and leave the full attempt reserve within $20")
+     return {"image": image, "expected_commit": env["EXPECTED_COMMIT"],
+             "logical_tables_per_group": tables, "smoke_logical_tables": 500,
+             "timeout_minutes": minutes, "prefix": owned_prefix(env["RUN_PREFIX"]),
+-            "instance_type": "c6id.4xlarge", "region": REGION,
++            "instance_type": "c6id.4xlarge", "region": env["S3_REGION"],
+             "prior_estimated_usd": str(prior), "attempt_reserve_usd": str(reservation),
+-            "ec2_hourly_usd": str(HOURLY_USD), "other_reserve_usd": str(OTHER_RESERVE_USD),
++            "ec2_hourly_usd": str(hourly), "other_reserve_usd": str(OTHER_RESERVE_USD),
+             "cost_note": "Estimate, not an AWS billing total or a hard spending cap."}
+ 
+ 
+ def client(region):
+     import boto3
+     from botocore.config import Config
+ 
+-    if region != REGION:
+-        raise ValueError("S3 region must be ap-southeast-1")
++    if not region.strip():
++        raise ValueError("S3 region is required")
+     return boto3.client("s3", region_name=region, config=Config(
+         connect_timeout=10, read_timeout=30, retries={"mode": "standard", "max_attempts": 3}))
+ 
+@@ -193,8 +204,10 @@ def main():
+         if args.started_at is None:
+             parser.error("cost requires --started-at")
+         seconds = max(0, int(time.time()) - args.started_at)
+-        estimate = HOURLY_USD * Decimal(seconds) / 3600
+-        result = {"allocation_window_seconds": seconds, "ec2_estimate_usd": str(round(estimate, 4)),
++        hourly = hourly_estimate(os.environ)
++        estimate = hourly * Decimal(seconds) / 3600
++        result = {"allocation_window_seconds": seconds, "ec2_hourly_usd": str(hourly),
++                  "ec2_estimate_usd": str(round(estimate, 4)),
+                   "campaign_estimate_with_other_reserve_usd": str(round(
+                       Decimal(os.environ["PRIOR_SPEND_USD"]) + estimate + OTHER_RESERVE_USD, 4)),
+                   "note": "Allocation wall-time estimate plus $1.50 reserve for S3, disk and IPv4; not an AWS bill."}
+```
+
+**File**: `.github/scripts/tests/test_metric_snapshot_s3_bench.py` (modified, +19/-0)
+```diff
+@@ -28,6 +28,25 @@
+ 
+ 
+ class PhaseTests(unittest.TestCase):
++    def test_cloud_region_configuration(self):
++        for bucket, runner, accepted in (("us-east-1", "us-east-1", True),
++                                          ("ap-southeast-1", "ap-southeast-1", True),
++                                          ("us-east-1", "ap-southeast-1", False),
++                                          ("", "", False)):
++            with self.subTest(bucket=bucket, runner=runner), tempfile.TemporaryDirectory() as directory:
++                env = dict(GREPTIMEDB_IMAGE="greptime/greptimedb@sha256:" + "a" * 64,
++                           EXPECTED_COMMIT="b" * 40, RUN_PREFIX="metric-snapshot-bench/123-1/",
++                           RESULTS=str(Path(directory) / "results"), DATA_ROOT=str(Path(directory) / "data"),
++                           S3_REGION=bucket, RUNNER_REGION=runner, S3_ENDPOINT="")
++                with patch.dict(bench.os.environ, env):
++                    if accepted:
++                        benchmark = bench.Benchmark(local_smoke=False)
++                        benchmark.summary()
++                        self.assertIn(f"S3 in {bucket};", (benchmark.results / "summary.md").read_text())
++                    else:
++                        with self.assertRaisesRegex(ValueError, "same nonempty"):
++                            bench.Benchmark(local_smoke=False)
++
+     def test_docker_nanosecond_timestamps(self):
+         start = bench.docker_timestamp("2026-10-14T06:06:44.72000818Z")
+         end = bench.docker_timestamp("2026-10-14T06:06:46.123456789Z")
+```
+
+**File**: `.github/scripts/tests/test_metric_snapshot_s3_ops.py` (modified, +40/-0)
+```diff
+@@ -20,6 +20,7 @@
+ import json
+ from pathlib import Path
+ import tempfile
++import types
+ import unittest
+ from unittest import mock
+ 
+@@ -82,6 +83,45 @@ def test_budget_includes_provision_cleanup_and_other_cost_reserve(self):
+             with self.subTest(changes=changes), self.assertRaises(ValueError):
+                 ops.plan(self.env(**changes))
+ 
++    def test_regions_follow_configuration_and_reject_mismatch_or_empty(self):
++        for region in ("us-east-1", "ap-southeast-1"):
++            with self.subTest(region=region):
++                self.assertEqual(ops.plan(self.env(S3_REGION=region, RUNNER_REGION=region))["region"], region)
++        for bucket, runner in (("us-east-1", "ap-southeast-1"), ("", ""), (" ", " ")):
++            with self.subTest(bucket=bucket, runner=runner), self.assertRaises(ValueError):
++                ops.plan(self.env(S3_REGION=bucket, RUNNER_REGION=runner))
++
++    def test_client_uses_configured_region(self):
++        boto = types.ModuleType("boto3")
++        boto.client = mock.Mock()
++        config = types.ModuleType("botocore.config")
++        config.Config = mock.Mock()
++        with mock.patch.dict("sys.modules", {"boto3": boto, "botocore.config": config}):
++            for region in ("us-east-1", "ap-southeast-1"):
++                ops.client(region)
++                self.assertEqual(boto.client.call_args.kwargs["region_name"], region)
++            with self.assertRaises(ValueError):
++                ops.client("")
++
++    def test_hourly_estimate_controls_reservation_and_cost(self):
++        env = self.env(EC2_HOURLY_USD="2", BENCHMARK_TIMEOUT_MINUTES="30")
++        plan = ops.plan(env)
++        self.assertEqual(plan["ec2_hourly_usd"], "2")
++        self.assertEqual(plan["attempt_reserve_usd"], "5.00")
++        with mock.patch.dict(ops.os.environ, env), mock.patch.object(ops.time, "time", return_value=4600), \
++                mock.patch("sys.argv", ["ops", "cost", "--started-at", "1000"]), \
++                mock.patch("sys.stdout", new_callable=io.StringIO) as output:
++            ops.main()
++        cost = json.loads(output.getvalue())
++        self.assertEqual(cost["ec2_hourly_usd"], "2")
++        self.assertEqual(cost["ec2_estimate_usd"], "2.0000")
++        self.assertEqual(cost["campaign_estimate_with_other_reserve_usd"], "3.5000")
++        for rate in ("", "invalid", "0", "-1", "NaN", "Infinity", "-Infinity"):
++            with self.subTest(rate=rate), self.assertRaises(ValueError):
++                ops.plan(self.env(EC2_HOURLY_USD=rate))
++        with self.assertRaises(ValueError):
++            ops.plan(self.env(EC2_HOURLY_USD="4"))
++
+     def watcher_env(self):
+         return self.env(GITHUB_REPOSITORY="GreptimeTeam/greptimedb", GITHUB_RUN_ID="123",
+                         GITHUB_RUN_ATTEMPT="2", GH_TOKEN="test-token", BENCHMARK_TIMEOUT_MINUTES="30")
+```
+
+**File**: `.github/workflows/metric-snapshot-s3-bench.yml` (modified, +6/-0)
+```diff
+@@ -18,6 +18,11 @@ on:
+         description: 'Setup, 500-table smoke and full run timeout, 30..240 minutes'
+         type: number
+         default: 240
++      ec2_hourly_usd:
++        description: 'Positive EC2 hourly USD budget estimate; historical default, not live regional pricing'
++        required: true
++        type: string
++        default: '0.9408'
+       prior_spend_usd:
+         description: 'Cumulative estimated cloud spend for all earlier attempts in this $20 campaign'
+         required: true
+@@ -34,6 +39,7 @@ env:
+   LOGICAL_TABLES_PER_GROUP: ${{ inputs.logical_tables_per_group }}
+   BENCHMARK_TIMEOUT_MINUTES: ${{ inputs.benchmark_timeout_minutes }}
+   PRIOR_SPEND_USD: ${{ inputs.prior_spend_usd }}
++  EC2_HOURLY_USD: ${{ inputs.ec2_hourly_usd }}
+   RUN_PREFIX: metric-snapshot-bench/${{ github.run_id }}-${{ github.run_attempt }}/
+   S3_BUCKET: ${{ vars.AWS_CI_TEST_BUCKET }}
+   S3_REGION: ${{ vars.AWS_CI_TEST_BUCKET_REGION }}
+```
+
+**File**: `docs/how-to/metric-snapshot-s3-bench.md` (modified, +12/-5)
+```diff
+@@ -1,14 +1,17 @@
+ # Metric snapshot benchmark on AWS S3
+ 
+ The manual `Metric Snapshot S3 Benchmark` workflow tests packed Metric export and
+-restore against real S3 in `ap-southeast-1`. It must first exist on the repository's
+-default branch for GitHub to register `workflow_dispatch`. It was validated on AWS
++restore against real S3 in the configured CI bucket region. It must first exist on
++the repository's default branch for GitHub to register `workflow_dispatch`. It was validated on AWS
+ by run [38544464731](https://github.com/GreptimeTeam/greptimedb/actions/runs/38544464731);
+ [#9573](https://github.com/GreptimeTeam/greptimedb/pull/9573) records its conditions and results.
+ 
+ ## Run
+ 
+ Use the repository's existing EC2 runner configuration and CI S3 credentials.
++`AWS_CI_TEST_BUCKET_REGION` and `EC2_RUNNER_REGION` must be nonempty and equal;
++for example, both can be `us-east-1`. The configured subnet, security group and
++AMI (if explicitly supplied) must also belong to the runner region.
+ The workflow passes credentials only through CI; no local AWS credentials are
+ needed. Source, target and CLI use the same immutable image. This image's source
+ SHA and required CLI capabilities have been checked:
+@@ -20,6 +23,7 @@ gh workflow run metric-snapshot-s3-bench.yml \
+   -f expected_commit=f690bbb2040865c0d22b0b57d51612b60ae27cd0 \
+   -f logical_tables_per_group=10000 \
+   -f benchmark_timeout_minutes=240 \
++  -f ec2_hourly_usd=0.9408 \
+   -f prior_spend_usd=0
+ ```
+ 
+@@ -28,9 +32,12 @@ earlier cloud attempts in the campaign, including failed setup and cleanup.
+ Do not reset the estimate to zero when retrying. The workflow accepts 50–10,000
+ logical tables per group and a 30–240 minute benchmark job timeout.
+ 
+-The runner is fixed at `c6id.4xlarge` (16 vCPU, 32 GiB RAM). At the recorded
+-Singapore Linux on-demand estimate of $0.9408/hour, the default attempt reserves
+-$6.4392: four benchmark hours, 45 minutes of provisioning, 10 minutes for queueing,
++The runner is fixed at `c6id.4xlarge` (16 vCPU, 32 GiB RAM). Set
++`ec2_hourly_usd` to a positive, finite hourly budget estimate appropriate for the
++selected region and instance. Its default $0.9408/hour preserves the historical
++Singapore estimate; it is not a live regional price or a guaranteed upper bound.
++The same estimate is used for preflight reservation and the final cost summary.
++At that default rate, the default attempt reserves $6.4392: four benchmark hours, 45 minutes of provisioning, 10 minutes for queueing,
+ 20 minutes of cleanup, and $1.50 for S3, disk and IPv4 costs. Preflight rejects prior spend at or above
+ $15, or an attempt whose reserve would exceed the cumulative $20 budget.
+ These estimates and checks are not an AWS hard spending cap or an AWS bill.
+```
+
+---
+
+### Incident Patch 3: `ae422ef4` (2026-11-06)
+**Commit Message**: fix: prioritize region ALTER over queued edits (#10193)
+
+* fix: prioritize region ALTER over queued edits
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+* test: use valid edits in ALTER priority regression
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+* refactor: make region edit dispatch outcomes explicit
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+* fix: reject queued alters and edits when dropping regions
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+* test: cover queued ALTER handoff before region edits
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: evenyag <[REDACTED_EMAIL]>
+
+**File**: `src/mito2/src/engine/edit_region_test.rs` (modified, +336/-0)
+```diff
+@@ -884,3 +884,339 @@ async fn test_edit_region_concurrently_with_format(flat_format: bool) {
+         tasks_count * EDITS_PER_TASK
+     );
+ }
++
++#[tokio::test]
++async fn test_alter_precedes_edit_backlog() {
++    use store_api::region_request::{AddColumn, AlterKind, RegionAlterRequest};
++    use tokio::sync::Notify;
++    struct Listener {
++        tx: mpsc::UnboundedSender<usize>,
++        altering: Notify,
++        release: Notify,
++        flushing: Notify,
++        release_flush: Notify,
++    }
++    #[async_trait::async_trait]
++    impl EventListener for Listener {
++        fn on_recv_requests(&self, count: usize) {
++            let _ = self.tx.send(count);
++        }
++        async fn on_flush_begin(&self, _: RegionId) {
++            self.flushing.notify_one();
++            self.release_flush.notified().await;
++        }
++        async fn on_notify_region_change_result_begin(&self, _: RegionId) {
++            self.altering.notify_one();
++            self.release.notified().await;
++        }
++    }
++    for (dirty, invalid) in [(false, false), (true, false), (false, true)] {
++        let mut env = TestEnv::new().await;
++        let (tx, mut rx) = mpsc::unbounded_channel();
++        let listener = Arc::new(Listener {
++            tx,
++            altering: Notify::new(),
++            release: Notify::new(),
++            flushing: Notify::new(),
++            release_flush: Notify::new(),
++        });
++        let engine = env
++            .create_engine_with(
++                MitoConfig {
++                    schedule_compaction_after_edit: false,
++                    ..Default::default()
++                },
++                None,
++                Some(listener.clone()),
++                None,
++            )
++            .await;
++        let region_id = RegionId::new(1, 1);
++        let create = CreateRequestBuilder::new().build();
++        let schema = rows_schema(&create);
++        engine
++            .handle_request(region_id, RegionRequest::Create(create))
++            .await
++            .unwrap();
++        if dirty {
++            crate::test_util::put_rows(
++                &engine,
++                region_id,
++                Rows {
++                    schema,
++                    rows: build_rows(0, 1),
++                },
++            )
++            .await;
++        }
++        let region = engine.get_region(region_id).unwrap();
++        let guard = region.manifest_ctx.manifest_manager.write().await;
++        let e = engine.clone();
++        let first = tokio::spawn(async move {
++            e.edit_region(region_id, test_region_edit(region_id, FileId::random()))
++                .await
++        });
++        wait_until_region_is_in_editing(&region).await;
++        drain_worker_recv_events(&mut rx);
++        let file_id = FileId::random();
++        let e = engine.clone();
++        let queued = tokio::spawn(async move {
++            e.edit_region(region_id, test_region_edit(region_id, file_id))
++                .await
++        });
++        wait_worker_recv_event(&mut rx).await;
++        let e = engine.clone();
++        let alter = tokio::spawn(async move {
++            e.handle_request(
++                region_id,
++                RegionRequest::Alter(RegionAlterRequest {
++                    kind: AlterKind::AddColumns {
++                        columns: vec![AddColumn {
++                            column_metadata: store_api::metadata::ColumnMetadata {
++                                column_schema: datatypes::schema::ColumnSchema::new(
++                                    if invalid { "ts" } else { "new_field" },
++                                    datatypes::data_type::ConcreteDataType::float64_datatype(),
++                                    true,
++                                ),
++                                semantic_type: api::v1::SemanticType::Field,
++                                column_id: 100,
++                            },
++                            location: None,
++                        }],
++                    },
++                }),
++            )
++            .await
++        });
++        wait_worker_recv_event(&mut rx).await;
++        drop(guard);
++        let late = if dirty {
++            tokio::time::timeout(Duration::from_secs(10), listener.flushing.notified())
++                .await
++                .unwrap();
++            drain_worker_recv_events(&mut rx);
++            let e = engine.clone();
++            let task = tokio::spawn(async move {
++                e.edit_region(region_id, test_region_edit(region_id, FileId::random()))
++                    .await
++            });
++            wait_worker_recv_event(&mut rx).await;
++            listener.release_flush.notify_one();
++            Some(task)
++        } else {
++            None
++        };
++        if invalid {
++            assert!(alter.await.unwrap().is_err());
++            first.await.unwrap().unwrap();
++            tokio::time::timeout(Duration::from_secs(10), queued)
++                .await
++             
+```
+
+**File**: `src/mito2/src/flush.rs` (modified, +10/-0)
+```diff
+@@ -1497,6 +1497,16 @@ impl FlushScheduler {
+         status.pending_bulk_writes.push(request);
      }
  
--    /// Gets a manifest file from cache.
-+    /// Gets the encoded object-store payload from cache.
-     /// Returns the file data if found in cache, None otherwise.
-     pub(crate) async fn get_file(&self, key: &str) -> Option<Vec<u8>> {
-         if self.get(key).await.is_none() {
-@@ -259,7 +259,7 @@ impl ManifestCache {
++    /// Whether an ALTER owns a turn while waiting for its memtables to flush.
++    pub(crate) fn has_pending_alter(&self, region_id: RegionId) -> bool {
++        self.region_status.get(&region_id).is_some_and(|status| {
++            status
++                .pending_ddls
++                .iter()
++                .any(|ddl| matches!(ddl.request, DdlRequest::Alter(_)))
++        })
++    }
++
+     /// Returns true if the region has pending DDLs or a close-time flush.
+     pub(crate) fn has_pending_ddls(&self, region_id: RegionId) -> bool {
+         self.region_status
+```
+
+**File**: `src/mito2/src/worker.rs` (modified, +3/-0)
+```diff
+@@ -769,6 +769,7 @@ impl<S: LogStore> WorkerStarter<S> {
+             region_count: REGION_COUNT.with_label_values(&[&id_string]),
+             request_wait_time: REQUEST_WAIT_TIME.with_label_values(&[&id_string]),
+             region_edit_queues: RegionEditQueues::default(),
++            pending_alters: Default::default(),
+             schema_metadata_manager: self.schema_metadata_manager,
+             file_ref_manager: self.file_ref_manager.clone(),
+             partition_expr_fetcher: self.partition_expr_fetcher,
+@@ -1100,6 +1101,8 @@ struct RegionWorkerLoop<S> {
+     request_wait_time: Histogram,
+     /// Queues for region edit requests.
+     region_edit_queues: RegionEditQueues,
++    /// ALTER requests waiting for the current edit or ALTER to finish.
++    pending_alters: handle_alter::PendingAlters,
+     /// Database level metadata manager.
+     schema_metadata_manager: SchemaMetadataManagerRef,
+     /// Datanode level file references manager.
+```
+
+**File**: `src/mito2/src/worker/handle_alter.rs` (modified, +35/-0)
+```diff
+@@ -45,12 +45,47 @@ use crate::request::{DdlRequest, OptionOutputTx, SenderDdlRequest};
+ use crate::sst::FormatType;
+ use crate::worker::RegionWorkerLoop;
+ 
++pub(crate) type PendingAlters = std::collections::HashMap<
++    RegionId,
++    std::collections::VecDeque<(RegionAlterRequest, OptionOutputTx)>,
++>;
++
+ impl<S: LogStore> RegionWorkerLoop<S> {
+     pub(crate) async fn handle_alter_request(
+         &mut self,
+         region_id: RegionId,
+         request: RegionAlterRequest,
+         sender: OptionOutputTx,
++    ) {
++        if self.flush_scheduler.has_pending_alter(region_id)
++            || self.pending_alters.contains_key(&region_id)
++            || self.regions.get_region(region_id).is_some_and(|region| {
++                matches!(
++                    region.state(),
++                    crate::region::RegionRoleState::Leader(
++                        crate::region::RegionLeaderState::Editing
++                            | crate::region::RegionLeaderState::Altering
++                    )
++                )
++            })
++        {
++            let queue = self.pending_alters.entry(region_id).or_default();
++            if queue.len() >= 128 {
++                sender.send(crate::error::RegionBusySnafu { region_id }.fail());
++            } else {
++                queue.push_back((request, sender));
++            }
++            self.dispatch_pending_region_requests(region_id).await;
++            return;
++        }
++        self.execute_alter_request(region_id, request, sender).await;
++    }
++
++    pub(crate) async fn execute_alter_request(
++        &mut self,
++        region_id: RegionId,
++        request: RegionAlterRequest,
++        sender: OptionOutputTx,
+     ) {
+         let requested_skip_wal = skip_wal_value(&request.kind);
+         let (region, follower_skip_wal) = match self.regions.writable_non_staging_region(region_id)
+```
+
+**File**: `src/mito2/src/worker/handle_drop.rs` (modified, +3/-0)
+```diff
+@@ -223,6 +223,9 @@ where
+ 
+     /// Cleans runtime state for a region that is no longer available to serve requests.
+     pub(crate) async fn cleanup_dropped_region_runtime_state(&mut self, region_id: RegionId) {
++        // A successful flush may hand off DROP before queued ALTERs and edits resume.
++        // Reject their waiters here because the removed region has no next turn.
++        self.reject_region_edit_queue_as_not_found(region_id);
+         // Notifies flush scheduler.
+         self.flush_scheduler.on_region_dropped(region_id);
+         // Notifies compaction scheduler.
+```
+
+**File**: `src/mito2/src/worker/handle_flush.rs` (modified, +11/-1)
+```diff
+@@ -74,6 +74,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+ 
+         // Handle stalled requests.
+         self.handle_stalled_requests().await;
++        self.dispatch_pending_region_requests(region_id).await;
+     }
+ 
+     /// Checks whether the engine reaches flush threshold. If so, finds regions in this
+@@ -483,7 +484,15 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+             self.flush_scheduler.on_flush_success(region_id)
+         {
+             // Perform DDLs first because they require empty memtables.
+-            self.handle_ddl_requests(&mut ddl_requests).await;
++            // These ALTERs already own the flush turn; bypass initial admission.
++            for ddl in ddl_requests.drain(..) {
++                if let crate::request::DdlRequest::Alter(request) = ddl.request {
++                    self.execute_alter_request(ddl.region_id, request, ddl.sender)
++                        .await;
++                } else {
++                    self.handle_ddl_requests(&mut vec![ddl]).await;
++                }
++            }
+             if self.flush_scheduler.is_flush_requested(region_id) {
+                 // The DDL may schedule another flush, e.g. a close-time flush after writes
+                 // arrived in the mutable memtable during the previous flush. Keep pending
+@@ -518,6 +527,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         // Schedules compaction.
+         self.schedule_compaction(&region).await;
+ 
++        self.dispatch_pending_region_requests(region_id).await;
+         self.listener.on_flush_success(region_id);
+     }
+ 
+```
+
+**File**: `src/mito2/src/worker/handle_manifest.rs` (modified, +89/-25)
+```diff
+@@ -52,7 +52,14 @@ use crate::worker::{RegionWorkerLoop, WorkerListener};
+ 
+ pub(crate) type RegionEditQueues = HashMap<RegionId, RegionEditQueue>;
+ 
+-/// A queue for region edit requests received while the region is already `Editing`.
++/// Outcome of admitting a region edit, independent of subsequent region role changes.
++pub(crate) enum RegionEditDispatch {
++    Started,
++    Queued,
++    Rejected,
++}
++
++/// A queue for region edits waiting behind an active edit or ALTER.
+ ///
+ /// Normal writes and bulk inserts that arrive during `Editing` use the stalled-write queue instead.
+ /// When an edit completes, those writes are handled before the next queued edit starts, preserving
+@@ -74,17 +81,18 @@ impl RegionEditQueue {
          }
      }
  
--    /// Puts a manifest file into cache.
-+    /// Caches the object-store payload verbatim, before decompression.
-     pub(crate) async fn put_file(&self, key: String, data: Vec<u8>) {
-         let cache_file_path = self.cache_file_path(&key);
- 
-```
-
-**File**: `src/mito2/src/engine/open_test.rs` (modified, +63/-0)
-```diff
-@@ -1366,3 +1366,66 @@ async fn test_region_hook_on_open() {
-     assert_eq!(hook.closed_count.load(Ordering::Relaxed), 1);
-     assert_eq!(hook.dropped_count.load(Ordering::Relaxed), 0);
- }
-+
-+#[tokio::test]
-+async fn test_reopen_region_with_compressed_manifest_cache() {
-+    let mut env = TestEnv::new().await;
-+    let engine = env
-+        .create_engine(MitoConfig {
-+            enable_write_cache: true,
-+            compress_manifest: true,
-+            manifest_checkpoint_distance: 1,
-+            ..Default::default()
-+        })
-+        .await;
-+    let region_id = RegionId::new(1, 1);
-+    let request = CreateRequestBuilder::new().build();
-+    let table_dir = request.table_dir.clone();
-+    let schema = rows_schema(&request);
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
-+        .await
-+        .unwrap();
-+    for i in 0..3 {
-+        put_rows(
-+            &engine,
-+            region_id,
-+            Rows {
-+                schema: schema.clone(),
-+                rows: build_rows(i * 3, (i + 1) * 3),
-+            },
-+        )
-+        .await;
-+        flush_region(&engine, region_id, None).await;
-+    }
-+    let region = engine.get_region(region_id).unwrap();
-+    let mut manager = region.manifest_ctx.manifest_manager.write().await;
-+    tokio::time::timeout(
-+        Duration::from_secs(10),
-+        manager.wait_for_pending_checkpoint(),
-+    )
-+    .await
-+    .unwrap();
-+    assert!(manager.checkpointer().last_checkpoint_version() > 0);
-+    drop(manager);
-+    let stream = engine
-+        .scan_to_stream(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    let expected = RecordBatches::try_collect(stream)
-+        .await
-+        .unwrap()
-+        .pretty_print()
-+        .unwrap();
-+    reopen_region(&engine, region_id, table_dir, true, HashMap::new()).await;
-+    let stream = engine
-+        .scan_to_stream(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    let actual = RecordBatches::try_collect(stream)
-+        .await
-+        .unwrap()
-+        .pretty_print()
-+        .unwrap();
-+    assert_eq!(expected, actual);
-+}
-```
-
-**File**: `src/mito2/src/manifest/storage.rs` (modified, +239/-0)
-```diff
-@@ -846,4 +846,243 @@ mod tests {
-             .unwrap();
-         assert!(entries.is_empty());
+-    fn enqueue(&mut self, request: RegionEditRequest) {
++    fn enqueue(&mut self, request: RegionEditRequest) -> RegionEditDispatch {
+         if self.requests.len() > Self::QUEUE_MAX_LEN {
+             request.waiters.reply_with(|| {
+                 RegionBusySnafu {
+                     region_id: self.region_id,
+                 }
+                 .fail()
+             });
+-            return;
++            return RegionEditDispatch::Rejected;
+         };
+         self.requests.push_back(request);
++        RegionEditDispatch::Queued
      }
-+
-+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+    enum CacheSource {
-+        WriteThrough,
-+        RemoteFill,
-+        LegacyDecoded,
-+        Truncated,
-+    }
-+
-+    #[derive(Debug, Clone, Copy)]
-+    enum PayloadKind {
-+        Delta,
-+        Checkpoint { checksum: bool },
-+    }
-+
-+    // Exercise both representations left by older versions, as well as new writes
-+    // and remote fills. Truncation only applies to compression envelopes.
-+    #[rstest::rstest]
-+    #[case::write_through_uncompressed(CacheSource::WriteThrough, CompressionType::Uncompressed)]
-+    #[case::write_through_gzip(CacheSource::WriteThrough, CompressionType::Gzip)]
-+    #[case::write_through_zstd(CacheSource::WriteThrough, CompressionType::Zstd)]
-+    #[case::write_through_xz(CacheSource::WriteThrough, CompressionType::Xz)]
-+    #[case::write_through_bzip2(CacheSource::WriteThrough, CompressionType::Bzip2)]
-+    #[case::remote_fill_uncompressed(CacheSource::RemoteFill, CompressionType::Uncompressed)]
-+    #[case::remote_fill_gzip(CacheSource::RemoteFill, CompressionType::Gzip)]
-+    #[case::remote_fill_zstd(CacheSource::RemoteFill, CompressionType::Zstd)]
-+    #[case::remote_fill_xz(CacheSource::RemoteFill, CompressionType::Xz)]
-+    #[case::remote_fill_bzip2(CacheSource::RemoteFill, CompressionType::Bzip2)]
-+    #[case::legacy_decoded_uncompressed(CacheSource::LegacyDecoded, CompressionType::Uncompressed)]
-+    #[case::legacy_decoded_gzip(CacheSource::LegacyDecoded, CompressionType::Gzip)]
-+    #[case::legacy_decoded_zstd(CacheSource::LegacyDecoded, CompressionType::Zstd)]
-+    #[case::legacy_decoded_xz(CacheSource::LegacyDecoded, CompressionType::Xz)]
-+    #[case::legacy_decoded_bzip2(CacheSource::LegacyDecoded, CompressionType::Bzip2)]
-+    #[case::truncated_gzip(CacheSource::Truncated, CompressionType::Gzip)]
-+    #[case::truncated_zstd(CacheSource::Truncated, CompressionType::Zstd)]
-+    #[case::truncated_xz(CacheSource::Truncated, CompressionType::Xz)]
-+    #[case::truncated_bzip2(CacheSource::Truncated, CompressionType::Bzip2)]
-+    #[tokio::test]
-+    async fn test_manifest_cache_payload(
-+        #[case] source: CacheSource,
-+        #[case] compression: CompressionType,
-+        #[values(PayloadKind::Delta, PayloadKind::Checkpoint { checksum: false }, PayloadKind::Checkpoint { checksum: true })]
-+        payload: PayloadKind,
-+    ) {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        use common_base::readable_size::ReadableSize;
-+        use object_store::layers::mock::MockLayerBuilder;
-+
-+        let remote_dir = create_temp_dir("manifest-cache-remote");
-+        let cache_dir = create_temp_dir("manifest-cache-local");
-+        let remote =
-+            ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
-+        let local =
-+            ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
-+        let reads = Arc::new(AtomicUsize::new(0));
-+        let observed = reads.clone();
-+        let remote = remote.layer(
-+            MockLayerBuilder::default()
-+                .reader_factory(Arc::new(move |_, _, reader| {
-+                    observed.fetch_add(1, Ordering::Relaxed);
-+                    reader
-+                }))
-+                .build()
-+                .unwrap(),
-+        );
-+        let mut cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+        let mut store = ManifestObjectStore::new(
-+            "region/manifest/",
-+            remote.clone(),
-+            compression,
-+            Default::default(),
-+            (source != CacheSource::RemoteFill).then(|| cache.clone()),
-+        );
-+        let data = br#"{"manifest":"persistent cache payload"}"#;
-+        let key = gen_path(
-+            "region/manifest/",
-+            &if matches!(payload, PayloadKind::Checkpoint { .. }) {
-+                checkpoint_file(3)
-+            } else {
-+                delta_file(3)
-+            },
-+            compression,
-+        );
-+        if matches!(payload, PayloadKind::Checkpoint { .. }) {
-+            store.save_checkpoint(3, data).await.unwrap();
-+        } else {
-+            store.save(3, data, false).await.unwrap();
-+        }
-+        let encoded = remote.read(&key).await.unwrap().to_vec();
-+        if source == CacheSource::LegacyDecoded {
-+            cache.put_file(key.clone(), data.to_vec()).await;
-+        } else if source == CacheSource::Truncated {
-+            cache
-+                .put_file(key.clone(), encoded[..encoded.len() / 2].to_vec())
-+                .await;
-+        }
-+        drop(store);
-+        for iteration in 0..2 {
-+            drop(cache);
-+            cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+            if source != CacheSource::RemoteFill || iteration > 0 {
-+                assert!(
-+                   
-```
-
-**File**: `src/mito2/src/manifest/storage/checkpoint.rs` (modified, +26/-21)
-```diff
-@@ -27,7 +27,7 @@ use crate::error::{
-     CompressObjectSnafu, DecompressObjectSnafu, OpenDalSnafu, Result, SerdeJsonSnafu, Utf8Snafu,
- };
- use crate::manifest::storage::size_tracker::Tracker;
--use crate::manifest::storage::utils::{get_from_cache, put_to_cache, write_and_put_cache};
-+use crate::manifest::storage::utils::{get_from_cache_decoded, write_and_put_cache};
- use crate::manifest::storage::{
-     FALL_BACK_COMPRESS_TYPE, LAST_CHECKPOINT_FILE, checkpoint_checksum, checkpoint_file, gen_path,
-     verify_checksum,
-@@ -102,7 +102,9 @@ impl<T: Tracker> CheckpointStorage<T> {
-         let path = self.checkpoint_file_path(version);
  
-         // Try to get from cache first
--        if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), &path).await {
-+        if let Some(data) =
-+            get_from_cache_decoded(self.manifest_cache.as_ref(), &path, self.compress_type).await
-+        {
-             verify_checksum(&data, metadata.checksum)?;
-             self.record_cached_checkpoint_size(version, &path).await;
-             return Ok(Some((version, data)));
-@@ -113,19 +115,21 @@ impl<T: Tracker> CheckpointStorage<T> {
-         let checkpoint_data = match self.object_store.read(&path).await {
-             Ok(checkpoint) => {
-                 let checkpoint_size = checkpoint.len();
--                let decompress_data =
--                    self.compress_type
--                        .decode(checkpoint)
--                        .await
--                        .with_context(|_| DecompressObjectSnafu {
--                            compress_type: self.compress_type,
--                            path: path.clone(),
--                        })?;
-+                let decompress_data = self
-+                    .compress_type
-+                    .decode(checkpoint.clone())
-+                    .await
-+                    .with_context(|_| DecompressObjectSnafu {
-+                        compress_type: self.compress_type,
-+                        path: path.clone(),
-+                    })?;
-                 verify_checksum(&decompress_data, metadata.checksum)?;
-                 // set the checkpoint size
-                 self.size_tracker.record(version, checkpoint_size as u64);
-                 // Add to cache
--                put_to_cache(self.manifest_cache.as_ref(), path, &decompress_data).await;
-+                if let Some(cache) = &self.manifest_cache {
-+                    cache.put_file(path, checkpoint.to_vec()).await;
-+                }
-                 Ok(Some(decompress_data))
-             }
-             Err(e) => {
-@@ -142,8 +146,12 @@ impl<T: Tracker> CheckpointStorage<T> {
-                         );
+     fn dequeue(&mut self) -> Option<RegionEditRequest> {
+@@ -149,8 +157,13 @@ impl RegionEditQueue {
+ }
  
-                         // Try to get fallback from cache first
--                        if let Some(data) =
--                            get_from_cache(self.manifest_cache.as_ref(), &fall_back_path).await
-+                        if let Some(data) = get_from_cache_decoded(
-+                            self.manifest_cache.as_ref(),
-+                            &fall_back_path,
-+                            FALL_BACK_COMPRESS_TYPE,
-+                        )
-+                        .await
-                         {
-                             verify_checksum(&data, metadata.checksum)?;
-                             self.record_cached_checkpoint_size(version, &fall_back_path)
-@@ -155,7 +163,7 @@ impl<T: Tracker> CheckpointStorage<T> {
-                             Ok(checkpoint) => {
-                                 let checkpoint_size = checkpoint.len();
-                                 let decompress_data = FALL_BACK_COMPRESS_TYPE
--                                    .decode(checkpoint)
-+                                    .decode(checkpoint.clone())
-                                     .await
-                                     .with_context(|_| DecompressObjectSnafu {
-                                         compress_type: FALL_BACK_COMPRESS_TYPE,
-@@ -164,12 +172,9 @@ impl<T: Tracker> CheckpointStorage<T> {
-                                 verify_checksum(&decompress_data, metadata.checksum)?;
-                                 self.size_tracker.record(version, checkpoint_size as u64);
-                                 // Add fallback to cache
--                                put_to_cache(
--                                    self.manifest_cache.as_ref(),
--                                    fall_back_path,
--                                    &decompress_data,
--                                )
--                                .await;
-+                                if let Some(cache) = &self.manifest_cache {
-+                                    cache.put_file(fall_back_path, checkpoint.to_vec()).await;
-+                                }
-                                 Ok(Some(decompress_data))
-                             }
-                             Err(e) if e.kind() == ErrorKind::NotFound => Ok(None),
-@@ -220,7 +225,7 @@ impl<T: Tracker> CheckpointStorage<T> {
-         Ok(Some(che
-```
-
-**File**: `src/mito2/src/manifest/storage/delta.rs` (modified, +7/-5)
-```diff
-@@ -31,7 +31,7 @@ use crate::error::{
- };
- use crate::manifest::storage::size_tracker::Tracker;
- use crate::manifest::storage::utils::{
--    get_from_cache, put_to_cache, sort_manifests, write_and_put_cache,
-+    get_from_cache_decoded, sort_manifests, write_and_put_cache,
- };
- use crate::manifest::storage::{
-     FETCH_MANIFEST_PARALLELISM, delta_file, file_compress_type, file_version, gen_path,
-@@ -206,8 +206,9 @@ impl<T: Tracker> DeltaStorage<T> {
-             let _permit = semaphore.acquire().await.unwrap();
- 
-             let cache_key = entry.path();
-+            let compress_type = file_compress_type(entry.name());
-             // Try to get from cache first
--            if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), cache_key).await {
-+            if let Some(data) = get_from_cache_decoded(self.manifest_cache.as_ref(), cache_key, compress_type).await {
-                 let size = entry.metadata().content_length();
-                 if size > 0 {
-                     self.delta_tracker.record(*v, size);
-@@ -221,7 +222,6 @@ impl<T: Tracker> DeltaStorage<T> {
-             }
- 
-             // Fetch from remote object store
--            let compress_type = file_compress_type(entry.name());
-             let bytes = match self.object_store.read(entry.path()).await {
-                 Ok(bytes) => bytes,
-                 Err(error) if error.kind() == ErrorKind::NotFound => {
-@@ -234,15 +234,17 @@ impl<T: Tracker> DeltaStorage<T> {
-             };
-             self.delta_tracker.record(*v, bytes.len() as u64);
-             let data = compress_type
--                .decode(bytes)
-+                .decode(bytes.clone())
-                 .await
-                 .context(DecompressObjectSnafu {
-                     compress_type,
-                     path: entry.path(),
-                 })?;
- 
-             // Add to cache
--            put_to_cache(self.manifest_cache.as_ref(), cache_key.to_string(), &data).await;
-+            if let Some(cache) = &self.manifest_cache {
-+                cache.put_file(cache_key.to_string(), bytes.to_vec()).await;
+ impl<S: LogStore> RegionWorkerLoop<S> {
+-    /// Rejects queued region edit requests as region not found.
++    /// Rejects queued ALTER and region edit requests as region not found.
+     pub(crate) fn reject_region_edit_queue_as_not_found(&mut self, region_id: RegionId) {
++        if let Some(queue) = self.pending_alters.remove(&region_id) {
++            for (_, sender) in queue {
++                sender.send(RegionNotFoundSnafu { region_id }.fail());
 +            }
- 
-             Ok((*v, data))
-         });
-```
-
-**File**: `src/mito2/src/manifest/storage/utils.rs` (modified, +29/-21)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use common_datasource::compression::CompressionType;
-+use common_telemetry::debug;
- use object_store::{Entry, ObjectStore};
- use snafu::ResultExt;
- use store_api::ManifestVersion;
-@@ -21,19 +23,29 @@ use crate::error::{OpenDalSnafu, Result};
- 
- const CHUNK_SIZE: usize = 64 * 1024 * 1024; // 64MB
- 
--/// Gets a manifest file from cache.
--/// Returns the file data if found in cache, None otherwise.
--pub(crate) async fn get_from_cache(cache: Option<&ManifestCache>, key: &str) -> Option<Vec<u8>> {
-+/// Gets and decodes the object payload cached under `key`.
-+///
-+/// Older remote fills cached decoded content. If decoding fails, discard the
-+/// entry and let the caller refill it from object storage. Remote decode and
-+/// checksum errors are still returned by the caller.
-+pub(crate) async fn get_from_cache_decoded(
-+    cache: Option<&ManifestCache>,
-+    key: &str,
-+    compress_type: CompressionType,
-+) -> Option<Vec<u8>> {
-     let cache = cache?;
--    cache.get_file(key).await
--}
--
--/// Puts a manifest file into cache.
--pub(crate) async fn put_to_cache(cache: Option<&ManifestCache>, key: String, data: &[u8]) {
--    let Some(cache) = cache else {
--        return;
--    };
--    cache.put_file(key, data.to_vec()).await
-+    let raw = cache.get_file(key).await?;
-+    match compress_type.decode(raw.as_slice()).await {
-+        Ok(data) => Some(data),
-+        Err(error) => {
-+            debug!(
-+                "Failed to decode cached manifest {}, removing entry: {}",
-+                key, error
-+            );
-+            cache.remove(key).await;
-+            None
 +        }
-+    }
- }
- 
- /// Removes a manifest file from cache.
-@@ -44,19 +56,15 @@ pub(crate) async fn remove_from_cache(cache: Option<&ManifestCache>, key: &str)
-     cache.remove(key).await
- }
- 
--/// Writes data to object store and puts it into cache.
-+/// Writes data to object store and caches the same encoded payload.
- pub(crate) async fn write_and_put_cache(
-     object_store: &ObjectStore,
-     cache: Option<&ManifestCache>,
-     path: &str,
-     data: Vec<u8>,
- ) -> Result<()> {
--    // Clone data for cache before writing, only if cache is enabled.
--    let cache_data = if cache.is_some() {
--        Some(data.clone())
--    } else {
--        None
--    };
-+    // Clone only when caching is enabled; retain the owner for the cache write.
-+    let cache_data = cache.map(|cache| (cache, data.clone()));
- 
-     // Write to object store
-     object_store
-@@ -66,8 +74,8 @@ pub(crate) async fn write_and_put_cache(
-         .context(OpenDalSnafu)?;
- 
-     // Put to cache if we cloned the data
--    if let Some(data) = cache_data {
--        put_to_cache(cache, path.to_string(), &data).await;
-+    if let Some((cache, data)) = cache_data {
-+        cache.put_file(path.to_string(), data).await;
+         if let Some(edit_queue) = self.region_edit_queues.remove(&region_id) {
+             edit_queue.reject_all_as_not_found();
+         }
+@@ -206,6 +219,8 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         // Handles the stalled requests.
+         self.handle_region_stalled_requests(&change_result.region_id, true)
+             .await;
++        self.dispatch_pending_region_requests(change_result.region_id)
++            .await;
      }
  
-     Ok(())
-```
-
-**File**: `src/mito2/src/manifest/tests/checkpoint.rs` (modified, +69/-0)
-```diff
-@@ -1072,3 +1072,72 @@ impl oio::List for ZeroSizeLister {
-         Ok(Some(oio::Entry::new(&path, builder.build())))
-     }
+     /// Handles region sync request.
+@@ -285,19 +300,24 @@ impl<S: LogStore> RegionWorkerLoop<S> {
  }
-+
-+#[rstest::rstest]
-+#[case(CompressionType::Uncompressed)]
-+#[case(CompressionType::Gzip)]
-+#[case(CompressionType::Zstd)]
-+#[tokio::test]
-+async fn manifest_cache_write_through_survives_reopen(#[case] compression: CompressionType) {
-+    use common_base::readable_size::ReadableSize;
-+    use common_test_util::temp_dir::create_temp_dir;
-+    use object_store::ObjectStore;
-+    use object_store::services::Fs;
-+
-+    use crate::cache::manifest_cache::ManifestCache;
-+    use crate::manifest::manager::RegionManifestOptions;
-+    use crate::sst::FormatType;
-+
-+    let remote_dir = create_temp_dir("manifest-manager-remote");
-+    let cache_dir = create_temp_dir("manifest-manager-cache");
-+    let remote = ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
-+    let local = ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
-+    let cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+    // Use a relative prefix, matching production keys and the recovered index.
-+    let mut options = RegionManifestOptions {
-+        manifest_dir: "region/".to_string(),
-+        object_store: remote,
-+        compress_type: compression,
-+        checkpoint_distance: 3,
-+        remove_file_options: Default::default(),
-+        manifest_cache: Some(cache.clone()),
-+    };
-+    let mut writer = RegionManifestManager::new(
-+        Arc::new(basic_region_metadata()),
-+        0,
-+        options.clone(),
-+        FormatType::PrimaryKey,
-+        false,
-+        &Default::default(),
-+    )
-+    .await
-+    .unwrap();
-+    for _ in 0..7 {
-+        writer.update(nop_action(), false).await.unwrap();
-+        wait_for_manifest_checkpoint(&writer).await;
-+    }
-+    let key = gen_path(
-+        "region/",
-+        &checkpoint_file(writer.checkpointer().last_checkpoint_version()),
-+        compression,
-+    );
-+    assert!(cache.get(&key).await.is_some());
-+    let version = writer.manifest().manifest_version;
-+    let usage = writer.manifest_usage();
-+    drop(writer);
-+    drop(cache);
-+    // Release the final old cache handle before recovering a new index.
-+    drop(options.manifest_cache.take());
-+    let cache = ManifestCache::new(local, ReadableSize::mb(32), None, true).await;
-+    assert!(
-+        cache.get(&key).await.is_some(),
-+        "cache recovery missed {key}"
-+    );
-+    options.manifest_cache = Some(cache);
-+    let reopened = RegionManifestManager::open(options, &Default::default())
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    assert_eq!(version, reopened.manifest().manifest_version);
-+    assert_eq!(usage, reopened.manifest_usage());
-+}
-```
-
----
-
-### Incident Patch 3: `8e4aa4c8` (2026-11-05)
-**Commit Message**: fix(grafana): correct autopilot counters and show baseline reasons (#10160)
-
-* fix(grafana): correct autopilot counters and show baseline reasons
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(grafana): retain baseline totals when details are unavailable
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-**File**: `grafana/dashboards/metrics/cluster/dashboard.json` (modified, +18/-5)
-```diff
-@@ -13962,7 +13962,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-+              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14064,7 +14064,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-@@ -14399,7 +14399,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
-+              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14415,7 +14415,7 @@
-             "type": "prometheus",
-             "uid": "${metrics}"
-           },
--          "description": "Auto repartition gate stop count by gate and reason",
-+          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
-           "fieldConfig": {
-             "defaults": {
-               "color": {
-@@ -14501,12 +14501,25 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-               "range": true,
-               "refId": "A"
-+            },
+ 
+ impl<S: LogStore> RegionWorkerLoop<S> {
+-    /// Handles region edit request.
+-    pub(crate) fn handle_region_edit(&mut self, request: RegionEditRequest) {
++    /// Admits an edit and reports whether it started, queued, or failed synchronously.
++    pub(crate) fn handle_region_edit(&mut self, request: RegionEditRequest) -> RegionEditDispatch {
+         let region_id = request.region_id;
+         let Some(region) = self.regions.get_region(region_id) else {
+             request
+                 .waiters
+                 .reply_with(|| RegionNotFoundSnafu { region_id }.fail());
+-            return;
++            return RegionEditDispatch::Rejected;
+         };
+ 
+-        if !region.is_writable() {
+-            if region.state() == RegionRoleState::Leader(RegionLeaderState::Editing) {
+-                self.region_edit_queues
++        if !region.is_writable() || self.flush_scheduler.has_pending_alter(region_id) {
++            if matches!(
++                region.state(),
++                RegionRoleState::Leader(RegionLeaderState::Editing | RegionLeaderState::Altering)
++            ) || (region.is_writable() && self.flush_scheduler.has_pending_alter(region_id))
 +            {
-+              "datasource": {
-+                "type": "prometheus",
-+                "uid": "${metrics}"
-+              },
-+              "editorMode": "code",
-+              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
-+              "hide": false,
-+              "instant": false,
-+              "legendFormat": "baseline / {{reason}}",
-+              "range": true,
-+              "refId": "B"
++                return self
++                    .region_edit_queues
+                     .entry(region_id)
+                     .or_insert_with(|| RegionEditQueue::new(region_id))
+                     .enqueue(request);
+@@ -306,7 +326,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                     .waiters
+                     .reply_with(|| RegionBusySnafu { region_id }.fail());
              }
-           ],
-           "title": "Auto Repartition Gate Stops",
-```
-
-**File**: `grafana/dashboards/metrics/cluster/dashboard.md` (modified, +10/-4)
-```diff
-@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
- | Title | Query | Type | Description | Datasource | Unit | Legend Format |
- | --- | --- | --- | --- | --- | --- | --- |
- | Region Balancer Actions | `sum by (result) (
--  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+  increase(greptime_region_balancer_actions_total[$__rate_interval])
- )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
--| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
--| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
--| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
-+| Auto Repartition Gate Stops | `sum by (gate, reason) (
-+  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+  or
-+  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+    unless ignoring (gate, reason)
-+    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- # Object Store
-```
-
-**File**: `grafana/dashboards/metrics/cluster/dashboard.yaml` (modified, +17/-5)
-```diff
-@@ -1904,7 +1904,7 @@ groups:
-           queries:
-             - expr: |-
-                 sum by (result) (
--                  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+                  increase(greptime_region_balancer_actions_total[$__rate_interval])
-                 )
-               datasource:
-                 type: prometheus
-@@ -1915,7 +1915,7 @@ groups:
-           description: Region balancer gate stop count by gate and reason
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-+            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-@@ -1955,21 +1955,33 @@ groups:
-           description: Auto repartition action count by result
-           unit: short
-           queries:
--            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
-+            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{result}}'
-         - title: Auto Repartition Gate Stops
-           type: timeseries
--          description: Auto repartition gate stop count by gate and reason
-+          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
-+            - expr: |-
-+                sum by (gate, reason) (
-+                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+                  or
-+                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+                    unless ignoring (gate, reason)
-+                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+                )
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{gate}} / {{reason}}'
-+            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+              datasource:
-+                type: prometheus
-+                uid: ${metrics}
-+              legendFormat: baseline / {{reason}}
-         - title: Auto Repartition Sampling P99
-           type: timeseries
-           description: Auto repartition sampling elapsed time by stage
-```
-
-**File**: `grafana/dashboards/metrics/standalone/dashboard.json` (modified, +18/-5)
-```diff
-@@ -13962,7 +13962,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-+              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14064,7 +14064,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-@@ -14399,7 +14399,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
-+              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14415,7 +14415,7 @@
-             "type": "prometheus",
-             "uid": "${metrics}"
-           },
--          "description": "Auto repartition gate stop count by gate and reason",
-+          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
-           "fieldConfig": {
-             "defaults": {
-               "color": {
-@@ -14501,12 +14501,25 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-               "range": true,
-               "refId": "A"
-+            },
-+            {
-+              "datasource": {
-+                "type": "prometheus",
-+                "uid": "${metrics}"
-+              },
-+              "editorMode": "code",
-+              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
-+              "hide": false,
-+              "instant": false,
-+              "legendFormat": "baseline / {{reason}}",
-+              "range": true,
-+              "refId": "B"
+-            return;
++            return RegionEditDispatch::Rejected;
+         }
+ 
+         let RegionEditRequest {
+@@ -339,7 +359,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         if let Err(e) = region.set_editing(expect_state) {
+             let e = Arc::new(e);
+             waiters.reply_with(|| Err(e.clone()).context(EditRegionSnafu { region_id }));
+-            return;
++            return RegionEditDispatch::Rejected;
+         }
+         region.version_control.update_last_sequence(file_sequence);
+ 
+@@ -383,6 +403,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                 );
              }
-           ],
-           "title": "Auto Repartition Gate Stops",
-```
-
-**File**: `grafana/dashboards/metrics/standalone/dashboard.md` (modified, +10/-4)
-```diff
-@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
- | Title | Query | Type | Description | Datasource | Unit | Legend Format |
- | --- | --- | --- | --- | --- | --- | --- |
- | Region Balancer Actions | `sum by (result) (
--  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+  increase(greptime_region_balancer_actions_total[$__rate_interval])
- )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
--| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
--| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
--| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
-+| Auto Repartition Gate Stops | `sum by (gate, reason) (
-+  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+  or
-+  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+    unless ignoring (gate, reason)
-+    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- # Object Store
-```
-
-**File**: `grafana/dashboards/metrics/standalone/dashboard.yaml` (modified, +17/-5)
-```diff
-@@ -1904,7 +1904,7 @@ groups:
-           queries:
-             - expr: |-
-                 sum by (result) (
--                  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+                  increase(greptime_region_balancer_actions_total[$__rate_interval])
-                 )
-               datasource:
-                 type: prometheus
-@@ -1915,7 +1915,7 @@ groups:
-           description: Region balancer gate stop count by gate and reason
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-+            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-@@ -1955,21 +1955,33 @@ groups:
-           description: Auto repartition action count by result
-           unit: short
-           queries:
--            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
-+            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{result}}'
-         - title: Auto Repartition Gate Stops
-           type: timeseries
--          description: Auto repartition gate stop count by gate and reason
-+          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
-+            - expr: |-
-+                sum by (gate, reason) (
-+                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+                  or
-+                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+                    unless ignoring (gate, reason)
-+                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+                )
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{gate}} / {{reason}}'
-+            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+              datasource:
-+                type: prometheus
-+                uid: ${metrics}
-+              legendFormat: baseline / {{reason}}
-         - title: Auto Repartition Sampling P99
-           type: timeseries
-           description: Auto repartition sampling elapsed time by stage
+         });
++        RegionEditDispatch::Started
+     }
+ 
+     /// Handles region edit result.
+@@ -450,25 +471,68 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                 .await;
+         }
+ 
+-        let next_request =
+-            if let Some(edit_queue) = self.region_edit_queues.get_mut(&edit_result.region_id) {
+-                let request = edit_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10194** (2026-11-05): docs: tighten README facts and move quick start up (@killme2008)
-- **PR #10190** (closed): feat: update dashboard to v0.14.4 (@sunchanglong)
-- **PR #10187** (2026-11-05): ci: compare GreptimeDB File and S3 in observability benchmarks (@WenyXu)
-- **PR #10186** (2026-11-05): feat: update dashboard to v0.14.3 (@sunchanglong)
-- **PR #10184** (2026-11-05): docs: add demo link (@sunchanglong)
-- **PR #10182** (closed): fix(common-recordbatch): prune SQL UInt64 predicates in SST manifest scans (@WenyXu)
+- **PR #10227** (2026-11-06): feat(query): read a split-series table through a raw source (@discord9)
+- **PR #10226** (2026-11-06): feat(query): match a partitioned multi-selector tree above its sources (@discord9)
+- **PR #10224** (2026-11-06): fix(query): plan a data-free statement and a zero-match discovery natively (@discord9)
+- **PR #10223** (2026-11-06): feat(promql): match an empty on() and grouped cardinalities natively (@discord9)
+- **PR #10219** (2026-11-06): fix(meta-srv): invalidate leader cache on transaction errors (@WenyXu)
+- **PR #10218** (2026-11-07): feat(meta): configure drain parallelism and strategy over HTTP (@WenyXu)
 
 ---
 
@@ -2765,3 +2584,67 @@ Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)
+
+**RULE**:
+When implementing operations in `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c9acb55a`: meta-srv): acquire remote WAL read lock once before upgrade retries (#10205). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // If using Kafka WAL, hold a read lock on each topic for all attempts to prevent WAL
+        // pruning during the upgrade. Acquire once: re-acquiring a held read lock on retry
+        // queues behind a waiting `WalPruneProcedure` writer, which waits on the first guard.
+        for topic in &topics {
+            guards.push(
+                procedure_ctx
+                    .provider
+                    .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
+                    .await,
+            );
+        }
+
+
+/// Regression tests for a deadlock between the upgrade step's per-retry `RemoteWalLock::Read`
+/// (now acquired once before the retry loop) and `WalPruneProcedure`'s `RemoteWalLock::Write`
+/// on the same topic.
+///
+/// Mirrors a datanode rolling restart: failover sends the upgrade instruction to a candidate
+/// datanode that never answers, the mailbox times out (retryable), and the periodic WAL prune
+/// for the region's topic starts while the upgrade is waiting. Both procedures share one
+/// `ContextProvider`, as they do inside metasrv's procedure manager.
+///
+/// Requires a Kafka broker: `GT_KAFKA_ENDPOINTS=127.0.0.1:9092`.
+#[cfg(test)]
+mod wal_prune_deadl
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+            // If using Kafka WAL, acquire a read lock on the topic to prevent WAL pruning during the upgrade.
+            for topic in &topics {
+                guards.push(
+                    procedure_ctx
+                        .provider
+                        .acquire_lock(&(RemoteWalLock::Read(topic.clone()).into()))
+                        .await,
+                );
+            }
+
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c9acb55a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:16:16.151Z",
+  "last_updated": "2026-11-07T22:23:48.704Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17391,11 +17391,16 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "5bcb576b",
-      "content_hash": "e285a283f10c85461b8d5efa1f7774f4ec9c96c186c8fbcd9633e00dae4c6eb9",
+      "source_version": "2fefad6a",
+      "content_hash": "e254a726bbeb4c691ac3177c48a56ebba4d2804a9cc7d165496677cafe486a0a",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "meta-srv): acquire remote WAL read lock once before upgrade retries (#10205)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2079,
           "title": "log-store): refuse to open object store WAL regions whose history is missing (#9",
@@ -17477,7 +17482,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:40:02.782Z",
+      "verified_at": "2026-11-07T22:23:48.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58369,8 +58374,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "6183501e",
-      "content_hash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
+      "source_version": "50301083",
+      "content_hash": "6ef9bf2bc0caf5e64c13b79c08d6e1a5d9bdf5e6d6f2279297abd71007881a04",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -58392,6 +58397,11 @@
         {
           "number": null,
           "title": "ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "go.mod: fix duplicate handshake response in wireguard-go (#22221)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58590,7 +58600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:17:11.545Z",
+      "verified_at": "2026-11-07T22:23:44.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72584,14 +72594,19 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "469ff28e",
-      "content_hash": "c6bf03a885c86ee36d3b45fe0e7ad1bd05d4250c3a32cae70c271321effa350a",
+      "source_version": "21af52d1",
+      "content_hash": "03b7a0d1a755a8f170264e9cae511e16bfe5b8aa9d91d08e13389eea77b5870a",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "desktop): recover CLIProxyAPI after crashes and hangs",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(desktop): sign macOS dev builds with Developer ID",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -72655,7 +72670,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:24:35.385Z",
+      "verified_at": "2026-11-07T22:23:35.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
