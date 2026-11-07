@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-IJ4F",
-    "timestamp": "2026-11-05T06:15:06.063Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "35e4b92b8df0702fbdf48bec958ecceb597d9844a05dfabc9f0a2a624e8c798c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-IKOU",
-    "timestamp": "2026-11-05T06:15:08.094Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "e1184c9f1114401db6b2e4467507c7ff2f85d0e2a0706576bec6ccd6d1990048",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-INFQ",
     "timestamp": "2026-11-05T06:15:11.654Z",
     "repository": "apache/zookeeper",
@@ -7490,6 +7460,36 @@
     "repository": "open-ani/animeko",
     "learningId": "learn-github-open-ani-animeko",
     "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-BI5S",
+    "timestamp": "2026-11-07T19:16:47.920Z",
+    "repository": "Viggle/Viggle-Remake",
+    "learningId": "learn-huggingface-viggle-viggle-remake",
+    "contentHash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-BIRE",
+    "timestamp": "2026-11-07T19:16:48.698Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

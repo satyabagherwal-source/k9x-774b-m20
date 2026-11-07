@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:09:35.086Z",
-  "total_verified_learnings": 1232,
+  "last_updated": "2026-11-07T19:16:48.604Z",
+  "total_verified_learnings": 1233,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -12636,11 +12636,16 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "57c1f71e",
-      "content_hash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
+      "source_version": "cf4e7963",
+      "content_hash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bump the all-dependencies group with 5 updates (#728)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2329,
           "title": "Resilient Stream-Lease Recycle Pattern for Long-Lived Kubernetes Watchers",
@@ -12712,7 +12717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:53:13.523Z",
+      "verified_at": "2026-11-07T19:16:48.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185373,6 +185378,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-07T17:40:43.174Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-viggle-viggle-remake": {
+      "learning_id": "learn-huggingface-viggle-viggle-remake",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Viggle/Viggle-Remake",
+      "repository": "Viggle/Viggle-Remake",
+      "slug": "hf-viggle-viggle-remake",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Viggle/Viggle-Remake",
+      "source_version": "hf-viggle-viggle-remake",
+      "content_hash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
+      "dossier_path": "07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Temporal Consistency via Keyframe Anchoring in Diffusion Video Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "VRAM-Aware Video Chunking with Overlap Blending",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T19:16:47.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

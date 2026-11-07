@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T19:09:35.180Z",
-  "total_cycles_completed": 8016,
-  "total_learnings_persisted": 8016,
-  "total_rules_promoted": 7665,
+  "last_updated": "2026-11-07T19:16:48.707Z",
+  "total_cycles_completed": 8018,
+  "total_learnings_persisted": 8018,
+  "total_rules_promoted": 7668,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:27:09.065Z",
-      "repository": "milind-soni/OpenMausBot",
-      "learningId": "learn-github-milind-soni-openmausbot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:27:17.389Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:27:19.296Z",
       "repository": "microsoft/Florence-2-base",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T19:09:35.180Z",
       "repository": "open-ani/animeko",
       "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:16:47.933Z",
+      "repository": "Viggle/Viggle-Remake",
+      "learningId": "learn-huggingface-viggle-viggle-remake",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:16:48.707Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

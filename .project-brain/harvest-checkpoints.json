@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:09:35.183Z",
+  "last_updated": "2026-11-07T19:16:48.713Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
-      "verified_at": "2026-11-05T05:53:13.602Z",
+      "content_hash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
+      "verified_at": "2026-11-07T19:16:48.712Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:53:13.603Z"
+      "last_updated": "2026-11-07T19:16:48.712Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -18269,6 +18269,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-07T17:40:43.310Z"
+    },
+    "Viggle/Viggle-Remake": {
+      "repository": "Viggle/Viggle-Remake",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-viggle-viggle-remake",
+      "content_hash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
+      "verified_at": "2026-11-07T19:16:47.937Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-07T19:16:47.937Z"
     }
   },
   "repos": {

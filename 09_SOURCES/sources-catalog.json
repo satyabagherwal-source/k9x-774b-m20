@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "57c1f71e",
+    "sourceVersion": "cf4e7963",
     "license": "MIT",
-    "contentHash": "f0ac7cdb32eb3b4e724916f5e21488404dc755bac712c81bace2cd7fc038c93e",
-    "lastHarvestedAt": "2026-11-05T05:53:13.590Z",
+    "contentHash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
+    "lastHarvestedAt": "2026-11-07T19:16:48.702Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -12138,5 +12138,15 @@
     "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
     "lastHarvestedAt": "2026-11-07T17:40:43.287Z",
     "learningId": "learn-huggingface-nousresearch-arete-27b"
+  },
+  "hf-viggle-viggle-remake": {
+    "repository": "Viggle/Viggle-Remake",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Viggle/Viggle-Remake",
+    "sourceVersion": "hf-viggle-viggle-remake",
+    "license": "Open-Source",
+    "contentHash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
+    "lastHarvestedAt": "2026-11-07T19:16:47.924Z",
+    "learningId": "learn-huggingface-viggle-viggle-remake"
   }
 }
