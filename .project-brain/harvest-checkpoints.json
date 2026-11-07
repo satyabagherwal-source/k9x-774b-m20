@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:16:32.191Z",
+  "last_updated": "2026-11-07T20:23:08.291Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
-      "verified_at": "2026-11-04T02:33:13.618Z",
+      "content_hash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
+      "verified_at": "2026-11-07T20:22:59.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:33:13.618Z"
+      "last_updated": "2026-11-07T20:22:59.512Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
-      "verified_at": "2026-11-05T22:47:58.851Z",
+      "content_hash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
+      "verified_at": "2026-11-07T20:23:02.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:47:58.851Z"
+      "last_updated": "2026-11-07T20:23:02.909Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
-      "verified_at": "2026-11-05T21:32:49.485Z",
+      "content_hash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
+      "verified_at": "2026-11-07T20:22:55.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:32:49.485Z"
+      "last_updated": "2026-11-07T20:22:55.733Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
-      "verified_at": "2026-11-05T21:54:43.963Z",
+      "content_hash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
+      "verified_at": "2026-11-07T20:23:08.291Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:54:43.963Z"
+      "last_updated": "2026-11-07T20:23:08.291Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
-      "verified_at": "2026-11-04T20:46:42.903Z",
+      "content_hash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
+      "verified_at": "2026-11-07T20:22:59.859Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:46:42.903Z"
+      "last_updated": "2026-11-07T20:22:59.859Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",

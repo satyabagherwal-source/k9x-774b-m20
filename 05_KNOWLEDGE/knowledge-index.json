@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:16:32.097Z",
+  "last_updated": "2026-11-07T20:23:08.197Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8506,14 +8506,19 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "885ef69f",
-      "content_hash": "e41776c33e0a0d7b6b8aef6ff19470f2b4cef4bfc48855b5496a8080782436e1",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "6e0042e3",
+      "content_hash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "release): handle Windows cleanup and align kit lock [skip ci]",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1747,
           "title": "engine): refuse a shell or gate command the safety check blocks before asking to",
@@ -8630,7 +8635,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:32:49.363Z",
+      "verified_at": "2026-11-07T20:22:55.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13488,14 +13493,19 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "cda871cc",
-      "content_hash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
+      "source_version": "d622ec57",
+      "content_hash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update changelog to cover the alarmStore race issue",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #22682 from fuweid/weifu/benchmark",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13564,7 +13574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:54:43.826Z",
+      "verified_at": "2026-11-07T20:23:08.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37495,11 +37505,16 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "b5012d56",
-      "content_hash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
+      "source_version": "976421fc",
+      "content_hash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2253,
           "title": "Make the `shouldBeSingleton` block overloads infix (#6223)",
@@ -37526,7 +37541,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:46:42.772Z",
+      "verified_at": "2026-11-07T20:22:59.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43371,14 +43386,19 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "d2de4602",
-      "content_hash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
+      "source_version": "cedaeca8",
+      "content_hash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #7371 from moby/dependabot/github_actions/github/codeql-actio",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43442,7 +43462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:47:58.768Z",
+      "verified_at": "2026-11-07T20:23:02.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79454,11 +79474,16 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "0b35ae90",
-      "content_hash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
+      "source_version": "cd77dba9",
+      "content_hash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "html,css): keep minified and built HTML and CSS reading as their source (#23180)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1638,
           "title": "Zero-Falsy Invariant Guard in Numeric and Grammar Descriptors",
@@ -79515,7 +79540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:33:13.498Z",
+      "verified_at": "2026-11-07T20:22:59.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

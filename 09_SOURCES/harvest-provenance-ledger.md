@@ -8080,3 +8080,8 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3c5c334e` | Multi-dimensional audit evidence | 2026-11-07T20:09:34.199Z |
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `a579e352` | Multi-dimensional audit evidence | 2026-11-07T20:16:27.185Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `ab967ebc` | Multi-dimensional audit evidence | 2026-11-07T20:16:32.174Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `6e0042e3` | Multi-dimensional audit evidence | 2026-11-07T20:22:55.726Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `cd77dba9` | Multi-dimensional audit evidence | 2026-11-07T20:22:59.495Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `976421fc` | Multi-dimensional audit evidence | 2026-11-07T20:22:59.843Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `cedaeca8` | Multi-dimensional audit evidence | 2026-11-07T20:23:02.896Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `d622ec57` | Multi-dimensional audit evidence | 2026-11-07T20:23:08.284Z |

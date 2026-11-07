@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `885ef69f`  
+> **Source Version**: `6e0042e3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:59:20.838Z  
+> **Timestamp**: 2026-11-07T20:22:54.677Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:59:20.829Z  
+> **Harvest Timestamp**: 2026-11-07T20:22:53.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41157 stars
+- **Stars / Engagement**: 41161 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7136** (2026-10-29): **The persistent "update available" header chip is never rendered — `app.update_available` is written and never read**
-  *Symptoms*: ### Before you start  - [X] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  saw no notification  ### Steps to reproduce 复现步骤  Using codewhale  - the update available notification for 0.10.2 was not given  ### Codewhale version 版本  codewhale 0.10.1  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Linux  ### How did you get Codewhale? 获取方式  Official script ([codewhale.net/install.sh](<http://codewhale.net/install.sh>))  ### Provider and model 提供商和模型  *No response*  ### Terminal and shell 终端  *No response*  ### codewhale doctor (optional)  ```text ```  ### Logs, screenshots, anything else (optional)  # The persistent "update available" header chip is never rendered — `app.update_available` is written and never read  **Labels:** `bug`  **Surface:** TUI (terminal interface)  **Version:** `codewhale 0.10.1 (fead51eeea0f)`  **OS:** Linux (Linux Mint 22.2, x86-64)  **Confirmed present in:** `v0.10.1` tag and `HEAD` (`687a38c6e`, 2026-10-28) — 281 commits after the tag, still unreproduced.  ---  ## What happened  A newer release was available and Codewhale never told me — or told me only for twelve seconds, at startup, four days before I noticed.  Running `0.10.1` with `0.10.2` published:  | Fact | Value | | -- | -- | | Installed | `codewhale 0.10.1 (fead51eeea0f)`, `/usr/local/bin/codewhale`, 8 Oct | | `v0.10.2` published | 2026-10-24T17:31:14Z | | Session started | 2026-10-25T04:27:16Z | | Updat
+- **Issue #7234** (2026-11-07): **fix(fork): cut saved histories that carry workspace drift notices**
+  *Symptoms*:   No-Issue: fifth instance of the engine-owned history-envelope boundary class; no separate tracker issue exists. 
 
-- **Issue #7123** (2026-10-29): **Display overflow of the chain of thought**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  Some content within the chain of thought may spill over the boundaries of the chain-of-thought card and appear as regular content.   **This is the chain-of-thought in a collapsed state.** <img width="887" height="189" alt="Image" src="https://github.com/user-attachments/assets/bb3c8c61-56bb-4913-bd8f-d3c3314a9573" />  **This is the chain of thought in its expanded state. A single sentence has been split into two parts: the first half appears inside the chain of thought, while the second half appears outside of it; together, they form one continuous sentence.** <img width="916" height="233" alt="Image" src="https://github.com/user-attachments/assets/935c37bd-77c5-46a3-9c3d-c956be2acfef" />  ### Steps to reproduce 复现步骤  Just use it as normal.  ### Codewhale version 版本  0.10.3  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Windows  ### How did you get Codewhale? 获取方式  Official script (codewhale.net/install.sh)  ### Provider and model 提供商和模型  _No response_  ### Terminal and shell 终端  Windows Terminal  ### codewhale doctor (optional)  ```text  ```  ### Logs, screenshots, anything else (optional)  _No response_
+- **Issue #7231** (2026-11-07): **fix(net): go direct when a local proxy disappears**
+  *Symptoms*: ## What and why  reqwest snapshots `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` when a client is built, and Codewhale builds its engine HTTP clients once per session. A session started behind a local proxy (Clash, v2rayN, sing-box on `127.0.0.1:…`) therefore kept dialing that port after the proxy was closed: every request failed with a connect error, including requests to providers that need no proxy at all, and the only recovery was restarting Codewhale.  `codewhale_net::proxy::install_loopback_proxy()` installs a `reqwest::Proxy::custom` route for ambient **loopback** proxies:  - `no_proxy()` runs first, so the custom route is the only proxy source. `no_proxy()` clears every proxy registered before it, so the order matters: a request the callback declines cannot fall back to the address reqwest read when the client was built. - A background thread probes each configured loopback proxy on its own port. While a port refuses connections, requests that would use it go direct; when it answers again, proxy routing resumes. A live `HTTP_PROXY` therefore does not keep a dead `HTTPS_PROXY` in the path. - Only a definite `ECONNREFUSED` from every resolved address moves a proxy to direct. A timeout, an fd limit or a resolver failure leaves the previous state alone: routing a session direct on that evidence would put traffic on a network path the operator deliberately avoided. - While the port answers, routing is unchanged: `ALL_PROXY` / `HTTP_PROXY` / `HTTPS_PROXY` precedence, `NO_PROXY
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,474 +1845,876 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `885ef69f` (2026-11-05)
-**Commit Message**: fix(app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2)
+### Incident Patch 1: `549ff01e` (2026-11-07)
+**Commit Message**: fix(release): handle Windows cleanup and align kit lock [skip ci]
 
-GET /v1/workspace/status and the git status detail spawned `git status
---porcelain=v1` with only core.fsmonitor and core.hooksPath disabled, so a
-repository-configured clean or process filter executed (observed on native-v36:
-filter-clean and filter-process markers written), and a failing process filter
-made git exit nonzero so the route silently reported dirty=false with zero counts
-on a dirty repository. Status reads now go through Git::status_command, which
-enumerates filter drivers with `git config --show-scope` and neutralizes any
-driver with a definition in a non-global/system scope (local, worktree, other),
-including a local redefinition of a global driver; drivers defined only in the
-user's global or system config, such as Git LFS, keep working. If the scoped probe
-fails it falls back to the all-scope neutralizer (fail closed). --ignore-submodules
-=dirty stops a repo-controlled submodule from running its own drivers. Status runs
-once in collect_workspace_status (it ran twice). A git failure no longer reads as
-clean: WorkspaceStatusResponse and GitStatusDetailResponse gain
-status
+Strip Windows PowerShell's UTF8 BOM before parsing normal cleanup
+receipts. Run the existing bounded exact-private-path cleanup fallback
+on failures even when its controller has already exited, verify its
+returned path and zero remaining Terminal processes, and retain the
+original failure result.
 
-**File**: `crates/app-server/src/runtime_api/git.rs` (modified, +37/-4)
+Use Cargo's conservative offline update for the standalone vendored
+kit lock: app-server-protocol0.10.3 and its declared chrono edge. Root
+Cargo.lock and runtime Rust sources are unchanged from4ba0c656ac9c.
+
+Verified on the frozen4ba+these2paths: existing standalone kit themes
+14passed/0failed; surfaces3passed/0failed, both locked/offline with
+source unchanged and disk guard retained. Node syntax and diff checks
+exit0. Independent review confirms both Windows findings are closed.
+Actual PowerShell/Windows execution remains pending finalCI.
+
+Mac4ba CLI build and strict HTTP admission/recovery observations passed;
+Linux4ba-equivalent CLI build passed with full4270source invariants.
+Those executables retain their exact4ba identity and scope; this commit
+is not a claim that they were rebuilt from the later script/kit-lock
+meta
+
+**File**: `scripts/release/windows-terminal-clipboard.mjs` (modified, +15/-11)
 ```diff
-@@ -217,6 +217,22 @@ fn run_git_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
- }
- 
-+fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-+    let output = Git::status_command(workspace)
-+        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-+        .args(args)
-+        .output()
-+        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-+    if !output.status.success() {
-+        return Err(ApiError::internal(format!(
-+            "git {} failed: {}",
-+            args.first().copied().unwrap_or(""),
-+            String::from_utf8_lossy(&output.stderr).trim()
-+        )));
+@@ -120,7 +120,7 @@ try {
+   receipt.stash = { path: stashFile, sha256: createHash('sha256').update(stashBytes).digest('hex'), records: 1, exactDraftMatch: true, normalization: 'CRLF to LF only' };
+   assert.equal(await desktopClosed, 0, desktopError);
+   assert.equal(desktopError, '', 'no desktop errors');
+-  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
++  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
+   assert.equal(receipt.cleanup.terminal, terminal, 'cleanup used the owned Terminal path');
+   assert.equal(receipt.cleanup.remaining, 0, 'owned Terminal processes are gone');
+   receipt.result = 'passed';
+@@ -135,18 +135,22 @@ try {
+         await fs.writeFile(path.join(evidence, 'cancel'), 'retire owned Terminal');
+         await Promise.race([desktopClosed, delay(5000)]);
+       } catch (error) { receipt.desktop.cancelError = String(error); }
+-      if (desktop.exitCode === null && desktop.signalCode === null) {
+-        try {
+-          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+-            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+-          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+-          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+-        } catch (error) {
+-          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+-        }
+-        receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
 +    }
-+    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-+}
-+
- // ---------------------------------------------------------------------------
- // GET /v1/git — status detail
- // ---------------------------------------------------------------------------
-@@ -252,6 +268,8 @@ pub(super) struct GitStatusDetailResponse {
-     head: Option<String>,
-     /// Full HEAD commit id; null on an unborn branch.
-     head_oid: Option<String>,
-+    /// True when `git status` could not be read: the counts are unknown.
-+    status_unavailable: bool,
-     /// Opaque token for the whole index (every stage entry, repository-wide).
-     index_token: Option<String>,
-     /// Opaque token for the whole tree: HEAD, the index and every row.
-@@ -289,6 +307,7 @@ fn collect_git_status_detail(workspace: &FsPath) -> Result<GitStatusDetailRespon
-         detached: false,
-         head: status.head,
-         head_oid: None,
-+        status_unavailable: status.status_unavailable,
-         index_token: None,
-         revision: None,
-         ahead: status.ahead,
-@@ -388,13 +407,13 @@ fn status_rows(
-     frame: &RepoFrame,
- ) -> Result<(Vec<GitFileEntry>, bool), ApiError> {
-     let mut complete = true;
--    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-+    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-         Ok(porcelain) => parse_porcelain(&porcelain),
-         Err(_) => {
-             // One broken submodule can abort all of Git's porcelain output.
-             // Recover ordinary rows, then inspect gitlinks individually so
-             // only the unreadable submodule is shown as unknown/unguardable.
--            let porcelain = run_git_sync(
-+            let porcelain = status_sync(
-                 workspace,
-                 &["status", "--porcelain=v1", "-z", "--ignore-submodules=all"],
-             )?;
-@@ -407,7 +426,7 @@ fn status_rows(
-                     continue;
-                 }
-                 rows.retain(|row| normalized_row_path(&row.path) != path);
--                match run_git_sync(
-+                match status_sync(
-                     &frame.toplevel,
-                     &[
-                         "--literal-pathspecs",
-@@ -2229,6 +2248,7 @@ pub(super) async fn git_branch(
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-     use std::fs;
- 
-     thread_local! {
-@@ -2811,9 +2831,22 @@ mod tests {
-     #[cfg(unix)]
-     #[test]
-     fn status_and_guards_respect_clean_filters() {
-+        let _env_lock = lock_test_env();
-         let tmp = repo();
-         let ws = tmp.path();
--        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
-+        let global = tempfile::tempdir().unwrap();
-+        let global_config = global.path().join("gitconfig");
-+        git(
-+            ws,
-+            &[
-+                "config",
-+                "--file",
-+                global_config.to_str().unwrap(),
-+                "filter.up.clean",
-+                "tr a-z A-Z",
-+            ],
-+        );
-+        let _global = EnvVarGuard::set("GIT_CONFIG_GLOBAL", &global_config);
-         fs::write(ws.join(".gitattributes"), "*.txt filter=up\n").unwrap();
-         git(ws, &["add", ".gitattributes"]);
-         // The tracked file is unchanged since the initial commit. Apply the
++    if (receipt.result !== 'passed') {
++      try {
++        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
++          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
++        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
++        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
++        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
++        assert.equal(receipt.desktop.fallbackCleanup.remaining, 0, 'fallback cleanup retired the owned Terminal');
++      } catch (error) {
++        receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+       }
+     }
++    if (desktop.exitCode === null && desktop.signalCode === null) {
++      receipt.desktop.killRequestedAt = new Date().toISOString(); desktop.kill();
++    }
+     await desktopClosed;
+   }
+   await fs.writeFile(path.join(evidence, 'receipt.json'), JSON.stringify(receipt, null, 2));
 ```
 
-**File**: `crates/app-server/src/runtime_api/workspace.rs` (modified, +44/-23)
+**File**: `vendor/codewhale-ratatui/Cargo.lock` (modified, +3/-2)
 ```diff
-@@ -131,6 +131,9 @@ pub(super) struct WorkspaceStatusResponse {
-     pub(super) branch: Option<String>,
-     pub(super) head: Option<String>,
-     pub(super) dirty: bool,
-+    /// True when `git status` could not be read, so `dirty` and the
-+    /// staged/unstaged/untracked counts are unknown rather than zero.
-+    pub(super) status_unavailable: bool,
-     pub(super) staged: usize,
-     pub(super) unstaged: usize,
-     pub(super) untracked: usize,
-@@ -148,11 +151,10 @@ pub(super) struct WorkspaceGitMetadata {
- }
+@@ -100,8 +100,9 @@ dependencies = [
  
- /// Status is several blocking `git` spawns, so it runs off the async workers
--/// (#6149) like every other git read on this surface. It deliberately keeps
--/// normal Git filters and untracked settings rather than the full review
--/// command, so its counts match `git status` and the operator writes (see
--/// `git.rs`), but it never runs a repository-configured helper: fsmonitor and
--/// hooks are off, as on every read-only review path (see `run_git`).
-+/// (#6149) like every other git read on this surface. It keeps normal
-+/// untracked settings rather than the full review diff flags, but it never
-+/// runs a repository-configured helper: fsmonitor, hooks and clean/process
-+/// filters are off, as on every read-only review path (see `run_status`).
- pub(super) async fn workspace_status(
-     State(state): State<RuntimeApiState>,
- ) -> Result<Json<WorkspaceStatusResponse>, ApiError> {
-@@ -238,6 +240,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-         branch: None,
-         head: None,
-         dirty: false,
-+        status_unavailable: false,
-         staged: 0,
-         unstaged: 0,
-         untracked: 0,
-@@ -254,12 +257,16 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     };
- 
-     status.git_repo = true;
--    let metadata = workspace_git_metadata(workspace, &head);
--    status.branch = metadata.branch;
--    status.head = metadata.head;
--    status.dirty = metadata.dirty;
--
--    if let Some(porcelain) = run_git(workspace, &["status", "--porcelain=v1"]) {
-+    let (branch, short_head) = branch_and_head(&head);
-+    status.branch = branch;
-+    status.head = short_head;
-+
-+    let porcelain = run_status(workspace);
-+    status.status_unavailable = porcelain.is_none();
-+    status.dirty = porcelain
-+        .as_deref()
-+        .is_some_and(|porcelain| !porcelain.trim().is_empty());
-+    if let Some(porcelain) = porcelain {
-         for line in porcelain.lines() {
-             if line.starts_with("??") {
-                 status.untracked += 1;
-@@ -278,7 +285,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     }
- 
-     if let Some(counts) = run_git(
--        workspace,
-+        Git::review_base(workspace),
-         &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
-     ) {
-         let mut parts = counts.split_whitespace();
-@@ -298,8 +305,8 @@ pub(super) fn collect_workspace_git_metadata(workspace: &FsPath) -> WorkspaceGit
-     }
- }
- 
--fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
--    let (branch, short_id) = match head.id {
-+fn branch_and_head(head: &GitHead) -> (Option<String>, Option<String>) {
-+    match head.id {
-         Some(_) => (
-             head.branch.clone().or_else(|| {
-                 head.short_id()
-@@ -308,11 +315,17 @@ fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMet
-             head.short_id().map(str::to_string),
-         ),
-         None => (None, None),
--    };
-+    }
-+}
-+
-+fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
-+    let (branch, head) = branch_and_head(head);
-+    let porcelain = run_status(workspace);
-     WorkspaceGitMetadata {
-         branch,
--        head: short_id,
--        dirty: run_git(workspace, &["status", "--porcelain=v1"])
-+        head,
-+        dirty: porcelain
-+            .as_deref()
-             .is_some_and(|porcelain| !porcelain.trim().is_empty()),
-     }
- }
-@@ -329,12 +342,20 @@ fn read_workspace_head(workspace: &FsPath) -> Option<GitHead> {
-     }
- }
- 
--/// Read-only git for status and metadata. `Git::review_base` disables
--/// `core.fsmonitor`, `core.hooksPath`, lazy fetch and replace objects: a
--/// status poll must not execute a helper the repository's config names.
--fn run_git(workspace: &FsPath, args: &[&str]) -> Option<String> {
--    let mut command = Git::review_base(workspace).ok()?;
--    let output = command.args(args).output().ok()?;
-+/// `git status` through [`Git::status_command`]: besides fsmonitor and hooks
-+/// it neutralizes every clean/process filter driver the repository itself
-+/// configures (never the user's global or system ones, such as Git LFS),
-+/// and submodules are compared without a child status inside them. `None`
-+/// means git could not be read, never a clean tree.
-+fn run_status(workspace: &FsPath) -> Option<String> {
-+    run_git(
-+        Git::status_command(wor
+ [[package]]
+ name = "codewhale-app-server-protocol"
+-version = "0.10.2"
++version = "0.10.3"
+ dependencies = [
++ "chrono",
+  "serde",
+  "serde_json",
+ ]
+@@ -110,8 +111,8 @@ dependencies = [
+ name = "codewhale-protocol"
+ version = "0.10.3"
+ dependencies = [
+- "codewhale-app-server-protocol",
+  "chrono",
++ "codewhale-app-server-protocol",
+  "serde",
+  "serde_json",
+  "uuid",
 ```
 
-**File**: `crates/dependencies/src/lib.rs` (modified, +46/-4)
+---
+
+### Incident Patch 2: `147bd65c` (2026-11-07)
+**Commit Message**: fix(runtime): admit supported DSH packages and clarify lock refusals [skip ci]
+
+Reuse npm semver7.8.5 inside the existing detached reviewer, including the
+pinned upstream prerelease policy. Require its exact compatibility decision
+before import and resolve a selected package's own ESM export through existing
+contained-path guards. Preserve the existing unresolved-sibling refusal.
+
+Stop deriving a lock-owner PID from stale lockfile bytes. Reuse coordination
+projection and event-keyed notices to report each refusal cause once. Skip
+sidebar cleanup only for already-latched read-only admission without a lock
+slot; pace other failed attempts with the existing timestamp. Locks, migration,
+retained state and explicit owning-Runtime restart behavior remain unchanged.
+Align release notes and the existing affected fixture/assertion; no new tests.
+
+Verified frozen4270-file Mac check: six native crates, all targets, locked,
+onejob, offline, exit0 in838.473s, unchanged full source, no disk stop.
+Node typecheck/build0, existing offline-reviewer1pass and six range observations
+on the exact DSH source. Historical source-equivalent real1.0.8 preview400
+reproduced the original range refusal. Current
+
+**File**: `CHANGELOG.md` (modified, +17/-5)
 ```diff
-@@ -1161,6 +1161,27 @@ impl Git {
-     /// Configured filters otherwise execute even when those flags are present.
-     pub fn review_command(workspace: &Path) -> anyhow::Result<Command> {
-         let overrides = Self::review_filter_overrides(workspace)?;
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    /// Like [`Self::review_command`] for status reads, which must keep the
-+    /// user's own filters (Git LFS in global or system config) working so
-+    /// files they manage do not look modified. Only filter drivers that
-+    /// repository-controlled config (local or worktree scope, including files
-+    /// it includes) defines are neutralized. If the scoped probe fails, this
-+    /// falls back to neutralizing every driver.
-+    pub fn status_command(workspace: &Path) -> anyhow::Result<Command> {
-+        let overrides = match Self::filter_overrides(workspace, true) {
-+            Ok(overrides) => overrides,
-+            Err(_) => Self::review_filter_overrides(workspace)?,
-+        };
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    fn with_filter_overrides(
-+        workspace: &Path,
-+        overrides: Vec<(String, &'static str)>,
-+    ) -> anyhow::Result<Command> {
-         let mut command = Self::review_base(workspace)?;
-         let mut count = 2;
-         for (key, value) in overrides {
-@@ -1254,12 +1275,22 @@ impl Git {
-     /// apply them through `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n`.
-     pub fn review_filter_overrides(
-         workspace: &Path,
-+    ) -> anyhow::Result<Vec<(String, &'static str)>> {
-+        Self::filter_overrides(workspace, false)
-+    }
-+
-+    fn filter_overrides(
-+        workspace: &Path,
-+        repository_only: bool,
-     ) -> anyhow::Result<Vec<(String, &'static str)>> {
-         use anyhow::{Context, bail};
+@@ -274,15 +274,27 @@ until the matching tag, packages, checksums, and release assets exist.
+   generation or trust receipt. The macOS stale-enable check passed (1/1);
+   a separate Linux run reported 202 passed and one ignored on an earlier base
+   with matching plugin files and lockfile. Snapshot checking is point-in-time;
+-  automatic restoration is unfinished and filesystem races remain open. A
+-  stage-disappearance regression and the final candidate remain unqualified.
++  missing-stage recovery reuses the current receipt and policy. Filesystem
++  race coverage and final-candidate native qualification remain open.
+ - **Plugin status and UI admission:** an enabled, trusted plugin whose reviewed
+   runtime snapshot is missing or invalid now reports
+   `runtime-snapshot-unavailable`. Both plugin UI metadata and assets require a
+   declared DSH client; ordinary plugins cannot expose staged files through the
+-  client UI route. Automatic restoration of missing snapshots from
+-  receipt-matching canonical source and authenticated DSH asset transport
+-  remain work in progress; existing modified snapshots require review.
++  client UI route. Missing snapshots recover only from receipt-matching
++  canonical source; authenticated assets require an exact current grant.
++  Native and Electron qualification remains open; existing modified snapshots
++  require review.
++- **DSH package-directory imports:** the existing offline reviewer uses npm's
++  version-range parser with the pinned DeepSeek host's prerelease policy, and
++  bare self-package exports resolve inside the selected package directory.
++  Invalid or incompatible ranges and paths outside the reviewed package still
++  refuse. Real published-plugin activation remains unqualified.
++- **Coordination lock diagnostics (#7232):** stale lock-file contents no longer
++  identify an owner PID. A refused legacy admission keeps its reason in Work
++  and shows one notice per cause instead of repeating cleanup warnings on
++  every sidebar refresh. Legacy migration still requires the actual holder to
++  exit and the refused owning Runtime to restart; locks and retained state
++  remain protected.
+ - **A local proxy that stops mid-session no longer strands the session (#7231):** the model, catalog, search, vision, finance, MCP-registry, profile and remote-control clients watch a loopback proxy port and go direct while it refuses connections, then resume proxying when it returns. Only a definite refusal from every resolved address changes the route; remote proxies, `NO_PROXY` matches, credentials and the existing precedence are unchanged. Set `CODEWHALE_LOCAL_PROXY_FALLBACK=0` to keep the old build-time snapshot.
+ - **Proxy diagnostic privacy ([#7233](https://github.com/codewhale-hq/codewhale/issues/7233)):** malformed MCP proxy warnings omit configured values; local-proxy log labels mask userinfo and omit URL paths, queries and fragments. Routing is unchanged. All 23 existing proxy tests passed on macOS; runtime log capture and other platforms remain unqualified. Thanks [@SparkofSpike](https://github.com/SparkofSpike) for the report.
+ - **Fork, undo and retry work after a workspace drift notice (#7234):** the history-boundary walks now treat a whole `<context_update>` envelope as engine-owned, so a session that received one can be cut at every saved turn. A person quoting a notice or a truncated envelope still counts as their own prompt.
+```
+
+**File**: `crates/engine/extension-host/dist/LICENSES.txt` (modified, +21/-0)
+```diff
+@@ -30,6 +30,7 @@ Packages:
+   jose@6.2.12 (MIT)
+   js-yaml@4.3.2 (MIT)
+   pkce-challenge@5.0.1 (MIT)
++  semver@7.8.5 (ISC)
+   zod@4.6.7 (MIT)
  
-         let mut command = Self::review_base(workspace)?;
-+        command.arg("config");
-+        if repository_only {
-+            command.arg("--show-scope");
+ ========================================================================
+@@ -1183,6 +1184,26 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ 
++========================================================================
++semver@7.8.5 (ISC)
++========================================================================
++
++The ISC License
++
++Copyright (c) Isaac Z. Schlueter and Contributors
++
++Permission to use, copy, modify, and/or distribute this software for any
++purpose with or without fee is hereby granted, provided that the above
++copyright notice and this permission notice appear in all copies.
++
++THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
++IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++
+ ========================================================================
+ zod@4.6.7 (MIT)
+ ========================================================================
+```
+
+**File**: `crates/engine/extension-host/dist/dsh-composition-review.mjs` (modified, +1193/-1)
+```diff
+@@ -1,6 +1,10 @@
+ // trusted nonexecuting DSH composition reviewer; third-party notices: LICENSES.txt
++var __create = Object.create;
+ var __defProp = Object.defineProperty;
++var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+ var __getOwnPropNames = Object.getOwnPropertyNames;
++var __getProtoOf = Object.getPrototypeOf;
++var __hasOwnProp = Object.prototype.hasOwnProperty;
+ var __esm = (fn, res, err) => function __init() {
+   if (err) throw err[0];
+   try {
+@@ -9,10 +13,33 @@ var __esm = (fn, res, err) => function __init() {
+     throw err = [e], e;
+   }
+ };
++var __commonJS = (cb, mod) => function __require() {
++  try {
++    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
++  } catch (e) {
++    throw mod = 0, e;
++  }
++};
+ var __export = (target, all) => {
+   for (var name in all)
+     __defProp(target, name, { get: all[name], enumerable: true });
+ };
++var __copyProps = (to, from, except, desc) => {
++  if (from && typeof from === "object" || typeof from === "function") {
++    for (let key of __getOwnPropNames(from))
++      if (!__hasOwnProp.call(to, key) && key !== except)
++        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
++  }
++  return to;
++};
++var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
++  // If the importer is in node compatibility mode or this is not an ESM
++  // file that has been converted to a CommonJS file using a Babel-
++  // compatible transform (i.e. "__esModule" has not been set), then set
++  // "default" to the CommonJS "module.exports" for node compatibility.
++  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
++  mod
++));
+ 
+ // node_modules/@deepseek-ai/cosmokit/lib/index.js
+ function isNullable(value) {
+@@ -14332,9 +14359,1166 @@ var init_composition = __esm({
+   }
+ });
+ 
++// node_modules/semver/internal/lrucache.js
++var require_lrucache = __commonJS({
++  "node_modules/semver/internal/lrucache.js"(exports, module) {
++    "use strict";
++    var LRUCache = class {
++      constructor() {
++        this.max = 1e3;
++        this.map = /* @__PURE__ */ new Map();
++      }
++      get(key) {
++        const value = this.map.get(key);
++        if (value === void 0) {
++          return void 0;
++        } else {
++          this.map.delete(key);
++          this.map.set(key, value);
++          return value;
 +        }
-         command.args([
--            "config",
-             "--null",
-             "--name-only",
-             "--get-regexp",
-@@ -1276,11 +1307,22 @@ impl Git {
-             bail!("Cannot safely inspect Git review configuration");
-         }
-         let mut filters = std::collections::BTreeSet::new();
--        for key in output
-+        let mut fields = output
-             .stdout
-             .split(|byte| *byte == 0)
--            .filter(|key| !key.is_empty())
--        {
-+            .filter(|field| !field.is_empty());
-+        while let Some(field) = fields.next() {
-+            let key = if repository_only {
-+                let key = fields
-+                    .next()
-+                    .context("Git review filter scope has no key")?;
-+                if matches!(field, b"global" | b"system") {
-+                    continue;
-+                }
-+                key
-+            } else {
-+                field
-+            };
-             let key =
-                 std::str::from_utf8(key).context("Git review filter name is not valid UTF-8")?;
-             let (driver, _) = key
++      }
++      delete(key) {
++        return this.map.delete(key);
++      }
++      set(key, value) {
++        const deleted = this.delete(key);
++        if (!deleted && value !== void 0) {
++          if (this.map.size >= this.max) {
++            const firstKey = this.map.keys().next().value;
++            this.delete(firstKey);
++          }
++          this.map.set(key, value);
++        }
++        return this;
++      }
++    };
++    module.exports = LRUCache;
++  }
++});
++
++// node_modules/semver/internal/parse-options.js
++var require_parse_options = __commonJS({
++  "node_modules/semver/internal/parse-options.js"(exports, module) {
++    "use strict";
++    var looseOption = Object.freeze({ loose: true });
++    var emptyOpts = Object.freeze({});
++    var parseOptions = (options) => {
++      if (!options) {
++        return emptyOpts;
++      }
++      if (typeof options !== "object") {
++        return looseOption;
++      }
++      return options;
++    };
++    module.exports = parseOptions;
++  }
++});
++
++// node_modules/semver/internal/constants.js
++var require_constants = __commonJS({
++  "node_modules/semver/internal/constants.js"(exports, module) {
++    "use strict";
++    var SEMVER_SPEC_VERSION = "2.0.0";
++    var MAX_LENGTH = 256;
++    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || /* istanbul ignore next */
++    9007199254740991;
++    var MAX_SAFE_COMPONENT_LENGTH = 16;
++    var MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
++    var RELEASE_TYPES = [
++      "major",
++      "premajor",
++      "minor",
++      "preminor",
++      "patch",
++      "prepatch",
++      "prerelease"
++    ];
++    module.exports = {
++      MAX_LENGTH,
++      MAX_SAFE_COMPONENT_LENGTH,
++      MAX_SAFE_BUILD_LENGTH,
++      MAX_SAFE_INTEGER,
++      RELEASE_TYPES,
++      SEMVER_SPEC_VERSION,
++      FLAG_INCLUDE_PRERELEASE: 1,
++      FLAG_LOOSE: 2
++    };
++  }
++});
++
++// node_modules/semver/internal/debug.js
++var require_debug = __commonJS({
++  "node_modules/semver/internal/debug.js"(exports, module) {
++    "use strict";
++    var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
++    };
++    module.exports = debug;
++  }
++});
++
++// node_modules/semver/internal/re.js
++var require_re = __commonJS({
++  "node_modules/semver/internal/re.js"(exports, module) {
++    "use strict";
++    var {
++      MAX_SAFE_COMPONENT_LENGTH,
++      MAX_SAFE_BUILD_LENGTH,
++     
 ```
 
----
-
-### Incident Patch 2: `e9fdd250` (2026-11-05)
-**Commit Message**: fix(engine): session loads observe under the shared read lock and create no storage
-
-Since 20f8244aafd every snapshot/checkpoint load took the exclusive
-write-admission lock to mint an optional write receipt, which creates the
-late-usage sidecar directory and lock leaf, so a pure read wrote to disk and
-could fail on read-only storage. Loads now observe the session/checkpoint pair
-under the shared, non-creating read lock (with_session_observation, which returns
-None for a tombstoned session); an absent lock leaf is read unlocked, and when no
-observation can be taken the existing degrade path returns the transcript without
-a write receipt (the commit message of 20f8244aafd states receipts are optional).
-save/rename/archive/delete/capture_session_write_source/resume_session and the
-admitted branches are unchanged, and publish_session_inner still refuses a value
-with no captured native producer, so a session loaded without a receipt cannot
-publish until a caller captures one under write admission. One behavior
-difference: a read no longer runs ledger sync/retirement on a deletion marker; it
-returns NotFound and the next writer cleans up. A first-ever save racing a read
-before the lock 
-
-**File**: `crates/engine/src/session_manager.rs` (modified, +15/-2)
+**File**: `crates/engine/extension-host/package-lock.json` (modified, +22/-0)
 ```diff
-@@ -3112,6 +3112,19 @@ impl SessionManager {
-         write().map(Some)
+@@ -16,9 +16,11 @@
+         "@modelcontextprotocol/client": "2.4.0",
+         "@types/js-yaml": "4.0.9",
+         "@types/node": "22.20.4",
++        "@types/semver": "7.8.0",
+         "acorn": "8.18.0",
+         "esbuild": "0.28.1",
+         "js-yaml": "4.3.2",
++        "semver": "7.8.5",
+         "typescript": "5.9.3"
+       },
+       "engines": {
+@@ -578,6 +580,13 @@
+         "undici-types": "~6.21.0"
+       }
+     },
++    "node_modules/@types/semver": {
++      "version": "7.8.0",
++      "resolved": "https://registry.npmjs.org/@types/semver/-/semver-7.8.0.tgz",
++      "integrity": "sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/acorn": {
+       "version": "8.18.0",
+       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
+@@ -738,6 +747,19 @@
+         "node": ">=16.20.0"
+       }
+     },
++    "node_modules/semver": {
++      "version": "7.8.5",
++      "resolved": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz",
++      "integrity": "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==",
++      "dev": true,
++      "license": "ISC",
++      "bin": {
++        "semver": "bin/semver.js"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
+     "node_modules/shebang-command": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
+```
+
+**File**: `crates/engine/extension-host/package.json` (modified, +2/-0)
+```diff
+@@ -24,9 +24,11 @@
+     "@modelcontextprotocol/client": "2.4.0",
+     "@types/js-yaml": "4.0.9",
+     "@types/node": "22.20.4",
++    "@types/semver": "7.8.0",
+     "acorn": "8.18.0",
+     "esbuild": "0.28.1",
+     "js-yaml": "4.3.2",
++    "semver": "7.8.5",
+     "typescript": "5.9.3"
+   }
+ }
+```
+
+**File**: `crates/engine/extension-host/src/dsh/review-main.ts` (modified, +12/-2)
+```diff
+@@ -1,6 +1,8 @@
+ /** Detached trusted offline reviewer. No HostRoot, plugin import or expression evaluation. */
+ import { reviewComposition, type ReviewedComposition } from './composition.ts'
+ import {reviewAgentPresets, type PresetReviewInput} from './agent-presets.ts'
++import satisfies from 'semver/functions/satisfies.js'
++import validRange from 'semver/ranges/valid.js'
+ 
+ try {
+   let bytes = 0
+@@ -11,8 +13,16 @@ try {
+     if (bytes > 8 * 1024 * 1024) throw new Error('review request exceeds 8 MiB')
+     chunks.push(part)
+   }
+-  const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ReviewedComposition
+-  const output = JSON.stringify((input as any).kind === 'agent-presets' ? await reviewAgentPresets(input as unknown as PresetReviewInput) : reviewComposition(input))
++  const input = JSON.parse(Buffer.concat(chunks).toString('utf8')) as ReviewedComposition & { compatibility?: { range: string; version: string } }
++  const result = (input as any).kind === 'agent-presets' ? await reviewAgentPresets(input as unknown as PresetReviewInput) : reviewComposition(input)
++  let compatibility: string | undefined
++  if (input.compatibility !== undefined) {
++    const { range, version } = input.compatibility
++    if (typeof range !== 'string' || typeof version !== 'string') throw new Error('invalid compatibility request')
++    const options = { includePrerelease: true }
++    compatibility = range.trim() === '' || validRange(range, options) === null ? 'invalid' : satisfies(version, range, options) ? 'match' : 'mismatch'
++  }
++  const output = JSON.stringify(compatibility === undefined ? result : { ...result, compatibility })
+   if (Buffer.byteLength(output) > 8 * 1024 * 1024) throw new Error('review response exceeds 8 MiB')
+   process.stdout.write(output)
+ } catch {
+```
+
+**File**: `crates/engine/src/tools/subagent/mod.rs` (modified, +22/-34)
+```diff
+@@ -3939,13 +3939,9 @@ struct CoordinationProcessLock {
+     thread: Option<std::thread::JoinHandle<()>>,
+ }
+ 
+-/// Marker prefix for a coordination-lock failure whose holder is THIS
+-/// process: an engine swap (model/provider switch) constructs the new
+-/// engine's manager while the old engine still holds the flock on its own
+-/// fd, and flock treats a second descriptor in the same process as a
+-/// conflict. This is a transient handover that self-heals on the next
+-/// projection retry (#5036) — UI surfaces must not present it as "another
+-/// Codewhale process" (owner report, 2026-08-04).
++/// Marker prefix retained for presentation compatibility with same-process
++/// handover notes from earlier hosts. It does not control lock acquisition
++/// or retry.
+ pub const COORDINATION_SAME_PROCESS_HANDOVER: &str =
+     "handing delegated coordination between engines in this process";
+ 
+@@ -4036,23 +4032,10 @@ impl CoordinationProcessLock {
+             }),
+             Ok(Err(error)) => {
+                 let _ = thread.join();
+-                let holder_pid = std::fs::read_to_string(&lock_path)
+-                    .ok()
+-                    .and_then(|contents| contents.trim().parse::<u32>().ok());
+-                if holder_pid == Some(std::process::id()) {
+-                    Err(anyhow!(
+-                        "{COORDINATION_SAME_PROCESS_HANDOVER} for {}: {error}",
+-                        state_root.display()
+-                    ))
+-                } else {
+-                    Err(anyhow!(
+-                        "another Codewhale process{} owns delegated coordination for {}: {error}",
+-                        holder_pid
+-                            .map(|pid| format!(" (pid {pid})"))
+-                            .unwrap_or_default(),
+-                        state_root.display()
+-                    ))
+-                }
++                Err(anyhow!(
++                    "delegated coordination lock is unavailable for {}: {error}; close any other running or suspended Codewhale session using this workspace, then restart this Runtime if admission was refused",
++                    state_root.display()
++                ))
+             }
+             Err(error) => {
+                 drop(release_tx);
+@@ -4166,7 +4149,7 @@ pub struct SubAgentManager {
+     /// capture the most recent checkpoint.
+     last_persist_at: Option<Instant>,
+     persist_pending: bool,
+-    /// #3803: last time `cleanup` ran. The sidebar refresh (`Op::ListSubAgents`)
++    /// #3803: last time a cleanup attempt finished. The sidebar refresh (`Op::ListSubAgents`)
+     /// renders from a read-only `list()` snapshot and only runs the
+     /// write-locked `cleanup` on a bounded cadence, so a UI refresh storm during
+     /// a sub-agent fanout no longer contends for the write lock on every request.
+@@ -11338,15 +11321,20 @@ impl SubAgentManager {
+     /// given duration. Returns the number of running agents auto-cancelled
+     /// during this pass.
+     pub fn cleanup(&mut self, max_age: Duration) -> Result<usize> {
+-        self.with_store_transaction(|held| held.cleanup_inner(None, max_age))
++        let result = self.with_store_transaction(|held| held.cleanup_inner(None, max_age));
++        self.last_cleanup_at = Some(Instant::now());
++        result
      }
  
-+    fn with_session_observation<T>(
-+        &self,
-+        session_id: &str,
-+        observe: impl FnOnce() -> io::Result<T>,
-+    ) -> io::Result<Option<T>> {
-+        self.with_session_read_lock(session_id, |path| {
-+            if Self::late_usage_is_deleted(path)? {
-+                return Ok(None);
-+            }
-+            observe().map(Some)
-+        })
-+    }
-+
-     /// Run an out-of-band rewrite of a session's files (`scrub-secrets`)
-     /// under the same per-session lock every save takes, so it cannot
-     /// interleave with a save, and while holding the session's live lease, so
-@@ -4900,7 +4913,7 @@ impl SessionManager {
-             let observation = if admission_held {
-                 capture()
-             } else {
--                self.with_session_write_admission(id, capture)
-+                self.with_session_observation(id, capture)
-                     .and_then(|observation| {
-                         observation.ok_or_else(Self::retired_session_write_error)
-                     })
-@@ -5453,7 +5466,7 @@ impl SessionManager {
-         let observation = if admission_held {
-             capture()
-         } else {
--            self.with_session_write_admission(id, capture)
-+            self.with_session_observation(id, capture)
-                 .and_then(|observation| observation.ok_or_else(Self::retired_session_write_error))
+     pub fn cleanup_for_session(
+         &mut self,
+         active_session_id: &str,
+         max_age: Duration,
+     ) -> Result<usize> {
+-        self.with_store_transaction(|held| held.cleanup_inner(Some(active_session_id), max_age))
++        let result = self
++            .with_store_transaction(|held| held.cleanup_inner(Some(active_session_id), max_age));
++        self.last_cleanup_at = Some(Instant::now());
++        result
+     }
+ 
+     fn cleanup_inner(
+@@ -11592,18 +11580,18 @@ impl SubAgentManager {
+             self.pending_handle_evictions
+                 .push((agent_id, owner_session_id));
+         }
+-        self.last_cleanup_at = Some(Instant::now());
+         Ok(auto_cancelled)
+     }
+ 
+-    /// #3803: whether enough time has elapsed since the last `cleanup` that the
+-    /// next sidebar refresh should run the write-locked cleanup again. Every
+-    /// other refresh renders from the read-only `list()` snapshot, so a UI
+-    /// refresh storm during a fanout does not take the write lock per request.
++    /// #3803: whether the next sidebar refresh should attempt cleanup.
++    /// Read-only managers without a process lock only render their refusal.
++    /// Other managers use the last attempt's interval to bound cleanup locking.
+     #[must_use]
+     pub fn cleanup_due(&self, min_interval: Duration) -> bool {
+-        self.last_cleanup_at
+-            .is_none_or(|last| last.elapsed() >= min_interval)
++        (!self.coordination_snapshot_read_only || self.holds_coordination_process_lock())
++            && self
++                .last_cleanup_at
++                .is_none_or(|last| last.elapsed() >= min_interval)
+     }
+ 
+     #[must_use]
+```
+
+**File**: `crates/plugins/src/install/dsh.rs` (modified, +41/-15)
+```diff
+@@ -563,8 +563,8 @@ fn target_dsh_version() -> Result<semver::Version> {
+     })
+ }
+ 
+-fn admit_host_compatibility(manifest: &Value) -> Result<()> {
+-    if let Some(declared) = manifest
++fn admit_host_compatibility(manifest: &Value) -> Result<Option<&str>> {
++    let dsh_range = if let Some(declared) = manifest
+         .get("engines")
+         .and_then(|engines| engines.get("dsh"))
+     {
+@@ -573,21 +573,17 @@ fn admit_host_compatibility(manifest: &Value) -> Result<()> {
+                 "incompatible-version: `engines.dsh` must be a string semver range; author the supported DSH range or remove the field.",
+             );
          };
-         match observation {
+-        let requirement = semver::VersionReq::parse(range).map_err(|_| {
+-            anyhow::Error::msg(format!(
+-                "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
+-                refusal_text(range)
+-            ))
+-        })?;
+-        let target = target_dsh_version()?;
+         require(
+-            requirement.matches(&target),
++            !range.trim().is_empty(),
+             &format!(
+-                "incompatible-version: this bundle requires DSH `{}`, but this Codewhale host targets DSH {target}; import a bundle built for that host or update the host.",
++                "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
+                 refusal_text(range)
+             ),
+         )?;
+-    }
++        Some(range)
++    } else {
++        None
++    };
+     if let Some(declared) = manifest
+         .get("dsh")
+         .and_then(|dsh| dsh.get("bundle"))
+@@ -631,7 +627,7 @@ fn admit_host_compatibility(manifest: &Value) -> Result<()> {
+             ),
+         )?;
+     }
+-    Ok(())
++    Ok(dsh_range)
+ }
+ 
+ fn declares_client(manifest: &Value) -> bool {
+@@ -654,7 +650,7 @@ pub fn load_bundle(package: &Package) -> Result<LoadedBundle> {
+         matches!(bundle, Some(Value::Map(_))),
+         "Not a DSH bundle package: package.json lacks `dsh.bundle.patch`.",
+     )?;
+-    admit_host_compatibility(&manifest)?;
++    let dsh_range = admit_host_compatibility(&manifest)?;
+     let mut notes = Vec::new();
+     if declares_client(&manifest) {
+         notes.push(
+@@ -714,7 +710,37 @@ pub fn load_bundle(package: &Package) -> Result<LoadedBundle> {
+         });
+     }
+     let composition = json!({"version":1,"layers":raw_layers,"modules":[],"files":{}});
+-    let reviewed = crate::composition_review::review(&composition).map_err(anyhow::Error::msg)?;
++    let mut review_input = composition.clone();
++    let target = if let Some(range) = dsh_range {
++        let target = target_dsh_version()?;
++        review_input["compatibility"] = json!({"range":range,"version":target.to_string()});
++        Some(target)
++    } else {
++        None
++    };
++    let reviewed = crate::composition_review::review(&review_input).map_err(anyhow::Error::msg)?;
++    if let (Some(range), Some(target)) = (dsh_range, target) {
++        match reviewed.get("compatibility").and_then(Json::as_str) {
++            Some("match") => {}
++            Some("invalid") => {
++                return refuse(format!(
++                    "incompatible-version: `engines.dsh` value `{}` is not a valid semver range.",
++                    refusal_text(range)
++                ));
++            }
++            Some("mismatch") => {
++                return refuse(format!(
++                    "incompatible-version: this bundle requires DSH `{}`, but this Codewhale host targets DSH {target}; import a bundle built for that host or update the host.",
++                    refusal_text(range)
++                ));
++            }
++            _ => {
++                return refuse(
++                    "incompatible-version: compatibility reviewer returned no valid decision.",
++                );
++            }
++        }
++    }
+     let entries = reviewed
+         .get("entries")
+         .and_then(Json::as_array)
 ```
 
 ---
 
-### Incident Patch 3: `f11f7c42` (2026-11-05)
-**Commit Message**: test(engine): fix the 201-round backstop, LRU and RLM batch-pin fixtures
+### Incident Patch 3: `b175b1f9` (2026-11-07)
+**Commit Message**: fix(engine): keep injected-route config when preflight fails [skip ci]
 
-productive_tool_results_do_not_hit_no_user_input_backstop, enforce_lru_capacity_does_not_loop_when_all_threads_are_active (its fixed child id was already terminal in the shared temp-dir sub-agent store from an earlier run; it now uses a unique child name) and rlm::bridge llm_batch_dispatch_pins_configured_child_model are repaired as stale fixtures; no product code, caps or accounting semantics changed.
+Fixes the remaining hosted test failures on 549ff01ebb (CI 42381817495).
 
-Verified (local, source only): full workspace nextest run after these edits: 19068 run, 19063 passed, 5 failed (67 -> 37 -> 11 -> 8 -> 5 across the series). Still failing and unresolved, stated plainly: child_host child_cancelled_dispatched_open_keeps_unknown_origin (now 2 vs 1 unpriced turns after the fixture fix) and child_step_timeout (usage receipt settle times out), the auto_review guardian missing-coverage receipt check (2 vs 1), event_capacity_cancelled_repl_child (provider source admission fails with the writer's attempted fixture, reverted), and session_manager late_usage_reads_do_not_create_accounting_storage (product decision: reads now create the sidecar directory since 20f8244aafd). The partial ed
+Runtime: a host-provided route with no preflighted client took its config
+with mem::take before the optional credential preflight, so a failed
+preflight left the route with a default config and lost its session
+isolation and approval deadlines. It now clones, so the configured route
+survives a failure. The existing privacy/timeout assertions are unchanged.
 
-**File**: `crates/engine/src/core/engine/tests/test_cases_07.rs` (modified, +10/-6)
+Exports: the four capabilities the runtime already serializes
+(thread_scoped_git_writes, thread_scoped_snapshots, worktrees,
+job_operations) are restored to the committed JSON schema, the TypeScript
+declarations and the runtime SDK copy; the JSON matches the Rust-generated
+contract.
+
+Existing expectations realigned with shipped behavior: `present` is an eager
+core tool (hook category stays other) in the five tool-surface tests; Native
+extension entries accept .cjs and .cts; account logout is account-only and
+keeps provider keys (two TUI tests renamed to say so). The router HTTP-status
+unit test disables retry because it mounts a single response; runtime retries
+are unchanged. THIRD_PAR
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -1525,19 +1525,23 @@ async fn productive_tool_results_do_not_hit_no_user_input_backstop() {
-     let usage_owner = format!("productive-backstop:{}", uuid::Uuid::new_v4());
-     crate::cost_status::register_runtime_usage_sink(&usage_owner, std::sync::Arc::new(|_| true));
-     let mut engine_config = deterministic_engine_config(workspace.path());
--    engine_config.compaction.runtime_cost_owner = Some(usage_owner);
-+    engine_config.compaction.runtime_cost_owner = Some(usage_owner.clone());
-     let (engine, handle) = Engine::new_with_model_client(
-         engine_config,
-         &Config::default(),
-         client,
-     );
-     let task = tokio::spawn(engine.run());
-+    let mut op = external_user_message_op(
-+        "Read every distinct fixture, then report completion.",
-+        AppMode::Agent,
-+        &Config::default(),
-+    );
-+    if let Op::SendMessage(spec) = &mut op {
-+        spec.compaction.runtime_cost_owner = Some(usage_owner);
-+    }
-     handle
--        .send(external_user_message_op(
--            "Read every distinct fixture, then report completion.",
--            AppMode::Agent,
--            &Config::default(),
--        ))
-+        .send(op)
-         .await
-         .expect("send productive tool trajectory");
+@@ -275,6 +275,10 @@ until the matching tag, packages, checksums, and release assets exist.
  
+ ### Fixed
+ 
++- **Host-provided model clients:** keep configured session isolation and
++  approval deadlines when optional credential preflight fails.
++- **Runtime SDK exports:** include the existing thread-scoped Git, snapshot,
++  worktree and job-operation capabilities in the committed schema and types.
+ - **Plugin enablement revalidates its review:** enabling rechecks the staged
+   snapshot and, under the existing state lock, refuses a changed review
+   generation or trust receipt. The macOS stale-enable check passed (1/1);
 ```
 
-**File**: `crates/engine/src/rlm/bridge.rs` (modified, +3/-2)
+**File**: `THIRD_PARTY_NOTICES.md` (modified, +21/-0)
 ```diff
-@@ -984,12 +984,13 @@ mod tests {
+@@ -933,6 +933,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ ```
  
-         match response {
-             RpcResponse::Batch(batch) => {
--                let texts: Vec<_> = batch
-+                let mut texts: Vec<_> = batch
-                     .results
-                     .iter()
-                     .map(|result| result.text.as_str())
-                     .collect();
--                assert_eq!(texts, ["one", "two", "three"]);
-+                texts.sort_unstable();
-+                assert_eq!(texts, ["one", "three", "two"]);
-                 assert!(batch.results.iter().all(|result| result.error.is_none()));
-             }
-             other => panic!("expected batch response, got {other:?}"),
++### `semver` 7.8.5
++
++```text
++The ISC License
++
++Copyright (c) Isaac Z. Schlueter and Contributors
++
++Permission to use, copy, modify, and/or distribute this software for any
++purpose with or without fee is hereby granted, provided that the above
++copyright notice and this permission notice appear in all copies.
++
++THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
++IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++
++```
++
+ ## Optional compiled extension host
+ 
+ Node remains the default extension-host runtime. An explicitly installed
 ```
 
-**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +1/-1)
+**File**: `crates/app-server-protocol/schema/json/runtime.schema.json` (modified, +23/-0)
 ```diff
-@@ -8433,7 +8433,7 @@ fn enforce_lru_capacity_does_not_loop_when_all_threads_are_active() {
-             .with_store_transaction(|workers| {
-                 workers
-                     .insert_test_running_direct_child_in_origin(
--                        "lru_child",
-+                        &format!("lru_child_{}", Uuid::new_v4().simple()),
-                         &std::env::temp_dir(),
-                         &std::env::temp_dir(),
-                         "thr_a",
+@@ -289,6 +289,25 @@
+           "type": "boolean",
+           "default": false
+         },
++        "thread_scoped_git_writes": {
++          "type": "boolean",
++          "description": "Git stage, unstage, discard, commit, push and branch accept\n`?thread_id=` and act on that thread's workspace.",
++          "default": false
++        },
++        "thread_scoped_snapshots": {
++          "type": "boolean",
++          "description": "`GET /v1/snapshots` and `POST /v1/snapshots/{id}/restore` accept\n`?thread_id=` and act on that thread's workspace.",
++          "default": false
++        },
++        "worktrees": {
++          "type": "boolean",
++          "description": "`GET`/`POST /v1/worktrees` and `POST /v1/worktrees/remove`.",
++          "default": false
++        },
++        "job_operations": {
++          "type": "boolean",
++          "default": false
++        },
+         "thread_shell_consent": {
+           "type": "boolean",
+           "description": "Explicit per-thread shell opt-in is checked against loaded policy and\ncannot broaden a conversation while it has an active turn.",
+@@ -454,6 +473,10 @@
+         "thread_idle_precondition",
+         "thread_patch_undo_turn_id",
+         "thread_scoped_reads",
++        "thread_scoped_git_writes",
++        "thread_scoped_snapshots",
++        "worktrees",
++        "job_operations",
+         "thread_shell_consent",
+         "turns",
+         "turn_operation_idempotency",
+```
+
+**File**: `crates/app-server-protocol/schema/typescript/runtime.d.ts` (modified, +4/-0)
+```diff
+@@ -62,6 +62,10 @@ export type RuntimeCapabilities = {
+   thread_idle_precondition: boolean
+   thread_patch_undo_turn_id: boolean
+   thread_scoped_reads: boolean
++  thread_scoped_git_writes: boolean
++  thread_scoped_snapshots: boolean
++  worktrees: boolean
++  job_operations: boolean
+   thread_shell_consent: boolean
+   turns: boolean
+   turn_operation_idempotency: boolean
+```
+
+**File**: `crates/engine/src/core/engine.rs` (modified, +1/-1)
+```diff
+@@ -2056,7 +2056,7 @@ impl Engine {
+         let concrete_client = match route.take_preflighted_client() {
+             Some(client) => Ok(client),
+             None => {
+-                let config = std::mem::take(&mut route.config);
++                let config = route.config.clone();
+                 match CodewhaleClient::capture_candidate_preflight(config, &route.candidate).await {
+                     Ok((config, captured)) => {
+                         route.config = config;
+```
+
+**File**: `crates/engine/src/core/engine/tests/test_cases_10.rs` (modified, +2/-1)
+```diff
+@@ -1,6 +1,6 @@
+ #[test]
+ fn default_active_contract_keeps_discovery_and_core_tools_eager() {
+-    const EXPECTED_NATIVE: [&str; 15] = [
++    const EXPECTED_NATIVE: [&str; 16] = [
+         "read",
+         "write",
+         "edit",
+@@ -13,6 +13,7 @@ fn default_active_contract_keeps_discovery_and_core_tools_eager() {
+         "get_goal",
+         "update_goal",
+         "task_shell_wait",
++        "present",
+         "load_skill",
+         "context_archive_get",
+         "context_archive_search",
+```
+
+**File**: `crates/engine/src/core/engine/tool_catalog/tests.rs` (modified, +3/-0)
+```diff
+@@ -113,6 +113,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
+             "get_goal",
+             "update_goal",
+             "task_shell_wait",
++            "present",
+             "load_skill",
+             "context_archive_get",
+             "context_archive_search"
+@@ -127,6 +128,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
+         "edit",
+         "file_search",
+         "load_skill",
++        "present",
+         "read",
+         "task_shell_wait",
+         "todo_write",
+@@ -152,6 +154,7 @@ fn first_turn_surface_is_stable_across_plan_work_and_operate() {
+             "get_goal",
+             "update_goal",
+             "task_shell_wait",
++            "present",
+             "Git",
+             "Run",
+             "tasks",
+```
+
+**File**: `crates/engine/src/extension_host/tests.rs` (modified, +1/-1)
+```diff
+@@ -1956,7 +1956,7 @@ fn native_entry_rule_fails_validation_when_the_host_is_enabled() {
+             let errors = native_errors(&registry, name);
+             assert_eq!(errors.len(), 1, "{name}: {errors:?}");
+             assert!(
+-                errors[0].contains(".mjs, .js or .mts"),
++                errors[0].contains(".mjs, .js, .cjs, .mts or .cts"),
+                 "{name}: {errors:?}"
+             );
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7219** (closed): fix(workspace): exempt the home state directory from link confinement (@SparkofSpike)
-- **PR #7204** (closed): fix(ci): qualify session ownership and terminal regressions after #7138 (@zhuowp)
-- **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
-- **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
-- **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
-- **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
+- **PR #7246** (2026-11-07): chore(deps): bump similar from 3.2.0 to 3.2.1 (@dependabot[bot])
+- **PR #7245** (2026-11-07): chore(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
+- **PR #7244** (2026-11-07): chore(deps): bump rmcp from 3.7.0 to 3.8.0 (@dependabot[bot])
+- **PR #7243** (2026-11-07): chore(deps): bump unicode-normalization from 0.1.25 to 0.1.26 (@dependabot[bot])
+- **PR #7242** (2026-11-07): chore(deps): bump actions/setup-java from 4.7.1 to 6.1.0 (@dependabot[bot])
+- **PR #7241** (2026-11-07): chore(deps): bump webpki-roots from 1.0.10 to 1.0.11 (@dependabot[bot])
 
 ---
 
@@ -2332,57 +2734,47 @@ Verified (local, source only): full workspace nextest run after these edits: 190
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. app-server): neutralize repository-defined git filter drivers on status reads (P
+## X. release): handle Windows cleanup and align kit lock [skip ci]
 
 **RULE**:
-When implementing operations in `crates/app-server/src/runtime_api/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/release/windows-terminal-clipboard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `885ef69f`: app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `549ff01e`: release): handle Windows cleanup and align kit lock [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server/src/runtime_api/git.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release/windows-terminal-clipboard.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-    let output = Git::status_command(workspace)
-        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-        .args(args)
-        .output()
-        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-    if !output.status.success() {
-        return Err(ApiError::internal(format!(
-            "git {} failed: {}",
-            args.first().copied().unwrap_or(""),
-            String::from_utf8_lossy(&output.stderr).trim()
-        )));
+  receipt.cleanup = JSON.parse((await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8')).replace(/^\uFEFF/, ''));
     }
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-}
-
-    /// True when `git status` could not be read: the counts are unknown.
-    status_unavailable: bool,
-        status_unavailable: status.status_unavailable,
-    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = status_sync(
-                match status_sync(
-    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-        let _env_lock = lock_test_env();
-        let global = tempfile::tempdir().unwrap();
-        let global_config = global.path().join("gitconfig");
-        git(
+    if (receipt.result !== 'passed') {
+      try {
+        const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+          '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+        { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+        receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+        assert.equal(receipt.desktop.fallbackCleanup.terminal, terminal, 'fallback cleanup used the owned Terminal path');
+        assert.equal(receipt.des
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = run_git_sync(
-                match run_git_sync(
-        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
+  receipt.cleanup = JSON.parse(await fs.readFile(path.join(evidence, 'cleanup.json'), 'utf8'));
+      if (desktop.exitCode === null && desktop.signalCode === null) {
+        try {
+          const cleanup = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+            '$ErrorActionPreference = "Stop"; $terminal = $env:CODEWHALE_CLIPBOARD_TERMINAL; $stopped = @(); foreach ($process in @(Get-Process | Where-Object { $_.Path -eq $terminal })) { Stop-Process -InputObject $process -Force; if (!$process.WaitForExit(5000)) { throw "Owned Terminal did not exit" }; $stopped += $process.Id }; $remaining = @(Get-Process | Where-Object { $_.Path -eq $terminal }).Count; if ($remaining) { throw "Owned Terminal is still running" }; @{ terminal = $terminal; stopped = $stopped; remaining = $remaining } | ConvertTo-Json -Compress'],
+          { env: { ...desktopEnv, CODEWHALE_CLIPBOARD_TERMINAL: terminal }, encoding: 'utf8', timeout: 10_000 });
+          receipt.desktop.fallbackCleanup = JSON.parse(cleanup.replace(/^\uFEFF/, ''));
+        } catch (error) {
+          receipt.desktop.cleanupError = String(error); receipt.result = 'failed'; process.exitCode = 1;
+        }
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `885ef69f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `549ff01e` are properly handled with clean fallback behavior.

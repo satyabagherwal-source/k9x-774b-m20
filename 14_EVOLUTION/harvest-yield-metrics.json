@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T20:16:32.187Z",
-  "total_cycles_completed": 8036,
-  "total_learnings_persisted": 8036,
-  "total_rules_promoted": 7686,
+  "last_updated": "2026-11-07T20:23:08.288Z",
+  "total_cycles_completed": 8041,
+  "total_learnings_persisted": 8041,
+  "total_rules_promoted": 7691,
   "history": [
-    {
-      "timestamp": "2026-11-06T14:25:58.306Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T14:33:55.508Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T14:33:58.558Z",
-      "repository": "LiconStudio/Minimax-H3-VBVR",
-      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T14:34:06.618Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T14:40:35.581Z",
-      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T14:40:41.800Z",
       "repository": "kumahq/kuma",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-07T20:16:32.187Z",
       "repository": "siderolabs/talos",
       "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:22:55.731Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:22:59.507Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:22:59.856Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:23:02.906Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:23:08.288Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

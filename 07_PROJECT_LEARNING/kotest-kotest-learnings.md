@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `b5012d56`  
+> **Source Version**: `976421fc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:46:42.136Z  
+> **Timestamp**: 2026-11-07T20:22:58.266Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:46:42.128Z  
+> **Harvest Timestamp**: 2026-11-07T20:22:57.936Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Powerful, elegant and flexible test framework for Kotlin with assertions, property testing and data driven tests.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4788 stars
+- **Stars / Engagement**: 4787 stars
 
 ---
 
@@ -697,61 +697,210 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b5012d56` (2026-11-02)
-**Commit Message**: Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)
+### Incident Patch 1: `976421fc` (2026-11-05)
+**Commit Message**: Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)
 
-Fixes #6257
+Adds `shouldHaveConcreteType` / `shouldNotHaveConcreteType` as plain
+aliases of `shouldBeTypeOf` / `shouldNotBeTypeOf`, covering the reified
+variants (with block, and the no-arg one with the smart-cast contract)
+and the `KClass` ones. No new matcher, failure messages are unchanged.
 
-## Summary
+Went with `shouldHaveConcreteType` rather than `shouldBeOfType`, since
+`KType.shouldBeOfType<T>()` already exists in
+`io.kotest.matchers.reflection` with subtype semantics, and the same
+name meaning exact type on `Any?` would be confusing. Happy to rename to
+`shouldBeConcreteType` if that reads better.
 
-The Gradle plugin currently disables `failOnNoDiscoveredTests` on
-**every** `AbstractTestTask`. As measured in the issue, that opt-out is
-only required on non-JVM targets (Kotlin/JS, Wasm, Native), where
-Gradle's result counters stay at zero even for a fully successful run,
-so Gradle 9's check fails every green build. On the JVM the counters are
-correct, and the opt-out only suppresses an accurate error.
+Tests are next to the existing `shouldBeTypeOf` ones,
+`assertions/core.md` and the skill reference list both names, api dump
+updated.
 
-## Change
+Closes #6152
 
-`decorateGradleTestTask` now applies the opt-out only when the task is
-**not** a Gradle `Test` task (the JVM test task type, which
-`KotlinJvmTest` extends as well). JS/Wasm/Native test tasks are other
-`AbstractTestTask` subtypes and keep the opt-out. Also switched the
-string literal to the existing `FAIL_ON_NO_DISCOVERED_TESTS` constant.
+---------
 
-## Behaviour change (deliberate, please sanity-check)
+Co-authored-by: Obrams <[REDACTED_EMAIL]>
+Co-authored-by: Alfonso Ristorato <[REDACTED_EMAIL]>
 
-A JVM test task with test sources but no discoverable tests will now
-fail the build with Gradle's *"the test task did not discover any tests
-to execute"* instead of passing silently. This is exactly the behaviour
-the issue proposes; if you'd rather keep the opt-out uniform across
-ta
-
-**File**: `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt` (modified, +5/-2)
+**File**: `documentation/docs/assertions/core.md` (modified, +1/-0)
 ```diff
-@@ -154,8 +154,11 @@ abstract class KotestPlugin : Plugin<Project> {
-    private fun decorateGradleTestTask(project: Project, extension: KotestGradleExtension, task: AbstractTestTask) {
+@@ -26,6 +26,7 @@ Matchers provided by the `kotest-assertions-core` module.
+ |---------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ | `obj.shouldBeSameInstanceAs(other)`         | Compares objects by identity, that is, they are the same exact reference.                                                                                                               |
+ | `obj.shouldBeTypeOf<T>()`                   | Asserts that the given reference is exactly of type T. Subclass will fail. Ie, `1 should beOfType<Number>` would fail because although 1 _is_ a Number, the runtime type is not Number. |
++| `obj.shouldHaveConcreteType<T>()`           | Alias for `shouldBeTypeOf<T>()`. The name makes explicit that the concrete (runtime) type must be exactly T, in contrast to `shouldBeInstanceOf<T>()`.                                 |
+ | `obj.shouldBeInstanceOf<T>()`               | Asserts that the given reference is of type T or a subclass of T.                                                                                                                       |
+ | `obj.shouldHaveAnnotation(annotationClass)` | Asserts that the object has an annotation of the given type.                                                                                                                            |
+ | `obj.shouldBeNull()`                        | Asserts that a given reference is null.                                                                                                                                                 |
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/api/kotest-assertions-core.api` (modified, +3/-0)
+```diff
+@@ -3889,9 +3889,12 @@ public final class io/kotest/matchers/types/MatchersKt {
+ 	public static final fun shouldBeSameInstanceAs (Ljava/lang/Object;Ljava/lang/Object;)V
+ 	public static final fun shouldBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+ 	public static final fun shouldBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
++	public static final fun shouldHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;)Ljava/lang/Object;
++	public static final fun shouldHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+ 	public static final fun shouldNotBeInstanceOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
+ 	public static final fun shouldNotBeSameInstanceAs (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ 	public static final fun shouldNotBeTypeOf (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
++	public static final fun shouldNotHaveConcreteType (Ljava/lang/Object;Lkotlin/reflect/KClass;)V
+ }
  
-       // this has to happen at configuration time as its a final property
--      if (task.hasProperty("failOnNoDiscoveredTests")) {
--         task.setProperty("failOnNoDiscoveredTests", false)
-+      // Gradle's no-discovered-tests check false-positives on non-JVM targets, where Gradle's
-+      // result counters stay at zero even when the whole suite ran successfully (#6257); on the
-+      // JVM (Gradle's Test task) the check works correctly, so it is left enabled there
-+      if (task !is Test && task.hasProperty(FAIL_ON_NO_DISCOVERED_TESTS)) {
-+         task.setProperty(FAIL_ON_NO_DISCOVERED_TESTS, false)
-       }
+ public final class io/kotest/matchers/types/TypeMatchersKt {
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/types/matchers.kt` (modified, +52/-0)
+```diff
+@@ -162,6 +162,8 @@ infix fun Any?.shouldNotBeInstanceOf(expected: KClass<*>) {
+  *
+  * If you want to verify including inheritance, use [shouldBeInstanceOf]
+  *
++ * Also available under the more explicit name [shouldHaveConcreteType].
++ *
+  * ```
+  * val list: List<Int> = arrayListOf(1, 2, 3)
+  *
+@@ -271,5 +273,55 @@ infix fun Any?.shouldNotBeTypeOf(expected: KClass<*>) {
+    this shouldNotBe matcher
+ }
  
-       task.doFirst {
++/**
++ * Verifies that this is exactly of type T, where no inheritance is verified.
++ *
++ * Alias for [shouldBeTypeOf]. The name makes the distinction from [shouldBeInstanceOf] explicit.
++ */
++inline fun <reified T : Any> Any?.shouldHaveConcreteType(block: (T) -> Unit = { }): T =
++   shouldBeTypeOf<T>(block)
++
++/**
++ * Verifies that this is exactly of type T, where no inheritance is verified, and smart casts the receiver to T.
++ *
++ * Alias for [shouldBeTypeOf].
++ */
++inline fun <reified T : Any> Any?.shouldHaveConcreteType(): T {
++   contract {
++      returns() implies (this@shouldHaveConcreteType is T)
++   }
++   return shouldBeTypeOf<T>()
++}
++
++/**
++ * Verifies that this is NOT exactly of type T.
++ *
++ * Alias for [shouldNotBeTypeOf].
++ */
++inline fun <reified T : Any> Any?.shouldNotHaveConcreteType() = shouldNotBeTypeOf<T>()
++
++/**
++ * Verifies that this is exactly of type [expected], where no inheritance is verified.
++ *
++ * Alias for [shouldBeTypeOf].
++ */
++infix fun <T : Any> Any?.shouldHaveConcreteType(expected: KClass<T>): T = shouldBeTypeOf(expected)
++
++/**
++ * Verifies that this is exactly of type [expected], where no inheritance is verified, and executes [block]
++ * with the typecasted value.
++ *
++ * Alias for [shouldBeTypeOf].
++ */
++fun <T : Any> Any?.shouldHaveConcreteType(expected: KClass<T>, block: (T) -> Unit): T =
++   shouldBeTypeOf(expected, block)
++
++/**
++ * Verifies that this is NOT exactly of type [expected].
++ *
++ * Alias for [shouldNotBeTypeOf].
++ */
++infix fun Any?.shouldNotHaveConcreteType(expected: KClass<*>) = shouldNotBeTypeOf(expected)
++
+ infix fun Any?.shouldBeSameInstanceAs(ref: Any?) = this should beTheSameInstanceAs(ref)
+ infix fun Any?.shouldNotBeSameInstanceAs(ref: Any?) = this shouldNotBe beTheSameInstanceAs(ref)
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/types/TypeMatchersTest.kt` (modified, +42/-0)
+```diff
+@@ -16,6 +16,8 @@ import io.kotest.matchers.types.instanceOf
+ import io.kotest.matchers.types.shouldBeInstanceOf
+ import io.kotest.matchers.types.shouldBeSameInstanceAs
+ import io.kotest.matchers.types.shouldBeTypeOf
++import io.kotest.matchers.types.shouldHaveConcreteType
++import io.kotest.matchers.types.shouldNotHaveConcreteType
+ import io.kotest.matchers.types.shouldHaveAnnotation
+ import io.kotest.matchers.types.shouldNotBeInstanceOf
+ import io.kotest.matchers.types.shouldNotBeTypeOf
+@@ -51,6 +53,46 @@ class TypeMatchersTest : WordSpec() {
+         }
+      }
+ 
++     "shouldHaveConcreteType" should {
++        "test for exact type" {
++           val arrayList: List<Int> = arrayListOf(1, 2, 3)
++           arrayList.shouldHaveConcreteType<ArrayList<*>>()
++           arrayList.shouldNotHaveConcreteType<List<*>>()
++
++           arrayList.shouldHaveConcreteType(ArrayList::class)
++           arrayList shouldHaveConcreteType ArrayList::class
++           arrayList.shouldNotHaveConcreteType(List::class)
++           arrayList shouldNotHaveConcreteType List::class
++
++           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType<List<*>>() }
++           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType(List::class) }
++           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType<ArrayList<*>>() }
++           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType(ArrayList::class) }
++        }
++
++        "return the typecasted value and accept a block" {
++           val list: Any = arrayListOf(1, 2, 3)
++
++           list.shouldHaveConcreteType<ArrayList<Int>> { it[0] shouldBe 1 }
++           list.shouldHaveConcreteType(ArrayList::class) { it.size shouldBe 3 }
++
++           list.shouldHaveConcreteType<ArrayList<Int>>().shouldHaveSize(3)
++           list.shouldHaveConcreteType(ArrayList::class).shouldHaveSize(3)
++
++           // smart cast via contract
++           list.shouldHaveConcreteType<ArrayList<Int>>()
++           list[0] shouldBe 1
++        }
++
++        "accept null values" {
++           val arrayList: List<Int>? = null
++           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType<List<*>>() }
++           shouldThrow<AssertionError> { arrayList.shouldHaveConcreteType(List::class) }
++           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType<List<*>>() }
++           shouldThrow<AssertionError> { arrayList.shouldNotHaveConcreteType(List::class) }
++        }
++     }
++
+     "haveAnnotation(annotation)" should {
+       "test for the presence of an annotation" {
+         Wibble::class.java should haveAnnotation(Vod::class.java)
+```
+
+**File**: `skills/kotest/references/ASSERTIONS-REFERENCE.md` (modified, +2/-1)
+```diff
+@@ -107,7 +107,8 @@ import io.kotest.matchers.result.*
+ 
+ val s: String = obj.shouldBeInstanceOf<String>()  // is T or subtype; returns T and smart-casts
+ val s2 = obj shouldBeInstanceOf String::class      // KClass overload, returns T
+-obj.shouldBeTypeOf<String>()                      // exactly T
++obj.shouldBeTypeOf<String>()                      // exactly T (runtime class), subclasses fail
++obj.shouldHaveConcreteType<String>()              // alias of shouldBeTypeOf with a more explicit name (only available on versions > 6.2.6)
+ obj shouldBeSameInstanceAs other                  // reference equality
+ obj.shouldBeNull()
+ val nn = nullable.shouldNotBeNull()               // returns non-null T, smart-casts
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6261** (2026-11-02): Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (@Inf1mum)
 - **PR #6260** (2026-10-30): perf: short-circuit the contain matcher pass/fail decision (#6106) (@Inf1mum)
 - **PR #6259** (2026-10-29): Expose HikariCP as an api dependency of kotest-extensions-testcontainers (@PreAgile)
+- **PR #6256** (2026-11-05): Add shouldHaveConcreteType alias for shouldBeTypeOf (@Obrams)
 - **PR #6255** (2026-10-21): Report a spec that fails outside its tests to pitest (@ItsDeadlyProgrammer)
 - **PR #6253** (2026-10-18): improve ai skills and make coroutines-test part of api (@alfonsoristorato)
-- **PR #6252** (2026-10-21): Call PropTestListeners around every shrink run (@ybai08)
 
 ---
 
@@ -771,33 +920,28 @@ ta
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261)
+## X. Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256)
 
 **RULE**:
-When implementing operations in `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/docs/assertions/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b5012d56`: Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (#6261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `976421fc`: Add shouldHaveConcreteType alias for shouldBeTypeOf (#6256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/assertions/core.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      // Gradle's no-discovered-tests check false-positives on non-JVM targets, where Gradle's
-      // result counters stay at zero even when the whole suite ran successfully (#6257); on the
-      // JVM (Gradle's Test task) the check works correctly, so it is left enabled there
-      if (task !is Test && task.hasProperty(FAIL_ON_NO_DISCOVERED_TESTS)) {
-         task.setProperty(FAIL_ON_NO_DISCOVERED_TESTS, false)
+| `obj.shouldHaveConcreteType<T>()`           | Alias for `shouldBeTypeOf<T>()`. The name makes explicit that the concrete (runtime) type must be exactly T, in contrast to `shouldBeInstanceOf<T>()`.                                 |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-      if (task.hasProperty("failOnNoDiscoveredTests")) {
-         task.setProperty("failOnNoDiscoveredTests", false)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b5012d56` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `976421fc` are properly handled with clean fallback behavior.

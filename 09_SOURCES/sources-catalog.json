@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "0b35ae90",
+    "sourceVersion": "cd77dba9",
     "license": "MIT",
-    "contentHash": "3108916c3ea9239bbf225ff5caba65f241867ec2164e39a5a9eb328ca460a63f",
-    "lastHarvestedAt": "2026-11-04T02:33:13.608Z",
+    "contentHash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
+    "lastHarvestedAt": "2026-11-07T20:22:59.495Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "d2de4602",
+    "sourceVersion": "cedaeca8",
     "license": "Apache-2.0",
-    "contentHash": "7ea70990272520398e8b214502460c4c2efaeb421f7de884f141348f47ea7ee0",
-    "lastHarvestedAt": "2026-11-05T22:47:58.839Z",
+    "contentHash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
+    "lastHarvestedAt": "2026-11-07T20:23:02.896Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "cda871cc",
+    "sourceVersion": "d622ec57",
     "license": "Apache-2.0",
-    "contentHash": "04c705dae4861d87c3b2c70e7da73984f6b664d25c63bac6e275436af218b33b",
-    "lastHarvestedAt": "2026-11-05T21:54:43.949Z",
+    "contentHash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
+    "lastHarvestedAt": "2026-11-07T20:23:08.284Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "b5012d56",
+    "sourceVersion": "976421fc",
     "license": "Apache-2.0",
-    "contentHash": "bf18c488bab810167cf4bcb19cec28745586a3b2807fc38cea5f6cbc5dc6de6e",
-    "lastHarvestedAt": "2026-11-04T20:46:42.885Z",
+    "contentHash": "7804969aa1cae232d67b79dbca0ab81fd07a975ae2df58e8f7607fd5d966226d",
+    "lastHarvestedAt": "2026-11-07T20:22:59.843Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "885ef69f",
+    "sourceVersion": "6e0042e3",
     "license": "MIT",
-    "contentHash": "3457265978d799fec32a6c8c91f4769cdba5a9db189e0a83ec2bdbfb1e1d71af",
-    "lastHarvestedAt": "2026-11-05T15:59:21.637Z",
+    "contentHash": "6b421145df60e92f03fe5572a485731245bc9bd835ed9eff991683fa45118c30",
+    "lastHarvestedAt": "2026-11-07T20:22:55.726Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
