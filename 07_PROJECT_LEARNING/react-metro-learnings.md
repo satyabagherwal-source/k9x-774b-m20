@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `db6a361c`  
+> **Source Version**: `72601c99`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:17:56.217Z  
+> **Timestamp**: 2026-11-07T05:28:15.814Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:17:56.042Z  
+> **Harvest Timestamp**: 2026-11-07T05:28:15.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5662 stars
+- **Stars / Engagement**: 5663 stars
 
 ---
 
@@ -335,7 +335,7 @@ declare module 'jest-worker' {
 
   declare export class Worker<
     TExposed extends Readonly<{
-      [string]: (...Array<$FlowFixMe>) => Promise<$FlowFixMe>,
+      [string]: (...args: Array<$FlowFixMe>) => Promise<$FlowFixMe>,
     }> = {},
     TSetupArgs extends ReadonlyArray<unknown> = ReadonlyArray<unknown>,
   > {
@@ -778,14 +778,20 @@ type IncomingMessage = HandshakeMessage | CommandMessage;
 type Response = HandshakeResponse | CommandResponse | ErrorResponse;
 type RespondFn = (response: Response) => void;
 
-type JSONReaderDataHandler = IncomingMessage => unknown;
+type JSONReaderDataHandler = (message: IncomingMessage) => unknown;
 type JSONReaderEndHandler = () => unknown;
 
-type JSONReaderDataListener = ('data', JSONReaderDataHandler) => JSONReader;
-type JSONReaderEndListener = ('end', JSONReaderEndHandler) => JSONReader;
+type JSONReaderDataListener = (
+  event: 'data',
+  handler: JSONReaderDataHandler,
+) => JSONReader;
+type JSONReaderEndListener = (
+  event: 'end',
+  handler: JSONReaderEndHandler,
+) => JSONReader;
 type JSONReaderRootEndListener = (
-  'root_end',
-  JSONReaderEndHandler,
+  event: 'root_end',
+  handler: JSONReaderEndHandler,
 ) => JSONReader;
 type JSONReaderListener = JSONReaderDataListener &
   JSONReaderEndListener &
@@ -1199,15 +1205,16 @@ export {on, createEntry, createActionStartEntry, createActionEndEntry, log};
 import type {Socket} from 'node:net';
 import type {Writable} from 'node:stream';
 
-import throttle from 'lodash.throttle';
-import readline from 'node:readline';
+import {clearTimeout, setTimeout} from 'node:timers';
 import tty from 'node:tty';
 import util from 'node:util';
 
 type UnderlyingStream = Socket | Writable;
 
 const STATUS_UPDATE_DELAY_MS = 33;
-const NON_TTY_STATUS_THROTTLE_MS = 3500;
+const NON_TTY_STATUS_UPDATE_DELAY_MS = 3500;
+const EXTERNAL_WRITES_QUIET_MS = 333;
+const EXTERNAL_WRITES_MAX_WAIT_MS = 2000;
 
 /**
  * Cut a string into an array of strings of the specified maximum size. A newline
@@ -1222,21 +1229,6 @@ function chunkString(str: string, size: number): Array<string> {
   const ANSI_COLOR = '\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?m';
   const SKIP_ANSI = `(?:${ANSI_COLOR})*`;
   return str.match(new RegExp(`(?:${SKIP_ANSI}.){1,${size}}`, 'g')) || [];
-}
-
-/**
- * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
- * usually share the terminal (e.g. `console.error()`).
- */
-function getBytesWritten(stream: tty.WriteStream): number {
-  if (stream !== process.stdout && stream !== process.stderr) {
-    return stream.bytesWritten;
-  }
-
-  return (
-    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
-    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
-  );
 }
 
 /**
@@ -1288,11 +1280,11 @@ export default class Terminal {
   #ttyStream: ?tty.WriteStream;
   #updatePromise: Promise<void> | null;
   #lastWritePromise: Promise<void>;
-  #isUpdating: boolean;
-  #hasPendingUpdate: boolean;
   #isFlushRequested: boolean;
-  #writeNonTTYStatusThrottled: string => void;
-  #bytesWrittenAfterStatus: ?number;
+  #statusDelay: {promise: Promise<void>, endEarly: () => void} | null;
+  #bytesWrittenAfterLastWrite: number;
+  #externalBytesWritten: number;
+  #flushBeforeExit: () => void;
 
   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
     this.#status = '';
@@ -1301,41 +1293,54 @@ export default class Terminal {
     this.#ttyStream = (opts.ttyPrint ?? true) ? getTTYStream(stream) : null;
     this.#updatePromise = null;
     this.#lastWritePromise = Promise.resolve();
-    this.#isUpdating = false;
-    this.#hasPendingUpdate = false;
     this.#isFlushRequested = false;
-    this.#writeNonTTYStatusThrottled = throttle(
-      status => this.#write(status),
-      NON_TTY_STATUS_THROTTLE_MS,
-    );
+    this.#statusDelay = null;
+    this.#bytesWrittenAfterLastWrite = this.#getBytesWritten();
+    this.#externalBytesWritten = 0;
+    this.#flushBeforeExit = () => {
+      void this.flush();
+    };
   }
 
   /**
-   * Schedule an update of the status.
-   * If there's an ongoing update, schedule another one after the current one.
-   * If there are two updates scheduled, do nothing, as the second update will
-   * take care of the latest status.
+   * Starts an update of the status, unless one is ongoing. An update keeps
+   * writing the status until the latest one is written. Status delays don't
+   * keep the process alive, so an ongoing update is flushed before the process
+   * exits.
    */
   #scheduleStatusUpdate() {
-    if (this.#isUpdating) {
-      this.#hasPendingUpdate = true;
+    if (this.#updatePromise != null) {
       return;
     }
 
-    this.#isUpdating = true;
+    process.on('beforeExit', this.#flushBeforeExit);
     this.#updatePromise = this.#writeStatus().then(async () => {
-      while (this.#hasPendingUpdate) {
-        if (!this.#isFlushRequested) {
-          await new Promise(resolve =>
-            setTimeout(resolve, STATUS_UPDATE_DELAY_MS),
-          );
-        }
-        this.#hasPendingUpdate = false;
+      while (this.#writtenStatus !== this.#status) {
         await this.#writeStatus();
       }
-      this.#isUpdating = false;
+      process.off('beforeExit', this.#flushBeforeExit);
+      this.#updatePromise = null;
       this.#isFlushRequested = false;
     });
+  }
+
+  /**
+   * Makes status writes wait `ms`, or until `#statusDelay.endEarly()` is called.
+   * Returns the delay's promise.
+   */
+  #delayStatus(ms: number): Promise<void> {
+    if (this.#isFlushRequested) {
+      return Promise.resolve();
+    }
+    const {promise, resolve} = Promise.withResolvers<void>();
+    const endEarly = () => {
+      clearTimeout(timeout);
+      this.#statusDelay = null;
+      resolve();
+    };
+    const timeout = setTimeout(endEarly, ms).unref();
+    this.#statusDelay = {promise, endEarly};
+    return promise;
   }
 
   async waitForUpdates(): Promise<void> {
@@ -1344,28 +1349,30 @@ export default class Terminal {
   }
 
   /**
-   * Writes the pending status without starting another update delay, and
+   * Writes the pending status without waiting for the status delay, and
    * resolves once all writes are done. Useful before writing to the stream
    * directly or exiting, so the latest status shows before that output.
    */
   async flush(): Promise<void> {
-    if (this.#isUpdating) {
+    if (this.#updatePromise != null) {
       this.#isFlushRequested = true;
+      this.#statusDelay?.endEarly();
     }
     await this.waitForUpdates();
-    // $FlowFixMe[prop-missing]
-    this.#writeNonTTYStatusThrottled.flush();
-    await this.#lastWritePromise;
   }
 
   /**
-   * Writes to the stream, tracking the write's completion. Writes to a stream
-   * complete in order, so the last write's completion covers all of them.
+   * Writes to the stream, tracking the write's completion, the bytes written
+   * outside of Terminal before it, and the bytes written after it. Writes to a
+   * stream complete in order, so the last write's completion covers all of
+   * them.
    */
   #write(chunk: string): void {
+    this.#externalBytesWritten = this.#getExternalBytesWritten();
     this.#lastWritePromise = new Promise(resolve =>
       this.#stream.write(chunk, () => resolve()),
     );
+    this.#bytesWrittenAfterLastWrite = this.#getBytesWritten();
   }
 
   /**
@@ -1373,103 +1380,121 @@ export default class Terminal {
    * can land in the middle of an update. Resolves when the writes are done.
    */
   async #writeStatus(): Promise<void> {
-    const ttyStream = this.#ttyStream;
+    if (this.#writtenStatus === this.#status) {
+      return;
+    }
+
+    if (this.#statusDelay != null) {
+      await this.#statusDelay.promise;
+    }
+    const externalWritesStop = this.#waitForExternalWritesToStop();
+    if (externalWritesStop != null) {
+      await externalWritesStop;
+    }
+    this.#eraseWrittenStatusMaybe();
     const status = this.#status;
-
-    if (this.#writtenStatus === status) {
-      return;
-    }
-
-    if (!ttyStream) {
-      this.#writeNonTTYStatusThrottled(status.length > 0 ? status + '\n' : '');
-      this.#writtenStatus = status;
-      return;
-    }
-
-    this.#discardWrittenStatus(ttyStream);
     if (status.length > 0) {
       this.#write(status + '\n');
     }
     this.#writtenStatus = status;
-    this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
+    void this.#delayStatus(
+      this.#ttyStream ? STATUS_UPDATE_DELAY_MS : NON_TTY_STATUS_UPDATE_DELAY_MS,
+    );
     await this.#lastWritePromise;
   }
 
   /**
-   * Discards the written status by erasing it from the screen or, when it
-   * can't be reliably erased, by ignoring it and letting it drift with the
-   * scrollbar.
+   * Waits until no output is written outside of Terminal for
+   * EXTERNAL_WRITES_QUIET_MS, so the status isn't written in the middle of a
+   * burst of such output, for at most EXTERNAL_WRITES_MAX_WAIT_MS, so sustained
+   * output doesn't hide the status. Returns nothing without such output, so the
+   * status can be written synchronously.
    */
-  #discardWrittenStatus(ttyStream: tty.WriteStream): void {
+  #waitForExternalWritesToStop(
+    externalBytesWritten: number = this.#externalBytesWritten,
+    deadline: number = Date.now() + EXTERNAL_WRITES_MAX_WAIT_MS,
+  ): Promise<void> | void {
+    const currentExternalBytesWritten = this.#getExternalBytesWritten();
+    const now = Date.now();
+    if (
+      this.#isFlushRequested ||
+      currentExternalBytesWritten === externalBytesWritten ||
+      now >= deadline
+    ) {
+      return undefined;
+    }
+
+    return this.#delayStatus(
+      Math.min(EXTERNAL_WRITES_QUIET_MS, deadline - now),
+    ).then(() =>
+      this.#waitForExternalWritesToStop(currentExternalBytesWritten, deadline),
+    );
+  }
+
+  /**
+   * Bytes written outside of Terminal since it was created.
+   */
+  #getExternalBytesWritten(): number {
+    return (
+      this.#externalBytesWritten +
+      this.#getBytesWritten() -
+      this.#bytesWrittenAfterLastWrite
+    );
+  }
+
+  /**
+   * Bytes written by the stream and, when it is stdout or stderr, by both, as
+   * they usually share the terminal (e.g. `console.error()`). 0 when the stream
+   * doesn't count them.
+   */
+  #getBytesWritten(): number {
+    const stream = this.#stream;
+    if (stream !== process.stdout && stream !== process.stderr) {
+      // $FlowFixMe[prop-missing] `bytesWritten` is missing on generic streams
+      return stream.bytesWritten ?? 0;
+    }
+
+    return (
+      // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
+      (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
+    );
+  }
+
+  /**
+   * Erases the written status from the screen, unless it can't be reliably
+   * erased, in which case it is left to drift with the scrollbar. In
+   * non-interactive terminals, the written status stays. Returns whether the
+   * status was erased.
+   */
+  #eraseWrittenStatusMaybe(): boolean {
+    if (!this.#ttyStream) {
+      return false;
+    }
+
     const writtenStatus = this.#writtenStatus;
     this.#writtenStatus = '';
 
     if (
       writtenStatus.length === 0 ||
       // If output printed outside of Terminal (like direct console.log) is
-      // detected, the status can't be erased without erasing that output too,
-      // so it is ignored and left to drift with the scrollbar.
+      // detected, the status can't be erased without erasing that output too.
       // Detection compares bytes written, as the number of lines printed can't
       // be known without overriding the stdout/stderr globals
-      getBytesWritten(ttyStream) !== this.#bytesWrittenAfterStatus
+      this.#getBytesWritten() !== this.#bytesWrittenAfterLastWrite
     ) {
-      return;
+      return false;
     }
 
-    const statusLinesCount = writtenStatus.split('\n').length - 1;
-    // extra -1 because we print the status with a trailing new line
-    readline.moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
-    this.#lastWritePromise = new Promise(resolve =>
-      readline.clearScreenDown(ttyStream, () => resolve()),
-    );
+    const statusLinesCount = writtenStatus.split('\n').length;
+    // Moves to the start of the line, up over the status lines, and clears below
+    this.#write(`\r\x1B[${statusLinesCount}A\x1B[J`);
+    return true;
   }
 
   /**
    * Shows some text that is meant to be overridden later. Return the previous
    * status that was shown and is no more. Calling `status()` with no argument
-   * removes the status altogether. The status is never shown in a
-   * non-interactive terminal: for example, if the output is redirected to a
-   * file, then we don't care too much about having a progress bar.
-   */
-  status(format: string, ...args: Array<unknown>): string {
-    const previousStatus = this.#status;
-
-    const status = util.format(format, ...args);
-    this.#status = this.#ttyStream
-      ? chunkString(status, this.#ttyStream.columns).join('\n')
-      : status;
-
-    this.#scheduleStatusUpdate();
-
-    return previousStatus;
-  }
-
-  /**
-   * Similar to `console.log`, except it moves the status/progress text out of
-   * the way correctly. In non-interactive terminals this is the same as
-   * `console.log`. The line is written immediately, so it keeps its order
-   * relative to other output.
-   */
-  log(format: string, ...args: Array<unknown>): void {
-    if (this.#ttyStream) {
-      this.#discardWrittenStatus(this.#ttyStream);
-    }
-    this.#write(util.format(format, ...args) + '\n');
-
-    this.#scheduleStatusUpdate();
-  }
-
-  /**
-   * Log the current status and start from scratch. This is useful if the last
-   * status was the last one of a series of updates.
-   */
-  persistStatus(): void {
-    const status = this.#status;
-    this.#status = '';
-    this.log(status);
-  }
-}
-
+   * removes the status altogether. In a non-
 ```
 
 
@@ -1478,11 +1503,11 @@ export default class Terminal {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1582** (2026-11-06): **[metro-resolver] Import resolution `package.json` lookup for ESM is not Node module resolution compliant**
+  *Symptoms*: As per the algorithm: https://nodejs.org/api/esm.html#resolution-algorithm-specification  We'd expect `foo-pkg/bar` to be resolving `package.json:exports` from `foo-pkg/package.json` first to check for `exports`. However, currently, it seems that Metro prioritises `foo-pkg/bar/package.json`  A lot of logic relies on `getPackageForModule` and `getPackage` which look up the `package.json` at the given absolute path, rather than taking the package path into account (as per the spec, see: `packageSubpath` being separated out)  Reproduction in the form of a unit test: https://github.com/kitten/metro/tree/%40kitten/fix/metro-exports-package-json-priority
+
 - **Issue #1347** (2024-09-07): **[0.80.11] breaks package exports with symlinks**
   *Symptoms*: Hello, having an issue with `0.80.11` and `pnpm` + `expo` + symlinks + package exports  In `0.80.10` package exports are resolved correctly. In `0.80.11` package exports are not resolved.  I have created a reproduction of this issue here: https://github.com/franksmule/expo-repo/tree/main   Symlinks are enabled, although I've enabled `shamefully-hoist=true` - I believe local packages are still symlinked - so it seems to be an issue with the combination of symlinks and package exports?  Metro Config: (https://github.com/franksmule/expo-repo/blob/main/expo-app/metro.config.js) ``` config.resolver.unstable_enablePackageExports = true; config.resolver.unstable_enableSymlinks = true; ```  ``` iOS Bundling failed 756ms index.js (1013 modules) Unable to resolve "@internal/another-dep/hi" from "app/(tabs)/index.tsx" ```  Reproduction: https://github.com/franksmule/expo-repo - change https://github.com/franksmule/expo-repo/blob/main/package.json#L5 - to `0.80.10` and notice bundle will load.
-
-- **Issue #1211** (2026-10-03): **React Native application does not update on many code changes when using vim**
-  *Symptoms*: <!-- *Before creating an issue please make sure you are using the latest version of Metro, try re-installing your node_modules folder and run Metro once with `--reset-cache` to see if that fixes the problem you are experiencing.* -->  **Do you want to request a *feature* or report a *bug*?** *bug*  **What is the current behavior?** Newly-created React Native app doesn't reflect every code change during development when using Metro. The behavior is intermittent. Some code changes will be reflected in the app, then some won't be after saving the file. None of the following work to "force" an update:  * Saving the file repeatedly. * Hitting the "r" key to force reload in the Metro terminal window * Hitting the "r" key on the emulator to get it to reload. * Running with `--reset-cache`.  It looks minor, but it's really disruptive to development, since when I'm debugging, I can't tell which version of the app is currently being displayed. The only "workaround" I have is to add unique `console.log()` statements until one of them appears in the terminal that matches what I last wrote.  Usually the first code change is reflected after starting Metro. After that it's totally it or miss. I might get two or three successful updates in a row, and then none for a while.  **If the current behavior is a bug, please provide the steps to reproduce and a minimal repository on GitHub that we can `yarn install` and `yarn test`.**  1. Create a new React Native+metro application
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1499,142 +1524,175 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `434cc446` (2026-11-02)
-**Commit Message**: Fix JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)
+### Incident Patch 1: `3030eda7` (2026-11-06)
+**Commit Message**: Fix crash on a non-object "exports" field in package.json (#2187)
 
-**File**: `packages/metro/src/DeltaBundler/Worker.flow.js` (modified, +6/-0)
+Resolving a package whose package.json has a non-object "exports" value
+such as false, true or a number failed the whole resolution with
+"TypeError: Invalid value used as weak map key".
+
+normalizeExportsField only special cased strings, which are not weakly
+referenceable, before caching its result in a WeakMap. Booleans and
+numbers aren't either, but they pass through Object.keys() as an empty
+key list, so they reach the WeakMap set() call, which throws. This is a
+plain TypeError rather than an InvalidPackageConfigurationError, so the
+callers in resolve.js rethrow it instead of falling back.
+
+Node.js ignores these values and uses "main". Raise a config error for
+them, so that the existing handling warns and falls back to file-based
+resolution, which resolves to the same file as Node.js.
+
+**File**: `packages/metro-resolver/src/PackageExportsResolve.js` (modified, +6/-0)
 ```diff
-@@ -47,6 +47,12 @@ type Data = Readonly<{
-   transformFileEndLogEntry: LogEntry,
- }>;
+@@ -193,6 +193,12 @@ function normalizeExportsField(
+     return new Map([['.', exportsField]]);
+   }
  
-+// jest-worker assigns the ID of the worker to JEST_WORKER_ID in a worker thread,
-+// regardless of the `env` it is given. Transform output must not depend on the
-+// worker that produced it, and a Babel plugin may inline any environment
-+// variable.
-+delete process.env.JEST_WORKER_ID;
-+
- /**
-  * When the `Buffer` is sent over the worker thread it gets serialized into a JSON object.
-  * This helper method will deserialize it if needed.
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/WorkerFarm-environment-test.js` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @format
-+ * @oncall react_native
-+ */
-+
-+'use strict';
-+
-+const WorkerFarm = require('../WorkerFarm').default;
-+const {getDefaultConfig} = require('metro-config');
-+
-+jest.setTimeout(60 * 1000);
-+jest.useRealTimers();
-+
-+async function getWorkerEnv(unstable_workerThreads) {
-+  const config = await getDefaultConfig(__dirname);
-+  const farm = new WorkerFarm(
-+    {
-+      ...config,
-+      maxWorkers: 2,
-+      projectRoot: __dirname,
-+      transformer: {...config.transformer, unstable_workerThreads},
-+    },
-+    {
-+      transformerPath: require.resolve('./envSnapshotTransformer'),
-+      transformerConfig: {},
-+    },
-+  );
-+  try {
-+    const {result} = await farm.transform('file.js', {}, Buffer.from(''));
-+    return JSON.parse(result.output[0].data.code);
-+  } finally {
-+    await farm.kill();
++  if (typeof exportsField !== 'object') {
++    throw createConfigError(
++      'The "exports" field must be a string, an array or an object.',
++    );
 +  }
-+}
 +
-+test('a transformer observes the same environment in worker threads and child processes', async () => {
-+  const [inThread, inProcess] = await Promise.all([
-+    getWorkerEnv(true),
-+    getWorkerEnv(false),
-+  ]);
-+
-+  expect(inThread.envAtLoad.JEST_WORKER_ID).toBeUndefined();
-+  expect(inThread.envAtCall.JEST_WORKER_ID).toBeUndefined();
-+  expect(inThread).toEqual(inProcess);
-+});
+   const cachedValue = _normalizedExportsFields.get(exportsField);
+   if (cachedValue) {
+     return cachedValue;
 ```
 
-**File**: `packages/metro/src/DeltaBundler/__tests__/envSnapshotTransformer.js` (added, +32/-0)
+**File**: `packages/metro-resolver/src/__tests__/package-exports-test.js` (modified, +32/-0)
 ```diff
-@@ -0,0 +1,32 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @format
-+ * @oncall react_native
-+ */
+@@ -213,6 +213,38 @@ describe('with package exports resolution enabled', () => {
+       );
+     });
+ 
++    test.each([
++      ['false', false],
++      ['true', true],
++      ['a number', 1],
++    ])(
++      '[nonstrict] should fall back to "main" field resolution when "exports" is %s',
++      (_, exportsField) => {
++        const logWarning = jest.fn();
++        const context = {
++          ...baseContext,
++          ...createPackageAccessors({
++            [p('/root/node_modules/test-pkg/package.json')]: {
++              main: 'index-main.js',
++              exports: exportsField,
++            },
++          }),
++          unstable_logWarning: logWarning,
++        };
 +
-+'use strict';
-+
-+// A transformer reporting the environment it observes as its output, both when
-+// it is loaded and when it is called.
-+const envAtLoad = {...process.env};
-+
-+module.exports = {
-+  transform: async () => ({
-+    dependencies: [],
-+    output: [
-+      {
-+        type: 'js/module',
-+        data: {
-+          code: JSON.stringify({envAtLoad, envAtCall: {...process.env}}),
-+          lineCount: 1,
-+          map: [],
-+          functionMap: null,
-+        },
++        expect(Resolver.resolve(context, 'test-pkg', null)).toEqual({
++          type: 'sourceFile',
++          filePath: p('/root/node_modules/test-pkg/index-main.js'),
++        });
++        expect(logWarning).toHaveBeenCalledTimes(1);
++        expect(logWarning.mock.calls[0][0]).toBe(
++          `The package ${p('/root/node_modules/test-pkg')} contains an invalid package.json configuration. Consider raising this issue with the package maintainer(s).
++` +
++            'Reason: The "exports" field must be a string, an array or an object. Falling back to file-based resolution.',
++        );
 +      },
-+    ],
-+  }),
-+};
++    );
++
+     describe('should resolve "exports" target directly', () => {
+       const context = {
+         ...baseContext,
 ```
 
 ---
 
-### Incident Patch 2: `97f9e8ad` (2026-11-04)
-**Commit Message**: Remove obsolete FlowFixMe for @jridgewell/sourcemap-codec import (#2167)
+### Incident Patch 2: `89476f43` (2026-11-06)
+**Commit Message**: Docs: Fix the broken asyncRequireModulePath link (#2190)
 
-**File**: `packages/metro-transform-worker/src/index.js` (modified, +0/-1)
+* Docs: Fix the broken asyncRequireModulePath anchor
+
+Sets the `asyncRequireModulePath` heading id explicitly, so Docusaurus finds the `#asyncrequiremodulepath` anchor, which raw `<a name>` tags do not provide.
+
+Changelog: [Internal]
+
+* Link to the generated asyncRequireModulePath anchor instead
+
+---------
+
+Co-authored-by: Rob Hogan <[REDACTED_EMAIL]>
+
+**File**: `docs/Configuration.md` (modified, +1/-1)
 ```diff
-@@ -42,7 +42,6 @@ import {transformFromAstSync, traverse} from '@babel/core';
- import generate from '@babel/generator';
- import * as babylon from '@babel/parser';
- import * as types from '@babel/types';
--// $FlowFixMe[cannot-resolve-module] - No typings at Meta (OSS uses a libdef)
- import {decode as decodeMappings} from '@jridgewell/sourcemap-codec';
- import {stableHash} from 'metro-cache';
- import {getCacheKey as metroGetCacheKey} from 'metro-cache-key';
+@@ -321,7 +321,7 @@ Directories containing packages (like `node_modules`) to check after all `node_m
+ 
+ Type: [`?CustomResolver`](./Resolution.md#resolverequest-customresolver)
+ 
+-An optional function that overrides the default resolution algorithm, e.g. for aliases or custom protocols. It must delegate any specifiers it doesn't handle, including those in Metro's `metro:` scheme, such as the defaults for [`emptyModulePath`](#emptymodulepath) and [`asyncRequireModulePath`](#asyncrequiremodulepath). See [Module Resolution](./Resolution.md).
++An optional function that overrides the default resolution algorithm, e.g. for aliases or custom protocols. It must delegate any specifiers it doesn't handle, including those in Metro's `metro:` scheme, such as the defaults for [`emptyModulePath`](#emptymodulepath) and [`asyncRequireModulePath`](#asyncrequiremodulepath-deprecated). See [Module Resolution](./Resolution.md).
+ 
+ ```javascript
+ resolveRequest: (context, moduleName, platform) => {
+```
+
+---
+
+### Incident Patch 3: `7201ee4c` (2026-11-06)
+**Commit Message**: Breaking: Make `ResolutionContext.isESMImport` required (#2182)
+
+Metro always sets this, so custom resolvers needn't handle it being missing.
+
+Changelog:
+```
+ - **[Breaking]**: `ResolutionContext.isESMImport` is required
+```
+
+Test plan:
+Existing tests.
+
+**File**: `docs/Resolution.md` (modified, +1/-1)
+```diff
+@@ -266,7 +266,7 @@ Given the path to a `package.json` file, returns the parsed contents, or `null`
+ 
+ Given a candidate absolute module path, which need not exist, returns the closest package root (searching upwards, stopping at the nearest `node_modules`), its parsed `package.json`, and the package-relative path, or `null` if there's no `package.json` before the nearest `node_modules`. A path through a symlinked directory checks the link's target, then continues up from the link's parent; a symlinked file is scoped by where the link is. A missing path takes the scope of its deepest existing ancestor, or `null` if the first missing segment is `node_modules`. E.g. `getPackageForModule('/app/node_modules/foo/lib/index.js')` returns `{rootPath: '/app/node_modules/foo', packageJson: {...}, packageRelativePath: 'lib/index.js'}`.
+ 
+-#### `isESMImport?: boolean`
++#### `isESMImport: boolean`
+ 
+ Whether the dependency was declared with an ESM import (`import x from 'y'` or `await import('z')`) rather than `require()`, the criteria Node.js uses to assert the `"import"` rather than the `"require"` [condition](./PackageExports.md#how-metro-applies-importrequire-exports-conditions).
+ 
+```
+
+**File**: `packages/metro-resolver/API.md` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ export type ResolutionContext = Readonly<{
+   getPackage: (packageJsonPath: string) => null | undefined | PackageJson;
+   getPackageForModule: (absoluteModulePath: string) => null | undefined | PackageForModule;
+   dependency?: TransformResultDependency | undefined;
+-  isESMImport?: boolean | undefined;
++  isESMImport: boolean;
+   fileSystemLookup: FileSystemLookup;
+   mainFields: ReadonlyArray<string>;
+   originModulePath: string;
+```
+
+**File**: `packages/metro-resolver/src/types.js` (modified, +1/-1)
+```diff
+@@ -200,7 +200,7 @@ export type ResolutionContext = Readonly<{
+    * Always equal to dependency.data.isESMImport where dependency is provided,
+    * but may be used for resolution.
+    */
+-  isESMImport?: boolean,
++  isESMImport: boolean,
+ 
+   /**
+    * Synchronously returns information about a given absolute path, including
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2167** (2026-11-04): Remove obsolete FlowFixMe for @jridgewell/sourcemap-codec import (@vzaidman)
-- **PR #2165** (closed): Check that flow-typed/jest.js covers the jest-mock MockInstance API (@vzaidman)
-- **PR #2164** (2026-11-03): Rename sourcemap-codec libdef to .js.flow (@vzaidman)
-- **PR #2163** (2026-11-03): Add getMockImplementation to Jest libdef and guard its use in Server test (@vzaidman)
-- **PR #2162** (2026-11-04): Keep Terminal logs in order with other stdout/stderr output (@vzaidman)
-- **PR #2160** (2026-11-04): Resolver: Optionally read "exports" from the package root (@robhogan)
+- **PR #2192** (2026-11-06): Publish 0.88.0 (@robhogan)
+- **PR #2191** (2026-11-06): Fix vacuous package root lookup tests (@vzaidman)
+- **PR #2190** (2026-11-06): Docs: Fix the broken asyncRequireModulePath anchor (@vzaidman)
+- **PR #2188** (2026-11-06): Label dictionary keys in xplat/js/tools/metro (2/69) (@SamChou19815)
+- **PR #2187** (2026-11-06): Fix crash on a non-object `exports` field in `package.json` (@kwy404)
+- **PR #2186** (2026-11-06): Breaking: Apply `globalPrefix` to all module system globals (@robhogan)
 
 ---
 
@@ -1654,25 +1712,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152)
+## X. crash on a non-object "exports" field in package.json (#2187)
 
 **RULE**:
-When implementing operations in `packages/metro/src/DeltaBundler/Worker.flow.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-resolver/src/PackageExportsResolve.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `434cc446`: JEST_WORKER_ID leaking into transforms with unstable_workerThreads (#2152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3030eda7`: crash on a non-object "exports" field in package.json (#2187). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro/src/DeltaBundler/Worker.flow.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-resolver/src/PackageExportsResolve.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// jest-worker assigns the ID of the worker to JEST_WORKER_ID in a worker thread,
-// regardless of the `env` it is given. Transform output must not depend on the
-// worker that produced it, and a Babel plugin may inline any environment
-// variable.
-delete process.env.JEST_WORKER_ID;
+  if (typeof exportsField !== 'object') {
+    throw createConfigError(
+      'The "exports" field must be a string, an array or an object.',
+    );
+  }
 
 ```
 
@@ -1683,4 +1741,4 @@ delete process.env.JEST_WORKER_ID;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `434cc446` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3030eda7` are properly handled with clean fallback behavior.

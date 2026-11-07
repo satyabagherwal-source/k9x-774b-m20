@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `73a365c0`  
+> **Source Version**: `e9de42d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:15:23.620Z  
+> **Timestamp**: 2026-11-07T05:28:17.319Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:15:23.612Z  
+> **Harvest Timestamp**: 2026-11-07T05:28:17.315Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11525 stars
+- **Stars / Engagement**: 11528 stars
 
 ---
 
@@ -1621,221 +1621,135 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73a365c0` (2026-11-05)
-**Commit Message**: chore: bump k8s testing ref to 1.37 (#15740)
+### Incident Patch 1: `7dc717c3` (2026-11-06)
+**Commit Message**: ci: fix flaky policy tests (#15732)
 
-Bump the testing version of k8s to 1.37.
+Policy admission tests such as `rejects_duplicate_mtls_authns` fail
+intermittently with "resource must not apply". The validating webhook uses
+`failurePolicy: Ignore`, so when the apiserver cannot reach it the invalid
+resource is admitted. `_linkerd-ready` waited on control plane pods right after
+the install was applied, which often failed at once with "no matching
+resources found", and the recipe did not fail on that error.
 
-Disable installing the gateway api via k3s/k3d. Also set the k8s version when
-running cni-calico-deep tests.
+* `_linkerd-ready` waits for the control plane deployments to be Available,
+  which exist as soon as the install is applied, and exits non-zero on timeout.
+* A new `policy-validator-ready` recipe retries a server-side dry run of an
+  invalid AuthorizationPolicy until the webhook denies it. Only a denial
+  proves the apiserver can reach the webhook.
+* `policy-test` and the `test-policy` CI job run `policy-validator-ready`
+  after installing Linkerd.
 
-Bump the gateway api version tested against to 1.6.1 (default with the latest
-version of kubernetes). Also bump to 1.6.1 in the error displayed when missing.
+Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
 
-Bump the version of calico installed to the latest.
-
-Change the gateway api install flag for multi-cluster to include --server-side.
-
-**File**: `.github/workflows/integration.yml` (modified, +10/-8)
+**File**: `.github/workflows/integration.yml` (modified, +8/-1)
 ```diff
-@@ -160,7 +160,7 @@ jobs:
-         # Full k3s image tags are used, rather than release channels, so that
-         # cluster creation doesn't depend on update.k3s.io being reachable.
-         k8s:
--          - v1.36.5-k3s1
-+          - v1.37.1-k3s1
-         # 'tls-route' is the TLSRoute API version the bundle serves, and that
-         # the policy controller therefore negotiates, or 'none' when the bundle
-         # ships no TLSRoute CRD at all. TLSRoute only graduated to 'v1', and to
-@@ -170,10 +170,10 @@ jobs:
-           - version: linkerd
-             channel: experimental
-             tls-route: v1alpha2
--          - version: v1.5.1
-+          - version: v1.6.1
-             channel: experimental
-             tls-route: v1
--          - version: v1.5.1
-+          - version: v1.6.1
-             channel: standard
-             tls-route: v1
-         # Also test the Minimum Supported Kubernetes Version with the Minimum
-@@ -350,13 +350,15 @@ jobs:
-       fail-fast: false
-       matrix:
-         cases:
--        # Full k3s image tags are used, rather than release channels, so that
--        # cluster creation doesn't depend on update.k3s.io being reachable.
--        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true}
-+          # Full k3s image tags are used, rather than release channels, so that
-+          # cluster creation doesn't depend on update.k3s.io being reachable.
-+        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.5.1}
-         # for v1.34 onwards, gwapi gets installed by Traefik on the target cluster
--        - {k8s: "v1.36.5-k3s1", manage-controllers: false, install-gwapi: false}
--        - {k8s: "v1.36.5-k3s1", manage-controllers: true, install-gwapi: false}
-+        - {k8s: "v1.37.1-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.6.1}
-+        - {k8s: "v1.37.1-k3s1", manage-controllers: true,  install-gwapi: true, gwapi: v1.6.1}
-     name: "test-multicluster(${{ matrix.cases.k8s }}, ${{ matrix.cases.manage-controllers && 'managed-controllers' || 'unmanaged-controllers' }})"
-+    env:
-+      GWAPI_VERSION: ${{ matrix.cases.gwapi }}
-     steps:
-       - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3
-         env:
+@@ -224,7 +224,14 @@ jobs:
+       - run: docker load <image-archives/controller.tar
+       - run: docker load <image-archives/proxy.tar
+       - run: docker image ls
+-      - run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
++      - name: Install Linkerd
++        # Install Linkerd and check readiness.
++        run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
++      - name: Wait for policy validator ready
++        # Check readiness by blocking until the policy validator webhook denies an invalid
++        # AuthorizationPolicy. Pod readiness alone does not prove the apiserver can reach the
++        # webhook, and with failurePolicy=Ignore an unreachable webhook admits invalid resources.
++        run: just policy-validator-ready
+       - name: Load images
+         run: |
+           # Image loading is flakey in CI, so retry!
 ```
 
-**File**: `bin/_test-helpers.sh` (modified, +4/-4)
+**File**: `justfile` (modified, +21/-5)
 ```diff
-@@ -5,7 +5,7 @@
- set +e
+@@ -137,7 +137,7 @@ _cargo-test := _cargo + ```
+ export POLICY_TEST_CONTEXT := env_var_or_default("POLICY_TEST_CONTEXT", "k3d-" + k3d-name)
  
- k8s_version_min='docker.io/rancher/k3s:v1.31.14-k3s1'
--k8s_version_max='docker.io/rancher/k3s:v1.36.5-k3s1'
-+k8s_version_max='docker.io/rancher/k3s:v1.37.1-k3s1'
+ # Install linkerd in the test cluster and run the policy tests.
+-policy-test: linkerd-install policy-test-deps-load policy-test-run && policy-test-cleanup linkerd-uninstall
++policy-test: linkerd-install policy-validator-ready policy-test-deps-load policy-test-run && policy-test-cleanup linkerd-uninstall
  
- bindir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
- testdir=$bindir/../test/integration
-@@ -310,16 +310,16 @@ start_test() {
+ _policy-test-tls-route-flags := if GATEWAY_API_TLS_ROUTE == "none" { "" } else if GATEWAY_API_TLS_ROUTE =~ '^v1(alpha2)?$' { " --features=gateway-api-tls-route-" + GATEWAY_API_TLS_ROUTE } else { error("GATEWAY_API_TLS_ROUTE must be 'v1', 'v1alpha2', or 'none'") }
  
-   case $name in
-     cluster-domain)
--      config=("$name" "${config[@]}" --no-lb --k3s-arg --cluster-domain=custom.domain --k3s-arg '--disable=servicelb,traefik@server:0' --image "$k8s_version_max")
-+      config=("$name" "${config[@]}" --no-lb --k3s-arg --cluster-domain=custom.domain --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
-       ;;
-     cni-calico-deep)
--      config=("$name" "${config[@]}" --no-lb --k3s-arg --write-kubeconfig-mode=644 --k3s-arg --flannel-backend=none --k3s-arg --cluster-cidr=192.168.0.0/16 --k3s-arg '--disable=servicelb,traefik@server:0')
-+      config=("$name" "${config[@]}" --no-lb --k3s-arg --write-kubeconfig-mode=644 --k3s-arg --flannel-backend=none --k3s-arg --cluster-cidr=192.168.0.0/16 --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
-       ;;
-     multicluster)
-       config=("${config[@]}" --network multicluster-test --image "$k8s_version_max")
-       ;;
-     *)
--      config=("$name" "${config[@]}" --no-lb --k3s-arg '--disable=servicelb,traefik@server:0' --image "$k8s_version_max")
-+      config=("$name" "${config[@]}" --no-lb --k3s-arg '--disable=gateway-api-crd,servicelb,traefik@server:0' --image "$k8s_version_max")
-       ;;
-   esac
+@@ -393,12 +393,28 @@ _controller-build:
+         --load
  
-```
-
-**File**: `justfile` (modified, +5/-5)
-```diff
-@@ -2,7 +2,7 @@
+ _linkerd-ready:
+-    if ! {{ _kubectl }} wait pod --for=condition=ready \
+-            --namespace=linkerd --selector='linkerd.io/control-plane-component' \
+-            --timeout=1m ; then \
+-        {{ _kubectl }} describe pods --namespace=linkerd ; \
++    # Wait for the control plane deployments to be Available. They exist as soon as the install is
++    # applied, so unlike a pod selector this wait cannot fail early with "no matching resources".
++    if ! {{ _kubectl }} -n linkerd wait deploy -l linkerd.io/control-plane-component \
++            --for=condition=Available --timeout=2m ; then \
++        {{ _kubectl }} describe deployments,pods --namespace=linkerd ; \
++        exit 1 ; \
+     fi
  
- lint: action-lint action-dev-check md-lint sh-lint rs-fetch rs-clippy rs-check-fmt go-lint
- 
--export GWAPI_VERSION := "v1.2.0"
-+export GWAPI_VERSION := env_var_or_default("GWAPI_VERSION", "v1.6.1")
- 
- ##
- ## Go
-@@ -190,7 +190,7 @@ _k3d-image := if k3d-k8s =~ '^v[0-9]+\.[0-9]+\.[0-9]+' { "rancher/k3s:" + k3d-k8
- k3d-agents := "0"
- k3d-servers := "1"
- 
--_k3d-flags := "--no-lb --k3s-arg --disable='local-storage,traefik,servicelb,metrics-server@server:*'"
-+_k3d-flags := "--no-lb --k3s-arg --disable='gateway-api-crd,local-storage,traefik,servicelb,metrics-server@server:*'"
- 
- _context := "--context=k3d-" + k3d-name
- _kubectl := "kubectl " + _context
-@@ -300,7 +300,7 @@ proxy-image := DOCKER_REGISTRY + "/proxy"
- # When GATEWAY_API_VERSION is 'linkerd' we use the CLI's vendored gateway API
- # CRDs. Otherwise, we install the CRDs from the upstream release.
- # This should be kept up-to-date with the latest stable release of the gateway API.
--export GATEWAY_API_VERSION := env_var_or_default("GATEWAY_API_VERSION", "v1.5.1")
-+export GATEWAY_API_VERSION := env_var_or_default("GATEWAY_API_VERSION", "v1.6.1")
- 
- # When GATEWAY_API_CHANNEL is 'experimental', we enable testing of experimental
- # resource types (TCPRoute). Alternatively, the 'standard' channel may be used.
-@@ -486,7 +486,7 @@ _linkerd-viz-uninit:
- ## linkerd multicluster
- ##
- 
--_mc-target-k3d-flags := "--k3s-arg --disable='local-storage,metrics-server@server:*' --k3s-arg '--cluster-cidr=10.23.0.0/24@server:*'"
-+_mc-target-k3d-flags := "--k3s-arg --disable='gateway-api-crd,local-storage,metrics-server@server:*' --k3s-arg '--cluster-cidr=10.23.0.0/24@server:*'"
- 
- linkerd-mc-install: _linkerd-init
-     {{ _linkerd }} mc install --set='linkerdVersion={{ linkerd-tag }}' \
-@@ -524,7 +524,7 @@ mc-target-load:
-         mc-load
- 
- mc-install-gwapi:
--	{{ _kubectl }} apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GWAPI_VERSION}/experimental-install.yaml
-+	{{ _kubectl }} apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/${GWAPI_VERSION}/experimental-install.yaml
- 
- mc-test-build:
-     go build --mod=readonly \
-```
-
-**File**: `pkg/healthcheck/healthcheck.go` (modified, +1/-1)
-```diff
-@@ -2271,7 +2271,7 @@ func CheckGatewayAPICRDsInstalled(ctx context.Context, k8sAPI *k8s.KubernetesAPI
- func GatewayAPICRDsMissingError() error {
- 	return errors.New(`The Gateway API CRDs must be installed prior to installing Linkerd. Run:
- 
--kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
-+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.1/standard-install.yaml
- 
- or see https://gateway-api.sigs.k8s.io/guides/#installing-gateway-api for more options.`)
- }
-```
-
-**File**: `test/integration/deep/install_test.go` (modified, +11/-2)
-```diff
-@@ -13,6 +13,11 @@ import (
- ///   TEST SETUP   ///
- //////////////////////
- 
-+const (
-+	// calicoVer installed by the test cases below.
-+	calicoVer = "v3.33.0"
-+)
++# Wait until the policy validator webhook denies an invalid resource.
++policy-validator-ready:
++    # Pod readiness does not prove the apiserver can reach the webhook, and with
++    # failurePolicy=Ignore an unreachable webhook admits invalid resources. Only a denial of a
++    # server-side dry run of an invalid AuthorizationPolicy (two MeshTLSAuthentication refs) does.
++    # https://github.com/kubernetes/apiserver/blob/a1b8e6fa9269c795a50d34e22fef9b0bc55f9fdb/pkg/admission/plugin/webhook/errors/statuserror.go#L29
++    for _ in $(seq 60) ; do \
++        out=$(printf '%s' '{"apiVersion":"policy.linkerd.io/v1alpha1","kind":"AuthorizationPolicy","metadata":{"name":"webhook-probe","namespace":"default"},"spec":{"targetRef":{"group":"policy.linkerd.io","kind":"Server","name":"probe"},"requiredAuthenticationRefs":[{"group":"policy.linkerd.io","kind":"MeshTLSAuthentication","name":"a"},{"group":"policy.linkerd.io","kind":"MeshTLSAuthentication","name":"b"}]}}' | {{ _kubectl }} apply --dry-run=server -f - 2>&1) ; \
++        if echo "$out" | grep -qF 'admission webhook "linkerd-policy-validator.linkerd.io" denied the request' ; then exit 0 ; fi ; \
++        sleep 1 ; \
++    done ; \
++    echo "ERROR: policy validator webhook did not deny an invalid AuthorizationPolicy within 60s. Last response: $out" >&2 ; \
++    exit 1
 +
- var (
- 	TestHelper *testutil.TestHelper
- )
-@@ -34,7 +39,9 @@ func TestInstallCalico(t *testing.T) {
- 	var out string
- 	err := testutil.RetryFor(time.Minute, func() error {
- 		var err error
--		out, err = TestHelper.Kubectl("", []string{"apply", "-f", "https://raw.githubusercontent.com/projectcalico/calico/v3.31.0/manifests/tigera-operator.yaml"}...)
-+		out, err = TestHelper.Kubectl("", []string{"apply", "-f", fmt.Sprintf(
-+			"https://raw.githubusercontent.com/projectcalico/calico/%s/manifests/tigera-operator.yaml",
-+			calicoVer)}...)
- 		if err != nil {
- 			return err
- 		}
-@@ -47,7 +54,9 @@ func TestInstallCalico(t *testing.T) {
- 		}
- 		TestHelper.WaitRollout(t, deploys)
- 
--		out, err = TestHelper.Kubectl("", []string{"apply", "-f", "https://raw.githubusercontent.com/projectcalico/calico/v3.31.0/manifests/custom-resources.yaml"}...)
-+		out, err = TestHelper.Kubectl("", []string{"apply", "-f", fmt.Sprintf(
-+			"https://raw.githubusercontent.com/projectcalico/calico/%s/manifests/custom-resources.yaml",
-+			calicoVer)}...)
- 		if err != nil {
- 			return err
- 		}
+ # Ensure that a linkerd control plane is installed
+ _linkerd-init: && _linkerd-ready
+     #!/usr/bin/env bash
 ```
 
-**File**: `testutil/test_helper.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `36a43b29` (2026-11-05)
+**Commit Message**: build(deps): bump node-forge from 1.4.0 to 1.4.3 in /web/app (#15763)
+
+Bumps [node-forge](https://github.com/digitalbazaar/forge) from 1.4.0 to 1.4.3.
+- [Changelog](https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/digitalbazaar/forge/compare/v1.4.0...v1.4.3)
+
+---
+updated-dependencies:
+- dependency-name: node-forge
+  dependency-version: 1.4.2
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `web/app/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -22,7 +22,7 @@ import (
- 	corev1 "k8s.io/api/core/v1"
- )
+@@ -7972,9 +7972,9 @@ node-addon-api@^7.0.0:
+   integrity sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==
  
--const GATEWAY_API_VERSION = "v1.5.1"
-+const GATEWAY_API_VERSION = "v1.6.1"
+ node-forge@>=0.10.0:
+-  version "1.4.0"
+-  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.4.0.tgz#1c7b7d8bdc2d078739f58287d589d903a11b2fc2"
+-  integrity sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==
++  version "1.4.3"
++  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.4.3.tgz#5dc578529ac8e162f58038c6673337cabfab3277"
++  integrity sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==
  
- // TestHelper provides helpers for running the linkerd integration tests.
- type TestHelper struct {
+ node-gettext@^3.0.0:
+   version "3.0.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
+- **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
+- **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
 - **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
+- **PR #15763** (2026-11-05): build(deps): bump node-forge from 1.4.0 to 1.4.3 in /web/app (@dependabot[bot])
 - **PR #15761** (2026-11-02): ci: pin k3s images to avoid update.k3s.io lookups (@alpeb)
-- **PR #15757** (2026-10-30): chore: upgrade to network-validator 0.1.10 (@anthoturc)
-- **PR #15756** (2026-10-30): chore: bump dev image to v53. (@toidiu)
-- **PR #15755** (2026-10-30): chore(deps): bump golang.org/x/net to 0.62.0 (@arichardet)
-- **PR #15754** (2026-10-29): chore(deps): upgrade proxy-init to v2.4.11 and cni-plugin to v1.7.1 (@anthoturc)
 
 ---
 
@@ -1855,13 +1769,13 @@ Change the gateway api install flag for multi-cluster to include --server-side.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump k8s testing ref to 1.37 (#15740)
+## X. ci: fix flaky policy tests (#15732)
 
 **RULE**:
 When implementing operations in `.github/workflows/integration.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73a365c0`: bump k8s testing ref to 1.37 (#15740). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7dc717c3`: ci: fix flaky policy tests (#15732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/integration.yml`.
@@ -1869,30 +1783,21 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          - v1.37.1-k3s1
-          - version: v1.6.1
-          - version: v1.6.1
-          # Full k3s image tags are used, rather than release channels, so that
-          # cluster creation doesn't depend on update.k3s.io being reachable.
-        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.5.1}
-        - {k8s: "v1.37.1-k3s1", manage-controllers: false, install-gwapi: true, gwapi: v1.6.1}
-        - {k8s: "v1.37.1-k3s1", manage-controllers: true,  install-gwapi: true, gwapi: v1.6.1}
-    env:
-      GWAPI_VERSION: ${{ matrix.cases.gwapi }}
+      - name: Install Linkerd
+        # Install Linkerd and check readiness.
+        run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
+      - name: Wait for policy validator ready
+        # Check readiness by blocking until the policy validator webhook denies an invalid
+        # AuthorizationPolicy. Pod readiness alone does not prove the apiserver can reach the
+        # webhook, and with failurePolicy=Ignore an unreachable webhook admits invalid resources.
+        run: just policy-validator-ready
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          - v1.36.5-k3s1
-          - version: v1.5.1
-          - version: v1.5.1
-        # Full k3s image tags are used, rather than release channels, so that
-        # cluster creation doesn't depend on update.k3s.io being reachable.
-        - {k8s: "v1.31.14-k3s1", manage-controllers: false, install-gwapi: true}
-        - {k8s: "v1.36.5-k3s1", manage-controllers: false, install-gwapi: false}
-        - {k8s: "v1.36.5-k3s1", manage-controllers: true, install-gwapi: false}
+      - run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73a365c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7dc717c3` are properly handled with clean fallback behavior.

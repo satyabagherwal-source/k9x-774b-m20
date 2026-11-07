@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T05:21:53.358Z",
+  "last_updated": "2026-11-07T05:28:23.475Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39230,14 +39230,19 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "73a365c0",
-      "content_hash": "49bae958ccf45e79b9cbba50d65e1be4c8aa1209f5271a2ac55d196f9d9bce2b",
+      "source_version": "e9de42d3",
+      "content_hash": "1e750f966a18a6427a7cf7b21357f6b9a44e78924e588f4e2b582505d5fd47ba",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bump k8s testing ref to 1.37 (#15740)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: fix flaky policy tests (#15732)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39286,7 +39291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:15:24.934Z",
+      "verified_at": "2026-11-07T05:28:18.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51306,11 +51311,16 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "db6a361c",
-      "content_hash": "1a666ffdaf8b1961a0e74b60c10742ca82a85ba55f6d3145dd5e54a60838fb65",
+      "source_version": "72601c99",
+      "content_hash": "0c660e28506a99c06ec85954bbb7f3b863acca11147d068a01e4cea51b9db219",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "crash on a non-object \"exports\" field in package.json (#2187)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2091,
           "title": "metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#200",
@@ -51352,7 +51362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:17:56.890Z",
+      "verified_at": "2026-11-07T05:28:16.610Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53925,8 +53935,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "2b0847bf",
-      "content_hash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
+      "source_version": "70c75797",
+      "content_hash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -53946,7 +53956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:04:59.291Z",
+      "verified_at": "2026-11-07T05:28:23.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116974,14 +116984,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
       "title": "Update README.md",
-      "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "8d71a376",
+      "source_url": "https://github.com/SeekStorm/SeekStorm",
+      "source_version": "70c75797",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-03T12:13:39.246Z"
+      "verified_at": "2026-11-07T05:28:23.461Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
