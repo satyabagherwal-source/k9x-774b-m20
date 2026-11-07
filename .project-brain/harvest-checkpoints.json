@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T03:41:53.898Z",
+  "last_updated": "2026-11-07T03:49:05.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17796,14 +17796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-      "content_hash": "1c37d312f0c7c4c45549e072ad38bbe1eb9693485c4b352b6db6c3f2eb38fa4d",
-      "verified_at": "2026-11-03T22:06:37.209Z",
+      "content_hash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
+      "verified_at": "2026-11-07T03:49:05.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:06:37.209Z"
+      "last_updated": "2026-11-07T03:49:05.020Z"
     },
     "abenzerps/Qwen-Image-2.1-Turbo-Quantized": {
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",

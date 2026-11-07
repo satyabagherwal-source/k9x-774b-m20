@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:21:05.145Z",
-    "lastVerified": "2026-11-06T21:21:05.145Z",
+    "lastChecked": "2026-11-07T03:49:04.231Z",
+    "lastVerified": "2026-11-07T03:49:04.231Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:41:56.431Z",
-    "lastVerified": "2026-11-07T03:41:56.431Z",
+    "lastChecked": "2026-11-07T03:49:09.234Z",
+    "lastVerified": "2026-11-07T03:49:09.234Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T03:14:19.238Z",
-    "lastVerified": "2026-11-07T03:14:19.238Z",
+    "lastChecked": "2026-11-07T03:49:09.223Z",
+    "lastVerified": "2026-11-07T03:49:09.223Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3204,9 +3204,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-05T15:13:10.425Z",
+    "lastChecked": "2026-11-07T03:49:06.639Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-05T15:13:10.425Z"
+    "lastVerified": "2026-11-07T03:49:06.639Z"
   },
   "clementtsang-bottom": {
     "name": "bottom",
@@ -4594,12 +4594,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wix-react-native-ui-lib": {
-    "name": "wix/react-native-ui-lib",
+    "name": "react-native-ui-lib",
     "officialUrl": "https://github.com/wix/react-native-ui-lib",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T10:20:12.998Z",
-    "lastVerified": "2026-11-04T10:20:12.998Z",
+    "lastChecked": "2026-11-07T03:48:59.200Z",
+    "lastVerified": "2026-11-07T03:48:59.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-react-native-ui-lib",
@@ -4608,7 +4608,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "999abfa6"
   },
   "sealerio-sealer": {
     "name": "sealer",
@@ -6351,9 +6352,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-05T11:16:34.486Z",
+    "lastChecked": "2026-11-07T03:48:54.097Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-05T11:16:34.486Z"
+    "lastVerified": "2026-11-07T03:48:54.097Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -6523,9 +6524,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-05T16:06:05.873Z",
+    "lastChecked": "2026-11-07T03:49:01.605Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-05T16:06:05.873Z"
+    "lastVerified": "2026-11-07T03:49:01.605Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -13575,12 +13576,12 @@
     "officialUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-03T22:06:28.487Z",
-    "lastVerified": "2026-11-03T22:06:28.487Z",
+    "lastChecked": "2026-11-07T03:48:56.752Z",
+    "lastVerified": "2026-11-07T03:48:56.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "1c37d312f0c7c4c45549e072ad38bbe1eb9693485c4b352b6db6c3f2eb38fa4d",
+    "contentHash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
