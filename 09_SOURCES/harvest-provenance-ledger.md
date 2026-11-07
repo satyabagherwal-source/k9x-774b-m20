@@ -8011,3 +8011,4 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `906848d5` | Multi-dimensional audit evidence | 2026-11-07T04:56:55.304Z |
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `cada1c61` | Multi-dimensional audit evidence | 2026-11-07T05:09:02.462Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `b04b69a0` | Multi-dimensional audit evidence | 2026-11-07T05:09:09.515Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9c6d5753` | Multi-dimensional audit evidence | 2026-11-07T05:21:53.447Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `4ff3fcc6`  
+> **Source Version**: `9c6d5753`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:07:31.524Z  
+> **Timestamp**: 2026-11-07T05:21:52.435Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:07:31.515Z  
+> **Harvest Timestamp**: 2026-11-07T05:16:48.922Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2087 stars
+- **Stars / Engagement**: 2094 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1861** (2026-11-05): **dashboard restart and update kill a server started with `python -m uvicorn`**
-  *Symptoms*: Restarting from the dashboard leaves the server dead when it was started with `memory launch`. That affects Restart, Update, and both config "save and restart" paths.  All four schedule `_restart_server_delayed` (`web/api/server.py:195`; callers at `server.py:350`, `server.py:434`, `configuration.py:799`, `configuration.py:905`). It re-executes with:  ```python os.execv(sys.executable, [sys.executable] + sys.argv) ```  `memory launch` starts the server as `python -m uvicorn ...` (`cli/lifecycle.py:847`). Under `-m`, `sys.argv[0]` is the path of `uvicorn/__main__.py`, so the new process runs that file as a script instead of `-m uvicorn`. Python then puts the script's directory, `site-packages/uvicorn/`, first on `sys.path`. uvicorn ships its own `logging.py`, which now shadows the standard library, and the new process dies on import:  ``` File ".../site-packages/uvicorn/logging.py", line 14, in <module>     class ColourizedFormatter(logging.Formatter): AttributeError: partially initialized module 'logging' has no attribute 'Formatter' (most likely due to a circular import) ```  That is from `server.err` on 2026-11-04, right after "AUDIT: Server process restart initiated", following a dashboard update. The update itself succeeded (git pull and pip install); only the restart failed, and the server stayed down until it was launched by hand.  The Windows branch has the same problem: it passes the same `sys.argv` to `subprocess.Popen`.  Fix: rebuild the command from `sys.orig_argv`
+- **Issue #1874** (2026-11-06): **[Bug]: Entity linking replaces contradicts edges, so memory_conflicts loses the pair**
+  *Symptoms*: ### Bug Description  With `MCP_ENTITY_LINKING_ENABLED=true`, storing a memory B that contradicts an existing memory A records the conflict and then immediately overwrites it. `memory_conflicts` never shows the pair, and both memories keep a `conflict:unresolved` tag with no `contradicts` edge behind it. Entity linking is opt-in (default off), so default installs are unaffected.  Cause: `memory_graph` has `PRIMARY KEY (source_hash, target_hash)` (migration 008; 009 added `relationship_type` as a plain column), and `GraphStorage.store_association()` writes with `INSERT OR REPLACE`, in both directions for symmetric types. So a pair holds one edge, and the last writer wins. During a store of B, two steps run in this order:  1. `StoreMixin.store()` → `_detect_conflicts()` → `_record_conflicts()` writes `A ↔ B` as `contradicts` and tags both memories `conflict:unresolved`. 2. `MemoryService.store_memory()` → `_maybe_link_entities()` → `EntityLinker.link_by_entities()` → `store_association(..., relationship_type="shares_entity")` for up to 20 memories per shared entity. (`evolve_memory()` reaches the same linker via `_run_post_store_steps()`.)  Conflicting pairs are semantically near-identical by construction (cosine similarity ≥ 0.95, with ≥ 20 % text divergence), so they often share an entity. One common tag is enough, because the extractor turns tags into entities, as long as A has a `has_entity` row for it among the 20 newest. Step 2 then replaces both `contradicts` edg
 
-- **Issue #1858** (2026-11-04): **harvest: an older session can evolve a newer memory, because the statement time is never kept**
-  *Symptoms*: A harvest over several sessions processes them newest first, and evolution does not compare times. So within one run, a statement from an older session can replace the current version of a memory that a newer session just wrote.  How it happens on `9ad9b7ac`:  1. `TranscriptParser.find_sessions` sorts the session files by mtime, newest first, and returns the first `count` (`harvest/parser.py:190-191`). `harvest_and_store` loops over them in that order (`harvest/harvester.py:211-219`). 2. For every candidate, `_try_evolve` (`harvester.py:307`) retrieves the single most similar memory and, above `similarity_threshold` (0.85), calls `evolve_memory` with the candidate's content. The candidate becomes the new current version. Nothing compares when either statement was made. 3. The time is available but dropped. `ParsedMessage` carries the transcript `timestamp` (`parser.py:22`), but `HarvestCandidate` has no time field (`harvest/models.py:15-25`), `_provenance` records none (`harvester.py:284-305`), and `store_memory` takes no time argument. A harvested memory's `created_at` is the time of the harvest.  Scenario: `memory_harvest` with `{"sessions": 2, "dry_run": false}`. The newer session says "the sync hub runs on port 8020", the older one says "the sync hub runs on port 8010". The newer one is processed first and stored. Then the older one comes along, matches it above 0.85, and evolves it. The current version now says 8010. The same applies to `session_ids` backfills and `force
+- **Issue #1870** (2026-11-06): **Dashboard 'delete untagged' bypasses graph cleanup, citation retraction and sync events**
+  *Symptoms*: ## What happens  `POST /api/manage/delete-untagged` on the SQLite backends (sqlite_vec, and hybrid through `storage.primary.conn`) tombstones the rows with a raw statement in `_soft_delete_untagged_sql()` (`src/mcp_memory_service/web/api/manage.py:69`):  ```python cursor = conn.execute(     f"UPDATE memories SET deleted_at = ? WHERE {_UNTAGGED_PREDICATE}",     (time.time(),), ) conn.commit() ```  That skips everything `DeleteMixin` does around a tombstone:  1. **Graph edges stay.** `delete()` removes `memory_graph` rows touching the hash; this path does not. 2. **Beliefs and summaries keep citing the deleted hashes.** Since #1865 every `DeleteMixin` delete calls `retract_sources_for_deleted_hashes()` in the same transaction, so a belief whose evidence is gone becomes `ungrounded` and compression/association summaries get `metadata.stale_sources`. A belief built from untagged observations stays `active` after this endpoint deletes them. 3. **No sync event.** `_append_sync_event` is never called, so delta-sync peers never see these deletes. 4. **No connection lock.** It writes on the shared connection without `_conn_lock`, unlike every storage-layer write.  ## Expected  Deleting untagged memories goes through the storage layer like `delete_by_tags` does: collect the hashes, tombstone them, clean graph edges, retract citations, commit once, all under the connection lock. Milvus already has a native `delete_untagged_memories()`; the SQLite backends need the same method instead of
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1072 +2932,1174 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16a0ae92` (2026-11-05)
-**Commit Message**: fix(storage): mark beliefs/summaries stale when source memory deleted (#1865)
+### Incident Patch 1: `e693b07a` (2026-11-06)
+**Commit Message**: fix(consolidation): default MCP_TYPED_EDGES_ENABLED to false (#1887)
 
-* fix(storage): mark beliefs and summaries stale when a source is deleted
+* fix(consolidation): default MCP_TYPED_EDGES_ENABLED to false (#1883)
 
-Deleting a memory removed its graph edges and left derived_from,
-contradicted_by, merged_from_hashes and source_memory_hashes pointing
-at the hash. The delete transaction now drops the hash from belief
-provenance, flags compression and association memories, and marks a
-belief ungrounded when no sources remain.
+Typed labels come from the pair of memory types, not from the content of
+the two memories; the hand-checked samples in #1883 found 0 of 139 correct.
+Inferred associations stay, as related. MCP_TYPED_EDGES_ENABLED=true keeps
+the old behavior.
 
-Fixes #1857
+The old default test patched the attribute and asserted the patch, so it
+could not fail. The new one reads the variable in a fresh interpreter.
+The review-band tests opt in to typed edges explicitly.
 
-Co-authored-by: yuzhou <[REDACTED_EMAIL]>
+Assisted-by: Claude Code/claude-opus-5-5
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(storage): restore ungrounded beliefs and sync summary flags
+* test: block dotenv in the default-flag child, check the package re-export
 
-Re-deriving a belief whose sources came back promotes it from ungrounded
-to candidate, or to active when the usual floors are met. A delta-sync
-tombstone runs the same citation cleanup as a local delete. Summary
-flags advance updated_at and record an update_metadata event.
+A developer .env could set the flag and fail the unset case. Also notes in
+the changelog that auto-supersede has no contradicts edges to act on.
 
-Fixes #1857
+Assisted-by: Claude Code/claude-opus-5-5
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: yuzhou <[REDACTED_EMAIL]>
+* docs(changelog): rediscovered pairs lose their typed label (#1883)
 
-* fix(sync): roll back a tombstone whose citation cleanup fails
+Review: store_association() writes with INSERT OR REPLACE, so 'existing
+typed edges are not touched' was too broad.
 
-A delta-sync delete committed the tombstone and the sync_events row
-before checking that belief and summary cleanup finished. The retry
-then looked like a duplicate. Apply now commits only a finished
-materialize, k
+Assisted-by: Claud
 
-**File**: `changelog.d/1857.fixed.md` (added, +19/-0)
+**File**: `changelog.d/1883.fixed.md` (added, +10/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+- **Deleting a memory left beliefs and consolidation summaries citing it (#1857, ZYZ666-RGB).**
-+  Graph edges were removed in the delete transaction, but `derived_from`,
-+  `contradicted_by` and `metadata.merged_from_hashes` kept the hash, and
-+  compression and association memories kept it in `source_memory_hashes`.
-+  Retention deletes this way all the time, so `get_beliefs` kept returning a
-+  belief whose evidence was gone. The same transaction now drops the hash from
-+  those lists, records `metadata.stale_sources` (how many, and when), and marks
-+  a belief `ungrounded` when nothing is left. That status is not `superseded`.
-+  Confidence is unchanged until the next `challenge_belief`. Summaries are
-+  flagged and not rewritten. A later re-derivation does not union a merged
-+  source that is no longer live. Re-deriving an ungrounded belief promotes it
-+  back to candidate, or to active when the usual floors are met. A tombstone
-+  applied through delta sync runs the same cleanup. A summary flag advances
-+  `updated_at` and records an `update_metadata` event when the sync log is on.
-+  If that cleanup fails, the delta-sync apply rolls the tombstone and the
-+  event back, so a retry can finish instead of sticking as a duplicate. A
-+  local delete rolls that same transaction back before it releases the
-+  connection lock. Re-derivation writes only sources that are still live,
-+  and saves that list with confidence and status together.
+@@ -0,0 +1,10 @@
++- **Consolidation no longer labels inferred edges `fixes` / `contradicts` by default (#1883).**
++  `MCP_TYPED_EDGES_ENABLED` now defaults to `false`. A typed label came from the pair of
++  memory types (`learning` -> `bug` gave `fixes`, two note-like types gave `contradicts`),
++  not from what the two memories say, and hand-checked samples from three stores found
++  0 of 139 typed edges correct. Inferred associations are still stored, as `related`.
++  This release does not relabel stored edges in bulk, but `store_association()` writes
++  with `INSERT OR REPLACE`, so a pair that a later consolidation finds again is
++  stored as `related` and loses its typed label. `MCP_CONSOLIDATION_AUTO_SUPERSEDE`
++  acts on `contradicts` edges, so with the new default it has nothing to act on. To keep the old behavior, set
++  `MCP_TYPED_EDGES_ENABLED=true`; the #1457 gates still apply.
 ```
 
-**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +227/-32)
+**File**: `src/mcp_memory_service/config/graph.py` (modified, +7/-4)
 ```diff
-@@ -22,6 +22,11 @@
-     should_supersede,
- )
- from ..compat import _sanitize_log_value
-+from ..storage.source_retraction import (
-+    UNGROUNDED_STATUS,
-+    live_memory_hashes,
-+    union_live_merged_sources,
-+)
+@@ -49,11 +49,14 @@
+ logger.info("Consolidation auto-supersede on contradicts edges: %s", CONSOLIDATION_AUTO_SUPERSEDE)
  
- logger = logging.getLogger(__name__)
+ # Whether the RelationshipInferenceEngine assigns typed edges (fixes, causes,
+-# contradicts, etc.) during consolidation. Set to false to keep all inferred
+-# edges as "related", avoiding false-positive typed labels.
+-# Default: true for backward compatibility.
++# contradicts, etc.) during consolidation. When false, inferred edges are kept
++# as "related".
++# Default: false (#1883). Today's typed labels come from the pair of memory
++# types, not from what the two memories say: hand-checked samples from three
++# stores found 0 of 139 typed edges correct. Set MCP_TYPED_EDGES_ENABLED=true
++# to keep typed labels (the #1457 gates still apply).
+ TYPED_EDGES_ENABLED = os.getenv(
+-    'MCP_TYPED_EDGES_ENABLED', 'true'
++    'MCP_TYPED_EDGES_ENABLED', 'false'
+ ).lower() == 'true'
+ logger.info("Typed edge inference enabled: %s", TYPED_EDGES_ENABLED)
  
-@@ -166,6 +171,50 @@ def _hash_content(content: str) -> str:
-     return hashlib.sha256(content.encode()).hexdigest()
+```
+
+**File**: `tests/consolidation/test_issues_544_545_546_547.py` (modified, +31/-6)
+```diff
+@@ -171,12 +171,37 @@ def test_consolidation_store_associations_default_true(self, monkeypatch):
+         monkeypatch.setattr(cfg, "CONSOLIDATION_STORE_ASSOCIATIONS", True)
+         assert cfg.CONSOLIDATION_STORE_ASSOCIATIONS is True
  
- 
-+def _status_after_source_restore(
-+    status: str, confidence: float, support_count: int
-+) -> Optional[str]:
-+    """Next status when derivation rewrites an existing belief's sources.
+-    def test_typed_edges_enabled_default_true(self, monkeypatch):
+-        """Default value for TYPED_EDGES_ENABLED is True (backward compat)."""
+-        import mcp_memory_service.config as cfg
+-        monkeypatch.delenv("MCP_TYPED_EDGES_ENABLED", raising=False)
+-        monkeypatch.setattr(cfg, "TYPED_EDGES_ENABLED", True)
+-        assert cfg.TYPED_EDGES_ENABLED is True
++    @pytest.mark.parametrize(
++        "env_value, expected",
++        [(None, False), ("false", False), ("true", True), ("TRUE", True)],
++    )
++    def test_typed_edges_enabled_reads_env_default_false(self, env_value, expected):
++        """#1883: typed edges are off unless MCP_TYPED_EDGES_ENABLED=true.
 +
-+    ``candidate`` promotes to ``active`` once the floors are met.
-+    ``ungrounded`` is that same path once evidence exists again: ``active``
-+    when the floors are met, otherwise ``candidate``. Left at ``ungrounded``,
-+    the belief stays out of the default ``get_beliefs`` read. ``active`` moves
-+    to ``superseded`` when confidence falls through the floor.
-+    """
-+    if status in ("candidate", "ungrounded") and should_promote(confidence, support_count):
-+        return "active"
-+    if status == "ungrounded":
-+        return "candidate"
-+    if status == "active" and should_supersede(confidence):
-+        return "superseded"
-+    return None
-+
-+
-+def _status_for_live_evidence(status, confidence, support_count, has_evidence):
-+    """Status to store after a derivation re-checks which sources are still live.
-+
-+    No remaining evidence stays ``ungrounded`` (a dedup ``superseded`` row stays
-+    what it is). Live evidence uses the same promotion rules as a candidate.
-+    """
-+    if not has_evidence:
-+        if status == "superseded":
-+            return "superseded"
-+        return UNGROUNDED_STATUS
-+    restored = _status_after_source_restore(status, confidence, support_count)
-+    if restored is None:
-+        return status
-+    return restored
-+
-+
-+def _hash_is_live(source, live) -> bool:
-+    return isinstance(source, str) and bool(source) and source in live
-+
-+
-+def _has_live_hash(items) -> bool:
-+    return any(isinstance(item, str) and item for item in items or [])
-+
-+
- def _sum_numeric_counters(target: dict, source: dict) -> None:
-     """Add source's numeric counters into target in place (bool excluded).
- 
-@@ -286,21 +335,20 @@ async def _derive_group_belief(self, group_content, group_obs, now, stats):
-         existing = await self._get_belief(belief_hash)
- 
-         if existing:
--            await self._update_belief(
--                belief_hash, confidence, supporting_hashes, contradicting_hashes, now
-+            # Re-read liveness under the connection lock. The observations
-+            # above were loaded earlier; a delete in between has already
-+            # marked this belief ungrounded, and writing the cached hashes
-+            # back would promote it with no live evidence.
-+            outcome = await self._rewrite_belief_from_live_sources(
-+                belief_hash, obs_dicts, contradicting, now
-             )
-+            if outcome is None:
-+                return
-             stats["updated"] += 1
--
--            # Promote or supersede
--            status = existing["status"]
--            if status == "candidate" and should_promote(confidence, len(supporting_hashes)):
--                stats["promoted"] += await self._set_belief_status(
--                    belief_hash, "active", now, expected_status=status
--                )
--            elif status == "active" and should_supersede(confidence):
--                stats["superseded"] += await self._set_belief_status(
--                    belief_hash, "superseded", now, expected_status=status
--                )
-+            if outcome == "promoted":
-+                stats["promoted"] += 1
-+            elif outcome == "superseded":
-+                stats["superseded"] += 1
-         else:
-             # Create new candidate
-             status = "active" if should_promote(confidence, len(supporting_hashes)) else "candidate"
-@@ -364,7 +412,11 @@ async def challenge_belief(self, belief_hash: str) -> dict:
-     async def get_beliefs(
-         self, status: str = "active", min_confidence: float = CONFIDENCE_FLOOR
-     ) -> List[dict]:
--        """Get beliefs without waiting for the connection lock on the event loop."""
-+        """Get beliefs without waiting for the connection lock on the event loop.
-+
-+        The default status is ``active``. A belief left with no live sources is
-+        stored as ``ungrounded`` and stays out of this read.
++        Evaluated in a fresh interpreter so the module-level os.getenv() really
++        runs against the given environment instead of a patched attribute.
 +        """
-         return await asyncio.to_thread(self._get_beliefs_sync, status, min_confidence)
- 
-     def _get_beliefs_sync(self, status, min_confidence):
-@@ -1048,6 +1100,110 @@ def _insert_belief(
-             )
-             conn.commit()
- 
-+    async def _rewrite_belief_from_live_sources(
-+        self, belief_hash, obs_dicts, contradicting, now
-+    ):
-+        """Write sources, confidence, and status from hashes that are still live.
++        import os
++        import subprocess
++        import sys
 +
-+        One connection-lock critical section, so a delete cannot commit between
-+       
++        env = {k: v for k, v in os.environ.items() if k != "MCP_TYPED_EDGES_ENABLED"}
++        if env_value is not None:
++            env["MCP_TYPED_EDGES_ENABLED"] = env_value
++        # The child sees the same import path as pytest, installed package or not.
++        env["PYTHONPATH"] = os.pathsep.join(p for p in sys.path if p)
++        # dotenv is blocked in the child so a developer's .env cannot set the
++        # flag; the package-level re-export is what callers import.
++        code = (
++            "import sys; sys.modules['dotenv'] = None\n"
++            "from mcp_memory_service import config\n"
++            "print('TYPED_EDGES_ENABLED=%s' % config.TYPED_EDGES_ENABLED)\n"
++        )
++        stdout = subprocess.run(
++            [sys.executable, "-c", code],
++            env=env, capture_output=True, text=True, check=True, timeout=60,
++        ).stdout
++        assert f"TYPED_EDGES_ENABLED={expected}" in stdout.splitlines()
+ 
+     @pytest.mark.asyncio
+     async def test_store_associations_false_skips_memory_table_writes(self):
 ```
 
-**File**: `src/mcp_memory_service/storage/mixins/delete.py` (modified, +63/-7)
+**File**: `tests/consolidation/test_relationship_review_bands.py` (modified, +3/-0)
 ```diff
-@@ -7,6 +7,8 @@
+@@ -19,6 +19,9 @@ async def consolidator(temp_db_path):
+     storage = SqliteVecMemoryStorage(db_path)
+     await storage.initialize()
+     instance = DreamInspiredConsolidator(storage, ConsolidationConfig())
++    # These tests pin the review bands of typed edges, which are opt-in since
++    # #1883 (MCP_TYPED_EDGES_ENABLED defaults to false). Opt in explicitly.
++    instance.relationship_inference.typed_edges_enabled = True
+     instance.graph_storage = GraphStorage(db_path)
+     try:
+         yield instance
+```
+
+---
+
+### Incident Patch 2: `516362ae` (2026-11-06)
+**Commit Message**: fix(manage): delete untagged memories through the storage layer (#1871)
+
+* fix(manage): delete untagged memories through the storage layer
+
+/api/manage/delete-untagged tombstoned untagged rows with a raw UPDATE on
+the shared SQLite connection, so a delete there skipped everything the
+storage layer does around a tombstone: graph edges stayed, beliefs and
+summaries kept citing the deleted hashes, delta-sync peers never saw the
+deletes, and the write went out without the connection lock.
+
+DeleteMixin now owns the operation. delete_untagged_memories() collects
+the hashes, drops their embeddings and graph edges, tombstones them,
+retracts the citations (#1865), appends one delete event per hash, and
+commits once under the connection lock - the same body as
+delete_by_tags(). count_untagged_memories() shares its predicate, so the
+confirmation count the caller is held to and the rows that go are decided
+by one expression.
+
+The endpoint resolves the backend and calls it: hybrid storage keeps
+SQLite as primary and does not re-export its bulk deletes, so the
+resolver makes the same hop the raw-connection path used to make.
+
+Closes #1870
+
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+
+* fix(
+
+**File**: `changelog.d/1870.fixed.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++- `POST /api/manage/delete-untagged` now deletes through the storage layer on the SQLite backends instead of tombstoning the rows with a raw `UPDATE` on the shared connection. The new `DeleteMixin.delete_untagged_memories()` removes the graph edges, retracts the beliefs and summaries that cited the deleted hashes, appends one delete event per hash for delta-sync peers, and commits once under the connection lock — the same shape as `delete_by_tags()`. `count_untagged_memories()` joins it, so both endpoints now go through one predicate and the raw-SQL fallbacks are gone.
++- The `confirm_count` the caller is held to is now re-checked where the rows are selected for deletion — inside the connection lock and the transaction on SQLite, before the first write — so a concurrent request that strips the last tag off another memory between the count and the delete can no longer widen the delete past what was confirmed. The endpoint answers such a race with the same `400` as a stale count.
+```
+
+**File**: `src/mcp_memory_service/storage/base.py` (modified, +19/-0)
+```diff
+@@ -38,6 +38,25 @@ def __init__(self, message: str, local_model: Optional[str] = None, remote_model
+         self.remote_model = remote_model
+ 
+ 
++class UntaggedCountChanged(RuntimeError):
++    """Raised when the untagged set is no longer the size the caller confirmed.
++
++    ``delete-untagged`` is guarded by a confirmation count, and the count and
++    the delete are two awaits apart: another request can strip the last tag
++    off a memory in between, which would widen the delete past what the user
++    agreed to. The backends re-check the size where the rows are selected for
++    deletion - inside the connection lock and the transaction on SQLite - and
++    raise this before anything is written.
++    """
++
++    def __init__(self, expected: int, actual: int):
++        super().__init__(
++            f"Untagged memory count changed from {expected} to {actual} before the delete"
++        )
++        self.expected = expected
++        self.actual = actual
++
++
+ class RecreateRefused(str):
+     """The (False, message) string store()/store_batch() return when ``recreate=False``
+     met a delete on record for the content_hash (#1560).
+```
+
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +18/-3)
+```diff
+@@ -89,7 +89,7 @@
+     SENTENCE_TRANSFORMERS_AVAILABLE = False
+     SentenceTransformer = None  # type: ignore
+ 
+-from .base import MemoryStorage
++from .base import MemoryStorage, UntaggedCountChanged
+ from .milvus_expr import escape_expr_value
+ from .read_policy import should_raise_read_error
+ from .shared import (
+@@ -2028,10 +2028,11 @@ async def _delete_matching(
+         success_template: str,
+         require_live: bool = False,
+         any_of_tags: Optional[List[str]] = None,
++        expected_count: Optional[int] = None,
+     ) -> Tuple[int, str]:
+         count, hashes = await self._delete_matching_parts(
+             filter_expr, success_template, require_live=require_live,
+-            any_of_tags=any_of_tags,
++            any_of_tags=any_of_tags, expected_count=expected_count,
+         )
+         if count > 0:
+             return count, success_template.format(count=count)
+@@ -2043,10 +2044,14 @@ async def _delete_matching_parts(
+         _success_template: str,
+         require_live: bool = False,
+         any_of_tags: Optional[List[str]] = None,
++        expected_count: Optional[int] = None,
+     ) -> Tuple[int, List[str]]:
+         hashes = await self._collect_hashes(
+             filter_expr, require_live=require_live, any_of_tags=any_of_tags,
+         )
++        # Checked on the ids that are about to go, before the first delete.
++        if expected_count is not None and len(hashes) != expected_count:
++            raise UntaggedCountChanged(expected_count, len(hashes))
+         if not hashes:
+             return 0, []
+         deleted: List[str] = []
+@@ -3160,11 +3165,20 @@ async def count_untagged_memories(self) -> int:
+             logger.error("count_untagged_memories failed: %s", _sanitize_log_value(exc))
+             return 0
+ 
+-    async def delete_untagged_memories(self) -> Tuple[int, str]:
++    async def delete_untagged_memories(
++        self, expected_count: Optional[int] = None
++    ) -> Tuple[int, str]:
+         """Delete every memory that has no tags.
+ 
+         Deletion is hard here (see the module docstring), so unlike SQLite
+         there is no tombstone to sync — the rows are removed outright.
++
++        ``expected_count`` is re-checked against the ids collected for this
++        delete, before the first ``delete`` call goes out, so a concurrent
++        write that strips the last tag off another memory cannot widen the
++        delete past the count the caller confirmed. There is no transaction
++        to hold it in here, but the window closes to the gap between the
++        collect and the first chunk.
+         """
+         if not self._ensure_initialized():
+             return 0, "Milvus storage not initialized"
+@@ -3173,6 +3187,7 @@ async def delete_untagged_memories(self) -> Tuple[int, str]:
+             _UNTAGGED_FILTER,
+             "Successfully deleted {count} memories without tags",
+             require_live=True,
++            expected_count=expected_count,
+         )
+ 
+     async def get_type_counts(self) -> Dict[str, int]:
+```
+
+**File**: `src/mcp_memory_service/storage/mixins/delete.py` (modified, +123/-0)
+```diff
+@@ -7,6 +7,7 @@
  from datetime import datetime, date
  from typing import List, Tuple, Optional
  
-+from ..source_retraction import retract_sources_for_deleted_hashes
++from ..base import UntaggedCountChanged
+ from ..source_retraction import retract_sources_for_deleted_hashes
+ 
+ 
+@@ -21,6 +22,14 @@ def _escape_like(value: str) -> str:
+     return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+ 
+ 
++# A memory counts as untagged when its tag column is NULL, empty, or nothing
++# but whitespace. Shared by the count and the delete so the confirmation count
++# the caller is held to and the rows that go are decided by one predicate.
++_UNTAGGED_PREDICATE = (
++    "(tags IS NULL OR tags = '' OR length(trim(tags)) = 0) AND deleted_at IS NULL"
++)
 +
- 
- logger = logging.getLogger(__name__)
- 
-@@ -22,6 +24,45 @@ def _escape_like(value: str) -> str:
++
  class DeleteMixin:
      """Mixin providing memory deletion operations."""
  
-+    async def _rollback_quietly(self) -> None:
-+        """Drop an open delete transaction after a failure.
-+
-+        The belief/summary retraction runs before commit. A failure there has
-+        to undo the tombstone too, or the next statement inherits it.
-+        """
-+        try:
-+            await self._run_in_thread(self.conn.rollback)
-+        except sqlite3.OperationalError as exc:
-+            # Best-effort. "no transaction is active" means the failure
-+            # happened before any statement opened one, so there is nothing
-+            # to undo. A connection closed in between raises the same error.
-+            logger.debug("Delete rollback skipped: %s", _sanitize_log_value(exc))
-+
-+    def _abort_open_delete(self) -> None:
-+        """Roll back a delete before the worker releases the connection lock.
-+
-+        Citation cleanup runs after the tombstone update and before commit.
-+        Rolling back only after ``_execute_with_retry`` returns lets another
-+        waiter take ``_conn_lock`` and commit the shared connection first.
-+        The caller then sees a failed delete whose tombstone is already saved.
-+        """
-+        try:
-+            if self.conn is None:
-+                return
-+            # A connection double without in_transaction still gets rollback.
-+            if getattr(self.conn, "in_transaction", True):
-+                self.conn.rollback()
-+        except sqlite3.Error as exc:
-+            logger.error("Could not roll back delete: %s", _sanitize_log_value(exc))
-+
-+    def _guard_delete(self, operation):
-+        """Run a delete body and undo it before the connection lock drops."""
-+        try:
-+            return operation()
-+        except Exception:
-+            self._abort_open_delete()
-+            raise
-+
-     async def get_sync_state_for_hash(
-         self, content_hash: str
-     ) -> tuple[float | None, float | None] | None:
-@@ -115,6 +156,7 @@ def _apply_remote_tombstone():
-                                     'DELETE FROM memory_graph WHERE source_hash = ? OR target_hash = ?',
-                                     (content_hash, content_hash),
-                                 )
-+                                retract_sources_for_deleted_hashes(self.conn, [content_hash], sync=self)
-                                 if hasattr(self, '_append_sync_event'):
-                                     self._append_sync_event(
-                                         self.conn,
-@@ -205,6 +247,8 @@ def _delete_memory():
-                     update_sql += ' AND store = ?'
-                     update_params.append(store)
-                 cursor = self.conn.execute(update_sql, tuple(update_params))
-+                if cursor.rowcount > 0:
-+                    retract_sources_for_deleted_hashes(self.conn, [content_hash], sync=self)
- 
-                 # Append sync event between UPDATE and commit (ADR-0008)
-                 if hasattr(self, '_append_sync_event') and cursor.rowcount > 0:
-@@ -217,7 +261,10 @@ def _delete_memory():
-                 self.conn.commit()
-                 return cursor.rowcount
- 
--            rowcount = await self._execute_with_retry(_delete_memory)
-+            def _guarded_delete():
-+                return self._guard_delete(_delete_memory)
-+
-+            rowcount = await self._execute_with_retry(_guarded_delete)
-             if rowcount is None:
-                 return False, f"Memory with hash {content_hash} not found"
-             if rowcount > 0:
-@@ -227,10 +274,7 @@ def _delete_memory():
-                 return False, f"Memory with hash {content_hash} not found"
- 
-         except Exception as e:
--            try:
--                await self._run_in_thread(self.conn.rollback)
--            except sqlite3.OperationalError:
--                pass
-+            await self._rollback_quietly()
-             error_msg = f"Failed to delete memory: {str(e)}"
+@@ -514,6 +523,120 @@ def _guarded_delete_by_tags():
              logger.error("%s", _sanitize_log_value(error_msg))
-             return False, error_msg
-@@ -367,10 +411,15 @@ def _delete_by_tag():
-                     "UPDATE memories SET deleted_at = ? WHERE (',' || tags || ',') LIKE ? ESCAPE '\\' AND deleted_at IS NULL",
-                     (time.time(), exact_match_pattern)
-                 )
-+                if cursor.rowcount > 0:
-+                    retract_sources_for_deleted_hashes(self.conn, content_hashes, sync=self)
-                 self.conn.commit()
-                 return cursor.rowcount
+             return 0, error_msg, []
  
--            count = await self._execute_with_retry(_delete_by_tag)
-+            def _guarded_delete_by_tag():
-+                return self._guard_delete(_delete_by_tag)
++    async def count_untagged_memories(self) -> int:
++        """Count live memories that carry no tags."""
++        if not self.conn:
++            return 0
 +
-+            count = await self._execute
++        def _count_untagged():
++            cursor = self.conn.execute(
++                f'SELECT COUNT(*) FROM memories WHERE {_UNTAGGED_PREDICATE}'
++            )
++            return cursor.fetchone()[0]
++
++        return await self._execute_with_retry(_count_untagged)
++
++    async def delete_untagged_memories(
++        self, expected_count: Optional[int] = None
++    ) -> Tuple[int, str]:
++        """Soft-delete every memory that carries no tags.
++
++        The tombstone is only part of a delete on this backend: graph edges
++        have to go with it, beliefs and summaries built on these hashes have
++        to be retracted (#1865), delta-sync peers need a delete event each,
++        and all of it belongs in one transaction under the connection lock —
++        the same shape as :meth:`delete_by_tags`.
++
++        ``expected_count`` is the size the caller was held to. It is checked
++        here, against the rows that are about to go, inside the connection
++        lock and before the first write: a caller that counted in one request
++        and deleted in the next cannot otherwise tell whether a concurrent
++        write stripped the last tag off another memory in between and widened
++        the delete. A mismatch raises :class:`UntaggedCountChanged` with
++        nothing written.
++        """
++        try:
++            if not self.conn:
++                return 0, "Database not initialized"
++
++            def _delete_untagged():
++                cursor = self.conn.execute(
++                    f'SELECT id, content_hash FROM memories WHERE {_UNTAGGED_PREDICATE}'
++                )
++                rows = cursor.fetchall()
++                memory_ids = [row[0] for row in rows]
++                hashes = [row[1] for row in rows]
++
++                # Before any write, and under the lock that serialises them.
++                if expected_count is not None and len(rows) != expected_count:
++                    raise UntaggedCountChanged(expected_count, len(rows))
++
++                if not memory_ids:
++                    return 0
++
++                placeholders = ','.join('?' for _ in memory_ids)
++                try:
++                    self.conn.execute(f'DELETE FROM memory_embeddings WHERE rowid IN ({placeholders})', memory_ids)
++                except Exception as vec_err:
++                    logger.warning(
++                        "Batch embedding delete failed (%s) — retrying per-row to skip corrupted blobs.",
++                        _sanitize_log_value(vec_err),
++                    )
++                    for mid in memory_ids:
++                        try:
++                            self.conn.execute('DELETE FROM memory_embeddings WHERE rowid = ?', (mid,))
++                        except Exception as row_err:
++                            logger.warning("Could not delete embedding rowid=%s (corrupted blob?): %s", mid, _sanitize_log_value(row_err))
++
++                for ch in hashes:
++                    self.conn.execute(
++                        'DELETE FROM memory_graph WHERE source_hash = ? OR target_hash = ?',
++                        (ch, ch)
++                    )
++
++                deleted_at = time.time()
++                cursor = self.conn.execute(
++                    f'UPDATE memories SET deleted_at = ? WHERE {_UNTAGGED_PREDICATE}',
++                    (deleted_at,)
++                )
++                if cursor.rowcount > 0:
++                    retract_sources_for_deleted_hashes(self.conn, hashes, sync=self)
++
++                    # One event per hash, between UPDATE and commit (ADR-0008),
++                    # so a delta-sync peer sees these deletes like any other.
++                    if hasattr(self, '_append_sync_event'):
++                        for ch in hashes:
++                            self._append_sync_event(
++                                self.conn, 'delete', ch,
++                                {
 ```
 
-**File**: `src/mcp_memory_service/storage/source_retraction.py` (added, +523/-0)
+**File**: `src/mcp_memory_service/web/api/manage.py` (modified, +38/-58)
 ```diff
-@@ -0,0 +1,523 @@
-+# Copyright 2024 Heinrich Krupp
+@@ -19,14 +19,13 @@
+ """
+ 
+ import logging
+-import time
+ from typing import List, Optional
+ from datetime import datetime
+ 
+ from fastapi import APIRouter, HTTPException, Depends, Query
+ from pydantic import BaseModel, Field
+ 
+-from ...storage.base import MemoryStorage
++from ...storage.base import MemoryStorage, UntaggedCountChanged
+ # OAuth config no longer needed - auth is always enabled
+ from ..dependencies import get_storage
+ 
+@@ -42,40 +41,22 @@ def _sanitize_log_value(value: object) -> str:
+     return str(value).replace("\n", "\\n").replace("\r", "\\r").replace("\x1b", "\\x1b")
+ 
+ 
+-# Untagged memories have no first-class storage API on the SQLite backends, so
+-# these endpoints reach into the connection directly. Backends that expose
+-# count_untagged_memories()/delete_untagged_memories() (Milvus) are preferred
+-# and never touch this path.
+-_UNTAGGED_PREDICATE = (
+-    "(tags IS NULL OR tags = '' OR length(trim(tags)) = 0) AND deleted_at IS NULL"
+-)
++def _untagged_backend(storage: MemoryStorage):
++    """Return the backend implementing the untagged API, or None.
+ 
+-
+-def _sqlite_conn(storage: MemoryStorage):
+-    """Return the underlying SQLite connection, or None for other backends."""
+-    if hasattr(storage, 'conn'):
+-        return storage.conn
+-    if hasattr(storage, 'primary') and hasattr(storage.primary, 'conn'):
+-        return storage.primary.conn
++    Every backend that can do this exposes count_untagged_memories() and
++    delete_untagged_memories(); the storage layer is where the tombstone,
++    the graph cleanup, the citation retraction and the sync events live.
++    Hybrid storage keeps SQLite as ``primary`` and does not re-export its
++    bulk deletes, so ask the primary — the same hop this endpoint used to
++    make for the raw connection.
++    """
++    for candidate in (storage, getattr(storage, 'primary', None)):
++        if candidate is not None and hasattr(candidate, 'delete_untagged_memories'):
++            return candidate
+     return None
+ 
+ 
+-def _count_untagged_sql(conn) -> int:
+-    """Count untagged, non-tombstoned memories via raw SQL."""
+-    cursor = conn.execute(f"SELECT COUNT(*) FROM memories WHERE {_UNTAGGED_PREDICATE}")
+-    return cursor.fetchone()[0]
+-
+-
+-def _soft_delete_untagged_sql(conn) -> int:
+-    """Tombstone untagged memories via raw SQL; returns the affected row count."""
+-    cursor = conn.execute(
+-        f"UPDATE memories SET deleted_at = ? WHERE {_UNTAGGED_PREDICATE}",
+-        (time.time(),),
+-    )
+-    conn.commit()
+-    return cursor.rowcount
+-
+-
+ # Request/Response Models
+ class BulkDeleteRequest(BaseModel):
+     """Request model for bulk delete operations."""
+@@ -256,16 +237,11 @@ async def count_untagged_memories(
+     Returns the number of memories that have no tags assigned.
+     """
+     try:
+-        if hasattr(storage, 'count_untagged_memories'):
+-            count = await storage.count_untagged_memories()
+-        else:
+-            # Fallback: use raw SQL for SQLite-based backends (exclude soft-deleted)
+-            conn = _sqlite_conn(storage)
+-            if conn is None:
+-                raise HTTPException(status_code=501, detail="Untagged count not supported by storage backend")
+-            count = _count_untagged_sql(conn)
++        backend = _untagged_backend(storage)
++        if backend is None:
++            raise HTTPException(status_code=501, detail="Untagged count not supported by storage backend")
+ 
+-        return {"count": count}
++        return {"count": await backend.count_untagged_memories()}
+ 
+     except HTTPException:
+         raise
+@@ -299,17 +275,17 @@ async def delete_untagged_memories(
+     try:
+         # CRITICAL: confirm_count is now REQUIRED (fixed in v9.0.1)
+         # Previous bug: confirm_count was optional, allowing accidental mass deletion
+-        conn = _sqlite_conn(storage)
+-        native = hasattr(storage, 'delete_untagged_memories')
+-        if conn is None and not native:
++        backend = _untagged_backend(storage)
++        if backend is None:
+             raise HTTPException(status_code=501, detail="Delete untagged not supported by storage backend")
+ 
+-        actual_count = (
+-            await storage.count_untagged_memories() if native
+-            else _count_untagged_sql(conn)
+-        )
++        actual_count = await backend.count_untagged_memories()
+ 
+-        # CRITICAL Safety check - confirm_count MUST match actual_count
++        # CRITICAL Safety check - confirm_count MUST match actual_count.
++        # This answers a wrong count without touching the store; it is not the
++        # guarantee, because another request can change the set between this
++        # await and the delete. confirm_count is passed down and re-checked
++        # where the rows are selected, which is what holds the delete to it.
+         if confirm_count != actual_count:
+             raise HTTPException(
+                 status_code=400,
+@@ -325,15 +301,11 @@ async def delete_untagged_memories(
+                 o
+```
+
+**File**: `tests/storage/test_backend_store_signature_conformance.py` (modified, +2/-2)
+```diff
+@@ -154,8 +154,8 @@
+ 
+ # Milvus parity methods (issue #1201). These are not guaranteed on every
+ # backend: older backends may intentionally inherit a base fallback, and the
+-# web layer still has SQLite-only compatibility paths for untagged memories and
+-# type counts. Milvus, however, is expected to implement all of them, and the
++# web layer still has a SQLite-only compatibility path for type counts (the
++# untagged one went to the storage layer in #1870). Milvus, however, is expected to implement all of them, and the
+ # calls below mirror every shape used by web/api and the MCP handlers. Keeping
+ # the call shapes here prevents a rebase from silently changing a keyword name
+ # or dropping a parameter that production callers pass.
+```
+
+**File**: `tests/storage/test_delete_untagged_storage_path.py` (added, +265/-0)
+```diff
+@@ -0,0 +1,265 @@
++# Copyright 2026 Heinrich Krupp
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
 +# you may not use this file except in compliance with the License.
 +# You may obtain a copy of the License at
 +#
 +#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
 +
-+"""Drop deleted memory hashes from beliefs and flag consolidation summaries.
++"""Regression tests for #1870: delete-untagged went around the storage layer.
 +
-+Beliefs (``derived_from``, ``contradicted_by``, ``metadata.merged_from_hashes``)
-+and compression/association memories (``metadata.source_memory_hashes``) record
-+the content hashes they were built from. Deleting a memory has to act on those
-+receipts in the same transaction as the ``memory_graph`` cleanup. No model call.
-+
-+``ungrounded`` is the status of a belief with no sources left. ``get_beliefs``
-+reads ``status = 'active'`` by default, so the belief drops out of search.
-+``superseded`` stays what dedup uses for a loser absorbed into a canonical.
-+Confidence is left untouched for the next ``challenge_belief``.
-+
-+The liveness check is a pure function. Callers pass the stored source list and
-+the set of hashes that still have a live ``memories`` row. Deleted, invalidated
-+and re-ingested hashes are the same answer. These columns hold memory content
-+hashes only; an id that cannot be resolved is treated as gone when the
-+``memories`` table can be asked, and left alone when it cannot (a belief-only
-+database is not evidence that the hash was deleted).
++``POST /api/manage/delete-untagged`` used to tombstone untagged rows with a
++raw ``UPDATE`` on the shared connection, so graph edges survived the delete,
++beliefs and summaries kept citing the deleted hashes (#1865), and delta-sync
++peers never saw the deletes. The work now lives in
++``DeleteMixin.delete_untagged_memories()``, which is what these tests drive.
 +"""
 +
++import hashlib
 +import json
-+import logging
-+import sqlite3
 +import time
-+from datetime import datetime, timezone
-+
-+from mcp_memory_service.compat import _sanitize_log_value
-+
-+logger = logging.getLogger(__name__)
-+
-+# Not a dedup outcome. A belief with this status has no remaining evidence.
-+UNGROUNDED_STATUS = "ungrounded"
-+
-+# Statuses get_beliefs / derivation still treat as current knowledge.
-+_GROUNDABLE_STATUSES = frozenset({"active", "candidate", "disputed"})
-+
-+_HASH_TABLE = "mcp_retract_hashes"
-+_SQL_IN_CHUNK = 400
-+
-+_BELIEF_CITE_SQL = """
-+SELECT belief_hash, derived_from, contradicted_by, metadata, status
-+FROM beliefs
-+WHERE EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.derived_from) THEN beliefs.derived_from ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+OR EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.contradicted_by) THEN beliefs.contradicted_by ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+OR EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.metadata)
-+             THEN json_extract(beliefs.metadata, '$.merged_from_hashes')
-+             ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+"""
-+
-+_SUMMARY_CITE_SQL = """
-+SELECT content_hash, metadata, tags
-+FROM memories
-+WHERE deleted_at IS NULL
-+AND json_valid(metadata)
-+AND EXISTS (
-+    SELECT 1 FROM json_each(json_extract(metadata, '$.source_memory_hashes')) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+"""
-+
-+
-+def departed_sources(stored_sources, live_ids) -> list:
-+    """Return stored hashes that are not in ``live_ids``.
-+
-+    Order-preserving, duplicates collapsed. Non-strings are ignored.
-+    """
-+    gone = []
-+    seen = set()
-+    for source in stored_sources or []:
-+        if (
-+            not isinstance(source, str)
-+            or not source
-+            or source in seen
-+            or source in live_ids
-+        ):
-+            continue
-+        seen.add(source)
-+        gone.append(source)
-+    return gone
-+
-+
-+def retract_belief_record(
-+    *,
-+    derived_from,
-+    contradicted_by,
-+    metadata,
-+    status,
-+    live_ids,
-+    updated_at,
-+) -> dict | None:
-+    """Return the fields to write, or None when no provenance hash departed.
-+
-+    Confidence is not part of the result. A belief whose ``derived_from`` and
-+    ``contradicted_by`` are both empty moves to ``ungrounded`` unless it is
-+    already ``superseded`` (or some other non-groundable status).
-+    """
-+    derived = list(derived_from or [])
-+    contradicted = list(contradicted_by or [])
-+    meta = dict(metadata or {})
-+    merged = meta.get("merged_from_hashes")
-+    if not isinstance(merged, list):
-+        merged = []
-+    removed = departed_sources(derived + contradicted + merged, live_ids)
-+    if not removed:
-+        return None
-+    removed_set = set(removed)
-+    new_derived = _without(derived, removed_set)
-+    new_contradicted = _without(contradicted, removed_set)
-+    new_merged = _without(merged, removed_set)
-+    if new_merged:
-+        meta["merged_from_hashes"] = new_mer
-```
-
-**File**: `src/mcp_memory_service/storage/sync/apply.py` (modified, +76/-33)
-```diff
-@@ -17,6 +17,7 @@
- 
- from ..base import MemoryStorage
- from ..mixins.base import _sanitize_log_value
-+from ..source_retraction import retract_sources_for_deleted_hashes
- from .resolver import EventView, reduce_events, _winner_key
- 
- logger = logging.getLogger(__name__)
-@@ -268,37 +269,25 @@ def _apply_remote_event_locked(storage: MemoryStorage, event: Dict[str, Any]) ->
-             if is_winner or op == "update_metadata":
-                 try:
-                     materialized = _materialize_event(storage, event)
-+                    if not materialized:
-+                        # Commit only the skippable empty create. Any other miss,
-+                        # including a tombstone whose citation cleanup returned
-+                        # False, rolls back so the retry is not a duplicate.
-+                        return _unmaterialized_result(s, op, payload)
-                     s.conn.commit()  # durability: persist event + materialization (ADR-0019/§8.5)
--                    if materialized:
--                        reason = ("Remote event won and materialized" if is_winner
--                                  else "update_metadata merged (field-level convergence)")
--                        if locals().get("_is_content_repair"):
--                            reason = "Empty-content create repaired with real content (via resolver)"
--                        return ApplyResult(applied=True, materialized=True, reason=reason)
--                    # A win that fails to materialize is NOT applied. A create whose content
--                    # is empty in BOTH the payload and the source table is permanently
--                    # non-materializable — mark it skippable so the orchestrator advances past
--                    # it instead of fail-stopping the whole feed (a few irrecoverable events
--                    # must not block thousands of good ones). Any other materialization miss
--                    # stays a transient failure the sender keeps retrying (Greptile P1).
--                    if op == "create" and not (payload.get("content") or ""):
--                        return ApplyResult(applied=False, materialized=False,
--                                           reason="Create event has no recoverable content — skipped",
--                                           skippable=True)
--                    return ApplyResult(applied=False, materialized=False, reason="Materialization failed")
-+                    reason = ("Remote event won and materialized" if is_winner
-+                              else "update_metadata merged (field-level convergence)")
-+                    if locals().get("_is_content_repair"):
-+                        reason = "Empty-content create repaired with real content (via resolver)"
-+                    return ApplyResult(applied=True, materialized=True, reason=reason)
-                 except Exception as e:
-                     # Roll back any pending write (e.g. a content-repair UPDATE to
--                    # sync_events) so a transient materialization failure does not leave
--                    # the stored payload mutated — otherwise the next retry would match
--                    # it as a duplicate and never re-attempt the memory write (Greptile
--                    # #1499 apply:181, exception path).
--                    try:
--                        s.conn.rollback()
--                    except Exception:
--                        # Best-effort rollback: if the connection cannot roll back (e.g.
--                        # no open transaction) there is nothing to undo; the original error
--                        # below is what matters.
--                        pass
-+                    # sync_events, or a tombstone whose citation cleanup raised)
-+                    # so a transient materialization failure does not leave the
-+                    # stored payload mutated — otherwise the next retry would match
-+                    # it as a duplicate and never re-attempt the memory write
-+                    # (Greptile #1499 apply:181, and #1865 citation cleanup).
-+                    _rollback_apply(s)
-                     logger.error("Materialization failed: %s", _sanitize_log_value(e))
-                     return ApplyResult(applied=False, materialized=False, reason=f"Materialization error: {e}")
-             else:
-@@ -313,9 +302,21 @@ def _apply_remote_event_locked(storage: MemoryStorage, event: Dict[str, Any]) ->
-                 if op in ("create", "delete"):
-                     try:
-                         _reconcile_liveness(_sqlite(storage), content_hash)
--                    except Exception as e:  # noqa: BLE001 - never fail-stop the feed on reconcile
--                        logger.warning("liveness reconcile (loser) failed for %s: %s",
--                                       _sanitize_log_value(content_hash), _sanitize_log_value(e))
-+                    except Exception as e:  # noqa: BLE001 - partial liveness write must not commit
-+                       
-```
-
-**File**: `tests/consolidation/test_delete_stale_beliefs.py` (added, +910/-0)
-```diff
-@@ -0,0 +1,910 @@
-+"""Deleting a memory retracts it from beliefs and flags consolidation summaries.
-+
-+The graph-edge cleanup already runs inside the delete transaction. These tests
-+drive the real sqlite-vec storage (no mocked delete) and require the same
-+transaction to drop the hash from belief provenance and to mark compression
-+and association memories stale. They fail on main, where only memory_graph
-+is cleaned.
-+"""
-+
-+import asyncio
-+import json
-+import os
-+import sqlite3
-+from datetime import date, datetime, timezone
 +
 +import pytest
++import pytest_asyncio
 +
-+from mcp_memory_service.consolidation.belief_service import BeliefService, _hash_content
++from fastapi import HTTPException
++
 +from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.base import UntaggedCountChanged
++from mcp_memory_service.storage.mixins import delete as delete_mixin
 +from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+_WHEN = "2026-11-05T02:00:00+00:00"
++from mcp_memory_service.web.api import manage
 +
 +
-+def test_departed_sources_lists_hashes_that_are_not_live():
-+    """One question: is the source still live? Duplicates and non-hashes are ignored."""
-+    from mcp_memory_service.storage.source_retraction import departed_sources
-+
-+    gone = departed_sources(
-+        ["live", "dead", "dead", "", None, 3, "also-dead"],
-+        {"live"},
-+    )
-+    assert gone == ["dead", "also-dead"]
-+
-+
-+def test_retract_belief_record_strips_the_hash_once_and_keeps_confidence():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    update = retract_belief_record(
-+        derived_from=["dead", "live"],
-+        contradicted_by=["dead"],
-+        metadata={"merged_from_hashes": ["dead", "live"], "note": "keep"},
-+        status="active",
-+        live_ids={"live"},
-+        updated_at=_WHEN,
-+    )
-+    assert update["derived_from"] == ["live"]
-+    assert update["contradicted_by"] == []
-+    assert update["metadata"]["merged_from_hashes"] == ["live"]
-+    assert update["metadata"]["note"] == "keep"
-+    assert update["metadata"]["stale_sources"] == {"count": 1, "updated_at": _WHEN}
-+    assert update["status"] == "active"
-+    assert "confidence" not in update
++@pytest_asyncio.fixture
++async def storage(tmp_path):
++    s = SqliteVecMemoryStorage(str(tmp_path / "untagged.db"))
++    await s.initialize()
++    try:
++        yield s
++    finally:
++        await s.close()
 +
 +
-+def test_retract_belief_record_ungrounds_a_belief_with_no_sources_left():
-+    from mcp_memory_service.storage.source_retraction import (
-+        UNGROUNDED_STATUS,
-+        retract_belief_record,
-+    )
-+
-+    update = retract_belief_record(
-+        derived_from=["dead"],
-+        contradicted_by=[],
-+        metadata={},
-+        status="active",
-+        live_ids=set(),
-+        updated_at=_WHEN,
-+    )
-+    assert update["derived_from"] == []
-+    assert update["status"] == UNGROUNDED_STATUS
-+    assert update["status"] == "ungrounded"
-+    assert update["metadata"]["stale_sources"]["count"] == 1
++def _hash(content: str) -> str:
++    return hashlib.sha256(content.strip().lower().encode()).hexdigest()
 +
 +
-+def test_retract_belief_record_leaves_superseded_status_alone():
-+    """superseded means a dedup loser, not 'evidence gone'. Do not overload it."""
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
++async def _store(storage, content: str, tags):
++    """Store a memory, then strip its tags in SQL when it must be untagged.
 +
-+    update = retract_belief_record(
-+        derived_from=["dead"],
-+        contradicted_by=[],
-+        metadata={"merged_from_hashes": ["dead"]},
-+        status="superseded",
-+        live_ids=set(),
-+        updated_at=_WHEN,
-+    )
-+    assert update["status"] == "superseded"
-+    assert update["derived_from"] == []
-+    assert "merged_from_hashes" not in update["metadata"]
-+
-+
-+def test_retract_belief_record_is_a_no_op_when_every_source_is_live():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    assert (
-+        retract_belief_record(
-+            derived_from=["live"],
-+            contradicted_by=["other"],
-+            metadata={"merged_from_hashes": ["live"]},
-+            status="active",
-+            live_ids={"live", "other"},
-+            updated_at=_WHEN,
++    ``Memory.__post_init__`` rewrites an empty tag list to ``["untagged"]``,
++    so a row with a genuinely empty tag column cannot be created through the
++    public API — which is what the endpoint exists to clean up.
++    """
++    memory = Memory(content=content, content_hash=_hash(content), tags=tags or ["keep"])
++    success, message = await storage.store(memory)
++    assert success, message
++    if not tags:
++        storage.conn.execute(
++            "UPDATE memories SET tags = '' WHERE content_hash = ?", (memory.content_hash,)
 +        )
-+        is None
-+    )
++        storage.conn.commit()
++    return memory.content_hash
 +
 +
-+def test_belief_stale_count_accumulates_as_later_sources_depart():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    first = retract_belief_record(
-+        derived_from=["a", "b"],
-+        contradicted_by=[],
-+        metadata={},
-+        status="candidate",
-+        live_ids={"b"},
-+        updated_at=_WHEN,
-+    )
-+    assert first["status"] == "candidate"
-+    assert first["metadata"]["stale_sources"]["count"] == 1
-+    second = retract_belief_record(
-+        derived_from=first["derived_from"],
-+        contradicted_by=[],
-+        metadata=first["metadata"],
-+        status=first["status"],
-+        live_ids=set(),
-+        updated_at="2026-11-05T03:00:00+00:00",
-+    )
-+    assert second["status"] == "ungrounded"
-+    assert second["metadata"]["stale_sources"] == {
-+        "count": 2,
-+        "updated_at": "2026-11-05T03:00:00+00:00",
-+    }
++def _deleted_at(storage, content_hash):
++    row = storage.conn.execute(
++        "SELECT deleted_at FROM memories WHERE content_hash = ?", (content_hash,)
++    ).fetchone()
++    return row[0]
 +
 +
-+def test_summary_flag_keeps_the_source_list_and_counts_departed_hashes():
-+    from mcp_memory_service.storage.source_retraction import flag_summary_sources
++@pytest.mark.asyncio
++async def test_count_and_delete_see_the_same_rows(storage):
++    untagged = await _store(storage, "no tags here", None)
++    tagged = await _store(storage, "this one is tagged", ["keep"])
 +
-+    original = {
-+        "source_memory_hashes": ["dead", "live"],
-+        "compression_ratio": 0.4,
-+    }
-+    flagged =
-```
-
-**File**: `tests/storage/test_delete_mixin_logging.py` (modified, +24/-4)
-```diff
-@@ -78,14 +78,34 @@ def fetchall(self):
-         return [self._row] if self._row else []
- 
- 
-+def _lookup_cursor(sql: str):
-+    """Memory-id lookups return a row. Citation scans stay empty.
++    assert await storage.count_untagged_memories() == 1
 +
-+    Delete now stages retracted hashes with ``executemany`` and then asks
-+    which beliefs and summaries cite them. This double only covers log
-+    injection, so those scans report nothing.
-+    """
-+    compact = " ".join(sql.split()).upper()
-+    if "MEMORY_EMBEDDINGS" in compact and compact.startswith("DELETE"):
-+        raise RuntimeError(f"corrupted blob\n{FORGED}")
-+    if (
-+        compact.startswith("SELECT")
-+        and " FROM MEMORIES" in compact
-+        and "SQLITE_MASTER" not in compact
-+        and "JSON_" not in compact
-+        and " FROM BELIEFS" not in compact
-+    ):
-+        return _Cursor(row=(1, "abc"))
-+    return _Cursor()
++    count, message = await storage.delete_untagged_memories()
++
++    assert count == 1
++    assert "1" in message
++    assert _deleted_at(storage, untagged) is not None
++    assert _deleted_at(storage, tagged) is None
++    assert await storage.count_untagged_memories() == 0
 +
 +
- class _WorkingConn:
-     """A connection whose statements succeed, except for the embedding delete."""
- 
-     def execute(self, sql, *_args):
--        if "memory_embeddings" in sql and sql.lstrip().startswith("DELETE"):
--            raise RuntimeError(f"corrupted blob\n{FORGED}")
--        if sql.lstrip().startswith("SELECT"):
--            return _Cursor(row=(1, "abc"))
-+        return _lookup_cursor(sql)
++@pytest.mark.asyncio
++async def test_empty_store_reports_nothing_deleted(storage):
++    await _store(storage, "this one is tagged", ["keep"])
 +
-+    def executemany(self, _sql, _rows):
-         return _Cursor()
- 
-     def commit(self):
-```
-
----
-
-### Incident Patch 2: `3c67ff07` (2026-11-05)
-**Commit Message**: fix(transport): refuse cross-origin and rebinding requests on unauthenticated HTTP transports
-
-With no API key or OAuth, the loopback-only --streamable-http and --sse
-transports answered every /mcp preflight with a wildcard origin and checked
-neither Host nor Origin. A web page could call any tool cross-origin, and a
-DNS-rebinding domain could read the responses too (GHSA-8p26-g7wp-65jw).
-
-Both transports now get TransportSecuritySettings when no auth is
-configured: Host pinned to loopback names, Origin to loopback plus
-MCP_CORS_ORIGINS. The preflight grants exactly the origins the transport
-accepts. Authenticated servers keep their behaviour, so a reverse proxy
-with a public Host header still works.
-
-The lifespan loop, uvicorn bind, /mcp request handling and OAuth sub-app
-moved out of run_sse/run_streamable_http into shared helpers, which the
-complexity gate required once both functions were touched.
-
-Reported by orshih6.
-
-**File**: `changelog.d/GHSA-8p26-g7wp-65jw.fixed.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Any web page could drive an unauthenticated local `--streamable-http` or `--sse` server (GHSA-8p26-g7wp-65jw, orshih6).**
-+  With no API key or OAuth on a loopback bind, the `/mcp` preflight answered every origin
-+  with `Access-Control-Allow-Origin: *`, and neither transport checked `Host` or `Origin`,
-+  so a cross-origin page could call `memory_delete` or plant memories, and a DNS-rebinding
-+  domain could also read the results. An unauthenticated server now only accepts loopback
-+  `Host` values and loopback origins plus `MCP_CORS_ORIGINS` (403/421 otherwise), and the
-+  preflight grants exactly those origins. Servers with an API key or OAuth keep their
-+  current behaviour, including behind a reverse proxy.
-```
-
-**File**: `src/mcp_memory_service/utils/startup_orchestrator.py` (modified, +198/-154)
-```diff
-@@ -67,8 +67,7 @@ def _assert_bind_is_authenticated(host: str, port: int) -> None:
-     deployment GHSA-2hh8-qjxc-43x3 describes. Documenting "do not expose SSE"
-     is not a control. Refusing to start is.
-     """
--    from ..config import OAUTH_ENABLED, API_KEY
--    if _is_loopback_host(host) or OAUTH_ENABLED or API_KEY:
-+    if _is_loopback_host(host) or _auth_configured():
-         return
-     raise RuntimeError(
-         f"Refusing to start an MCP transport on {host}:{port} with no authentication "
-@@ -77,6 +76,179 @@ def _assert_bind_is_authenticated(host: str, port: int) -> None:
-     )
- 
- 
-+def _auth_configured() -> bool:
-+    """True when the HTTP transports check a credential on every MCP request."""
-+    from ..config import OAUTH_ENABLED, API_KEY
-+    return bool(OAUTH_ENABLED or API_KEY)
++    count, message = await storage.delete_untagged_memories()
++
++    assert count == 0
++    assert message == "No untagged memories found"
 +
 +
-+def _configured_cors_origins() -> list:
-+    return [o.strip() for o in os.environ.get("MCP_CORS_ORIGINS", "").split(",") if o.strip()]
++@pytest.mark.asyncio
++async def test_graph_edges_go_with_the_memory(storage):
++    untagged = await _store(storage, "no tags here", None)
++    tagged = await _store(storage, "this one is tagged", ["keep"])
++    other = await _store(storage, "another tagged one", ["keep"])
++    for source, target in ((untagged, tagged), (tagged, untagged), (tagged, other)):
++        storage.conn.execute(
++            "INSERT INTO memory_graph (source_hash, target_hash, similarity, "
++            "connection_types, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)",
++            (source, target, 0.9, json.dumps(["semantic"]), None, time.time()),
++        )
++    storage.conn.commit()
++
++    await storage.delete_untagged_memories()
++
++    rows = storage.conn.execute(
++        "SELECT source_hash, target_hash FROM memory_graph"
++    ).fetchall()
++    assert rows == [(tagged, other)]
 +
 +
-+_LOOPBACK_HOSTS = ["127.0.0.1:*", "localhost:*", "[::1]:*"]
-+_LOOPBACK_ORIGINS = ["http://127.0.0.1:*", "http://localhost:*", "http://[::1]:*"]
++@pytest.mark.asyncio
++async def test_citations_are_retracted_before_the_commit(storage, monkeypatch):
++    untagged = await _store(storage, "no tags here", None)
++    seen = {}
++
++    def _spy(conn, hashes, sync=None):
++        seen["hashes"] = list(hashes)
++        seen["in_transaction"] = conn.in_transaction
++
++    monkeypatch.setattr(delete_mixin, "retract_sources_for_deleted_hashes", _spy)
++
++    await storage.delete_untagged_memories()
++
++    assert seen["hashes"] == [untagged]
++    # Retraction and tombstone have to land in the same transaction, or a
++    # failed retraction leaves a memory deleted with its beliefs still active.
++    assert seen["in_transaction"] is True
 +
 +
-+def _transport_security_settings():
-+    """Host/Origin validation for the SSE and Streamable HTTP transports.
-+
-+    With no auth configured the server is loopback-only (see
-+    _assert_bind_is_authenticated), and the browser is the only way a remote
-+    party can reach it: a cross-origin page, or a DNS-rebinding domain that
-+    resolves to 127.0.0.1 (GHSA-8p26-g7wp-65jw). Both are refused here by
-+    pinning Host to loopback names and Origin to loopback plus
-+    MCP_CORS_ORIGINS. The SDK leaves this off unless it is passed in.
-+
-+    With auth configured this returns None on purpose: every request needs a
-+    credential a browser never attaches on its own, and a server behind a
-+    reverse proxy sees the public hostname in Host, which a loopback
-+    allowlist would answer with 421. Gate on auth, not on the bind address.
-+    """
-+    if _auth_configured():
-+        return None
-+    from mcp.server.transport_security import TransportSecuritySettings  # inline import: only the HTTP transports need it
-+    return TransportSecuritySettings(
-+        enable_dns_rebinding_protection=True,
-+        allowed_hosts=list(_LOOPBACK_HOSTS),
-+        allowed_origins=_LOOPBACK_ORIGINS + _configured_cors_origins(),
-+    )
-+
-+
-+def _origin_matches(origin: str, allowed: list) -> bool:
-+    """Same rule as the SDK's TransportSecurityMiddleware: exact, or `base:*`."""
-+    return any(
-+        origin == a or (a.endswith(":*") and origin.startswith(a[:-1]))
-+        for a in allowed
-+    )
-+
-+
-+def _mcp_preflight_headers(origin: str) -> dict:
-+    """CORS headers for an OPTIONS preflight on /mcp.
-+
-+    An origin is granted only when the transport would also accept its
-+    request, so the preflight and the SDK's Origin check cannot disagree.
-+    Until GHSA-8p26-g7wp-65jw this answered every origin with `*`, which
-+    let any web page drive an unauthenticated local server.
-+    """
-+    configured = _configured_cors_origins()
-+    if _auth_configured() and (not configured or "*" in configured):
-+        # Every request still needs a token the page does not have. Without
-+        # auth an explicit `*` is not honoured: that is the advisory itself.
-+        allow = "*"
-+    else:
-+        settings = _transport_security_settings()
-+        allowed = settings.allowed_origins if settings else configured
-+        allow = origin if origin and _origin_matches(origin, allowed) else None
-+    if allow is None:
-+        return {}
-+    headers = {
-+        "Access-Control-Allow-Origin": allow,
-+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-+        "Access-Control-Allow-Headers": "*",
-+        "Access-Control-Max-Age": "86400",
-+    }
-+    if allow != "*":
-+        headers["Vary"] = "Origin"
-+    return headers
-+
-+
-+async def _serve_lifespan(receive, send, context=None) -> None:
-+    """ASGI lifespan loop shared by the HTTP transports.
-+
-+    `context` is an async context manager held open from startup to shutdown
-+    (the Streamable HTTP session manager); SSE passes none.
-+    """
-+    entered = False
-+    while True:
-+        message = await receive()
-+        if message["type"] == "lifespan.startup":
-+            if context is not None:
-+                await context.__aenter__()
-+                entered = True
-+            await send({"type": "lifespan.startup.complete"})
-+        elif message["type"] == "lifespan.shutdown":
-+            if entered:
-+                await context.__aexit__(None, None, None)
-+            await send({"type": "lifespan.shutdown.complete"})
-+            return
-+
-+
-+async def _answer_health_or_404(path: str, scope, receive, send) -> None:
-+    from starlette.responses import Response  # inline import: only the HTTP transports need it
-+    if path == "/health":
-+        response = Response('{"status":"ok"}', media_type="application/json")
-+    else:
-+        response = Response("Not Found", st
-```
-
-**File**: `tests/unit/test_remote_transport_guards.py` (modified, +73/-0)
-```diff
-@@ -177,3 +177,76 @@ def test_guard_reads_the_address_uvicorn_binds(self, runs):
-         value main() checks; it has to come from MCP_HTTP_HOST."""
-         from mcp_memory_service import mcp_server
-         assert mcp_server.mcp.settings.host == mcp_server.HTTP_HOST
-+
-+
-+class TestBrowserReachability:
-+    """GHSA-8p26-g7wp-65jw: an unauthenticated loopback server was reachable
-+    from any web page (wildcard CORS preflight) and through DNS rebinding (no
-+    Host/Origin check). These pin the allowlists both paths now share."""
-+
-+    @pytest.fixture
-+    def so(self, monkeypatch):
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        from mcp_memory_service.utils import startup_orchestrator as so
-+        monkeypatch.setattr(config, "OAUTH_ENABLED", False)
-+        monkeypatch.setattr(config, "API_KEY", None)
-+        monkeypatch.delenv("MCP_CORS_ORIGINS", raising=False)
-+        return so
-+
-+    async def _validate(self, settings, host, origin=None):
-+        """Run the SDK's own request check, the one the transports apply."""
-+        from mcp.server.transport_security import TransportSecurityMiddleware
-+        from starlette.requests import Request
-+        headers = [(b"host", host.encode()), (b"content-type", b"application/json")]
-+        if origin:
-+            headers.append((b"origin", origin.encode()))
-+        req = Request({"type": "http", "method": "POST", "path": "/mcp", "headers": headers})
-+        resp = await TransportSecurityMiddleware(settings).validate_request(req, is_post=True)
-+        return resp.status_code if resp else 200
-+
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_rejects_rebinding_host(self, so):
-+        assert await self._validate(so._transport_security_settings(), "evil.example:8765") == 421
-+
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_rejects_foreign_origin(self, so):
-+        status = await self._validate(so._transport_security_settings(), "127.0.0.1:8765", "https://evil.example")
-+        assert status == 403
-+
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_serves_local_clients(self, so):
-+        settings = so._transport_security_settings()
-+        assert await self._validate(settings, "127.0.0.1:8765") == 200
-+        assert await self._validate(settings, "localhost:8765", "http://localhost:6274") == 200
-+
-+    def test_authenticated_server_leaves_host_unchecked(self, so, monkeypatch):
-+        """Behind a reverse proxy Host is the public name; the token is the gate."""
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        monkeypatch.setattr(config, "API_KEY", "a-key")
-+        assert so._transport_security_settings() is None
-+
-+    def test_preflight_grants_no_foreign_origin(self, so):
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
-+        assert so._mcp_preflight_headers("") == {}
-+
-+    def test_preflight_reflects_local_origin(self, so):
-+        headers = so._mcp_preflight_headers("http://localhost:6274")
-+        assert headers["Access-Control-Allow-Origin"] == "http://localhost:6274"
-+        assert headers["Vary"] == "Origin"
-+
-+    def test_configured_origin_is_allowed_on_both_paths(self, so, monkeypatch):
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "https://app.example")
-+        assert "https://app.example" in so._transport_security_settings().allowed_origins
-+        assert so._mcp_preflight_headers("https://app.example")["Access-Control-Allow-Origin"] == "https://app.example"
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
-+
-+    def test_authenticated_server_keeps_wildcard_preflight(self, so, monkeypatch):
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        monkeypatch.setattr(config, "API_KEY", "a-key")
-+        assert so._mcp_preflight_headers("https://anything.example")["Access-Control-Allow-Origin"] == "*"
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "*")
-+        assert so._mcp_preflight_headers("https://anything.example")["Access-Control-Allow-Origin"] == "*"
-+
-+    def test_explicit_wildcard_does_not_open_unauthenticated_server(self, so, monkeypatch):
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "*")
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
++@pytest.mark.asyncio
++async def test_one_delete_event_per_deleted_hash(storage, monkeypatch):
++    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "on")
++  
 ```
 
 ---
 
-### Incident Patch 3: `7e053af2` (2026-11-05)
-**Commit Message**: docs(site): require Python 3.11 on five localized pages (#1868)
+### Incident Patch 3: `01c7ef6d` (2026-11-05)
+**Commit Message**: fix(i18n): translate the filter tooltips and the Documents tab (#1822)
 
-* docs(site): require Python 3.11 on the de, es, fr, ja and zh-cn pages
+The five search filter tooltips and the three Documents help icons already
+had catalog keys, but only on data-i18n-aria: the tooltip a user hovers kept
+its English title. data-i18n-title now sits next to each aria attribute,
+which is why those eight keys gain no new strings.
 
-Python 3.10 was retired in #1770, but five localized introductions still
-told readers 3.10 or newer was enough. pt-br, zh-tw and ko already said 3.11.
+The rest was hardcoded: the upload history and its error line, the
+View/Remove buttons of both document lists, the drop zone app.js rebuilds
+after an upload, the chunk-overlap illustration, the processing-mode help
+heading, the memory-viewer chunk count and the removal confirmation. They go
+through this.t() or a data-i18n* attribute now, with twenty-two new strings
+in all ten catalogs. documents.supported also lists DOCX and PPTX, which the
+file input and semtools_loader.py have accepted all along.
 
-* docs(changelog): add fragment for #1868
+tests/web/test_i18n_filters_documents.py reads the real catalogs,
+index.html and app.js: it fails on the base branch and passes with the
+change.
 
-**File**: `changelog.d/1868.fixed.md` (added, +4/-0)
+Fixes #1817
+
+Co-authored-by: qwist1233-cpu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1817.fixed.md` (added, +17/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+- **Five localized website introductions still allowed Python 3.10 (#1868).** The
-+  German, Spanish, French, Japanese and Simplified Chinese pages said Python 3.10 or
-+  newer was enough after #1770 had retired 3.10. They now say 3.11, like the English,
-+  Brazilian Portuguese, Traditional Chinese and Korean pages.
+@@ -0,0 +1,17 @@
++- **Search filter tooltips and most of the Documents tab stayed English (#1817).**
++  The five filter tooltips and the three Documents help icons already had catalog
++  keys, but only on `data-i18n-aria`, so the tooltip a user actually hovers kept its
++  English `title`; `data-i18n-title` now sits next to each aria attribute. Those icons
++  also sat inside the element whose text is translated, and `applyTranslations()`
++  writes `textContent`/`innerHTML`, so the first render dropped them from the page --
++  the translatable text now lives in its own `<span>` and the icon stays beside it.
++  The upload history (`No uploads yet`, its error line), the View/Remove buttons of
++  both document lists, the drop zone that `app.js` rebuilds after an upload, the
++  chunk-overlap illustration, the processing-mode help heading, the memory-viewer chunk
++  count and the removal confirmation go through `this.t()` or a `data-i18n*` attribute
++  now, with twenty-two new strings in all eleven catalogs. The chunk-size help icon also
++  gets its own `info-icon-chunk` class: it shared the bare `.info-icon` hook that
++  `setupDocumentsEventListeners()` queries, so once the processing-mode icon stayed in
++  the page the wrong icon answered the click. `documents.supported` also lists DOCX and
++  PPTX, which `semtools_loader.py` has accepted all along, and the static `#fileInput`
++  now accepts `.docx,.pptx` like the input `app.js` rebuilds.
 ```
 
-**File**: `scripts/maintenance/site_locales/de.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +28/-24)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Selbst hosten",
-   "case_3_text": "Starte lokal mit SQLite und Vektorsuche. Für diesen Betrieb brauchst du weder einen Cloud-Speicherdienst noch einen kostenpflichtigen Embedding-API-Schlüssel.",
-   "install_heading": "In Claude Code einrichten",
--  "install_intro": "Du brauchst Python 3.10 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.",
-+  "install_intro": "Du brauchst Python 3.11 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.",
-   "step_1_title": "Memory Service installieren",
-   "step_1_text": "Installiere das Paket in einer Python-Umgebung, deren Befehle für deinen Client erreichbar sind.",
-   "step_2_title": "Als MCP-Server hinzufügen",
+@@ -1334,7 +1334,7 @@ class MemoryDashboard {
+             // Show a message in the history container instead of just logging
+             const historyContainer = document.getElementById('uploadHistory');
+             if (historyContainer) {
+-                historyContainer.innerHTML = '<p style="text-align: center; color: var(--error);">Failed to load upload history. Please check the console for details.</p>';
++                historyContainer.innerHTML = `<p style="text-align: center; color: var(--error);">${this.escapeHtml(this.t('documents.uploadHistoryError', 'Failed to load upload history. Please check the console for details.'))}</p>`;
+             }
+         }
+     }
+@@ -1347,7 +1347,7 @@ class MemoryDashboard {
+         if (!historyContainer) return;
+ 
+         if (uploads.length === 0) {
+-            historyContainer.innerHTML = '<p style="text-align: center; color: var(--neutral-500);">No uploads yet</p>';
++            historyContainer.innerHTML = `<p style="text-align: center; color: var(--neutral-500);" data-i18n="documents.noUploads">${this.escapeHtml(this.t('documents.noUploads', 'No uploads yet'))}</p>`;
+             return;
+         }
+ 
+@@ -1382,18 +1382,20 @@ class MemoryDashboard {
+                         ${upload.status === 'completed' && hasMemories ? `
+                             <div class="upload-actions">
+                                 <button class="btn-icon btn-view-memory"
+-                                title="View memory chunks">
++                                title="${this.escapeHtml(this.t('documents.viewChunksTip', 'View memory chunks'))}"
++                                data-i18n-title="documents.viewChunksTip">
+                                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                         <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                     </svg>
+-                                    <span>View</span>
++                                    <span data-i18n="documents.view">${this.escapeHtml(this.t('documents.view', 'View'))}</span>
+                                 </button>
+                                 <button class="btn-icon btn-remove"
+-                                title="Remove document and memories">
++                                title="${this.escapeHtml(this.t('documents.removeWithMemoriesTip', 'Remove document and memories'))}"
++                                data-i18n-title="documents.removeWithMemoriesTip">
+                                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                     </svg>
+-                                    <span>Remove</span>
++                                    <span data-i18n="documents.remove">${this.escapeHtml(this.t('documents.remove', 'Remove'))}</span>
+                                 </button>
+                             </div>
+                         ` : ''}
+@@ -1465,7 +1467,7 @@ class MemoryDashboard {
+         }
+ 
+         // Chunking help info icon
+-        const infoIcon = document.querySelector('.info-icon');
++        const infoIcon = document.querySelector('.info-icon-chunk');
+         if (infoIcon) {
+             infoIcon.addEventListener('click', () => {
+                 this.toggleChunkingHelp();
+@@ -1656,8 +1658,8 @@ class MemoryDashboard {
+         }
+         if (this.modeDescription) {
+             this.modeDescription.innerHTML = mode === 'batch'
+-                ? '<small>All selected files will be processed together with the same tags.</small>'
+-                : '<small>Each file will be processed individually with the same tags.</small>';
++                ? `<small data-i18n="documents.modeDescription">${this.escapeHtml(this.t('documents.modeDescription', 'All selected files will be processed together with the same tags.'))}</small>`
++                : `<small data-i18n="documents.modeDescriptionIndividual">${this.escapeHtml(this.t('documents.modeDescriptionIndividual', 'Each file will be processed individually with the same tags.'))}</small>`;
+         }
+ 
+         console.log(`Processing mode set to: ${mode}`);
+@@ -1732,9 +1734,9 @@ class MemoryDashboard {
+                         <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                         </svg>
+-                        <h3>Drag & drop files here</h3>
+-                        <p>or <button id="fileSelectBtn" class="link-button">browse to select files</button></p>
+-                        <p class="supported-formats">Supported
 ```
 
-**File**: `scripts/maintenance/site_locales/es.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +23/-1)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Aloja el servicio en tu equipo",
-   "case_3_text": "Empieza en local con SQLite y búsqueda vectorial. Para esta configuración no necesitas almacenamiento en la nube ni una API de pago para generar embeddings.",
-   "install_heading": "Configúralo en Claude Code",
--  "install_intro": "Necesitas Python 3.10 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.",
-+  "install_intro": "Necesitas Python 3.11 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.",
-   "step_1_title": "Instala Memory Service",
-   "step_1_text": "Instala el paquete en un entorno de Python cuyos comandos estén disponibles para tu cliente.",
-   "step_2_title": "Añádelo como servidor MCP",
+@@ -212,6 +212,9 @@
+   "documents.overlapHelp.tipsTitle": "Richtlinien:",
+   "documents.overlapHelp.title": "Chunk-Überlappung erklärt",
+   "documents.overlapHelp.visual": "Visuelles Beispiel:",
++  "documents.overlapHelp.chunk1": "Chunk 1 – eigener Inhalt...",
++  "documents.overlapHelp.shared": "gemeinsamer Überlappungsbereich",
++  "documents.overlapHelp.chunk2": "Chunk 2 – eigener Inhalt...",
+   "documents.processingHelp.batchBest": "<strong>Optimal für:</strong> Ähnliche Dateien, schnelle Massenverarbeitung, wenn Dateien gruppiert werden sollen",
+   "documents.processingHelp.batchCons": "<strong>Nachteile:</strong> Fehler bei einer Datei kann gesamten Batch betreffen",
+   "documents.processingHelp.batchPros": "<strong>Vorteile:</strong> Schneller, einfacher, einzelner Fortschrittsbalken",
+@@ -223,6 +226,7 @@
+   "documents.processingHelp.individualPros": "<strong>Vorteile:</strong> Bessere Fehlerbehandlung, individueller Fortschritt, robuster",
+   "documents.processingHelp.individualTitle": "Einzelverarbeitung",
+   "documents.processingHelp.individualWhat": "<strong>Funktion:</strong> Lädt jede Datei separat mit individuellen API-Aufrufen hoch",
++  "documents.processingHelp.title": "Optionen für den Verarbeitungsmodus",
+   "documents.processingHelp.note": "<strong>Beim Hochladen mehrerer Dateien</strong> wählen Sie wie sie verarbeitet werden sollen. Beide Modi wenden dieselben Tags auf alle Dateien an.",
+   "documents.processingHelp.tipBatch": "<strong>Batch-Modus:</strong> Wenn Dateien ähnlich sind und schnell zusammen verarbeitet werden sollen",
+   "documents.processingHelp.tipIndividual": "<strong>Einzel-Modus:</strong> Wenn Dateien unterschiedliche Anforderungen haben oder sichergestellt werden soll dass alle verarbeitet werden auch wenn einige fehlschlagen",
+@@ -236,10 +240,27 @@
+   "documents.search.count.other": "{count} Ergebnisse{extra}",
+   "documents.search.noMatch": "Kein passender Dokumentinhalt gefunden. Versuchen Sie andere Suchbegriffe.",
+   "documents.searchBtn": "Dokumente durchsuchen",
++  "documents.modeDescriptionIndividual": "Jede Datei wird einzeln mit denselben Tags verarbeitet.",
++  "documents.uploadHistoryError": "Upload-Verlauf konnte nicht geladen werden. Details finden Sie in der Konsole.",
++  "documents.noUploads": "Noch keine Uploads",
++  "documents.view": "Anzeigen",
++  "documents.viewChunksTip": "Speicher-Chunks anzeigen",
++  "documents.remove": "Entfernen",
++  "documents.removeWithMemoriesTip": "Dokument und Erinnerungen entfernen",
++  "documents.removeTip": "Dokument entfernen",
++  "documents.viewChunks": "Chunks anzeigen",
++  "documents.viewAllChunksTip": "Alle Chunks anzeigen",
++  "documents.untitled": "Dokument",
++  "documents.unknownFile": "Unbekannte Datei",
++  "documents.noPreview": "Keine Inhaltsvorschau verfügbar",
++  "documents.noChunks": "Für dieses Dokument wurden keine Speicher-Chunks gefunden.",
++  "documents.removeConfirm": "„{filename}“ und alle zugehörigen Speicher-Chunks entfernen?\n\nDiese Aktion kann nicht rückgängig gemacht werden.",
++  "documents.uploadStatusError": "Upload fehlgeschlagen mit Status {status}",
++  "documents.batchUploadFailed": "Stapel-Upload fehlgeschlagen",
+   "documents.searchDesc": "Durchsuchen Sie hochgeladene Dokumente um zu prüfen ob Inhalt indexiert ist",
+   "documents.searchPlaceholder": "Inhalt in erfassten Dokumenten durchsuchen...",
+   "documents.searchTitle": "Erfasste Inhalte durchsuchen",
+-  "documents.supported": "Unterstützte Formate: PDF, TXT, MD, JSON",
++  "documents.supported": "Unterstützte Formate: PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsHelp": "Tags werden auf alle Dateien angewendet. Nutzen Sie Leerzeichen oder Kommas als Trennzeichen.",
+   "documents.tagsLabel": "Tags (kommagetrennt)",
+   "documents.tagsPlaceholder": "z.B. dokumentation, referenz, handbuch",
+@@ -334,6 +355,7 @@
+   "modal.memoryViewer.chunksFound": "{count} Chunks gefunden",
+   "modal.memoryViewer.chunksFound.one": "{count} Chunk gefunden",
+   "modal.memoryViewer.close": "Schließen",
++  "modal.close": "Schließen",
+   "modal.auth.title": "Authentifizierung erforderlich",
+   "modal.auth.description": "Das Dashboard erfordert eine Authentifizierung für den Zugriff auf Erinnerungsoperationen.",
+   "modal.auth.apiKeyTitle": "API-Schlüssel",
 ```
 
-**File**: `scripts/maintenance/site_locales/fr.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +23/-1)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Hébergez le service sur votre machine",
-   "case_3_text": "Commencez en local avec SQLite et la recherche vectorielle. Cette configuration ne nécessite ni stockage dans le cloud ni API payante pour générer les embeddings.",
-   "install_heading": "Configurez-le dans Claude Code",
--  "install_intro": "Il vous faut Python 3.10 ou une version ultérieure, ainsi que Claude Code installé. Vous pouvez aussi connecter d'autres clients via MCP ; le guide en anglais explique comment les configurer.",
-+  "install_intro": "Il vous faut Python 3.11 ou une version ultérieure, ainsi que Claude Code installé. Vous pouvez aussi connecter d'autres clients via MCP ; le guide en anglais explique comment les configurer.",
-   "step_1_title": "Installez Memory Service",
-   "step_1_text": "Installez le paquet dans un environnement Python dont les commandes sont accessibles à votre client.",
-   "step_2_title": "Ajoutez-le comme serveur MCP",
+@@ -161,7 +161,7 @@
+   "documents.title": "Document Ingestion",
+   "documents.dropTitle": "Drag & drop files here",
+   "documents.dropSubtitle": "or <button id=\"fileSelectBtn\" class=\"link-button\">browse to select files</button>",
+-  "documents.supported": "Supported formats: PDF, TXT, MD, JSON",
++  "documents.supported": "Supported formats: PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsLabel": "Tags (comma-separated)",
+   "documents.tagsPlaceholder": "e.g., documentation, reference, manual",
+   "documents.tagsHelp": "Tags will be applied to all files. Use spaces or commas as separators.",
+@@ -194,6 +194,9 @@
+   "documents.overlapHelp.title": "Chunk Overlap Explained",
+   "documents.overlapHelp.note": "<strong>What is overlap?</strong> Overlap is the number of characters that are duplicated between consecutive chunks. This helps maintain context across chunk boundaries.",
+   "documents.overlapHelp.visual": "Visual Example:",
++  "documents.overlapHelp.chunk1": "Chunk 1 unique content...",
++  "documents.overlapHelp.shared": "shared overlap region",
++  "documents.overlapHelp.chunk2": "Chunk 2 unique content...",
+   "documents.overlapHelp.noneTitle": "No Overlap (0 chars)",
+   "documents.overlapHelp.noneBest": "<strong>Best for:</strong> Maximum storage efficiency, no redundancy needed",
+   "documents.overlapHelp.noneTradeoff": "<strong>Trade-off:</strong> Context may be lost at chunk boundaries",
+@@ -210,6 +213,7 @@
+   "documents.overlapHelp.tipLarge": "<strong>Large chunks (2000)</strong> → Use 400-500 overlap",
+   "documents.overlapHelp.tipAccuracy": "Higher overlap helps with search accuracy but increases storage",
+   "documents.overlapHelp.tipZero": "Zero overlap is fine for well-structured documents with clear sections",
++  "documents.processingHelp.title": "Processing Mode Options",
+   "documents.processingHelp.note": "<strong>When uploading multiple files,</strong> choose how they should be processed. Both modes apply the same tags to all files.",
+   "documents.processingHelp.batchTitle": "Batch Processing",
+   "documents.processingHelp.default": "Default",
+@@ -239,6 +243,23 @@
+   "documents.searchDesc": "Search within your uploaded documents to verify content is indexed",
+   "documents.searchPlaceholder": "Search for content within ingested documents...",
+   "documents.searchBtn": "Search Documents",
++  "documents.modeDescriptionIndividual": "Each file will be processed individually with the same tags.",
++  "documents.uploadHistoryError": "Failed to load upload history. Please check the console for details.",
++  "documents.noUploads": "No uploads yet",
++  "documents.view": "View",
++  "documents.viewChunksTip": "View memory chunks",
++  "documents.remove": "Remove",
++  "documents.removeWithMemoriesTip": "Remove document and memories",
++  "documents.removeTip": "Remove document",
++  "documents.viewChunks": "View Chunks",
++  "documents.viewAllChunksTip": "View all chunks",
++  "documents.untitled": "Document",
++  "documents.unknownFile": "Unknown file",
++  "documents.noPreview": "No content preview available",
++  "documents.noChunks": "No memory chunks found for this document.",
++  "documents.removeConfirm": "Remove \"{filename}\" and all its memory chunks?\n\nThis action cannot be undone.",
++  "documents.uploadStatusError": "Upload failed with status {status}",
++  "documents.batchUploadFailed": "Batch upload failed",
+   "api.title": "API Documentation",
+   "api.subtitle": "REST endpoints of this server",
+   "api.link.swagger": "Interactive Swagger UI",
+@@ -571,6 +592,7 @@
+   "modal.memoryViewer.chunksFound": "{count} chunks found",
+   "modal.memoryViewer.chunksFound.one": "{count} chunk found",
+   "modal.memoryViewer.close": "Close",
++  "modal.close": "Close",
+   "modal.auth.title": "Authentication Required",
+   "modal.auth.description": "The dashboard requires authentication to access memory operations.",
+   "modal.auth.apiKeyTitle": "API Key",
 ```
 
-**File**: `scripts/maintenance/site_locales/ja.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +23/-1)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "セルフホストで運用",
-   "case_3_text": "SQLiteとベクトル検索でローカルに始められます。クラウドのストレージサービスも有償のEmbedding APIキーも不要です。",
-   "install_heading": "Claude Codeにセットアップする",
--  "install_intro": "Python 3.10以降と、インストール済みのClaude Codeクライアントが必要です。他のクライアントもMCP経由で接続できます。設定方法は英語のガイドに記載されています。",
-+  "install_intro": "Python 3.11以降と、インストール済みのClaude Codeクライアントが必要です。他のクライアントもMCP経由で接続できます。設定方法は英語のガイドに記載されています。",
-   "step_1_title": "Memory Serviceをインストール",
-   "step_1_text": "クライアントからコマンドを利用できるPython環境に、パッケージをインストールします。",
-   "step_2_title": "MCPサーバーとして追加",
+@@ -212,6 +212,9 @@
+   "documents.overlapHelp.tipsTitle": "Directrices:",
+   "documents.overlapHelp.title": "Explicación del Solapamiento de Fragmentos",
+   "documents.overlapHelp.visual": "Ejemplo Visual:",
++  "documents.overlapHelp.chunk1": "Contenido exclusivo del fragmento 1...",
++  "documents.overlapHelp.shared": "región de solapamiento compartida",
++  "documents.overlapHelp.chunk2": "Contenido exclusivo del fragmento 2...",
+   "documents.processingHelp.batchBest": "<strong>Mejor para:</strong> Archivos similares, procesamiento masivo rápido, cuando quieres agrupar archivos",
+   "documents.processingHelp.batchCons": "<strong>Desventajas:</strong> El fallo de un archivo puede afectar todo el lote",
+   "documents.processingHelp.batchPros": "<strong>Ventajas:</strong> Más rápido, más simple, indicador de progreso único",
+@@ -223,6 +226,7 @@
+   "documents.processingHelp.individualPros": "<strong>Ventajas:</strong> Mejor manejo de errores, progreso individual, más robusto",
+   "documents.processingHelp.individualTitle": "Procesamiento Individual",
+   "documents.processingHelp.individualWhat": "<strong>Qué hace:</strong> Sube cada archivo por separado con llamadas API individuales",
++  "documents.processingHelp.title": "Opciones del modo de procesamiento",
+   "documents.processingHelp.note": "<strong>Al subir múltiples archivos,</strong> elige cómo deben procesarse. Ambos modos aplican las mismas etiquetas a todos los archivos.",
+   "documents.processingHelp.tipBatch": "<strong>Modo por lotes:</strong> Cuando los archivos son similares y quieres procesarlos rápidamente juntos",
+   "documents.processingHelp.tipIndividual": "<strong>Modo individual:</strong> Cuando los archivos pueden tener diferentes requisitos de procesamiento o quieres asegurar que todos los archivos se procesen incluso si algunos fallan",
+@@ -236,10 +240,27 @@
+   "documents.search.count.other": "{count} resultados{extra}",
+   "documents.search.noMatch": "No se encontró contenido de documento coincidente. Prueba con otros términos de búsqueda.",
+   "documents.searchBtn": "Buscar Documentos",
++  "documents.modeDescriptionIndividual": "Cada archivo se procesará individualmente con las mismas etiquetas.",
++  "documents.uploadHistoryError": "No se pudo cargar el historial de subidas. Consulta la consola para más detalles.",
++  "documents.noUploads": "Aún no hay subidas",
++  "documents.view": "Ver",
++  "documents.viewChunksTip": "Ver fragmentos de memoria",
++  "documents.remove": "Eliminar",
++  "documents.removeWithMemoriesTip": "Eliminar el documento y sus memorias",
++  "documents.removeTip": "Eliminar el documento",
++  "documents.viewChunks": "Ver fragmentos",
++  "documents.viewAllChunksTip": "Ver todos los fragmentos",
++  "documents.untitled": "Documento",
++  "documents.unknownFile": "Archivo desconocido",
++  "documents.noPreview": "No hay vista previa del contenido",
++  "documents.noChunks": "No se encontraron fragmentos de memoria para este documento.",
++  "documents.removeConfirm": "¿Eliminar «{filename}» y todos sus fragmentos de memoria?\n\nEsta acción no se puede deshacer.",
++  "documents.uploadStatusError": "La subida falló con el estado {status}",
++  "documents.batchUploadFailed": "La subida por lotes falló",
+   "documents.searchDesc": "Busca dentro de tus documentos subidos para verificar que el contenido esté indexado",
+   "documents.searchPlaceholder": "Buscar contenido dentro de documentos ingestados...",
+   "documents.searchTitle": "Buscar en Contenido Ingestado",
+-  "documents.supported": "Formatos soportados: PDF, TXT, MD, JSON",
++  "documents.supported": "Formatos soportados: PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsHelp": "Las etiquetas se aplicarán a todos los archivos. Usa espacios o comas como separadores.",
+   "documents.tagsLabel": "Etiquetas (separadas por comas)",
+   "documents.tagsPlaceholder": "ej: documentación, referencia, manual",
+@@ -334,6 +355,7 @@
+   "modal.memoryViewer.chunksFound": "{count} fragmentos encontrados",
+   "modal.memoryViewer.chunksFound.one": "{count} fragmento encontrado",
+   "modal.memoryViewer.close": "Cerrar",
++  "modal.close": "Cerrar",
+   "modal.auth.title": "Autenticación requerida",
+   "modal.auth.description": "El panel requiere autenticación para acceder a las operaciones de memoria.",
+   "modal.auth.apiKeyTitle": "Clave API",
 ```
 
-**File**: `scripts/maintenance/site_locales/zh-cn.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +23/-1)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "放在自己的机器上运行",
-   "case_3_text": "用 SQLite 加向量检索就能在本地起步。这种配置既不需要云存储服务，也不需要付费的 Embedding API 密钥。",
-   "install_heading": "在 Claude Code 中配置",
--  "install_intro": "需要 Python 3.10 或更高版本，以及已经装好的 Claude Code 客户端。其他客户端也可以通过 MCP 接入，配置方法见英文指南。",
-+  "install_intro": "需要 Python 3.11 或更高版本，以及已经装好的 Claude Code 客户端。其他客户端也可以通过 MCP 接入，配置方法见英文指南。",
-   "step_1_title": "安装 Memory Service",
-   "step_1_text": "把这个包安装到客户端能够调用其命令的 Python 环境里。",
-   "step_2_title": "添加为 MCP 服务器",
+@@ -212,6 +212,9 @@
+   "documents.overlapHelp.tipsTitle": "Lignes directrices :",
+   "documents.overlapHelp.title": "Explication du Chevauchement de Fragments",
+   "documents.overlapHelp.visual": "Exemple Visuel :",
++  "documents.overlapHelp.chunk1": "Contenu propre au fragment 1...",
++  "documents.overlapHelp.shared": "zone de chevauchement partagée",
++  "documents.overlapHelp.chunk2": "Contenu propre au fragment 2...",
+   "documents.processingHelp.batchBest": "<strong>Meilleur pour :</strong> Fichiers similaires, traitement rapide en masse, quand vous voulez grouper les fichiers",
+   "documents.processingHelp.batchCons": "<strong>Inconvénients :</strong> L'échec d'un fichier peut affecter tout le lot",
+   "documents.processingHelp.batchPros": "<strong>Avantages :</strong> Plus rapide, plus simple, indicateur de progression unique",
+@@ -223,6 +226,7 @@
+   "documents.processingHelp.individualPros": "<strong>Avantages :</strong> Meilleure gestion des erreurs, progression individuelle, plus robuste",
+   "documents.processingHelp.individualTitle": "Traitement Individuel",
+   "documents.processingHelp.individualWhat": "<strong>Ce qu'il fait :</strong> Télécharge chaque fichier séparément avec des appels API individuels",
++  "documents.processingHelp.title": "Options du mode de traitement",
+   "documents.processingHelp.note": "<strong>Lors du téléchargement de plusieurs fichiers,</strong> choisissez comment ils doivent être traités. Les deux modes appliquent les mêmes tags à tous les fichiers.",
+   "documents.processingHelp.tipBatch": "<strong>Mode par lot :</strong> Quand les fichiers sont similaires et que vous voulez les traiter rapidement ensemble",
+   "documents.processingHelp.tipIndividual": "<strong>Mode individuel :</strong> Quand les fichiers peuvent avoir des exigences de traitement différentes ou que vous voulez assurer que tous les fichiers sont traités même si certains échouent",
+@@ -236,10 +240,27 @@
+   "documents.search.count.other": "{count} résultats{extra}",
+   "documents.search.noMatch": "Aucun contenu de document correspondant trouvé. Essayez d'autres termes de recherche.",
+   "documents.searchBtn": "Rechercher Documents",
++  "documents.modeDescriptionIndividual": "Chaque fichier sera traité individuellement avec les mêmes tags.",
++  "documents.uploadHistoryError": "Impossible de charger l'historique des envois. Consultez la console pour plus de détails.",
++  "documents.noUploads": "Aucun envoi pour le moment",
++  "documents.view": "Afficher",
++  "documents.viewChunksTip": "Afficher les fragments de mémoire",
++  "documents.remove": "Supprimer",
++  "documents.removeWithMemoriesTip": "Supprimer le document et ses mémoires",
++  "documents.removeTip": "Supprimer le document",
++  "documents.viewChunks": "Afficher les fragments",
++  "documents.viewAllChunksTip": "Afficher tous les fragments",
++  "documents.untitled": "Document",
++  "documents.unknownFile": "Fichier inconnu",
++  "documents.noPreview": "Aucun aperçu du contenu disponible",
++  "documents.noChunks": "Aucun fragment de mémoire trouvé pour ce document.",
++  "documents.removeConfirm": "Supprimer « {filename} » et tous ses fragments de mémoire ?\n\nCette action est irréversible.",
++  "documents.uploadStatusError": "Échec de l'envoi avec le statut {status}",
++  "documents.batchUploadFailed": "Échec de l'envoi par lot",
+   "documents.searchDesc": "Recherchez dans vos documents téléchargés pour vérifier que le contenu est indexé",
+   "documents.searchPlaceholder": "Rechercher du contenu dans les documents ingérés...",
+   "documents.searchTitle": "Rechercher dans le Contenu Ingéré",
+-  "documents.supported": "Formats supportés : PDF, TXT, MD, JSON",
++  "documents.supported": "Formats supportés : PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsHelp": "Les tags seront appliqués à tous les fichiers. Utilisez les espaces ou virgules comme séparateurs.",
+   "documents.tagsLabel": "Tags (séparés par des virgules)",
+   "documents.tagsPlaceholder": "ex : documentation, référence, manuel",
+@@ -334,6 +355,7 @@
+   "modal.memoryViewer.chunksFound": "{count} fragments trouvés",
+   "modal.memoryViewer.chunksFound.one": "{count} fragment trouvé",
+   "modal.memoryViewer.close": "Fermer",
++  "modal.close": "Fermer",
+   "modal.auth.title": "Authentification requise",
+   "modal.auth.description": "Le tableau de bord requiert une authentification pour accéder aux opérations sur les mémoires.",
+   "modal.auth.apiKeyTitle": "Clé API",
 ```
 
-**File**: `site/de/index.html` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +23/-1)
 ```diff
-@@ -85,7 +85,7 @@ <h2>Projektwissen behalten, statt es immer neu zu erklären</h2>
-   <section class="sec" id="install">
-     <div class="wrap locale-install">
-       <h2>In Claude Code einrichten</h2>
--      <p class="lede">Du brauchst Python 3.10 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.</p>
-+      <p class="lede">Du brauchst Python 3.11 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.</p>
-       <ol class="install-steps">
-         <li><h3>Memory Service installieren</h3><pre><code>pip install 'mcp-memory-service[sqlite]'</code></pre><p>Installiere das Paket in einer Python-Umgebung, deren Befehle für deinen Client erreichbar sind.</p></li>
-         <li><h3>Als MCP-Server hinzufügen</h3><pre><code>claude mcp add memory -- memory server</code></pre><p>Führe den Befehl im Projektverzeichnis aus und starte Claude Code danach neu. Beim ersten Start wird das lokale Embedding-Modell heruntergeladen.</p></li>
+@@ -161,7 +161,7 @@
+   "documents.title": "दस्तावेज़ आयात",
+   "documents.dropTitle": "फ़ाइलें यहाँ खींचकर छोड़ें",
+   "documents.dropSubtitle": "या <button id=\"fileSelectBtn\" class=\"link-button\">फ़ाइलें चुनने के लिए ब्राउज़ करें</button>",
+-  "documents.supported": "समर्थित फ़ॉर्मेट: PDF, TXT, MD, JSON",
++  "documents.supported": "समर्थित फ़ॉर्मेट: PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsLabel": "टैग (अल्पविराम से अलग करें)",
+   "documents.tagsPlaceholder": "उदाहरण: दस्तावेज़ीकरण, संदर्भ, मैन्युअल",
+   "documents.tagsHelp": "सभी फ़ाइलों पर टैग लागू होंगे। अलग करने के लिए रिक्त स्थान या अल्पविराम का उपयोग करें।",
+@@ -194,6 +194,9 @@
+   "documents.overlapHelp.title": "चंक ओवरलैप की व्याख्या",
+   "documents.overlapHelp.note": "<strong>ओवरलैप क्या है?</strong> ओवरलैप वह अक्षरों की संख्या है जो लगातार दो चंक्स के बीच दोहराई जाती है। इससे चंक्स की सीमाओं के बीच संदर्भ बनाए रखने में मदद मिलती है।",
+   "documents.overlapHelp.visual": "दृश्य उदाहरण:",
++  "documents.overlapHelp.chunk1": "खंड 1 की अपनी सामग्री...",
++  "documents.overlapHelp.shared": "साझा ओवरलैप क्षेत्र",
++  "documents.overlapHelp.chunk2": "खंड 2 की अपनी सामग्री...",
+   "documents.overlapHelp.noneTitle": "बिना ओवरलैप (0 अक्षर)",
+   "documents.overlapHelp.noneBest": "<strong>इनके लिए सर्वोत्तम:</strong> अधिकतम स्टोरेज दक्षता, जहाँ दोहराव की आवश्यकता न हो",
+   "documents.overlapHelp.noneTradeoff": "<strong>समझौता:</strong> चंक्स की सीमाओं पर संदर्भ खो सकता है",
+@@ -210,6 +213,7 @@
+   "documents.overlapHelp.tipLarge": "<strong>बड़े चंक्स (2000)</strong> → 400-500 ओवरलैप का उपयोग करें",
+   "documents.overlapHelp.tipAccuracy": "अधिक ओवरलैप खोज की सटीकता बढ़ाता है, लेकिन स्टोरेज की आवश्यकता भी बढ़ाता है",
+   "documents.overlapHelp.tipZero": "स्पष्ट अनुभागों वाले सुव्यवस्थित दस्तावेज़ों के लिए शून्य ओवरलैप भी उपयुक्त है",
++  "documents.processingHelp.title": "प्रोसेसिंग मोड विकल्प",
+   "documents.processingHelp.note": "<strong>एक से अधिक फ़ाइलें अपलोड करते समय,</strong> चुनें कि उन्हें कैसे प्रोसेस किया जाना चाहिए। दोनों मोड सभी फ़ाइलों पर समान टैग लागू करते हैं।",
+   "documents.processingHelp.batchTitle": "बैच प्रोसेसिंग",
+   "documents.processingHelp.default": "डिफ़ॉल्ट",
+@@ -239,6 +243,23 @@
+   "documents.searchDesc": "यह सत्यापित करने के लिए अपने अपलोड किए गए दस्तावेज़ों में खोजें कि उनकी सामग्री इंडेक्स हो गई है",
+   "documents.searchPlaceholder": "अपलोड किए गए दस्तावेज़ों में सामग्री खोजें...",
+   "documents.searchBtn": "दस्तावेज़ खोजें",
++  "documents.modeDescriptionIndividual": "प्रत्येक फ़ाइल को उन्हीं टैग के साथ अलग-अलग संसाधित किया जाएगा।",
++  "documents.uploadHistoryError": "अपलोड इतिहास लोड नहीं हो सका। विवरण के लिए कंसोल देखें।",
++  "documents.noUploads": "अभी कोई अपलोड नहीं",
++  "documents.view": "देखें",
++  "documents.viewChunksTip": "मेमोरी खंड देखें",
++  "documents.remove": "हटाएँ",
++  "documents.removeWithMemoriesTip": "दस्तावेज़ और मेमोरी हटाएँ",
++  "documents.removeTip": "दस्तावेज़ हटाएँ",
++  "documents.viewChunks": "खंड देखें",
++  "documents.viewAllChunksTip": "सभी खंड देखें",
++  "documents.untitled": "दस्तावेज़",
++  "documents.unknownFile": "अज्ञात फ़ाइल",
++  "documents.noPreview": "कोई सामग्री पूर्वावलोकन उपलब्ध नहीं",
++  "documents.noChunks": "इस दस्तावेज़ के लिए कोई मेमोरी खंड नहीं मिला।",
++  "documents.removeConfirm": "\"{filename}\" और इसके सभी मेमोरी खंड हटाएँ?\n\nयह क्रिया पूर्ववत नहीं की जा सकती।",
++  "documents.uploadStatusError": "अपलोड विफल, स्थिति {status}",
++  "documents.batchUploadFailed": "बैच अपलोड विफल",
+   "api.title": "API दस्तावेज़",
+   "api.subtitle": "इस सर्वर के REST एंडपॉइंट",
+   "api.link.swagger": "इंटरैक्टिव Swagger UI",
+@@ -571,6 +592,7 @@
+   "modal.memoryViewer.chunksFound": "{count} खंड मिले",
+   "modal.memoryViewer.chunksFound.one": "{count} खंड मिला",
+   "modal.memoryViewer.close": "बंद करें",
++  "modal.close": "बंद करें",
+   "modal.auth.title": "प्रमाणीकरण आवश्यक",
+   "modal.auth.description": "मेमोरी ऑपरेशन तक पहुँचने के लिए डैशबोर्ड को प्रमाणीकरण की आवश्यकता है।",
+   "modal.auth.apiKeyTitle": "API कुंजी",
 ```
 
-**File**: `site/es/index.html` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +23/-1)
 ```diff
-@@ -85,7 +85,7 @@ <h2>Conserva el contexto de tu proyecto sin explicarlo cada vez</h2>
-   <section class="sec" id="install">
-     <div class="wrap locale-install">
-       <h2>Configúralo en Claude Code</h2>
--      <p class="lede">Necesitas Python 3.10 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.</p>
-+      <p class="lede">Necesitas Python 3.11 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.</p>
-       <ol class="install-steps">
-         <li><h3>Instala Memory Service</h3><pre><code>pip install 'mcp-memory-service[sqlite]'</code></pre><p>Instala el paquete en un entorno de Python cuyos comandos estén disponibles para tu cliente.</p></li>
-         <li><h3>Añádelo como servidor MCP</h3><pre><code>claude mcp add memory -- memory server</code></pre><p>Ejecuta el comando desde el directorio del proyecto y reinicia Claude Code. En el primer inicio se descargará el modelo local de embeddings.</p></li>
+@@ -161,7 +161,7 @@
+   "documents.title": "Ingesti Dokumen",
+   "documents.dropTitle": "Seret & lepas file di sini",
+   "documents.dropSubtitle": "atau <button id=\"fileSelectBtn\" class=\"link-button\">telusuri untuk memilih file</button>",
+-  "documents.supported": "Format yang didukung: PDF, TXT, MD, JSON",
++  "documents.supported": "Format yang didukung: PDF, DOCX, PPTX, TXT, MD, JSON",
+   "documents.tagsLabel": "Tag (dipisahkan koma)",
+   "documents.tagsPlaceholder": "misalnya: dokumentasi, referensi, panduan",
+   "documents.tagsHelp": "Tag akan diterapkan ke semua file. Gunakan spasi atau koma sebagai pemisah.",
+@@ -194,6 +194,9 @@
+   "documents.overlapHelp.title": "Penjelasan Overlap Chunk",
+   "documents.overlapHelp.note": "<strong>Apa itu overlap?</strong> Overlap adalah jumlah karakter yang diduplikasi antar chunk yang berurutan. Ini membantu menjaga konteks di batas chunk.",
+   "documents.overlapHelp.visual": "Contoh Visual:",
++  "documents.overlapHelp.chunk1": "Konten unik chunk 1...",
++  "documents.overlapHelp.shared": "area tumpang tindih bersama",
++  "documents.overlapHelp.chunk2": "Konten unik chunk 2...",
+   "documents.overlapHelp.noneTitle": "Tanpa Overlap (0 karakter)",
+   "documents.overlapHelp.noneBest": "<strong>Cocok untuk:</strong> Efisiensi penyimpanan maksimum, tanpa redundansi",
+   "documents.overlapHelp.noneTradeoff": "<strong>Kompromi:</strong> Konteks bisa hilang di batas chunk",
+@@ -210,6 +213,7 @@
+   "documents.overlapHelp.tipLarge": "<strong>Chunk besar (2000)</strong> → Gunakan overlap 400-500",
+   "documents.overlapHelp.tipAccuracy": "Overlap lebih tinggi membantu akurasi pencarian tetapi menambah penyimpanan",
+   "documents.overlapHelp.tipZero": "Overlap nol baik untuk dokumen terstruktur dengan bagian yang jelas",
++  "documents.processingHelp.title": "Opsi mode pemrosesan",
+   "documents.processingHelp.note": "<strong>Saat mengunggah beberapa file,</strong> pilih cara pemrosesannya. Kedua mode menerapkan tag yang sama ke semua file.",
+   "documents.processingHelp.batchTitle": "Pemrosesan Batch",
+   "documents.processingHelp.default": "Default",
+@@ -239,6 +243,23 @@
+   "documents.searchDesc": "Cari di dalam dokumen yang Anda unggah untuk memverifikasi konten telah terindeks",
+   "documents.searchPlaceholder": "Cari konten di dalam dokumen yang diingesti...",
+   "documents.searchBtn": "Cari Dokumen",
++  "documents.modeDescriptionIndividual": "Setiap file akan diproses satu per satu dengan tag yang sama.",
++  "documents.uploadHistoryError": "Gagal memuat riwayat unggahan. Lihat konsol untuk detailnya.",
++  "documents.noUploads": "Belum ada unggahan",
++  "documents.view": "Lihat",
++  "documents.viewChunksTip": "Lihat chunk memori",
++  "documents.remove": "Hapus",
++  "documents.removeWithMemoriesTip": "Hapus dokumen dan memori",
++  "documents.removeTip": "Hapus dokumen",
++  "documents.viewChunks": "Lihat chunk",
++  "documents.viewAllChunksTip": "Lihat semua chunk",
++  "documents.untitled": "Dokumen",
++  "documents.unknownFile": "File tidak diketahui",
++  "documents.noPreview": "Pratinjau konten tidak tersedia",
++  "documents.noChunks": "Tidak ada chunk memori untuk dokumen ini.",
++  "documents.removeConfirm": "Hapus \"{filename}\" dan semua chunk memorinya?\n\nTindakan ini tidak dapat dibatalkan.",
++  "documents.uploadStatusError": "Unggahan gagal dengan status {status}",
++  "documents.batchUploadFailed": "Unggahan batch gagal",
+   "api.title": "Dokumentasi API",
+   "api.subtitle": "Endpoint REST server ini",
+   "api.link.swagger": "Swagger UI Interaktif",
+@@ -571,6 +592,7 @@
+   "modal.memoryViewer.chunksFound": "{count} chunk ditemukan",
+   "modal.memoryViewer.chunksFound.one": "{count} chunk ditemukan",
+   "modal.memoryViewer.close": "Tutup",
++  "modal.close": "Tutup",
+   "modal.auth.title": "Autentikasi Diperlukan",
+   "modal.auth.description": "Dasbor memerlukan autentikasi untuk mengakses operasi memori.",
+   "modal.auth.apiKeyTitle": "Kunci API",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1873** (2026-11-05): docs(site): reword the Korean hero headline (@doobidoo)
-- **PR #1872** (2026-11-05): fix(storage): clear conflict:unresolved once the conflict is gone (#1840) (@mbreitkreuz)
-- **PR #1869** (2026-11-05): chore(release): v12.6.0 (@doobidoo)
-- **PR #1868** (2026-11-05): docs(site): require Python 3.11 on five localized pages (@doobidoo)
-- **PR #1867** (2026-11-05): fix(storage): explain the optional sqlite_vec import guard in retrieve.py (@doobidoo)
-- **PR #1866** (2026-11-05): docs: add Korean website introduction (@laozhej)
+- **PR #1889** (2026-11-06): fix(reasoning): keep contradicts edges when linking entities (#1874) (@mbreitkreuz)
+- **PR #1888** (2026-11-06): fix(consolidation): ship the #541 typed-edge gates (#1457) (@massimiliano1991)
+- **PR #1887** (2026-11-06): fix(consolidation): default MCP_TYPED_EDGES_ENABLED to false (@tonydzi)
+- **PR #1886** (2026-11-06): chore(pr): run the changelog fragment check in pre_pr_check.sh (@doobidoo)
+- **PR #1885** (2026-11-06): fix(search): keep the exact/tag fallback in the searched store (#1876) (@doobidoo)
+- **PR #1884** (2026-11-06): fix(consolidation): preserve qualifications during compression (@doobidoo)
 
 ---
 
@@ -4017,36 +4119,30 @@ told readers 3.10 or newer was enough. pt-br, zh-tw and ko already said 3.11.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): mark beliefs/summaries stale when source memory deleted (#1865)
+## X. consolidation): default MCP_TYPED_EDGES_ENABLED to false (#1887)
 
 **RULE**:
-When implementing operations in `changelog.d/1857.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1883.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16a0ae92`: storage): mark beliefs/summaries stale when source memory deleted (#1865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e693b07a`: consolidation): default MCP_TYPED_EDGES_ENABLED to false (#1887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1857.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1883.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Deleting a memory left beliefs and consolidation summaries citing it (#1857, ZYZ666-RGB).**
-  Graph edges were removed in the delete transaction, but `derived_from`,
-  `contradicted_by` and `metadata.merged_from_hashes` kept the hash, and
-  compression and association memories kept it in `source_memory_hashes`.
-  Retention deletes this way all the time, so `get_beliefs` kept returning a
-  belief whose evidence was gone. The same transaction now drops the hash from
-  those lists, records `metadata.stale_sources` (how many, and when), and marks
-  a belief `ungrounded` when nothing is left. That status is not `superseded`.
-  Confidence is unchanged until the next `challenge_belief`. Summaries are
-  flagged and not rewritten. A later re-derivation does not union a merged
-  source that is no longer live. Re-deriving an ungrounded belief promotes it
-  back to candidate, or to active when the usual floors are met. A tombstone
-  applied through delta sync runs the same cleanup. A summary flag advances
-  `updated_at` and records an `update_metadata` event when the sync log is on.
-  If that cleanup fails, the delta-sync apply rolls the tombstone and the
-  event back, so a retry can finis
+- **Consolidation no longer labels inferred edges `fixes` / `contradicts` by default (#1883).**
+  `MCP_TYPED_EDGES_ENABLED` now defaults to `false`. A typed label came from the pair of
+  memory types (`learning` -> `bug` gave `fixes`, two note-like types gave `contradicts`),
+  not from what the two memories say, and hand-checked samples from three stores found
+  0 of 139 typed edges correct. Inferred associations are still stored, as `related`.
+  This release does not relabel stored edges in bulk, but `store_association()` writes
+  with `INSERT OR REPLACE`, so a pair that a later consolidation finds again is
+  stored as `related` and loses its typed label. `MCP_CONSOLIDATION_AUTO_SUPERSEDE`
+  acts on `contradicts` edges, so with the new default it has nothing to act on. To keep the old behavior, set
+  `MCP_TYPED_EDGES_ENABLED=true`; the #1457 gates still apply.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4056,4 +4152,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16a0ae92` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e693b07a` are properly handled with clean fallback behavior.

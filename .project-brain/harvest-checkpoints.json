@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T05:09:09.534Z",
+  "last_updated": "2026-11-07T05:21:53.454Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "9d36bfc04f5d6a72e967579ae2f1d244de09baa608159cf9dbc8fc36abea6e30",
-      "verified_at": "2026-11-05T17:07:33.424Z",
+      "content_hash": "ed8e6254e96ca41826115c3efd4f304881ec7266ae520d69eae95226a93d1316",
+      "verified_at": "2026-11-07T05:21:53.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:07:33.424Z"
+      "last_updated": "2026-11-07T05:21:53.454Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",

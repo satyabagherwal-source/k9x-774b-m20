@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "4ff3fcc6",
+    "sourceVersion": "9c6d5753",
     "license": "Apache-2.0",
-    "contentHash": "9d36bfc04f5d6a72e967579ae2f1d244de09baa608159cf9dbc8fc36abea6e30",
-    "lastHarvestedAt": "2026-11-05T17:07:33.407Z",
+    "contentHash": "ed8e6254e96ca41826115c3efd4f304881ec7266ae520d69eae95226a93d1316",
+    "lastHarvestedAt": "2026-11-07T05:21:53.447Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {

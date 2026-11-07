@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T05:09:09.530Z",
-  "total_cycles_completed": 7967,
-  "total_learnings_persisted": 7967,
-  "total_rules_promoted": 7618,
+  "last_updated": "2026-11-07T05:21:53.451Z",
+  "total_cycles_completed": 7968,
+  "total_learnings_persisted": 7968,
+  "total_rules_promoted": 7619,
   "history": [
-    {
-      "timestamp": "2026-11-05T22:01:24.807Z",
-      "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T22:08:31.801Z",
       "repository": "software-mansion/react-native-screens",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T05:09:09.530Z",
       "repository": "open-policy-agent/opa",
       "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T05:21:53.451Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
