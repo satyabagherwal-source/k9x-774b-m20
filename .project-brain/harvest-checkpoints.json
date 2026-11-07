@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-06T23:44:54.627Z",
+  "last_updated": "2026-11-07T02:06:47.837Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
-      "verified_at": "2026-11-05T09:44:34.862Z",
+      "content_hash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
+      "verified_at": "2026-11-07T02:06:47.836Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:44:34.862Z"
+      "last_updated": "2026-11-07T02:06:47.836Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
-      "verified_at": "2026-11-05T13:40:25.464Z",
+      "content_hash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
+      "verified_at": "2026-11-07T02:01:58.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:40:25.464Z"
+      "last_updated": "2026-11-07T02:01:58.173Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

@@ -7966,3 +7966,5 @@ Every entry in this ledger must capture:
 | `learn-github-berty-berty` | `https://github.com/berty/berty` | `de4ae482` | Multi-dimensional audit evidence | 2026-11-06T23:27:15.511Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `cbccb455` | Multi-dimensional audit evidence | 2026-11-06T23:27:17.215Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `08454975` | Multi-dimensional audit evidence | 2026-11-06T23:44:54.609Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `8c573832` | Multi-dimensional audit evidence | 2026-11-07T02:01:58.165Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `87851900` | Multi-dimensional audit evidence | 2026-11-07T02:06:47.821Z |

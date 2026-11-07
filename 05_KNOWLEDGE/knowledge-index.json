@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-06T23:44:54.513Z",
+  "last_updated": "2026-11-07T02:06:47.708Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9564,11 +9564,16 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "75d69a0f",
-      "content_hash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
+      "source_version": "8c573832",
+      "content_hash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "formats): preserve CSV empty values and correct quote styles (#20946)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2462,
           "title": "meta: make metactl RPC timeouts configurable (#20706)",
@@ -9635,7 +9640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:40:25.338Z",
+      "verified_at": "2026-11-07T02:01:58.051Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46071,11 +46076,16 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "e706cab3",
-      "content_hash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
+      "source_version": "87851900",
+      "content_hash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "cute-rs-preview): rename ctm-rs to cutlass-primitives (#1751)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2129,
           "title": "Zero-Safe Device Memory Serialization Invariant (`DeviceCopy` Rejection of Sum Types)",
@@ -46162,7 +46172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T09:44:34.745Z",
+      "verified_at": "2026-11-07T02:06:47.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

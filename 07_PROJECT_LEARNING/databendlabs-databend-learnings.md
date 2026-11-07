@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `75d69a0f`  
+> **Source Version**: `8c573832`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:40:24.897Z  
+> **Timestamp**: 2026-11-07T02:01:56.996Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:40:24.892Z  
+> **Harvest Timestamp**: 2026-11-07T02:01:32.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9491 stars
+- **Stars / Engagement**: 9492 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20967** (2026-11-04): **feat(query): support runtime TopN pruning across UNION ALL**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Runtime TopN pruning (#20247) stopped at `UNION ALL`: for `SELECT ... FROM (t1 UNION ALL t2) ORDER BY k LIMIT n`, or a view defined as such a union, no branch scan got a runtime filter. This PR lets one TopN drive the runtime filters of all branch scans, and does the same for the aggregate rank limit (`GROUP BY k ORDER BY k LIMIT n` over a union).  - `RuntimeTopNFilter` is split into a shared `RuntimeTopNBoundary` (published by TopN / rank-limit sort) and per-scan `RuntimeTopNFilter`s (each with its own column id). One boundary update prunes and notifies every branch. - `register_runtime_top_n_filter` now crosses `UnionAll` (including nested ones) besides `Filter`/`EvalScalar`, and registers a filter on every eligible branch scan. An ineligible branch only skips itself. The scan's sort column is now matched by symbol through `name_mapping` instead of `display_name`. - New rule `PushDownTopNUnionScan` (`TopN -> [EvalScalar ->] UnionAll`) pushes the TopN keys, translated into each branch's columns, into the branch scans' `order_by`. Only the order is pushed, not the limit. `PushDownRankLimitAggregate` reuses the same helper (`rule/scan_order.rs`), so aggregates over a union push the order too. - Correctness: the boundary comes from rows of the union output; a block whose rows are all strictly worse cannot reach the top N whichever branch it belongs to. A branch is skipp
+- **Issue #21013** (2026-11-06): **feat(query): expose node-local cache statistics on admin API**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Add `GET /v1/caches` on the internal admin port, following the node-local Processlist pattern. Reuse `CacheManager::rows()` without SQL, sessions, or cross-node requests; warehouse discovery and aggregation remain the caller's responsibility. - Return cache statistics with node identity, pool classification, enabled state, nullable capacity and its unit, item counts, charged/resident bytes, and cumulative access/hit/miss counters. Include disabled caches and pool summaries; pool and per-cache rows overlap and must not be summed together. - Add three real-router integration tests covering legacy refresh/counters and session neutrality, disabled caches, and shared pools with nullable capacity. Targeted validation log on `db0-aws`: 3 passed, 0 failed, using `cargo test --locked -p databend-query --no-default-features --test it servers::admin::v1::caches --jobs 3` with `RUST_TEST_THREADS=1`. Formatting and whitespace checks are clean; full/default-feature CI is not yet validated. - Example: `curl http://127.0.0.1:8080/v1/caches` (use the configured admin address). No storage, configuration, or existing endpoint changes. Keep this PR draft with `hold-ci` during review; resume full CI after review converges.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an i
 
-- **Issue #20965** (2026-11-04): **ci: use $1 for the capture group in ClickBench Q28**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `benchmark/hits/queries/28.sql` passed `'\1'` as the replacement of `REGEXP_REPLACE`. The string literal parser turns `'\1'` into the byte `0x01` (`SELECT ascii('\1')` returns 1), and `regexp_replace` uses the Rust regex syntax `$1` for a capture group, so every matching `Referer` was replaced by `'\x01'`. On the 100M-row `hits` table the query returned 11 rows, the first being the key `'\x01'` with 66,284,655 rows, instead of 25 domains.  This PR uses `'$1'`, as the Databend query of ClickBench does (`databend/queries.sql`, line 29); the file now matches it. Q28 timings of the local and cloud benchmarks measured the wrong query until now and will change: on a local 100M-row run the corrected query takes 2.25 s instead of about 1 s.  The corrected query returns the 25 domains. With `octet_length` and `(?s)` added for the dialect differences (byte length, `.` matching newlines), its result is identical to another engine's result of the ClickBench query.  No test: this changes a benchmark query only; it was checked by running it as described above.  ## Tests  - [ ] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [x] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work 
+- **Issue #21010** (2026-11-06): **ci: test_compat_python_client_cluster fails on all PRs because databend-driver 0.34.3 is not on PyPI**
+  *Symptoms*: ## Summary  `linux / test_compat_python_client_cluster` in the `Dev` workflow fails on every pull request that reaches it, independent of the change. All open PRs are blocked on this required job.  ## Cause  The `python_client` nox session (`tests/nox/noxfile.py`) runs with `driver_version="latest"` and `"0.33.6"`. For `latest`, it reads the tag of the latest bendsql GitHub release (`PYTHON_CLIENT_LATEST_RELEASE_URL`, `resolve_latest_release_tag`) and then runs `pip install databend-driver==<tag>`.  bendsql published the GitHub release `v0.34.3` at 2026-11-05T03:58Z, but its `Release` workflow failed (https://github.com/databendlabs/bendsql/actions/runs/41964814007), so `databend-driver` 0.34.3 was never uploaded to PyPI. PyPI still has 0.34.2 as the latest version. Every run since then fails with:  ``` nox > Command python -m pip install databend-driver==0.34.3 failed with exit code 1: ERROR: No matching distribution found for databend-driver==0.34.3 nox > Session python_client(driver_version='latest') failed. ```  The pinned `0.33.6` session passes. Rebasing does not help: `main` at d468d2b31f still resolves `latest` from the GitHub release.  ## Fix options  1. Publish `databend-driver` 0.34.3 to PyPI (re-run the failed bendsql `Release` workflow). Re-running the job is then enough. 2. Resolve `latest` from PyPI instead of the GitHub release. #20946 already does this in its branch (`PYTHON_CLIENT_PYPI_URL`), and the job passes there. Landing that part on `main` separately w
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,610 +1217,281 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f004c938` (2026-11-05)
-**Commit Message**: fix(query): allow create Materialized View with Table in different Database (#20906)
+### Incident Patch 1: `c8267559` (2026-11-06)
+**Commit Message**: fix(formats): preserve CSV empty values and correct quote styles (#20946)
 
-* fix(query): allow create Materialized View with Table in different Database
+* fix(formats): preserve CSV empty values and correct quote styles
 
-* fix
+* test(formats): move CSV quoting matrices to nox
 
-* fix
+* test(formats): update remaining CSV quoting golden outputs
 
-* fix
+* test(formats): quote numeric fields in GBK CSV expectation
 
-* add tests
+* test(formats): cover named CSV quote styles in nox matrix
 
-* add tests
+* ci: resolve latest Python driver from PyPI
 
-* fix tests
+* test(cache): settle shared limits after readers release values
 
-* fix tests
-
-**File**: `src/meta/api/src/api_impl/materialized_view_api.rs` (modified, +30/-8)
+**File**: `.github/actions/test_compat_client_cluster/action.yml` (modified, +1/-1)
 ```diff
-@@ -127,6 +127,7 @@ use std::collections::BTreeSet;
- use std::collections::HashMap;
+@@ -66,7 +66,7 @@ runs:
+     - name: Run python client compat tests
+       if: ${{ inputs.nox_session == 'python_client' }}
+       shell: bash
+-      run: nox -f tests/nox/noxfile.py -s python_client
++      run: nox -f tests/nox/noxfile.py -s noxfile_tests python_client
  
- use databend_common_meta_app::schema::DBIdTableName;
-+use databend_common_meta_app::schema::DatabaseId;
- use databend_common_meta_app::schema::DatabaseIdToName;
- use databend_common_meta_app::schema::ListedMVSource;
- use databend_common_meta_app::schema::ListedMaterializedView;
-@@ -723,18 +724,34 @@ where
-     let source_database_keys = source_database_ids
-         .iter()
-         .map(|database_id| DatabaseIdToName::new(*database_id).to_string_key())
-+        .chain(
-+            source_database_ids
-+                .iter()
-+                .map(|database_id| DatabaseId::new(*database_id).to_string_key()),
-+        )
-         .collect::<Vec<_>>();
--    let source_database_responses = mget_responses(kv_api, &source_database_keys).await?;
-+    let mut source_database_name_responses = mget_responses(kv_api, &source_database_keys).await?;
-+    let source_database_meta_responses =
-+        source_database_name_responses.split_off(source_database_ids.len());
-     let mut source_database_names = HashMap::with_capacity(source_database_ids.len());
--    for (database_id, response) in source_database_ids
--        .into_iter()
--        .zip(source_database_responses)
--    {
--        let (_, database_name) = deserialize_struct_get_response::<DatabaseIdToName>(response)?;
-+    // DROP DATABASE marks only DatabaseMeta and keeps both the id-to-name mapping and the tables'
-+    // TableMeta until GC, so a source in a dropped database must be checked through its database.
-+    let mut active_source_database_ids = BTreeSet::new();
-+    for (database_id, (name_response, meta_response)) in source_database_ids.into_iter().zip(
-+        source_database_name_responses
-+            .into_iter()
-+            .zip(source_database_meta_responses),
-+    ) {
-+        let (_, database_name) =
-+            deserialize_struct_get_response::<DatabaseIdToName>(name_response)?;
-         if let Some(database_name) = database_name {
-             source_database_names
-                 .insert(database_id, database_name.data.database_name().to_string());
-         }
-+        let (_, database_meta) = deserialize_struct_get_response::<DatabaseId>(meta_response)?;
-+        if database_meta.is_some_and(|meta| meta.data.drop_on.is_none()) {
-+            active_source_database_ids.insert(database_id);
-+        }
-     }
- 
-     let mut listed = Vec::with_capacity(targets.len());
-@@ -744,16 +761,20 @@ where
-             .get(&target.source_table_id)
-             .cloned()
-             .unwrap_or((None, None, false));
--        let (database_id, database_name, table_name) = match table_name {
-+        let (database_id, database_name, table_name, is_active, database_dropped) = match table_name
-+        {
-             Some(table_name) => {
-                 let database_id = table_name.data.db_id;
-+                let database_dropped = !active_source_database_ids.contains(&database_id);
-                 (
-                     Some(database_id),
-                     source_database_names.get(&database_id).cloned(),
-                     Some(table_name.data.table_name),
-+                    is_active && !database_dropped,
-+                    database_dropped,
-                 )
-             }
--            None => (None, None, None),
-+            None => (None, None, None, is_active, false),
-         };
-         listed.push(ListedMaterializedView {
-             mv: target.mv,
-@@ -766,6 +787,7 @@ where
-                 database_name,
-                 table_name,
-                 is_active,
-+                database_dropped,
-                 bound_source_generation: binding
-                     .map(|binding| binding.data.bound_source_generation),
-                 current_source_generation: generation
+     - name: Run java client compat tests
+       if: ${{ inputs.nox_session == 'java_client' }}
 ```
 
-**File**: `src/meta/app/src/schema/materialized_view/mod.rs` (modified, +4/-1)
+**File**: `src/meta/app/src/principal/file_format.rs` (modified, +7/-3)
 ```diff
-@@ -178,8 +178,11 @@ pub struct ListedMVSource {
-     pub database_id: Option<u64>,
-     pub database_name: Option<String>,
-     pub table_name: Option<String>,
--    /// Whether source `TableMeta` exists and is not soft-dropped.
-+    /// Whether source `TableMeta` exists and is not soft-dropped, and its database is not dropped.
-     pub is_active: bool,
-+    /// Whether the source's current database is dropped. `is_active` is false in that case too;
-+    /// this flag only tells management paths which of the two was dropped.
-+    pub database_dropped: bool,
-     pub bound_source_generation: Option<u64>,
-     pub current_source_generation: Option<u64>,
+@@ -571,7 +571,7 @@ pub struct CsvFileFormatParams {
+     pub record_delimiter: String,
+     pub escape: String,
+     pub quote: String,
+-    /// Controls whether CSV output quotes every field or only fields that require quoting.
++    /// Controls whether CSV output quotes all non-NULL, non-numeric, or only necessary fields.
+     #[serde(default)]
+     pub quote_style: CsvQuoteStyle,
+     pub error_on_column_count_mismatch: bool,
+@@ -747,8 +747,10 @@ pub enum CsvQuoteStyle {
+     /// Quote every non-NULL field in the CSV output.
+     #[default]
+     QuoteNotNull,
+-    /// Quote a field only when required by the CSV output format.
++    /// Quote a field only when required by CSV syntax or to distinguish it from NULL.
+     QuoteMinimal,
++    /// Quote every non-NULL field except numbers and decimals.
++    QuoteNonNumeric,
  }
+ 
+ impl CsvQuoteStyle {
+@@ -763,9 +765,10 @@ impl FromStr for CsvQuoteStyle {
+     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+         match s.to_lowercase().as_str() {
+             "quote_not_null" => Ok(Self::QuoteNotNull),
++            "quote_non_numeric" => Ok(Self::QuoteNonNumeric),
+             "quote_minimal" => Ok(Self::QuoteMinimal),
+             _ => Err(format!(
+-                "Invalid option value: QUOTE_STYLE is set to {s}. The valid values are QUOTE_NOT_NULL | QUOTE_MINIMAL."
++                "Invalid option value: QUOTE_STYLE is set to {s}. The valid values are QUOTE_NOT_NULL | QUOTE_NON_NUMERIC | QUOTE_MINIMAL."
+             )),
+         }
+     }
+@@ -775,6 +778,7 @@ impl Display for CsvQuoteStyle {
+     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+         match self {
+             Self::QuoteNotNull => write!(f, "quote_not_null"),
++            Self::QuoteNonNumeric => write!(f, "quote_non_numeric"),
+             Self::QuoteMinimal => write!(f, "quote_minimal"),
+         }
+     }
 ```
 
-**File**: `src/query/ee/tests/it/materialized_view.rs` (modified, +47/-0)
+**File**: `src/meta/app/tests/it/file_format.rs` (modified, +35/-0)
 ```diff
-@@ -12,7 +12,10 @@
+@@ -12,8 +12,43 @@
  // See the License for the specific language governing permissions and
  // limitations under the License.
  
-+use databend_common_exception::ErrorCode;
- use databend_common_meta_app::principal::GrantObject;
-+use databend_common_meta_app::schema::RenameTableReq;
-+use databend_common_meta_app::schema::TableNameIdent;
- use databend_common_meta_store::LocalMetaService;
- use databend_common_users::UserApiProvider;
- use databend_enterprise_query::test_kits::context::EESetup;
-@@ -70,3 +73,47 @@ async fn test_materialized_view_revoke_all_legacy_grants() -> anyhow::Result<()>
-     assert!(after.grants.entries().is_empty(), "{:?}", after.grants);
-     Ok(())
- }
++use std::collections::BTreeMap;
 +
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_materialized_view_rejects_source_moved_across_databases() -> anyhow::Result<()> {
-+    let meta = LocalMetaService::new_testing::<DatabendRuntime>("mv-moved-source").await?;
-+    let mut setup = EESetup::new();
-+    setup.config_mut().meta.endpoints = meta.get_cached_endpoints().await?;
-+    let fixture = TestFixture::setup_with_custom(setup).await?;
-+    for sql in [
-+        "CREATE DATABASE mv_moved_old",
-+        "CREATE DATABASE mv_moved_new",
-+        "CREATE TABLE mv_moved_old.t(id INT) CHANGE_TRACKING = true",
-+    ] {
-+        fixture.execute_command(sql).await?;
-+    }
-+    // The binder has rejected cross-database RENAME TABLE since #14098; older versions moved the
-+    // table without updating its recorded database id. Seed that state through the catalog.
-+    let ctx = fixture.new_query_ctx().await?;
-+    let tenant = ctx.get_tenant();
-+    ctx.get_default_catalog()?
-+        .rename_table(RenameTableReq {
-+            if_exists: false,
-+            name_ident: TableNameIdent {
-+                tenant: tenant.clone(),
-+                db_name: "mv_moved_old".to_string(),
-+                table_name: "t".to_string(),
-+            },
-+            new_db_name: "mv_moved_new".to_string(),
-+            new_table_name: "t".to_string(),
-+        })
-+        .await?;
-+
-+    let error = fixture
-+        .execute_command(
-+            "CREATE MATERIALIZED VIEW mv_moved_new.mv AS SELECT id FROM mv_moved_new.t WHERE 1 = 1",
-+        )
-+        .await
-+        .unwrap_err();
++use databend_common_meta_app::principal::CsvFileFormatParams;
++use databend_common_meta_app::principal::CsvQuoteStyle;
++use databend_common_meta_app::principal::FileFormatOptionsReader;
++use databend_common_meta_app::principal::FileFormatParams;
+ use databend_common_meta_app::principal::check_record_delimiter;
+ 
++#[test]
++fn test_csv_quote_styles() {
 +    assert_eq!(
-+        ErrorCode::INVALID_MATERIALIZED_VIEW,
-+        error.code(),
-+        "{error}"
++        CsvFileFormatParams::default().quote_style,
++        CsvQuoteStyle::QuoteNotNull
 +    );
++    for (name, style) in [
++        ("quote_not_null", CsvQuoteStyle::QuoteNotNull),
++        ("quote_non_numeric", CsvQuoteStyle::QuoteNonNumeric),
++        ("quote_minimal", CsvQuoteStyle::QuoteMinimal),
++    ] {
++        assert_eq!(name.parse::<CsvQuoteStyle>().unwrap(), style);
++        assert_eq!(style.to_string(), name);
++        let options = BTreeMap::from([
++            ("type".to_string(), "csv".to_string()),
++            ("quote_style".to_string(), name.to_uppercase()),
++        ]);
++        let params =
++            FileFormatParams::try_from_reader(FileFormatOptionsReader::from_map(options), false)
++                .unwrap();
++        assert_eq!(
++            CsvFileFormatParams::downcast_unchecked(&params).quote_style,
++            style
++        );
++    }
++    let error = "quote_invalid".parse::<CsvQuoteStyle>().unwrap_err();
++    assert!(error.contains("QUOTE_NON_NUMERIC"));
++}
++
+ #[test]
+ fn test_check_record_delimiter() {
+     assert!(check_record_delimiter("|").is_ok());
+```
+
+**File**: `src/meta/proto-conv/src/impls/file_format.rs` (modified, +5/-1)
+```diff
+@@ -613,7 +613,11 @@ impl FromToProto for mt::principal::CsvFileFormatParams {
+         let compression = mt::principal::StageFileCompression::to_pb_enum(&self.compression) as i32;
+         Self::PB {
+             ver: VER,
+-            min_reader_ver: MIN_READER_VER,
++            min_reader_ver: if self.quote_style == CsvQuoteStyle::QuoteNonNumeric {
++                193
++            } else {
++                MIN_READER_VER
++            },
+             compression,
+             headers: self.headers,
+             field_delimiter: self.field_delimiter.clone(),
+```
+
+**File**: `src/meta/proto-conv/src/util.rs` (modified, +1/-0)
+```diff
+@@ -222,6 +222,7 @@ const META_CHANGE_LOG: &[(u64, &str)] = &[
+     (190, "2026-10-12: Add: remote UDF external access integrations and network rules"),
+     (191, "2026-10-22: Add: table.proto/TableMeta.masking_where_use_unmasked_value"),
+     (192, "2026-10-29: Add: Python script UDF external access integrations"),
++    (193, "2026-11-02: Add: CsvFileFormatParams quote_non_numeric quote style"),
+     // Dear developer:
+     //      If you're gonna add a new metadata version, you'll have to add a test for it.
+     //      You could just copy an existing test file(e.g., `../tests/it/v024_table_meta.rs`)
+```
+
+**File**: `src/meta/proto-conv/tests/it/main.rs` (modified, +1/-0)
+```diff
+@@ -184,3 +184,4 @@ mod v189_table_clone;
+ mod v190_external_access;
+ mod v191_masking_where_unmasked_value;
+ mod v192_script_external_access;
++mod v193_csv_quote_non_numeric;
+```
+
+**File**: `src/meta/proto-conv/tests/it/v193_csv_quote_non_numeric.rs` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++// Copyright 2026 Datafuse Labs.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use databend_common_meta_app::principal::CsvFileFormatParams;
++use databend_common_meta_app::principal::CsvQuoteStyle;
++use databend_common_proto_conv::FromToProto;
++use databend_common_proto_conv::MIN_READER_VER;
++use fastrace::func_name;
++
++use crate::common;
++
++#[test]
++fn test_decode_v193_csv_quote_non_numeric() -> anyhow::Result<()> {
++    let csv_file_format_params_v193 = vec![
++        8, 9, 26, 1, 44, 34, 1, 10, 42, 3, 78, 97, 78, 58, 1, 34, 66, 2, 92, 78, 82, 4, 78, 85, 76,
++        76, 90, 3, 104, 101, 120, 106, 4, 69, 87, 75, 84, 122, 6, 83, 84, 82, 73, 78, 71, 130, 1,
++        5, 85, 84, 70, 45, 56, 138, 1, 6, 115, 116, 114, 105, 99, 116, 154, 1, 17, 113, 117, 111,
++        116, 101, 95, 110, 111, 110, 95, 110, 117, 109, 101, 114, 105, 99, 160, 6, 193, 1, 168, 6,
++        193, 1,
++    ];
++    let want = CsvFileFormatParams {
++        quote_style: CsvQuoteStyle::QuoteNonNumeric,
++        ..Default::default()
++    };
++    assert_eq!(want.to_pb().min_reader_ver, 193);
++    assert_eq!(
++        CsvFileFormatParams::default().to_pb().min_reader_ver,
++        MIN_READER_VER
++    );
++    common::test_load_old(
++        func_name!(),
++        &csv_file_format_params_v193,
++        193,
++        want.clone(),
++    )?;
++    common::test_pb_from_to(func_name!(), want)?;
 +    Ok(())
 +}
 ```
 
-**File**: `src/query/sql/src/planner/binder/bind_table_reference/bind_materialized_view.rs` (modified, +16/-1)
+**File**: `src/query/formats/README.md` (modified, +25/-10)
 ```diff
-@@ -674,7 +674,22 @@ impl Binder {
-         .with_subquery_executor(self.subquery_executor.clone());
-         let mut definition_context = BindContext::new();
-         definition_context.binding_depth = bind_context.next_depth()?;
--        let (definition_expr, _) = definition_binder.bind_query(&mut definition_context, &query)?;
-+        // The persisted definition names the source captured by CREATE. A missing database or
-+        // table means the source was dropped, renamed, or replaced, which REFRESH also reports as
-+        // InvalidMaterializedView. Other errors keep their original code.
-+        let (definition_expr, _) = definition_binder
-+            .bind_query(&mut definition_context, &query)
-+            .map_err(|error| match error.code() {
-+                ErrorCode::UNKNOWN_DATABASE | ErrorCode::UNKNOWN_TABLE => {
-+                    ErrorCode::InvalidMaterializedView(format!(
-+                        "materialized view {} source table changed: expected table id {}: {}",
-+                        table_meta.name(),
-+                        source_table_id,
-+                        error
-+                    ))
-+                }
-+                _ => error,
-+            })?;
-         validate_materialized_view_source(
-             &definition_metadata,
-             source_table_id,
-```
-
-**File**: `src/query/sql/src/planner/binder/ddl/materialized_view.rs` (modified, +47/-13)
-```diff
-@@ -50,6 +50,8 @@ use databend_common_license::license_manager::LicenseManagerSwitch;
- use databend_common_meta_app::schema::MATERIALIZED_VIEW_SOURCE_ROW_ID_COLUMN;
- use databend_common_meta_app::schema::MVDefinition;
- use databend_common_meta_app::schema::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
-+use databend_common_meta_app::schema::TableIdent;
-+use databend_common_meta_app::schema::TableInfo;
- use databend_common_meta_app::schema::UpsertTableOptionReq;
- use databend_common_meta_app::schema::is_materialized_view_engine;
- use databend_enterprise_materialized_view::get_materialized_view_handler;
-@@ -222,20 +224,28 @@ impl Binder {
-                     .get(OPT_KEY_DATABASE_ID)
-                     .ok_or_else(|| ErrorCode::Internal("materialized view database id is missing"))?
-                     .parse::<u64>()?;
--                let mv_database = catalog.get_db_name_by_id(database_id).await?;
-+                // A materialized view may live in a different database than its source. A dropped
-+                // database keeps its id-to-name mapping and the MV source bindings until GC, and
-+                // `get_db_name_by_id` still returns that name. `mget_database_names_by_ids` also
-+                // checks `drop_on`; MVs in a dropped database are skipped like dropped MVs, so
-+                // queries on the source table are not affected.
-+                let Some(mv_database) = catalog
-+                    .mget_database_names_by_ids(&tenant, &[database_id])
-+                    .await?
-+                    .pop()
-+                    .flatten()
-+                else {
-+                    continue;
-+                };
-                 let Some(mv_name) = catalog.get_table_name_by_id(mv.mv_id).await? else {
-                     continue;
-                 };
-                 let current_mv = catalog.get_table(&tenant, &mv_database, &mv_name).await?;
--                let mv_table =
--                    catalog.get_table_by_info(&databend_common_meta_app::schema::TableInfo {
--                        ident: databend_common_meta_app::schema::TableIdent::new(
--                            mv.mv_id,
--                            mv.table_meta.seq,
--                        ),
--                        meta: mv.table_meta.data.clone(),
--                        ..current_mv.get_table_info().clone()
--                    })?;
-+                let mv_table = catalog.get_table_by_info(&TableInfo {
-+                    ident: TableIdent::new(mv.mv_id, mv.table_meta.seq),
-+                    meta: mv.table_meta.data.clone(),
-+                    ..current_mv.get_table_info().clone()
-+                })?;
+@@ -11,12 +11,26 @@ are preserved literally. The `ESCAPE` file-format option is **load only**:
+ it changes neither output contents nor the decision to quote an output field.
+ This applies to both data and headers.
  
-                 let logical_query = parse_materialized_view_query(
-                     &mv.definition.data.original_query,
-@@ -566,7 +576,9 @@ impl Binder {
-         let source_table_name = source_entry.name().to_string();
-         let source_table_id = source_table.get_id();
-         let source_table_seq = source_table.get_table_info().ident.seq;
--        let source_database_id = source_table
-+        // Refresh, read, and privilege checks resolve the source database from this option, so
-+        // reject a source without it here instead of creating an unusable materialized view.
-+        let recorded_source_database_id = source_table
-             .get_table_info()
-             .meta
-             .options
-@@ -577,12 +589,34 @@ impl Binder {
-                 ))
-             })?
-             .parse::<u64>()?;
--        if source_catalog_name != catalog_name || source_database_id != target_database_id {
-+        // Refresh, read, and privilege checks resolve the source through its table id in the
-+        // default catalog, so the source may live in any database of the target catalog.
-+        if source_catalog_name != catalog_name {
-             return Err(ErrorCode::InvalidMaterializedView(format!(
--                "materialized view and source table must belong to the same catalog and database: target '{}.{}', source '{}.{}'",
-+                "materialized view and source table must belong to the same catalog: target '{}.{}', source '{}.{}'",
-                 catalog_name, database_name, source_catalog_name, source_database
-             )));
-         }
-+        // The recorded database id also locates the table's storage, so RENAME TABLE does not
-+        // update it. Older versions allowed renaming a table into another database, which leaves
-+        // the recorded id pointing at the old database. Refresh, read, and privilege checks would
-+        // then resolve the wrong database, so reject such a source instead of creating an unusable
-+        // materialized view.
-+        let current_source_database_id = target_catalog
-+            .get_database(&tenant, &source_database)
-+            .await?
-+            .get_db_info()
-+            .database_id
-+            .db_id;
-+        if recorded_source_database_id != current_source_database_id {
-+            return Err(ErrorCode::InvalidMaterializedView(for
-```
-
-**File**: `src/query/storages/common/table_meta/src/table/table_keys.rs` (modified, +2/-0)
-```diff
-@@ -51,6 +51,8 @@ pub const MATERIALIZED_VIEW_INVALID_SOURCE_REASON: &str =
-     "source table was dropped, renamed, or replaced";
- /// Reason reported when the database name persisted in the MV definition no longer resolves.
- pub const MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON: &str = "source database was renamed";
-+/// Reason reported when the source table's current database is dropped.
-+pub const MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON: &str = "source database was dropped";
- pub const OPT_KEY_SNAPSHOT_LOCATION_FIXED_FLAG: &str = "snapshot_location_fixed";
- pub const OPT_KEY_STORAGE_FORMAT: &str = "storage_format";
- /// External-table S3 storage class for new objects; overrides the experimental session setting.
-```
-
-**File**: `src/query/storages/system/src/materialized_views_table.rs` (modified, +55/-7)
-```diff
-@@ -48,6 +48,7 @@ use databend_common_meta_app::tenant::Tenant;
- use databend_common_storages_fuse::TableContext;
- use databend_common_users::TablePrivilegeTarget;
- use databend_common_users::filter_tables_by_privilege;
-+use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON;
- use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON;
- use databend_storages_common_table_meta::table::MATERIALIZED_VIEW_INVALID_SOURCE_REASON;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
-@@ -254,10 +255,15 @@ fn source_lifecycle_invalid_reason(
-     current_source_database: Option<&str>,
-     current_source_name: Option<&str>,
-     source_is_active: bool,
-+    source_database_dropped: bool,
- ) -> Option<&'static str> {
-     let expected_source_name = table_meta
-         .options
-         .get(OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME)?;
-+    // A dropped database also makes the source inactive; report the more specific cause.
-+    if source_database_dropped {
-+        return Some(MATERIALIZED_VIEW_DROPPED_SOURCE_DATABASE_REASON);
-+    }
-     if !source_is_active || current_source_name != Some(expected_source_name.as_str()) {
-         return Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON);
-     }
-@@ -275,6 +281,7 @@ fn listed_materialized_view_status(item: &ListedMaterializedView) -> (bool, Opti
-         item.source.database_name.as_deref(),
-         item.source.table_name.as_deref(),
-         item.source.is_active,
-+        item.source.database_dropped,
-     );
-     let binding_invalid = item.source.bound_source_generation.is_none()
-         || item.source.current_source_generation.is_none()
-@@ -380,7 +387,13 @@ mod tests {
- 
-         // Legacy MVs without the source-name option do not get lifecycle validation.
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("renamed"), false,),
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("renamed"),
-+                false,
-+                false
-+            ),
-             None
-         );
- 
-@@ -389,19 +402,37 @@ mod tests {
-             "source".to_string(),
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), true,),
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("source"),
-+                true,
-+                false
-+            ),
-             None
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("renamed"), true,),
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("renamed"),
-+                true,
-+                false
-+            ),
-             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), false,),
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("source"),
-+                false,
-+                false
-+            ),
-             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), None, false),
-+            source_lifecycle_invalid_reason(&table_meta, Some("database"), None, false, false),
-             Some(MATERIALIZED_VIEW_INVALID_SOURCE_REASON)
-         );
- 
-@@ -410,7 +441,13 @@ mod tests {
-             "database".to_string(),
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, Some("database"), Some("source"), true,),
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("source"),
-+                true,
-+                false
-+            ),
-             None
-         );
-         assert_eq!(
-@@ -419,12 +456,23 @@ mod tests {
-                 Some("renamed_database"),
-                 Some("source"),
-                 true,
-+                false,
-             ),
-             Some(MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON)
-         );
-         assert_eq!(
--            source_lifecycle_invalid_reason(&table_meta, None, Some("source"), true),
-+            source_lifecycle_invalid_reason(&table_meta, None, Some("source"), true, false),
-             Some(MATERIALIZED_VIEW_INVALID_SOURCE_DATABASE_REASON)
-         );
-+        assert_eq!(
-+            source_lifecycle_invalid_reason(
-+                &table_meta,
-+                Some("database"),
-+                Some("source"),
-+                false,
-+                true
-+            ),
-+            Some(MATERIALIZED_VIEW_DROPPED
-```
-
-**File**: `tests/sqllogictests/suites/ee/05_ee_ddl/05_0017_ddl_materialized_view.test` (modified, +94/-8)
-```diff
-@@ -847,7 +847,13 @@ ALTER MATERIALIZED VIEW test_mv2 CLUSTER BY (cnt)
- statement ok
- ALTER MATERIALIZED VIEW test_mv2 CLUSTER BY (val)
- 
--# Materialized views and their sources must belong to the same database.
-+# Cross-database MV creation resolves source references in the session database.
-+statement ok
-+DROP DATABASE IF EXISTS mv_src_db
-+
-+statement ok
-+DROP DATABASE IF EXISTS mv_dst_db
-+
- statement ok
- CREATE DATABASE mv_src_db
- 
-@@ -872,12 +878,95 @@ INSERT INTO mv_dst_db.t VALUES (100)
- statement ok
- USE mv_src_db
- 
--statement error 2328
-+statement ok
- CREATE MATERIALIZED VIEW mv_dst_db.cross_mv AS SELECT id FROM t WHERE 1 = 1
- 
-+query I
-+SELECT count(*) FROM mv_dst_db.cross_mv
-+----
-+2
-+
-+query TT
-+SHOW CREATE MATERIALIZED VIEW mv_dst_db.cross_mv
-+----
-+cross_mv CREATE MATERIALIZED VIEW `mv_dst_db`.`cross_mv` (`id`) AS SELECT id FROM mv_src_db.t WHERE 1 = 1
-+
-+statement ok
-+REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
-+
-+query I
-+SELECT id FROM mv_dst_db.cross_mv ORDER BY id
-+----
-+1
-+2
-+
- statement ok
- USE test_mv_ddl
- 
-+# A dropped source database invalidates the MV even though the source TableMeta is retained.
-+statement ok
-+DROP DATABASE mv_src_db
-+
-+query TBT
-+SELECT source_database, invalid, invalid_reason
-+FROM system.materialized_views
-+WHERE database = 'mv_dst_db' AND name = 'cross_mv'
-+----
-+mv_src_db 1 source database was dropped
-+
-+# The persisted definition still names the dropped database; reads and refreshes both report it
-+# as an invalid materialized view.
-+statement error 2328
-+SELECT * FROM mv_dst_db.cross_mv
-+
-+statement error 2328
-+REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
-+
-+statement ok
-+UNDROP DATABASE mv_src_db
-+
-+query BB
-+SELECT invalid, invalid_reason IS NULL
-+FROM system.materialized_views
-+WHERE database = 'mv_dst_db' AND name = 'cross_mv'
-+----
-+0 1
-+
-+# MVs in a dropped database are skipped, so queries on the source table are not affected.
-+statement ok
-+DROP DATABASE mv_dst_db
-+
-+query I
-+SELECT count(*) FROM mv_src_db.t
-+----
-+2
-+
-+# A source database recreated under the same name binds the definition to a new table, which the
-+# table-id check rejects instead of reading it. UNDROP restores the latest database id of a name,
-+# so this runs after the UNDROP case above.
-+statement ok
-+UNDROP DATABASE mv_dst_db
-+
-+statement ok
-+DROP DATABASE mv_src_db
-+
-+statement ok
-+CREATE DATABASE mv_src_db
-+
-+# CHANGE_TRACKING lets the definition's change$row_id bind, so the table-id check is what rejects
-+# the new table.
-+statement ok
-+CREATE TABLE mv_src_db.t (id INT) CHANGE_TRACKING = true
-+
-+statement error 2328
-+SELECT * FROM mv_dst_db.cross_mv
-+
-+statement error 2328
-+REFRESH MATERIALIZED VIEW mv_dst_db.cross_mv
-+
-+statement ok
-+DROP DATABASE mv_dst_db
-+
- # CTE definitions remain outside the query shapes supported by feat-mv-insert.
- statement error 1065
- CREATE MATERIALIZED VIEW test_mv_cte AS WITH c AS (SELECT val, SUM(amount) AS total FROM mv_base_t GROUP BY val) SELECT * FROM c WHERE 1 = 1
-@@ -968,7 +1057,7 @@ where database = 'test_mv_ddl' and name = 'replaced_mv'
- ----
- renamed_replaced_source 1 source table was dropped, renamed, or replaced
- 
--statement error 1025
-+statement error 2328
- select * from replaced_mv
- 
- statement error 2328
-@@ -1058,7 +1147,7 @@ where database = 'test_mv_ddl' and name = 'dropped_mv'
- ----
- dropped_source 1 source table was dropped, renamed, or replaced
- 
--statement error 1025
-+statement error 2328
- select * from dropped_mv
- 
- statement error 2328
-@@ -1160,7 +1249,7 @@ where database = 'mv_database_renamed' and name = 'mv'
- ----
- mv_database_renamed source 1 source database was renamed 0 0
- 
--statement error 1003
-+statement error 2328
- select * from mv_database_renamed.mv
- 
- statement error 2328
-@@ -1261,9 +1350,6 @@ DROP TABLE mv_guard_source
- statement ok
- DROP MATERIALIZED VIEW IF EXISTS test_mv2
- 
--statement ok
--DROP MATERIALIZED VIEW IF EXISTS mv_dst_db.cross_mv
+-For string-encoded values and headers:
 -
- statement ok
- DROP DATABASE IF EXISTS mv_src_db
+-- `QUOTE_STYLE = 'quote_not_null'` always adds quotes.
+-- `QUOTE_STYLE = 'quote_minimal'` adds quotes when the value contains the
+-  configured quote, field delimiter, or the record delimiter's first byte. An
+-  `ESCAPE` character alone does not require quoting.
++`QUOTE_STYLE` controls quoting of all non-NULL values:
++
++- `quote_not_null` (the default) quotes every non-NULL value, including numbers,
++  decimals, booleans, and BINARY.
++- `quote_non_numeric` quotes every non-NULL value except numbers and decimals.
++  Booleans, BINARY, dates/timestamps, and complex values are quoted.
++- `quote_minimal` quotes a value when it is empty, equals `NULL_DISPLAY`, or
++  contains the configured quote, field delimiter, or the record delimiter's
++  first byte. An `ESCAPE` character alone does not require quoting.
++
++Empty values and non-NULL values equal to `NULL_DISPLAY` are always quoted,
++including numeric values under `quote_non_numeric`. NULL itself is written as
++an unquoted `NULL_DISPLAY`. Headers follow the string/non-numeric quoting rules.
++With the default load options, quoted empty STRING and BINARY fields remain
++empty values, while unquoted empty fields are read as NULL.
++
++Compatibility note: `quote_not_null` previously left numbers, decimals,
++booleans, and non-empty BINARY unquoted. It now quotes these values as its name
++specifies. Use `quote_non_numeric` to keep ordinary numbers and decimals
++unquoted; unlike the old behavior, it also quotes booleans and BINARY.
  
+ To read this output without interpreting backslashes as escapes, use
+ `ESCAPE = ''` on load (the default). For example, a quoted field containing a
+@@ -28,10 +42,11 @@ not convert the pair to a tab.
+ 
+ Using the same named file format for load and unload does not guarantee a
+ lossless round trip. Other options must also match the intended data semantics.
+-For example, minimal quoting can make an empty string indistinguishable from
+-an empty field representing NULL, or a literal `NULL_DISPLAY` string
+-indistinguishable from NULL. Disabling input escaping does not resolve those
+-collisions.
++For example, loading with `ALLOW_QUOTED_NULLS = true` interprets quoted literal
++NULL markers as NULL even though output quoted them for protection. Changing
++`QUOTED_EMPTY_FIELD_AS` or enabling `TRIM_SPACE` can also change values on load.
++Use a NULL marker without CSV delimiters, record delimiters, or quote characters;
++NULL markers are emitted verbatim, without CSV quoting or escaping.
+ 
+ Outputting a backslash-escaped CSV dialect is not currently supported. Setting
+ `ESCAPE` does not opt into such an output dialect.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21013** (2026-11-06): feat(query): expose node-local cache statistics on admin API (@bohutang)
+- **PR #21009** (2026-11-06): chore(ci): cancel closed PR runs and limit PR auto retries (@TCeason)
+- **PR #21006** (2026-11-05): ci(cloud): run docker job on 16c on-demand runner (@zhang2014)
+- **PR #21000** (closed): fix(storage): re-sort recluster MergeBlocks tasks by default (@zhang2014)
+- **PR #20980** (2026-11-06): feat(query): sort hash write lanes by the linear cluster key (@youngsofun)
 - **PR #20967** (2026-11-04): feat(query): support runtime TopN pruning across UNION ALL (@zhang2014)
-- **PR #20965** (2026-11-04): ci: use $1 for the capture group in ClickBench Q28 (@KKould)
-- **PR #20964** (2026-11-04): feat(query): prune runtime TopN by the first of several sort keys (@KKould)
-- **PR #20962** (2026-11-04): feat(query): prune group items computed from group items and constants (@KKould)
-- **PR #20956** (2026-11-05): feat(query): keep dictionary encoded columns in hash join (@KKould)
-- **PR #20955** (closed): fix(query): evaluate stream status in private task conditions (@KKould)
 
 ---
 
@@ -1840,56 +1511,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): allow create Materialized View with Table in different Database (#20906)
+## X. formats): preserve CSV empty values and correct quote styles (#20946)
 
 **RULE**:
-When implementing operations in `src/meta/api/src/api_impl/materialized_view_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/test_compat_client_cluster/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f004c938`: query): allow create Materialized View with Table in different Database (#20906). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8267559`: formats): preserve CSV empty values and correct quote styles (#20946). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/materialized_view_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/test_compat_client_cluster/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use databend_common_meta_app::schema::DatabaseId;
-        .chain(
-            source_database_ids
-                .iter()
-                .map(|database_id| DatabaseId::new(*database_id).to_string_key()),
-        )
-    let mut source_database_name_responses = mget_responses(kv_api, &source_database_keys).await?;
-    let source_database_meta_responses =
-        source_database_name_responses.split_off(source_database_ids.len());
-    // DROP DATABASE marks only DatabaseMeta and keeps both the id-to-name mapping and the tables'
-    // TableMeta until GC, so a source in a dropped database must be checked through its database.
-    let mut active_source_database_ids = BTreeSet::new();
-    for (database_id, (name_response, meta_response)) in source_database_ids.into_iter().zip(
-        source_database_name_responses
-            .into_iter()
-            .zip(source_database_meta_responses),
-    ) {
-        let (_, database_name) =
-            deserialize_struct_get_response::<DatabaseIdToName>(name_response)?;
-        let (_, database_meta) = deserialize_struct_get_response::<DatabaseId>(meta_response)?;
-        if database_meta.is_some_and(|meta| meta.data.drop_on.is_none()) {
-           
+      run: nox -f tests/nox/noxfile.py -s noxfile_tests python_client
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let source_database_responses = mget_responses(kv_api, &source_database_keys).await?;
-    for (database_id, response) in source_database_ids
-        .into_iter()
-        .zip(source_database_responses)
-    {
-        let (_, database_name) = deserialize_struct_get_response::<DatabaseIdToName>(response)?;
-        let (database_id, database_name, table_name) = match table_name {
-            None => (None, None, None),
+      run: nox -f tests/nox/noxfile.py -s python_client
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f004c938` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8267559` are properly handled with clean fallback behavior.

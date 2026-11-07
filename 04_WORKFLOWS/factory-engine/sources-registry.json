@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-06T23:44:57.233Z",
-    "lastVerified": "2026-11-06T23:44:57.233Z",
+    "lastChecked": "2026-11-07T02:06:50.419Z",
+    "lastVerified": "2026-11-07T02:06:50.419Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-06T23:12:04.900Z",
+    "lastChecked": "2026-11-07T02:01:30.162Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-06T23:12:04.900Z"
+    "lastVerified": "2026-11-07T02:01:30.162Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1519,9 +1519,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-06T19:02:08.739Z",
+    "lastChecked": "2026-11-07T02:01:25.288Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-06T19:02:08.739Z"
+    "lastVerified": "2026-11-07T02:01:25.288Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2419,12 +2419,12 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:40:24.892Z",
-    "lastVerified": "2026-11-05T13:40:24.892Z",
+    "lastChecked": "2026-11-07T02:01:32.436Z",
+    "lastVerified": "2026-11-07T02:01:32.436Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
+    "contentHash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -3910,9 +3910,9 @@
   "ritz078-transform": {
     "name": "transform",
     "officialUrl": "https://github.com/ritz078/transform",
-    "lastChecked": "2026-11-04T08:35:01.107Z",
+    "lastChecked": "2026-11-07T02:01:20.197Z",
     "revisionIdentifier": "ff755793",
-    "lastVerified": "2026-11-04T08:35:01.107Z"
+    "lastVerified": "2026-11-07T02:01:20.197Z"
   },
   "dosco-graphjin": {
     "name": "dosco/graphjin",
@@ -5564,14 +5564,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:44:33.281Z",
-    "lastVerified": "2026-11-05T09:44:33.281Z",
+    "lastChecked": "2026-11-07T02:01:19.853Z",
+    "lastVerified": "2026-11-07T02:01:19.853Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
+    "contentHash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5756,9 +5756,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-05T14:43:27.586Z",
+    "lastChecked": "2026-11-07T02:01:22.677Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-05T14:43:27.586Z"
+    "lastVerified": "2026-11-07T02:01:22.677Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -10774,9 +10774,9 @@
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
-    "lastChecked": "2026-11-03T20:00:43.843Z",
+    "lastChecked": "2026-11-07T02:01:17.729Z",
     "revisionIdentifier": "0eef52b5",
-    "lastVerified": "2026-11-03T20:00:43.843Z"
+    "lastVerified": "2026-11-07T02:01:17.729Z"
   },
   "lessica-trollfools": {
     "name": "TrollFools",

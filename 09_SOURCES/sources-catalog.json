@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "e706cab3",
+    "sourceVersion": "87851900",
     "license": "Apache-2.0",
-    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
-    "lastHarvestedAt": "2026-11-05T09:44:34.847Z",
+    "contentHash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
+    "lastHarvestedAt": "2026-11-07T02:06:47.821Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "75d69a0f",
+    "sourceVersion": "8c573832",
     "license": "Apache-2.0",
-    "contentHash": "0f1bb7272473bbb6d120e216e703bf060f258102d8edc535bd3e730b5cf16d77",
-    "lastHarvestedAt": "2026-11-05T13:40:25.445Z",
+    "contentHash": "c2632cdade8ea7c3e4242f5a3cf9323de8903acd8e2a4d05121b4e921eacba2b",
+    "lastHarvestedAt": "2026-11-07T02:01:58.165Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
