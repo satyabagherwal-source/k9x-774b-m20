@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `87e85f28`  
+> **Source Version**: `61f8849c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T06:15:10.873Z  
+> **Timestamp**: 2026-11-07T21:29:33.104Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T06:15:10.865Z  
+> **Harvest Timestamp**: 2026-11-07T21:29:32.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12830 stars
+- **Stars / Engagement**: 12831 stars
 
 ---
 
@@ -1800,12 +1800,13 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2492** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
-  *Symptoms*: Reviewers: kezhuw Author: PDavid Closes #2487 from PDavid/ZOOKEEPER-5116  (cherry picked from commit a9d2ce608314851c71eb09754d4c4698ff489ff5)
+- **Issue #2493** (2026-11-06): **ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js**
+  *Symptoms*: npm audit before:  23 vulnerabilities (4 low, 15 moderate, 4 high)  Fix: Executed `npm audit fix`.  after fixing:  18 vulnerabilities (4 low, 13 moderate, 1 high)
   **Post-Mortem & Fix Analysis**:
-  > Cherry-picked the master commit which if course did not apply cleanly because there is no website build in this branch.
+  > ### Testing  Verified this locally:  - quickly checked with `npm run dev` - site is working fine - :heavy_check_mark:  - by building the site with executing `mvn site -pl zookeeper-website` and then checking the site with a quick HTTP server by running `(cd zookeeper-website/build/client && python3 -m http.server)`  Both website and docs are looking good - :heavy_check_mark:   <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/bf094caf-762f-45fe-bbc7-6be899d38f36" />  <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/ab38ffd5-cd93-4332-bd5e-0727134b35f2" /> 
+  > LGTM, thanks David!
 
-- **Issue #2491** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
+- **Issue #2492** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
   *Symptoms*: Reviewers: kezhuw Author: PDavid Closes #2487 from PDavid/ZOOKEEPER-5116  (cherry picked from commit a9d2ce608314851c71eb09754d4c4698ff489ff5)
   **Post-Mortem & Fix Analysis**:
   > Cherry-picked the master commit which if course did not apply cleanly because there is no website build in this branch.
@@ -1825,99 +1826,129 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87e85f28` (2026-11-04)
-**Commit Message**: ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false
+### Incident Patch 1: `61f8849c` (2026-11-06)
+**Commit Message**: ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js
 
-Reviewers: kezhuw, anmolnar
-Author: dajiaohuang
-Closes #2484 from dajiaohuang/ZOOKEEPER-5108
+Reviewers: anmolnar
+Author: PDavid
+Closes #2493 from PDavid:ZOOKEEPER-5118
 
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java` (modified, +2/-12)
+**File**: `zookeeper-website/package-lock.json` (modified, +128/-128)
 ```diff
-@@ -58,19 +58,9 @@ static String getServerPrincipal(WrapperInetSocketAddress addr, ZKClientConfig c
-             ZKClientConfig.ZK_SASL_CLIENT_USERNAME_DEFAULT);
-         String hostName = addr.getHostName();
- 
--        boolean canonicalize = true;
--        String canonicalizeText = clientConfig.getProperty(
-+        boolean canonicalize = clientConfig.getBoolean(
-             ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
--            ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT);
--        try {
--            canonicalize = Boolean.parseBoolean(canonicalizeText);
--        } catch (IllegalArgumentException ea) {
--            LOG.warn(
--                "Could not parse config {} \"{}\" into a boolean using default {}",
--                ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
--                canonicalizeText,
--                canonicalize);
--        }
-+            Boolean.parseBoolean(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT));
- 
-         if (canonicalize) {
-             WrapperInetAddress ia = addr.getAddress();
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java` (modified, +1/-1)
-```diff
-@@ -148,7 +148,7 @@ protected void handleBackwardCompatibility() {
-      * @return true if the SASL client is enabled.
-      */
-     public boolean isSaslClientEnabled() {
--        return Boolean.valueOf(getProperty(ENABLE_CLIENT_SASL_KEY, ENABLE_CLIENT_SASL_DEFAULT));
-+        return getBoolean(ENABLE_CLIENT_SASL_KEY, Boolean.parseBoolean(ENABLE_CLIENT_SASL_DEFAULT));
-     }
- 
-     /**
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/ClientCanonicalizeTest.java` (modified, +16/-0)
-```diff
-@@ -61,6 +61,22 @@ public void testClientNoCanonicalization() throws IOException, InterruptedExcept
-         assertEquals("zookeeper/zookeeper.apache.org", principal, "The computed principal does appears to have been canonicalized incorrectly");
-     }
- 
-+    @Test
-+    public void testClientCanonicalizationWithTrailingWhitespace() {
-+        SaslServerPrincipal.WrapperInetSocketAddress addr = mock(SaslServerPrincipal.WrapperInetSocketAddress.class);
-+        SaslServerPrincipal.WrapperInetAddress ia = mock(SaslServerPrincipal.WrapperInetAddress.class);
-+
-+        when(addr.getHostName()).thenReturn("zookeeper.apache.org");
-+        when(addr.getAddress()).thenReturn(ia);
-+        when(ia.getCanonicalHostName()).thenReturn("zk1.apache.org");
-+        when(ia.getHostAddress()).thenReturn("127.0.0.1");
-+
-+        ZKClientConfig conf = new ZKClientConfig();
-+        conf.setProperty(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME, "true ");
-+        String principal = SaslServerPrincipal.getServerPrincipal(addr, conf);
-+        assertEquals("zookeeper/zk1.apache.org", principal, "The principal should be canonicalized");
-+    }
-+
-     @Test
-     public void testClientCanonicalizationToIp() throws IOException, InterruptedException {
-         SaslServerPrincipal.WrapperInetSocketAddress addr = mock(SaslServerPrincipal.WrapperInetSocketAddress.class);
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/test/SaslClientTest.java` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ public void testSaslClientDisabled() {
-         System.clearProperty(ZKClientConfig.ENABLE_CLIENT_SASL_KEY);
-         assertTrue(new ZKClientConfig().isSaslClientEnabled(), "SASL client disabled");
- 
--        for (String value : Arrays.asList("true", "TRUE")) {
-+        for (String value : Arrays.asList("true", "TRUE", "true ")) {
-             System.setProperty(ZKClientConfig.ENABLE_CLIENT_SASL_KEY, value);
-             assertTrue(new ZKClientConfig().isSaslClientEnabled(), "SASL client disabled");
-         }
+@@ -4391,17 +4391,17 @@
+       }
+     },
+     "node_modules/@typescript-eslint/eslint-plugin": {
+-      "version": "8.70.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.70.0.tgz",
+-      "integrity": "sha512-/v8HZt6RlyIZxB3ntehELOcUcfxKPVGWXnQdJuHRmzrqgF8nQypcC/oxGW+Ot4VGKDq81XugPKxx0n5PBtf9PA==",
++      "version": "8.72.1",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
++      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@eslint-community/regexpp": "^4.12.2",
+-        "@typescript-eslint/scope-manager": "8.70.0",
+-        "@typescript-eslint/type-utils": "8.70.0",
+-        "@typescript-eslint/utils": "8.70.0",
+-        "@typescript-eslint/visitor-keys": "8.70.0",
++        "@typescript-eslint/scope-manager": "8.72.1",
++        "@typescript-eslint/type-utils": "8.72.1",
++        "@typescript-eslint/utils": "8.72.1",
++        "@typescript-eslint/visitor-keys": "8.72.1",
+         "ignore": "^7.0.5",
+         "natural-compare": "^1.4.0",
+         "ts-api-utils": "^2.5.0"
+@@ -4414,22 +4414,22 @@
+         "url": "https://opencollective.com/typescript-eslint"
+       },
+       "peerDependencies": {
+-        "@typescript-eslint/parser": "^8.70.0",
++        "@typescript-eslint/parser": "^8.72.1",
+         "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+         "typescript": ">=4.8.4 <6.1.0"
+       }
+     },
+     "node_modules/@typescript-eslint/parser": {
+-      "version": "8.70.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.70.0.tgz",
+-      "integrity": "sha512-zYvrmj9Yxd63UGaXw+kdt6A0F0s0qveJyuatIM77bYC2DE4pgmg7a50u8LR7PRtXd0x+h+Tl3eXabGm06SWd3Q==",
++      "version": "8.72.1",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
++      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/scope-manager": "8.70.0",
+-        "@typescript-eslint/types": "8.70.0",
+-        "@typescript-eslint/typescript-estree": "8.70.0",
+-        "@typescript-eslint/visitor-keys": "8.70.0",
++        "@typescript-eslint/scope-manager": "8.72.1",
++        "@typescript-eslint/types": "8.72.1",
++        "@typescript-eslint/typescript-estree": "8.72.1",
++        "@typescript-eslint/visitor-keys": "8.72.1",
+         "debug": "^4.4.3"
+       },
+       "engines": {
+@@ -4445,14 +4445,14 @@
+       }
+     },
+     "node_modules/@typescript-eslint/project-service": {
+-      "version": "8.70.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.70.0.tgz",
+-      "integrity": "sha512-hFHbTNqhU9G+2eKFXCBVb1tjFT/LceiJ4+HfLO4pTpDI0KHi6iajpcFFkaSQ9gXmCh7n82A0PthaayEdN6mspQ==",
++      "version": "8.72.1",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
++      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGzW1J6jTg==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/tsconfig-utils": "^8.70.0",
+-        "@typescript-eslint/types": "^8.70.0",
++        "@typescript-eslint/tsconfig-utils": "^8.72.1",
++        "@typescript-eslint/types": "^8.72.1",
+         "debug": "^4.4.3"
+       },
+       "engines": {
+@@ -4467,14 +4467,14 @@
+       }
+     },
+     "node_modules/@typescript-eslint/scope-manager": {
+-      "version": "8.70.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.70.0.tgz",
+-      "integrity": "sha512-8nP3Kwh5hlgZ4FicGvmznAmJe8UL4sdU8tLukrPaMuQmDuk4Y8xYfzu/aYZW4xT2JCgc7H/TpDI5cGlxcWJSqQ==",
++      "version": "8.72.1",
++      "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.72.1.tgz",
++      "integrity": "sha512-lC/t6eMCZZQAAKZEYGL6RDVSuFehpdmMT6h+nJIjIa6oylN/PwDgDVtEIbB7O9xFfZYtZAYLoLlDNWKJhtF+uQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@typescript-eslint/types": "8.70.0",
+-        "@typescript-eslint/visitor-keys": "8.70.0"
++        "@typescript-eslint/types": "8.72.1",
++        "@typescript-eslint/visitor-keys": "8.72.1"
+       },
+       "engines": {
+         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+@@ -4485,9 +4485,9 @@
+       }
+     },
+     "node_modules/@typescript-eslint/tsconfig-utils": {
+-      "version": "8.70.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.70.0.tgz",
+-      "integrity": "sha512-adnkeeNq9Sq1sUf4+FRVc0KdgYghzsgFpZSQVZVvY0LCuUuN0FnQgyGzCJeC4fW1cdXseBAjU2EOqUIjbNcZUw==",
++      "version": "8.72.1",
++      "resolved": "https://registr
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
 - **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2487** (2026-11-04): ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build (@PDavid)
 - **PR #2484** (2026-11-04): ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false (@dajiaohuang)
 - **PR #2476** (2026-10-20): ZOOKEEPER-5097: Make DataTree snapshot serialization iterative (@anmolnar)
-- **PR #2475** (2026-10-26): ZOOKEEPER-5103: Address memory leaks in the C client (@apurtell)
 
 ---
 
@@ -1937,40 +1968,62 @@ Closes #2484 from dajiaohuang/ZOOKEEPER-5108
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are re
+## X. ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zo
 
 **RULE**:
-When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-website/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87e85f28`: ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61f8849c`: ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/SaslServerPrincipal.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-website/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        boolean canonicalize = clientConfig.getBoolean(
-            Boolean.parseBoolean(ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT));
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/type-utils": "8.72.1",
+        "@typescript-eslint/utils": "8.72.1",
+        "@typescript-eslint/visitor-keys": "8.72.1",
+        "@typescript-eslint/parser": "^8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/types": "8.72.1",
+        "@typescript-eslint/typescript-estree": "8.72.1",
+        "@typescript-eslint/visitor-keys": "8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.72.1.tgz",
+      "integrity": "sha512-fAuVMkwdO/huI8nyo/WKnNKf6Gag93S56Rh3Ts5mGcavwSdaN8tRg1gCeIGX8PF+nzp1BjGfO4gHhGz
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        boolean canonicalize = true;
-        String canonicalizeText = clientConfig.getProperty(
-            ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME_DEFAULT);
-        try {
-            canonicalize = Boolean.parseBoolean(canonicalizeText);
-        } catch (IllegalArgumentException ea) {
-            LOG.warn(
-                "Could not parse config {} \"{}\" into a boolean using default {}",
-                ZKClientConfig.ZK_SASL_CLIENT_CANONICALIZE_HOSTNAME,
-                canonicalizeText,
-                canonicalize);
-        }
+      "version": "8.70.0",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.70.0.tgz",
+      "integrity": "sha512-/v8HZt6RlyIZxB3ntehELOcUcfxKPVGWXnQdJuHRmzrqgF8nQypcC/oxGW+Ot4VGKDq81XugPKxx0n5PBtf9PA==",
+        "@typescript-eslint/scope-manager": "8.70.0",
+        "@typescript-eslint/type-utils": "8.70.0",
+        "@typescript-eslint/utils": "8.70.0",
+        "@typescript-eslint/visitor-keys": "8.70.0",
+        "@typescript-eslint/parser": "^8.70.0",
+      "version": "8.70.0",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.70.0.tgz",
+      "integrity": "sha512-zYvrmj9Yxd63UGaXw+kdt6A0F0s0qveJyuatIM77bYC2DE4pgmg7a50u8LR7PRtXd0x+h+Tl3eXabGm06SWd3Q==",
+        "@typescript-eslint/scope-manager": "8.70.0",
+        "@typescript-eslint/types": "8.70.0",
+        "@typescript-eslint/typescript-estree": "8.70.0",
+        "@typescript-eslint/visitor-keys": "8.70.0",
+      "version": "8.70.0",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.70.0.tgz",
+      "integrity": "sha512-hFHbTNqhU9G+2eKFXCBVb1tjFT/LceiJ4+HfLO4pTpDI0KHi6iajpcFFkaSQ9gXmCh7n82A0PthaayE
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87e85f28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61f8849c` are properly handled with clean fallback behavior.

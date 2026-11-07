@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "87e85f28",
+    "sourceVersion": "61f8849c",
     "license": "Apache-2.0",
-    "contentHash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
-    "lastHarvestedAt": "2026-11-05T06:15:11.658Z",
+    "contentHash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
+    "lastHarvestedAt": "2026-11-07T21:29:34.324Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "ec8b029e",
+    "sourceVersion": "5ce34500",
     "license": "Apache-2.0",
-    "contentHash": "5a3b7b3db66ec7135df081b5dfd2d794d60f1f9897baab497f9f1496caf04de9",
-    "lastHarvestedAt": "2026-11-05T17:28:57.931Z",
+    "contentHash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
+    "lastHarvestedAt": "2026-11-07T21:29:22.255Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "11765ab6",
+    "sourceVersion": "b72200d2",
     "license": "MIT",
-    "contentHash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
-    "lastHarvestedAt": "2026-11-04T03:23:36.696Z",
+    "contentHash": "989fe43af4768c8f04611c32ae419560967a477efb9f637f40d7aba7e1495f92",
+    "lastHarvestedAt": "2026-11-07T21:29:25.244Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {

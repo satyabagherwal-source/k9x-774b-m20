@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-2738",
-    "timestamp": "2026-11-05T08:50:21.668Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "baf58ec7129091ea759607be048744b8625590273319835069f84b8cf6b56840",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-27YD",
-    "timestamp": "2026-11-05T08:50:22.789Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "9ebecf01a832add068995a9de354b2d88827968c988350631b5111917a7a0ef5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-4JQF",
-    "timestamp": "2026-11-05T08:52:11.367Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "f5de16815234741eedaf35c4d2d65a17e6fc051fbacbc8f51eb81fbbc8c518bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-KVB2",
     "timestamp": "2026-11-05T09:04:52.862Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7445,51 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1ZRB",
+    "timestamp": "2026-11-07T21:29:22.247Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-222I",
+    "timestamp": "2026-11-07T21:29:25.242Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "989fe43af4768c8f04611c32ae419560967a477efb9f637f40d7aba7e1495f92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-292Q",
+    "timestamp": "2026-11-07T21:29:34.322Z",
+    "repository": "apache/zookeeper",
+    "learningId": "learn-github-apache-zookeeper",
+    "contentHash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

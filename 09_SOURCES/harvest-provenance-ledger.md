@@ -8107,3 +8107,6 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `7ca0042d` | Multi-dimensional audit evidence | 2026-11-07T21:18:16.304Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `dbeba0d5` | Multi-dimensional audit evidence | 2026-11-07T21:18:17.073Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `29d63fc2` | Multi-dimensional audit evidence | 2026-11-07T21:18:29.756Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `5ce34500` | Multi-dimensional audit evidence | 2026-11-07T21:29:22.255Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `b72200d2` | Multi-dimensional audit evidence | 2026-11-07T21:29:25.244Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `61f8849c` | Multi-dimensional audit evidence | 2026-11-07T21:29:34.324Z |

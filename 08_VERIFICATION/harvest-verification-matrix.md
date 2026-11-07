@@ -8098,3 +8098,6 @@
 | `CYCLE-20261107-NPWT` | `2026-11-07T21:18:16.301Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ceaa72f1...`) |
 | `CYCLE-20261107-NQI6` | `2026-11-07T21:18:17.070Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8be8e553...`) |
 | `CYCLE-20261107-O0AH` | `2026-11-07T21:18:29.753Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5070` | Yes (`b30a80a4...`) |
+| `CYCLE-20261107-1ZRB` | `2026-11-07T21:29:22.247Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59df7f92...`) |
+| `CYCLE-20261107-222I` | `2026-11-07T21:29:25.242Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`989fe43a...`) |
+| `CYCLE-20261107-292Q` | `2026-11-07T21:29:34.322Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`35a7ef7e...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:18:29.698Z",
+  "last_updated": "2026-11-07T21:29:34.239Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2601,11 +2601,16 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "87e85f28",
-      "content_hash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
+      "source_version": "61f8849c",
+      "content_hash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zo",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2051,
           "title": "Add new CVEs to Security page related to 3.8.7 and 3.9.6",
@@ -2647,7 +2652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T06:15:11.543Z",
+      "verified_at": "2026-11-07T21:29:34.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4002,14 +4007,19 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "ec8b029e",
-      "content_hash": "5a3b7b3db66ec7135df081b5dfd2d794d60f1f9897baab497f9f1496caf04de9",
+      "source_version": "5ce34500",
+      "content_hash": "59df7f921baa12b2045856f0468f168044eb2140b5f2d8a55e3a05523545f0d1",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Support installing wheel variants from Git paths (#22724)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "`uv audit` project status lookups for redacted query values (#23129)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4098,7 +4108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:28:57.835Z",
+      "verified_at": "2026-11-07T21:29:22.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79995,11 +80005,16 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "11765ab6",
-      "content_hash": "f86ac1a8e6de78dade76b7ea48960157a7d58125bf9fe3056852b85aa25277f8",
+      "source_version": "b72200d2",
+      "content_hash": "989fe43af4768c8f04611c32ae419560967a477efb9f637f40d7aba7e1495f92",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "router): replace a crashed ssg worker",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3011,
           "title": "Merge pull request #9217 from rapporian/fix/devtools-mcp-custom-hooks",
@@ -80031,7 +80046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:23:36.579Z",
+      "verified_at": "2026-11-07T21:29:25.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

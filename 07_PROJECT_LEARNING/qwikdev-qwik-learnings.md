@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source**: github ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
-> **Source Version**: `11765ab6`  
+> **Source Version**: `b72200d2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:23:35.894Z  
+> **Timestamp**: 2026-11-07T21:29:24.002Z  
 > **Learning ID**: `learn-github-qwikdev-qwik`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:23:34.857Z  
+> **Harvest Timestamp**: 2026-11-07T21:29:23.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Instant-loading web apps, without effort
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 22070 stars
+- **Stars / Engagement**: 22066 stars
 
 ---
 
@@ -1136,769 +1136,890 @@ export { default, onGet } from '../../../../error-handling/src/routes/render-cra
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `914b53ee` (2026-10-31)
-**Commit Message**: fix(router): report production crashes to next(err) and the logs
+### Incident Patch 1: `da290682` (2026-10-23)
+**Commit Message**: fix(router): replace a crashed ssg worker
 
-The crash path sends the 500 page, which makes headersSent true, so the
-node middleware returned before it looked at the error. completion now
-holds failures only, so the checks can go back in their old order and
-the other adapters stop logging redirects.
+A crashed worker stayed in rotation, so the next routes sent to it hung until the 30s render timeout. A worker that dies before it is ready would die again, so it is not replaced; the build stops with its startup error instead.
 
-**File**: `.changeset/report-production-crashes.md` (added, +5/-0)
+**File**: `.changeset/ssg-crashed-worker.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@qwik.dev/router': patch
 +---
 +
-+fix: production crashes now reach `next(err)` and the server logs
++fix: a crashed ssg worker no longer stalls the build until it times out
 ```
 
-**File**: `packages/qwik-router/src/middleware/node/index.ts` (modified, +3/-3)
+**File**: `packages/qwik-router/src/ssg/worker-pool.ts` (modified, +33/-3)
 ```diff
-@@ -83,12 +83,12 @@ export function createQwikRouter(
-       const handled = await requestHandler(serverRequestEv, opts);
-       if (handled) {
-         const err = await handled.completion;
--        if (handled.requestEv.headersSent) {
--          return;
--        }
-         if (err) {
-           throw err;
-         }
-+        if (handled.requestEv.headersSent) {
-+          return;
-+        }
+@@ -18,6 +18,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+   const ssgWorkers: SsgWorker[] = [];
+   const sitemapBuffer: string[] = [];
+   let sitemapStream: fs.WriteStream | null = null;
++  let isClosing = false;
+ 
+   opts = { ...opts };
+ 
+@@ -69,11 +70,19 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+     const mainTasks = new Map<string, WorkerMainTask>();
+     let terminateTimeout: number | null = null;
+ 
++    let isReady = false;
++    let startupError: Error | undefined;
+     let markWorkerReady!: () => void;
++    let failWorkerStart!: (error: Error) => void;
+     // Bun drops messages posted before the worker listens, so wait for its ready signal.
+-    const workerReady = new Promise<void>((resolve) => {
+-      markWorkerReady = resolve;
++    const workerReady = new Promise<void>((resolve, reject) => {
++      markWorkerReady = () => {
++        isReady = true;
++        resolve();
++      };
++      failWorkerStart = reject;
+     });
++    workerReady.catch(() => {});
+ 
+     const nodeWorker = new Worker(workerFilePath, { workerData });
+     nodeWorker.unref();
+@@ -112,7 +121,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+             await nodeWorker.terminate();
+             resolve();
+           }, 1000) as unknown as number;
+-          workerReady.then(() => nodeWorker.postMessage(msg));
++          workerReady.then(() => nodeWorker.postMessage(msg)).catch(() => {});
+         });
+         // If worker responded gracefully, cancel the force-terminate
+         if (terminateTimeout) {
+@@ -149,6 +158,9 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+ 
+     nodeWorker.on('error', (e) => {
+       log.error(`worker error`, e);
++      if (!isReady) {
++        startupError = e instanceof Error ? e : new Error(String(e));
++      }
+     });
+ 
+     nodeWorker.on('exit', (code) => {
+@@ -157,6 +169,13 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+         clearTimeout(terminateTimeout);
+         terminateTimeout = null;
        }
-       next();
-     } catch (e) {
-```
-
-**File**: `packages/qwik-router/src/middleware/node/index.unit.ts` (modified, +28/-6)
-```diff
-@@ -50,16 +50,38 @@ describe('createQwikRouter().router', () => {
-     expect(middleware.router).toHaveLength(3);
-   });
- 
--  it('should not forward handled completion errors after headers are sent', async () => {
--    const requestEv = {
--      headersSent: true,
--    };
-+  it('forwards a render crash to next after the response started', async () => {
-+    const error = new Error('render failed');
-     mockFromNodeHttp.mockResolvedValue({
-       platform: {},
-     });
-     mockRequestHandler.mockResolvedValue({
--      completion: Promise.resolve(new Error('already handled')),
--      requestEv,
-+      completion: Promise.resolve(error),
-+      requestEv: {
-+        headersSent: true,
-+      },
-+    });
-+
-+    const next = vi.fn();
-+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-+    const middleware = createQwikRouter(createNodeOptions());
-+
-+    await middleware.router({ url: '/', headers: {} } as any, {} as any, next);
-+
-+    expect(next).toHaveBeenCalledWith(error);
-+    expect(consoleError).toHaveBeenCalledWith(error);
-+    consoleError.mockRestore();
-+  });
-+
-+  it('does not call next once a response went out without a failure', async () => {
-+    mockFromNodeHttp.mockResolvedValue({
-+      platform: {},
-+    });
-+    mockRequestHandler.mockResolvedValue({
-+      completion: Promise.resolve(undefined),
-+      requestEv: {
-+        headersSent: true,
-+      },
++      if (!isReady && !isClosing) {
++        const cause = startupError ? `: ${startupError.message}` : '';
++        failWorkerStart(
++          new Error(`SSG worker exited with code ${code} before it was ready${cause}`)
++        );
++        return;
++      }
+       // Resolve any pending tasks so the main thread doesn't hang
+       if (mainTasks.size > 0) {
+         for (const [pathname, resolve] of mainTasks) {
+@@ -182,11 +201,21 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+       if (code !== 0) {
+         console.error(`worker exit ${code}`);
+       }
++      if (!isClosing) {
++        replaceWorker(ssgWorker);
++      }
      });
  
-     const next = vi.fn();
-```
-
-**File**: `packages/qwik-router/src/middleware/node/request-failures.unit.ts` (added, +152/-0)
-```diff
-@@ -0,0 +1,152 @@
-+import { createServer, type Server } from 'node:http';
-+import type { AddressInfo } from 'node:net';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-+import { _setRouterConfig } from '../../runtime/src/router-config';
-+import type { RequestEvent } from '../../runtime/src/types';
-+import { ServerError } from '../request-handler/server-error';
-+
-+vi.mock('@qwik.dev/core', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('@qwik.dev/core')>()),
-+  isDev: false,
-+}));
-+
-+vi.mock('@qwik.dev/core/internal', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('@qwik.dev/core/internal')>()),
-+  isDev: false,
-+}));
-+
-+import { createQwikRouter } from './index';
-+
-+const routeState = { module: {} as Record<string, unknown> };
-+
-+_setRouterConfig({
-+  routes: { _I: async () => routeState.module },
-+  cacheModules: false,
-+  basePathname: '/',
-+  fallthrough: false,
-+} as any);
-+
-+const FIRST_CHUNK = '<!DOCTYPE html><html q:container="paused">';
-+
-+const renderFirstChunkThenThrow = (thrown: unknown) =>
-+  vi.fn(async (opts: any) => {
-+    await opts.stream.write(FIRST_CHUNK);
-+    throw thrown;
-+  });
-+
-+const renderNothing = vi.fn();
-+
-+describe('request failures through the node middleware', () => {
-+  const servers: Server[] = [];
-+
-+  const request = async (render: unknown) => {
-+    const next = vi.fn();
-+    const handled: Promise<void>[] = [];
-+    const { router } = createQwikRouter({ render } as any);
-+    const server = createServer((req, res) => {
-+      handled.push(router(req, res, next));
-+    });
-+    servers.push(server);
-+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-+    const { port } = server.address() as AddressInfo;
-+
-+    const response = await fetch(`http://127.0.0.1:${port}/`, {
-+      headers: { accept: 'text/html' },
-+      redirect: 'manual',
-+    });
-+    const body = await response.text();
-+    await Promise.all(handled);
-+
-+    return { body, next, status: response.status };
+     return ssgWorker;
+   };
+ 
++  const replaceWorker = (deadWorker: SsgWorker) => {
++    const index = ssgWorkers.indexOf(deadWorker);
++    if (index !== -1) {
++      ssgWorkers[index] = createWorker();
++    }
 +  };
 +
-+  let consoleError: ReturnType<typeof vi.spyOn>;
+   const getNextWorker = () => ssgWorkers.sort(ssgWorkerCompare)[0];
+ 
+   const hasAvailableWorker = () => {
+@@ -216,6 +245,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+   };
+ 
+   const close = async () => {
++    isClosing = true;
+     const promises: Promise<unknown>[] = [];
+ 
+     if (sitemapStream) {
+```
+
+**File**: `packages/qwik-router/src/ssg/worker-pool.unit.ts` (modified, +100/-26)
+```diff
+@@ -1,6 +1,11 @@
+ import { EventEmitter } from 'node:events';
+ import { afterEach, describe, expect, it, vi } from 'vitest';
+-import type { System, WorkerInputMessage, WorkerOutputMessage } from './types';
++import type {
++  SsgWorkerRenderResult,
++  System,
++  WorkerInputMessage,
++  WorkerOutputMessage,
++} from './types';
+ 
+ const workers = vi.hoisted(() => [] as InstanceType<typeof FakeWorker>[]);
+ 
+@@ -35,35 +40,104 @@ const sys = {
+   createLogger: async () => ({ debug() {}, error() {}, info() {} }),
+ } as unknown as System;
+ 
++const renderResult = (pathname: string, overrides: Partial<SsgWorkerRenderResult> = {}) =>
++  ({
++    type: 'render',
++    pathname,
++    url: `https://qwik.dev${pathname}`,
++    ok: true,
++    error: null,
++    filePath: null,
++    contentType: 'text/html',
++    resourceType: 'page',
++    ...overrides,
++  }) satisfies WorkerOutputMessage;
 +
-+  beforeEach(() => {
-+    routeState.module = { default: () => null };
-+    consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+ describe('createWorkerPool', () => {
+   afterEach(() => {
+     workers.length = 0;
++    vi.restoreAllMocks();
+   });
+ 
+-  it('holds render messages until the worker is ready', async () => {
+-    const pool = await createWorkerPool(sys, {
+-      outDir: '/out',
+-      sitemapOutFile: null,
+-      maxWorkers: 1,
+-      workerFilePath: '/run-ssg-worker.js',
+-    } as any);
+-    const [worker] = workers;
+-
+-    const rendered = pool.render({ type: 'render', pathname: '/', params: undefined } as any);
+-    await Promise.resolve();
+-    worker.attachListener();
+-    await vi.waitFor(() => expect(worker.received).toHaveLength(1));
+-
+-    worker.emit('message', {
+-      type: 'render',
+-      pathname: '/',
+-      url: 'https://example.com/',
+-      ok: true,
+-      error: null,
+-      filePath: null,
+-      contentType: null,
+-      resourceType: null,
+-    } satisfies WorkerOutputMessage);
+-    await expect(rendered).resolves.toMatchObject({ pathname: '/', ok: true });
++  describe('worker startup', () => {
++    it('holds render messages until the worker is ready', async () => {
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++      const [worker] = workers;
++
++      const rendered = pool.render({ type: 'render', pathname: '/', params: undefined } as any);
++      await Promise.resolve();
++      worker.attachListener();
++      await vi.waitFor(() => expect(worker.received).toHaveLength(1));
++
++      worker.emit('message', {
++        type: 'render',
++        pathname: '/',
++        url: 'https://example.com/',
++        ok: true,
++        error: null,
++        filePath: null,
++        contentType: null,
++        resourceType: null,
++      } satisfies WorkerOutputMessage);
++      await expect(rendered).resolves.toMatchObject({ pathname: '/', ok: true });
++    });
++
++    it('does not replace a worker that crashes during startup', async () => {
++      vi.spyOn(console, 'error').mockImplementation(() => {});
++      await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++
++      workers[0].emit('error', new Error('entry.ssr failed to load'));
++      workers[0].emit('exit', 1);
++
++      expect(workers).toHaveLength(1);
++    });
++
++    it('fails waiting routes with the startup error when a worker crashes during startup', async () => {
++      vi.spyOn(console, 'error').mockImplementation(() => {});
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++
++      const rendered = pool.render({ type: 'render', pathname: '/', params: undefined });
++      workers[0].emit('error', new Error('entry.ssr failed to load'));
++      workers[0].emit('exit', 1);
++
++      await expect(rendered).rejects.toThrow('entry.ssr failed to load');
++    });
++  });
++
++  describe('worker crashes', () => {
++    it('replaces a crashed worker so later routes still render', async () => {
++      vi.spyOn(console, 'error').mockImplementation(() => {});
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++      workers[0].attachListener();
++
++      const crashed = pool.render({ type: 'render', pathname: '/crash', params: undefined });
++      workers[0].emit('exit', 1);
++      const next = pool.render({ type: 'render', pathname: '/fine', params: undefined });
++      workers[1].attachListener();
++      workers[1].emit('message', renderResult('/fine'));
++
++      expect((await crashed).error?.message).toContain('Worker exited');
++      expect((await next).ok).toBe(true);
++    });
+   });
+ });
+```
+
+---
+
+### Incident Patch 2: `25e1606e` (2026-11-03)
+**Commit Message**: fix(router): drain the ssg queue after a retryable render error
+
+A failed render frees its worker slot, but queued routes waited out the
+retry delay before they started.
+
+**File**: `packages/qwik-router/src/ssg/orchestrator.ts` (modified, +1/-0)
+```diff
+@@ -175,6 +175,7 @@ export async function mainThread(sys: System) {
+ 
+           if (result.error && hasRetriesLeft(staticRoute)) {
+             retryLater(staticRoute, result.error.message);
++            flushQueue();
+             return;
+           }
+ 
+```
+
+**File**: `packages/qwik-router/src/ssg/orchestrator.unit.ts` (modified, +30/-0)
+```diff
+@@ -311,6 +311,36 @@ describe('retries', () => {
+       assert.deepEqual(waits, [650, 1300, 2600, 2600]);
+     });
+ 
++    test('starts a queued route while a failed route waits for its retry', async () => {
++      let activeRenders = 0;
++      let indexRenderCount = 0;
++      let aboutStartedAt: number | undefined;
++      const sys = createSystem({
++        routes: {
++          _I: async () => ({ default: () => null as any }),
++          about: { _I: async () => ({ default: () => null as any }) },
++        },
++        hasAvailableWorker: () => activeRenders === 0,
++        render: async ({ pathname }) => {
++          activeRenders++;
++          if (pathname === '/about') {
++            aboutStartedAt ??= Date.now();
++          }
++          await Promise.resolve();
++          activeRenders--;
++          return pathname === '/' && indexRenderCount++ === 0
++            ? createFailedRenderResult(pathname)
++            : createRenderResult(pathname);
++        },
++        retries: 1,
++      });
++      const startedAt = Date.now();
++
++      await runMainThread(sys);
++
++      assert.isBelow(aboutStartedAt! - startedAt, 500);
++    });
++
+     test('does not finish the build while a retry is waiting', async () => {
+       let indexRenderCount = 0;
+       const sys = createSystem({
+```
+
+---
+
+### Incident Patch 3: `c2733303` (2026-10-23)
+**Commit Message**: feat(router): retry ssg renders that time out
+
+A hung render held its worker slot, so a timeout stopped the whole build. With retries left, the worker is restarted first and the route is retried on a fresh one; the other renders it stopped start again without using a retry. With none left, the build stops as before.
+
+**File**: `packages/docs/src/routes/api/qwik-router-ssg/api.json` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@
+         }
+       ],
+       "kind": "Interface",
+-      "content": "```typescript\nexport interface SsgRenderOptions extends RenderOptions \n```\n**Extends:** RenderOptions\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nemitData?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated per-loader data files should not be written to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nemitHtml?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated static HTML files should not be written to disk. Setting to `false` is useful if the SSG should only write the per-loader data files to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nexclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should not be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. `exclude` always takes priority over `include`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\ninclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. If not provided, all routes will be static generated. `exclude` always takes priority over `include`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nlog?\n\n\n</td><td>\n\n\n</td><td>\n\n'debug' \\| 'quiet'\n\n\n</td><td>\n\n_(Optional)_ Log level. `'quiet'` suppresses per-page output, `'debug'` enables verbose logging.\n\n\n</td></tr>\n<tr><td>\n\nmaxTasksPerWorker?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Maximum number of tasks to be running at one time per worker. Defaults to `20`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nmaxWorkers?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Maximum number of workers to use while generating the static pages. Defaults to the number of CPUs available.\n\n\n</td></tr>\n<tr><td>\n\norigin\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\nThe URL `origin`<!-- -->, which is a combination of the scheme (protocol) and hostname (domain). For example, `https://qwik.dev` has the protocol `https://` and domain `qwik.dev`<!-- -->. However, the `origin` does not include a `pathname`<!-- -->.\n\nThe `origin` is used to provide a full URL during Static Site Generation (SSG), and to simulate a complete URL rather than just the `pathname`<!-- -->. For example, in order to render a correct canonical tag URL or URLs within the `sitemap.xml`<!-- -->, the `origin` must be provided too.\n\nIf the site also starts with a pathname other than `/`<!-- -->, please use the `basePathname` option in the Qwik Router config options.\n\n\n</td></tr>\n<tr><td>\n\noutDir\n\n\n</td><td>\n\n\n</td><td>\n\nstring\n\n\n</td><td>\n\nFile system directory where the static files should be written.\n\n\n</td></tr>\n<tr><td>\n\nretries?\n\n\n</td><td>\n\n\n</td><td>\n\nnumber\n\n\n</td><td>\n\n_(Optional)_ Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).\n\n\n</td></tr>\n<tr><td>\n\nsitemapOutFile?\n\n\n</td><td>\n\n\n</td><td>\n\nstring \\| null\n\n\n</td><td>\n\n_(Optional)_ File system path to write the `sitemap.xml` to. Defaults to `sitemap.xml` and written to the root of the `outDir`<!-- -->. Setting to `null` will prevent the sitemap from being created.\n\n\n</td></tr>\n</tbody></table>",
++      "content": "```typescript\nexport interface SsgRenderOptions extends RenderOptions \n```\n**Extends:** RenderOptions\n\n\n<table><thead><tr><th>\n\nProperty\n\n\n</th><th>\n\nModifiers\n\n\n</th><th>\n\nType\n\n\n</th><th>\n\nDescription\n\n\n</th></tr></thead>\n<tbody><tr><td>\n\nemitData?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated per-loader data files should not be written to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nemitHtml?\n\n\n</td><td>\n\n\n</td><td>\n\nboolean\n\n\n</td><td>\n\n_(Optional)_ Set to `false` if the generated static HTML files should not be written to disk. Setting to `false` is useful if the SSG should only write the per-loader data files to disk. Defaults to `true`<!-- -->.\n\n\n</td></tr>\n<tr><td>\n\nexclude?\n\n\n</td><td>\n\n\n</td><td>\n\nstring\\[\\]\n\n\n</td><td>\n\n_(Optional)_ Defines file system routes relative to the source `routes` directory that should not be static generated. Accepts wildcard behavior. This should not include the \"base\" pathname. `exclude` always takes priority ov
+```
+
+**File**: `packages/docs/src/routes/api/qwik-router-ssg/index.mdx` (modified, +1/-1)
+```diff
+@@ -397,7 +397,7 @@ number
+ 
+ </td><td>
+ 
+-_(Optional)_ Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).
++_(Optional)_ Number of times to retry a route whose render failed or timed out, or an `onStaticGenerate` call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at random. Defaults to `0` (the first failure is final).
+ 
+ </td></tr>
+ <tr><td>
+```
+
+**File**: `packages/qwik-router/src/ssg/orchestrator.ts` (modified, +19/-5)
+```diff
+@@ -149,16 +149,30 @@ export async function mainThread(sys: System) {
+ 
+           const result = await Promise.race([
+             main.render({ type: 'render', ...staticRoute }),
+-            new Promise<never>((_, reject) =>
+-              setTimeout(
+-                () => reject(new Error(`SSG render timed out after ${renderTimeout}ms`)),
+-                renderTimeout
+-              )
++            new Promise<undefined>((resolve) =>
++              setTimeout(() => resolve(undefined), renderTimeout)
+             ),
+           ]);
+ 
+           log.debug(`render done: ${staticRoute.pathname}`);
+ 
++          if (!result) {
++            const timeoutMessage = `SSG render timed out after ${renderTimeout}ms`;
++            if (!hasRetriesLeft(staticRoute)) {
++              throw new Error(timeoutMessage);
++            }
++            await main.restartWorker(staticRoute.pathname);
++            retryLater(staticRoute, timeoutMessage);
++            flushQueue();
++            return;
++          }
++
++          if (result.isInterrupted) {
++            queue.push(staticRoute);
++            flushQueue();
++            return;
++          }
++
+           if (result.error && hasRetriesLeft(staticRoute)) {
+             retryLater(staticRoute, result.error.message);
+             return;
+```
+
+**File**: `packages/qwik-router/src/ssg/orchestrator.unit.ts` (modified, +148/-2)
+```diff
+@@ -2,7 +2,7 @@ import type { QwikRouterConfig, RouteData } from '@qwik.dev/router';
+ import { afterEach, assert, beforeEach, describe, test, vi } from 'vitest';
+ import { getLoaderName } from '../middleware/request-handler/request-path';
+ import { mainThread } from './orchestrator';
+-import type { Logger, MainContext, System } from './types';
++import type { Logger, MainContext, SsgWorkerRenderResult, System } from './types';
+ 
+ const noopLogger: Logger = {
+   info: () => {},
+@@ -392,6 +392,147 @@ describe('retries', () => {
+       assert.equal(callCount, 3);
+     });
+   });
++
++  describe('timeouts', () => {
++    test('stops the build when a render times out with no retries left', async () => {
++      vi.spyOn(console, 'error').mockImplementation(() => {});
++      const sys = createSystem({
++        routes: { _I: async () => ({ default: () => null as any }) },
++        render: () => new Promise<never>(() => {}),
++      });
++
++      const done = mainThread(sys).catch((error: Error) => error);
++      await vi.runAllTimersAsync();
++
++      assert.include(String(await done), 'timed out');
++    });
++
++    test('restarts the worker and retries a route whose render timed out', async () => {
++      const restarted: string[] = [];
++      let renderCount = 0;
++      const sys = createSystem({
++        routes: { _I: async () => ({ default: () => null as any }) },
++        render: ({ pathname }) => {
++          renderCount++;
++          return renderCount === 1
++            ? new Promise<never>(() => {})
++            : Promise.resolve(createRenderResult(pathname));
++        },
++        restartWorker: async (pathname) => {
++          restarted.push(pathname);
++        },
++        retries: 1,
++      });
++
++      const result = await runMainThread(sys);
++
++      assert.deepEqual(restarted, ['/']);
++      assert.equal(renderCount, 2);
++      assert.equal(result.rendered, 1);
++    });
++
++    test('still retries a timed-out route when the worker restart is slow', async () => {
++      let busySlots = 0;
++      let renderCount = 0;
++      const sys = createSystem({
++        routes: { _I: async () => ({ default: () => null as any }) },
++        hasAvailableWorker: () => busySlots === 0,
++        render: ({ pathname }) => {
++          renderCount++;
++          if (renderCount === 1) {
++            busySlots++;
++            return new Promise<never>(() => {});
++          }
++          return Promise.resolve(createRenderResult(pathname));
++        },
++        restartWorker: () =>
++          new Promise<void>((resolve) =>
++            setTimeout(() => {
++              busySlots = 0;
++              resolve();
++            }, 1000)
++          ),
++        retries: 1,
++      });
++
++      const result = await runMainThread(sys);
++
++      assert.equal(renderCount, 2);
++      assert.equal(result.rendered, 1);
++    });
++
++    test("does not use a retry for a route stopped by another route's timeout", async () => {
++      let interruptAbout: (() => void) | undefined;
++      const aboutRenders = [
++        () =>
++          new Promise<SsgWorkerRenderResult>((resolve) => {
++            interruptAbout = () =>
++              resolve({ ...createFailedRenderResult('/about'), isInterrupted: true });
++          }),
++        () => Promise.resolve(createFailedRenderResult('/about')),
++        () => Promise.resolve(createRenderResult('/about')),
++      ];
++      let indexRenderCount = 0;
++      const sys = createSystem({
++        routes: {
++          _I: async () => ({ default: () => null as any }),
++          about: { _I: async () => ({ default: () => null as any }) },
++        },
++        render: ({ pathname }) => {
++          if (pathname === '/about') {
++            return aboutRenders.shift()!();
++          }
++          return indexRenderCount++ === 0
++            ? new Promise<never>(() => {})
++            : Promise.resolve(createRenderResult(pathname));
++        },
++        restartWorker: async () => {
++          interruptAbout?.();
++        },
++        retries: 1,
++      });
++
++      const result = await runMainThread(sys);
++
++      assert.equal(result.errors, 0);
++      assert.sameMembers(result.staticPaths, ['/', '/about']);
++    });
++
++    test('retries each route once when two routes on one worker time out together', async () => {
++      const renderCounts = new Map<string, number>();
++      const hungRenders = new Map<string, (result: SsgWorkerRenderResult) => void>();
++      const sys = createSystem({
++        routes: {
++          _I: async () => ({ default: () => null as any }),
++          about: { _I: async () => ({ default: () => null as any }) },
++        },
++        render: ({ pathname }) => {
++          const renderCount = (renderCounts.get(pathname) ?? 0) + 1;
++          renderCounts.set(pathname, renderCount);
++          if (renderCount === 1) {
++            return new Promise((resolve) => hungRenders.set(pathname, resolve));
++          }
++          return Promise.resolve(createRenderResult(pathname));
++        },
++        restart
+```
+
+**File**: `packages/qwik-router/src/ssg/types.ts` (modified, +5/-3)
+```diff
+@@ -26,6 +26,7 @@ export interface StaticStreamWriter extends StreamWriter {
+ export interface MainContext {
+   hasAvailableWorker: () => boolean;
+   render: (staticRoute: SsgRenderInput) => Promise<SsgWorkerRenderResult>;
++  restartWorker: (pathname: string) => Promise<void>;
+   close: () => Promise<void>;
+ }
+ 
+@@ -61,9 +62,9 @@ export interface SsgRenderOptions extends RenderOptions {
+   /** Maximum number of tasks to be running at one time per worker. Defaults to `20`. */
+   maxTasksPerWorker?: number;
+   /**
+-   * Number of times to retry a route whose render failed, or an `onStaticGenerate` call that threw,
+-   * before recording the error. Each retry waits 500ms, doubling up to 2s, plus up to 30% at
+-   * random. Defaults to `0` (the first failure is final).
++   * Number of times to retry a route whose render failed or timed out, or an `onStaticGenerate`
++   * call that threw, before recording the error. Each retry waits 500ms, doubling up to 2s, plus up
++   * to 30% at random. Defaults to `0` (the first failure is final).
+    */
+   retries?: number;
+   /**
+@@ -165,6 +166,7 @@ export interface SsgWorkerRenderResult {
+   filePath: string | null;
+   contentType: string | null;
+   resourceType: 'page' | null;
++  isInterrupted?: boolean;
+ }
+ 
+ /** @public */
+```
+
+**File**: `packages/qwik-router/src/ssg/worker-pool.threads.unit.ts` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++import { access, mkdtemp, rm, writeFile } from 'node:fs/promises';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++import type { System } from './types';
++import { createWorkerPool } from './worker-pool';
++
++const fixtureWorker = `
++import { writeFileSync } from 'node:fs';
++import { parentPort, workerData } from 'node:worker_threads';
++
++parentPort.on('message', (msg) => {
++  if (msg.type === 'close') {
++    parentPort.postMessage({ type: 'close' });
++    parentPort.close();
++    return;
++  }
++  const filePath = workerData.outDir + msg.pathname + '.html';
++  parentPort.postMessage({ type: 'file', pathname: msg.pathname, filePath });
++  writeFileSync(filePath, '<html>' + msg.pathname + '</html>');
++  if (msg.pathname === '/hang') {
++    return;
++  }
++  parentPort.postMessage({
++    type: 'render',
++    pathname: msg.pathname,
++    url: 'https://qwik.dev' + msg.pathname,
++    ok: true,
++    error: null,
++    filePath,
++    contentType: 'text/html',
++    resourceType: 'page',
++  });
++});
++parentPort.postMessage({ type: 'ready' });
++`;
++
++const sys = {
++  createLogger: async () => ({ debug() {}, error() {}, info() {}, warn() {} }),
++} as unknown as System;
++
++describe('createWorkerPool with real worker threads', () => {
++  let outDir: string;
++
++  beforeEach(async () => {
++    outDir = await mkdtemp(join(tmpdir(), 'qwik-router-ssg-threads-'));
 +  });
 +
 +  afterEach(async () => {
-+    consoleError.mockRestore();
-+    await Promise.all(
-+      servers.splice(0).map(
-+        (server) =>
-+          new Promise((resolve) => {
-+            server.closeAllConnections();
-+            server.close(resolve);
-+          })
-+      )
-+    );
++    await rm(outDir, { recursive: true, force: true });
 +  });
 +
-+  it('a render crash after the first chunk reaches next and the response ends', async () => {
-+    const crash = new Error('render failed');
++  it("deletes a timed-out route's files before the worker restart finishes", async () => {
++    const workerFilePath = join(outDir, 'worker.mjs');
++    await writeFile(workerFilePath, fixtureWorker);
++    const pool = await createWorkerPool(sys, {
++      outDir,
++      sitemapOutFile: null,
++      maxWorkers: 1,
++      workerFilePath,
++    } as any);
++    try {
++      const hangPath = join(outDir, 'hang.html');
++      void pool.render({ type: 'render', pathname: '/hang', params: undefined });
++      await vi.waitFor(() => access(hangPath));
 +
-+    const { body, next, status } = await request(renderFirstChunkThenThrow(crash));
++      await pool.restartWorker('/hang');
 +
-+    expect(status).toBe(200);
-+    expect(body).toContain(FIRST_CHUNK);
-+    expect(next).toHaveBeenCalledOnce();
-+    expect(next).toHaveBeenCalledWith(crash);
-+    expect(consoleError).toHaveBeenCalledWith(crash);
-+  });
-+
-+  it('forwards a middleware crash that got the 500 page to next', async () => {
-+    const crash = new Error('middleware failed');
-+    routeState.module = {
-+      default: () => null,
-+      onGet: () => {
-+        throw crash;
-+      },
-+    };
-+
-+    const { body, next, status } = await request(renderNothing);
-+
-+    expect(status).toBe(500);
-+    expect(body).toContain('Internal Server Error');
-+    expect(next).toHaveBeenCalledOnce();
-+    expect(next).toHaveBeenCalledWith(crash);
-+    expect(consoleError).toHaveBeenCalledWith(crash);
-+  });
-+
-+  it('forwards a ServerError thrown after headers were sent', async () => {
-+    const lateError = new ServerError(404, 'No such order');
-+
-+    const { next, status } = await request(renderFirstChunkThenThrow(lateError));
-+
-+    expect(status).toBe(200);
-+    expect(next).toHaveBeenCalledOnce();
-+    expect(next).toHaveBeenCalledWith(lateError);
-+  });
-+
-+  it('does not call next for a redirect', async () => {
-+    routeState.module = {
-+      default: () => null,
-+      onGet: (ev: RequestEvent) => {
-+        throw ev.redirect(302, '/elsewhere');
-+      },
-+    };
-+
-+    const { next, status } = await request(renderNothing);
-+
-+    expect(status).toBe(302);
-+    expect(next).not.toHaveBeenCalled();
-+    expect(consoleError).not.toHaveBeenCalled();
-+  });
-+
-+  it('does not call next for an error page the router sent', async () => {
-+    routeState.module = {
-+      onGet: (ev: RequestEvent) => {
-+        throw ev.error(403, 'Members only');
-+      },
-+    };
-+
-+    const { body, next, status } = await request(renderNothing);
-+
-+    expect(status).toBe(403);
-+    expect(body).toContain('Members only');
-+    expect(next).not.toHaveBeenCalled();
-+    expect(consoleError).not.toHaveBeenCalled();
++      await expect(access(hangPath)).rejects.toThrow();
++      const fine = await pool.render({ type: 'render', pathname: '/fine', params: undefined });
++      expect(fine.ok).toBe(true);
++    } finally {
++      await pool.close();
++    }
 +  });
 +});
 ```
 
-**File**: `packages/qwik-router/src/middleware/request-handler/request-event-core.ts` (modified, +1/-0)
+**File**: `packages/qwik-router/src/ssg/worker-pool.ts` (modified, +31/-4)
 ```diff
-@@ -46,6 +46,7 @@ export const RequestEvIsRewrite = '@rewrite';
- export const RequestEvShareServerTiming = '@serverTiming';
- export const RequestEvETagCacheKey = '@eTagCacheKey';
- export const RequestEvCaughtError = '@caughtError';
-+export const RequestEvSentServerError = '@sentServerError';
- export const RequestEvHttpStatusMessage = '@httpStatusMessage';
+@@ -70,6 +70,8 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+     const mainTasks = new Map<string, WorkerMainTask>();
+     const taskFiles = new Map<string, string[]>();
+     let terminateTimeout: number | null = null;
++    let stoppedPathname: string | undefined;
++    let exitCleanup: Promise<unknown> = Promise.resolve();
  
- export function createRequestEvent(
-```
-
-**File**: `packages/qwik-router/src/middleware/request-handler/user-response.ts` (modified, +10/-7)
-```diff
-@@ -9,7 +9,11 @@ import type {
- } from '../../runtime/src/types';
- import { _asyncRequestStore } from './async-request-store';
- import { getErrorHtml } from './error-handler';
--import { createRequestEvent, type RequestEventInternal } from './request-event-core';
-+import {
-+  createRequestEvent,
-+  RequestEvSentServerError,
-+  type RequestEventInternal,
-+} from './request-event-core';
- import { AbortMessage, RedirectMessage } from './redirect-handler';
- import { RewriteMessage } from './rewrite-handler';
- import { ServerError } from './server-error';
-@@ -78,7 +82,8 @@ async function runNext(
-     const message = 'Resource Not Found';
-     requestEv.status(status);
-     requestEv.html(status, getErrorHtml(status, message));
--    return new ServerError(status, message);
-+    requestEv.sharedMap.set(RequestEvSentServerError, new ServerError(status, message));
-+    return;
-   }
+     let isReady = false;
+     let startupError: Error | undefined;
+@@ -92,6 +94,14 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+       activeTasks: 0,
+       totalTasks: 0,
  
-   let rewriteAttempt = 1;
-@@ -90,7 +95,7 @@ async function runNext(
-       if (e instanceof RedirectMessage) {
-         const stream = requestEv.getWritableStream();
-         await stream.close();
--        return e;
-+        return;
-       } else if (e instanceof RewriteMessage) {
-         if (rewriteAttempt > 50) {
-           return new Error(`Infinite rewrite loop`);
-@@ -114,12 +119,10 @@ async function runNext(
-         } else {
-           requestEv.html(status, getErrorHtml(status, e.data));
-         }
--        return e;
-+        requestEv.sharedMap.set(RequestEvSentServerError, e);
-+        return;
++      isRendering: (pathname) => mainTasks.has(pathname),
++
++      restart: async (pathname) => {
++        stoppedPathname = pathname;
++        await nodeWorker.terminate();
++        await exitCleanup;
++      },
++
+       render: (staticRoute) => {
+         return new Promise((resolve, reject) => {
+           ssgWorker.activeTasks++;
+@@ -185,7 +195,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+         clearTimeout(terminateTimeout);
+         terminateTimeout = null;
        }
-       if (!isDev || requestEv.headersSent) {
--        if (isDev) {
--          console.error(e);
--        }
-         try {
-           if (!requestEv.headersSent) {
-             requestEv.headers.set('content-type', 'text/html; charset=utf-8');
-```
-
-**File**: `packages/qwik-router/src/middleware/request-handler/user-response.unit.ts` (modified, +33/-16)
-```diff
-@@ -13,7 +13,8 @@ vi.mock('@qwik.dev/core/internal', async (importOriginal) => ({
-   },
- }));
- 
--vi.mock('./request-event-core', () => ({
-+vi.mock('./request-event-core', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('./request-event-core')>()),
-   createRequestEvent: mocks.createRequestEvent,
- }));
- 
-@@ -23,6 +24,7 @@ vi.mock('./async-request-store', () => ({
-   },
- }));
- 
-+import { RedirectMessage } from './redirect-handler';
- import { ServerError } from './server-error';
- import { runQwikRouter } from './user-response';
- import type { ServerRequestEvent } from './types';
-@@ -96,32 +98,44 @@ describe('runQwikRouter', () => {
-     };
-     mocks.createRequestEvent.mockReturnValue(requestEv);
- 
--    await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion;
-+    const completion = await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/')
-+      .completion;
- 
--    return { html: written.join(''), writer };
-+    return { completion, html: written.join(''), writer };
+-      if (!isReady && !isClosing) {
++      if (!isReady && !isClosing && !stoppedPathname) {
+         const cause = startupError ? `: ${startupError.message}` : '';
+         failWorkerStart(
+           new Error(`SSG worker exited with code ${code} before it was ready${cause}`)
+@@ -194,29 +204,38 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+       }
+       // Resolve any pending tasks so the main thread doesn't hang
+       if (mainTasks.size > 0) {
++        const cleanups: Promise<void>[] = [];
+         for (const [pathname, resolve] of mainTasks) {
+           ssgWorker.activeTasks--;
+-          removeFiles(takeTaskFiles(pathname)).then(() =>
++          const cleanup = removeFiles(takeTaskFiles(pathname)).then(() =>
+             resolve({
+               type: 'render',
+               pathname,
+               url: '',
+               ok: false,
+-              error: { message: `Worker exited with code ${code}`, stack: undefined },
++              error: {
++                message: stoppedPathname
++                  ? `Worker restarted to stop the render of ${stoppedPathname}`
++                  : `Worker exited with code ${code}`,
++                stack: undefined,
++              },
++              isInterrupted: stoppedPathname !== undefined && pathname !== stoppedPathname,
+               filePath: null,
+               contentType: null,
+               resourceType: null,
+             })
+           );
++          cleanups.push(cleanup);
+         }
++        exitCleanup = Promise.all(cleanups);
+         mainTasks.clear();
+       }
+       // Resolve terminate if it was waiting
+       if (terminateResolve) {
+         terminateResolve();
+         terminateResolve = null;
+       }
+-      if (code !== 0) {
++      if (code !== 0 && !stoppedPathname) {
+         console.error(`worker exit ${code}`);
+       }
+       if (!isClosing) {
+@@ -234,6 +253,11 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+     }
    };
  
--  it('finishes, logs and shows an error that is thrown after the response started in dev', async () => {
--    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-+  it('finishes and shows an error that is thrown after the response started in dev', async () => {
-+    const { completion, html, writer } = await failAfterResponseStarted();
- 
--    try {
--      const { html, writer } = await failAfterResponseStarted();
--
--      expect(html).toContain('boom');
--      expect(writer.close).toHaveBeenCalled();
--      expect(consoleError).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
--    } finally {
--      consoleError.mockRestore();
--    }
-+    expect(html).toContain('boom');
-+    expect(writer.close).toHaveBeenCalled();
-+    expect(completion).toEqual(expect.objectContaining({ message: 'boom' }));
-   });
- 
-   it('keeps the generic error page in production when SSR fails after the response started', async () => {
-     mocks.isDev = false;
- 
--    const { html } = await failAfterResponseStarted();
-+    const { completion, html } = await failAfterResponseStarted();
- 
-     expect(html).toContain('Internal Server Error');
-     expect(html).not.toContain('boom');
-+    expect(completion).toEqual(expect.objectContaining({ message: 'boom' }));
-+  });
++  const restartWorker = async (pathname: string) => {
++    const ssgWorker = ssgWorkers.find((worker) => worker.isRendering(pathname));
++    await ssgWorker?.restart(pathname);
++  };
 +
-+  it('resolves completion with nothing for a redirect', async () => {
-+    const requestEv = {
-+      originalUrl: new URL('http://localhost/'),
-+      next: vi.fn(async () => {
-+        throw new RedirectMessage();
-+      }),
-+      getWritableStream: vi.fn(() => ({ close: vi.fn() })),
-+      isDirty: () => true,
-+    };
-+    mocks.createRequestEvent.mockReturnValue(requestEv);
-+
-+    const run = runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/');
-+
-+    await expect(run.completion).resolves.toBeUndefined();
-   });
+   const getNextWorker = () => ssgWorkers.sort(ssgWorkerCompare)[0];
  
-   it.each(['application/json', 'text/html'])(
-@@ -132,6 +146,7 @@ describe('runQwikRouter', () => {
-         request: new Request('http://localhost/members/', { headers: { Accept: accept } }),
-         headers: new Headers({ 'Cache-Control': 'public, max-age=60' }),
-         headersSent: false,
-+        sharedMap: new Map(),
-         next: vi.fn(async () => {
-           throw new ServerError(403, 'Members only');
-         }),
-@@ -141,7 +156,9 @@ describe('runQwikRouter', () => {
-       };
-       mocks.createRequestEvent.mockReturnValue(requestEv);
+   const hasAvailableWorker = () => {
+@@ -330,6 +354,7 @@ export async function createWorkerPool(sys: System, opts: SsgGenerateOptions) {
+   const mainCtx: MainContext = {
+     hasAvailableWorker,
+     render,
++    restartWorker,
+     close,
+   };
  
--      await runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion;
-+      await expect(
-+        runQwikRouter({} as any, {} as any, [], vi.fn() as any, '/').completion
-+      ).resolves.toBeUndefined();
- 
-       expect(requestEv.send.mock.calls.length + requestEv.html.mock.calls.length).toBe(1);
-       expect(requestEv.headers.get('Cache-Control')).toBe('no-store');
+@@ -354,6 +379,8 @@ type WorkerMainTask = (result: SsgWorkerRenderResult) => void;
+ interface SsgWorker {
+   activeTasks: number;
+   totalTasks: number;
++  isRendering: (pathname: string) => boolean;
++  restart: (stoppedPathname: string) => Promise<void>;
+   render: (staticRoute: SsgRoute) => Promise<SsgWorkerRenderResult>;
+   terminate: () => Promise<void>;
+ }
 ```
 
-**File**: `packages/qwik-router/src/ssg/worker-thread.ts` (modified, +7/-16)
+**File**: `packages/qwik-router/src/ssg/worker-pool.unit.ts` (modified, +107/-2)
 ```diff
-@@ -4,7 +4,10 @@ import {
-   renderQwikMiddleware,
-   resolveRequestHandlers,
- } from '../middleware/request-handler/resolve-request-handlers-core';
--import { RequestEvCaughtError } from '../middleware/request-handler/request-event-core';
-+import {
-+  RequestEvCaughtError,
-+  RequestEvSentServerError,
-+} from '../middleware/request-handler/request-event-core';
- import { trimInternalPathname } from '../middleware/request-handler/request-path';
- import type { ServerRequestEvent } from '../middleware/request-handler/types';
- import { runQwikRouter } from '../middleware/request-handler/user-response';
-@@ -317,20 +320,16 @@ export async function workerRender(
-               }
-               return completion;
-             };
-+            const failure = r ?? rsp.requestEv.sharedMap.get(RequestEvSentServerError);
-             if (routeWriter) {
--              return closePromise.then(() => failRouteOnCaughtBoundary(r));
-+              return closePromise.then(() => failRouteOnCaughtBoundary(failure));
-             }
--            return failRouteOnCaughtBoundary(r);
-+            return failRouteOnCaughtBoundary(failure);
-           });
-         }
-       })
-       .then((e: any) => {
-         if (e !== undefined) {
--          if (isRedirectMessage(e)) {
--            // TODO We should render a html page for redirects too
--            // that would require refactoring redirects
--            return;
--          }
-           if (e instanceof Error) {
-             result.error = {
-               message: e.message,
-@@ -378,14 +377,6 @@ export async function workerRender(
- /** Create a fresh no-op WritableStream (must be a real instance for pipeTo checks). */
- const createNoopWritableStream = () => new WritableStream();
- 
--function isRedirectMessage(value: unknown) {
--  return (
--    typeof value === 'object' &&
--    value !== null &&
--    (value as { constructor?: { name?: string } }).constructor?.name === 'RedirectMessage'
--  );
--}
--
- async function requestHandlerForSsg<T>(
-   serverRequestEv: ServerRequestEvent<T>,
-   opts: SsgHandlerOptions,
-```
-
----
-
-### Incident Patch 2: `fa1528e4` (2026-11-03)
-**Commit Message**: fix(router): settle a superseded action while resolving a server rewrite
-
-- Call abandonAction() when a newer navigation takes over during the q-route.json lookup or the
-  rewritten route load, so the submit promise does not stay pending.
-- Do not reload an obsolete navigation when loading the rewritten route fails.
-- A "reload" answer with an action no longer reaches loadRoute('reload'); the action is submitted.
-- e2e: a navigation started while q-route.json is pending, and an action superseded meanwhile.
-- Shorter changeset without internal names.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/rewrite-spa-navigation.md` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- '@qwik.dev/router': patch
- ---
- 
--fix: client navigation to a URL that only exists through a server `rewrite()` now renders the rewrite target instead of the 404 page. When no page matches on the client, the router asks the server (`q-route.json`) where the URL routes to and loads that route, keeping the original URL. This also follows a redirect thrown by a route that has no component. Submitting an action on such a URL resolves the rewrite too, so the page no longer turns into the 404 after the action runs.
-+fix: client-side navigation to a URL that only exists through a server `rewrite()` now shows the rewritten page instead of a 404, and keeps the original URL in the address bar. Submitting an action on such a page keeps it rendered too, and navigating to a route that only redirects (no page component) now follows the redirect.
-```
-
-**File**: `e2e/qwik-e2e/apps/qwikrouter-test/src/routes/rewrite-spa/target/index.tsx` (modified, +16/-1)
-```diff
-@@ -1,5 +1,5 @@
- import { component$ } from '@qwik.dev/core';
--import { Form, routeAction$, routeLoader$ } from '@qwik.dev/router';
-+import { Form, Link, routeAction$, routeLoader$ } from '@qwik.dev/router';
- 
- export const useTarget = routeLoader$(({ originalUrl, url }) => ({
-   original: originalUrl.pathname,
-@@ -22,6 +22,21 @@ export default component$(() => {
-         </button>
-       </Form>
-       {submit.value?.done && <p id="rewrite-spa-action-done">action done</p>}
-+      <button
-+        id="rewrite-spa-submit-js"
-+        onClick$={() => {
-+          (window as any).__submitOutcome = 'pending';
-+          submit.submit().then(
-+            () => ((window as any).__submitOutcome = 'resolved'),
-+            () => ((window as any).__submitOutcome = 'rejected')
-+          );
-+        }}
-+      >
-+        submit from code
-+      </button>
-+      <Link href="/qwikrouter-test/rewrite-spa/" id="rewrite-spa-back">
-+        back
-+      </Link>
-     </>
-   );
- });
-```
-
-**File**: `e2e/qwik-e2e/tests/qwikrouter/rewrite-spa.e2e.ts` (modified, +55/-1)
-```diff
-@@ -1,8 +1,23 @@
--import { expect, test } from '@playwright/test';
-+import { expect, test, type Page } from '@playwright/test';
- 
- const pretty = '/qwikrouter-test/rewrite-spa/pretty/';
- const target = '/qwikrouter-test/rewrite-spa/target/';
- 
-+/** Holds the `pretty` q-route.json response until `release()` is called. */
-+async function holdPrettyRoute(page: Page) {
-+  let release!: () => void;
-+  let started!: () => void;
-+  const gate = new Promise<void>((resolve) => (release = resolve));
-+  const requested = new Promise<void>((resolve) => (started = resolve));
-+  await page.route(`**${pretty}q-route.json`, async (route) => {
-+    const response = await route.fetch();
-+    started();
-+    await gate;
-+    await route.fulfill({ response }).catch(() => {});
-+  });
-+  return { requested, release };
-+}
-+
- test.describe('rewrite to a different route', () => {
-   test('SSR serves the target page under the original URL', async ({ page }) => {
-     const response = await page.goto(pretty);
-@@ -76,4 +91,43 @@ test.describe('rewrite to a different route', () => {
-     await expect(page.locator('#rewrite-spa-original')).toHaveText(pretty);
-     expect(pageErrors).toEqual([]);
-   });
-+
-+  test('a navigation started while q-route.json is pending wins', async ({ page }) => {
-+    const prettyCached = '/qwikrouter-test/rewrite-spa/pretty-cached/';
-+    const pageErrors: Error[] = [];
-+    page.on('pageerror', (err) => pageErrors.push(err));
-+    await page.goto('/qwikrouter-test/rewrite-spa/');
-+    await page.evaluate(() => ((window as any).__noReload = true));
-+    const held = await holdPrettyRoute(page);
-+
-+    await page.locator('[data-test-link="rewrite-spa-pretty"]').click();
-+    await held.requested;
-+    await page.locator('[data-test-link="rewrite-spa-pretty-cached"]').click();
-+
-+    await expect(page).toHaveURL(new RegExp(`${prettyCached}$`));
-+    await expect(page.locator('#rewrite-spa-original')).toHaveText(prettyCached);
-+
-+    held.release();
-+    await page.waitForTimeout(200);
-+    await expect(page).toHaveURL(new RegExp(`${prettyCached}$`));
-+    await expect(page.locator('#rewrite-spa-original')).toHaveText(prettyCached);
-+    expect(await page.evaluate(() => (window as any).__noReload)).toBe(true);
-+    expect(pageErrors).toEqual([]);
-+  });
-+
-+  test('an action superseded while q-route.json is pending settles its submit promise', async ({
-+    page,
-+  }) => {
-+    await page.goto(pretty);
-+    await expect(page.locator('#rewrite-spa-target')).toBeVisible();
-+    const held = await holdPrettyRoute(page);
-+
-+    await page.locator('#rewrite-spa-submit-js').click();
-+    await held.requested;
-+    await page.locator('#rewrite-spa-back').click();
-+
-+    await expect(page.locator('#rewrite-spa-source')).toBeVisible();
-+    await expect.poll(() => page.evaluate(() => (window as any).__submitOutcome)).toBe('rejected');
-+    held.release();
-+  });
- });
-```
-
-**File**: `packages/qwik-router/src/runtime/src/qwik-router-component.tsx` (modified, +13/-5)
-```diff
-@@ -778,23 +778,31 @@ export const useQwikRouter = (props?: QwikRouterProps) => {
-         // An action on a rewritten page also needs the real route, or the page renders as not found after submit.
-         const resolved = await Promise.race([resolveServerRewrite(trackUrl), canceled]);
-         if (internalState.navCount !== navCountBefore) {
-+          abandonAction();
-           return;
-         }
--        if (resolved === 'reload' && !action) {
--          window.location.href = trackUrl.href;
--          return;
--        }
--        if (resolved && resolved !== trackUrl.pathname) {
-+        if (resolved === 'reload') {
-+          // With an action, skip the reload so the submission is not dropped; the action still runs.
-+          if (!action) {
-+            window.location.href = trackUrl.href;
-+            return;
-+          }
-+        } else if (resolved && resolved !== trackUrl.pathname) {
-           try {
-             const config = await getRouterConfig();
-             loadedRoute = await loadRoute(config.routes, config.cacheModules, resolved);
-             rewrittenTo = resolved;
-           } catch (e) {
-+            if (internalState.navCount !== navCountBefore) {
-+              abandonAction();
-+              return;
-+            }
-             console.error(`Could not load rewritten route ${resolved}, reloading:`, e);
-             window.location.href = trackUrl.href;
-             return;
-           }
-           if (internalState.navCount !== navCountBefore) {
-+            abandonAction();
-             return;
-           }
-         }
-```
-
----
-
-### Incident Patch 3: `9832c7d9` (2026-11-02)
-**Commit Message**: Merge pull request #9345 from omerman/fix/removed-dirty-component-cleanup
-
-fix(core): run the visible task cleanups of a removed component that had a pending re-render
-
-**File**: `.changeset/removed-dirty-component-cleanup.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
-+
-+fix: `useVisibleTask$` cleanups now run when a component is removed while it is about to re-render (for example, a `usePreventNavigate$` handler is now unregistered).
-```
-
-**File**: `packages/qwik/src/core/client/vnode-diff.ts` (modified, +11/-1)
-```diff
-@@ -61,7 +61,11 @@ import type { TextVNode } from '../shared/vnode/text-vnode';
- import { createSetAttributeOperation } from '../shared/vnode/types/dom-vnode-operation';
- import type { VirtualVNode } from '../shared/vnode/virtual-vnode';
- import type { VNode } from '../shared/vnode/vnode';
--import { addVNodeOperation, markVNodeDirty } from '../shared/vnode/vnode-dirty';
-+import {
-+  addVNodeOperation,
-+  markVNodeDirty,
-+  propagateToCursorRoot,
-+} from '../shared/vnode/vnode-dirty';
- import { updateDirtySubtreeCursorBoundary, type CursorBoundary } from '../use/use-cursor-boundary';
- import { trackSignalAndAssignHost, untrack } from '../use/use-core';
- import { TaskFlags, isTask } from '../use/use-task';
-@@ -1912,6 +1916,12 @@ export function cleanup(
-   do {
-     if (cursorRootData && vCursor !== cursorRoot && isCursor(vCursor)) {
-       abandonCursor(container, cursorRootData, vCursor);
-+      // The abandoned cursor keeps its dirty bits, but nothing walks it any more. Link it to the
-+      // cursor root, otherwise markVNodeDirty() below skips it as "already dirty" and the cleanups
-+      // of the visible tasks in this subtree are never executed.
-+      if (vCursor.dirty & ChoreBits.DIRTY_MASK) {
-+        propagateToCursorRoot(vCursor, cursorRoot!);
-+      }
-     }
-     const type = vCursor.flags;
-     if (type & VNodeFlags.ELEMENT_OR_VIRTUAL_MASK) {
-```
-
-**File**: `packages/qwik/src/core/shared/vnode/vnode-dirty.ts` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ function propagatePath(target: VNode): void {
-  * Propagates dirty bits from vNode up to the specified cursorRoot. Used during diff when we know
-  * the cursor root to merge with. Also updates cursor position if we pass through any cursors.
-  */
--function propagateToCursorRoot(vNode: VNode, cursorRoot: VNode): void {
-+export function propagateToCursorRoot(vNode: VNode, cursorRoot: VNode): void {
-   reusablePath.push(vNode);
-   let cursorBoundary = getOwnCursorBoundary(vNode);
-   let current: VNode | null = vNode.slotParent || vNode.parent;
-```
-
-**File**: `packages/qwik/src/core/tests/use-visible-task.spec.tsx` (modified, +52/-0)
-```diff
-@@ -764,6 +764,58 @@ describe.each([
-       (globalThis as any).log = undefined;
+@@ -22,8 +22,15 @@ class FakeWorker extends EventEmitter {
+     workers.push(this);
+   }
+   unref() {}
+-  async terminate() {
+-    return 0;
++  exited?: Promise<number>;
++  terminate() {
++    this.exited ??= new Promise((resolve) =>
++      setImmediate(() => {
++        this.emit('exit', 1);
++        resolve(1);
++      })
++    );
++    return this.exited;
+   }
+   postMessage(msg: WorkerInputMessage) {
+     if (this.isListening) {
+@@ -268,4 +275,102 @@ describe('createWorkerPool', () => {
+       expect((await failed).error?.message).toBe('caught');
      });
- 
-+    it('should execute cleanup visible task on unmount when the removed component has a pending re-render', async () => {
-+      (globalThis as any).log = [] as string[];
-+      // Not captured by the components: Qwik would serialize (= await) a captured promise.
-+      let finishTask!: () => void;
-+      (globalThis as any).taskDone = new Promise<void>((resolve) => (finishTask = resolve));
-+      const Child = component$((props: { count: SignalType<number> }) => {
-+        useVisibleTask$(({ cleanup }) => {
-+          (globalThis as any).log.push('visible_task:');
-+          cleanup(() => (globalThis as any).log.push('cleanup:'));
-+        });
-+        // render blocking: when `count` changes the re-render of the component waits for this task
-+        useTask$(async ({ track }) => {
-+          const count = track(props.count);
-+          if (count > 0) {
-+            (globalThis as any).log.push('task: waiting');
-+            await (globalThis as any).taskDone;
-+          }
-+        });
-+        // reading the signal in the body makes the whole component re-render when it changes
-+        return <span>Child {props.count.value}</span>;
-+      });
-+      const Parent = component$(() => {
-+        const show = useSignal(true);
-+        const count = useSignal(0);
-+        return (
-+          <button
-+            onClick$={() => {
-+              // the child gets a pending re-render in the same moment it is removed
-+              count.value++;
-+              show.value = false;
-+            }}
-+          >
-+            {show.value ? <Child count={count} /> : 'click'}
-+          </button>
-+        );
-+      });
+   });
 +
-+      const { document } = await render(<Parent />, { debug });
-+      await trigger(document.body, 'span', 'qvisible');
-+      expect((globalThis as any).log).toEqual(['visible_task:']);
-+      (globalThis as any).log = [];
-+      // the pending task keeps the scheduler busy, so don't wait for it to go idle
-+      const click = trigger(document.body, 'button', 'click', {}, { waitForIdle: false });
-+      await vi.waitFor(() =>
-+        expect((globalThis as any).log).toEqual(expect.arrayContaining(['cleanup:']))
-+      );
-+      finishTask();
-+      await click;
-+      (globalThis as any).log = undefined;
-+      (globalThis as any).taskDone = undefined;
++  describe('worker restarts', () => {
++    it('restarting a worker for a timed-out route stops its other routes and renders on a new worker', async () => {
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++      workers[0].attachListener();
++
++      const hung = pool.render({ type: 'render', pathname: '/hang', params: undefined });
++      const hungToo = pool.render({ type: 'render', pathname: '/hang-too', params: undefined });
++      await pool.restartWorker('/hang');
++      const next = pool.render({ type: 'render', pathname: '/fine', params: undefined });
++      workers[1].attachListener();
++      workers[1].emit('message', renderResult('/fine'));
++
++      expect((await hung).error?.message).toContain('/hang');
++      expect((await hung).isInterrupted).toBeFalsy();
++      expect((await hungToo).isInterrupted).toBe(true);
++      expect((await next).ok).toBe(true);
 +    });
 +
-     it('#9203 - should run visible task cleanups for nested components', async () => {
-       (globalThis as any).log = [] as string[];
-       const Grandchild = component$(() => {
++    it("finishes a worker restart only after the timed-out route's files are deleted", async () => {
++      const outDir = await mkdtemp(join(tmpdir(), 'qwik-router-ssg-pool-'));
++      try {
++        const indexPath = join(outDir, 'index.html');
++        const realRm = fs.promises.rm;
++        const heldRemovals: Array<() => Promise<void>> = [];
++        vi.spyOn(fs.promises, 'rm').mockImplementation(
++          (...args) =>
++            new Promise<void>((resolve, reject) => {
++              heldRemovals.push(() => realRm(...args).then(resolve, reject));
++            })
++        );
++        const pool = await createWorkerPool(sys, {
++          outDir,
++          sitemapOutFile: null,
++          maxWorkers: 1,
++          workerFilePath: '/run-ssg-worker.js',
++        } as any);
++        workers[0].attachListener();
++        pool.render({ type: 'render', pathname: '/hang', params: undefined });
++        workers[0].emit('message', { type: 'file', pathname: '/hang', filePath: indexPath });
++        await writeFile(indexPath, '<html>partial');
++
++        let isRestarted = false;
++        const restarted = pool.restartWorker('/hang').then(() => {
++          isRestarted = true;
++        });
++        await new Promise((resolve) => setImmediate(resolve));
++        expect(heldRemovals).toHaveLength(1);
++        expect(isRestarted).toBe(false);
++
++        await heldRemovals[0]();
++        await restarted;
++        await writeFile(indexPath, '<html>retried</html>');
++
++        expect(await readFile(indexPath, 'utf-8')).toBe('<html>retried</html>');
++      } finally {
++        await rm(outDir, { recursive: true, force: true });
++      }
++    });
++
++    it('restarts the worker once when two of its routes time out together', async () => {
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++      workers[0].attachListener();
++      const first = pool.render({ type: 'render', pathname: '/slow-a', params: undefined });
++      const second = pool.render({ type: 'render', pathname: '/slow-b', params: undefined });
++
++      await Promise.all([pool.restartWorker('/slow-a'), pool.restartWorker('/slow-b')]);
++
++      expect(workers).toHaveLength(2);
++      expect((await first).error).not.toBeNull();
++      expect((await second).error).not.toBeNull();
++    });
++
++    it('restarts a worker that is still starting instead of reporting a startup crash', async () => {
++      const pool = await createWorkerPool(sys, {
++        outDir: '/out',
++        sitemapOutFile: null,
++        maxWorkers: 1,
++        workerFilePath: '/run-ssg-worker.js',
++      } as any);
++
++      const slow = pool.render({ type: 'render', pathname: '/slow', params: undefined });
++      await pool.restartWorker('/slow');
++
++      expect((await slow).error?.message).toContain('/slow');
++      expect(workers).toHaveLength(2);
++    });
++  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9368** (2026-11-03): fix(core): keep SSR-shared text intact when a keyed diff reorders or replaces siblings (@omerman)
-- **PR #9354** (closed): fix(core): keep a JSX event handler when useOn() adds the same event (@intellix)
-- **PR #9348** (2026-11-02): fix(core): hold a document's first flush until body opens (@maiieul)
-- **PR #9345** (2026-11-02): fix(core): run the visible task cleanups of a removed component that had a pending re-render (@omerman)
-- **PR #9344** (closed): fix(router): a pending render blocking task no longer blocks client navigation (@omerman)
-- **PR #9341** (2026-11-01): fix(router): report production crashes to next(err) and the logs (@maiieul)
+- **PR #9386** (2026-11-07): fix(qwik-vite): readable names for split segment chunks (@maiieul)
+- **PR #9380** (2026-11-06): fix(optimizer): preserve purity of migrated QRLs (@Varixo)
+- **PR #9378** (2026-11-05): fix(router): reject server$ calls that get a non-server$ response (@thelastbackspace)
+- **PR #9377** (2026-11-05): fix(ssr): keep streamed scripts out of colgroup (@wmertens)
+- **PR #9376** (2026-11-04): docs: add roadmap page (@Varixo)
+- **PR #9375** (2026-11-06): fix(router): exclude the document root from typed view transitions (@Nelmad)
 
 ---
 
@@ -1918,16 +2039,16 @@ fix(core): run the visible task cleanups of a removed component that had a pendi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router): report production crashes to next(err) and the logs
+## X. router): replace a crashed ssg worker
 
 **RULE**:
-When implementing operations in `.changeset/report-production-crashes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/ssg-crashed-worker.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `914b53ee`: router): report production crashes to next(err) and the logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da290682`: router): replace a crashed ssg worker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/report-production-crashes.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/ssg-crashed-worker.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
@@ -1936,7 +2057,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 '@qwik.dev/router': patch
 ---
 
-fix: production crashes now reach `next(err)` and the server logs
+fix: a crashed ssg worker no longer stalls the build until it times out
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1946,4 +2067,4 @@ fix: production crashes now reach `next(err)` and the server logs
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `914b53ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da290682` are properly handled with clean fallback behavior.

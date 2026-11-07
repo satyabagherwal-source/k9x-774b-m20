@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:18:29.759Z",
-  "total_cycles_completed": 8063,
-  "total_learnings_persisted": 8063,
-  "total_rules_promoted": 7722,
+  "last_updated": "2026-11-07T21:29:34.335Z",
+  "total_cycles_completed": 8066,
+  "total_learnings_persisted": 8066,
+  "total_rules_promoted": 7725,
   "history": [
-    {
-      "timestamp": "2026-11-06T18:54:46.741Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T19:02:20.489Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T19:02:22.864Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T19:09:43.215Z",
       "repository": "streetwriters/notesnook",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T21:18:29.759Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:29:22.260Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:29:25.292Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:29:34.335Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
