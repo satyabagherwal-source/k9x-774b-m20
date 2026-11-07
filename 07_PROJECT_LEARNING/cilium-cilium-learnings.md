@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `b5f748ab`  
+> **Source Version**: `05ca843b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T20:38:15.648Z  
+> **Timestamp**: 2026-11-07T02:54:29.990Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T20:38:14.265Z  
+> **Harvest Timestamp**: 2026-11-07T02:54:29.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1280,134 +1280,350 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bab1b1b6` (2026-11-05)
-**Commit Message**: loader: Raise test timeout and skip nodeport programs
+### Incident Patch 1: `05ca843b` (2026-10-12)
+**Commit Message**: fix: skip endpoints with missing netns during ztunnel initial snapshot
 
-Since #49820, the pkg/datapath/loader tests in Runtime Test (privileged)
-and Integration Test hit their 10 s context timeout while clang compiles
-bpf_lxc or bpf_host, in 6 out of 10 Runtime Test runs [1] and 4 out of
-10 amd64 Integration Test runs [2]. The tests compile the programs
-without SKIP_NODEPORT_PROGS, which the agent defines when kube-proxy
-replacement and BPF masquerade are both disabled.
+If a stale endpoint makes its way into the endpoint cache (its network
+namespace is deleted but it remains in the cache), a ztunnel restart
+triggers sendInitialSnapshot on the cilium-agent, which loops over the
+endpoint cache attempting to open each endpoint's netns. If one open
+fails, the entire snapshot aborts and ztunnel never becomes ready.
 
-This commit compiles the test programs with SKIP_NODEPORT_PROGS defined
-and raises contextTimeout to 60 s, as suggested in [3]. With both,
-Runtime Test passed 10 out of 10 [4] and the loader tests passed in all
-20 Integration Test runs [5]. The 60 s timeout hides compile-time
-regressions in these tests, which #49861 tracks.
+This fix checks, during netns open, for a netns-not-found error (i.e.
+already deleted); on that error it skips the stale endpoint and
+continues sending the other, non-stale endpoints.
 
-This commit was prepared with AIL:1. I personally checked the diff.
+Signed-off-by: Alexander <[REDACTED_EMAIL]>
 
-1: https://github.com/cilium/cilium/actions/runs/42007084673
-2: https://github.com/cilium/cilium/actions/runs/42003749259
-3: https://github.com/cilium/cilium/pull/49853#issuecomment-6657192551
-4: https://github.com/cilium/cilium/actions/runs/42027575183
-5: https://github.com/cilium/cilium/actions/runs/42023303252
-Suggested-by: Leonardo Di Giov
-
-**File**: `pkg/datapath/loader/compile.go` (modified, +2/-1)
+**File**: `pkg/ztunnel/zds/server.go` (modified, +7/-0)
 ```diff
-@@ -116,7 +116,8 @@ var (
- 		"-Wimplicit-fallthrough"}
+@@ -498,6 +498,13 @@ func (s *Server) sendInitialSnapshot(zc *ztunnelConn) error {
  
- 	// testIncludes allows the unit tests to inject additional include
--	// paths into the compile command at test time. It is usually nil.
-+	// paths and defines into the compile command at test time. It is
-+	// usually nil.
- 	testIncludes []string
- 
- 	epProg = &progInfo{
+ 	for _, ep := range s.endpointCache {
+ 		ns, err := netns.OpenPinned(ep.GetContainerNetnsPath())
++		if errors.Is(err, os.ErrNotExist) {
++			s.logger.Warn("skipping endpoint with missing netns during initial snapshot",
++				logfields.EndpointID, ep.GetID16(),
++			)
++			delete(s.endpointCache, ep.GetID16())
++			continue
++		}
+ 		if err != nil {
+ 			s.logger.Error("failed to open netns file",
+ 				logfields.EndpointID, ep.GetID16(),
 ```
 
-**File**: `pkg/datapath/loader/loader_test.go` (modified, +2/-1)
+**File**: `pkg/ztunnel/zds/server_test.go` (modified, +82/-0)
 ```diff
-@@ -26,7 +26,8 @@ import (
- )
+@@ -5,10 +5,12 @@ package zds
  
- var (
--	contextTimeout = 10 * time.Second
-+	// FIXME(#49861): 60 s hides BPF compile-time regressions.
-+	contextTimeout = 60 * time.Second
- 	benchTimeout   = 5*time.Minute + 5*time.Second
+ import (
+ 	"fmt"
++	"io"
+ 	"net"
+ 	"os"
+ 	"path/filepath"
+ 	"testing"
++	"time"
  
- 	bpfDir = filepath.Join("..", "..", "..", "bpf")
-```
-
-**File**: `pkg/datapath/loader/util_test.go` (modified, +3/-0)
-```diff
-@@ -55,6 +55,9 @@ func setupCompilationDirectories(tb testing.TB) {
- 		// errors due to redefined macros and such. *sigh*
- 		fmt.Sprintf("-I%s", bpfDir),
- 		fmt.Sprintf("-I%s", filepath.Join(bpfDir, "include")),
-+		// The agent defines it without kube-proxy replacement and BPF
-+		// masquerading, which is the config of these tests.
-+		"-DSKIP_NODEPORT_PROGS=1",
- 	}
- 
- 	tb.Cleanup(func() {
+ 	"github.com/cilium/hive/hivetest"
+ 	"github.com/stretchr/testify/require"
+@@ -480,3 +482,83 @@ func TestPrivilegedZDSDisenrollNetnsOpenError(t *testing.T) {
+ 	server.endpointCacheMutex.Unlock()
+ 	require.True(t, ok, "endpoint should remain in cache on a non-ENOENT netns error")
+ }
++
++// TestPrivilegedZDSSnapshotSkipsMissingNetns verifies that an endpoint whose
++// netns is already gone is skipped during the initial snapshot (rather than
++// aborting it), so a live endpoint and the SnapshotSent marker are still
++// delivered. A stale cache entry must not break the whole snapshot.
++func TestPrivilegedZDSSnapshotSkipsMissingNetns(t *testing.T) {
++	server := setupZDSTestSuite(t)
++
++	ep1, cleanup1 := createTestEndpoint(t, "live-ep", 1)
++	defer cleanup1()
++	ep2, cleanup2 := createTestEndpoint(t, "missing-ep", 2)
++	defer cleanup2()
++
++	server.SeedInitialSnapshot(ep1, ep2)
++
++	// Make ep2's netns disappear so OpenPinned returns ENOENT during the snapshot.
++	ep2.SetContainerNetnsPath(filepath.Join(t.TempDir(), "missing-netns"))
++
++	conn, clientZC := dialZDSClient(t)
++	defer conn.Close()
++	sendHello(t, conn)
++
++	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
++	ackData, err := proto.Marshal(ack)
++	require.NoError(t, err)
++
++	// The snapshot should deliver the live endpoint and the SnapshotSent marker,
++	// skipping the endpoint whose netns is gone. Map iteration order is not
++	// deterministic, so collect by UID until SnapshotSent arrives.
++	receivedUIDs := make(map[string]bool)
++	for {
++		req := &pb.WorkloadRequest{}
++		require.NoError(t, clientZC.readMsg(req))
++		if req.GetSnapshotSent() != nil {
++			_, err = conn.Write(ackData)
++			require.NoError(t, err)
++			break
++		}
++		require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
++		receivedUIDs[req.GetAdd().GetUid()] = true
++		_, err = conn.Write(ackData)
++		require.NoError(t, err)
++	}
++
++	require.True(t, receivedUIDs["live-ep"], "live endpoint should be in the snapshot")
++	require.False(t, receivedUIDs["missing-ep"], "endpoint with missing netns should be skipped")
++
++	server.endpointCacheMutex.Lock()
++	_, stale := server.endpointCache[ep2.GetID16()]
++	server.endpointCacheMutex.Unlock()
++	require.False(t, stale, "endpoint with missing netns should be evicted")
++}
++
++// TestPrivilegedZDSSnapshotAbortsOnNetnsError verifies that a non-ENOENT failure
++// to open an endpoint's netns still aborts the initial snapshot (original
++// behavior), so the connection is closed without a SnapshotSent marker.
++func TestPrivilegedZDSSnapshotAbortsOnNetnsError(t *testing.T) {
++	server := setupZDSTestSuite(t)
++
++	ep, cleanup := createTestEndpoint(t, "err-ep", 1)
++	defer cleanup()
++
++	server.SeedInitialSnapshot(ep)
++
++	// Force a non-ENOENT open error: a path whose parent is a regular file yields
++	// ENOTDIR, for which os.IsNotExist is false.
++	notDir := filepath.Join(t.TempDir(), "file")
++	require.NoError(t, os.WriteFile(notDir, nil, 0o600))
++	ep.SetContainerNetnsPath(filepath.Join(notDir, "netns"))
++
++	conn, clientZC := dialZDSClient(t)
++	defer conn.Close()
++	sendHello(t, conn)
++
++	// The snapshot aborts before SnapshotSent and the server closes the
++	// connection, so the client read fails.
++	require.NoError(t, conn.SetReadDeadline(time.Now().Add(5*time.Second)))
++	req := &pb.WorkloadRequest{}
++	require.ErrorIs(t, clientZC.readMsg(req), io.EOF, "snapshot should abort on a non-ENOENT netns error")
++}
 ```
 
 ---
 
-### Incident Patch 2: `3aa49991` (2026-11-04)
-**Commit Message**: shortener: fix a edge case that would produce invalid name
+### Incident Patch 2: `f1daa410` (2026-10-12)
+**Commit Message**: fix: evict ztunnel endpoint from cache when netns gone at disenroll
 
-We must ensure that the resulting shortened name do not contain "-." since
-this is invalid for Kubernetes name validation. See the comment inline
-for more details.
+An endpoint can be leaked and left in the ztunnel endpoint cache if
+CNI DEL deletes the netns before DisenrollEndpoint runs. When
+DisenrollEndpoint runs it cannot open the (already deleted) netns and
+returns early without evicting the endpoint from the cache.
 
-Signed-off-by: Arthur Outhenin-Chalandre <[REDACTED_EMAIL]>
+This fix lets the disenroll flow continue when the netns does not
+exist (i.e. already deleted) and evicts the endpoint from the endpoint
+cache.
 
-**File**: `pkg/shortener/shortener.go` (modified, +10/-1)
+Signed-off-by: Alexander <[REDACTED_EMAIL]>
+
+**File**: `pkg/ztunnel/zds/server.go` (modified, +20/-5)
 ```diff
-@@ -6,6 +6,7 @@ package shortener
- import (
- 	"crypto/sha256"
- 	"fmt"
-+	"strings"
- )
+@@ -5,6 +5,7 @@ package zds
  
- const (
-@@ -29,7 +30,15 @@ func ShortenDNSLabelK8sName(s string) string {
- // ShortenDNSSubdomainK8sName shortens names longer than 253 characters with a hash
- // suffix. This is useful for most Kubernetes resources.
- func ShortenDNSSubdomainK8sName(s string) string {
--	return shorten(s, k8sMaxResourceNameDNSSubdomainLength)
-+	name := shorten(s, k8sMaxResourceNameDNSSubdomainLength)
-+	if name != s {
-+		// If we actually shortened [s], we may get to a result containing ".-"
-+		// which is actually invalid since a DNS label must start with a
-+		// alphanumeric character. For instance, some-name.-test would be
-+		// invalid.
-+		return strings.Replace(name, ".-", "-", 1)
-+	}
-+	return name
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"log/slog"
+ 	"net"
+@@ -404,10 +405,15 @@ func (s *Server) EnrollEndpoint(ep *endpoint.Endpoint) error {
+ 	return nil
  }
  
- func ShortenHiveJobName(s string) string {
+-func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
+-	s.logger.Info("disenrolling endpoint from ztunnel", logfields.EndpointID, ep.GetID16())
+-
++// removeInPodRules skips cleanup when the runtime has already removed the netns.
++func (s *Server) removeInPodRules(ep *endpoint.Endpoint) error {
+ 	ns, err := netns.OpenPinned(ep.GetContainerNetnsPath())
++	if errors.Is(err, os.ErrNotExist) {
++		s.logger.Info("netns already gone, skipping in-pod cleanup during disenroll",
++			logfields.EndpointID, ep.GetID16(),
++		)
++		return nil
++	}
+ 	if err != nil {
+ 		s.logger.Error("failed to open netns file",
+ 			logfields.EndpointID, ep.GetID16(),
+@@ -417,11 +423,20 @@ func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
+ 	}
+ 	defer ns.Close()
+ 
+-	if err = ns.Do(func() error {
++	if err := ns.Do(func() error {
+ 		return iptables.DeleteInPodRules(s.logger, option.Config.EnableIPv4, option.Config.EnableIPv6)
+ 	}); err != nil {
+ 		return fmt.Errorf("unable to remove iptable rules for ztunnel inpod mode: %w", err)
+ 	}
++	return nil
++}
++
++func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
++	s.logger.Info("disenrolling endpoint from ztunnel", logfields.EndpointID, ep.GetID16())
++
++	if err := s.removeInPodRules(ep); err != nil {
++		return err
++	}
+ 
+ 	pod := ep.GetPod()
+ 	if pod == nil {
+@@ -450,7 +465,7 @@ func (s *Server) DisenrollEndpoint(ep *endpoint.Endpoint) error {
+ 		return fmt.Errorf("sending update failed: %w", err)
+ 	}
+ 
+-	// Only remove from cache after successful disenrollment
++	// Remove from cache after successful disenrollment.
+ 	s.endpointCacheMutex.Lock()
+ 	delete(s.endpointCache, ep.GetID16())
+ 	s.endpointCacheMutex.Unlock()
 ```
 
-**File**: `pkg/shortener/shortener_test.go` (modified, +9/-0)
+**File**: `pkg/ztunnel/zds/server_test.go` (modified, +120/-0)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"testing"
+@@ -231,6 +231,12 @@ func TestPrivilegedZDSConnHandlerEndpointUpdate(t *testing.T) {
+ 	// Wait for disenrollment to complete
+ 	err = <-enrollDone
+ 	require.NoError(t, err)
++
++	// The endpoint should be evicted from the cache after a successful disenroll.
++	server.endpointCacheMutex.Lock()
++	_, ok := server.endpointCache[ep.GetID16()]
++	server.endpointCacheMutex.Unlock()
++	require.False(t, ok, "endpoint should be evicted from cache after disenroll")
+ }
  
- 	"github.com/stretchr/testify/assert"
-+	"k8s.io/apimachinery/pkg/util/validation"
- )
- 
- func TestShorten(t *testing.T) {
-@@ -43,3 +44,11 @@ func TestShorten(t *testing.T) {
- 	assert.Equal(t, equalResult0, equalResult1, "Equal name wasn't matched with previous result")
- 	assert.Equal(t, longerResult0, longerResult1, "Longer name wasn't matched with previous result")
+ // TestPrivilegedZDSRollingUpdate tests the scenario where a ztunnel pod is rolling updated.
+@@ -360,3 +366,117 @@ func TestPrivilegedZDSRollingUpdate(t *testing.T) {
+ 	err = oldClientZC.readMsg(req)
+ 	require.Error(t, err)
  }
 +
-+func TestShortenDNSSubdomainK8sDNSLabelEdgeCase(t *testing.T) {
-+	// The dot would fall exactly at the truncation boundary before the hash suffix.
-+	name := strings.Repeat("a", k8sMaxResourceNameDNSSubdomainLength-12) + ".bbb" + strings.Repeat("c", 20)
-+	shortened := ShortenDNSSubdomainK8sName(name)
-+	assert.Equal(t, strings.Repeat("a", 241)+"-4cdbbcg65m", shortened)
-+	assert.Empty(t, validation.IsDNS1123Subdomain(shortened))
++// TestPrivilegedZDSDisenrollMissingNetns verifies that when an endpoint's netns
++// is already gone (e.g. CNI DEL ran before disenrollment), disenroll still drops
++// the workload from ztunnel and evicts the stale cache entry instead of leaking
++// it, which would otherwise abort a later sendInitialSnapshot.
++func TestPrivilegedZDSDisenrollMissingNetns(t *testing.T) {
++	server := setupZDSTestSuite(t)
++	server.SeedInitialSnapshot()
++
++	conn, clientZC := dialZDSClient(t)
++	defer conn.Close()
++
++	sendHello(t, conn)
++	expectSnapshotAndAck(t, clientZC, conn, "")
++
++	ep, cleanup := createTestEndpoint(t, testUID, 1)
++	defer cleanup()
++
++	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
++	ackData, err := proto.Marshal(ack)
++	require.NoError(t, err)
++
++	// Enroll so the endpoint is in the cache.
++	enrollDone := make(chan error, 1)
++	go func() { enrollDone <- server.EnrollEndpoint(ep) }()
++
++	req := &pb.WorkloadRequest{}
++	require.NoError(t, clientZC.readMsg(req))
++	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
++	_, err = conn.Write(ackData)
++	require.NoError(t, err)
++	require.NoError(t, <-enrollDone)
++
++	// Simulate CNI DEL removing the netns before disenroll: point the endpoint at
++	// a netns path that no longer exists so OpenPinned returns ENOENT.
++	ep.SetContainerNetnsPath(filepath.Join(t.TempDir(), "missing-netns"))
++
++	disenrollDone := make(chan error, 1)
++	go func() { disenrollDone <- server.DisenrollEndpoint(ep) }()
++
++	// ztunnel still receives a Del for the workload.
++	req = &pb.WorkloadRequest{}
++	require.NoError(t, clientZC.readMsg(req))
++	require.NotNil(t, req.GetDel(), "Expected Del, got %T", req.Payload)
++	require.Equal(t, testUID, req.GetDel().GetUid())
++	_, err = conn.Write(ackData)
++	require.NoError(t, err)
++	require.NoError(t, <-disenrollDone)
++
++	// The stale entry must be evicted.
++	server.endpointCacheMutex.Lock()
++	_, ok := server.endpointCache[ep.GetID16()]
++	server.endpointCacheMutex.Unlock()
++	require.False(t, ok, "endpoint should be evicted from cache when netns is gone")
++}
++
++// TestPrivilegedZDSDisenrollNetnsOpenError verifies that a non-ENOENT failure to
++// open the netns (e.g. a live pod hitting a transient error) fails closed: the
++// endpoint stays enrolled in the cache and no Del is sent to ztunnel.
++func TestPrivilegedZDSDisenrollNetnsOpenError(t *testing.T) {
++	server := setupZDSTestSuite(t)
++	server.SeedInitialSnapshot()
++
++	conn, clientZC := dialZDSClient(t)
++	defer conn.Close()
++
++	sendHello(t, conn)
++	expectSnapshotAndAck(t, clientZC, conn, "")
++
++	ep, cleanup := createTestEndpoint(t, testUID, 1)
++	defer cleanup()
++
++	ack := &pb.WorkloadResponse{Payload: &pb.WorkloadResponse_Ack{Ack: &pb.Ack{}}}
++	ackData, err := proto.Marshal(ack)
++	require.NoError(t, err)
++
++	enrollDone := make(chan error, 1)
++	go func() { enrollDone <- server.EnrollEndpoint(ep) }()
++
++	req := &pb.WorkloadRequest{}
++	require.NoError(t, clientZC.readMsg(req))
++	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
++	_, err = conn.Write(ackData)
++	require.NoError(t, err)
++	require.NoError(t, <-enrollDone)
++
++	// Force a non-ENOENT open error: a path whose parent is a regular file yields
++	// ENOTDIR, for which os.IsNotExist is false.
++	notDir := filepath.Join(t.TempDir(), "file")
++	require.NoError(t, os.WriteFile(notDir, nil, 0o600))
++	ep.SetContainerNetnsPath(filepath.Join(notDir, "netns"))
++
++	// Disenroll returns the error synchronously, before any Del is sent.
++	require.Error(t, server.DisenrollEndpoint(ep))
++
++	// The next message must be the second endpoint's Add, not a Del.
++	ep2, cleanup2 := createTestEndpoint(t, "second-ep", 2)
++	defer cleanup2()
++	go func() { enrollDone <- server.EnrollEndpoint(ep2) }()
++
++	req = &pb.WorkloadRequest{}
++	require.NoError(t, clientZC.readMsg(req))
++	require.NotNil(t, req.GetAdd(), "Expected Add, got %T", req.Payload)
++	require.Equal(t, "second-ep", req.GetAdd().GetUid())
++	_, err = conn.Write(ackData)
++	require.NoError(t, err)
++	require.NoError(t, <-enrollDone)
++
++	// The endpoint must remain enrolled (fail closed).
++	server.endpointCacheMutex.Lock()
++	_, ok := server.endpointCache[ep.GetID16()]
++	server.endpointCacheMutex.Unlock()
++	require.True(t, ok, "endpoint should remain in cache on a non-ENOENT netns error")
 +}
 ```
 
@@ -1437,29 +1653,34 @@ Signed-off-by: Arthur Outhenin-Chalandre <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. loader: Raise test timeout and skip nodeport programs
+## X. skip endpoints with missing netns during ztunnel initial snapshot
 
 **RULE**:
-When implementing operations in `pkg/datapath/loader/compile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ztunnel/zds/server.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bab1b1b6`: loader: Raise test timeout and skip nodeport programs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05ca843b`: skip endpoints with missing netns during ztunnel initial snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/loader/compile.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ztunnel/zds/server.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// paths and defines into the compile command at test time. It is
-	// usually nil.
+		if errors.Is(err, os.ErrNotExist) {
+			s.logger.Warn("skipping endpoint with missing netns during initial snapshot",
+				logfields.EndpointID, ep.GetID16(),
+			)
+			delete(s.endpointCache, ep.GetID16())
+			continue
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// paths into the compile command at test time. It is usually nil.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bab1b1b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05ca843b` are properly handled with clean fallback behavior.

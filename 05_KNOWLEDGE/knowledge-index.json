@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:41:10.551Z",
+  "last_updated": "2026-11-07T02:54:31.818Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7389,8 +7389,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "b5f748ab",
-      "content_hash": "1f11f1d5be0f416e1c71391131339e914251b39c52960ecfa34119477e3c0a2f",
+      "source_version": "05ca843b",
+      "content_hash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7402,6 +7402,11 @@
         {
           "number": null,
           "title": "loader: Raise test timeout and skip nodeport programs",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "skip endpoints with missing netns during ztunnel initial snapshot",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7650,7 +7655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:38:16.893Z",
+      "verified_at": "2026-11-07T02:54:31.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62496,17 +62501,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "812e5b3a",
-      "content_hash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "703f25d7",
+      "content_hash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs(📚): warn that a sync flush blocks in the background, drop a stale device l",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "🤖): never make Android's main thread wait for the present thread (#4395)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62565,7 +62575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:54:49.370Z",
+      "verified_at": "2026-11-07T02:54:26.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77296,11 +77306,16 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "da674c53",
-      "content_hash": "728ec339525c09a499990df2bc0ef97ccfe2291472d760a976a75e5355b80ee3",
+      "source_version": "7ed01936",
+      "content_hash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "WARC-Concurrent-To references for revisit records (#1199)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2848,
           "title": "browser: add configurable --browserStartTimeout (#1160)",
@@ -77337,7 +77352,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:09:02.359Z",
+      "verified_at": "2026-11-07T02:54:24.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

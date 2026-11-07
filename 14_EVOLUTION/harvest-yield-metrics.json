@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T02:41:10.648Z",
-  "total_cycles_completed": 7932,
-  "total_learnings_persisted": 7932,
-  "total_rules_promoted": 7582,
+  "last_updated": "2026-11-07T02:54:31.933Z",
+  "total_cycles_completed": 7935,
+  "total_learnings_persisted": 7935,
+  "total_rules_promoted": 7585,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:45:45.021Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:45:49.327Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:53:36.562Z",
-      "repository": "sxyazi/yazi",
-      "learningId": "learn-github-sxyazi-yazi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T18:53:43.370Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T02:41:10.648Z",
       "repository": "webrecorder/pywb",
       "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:54:24.596Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:54:26.330Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:54:31.933Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

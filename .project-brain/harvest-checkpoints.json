@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T02:41:10.651Z",
+  "last_updated": "2026-11-07T02:54:31.937Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "1f11f1d5be0f416e1c71391131339e914251b39c52960ecfa34119477e3c0a2f",
-      "verified_at": "2026-11-06T20:38:17.018Z",
+      "content_hash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
+      "verified_at": "2026-11-07T02:54:31.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:38:17.018Z"
+      "last_updated": "2026-11-07T02:54:31.936Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "e17b1517f6b76691e2a5f00543883018b87f187496f4b2871752e6e6290a52c3",
-      "verified_at": "2026-11-05T21:54:49.479Z",
+      "content_hash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
+      "verified_at": "2026-11-07T02:54:26.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:54:49.479Z"
+      "last_updated": "2026-11-07T02:54:26.333Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -13926,14 +13926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
-      "content_hash": "728ec339525c09a499990df2bc0ef97ccfe2291472d760a976a75e5355b80ee3",
-      "verified_at": "2026-11-03T21:09:02.476Z",
+      "content_hash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
+      "verified_at": "2026-11-07T02:54:24.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:09:02.476Z"
+      "last_updated": "2026-11-07T02:54:24.600Z"
     },
     "pointfreeco/isowords": {
       "repository": "pointfreeco/isowords",

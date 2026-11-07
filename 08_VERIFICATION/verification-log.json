@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-1R1Z",
-    "timestamp": "2026-11-05T02:18:06.263Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "fc910c9ed45e53cb525c65cd0d9e3fcc6962b57a8477cd3fa0ffa9d39b974aa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-1WC3",
-    "timestamp": "2026-11-05T02:18:13.107Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-BI6S",
-    "timestamp": "2026-11-05T02:25:41.332Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "6b88376da51f5fb7eebb016adf112de1a7b8485c786c12eefda10f1b4944a62d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-BQXD",
     "timestamp": "2026-11-05T02:25:52.657Z",
     "repository": "bee-san/Ciphey",
@@ -7490,6 +7445,51 @@
     "repository": "webrecorder/pywb",
     "learningId": "learn-github-webrecorder-pywb",
     "contentHash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-856X",
+    "timestamp": "2026-11-07T02:54:24.585Z",
+    "repository": "webrecorder/browsertrix-crawler",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler",
+    "contentHash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-86J3",
+    "timestamp": "2026-11-07T02:54:26.319Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "1f482b0d83f1e76495bc92a7955a21ec9d77fa0033875b4ca455daa70298fa7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-8AUI",
+    "timestamp": "2026-11-07T02:54:31.914Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

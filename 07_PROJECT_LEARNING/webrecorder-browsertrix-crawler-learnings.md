@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
-> **Source Version**: `da674c53`  
+> **Source Version**: `7ed01936`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:09:01.708Z  
+> **Timestamp**: 2026-11-07T02:54:23.044Z  
 > **Learning ID**: `learn-github-webrecorder-browsertrix-crawler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:09:01.096Z  
+> **Harvest Timestamp**: 2026-11-07T02:54:21.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run a high-fidelity browser-based web archiving crawler in a single Docker container
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 1186 stars
+- **Stars / Engagement**: 1188 stars
 
 ---
 
@@ -2639,43 +2639,108 @@ export class OriginOverride {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da674c53` (2026-11-03)
-**Commit Message**: skipped pages reporting fix: (#1192)
+### Incident Patch 1: `7ed01936` (2026-11-07)
+**Commit Message**: Fix WARC-Concurrent-To references for revisit records (#1199)
 
-- don't log page as out of scope in isInScope() check, which is also
-used for already loaded, redirected seed pages to determine if they
-should also be added as seeds
-- skipped pages already logged when queueing with outOfScope or after
-being queued with outOfScopeMidCrawl
-- fixes #1191, redirected pages that incorrectly logged as skipped
+## Summary
 
-**File**: `src/crawler.ts` (modified, +1/-8)
+When creating a revisit record, the corresponding request record was
+created before the response record was potentially converted into a
+revisit record. As a result, `WARC-Concurrent-To` still referenced the
+UUID of the original response record that was replaced.
+
+## Changes
+
+Create the request record only after deduplication handling and any
+possible conversion of the response record into a revisit record.
+
+This ensures that `WARC-Concurrent-To` references the response or
+revisit record that is actually written.
+
+
+tests: add tests to ensure request records point to actual response or revisit records
+---------
+
+Co-authored-by: Ilya Kreymer <[REDACTED_EMAIL]>
+
+**File**: `src/util/recorder.ts` (modified, +4/-1)
 ```diff
-@@ -817,14 +817,7 @@ export class Crawler {
-       seedId,
-     );
+@@ -1936,7 +1936,6 @@ export class Recorder extends EventEmitter {
+     }
  
--    const res = seed.isIncluded(link, logDetails);
--
--    if (!res) {
--      const { url, depth } = link;
--      this.writeSkippedPage(url, seedId, depth, SkippedReason.OutOfScope);
--    }
--
--    return !!res;
-+    return !!seed.isIncluded(link, logDetails);
+     let responseRecord = createResponse(reqresp, pageid, iter);
+-    const requestRecord = createRequest(reqresp, responseRecord, pageid);
+ 
+     let serializer = new WARCSerializer(responseRecord, {
+       gzip,
+@@ -2043,6 +2042,10 @@ export class Recorder extends EventEmitter {
+       }
+     }
+ 
++    // Create the request record after dedupe handling so it references the
++    // response or revisit record that will actually be written.
++    const requestRecord = createRequest(reqresp, responseRecord, pageid);
++
+     let modified = false;
+ 
+     if (reqresp.truncated) {
+```
+
+**File**: `tests/dedupe-basic.test.ts` (modified, +23/-0)
+```diff
+@@ -129,13 +129,26 @@ test("check revisit records written on duplicate crawl, same collection, no wacz
+ 
+   const parserOrig = loadFirstWARC(collName);
+ 
++  const responseID = new Set<string>();
++  const revisitID = new Set<string>();
++
+   for await (const record of parserOrig) {
+     if (record.warcTargetURI && record.warcTargetURI.startsWith("urn:")) {
+       continue;
+     }
+ 
+     if (record.warcType === "response") {
+       response++;
++      const id = record.warcHeader("WARC-Record-ID");
++      if (id) {
++        responseID.add(id);
++      }
++    }
++
++    if (record.warcType === "request") {
++      expect(
++        responseID.has(record.warcHeader("WARC-Concurrent-To") || ""),
++      ).toBe(true);
+     }
    }
  
-   async setupPage(opts: WorkerState) {
+@@ -152,6 +165,16 @@ test("check revisit records written on duplicate crawl, same collection, no wacz
+ 
+     if (record.warcType === "revisit") {
+       revisit++;
++      const id = record.warcHeader("WARC-Record-ID");
++      if (id) {
++        revisitID.add(id);
++      }
++    }
++
++    if (record.warcType === "request") {
++      expect(revisitID.has(record.warcHeader("WARC-Concurrent-To") || "")).toBe(
++        true,
++      );
+     }
+   }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1199** (2026-11-07): Fix WARC-Concurrent-To references for revisit records (@aponb)
+- **PR #1194** (2026-11-04): deps: bump brave to 1.98.63 (@ikreymer)
+- **PR #1193** (2026-11-06): warc writer: add callback to be executed after write (@mistydemeo)
 - **PR #1192** (2026-11-03): skipped pages reporting fix: (@ikreymer)
 - **PR #1190** (2026-11-03): deps: browsertrix-behaviors 0.15.2 (@mistydemeo)
-- **PR #1186** (2026-10-29): Use shared sitemap reader for all sitemaps from all seeds (@ikreymer)
-- **PR #1183** (2026-10-23): deps: update for 1.15.1 (@ikreymer)
-- **PR #1182** (2026-10-22): deps: bump brave to 1.97.59 (@ikreymer)
-- **PR #1180** (2026-10-23): build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (@dependabot[bot])
+- **PR #1189** (2026-11-03): Allow skipping disk utilization check (@mistydemeo)
 
 ---
 
@@ -2695,35 +2760,31 @@ being queued with outOfScopeMidCrawl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skipped pages reporting fix: (#1192)
+## X. WARC-Concurrent-To references for revisit records (#1199)
 
 **RULE**:
-When implementing operations in `src/crawler.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/util/recorder.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da674c53`: skipped pages reporting fix: (#1192). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ed01936`: WARC-Concurrent-To references for revisit records (#1199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/crawler.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/util/recorder.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    return !!seed.isIncluded(link, logDetails);
+    // Create the request record after dedupe handling so it references the
+    // response or revisit record that will actually be written.
+    const requestRecord = createRequest(reqresp, responseRecord, pageid);
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const res = seed.isIncluded(link, logDetails);
-
-    if (!res) {
-      const { url, depth } = link;
-      this.writeSkippedPage(url, seedId, depth, SkippedReason.OutOfScope);
-    }
-
-    return !!res;
+    const requestRecord = createRequest(reqresp, responseRecord, pageid);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da674c53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ed01936` are properly handled with clean fallback behavior.

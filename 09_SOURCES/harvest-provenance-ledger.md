@@ -7976,3 +7976,6 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `8bf09329` | Multi-dimensional audit evidence | 2026-11-07T02:31:59.228Z |
 | `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `8e447440` | Multi-dimensional audit evidence | 2026-11-07T02:41:09.918Z |
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `73e13e0c` | Multi-dimensional audit evidence | 2026-11-07T02:41:10.643Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `7ed01936` | Multi-dimensional audit evidence | 2026-11-07T02:54:24.589Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `703f25d7` | Multi-dimensional audit evidence | 2026-11-07T02:54:26.323Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `05ca843b` | Multi-dimensional audit evidence | 2026-11-07T02:54:31.919Z |

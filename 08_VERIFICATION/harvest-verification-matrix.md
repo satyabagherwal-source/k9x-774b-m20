@@ -7967,3 +7967,6 @@
 | `CYCLE-20261107-FB3S` | `2026-11-07T02:31:59.224Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8f07f9c0...`) |
 | `CYCLE-20261107-R40Q` | `2026-11-07T02:41:09.914Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3ef2bcde...`) |
 | `CYCLE-20261107-R4KV` | `2026-11-07T02:41:10.639Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cbf73159...`) |
+| `CYCLE-20261107-856X` | `2026-11-07T02:54:24.585Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cbc2521b...`) |
+| `CYCLE-20261107-86J3` | `2026-11-07T02:54:26.319Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f482b0d...`) |
+| `CYCLE-20261107-8AUI` | `2026-11-07T02:54:31.914Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`92f91a70...`) |
