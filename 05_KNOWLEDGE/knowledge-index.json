@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:15:09.657Z",
+  "last_updated": "2026-11-07T02:24:40.967Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5345,8 +5345,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "1a23cb72",
-      "content_hash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
+      "source_version": "fe15ee33",
+      "content_hash": "c8746b61e60a23b6128f036a36890d5b890ceb24ea1279f49a2e792284887c5a",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5368,6 +5368,11 @@
         {
           "number": null,
           "title": "gateway): correct WSL logon task XML schema (#367)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "skills): add verified live outcome writer in shadow mode (#369)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5576,7 +5581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:38:18.747Z",
+      "verified_at": "2026-11-07T02:24:36.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5986,11 +5991,16 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "0e8dbd98",
-      "content_hash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
+      "source_version": "1d9c6140",
+      "content_hash": "016e4f708af2cac371d36dac59bf92528364d2ce9511b7ca3beb9d2b2645e57a",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1972,
           "title": "sdks): jsCode context functions, jsCode state reactivity, and bound id in gen2 (",
@@ -6022,7 +6032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T08:57:37.782Z",
+      "verified_at": "2026-11-07T02:24:36.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77136,12 +77146,17 @@
       "slug": "scrapy-plugins-scrapy-zyte-api",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-      "source_version": "9b63ad94",
-      "content_hash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
+      "source_version": "8fcb6177",
+      "content_hash": "a4e4dd2eb5e1e85f6bd7597c6495be6e16e0f270d9b4cd2aa9a35e288fd1dc85",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "promoted_rules": [
         "Rule 1629",
+        {
+          "number": null,
+          "title": "Bump version: 0.36.0 → 0.37.0",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2834,
           "title": "Merge pull request #328 from AdrianAtZyte/session-close-deadlock",
@@ -77158,7 +77173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:09:12.475Z",
+      "verified_at": "2026-11-07T02:24:40.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

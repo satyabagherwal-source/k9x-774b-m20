@@ -7970,3 +7970,6 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `87851900` | Multi-dimensional audit evidence | 2026-11-07T02:06:47.821Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1b6a9297` | Multi-dimensional audit evidence | 2026-11-07T02:15:09.732Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `c52feb8b` | Multi-dimensional audit evidence | 2026-11-07T02:15:09.771Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `1d9c6140` | Multi-dimensional audit evidence | 2026-11-07T02:24:36.110Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fe15ee33` | Multi-dimensional audit evidence | 2026-11-07T02:24:36.962Z |
+| `learn-github-scrapy-plugins-scrapy-zyte-api` | `https://github.com/scrapy-plugins/scrapy-zyte-api` | `8fcb6177` | Multi-dimensional audit evidence | 2026-11-07T02:24:41.065Z |

@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "1a23cb72",
+    "sourceVersion": "fe15ee33",
     "license": "MIT",
-    "contentHash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
-    "lastHarvestedAt": "2026-11-06T20:38:18.891Z",
+    "contentHash": "c8746b61e60a23b6128f036a36890d5b890ceb24ea1279f49a2e792284887c5a",
+    "lastHarvestedAt": "2026-11-07T02:24:36.962Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "0e8dbd98",
+    "sourceVersion": "1d9c6140",
     "license": "MIT",
-    "contentHash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
-    "lastHarvestedAt": "2026-11-04T08:57:37.876Z",
+    "contentHash": "016e4f708af2cac371d36dac59bf92528364d2ce9511b7ca3beb9d2b2645e57a",
+    "lastHarvestedAt": "2026-11-07T02:24:36.110Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -9183,10 +9183,10 @@
     "repository": "scrapy-plugins/scrapy-zyte-api",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-    "sourceVersion": "9b63ad94",
+    "sourceVersion": "8fcb6177",
     "license": "BSD-3-Clause",
-    "contentHash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
-    "lastHarvestedAt": "2026-10-27T11:09:12.521Z",
+    "contentHash": "a4e4dd2eb5e1e85f6bd7597c6495be6e16e0f270d9b4cd2aa9a35e288fd1dc85",
+    "lastHarvestedAt": "2026-11-07T02:24:41.065Z",
     "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api"
   },
   "yannickl-dynamiccolor": {

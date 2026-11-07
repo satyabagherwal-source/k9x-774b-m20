@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T02:15:09.791Z",
+  "last_updated": "2026-11-07T02:24:41.081Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "0becd24702a546dcfb7bf2f46ac2685acc374b874be9e4c5891469f5d6bf9e41",
-      "verified_at": "2026-11-06T20:38:18.904Z",
+      "content_hash": "c8746b61e60a23b6128f036a36890d5b890ceb24ea1279f49a2e792284887c5a",
+      "verified_at": "2026-11-07T02:24:36.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:38:18.904Z"
+      "last_updated": "2026-11-07T02:24:36.977Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "3fac62689a511c974c08f8e1623389cdaf979f1d3ef702cc74ab4560413716ff",
-      "verified_at": "2026-11-04T08:57:37.884Z",
+      "content_hash": "016e4f708af2cac371d36dac59bf92528364d2ce9511b7ca3beb9d2b2645e57a",
+      "verified_at": "2026-11-07T02:24:36.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:57:37.884Z"
+      "last_updated": "2026-11-07T02:24:36.121Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -13821,14 +13821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-plugins-scrapy-zyte-api",
-      "content_hash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
-      "verified_at": "2026-10-27T11:09:12.527Z",
+      "content_hash": "a4e4dd2eb5e1e85f6bd7597c6495be6e16e0f270d9b4cd2aa9a35e288fd1dc85",
+      "verified_at": "2026-11-07T02:24:41.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:09:12.527Z"
+      "last_updated": "2026-11-07T02:24:41.080Z"
     },
     "yannickl/DynamicColor": {
       "repository": "yannickl/DynamicColor",

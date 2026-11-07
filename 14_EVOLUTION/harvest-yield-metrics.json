@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T02:15:09.787Z",
-  "total_cycles_completed": 7926,
-  "total_learnings_persisted": 7926,
-  "total_rules_promoted": 7576,
+  "last_updated": "2026-11-07T02:24:41.077Z",
+  "total_cycles_completed": 7929,
+  "total_learnings_persisted": 7929,
+  "total_rules_promoted": 7579,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:31:38.907Z",
-      "repository": "LiquidAI/d1-2B",
-      "learningId": "learn-huggingface-liquidai-d1-2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:38:26.037Z",
-      "repository": "FusionCow/Sulphur-3",
-      "learningId": "learn-huggingface-fusioncow-sulphur-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:38:36.758Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T18:38:42.275Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T02:15:09.787Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:24:36.116Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:24:36.967Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:24:41.077Z",
+      "repository": "scrapy-plugins/scrapy-zyte-api",
+      "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source**: github ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
-> **Source Version**: `0e8dbd98`  
+> **Source Version**: `1d9c6140`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:57:37.243Z  
+> **Timestamp**: 2026-11-07T02:24:34.897Z  
 > **Learning ID**: `learn-github-builderio-builder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:57:36.864Z  
+> **Harvest Timestamp**: 2026-11-07T02:22:00.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8882 stars
+- **Stars / Engagement**: 8886 stars
 
 ---
 
@@ -605,252 +605,115 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e8dbd98` (2026-11-03)
-**Commit Message**: Upgrade nextjs-app-dir-v2 example to Next 16 (#4918)
+### Incident Patch 1: `4088da36` (2026-11-04)
+**Commit Message**: fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (#4921)
 
 ## Summary
-- Upgrade `examples/nextjs-app-dir-v2` to Next 16: updated dependencies
-and lockfile, migrated ESLint to flat config (`eslint.config.mjs`),
-added `.nvmrc` and `.env.example`, refreshed README, and cleaned up
-default template assets/styles.
+- \`Raw:Img\` replaced the Builder block class with a fixed
+\`builder-raw-img\`, so layout styles were dropped and images rendered
+at full size. The incoming class is now merged in.
+- Legacy \`alt\`/\`title\` attributes were overridden with \`undefined\`
+when the \`altText\`/\`title\` inputs were unset. They now fall back to
+the attributes.
+- Adds \`Img.test.tsx\` (3 cases) and a \`moduleNameMapper\` for
+\`src/...\` imports in the react jest config.
 
-## Test plan
-- [ ] `npm install && npm run build` in `examples/nextjs-app-dir-v2`
-- [ ] `npm run dev` and confirm the Builder page renders and the
-registered component works
+Fixes ENG-14392.
+
+## Verification
+- \`npx jest src/blocks/raw/Img.test.tsx\`: 3/3 pass.
+- Browser check with the local \`packages/react\` build and the
+Builder-hosted page (\`/eng-14392-raw-img\`, draft fetched with
+\`includeUnpublished\`): both \`<img class="builder-raw-img
+builder-block builder-raw-img-{a,b} …">\` render at 200x150. Block A has
+\`alt="Legacy alt text"\`; Block B has \`alt="New alt text"\`.
+- Not run: a before/after comparison against \`main\`.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+---------
 
-**File**: `examples/nextjs-app-dir-v2/.env.example` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+# Your Builder.io public API key.
-+# If unset, the example falls back to a public demo key.
-+NEXT_PUBLIC_BUILDER_API_KEY=
-```
+Co-authored-by: Claude Haiku 5.5 <[REDACTED_EMAIL]>
 
-**File**: `examples/nextjs-app-dir-v2/.eslintrc.json` (removed, +0/-3)
+**File**: `.changeset/raw-img-class-alt.md` (added, +5/-0)
 ```diff
-@@ -1,3 +0,0 @@
--{
--  "extends": "next/core-web-vitals"
--}
-```
-
-**File**: `examples/nextjs-app-dir-v2/.nvmrc` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+24
-```
-
-**File**: `examples/nextjs-app-dir-v2/README.md` (modified, +23/-20)
-```diff
-@@ -1,36 +1,39 @@
--This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-+# Builder.io + Next.js 16 (App Router)
- 
--## Getting Started
-+Example of the [Builder.io Gen 2 React SDK](https://www.builder.io/c/docs/developers) (`@builder.io/sdk-react`) with the Next.js App Router and React 19. Requires Node 22+ (`.nvmrc` pins 24; run `nvm use`).
- 
--First, run the development server:
-+## Getting started
- 
- ```bash
-+npm install
- npm run dev
--# or
--yarn dev
--# or
--pnpm dev
--# or
--bun dev
- ```
- 
--Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-+Open [http://localhost:3000](http://localhost:3000). The example uses a public demo API key by default. To use your own space, copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_BUILDER_API_KEY`.
- 
--You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-+## Try it
- 
--This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-+1. In [Builder](https://builder.io), create a `page` entry with URL `/`.
-+2. Set the model's preview URL to `http://localhost:3000`.
-+3. In the Visual Editor, drag **MyFunComponent** in from the Insert menu.
-+4. Publish and reload. If nothing is published for a URL, the page shows a 404 message.
- 
--## Learn More
-+## What's here
- 
--To learn more about Next.js, take a look at the following resources:
-+- `src/app/[[...slug]]/page.tsx`: catch-all route that fetches the entry with `fetchOneEntry` and renders it with `<Content />`. `params` and `searchParams` are Promises in Next.js 15+.
-+- `src/app/components/register.ts`: registers custom components. With this SDK they must be client components (hence `'use client'`), but they are still server-rendered, then hydrated.
-+- `src/app/components/MyFunComponent.tsx`: sample component to drag into Builder content.
-+- `next.config.mjs`: marks `isolated-vm` (used by the SDK on the server) as a server external package.
- 
--- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-+## Rendering
- 
--You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-+The page awaits `searchParams`, which Builder preview and the Visual Editor rely on, so it renders on every request.
- 
--## Deploy on Vercel
-+For static or cached pages, a possible approach (**not implemented or tested here**):
- 
--The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-+- Fetch published content without `searchParams`, using [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) with a [`revalidate`](https://nextjs.org/docs/app/guides/incremental-static-regeneration) interval or a Builder webhook that calls `revalidatePath()`.
-+- Serve editing and previews from a separate dynamic route and point the model's Preview URL at it with [dynamic preview URLs](https://www.builder.io/c/docs/dynamic-preview-urls).
- 
--Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-+## Builder CMS MCP server (optional)
+@@ -0,0 +1,5 @@
++---
++'@builder.io/react': patch
++---
 +
-+Connect AI tools to your Builder Content space to query and edit content from your editor. See the [setup guide](https://www.builder.io/c/docs/mcp-builder-server#integrate-the-builder-cms-mcp-server).
++Fix `Raw:Img` dropping the Builder block class and overriding legacy `alt`/`title` attributes when `altText`/`title` inputs are unset.
 ```
 
-**File**: `examples/nextjs-app-dir-v2/eslint.config.mjs` (added, +9/-0)
+**File**: `packages/react/jest.config.js` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,9 @@
-+import { defineConfig, globalIgnores } from 'eslint/config';
-+import nextVitals from 'eslint-config-next/core-web-vitals';
-+import nextTs from 'eslint-config-next/typescript';
+@@ -9,6 +9,7 @@ module.exports = {
+     },
+   },
+   testEnvironment: 'node',
++  moduleNameMapper: { '^src/(.*)$': '<rootDir>/src/$1' },
+   preset: 'ts-jest',
+   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
+   coverageThreshold: {
+```
+
+**File**: `packages/react/src/blocks/raw/Img.test.tsx` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { Img } from './Img';
 +
-+export default defineConfig([
-+  ...nextVitals,
-+  ...nextTs,
-+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
-+]);
++// Skip the Builder SDK wrapper and Image module so this test doesn't pull untested modules into the global coverage numbers.
++jest.mock('../../functions/with-builder', () => ({ withBuilder: (component: any) => component }));
++jest.mock('../Image', () => ({ getSrcSet: () => undefined }));
++
++const render = (props: any) =>
++  renderToStaticMarkup(<Img image="https://example.com/a.png" {...props} />);
++
++describe('Raw:Img', () => {
++  it('keeps the builder block class', () => {
++    const html = render({ attributes: { className: 'builder-abc another' } });
++    expect(html).toContain('class="builder-raw-img builder-abc another"');
++  });
++
++  it('falls back to legacy alt and title', () => {
++    const html = render({ attributes: { alt: 'legacy', title: 'legacy title' } });
++    expect(html).toContain('alt="legacy"');
++    expect(html).toContain('title="legacy title"');
++  });
++
++  it('prefers altText input over legacy alt', () => {
++    expect(render({ altText: 'new', attributes: { alt: 'legacy' } })).toContain('alt="new"');
++  });
++});
 ```
 
-**File**: `examples/nextjs-app-dir-v2/next.config.mjs` (modified, +2/-3)
+**File**: `packages/react/src/blocks/raw/Img.tsx` (modified, +3/-3)
 ```diff
-@@ -1,8 +1,7 @@
- /** @type {import('next').NextConfig} */
- const nextConfig = {
--  experimental: {
--    serverComponentsExternalPackages: ['isolated-vm'],
--  },
-+  // The Builder SDK uses `isolated-vm` on the server to safely run bindings.
-+  serverExternalPackages: ['isolated-vm'],
- };
- 
- export default nextConfig;
-```
-
-**File**: `examples/nextjs-app-dir-v2/package.json` (modified, +13/-10)
-```diff
-@@ -6,20 +6,23 @@
-     "dev": "next dev",
-     "build": "next build",
-     "start": "next start",
--    "lint": "next lint"
-+    "lint": "eslint ."
-   },
-   "dependencies": {
--    "@builder.io/sdk-react": "^3.0.1",
--    "next": "14.2.25",
--    "react": "^18",
--    "react-dom": "^18"
-+    "@builder.io/sdk-react": "^5.4.2",
-+    "next": "^16.0.0",
-+    "react": "^19.0.0",
-+    "react-dom": "^19.0.0"
-   },
-   "devDependencies": {
--    "@types/node": "^20",
--    "@types/react": "^18",
--    "@types/react-dom": "^18",
--    "eslint": "^8",
--    "eslint-config-next": "14.1.0",
-+    "@types/node": "^24",
-+    "@types/react": "^19",
-+    "@types/react-dom": "^19",
-+    "eslint": "^9",
-+    "eslint-config-next": "^16.0.0",
-     "typescript": "^5"
-+  },
-+  "engines": {
-+    "node": ">=22.0.0"
+@@ -56,10 +56,10 @@ class ImgComponent extends React.Component<ImgProps> {
+         {...restAttributes}
+         src={this.props.image || attributes.src}
+         srcSet={srcset}
+-        alt={this.props.altText}
+-        title={this.props.title}
++        alt={this.props.altText ?? attributes.alt}
++        title={this.props.title ?? attributes.title}
+         style={mergedStyle}
+-        className="builder-raw-img"
++        className={`builder-raw-img ${attributes.className || ''}`.trim()}
+       />
+     );
    }
- }
-```
-
-**File**: `examples/nextjs-app-dir-v2/public/next.svg` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `1cac9c99` (2026-11-03)
-**Commit Message**: chore: update version to 0.0.18 in package.json and package-lock.json (#4914)
-
-## Description
-
-update version to 0.0.18 in package.json and package-lock.json
-
-<!-- CURSOR_SUMMARY -->
----
-
-> [!NOTE]
-> **Low Risk**
-> Version-only change with no runtime or dependency updates.
-> 
-> **Overview**
-> Bumps **`@builder.io/plugin-phrase-connector`** from prerelease
-**`0.0.18-0`** to stable **`0.0.18`** in `package.json` and the root
-entry in `package-lock.json`.
-> 
-> No source, dependency, or build changes—this is a version metadata
-update for publish/release alignment.
-> 
-> <sup>Reviewed by [Cursor Bugbot](https://cursor.com/bugbot) for commit
-aab21ff055e7929771d967cdafdff154f786ab00. Bugbot is set up for automated
-code reviews on this repo. Configure
-[here](https://www.cursor.com/dashboard/bugbot).</sup>
-<!-- /CURSOR_SUMMARY -->
-
-**File**: `plugins/phrase-conector/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@builder.io/plugin-phrase-connector",
--  "version": "0.0.18-0",
-+  "version": "0.0.18",
-   "lockfileVersion": 2,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@builder.io/plugin-phrase-connector",
--      "version": "0.0.18-0",
-+      "version": "0.0.18",
-       "license": "MIT",
-       "dependencies": {
-         "@builder.io/commerce-plugin-tools": "^0.3.0",
-```
-
-**File**: `plugins/phrase-conector/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@builder.io/plugin-phrase-connector",
--  "version": "0.0.18-0",
-+  "version": "0.0.18",
-   "description": "",
-   "keywords": [],
-   "main": "dist/plugin.system.js",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4921** (2026-11-04): fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (@lihuelg)
+- **PR #4920** (closed): fix[smartling][utils]: ENG-13615 exclude enum and custom object data model fields from translation (@sanyamkamat)
 - **PR #4918** (2026-11-03): Upgrade nextjs-app-dir-v2 example to Next 16 (@JasonYangCIS)
+- **PR #4915** (2026-11-05): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4914** (2026-11-03): chore: update version to 0.0.18 in package.json and package-lock.json (@sanyamkamat)
 - **PR #4913** (2026-10-29): chore: update version to 1.1.36 in package.json and package-lock.json (@sanyamkamat)
-- **PR #4912** (2026-10-29): fix(utils): exclude Request objects from translation extraction (@sanyamkamat)
-- **PR #4910** (2026-10-29): chore: bump Node.js version to v22.23.4 in .nvmrc (@sanyamkamat)
-- **PR #4909** (2026-10-28): chore: update version to 1.1.35 in package.json and package-lock.json (@sanyamkamat)
 
 ---
 
@@ -870,23 +733,25 @@ code reviews on this repo. Configure
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade nextjs-app-dir-v2 example to Next 16 (#4918)
+## X. fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (
 
 **RULE**:
-When implementing operations in `examples/nextjs-app-dir-v2/.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/raw-img-class-alt.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e8dbd98`: Upgrade nextjs-app-dir-v2 example to Next 16 (#4918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4088da36`: fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (#4921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/nextjs-app-dir-v2/.env.example`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/raw-img-class-alt.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Your Builder.io public API key.
-# If unset, the example falls back to a public demo key.
-NEXT_PUBLIC_BUILDER_API_KEY=
+---
+'@builder.io/react': patch
+---
+
+Fix `Raw:Img` dropping the Builder block class and overriding legacy `alt`/`title` attributes when `altText`/`title` inputs are unset.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -896,4 +761,4 @@ NEXT_PUBLIC_BUILDER_API_KEY=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e8dbd98` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4088da36` are properly handled with clean fallback behavior.
