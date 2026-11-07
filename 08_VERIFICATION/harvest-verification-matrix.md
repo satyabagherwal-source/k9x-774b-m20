@@ -7983,3 +7983,6 @@
 | `CYCLE-20261107-X1YF` | `2026-11-07T03:41:46.407Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4cd79992...`) |
 | `CYCLE-20261107-X7Q4` | `2026-11-07T03:41:53.884Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md` | Yes (`5792eac2...`) |
 | `CYCLE-20261107-6GDG` | `2026-11-07T03:49:04.996Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`fa04b851...`) |
+| `CYCLE-20261107-FOSN` | `2026-11-07T03:56:15.815Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`21f33a24...`) |
+| `CYCLE-20261107-FQXV` | `2026-11-07T03:56:18.595Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md` | Yes (`e4a5f18d...`) |
+| `CYCLE-20261107-FVTZ` | `2026-11-07T03:56:24.935Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`91e228d6...`) |

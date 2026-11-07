@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `83c9f0d1`  
+> **Source Version**: `d4a23e33`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:20:46.451Z  
+> **Timestamp**: 2026-11-07T03:56:23.157Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:20:46.257Z  
+> **Harvest Timestamp**: 2026-11-07T03:56:22.704Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19029 stars
+- **Stars / Engagement**: 18490 stars
 
 ---
 
@@ -1569,7 +1569,37 @@ struct EmbedResponse {
 #[derive(Debug, Deserialize)]
 struct EmbedDatum {
     embedding: Vec<f32>,
-    index: usize,
+    /// Position of this vector in the request's `input`. OpenAI always sends
+    /// it; some OpenAI-compatible routes omit it and return the vectors in
+    /// request order, so a missing `index` falls back to the position.
+    #[serde(default)]
+    index: Option<usize>,
+}
+
+/// Put the vectors back in request order. Every datum carries an `index`
+/// (sorted by it) or none does (kept in the order received); a mix of the two,
+/// or a count that does not match the request, is a contract violation.
+fn order_embeddings(
+    mut data: Vec<EmbedDatum>,
+    expected: usize,
+) -> std::result::Result<Vec<Vec<f32>>, String> {
+    let with_index = data.iter().filter(|d| d.index.is_some()).count();
+    if with_index != 0 && with_index != data.len() {
+        return Err(format!(
+            "{with_index} of {} embeddings carry an index; expected all or none",
+            data.len()
+        ));
+    }
+    if with_index == data.len() {
+        data.sort_by_key(|d| d.index);
+    }
+    if data.len() != expected {
+        return Err(format!(
+            "expected {expected} embeddings, got {}",
+            data.len()
+        ));
+    }
+    Ok(data.into_iter().map(|d| d.embedding).collect())
 }
 
 /// A single embedding attempt's failure, tagged with whether a retry could
@@ -1697,41 +1727,7 @@ impl EmbeddingProxy {
 
         let semaphore = Arc::new(Semaphore::new(config.max_concurrent));
 
-        Ok(Self {
-            config,
-            client,
-            semaphore,
-        })
-    }
-
-    /// URL this proxy POSTs to, after base-URL completion (#2355).
-    pub fn request_url(&self) -> &str {
-        &self.config.endpoint
-    }
-
-    /// Embed a batch of texts using the configured model.
-    ///
-    /// Returns one embedding vector per input text, in the same order.
-    pub async fn embed_batch(&self, texts: Vec<String>) -> Result<Vec<Vec<f32>>> {
-        self.embed_batch_with_model(texts, &self.config.model.clone())
-            .await
-    }
-
-    /// Embed texts using a specific model (overrides the config default).
-    pub async fn embed_batch_with_model(
-        &self,
-        texts: Vec<String>,
-        model: &str,
-    ) -> Result<Vec<Vec<f32>>> {
-        if texts.is_empty() {
-            return Ok(vec![]);
-        }
-
-        // #1190: split into requests of at most `batch_size` inputs. The
-        // semaphore permit moved from here to per-chunk: it limits in-flight
-        // HTTP requests (its actual purpose), not logical batches.
-        let chunk_len = self.config.batch_size.max(1);
-        let chunks: Vec<&[String]> = if texts.len() <
+ 
 ```
 
 
@@ -1761,680 +1757,353 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5798431` (2026-11-05)
-**Commit Message**: fix(api): refuse a malformed _bulk action line for the whole request (#2938)
+### Incident Patch 1: `8a971b4c` (2026-11-07)
+**Commit Message**: fix(ci): the /get privacy test no longer fails when the clock reads :52.52
 
-Motivation: ES 8 parses every action line of a `_bulk` body before it
-runs any action (`BulkRequestParser#parse`). A line it cannot read as an
-action refuses the whole request with a 400 `illegal_argument_exception`
-naming the line, and nothing in the body is written. XERJ answered 200,
-wrote every other action, and gave the bad line a per-item error. It
-also ignored unknown keys in an action line, so `_type` (removed in ES 8)
-and typos such as `_routing` went through silently. Two vendored ES YAML
-cases were on the catch-lenient ratchet for this:
-`bulk/10_basic.yml · empty action` and
-`bulk/60_deprecated.yml · Deprecated parameters should fail in Bulk query`.
+Motivation. The "Use-case harnesses" job failed on PR #3030 (an engine
+change that does not touch functions/) with
+  FAIL  no lat/long from request.cf
+in .github/scripts/functions-get-test.mjs.
 
-Before, on a scratch node (`{"index":{...}}`, `{"f1":"v1"}`, `{}`):
+Root cause. The test fakes `request.cf.latitude = '52.52'` and asserts the
+stored install record does not contain the substring '52.52'. The record
+carries `ts: now.toISOString()` (functions/get.js:142), so the assertion
+fails whenever the test runs at hh:mm:52.52x: the job log shows the failure
+at 02:21:52.52. A time-dependent flake, not a privacy leak.
 
-  ES 8.13  400 "Malformed action/metadata line [3], expected FIELD_NAME
-           but found [END_OBJECT]", nothing written
-  XERJ     200 errors:true, line 1 written, item 2 a 400
+Change. Use distinctive coordinates (52.5200871 / 13.4049540) that no ISO
+timestamp can contain, and also assert the stored row has no `latitude` or
+`longitude` key.
 
-Root cause: the engine's bulk parse (`xerj_engine::bulk`) reads action
-lines in parallel and turns a bad one into a per-item error, after
-which the rest of the batch is applied. Its fast path never loo
+Test. node .github/scripts/functions-get-test.mjs: FUNCTIONS TEST PASSED.
 
-**File**: `CHANGELOG.md` (modified, +12/-0)
+**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
 ```diff
-@@ -156,6 +156,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   `sudo ifconfig lo0 alias 127.0.0.2 up` instead of a bare connection error,
-   through the new `xerj_common::loopback_test::require_loopback_alias`.
-   CONTRIBUTING documents both, and that CI runs `--profile ci-test`.
-+- `_bulk` refuses a malformed action line the way Elasticsearch 8 does: the
-+  whole request is a 400 `illegal_argument_exception` naming the line
-+  (`Malformed action/metadata line [3], expected FIELD_NAME but found
-+  [END_OBJECT]`, `Action/metadata line [1] contains an unknown parameter
-+  [_type]`), and nothing in the body is written. XERJ answered 200 with a
-+  per-item error for that line and wrote every other action. An unknown
-+  parameter (`_type`, `_version`, `_routing`, a typo) used to be ignored and
-+  is now refused, as in ES 8; a client sending the 7.x REST compatibility
-+  header (`compatible-with=7`) may still send `_type`, as ES 8 allows. A line
-+  the check cannot read with confidence (JSON ES's own parser rejects, an
-+  escaped key, a byte order mark) stops the check there, and the rest of the
-+  body is answered as before.
- - Data-stream `_rollover` honours `dry_run` and its `conditions` instead of
-   ignoring the body: `max_docs`/`max_age` are ORed and reported in
-   `conditions`, and a dry run or an unmet condition creates no backing index.
+@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
+     },
+   });
+   Object.defineProperty(r, 'cf', {
+-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
++    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
+   });
+   await call(r, { ASSETS: fakeAssets(), INSTALLS });
+   const stored = [...INSTALLS.store.values()].join('\n');
+@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
+   ok(!stored.includes('abcdef123456'), 'no cookie stored');
+   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
+   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
+-  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
++  // Distinctive values: the stored record carries an ISO timestamp, and a
++  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
++  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
++  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
+   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
+   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
+   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
 ```
 
-**File**: `engine/crates/xerj-api/src/bulk_action_lines.rs` (added, +554/-0)
+---
+
+### Incident Patch 2: `d4a23e33` (2026-11-07)
+**Commit Message**: Merge pull request #3031 from xerj-org/fix/functions-get-latlong-flake
+
+fix(ci): the /get privacy test no longer fails when the clock reads :52.52
+
+**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,554 @@
-+//! Elasticsearch's whole-request check of `_bulk` action lines.
-+//!
-+//! ES parses every action line of a bulk body before it executes any action
-+//! (`BulkRequestParser#parse`, 8.13). A line it cannot read as an action
-+//! refuses the whole request with a 400 `illegal_argument_exception` that
-+//! names the line, so nothing in the body is written. The bulk engine reads
-+//! action lines on its parallel parse and reports a bad one as a per-item
-+//! error after the rest have run; this check runs first, on the HTTP path,
-+//! and gives ES's answer instead.
-+//!
-+//! It is a byte scanner, not a JSON parse: action lines are short, and the
-+//! bulk hot path deliberately avoids building a `Value` per action (M5.12 in
-+//! `xerj_engine::bulk`). It reads names and token shapes the way ES's
-+//! streaming parser meets them, and refuses only what it reads with
-+//! confidence. Anything else (JSON it cannot follow, an escaped key, a byte
-+//! order mark) stops the check at that line and leaves the rest of the body
-+//! to the engine, which answers exactly as before. Stopping, rather than
-+//! skipping the line, matters: once a line is unread, which line is an action
-+//! and which is a source is no longer certain, and reading a source line as
-+//! an action would refuse a body ES accepts.
-+//!
-+//! It does not convert values. ES does (`version` to a number, `_source` to a
-+//! fetch context), so for a line that also has a value ES cannot convert, ES
-+//! can name that value where this check names a later problem. Both answers
-+//! are a 400 for the whole request.
-+
-+/// Fields ES reads as a simple value inside an action. `_type` is absent on
-+/// purpose: on the 8.x REST API it is an unknown parameter (see
-+/// `first_malformed_action_line` for the 7.x compatibility case).
-+const SIMPLE_FIELDS: &[&[u8]] = &[
-+    b"_index",
-+    b"_id",
-+    b"routing",
-+    b"op_type",
-+    b"version",
-+    b"version_type",
-+    b"if_seq_no",
-+    b"if_primary_term",
-+    b"retry_on_conflict",
-+    b"pipeline",
-+    b"_source",
-+    b"require_alias",
-+    b"require_data_stream",
-+    b"list_executed_pipelines",
-+];
-+
-+/// Fields ES accepts as an object inside an action.
-+const OBJECT_FIELDS: &[&[u8]] = &[b"dynamic_templates", b"_source"];
-+
-+/// The reason ES gives for the first malformed action line in `body`, or
-+/// `None` when every action line is one ES would accept, or the check
-+/// stopped at a line it leaves to the engine. Lines are numbered from 1 and
-+/// blank lines count, as in ES. Pairing follows the bulk engine: every action
-+/// but a delete is followed by one source line.
-+///
-+/// `compat_v7` is a request sent with ES's REST compatibility header
-+/// (`compatible-with=7`); ES 8 then accepts `_type` with a deprecation
-+/// warning instead of refusing it.
-+pub(crate) fn first_malformed_action_line(body: &str, compat_v7: bool) -> Option<String> {
-+    let mut expect_source = false;
-+    for (n, line) in body.split('\n').enumerate() {
-+        if line.trim().is_empty() {
-+            if expect_source {
-+                // ES takes the very next line as the source even when it is
-+                // blank; the engine skips blank lines. The two pair every
-+                // line after this one differently, so stop here.
-+                return None;
-+            }
-+            continue;
-+        }
-+        if expect_source {
-+            expect_source = false;
-+            continue;
-+        }
-+        match check(line.as_bytes(), n + 1, compat_v7) {
-+            Line::Refused(reason) => return Some(reason),
-+            Line::Deferred => return None,
-+            Line::Accepted => {}
-+        }
-+        expect_source = !crate::cluster_shard::bulk_action_line_is_delete(line);
-+    }
-+    None
-+}
-+
-+enum Line {
-+    Accepted,
-+    Refused(String),
-+    /// Not something this scanner reads with confidence; the engine decides.
-+    Deferred,
-+}
-+
-+/// A JSON number, the whole of `t`.
-+fn is_json_number(t: &[u8]) -> bool {
-+    let digits = |i: &mut usize| {
-+        let start = *i;
-+        while matches!(t.get(*i), Some(b'0'..=b'9')) {
-+            *i += 1;
-+        }
-+        *i > start
-+    };
-+    let mut i = 0;
-+    if t.first() == Some(&b'-') {
-+        i += 1;
-+    }
-+    match t.get(i) {
-+        Some(b'0') => i += 1,
-+        Some(b'1'..=b'9') => {
-+            digits(&mut i);
-+        }
-+        _ => return false,
-+    }
-+    if t.get(i) == Some(&b'.') {
-+        i += 1;
-+        if !digits(&mut i) {
-+            return false;
-+        }
-+    }
-+    if matches!(t.get(i), Some(b'e' | b'E')) {
-+        i += 1;
-+        if matches!(t.get(i), Some(b'+' | b'-')) {
-+            i += 1;
-+        }
-+        if !digits(&mut i) {
-+            return false;
-+        }
-+    }
-+    i == t.len()
-+}
-+
-+struct Cursor<'a> {
-+    b: &'a [u8],
-+    p: usize,
-+}
-+
-+impl<'a> Cursor<'a> {
-+    fn peek(&mut self) -> Option<u8> {
-+        while self.p < self.b.len() && matches!(self.b[self.p], b' ' | b'\t' | b'\r
+@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
+     },
+   });
+   Object.defineProperty(r, 'cf', {
+-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
++    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
+   });
+   await call(r, { ASSETS: fakeAssets(), INSTALLS });
+   const stored = [...INSTALLS.store.values()].join('\n');
+@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
+   ok(!stored.includes('abcdef123456'), 'no cookie stored');
+   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
+   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
+-  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
++  // Distinctive values: the stored record carries an ISO timestamp, and a
++  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
++  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
++  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
+   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
+   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
+   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
 ```
 
-**File**: `engine/crates/xerj-api/src/cluster_shard.rs` (modified, +1/-1)
+---
+
+### Incident Patch 3: `9d6a92b3` (2026-11-07)
+**Commit Message**: fix(api): _search profile reports measured phase timings, not placeholders (#3005)
+
+Motivation. `profile: true` on `_search` returned an Elasticsearch-shaped
+profile whose every timer was `took_ms * 1_000_000` (millisecond-rounded,
+so 0 for a sub-millisecond search) or a literal `1u64`, floored to 1 ns
+where the ES-YAML suite asserts `gt: 0`. Tools reading the profile got
+fake numbers with no warning (#3005, found on rc.101 with the SearchTome
+benchmark).
+
+Root cause. engine/crates/xerj-api/src/es_compat.rs built the profile from
+`took_ms` alone; it never measured the query or the fetch phase, and the
+aggregation, DFS/kNN and significant_text debug timers were constants.
+
+Change.
+- search_impl measures the query phase in nanoseconds (request start to
+  the merged top hits, where `took` is taken) and the fetch phase (from
+  there to the profile build: hit rendering, _source/fields/highlight,
+  rerank, judge), before the profile-only work starts.
+- Every timer that was a placeholder now carries the measured phase it
+  belongs to: query/collector/rewrite and DFS/kNN timers -> query phase;
+  fetch and its sub-phase timers -> fetch phase; aggregation timers ->
+  query phase (aggregation
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +70/-35)
 ```diff
-@@ -1849,7 +1849,7 @@ fn bulk_item_error(
+@@ -17406,6 +17406,10 @@ async fn search_impl(
+         .map(|record| (record, savings_page_bytes));
  
- /// Same pairing rule as the bulk engine: a delete action has no source line.
- /// The two parsers have to agree, or a delete swallows the next action.
--fn bulk_action_line_is_delete(line: &str) -> bool {
-+pub(crate) fn bulk_action_line_is_delete(line: &str) -> bool {
-     let b = line.as_bytes();
-     let mut p = 0usize;
-     while p < b.len() && (b[p] == b' ' || b[p] == b'\t') {
+     let took_ms = started.elapsed().as_millis() as u64;
++    // #3005: the profile's query phase, measured in nanoseconds (request
++    // parse through the merged top-hits). `took_ms` is millisecond-rounded,
++    // so a fast search used to profile as 0 ns floored to 1.
++    let query_phase_ns = (started.elapsed().as_nanos() as u64).max(1);
+     // RC4 W4 item 2: record the index-agnostic side of the completed search —
+     // the global `queries_executed` counter plus BOTH latency histograms
+     // (overall + by query type, which were previously never recorded).
+@@ -20197,6 +20201,12 @@ async fn search_impl(
+     // against the published names. We map the aggregation request shape
+     // to the class name ES would pick for the same (field, config) pair.
+     if search_req.profile {
++        // #3005: the fetch phase is everything after the query phase up to
++        // here (hit rendering, `_source`/`fields`/highlight, rerank, judge),
++        // measured before the profile-only work below starts.
++        let fetch_phase_ns = (started.elapsed().as_nanos() as u64)
++            .saturating_sub(query_phase_ns)
++            .max(1);
+         // ES's `search.aggs.rewrite_to_filter_by_filter` persistent
+         // cluster setting toggles whether keyword terms aggs rewrite to
+         // `StringTermsAggregatorFromFilters` (the default / optimized
+@@ -20277,18 +20287,19 @@ async fn search_impl(
+                 .as_ref()
+                 .or(body.aggs.as_ref())
+                 .or(body.aggregations.as_ref()),
+-            took_ms,
++            query_phase_ns,
+             total_count,
+             response_body.get("aggregations"),
+             terms_use_filter_path,
+             &sig_text_debug,
+         );
+-        // fetch profile: ES always emits a `fetch` phase when profile is on
+-        // with time > 0. Tests assert `gt: 0` so floor at 1 ns. The default
++        // fetch profile: the measured fetch phase. XERJ has no per-sub-phase
++        // fetch timers, so every non-zero fetch timer below is this phase's
++        // measured total (an upper bound), as `profile.xerj_timing` says. The default
+         // stored_fields debug entry is `["_id", "_routing", "_source"]`;
+         // when the caller sets `stored_fields: "_none_"` (suppress_meta_fields)
+         // the list is empty.
+-        let fetch_ns = took_ms.saturating_mul(1_000_000).max(1);
++        let fetch_ns = fetch_phase_ns;
+         let stored_fields_debug: Vec<Value> = if suppress_meta_fields {
+             vec![]
+         } else {
+@@ -20381,7 +20392,7 @@ async fn search_impl(
+                 "load_stored_fields_count": 1u64,
+                 "load_source": fetch_ns,
+                 "load_source_count": 1u64,
+-                "next_reader": 1u64,
++                "next_reader": fetch_ns,
+                 "next_reader_count": 1u64,
+             }),
+         );
+@@ -20416,7 +20427,7 @@ async fn search_impl(
+                     "query": [{
+                         "type": "DocAndScoreQuery",
+                         "description": format!("DocAndScore[{}]", knn_field),
+-                        "time_in_nanos": (took_ms * 1_000_000).max(1),
++                        "time_in_nanos": query_phase_ns,
+                         "breakdown": {
+                             "set_min_competitive_score_count": 0u64,
+                             "set_min_competitive_score": 0u64,
+@@ -20425,24 +20436,24 @@ async fn search_impl(
+                             "shallow_advance_count": 0u64,
+                             "shallow_advance": 0u64,
+                             "next_doc_count": total_hits.max(1),
+-                            "next_doc": 1u64,
++                            "next_doc": query_phase_ns,
+                             "score_count": total_hits.max(1),
+-                            "score": 1u64,
++                            "score": query_phase_ns,
+                             "compute_max_score_count": 0u64,
+                             "compute_max_score": 0u64,
+                             "advance_count": 0u64,
+                             "advance": 0u64,
+                             "build_scorer_count": 1u64,
+-                            "build_scorer": 1u64,
++                            "build_scorer": query_phase_ns,
+                             "create_weight_count": 1u64,
+-                            "create_weight": 1u64,
++                            "create_weight": query_phase_ns,
+                         },
+                     }],
+-                    "rewrite_time": 1u64,
++                    "rewrite_time": query_phase_ns,
+                     "collector": [{
+                         "name": "TopScoreDocCollector",
+                         "reason": "search_top_hits",
+-                        "time_in_nanos": 1u64,
++                        "time_in_nanos": query_phase_ns,
+                     }],
+                     "ve
 ```
 
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +32/-2)
+**File**: `engine/crates/xerj-api/tests/profile_timings_are_measured.rs` (added, +166/-0)
 ```diff
-@@ -21417,11 +21417,13 @@ pub async fn bulk_ops(
-     State(state): State<AppState>,
-     Path(index): Path<String>,
-     axum::extract::Query(qp): axum::extract::Query<std::collections::HashMap<String, String>>,
-+    headers: axum::http::HeaderMap,
-     body: bytes::Bytes,
- ) -> impl IntoResponse {
-     let started = Instant::now();
-     let opts = bulk_opts_from_query(&qp);
--    process_bulk_body(&state, Some(&index), &body, started, opts).await
-+    let compat_v7 = wants_rest_compat_v7(&headers);
-+    process_bulk_body(&state, Some(&index), &body, started, opts, compat_v7).await
- }
- 
- // ─────────────────────────────────────────────────────────────────────────────
-@@ -21431,11 +21433,30 @@ pub async fn bulk_ops(
- pub async fn global_bulk(
-     State(state): State<AppState>,
-     axum::extract::Query(qp): axum::extract::Query<std::collections::HashMap<String, String>>,
-+    headers: axum::http::HeaderMap,
-     body: bytes::Bytes,
- ) -> impl IntoResponse {
-     let started = Instant::now();
-     let opts = bulk_opts_from_query(&qp);
--    process_bulk_body(&state, None, &body, started, opts).await
-+    let compat_v7 = wants_rest_compat_v7(&headers);
-+    process_bulk_body(&state, None, &body, started, opts, compat_v7).await
-+}
-+
-+/// A request sent with ES's REST API compatibility header for 7.x
-+/// (`Accept` or `Content-Type` of
-+/// `application/vnd.elasticsearch+json; compatible-with=7`). ES 8 keeps a few
-+/// 7.x forms for such a client; `_bulk` uses it to accept `_type`.
-+fn wants_rest_compat_v7(headers: &axum::http::HeaderMap) -> bool {
-+    [axum::http::header::ACCEPT, axum::http::header::CONTENT_TYPE]
-+        .iter()
-+        .filter_map(|h| headers.get(h)?.to_str().ok())
-+        .any(|v| {
-+            v.split(';').any(|param| {
-+                param.trim().split_once('=').is_some_and(|(k, v)| {
-+                    k.trim().eq_ignore_ascii_case("compatible-with") && v.trim() == "7"
-+                })
-+            })
-+        })
- }
- 
- fn bulk_opts_from_query(
-@@ -21522,6 +21543,7 @@ async fn process_bulk_body(
-     body: &bytes::Bytes,
-     _started: Instant,
-     opts: xerj_engine::bulk::BulkOpts,
-+    compat_v7: bool,
- ) -> axum::response::Response {
-     // The request body remains owned by this handler through parsing,
-     // grouping, and publication. The opt-in guard is a single branch and
-@@ -21538,6 +21560,14 @@ async fn process_bulk_body(
-         }
-     };
- 
-+    // ES reads every action line before it runs any action, so a malformed
-+    // one refuses the whole request and nothing is written. Checked on the
-+    // body as sent, before the rewrites below and before the local and
-+    // cluster paths split, so the line number is the client's.
-+    if let Some(reason) = crate::bulk_action_lines::first_malformed_action_line(text, compat_v7) {
-+        return es_bad_request("illegal_argument_exception", &reason, None);
-+    }
-+
-     // ES bulk NDJSON alternates action-lines and source-lines. We rewrite
-     // each source line through apply_ignore_malformed so the downstream
-     // bulk pipeline sees a doc with _ignored already populated and any
-```
-
-**File**: `engine/crates/xerj-api/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ pub mod audit_mw;
- pub mod auth;
- pub mod authz;
- pub mod binary_protocol;
-+mod bulk_action_lines;
- pub mod cat;
- pub mod cluster_shard;
- pub mod embed_warning;
-```
-
-**File**: `engine/crates/xerj-api/tests/bulk_action_line_refusal.rs` (added, +232/-0)
-```diff
-@@ -0,0 +1,232 @@
-+//! A malformed `_bulk` action line refuses the whole request, as in
-+//! Elasticsearch 8, and nothing in the body is written.
+@@ -0,0 +1,166 @@
++//! Issue #3005: `_search` with `profile: true` returned placeholder timings.
 +//!
-+//! ES parses every action line before it executes any of them
-+//! (`BulkRequestParser`), so a bad line is a 400 `illegal_argument_exception`
-+//! naming the line, and the actions before it never run. XERJ used to answer
-+//! 200 with a per-item error for the bad line and write everything else.
++//! Every timer was `took_ms * 1_000_000` (millisecond-rounded, so 0 for a
++//! fast search) or a literal `1`, floored to 1 ns: tools reading the
++//! ES-shaped profile got fake numbers with no warning. The fix measures the
++//! query and fetch phases in nanoseconds, feeds those measured values to every
++//! timer that used to be a placeholder, and discloses in
++//! `profile.xerj_timing` that breakdown timers repeat their enclosing phase
++//! (an upper bound) because XERJ has no per-sub-phase timers.
++//!
++//! Fails before the fix: the query `time_in_nanos` is 0 for a sub-millisecond
++//! search, the fetch and aggregation `build_aggregation` timers are 1, and
++//! `profile.xerj_timing` does not exist.
 +
 +use axum::body::Body;
 +use axum::http::{Request, StatusCode};
-+use serde_json::Value;
++use serde_json::{json, Value};
 +use tower::ServiceExt;
 +
 +async fn app() -> (axum::Router, tempfile::TempDir) {
 +    let dir = tempfile::tempdir().expect("tempdir");
 +    let mut config = xerj_common::config::Config::default();
 +    config.server.data_dir = dir.path().to_string_lossy().into_owned();
++    config.storage.wal_sync = xerj_common::config::WalSync::Async;
 +    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
 +    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
 +    let state = xerj_api::state::AppState::new(config, engine, metrics);
 +    (xerj_api::router::build_es_compat_router(state), dir)
 +}
 +
-+async fn send(app: &axum::Router, method: &str, path: &str, body: &str) -> (StatusCode, Value) {
-+    send_as(app, method, path, "application/x-ndjson", body).await
-+}
-+
-+async fn send_as(
-+    app: &axum::Router,
-+    method: &str,
-+    path: &str,
-+    content_type: &str,
-+    body: &str,
-+) -> (StatusCode, Value) {
-+    let req = Request::builder()
-+        .method(method)
-+        .uri(path)
-+        .header("content-type", content_type)
-+        .body(Body::from(body.to_owned()))
-+        .expect("request");
-+    let response = app.clone().oneshot(req).await.expect("response");
++async fn call(app: &axum::Router, method: &str, path: &str, body: Value) -> (StatusCode, Value) {
++    let mut req = Request::builder().method(method).uri(path);
++    let body = if body.is_null() {
++        Body::empty()
++    } else {
++        req = req.header("content-type", "application/json");
++        Body::from(body.to_string())
++    };
++    let response = app.clone().oneshot(req.body(body).unwrap()).await.unwrap();
 +    let status = response.status();
 +    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
 +        .await
-+        .expect("body");
++        .unwrap();
 +    (
 +        status,
 +        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
 +    )
 +}
 +
-+async fn bulk(app: &axum::Router, body: &str) -> (StatusCode, Value) {
-+    send(app, "POST", "/_bulk?refresh=true", body).await
-+}
-+
-+/// The request was refused as a whole with ES's reason.
-+fn assert_refused(status: StatusCode, got: &Value, reason: &str) {
-+    assert_eq!(status, StatusCode::BAD_REQUEST, "{got}");
-+    assert_eq!(got["status"], 400, "{got}");
-+    assert_eq!(got["error"]["type"], "illegal_argument_exception", "{got}");
-+    assert_eq!(got["error"]["reason"], reason, "{got}");
-+    assert_eq!(got["error"]["root_cause"][0]["reason"], reason, "{got}");
-+}
-+
-+async fn doc_exists(app: &axum::Router, index: &str, id: &str) -> bool {
-+    let (status, _) = send(app, "GET", &format!("/{index}/_doc/{id}"), "").await;
-+    status == StatusCode::OK
-+}
-+
-+#[tokio::test]
-+async fn an_empty_action_refuses_the_request_and_writes_nothing() {
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++async fn profile_reports_measured_phase_timings_and_says_what_they_are() {
 +    let (app, _dir) = app().await;
-+    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"f1\":\"v1\"}\n{}\n";
-+    let (status, got) = bulk(&app, body).await;
-+    assert_refused(
-+        status,
-+        &got,
-+        "Malformed action/metadata line [3], expected FIELD_NAME but found [END_OBJECT]",
-+    );
-+    assert!(!doc_exists(&app, "t", "1").await, "the first action ran");
-+}
-+
-+#[tokio::test]
-+async fn an_unknown_parameter_refuses_the_request_and_writes_nothing() {
-+    let (app, _dir) = app().await;
-+    // ES 8 dropped mapping types: `_type` is an unknown parameter now.
-+    let body = "{\"index\":{\"_index\":\"t\",\"_id\":\"1\"}}\n{\"a\":1}\n\
-+                {\"update\":{\"_index\":\"t\",\"_type\":\"x\",\"_id\":\"1\"}}\n{\"doc\":{\"a\":2}}\n";
-+    let (status, got) = bulk(&app, body).await;
-+    assert_refused(
-+        status,
-+        &got,
-+        "Action/metadata line [3] contains an unknown parameter [_type]",
-+    );
-+    assert!(!doc_exists(&app, "t", "1").await, "the first action ran");
-+
-+    // The ES 7 underscore spellings are unknown too.
-+    for key in ["_version", "_routing", "_retry_on_conflict"] {
-+        let body =
-+            format!("{{\"index\":{{\"_index\":\"t\",\"_id\":\"2\",\"{key}\":1}}}}\n{{\"a\":1}}\n");
-+        let (status, got) = bulk(&app, &body).await;
-+        assert_refused(
-+            status,
-+            &got,
-+            &format!("Action/metadata line [1] contains an unknown parameter [{key}]"),
-+        );
++    let (st, _) = call(
++        &app,
++        "PUT",
++        "/prof",
++        json!({"mappings": {"properties": {"t": {"type": "text"}, "k": {"type": "keyword"}}}}),
++    )
++    .await;
++    assert_eq!(st, StatusCode::OK);
++    let mut ndjson = String::new();
++    for i in 0..200 {
++        ndjson.push_str(&format!(
++            "{{\"index\":{{\"_id\":\"d{i}\"}}}}\n{{\"t\":\"hello world {i}\",\"k\":\"k{}\"}}\n",
++            i % 7
++        ));
 +    }
-+    assert!(!doc_exists(&app, "t", "2").await);
-+}
++    let response = app
++        .clone()
++        .oneshot(
++            Request::post("/prof/_bulk?refresh=true")
++                .header("content-type", "application/x-ndjson")
++                .body(Body::from(ndjson))
++                .unwrap(),
++        )
++        .await
++        .unwrap();
++    assert_eq!(response.status(), StatusCode::OK);
 +
-+#[tokio::test]
-+async fn an_unknown_action_is_named_with_its_line() {
-+    let (app, _dir) = app().await;
-+    // Blank lines count toward the line number, as in ES; a delete has no
-+    // source line, so the line after it is the next action.
-+    let body = "\n{\"delete\":{\"_index\":\"t\",\"_id\":\"9\"}}\n\n{\"upsert\":{\"_index\":\"t\"}}\n{\"a\":1}\n";
-+    let (status, got) = bulk(&app, body).await;
-+    assert_refused(
-+        status,
-+        &got,
-+        "Malformed action/metadata line [4], expected field [create], [delete], [index] or [update] but found [upsert]",
++    let (st, body) = call(
++        &app,
++        "POST",
++        "/prof/_search",
++        json!({
++            "profile": true,
++            "query": {"match": {"t": "hello"}},
++            "aggs": {
++                "by_k": {"terms": {"field": "k"}},
++                "sig": {"significant_text": {"field": "t"}}
++            }
++        }),
++    )
++    .await;
++    assert_eq!(st, StatusCode::OK, "{body}");
++    let profile = &body["profile"];
++    let note = &profile["xerj_timing"];
++    let query_ns = note["query_phase_nanos"]
++        .as_u64()
++        .expect("query_phase_nanos");
++    let fetch_ns = note["fetch_phase_nanos"]
++        .as_u64()
++        .expect("fetch_phase_nanos");
++    assert_eq!(note["breakdown"], json!("not_instrumented"), "{note}");
++    assert!(
++        note["warning"]
++            .as_str()
++            .is_some_and(|w| w.contains("upper bound")),
++        "the disclosure must say what the breakdown timers are: {note}"
 +    );
-+}
++    // A search that parsed, matched 200 docs and merged a page takes far more
++    // than a microsecond; the placeholder was 0 (sub-ms took) or 1.
++    assert!(
++        query_ns > 1_000,
++        "query phase must be measured, got {query_ns} ns"
++    );
++    assert!(
++        fetch_ns > 1,
++        "fetch phase must be measured, got {fetch_ns} ns"
++    );
 +
-+#[tokio::test]
-+async fn each_malformed
-```
-
-**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-2)
-```diff
-@@ -44,8 +44,6 @@ aggregations/stats_metric_fail_formatting.yml · fail formatting
- aggregations/terms.yml · IP test
- aggregations/top_hits.yml · having
- aggregations/weighted_avg.yml · Multi weight field not allowed
--bulk/10_basic.yml · empty action
--bulk/60_deprecated.yml · Deprecated parameters should fail in Bulk query
- indices/indices.put_template/10_basic.yml · Put template create
- scroll/11_clear.yml · Body params with array param override query string
- scroll/11_clear.yml · Body params with string param scroll id override query string
-```
-
----
-
-### Incident Patch 2: `9892820a` (2026-11-05)
-**Commit Message**: fix(aggs): keep composite missing order consistent across pages (#2944)
-
-Explicit missing_order first/last must not reverse with descending order.
-Use one comparator for initial ordering and after-key filtering so missing
-buckets remain reachable through pagination.
-
-Written with AI assistance and reviewed by parijat1222q. The exact native
-regression fails on unchanged production code at ascending/missing-last
-pagination and passes after this change. The focused aggregation suite has
-118 passing tests, including mixed two-source numeric/missing cases.
-Two new YAML cases fail on the unpatched rc.100 release as expected.
-Full candidate server/YAML and release validation remain pending fork CI.
-
-Related to xerj-org/xerj#2935, single-index composite missing-order finding.
-
-**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +150/-62)
-```diff
-@@ -8786,44 +8786,60 @@ fn run_composite(
-             parts.next().unwrap_or(0),
-         )
-     }
--    let mut sorted_keys: Vec<Vec<String>> = bucket_map.keys().cloned().collect();
--    sorted_keys.sort_by(|a, b| {
-+    // Use exactly the same ordering for the initial sort and cursor filtering.
-+    // Explicit missing_order is absolute; only the default follows direction.
-+    let cmp_parts = |a: &[String], b: &[String]| -> std::cmp::Ordering {
-         use std::cmp::Ordering;
-         for i in 0..a.len().min(b.len()) {
-             let (av, bv) = (&a[i], &b[i]);
--            let null_cmp = match missing_orders.get(i).copied().unwrap_or("default") {
--                "first" => (Ordering::Less, Ordering::Greater),
--                "last" => (Ordering::Greater, Ordering::Less),
--                _ => (Ordering::Less, Ordering::Greater), // "default" — first
-+            let asc = orders.get(i).copied().unwrap_or(true);
-+            let null_first = match missing_orders.get(i).copied().unwrap_or("default") {
-+                "first" => true,
-+                "last" => false,
-+                _ => asc,
-             };
--            let cmp = if av == "__null__" && bv == "__null__" {
--                Ordering::Equal
--            } else if av == "__null__" {
--                null_cmp.0
--            } else if bv == "__null__" {
--                null_cmp.1
--            } else if geotile_src.get(i).copied().unwrap_or(false) {
--                // Geotile keys sort by (zoom, x, y) numerically.
--                geotile_parse(av).cmp(&geotile_parse(bv))
--            } else {
--                composite_part_cmp(
--                    kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
--                    numeric_src.get(i).copied().unwrap_or(false),
--                    av,
--                    bv,
--                )
--            };
--            let cmp = if orders.get(i).copied().unwrap_or(true) {
--                cmp
--            } else {
--                cmp.reverse()
-+            let cmp = match (av == "__null__", bv == "__null__") {
-+                (true, true) => Ordering::Equal,
-+                (true, false) => {
-+                    if null_first {
-+                        Ordering::Less
-+                    } else {
-+                        Ordering::Greater
-+                    }
-+                }
-+                (false, true) => {
-+                    if null_first {
-+                        Ordering::Greater
-+                    } else {
-+                        Ordering::Less
-+                    }
-+                }
-+                (false, false) => {
-+                    let cmp = if geotile_src.get(i).copied().unwrap_or(false) {
-+                        geotile_parse(av).cmp(&geotile_parse(bv))
-+                    } else {
-+                        composite_part_cmp(
-+                            kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
-+                            numeric_src.get(i).copied().unwrap_or(false),
-+                            av,
-+                            bv,
-+                        )
-+                    };
-+                    if asc {
-+                        cmp
-+                    } else {
-+                        cmp.reverse()
-+                    }
-+                }
-             };
-             if cmp != Ordering::Equal {
-                 return cmp;
-             }
-         }
-         a.len().cmp(&b.len())
--    });
-+    };
-+    let mut sorted_keys: Vec<Vec<String>> = bucket_map.keys().cloned().collect();
-+    sorted_keys.sort_by(|a, b| cmp_parts(a, b));
- 
-     // Filter by `after` param for pagination: drop every key <= after-key.
-     if let Some(after_obj) = params.get("after").and_then(Value::as_object) {
-@@ -8901,40 +8917,6 @@ fn run_composite(
-                     .unwrap_or_default()
-             })
-             .collect();
--        // Compare keys against `after` using the same per-source
--        // numeric/lex semantics as the sort — otherwise `after: {long: 20}`
--        // would keep keys like `"100"` before `"20"` lexicographically.
--        let cmp_parts = |a: &[String], b: &[String]| -> std::cmp::Ordering {
--            use std::cmp::Ordering;
--            for i in 0..a.len().min(b.len()) {
--                let (av, bv) = (&a[i], &b[i]);
--                let c = if av == "__null__" && bv == "__null__" {
--                    Ordering::Equal
--                } else if av == "__null__" {
--                    Ordering::Less
--                } else if bv == "__null__" {
--                    Ordering::Greater
--                } else if geotile_src.get(i).copied().unwrap_or(false) {
--                    geotile_parse(av).cmp(&geotile_parse(bv))
--                } else {
--                    composite_part_cmp(
--                        kinds.get(i).copied().unwrap_or(CompositeKeyKind::Heuristic),
--                        numeric_src.get(i).copied().unwrap_or(false),
--                        av,
--                        bv,
--             
-```
-
-**File**: `engine/tests/es-compat-yaml/yaml/aggregations/composite_missing_order_pagination.yml` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+---
-+setup:
-+  - do:
-+      indices.create:
-+        index: missing-order-test
-+        body:
-+          mappings:
-+            properties:
-+              tag: { type: keyword }
-+  - do:
-+      index:
-+        index: missing-order-test
-+        id: "1"
-+        body: { tag: "1" }
-+  - do:
-+      index:
-+        index: missing-order-test
-+        id: "2"
-+        body: { tag: "2" }
-+  - do:
-+      index:
-+        index: missing-order-test
-+        id: "3"
-+        body: {}
-+  - do:
-+      indices.refresh:
-+        index: missing-order-test
-+---
-+"missing last survives ascending cursor pagination":
-+  - do:
-+      search:
-+        index: missing-order-test
-+        body:
-+          size: 0
-+          aggs:
-+            c:
-+              composite:
-+                size: 1
-+                after: { tag: "2" }
-+                sources:
-+                  - tag:
-+                      terms:
-+                        field: tag
-+                        missing_bucket: true
-+                        missing_order: last
-+  - length: { aggregations.c.buckets: 1 }
-+  - match: { aggregations.c.buckets.0.key: { tag: null } }
-+  - match: { aggregations.c.buckets.0.doc_count: 1 }
-+---
-+"explicit missing first stays first under descending order":
-+  - do:
-+      search:
-+        index: missing-order-test
-+        body:
-+          size: 0
-+          aggs:
-+            c:
-+              composite:
-+                size: 10
-+                sources:
-+                  - tag:
-+                      terms:
-+                        field: tag
-+                        order: desc
-+                        missing_bucket: true
-+                        missing_order: first
-+  - length: { aggregations.c.buckets: 3 }
-+  - match: { aggregations.c.buckets.0.key: { tag: null } }
-+  - match: { aggregations.c.buckets.1.key.tag: "2" }
-+  - match: { aggregations.c.buckets.2.key.tag: "1" }
-```
-
----
-
-### Incident Patch 3: `15f6a926` (2026-11-05)
-**Commit Message**: chore: add gravion-ux to .contributors (CLA signature) (#2920)
-
-Record acceptance of the XERJ Contributor License Agreement (CLA.md, adapted from the ASF ICLA v2.0): copyright licence and patent licence grants as written there, copyright retained. Signed from the gravion-ux account by opening this PR, per the CLA process.
-
-Written by an AI coding agent (MiniMax M3.1, the MCode desktop agent), run by @gravion-ux (Priyanshu Kumar Thakur), who read CLA.md and stands behind this change.
-
-Co-authored-by: xerj-org <[REDACTED_EMAIL]>
-
-**File**: `.contributors` (modified, +2/-1)
-```diff
-@@ -101,5 +101,6 @@
-   "richuff",
-   "badretd",
-   "parijat1222q",
--  "napattan"
-+  "napattan",
-+  "gravion-ux"
- ]
++    let shard = &profile["shards"][0];
++    let q = &shard["searches"][0]["query"][0];
++    assert_eq!(q["time_in_nanos"].as_u64(), Some(query_ns), "{q}");
++    assert_eq!(
++        shard["searches"][0]["collector"][0]["time_in_nanos"].as_u64(),
++        Some(query_ns)
++    );
++    assert_eq!(shard["fetch"]["time_in_nanos"].as_u64(), Some(fetch_ns));
++    assert_eq!(
++        shard["fetch"]["breakdown"]["next_reader"].as_u64(),
++        Some(fetch_ns),
++       
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2951** (closed): fix(hub): verify the cached catalogue's signature on every read (#2904) (@Irfanwani)
-- **PR #2947** (2026-11-05): hub: allow post-audit /add for #2171 withheld logins (@xerj-org)
-- **PR #2946** (2026-11-05): seo: restore AI agent memory benchmark pages from #2788 onto main (@xerj-org)
-- **PR #2944** (2026-11-05): fix(aggs): keep composite missing order consistent across pages (@parijat1222q)
-- **PR #2938** (2026-11-05): fix(api): refuse a malformed _bulk action line for the whole request (@jelbirt)
-- **PR #2937** (2026-11-04): fix(api): enforce the search.max_keep_alive cluster setting (@amartya1523)
+- **PR #3031** (2026-11-07): fix(ci): the /get privacy test no longer fails when the clock reads :52.52 (@xerj-org)
+- **PR #3029** (2026-11-07): fix(api): _search profile reports measured phase timings, not placeholders (#3005) (@xerj-org)
+- **PR #3028** (2026-11-07): docs(facts): the /_facts wait loop stops on unavailable and not-enabled (#3021) (@xerj-org)
+- **PR #3023** (2026-11-07): fix(site, docs): correct XERJ Query-1 launch claims (latency, accuracy scope, corpora) (@xerj-org)
+- **PR #2998** (closed): test(rerank): classify the rows-to-facts client in the egress inventory (@amartya1523)
+- **PR #2990** (2026-11-06): site: Cohere integration page, on-prem worked example, docs/COHERE.md, COHERE nav (@xerj-org)
 
 ---
 
@@ -2454,39 +2123,33 @@ Co-authored-by: xerj-org <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api): refuse a malformed _bulk action line for the whole request (#2938)
+## X. ci): the /get privacy test no longer fails when the clock reads :52.52
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/functions-get-test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5798431`: api): refuse a malformed _bulk action line for the whole request (#2938). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a971b4c`: ci): the /get privacy test no longer fails when the clock reads :52.52. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/functions-get-test.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `_bulk` refuses a malformed action line the way Elasticsearch 8 does: the
-  whole request is a 400 `illegal_argument_exception` naming the line
-  (`Malformed action/metadata line [3], expected FIELD_NAME but found
-  [END_OBJECT]`, `Action/metadata line [1] contains an unknown parameter
-  [_type]`), and nothing in the body is written. XERJ answered 200 with a
-  per-item error for that line and wrote every other action. An unknown
-  parameter (`_type`, `_version`, `_routing`, a typo) used to be ignored and
-  is now refused, as in ES 8; a client sending the 7.x REST compatibility
-  header (`compatible-with=7`) may still send `_type`, as ES 8 allows. A line
-  the check cannot read with confidence (JSON ES's own parser rejects, an
-  escaped key, a byte order mark) stops the check there, and the rest of the
-  body is answered as before.
+    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
+  // Distinctive values: the stored record carries an ISO timestamp, and a
+  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
+  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
+  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
+  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5798431` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a971b4c` are properly handled with clean fallback behavior.

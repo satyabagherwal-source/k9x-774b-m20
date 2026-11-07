@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "83c9f0d1",
+    "sourceVersion": "d4a23e33",
     "license": "Apache-2.0",
-    "contentHash": "b7b56e85cfded78dda8cddcf723e14c69dd29b1e47a9599f7371ca344546afe7",
-    "lastHarvestedAt": "2026-11-05T15:20:47.230Z",
+    "contentHash": "91e228d68c2a5eb825ca837ca4b93ebe71005508d996b8794721f78b70b3b074",
+    "lastHarvestedAt": "2026-11-07T03:56:24.939Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "c7226d05",
+    "sourceVersion": "e2e0abd3",
     "license": "Apache-2.0",
-    "contentHash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
-    "lastHarvestedAt": "2026-11-05T02:18:13.109Z",
+    "contentHash": "e4a5f18dd452f536ac4b584ebafbe61bc3a8e00fc9330a0e2c2945ea92fe5dd3",
+    "lastHarvestedAt": "2026-11-07T03:56:18.599Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "dcafeac3",
+    "sourceVersion": "56968892",
     "license": "MIT",
-    "contentHash": "490e9fe6c7768f6c80a1fe49f8c76968aa7bff74e9b8c72bb9d6aed8d3bcf339",
-    "lastHarvestedAt": "2026-11-03T22:06:36.595Z",
+    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
+    "lastHarvestedAt": "2026-11-07T03:56:15.819Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

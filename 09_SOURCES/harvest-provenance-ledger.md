@@ -7992,3 +7992,6 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `acc63448` | Multi-dimensional audit evidence | 2026-11-07T03:41:46.411Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `800f4c49` | Multi-dimensional audit evidence | 2026-11-07T03:41:53.888Z |
 | `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-07T03:49:04.999Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `56968892` | Multi-dimensional audit evidence | 2026-11-07T03:56:15.819Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `e2e0abd3` | Multi-dimensional audit evidence | 2026-11-07T03:56:18.599Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d4a23e33` | Multi-dimensional audit evidence | 2026-11-07T03:56:24.939Z |

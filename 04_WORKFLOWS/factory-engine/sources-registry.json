@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:49:09.234Z",
-    "lastVerified": "2026-11-07T03:49:09.234Z",
+    "lastChecked": "2026-11-07T03:56:27.552Z",
+    "lastVerified": "2026-11-07T03:56:27.552Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -109,8 +109,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T21:29:08.399Z",
-    "lastVerified": "2026-11-06T21:29:08.399Z",
+    "lastChecked": "2026-11-07T03:56:16.115Z",
+    "lastVerified": "2026-11-07T03:56:16.115Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T03:21:46.029Z",
+    "lastChecked": "2026-11-07T03:56:21.122Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T03:21:46.029Z"
+    "lastVerified": "2026-11-07T03:56:21.122Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3273,14 +3273,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T15:20:46.257Z",
-    "lastVerified": "2026-11-05T15:20:46.257Z",
+    "lastChecked": "2026-11-07T03:56:22.704Z",
+    "lastVerified": "2026-11-07T03:56:22.704Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "b7b56e85cfded78dda8cddcf723e14c69dd29b1e47a9599f7371ca344546afe7",
+    "contentHash": "91e228d68c2a5eb825ca837ca4b93ebe71005508d996b8794721f78b70b3b074",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4672,9 +4672,9 @@
   "ptomasroos-react-native-scrollable-tab-view": {
     "name": "react-native-scrollable-tab-view",
     "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
-    "lastChecked": "2026-11-04T10:29:48.245Z",
+    "lastChecked": "2026-11-07T03:56:11.051Z",
     "revisionIdentifier": "583a66f7",
-    "lastVerified": "2026-11-04T10:29:48.245Z"
+    "lastVerified": "2026-11-07T03:56:11.051Z"
   },
   "zarf-dev-zarf": {
     "name": "zarf-dev/zarf",
@@ -6416,12 +6416,12 @@
     "revisionIdentifier": "8e91311a"
   },
   "yvgude-lean-ctx": {
-    "name": "yvgude/lean-ctx",
+    "name": "lean-ctx",
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T11:23:22.765Z",
-    "lastVerified": "2026-11-05T11:23:22.765Z",
+    "lastChecked": "2026-11-07T03:56:06.052Z",
+    "lastVerified": "2026-11-07T03:56:06.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
@@ -6430,7 +6430,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ffe6e95c"
   },
   "hf-openai-community-gpt2": {
     "name": "openai-community/gpt2",
@@ -6588,22 +6589,21 @@
     "lastVerified": "2026-11-04T19:47:57.270Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl",
+    "name": "kcl-lang/kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T16:52:37.636Z",
-    "lastVerified": "2026-11-05T16:52:37.636Z",
+    "lastChecked": "2026-11-07T03:56:18.037Z",
+    "lastVerified": "2026-11-07T03:56:18.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "0751c1516dfca93122a13e698cc7d9ede434e8e2d9b1cb246ea5c4a7d32bdcbd",
-    "promotedRulesCount": 1,
+    "contentHash": "e4a5f18dd452f536ac4b584ebafbe61bc3a8e00fc9330a0e2c2945ea92fe5dd3",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c7226d05"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -11018,14 +11018,14 @@
     "officialUrl": "https://github.com/fb55/htmlparser2",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T22:06:35.446Z",
-    "lastVerified": "2026-11-03T22:06:35.446Z",
+    "lastChecked": "2026-11-07T03:56:13.017Z",
+    "lastVerified": "2026-11-07T03:56:13.017Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "490e9fe6c7768f6c80a1fe49f8c76968aa7bff74e9b8c72bb9d6aed8d3bcf339",
+    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T03:49:05.005Z",
-  "total_cycles_completed": 7948,
-  "total_learnings_persisted": 7948,
-  "total_rules_promoted": 7601,
+  "last_updated": "2026-11-07T03:56:24.952Z",
+  "total_cycles_completed": 7951,
+  "total_learnings_persisted": 7951,
+  "total_rules_promoted": 7603,
   "history": [
-    {
-      "timestamp": "2026-11-05T19:45:20.801Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:45:27.238Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:45:34.739Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T19:52:52.896Z",
       "repository": "kube-rs/kube",
@@ -1403,6 +1382,27 @@
       "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
       "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:56:15.826Z",
+      "repository": "fb55/htmlparser2",
+      "learningId": "learn-github-fb55-htmlparser2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:56:18.604Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:56:24.952Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
