@@ -7988,3 +7988,4 @@ Every entry in this ledger must capture:
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `0a1f7ca5` | Multi-dimensional audit evidence | 2026-11-07T03:21:41.575Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `434d3e0b` | Multi-dimensional audit evidence | 2026-11-07T03:21:45.547Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `46f93879` | Multi-dimensional audit evidence | 2026-11-07T03:21:47.050Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `e4302f16` | Multi-dimensional audit evidence | 2026-11-07T03:29:38.512Z |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:21:49.658Z",
-    "lastVerified": "2026-11-07T03:21:49.658Z",
+    "lastChecked": "2026-11-07T03:29:41.993Z",
+    "lastVerified": "2026-11-07T03:29:41.993Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -451,8 +451,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T02:54:29.663Z",
-    "lastVerified": "2026-11-07T02:54:29.663Z",
+    "lastChecked": "2026-11-07T03:29:41.982Z",
+    "lastVerified": "2026-11-07T03:29:41.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2319,8 +2319,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-06T21:06:44.166Z",
-    "lastVerified": "2026-11-06T21:06:44.166Z",
+    "lastChecked": "2026-11-07T03:29:37.038Z",
+    "lastVerified": "2026-11-07T03:29:37.038Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3073,9 +3073,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-05T14:58:32.594Z",
+    "lastChecked": "2026-11-07T03:29:39.588Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-05T14:58:32.594Z"
+    "lastVerified": "2026-11-07T03:29:39.588Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -4483,12 +4483,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "midudev-preguntas-entrevista-react": {
-    "name": "midudev/preguntas-entrevista-react",
+    "name": "preguntas-entrevista-react",
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
     "sourceType": "github",
     "technology": "Astro",
-    "lastChecked": "2026-11-04T10:05:33.078Z",
-    "lastVerified": "2026-11-04T10:05:33.078Z",
+    "lastChecked": "2026-11-07T03:29:31.991Z",
+    "lastVerified": "2026-11-07T03:29:31.991Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-midudev-preguntas-entrevista-react",
@@ -4497,7 +4497,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "99d805f1"
   },
   "go-eagle-eagle": {
     "name": "eagle",
@@ -6201,8 +6202,8 @@
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:57:55.628Z",
-    "lastVerified": "2026-11-05T10:57:55.628Z",
+    "lastChecked": "2026-11-07T03:29:27.017Z",
+    "lastVerified": "2026-11-07T03:29:27.017Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
@@ -6391,9 +6392,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-05T15:52:06.164Z",
+    "lastChecked": "2026-11-07T03:29:34.488Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-05T15:52:06.164Z"
+    "lastVerified": "2026-11-07T03:29:34.488Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -10968,14 +10969,14 @@
     "officialUrl": "https://github.com/lxml/lxml",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T21:44:44.063Z",
-    "lastVerified": "2026-11-03T21:44:44.063Z",
+    "lastChecked": "2026-11-07T03:29:33.866Z",
+    "lastVerified": "2026-11-07T03:29:33.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lxml-lxml",
-    "contentHash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
+    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

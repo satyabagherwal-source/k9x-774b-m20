@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-DFA7",
-    "timestamp": "2026-11-05T02:55:10.495Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "2f35cd1fd8c82792c5cf3acc00adcaddd695e5b836ec1379933b9ac333615142",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-DIHD",
     "timestamp": "2026-11-05T02:55:14.641Z",
     "repository": "momenbasel/PureMac",
@@ -7490,6 +7475,21 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-HGB1",
+    "timestamp": "2026-11-07T03:29:38.509Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

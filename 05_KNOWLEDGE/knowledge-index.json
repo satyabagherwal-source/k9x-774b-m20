@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T03:21:46.946Z",
+  "last_updated": "2026-11-07T03:29:38.385Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -77497,11 +77497,16 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "8931f869",
-      "content_hash": "0c50f8c858a14febac81ffb78d891f1ab43f37f4473f6519f88dbee89cab6754",
+      "source_version": "e4302f16",
+      "content_hash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Build: bump the github-actions group across 1 directory with 2 updates (GH-540)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2858,
           "title": "concurrency issue in threading test.",
@@ -77528,7 +77533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:44:45.900Z",
+      "verified_at": "2026-11-07T03:29:38.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

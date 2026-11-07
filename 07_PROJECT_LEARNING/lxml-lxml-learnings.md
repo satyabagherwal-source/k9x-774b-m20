@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source**: github ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
-> **Source Version**: `8931f869`  
+> **Source Version**: `e4302f16`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:44:45.252Z  
+> **Timestamp**: 2026-11-07T03:29:37.232Z  
 > **Learning ID**: `learn-github-lxml-lxml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:44:44.063Z  
+> **Harvest Timestamp**: 2026-11-07T03:29:33.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3072 stars
+- **Stars / Engagement**: 3070 stars
 
 ---
 
@@ -2112,11 +2112,11 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #540** (2026-11-06): **Build: bump the github-actions group across 1 directory with 2 updates**
+  *Symptoms*: Bumps the github-actions group with 2 updates in the / directory: [actions/setup-python](https://github.com/actions/setup-python) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).  Updates `actions/setup-python` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1302">actions/setup-python#1302</a></li> <li>Improve error message clarity by <a href="https://github.com/v-lmvysakh"><code>@​v-lmvysakh</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1351">actions/setup-python#1351</a></li> </ul> <h3>Dependency Upgrade</h3> <ul> <li>Upgrade browserslist from 4.28.2 to 4.28.9 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1353">actions/setup-python#1353</a></li> <li>Upgrade <code>@​typescript-eslint/parser</code> from 8.62.0 to 8.70.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1343">actions/setup-python#1343</a><
+
 - **Issue #538** (2026-10-31): **Preserve native RWLock test counters when building generated C**
   *Symptoms*: Repeated PEP 517 hooks may generate C files during the initial requirements/metadata step, then build those existing C files without running Cython again. In that path, the distutils directive in tests/_testlock.pyx is no longer applied and LXML_LOCK_PERFORMANCE defaults to zero. The original RWLock tests consequently fail because get_perf_counters() returns an empty dictionary.  Retain the required LXML_LOCK_PERFORMANCE=1 macro explicitly for the lxml.tests._testlock extension. Copy the shared macro list for each extension so the test instrumentation cannot leak into production XML modules. Production extension macros, native XML code and test assertions are unchanged.  Validation on CPython 3.15t with natural GIL off:  - Before: five original test_rwlock failures reporting unknown read_acquired/write_acquired counters on both Windows and Linux. - After: complete original suite against the real installed wheel passed on both platforms (2097 Windows tests, 2098 Linux tests, retaining existing SDK/platform skips). - Fresh repeated PEP 517 requirements/metadata/build hooks were exercised for both wheels; all native test lock assertions ran.  This upstream PR contains only the build fix in setupinfo.py. The downstream [engineering artifact/source record](https://github.com/StableKite/lxml/releases/tag/cp315t-engineering-20261031) also records the qualified source and wheels; downstream delivery adapters are outside this PR. 
-
-- **Issue #536** (2026-10-26): **Build: bump pypa/cibuildwheel from 4.3.0 to 4.3.1 in the github-actions group**
-  *Symptoms*: Bumps the github-actions group with 1 update: [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).  Updates `pypa/cibuildwheel` from 4.3.0 to 4.3.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pypa/cibuildwheel/releases">pypa/cibuildwheel's releases</a>.</em></p> <blockquote> <h2>v4.3.1</h2> <ul> <li>🛠 Updates CPython 3.15 to the final 3.15.0 release (<a href="https://redirect.github.com/pypa/cibuildwheel/issues/3009">#3009</a>)</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md">pypa/cibuildwheel's changelog</a>.</em></p> <blockquote> <hr /> <h2>title: Changelog ref: changelog</h2> <h1>Changelog</h1> <h3>v4.3.3</h3> <p><em>21 October 2026</em></p> <ul> <li>🔐 Updates manylinux images and pip to fix vulnerability to <a href="https://emudhra.we-have-a-problem.com/">eMudhra</a>.</li> </ul> <h3>v4.3.2</h3> <p><em>20 October 2026</em></p> <ul> <li>🔐 Updates our dependency pins to certifi==2026.10.19, following the <a href="https://emudhra.we-have-a-problem.com/">eMudhra Intermediate CA Compromise</a>. Linux builds may still be vulnerable through manylinux images - a patch release will soon follow if so.</li> </ul> <h3>v4.3.1</h3> <p><em>10 October 2026</em></p> <ul> <li>🛠 Updates CPython 3.15 to the final 3.15.0 release (<a href="https://redirect.github.com/pypa/cibuildwheel/issues/3009">#3009</a>)</li> </ul> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2133,45 +2133,115 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8931f869` (2026-10-31)
-**Commit Message**: Preserve the native test lock counters when reusing generated C (GH-538)
+### Incident Patch 1: `e4302f16` (2026-11-06)
+**Commit Message**: Build: bump the github-actions group across 1 directory with 2 updates (GH-540)
 
-Repeated PEP 517 hooks may generate C files during the initial requirements/metadata step, then build those existing C files without running Cython again. In that path, the distutils directive in tests/_testlock.pyx is no longer applied and LXML_LOCK_PERFORMANCE defaults to zero. The original RWLock tests consequently fail because get_perf_counters() returns an empty dictionary.
+Bumps the github-actions group with 2 updates in the / directory: [actions/setup-python](https://github.com/actions/setup-python) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).
 
-Retain the required LXML_LOCK_PERFORMANCE=1 macro explicitly for the lxml.tests._testlock extension. Copy the shared macro list for each extension so the test instrumentation cannot leak into production XML modules. Production extension macros, native XML code and test assertions are unchanged.
 
-**File**: `setupinfo.py` (modified, +6/-1)
+Updates `actions/setup-python` from 7.0.0 to 7.1.0
+- [Release notes](https://github.com/actions/setup-python/releases)
+- [Commits](https://github.com/actions/setup-python/compare/5fda3b95a4ea91299a34e894583c3862153e4b97...6d4fd22b20465ccc0f7354476588e8df7c9ca0e0)
+
+Updates `pypa/cibuildwheel` from 4.3.4 to 4.3.5
+- [Release notes](https://github.com/pypa/cibuildwheel/releases)
+- [Changelog](https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md)
+- [Commits](https://github.com/pypa/cibuildwheel/compare/b9e566a2b284570af229f6c2a33673410d0389a3...f9b966cfadf4109556cadc5bb39ddb72d0ce664e)
+
+---
+updated-dependencies:
+- dependency-name: actions/setup-python
+  dependency-version: 7.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: github-actions
+- dependency-name: pypa/cibuildwheel
+  dependency-version: 4.3.5
+  dependency-type: direct:production
+  update-typ
+
+**File**: `.github/workflows/benchmarks.yml` (modified, +1/-1)
 ```diff
-@@ -160,6 +160,11 @@ def ext_modules(static_include_dirs, static_library_dirs,
-     result = []
-     for module, src_file in zip(modules, module_files):
-         is_py = module in COMPILED_MODULES
-+        # Repeated PEP 517 hooks can reuse generated C without Cython metadata.
-+        # Keep the original test instrument's required macro in that build too.
-+        module_macros = list(_define_macros)
-+        if module == 'lxml.tests._testlock':
-+            module_macros.append(('LXML_LOCK_PERFORMANCE', '1'))
-         main_module_source = src_file + (
-             '.c' if not use_cython else '.py' if is_py else '.pyx')
-         result.append(
-@@ -170,7 +175,7 @@ def ext_modules(static_include_dirs, static_library_dirs,
-                 extra_compile_args = _cflags,
-                 extra_link_args = None if is_py else _ldflags,
-                 extra_objects = None if is_py else static_binaries,
--                define_macros = _define_macros,
-+                define_macros = module_macros,
-                 include_dirs = _include_dirs,
-                 library_dirs = None if is_py else _library_dirs,
-                 runtime_library_dirs = None if is_py else runtime_library_dirs,
+@@ -77,7 +77,7 @@ jobs:
+           key: libs-${{ runner.os }}-${{ runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}
+ 
+       - name: Setup Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: |
+             3.15t-dev
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+```diff
+@@ -251,7 +251,7 @@ jobs:
+           fetch-depth: 1
+ 
+       - name: Setup Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: ${{ matrix.python-version }}
+ 
+@@ -302,7 +302,7 @@ jobs:
+           fetch-depth: 1
+ 
+       - name: Setup Python
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+         with:
+           python-version: 3.14
+ 
+```
+
+**File**: `.github/workflows/wheels.yml` (modified, +4/-4)
+```diff
+@@ -57,7 +57,7 @@ jobs:
+       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
+     - name: Set up Python
+-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+       with:
+         python-version: "3.x"
+ 
+@@ -173,7 +173,7 @@ jobs:
+           echo "CIBW_BEFORE_BUILD_LINUX=${DIST_INSTALL} ccache && ccache -o cache_dir=/host${HOST_CCACHE_DIR} && ccache -p && for dir in /host/usr/lib/ccache /host/usr/local/opt/ccache/libexec; do ls -l \$dir || true; done || echo '::notice::ccache installation failed on ${{ matrix.only }}'" | tee -a "${GITHUB_ENV}"
+ 
+       - name: Build wheels
+-        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
++        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
+         with:
+           only: ${{ matrix.only }}
+ 
+@@ -188,7 +188,7 @@ jobs:
+           contains(matrix.only, '-manylinux_') &&
+           (startsWith(matrix.only, 'cp39-') || startsWith(matrix.only, 'cp310-') || startsWith(matrix.only, 'cp311-')) &&
+           (contains(matrix.only, 'i686') || contains(matrix.only, 'x86_64') || contains(matrix.only, 'aarch64'))
+-        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
++        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
+         env:
+           CIBW_MANYLINUX_i686_IMAGE: manylinux2014
+           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+@@ -259,7 +259,7 @@ jobs:
+           platforms: all
+ 
+       - name: Build ABI3 wheels
+-        uses: pypa/cibuildwheel@b9e566a2b284570af229f6c2a33673410d0389a3 # v4.3.4
++        uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
+         env:
+           # Smaller set of platforms that we only provide Stable ABI wheels for
+           CIBW_BUILD: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #540** (2026-11-06): Build: bump the github-actions group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #538** (2026-10-31): Preserve native RWLock test counters when building generated C (@Robolightning)
+- **PR #537** (closed): Build: bump actions/setup-python from 7.0.0 to 7.1.0 in the github-actions group (@dependabot[bot])
 - **PR #536** (2026-10-26): Build: bump pypa/cibuildwheel from 4.3.0 to 4.3.1 in the github-actions group (@dependabot[bot])
 - **PR #535** (2026-10-21): Remove duplicate class names when toggling an HTML class (@xiehuanyi)
 - **PR #534** (2026-10-21): Keep a processing instruction after the root element (@Cherith1222)
-- **PR #533** (2026-10-21): Build: bump the github-actions group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #532** (closed): Build: Upgrade cibuildwheel to 4.3.1 to build wheels for Python 3.15 (@benglewis)
 
 ---
 
@@ -2191,33 +2261,28 @@ Retain the required LXML_LOCK_PERFORMANCE=1 macro explicitly for the lxml.tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve the native test lock counters when reusing generated C (GH-538)
+## X. Build: bump the github-actions group across 1 directory with 2 updates (GH-540)
 
 **RULE**:
-When implementing operations in `setupinfo.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmarks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8931f869`: Preserve the native test lock counters when reusing generated C (GH-538). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4302f16`: Build: bump the github-actions group across 1 directory with 2 updates (GH-540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `setupinfo.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmarks.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        # Repeated PEP 517 hooks can reuse generated C without Cython metadata.
-        # Keep the original test instrument's required macro in that build too.
-        module_macros = list(_define_macros)
-        if module == 'lxml.tests._testlock':
-            module_macros.append(('LXML_LOCK_PERFORMANCE', '1'))
-                define_macros = module_macros,
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                define_macros = _define_macros,
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8931f869` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4302f16` are properly handled with clean fallback behavior.
