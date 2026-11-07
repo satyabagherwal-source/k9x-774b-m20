@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source**: github ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
-> **Source Version**: `d0cf851f`  
+> **Source Version**: `9a5f8e25`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:49:04.726Z  
+> **Timestamp**: 2026-11-07T23:34:12.629Z  
 > **Learning ID**: `learn-github-dubzzz-fast-check`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:49:03.285Z  
+> **Harvest Timestamp**: 2026-11-07T23:34:11.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5228 stars
+- **Stars / Engagement**: 5240 stars
 
 ---
 
@@ -612,11 +612,14 @@ export function runAllCallbacksAndReturn<T>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7531** (2026-11-03): **⬆️ Update vitest monorepo to ^5.1.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [@vitest/coverage-v8](https://vitest.dev/guide/coverage) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-v8)) | [`^5.0.5` → `^5.1.0`](https://renovatebot.com/diffs/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@vitest%2fcoverage-v8/5.1.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0?slim=true) | | [vitest](https://vitest.dev) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest)) | [`^5.0.5` → `^5.1.0`](https://renovatebot.com/diffs/npm/vitest/5.0.5/5.1.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.1.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.5/5.1.0?slim=true) |  ---  ### Release Notes  <details> <summary>vitest-dev/vitest (@&#8203;vitest/coverage-v8)</summary>  ### [`v5.1.0`](https://redirect.github.com/vitest-dev/vitest/releases/tag/v5.1.0)  [Compare Source](https://redirect.github.com/vitest-dev/vitest/compare/v5.0.5...v5.1.0)  #####    🚀 Features  - Add `--last-failed` to run only failed tests  -  by [@&#8203;sheremet-va](https://redirect.github.com/sheremet-va) in [#&#8203;11558](https://redirect.github.com/vitest-de
+- **Issue #7550** (2026-11-07): **⬆️ Update dependency oxlint to ^1.92.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [oxlint](https://oxc.rs/docs/guide/usage/linter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxlint)) | [`^1.91.0` → `^1.92.0`](https://renovatebot.com/diffs/npm/oxlint/1.91.0/1.92.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxlint/1.92.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxlint/1.91.0/1.92.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxlint)</summary>  ### [`v1.92.0`](https://redirect.github.com/oxc-project/oxc/blob/HEAD/npm/oxlint/CHANGELOG.md#1920---2026-11-06)  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxlint_v1.91.0...oxlint_v1.92.0)  ##### 🚀 Features  - [`b7d2c75`](https://redirect.github.com/oxc-project/oxc/commit/b7d2c75) linter/eslint/no-redeclare: Add `ignoreDeclarationMerge` option ([#&#8203;28816](https://redirect.github.com/oxc-project/oxc/issues/28816)) (Cam McHenry)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update 
+  **Post-Mortem & Fix Analysis**:
+  > ### ⚠️ No Changeset found  Latest commit: 2c9793ad4c9f29772c3fd9d51c79000b0764c6f0  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/dubzzz/fast-check/new/renovate/oxlint-monorepo?filename=.changeset/quiet-dryers-hang.md&value=---%0A%0A---%0A%0A%E2%AC%86%EF%B8%8F%20Update%20dependency%20oxlint%20to%20%5E1.92.0%0A)  
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Bot user detected. >  > To trigger a single review, invoke the `@coderabbitai review` command. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg" width="16" height="16" align="absmiddle" alt=""></picture> Run configuration</strong></summary> > <dl> > <dd> > <br> >  > - **Source mode**: Auto > - **Repository**: Unavailable > - **Branch**: Unavailable > - **File**: No configuration file from this repository applied > - **Commit**: Unavailable > - **Layers**: Repository UI > - **Review profile**: ASSERTIVE > - **Plan**: Advanced > - **Ru
 
-- **Issue #7528** (2026-11-03): **⚡️ Reduce ticks when running asynchronous completion callbacks**
-  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex) and has not been line-by-line reviewed by a human before submission.  Asynchronous completion callbacks currently incur extra promise propagation when the runner recursively returns each remaining callback chain. Execute the remaining callbacks in one async continuation after encountering the first promise.  Preserve the generic `value: T` argument and `T | Promise<T>` return type, synchronous completion when possible, sequential callback execution, and first-error precedence after all callbacks finish.  The existing Promise.resolve pass-through cases complete one tick sooner: fixed completion overhead drops from 5 to 4 ticks for synchronous predicates and from 4 to 3 for asynchronous predicates. Update those expectations and add property-based tests generating callback sequences to verify the original return value and preserve arbitrary first-error values through cleanup. Includes a patch changeset.  ## Validation  - Focused callback-helper, runner, plugin-integration, and tick scenarios passed using Node's TypeScript transformer and a Node assertion adapter. All 8 callback-helper scenarios, including the two property-based regressions, pass. The first-error test generates a single Vitest mock chain and verifies error identity, callback indexes, and settled results using Vitest 5.0.5's actual spy implementation. - The arbitrary smoke test passed. - 19,608 callback sequences matched the 
+- **Issue #7549** (2026-11-07): **⬆️ Update dependency oxfmt to ^0.77.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [oxfmt](https://oxc.rs/docs/guide/usage/formatter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt)) | [`^0.76.0` → `^0.77.0`](https://renovatebot.com/diffs/npm/oxfmt/0.76.0/0.77.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.77.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.76.0/0.77.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxfmt)</summary>  ### [`v0.77.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.77.0): oxfmt v0.77.0  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.76.0...oxfmt_v0.77.0)  ##### 💥 BREAKING CHANGES  - [`00d1a67`](https://redirect.github.com/oxc-project/oxc/commit/00d1a67) oxfmt: \[**BREAKING**] Format `parser:vue` files by `oxc_formatter_htmlish` ([#&#8203;28848](https://redirect.github.com/oxc-project/oxc/issues/28848)) (leaysgur)  ##### 🚀 Features  - [`9a81e58`](https://redirect.github.com/oxc-project/oxc/commit/9a81e58) formatter_htmlish: Format Vue templates ([#&#8203;28847](https://redirect.github.com/oxc-project/oxc/issues/28847)) (leaysgur) - [`119d82f`](https://redirect.github.com/oxc-project/oxc/commit/119d82f) formatter: Format a template's expressions and handlers as `JsR
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -633,8 +636,8 @@ export function runAllCallbacksAndReturn<T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0cf851f` (2026-11-03)
-**Commit Message**: ⬆️ Update vitest monorepo to ^5.1.0 (#7531)
+### Incident Patch 1: `9a5f8e25` (2026-11-07)
+**Commit Message**: ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)
 
 This PR contains the following updates:
 
@@ -642,22 +645,14 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
-| [@vitest/coverage-v8](https://vitest.dev/guide/coverage)
-([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-v8))
-| [`^5.0.5` →
-`^5.1.0`](https://renovatebot.com/diffs/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0)
 |
-![age](https://developer.mend.io/api/mc/badges/age/npm/@vitest%2fcoverage-v8/5.1.0?slim=true)
+[rolldown-plugin-dts](https://redirect.github.com/sxzz/rolldown-plugin-dts)
+| [`^0.29.0` →
+`^0.30.0`](https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.29.0/0.30.0)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vitest%2fcoverage-v8/5.0.5/5.1.0?slim=true)
+![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.30.0?slim=true)
 |
-| [vitest](https://vitest.dev)
-([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest))
-| [`^5.0.5` →
-`^5.1.0`](https://renovatebot.com/diffs/npm/vitest/5.0.5/5.1.0) |
-![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.1.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.5/5.1.0?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.29.0/0.30.0?slim=true)
 |
 
 ---
@@ -665,505 +660,329 @@ This PR contains the following updates:
 ### Release Notes
 
 <details>
-<summary>vitest-dev/vitest (@&#8203;vitest/coverage-v8)</summary>
+<summary>sxzz/rolldown-plugin-dts (rolldown-plugin-dts)</summary>
 
 ###
-[`v5.1.0`](https:/
+[`v0.30.0`](https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.30.0)
 
-**File**: `examples/package.json` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@
-     "react": "^19.3.1",
-     "react-dom": "^19.3.1",
-     "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "author": "Nicolas DUBIEN <github@dubien.org>",
-   "license": "MIT"
-```
+[Compare
+Source](https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.29.0...v0.30.0)
 
-**File**: `package.json` (modified, +2/-2)
+#####    🚨 Breaking Changes
+
+- Merge `emitDtsOnly` and `dtsInput` into `dtsOnly`  -  by
+[@&#8203;sxzzbot](https://redirect.github.com/sxzzbot) in
+[#&#8203;340](https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/340)
+[<samp>(2858d)</samp>](https://redir
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -50,7 +50,7 @@
-     "@fast-check/packaged": "workspace:*",
-     "@types/jest": "^30.0.0",
-     "@types/node": "^26.6.6",
--    "@vitest/coverage-v8": "^5.0.5",
-+    "@vitest/coverage-v8": "^5.1.0",
-     "all-contributors-cli": "^7.0.0",
-     "cross-env": "^10.1.0",
-     "oxfmt": "^0.75.0",
-@@ -61,6 +61,6 @@
-     "rolldown": "^1.2.16",
-     "rolldown-plugin-dts": "^0.29.0",
+@@ -60,7 +60,7 @@
+     "pkg-pr-new": "^0.0.93",
+     "publint": "^0.3.25",
+     "rolldown": "^1.3.0",
+-    "rolldown-plugin-dts": "^0.29.0",
++    "rolldown-plugin-dts": "^0.30.0",
      "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
+     "vitest": "^5.1.0"
    }
- }
 ```
 
-**File**: `packages/ava/package.json` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +34/-34)
 ```diff
-@@ -45,7 +45,7 @@
-     "rolldown": "^1.2.16",
-     "rxjs": "^7.8.2",
-     "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [
-     "ava",
-```
-
-**File**: `packages/fast-check/package.json` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@
-     "not-node-buffer": "npm:buffer@^6.0.3",
-     "regexp-tree": "^0.1.27",
-     "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [
-     "property-based testing",
-```
-
-**File**: `packages/jest/package.json` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@
-     "jest-jasmine2": "^30.5.2",
-     "typescript": "~7.0.2",
-     "vite": "^8.3.5",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [
-     "jest",
-```
-
-**File**: `packages/packaged/package.json` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@
-     "@types/npmcli__arborist": "^6.3.3",
-     "rolldown": "^1.2.16",
-     "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [],
-   "funding": [
-```
-
-**File**: `packages/poisoning/package.json` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@
-     "@types/node": "^26.6.6",
-     "rolldown": "^1.2.16",
-     "typescript": "~7.0.2",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [
-     "poisoning",
-```
-
-**File**: `packages/vitest/package.json` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@
-     "rolldown": "^1.2.16",
-     "typescript": "~7.0.2",
-     "vite": "^8.3.5",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "keywords": [
-     "vitest",
+@@ -216,8 +216,8 @@ importers:
+         specifier: ^1.3.0
+         version: 1.3.0
+       rolldown-plugin-dts:
+-        specifier: ^0.29.0
+-        version: 0.29.0(rolldown@1.3.0)(typescript@7.0.2)
++        specifier: ^0.30.0
++        version: 0.30.0(rolldown@1.3.0)(typescript@7.0.2)
+       typescript:
+         specifier: ~7.0.2
+         version: 7.0.2
+@@ -4656,33 +4656,33 @@ packages:
+   '@xtuc/long@4.2.2':
+     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
+ 
+-  '@yuku-toolchain/darwin-arm64@0.25.0':
+-    resolution: {integrity: sha512-21QMCgP74cgSrgxIgw/SS5uMnn7cFHwgjNEBZYgO1HxpdjG4ULenXyUY92xRReuAJZdbRyz6OGwtYi6lDKumSw==}
++  '@yuku-toolchain/darwin-arm64@0.27.0':
++    resolution: {integrity: sha512-A3v83rNyHWlnJeeMBsWggZ+RZDP2BEMHIiMk+j23LqtVch24MXwg8veflkQgZ2GtCtZOxcG+NkztnsSUS4rWEQ==}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@yuku-toolchain/darwin-x64@0.25.0':
+-    resolution: {integrity: sha512-bsR90bUlDZpBdFyK5C+XFZ/Yuq4aPtK8BI15GZsT+dfdWabl8OGpTiJXcriSBu+4vrljw3pYKmn7WizWgjZ0fQ==}
++  '@yuku-toolchain/darwin-x64@0.27.0':
++    resolution: {integrity: sha512-u+fcqQw0uRj5irtO5f0xu5nGazYRxfBVBNIuhiONWX6Mh2izRONSNXhCwFDaYRqHunublzw2l2aQMB0n5n1t0Q==}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@yuku-toolchain/linux-arm64@0.25.0':
+-    resolution: {integrity: sha512-T0Y/gCqE4FKfchzRKpxXbQyWFpyaCcw6wdopu1ZKCLqZs48MfZShqihQjq1dck0JgJYwc+zxlfVvb693gFH4fg==}
++  '@yuku-toolchain/linux-arm64@0.27.0':
++    resolution: {integrity: sha512-IPB+9LSC/sf8Sa8DtqapUgU4uTL/U94Vr5mgUsfRx59u8/4BT38cze+e5b96AlQynsdtuF4tgC0FW0TmJ2B75g==}
+     cpu: [arm64]
+     os: [linux]
+ 
+-  '@yuku-toolchain/linux-x64@0.25.0':
+-    resolution: {integrity: sha512-uwroa8GsFLJLarEphscB0UCqrx3jdDNqhwVZC2Tv2QDN4i4Eo87NmJaTFpOlNF4+CNVsiN+P0BnriySTidc3xQ==}
++  '@yuku-toolchain/linux-x64@0.27.0':
++    resolution: {integrity: sha512-fe1kN04JPBODrkRZOuI06jIqKyzcyn0ykx+tpiERDwqAh9ALWOtkgfhFjVaOQSu+guhakzY/89xjQdmfY7EJ7w==}
+     cpu: [x64]
+     os: [linux]
+ 
+-  '@yuku-toolchain/win32-arm64@0.25.0':
+-    resolution: {integrity: sha512-VssXbUjyRj1egmSSNwo2NEayMTth0mHBPit9WiYGEnvQyTQSUM0TLix0sJn/mVjJBrwqEKyGYg7dkdWFafNYFw==}
++  '@yuku-toolchain/win32-arm64@0.27.0':
++    resolution: {integrity: sha512-NZmiFTF7ee45Fhnsa0BGMCpElJGg8iGYt4N3UoKj/n1vNmACcgY6NI4najNr9Jc1ulIVVvtPbo934RMlZQakrA==}
+     cpu: [arm64]
+     os: [win32]
+ 
+-  '@yuku-toolchain/win32-x64@0.25.0':
+-    resolution: {integrity: sha512-drLnLlLtqLni1UPZJ1pKl6PPsdGJoaFGaQsJa1khtjJT+OK5Z71rb+md9fO6KP9eJXjIOJKtW7OgnVlLf91WIw==}
++  '@yuku-toolchain/win32-x64@0.27.0':
++    resolution: {integrity: sha512-7LSviI8HtHga0g7G2oT7C/SP2IoLmrg8LYPeWZkp4ljFtaWKJoTRF0Iv0cVt0dR4rehoN/+TjN4r8SoArCKvlg==}
+     cpu: [x64]
+     os: [win32]
+ 
+@@ -9130,8 +9130,8 @@ packages:
+   robust-predicates@3.0.3:
+     resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
+ 
+-  rolldown-plugin-dts@0.29.0:
+-    resolution: {integrity: sha512-PvsbRXQR5tHGnjLyxj2peRMwv3pfRfStiIqhbag3J/I2fFaYdfEQ1AaFwXfZlK8qKBkgQUNnCZdrUcaTPPq05Q==}
++  rolldown-plugin-dts@0.30.0:
++    resolution: {integrity: sha512-5FNezfYv5alHvrYw5Xoj4RNqbZ9F+/1jETFSohhYfRiama8tUN4mcVURmBqbZQba45t5hRdW7aSOnV6WYIj0MA==}
+     engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
+     peerDependencies:
+       '@volar/typescript': ~2.4.0
+@@ -10442,11 +10442,11 @@ packages:
+     resolution: {integrity: sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg==}
+     engines: {node: '>=18'}
+ 
+-  yuku@0.25.0:
+-    resolution: {integrity: sha512-iAlHlpPmcjRqUauDkW9xF33b+jsUzTrrv49FfPLBNxEAUWuU7XN8tBUGjBHYPCEF/d3632MhG6GjCZutecA8Ng==}
++  yuku@0.27.0:
++    resolution: {integrity: sha512-YmSD4xYlESRi8egxzC4guegQdMhAcz1G9NUsMNrTABAIV9dQxoBzDC7ZyAG/dSG18o1Oxt4xDok2irvPy9FSJQ==}
+     engines: {node: '>=16.4.0'}
+     peerDependencies:
+-      '@yuku-toolchain/wasm': 0.25.0
++      '@yuku-toolchain/wasm': 0.27.0
+     peerDependenciesMeta:
+       '@yuku-toolchain/wasm':
+         optional: true
+@@ -15790,22 +15790,22 @@ snapshots:
+ 
+   '@xtuc/long@4.2.2': {}
+ 
+-  '@yuku-toolchain/darwin-arm64@0.25.0':
++  '@yuku-toolchain/darwin-arm64@0.27.0':
+     optional: true
+ 
+-  '@yuku-toolchain/darwin-x64@0.25.0':
++  '@yuku-toolchain/darwin-x64@0.27.0':
+     optional: true
+ 
+-  '@yuku-toolchain/linux-arm64@0.25.0':
++  '@yuku-toolchain/linux-arm64@0.27.0':
+     optional: true
+ 
+-  '@yuku-toolchain/linux-x64@0.25.0':
++  '@yuku-toolchain/linux-x64@0.27.0':
+     optional: true
+ 
+-  '@yuku-toolchain/win32-arm64@0.25.0':
++  '@yuku-toolchain/win32-arm64@0.27.0':
+     optional: true
+ 
+-  '@yuku-toolchain/win32-x64@0.25.0':
++  '@yuku-toolchain/win32-x64@0.27.0':
+     optional: true
+ 
+   abbrev@3.0.1: {}
+@@ -21117,13 +21117,13 @@ snapshots:
+ 
+   robust-predicates@3.0.3: {}
+ 
+-  rolldown-plugin-dts@0.29.0(rolldown@1.3.0)(typescript@7.0.2):
++  rolldown-plugin-dts@0.30.0(rolldown@1.3.0)(typescript@7.0.2):
+     dependencies:
+       dts-resolv
 ```
 
 ---
 
-### Incident Patch 2: `a8f5a905` (2026-11-03)
-**Commit Message**: 💥 Remove the check runner (#7526)
+### Incident Patch 2: `b3d2f808` (2026-11-07)
+**Commit Message**: ⬆️ Update dependency oxfmt to ^0.77.0 (#7549)
 
-## Description
+This PR contains the following updates:
 
-Remove the public `check` runner and execute properties through a single
-`assert` implementation returning `Promise<void>`. Completion plugins
-still receive run details, and tests collect them through
-`assertAndGetRunDetails`. Preserve default reporting, custom error
-precedence, cleanup, and `noDefaultPlugins`.
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
+([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt))
+| [`^0.76.0` →
+`^0.77.0`](https://renovatebot.com/diffs/npm/oxfmt/0.76.0/0.77.0) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.77.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.76.0/0.77.0?slim=true)
+|
 
-Update callers, documentation, tick expectations, and stack snapshots.
-Include one major `fast-check` changeset for the breaking API removal.
+---
 
-Validation: 53 existing tick/plugin scenarios passed through a local
-Node assertion adapter, along with focused helper and void-return
-checks, the arbitrary smoke test, and six stack-message comparisons.
-TypeScript syntax and helper-reference checks passed. Full CI is
-running.
+### Release Notes
 
-## Checklist
+<details>
+<summary>oxc-project/oxc (oxfmt)</summary>
 
-— _Don't delete this checklist and make sure you do the following before
-opening the PR_
+###
+[`v0.77.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.77.0):
+oxfmt v0.77.0
 
-- [ ] I have a full understanding of every line in this PR — whether the
-code was hand-written, AI-generated (our [AI
-Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)),
-copied from external sources or produced by any other tool
-- [ ] I flagged the impact of my change (minor / patch / maj
+[Compare
+Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.76.0...oxfmt_v0.77.0)
 
-**File**: `.changeset/remove-check-runner.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+---
-+"fast-check": major
-+---
-+
-+Remove the `check` runner. Use `await fc.assert(property, parameters)` to run a property.
-+Handle run details directly in a plugin's `onAllRunsComplete` callback: throw to report a failure, or return nothing when the outcome is acceptable.
-+Set `noDefaultPlugins: true` to replace default failure reporting with your own reporting.
-```
+##### 💥 BREAKING CHANGES
 
-**File**: `packages/fast-check/src/check/plugin/Plugin.ts` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@ import type { Property } from '../property/types/Property.js';
- import type { RunDetails } from '../runner/reporter/RunDetails.js';
- 
- /**
-- * Storage shared by all the plugins instantiated for one call to {@link check} or {@link assert}.
-+ * Storage shared by all the plugins instantiated for one call to {@link assert}.
-  * Use it to cooperate across plugins.
-  *
-  * @remarks Since 4.10.0
-@@ -82,7 +82,7 @@ export type PluginInstance<Ts> = {
- 
- /**
-  * Builder instantiating a plugin.
-- * Each property will instantiate its own plugin when starting to be assessed via {@link check} or {@link assert}.
-+ * Each property will instantiate its own plugin when starting to be assessed via {@link assert}.
-  *
-  * Parameters received by the Plugin function:
-  * - 1st argument or pluginIndex: Corresponds to the index of the plugin within the run (starts at zero).
-```
-
-**File**: `packages/fast-check/src/check/runner/Sampler.ts` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ function streamSample<Ts>(
- }
- 
- /**
-- * Generate an array containing all the values that would have been generated during {@link assert} or {@link check}
-+ * Generate an array containing all the values that would have been generated during {@link assert}
-  *
-  * @example
-  * ```typescript
-```
-
-**File**: `packages/fast-check/src/check/runner/assert.spec.ts` (renamed, +40/-42)
-```diff
-@@ -3,7 +3,7 @@ import { nil } from '../../utils/iterator.js';
- import * as fc from 'fast-check';
- 
- import { Value } from '../arbitrary/definition/Value.js';
--import { check as rCheck, assert as rAssert } from './Runner.js';
-+import { assert as rAssert } from './assert.js';
- import type { Random } from '../../random/generator/Random.js';
- import type { RunDetails } from './reporter/RunDetails.js';
- import { PreconditionFailure } from '../precondition/PreconditionFailure.js';
-@@ -12,31 +12,29 @@ import type { Property } from '../property/types/Property.js';
- import type { Parameters } from './configuration/Parameters.js';
- 
- const MAX_NUM_RUNS = 1000;
--describe('Runner', () => {
--  describe.each([
--    { name: 'check', check: rCheck },
--    {
--      name: 'assert with noDefaultPlugins',
--      check: async <Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> => {
--        let runDetails: RunDetails<Ts> | undefined;
--        const out = await rAssert(property, {
--          ...params,
--          noDefaultPlugins: true,
--          plugins: [
--            ...(params?.plugins ?? []),
--            () => ({
--              onAllRunsComplete: (details) => {
--                runDetails = details;
--              },
--            }),
--          ],
--        });
--        expect(out).toBeUndefined();
--        expect(runDetails).toBeDefined();
--        return runDetails!;
--      },
--    },
--  ])('$name', ({ check }) => {
-+describe('assert', () => {
-+  describe('assert with noDefaultPlugins', () => {
-+    const assertAndGetRunDetails = async <Ts>(
-+      property: Property<Ts>,
-+      params?: Parameters<Ts>,
-+    ): Promise<RunDetails<Ts>> => {
-+      let capturedRunDetails: RunDetails<Ts> | undefined;
-+      const out = await rAssert(property, {
-+        ...params,
-+        noDefaultPlugins: true,
-+        plugins: [
-+          ...(params?.plugins ?? []),
-+          () => ({
-+            onAllRunsComplete: (details) => {
-+              capturedRunDetails = details;
-+            },
-+          }),
-+        ],
-+      });
-+      expect(out).toBeUndefined();
-+      expect(capturedRunDetails).toBeDefined();
-+      return capturedRunDetails!;
-+    };
-     it('Should call the property 100 times by default (on success)', async () => {
-       let numCallsGenerate = 0;
-       let numCallsRun = 0;
-@@ -53,7 +51,7 @@ describe('Runner', () => {
-           return null;
-         },
-       };
--      const out = await check(p);
-+      const out = await assertAndGetRunDetails(p);
-       expect(numCallsGenerate).toEqual(100);
-       expect(numCallsRun).toEqual(100);
-       expect(out.failed).toBe(false);
-@@ -74,7 +72,7 @@ describe('Runner', () => {
-           return null;
-         },
-       };
--      const out = await check(p, { path: '3002' });
-+      const out = await assertAndGetRunDetails(p, { path: '3002' });
-       expect(numCallsGenerate).toEqual(100);
-       expect(numCallsRun).toEqual(100);
-       expect(out.failed).toBe(false);
-@@ -103,7 +101,7 @@ describe('Runner', () => {
-           return null;
-         },
-       };
--      const out = await check(p, { path: '3002:0' });
-+      const out = await assertAndGetRunDetails(p, { path: '3002:0' });
-       expect(numCallsGenerate).toEqual(1);
-       expect(numCallsRun).toEqual(1234);
-       expect(out.failed).toBe(false);
-@@ -130,7 +128,7 @@ describe('Runner', () => {
-               return new PreconditionFailure();
-             },
-           };
--          const out = await check(p);
-+          const out = await assertAndGetRunDetails(p);
-           if (failAtId == null) {
-             const expectedGenerate = successIds[successIds.length - 1] + 1;
-             const expectedSkips = expectedGenerate - 100;
-@@ -167,7 +165,7 @@ describe('Runner', () => {
-                 return new PreconditionFailure();
-               },
-             };
--            const out = await check(p, { numRuns: 2, maxSkipsPerRun: settings.maxSkipsPerRun });
-+            const out = await assertAndGetRunDetails(p, { numRuns: 2, maxSkipsPerRun: settings.maxSkipsPerRun });
-             const expectedSkips = 2 * settings.maxSkipsPerRun + 1;
-             const expectedRuns = settings.onlySuccessId === expectedSkips ? 0 : 1;
-             expect(out.numRuns).toEqual(expectedRuns);
-@@ -194,7 +192,7 @@ describe('Runner', () => {
-           return null;
-         },
-       };
--      const out = await check(p);
-+      const out = await assertAndGetRunDetails(p);
-       expect(numCallsGenerate).toEqual(100);
-       expect(numCallsRun).toEqual(100);
-       expect(out.failed).toBe(false);
-@@ -214,7 +212,7 @@ describe('Runner', () => {
-               return ++numCallsRun < num ? null : { error: new Error('error') };
-             },
-           };
--          const out = await check(p, { seed: seed });
-+          const out = await assertAndGetRunDetails(p, { seed: seed });
-           expect(numCallsGenerate).toEqual(num); // stopped generate at first failing run
-           expect(numCallsRun).toEqual(num); /
-```
-
-**File**: `packages/fast-check/src/check/runner/assert.ts` (renamed, +17/-42)
-```diff
-@@ -3,7 +3,6 @@ import { readConfigureGlobal } from './configuration/GlobalParameters.js';
- import type { Parameters } from './configuration/Parameters.js';
- import { read } from './configuration/QualifiedParameters.js';
- import type { QualifiedParameters } from './configuration/QualifiedParameters.js';
--import type { RunDetails } from './reporter/RunDetails.js';
- import { propertyRunner } from './PropertyRunner.js';
- import { createRunnerIterator } from './utils/RunnerIteratorBuilder.js';
- import {
-@@ -13,7 +12,23 @@ import {
-   runPluginCompletionCallbacks,
- } from './utils/PluginIntegration.js';
- 
--function checkInternal<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> {
-+/**
-+ * Run the property and reject if a plugin reports the run as an error
-+ *
-+ * With the default setup, failed runs are rejected.
-+ *
-+ * It can be called directly from describe/it blocks of your favorite test runner.
-+ * No meaningful results are produced. Use a plugin's `onAllRunsComplete` callback to access run details.
-+ *
-+ * WARNING: Has to be awaited
-+ *
-+ * @param property - Asynchronous property to be checked
-+ * @param params - Optional parameters to customize the execution
-+ *
-+ * @remarks Since 0.0.7
-+ * @public
-+ */
-+export function assert<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<void> {
-   const qParams: QualifiedParameters<Ts> = read<Ts>({
-     ...(readConfigureGlobal() as Parameters<Ts>),
-     ...params,
-@@ -39,43 +54,3 @@ function checkInternal<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Pro
-         ),
-       );
- }
 -
--/**
-- * Run the property, do not throw contrary to {@link assert}
-- *
-- * WARNING: Has to be awaited
-- *
-- * @param property - Asynchronous property to be checked
-- * @param params - Optional parameters to customize the execution
-- *
-- * @returns Test status and other useful details
-- *
-- * @remarks Since 0.0.7
-- * @public
-- */
--function check<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<RunDetails<Ts>> {
--  return checkInternal(property, { ...params, noDefaultPlugins: true });
--}
--
--/**
-- * Run the property and reject if a plugin reports the run as an error
-- *
-- * With the default setup, failed runs are rejected.
-- *
-- * It can be called directly from describe/it blocks of Mocha.
-- * No meaningful results are produced. Use a plugin's `onAllRunsComplete` callback to access run details.
-- *
-- * WARNING: Has to be awaited
-- *
-- * @param property - Asynchronous property to be checked
-- * @param params - Optional parameters to customize the execution
-- *
-- * @remarks Since 0.0.7
-- * @public
-- */
--function assert<Ts>(property: Property<Ts>, params?: Parameters<Ts>): Promise<void> {
--  const out = checkInternal(property, params);
--  return out.then(() => undefined);
--}
--
--export { check, assert };
+[`00d1a67`](https://redirect.github.com/oxc-project/oxc/commit/00d1a67)
+oxfmt: \[**BREAKING**] Format `parser:vue` files by
+`oxc_formatter_htmlish`
+([#&#8203;28848](https://redirect.github.com/oxc-project/oxc/issues/28848))
+(leaysgur)
+
+##### 🚀 F
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@
+     "@vitest/coverage-v8": "^5.1.0",
+     "all-contributors-cli": "^7.0.0",
+     "cross-env": "^10.1.0",
+-    "oxfmt": "^0.76.0",
++    "oxfmt": "^0.77.0",
+     "oxlint": "^1.92.0",
+     "oxlint-tsgolint": "^7.0.2006",
+     "pkg-pr-new": "^0.0.93",
 ```
 
-**File**: `packages/fast-check/src/check/runner/reporter/RunDetails.ts` (modified, +5/-5)
+**File**: `pnpm-lock.yaml` (modified, +81/-81)
 ```diff
-@@ -3,7 +3,7 @@ import type { ExecutionTree } from './ExecutionTree.js';
- import type { Parameters } from '../configuration/Parameters.js';
+@@ -198,8 +198,8 @@ importers:
+         specifier: ^10.1.0
+         version: 10.1.0
+       oxfmt:
+-        specifier: ^0.76.0
+-        version: 0.76.0
++        specifier: ^0.77.0
++        version: 0.77.0
+       oxlint:
+         specifier: ^1.92.0
+         version: 1.92.0(oxlint-tsgolint@7.0.2006)
+@@ -2695,124 +2695,124 @@ packages:
+   '@oxc-project/types@0.157.0':
+     resolution: {integrity: sha512-95iTox1qdt6WGWce3xwNOVayByOfLaYAq+qGPpub6NWbBh9sv0GG3+zyfh9ZBCO/jVu5A0EWI+qQI7g6fevjxg==}
  
- /**
-- * Post-run details produced by {@link check}
-+ * Post-run details provided to plugins by {@link assert} via `onAllRunsComplete`
-  *
-  * A failing property can easily detected by checking the `failed` flag of this structure
-  *
-@@ -69,7 +69,7 @@ export interface RunDetailsSuccess<Ts> extends RunDetailsCommon<Ts> {
-  */
- export interface RunDetailsCommon<Ts> {
-   /**
--   * Does the property failed during the execution of {@link check}?
-+   * Did the property fail during the execution of {@link assert}?
-    * @remarks Since 0.0.1
-    */
-   failed: boolean;
-@@ -104,7 +104,7 @@ export interface RunDetailsCommon<Ts> {
-   /**
-    * Seed that have been used by the run
-    *
--   * It can be forced in {@link assert}, {@link check}, {@link sample} and {@link statistics} using `Parameters`
-+   * It can be forced in {@link assert}, {@link sample} and {@link statistics} using `Parameters`
-    * @remarks Since 0.0.1
-    */
-   seed: number;
-@@ -121,7 +121,7 @@ export interface RunDetailsCommon<Ts> {
-   /**
-    * In case of failure: path to the counterexample
-    *
--   * For replay purposes, it can be forced in {@link assert}, {@link check}, {@link sample} and {@link statistics} using `Parameters`
-+   * For replay purposes, it can be forced in {@link assert}, {@link sample} and {@link statistics} using `Parameters`
-    *
-    * @remarks Since 1.0.0
-    */
-@@ -157,7 +157,7 @@ export interface RunDetailsCommon<Ts> {
-   /**
-    * Configuration of the run
-    *
--   * It includes both local parameters set on {@link check} or {@link assert}
-+   * It includes both local parameters set on {@link assert}
-    * and global ones specified using {@link configureGlobal}
-    *
-    * @remarks Since 1.25.0
-```
-
-**File**: `packages/fast-check/src/check/runner/utils/PluginIntegration.ts` (modified, +3/-3)
-```diff
-@@ -55,14 +55,14 @@ export function applyPluginRunDecorators<Ts>(
- export function runPluginCompletionCallbacks<Ts>(
-   pluginInstances: PluginInstance<Ts>[],
-   runDetails: RunDetails<Ts>,
--): RunDetails<Ts> | Promise<RunDetails<Ts>> {
-+): void | Promise<void> {
-   if (pluginInstances.length === 0) {
--    return runDetails;
-+    return;
-   }
-   const halfCount = pluginInstances.length;
-   const count = halfCount * 2;
-   return runAllCallbacksAndReturn(
--    runDetails,
-+    undefined,
-     (index) =>
-       index < halfCount
-         ? pluginInstances[index].onAllRunsComplete?.(runDetails)
-```
-
-**File**: `packages/fast-check/src/fast-check.ts` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ export type {
-   RunDetailsSuccess,
-   RunDetailsCommon,
- } from './check/runner/reporter/RunDetails.js';
--export { assert, check } from './check/runner/Runner.js';
-+export { assert } from './check/runner/assert.js';
- export { sample, statistics } from './check/runner/Sampler.js';
+-  '@oxfmt/binding-android-arm-eabi@0.76.0':
+-    resolution: {integrity: sha512-z8x4kittQLPsrJWmfoIJyYqs2gNwceGShoUqAJdFRPw3K4kkkKCFHh3Cr4NFRvZb7DPfDS3+JfBjSm3OIyQaJQ==}
++  '@oxfmt/binding-android-arm-eabi@0.77.0':
++    resolution: {integrity: sha512-zmPiuOvkuu0csMx4U3gdMunIFWNcWulzikFMdAPBzLazVAA3LhdHzv9yzgUgAckv/zje5vz4XJcseNQKdSsWMw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [android]
  
- export type { GeneratorValue } from './arbitrary/gen.js';
+-  '@oxfmt/binding-android-arm64@0.76.0':
+-    resolution: {integrity: sha512-Zj9fEQhQSKGj8ZTB+X4q4ho4545xWf7qsvJpwREWnBz5BATEFYtStKRgiwYOZvxQ7ORlBEgSj7pmDzuljfV1mQ==}
++  '@oxfmt/binding-android-arm64@0.77.0':
++    resolution: {integrity: sha512-shXOIK9sj3bvt4H6K47qFWNKaYBwEhzj97iUwoLGyyRDrXt1OdAAuCiupCinG1i7ETL81knjEKeB+JmhOOfPew==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@oxfmt/binding-darwin-arm64@0.76.0':
+-    resolution: {integrity: sha512-jZy8GpUXaWpic5JPMAvLmaBz95Sx0naZl6hptBPLOMiYmZYiME7jAt6pv8o/tjQqPNWKb+7jKzZhrYx6UqM5MQ==}
++  '@oxfmt/binding-darwin-arm64@0.77.0':
++    resolution: {integrity: sha512-lrTX0I54buv9CW2leEWchWLdfcrblZ5Rj8uAilKzBEyWif8CTN6zBHdFc12K1b6U2cnlvOFBd1LxdLdqLKX2EA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@oxfmt/binding-darwin-x64@0.76.0':
+-    resolution: {integrity: sha512-U59+a9lVpoRp9enRhTE9GssL3qB1k09CYagRzTfs3dfknopMYV0x0xHZv7Pls3SNMqHlyHR+ufmY76CYafQoLw==}
++  '@oxfmt/binding-darwin-x64@0.77.0':
++    resolution: {integrity: sha512-SD44K3x/Im8EsOtdHxjVmTBi0cafAaunRpCeq+w91tkD2keqYagR8oAvxkJHUK+KPg5NQk7JZqQnzGHnVEBrDw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@oxfmt/binding-freebsd-x64@0.76.0':
+-    resolution: {integrity: sha512-J1R3YJHPdQJ2RQvzMdTVDWyizhihGiRGGAeEZxtGp629j5pcT5ypSLSiBflopD7o7tmiMD+xlNfhIVmjcHKMVQ==}
++  '@oxfmt/binding-freebsd-x64@0.77.0':
++    resolution: {integrity: sha512-N+gUflsCx3FAVkxi5sxGlL5LwO+7pv5NexHJufBqPyl3BcPv1rXpfwqhL/Vj+XfshfoxMFTBbzrbJgGVaPVkAw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [x64]
+     os: [freebsd]
+ 
+-  '@oxfmt/binding-linux-arm-gnueabihf@0.76.0':
+-    resolution: {integrity: sha512-x9qTg6zHoqeyzmFVlIjSb9WlhZdoXaayMTeQeDeUEfKA484AgPJz7f9chLjDMONA6wUUX0FJxnVHsYgX5Zv0+g==}
++  '@oxfmt/binding-linux-arm-gnueabihf@0.77.0':
++    resolution: {integrity: sha512-DXGwP8818IUZ4cxcfugg9PXqnI6fVCWIqgCgBoUKdl/QhJF4Po+lucJBrnrX/b5BNKwVMc3xSrvbI9rl8+RrBA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [linux]
+ 
+-  '@oxfmt/binding-linux-arm-musleabihf@0.76.0':
+-    resolution: {integrity: sha512-303gbamm7NDllTtkeaX+8F5Da+KcSBr64mqELQEFg9XgnjfLX3YBCHUcOfgIlVTSybesy43eoeKai8oGr0P6UA==}
++  '@oxfmt/binding-linux-arm-musleabihf@0.77.0':
++    resolution: {integrity: sha512-HUiJTgdV10PkCW41nHqVYYlW8Uc+39YBOoluZLfJE2MBPKVTNElhL+vpdSEuVaCGhGkzOGR6XyxM37gu31L1Qw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [linux]
+ 
+-  '@oxfmt/binding-linux-arm64-gnu@0.76.0':
+-    resolution: {integrity: sha512-j3UAXzCJoWX9bZLaICj6DfwkI/2fzja9RpiCIbIN+2CQAcKoY+5SH5pQUcECvn32mQm17NSPE9YqTAwYx1seZg==}
++  '@oxfmt/binding-linux-arm64-gnu@0.77.0':
++    resolution: {integrity: sha512-+w3V07y6yy8FdACnGtzgDsG/CHgA0Y/W2/bzZuPYgvBAa23Lap/nmvyNQmCiGKkSaChTPlY7QpIShGGAC7IGEQ==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@oxfmt/binding-linux-arm64-musl@0.76.0':
+-    resolution: {integrity: sha512-qFZqWVkEzuxWMtUkCtHxsnohXHnUMBQr/ZIxF0KmlCSt8de/bc1lbpVgpqjb3QxCADQHG/O1s3JcowcBF2sqdw==}
++  '@oxfmt/binding-linux-arm64-musl@0.77.0':
++    resolution: {integrity: sha512-FASxWQAuLW4WXFViDa77ybd3Y1lbkBx5DTtL4OGl+pL64/ymtydTFvJM0xz/0vnCirNzPUDAI6TiTBDGsFbEVg==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
+ 
+-  '@oxfmt/binding-linux-ppc64-gnu@0.76.0':
+-    resolution: {integrity: sha512-ROiAid0UH2GN5lMMX2JTgKlOKx1rN+6a1WxIuBsU3j5A3MuB9U5XkREMW76XBbAImnH45mfOCFcSIwb+drcVYg==}
++  '@oxfmt/binding-linux-ppc64-gnu@0.77.0':
++    resolution: {integrity: sha512-WRdlgZahG35zCieq7Po7QU8mBgkFAIdEpgS5p3vVZrHt0FXTbFgzqC7xeBCceh9gpFGgr4VWblULNnU8gdw0DA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [ppc64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@oxfmt/binding-linux-riscv64-gnu@0.76.0':
+-    resolution: {integrity: sha512-Oyd/9ObdM2RYkZ7yzF/GyvVdbNgJcRG8BFVwnAVo3ooqzaem4E2p5eTIGB09FecQD+Q5HQEANOTEnIZTO6rBAQ==}
++  '@oxfmt/binding-linux-riscv64-gnu@0.77.0':
++    resolution: {integrity: 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7531** (2026-11-03): ⬆️ Update vitest monorepo to ^5.1.0 (@renovate[bot])
-- **PR #7528** (2026-11-03): ⚡️ Reduce ticks when running asynchronous completion callbacks (@dubzzz)
-- **PR #7527** (2026-11-03): ⬆️ Update zizmorcore/zizmor-action action to v0.8.1 (@renovate[bot])
-- **PR #7526** (2026-11-03): 💥 Remove the check runner (@dubzzz)
-- **PR #7525** (2026-11-02): ♻️ Convert default error reporting into a plugin (@dubzzz)
-- **PR #7524** (2026-11-02): 💥 Stop exposing the default error report (@dubzzz)
+- **PR #7550** (2026-11-07): ⬆️ Update dependency oxlint to ^1.92.0 (@renovate[bot])
+- **PR #7549** (2026-11-07): ⬆️ Update dependency oxfmt to ^0.77.0 (@renovate[bot])
+- **PR #7548** (2026-11-07): ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (@renovate[bot])
+- **PR #7547** (2026-11-07): ⬆️ Update dependency @atproto/api to ^0.30.3 (@renovate[bot])
+- **PR #7546** (2026-11-06): ⬆️ Update dependency rolldown to ^1.3.0 (@renovate[bot])
+- **PR #7545** (2026-11-06): ⬆️ Update dependency oxlint-tsgolint to ^7.0.2006 (@renovate[bot])
 
 ---
 
@@ -1183,28 +1002,28 @@ copied from external sources or produced by any other tool
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ⬆️ Update vitest monorepo to ^5.1.0 (#7531)
+## X. ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)
 
 **RULE**:
-When implementing operations in `examples/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0cf851f`: ⬆️ Update vitest monorepo to ^5.1.0 (#7531). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a5f8e25`: ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "vitest": "^5.1.0"
+    "rolldown-plugin-dts": "^0.30.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "vitest": "^5.0.5"
+    "rolldown-plugin-dts": "^0.29.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0cf851f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a5f8e25` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T23:18:19.474Z",
+  "last_updated": "2026-11-07T23:34:20.334Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42181,8 +42181,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "abaf4047",
-      "content_hash": "de08c5cd9cb1b16a8804c20cf7452215597de436373e4ee0a7ba8618113e7228",
+      "source_version": "fa310ff1",
+      "content_hash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -42194,6 +42194,11 @@
         {
           "number": null,
           "title": "a2a-protocol): keep a task's error when fail() is rejected (#4488)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "agent-hypervisor): return no events for an event query limit of 0 (#4491)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42327,7 +42332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:23:47.882Z",
+      "verified_at": "2026-11-07T23:34:20.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80699,12 +80704,17 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "d0cf851f",
-      "content_hash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
+      "source_version": "9a5f8e25",
+      "content_hash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
         "Rule 1633",
+        {
+          "number": null,
+          "title": "⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3034,
           "title": "⬆️ Lock file maintenance (#7457)",
@@ -80736,7 +80746,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:49:05.413Z",
+      "verified_at": "2026-11-07T23:34:13.964Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

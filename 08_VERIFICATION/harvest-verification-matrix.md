@@ -8131,3 +8131,5 @@
 | `CYCLE-20261107-1LSG` | `2026-11-07T22:53:02.992Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da4557b3...`) |
 | `CYCLE-20261107-IRE7` | `2026-11-07T23:06:23.407Z` | `avajs/ava` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`130d36ca...`) |
 | `CYCLE-20261107-Y3ZG` | `2026-11-07T23:18:19.564Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`be6ed8a8...`) |
+| `CYCLE-20261107-IKI5` | `2026-11-07T23:34:14.093Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f47b38de...`) |
+| `CYCLE-20261107-IPE9` | `2026-11-07T23:34:20.433Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5eee18c8...`) |

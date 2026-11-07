@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T23:18:22.160Z",
-    "lastVerified": "2026-11-07T23:18:22.160Z",
+    "lastChecked": "2026-11-07T23:34:23.021Z",
+    "lastVerified": "2026-11-07T23:34:23.021Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -334,12 +334,12 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T19:23:46.153Z",
-    "lastVerified": "2026-11-07T19:23:46.153Z",
+    "lastChecked": "2026-11-07T23:34:18.182Z",
+    "lastVerified": "2026-11-07T23:34:18.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "de08c5cd9cb1b16a8804c20cf7452215597de436373e4ee0a7ba8618113e7228",
+    "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -367,16 +367,16 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T22:46:34.976Z",
+    "lastChecked": "2026-11-07T23:34:20.025Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T22:46:34.976Z"
+    "lastVerified": "2026-11-07T23:34:20.025Z"
   },
   "lapce-lapce": {
     "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
-    "lastChecked": "2026-11-05T19:06:40.630Z",
+    "lastChecked": "2026-11-07T23:34:05.036Z",
     "revisionIdentifier": "f66ffaa9",
-    "lastVerified": "2026-11-05T19:06:40.630Z"
+    "lastVerified": "2026-11-07T23:34:05.036Z"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -3465,9 +3465,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-06T14:33:53.750Z",
+    "lastChecked": "2026-11-07T23:34:12.566Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-06T14:33:53.750Z"
+    "lastVerified": "2026-11-07T23:34:12.566Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -6951,9 +6951,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-06T13:27:17.683Z",
+    "lastChecked": "2026-11-07T23:34:17.578Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-11-06T13:27:17.683Z"
+    "lastVerified": "2026-11-07T23:34:17.578Z"
   },
   "dalance-procs": {
     "name": "dalance/procs",
@@ -8266,9 +8266,9 @@
   "linkwarden-linkwarden": {
     "name": "linkwarden",
     "officialUrl": "https://github.com/linkwarden/linkwarden",
-    "lastChecked": "2026-11-04T23:13:29.770Z",
+    "lastChecked": "2026-11-07T23:34:10.014Z",
     "revisionIdentifier": "eff7c6b7",
-    "lastVerified": "2026-11-04T23:13:29.770Z"
+    "lastVerified": "2026-11-07T23:34:10.014Z"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
     "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -12337,12 +12337,12 @@
     "officialUrl": "https://github.com/dubzzz/fast-check",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T07:49:03.285Z",
-    "lastVerified": "2026-11-04T07:49:03.285Z",
+    "lastChecked": "2026-11-07T23:34:11.375Z",
+    "lastVerified": "2026-11-07T23:34:11.375Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "75e5101f877ac998549a3fc873e0a5e37276ff7ea8d73578b18cf50dd688760d",
+    "contentHash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,

@@ -8140,3 +8140,5 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `acd3b387` | Multi-dimensional audit evidence | 2026-11-07T22:53:03.000Z |
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `a4fb2094` | Multi-dimensional audit evidence | 2026-11-07T23:06:23.411Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `7da7e6c8` | Multi-dimensional audit evidence | 2026-11-07T23:18:19.567Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `9a5f8e25` | Multi-dimensional audit evidence | 2026-11-07T23:34:14.097Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `fa310ff1` | Multi-dimensional audit evidence | 2026-11-07T23:34:20.437Z |

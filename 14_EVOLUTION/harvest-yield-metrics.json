@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T23:18:19.574Z",
-  "total_cycles_completed": 8096,
-  "total_learnings_persisted": 8096,
-  "total_rules_promoted": 7766,
+  "last_updated": "2026-11-07T23:34:20.451Z",
+  "total_cycles_completed": 8098,
+  "total_learnings_persisted": 8098,
+  "total_rules_promoted": 7768,
   "history": [
-    {
-      "timestamp": "2026-11-06T22:13:51.844Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T22:13:57.007Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:21:16.984Z",
       "repository": "aquasecurity/trivy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T23:18:19.574Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:34:14.104Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:34:20.451Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

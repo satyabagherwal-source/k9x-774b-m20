@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-CVYP",
-    "timestamp": "2026-11-05T10:50:38.929Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "d1c805b7636147463bad9354a1716e2dd2cee4ca8aae25f7e2f531239e846d93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-D0YV",
-    "timestamp": "2026-11-05T10:50:45.415Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "fdadf2f93e112d4e58c2c6a231a0b61bb23570511b0528f4f1a36d2b8bb5baa9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-MBQK",
     "timestamp": "2026-11-05T10:57:59.276Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-IKI5",
+    "timestamp": "2026-11-07T23:34:14.093Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-IPE9",
+    "timestamp": "2026-11-07T23:34:20.433Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
