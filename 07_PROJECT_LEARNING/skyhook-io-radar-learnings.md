@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `1f1e0719`  
+> **Source Version**: `7466899f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:47:43.394Z  
+> **Timestamp**: 2026-11-07T23:55:23.658Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:47:41.389Z  
+> **Harvest Timestamp**: 2026-11-07T23:55:23.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4061 stars
+- **Stars / Engagement**: 4068 stars
 
 ---
 
@@ -2451,369 +2451,801 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c21eb0f` (2026-11-05)
-**Commit Message**: Install into a listed namespace without creating it, and require Radar 1.19.1
+### Incident Patch 1: `6ed334f6` (2026-11-06)
+**Commit Message**: fix(issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)
 
-Helm sends a namespace create whenever "create namespace" is on, and only
-ignores "already exists". Under rbac.namespaces nobody can be granted
-namespace create, so installs into a listed namespace failed with 403. Skip
-the create for listed namespaces, which exist by construction.
+## What this fixes
+Radar's Issues list reported a healthy, still-running Job as "Job
+failed" whenever it had been active for more than an hour without
+completing. The rule looked at age alone — not pod health, the retry
+budget (backoffLimit), the configured time limit
+(activeDeadlineSeconds), or whether the Job had stopped making progress.
+Legitimate multi-hour Jobs (model training, data migrations, large batch
+jobs) were filed as failures. The rule also only fired when the Job had
+recorded zero failed attempts — the one case with no failure evidence at
+all.
 
-1.19.0 shipped without --rbac-namespaces, so the image check now starts at
-1.19.1.
+## The change
+Remove the age-only "stuck active Job" detector. We deliberately do not
+replace it with another heuristic: a Job's failed-attempt counter is
+unreliable in both directions (an OnFailure crash-loop keeps it at zero
+while a container restarts in place; a recovered Job keeps it non-zero),
+so it is not a sound signal either. Removing the bad rule aligns the
+detector with Radar's existing health model, which already treats an
+active Job with no terminal condition as in progress.
 
-**File**: `deploy/helm/radar/templates/deployment.yaml` (modified, +2/-2)
+## What still works
+- A Job with a terminal failure (exh
+
+**File**: `internal/issues/category.go` (modified, +5/-5)
 ```diff
-@@ -20,8 +20,8 @@
- {{- end }}
- {{- end }}
- {{- $tag := toString $.Values.image.tag }}
--{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.0-0" $tag) }}
--{{- fail (printf "rbac.namespaces requires Radar 1.19.0 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.0 or later." $tag) }}
-+{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.1-0" $tag) }}
-+{{- fail (printf "rbac.namespaces requires Radar 1.19.1 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.1 or later." $tag) }}
- {{- end }}
- {{- end }}
- {{- $basePath := include "radar.basePath" . -}}
+@@ -339,11 +339,11 @@ func classifyProblem(in classifyInput) issuesapi.Category {
+ 		return issuesapi.CategoryUnknown
+ 
+ 	case "Job":
+-		// DetectProblems only emits Job problems for genuine failures: a
+-		// JobFailed condition (reason e.g. BackoffLimitExceeded /
+-		// DeadlineExceeded, or the "Failed" fallback) or a stuck-active job
+-		// ("Running for … with no completions"). All map to the batch
+-		// workload-failure category rather than being discarded.
++		// DetectProblems only emits Job problems for a genuine terminal
++		// failure: a JobFailed condition (reason e.g. BackoffLimitExceeded /
++		// DeadlineExceeded, or the "Failed" fallback). It maps to the batch
++		// workload-failure category. (A deleting Job is classified as
++		// terminating earlier, before this switch.)
+ 		return issuesapi.CategoryJobFailed
+ 
+ 	case "CronJob":
 ```
 
-**File**: `deploy/helm/radar/tests/rbac_namespaces_test.yaml` (modified, +12/-2)
+**File**: `internal/issues/category_test.go` (modified, +0/-1)
 ```diff
-@@ -219,7 +219,17 @@ tests:
-     template: deployment.yaml
-     set:
-       rbac.namespaces: [app]
--      image.tag: 1.18.3
-+      image.tag: 1.19.0
-     asserts:
-       - failedTemplate:
--          errorPattern: requires Radar 1.19.0 or later
-+          errorPattern: requires Radar 1.19.1 or later
-+
-+  - it: accepts the first image with the flag
-+    template: deployment.yaml
-+    set:
-+      rbac.namespaces: [app]
-+      image.tag: 1.19.1
-+    asserts:
-+      - contains:
-+          path: spec.template.spec.containers[0].args
-+          content: --rbac-namespaces=app
+@@ -116,7 +116,6 @@ func TestClassify(t *testing.T) {
+ 		{"job failed condition", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "BackoffLimitExceeded"}, issuesapi.CategoryJobFailed},
+ 		{"job failure reason beats embedded forbidden message", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "BackoffLimitExceeded", Message: `workflowtaskresults.argoproj.io is forbidden: User "system:serviceaccount:ci:default" cannot create resource "workflowtaskresults"`}, issuesapi.CategoryJobFailed},
+ 		{"job failed fallback", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "Failed"}, issuesapi.CategoryJobFailed},
+-		{"job stuck active", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "Running for 3h with no completions"}, issuesapi.CategoryJobFailed},
+ 		{"cronjob stale", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "stale"}, issuesapi.CategoryCronJobFailed},
+ 		{"cronjob stale reason beats embedded forbidden message", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "stale", Message: `jobs.batch is forbidden: User "system:serviceaccount:ci:default" cannot create resource "jobs"`}, issuesapi.CategoryCronJobFailed},
+ 		{"cronjob never scheduled", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "never-scheduled"}, issuesapi.CategoryCronJobFailed},
 ```
 
-**File**: `internal/helm/client.go` (modified, +1/-1)
+**File**: `internal/k8s/detect.go` (modified, +3/-20)
 ```diff
-@@ -3865,7 +3865,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
- 	switch mode {
- 	case installFresh:
- 		sendProgress("installing", fmt.Sprintf("Installing %s to namespace %s...", req.ReleaseName, req.Namespace), "")
--		if req.CreateNamespace {
-+		if createsNamespace(req) {
- 			sendProgress("installing", fmt.Sprintf("Creating namespace %s if needed...", req.Namespace), "")
+@@ -1196,7 +1196,9 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
  		}
- 	case installReplace:
+ 	}
+ 
+-	// Job problems: stuck active (running > 1h with no completions)
++	// Job problems: a terminal failure condition, or a Job being deleted. Age
++	// alone is not failure — a long-running active Job (training, migration, big
++	// batch) with no failure evidence is in progress, not failed.
+ 	if cache.Jobs() != nil {
+ 		for _, job := range jobs {
+ 			if det, ok := terminatingProblem("Job", "batch", job, now); ok {
+@@ -1232,25 +1234,6 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
+ 				problems = append(problems, detection)
+ 				continue
+ 			}
+-			if stuckActiveJob(job, now) {
+-				onsetAt := job.CreationTimestamp.Time
+-				if job.Status.StartTime != nil && !job.Status.StartTime.IsZero() {
+-					onsetAt = job.Status.StartTime.Time
+-				}
+-				detection := Detection{
+-					Kind:              "Job",
+-					Namespace:         job.Namespace,
+-					Name:              job.Name,
+-					Group:             "batch",
+-					Severity:          "high",
+-					Reason:            fmt.Sprintf("Running for %s with no completions", timeutil.FormatAgeShort(ageDur)),
+-					Age:               timeutil.FormatAgeShort(ageDur),
+-					AgeSeconds:        int64(ageDur.Seconds()),
+-					ResourceCreatedAt: job.CreationTimestamp.Time,
+-				}
+-				setDetectionOnset(&detection, now, onsetAt)
+-				problems = append(problems, detection)
+-			}
+ 		}
+ 	}
+ 
 ```
 
-**File**: `internal/helm/install_preflight.go` (modified, +12/-1)
+**File**: `internal/k8s/detect_cronjob_events_test.go` (modified, +31/-6)
 ```diff
-@@ -6,13 +6,16 @@ import (
- 	"log"
- 	"net/http"
- 	"regexp"
-+	"slices"
- 	"time"
- 
- 	"helm.sh/helm/v3/pkg/action"
- 	"helm.sh/helm/v3/pkg/chart"
- 	"helm.sh/helm/v3/pkg/release"
- 	"helm.sh/helm/v3/pkg/storage/driver"
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
- )
- 
- // ReleasePendingError is returned when a prior install/upgrade left the release
-@@ -219,7 +222,7 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
- 	install := action.NewInstall(actionConfig)
- 	install.ReleaseName = req.ReleaseName
- 	install.Namespace = req.Namespace
--	install.CreateNamespace = req.CreateNamespace
-+	install.CreateNamespace = createsNamespace(req)
- 	install.Timeout = 120 * time.Second
- 	install.Version = req.Version
- 	install.Replace = mode == installReplace
-@@ -230,6 +233,14 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
- 	return install.Run(ch, req.Values)
+@@ -155,7 +155,11 @@ func observeCronJobEventTestSchedules(cj *batchv1.CronJob, tracker *cronJobSched
  }
  
-+// createsNamespace reports whether the install asks Helm to create its
-+// namespace. Not for a namespace in --rbac-namespaces: it exists, since the
-+// install's RoleBindings live there, and those bindings cannot grant namespace
-+// create, so Helm's create would be refused before the apiserver found it.
-+func createsNamespace(req *InstallRequest) bool {
-+	return req.CreateNamespace && !slices.Contains(k8s.RBACNamespaces(), req.Namespace)
-+}
-+
- // rbacPreflightRe matches Helm's wrapped pre-flight RBAC error. Helm formats
- // it as: `could not get information about the resource <Kind> "<name>" in
- // namespace "<ns>": <gvr> "<name>" is forbidden: User "<u>" cannot <verb>
+ func TestCronJobControllerEventsChildJobs(t *testing.T) {
+-	for _, childState := range []string{"none", "failed", "stuck"} {
++	// A terminally failed child is its own diagnosis and suppresses the parent
++	// aggregate. A merely active child is work in progress, not a failure: it
++	// produces no child diagnosis and does not suppress the aggregate, so the
++	// parent's repeated-without-success still surfaces (same as no child).
++	for _, childState := range []string{"none", "failed", "active"} {
+ 		for _, withEvent := range []bool{false, true} {
+ 			t.Run(childState+"/event="+strconv.FormatBool(withEvent), func(t *testing.T) {
+ 				now := time.Now()
+@@ -190,22 +194,43 @@ func TestCronJobControllerEventsChildJobs(t *testing.T) {
+ 				if len(got) != wantCount {
+ 					t.Fatalf("lost/duplicated child or schedule diagnosis: %+v", got)
+ 				}
++				// Only a terminally failed child replaces the parent aggregate
++				// with its own diagnosis; "none" and "active" keep the aggregate.
++				// Count each diagnosis so the schedule event and the aggregate /
++				// child row are required to coexist, not substitute for each other.
++				aggregateExpected := childState != "failed"
++				var miss, aggregate, child int
+ 				for _, d := range got {
+ 					switch d.Reason {
+ 					case "MissSchedule":
+-						if !withEvent || d.Kind != "CronJob" {
+-							t.Errorf("unexpected schedule event: %+v", d)
++						miss++
++						if d.Kind != "CronJob" {
++							t.Errorf("schedule event on wrong kind: %+v", d)
+ 						}
+ 					case "repeated-without-success":
+-						if childState != "none" {
+-							t.Errorf("child diagnosis duplicated on parent: %+v", d)
++						aggregate++
++						if d.Kind != "CronJob" {
++							t.Errorf("aggregate on wrong kind: %+v", d)
+ 						}
+ 					default:
+-						if d.Kind != "Job" || d.Name != "current-job" || d.OwnerKind != "" || (childState == "failed" && d.Reason != "BackoffLimitExceeded") || (childState == "stuck" && !strings.HasPrefix(d.Reason, "Running for ")) {
++						child++
++						if d.Kind != "Job" || d.Name != "current-job" || d.OwnerKind != "" || d.Reason != "BackoffLimitExceeded" {
+ 							t.Errorf("child diagnosis changed: %+v", d)
+ 						}
+ 					}
+ 				}
++				wantMiss := 0
++				if withEvent {
++					wantMiss = 1
++				}
++				wantAggregate, wantChild := 1, 0
++				if !aggregateExpected {
++					wantAggregate, wantChild = 0, 1
++				}
++				if miss != wantMiss || aggregate != wantAggregate || child != wantChild {
++					t.Errorf("childState=%s withEvent=%v: got miss=%d aggregate=%d child=%d; want miss=%d aggregate=%d child=%d; problems=%+v",
++						childState, withEvent, miss, aggregate, child, wantMiss, wantAggregate, wantChild, got)
++				}
+ 			})
+ 		}
+ 	}
 ```
 
-**File**: `internal/helm/install_rbac_namespaces_test.go` (added, +123/-0)
+**File**: `internal/k8s/detect_test.go` (modified, +89/-5)
 ```diff
-@@ -0,0 +1,123 @@
-+package helm
+@@ -39,7 +39,6 @@ func TestDetectProblems_PopulatesGroup(t *testing.T) {
+ 	oneReplica := int32(1)
+ 	minReplicas := int32(1)
+ 	now := time.Now()
+-	// Job needs to be older than 1h to surface a "stuck" problem.
+ 	jobStart := metav1.NewTime(now.Add(-2 * time.Hour))
+ 
+ 	client := fake.NewClientset(
+@@ -86,13 +85,13 @@ func TestDetectProblems_PopulatesGroup(t *testing.T) {
+ 				},
+ 			},
+ 		},
+-		// Job stuck Active>0 for >1h with no completions.
++		// Job with a terminal JobFailed condition.
+ 		&batchv1.Job{
+ 			ObjectMeta: metav1.ObjectMeta{Name: "migrate", Namespace: "prod", CreationTimestamp: jobStart},
+ 			Status: batchv1.JobStatus{
+-				Active:    1,
+-				Succeeded: 0,
+-				Failed:    0,
++				Conditions: []batchv1.JobCondition{
++					{Type: batchv1.JobFailed, Status: corev1.ConditionTrue, Reason: "BackoffLimitExceeded"},
++				},
+ 			},
+ 		},
+ 	)
+@@ -1046,6 +1045,91 @@ func TestDetectProblems_OperationalSignals(t *testing.T) {
+ 	assertProblem(t, problems, "Job", "migrate", "BackoffLimitExceeded", "critical")
+ }
+ 
++// TestJobDetection_AgeAloneIsNotFailure guards that a long-running active Job
++// with no failure evidence is not reported as a failure, while a Job that has
++// truly failed — or whose pods are failing — still surfaces.
++func TestJobDetection_AgeAloneIsNotFailure(t *testing.T) {
++	defer ResetTestState()
 +
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"slices"
-+	"sync"
-+	"testing"
-+
-+	"helm.sh/helm/v3/pkg/action"
-+	"helm.sh/helm/v3/pkg/chart"
-+	"helm.sh/helm/v3/pkg/kube"
-+	"helm.sh/helm/v3/pkg/release"
-+	corev1 "k8s.io/api/core/v1"
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/client-go/rest"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+)
-+
-+// An install limited by --rbac-namespaces holds no namespace create, and Helm
-+// sends that create even for a namespace that exists. Installing into a listed
-+// namespace with "create namespace" on must still succeed.
-+func TestInstallIntoRBACNamespaceSkipsNamespaceCreate(t *testing.T) {
-+	cases := []struct {
-+		name          string
-+		rbac          []string
-+		mode          installMode
-+		wantNSCreate  bool
-+		wantInstalled bool
-+	}{
-+		{name: "listed namespace", rbac: []string{"app"}, mode: installFresh, wantInstalled: true},
-+		{name: "listed namespace, replacing an uninstalled release", rbac: []string{"app"}, mode: installReplace, wantInstalled: true},
-+		{name: "namespace outside the list", rbac: []string{"billing"}, mode: installFresh, wantNSCreate: true},
-+		{name: "no list", mode: installFresh, wantNSCreate: true},
++	now := time.Now()
++	jobCtrl := true
++	// Healthy, long-running active Job: 12h old, one active pod, nothing failed
++	// or succeeded, no terminal condition. This is work in progress.
++	healthy := &batchv1.Job{
++		ObjectMeta: metav1.ObjectMeta{Name: "training", Namespace: "prod", UID: "training-uid", CreationTimestamp: metav1.NewTime(now.Add(-12 * time.Hour))},
++		Status:     batchv1.JobStatus{Active: 1},
 +	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			k8s.SetRBACNamespaces(tc.rbac)
-+			t.Cleanup(func() { k8s.SetRBACNamespaces(nil) })
-+			cfg, requests := namespaceLimitedActionConfig(t)
-+			if tc.mode == installReplace {
-+				seedUninstalledRelease(t, cfg)
-+			}
-+			ch := &chart.Chart{
-+				Metadata:  &chart.Metadata{APIVersion: "v2", Name: "demo", Version: "1.0.0"},
-+				Templates: []*chart.File{{Name: "templates/cm.yaml", Data: []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: demo\ndata:\n  a: b\n")}},
-+			}
-+			_, err := runInstallOrUpgrade(cfg, &InstallRequest{ReleaseName: "demo", Namespace: "app", CreateNamespace: true, Values: map[string]any{}}, ch, tc.mode)
-+			if got := slices.Contains(*requests, "POST /api/v1/namespaces"); got != tc.wantNSCreate {
-+				t.Fatalf("namespace create sent = %v, want %v (requests %v)", got, tc.wantNSCreate, *requests)
-+			}
-+			if installed := slices.Contains(*requests, "POST /api/v1/namespaces/app/configmaps"); installed != tc.wantInstalled {
-+				t.Fatalf("installed = %v, want %v (err %v)", installed, tc.wantInstalled, err)
-+			}
-+			if tc.wantInstalled && err != nil {
-+				t.Fatalf("install failed: %v", err)
-+			}
-+		})
++	// Truly failed Job: a terminal JobFailed condition.
++	failed := &batchv1.Job{
++		ObjectMeta: metav1.ObjectMeta{Name: "migrate", Namespace: "prod", UID: "migrate-uid", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour))},
++		Status: batchv1.JobStatus{
++			Conditions: []batchv1.JobCondition{{Type: batchv1.JobFailed, Status: corev1.ConditionTrue, Reason: "BackoffLimitExceeded", Message: "Job has reached the specified backoff limit", LastTransitionTime: metav1.NewTime(now.Add(-time.Minute))}},
++		},
++	}
++	// A still-active Job whose pod is crash-looping: no terminal condition yet,
++	// but the failing pod is real evidence and must still surface (on the pod).
++	crashJob := &batchv1.Job{
++		ObjectMeta: metav1.ObjectMeta{Name: "importer", Namespace: "prod", UID: "importer-uid", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour))},
++		Status:     batchv1.JobStatus{Active: 1},
++	}
++	crashPod := &corev1.Pod{
++		ObjectMeta: metav1.ObjectMeta{
++			Name: "importer-abc", Namespace: "prod", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour)),
++			OwnerReferences: []metav1.OwnerReference{{APIVersion: "batch/v1", Kind: "Job", Name: "importer", UID: "importer-uid", Controller: &jobCtrl}},
++		},
++		Status: corev1.PodStatus{
++			Phase: corev1.PodRunning,
++			ContainerStatuses: []corev1.ContainerStatus{{
++				Name:         "app",
++				RestartCount: 5,
++				State:        corev1.ContainerState{Waiting: &corev1.ContainerStateWaiting{Reason: "CrashLoopBackOff"}},
++				LastTerminationState: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
++					Reason: "Error", ExitCode: 1,
++					StartedAt: metav1.NewTime(now.Add(-3 * time.Second)), FinishedAt: metav1.NewTime(now.Add(-2 * time.Second)),
++				}},
++			}},
++		},
++	}
++
++	client := fake.NewClientset(healthy, failed, crashJob, crashPod)
++	if err := InitTestResourceCache(client); err != nil {
++		t.Fatalf("InitTestResourceCache: %v", err)
++	}
++	cache := GetResourceCache()
++	if cache == nil {
++		t.Fatal("cache nil after init")
++	}
++
++	deadline := time.Now().Add(2 * time.Second)
++	var problems []Detection
++	for time.Now().Before(deadline) {
++		problems = DetectProblems(cache, "prod")
++		if hasProblem(problems, "Job", "migrate", "BackoffLimitExceeded") &&
++			hasProblem(problems, "Pod", "importer-abc", "CrashLoopBackOff") {
++			break
++		}
++		time.Sleep(20 * time.Millisecond)
++	}
++
++	// Done-when #1: a healthy long-running Job produces no failure row.
++	for _, p := range problems {
++		if p.Kind == "Job" && p.Name == "training" {
++			t.Fatalf("healthy long-running Job should produce no problem, got %+v", p)
++		}
++	}
++	// Done-when #2: a truly failed Job still surfaces, and a failing pod of an
++	// otherwise-active Job still surfaces on the pod.
++	assertProblem(t, problems, "Job", "migrate", "BackoffLimitExceeded", "critical")
++	assertProblem(t, problems, "Pod", "importer-abc", "CrashLoopBackOff", "critical")
++	// The active crash-looping Job gets no Job-level row of its own (its evidence
++	// is the pod); age alone never fabricates one.
++	for _, p := range problems {
++		if p.Kind == "Job" && p.Name == "importer" {
++			t.Fatalf("active Job with a failing pod should carry no Job-level failure row, got %+v", p)
++		}
 +	}
 +}
 +
-+func seedUninstalledRelease(t *testing.T, cfg *action.Configuration) {
-+	t.Helper()
-+	seedRelease(t, cfg, "demo", release.StatusUninstalled, 1)
-+}
-+
-+// namespaceLimitedActionConfig serves an apiserver where the caller may write
-+// ConfigMaps in "app" and is refused any namespace create.
-+func namespaceLimitedActionConfig(t *testing.T) (*action.Configuration, *[]string) {
-+	t.Helper()
-+	cfg := memoryActionConfig(t)
-+	var mu sync.Mutex
-+	var requests []string
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		if r.URL.Path == "/version" {
-+			writeTestJSON(t, w, map[string]string{"gitVersion": "v1.36.2"})
-+			return
-+		}
-+		switch r.URL.Path {
-+		case "/openapi/v3":
-+			writeRaw(t, w, `{"paths":{"api/v1":{"serverRelativeURL":"/openapi/v3/api/v1"}}}`)
-+			return
-+		case "/openapi/v3/api/v1":
-+			writeRaw(t, w, `{"openapi":"3.0.0","info":{"title":"fixture","version":"v1"},"paths":{"/api/v1/namespaces/{namespace}/configmaps/{name}":{"patch":{"x-kubernetes-group-version-kind":{"group":"","version":"v1","kind":"ConfigMap"},"parameters":[{"name":"fieldValidation","in":"query","schema":{"type":"string"}}],"responses":{"200":{"description":"ok"}}}},"/api/v1/namespaces/{name}":{"patch":{"x-kubernetes-group-version-kind":{"group":"","version":"v1","kind":"Namespace"},"parameters":[{"name":"fieldValidation","in":"query","schema":{"type":"string"}}],"responses":{"200":{"description":"ok"}}}}}}`)
-+			return
-+		}
-+		mu.Lock()
-+		if r.Method != http.MethodGet {
-+			requests = append(requests, r.Method+" "+r.URL.Path)
-+		}
-+		mu.Unlock()
-+		switch {
-+		case r.Method == http.MethodPost && r.URL.Path == "/api/v1/namespaces":
-+			writeK8sStatus(t, w, http.StatusForbidden, "Forbidden", `namespaces is forbidden: cannot create resource "namespaces" at the cluster scope`)
-+		case r.URL.Path == "/api/v1/namespaces/app/configmaps" && r.Method == http.MethodPost:
-+			w.WriteHeader(http.StatusCreated)
-+			writeTestJSON(t, w, corev1.ConfigMap{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "ConfigMap"}, ObjectMeta: metav1.ObjectMeta{Name: "demo", Namespace: "app"}})
-+		default:
-+			writeK8sStatus(t, w, http.StatusNotFound, "NotFound", "absent")
-+		}
-+	}))
-+	t.Cleanup(srv.Close)
-+	getter := newRESTConfigGetter(&rest.Config{Host: srv.URL}, "app", nil)
-+	mapper := meta.NewDefaultRESTMapper([]schema.GroupVersion{{Version: "v1"}})
-+	mapper.Add(schema.Grou
+ func TestPo
+```
+
+**File**: `internal/k8s/detect_workload.go` (modified, +1/-6)
+```diff
+@@ -250,12 +250,7 @@ func jobHasDetectedProblem(job *batchv1.Job, now time.Time) bool {
+ 	if _, ok := terminatingProblem("Job", "batch", job, now); ok {
+ 		return true
+ 	}
+-	return failedJobCondition(job) != nil || stuckActiveJob(job, now)
+-}
+-
+-func stuckActiveJob(job *batchv1.Job, now time.Time) bool {
+-	return job != nil && job.Status.Active > 0 && job.Status.Succeeded == 0 && job.Status.Failed == 0 &&
+-		now.Sub(job.CreationTimestamp.Time) > time.Hour
++	return failedJobCondition(job) != nil
+ }
+ 
+ func repeatedCronJobSchedulesWithoutSuccess(cj *batchv1.CronJob, tracker *cronJobScheduleObservationTracker, now time.Time) (string, time.Time, bool) {
+```
+
+**File**: `internal/k8s/detect_workload_test.go` (modified, +4/-3)
+```diff
+@@ -604,14 +604,15 @@ func TestCronJobScheduleDetectionUsesObservedHistory(t *testing.T) {
+ 		}
+ 	})
+ 
+-	t.Run("a directly detected stuck child Job suppresses the aggregate", func(t *testing.T) {
++	t.Run("a merely active child Job does not suppress the aggregate", func(t *testing.T) {
+ 		cj := newSubject()
+ 		tracker := newCronJobScheduleObservationTracker()
+ 		observeMisses(tracker, cj, cronJobScheduleObservationThreshold)
+ 		job := ownedJob(cj)
+ 		job.Status.Active = 1
+-		if got := DetectCronJobProblems([]*batchv1.CronJob{cj}, []*batchv1.Job{job}, tracker, now); len(got) != 0 {
+-			t.Fatalf("stuck child Job left a duplicate aggregate: %+v", got)
++		got := DetectCronJobProblems([]*batchv1.CronJob{cj}, []*batchv1.Job{job}, tracker, now)
++		if len(got) != 1 || got[0].Problem != "repeated-without-success" {
++			t.Fatalf("an active-only child should not suppress the aggregate: %+v", got)
+ 		}
+ 	})
+ 
+```
+
+**File**: `pkg/issuesapi/catalog.go` (modified, +1/-1)
+```diff
+@@ -107,7 +107,7 @@ var categoryDescription = map[Category]string{
+ 	CategoryWorkloadDegraded:  "A workload has fewer ready replicas than desired — some pods are unavailable.",
+ 	CategoryHighRestart:       "A container has restarted many times — unstable even if it's currently running.",
+ 	CategoryPodEvicted:        "The kubelet evicted a pod because its node ran low on memory, disk, or PIDs, or because the pod exceeded its own ephemeral-storage limit.",
+-	CategoryJobFailed:         "A Job failed — it exhausted its retries (backoffLimit) or hit its deadline — or has been running too long with no completions.",
++	CategoryJobFailed:         "A Job failed — it exhausted its retries (backoffLimit) or hit its deadline (activeDeadlineSeconds).",
+ 	CategoryCronJobFailed:     "A CronJob's recent runs are failing, or its schedule isn't producing successful jobs.",
+ 	CategoryBatchRunStopped:   "Kueue stopped trying a batch run: it was requeued too many times, or it exceeded its maximum execution time.",
+ 	// Configuration
 ```
 
 ---
 
-### Incident Patch 2: `b618f366` (2026-11-01)
-**Commit Message**: Require every cached kind to be readable in each listed namespace
+### Incident Patch 2: `7466899f` (2026-11-07)
+**Commit Message**: Revert "parent Gateway not found" Issues check (RAD-939, #2555) to research out-of-cluster cases (#2567)
 
-A namespace that lost one kind's grant (StatefulSets, say) while pods,
-deployments and services stayed readable still counted as fully
-readable, so its cache could miss that kind while namespace-scope
-reported authoritative.
+## What
 
-**File**: `deploy/helm/radar/README.md` (modified, +1/-1)
+Reverts #2555 (commit `cb034e325`), which added the always-on **"Parent
+Gateway not found"** check to the Issues list, and removes its line from
+the v1.20.0 What's New notes. The revert is a clean, complete inverse of
+that PR — nothing added afterwards depends on its symbols, and no later
+commit touched its files.
+
+## Why
+
+The check is correct on a normal single cluster: an HTTPRoute whose
+`parentRef` names a Gateway that was deleted or mistyped attaches to
+nothing and silently serves no traffic, and before #2555 that was
+invisible in the Issues list. That value is real.
+
+But it has **no awareness of Gateways that live outside the cluster
+Radar watches**. In a vcluster setup, each team's app route points at a
+shared Gateway on the *host* cluster. Radar watches only the vcluster,
+reads the Gateway as an authoritative "does not exist", and flags
+**every team's healthy app route**. Because the Issues list feeds the
+hosted investigation, an all-clear investigation of a healthy app now
+*leads* with a false "the parent Gateway doesn't exist" — which
+undercuts the all-clear i
+
+**File**: `internal/issues/category.go` (modified, +1/-1)
 ```diff
-@@ -553,7 +553,7 @@ Limits:
- - `edit` and `admin` in a listed namespace let people run pods as any ServiceAccount there, so a privileged ServiceAccount in a listed namespace reaches beyond the list.
- - Prometheus, OpenCost, Kubecost and Hubble are not limited by RBAC. Radar shows what those backends return, which can cover the whole cluster.
- - Set the list at install. Narrowing an install that already reported to Radar Cloud does not remove what Radar Cloud holds: people with access to every listed namespace can still see history from namespaces that left the list, and alerts there resolve.
--- If Radar's ServiceAccount cannot read a listed namespace when Radar starts (its RoleBinding is missing, say), Radar reports its view as incomplete and Radar Cloud stops evaluating alerts for the cluster. As with any grant change, Radar notices a removed grant only when it restarts.
-+- If Radar's ServiceAccount cannot read a listed namespace when Radar starts (its RoleBinding is missing, say), or cannot read a kind there that it reads in the other listed namespaces, Radar reports its view as incomplete and Radar Cloud stops evaluating alerts for the cluster. As with any grant change, Radar notices a removed grant only when it restarts.
- - Radar's ServiceAccount must not be able to list namespaces cluster-wide. If a binding added outside the chart lets it, Radar logs a warning and is not limited.
- 
- The chart refuses Radar's own namespace in the list when auth or Radar Cloud is on, since people with access there could use Radar's ServiceAccount, which can impersonate anyone. It also refuses `cloud.defaultRbac.nodeOps`, and `--namespace-scope` or `--rbac-namespaces` in `extraArgs`. To clear the list on an existing release, use `--set-json 'rbac.namespaces=[]'`: `--set rbac.namespaces={}` sets a list holding one empty name, which the chart rejects.
+@@ -62,7 +62,7 @@ func Classify(in classifyInput) issuesapi.Category {
+ 			return issuesapi.CategoryIngressBackendMissing
+ 		case "Missing IngressClass":
+ 			return issuesapi.CategoryIngressClassMissing
+-		case "Missing Gateway backend Service", "Missing Gateway backend Service port", "Missing Gateway ReferenceGrant", k8s.MissingGatewayParentReason:
++		case "Missing Gateway backend Service", "Missing Gateway backend Service port", "Missing Gateway ReferenceGrant":
+ 			return issuesapi.CategoryGatewayRouteInvalid
+ 		case k8s.MissingWebhookBackendReason:
+ 			return issuesapi.CategoryWebhookBackendDown
 ```
 
-**File**: `internal/k8s/visibility.go` (modified, +29/-0)
+**File**: `internal/issues/category_test.go` (modified, +0/-1)
 ```diff
-@@ -88,6 +88,35 @@ func BuildVisibilitySummary(result *PermissionCheckResult, namespace string) *Vi
+@@ -136,7 +136,6 @@ func TestClassify(t *testing.T) {
+ 		{"traefik router service missing", classifyInput{Source: SourceMissingRef, Kind: "IngressRoute", APIGroup: "traefik.io", Reason: k8s.TraefikRouterMissingServiceReason}, issuesapi.CategoryIngressBackendMissing},
+ 		{"traefik router middleware missing", classifyInput{Source: SourceMissingRef, Kind: "IngressRoute", APIGroup: "traefik.io", Reason: k8s.TraefikRouterMissingMiddlewareReason}, issuesapi.CategoryIngressBackendMissing},
+ 		{"gateway reference grant missing", classifyInput{Source: SourceMissingRef, Kind: "HTTPRoute", APIGroup: "gateway.networking.k8s.io", Reason: "Missing Gateway ReferenceGrant"}, issuesapi.CategoryGatewayRouteInvalid},
+-		{"gateway parent missing", classifyInput{Source: SourceMissingRef, Kind: "HTTPRoute", APIGroup: "gateway.networking.k8s.io", Reason: k8s.MissingGatewayParentReason}, issuesapi.CategoryGatewayRouteInvalid},
+ 		{"ingress tls secret is config", classifyInput{Source: SourceMissingRef, Kind: "Ingress", APIGroup: "networking.k8s.io", Reason: "Missing TLS Secret"}, issuesapi.CategoryMissingConfigRef},
+ 		{"webhook backend down", classifyInput{Source: SourceMissingRef, Kind: "ValidatingWebhookConfiguration", APIGroup: "admissionregistration.k8s.io", Reason: k8s.MissingWebhookBackendReason}, issuesapi.CategoryWebhookBackendDown},
+ 		{"missing storageclass is pvc pending", classifyInput{Source: SourceMissingRef, Kind: "PersistentVolumeClaim", Reason: "Missing StorageClass"}, issuesapi.CategoryPVCPending},
+```
+
+**File**: `internal/issues/dedupe.go` (modified, +0/-8)
+```diff
+@@ -3,7 +3,6 @@ package issues
+ import (
+ 	"strings"
+ 
+-	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
+ )
+ 
+@@ -263,13 +262,6 @@ func dedupeConditionOverMissingRef(in []Issue) []Issue {
+ 		if i.Source != SourceMissingRef {
+ 			continue
+ 		}
+-		// A missing PARENT Gateway is a different failure axis than the
+-		// backend-resolution (ResolvedRefs) conditions this dedup suppresses, so
+-		// it must not stand in for a structural backend finding and silence an
+-		// unrelated backend condition on the same route.
+-		if i.Reason == k8s.MissingGatewayParentReason {
+-			continue
+-		}
+ 		structural[issueResourceCategoryKey(i)] = true
+ 	}
+ 	if len(structural) == 0 {
+```
+
+**File**: `internal/issues/dedupe_test.go` (modified, +0/-51)
+```diff
+@@ -4,7 +4,6 @@ import (
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
+ )
+ 
+@@ -367,53 +366,3 @@ func TestDedupeConditionOverMissingRef(t *testing.T) {
+ 		t.Fatalf("non-ResolvedRefs route condition was incorrectly dropped: %+v", out)
+ 	}
+ }
+-
+-// A missing PARENT Gateway finding shares the route and category with a backend
+-// ResolvedRefs condition but describes a different failure; it must not suppress
+-// that condition. A backend missing-ref finding on the same route still does.
+-func TestDedupeConditionOverMissingRefParentKeepsBackendCondition(t *testing.T) {
+-	parentMissing := Issue{
+-		Source:    SourceMissingRef,
+-		Group:     "gateway.networking.k8s.io",
+-		Kind:      "HTTPRoute",
+-		Namespace: "prod",
+-		Name:      "broken",
+-		Reason:    k8s.MissingGatewayParentReason,
+-		Category:  issuesapi.CategoryGatewayRouteInvalid,
+-	}
+-	backendCondition := Issue{
+-		Source:    SourceCondition,
+-		Group:     "gateway.networking.k8s.io",
+-		Kind:      "HTTPRoute",
+-		Namespace: "prod",
+-		Name:      "broken",
+-		Reason:    "ResolvedRefs: BackendNotFound",
+-		Category:  issuesapi.CategoryGatewayRouteInvalid,
+-	}
+-
+-	out := dedupeConditionOverMissingRef([]Issue{parentMissing, backendCondition})
+-	if len(out) != 2 {
+-		t.Fatalf("a missing-parent finding must not suppress a backend condition: %+v", out)
+-	}
+-
+-	// Add a backend structural finding and the ResolvedRefs echo should drop,
+-	// while the independent parent row stays.
+-	backendMissing := Issue{
+-		Source:    SourceMissingRef,
+-		Group:     "gateway.networking.k8s.io",
+-		Kind:      "HTTPRoute",
+-		Namespace: "prod",
+-		Name:      "broken",
+-		Reason:    "Missing Gateway backend Service",
+-		Category:  issuesapi.CategoryGatewayRouteInvalid,
+-	}
+-	out = dedupeConditionOverMissingRef([]Issue{parentMissing, backendMissing, backendCondition})
+-	for _, i := range out {
+-		if i.Source == SourceCondition && i.Reason == "ResolvedRefs: BackendNotFound" {
+-			t.Fatalf("backend missing-ref should still suppress its ResolvedRefs echo: %+v", out)
+-		}
+-	}
+-	if len(out) != 2 {
+-		t.Fatalf("expected parent + backend structural rows to remain, got %+v", out)
+-	}
+-}
+```
+
+**File**: `internal/k8s/detect_missing_refs.go` (modified, +5/-74)
+```diff
+@@ -13,7 +13,6 @@ import (
+ 	"github.com/skyhook-io/radar/internal/logsafe"
+ 	"github.com/skyhook-io/radar/pkg/configrefs"
+ 	"github.com/skyhook-io/radar/pkg/envresolve"
+-	"github.com/skyhook-io/radar/pkg/issuesapi"
+ 	"github.com/skyhook-io/radar/pkg/timeutil"
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	autoscalingv2 "k8s.io/api/autoscaling/v2"
+@@ -23,7 +22,6 @@ import (
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/labels"
+-	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	corev1listers "k8s.io/client-go/listers/core/v1"
+ )
+ 
+@@ -132,16 +130,6 @@ func WebhookBackendFingerprint(namespace, name string) string {
+ 	return missingRefFingerprint(MissingWebhookBackendReason, "clientConfig.service:"+namespace+"/"+name)
+ }
+ 
+-const MissingGatewayParentReason = "Parent Gateway not found"
+-
+-// GatewayParentFingerprint keys a missing parent-Gateway finding on the Gateway
+-// itself, so every route pointing at the same absent Gateway shares one stable
+-// identity regardless of which parentRef index, sectionName or port named it —
+-// a per-Gateway grouping key siblings can later collapse on.
+-func GatewayParentFingerprint(namespace, name string) string {
+-	return missingRefFingerprint(MissingGatewayParentReason, "parentGateway:"+namespace+"/"+name)
+-}
+-
+ // refLookupResult classifies a lister Get result into the honest tri-state
+ // "exists / known missing / couldn't verify". A lister miss is only
+ // authoritative when the informer for the target's kind actually covers the
+@@ -1067,12 +1055,12 @@ func DetectMissingGatewayRefs(cache *ResourceCache, dynamicCache *DynamicResourc
+ 	if cache == nil || dynamicCache == nil || discovery == nil {
+ 		return nil
+ 	}
+-	now := time.Now()
+-	// The Services lister gates only the backend check; parent-Gateway detection
+-	// reads Gateways, so it must still run when the Services informer is absent.
+ 	svcLister := cache.Services()
++	if svcLister == nil {
++		return nil
++	}
++	now := time.Now()
+ 	getReferenceGrants := gatewayReferenceGrantGetter(dynamicCache, discovery)
+-	gatewayGVR, gatewayKnown := discovery.GetGVRWithGroup("Gateway", "gateway.networking.k8s.io")
+ 	var out []Detection
+ 	for _, kind := range []string{"HTTPRoute", "GRPCRoute", "TCPRoute", "TLSRoute", "UDPRoute"} {
+ 		gvr, ok := discovery.GetGVRWithGroup(kind, "gateway.networking.k8s.io")
+@@ -1096,12 +1084,7 @@ func DetectMissingGatewayRefs(cache *ResourceCache, dynamicCache *DynamicResourc
+ 			routes = items
+ 		}
+ 		for _, route := range routes {
+-			if svcLister != nil {
+-				out = append(out, detectGatewayRouteMissingBackends(cache, svcLister, getReferenceGrants, kind, route, now)...)
+-			}
+-			if gatewayKnown {
+-				out = append(out, detectGatewayRouteMissingParents(dynamicCache, gatewayGVR, kind, route, now)...)
+-			}
++			out = append(out, detectGatewayRouteMissingBackends(cache, svcLister, getReferenceGrants, kind, route, now)...)
+ 		}
+ 	}
+ 	return out
+@@ -1209,58 +1192,6 @@ func detectGatewayRouteMissingBackends(cache *ResourceCache, svcLister corev1lis
  	return out
  }
  
-+// ReadableInEvery reports whether Radar's startup probe can read pods,
-+// deployments and services, and every other kind it caches, in each of
-+// namespaces. A kind cached in one of them but not another means a grant is
-+// missing there, so the cache for that namespace is incomplete.
-+func (r *PermissionCheckResult) ReadableInEvery(namespaces []string) bool {
-+	if r == nil {
-+		return false
-+	}
-+	readable := func(key string) bool {
-+		for _, namespace := range namespaces {
-+			if visibilityStatus(r, key, namespace) != "allowed" {
-+				return false
-+			}
-+		}
-+		return true
-+	}
-+	for key, scope := range r.Scopes {
-+		if scope.Enabled && !readable(key) {
-+			return false
-+		}
-+	}
-+	for _, key := range []string{k8score.Pods, k8score.Deployments, k8score.Services} {
-+		if !readable(key) {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- func visibilityStatus(result *PermissionCheckResult, key string, namespace string) string {
- 	scope, ok := result.Scopes[key]
- 	if !ok || !scope.Enabled {
-```
-
-**File**: `internal/server/namespace_pick_failure_test.go` (modified, +9/-5)
-```diff
-@@ -113,12 +113,14 @@ func TestGetAccessibleNamespacesWithSource_RBACNamespaces(t *testing.T) {
- // let those callers treat the namespace's issues as gone.
- func TestNamespaceScope_RBACNamespacesAuthoritative(t *testing.T) {
- 	cases := []struct {
--		name     string
--		readable []string
--		want     bool
-+		name        string
-+		readable    []string
-+		statefulSet []string
-+		want        bool
- 	}{
--		{"every listed namespace readable", []string{"alpha", "beta"}, true},
--		{"grant missing in one namespace", []string{"alpha"}, false},
-+		{"every listed namespace readable", []string{"alpha", "beta"}, []string{"alpha", "beta"}, true},
-+		{"grant missing in one namespace", []string{"alpha"}, []string{"alpha"}, false},
-+		{"one cached kind missing in one namespace", []string{"alpha", "beta"}, []string{"alpha"}, false},
- 	}
- 	for _, tc := range cases {
- 		t.Run(tc.name, func(t *testing.T) {
-@@ -133,6 +135,8 @@ func TestNamespaceScope_RBACNamespacesAuthoritative(t *testing.T) {
- 				scopes[kind] = k8score.ResourceScope{Enabled: true, Namespace: tc.readable[0]}
- 				fanout[kind] = tc.readable
- 			}
-+			scopes[k8score.StatefulSets] = k8score.ResourceScope{Enabled: true, Namespace: tc.statefulSet[0]}
-+			fanout[k8score.StatefulSets] = tc.statefulSet
- 			restore := k8s.SetTestPermissionResult(&k8s.PermissionCheckResult{Perms: &k8s.ResourcePermissions{}, Scopes: scopes, ScopeNamespaces: fanout})
- 			t.Cleanup(restore)
- 
-```
-
-**File**: `internal/server/namespace_scope.go` (modified, +1/-19)
-```diff
-@@ -436,24 +436,6 @@ func deniedNamespaces(namespaces []string, permissions *k8s.PermissionCheckResul
- 	return denied
- }
- 
--// namespacesFullyReadable reports whether Radar's own probe could list every
--// core workload kind in each namespace.
--func namespacesFullyReadable(namespaces []string, permissions *k8s.PermissionCheckResult) bool {
--	if permissions == nil {
--		return false
+-// detectGatewayRouteMissingParents flags each parentRef that names a Gateway
+-// which does not exist. It complements detectGatewayRouteMissingBackends (which
+-// reads only backendRefs) and the controller-status detector (silent when no
+-// controller claims the route): a route with a valid backend but a nonexistent
+-// parent is otherwise invisible. Absence is read through ReadableObject, which is
+-// authoritative only when the serving informer had synced before the read — an
+-// unsynced or unserved namespace yields no finding (never a false "missing"). The
+-// finding carries a RequiredReads for the Gateway's namespace so a caller who
+-// cannot read that namespace does not receive the derived absence claim. Severity
+-// is a flat warning: the reference is a real config defect, but a dangling parent
+-// is not proof the route is wanted, and existence of another parent would prove
+-// neither compensation nor acceptance.
+-func detectGatewayRouteMissingParents(dynamicCache *DynamicResourceCache, gatewayGVR schema.GroupVersionResource, kind string, route *unstructured.Unstructured, now time.Time) []Detection {
+-	parents, found, err := unstructured.NestedSlice(route.Object, "spec", "parentRefs")
+-	if err != nil || !found {
+-		return nil
 -	}
--	for _, namespace := range namespaces {
--		if visibility := k8s.BuildVisibilitySummary(permissions, namespace); visibility != nil {
--			for _, status := range visibility.Core {
--				if status != "allowed" {
--					return false
--				}
--			}
+-	seen := map[string]bool{}
+-	var out []Detection
+-	for pi, p := range parents {
+-		pm, ok := p.(map[string]any)
+-		if !ok || !configrefs.GatewayParentIsGateway(pm) {
+-			continue
 -		}
+-		name, _ := pm["name"].(string)
+-		if name == "" {
+-			continue
+-		}
+-		ns := configrefs.GatewayRefNamespace(pm, route.GetNamespace())
+-		key := ns + "/" + name
+-		if seen[key] {
+-			continue
+-		}
+-		seen[key] = true
+-		_, exists, readable := dynamicCache.ReadableObject(gatewayGVR, ns, name)
+-		if !readable || exists {
+-			continue
+-		}
+-		source := fmt.Sprintf("spec.parentRefs[%d]", pi)
+-		det := missingRefProblemSev(now, kind, "gateway.networking.k8s.io", rou
+```
+
+**File**: `internal/k8s/detect_missing_refs_test.go` (modified, +0/-298)
+```diff
+@@ -1,7 +1,6 @@
+ package k8s
+ 
+ import (
+-	"context"
+ 	"errors"
+ 	"strings"
+ 	"testing"
+@@ -1727,300 +1726,3 @@ func TestDetectMissingGatewayRefsCrossNamespaceCoverage(t *testing.T) {
+ 		}
+ 	}
+ }
+-
+-func gatewayRouteWithParents(name, namespace string, ts metav1.Time, parentRefs, backendRefs []any) *unstructured.Unstructured {
+-	spec := map[string]any{}
+-	if len(parentRefs) > 0 {
+-		spec["parentRefs"] = parentRefs
 -	}
--	return true
+-	if backendRefs != nil {
+-		spec["rules"] = []any{map[string]any{"backendRefs": backendRefs}}
+-	}
+-	return &unstructured.Unstructured{Object: map[string]any{
+-		"apiVersion": "gateway.networking.k8s.io/v1",
+-		"kind":       "HTTPRoute",
+-		"metadata": map[string]any{
+-			"name":              name,
+-			"namespace":         namespace,
+-			"creationTimestamp": ts.Format(time.RFC3339),
+-		},
+-		"spec": spec,
+-	}}
 -}
 -
- func (s *Server) handleGetNamespaceScope(w http.ResponseWriter, r *http.Request) {
- 	if !s.requireConnected(w) {
- 		return
-@@ -478,7 +460,7 @@ func (s *Server) handleGetNamespaceScope(w http.ResponseWriter, r *http.Request)
- 	// every listed namespace. Callers that resolve what they no longer see
- 	// (Radar Cloud alerts) would otherwise close issues in a namespace whose
- 	// grant was removed.
--	if source == k8s.NamespaceListRBAC && !namespacesFullyReadable(saAccessible, k8s.GetCachedPermissionResult()) {
-+	if source == k8s.NamespaceListRBAC && !k8s.GetCachedPermissionResult().ReadableInEvery(saAccessible) {
- 		authoritative = false
- 	}
- 
+-func gatewayObject(name, namespace string, ts metav1.Time) *unstructured.Unstructured {
+-	return &unstructured.Unstructured{Object: map[string]any{
+-		"apiVersion": "gateway.networking.k8s.io/v1",
+-		"kind":       "Gateway",
+-		"metadata": map[string]any{
+-			"name":              name,
+-			"namespace":         namespace,
+-			"creationTimestamp": ts.Format(time.RFC3339),
+-		},
+-		"spec": map[string]any{},
+-	}}
+-}
+-
+-// createGateway stores a Gateway under the real "gateways" resource. The fake
+-// dynamic client guesses a resource from the Kind, and its naive plural of
+-// "Gateway" is "gatewaies" (every -y becomes -ies), so a Gateway passed in the
+-// constructor is filed under a resource the informer never lists. Creating it
+-// through the explicit GVR sidesteps that guess.
+-func createGateway(t *testing.T, dynClient *dynamicfake.FakeDynamicClient, gvr schema.GroupVersionResource, name, namespace string, ts metav1.Time) {
+-	t.Helper()
+-	if _, err := dynClient.Resource(gvr).Namespace(namespace).Create(context.Background(), gatewayObject(name, namespace, ts), metav1.CreateOptions{}); err != nil {
+-		t.Fatalf("create gateway %s/%s: %v", namespace, name, err)
+-	}
+-}
+-
+-func TestDetectMissingGatewayParentRefs(t *testing.T) {
+-	defer ResetTestState()
+-	defer ResetTestDynamicState()
+-
+-	now := metav1.NewTime(time.Now().Add(-5 * time.Minute))
+-	apiSvc := &corev1.Service{
+-		ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "prod", CreationTimestamp: now},
+-		Spec:       corev1.ServiceSpec{Ports: []corev1.ServicePort{{Name: "http", Port: 80}}},
+-	}
+-	client := fake.NewClientset(apiSvc)
+-	if err := InitTestResourceCache(client); err != nil {
+-		t.Fatalf("InitTestResourceCache: %v", err)
+-	}
+-
+-	routeGVR := schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1", Resource: "httproutes"}
+-	gatewayGVR := schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1", Resource: "gateways"}
+-	scheme := runtime.NewScheme()
+-	dynClient := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(
+-		scheme,
+-		map[schema.GroupVersionResource]string{
+-			routeGVR:   "HTTPRouteList",
+-			gatewayGVR: "GatewayList",
+-		},
+-		gatewayRouteWithParents("valid-backend-missing-parent", "prod", now,
+-			[]any{map[string]any{"name": "ghost-gw"}},
+-			[]any{map[string]any{"name": "api", "port": int64(80)}}),
+-		gatewayRouteWithParents("both-missing", "prod", now,
+-			[]any{map[string]any{"name": "ghost-gw"}},
+-			[]any{map[string]any{"name": "nope", "port": int64(80)}}),
+-		gatewayRouteWithParents("has-parent", "prod", now,
+-			[]any{map[string]any{"name": "real-gw"}},
+-			[]any{map[string]any{"name": "api", "port": int64(80)}}),
+-		gatewayRouteWithParents("multi-parent", "prod", now,
+-			[]any{map[string]any{"name": "real-gw"}, map[string]any{"name": "ghost-gw"}},
+-			[]any{map[string]any{"name": "api", "port": int64(80)}}),
+-		gatewayRouteWithParents("dup-parent", "prod", now,
+-			[]any{map[string]any{"name": "ghost-gw"}, map[string]any{"name": "ghost-gw"}},
+-			nil),
+-		gatewayRouteWithParents("mesh-parent", "prod", now,
+-			[]any{map[string]any{"group": "", "kind": "Service", "name": "mesh"}},
+-			nil),
+-		gatewayRouteWithParents("cross-ns-parent", "prod", now,
+-			[]any{map[string]any{"name": "ghost-infra", "namespace": "infra"}},
+-			nil),
+-	)
+-	createGateway(t, dynClient, gatewayGVR, "real-gw", "prod", now)
+-	if err := InitTestDynamicResourceCache(dynClient, []APIResource{
+-		{Group: "gateway.networking.k8s.io", Version: "v1", Kind: "HTTPRoute", Name: "httproutes", Verbs: []string{"list", "watch"}},
+-		{Group: "gateway.networking.k8s.io", Version: "v1", Kind: "Gateway", Name: "gateways", Verbs: []string{"list", "watch"}},
+-	}); err != nil {
+-		t.Fatalf("InitTestDynamicResourceCache: %v", err)
+-	}
+-	dynCache := GetDynamicResourceCache()
+-	for _, gvr := range []schema.GroupVersionResource{routeGVR, gatewayGVR} {
+-		if err := dynCache.EnsureWatching(gvr); err != nil {
+-			t.Fatalf("EnsureWatching %s: %v", gvr.String(), err)
+-		}
+-		if !dynCache.WaitForSync(gvr, 2*time.Second) {
+-			t.Fatalf("%s did not sync", gvr.String())
+-		}
+-	}
+-
+-	problems := DetectMissingGatewayRe
+```
+
+**File**: `web/src/components/whats-new/releaseNotes.ts` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@ export const RELEASE_NOTES: ReleaseNotes[] = [
+       'Limit what Radar can reach with rbac.namespaces, disableExec and --disable-auto-port-forward',
+       'GitOps trees show operator-created workloads; drawers link webhooks, issuers and Secrets',
+       'get_changes includes RBAC and Node edits; search finds resources by a pasted IP or ip:port',
+-      'Issues link a missing Secret to its SealedSecret and report missing parent Gateways',
++      'Issues link a missing Secret to its SealedSecret',
+     ],
+   },
+   {
+```
+
+---
+
+### Incident Patch 3: `523a047c` (2026-11-06)
+**Commit Message**: fix(packaging): depend on sonames in the RPM package (#2546)
+
+## Description
+
+The RPM package declares Fedora package names (`gtk3`, `webkit2gtk4.1`)
+as dependencies. On openSUSE the same libraries ship as `libgtk-3-0` /
+`libwebkit2gtk-4_1-0`, so `rpm -i` fails with `webkit2gtk4.1 is needed
+by radar-desktop` even though everything the binary links against is
+installed.
+
+This switches the RPM dependencies to sonames (`libgtk-3.so.0()(64bit)`,
+`libwebkit2gtk-4.1.so.0()(64bit)`), which are auto-provided by the
+library packages on Fedora, RHEL and openSUSE. The `.deb` overrides are
+unchanged.
+
+## Type of change
+
+- [x] Bug fix (non-breaking change that fixes an issue)
+
+## How has this been tested?
+
+On openSUSE Tumbleweed (x86_64), using the v1.19.0 binary:
+
+- built the RPM with `nfpm package --config deploy/linux/nfpm.yaml
+--packager rpm`
+- `rpm -qpR` lists the soname requirements
+- `rpm -q --whatprovides` resolves both to `libgtk-3-0` and
+`libwebkit2gtk-4_1-0`
+- `rpm -i --test` passes (it failed with the old package)
+
+Not tested on Fedora, but both sonames are provided there by `gtk3` and
+`webkit2gtk4.1`.
+
+## Related issues
+
+Fixes #2545
+
+**File**: `deploy/linux/nfpm.yaml` (modified, +2/-2)
+```diff
+@@ -21,5 +21,5 @@ overrides:
+       - libwebkit2gtk-4.1-0
+   rpm:
+     depends:
+-      - gtk3
+-      - webkit2gtk4.1
++      - libgtk-3.so.0()(64bit)
++      - libwebkit2gtk-4.1.so.0()(64bit)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2547** (2026-11-06): feat(chart): add disableExec to turn off pod exec (@nadaverell)
-- **PR #2540** (2026-11-06): Nodes table: show an unknown Pod count as a dash, not zero (@nadaverell)
-- **PR #2539** (2026-11-06): Show a deleting Job with no active Pods as Deleting, not Pending (@nadaverell)
-- **PR #2538** (2026-11-06): Logs: show the line when a structured log has no message to summarize (@nadaverell)
-- **PR #2537** (2026-11-06): Capacity Demand: name GPU and Pod requests, and give no verdict while a pool is unknown (@nadaverell)
-- **PR #2535** (2026-11-04): Show CRD definitions with a searchable schema explorer and Schema tab (@nadaverell)
+- **PR #2567** (2026-11-07): Revert "parent Gateway not found" Issues check (RAD-939, #2555) to research out-of-cluster cases (@arlenvasconcelos)
+- **PR #2562** (2026-11-06): Tell Compare's sides apart when comparing one resource across clusters (@nadaverell)
+- **PR #2561** (2026-11-06): docs(chart): note the Helm write grant when turning exec off (@nadaverell)
+- **PR #2560** (2026-11-06): docs: correct the exec-off image note and the edit role row (@nadaverell)
+- **PR #2559** (2026-11-06): Report revision serving state, deploy time and access on applications (@nadaverell)
+- **PR #2558** (closed): Fix flaky Kueue queue paging test (@nadaverell)
 
 ---
 
@@ -2833,30 +3265,36 @@ reported authoritative.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Install into a listed namespace without creating it, and require Radar 1.19.1
+## X. issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)
 
 **RULE**:
-When implementing operations in `deploy/helm/radar/templates/deployment.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/issues/category.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c21eb0f`: Install into a listed namespace without creating it, and require Radar 1.19.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ed334f6`: issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/helm/radar/templates/deployment.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/issues/category.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.1-0" $tag) }}
-{{- fail (printf "rbac.namespaces requires Radar 1.19.1 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.1 or later." $tag) }}
+		// DetectProblems only emits Job problems for a genuine terminal
+		// failure: a JobFailed condition (reason e.g. BackoffLimitExceeded /
+		// DeadlineExceeded, or the "Failed" fallback). It maps to the batch
+		// workload-failure category. (A deleting Job is classified as
+		// terminating earlier, before this switch.)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag) (semverCompare "<1.19.0-0" $tag) }}
-{{- fail (printf "rbac.namespaces requires Radar 1.19.0 or later, but image.tag pins %s. Unset image.tag to use the chart's version, or pin 1.19.0 or later." $tag) }}
+		// DetectProblems only emits Job problems for genuine failures: a
+		// JobFailed condition (reason e.g. BackoffLimitExceeded /
+		// DeadlineExceeded, or the "Failed" fallback) or a stuck-active job
+		// ("Running for … with no completions"). All map to the batch
+		// workload-failure category rather than being discarded.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c21eb0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ed334f6` are properly handled with clean fallback behavior.

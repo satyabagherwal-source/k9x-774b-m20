@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-MIXD",
-    "timestamp": "2026-11-05T10:58:08.593Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "0944db45602655979a6afa06b81279583a1e989d0649848ee6fb63b2b850f4bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-MOHG",
-    "timestamp": "2026-11-05T10:58:15.796Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "aff96c17b9470fc4ec47c6da52533cab6a5279d438b81efe98405c86cd50dc76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-ZTHH",
-    "timestamp": "2026-11-05T11:08:28.805Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-ZZXC",
     "timestamp": "2026-11-05T11:08:37.152Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7445,51 @@
     "repository": "faker-js/faker",
     "learningId": "learn-github-faker-js-faker",
     "contentHash": "0660ef8f4f6b1d8f488e31cf1c2427b69dc479429d3b8ee86118c07e342b0f6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-9NN0",
+    "timestamp": "2026-11-07T23:55:17.868Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "ad86f125397a595dc39ce64d9762a509b06c53873588ca60caaaaa01eaafd3b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-9RFO",
+    "timestamp": "2026-11-07T23:55:22.788Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-9TCQ",
+    "timestamp": "2026-11-07T23:55:25.274Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

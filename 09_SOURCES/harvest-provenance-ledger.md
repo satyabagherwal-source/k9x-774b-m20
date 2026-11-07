@@ -8143,3 +8143,6 @@ Every entry in this ledger must capture:
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `9a5f8e25` | Multi-dimensional audit evidence | 2026-11-07T23:34:14.097Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `fa310ff1` | Multi-dimensional audit evidence | 2026-11-07T23:34:20.437Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `5415aecc` | Multi-dimensional audit evidence | 2026-11-07T23:47:04.892Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9f467738` | Multi-dimensional audit evidence | 2026-11-07T23:55:17.872Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `41fef581` | Multi-dimensional audit evidence | 2026-11-07T23:55:22.791Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `7466899f` | Multi-dimensional audit evidence | 2026-11-07T23:55:25.278Z |

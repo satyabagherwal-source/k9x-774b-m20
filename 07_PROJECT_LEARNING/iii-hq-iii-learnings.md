@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `9846078c`  
+> **Source Version**: `9f467738`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:22:13.399Z  
+> **Timestamp**: 2026-11-07T23:55:16.634Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:22:12.384Z  
+> **Harvest Timestamp**: 2026-11-07T23:55:15.419Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2263,124 +2263,235 @@ pub enum Commands {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9846078c` (2026-11-05)
-**Commit Message**: docs(changelog): add 0.25.1 release notes (#2476)
+### Incident Patch 1: `9f467738` (2026-11-07)
+**Commit Message**: fix(website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)
 
-Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
-
-**File**: `docs/changelog/index.mdx` (modified, +20/-0)
+**File**: `website/package.json` (modified, +3/-3)
 ```diff
-@@ -5,6 +5,26 @@ owner: "devrel"
- type: "reference"
- ---
- 
-+<Update label="0.25.1" description="November 2026">
-+  ## Native Windows fixes for Compose
-+
-+  This patch release adds only the following fixes to 0.25.0 and changes no protocol or API.
-+
-+  - Compose can sanitize and rotate an existing `engine.log`, including one that reached 10 MiB.
-+    Previously, truncating the log failed with `os error 5` (access denied): the engine log stopped
-+    updating, and later `iii compose --up` runs could not start the engine.
-+  - Local `path://` workers whose run command contains quotes start again. Compose passes the
-+    command text to `cmd /C` verbatim, preserving Windows shell quoting and operators, instead of
-+    failing with `ERROR_BAD_NETPATH`. As with `cmd /C`, when both the executable path and its
-+    arguments are quoted, wrap the whole command in one more pair of quotes, for example
-+    `""C:\Program Files\nodejs\node.exe" "C:\my app\main.js""`.
-+  - When Compose runs without a console, such as when it is detached, the engine and its workers no
-+    longer open empty console windows. When a console exists, including a hidden one, Compose still
-+    shares it, so console control events keep working.
-+
-+  [Compare 0.25.0 to 0.25.1](https://github.com/iii-hq/iii/compare/iii%2Fv0.25.0...iii%2Fv0.25.1).
-+</Update>
-+
- <Update label="0.25.0" description="October 2026">
-   ## Observe: every function is observable
- 
+@@ -30,9 +30,9 @@
+     "hast-util-to-jsx-runtime": "^2.3.6",
+     "lucide-react": "^1.48.0",
+     "marked": "^18.0.5",
+-    "mermaid": "^11.16.0",
++    "mermaid": "^11.17.2",
+     "motion": "^13.4.6",
+-    "next": "16.3.6",
++    "next": "16.4.5",
+     "next-themes": "^0.4.6",
+     "react": "19.2.8",
+     "react-dom": "19.2.8",
+@@ -42,7 +42,7 @@
+     "remark-parse": "^11.0.0",
+     "remark-rehype": "^11.1.2",
+     "server-only": "^0.0.1",
+-    "shadcn": "^4.21.0",
++    "shadcn": "^4.23.0",
+     "shiki": "^4.4.3",
+     "tailwind-merge": "^3.7.0",
+     "three": "^0.186.1",
 ```
 
 ---
 
-### Incident Patch 2: `49758581` (2026-11-05)
-**Commit Message**: feat(website): Pi vs OpenCode vs iii comparison post (#2458)
+### Incident Patch 2: `d5e595f8` (2026-11-06)
+**Commit Message**: ci(bench): report CPU and memory in /bench and in the release benchmarks (#2485)
 
-**File**: `website/content/blog/pi-vs-opencode-vs-iii.md` (added, +307/-0)
+Co-authored-by: iii harness (claude-sonnet-5-5) <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/bench-compare.yml` (modified, +93/-3)
 ```diff
-@@ -0,0 +1,307 @@
-+---
-+title: 'Pi vs OpenCode vs iii for extensible coding workflows'
-+seoTitle: 'Pi vs OpenCode vs iii: Extending Your Coding Workflow'
-+description: 'We tested the same tool with Pi, OpenCode, and iii to compare setup, error handling, and reuse between coding agents and applications.'
-+pubDate: 2026-11-05
-+tags: ['agents', 'comparison', 'pi', 'opencode', 'mcp', 'harness']
-+ogImage: ../../assets/blog/pi-vs-opencode-vs-iii/og.png
-+faq:
-+  - q: 'Does Pi support MCP servers now?'
-+    a: 'Yes. Pi added MCP with Codemode in v0.99.0 on September 29, 2026, and Pi 1.0 ships it. Earlier reviews contrasted OpenCode''s built-in MCP with Pi''s extension-first core. That distinction is now historical, as both ship MCP as a first-class configuration path.'
-+  - q: 'Can I embed Pi or OpenCode in my own app?'
-+    a: 'Yes, in different shapes. Pi offers a TypeScript SDK and an RPC mode over stdin and stdout. OpenCode offers a client for its background service''s HTTP API. In iii, the AI Agent Harness is itself a Worker on the same engine as your application''s Workers, so the integration boundary is a Function call rather than a separate protocol.'
-+  - q: 'How do I share an extension with my team?'
-+    a: 'Pi packages bundle extensions, skills, and prompt templates from npm or git, and versions can be pinned. OpenCode plugins install from npm or git and are listed in opencode.json(c). iii Workers come from the registry via compose::add and are pinned in worker-compose.lock.'
-+---
+@@ -14,6 +14,9 @@ name: Benchmark Compare
+ # the `iii/vX.Y.Z[-pre]` release tag. The first ref listed is the baseline the
+ # other columns are compared against.
+ #
++# Besides the timings, the report lists the peak memory and the CPU each bench
++# binary used (see "Install the resource-measuring bench runner" below).
++#
+ # Constraints:
+ #   - GitHub runs issue_comment workflows from the DEFAULT branch only, so this
+ #     file must be merged into main before /bench works on any PR (including PRs
+@@ -169,6 +172,27 @@ jobs:
+           PR: ${{ needs.authorize.outputs.pr }}
+         run: git fetch --no-tags origin "refs/pull/$PR/head"
+ 
++      # Cargo runs every bench binary through this wrapper (a target runner), which
++      # prints the binary's wall time, CPU time and peak memory (GNU time) next to
++      # its timings. It lives outside the checked-out tree, so refs that predate it
++      # are measured the same way.
++      - name: Install the resource-measuring bench runner
++        run: |
++          cat > "$RUNNER_TEMP/bench-runner.sh" <<'RUNNER'
++          #!/usr/bin/env bash
++          # cargo runner: bench-runner.sh <bench-binary> [args...]
++          if [[ ! -x /usr/bin/time ]]; then exec "$@"; fi
++          name="$(basename "$1")"; name="${name%-*}"
++          tmp="$(mktemp)"
++          /usr/bin/time -f '%e %U %S %M' -o "$tmp" "$@"
++          rc=$?
++          read -r wall user sys maxrss < <(tail -n1 "$tmp")
++          rm -f "$tmp"
++          printf '\n%s\n' "resource $name wall_s=${wall:-0} user_s=${user:-0} sys_s=${sys:-0} maxrss_kb=${maxrss:-0}"
++          exit "$rc"
++          RUNNER
++          chmod +x "$RUNNER_TEMP/bench-runner.sh"
 +
-+![Pi vs OpenCode vs iii: one tool, two callers. An Agent and an App both connect to one iii Function, release-notes::get.](../../assets/blog/pi-vs-opencode-vs-iii/banner.png)
+       # All refs run sequentially on the SAME runner so the numbers are
+       # comparable (separate runners add 10-20% noise). Each ref is benchmarked
+       # with its own benches, so a tag that predates a benchmark simply has no
+@@ -180,6 +204,9 @@ jobs:
+         run: |
+           set -uo pipefail
+           mkdir -p out
++          # Cargo's per-target runner, set through the environment so it wins over any .cargo/config of a ref.
++          HOST="$(rustc -vV | sed -n 's/^host: //p')"
++          RUNNER_VAR="CARGO_TARGET_$(echo "$HOST" | tr 'a-z-' 'A-Z_')_RUNNER"
+           echo "$REFS" > out/refs.json
+           N=$(jq length out/refs.json)
+           for i in $(seq 0 $((N-1))); do
+@@ -192,7 +219,7 @@ jobs:
+               git fetch --no-tags origin "$REV" || echo "::warning::pinned commit $REV is not available (PR force-pushed?)"
+             fi
+             if git worktree add --detach "$DIR" "$REV" && \
+-               (cd "$DIR" && cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee "$GITHUB_WORKSPACE/out/$i.txt"; exit "${PIPESTATUS[0]}"); then
++               (cd "$DIR" && env "$RUNNER_VAR=$RUNNER_TEMP/bench-runner.sh" cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee "$GITHUB_WORKSPACE/out/$i.txt"; exit "${PIPESTATUS[0]}"); then
+               echo ok > "out/$i.status"
+             else
+               echo failed > "out/$i.status"
+@@ -240,22 +267,31 @@ jobs:
+           def line_re():
+               return re.compile(r'^test (.+?) \.\.\. bench:\s+([\d,]+) ns/iter \(\+/- ([\d,]+)\)')
+ 
++          def res_re():
++              # Printed by the bench runner: one line per bench binary.
++              return re.compile(r'^resource (\S+) wall_s=([\d.]+) user_s=([\d.]+) sys_s=([\d.]+) maxrss_kb=(\d+)')
 +
-+You've built a small HTTP service that returns release notes for versioned packages, and now both your coding agent and your application need to call it.
+           try:
+               refs = json.load(open('out/refs.json'))
+           except Exception:
+               refs = []
+ 
+-          results, status = [], []
++          results, status, resources = [], [], []
+           for i, _ in enumerate(refs):
+-              data = {}
++              data, res = {}, {}
+               try:
+                   for line in open(f'out/{i}.txt', errors='replace'):
++                      rm = res_re().match(line.strip())
++                      if rm:
++                          res[rm.group(1)] = {'wall': float(rm.group(2)), 'user': float(rm.group(3)),
++                                              'sys': float(rm.group(4)), 'rss_kb': int(rm.group(5))}
+                       m = line_re().match(line.strip())
+                       if m:
+                           data[m.group(1)] = int(m.group(2).replace(',', ''))
+               except FileNotFoundError:
+                   pass
+               results.append(data)
++              resources.append(res)
+               try:
+                   status.append(open(f'out/{i}.status').read().strip())
+               except FileNotFoundError:
+@@ -365,6 +401,60 @@ jobs:
+               else:
+                   out.append('_Full table omitted (too long for a comment); see the run summary and the artifact attached to the workflow run._')
+                   open(os.environ['GITHUB_STEP_SUMMARY'], 'a').write(full + '\n')
++          # CPU and memory of each bench binary: peak resident memory, and the cores it kept busy on
++          # average ((user + sys CPU time
+```
+
+**File**: `.github/workflows/bench-release.yml` (modified, +66/-1)
+```diff
+@@ -30,8 +30,32 @@ jobs:
+         with:
+           cache-on-failure: true
+ 
++      # Cargo runs every bench binary through this wrapper (a target runner), which
++      # prints the binary's wall time, CPU time and peak memory (GNU time) next to
++      # its timings. The same wrapper is used by /bench (bench-compare.yml).
++      - name: Install the resource-measuring bench runner
++        run: |
++          cat > "$RUNNER_TEMP/bench-runner.sh" <<'RUNNER'
++          #!/usr/bin/env bash
++          # cargo runner: bench-runner.sh <bench-binary> [args...]
++          if [[ ! -x /usr/bin/time ]]; then exec "$@"; fi
++          name="$(basename "$1")"; name="${name%-*}"
++          tmp="$(mktemp)"
++          /usr/bin/time -f '%e %U %S %M' -o "$tmp" "$@"
++          rc=$?
++          read -r wall user sys maxrss < <(tail -n1 "$tmp")
++          rm -f "$tmp"
++          printf '\n%s\n' "resource $name wall_s=${wall:-0} user_s=${user:-0} sys_s=${sys:-0} maxrss_kb=${maxrss:-0}"
++          exit "$rc"
++          RUNNER
++          chmod +x "$RUNNER_TEMP/bench-runner.sh"
 +
-+Every team building real workflows hits this extension decision eventually, and it's where the top Pi vs OpenCode comparisons go silent.
+       - name: Run benchmarks
+-        run: cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee bench-output.txt
++        id: bench
++        run: |
++          HOST="$(rustc -vV | sed -n 's/^host: //p')"
++          RUNNER_VAR="CARGO_TARGET_$(echo "$HOST" | tr 'a-z-' 'A-Z_')_RUNNER"
++          env "$RUNNER_VAR=$RUNNER_TEMP/bench-runner.sh" cargo bench -p iii --bench '*' -- --output-format bencher 2>&1 | tee bench-output.txt
+ 
+       - name: Extract version from tag
+         id: meta
+@@ -64,6 +88,47 @@ jobs:
+           GH_TOKEN: ${{ github.token }}
+         run: gh workflow run deploy-website.yml --repo "${{ github.repository }}" --ref main
+ 
++      # Peak memory and the cores kept busy by each bench binary, as a second
++      # series on the same gh-pages charts (lower is better). iii.dev/benchmarks
++      # reads only the timing series above, so this one does not change the site.
++      # `!cancelled()` so a failed website dispatch above does not skip these (it still fails the job).
++      - name: Collect CPU and memory
++        if: ${{ !cancelled() && steps.bench.outcome == 'success' }}
++        run: |
++          python3 - <<'PY'
++          import json, re
++          out = []
++          pat = re.compile(r'^resource (\S+) wall_s=([\d.]+) user_s=([\d.]+) sys_s=([\d.]+) maxrss_kb=(\d+)')
++          for line in open('bench-output.txt', errors='replace'):
++              m = pat.match(line.strip())
++              if not m:
++                  continue
++              name = m.group(1)
++              wall, user, sys_ = float(m.group(2)), float(m.group(3)), float(m.group(4))
++              out.append({'name': f'{name} / peak memory', 'unit': 'MiB', 'value': round(int(m.group(5)) / 1024, 1)})
++              if wall > 0:
++                  out.append({'name': f'{name} / cores busy', 'unit': 'cores', 'value': round((user + sys_) / wall, 2)})
++          if out:
++              json.dump(out, open('resources.json', 'w'), indent=1)
++          print(f'{len(out)} resource series')
++          PY
 +
-+The top-ranking comparison pages contrast OpenCode's built-in MCP with Pi's extension-first core, but none of them adds the same tool to both agents and asks what happens when the application also needs that tool.
++      - name: Store CPU and memory result
++        if: ${{ !cancelled() && steps.bench.outcome == 'success' && hashFiles('resources.json') != '' }}
++        uses: benchmark-action/github-action-benchmark@v1
++        with:
++          name: iii Engine Benchmarks (CPU and memory)
++          tool: 'customSmallerIsBetter'
++          output-file-path: resources.json
++          gh-pages-branch: gh-pages
++          benchmark-data-dir-path: dev/bench
++          github-token: ${{ secrets.GITHUB_TOKEN }}
++          auto-push: true
++          alert-threshold: '150%'
++          comment-on-alert: true
++          summary-always: true
++          alert-comment-cc-users: '@iii-hq/engine'
 +
-+In this article, we built one release-notes lookup as a standalone HTTP service, connected it with Pi, OpenCode, and iii, and tested how each tool works when your agent and your app both need the same tool.
-+
-+> **Versions tested, checked October 13, 2026:** Pi 1.0.4, OpenCode v2.0.24, and iii engine 0.24.4 with AI Agent Harness 1.8.44, all running against the same claude-sonnet-5 model via the same Anthropic API key.
-+
-+## Our quick take by workload
-+
-+Pi and OpenCode are coding agents you extend with MCP servers or plugins. iii is a framework where the agent and the application call the same Functions. The right choice depends on which problem you're actually solving.
-+
-+<div class="verdict">
-+  <div class="verdict-card">
-+    <p class="verdict-pick">Best for getting the tool call right with minimal config</p>
-+    <p class="verdict-tool">Pi</p>
-+    <p class="verdict-reason">The .pi/mcp.json wiring was the smallest config of the three (one pi mcp add command, one JSON file), and the agent used the tool correctly with no missteps in our run.</p>
-+    <a class="verdict-cta" href="https://iii.dev/docs/install">Pi in iii</a>
-+  </div>
-+  <div class="verdict-card">
-+    <p class="verdict-pick">Best for a full agent with plugins and MCP built in</p>
-+    <p class="verdict-tool">OpenCode</p>
-+    <p class="verdict-reason">OpenCode ships agents, commands, skills, MCP, and a plugin API in one install, so you're customizing one complete tool rather than assembling pieces.</p>
-+    <a class="verdict-cta" href="https://iii.dev/docs/install">OpenCode in iii</a>
-+  </div>
-+  <div class="verdict-card" data-highlight>
-+    <p class="verdict-pick">Best when the app needs the tool too</p>
-+    <p class="verdict-tool">iii</p>
-+    <p class="verdict-reason">Confirmed in our run: the app called the exact same release-notes::get Function the agent did, with no second implementation, and both calls appeared in the same filterable trace list in the console.</p>
-+    <a class="verdict-cta" href="https://iii.dev/docs/install">Start the harness</a>
-+  </div>
-+</div>
-+
-+## How we ran the test
-+
-+We built one release-notes lookup as a standalone HTTP service returning merged changes for a `beacon-cli` version from a local fixture, with a clean 404 for unknown versions. We connected it three ways: a stdio MCP server used identically by Pi and OpenCode, and a Function registered by an iii Worker.
-+
-+All three call into the same running service, so every result below reflects how each option exposes and reaches a tool.
-+
-+We ran four cases per tool using the same fixed prompt template: "Look up the release notes for beacon-cli version {VERSION} using the available tool, and summarize the changes in one sentence."
-+
-+<div class="compare">
-+
-+| Setup | Pi | OpenCode | iii |
-+
+       - name: Upload raw criterion data
+         uses: actions/upload-artifact@v4
+         with:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2476** (2026-11-05): docs(changelog): add 0.25.1 release notes (@guibeira)
-- **PR #2474** (2026-11-05): ci(release): allow stable patch releases from release/X.Y.x branches (@guibeira)
-- **PR #2470** (2026-11-04): fix(engine): sandbox::adapter::info names the binding when the adapter hangs (@andersonleal)
-- **PR #2469** (2026-11-04): fix(compose,engine): sandbox regressions found testing observe-v2 with real VMs (@andersonleal)
-- **PR #2466** (2026-11-04): chore: merge main into observe-v2 to resolve #2433 conflicts (@andersonleal)
-- **PR #2465** (2026-11-04): fix(install): say when a release still needs iii-worker and iii-init (@andersonleal)
+- **PR #2492** (2026-11-06): fix(engine): bound trace reads so summaries never decode span payloads (MOT-5648) (@andersonleal)
+- **PR #2490** (2026-11-06): ci(bench-compare): resolve alpha release tags (iii-alpha/v*) (@guibeira)
+- **PR #2489** (2026-11-06): perf(engine): batch trace archive commits and give the writer a 16 MiB cache (@ytallo)
+- **PR #2488** (2026-11-06): perf(engine): read channel and /otel sockets with an 8 KiB buffer (@ytallo)
+- **PR #2487** (2026-11-07): fix(website): bump next, mermaid and shadcn for Supply Chain advisories (@arihantcodes)
+- **PR #2485** (2026-11-06): ci(bench): report CPU and memory in /bench and in the release benchmarks (@guibeira)
 
 ---
 
@@ -2400,45 +2511,32 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): add 0.25.1 release notes (#2476)
+## X. website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)
 
 **RULE**:
-When implementing operations in `docs/changelog/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9846078c`: docs(changelog): add 0.25.1 release notes (#2476). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f467738`: website): bump next, mermaid and shadcn for Supply Chain advisories (#2487). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/changelog/index.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<Update label="0.25.1" description="November 2026">
-  ## Native Windows fixes for Compose
-
-  This patch release adds only the following fixes to 0.25.0 and changes no protocol or API.
-
-  - Compose can sanitize and rotate an existing `engine.log`, including one that reached 10 MiB.
-    Previously, truncating the log failed with `os error 5` (access denied): the engine log stopped
-    updating, and later `iii compose --up` runs could not start the engine.
-  - Local `path://` workers whose run command contains quotes start again. Compose passes the
-    command text to `cmd /C` verbatim, preserving Windows shell quoting and operators, instead of
-    failing with `ERROR_BAD_NETPATH`. As with `cmd /C`, when both the executable path and its
-    arguments are quoted, wrap the whole command in one more pair of quotes, for example
-    `""C:\Program Files\nodejs\node.exe" "C:\my app\main.js""`.
-  - When Compose runs without a console, such as when it is detached, the engine and its workers no
-    longer open empty console windows. When a console exists, including a hidden one, Compose still
-    shares it, so console control events keep working.
-
-  [Compare 0.25.0 to 0.25.1](https://github.com
+    "mermaid": "^11.17.2",
+    "next": "16.4.5",
+    "shadcn": "^4.23.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "mermaid": "^11.16.0",
+    "next": "16.3.6",
+    "shadcn": "^4.21.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9846078c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f467738` are properly handled with clean fallback behavior.

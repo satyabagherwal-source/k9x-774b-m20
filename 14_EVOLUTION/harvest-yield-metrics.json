@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T23:47:04.898Z",
-  "total_cycles_completed": 8099,
-  "total_learnings_persisted": 8099,
-  "total_rules_promoted": 7769,
+  "last_updated": "2026-11-07T23:55:25.289Z",
+  "total_cycles_completed": 8102,
+  "total_learnings_persisted": 8102,
+  "total_rules_promoted": 7772,
   "history": [
-    {
-      "timestamp": "2026-11-06T22:28:43.455Z",
-      "repository": "RunanywhereAI/runanywhere-sdks",
-      "learningId": "learn-github-runanywhereai-runanywhere-sdks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T22:28:46.950Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T22:36:11.872Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:36:17.985Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T23:47:04.898Z",
       "repository": "faker-js/faker",
       "learningId": "learn-github-faker-js-faker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:55:17.877Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:55:22.802Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:55:25.289Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

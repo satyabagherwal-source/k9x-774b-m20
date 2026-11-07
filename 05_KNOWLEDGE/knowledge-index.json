@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T23:47:04.798Z",
+  "last_updated": "2026-11-07T23:55:25.200Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34437,14 +34437,19 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "9846078c",
-      "content_hash": "eb19e8d598f6b4b7a2e403ccc20ef67b8a30e9032e3df4887b911d42c184c322",
+      "source_version": "9f467738",
+      "content_hash": "ad86f125397a595dc39ce64d9762a509b06c53873588ca60caaaaa01eaafd3b7",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs(changelog): add 0.25.1 release notes (#2476)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "website): bump next, mermaid and shadcn for Supply Chain advisories (#2487)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -34518,7 +34523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:22:14.481Z",
+      "verified_at": "2026-11-07T23:55:17.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42552,11 +42557,16 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "4ef33ee9",
-      "content_hash": "a7736658a90dd119561c86e272dd806e8dd4f02ff5d729d55cfcc283c040cba0",
+      "source_version": "41fef581",
+      "content_hash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "crash when rendering zero sized text (#16579)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2468,
           "title": "crash modifying outline property (#16386)",
@@ -42593,7 +42603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:27:34.013Z",
+      "verified_at": "2026-11-07T23:55:22.686Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55751,14 +55761,19 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "1f1e0719",
-      "content_hash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
+      "source_version": "7466899f",
+      "content_hash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Install into a listed namespace without creating it, and require Radar 1.19.1",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55852,7 +55867,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:47:44.553Z",
+      "verified_at": "2026-11-07T23:55:25.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

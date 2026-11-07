@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "9846078c",
+    "sourceVersion": "9f467738",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "eb19e8d598f6b4b7a2e403ccc20ef67b8a30e9032e3df4887b911d42c184c322",
-    "lastHarvestedAt": "2026-11-05T19:22:14.591Z",
+    "contentHash": "ad86f125397a595dc39ce64d9762a509b06c53873588ca60caaaaa01eaafd3b7",
+    "lastHarvestedAt": "2026-11-07T23:55:17.872Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "1f1e0719",
+    "sourceVersion": "7466899f",
     "license": "Apache-2.0",
-    "contentHash": "1b9f4aae098d8aa8ec24c354b90a289321910f685a5f1fae23135729350ba287",
-    "lastHarvestedAt": "2026-11-06T14:47:44.689Z",
+    "contentHash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
+    "lastHarvestedAt": "2026-11-07T23:55:25.278Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "4ef33ee9",
+    "sourceVersion": "41fef581",
     "license": "NOASSERTION",
-    "contentHash": "a7736658a90dd119561c86e272dd806e8dd4f02ff5d729d55cfcc283c040cba0",
-    "lastHarvestedAt": "2026-11-04T23:27:34.092Z",
+    "contentHash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
+    "lastHarvestedAt": "2026-11-07T23:55:22.791Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
