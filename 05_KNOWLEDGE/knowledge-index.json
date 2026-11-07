@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:23:48.704Z",
+  "last_updated": "2026-11-07T22:34:32.269Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64154,14 +64154,19 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "c26894aa",
-      "content_hash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
+      "source_version": "cd2be24b",
+      "content_hash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "offsets replication for consumers with availability period (#58279)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[NEW RBO] Fix double-counted filter selectivity (#58429)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64250,7 +64255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:49:04.052Z",
+      "verified_at": "2026-11-07T22:30:28.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75200,8 +75205,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "05b25923",
-      "content_hash": "91bd071ae5125a5f95dea4328e096181d043eeabd51eb14012a954c3af9ecf94",
+      "source_version": "1332aafa",
+      "content_hash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -75209,6 +75214,21 @@
           "number": null,
           "title": "gallery): use colored icons for the dark-tile apps",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Concatenated Injected Script Line-Ending Termination Contract",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Engine DOM Shortcut Delegation Priority Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Native Binary FFI Crate Dependency Feature Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1452,
@@ -75276,7 +75296,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:31:28.619Z",
+      "verified_at": "2026-11-07T22:34:32.245Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

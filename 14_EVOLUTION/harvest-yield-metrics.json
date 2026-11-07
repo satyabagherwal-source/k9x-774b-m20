@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T22:23:48.831Z",
-  "total_cycles_completed": 8087,
-  "total_learnings_persisted": 8087,
-  "total_rules_promoted": 7753,
+  "last_updated": "2026-11-07T22:34:32.363Z",
+  "total_cycles_completed": 8089,
+  "total_learnings_persisted": 8089,
+  "total_rules_promoted": 7757,
   "history": [
-    {
-      "timestamp": "2026-11-06T21:21:14.494Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T21:34:04.825Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T21:45:00.179Z",
       "repository": "actix/actix-web",
@@ -1403,6 +1389,20 @@
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:30:28.533Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:34:32.363Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

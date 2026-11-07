@@ -8122,3 +8122,5 @@
 | `CYCLE-20261107-ZPSL` | `2026-11-07T22:23:35.253Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03b7a0d1...`) |
 | `CYCLE-20261107-ZX5L` | `2026-11-07T22:23:44.793Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6ef9bf2b...`) |
 | `CYCLE-20261107-009A` | `2026-11-07T22:23:48.814Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e254a726...`) |
+| `CYCLE-20261107-8KOD` | `2026-11-07T22:30:28.525Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba8bf79e...`) |
+| `CYCLE-20261107-DSTG` | `2026-11-07T22:34:32.356Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`8b4832b1...`) |

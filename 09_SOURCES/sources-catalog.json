@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "05b25923",
+    "sourceVersion": "1332aafa",
     "license": "GPL-3.0",
-    "contentHash": "91bd071ae5125a5f95dea4328e096181d043eeabd51eb14012a954c3af9ecf94",
-    "lastHarvestedAt": "2026-11-05T18:31:28.735Z",
+    "contentHash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
+    "lastHarvestedAt": "2026-11-07T22:34:32.359Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "c26894aa",
+    "sourceVersion": "cd2be24b",
     "license": "Apache-2.0",
-    "contentHash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
-    "lastHarvestedAt": "2026-11-05T23:49:04.178Z",
+    "contentHash": "ba8bf79e148cc0548d99910b6d2e010127169909b6dca6b3ff2cf90ee09809aa",
+    "lastHarvestedAt": "2026-11-07T22:30:28.528Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

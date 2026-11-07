@@ -8131,3 +8131,5 @@ Every entry in this ledger must capture:
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `21af52d1` | Multi-dimensional audit evidence | 2026-11-07T22:23:35.258Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `50301083` | Multi-dimensional audit evidence | 2026-11-07T22:23:44.804Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2fefad6a` | Multi-dimensional audit evidence | 2026-11-07T22:23:48.818Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `cd2be24b` | Multi-dimensional audit evidence | 2026-11-07T22:30:28.528Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `1332aafa` | Multi-dimensional audit evidence | 2026-11-07T22:34:32.359Z |

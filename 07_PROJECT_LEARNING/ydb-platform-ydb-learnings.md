@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `c26894aa`  
+> **Source Version**: `cd2be24b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:49:02.550Z  
+> **Timestamp**: 2026-11-07T22:30:27.586Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:49:02.542Z  
+> **Harvest Timestamp**: 2026-11-07T22:30:26.244Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2067,516 +2067,1545 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5da12a8a` (2026-11-05)
-**Commit Message**: fix offsets replication for consumers with availability period (#58279)
+### Incident Patch 1: `bcb03436` (2026-11-07)
+**Commit Message**: [NEW RBO] Fix double-counted filter selectivity (#58429)
 
-**File**: `ydb/core/persqueue/pqtablet/partition/partition.cpp` (modified, +2/-1)
+**File**: `ydb/core/kqp/opt/rbo/kqp_rbo_compute_statistics.cpp` (modified, +3/-4)
 ```diff
-@@ -4148,7 +4148,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
-     for (auto& user : AffectedUsers) {
-         if (auto* actual = GetPendingUserIfExists(user)) {
-             TUserInfo& userInfo = UsersInfoStorage->GetOrCreate(user, ctx);
--            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
-+            const auto previousOffset = userInfo.Offset;
-             if (userInfo.Type == NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION
-                 && !actual->Session.empty() && actual->ReadSessionActor
-                 && (userInfo.Session != actual->Session || userInfo.Generation != actual->Generation
-@@ -4181,6 +4181,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
-                 userInfo.Offset = GetStartOffset();
-             }
+@@ -422,10 +422,9 @@ void TOpFilter::ComputeStatistics(TRBOContext& ctx, TPlanProps& planProps) {
+     auto lambda = TCoLambda(FilterExpr.Node);
+     double selectivity = TPredicateSelectivityComputer(inputStats).Compute(lambda.Body());
  
-+            const bool offsetHasChanged = userInfo.Offset != previousOffset;
-             if (offsetHasChanged && !userInfo.UpdateTimestampFromCache()) {
-                 userInfo.ActualTimestamps = false;
-                 ReadTimestampForOffset(user, userInfo, ctx);
-```
-
-**File**: `ydb/core/persqueue/ut/partition_ut.cpp` (modified, +79/-0)
-```diff
-@@ -321,6 +321,7 @@ class TPartitionFixture : public NUnitTest::TBaseFixture {
-                        bool strict = false);
-     void SendGetOffset(ui64 cookie,
-                        const TString& clientId);
-+    void TestReplicateOffsetClampedToStart(bool important);
-     void WaitCmdWrite(const TCmdWriteMatcher& matcher = {});
-     void WaitCmdWriteTx(const TCmdWriteTxMatcher& matcher = {});
-     void SendCmdWriteResponse(NMsgBusProxy::EResponseStatus status);
-@@ -3283,6 +3284,84 @@ Y_UNIT_TEST_F(ReplicationDataSentOnlyForSessionStartAndChangedOffsets, TPartitio
-     Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
+-    double filterSelectivity = selectivity * Props.Statistics->Selectivity;
+-    Props.Statistics->EBytes = filterSelectivity * Props.Statistics->EBytes;
+-    Props.Statistics->ERows = filterSelectivity * Props.Statistics->ERows;
+-    Props.Statistics->Selectivity = filterSelectivity;
++    Props.Statistics->EBytes *= selectivity;
++    Props.Statistics->ERows *= selectivity;
++    Props.Statistics->Selectivity *= selectivity;
  }
  
-+void TPartitionFixture::TestReplicateOffsetClampedToStart(bool important)
-+{
-+    const TConfigParams initialConfig{.Version = 1, .Consumers = {
-+        {.Consumer = "reader", .Offset = 5}, {.Consumer = "replication"}}};
-+    auto* partition = CreatePartition({.Partition = TPartitionId{0}, .Begin = 5, .End = 10,
-+        .Config = initialConfig, .FillHead = true}, initialConfig);
-+    Config.SetVersion(2);
-+    GetConsumer(Config, "replication")->SetType(NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION);
-+    if (important) {
-+        GetConsumer(Config, "reader")->SetImportant(true);
-+    } else {
-+        GetConsumer(Config, "reader")->SetAvailabilityPeriodMs(TDuration::Days(1).MilliSeconds());
+ /**
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds30_1000s_column_store.json` (modified, +50/-38)
+```diff
+@@ -3,56 +3,62 @@
+   "args":
+     [
+       {
+-        "op_name":"InnerJoin (BlockHash)",
++        "op_name":"HashShuffle",
+         "args":
+           [
+             {
+-              "op_name":"HashShuffle",
++              "op_name":"InnerJoin (BlockHash)",
+               "args":
+                 [
+                   {
+-                    "op_name":"InnerJoin (BlockHash)",
++                    "op_name":"HashShuffle",
+                     "args":
+                       [
+                         {
+-                          "op_name":"TableFullScan",
+-                          "table":"customer"
+-                        },
+-                        {
+-                          "op_name":"HashShuffle",
++                          "op_name":"InnerJoin (BlockHash)",
+                           "args":
+                             [
++                              {
++                                "op_name":"TableFullScan",
++                                "table":"customer"
++                              },
+                               {
+                                 "op_name":"HashShuffle",
+                                 "args":
+                                   [
+                                     {
+-                                      "op_name":"InnerJoin (BlockHash)",
++                                      "op_name":"HashShuffle",
+                                       "args":
+                                         [
+                                           {
+-                                            "op_name":"HashShuffle",
++                                            "op_name":"InnerJoin (BlockHash)",
+                                             "args":
+                                               [
+                                                 {
+-                                                  "op_name":"InnerJoin (BlockHash)",
++                                                  "op_name":"HashShuffle",
+                                                   "args":
+                                                     [
+                                                       {
+-                                                        "op_name":"TableFullScan",
+-                                                        "table":"web_returns"
+-                                                      },
+-                                                      {
+-                                                        "op_name":"TableFullScan",
+-                                                        "table":"date_dim"
++                                                        "op_name":"InnerJoin (BlockHash)",
++                                                        "args":
++                                                          [
++                                                            {
++                                                              "op_name":"TableFullScan",
++                                                              "table":"web_returns"
++                                                            },
++                                                            {
++                                                              "op_name":"TableFullScan",
++                                                              "table":"date_dim"
++                                                            }
++                                                          ]
+                                                       }
+                                                     ]
++                                                },
++                                                {
++                                                  "op_name":"TableFullScan",
++                                                  "table":"customer_address"
+                                                 }
+                                               ]
+-                                          },
+-                                          {
+-                                            "op_name":"TableFullScan",
+-                                            "table":"customer_address"
+                                           }
+                                         ]
+                                     }
+@@ -61,12 +67,12 @@
+                             ]
+                         }
+                       ]
++                  },
++                  {
++                    "op_name":"TableFullScan",
++                    "table":"customer_address"
+                   }
+                 ]
+-            },
+-            {
+-              "op_name":"TableFullScan",
+-              "table":"customer_address"
+             }
+           ]
+       },
+@@ -79,32 +85,38 @@
+               "args":
+                 [
+                   {
+-                    "op_name":"InnerJoin (BlockHash)",
++                    "op_name":"HashShuffle",
+                     "args":
+                       [
+                         {
+-             
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds31_1000s_column_store.json` (modified, +23/-5)
+```diff
+@@ -7,7 +7,7 @@
+         "args":
+           [
+             {
+-              "op_name":"HashShuffle",
++              "op_name":"InnerJoin (BlockHash)",
+               "args":
+                 [
+                   {
+@@ -19,7 +19,7 @@
+                           "args":
+                             [
+                               {
+-                                "op_name":"InnerJoin (BlockHash)",
++                                "op_name":"HashShuffle",
+                                 "args":
+                                   [
+                                     {
+@@ -63,7 +63,13 @@
+                                               ]
+                                           }
+                                         ]
+-                                    },
++                                    }
++                                  ]
++                              },
++                              {
++                                "op_name":"HashShuffle",
++                                "args":
++                                  [
+                                     {
+                                       "op_name":"HashShuffle",
+                                       "args":
+@@ -107,7 +113,13 @@
+                                         ]
+                                     }
+                                   ]
+-                              },
++                              }
++                            ]
++                        },
++                        {
++                          "op_name":"HashShuffle",
++                          "args":
++                            [
+                               {
+                                 "op_name":"HashShuffle",
+                                 "args":
+@@ -151,7 +163,13 @@
+                                   ]
+                               }
+                             ]
+-                        },
++                        }
++                      ]
++                  },
++                  {
++                    "op_name":"HashShuffle",
++                    "args":
++                      [
+                         {
+                           "op_name":"HashShuffle",
+                           "args":
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds39_1000s_column_store.json` (modified, +40/-28)
+```diff
+@@ -7,42 +7,48 @@
+         "args":
+           [
+             {
+-              "op_name":"InnerJoin (BlockHash)",
++              "op_name":"HashShuffle",
+               "args":
+                 [
+                   {
+                     "op_name":"InnerJoin (BlockHash)",
+                     "args":
+                       [
+                         {
+-                          "op_name":"HashShuffle",
++                          "op_name":"InnerJoin (BlockHash)",
+                           "args":
+                             [
+                               {
+-                                "op_name":"InnerJoin (BlockHash)",
++                                "op_name":"HashShuffle",
+                                 "args":
+                                   [
+                                     {
+-                                      "op_name":"TableFullScan",
+-                                      "table":"inventory"
+-                                    },
+-                                    {
+-                                      "op_name":"TableFullScan",
+-                                      "table":"date_dim"
++                                      "op_name":"InnerJoin (BlockHash)",
++                                      "args":
++                                        [
++                                          {
++                                            "op_name":"TableFullScan",
++                                            "table":"inventory"
++                                          },
++                                          {
++                                            "op_name":"TableFullScan",
++                                            "table":"date_dim"
++                                          }
++                                        ]
+                                     }
+                                   ]
++                              },
++                              {
++                                "op_name":"TableFullScan",
++                                "table":"item"
+                               }
+                             ]
+                         },
+                         {
+                           "op_name":"TableFullScan",
+-                          "table":"item"
++                          "table":"warehouse"
+                         }
+                       ]
+-                  },
+-                  {
+-                    "op_name":"TableFullScan",
+-                    "table":"warehouse"
+                   }
+                 ]
+             }
+@@ -53,42 +59,48 @@
+         "args":
+           [
+             {
+-              "op_name":"InnerJoin (BlockHash)",
++              "op_name":"HashShuffle",
+               "args":
+                 [
+                   {
+                     "op_name":"InnerJoin (BlockHash)",
+                     "args":
+                       [
+                         {
+-                          "op_name":"HashShuffle",
++                          "op_name":"InnerJoin (BlockHash)",
+                           "args":
+                             [
+                               {
+-                                "op_name":"InnerJoin (BlockHash)",
++                                "op_name":"HashShuffle",
+                                 "args":
+                                   [
+                                     {
+-                                      "op_name":"TableFullScan",
+-                                      "table":"inventory"
+-                                    },
+-                                    {
+-                                      "op_name":"TableFullScan",
+-                                      "table":"date_dim"
++                                      "op_name":"InnerJoin (BlockHash)",
++                                      "args":
++                                        [
++                                          {
++                                            "op_name":"TableFullScan",
++                                            "table":"inventory"
++                                          },
++                                          {
++                                            "op_name":"TableFullScan",
++                                            "table":"date_dim"
++                                          }
++                                        ]
+                                     }
+                                   ]
++                              },
++                              {
++                                "op_name":"TableFullScan",
++                                "table":"item"
+                               }
+                             ]
+                         },
+                         {
+                           "op_name":"TableFullScan",
+-                          "table":"item"
++                          "table":"warehouse"
+                         }
+                       ]
+-                  },
+-                  {
+-                    "op_name":"TableFullS
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds41_1000s_column_store.json` (modified, +27/-15)
+```diff
+@@ -7,30 +7,42 @@
+         "args":
+           [
+             {
+-              "op_name":"TableFullScan",
+-              "table":"item"
++              "op_name":"HashShuffle",
++              "args":
++                [
++                  {
++                    "op_name":"TableFullScan",
++                    "table":"item"
++                  }
++                ]
+             },
+             {
+-              "op_name":"LeftJoin (BlockHash)",
++              "op_name":"HashShuffle",
+               "args":
+                 [
+                   {
+-                    "op_name":"HashShuffle",
++                    "op_name":"LeftJoin (BlockHash)",
+                     "args":
+                       [
+                         {
+-                          "op_name":"TableFullScan",
+-                          "table":"item"
+-                        }
+-                      ]
+-                  },
+-                  {
+-                    "op_name":"HashShuffle",
+-                    "args":
+-                      [
++                          "op_name":"HashShuffle",
++                          "args":
++                            [
++                              {
++                                "op_name":"TableFullScan",
++                                "table":"item"
++                              }
++                            ]
++                        },
+                         {
+-                          "op_name":"TableFullScan",
+-                          "table":"item"
++                          "op_name":"HashShuffle",
++                          "args":
++                            [
++                              {
++                                "op_name":"TableFullScan",
++                                "table":"item"
++                              }
++                            ]
+                         }
+                       ]
+                   }
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds81_1000s_column_store.json` (modified, +54/-42)
+```diff
+@@ -3,72 +3,78 @@
+   "args":
+     [
+       {
+-        "op_name":"InnerJoin (BlockHash)",
++        "op_name":"HashShuffle",
+         "args":
+           [
+             {
+-              "op_name":"HashShuffle",
++              "op_name":"InnerJoin (BlockHash)",
+               "args":
+                 [
+                   {
+                     "op_name":"HashShuffle",
+                     "args":
+                       [
+                         {
+-                          "op_name":"InnerJoin (BlockHash)",
++                          "op_name":"HashShuffle",
+                           "args":
+                             [
+                               {
+-                                "op_name":"HashShuffle",
++                                "op_name":"InnerJoin (BlockHash)",
+                                 "args":
+                                   [
+                                     {
+-                                      "op_name":"InnerJoin (BlockHash)",
++                                      "op_name":"HashShuffle",
+                                       "args":
+                                         [
+                                           {
+-                                            "op_name":"TableFullScan",
+-                                            "table":"catalog_returns"
+-                                          },
+-                                          {
+-                                            "op_name":"TableFullScan",
+-                                            "table":"date_dim"
++                                            "op_name":"InnerJoin (BlockHash)",
++                                            "args":
++                                              [
++                                                {
++                                                  "op_name":"TableFullScan",
++                                                  "table":"catalog_returns"
++                                                },
++                                                {
++                                                  "op_name":"TableFullScan",
++                                                  "table":"date_dim"
++                                                }
++                                              ]
+                                           }
+                                         ]
++                                    },
++                                    {
++                                      "op_name":"TableFullScan",
++                                      "table":"customer_address"
+                                     }
+                                   ]
+-                              },
+-                              {
+-                                "op_name":"TableFullScan",
+-                                "table":"customer_address"
+                               }
+                             ]
+                         }
+                       ]
+-                  }
+-                ]
+-            },
+-            {
+-              "op_name":"HashShuffle",
+-              "args":
+-                [
++                  },
+                   {
+-                    "op_name":"InnerJoin (BlockHash)",
++                    "op_name":"HashShuffle",
+                     "args":
+                       [
+                         {
+-                          "op_name":"HashShuffle",
++                          "op_name":"InnerJoin (BlockHash)",
+                           "args":
+                             [
++                              {
++                                "op_name":"HashShuffle",
++                                "args":
++                                  [
++                                    {
++                                      "op_name":"TableFullScan",
++                                      "table":"customer"
++                                    }
++                                  ]
++                              },
+                               {
+                                 "op_name":"TableFullScan",
+-                                "table":"customer"
++                                "table":"customer_address"
+                               }
+                             ]
+-                        },
+-                        {
+-                          "op_name":"TableFullScan",
+-                          "table":"customer_address"
+                         }
+                       ]
+                   }
+@@ -85,32 +91,38 @@
+               "args":
+                 [
+                   {
+-                    "op_name":"InnerJoin (BlockHash)",
++                    "op_name":"HashShuffle",
+                     "args":
+                       [
+                         {
+-                          "op_name":"HashShuffle",
++                          "op_name":"InnerJoin (BlockHash)",
+                           "args":
+                             [
+                               {
+-                                "op_name":"InnerJo
+```
+
+**File**: `ydb/core/kqp/ut/rbo/data/join_order/tpcds85_1000s_column_store.json` (modified, +2/-2)
+```diff
+@@ -90,13 +90,13 @@
+                   },
+                   {
+                     "op_name":"TableFullScan",
+-                    "table":"reason"
++                    "table":"date_dim"
+                   }
+                 ]
+             },
+             {
+               "op_name":"TableFullScan",
+-              "table":"date_dim"
++              "table":"reason"
+             }
+           ]
+       }
+```
+
+---
+
+### Incident Patch 2: `f16d0b61` (2026-11-07)
+**Commit Message**: Fix Console config delivery stalls under subscriber load (#58473)
+
+**File**: `ydb/core/cms/console/configs_dispatcher_ut.cpp` (modified, +64/-0)
+```diff
+@@ -1,5 +1,6 @@
+ #include "configs_dispatcher.h"
+ #include "console.h"
++#include "console_configs_subscriber.h"
+ #include "ut_helpers.h"
+ 
+ #include <ydb/core/base/counters.h>
+@@ -419,6 +420,69 @@ void SetSubscriptions(TTenantTestRuntime &runtime, TActorId aid, TVector<ui32> k
+ } // anonymous namespace
+ 
+ Y_UNIT_TEST_SUITE(TConfigsDispatcherTests) {
++    Y_UNIT_TEST(TestDelayedInitialConsoleNotificationDoesNotResubscribe) {
++        TTenantTestRuntime runtime(DefaultConsoleTestConfig());
++        const auto owner = runtime.AllocateEdgeActor();
++        const auto subscriber = runtime.Register(CreateConfigsSubscriber(
++            owner, {(ui32)NKikimrConsole::TConfigItem::LogConfigItem}, {},
++            0, false, 0, {}, {}, TNodeInfo{TENANT1_1_NAME, "type1"}));
++
++        ui64 generation = 0;
++        ui32 fallbackRequests = 0;
++        TTestActorRuntime::TEventFilter previousFilter;
++        previousFilter = runtime.SetEventFilter([&](TTestActorRuntimeBase& rt, TAutoPtr<IEventHandle>& ev) {
++            // Inspect the original event type before the tablet pipe forwards it.
++            if (ev->Sender == subscriber && ev->Type == TEvConsole::EvGetNodeConfigRequest) {
++                ++fallbackRequests;
++            }
++            return previousFilter(rt, ev);
++        });
++
++        bool acknowledged = false;
++        TAutoPtr<IEventHandle> delayedNotification;
++        auto observer = runtime.SetObserverFunc([&](TAutoPtr<IEventHandle>& ev) {
++            if (ev->Sender == subscriber
++                && ev->GetTypeRewrite() == TEvConsole::EvConfigSubscriptionRequest) {
++                generation = ev->Get<TEvConsole::TEvConfigSubscriptionRequest>()->Record.GetGeneration();
++                UNIT_ASSERT_VALUES_EQUAL_C(generation, 1,
++                    "Waiting for the initial config must not restart the subscription");
++            }
++            if (ev->GetRecipientRewrite() == subscriber
++                && ev->GetTypeRewrite() == TEvConsole::EvConfigSubscriptionResponse) {
++                const auto& record = ev->Get<TEvConsole::TEvConfigSubscriptionResponse>()->Record;
++                UNIT_ASSERT_VALUES_EQUAL(record.GetStatus().GetCode(), Ydb::StatusIds::SUCCESS);
++                UNIT_ASSERT_VALUES_EQUAL(record.GetGeneration(), 1);
++                acknowledged = true;
++            }
++            if (ev->GetRecipientRewrite() == subscriber
++                && ev->GetTypeRewrite() == TEvConsole::EvConfigSubscriptionNotification
++                && ev->Get<TEvConsole::TEvConfigSubscriptionNotification>()->Record.HasOrder()) {
++                delayedNotification = ev.Release();
++                return TTestActorRuntime::EEventAction::DROP;
++            }
++            return TTestActorRuntime::EEventAction::PROCESS;
++        });
++
++        // Process the acknowledgement while withholding Console's initial update.
++        runtime.WaitFor("subscription acknowledgement and initial notification", [&]() {
++            return acknowledged && delayedNotification;
++        });
++        UNIT_ASSERT_VALUES_EQUAL_C(fallbackRequests, 0,
++            "Waiting for the initial config must not issue a fallback GetNodeConfig request");
++        UNIT_ASSERT_VALUES_EQUAL(generation, 1);
++
++        const auto& initialRecord = delayedNotification->Get<TEvConsole::TEvConfigSubscriptionNotification>()->Record;
++        UNIT_ASSERT_VALUES_EQUAL(initialRecord.GetGeneration(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(initialRecord.GetOrder(), 1);
++        const auto initialConfig = initialRecord.GetConfig().SerializeAsString();
++        runtime.SetObserverFunc(observer);
++        runtime.Send(delayedNotification.Release());
++        auto notification = runtime.GrabEdgeEvent<TEvConsole::TEvConfigSubscriptionNotification>(owner);
++        UNIT_ASSERT_VALUES_EQUAL(notification->Get()->Record.GetGeneration(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(notification->Get()->Record.GetConfig().SerializeAsString(), initialConfig);
++        runtime.SetEventFilter(previousFilter);
 +    }
-+    SendEvent(new TEvPQ::TEvChangePartitionConfig(TopicConverter, Config));
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitPartitionConfigChanged();
 +
-+    TVector<NKikimrPQ::TReplicationDataPayload> payloads;
-+    Ctx->Runtime->SetObserverFunc([&](TAutoPtr<IEventHandle>& event) {
-+        if (event->GetTypeRewrite() == TEvPersQueue::TEvReplicationData::EventType) {
-+            auto& payload = payloads.emplace_back();
-+            UNIT_ASSERT(payload.ParseFromString(event->Get<TEvPersQueue::TEvReplicationData>()->Record.GetPayload()));
-+            return TTestActorRuntimeBase::EEventAction::DROP;
+     Y_UNIT_TEST(TestCompositeConveyorConfigSubscription) {
+         TTenantTestRuntime runtime(DefaultConsoleTestConfig());
+         TAutoPtr<IEventHandle> handle;
+```
+
+**File**: `ydb/core/cms/console/console_configs_delivery_ut.cpp` (added, +264/-0)
+```diff
+@@ -0,0 +1,264 @@
++#include "console_configs_provider.h"
++#include "ut_configs_provider_helpers.h"
++#include "ut_configs_subscriber_pipe.h"
++
++#include <ydb/core/testlib/basics/runtime.h>
++#include <ydb/core/testlib/basics/appdata.h>
++#include <ydb/library/actors/core/actor_bootstrapped.h>
++
++#include <atomic>
++#include <array>
++#include <memory>
++#include <future>
++
++namespace NKikimr::NConsole {
++namespace NQueueTestPipe {
++
++TActorId ServiceId(ui32 nodeId) {
++    return TActorId(nodeId, "cfg-q-ut");
++}
++
++class TClient : public TActorBootstrapped<TClient> {
++    const TActorId Owner;
++    const ui64 TabletId;
++public:
++    TClient(TActorId owner, ui64 tabletId)
++        : Owner(owner)
++        , TabletId(tabletId)
++    {}
++
++    void Bootstrap(const TActorContext& ctx) {
++        Become(&TClient::StateWork);
++        ctx.Send(Owner, new TEvTabletPipe::TEvClientConnected(
++            TabletId, NKikimrProto::OK, SelfId(), {}, true, false, 1));
++    }
++
++    STFUNC(StateWork) {
++        if (ev->GetTypeRewrite() == TEvents::TSystem::PoisonPill) {
++            PassAway();
++        } else {
++            // Preserve the real subscriber's Sender, just like tablet-pipe forwarding.
++            TActivationContext::Send(ev->Forward(ServiceId(SelfId().NodeId())));
 +        }
-+        return TTestActorRuntimeBase::EEventAction::PROCESS;
-+    });
++    }
++};
 +
-+    auto event = MakeHolder<TEvPQ::TEvSetClientInfo>(101, "replication", 0, "replication-session",
-+        1, 1, 1, Ctx->Edge, TEvPQ::TEvSetClientInfo::ESCI_CREATE_SESSION);
-+    event->ReadSessionActor = Ctx->Runtime->AllocateEdgeActor();
-+    SendEvent(event.Release());
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 101});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 1);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 5);
-+
-+    // Model retention moving the lower boundary past the saved consumer offset.
-+    auto& compactionEncoder = TPartitionTestWrapper::CompactionBlobEncoder(*partition);
-+    auto& encoder = compactionEncoder.IsEmpty()
-+        ? TPartitionTestWrapper::BlobEncoder(*partition) : compactionEncoder;
-+    encoder.StartOffset = 7;
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetStartOffset(*partition), 7);
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 5);
-+
-+    // Creating a reader session does not change the pending offset. The effective
-+    // offset is raised to StartOffset only when applying the persisted user info.
-+    SendCreateSession(102, "reader", "reader-session", 1, 1);
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 102});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 7);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().size(), 1);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 7);
-+
-+    SendSetOffset(103, "reader", 7, "reader-session");
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 103});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
-+    Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
++IActor* CreateClient(const TActorId& owner, ui64 tabletId, const TClientConfig&) {
++    return new TClient(owner, tabletId);
 +}
 +
-+Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForAvailabilityPeriod, TPartitionFixture)
-+{
-+    TestReplicateOffsetClampedToStart(false);
++void SendData(const TActorContext& ctx, const TActorId& pipe, IEventBase* event, ui64 cookie) {
++    ctx.Send(new IEventHandle(pipe, ctx.SelfID, event, 0, cookie));
 +}
 +
-+Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForImportantConsumer, TPartitionFixture)
-+{
-+    TestReplicateOffsetClampedToStart(true);
++void CloseClient(const TActorContext& ctx, const TActorId& pipe) {
++    ctx.Send(pipe, new TEvents::TEvPoisonPill());
 +}
 +
- void TPartitionFixture::TestRestoreReadSessionActor(bool hasDataRequest)
++} // namespace NQueueTestPipe
++
++namespace {
++constexpr ui32 ClientCount = 128;
++constexpr ui32 RequestCount = 256;
++constexpr ui32 NameserviceNodes = 5310;
++constexpr ui64 QueryCookie = ui64(1) << 63;
++
++void ObserveMaximum(std::atomic<ui64>& counter, ui64 value) {
++    auto old = counter.load();
++    while (old < value && !counter.compare_exchange_weak(old, value)) {
++    }
++}
++
++struct TDeliveryState {
++    std::atomic<ui32> Accepted{0}, Replies{0}, Duplicates{0}, Subscriptions{0}, Fallbacks{0};
++    std::atomic<ui64> MaxGeneration{0}, PeakScheduled{0};
++    std::atomic<bool> InvalidPayload{false};
++    std::promise<void> Done;
++};
++
++class TCountingValidator final : public TNameserviceConfigValidator {
++public:
++    mutable std::atomic<ui64> Checks{0};
++
++    bool CheckConfig(const NKikimrConfig::TAppConfig& oldConfig, const NKikimrConfig::TAppConfig& config,
++            TVector<Ydb::Issue::IssueMessage>& issues) const override {
++        ++Checks;
++        return TNameserviceConfigValidator::CheckConfig(oldConfig, config, issues);
++    }
++};
++
++class TRouter : public TActorBootstrapped<TRouter> {
++    const TActorId Provider;
++    const std::shared_ptr<TDeliveryState> State;
++public:
++    TRouter(TActorId provider, std::shared_ptr<TDeliveryState> state)
++        : Provider(provider)
++        , State(std::move(state))
++    {}
++
++    void Bootstrap(const TActorContext&) { Become(&TRouter::StateWork); }
++
++    STFUNC(StateWork) {
++        if (ev->GetTypeRewrite() == TEvConsole::EvConfigSubscriptionRequest) {
++            ++State->Subscriptions;
++            ObserveMaximum(State->MaxGeneration,
++                ev->Get<TEvConsole::TEvConfigSubscriptionRequest>()->Record.GetGeneration());
++        } else if (ev->GetTypeRewrite() == TEvConsole::EvGetNodeConfigRequest && !(ev->Cookie & QueryCookie)) {
++            ++State->Fallbacks;
++        }
++        TActivationContext::Send(ev->Forward(Provider));
++    }
++};
++
++class TRecipients : public TActorBootstrapped<TRecipients> {
++    const std::shared_ptr<TDeliveryState> State;
++    std::array<bool, ClientCount + 1> Seen{};
++public:
++    explicit TRecipients(std::shared_ptr<TDeliveryState> state)
++        : State(std::move(state))
++    {}
++
++    void Bootstrap(const TActorContext&) { Become(&TRecipients::StateWork); }
++
++    STFUNC(StateWork) {
++        if (ev->GetTypeRewrite() == TEvConsole::EvConfigSubscriptionNotification) {
++            // This is delivery by TConfigsSubscriber AFTER its generation/order checks.
++            const auto& record = ev->Get<TEvConsole::TEvConfigSubscriptionNotification>()->Record;
++            const auto cookie = ev->Cookie;
++            if (!cookie || cookie > ClientCount || record.GetGeneration() != 1 ||
++                record.GetConfig().GetNameserviceConfig().NodeSize() != NameserviceNodes) {
++                State->InvalidPayload = true;
++                return;
++            }
++            if (Seen[cookie]) {
++                ++State->Duplicates;
++            } else {
++                Seen[cookie] = true;
++                ++State->Accepted;
++            }
++        } else if (ev->GetTypeRewrite() == TEvConsole::EvGetNodeConfigResponse) {
++            if (++State->Replies == 1) {
++                const auto& record = ev->Get<TEvCo
+```
+
+**File**: `ydb/core/cms/console/console_configs_provider.cpp` (modified, +92/-7)
+```diff
+@@ -10,6 +10,9 @@
+ #include <ydb/library/actors/core/interconnect.h>
+ #include <ydb/library/yaml_config/yaml_config.h>
+ 
++#include <util/stream/str.h>
++#include <util/ysaveload.h>
++
+ #define YDB_LOG_THIS_FILE_COMPONENT NKikimrServices::CMS_CONFIGS
+ 
+ namespace NKikimr::NConsole {
+@@ -414,15 +417,40 @@ void TConfigsProvider::Die(const TActorContext &ctx)
+ 
+ void TConfigsProvider::ClearState()
  {
-     const TString session = "replication-session";
-```
-
----
-
-### Incident Patch 2: `5e498b4f` (2026-11-05)
-**Commit Message**: Fix workload vector fp8 (#58248)
-
-**File**: `ydb/library/workload/vector/ut/file_import_ut.cpp` (modified, +23/-12)
-```diff
-@@ -5,6 +5,7 @@
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_binary.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_nested.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_primitive.h>
-+#include <contrib/libs/apache/arrow/cpp/src/arrow/csv/api.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/io/memory.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/dictionary.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/reader.h>
-@@ -50,32 +51,44 @@ namespace {
++    ClearNodeConfigCache();
++    NodeConfigCacheRegistry.Reset();
++    NodeConfigCacheValidatorStates.clear();
+     ConfigIndex.Clear();
+     SubscriptionIndex.Clear();
+ }
  
- Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
- 
--    Y_UNIT_TEST_TWIN(CsvFloatListsPreserveLegacyFormat, Directory) {
-+    Y_UNIT_TEST_QUAD(CsvFloatListsUseSelectedFormat, Directory, Tsv) {
-         TTempDir directory;
--        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", "csv");
-+        const char* format = Tsv ? "tsv" : "csv";
-+        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", format);
-         {
-             TFileOutput output(file.Name());
--            output << "1,\"[1 0 2.5]\"\n";
-+            output << (Tsv ? "1\t[1, 0, 2.5]\n" : "1,\"[1 0 2.5]\"\n");
-         }
- 
-         for (const auto& vector : VectorCases) {
-             TVectorWorkloadParams params;
-             params.KeyColumns = {"id"};
-             params.EmbeddingColumn = "embedding";
--            params.VectorOpts.VectorType = vector.Type;
--            params.VectorOpts.VectorDimension = 3;
-             TWorkloadVectorFilesDataInitializer initializer(params);
-             NLastGetopt::TOpts opts;
-             initializer.ConfigureOpts(opts);
--            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", "csv"};
-+            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", format,
-+                "--vector-type", vector.Type, "--vector-dimension", "3"};
-             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-             const auto generators = initializer.GetBulkInitialData();
-             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-             const auto portions = generators.front()->GenerateDataPortion();
-             UNIT_ASSERT_VALUES_EQUAL(portions.size(), 1);
-             auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
-             UNIT_ASSERT(csv);
--            UNIT_ASSERT_C(csv->Data.Contains(FloatEmbedding), vector.Type);
-+            const auto input = std::make_shared<arrow::io::BufferReader>(arrow::util::string_view(csv->Data.data(), csv->Data.size()));
-+            auto convertOptions = arrow::csv::ConvertOptions::Defaults();
-+            convertOptions.column_types["embedding"] = arrow::binary();
-+            auto parseOptions = arrow::csv::ParseOptions::Defaults();
-+            parseOptions.newlines_in_values = true;
-+            const auto reader = arrow::csv::TableReader::Make(arrow::io::default_io_context(), input,
-+                arrow::csv::ReadOptions::Defaults(), parseOptions, convertOptions).ValueOrDie();
-+            const auto table = reader->Read().ValueOrDie();
-+            UNIT_ASSERT_VALUES_EQUAL(table->num_rows(), 1);
-+            const auto column = std::static_pointer_cast<arrow::BinaryArray>(table->GetColumnByName("embedding")->chunk(0));
-+            const auto bytes = column->GetView(0);
-+            UNIT_ASSERT_VALUES_EQUAL_C(TStringBuf(bytes.data(), bytes.size()), vector.Bytes, vector.Type);
-             UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-         }
-     }
-@@ -114,12 +127,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
-             TVectorWorkloadParams params;
-             params.KeyColumns = {"id"};
-             params.EmbeddingColumn = "embedding";
--            params.VectorOpts.VectorType = vector.Type;
--            params.VectorOpts.VectorDimension = 3;
-             TWorkloadVectorFilesDataInitializer initializer(params);
-             NLastGetopt::TOpts opts;
-             initializer.ConfigureOpts(opts);
--            const char* argv[] = {"files", "--input", file.Name().c_str()};
-+            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+            const char* argv[] = {"files", "--input", file.Name().c_str(), "--vector-type", vector.Type, "--vector-dimension", "3"};
-             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-             const auto generators = initializer.GetBulkInitialData();
-             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-@@ -136,8 +148,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
-             const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
-             UNIT_ASSERT(column);
-             const auto bytes = column->GetView(0);
--            cons
-```
-
-**File**: `ydb/library/workload/vector/ut/float8_ut.cpp` (modified, +4/-4)
-```diff
-@@ -48,14 +48,14 @@ Y_UNIT_TEST_SUITE(VectorWorkload) {
-     Y_UNIT_TEST_QUAD(Float8BulkData, E5M2, Prefixed) {
-         using T = std::conditional_t<E5M2, TFloat8E5M2, TFloat8E4M3>;
-         TVectorWorkloadParams params;
--        params.VectorOpts.VectorType = E5M2 ? "float8_e5m2" : "float8_e4m3";
--        params.VectorOpts.VectorDimension = 67;
--        params.KmeansTreePrefixed = Prefixed;
-         params.BulkSize = 3;
-         TWorkloadVectorGenerateDataInitializer initializer(params);
-         NLastGetopt::TOpts opts;
-         initializer.ConfigureOpts(opts);
--        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42"};
-+        params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42",
-+            "--vector-type", E5M2 ? "float8_e5m2" : "float8_e4m3", "--vector-dimension", "67",
-+            "--kmeans-tree-prefixed", Prefixed ? "1" : "0"};
-         NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-         const auto generators = initializer.GetBulkInitialData();
-         UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-```
-
-**File**: `ydb/library/workload/vector/ut/int4_ut.cpp` (modified, +7/-4)
-```diff
-@@ -145,6 +145,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-     }
- 
-     Y_UNIT_TEST_QUAD(Int4CsvImport, Signed, Directory) {
-+        using T = NVectorDistance::NPrivate::TInt4<Signed>;
-         TTempDir directory;
-         auto file = TTempFileHandle::InDir(directory.Path(), "int4", "csv");
-         {
-@@ -168,14 +169,15 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-         auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
-         UNIT_ASSERT(csv);
-         TStringBuilder expected;
--        NKnnVectorSerialization::TSerializer<float> serializer(&expected.Out);
-+        NKnnVectorSerialization::TSerializer<T> serializer(&expected.Out);
-         for (int value : {-9, 0, 19}) { serializer.HandleElement(value); }
-         serializer.Finish();
-         UNIT_ASSERT_STRING_CONTAINS(csv->Data, expected);
-         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-     }
- 
-     Y_UNIT_TEST_TWIN(Int4ParquetImport, Signed) {
-+        using T = NVectorDistance::NPrivate::TInt4<Signed>;
-         auto file = TTempFileHandle::InCurrentDir("int4", "parquet");
-         arrow::UInt64Builder ids;
-         UNIT_ASSERT(ids.Append(1).ok());
-@@ -223,10 +225,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-         const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
-         UNIT_ASSERT(column);
-         const auto bytes = column->GetView(0);
--        NKnnVectorSerialization::TDeserializer<float> decoder(TStringBuf(bytes.data(), bytes.size()));
--        const float expected[] = {-9.0f, 0.0f, 19.0f};
-+        CheckInt4Embedding<T>(TStringBuf(bytes.data(), bytes.size()), 3);
-+        NKnnVectorSerialization::TDeserializer<T> decoder(TStringBuf(bytes.data(), bytes.size()));
-+        const int expected[] = {T::MinValue, 0, T::MaxValue};
-         size_t index = 0;
--        decoder.DoDeserialize([&](const float& value) { UNIT_ASSERT_VALUES_EQUAL(value, expected[index++]); });
-+        decoder.DoDeserialize([&](const T& value) { UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(value), expected[index++]); });
-         UNIT_ASSERT_VALUES_EQUAL(index, 3);
-         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-     }
-```
-
-**File**: `ydb/library/workload/vector/vector_data_generator.cpp` (modified, +34/-9)
-```diff
-@@ -40,19 +40,44 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
- private:
-     const std::shared_ptr<IBulkDataGenerator> InnerDataGenerator;
-     const TString EmbeddingColumnName;
-+    const TString VectorType;
- 
- private:
--    template <typename TProducer>
-+    template <typename T, typename TProducer>
-     TString SerializeEmbedding(TProducer&& produce) const {
--        // Preserve file-import compatibility: float lists use FloatVector for every
--        // requested vector type, including INT4/UINT4. Binary embeddings are passed through.
-         TStringBuilder buffer;
--        NKnnVectorSerialization::TSerializer<float> serializer(&buffer.Out);
-+        NKnnVectorSerialization::TSerializer<T> serializer(&buffer.Out);
-         produce([&](float value) { serializer.HandleElement(value); });
-         serializer.Finish();
-         return TString(buffer);
-     }
- 
-+    template <typename TProducer>
-+    TString SerializeEmbedding(TProducer&& produce) const {
-+        if (VectorType == "float") {
-+            return SerializeEmbedding<float>(produce);
-+        } else if (VectorType == "float16") {
-+            return SerializeEmbedding<TFloat16>(produce);
-+        } else if (VectorType == "bfloat16") {
-+            return SerializeEmbedding<TBFloat16>(produce);
-+        } else if (VectorType == "float8_e4m3") {
-+            return SerializeEmbedding<TFloat8E4M3>(produce);
-+        } else if (VectorType == "float8_e5m2") {
-+            return SerializeEmbedding<TFloat8E5M2>(produce);
-+        } else if (VectorType == "uint4") {
-+            return SerializeEmbedding<TUint4>(produce);
-+        } else if (VectorType == "int4") {
-+            return SerializeEmbedding<TInt4>(produce);
-+        } else if (VectorType == "uint8") {
-+            return SerializeEmbedding<uint8_t>(produce);
-+        } else if (VectorType == "int8") {
-+            return SerializeEmbedding<int8_t>(produce);
-+        } else if (VectorType == "bit") {
-+            return SerializeEmbedding<bool>(produce);
++void TConfigsProvider::ClearNodeConfigCache()
++{
++    NodeConfigCache.Clear();
++    *Counters.NodeConfigCacheBytes = 0;
++    *Counters.NodeConfigCacheEntries = 0;
++}
++
++TConfigsProvider::TValidatorStates TConfigsProvider::GetValidatorStates(const TValidatorsRegistry::TPtr& registry)
++{
++    TValidatorStates states;
++    if (registry) {
++        for (const auto& [_, validator] : registry->GetValidators()) {
++            states.emplace_back(validator, validator->GetState());
 +        }
-+        ythrow yexception() << "Unknown vector type: " << VectorType;
++    }
++    return states;
++}
++
+ void TConfigsProvider::ApplyConfigModifications(const TConfigModifications &modifications,
+                                                 const TActorContext &ctx)
+ {
+     YDB_LOG_TRACE_CTX(ctx, "TConfigsProvider: applying config midifications");
+ 
++    if (!modifications.IsEmpty()) {
++        ClearNodeConfigCache();
 +    }
 +
-     static std::pair<std::shared_ptr<arrow::Schema>, std::shared_ptr<arrow::RecordBatch>> DeserializeArrow(TDataPortion::TArrow* data) {
-         arrow::ipc::DictionaryMemo dictionary;
+     TSubscriptionSet subscriptions;
+     TInMemorySubscriptionSet inMemorySubscriptions;
  
-@@ -247,10 +272,11 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
+@@ -1118,18 +1146,53 @@ void TConfigsProvider::Handle(TEvConsole::TEvGetNodeConfigRequest::TPtr &ev, con
+ {
+     auto &rec = ev->Get()->Record;
+ 
+-    auto response = MakeHolder<TEvConsole::TEvGetNodeConfigResponse>();
+-    response->Record.MutableStatus()->SetCode(Ydb::StatusIds::SUCCESS);
+-
+     THashSet<ui32> kinds;
+     for (auto &kind : rec.GetItemKinds())
+         kinds.insert(kind);
+ 
+     auto config = ConfigIndex.GetNodeConfig(rec.GetNode(), kinds);
++    const bool serveYaml = rec.HasServeYaml() && rec.GetServeYaml() &&
++        rec.HasYamlApiVersion() && rec.GetYamlApiVersion() == 1;
++    const bool hasDatabaseYaml = serveYaml && DatabaseYamlConfigs.contains(rec.GetNode().GetTenant());
++    TString key;
++    TStringOutput keyStream(key);
++    Save(&keyStream, serveYaml);
++    Save(&keyStream, hasDatabaseYaml);
++    if (hasDatabaseYaml) {
++        Save(&keyStream, rec.GetNode().GetTenant());
++    }
++    // Preserve kind boundaries and merge order, including the response's version order.
++    for (const auto& [kind, items] : config->ConfigItems) {
++        Save(&keyStream, kind);
++        Save(&keyStream, items.size());
++        for (const auto& item : items) {
++            Save(&keyStream, item->Id);
++            Save(&keyStream, item->Generation);
++        }
++    }
++
++    auto registry = Config.EnableValidationOnNodeConfigRequest ? TValidatorsRegistry::Instance() : nullptr;
++    auto validatorStates = GetValidatorStates(registry);
++    if (registry != NodeConfigCacheRegistry || validatorStates != NodeConfigCacheValidatorStates) {
++        ClearNodeConfigCache();
++        NodeConfigCacheRegistry = registry;
++        NodeConfigCacheValidatorStates = std::move(validatorStates);
++    }
++
++    if (auto it = NodeConfigCache.Find(key); it != NodeConfigCache.End()) {
++        ++*Counters.NodeConfigCacheHits;
++        YDB_LOG_TRACE_CTX(ctx, "Send cached node config");
++        ctx.Send(new IEventHandle(TEvConsole::EvGetNodeConfigResponse, 0,
++            ev->Sender, ctx.SelfID, it->Data, ev->Cookie));
++        return;
++    }
++    ++*Counters.NodeConfigCacheMisses;
++
++    auto response = MakeHolder<TEvConsole::TEvGetNodeConfigResponse>();
++    response->Record.MutableStatus()->SetCode(Ydb::StatusIds::SUCCESS);
+     config->ComputeConfig(*response->Record.MutableConfig(), true);
+ 
+-    if (Config.EnableValidationOnNodeConfigRequest) {
+-        auto registry = TValidatorsRegistry::Instance();
++    if (registry) {
+         TVector<Ydb::Issue::IssueMessage> issues;
+         if (!registry->CheckConfig({}, response->Record.GetConfig(), issues)) {
+             response->Record.ClearConfig();
+@@ -1148,7 +1211,7 @@ void TConfigsProvider::Handle(TEvConsole::TEvGetNodeConfigRequest::TPtr &ev, con
+     YDB_LOG_TRACE_CTX(ctx, "Send",
+         {"ev", response->Record.ShortDebugString()});
+ 
+-    if (rec.HasServeYaml() && rec.GetServeYaml() && rec.HasYamlApiVersion() && rec.GetYamlApiVersion() == 1) {
++    if (serveYaml) {
+         response->Record.SetMainYamlConfig(MainYamlConfig);
+ 
+         for (auto &[id, config] : VolatileYamlConfigs) {
+@@ -1162,7 +1225,26 @@ void TConfigsProvider::Handle(TEvConsole::TEvGetNodeConfigRequest::TPtr &ev, con
+         }
      }
  
- public:
--    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName)
-+    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName, const TString vectorType)
-         : IBulkDataGenerator(innerDataGenerator->GetName(), innerDataGenerator->GetSize())
-         , InnerDataGenerator(innerDataGenerator)
-         , EmbeddingColumnName(embeddingColumnName)
-+        , VectorType(vectorType)
-     {}
+-    ctx.Send(ev->Sender, response.Release(), 0, ev->Cookie);
++    const size_t keySize = key.capacity() + sizeof(TCachedNodeConfig);
++    const bool validatorsUnchanged = !registry ||
++        (registry == TValidatorsRegistry::Instance() && GetValidatorStates(registry) == N
+```
+
+**File**: `ydb/core/cms/console/console_configs_provider.h` (modified, +36/-1)
+```diff
+@@ -4,13 +4,17 @@
  
-     virtual TDataPortions GenerateDataPortion() override {
-@@ -572,7 +598,7 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
-                     VectorParams.GetColumns(),
-                     TDataGenerator::EPortionSizeUnit::Line
-                 );
--                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName));
-+                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType));
-             }
+ #include "configs_config.h"
+ #include "console.h"
++#include "validators/registry.h"
+ 
+ #include <ydb/core/base/tablet_pipe.h>
+ #include <ydb/core/cms/console/util/config_index.h>
+ #include <ydb/core/tablet_flat/tablet_flat_executed.h>
+ #include <ydb/library/actors/core/hfunc.h>
+ 
+ #include <library/cpp/monlib/dynamic_counters/counters.h>
++#include <library/cpp/cache/cache.h>
++
++#include <unordered_map>
+ 
+ namespace NKikimr::NConsole {
+ 
+@@ -176,6 +180,10 @@ class TConfigsProvider : public TActorBootstrapped<TConfigsProvider> {
+     using TBase = TActorBootstrapped<TConfigsProvider>;
+ 
+     void ClearState();
++    void ClearNodeConfigCache();
++
++    using TValidatorStates = TVector<std::pair<IConfigValidator::TPtr, ui64>>;
++    static TValidatorStates GetValidatorStates(const TValidatorsRegistry::TPtr& registry);
+ 
+     void ApplyConfigModifications(const TConfigModifications &modifications,
+                                   const TActorContext &ctx);
+@@ -264,11 +272,19 @@ class TConfigsProvider : public TActorBootstrapped<TConfigsProvider> {
+         TDynamicCounterPtr Counters;
+         TCounterPtr ScheduledConfigUpdates;
+         TCounterPtr InflightConfigUpdates;
++        TCounterPtr NodeConfigCacheHits;
++        TCounterPtr NodeConfigCacheMisses;
++        TCounterPtr NodeConfigCacheBytes;
++        TCounterPtr NodeConfigCacheEntries;
+ 
+         explicit TCounters(TDynamicCounterPtr counters)
+             : Counters(counters)
+             , ScheduledConfigUpdates(counters->GetCounter("ScheduledConfigUpdates", false))
+             , InflightConfigUpdates(counters->GetCounter("InflightConfigUpdates", false))
++            , NodeConfigCacheHits(counters->GetCounter("NodeConfigCacheHits", true))
++            , NodeConfigCacheMisses(counters->GetCounter("NodeConfigCacheMisses", true))
++            , NodeConfigCacheBytes(counters->GetCounter("NodeConfigCacheBytes", false))
++            , NodeConfigCacheEntries(counters->GetCounter("NodeConfigCacheEntries", false))
+         {
          }
-         return result;
-@@ -594,13 +620,12 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
-     );
  
-     return {
--        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName)
-+        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType)
+@@ -305,13 +321,32 @@ class TConfigsProvider : public TActorBootstrapped<TConfigsProvider> {
+     TConfigIndex ConfigIndex;
+     TSubscriptionIndex SubscriptionIndex;
+ 
++    struct TCachedNodeConfig {
++        TIntrusivePtr<TEventSerializedData> Data;
++        size_t Size;
++    };
++
++    struct TNodeConfigSizeProvider {
++        size_t operator()(const TCachedNodeConfig& entry) const {
++            return entry.Size;
++        }
++    };
++
++    // Bounds cache-owned keys/payloads; in-flight replies may retain shared payloads.
++    static constexpr size_t MAX_NODE_CONFIG_CACHE_BYTES = 64 * 1024 * 1024;
++    static constexpr size_t MAX_NODE_CONFIG_CACHE_ENTRIES = 128;
++    TLRUCache<TString, TCachedNodeConfig, TNoopDelete, TNodeConfigSizeProvider> NodeConfigCache{MAX_NODE_CONFIG_CACHE_BYTES};
++    TValidatorsRegistry::TPtr NodeConfigCacheRegistry;
++    TValidatorStates NodeConfigCacheValidatorStates;
++
+     enum class EUpdate {
+         All,
+         Yaml,
      };
- }
  
- TWorkloadVectorGenerateDataInitializer::TWorkloadVectorGenerateDataInitializer(const TVectorWorkloadParams& params)
-     : TWorkloadVectorDataInitializerBase("generator", "Generate random vectors and build a vector index", params)
--    , VectorOpts(params.VectorOpts)
- { }
+     TInMemorySubscriptionIndex InMemoryIndex;
+-    THashMap<TActorId, EUpdate> ScheduledUpdates;
++    // Repeated begin()/erase() must not scan buckets when draining the queue.
++    std::unordered_map<TActorId, EUpdate> ScheduledUpdates;
+     THashSet<TActorId> InflightUpdates;
+     static constexpr ui32 MAX_INFLIGHT_UPDATES = 50;
  
- void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& opts) {
-@@ -621,7 +646,7 @@ void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& o
- 
- TBulkDataGeneratorList TWorkloadVectorGenerateDataInitializer::DoGetBulkInitialData() {
-     Cout << "Using random seed: " << RandomSeed << Endl;
--    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
-+    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorParams.VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
- }
- 
- } // namespace NYdbWorkload
 ```
 
-**File**: `ydb/library/workload/vector/vector_data_generator.h` (modified, +0/-1)
+**File**: `ydb/core/cms/console/console_configs_provider_ut.cpp` (added, +261/-0)
 ```diff
-@@ -32,7 +32,6 @@ class TWorkloadVectorFilesDataInitializer : public TWorkloadVectorDataInitialize
+@@ -0,0 +1,261 @@
++#include "ut_configs_provider_helpers.h"
++
++namespace NKikimr::NConsole {
++using namespace NTests;
++
++Y_UNIT_TEST_SUITE(TConsoleNodeConfigCacheTests) {
++    Y_UNIT_TEST(EquivalentNodesShareValidatedSerializedReply) {
++        auto validator = MakeIntrusive<TCountingValidator>();
++        TConfigsProviderFixture fixture(validator);
++        fixture.SetItems({LogItem(1, "shared")});
++        auto first = fixture.Request(Node(1, "host1", "tenant1", "type1"), {}, false, {}, 123);
++        auto data = first->GetChainBuffer();
++        UNIT_ASSERT_VALUES_EQUAL(first->Get()->Record.GetStatus().GetCode(), Ydb::StatusIds::SUCCESS);
++        first->Get()->Record.MutableConfig()->MutableLogConfig()->SetClusterName("recipient mutation");
++
++        auto second = fixture.Request(Node(2, "host2", "tenant2", "type2"), {}, false, {}, 456);
++        UNIT_ASSERT_VALUES_EQUAL(second->GetChainBuffer().Get(), data.Get());
++        UNIT_ASSERT_VALUES_EQUAL(second->Get()->Record.GetConfig().GetLogConfig().GetClusterName(), "shared");
++        UNIT_ASSERT_VALUES_EQUAL(validator->Checks, 1);
++        UNIT_ASSERT_VALUES_EQUAL(fixture.Counter("NodeConfigCacheHits", true), 1);
++        UNIT_ASSERT_VALUES_EQUAL(fixture.Counter("NodeConfigCacheEntries"), 1);
++    }
++
++    Y_UNIT_TEST(ScopedKindsAndMergeOrderRemainDistinct) {
++        auto validator = MakeIntrusive<TCountingValidator>();
++        TConfigsProviderFixture fixture(validator);
++        fixture.SetItems({
++            LogItem(10, "domain-first", {}, {}, {}, {}, 1),
++            LogItem(1, "domain-last", {}, {}, {}, {}, 2),
++            LogItem(20, "node", {1}),
++            LogItem(30, "host", {}, {"special"}),
++            LogItem(40, "tenant", {}, {}, "tenant"),
++            LogItem(50, "type", {}, {}, {}, "type"),
++        });
++        auto check = [&](const NKikimrConsole::TNodeAttributes& node, const TString& expected) {
++            auto response = fixture.Request(node);
++            const auto& config = response->Get()->Record.GetConfig();
++            UNIT_ASSERT_VALUES_EQUAL(config.GetLogConfig().GetClusterName(), expected);
++            UNIT_ASSERT_VALUES_EQUAL(config.GetVersion().GetItems(0).GetId(), 10);
++            UNIT_ASSERT_VALUES_EQUAL(config.GetVersion().GetItems(1).GetId(), 1);
++        };
++        check(Node(2), "domain-last");
++        check(Node(1), "node");
++        check(Node(3, "special"), "host");
++        check(Node(4, {}, "tenant"), "tenant");
++        check(Node(5, {}, {}, "type"), "type");
++        check(Node(6), "domain-last");
++        UNIT_ASSERT_VALUES_EQUAL(validator->Checks, 5);
++        auto empty = fixture.Request(Node(1), {NKikimrConsole::TConfigItem::NameserviceConfigItem});
++        UNIT_ASSERT(!empty->Get()->Record.GetConfig().HasLogConfig());
++        auto log = fixture.Request(Node(1), {NKikimrConsole::TConfigItem::LogConfigItem});
++        UNIT_ASSERT_VALUES_EQUAL(log->Get()->Record.GetConfig().GetLogConfig().GetClusterName(), "node");
++        UNIT_ASSERT_VALUES_EQUAL(validator->Checks, 6);
++    }
++
++    Y_UNIT_TEST(ConfigMutationsInvalidateEvenWithReusedVersions) {
++        auto validator = MakeIntrusive<TCountingValidator>();
++        TConfigsProviderFixture fixture(validator);
++        fixture.Request(Node(1)); // Cache an empty initial index.
++        fixture.SetItems({LogItem(1, "initial")});
++        auto check = [&](const TString& expected) {
++            auto response = fixture.Request(Node(1));
++            UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.GetConfig().GetLogConfig().GetClusterName(), expected);
++        };
++        check("initial");
++        TConfigModifications modified;
++        modified.ModifiedItems.emplace(1, LogItem(1, "same-id-and-generation"));
++        fixture.Update(modified);
++        UNIT_ASSERT_VALUES_EQUAL(fixture.Counter("NodeConfigCacheEntries"), 0);
++        check("same-id-and-generation");
++        TConfigModifications removed;
++        removed.RemovedItems.emplace(1, modified.ModifiedItems.at(1));
++        fixture.Update(removed);
++        check({});
++        TConfigModifications added;
++        added.AddedItems.push_back(LogItem(1, "re-added"));
++        fixture.Update(added);
++        check("re-added");
++        UNIT_ASSERT_VALUES_EQUAL(validator->Checks, 5);
++    }
++
++    Y_UNIT_TEST(ValidationSettingsAndValidatorStateInvalidate) {
++        auto validator = MakeIntrusive<TCountingValidator>();
++        TConfigsProviderFixture fixture(validator);
++        fixture.SetItems({LogItem(1, "reject")});
++        auto check = [&](bool success) {
++            auto response = fixture.Request(Node(100));
++            const auto& record = response->Get()->Record;
++            UNIT_ASSERT_VALUES_EQUAL(record.GetStatus().GetCode(),
++                success ? Ydb::StatusIds::SUCCESS : Ydb::StatusIds::PRECONDITION_FAILED);
++            if (!success) {
++                UNIT_ASSERT(!record.HasConfig());
++                UNIT_ASSERT_STRING_CONTAINS(record.GetStatus().GetReason(), "cou
+```
+
+**File**: `ydb/core/cms/console/console_configs_subscriber.cpp` (modified, +4/-26)
+```diff
+@@ -100,7 +100,6 @@ class TConfigsSubscriber : public TActorBootstrapped<TConfigsSubscriber> {
+         switch (ev->GetTypeRewrite()) {
+             HFuncTraced(TEvPrivate::TEvRetryPoolStatus, Handle);
+             HFuncTraced(TEvTenantPool::TEvTenantPoolStatus, Handle);
+-            HFuncTraced(TEvConsole::TEvGetNodeConfigResponse, Handle);
+             HFuncTraced(TEvConsole::TEvConfigSubscriptionResponse, Handle);
+             HFuncTraced(TEvConsole::TEvConfigSubscriptionError, Handle);
+             HFuncTraced(TEvConsole::TEvConfigSubscriptionNotification, Handle);
+@@ -157,31 +156,10 @@ class TConfigsSubscriber : public TActorBootstrapped<TConfigsSubscriber> {
+             Die(ctx);
+         }
  
- class TWorkloadVectorGenerateDataInitializer : public TWorkloadVectorDataInitializerBase {
- private:
--    const NVector::TVectorOpts& VectorOpts;
-     size_t RowCount = 10000;
-     size_t PrefixCount = 100;
-     uint32_t RandomSeed = 42;
+-        if (!FirstUpdateSent) {
+-            auto request = MakeHolder<TEvConsole::TEvGetNodeConfigRequest>();
+-            request->Record.MutableNode()->SetNodeId(SelfId().NodeId());
+-            request->Record.MutableNode()->SetHost(FQDNHostName());
+-            request->Record.MutableNode()->SetTenant(Tenant);
+-            request->Record.MutableNode()->SetNodeType(NodeType);
+-            for (auto &kind : Kinds) {
+-                request->Record.AddItemKinds(kind);
+-            }
+-
+-            NTabletPipe::SendData(ctx, Pipe, request.Release(), Cookie);
+-        }
+-    }
+-
+-    void Handle(TEvConsole::TEvGetNodeConfigResponse::TPtr &ev, const TActorContext &ctx) {
+-        if (!FirstUpdateSent) {
+-            ctx.Send(
+-                new NActors::IEventHandle(
+-                    SelfId(),
+-                    ev->Sender,
+-                    new NConsole::TEvConsole::TEvConfigSubscriptionNotification(
+-                        Generation,
+-                        ev->Get()->Record.GetConfig(),
+-                        THashSet<ui32>(Kinds.begin(), Kinds.end()))));
+-        }
++        // Console always sends an initial notification, even when the config
++        // has not changed. Wait for it instead of racing it with GetNodeConfig:
++        // a synthetic notification cannot participate in the subscription's
++        // ordered stream and would trigger a resubscription.
+     }
+ 
+     void Handle(TEvConsole::TEvConfigSubscriptionError::TPtr &ev, const TActorContext &ctx) {
+```
+
+**File**: `ydb/core/cms/console/console_ut_configs.cpp` (modified, +111/-0)
+```diff
+@@ -10,6 +10,7 @@
+ #include <ydb/core/tablet/bootstrapper.h>
+ #include <ydb/core/tablet_flat/tablet_flat_executed.h>
+ #include <ydb/core/testlib/tablet_helpers.h>
++#include <ydb/core/testlib/actors/block_events.h>
+ 
+ #include <ydb/library/actors/interconnect/interconnect_impl.h>
+ 
+@@ -4007,6 +4008,116 @@ Y_UNIT_TEST_SUITE(TConsoleConfigSubscriptionTests) {
+ }
+ 
+ Y_UNIT_TEST_SUITE(TConsoleInMemoryConfigSubscriptionTests) {
++    Y_UNIT_TEST(TestPendingUpdatesCoalesceAndDrainAfterSubscriptionChanges) {
++        auto config = DefaultConsoleTestConfig();
++        config.CreateConsole = false;
++        TTenantTestRuntime runtime(config);
++        runtime.SetLogPriority(NKikimrServices::CMS_CONFIGS, NLog::PRI_ERROR);
++        auto counters = MakeIntrusive<NMonitoring::TDynamicCounters>();
++        const auto provider = runtime.Register(new TConfigsProvider(runtime.Sender, counters));
++        auto scheduled = counters->GetCounter("ScheduledConfigUpdates", false);
++        auto inflight = counters->GetCounter("InflightConfigUpdates", false);
++
++        constexpr ui32 maxInflight = 50;
++        constexpr ui32 subscriberCount = maxInflight + 5;
++        TVector<TActorId> subscribers;
++        THashMap<TActorId, TVector<NKikimrConsole::TConfigSubscriptionNotification>> notifications;
++        auto observer = runtime.AddObserver<TEvConsole::TEvConfigSubscriptionNotification>([&](auto& ev) {
++            if (ev->Sender == provider) {
++                // Allow the real sender's cooldown timer to release throttle slots.
++                runtime.EnableScheduleForActor(ev->GetRecipientRewrite());
++            } else if (auto it = notifications.find(ev->GetRecipientRewrite()); it != notifications.end()) {
++                it->second.push_back(ev->Get()->Record);
++                ev.Reset();
++            }
++        });
++        TBlockEvents<TConfigsProvider::TEvPrivate::TEvWorkerCoolDown> cooldowns(runtime,
++            [&](const auto& ev) { return ev->GetRecipientRewrite() == provider; });
++
++        auto send = [&](TActorId sender, IEventBase* event) {
++            runtime.Send(new IEventHandle(provider, sender, event), 0, true);
++        };
++        auto subscribe = [&](TActorId subscriber, ui64 generation) {
++            auto request = MakeHolder<TEvConsole::TEvConfigSubscriptionRequest>();
++            request->Record.SetGeneration(generation);
++            request->Record.MutableOptions()->SetNodeId(runtime.GetNodeId());
++            request->Record.AddConfigItemKinds(NKikimrConsole::TConfigItem::LogConfigItem);
++            request->Record.SetServeYaml(true);
++            request->Record.SetYamlApiVersion(1);
++            send(subscriber, request.Release());
++            auto response = runtime.GrabEdgeEventRethrow<TEvConsole::TEvConfigSubscriptionResponse>(subscriber);
++            UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.GetGeneration(), generation);
++            UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.GetStatus().GetCode(), Ydb::StatusIds::SUCCESS);
++        };
++        auto sync = [&]() {
++            send(runtime.Sender, new TConfigsProvider::TEvPrivate::TEvUpdateConfigs({},
++                new IEventHandle(runtime.Sender, provider, new TEvents::TEvWakeup())));
++            runtime.GrabEdgeEventRethrow<TEvents::TEvWakeup>(runtime.Sender);
++        };
++        auto updateYaml = [&](ui64 version) {
++            const TString yaml = TStringBuilder() << "metadata:\n  version: " << version << "\nconfig: {}\n";
++            send(runtime.Sender, new TConfigsProvider::TEvPrivate::TEvUpdateYamlConfig(yaml));
++        };
++
++        for (ui32 i = 0; i < subscriberCount; ++i) {
++            auto subscriber = runtime.AllocateEdgeActor();
++            subscribers.push_back(subscriber);
++            notifications.emplace(subscriber, TVector<NKikimrConsole::TConfigSubscriptionNotification>{});
++            subscribe(subscriber, 1);
++        }
++        runtime.WaitFor("first batch waiting for cooldown", [&]() { return cooldowns.size() == maxInflight; });
++        UNIT_ASSERT_VALUES_EQUAL(inflight->Val(), maxInflight);
++        UNIT_ASSERT_VALUES_EQUAL(scheduled->Val(), subscriberCount - maxInflight);
++
++        // Cancel one queued subscription and replace another without retaining its old generation.
++        const auto canceled = subscribers[maxInflight];
++        const auto replaced = subscribers[maxInflight + 1];
++        send(canceled, new TEvConsole::TEvConfigSubscriptionCanceled(1));
++        subscribe(replaced, 2);
++        send(replaced, new TEvConsole::TEvConfigSubscriptionCanceled(1));
++        sync();
++        UNIT_ASSERT_VALUES_EQUAL(scheduled->Val(), subscriberCount - maxInflight - 1);
++
++        // YAML updates share one pending entry and cannot downgrade an initial full update.
++        updateYaml(1);
++        updateYaml(2);
++        sync();
++        UNIT_ASSERT_VALUES_EQUAL(scheduled->Val(), subscriberCount - 1);
++
++        // A config change upgrades pending YAML work to All; another YAML update
+```
+
+**File**: `ydb/core/cms/console/ut_configs_provider_helpers.h` (added, +171/-0)
+```diff
+@@ -0,0 +1,171 @@
++#pragma once
++
++#include "console_configs_provider.h"
++#include "validators/validator_nameservice.h"
++
++#include <ydb/core/testlib/tenant_runtime.h>
++#include <library/cpp/testing/unittest/registar.h>
++
++namespace NKikimr::NConsole::NTests {
++
++class TCountingValidator : public IConfigValidator {
++public:
++    mutable ui64 Checks = 0;
++    mutable bool ToggleDuringCheck = false;
++
++    TCountingValidator()
++        : IConfigValidator("counting", THashSet<ui32>{})
++    {}
++
++    bool CheckConfig(const NKikimrConfig::TAppConfig&, const NKikimrConfig::TAppConfig& config,
++            TVector<Ydb::Issue::IssueMessage>& issues) const override {
++        ++Checks;
++        if (ToggleDuringCheck) {
++            ToggleDuringCheck = false;
++            auto* self = const_cast<TCountingValidator*>(this);
++            self->Disable();
++            self->Enable();
++        }
++        if (config.GetLogConfig().GetClusterName() == "reject") {
++            AddError(issues, "rejected config");
++            return false;
++        }
++        return true;
++    }
++};
++
++class TCountingNameserviceValidator : public TNameserviceConfigValidator {
++public:
++    mutable ui64 Checks = 0;
++
++    bool CheckConfig(const NKikimrConfig::TAppConfig& oldConfig, const NKikimrConfig::TAppConfig& config,
++            TVector<Ydb::Issue::IssueMessage>& issues) const override {
++        ++Checks;
++        return TNameserviceConfigValidator::CheckConfig(oldConfig, config, issues);
++    }
++};
++
++inline NKikimrConsole::TNodeAttributes Node(ui32 id, TString host = {}, TString tenant = {}, TString type = {}) {
++    NKikimrConsole::TNodeAttributes node;
++    node.SetNodeId(id);
++    node.SetHost(host);
++    node.SetTenant(tenant);
++    node.SetNodeType(type);
++    return node;
++}
++
++inline TConfigItem::TPtr LogItem(ui64 id, TString value, TVector<ui32> nodes = {}, TVector<TString> hosts = {},
++        TString tenant = {}, TString type = {}, ui32 order = 0) {
++    NKikimrConsole::TConfigItem item;
++    item.MutableId()->SetId(id);
++    item.MutableId()->SetGeneration(1);
++    item.SetKind(NKikimrConsole::TConfigItem::LogConfigItem);
++    item.SetOrder(order);
++    item.SetMergeStrategy(NKikimrConsole::TConfigItem::MERGE);
++    item.MutableConfig()->MutableLogConfig()->SetClusterName(value);
++    if (!nodes.empty()) {
++        for (auto node : nodes) {
++            item.MutableUsageScope()->MutableNodeFilter()->AddNodes(node);
++        }
++    } else if (!hosts.empty()) {
++        for (const auto& host : hosts) {
++            item.MutableUsageScope()->MutableHostFilter()->AddHosts(host);
++        }
++    } else if (tenant || type) {
++        item.MutableUsageScope()->MutableTenantAndNodeTypeFilter()->SetTenant(tenant);
++        item.MutableUsageScope()->MutableTenantAndNodeTypeFilter()->SetNodeType(type);
++    }
++    return new TConfigItem(item);
++}
++
++inline TConfigItem::TPtr NameserviceItem(ui32 nodes) {
++    auto item = LogItem(1, {});
++    item->Kind = NKikimrConsole::TConfigItem::NameserviceConfigItem;
++    item->Config.Clear();
++    for (ui32 id = 1; id <= nodes; ++id) {
++        auto* node = item->Config.MutableNameserviceConfig()->AddNode();
++        node->SetNodeId(id);
++        node->SetHost(TStringBuilder() << "host" << id);
++        node->SetInterconnectHost(TStringBuilder() << "host" << id);
++        node->SetAddress(TStringBuilder() << "address" << id);
++        node->SetPort(19001);
++    }
++    return item;
++}
++
++inline TString MainYaml(ui64 version) {
++    return TStringBuilder() << "metadata:\n  kind: MainConfig\n  cluster: \"\"\n  version: " << version << "\nconfig: {}\n";
++}
++
++class TConfigsProviderFixture {
++public:
++    TTenantTestRuntime Runtime{DefaultTenantTestConfig};
++    NMonitoring::TDynamicCounterPtr Counters = MakeIntrusive<NMonitoring::TDynamicCounters>();
++    TActorId Provider;
++    TActorId Sender;
++
++    explicit TConfigsProviderFixture(IConfigValidator::TPtr validator) {
++        TValidatorsRegistry::DropInstance();
++        auto registry = TValidatorsRegistry::Instance();
++        UNIT_ASSERT(registry->AddValidator(validator));
++        registry->LockValidators();
++        Runtime.SetLogPriority(NKikimrServices::CMS_CONFIGS, NLog::PRI_ERROR);
++        Sender = Runtime.AllocateEdgeActor();
++        Provider = Runtime.Register(new TConfigsProvider(Sender, Counters));
++    }
++
++    void Send(IEventBase* event) {
++        Runtime.Send(new IEventHandle(Provider, Sender, event), 0, true);
++    }
++
++    void Sync() {
++        Send(new TConfigsProvider::TEvPrivate::TEvUpdateConfigs({},
++            new IEventHandle(Sender, Provider, new TEvents::TEvWakeup())));
++        Runtime.GrabEdgeEventRethrow<TEvents::TEvWakeup>(Sender);
++    }
++
++    void SetItems(const TVector<TConfigItem::TPtr>& items) {
++        THashMap<ui64, TConfigItem::TPtr> map;
++        for (auto& item : items) {
++            map.emplace(item->Id, item);
++        }
++        Send(new TConfigsProvider::TEvPrivate::TEvSetConfigs(map));
++      
 ```
 
 ---
 
-### Incident Patch 3: `00e6b742` (2026-11-05)
-**Commit Message**: fix incorrect storage pool usage count when topics were ignored (#57650)
+### Incident Patch 3: `ce0f9bd9` (2026-11-07)
+**Commit Message**: Fix/cdc for replication (#58466)
 
-**File**: `ydb/core/viewer/viewer_tenantinfo.h` (modified, +9/-4)
+**File**: `ydb/core/tx/replication/controller/worker_lifecycle_ut.cpp` (modified, +59/-0)
 ```diff
-@@ -979,20 +979,25 @@ class TJsonTenantInfo : public TViewerPipeClient {
-                         }
+@@ -414,6 +414,65 @@ Y_UNIT_TEST_SUITE(WorkerLifecycle) {
+         }
+     };
  
-                         THashMap<NKikimrViewer::TStorageUsage::EType, ui64> tablesStorageByType;
-+                        const auto guessedStorageType = GuessStorageType(domainDescription);
- 
-                         for (const auto& poolUsage : domainDescription.GetDiskSpaceUsage().GetStoragePoolsUsage()) {
-                             auto type = GetStorageType(poolUsage.GetPoolKind());
-                             tablesStorageByType[type] += poolUsage.GetTotalSize();
-                         }
- 
-                         if (tablesStorageByType.empty() && domainDescription.HasDiskSpaceUsage()) {
--                            tablesStorageByType[GuessStorageType(domainDescription)] =
--                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize()
--                                + domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
-+                            tablesStorageByType[guessedStorageType] =
-+                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize();
-+                        }
++    Y_UNIT_TEST(CommitOffsetOnReadOnlySource) {
++        TSetup s(false);
++        auto& runtime = s.Env.GetRuntime();
++        auto session = s.Session();
++        const auto replicationPathId = s.Env.GetPathId("/Root/replication");
++        const auto waitFor = [](auto&& predicate) {
++            const auto deadline = TInstant::Now() + TDuration::Seconds(60);
++            while (TInstant::Now() < deadline) {
++                if (predicate()) {
++                    return;
++                }
++                Sleep(TDuration::MilliSeconds(100));
++            }
++            UNIT_FAIL("Timed out waiting for replication state or committed offset");
++        };
++        const auto alterState = [&](const TString& state) {
++            auto result = session.ExecuteSchemeQuery(TStringBuilder()
++                << "ALTER ASYNC REPLICATION `/Root/replication` SET (STATE = '" << state << "');").GetValueSync();
++            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
++            waitFor([&] {
++                auto request = MakeHolder<TEvController::TEvDescribeReplication>();
++                replicationPathId.ToProto(request->Record.MutablePathId());
++                auto description = s.Env.Send<TEvController::TEvDescribeReplicationResult>(s.ControllerId, std::move(request));
++                const auto& record = description->Get()->Record;
++                UNIT_ASSERT_C(record.GetStatus() == NKikimrReplication::TEvDescribeReplicationResult::SUCCESS,
++                    record.ShortDebugString());
++                const auto& actual = record.GetState();
++                UNIT_ASSERT_C(!actual.HasError(), actual.DebugString());
++                return state == "PAUSED" ? actual.HasPaused() : actual.HasStandBy();
++            });
++        };
++        NYdb::NTopic::TTopicClient topics(s.Env.GetDriver());
++        const auto consumerOffsets = [&] {
++            auto result = topics.DescribeConsumer(s.StreamPath, "replicationConsumer",
++                NYdb::NTopic::TDescribeConsumerSettings().IncludeStats(true)).GetValueSync();
++            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
++            const auto& partitions = result.GetConsumerDescription().GetPartitions();
++            UNIT_ASSERT_VALUES_EQUAL(partitions.size(), 1);
++            UNIT_ASSERT(partitions.front().GetPartitionConsumerStats());
++            UNIT_ASSERT(partitions.front().GetPartitionStats());
++            return std::make_pair(partitions.front().GetPartitionConsumerStats()->GetCommittedOffset(),
++                partitions.front().GetPartitionStats()->GetEndOffset());
++        };
 +
-+                        if (domainDescription.HasDiskSpaceUsage()) {
-+                            tablesStorageByType[guessedStorageType] +=
-+                                domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
-                         }
- 
-                         if (storageQuotasByType.empty()) {
--                            auto& quotas = storageQuotasByType[GuessStorageType(domainDescription)];
-+                            auto& quotas = storageQuotasByType[guessedStorageType];
-                             quotas.HardQuota = domainDescription.GetDatabaseQuotas().data_size_hard_quota();
-                             quotas.SoftQuota = domainDescription.GetDatabaseQuotas().data_size_soft_quota();
-                         }
++        // Drain the initial 100 rows before pausing, so an old commit cannot satisfy the final check.
++        waitFor([&] {
++            const auto [committed, end] = consumerOffsets();
++            return committed >= 100 && committed == end;
++        });
++        alterState("PAUSED");
++        const auto before = consumerOffsets().first;
++        s.Upsert(101, 101);
++        runtime.GetAppData().FeatureFlags.SetEnableClientModifications(false);
++        alterState("STANDBY");
++
++        UNIT_ASSERT_VALUES_EQUAL(s.WaitReplicated(101, TDuration::Seconds(60)), 101);
++        waitFor([&] { return consumerOffsets().first > before; });
++    }
++
+     Y_UNIT_TEST(ChildrenStartOnDataEnd) {
+         TSetup s;
+         const auto children = s.SplitRoot();
 ```
 
-**File**: `ydb/core/viewer/viewer_ut.cpp` (modified, +32/-2)
+**File**: `ydb/services/lib/actors/type_definitions.h` (modified, +3/-0)
 ```diff
-@@ -1258,7 +1258,9 @@ Y_UNIT_TEST_SUITE(Viewer) {
+@@ -29,6 +29,7 @@ struct TTopicInitInfo {
+     NKikimrPQ::TPQTabletConfig::EMeteringMode MeteringMode;
+     THashMap<ui32, TPartitionInfo> Partitions;
+     std::shared_ptr<const NPQ::TPartitionGraph> PartitionGraph;
++    bool IsAsyncReplication = false;
+ };
+ 
+ using TTopicInitInfoMap = THashMap<TString, TTopicInitInfo>;
+@@ -46,6 +47,7 @@ struct TTopicHolderBase {
+         MeteringMode = info.MeteringMode;
+         FullConverter = info.TopicNameConverter;
+         Partitions = info.Partitions;
++        IsAsyncReplication = info.IsAsyncReplication;
      }
  
-     void CheckStorageLimitWithGroupSizeInUnits(bool enforcedSlotSize, bool cluster = false,
--            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false)
-+            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false,
-+            ui64 tablesSize = 0, ui64 topicsSize = 0, std::optional<TString> poolUsageKind = "ssd",
-+            TString expectedTablesStorageType = "SSD")
-     {
-         TPortManager tp;
-         auto settings = TServerSettings(tp.GetPort(2134))
-@@ -1297,6 +1299,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
-                         pool->SetName(kind);
-                         pool->SetKind(kind);
-                     }
-+                    if (tablesSize || topicsSize) {
-+                        auto* diskSpaceUsage = domain->MutableDiskSpaceUsage();
-+                        if (poolUsageKind) {
-+                            auto* poolUsage = diskSpaceUsage->AddStoragePoolsUsage();
-+                            poolUsage->SetPoolKind(*poolUsageKind);
-+                            poolUsage->SetTotalSize(tablesSize);
-+                        } else {
-+                            diskSpaceUsage->MutableTables()->SetTotalSize(tablesSize);
-+                        }
-+                        diskSpaceUsage->MutableTopics()->SetDataSize(topicsSize);
-+                    }
-                     break;
-                 }
-                 case NSysView::TEvSysView::EvGetStoragePoolsResponse: {
-@@ -1412,10 +1425,10 @@ Y_UNIT_TEST_SUITE(Viewer) {
-         const auto& tenants = json["TenantInfo"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(tenants.size(), 1);
-         const auto& tenant = tenants[0];
-+        const auto& storage = tenant["DatabaseStorage"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedLimit"].GetString(),
-             ToString(saturatedQuota ? Max<ui64>() : fixedQuota + (enforcedSlotSize ? 500 : 600)));
-         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedSize"].GetString(), "50");
--        const auto& storage = tenant["DatabaseStorage"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(storage.size(), 2);
-         for (const auto& usage : storage) {
-             const auto& type = usage["Type"].GetString();
-@@ -1426,6 +1439,12 @@ Y_UNIT_TEST_SUITE(Viewer) {
-             UNIT_ASSERT_VALUES_EQUAL(usage["Limit"].GetString(), expectedLimit);
-             UNIT_ASSERT_VALUES_EQUAL(usage["Size"].GetString(), type == "SSD" ? "20" : "30");
-         }
-+        if (tablesSize || topicsSize) {
-+            const auto& tablesStorage = tenant["TablesStorage"].GetArray();
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage.size(), 1);
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Type"].GetString(), expectedTablesStorageType);
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Size"].GetString(), ToString(tablesSize + topicsSize));
-+        }
-     }
+     ui64 TabletID = 0;
+@@ -59,6 +61,7 @@ struct TTopicHolderBase {
+     NPersQueue::TDiscoveryConverterPtr DiscoveryConverter;
+     NPersQueue::TTopicConverterPtr FullConverter;
+     TMaybe<TString> CdcStreamPath;
++    bool IsAsyncReplication = false;
  
-     Y_UNIT_TEST(TenantInfoStorageLimitWithGroupSizeInUnits)
-@@ -1438,6 +1457,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
-         CheckStorageLimitWithGroupSizeInUnits(true);
-     }
+     TVector<ui32> Groups;
+     THashMap<ui32, TPartitionInfo> Partitions;
+```
+
+**File**: `ydb/services/persqueue_v1/actors/commit_offset_actor.cpp` (modified, +6/-5)
+```diff
+@@ -43,11 +43,6 @@ TCommitOffsetActor::~TCommitOffsetActor() = default;
  
-+    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithPoolUsage)
-+    {
-+        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 100, 200);
+ void TCommitOffsetActor::Bootstrap(const TActorContext& ctx) {
+     TBase::Bootstrap(ctx);
+-    if (!AppData(ctx)->FeatureFlags.GetEnableClientModifications()) {
+-        Reply(Ydb::StatusIds::PRECONDITION_FAILED,
+-            NYql::TIssues{NYql::TIssue("Consumer offset commits are disabled")}, ctx);
+-        return;
+-    }
+     Become(&TThis::StateFunc);
+ 
+     auto request = dynamic_cast<const Ydb::Topic::CommitOffsetRequest*>(GetProtoRequest());
+@@ -131,6 +126,12 @@ void TCommitOffsetActor::Handle(TEvPQProxy::TEvAuthResultOk::TPtr& ev, const TAc
+     AFL_ENSURE(TopicAndTablets.size() == 1);
+     auto& [_, topicInitInfo] = *TopicAndTablets.begin();
+ 
++    if (!AppData(ctx)->FeatureFlags.GetEnableClientModifications() && !topicInitInfo.IsAsyncReplication) {
++        Reply(Ydb::StatusIds::PRECONDITION_FAILED,
++            NYql::TIssues{NYql::TIssue("Consumer offset commits are disabled")}, ctx);
++        return;
 +    }
 +
-+    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithoutPoolUsage)
-+    {
-+        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 0, 200,
-+            std::nullopt);
-+    }
-+
-     Y_UNIT_TEST(ClusterStorageLimitWithGroupSizeInUnits)
-     {
-         CheckStorageLimitWithGroupSizeInUnits(false, true);
+     if (topicInitInfo.Partitions.find(PartitionId) == topicInitInfo.Partitions.end()) {
+         AnswerError("partition id not found in topic", PersQueue::ErrorCode::WRONG_PARTITION_NUMBER, ctx);
+         return;
+```
+
+**File**: `ydb/services/persqueue_v1/actors/partition_actor.cpp` (modified, +1/-1)
+```diff
+@@ -192,7 +192,7 @@ const std::set<NPQ::TPartitionGraph::Node*>& TPartitionActor::GetParents(std::sh
+ }
+ 
+ void TPartitionActor::SendCommit(const ui64 readId, const ui64 offset, const TActorContext& ctx) {
+-    if (!AppData(ctx)->FeatureFlags.GetEnableClientModifications()) {
++    if (!AppData(ctx)->FeatureFlags.GetEnableClientModifications() && !TopicHolder->IsAsyncReplication) {
+         CloseSessionAndDie("Consumer offset commits are disabled", PersQueue::ErrorCode::PRECONDITION_FAILED, ctx);
+         return;
+     }
+```
+
+**File**: `ydb/services/persqueue_v1/actors/read_init_auth_actor.cpp` (modified, +3/-1)
+```diff
+@@ -158,6 +158,7 @@ void TReadInitAndAuthActor::HandleTopicsDescribeResponse(TEvDescribeTopicsRespon
+             // primary path used to re-describe
+             it->second.DiscoveryConverter->SetPrimaryPath(JoinPath(ChildPath(entry.Path, topic.Name)));
+             it->second.CdcStreamPath = CanonizePath(entry.Path);
++            it->second.IsAsyncReplication = entry.Attributes.contains("__async_replication");
+ 
+ //            Topics[it->second.DiscoveryConverter->GetInternalName()] = it->second;
+ //            Topics.erase(it);
+@@ -296,7 +297,8 @@ void TReadInitAndAuthActor::FinishInitialization(const TActorContext& ctx) {
+             holder.FolderId,
+             holder.MeteringMode,
+             holder.Partitions,
+-            holder.GetPartitionGraph()
++            holder.GetPartitionGraph(),
++            holder.IsAsyncReplication
+         }));
+     }
+     ctx.Send(ParentId, new TEvPQProxy::TEvAuthResultOk(std::move(res)));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58339** (2026-11-05): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #58329** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58328** (2026-11-05): Sync branches 261105-2001: stable-26-3-1 to nbs-26-3-1 (@ydbot)
-- **PR #58323** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58321** (closed): Sync branches 261105-1740: rightlib to main (@ydbot)
-- **PR #58319** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #58528** (2026-11-07): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58516** (2026-11-07): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #58513** (2026-11-07): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58512** (2026-11-07): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #58502** (2026-11-07): [26-3-1] Revert #57600 and reapply replication data-loss fixes (@lberserq)
+- **PR #58500** (2026-11-07): Bridge: follow-ups to the limit of syncers (@alexvru)
 
 ---
 
@@ -2596,29 +3625,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. offsets replication for consumers with availability period (#58279)
+## X. [NEW RBO] Fix double-counted filter selectivity (#58429)
 
 **RULE**:
-When implementing operations in `ydb/core/persqueue/pqtablet/partition/partition.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/kqp/opt/rbo/kqp_rbo_compute_statistics.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5da12a8a`: offsets replication for consumers with availability period (#58279). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcb03436`: [NEW RBO] Fix double-counted filter selectivity (#58429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/persqueue/pqtablet/partition/partition.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/kqp/opt/rbo/kqp_rbo_compute_statistics.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            const auto previousOffset = userInfo.Offset;
-            const bool offsetHasChanged = userInfo.Offset != previousOffset;
+    Props.Statistics->EBytes *= selectivity;
+    Props.Statistics->ERows *= selectivity;
+    Props.Statistics->Selectivity *= selectivity;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
+    double filterSelectivity = selectivity * Props.Statistics->Selectivity;
+    Props.Statistics->EBytes = filterSelectivity * Props.Statistics->EBytes;
+    Props.Statistics->ERows = filterSelectivity * Props.Statistics->ERows;
+    Props.Statistics->Selectivity = filterSelectivity;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5da12a8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcb03436` are properly handled with clean fallback behavior.
