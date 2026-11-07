@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `588cf353`  
+> **Source Version**: `90d45251`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:23:17.694Z  
+> **Timestamp**: 2026-11-07T05:37:04.254Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:23:16.744Z  
+> **Harvest Timestamp**: 2026-11-07T05:37:04.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30728 stars
+- **Stars / Engagement**: 30746 stars
 
 ---
 
@@ -1398,11 +1398,11 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4815** (2026-11-06): **Plan failure when a child module uses a symbol library**
+  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.9 on linux_amd64 + provider registry.opentofu.org/hashicorp/aws v6.63.0 + provider registry.opentofu.org/hashicorp/random v3.9.1 + provider registry.opentofu.org/hashicorp/time v0.14.2  (Also tried OpenTofu v1.13.2) ```  ### OpenTofu Configuration Files  Repo: https://github.com/jmuleiro/opentofu-symbols-bug   ### Debug Output  https://gist.github.com/jmuleiro/67d8ec15f242d7fa204246abcd301f95  ### Expected Behavior  I expected OpenTofu to plan successfully when child modules use symbol libraries internally.  ### Actual Behavior  ``` ╷ │ Warning: Experimental features are active │  │   on child/main.tf line 1, in language: │    1: language { experiments = [symbol_libraries] } │  │ Experimental features are subject to breaking changes or total removal in later versions, based on feedback. We recommend against using experimental features in production. │  │ The following experiments are enabled: symbol_libraries ╵ ╷ │ Error: Missing source file for snapshot │  │ The source code for file child/lib/main.sym.hcl could not be found to produce a configuration snapshot. ╵ ```  ### Steps to Reproduce  1. Clone the linked repo 2. Run `tofu init` 3. Run `tofu plan` or `tofu apply`  ### Additional Context  Th
+
 - **Issue #4809** (2026-11-05): **State file loses resources when the first apply in a new workspace stops before it finishes (regression in v1.11.0)**
   *Symptoms*:  ### OpenTofu Version  ``` OpenTofu v1.13.8 on darwin_arm64 ```  Also reproduced with v1.12.9.  ### OpenTofu Configuration Files  ```hcl # a and b finish at once, c after 25 s; the apply is killed while d runs. resource "terraform_data" "a" { input = "a" } resource "terraform_data" "b" { input = terraform_data.a.output } resource "terraform_data" "c" {   input = terraform_data.b.output   provisioner "local-exec" { command = "sleep 25" } } resource "terraform_data" "d" {   input = terraform_data.c.output   provisioner "local-exec" { command = "sleep 300" } } ```  ### Debug Output  Not attached; the steps below reproduce it in about 30 seconds.  ### Expected Behavior  The state file lists `terraform_data.a`, `terraform_data.b`, and `terraform_data.c`, which the apply created before it stopped.  ### Actual Behavior  The state file lists only `terraform_data.c`:  ``` terraform_data.a: Creation complete after 0s terraform_data.b: Creation complete after 0s terraform_data.c: Creation complete after 25s terraform_data.d: Creating... Killed: 9  $ jq -c '[.resources[].name]' terraform.tfstate ["c"] ```  The next apply creates `a` and `b` again. With real resources, the first ones are left behind without state.  The same steps keep all three, `["a","b","c"]`:  - with v1.10.10, in a new workspace; - with v1.13.8, in a workspace whose state file exists before the apply (for example after `tofu apply -refresh-only -auto-approve`).  ### Steps to Reproduce  In an empty directory with the co
-
-- **Issue #4780** (2026-10-29): **Encryption key refernce panic**
-  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.2 on linux_amd64 ```  ### OpenTofu Configuration Files  ```hcl terraform {   encryption {     method "aes_gcm" "m" { keys = [6, 6, 6] }     state { method = method.aes_gcm.m }   } } ```   ### Debug Output  https://gist.github.com/denis256/b7467bc4ba40deceb76875dacc93f0fa  ### Expected Behavior  Proper error message  ### Actual Behavior  ``` !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  OpenTofu crashed! This is always indicative of a bug within OpenTofu. Please report the crash with OpenTofu[1] so that we can fix this.  When reporting bugs, please include your OpenTofu version, the stack trace shown below, and any additional information which may help replicate the issue.  [1]: https://github.com/opentofu/opentofu/issues  !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  not a string goroutine 1 [running]: runtime/debug.Stack() 	runtime/debug/stack.go:26 +0x5e github.com/opentofu/opentofu/internal/logging.panicHandler({0x68c6b38, 0x3b274f0}, {0x0, 0x0, 0x0}, {0x0, 0x0}, 0x0) 	github.com/opentofu/opentofu/internal/logging/panic.go:113 +0x173 github.com/opentofu/opentofu/internal/logging.PanicHandler() 	github.com/opentofu/opentofu/internal/logging/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,134 +1419,93 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `588cf353` (2026-11-05)
-**Commit Message**: Fix persist local state bug in error path on first run
+### Incident Patch 1: `90d45251` (2026-11-06)
+**Commit Message**: Fix symbol libraries in plan snapshot
 
-As identified in https://github.com/opentofu/opentofu/issues/4809: When
-we adopted a more efficient state file mutation method in https://github.com/opentofu/opentofu/pull/3110,
-a bug was introduced into the local state backend.
+This is a follow on to the changes made in
+https://github.com/opentofu/opentofu/pull/4734. Symbol libraries
+use the module installer in a non-standard way, causing some ordering to
+be a little funny for child modules.
 
-This was due to incorrect tracking of refreshed status in that
-backend.  I've added a regression test that replicates the issue
-if the fix is not applied.
-
-NOTE: This applies to the local filesystem backend only.  I have tested
-a variety of scenarios with the remote http backend (shared remote state
-code) and have been unable to cause any similar issue.
+This separates out the "discover files in installed modules" and "read
+the contents of files in installed modules", fixing the ordering
+concern.
 
 Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-**File**: `internal/states/statemgr/filesystem.go` (modified, +6/-5)
+**File**: `internal/configs/configload/loader_snapshot.go` (modified, +27/-14)
 ```diff
-@@ -144,7 +144,7 @@ func (s *Filesystem) WriteState(state *states.State) error {
- func (s *Filesystem) MutateState(fn func(*states.State) *states.State) error {
- 	defer s.mutex()()
+@@ -41,6 +41,26 @@ func (l *loader) LoadConfigWithSnapshot(ctx context.Context, rootDir string, cal
+ 	addDiags := l.addModuleToSnapshot(snap, "", rootDir, "", nil)
+ 	diags = append(diags, addDiags...)
  
--	if s.readFile == nil {
-+	if s.readFile == nil && s.file == nil {
- 		err := s.refreshState()
- 		if err != nil {
- 			return err
-@@ -157,11 +157,12 @@ func (s *Filesystem) MutateState(fn func(*states.State) *states.State) error {
- 	}
- 
- 	state = fn(state)
--
--	if s.file == nil {
--		s.file = NewStateFile()
-+	if state != nil {
-+		if s.file == nil {
-+			s.file = NewStateFile()
++	// Inject the source contents into the snapshot
++	sources := l.Sources() // should be populated with all the files we need by now
++	for _, snapMod := range snap.Modules {
++		for _, filePath := range snapMod.FilePaths {
++			filename := filepath.Base(filePath)
++			src, exists := sources[filePath]
++			if !exists {
++				diags = append(diags, &hcl.Diagnostic{
++					Severity: hcl.DiagError,
++					Summary:  "Missing source file for snapshot",
++					Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
++				})
++				continue
++			}
++			snapMod.Files[filepath.Clean(filename)] = src.Bytes
 +		}
-+		s.file.State = state
- 	}
--	s.file.State = state
++		// No-longer needed, clearing also makes testing easier
++		snapMod.FilePaths = nil
++	}
++
+ 	l.lastLoadedRoot = cfg
  
- 	return nil
- }
-```
-
-**File**: `internal/states/statemgr/filesystem_test.go` (modified, +56/-0)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"encoding/json"
- 	"os"
- 	"os/exec"
-+	"path"
- 	"path/filepath"
- 	"strings"
- 	"sync"
-@@ -498,6 +499,61 @@ func TestFilesystem_prettyPrintState(t *testing.T) {
- 	}
- }
+ 	return cfg, snap, diags
+@@ -109,6 +129,11 @@ type SnapshotModule struct {
+ 	// module to a raw byte representation of the source file contents.
+ 	Files map[string][]byte
  
-+func TestFilesystem_Mutate(t *testing.T) {
-+	defer testOverrideVersion(t, "1.2.3")()
++	// FilePaths is a list of the full paths of the files within the module
++	// This is populated during the walk and used to fill in Files once
++	// all the sources have been loaded
++	FilePaths []string `json:"-"`
 +
-+	td := t.TempDir()
-+	s := NewFilesystem(path.Join(td, "test.tfstate"), encryption.StateEncryptionDisabled())
-+
-+	lockID, err := s.Lock(t.Context(), NewLockInfo())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// Simulate mutating the state multiple times
-+	// before it's been written to disk.
-+	// See https://github.com/opentofu/opentofu/issues/4809 for reference.
-+	err = s.MutateState(func(in *states.State) *states.State {
-+		if in == nil {
-+			in = states.NewState()
-+		}
-+		in.RootModule().SetOutputValue("first", cty.StringVal("FIRST"), false, "")
-+		return in
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	err = s.MutateState(func(in *states.State) *states.State {
-+		if in == nil {
-+			in = states.NewState()
-+		}
-+		in.RootModule().SetOutputValue("second", cty.StringVal("SECOND"), false, "")
-+		return in
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	if err := s.PersistState(t.Context(), nil); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	recorded := s.file.State.RootModule().OutputValues
-+	if _, ok := recorded["first"]; !ok {
-+		t.Error("Expected first")
-+	}
-+	if _, ok := recorded["second"]; !ok {
-+		t.Error("Expected second")
-+	}
-+
-+	// Unlock releases the file handle, which is required on Windows
-+	// where t.TempDir cleanup cannot remove open files.
-+	if err := s.Unlock(t.Context(), lockID); err != nil {
-+		t.Fatalf("failed to unlock state: %s", err)
-+	}
-+}
-+
- func testOverrideVersion(t *testing.T, v string) func() {
- 	oldVersionStr := tfversion.Version
- 	oldPrereleaseStr := tfversion.Prerelease
+ 	// SourceAddr is the source address given for this module in configuration.
+ 	SourceAddr string `json:"Source"`
+ 
+@@ -189,20 +214,8 @@ func (l *loader) addModuleToSnapshot(snap *Snapshot, key string, dir string, sou
+ 	files = append(files, primaryFiles...)
+ 	files = append(files, overrideFiles...)
+ 	files = append(files, symbolFiles...)
+-	sources := l.Sources() // should be populated with all the files we need by now
+-	for _, filePath := range files {
+-		filename := filepath.Base(filePath)
+-		src, exists := sources[filePath]
+-		if !exists {
+-			diags = append(diags, &hcl.Diagnostic{
+-				Severity: hcl.DiagError,
+-				Summary:  "Missing source file for snapshot",
+-				Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
+-			})
+-			continue
+-		}
+-		snapMod.Files[filepath.Clean(filename)] = src.Bytes
+-	}
++	snapMod.FilePaths = files
++	// Files will be populated later
+ 
+ 	snap.Modules[key] = snapMod
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4816** (2026-11-06): Fix symbol libraries in plan snapshot (@cam72cam)
 - **PR #4813** (2026-11-05): [Backport 1.12] local statefile mutate bug (@cam72cam)
 - **PR #4812** (2026-11-05): [Backport 1.13] local statefile mutate bug  (@cam72cam)
 - **PR #4811** (2026-11-05): Fix persist local state bug in error path on first run (@cam72cam)
 - **PR #4808** (2026-11-04): [backport] .github/workflows: Use preinstalled Go from worker tool cache (@cam72cam)
 - **PR #4807** (2026-11-04): Prepare 1.13.6 release (@lbordowitz)
-- **PR #4806** (2026-11-05): [v1.12] Refactor release and nightly workflows (@lbordowitz)
 
 ---
 
@@ -1566,37 +1525,67 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. persist local state bug in error path on first run
+## X. symbol libraries in plan snapshot
 
 **RULE**:
-When implementing operations in `internal/states/statemgr/filesystem.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/configs/configload/loader_snapshot.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `588cf353`: persist local state bug in error path on first run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90d45251`: symbol libraries in plan snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/states/statemgr/filesystem.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/configs/configload/loader_snapshot.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if s.readFile == nil && s.file == nil {
-	if state != nil {
-		if s.file == nil {
-			s.file = NewStateFile()
+	// Inject the source contents into the snapshot
+	sources := l.Sources() // should be populated with all the files we need by now
+	for _, snapMod := range snap.Modules {
+		for _, filePath := range snapMod.FilePaths {
+			filename := filepath.Base(filePath)
+			src, exists := sources[filePath]
+			if !exists {
+				diags = append(diags, &hcl.Diagnostic{
+					Severity: hcl.DiagError,
+					Summary:  "Missing source file for snapshot",
+					Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
+				})
+				continue
+			}
+			snapMod.Files[filepath.Clean(filename)] = src.Bytes
 		}
-		s.file.State = state
+		// No-longer needed, clearing also makes testing easier
+		snapMod.FilePaths = nil
+	}
+
+	// FilePaths is a list of the full paths of the files within the module
+	// This is populated during the walk and used to fill in Files once
+	// all the sources have been loaded
+	FilePaths []string `json:"-"`
+
+	snapMod.FilePaths = files
+	// Files will be populated later
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if s.readFile == nil {
-
-	if s.file == nil {
-		s.file = NewStateFile()
-	s.file.State = state
+	sources := l.Sources() // should be populated with all the files we need by now
+	for _, filePath := range files {
+		filename := filepath.Base(filePath)
+		src, exists := sources[filePath]
+		if !exists {
+			diags = append(diags, &hcl.Diagnostic{
+				Severity: hcl.DiagError,
+				Summary:  "Missing source file for snapshot",
+				Detail:   fmt.Sprintf("The source code for file %s could not be found to produce a configuration snapshot.", filePath),
+			})
+			continue
+		}
+		snapMod.Files[filepath.Clean(filename)] = src.Bytes
+	}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `588cf353` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90d45251` are properly handled with clean fallback behavior.

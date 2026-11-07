@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `6f0ab313`  
+> **Source Version**: `800f4c49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:12:05.322Z  
+> **Timestamp**: 2026-11-07T05:37:07.446Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:12:05.314Z  
+> **Harvest Timestamp**: 2026-11-07T05:37:07.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1987,105 +1987,43 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f0ab313` (2026-11-06)
-**Commit Message**: Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal
+### Incident Patch 1: `024875e9` (2026-11-06)
+**Commit Message**: Merge pull request #4639 from aleo-labs-protocol/ci/remove-crash-all
 
-**File**: `.github/workflows/mirror-staging.yml` (added, +31/-0)
+**File**: `.github/workflows/ci.yml` (modified, +0/-4)
 ```diff
-@@ -0,0 +1,31 @@
-+name: Mirror staging to snarkOS-internal
-+
-+# snarkOS-internal is a private copy of this repository. Its staging follows this
-+# staging and nothing else: the bot only fast-forwards it, and a mirror that has
-+# diverged fails the run.
-+on:
-+  push:
-+    branches: [staging]
-+  # Catches a push whose run failed or never started.
-+  schedule:
-+    - cron: '41 * * * *'
-+  workflow_dispatch:
-+
-+permissions: {}
-+
-+concurrency: mirror-staging
-+
-+jobs:
-+  mirror:
-+    # snarkOS-internal holds this file too. Without this, the bot's push there
-+    # would start a run in the mirror.
-+    if: github.repository == 'aleo-labs-protocol/snarkOS'
-+    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
-+    permissions: { contents: read }
-+    with:
-+      mirror: snarkOS-internal
-+      branches: staging
-+    # Lives in the merge-bot environment, which admits only staging. The called
-+    # workflow's job sets that environment and receives the value.
-+    secrets:
-+      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
+@@ -373,10 +373,6 @@ jobs:
+             timeout: 45
+             delay: true
+             runs: ./.ci/test_restart_all.sh
+-          - name: chaotic-crash-all
+-            timeout: 45
+-            delay: true
+-            runs: ./.ci/test_restart_all.sh 7 0 10 100 3 crash
+     name: devnet (${{ matrix.name }})
+     steps: *devnet-steps
+ 
 ```
 
----
-
-### Incident Patch 2: `110e10ba` (2026-11-06)
-**Commit Message**: ci: fast-forward snarkOS-internal's staging whenever staging moves
-
-snarkOS-internal is a private copy of this repository, whose staging should
-follow this one and nothing else. This calls gh-actions' mirror-branches.yml
-on every push to staging, with an hourly run to catch a missed one. It pushes
-as the merge-bot App from the merge-bot environment, never forces, and fails
-if the mirror has diverged.
-
-Needs gh-actions' v2 to include mirror-branches.yml, and the merge-bot App
-installed on snarkOS-internal.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmKn7cZAEoLkokZcypG
-
-**File**: `.github/workflows/mirror-staging.yml` (added, +31/-0)
+**File**: `CI.md` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,31 @@
-+name: Mirror staging to snarkOS-internal
-+
-+# snarkOS-internal is a private copy of this repository. Its staging follows this
-+# staging and nothing else: the bot only fast-forwards it, and a mirror that has
-+# diverged fails the run.
-+on:
-+  push:
-+    branches: [staging]
-+  # Catches a push whose run failed or never started.
-+  schedule:
-+    - cron: '41 * * * *'
-+  workflow_dispatch:
-+
-+permissions: {}
-+
-+concurrency: mirror-staging
-+
-+jobs:
-+  mirror:
-+    # snarkOS-internal holds this file too. Without this, the bot's push there
-+    # would start a run in the mirror.
-+    if: github.repository == 'aleo-labs-protocol/snarkOS'
-+    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
-+    permissions: { contents: read }
-+    with:
-+      mirror: snarkOS-internal
-+      branches: staging
-+    # Lives in the merge-bot environment, which admits only staging. The called
-+    # workflow's job sets that environment and receives the value.
-+    secrets:
-+      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
+@@ -52,7 +52,6 @@ marked "release" only on the third. The other jobs run on every event.
+ | `devnet (upgrade)` | `cpu` | merge | 90 | `test_full_upgrade.sh`, `test_partial_upgrade.sh` |
+ | `devnet (upgrade-required)` | `cpu` | release | 30 | `test_upgrade_required.sh` |
+ | `devnet (chaotic-restart-all)` | `cpu` | release | 45 | `test_restart_all.sh`, with delays |
+-| `devnet (chaotic-crash-all)` | `cpu` | release | 45 | `test_restart_all.sh` with SIGKILL, with delays |
+ | `machete` | hosted | all | | `cargo machete` |
+ | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
+ | `ci-ok` | hosted | all | | fails unless every job a pull request runs succeeded |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4644** (2026-11-07): Add the Gauntlet sync test workflow (@cbeck88)
 - **PR #4640** (2026-11-06): ci: fast-forward snarkOS-internal's staging whenever staging moves (@cbeck88)
+- **PR #4639** (2026-11-06): Remove the chaotic-crash-all devnet entry (@cbeck88)
 - **PR #4638** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@7e48bc69c (@aleo-labs-merge-bot[bot])
 - **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
 - **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
-- **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
-- **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2099,64 +2037,3 @@ Claude-Session: https://claude.ai/code/session_01UYfmmKn7cZAEoLkokZcypG
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal
-
-**RULE**:
-When implementing operations in `.github/workflows/mirror-staging.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `6f0ab313`: Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/mirror-staging.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-name: Mirror staging to snarkOS-internal
-
-# snarkOS-internal is a private copy of this repository. Its staging follows this
-# staging and nothing else: the bot only fast-forwards it, and a mirror that has
-# diverged fails the run.
-on:
-  push:
-    branches: [staging]
-  # Catches a push whose run failed or never started.
-  schedule:
-    - cron: '41 * * * *'
-  workflow_dispatch:
-
-permissions: {}
-
-concurrency: mirror-staging
-
-jobs:
-  mirror:
-    # snarkOS-internal holds this file too. Without this, the bot's push there
-    # would start a run in the mirror.
-    if: github.repository == 'aleo-labs-protocol/snarkOS'
-    uses: aleo-labs-protocol/gh-actions/.github/workflows/mirror-branches.yml@v2
-    permissions: { contents: read }
-    with:
-      mirror: snarkOS-internal
-      branches: staging
-    # Lives in the merge-bot environment, which admits only staging. The called
-    # workflow's job sets that environment and receives the value.
-    secrets:
-      MERGE_BOT_APP_KEY: ${{ secrets.MERGE_BOT_APP_KEY }}
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f0ab313` are properly handled with clean fallback behavior.

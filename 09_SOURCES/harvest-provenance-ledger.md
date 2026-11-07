@@ -8015,3 +8015,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-metro` | `https://github.com/react/metro` | `72601c99` | Multi-dimensional audit evidence | 2026-11-07T05:28:16.679Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e9de42d3` | Multi-dimensional audit evidence | 2026-11-07T05:28:18.417Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `70c75797` | Multi-dimensional audit evidence | 2026-11-07T05:28:23.564Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `55bf2946` | Multi-dimensional audit evidence | 2026-11-07T05:37:01.537Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `90d45251` | Multi-dimensional audit evidence | 2026-11-07T05:37:05.678Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `800f4c49` | Multi-dimensional audit evidence | 2026-11-07T05:37:07.777Z |

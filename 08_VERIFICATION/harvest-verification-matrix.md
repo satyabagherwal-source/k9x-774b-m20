@@ -8006,3 +8006,6 @@
 | `CYCLE-20261107-Q0PW` | `2026-11-07T05:28:16.676Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0c660e28...`) |
 | `CYCLE-20261107-Q226` | `2026-11-07T05:28:18.414Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e750f96...`) |
 | `CYCLE-20261107-Q615` | `2026-11-07T05:28:23.561Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`372f6503...`) |
+| `CYCLE-20261107-19P9` | `2026-11-07T05:37:01.533Z` | `nodejs/undici` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nodejs-undici-learnings.md` | Yes (`8013e050...`) |
+| `CYCLE-20261107-1CWA` | `2026-11-07T05:37:05.674Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6038654e...`) |
+| `CYCLE-20261107-1EIL` | `2026-11-07T05:37:07.773Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`be773f9b...`) |

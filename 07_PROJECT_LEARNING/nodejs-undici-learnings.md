@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source**: github ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
-> **Source Version**: `39995739`  
+> **Source Version**: `55bf2946`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:39:18.205Z  
+> **Timestamp**: 2026-11-07T05:37:01.190Z  
 > **Learning ID**: `learn-github-nodejs-undici`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:39:17.688Z  
+> **Harvest Timestamp**: 2026-11-07T05:36:59.750Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An HTTP/1.1 client, written from scratch for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7723 stars
+- **Stars / Engagement**: 7728 stars
 
 ---
 
@@ -703,130 +703,448 @@ await run()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfb38712` (2026-11-01)
-**Commit Message**: build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)
+### Incident Patch 1: `10fa8227` (2026-11-05)
+**Commit Message**: docs: remove security release notes
 
-Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.21.1 to 2.22.3.
-- [Release notes](https://github.com/step-security/harden-runner/releases)
-- [Commits](https://github.com/step-security/harden-runner/compare/e14015d583714f6e62063499dc959a02595150a1...46b06cea07f9e64621fdf066ba77ac6915163d43)
+Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
 
----
-updated-dependencies:
-- dependency-name: step-security/harden-runner
-  dependency-version: 2.22.3
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `changelogs/v7.30.2.md` (removed, +0/-27)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
+@@ -1,27 +0,0 @@
+-# undici 7.30.2 security fixes
+-
+-This release fixes six vulnerabilities.
+-
+-## CVE-2026-116592 / GHSA-mqg3-3v4r-cm32 (high)
+-
+-Undici 7.30.1 could cache the final response from a redirect chain under the original request key without applying the origin, cache policy, freshness, or `Vary` requirements of every intermediate hop. This could poison a cache or expose one user's response to another user. The fix validates every redirect hop, combines their `Vary` fields, limits freshness and stale serving to the most restrictive hop, and invalidates persistent SQLite entries written by vulnerable releases.
+-
+-## CVE-2026-120474 / GHSA-7xg3-fphp-28hg (medium)
+-
+-In Undici 7.x, a shared cache used with `compose(redirect(), cache())` could store a credential-dependent response from a same-origin redirect under the original URL. A later authenticated or unauthenticated request could then receive another user's response. Redirected requests carrying `Authorization`, `Cookie`, or `Proxy-Authorization` are no longer stored under the original alias key.
+-
+-## CVE-2026-116630 / GHSA-5rm8-gv32-r954 (medium)
+-
+-In Undici 7.x, a cross-origin redirect during cache revalidation could let a `304 Not Modified` response from the redirect target validate a cached response from the original origin. Undici now checks that the revalidation target matches the cached URL and that any returned validator matches the stored representation before replaying the cached body.
+-
+-## CVE-2026-120415 / GHSA-9v6h-8rgp-m69f (medium)
+-
+-In Undici 7.x, the redirect interceptor did not strip credentials correctly when request headers were supplied as an array of `[name, value]` pairs. With a header-normalizing interceptor outside `redirect()`, credentials could be sent to a cross-origin redirect target. Undici now handles both tuple arrays and flat header arrays when removing sensitive headers.
+-
+-## CVE-2026-120222 / GHSA-3g9m-rv3r-w5w2 (medium)
+-
+-In Undici 7.x, a downstream handler exception during cache replay could escape as an uncaught exception or unhandled promise rejection and terminate the process. This included `dump` size-limit failures, excessive `Content-Encoding` values in `decompress`, asynchronous cache-store failures, and cached-body replay after a `304`. These failures are now reported as request errors.
+-
+-## CVE-2026-120423 / GHSA-r4pc-4jcp-7pqc (medium)
+-
+-Undici 7.15.0 through 7.30.1 could skip Subresource Integrity verification when valid integrity metadata was separated or surrounded by ASCII whitespace other than a space, including a horizontal tab. Integrity metadata is now split on all ASCII whitespace before SHA-256, SHA-384, or SHA-512 verification.
 ```
 
-**File**: `.github/workflows/codeql.yml` (modified, +1/-1)
+**File**: `changelogs/v8.12.4.md` (removed, +0/-27)
 ```diff
-@@ -41,7 +41,7 @@ jobs:
- 
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
- 
-```
-
----
-
-### Incident Patch 2: `f0719c4d` (2026-11-02)
-**Commit Message**: build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 (#6134)
-
-Bumps [node-forge](https://github.com/digitalbazaar/forge) from 1.4.0 to 1.4.2.
-- [Changelog](https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/digitalbazaar/forge/compare/v1.4.0...v1.4.2)
-
----
-updated-dependencies:
-- dependency-name: node-forge
-  dependency-version: 1.4.2
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +3/-3)
-```diff
-@@ -7195,9 +7195,9 @@
-       "license": "MIT"
-     },
-     "node_modules/node-forge": {
--      "version": "1.4.0",
--      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
--      "integrity": "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==",
-+      "version": "1.4.2",
-+      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.2.tgz",
-+      "integrity": "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==",
-       "dev": true,
-       "license": "(BSD-3-Clause OR GPL-2.0)",
-       "engines": {
+@@ -1,27 +0,0 @@
+-# undici 8.12.4 security fixes
+-
+-This release fixes six vulnerabilities.
+-
+-## CVE-2026-116592 / GHSA-mqg3-3v4r-cm32 (high)
+-
+-Undici 8.12.2 and 8.12.3 could cache the final response from a redirect chain under the original request key without applying the origin, cache policy, freshness, or `Vary` requirements of every intermediate hop. This could poison a cache or expose one user's response to another user. The fix validates every redirect hop, combines their `Vary` fields, limits freshness and stale serving to the most restrictive hop, and invalidates persistent SQLite entries written by vulnerable releases.
+-
+-## CVE-2026-120474 / GHSA-7xg3-fphp-28hg (medium)
+-
+-A shared cache used with `compose(redirect(), cache())` could store a credential-dependent response from a same-origin redirect under the original URL. A later authenticated or unauthenticated request could then receive another user's response. Redirected requests carrying `Authorization`, `Cookie`, or `Proxy-Authorization` are no longer stored under the original alias key.
+-
+-## CVE-2026-116630 / GHSA-5rm8-gv32-r954 (medium)
+-
+-A cross-origin redirect during cache revalidation could let a `304 Not Modified` response from the redirect target validate a cached response from the original origin. Undici now checks that the revalidation target matches the cached URL and that any returned validator matches the stored representation before replaying the cached body.
+-
+-## CVE-2026-120415 / GHSA-9v6h-8rgp-m69f (medium)
+-
+-The redirect interceptor did not strip credentials correctly when request headers were supplied as an array of `[name, value]` pairs. With a header-normalizing interceptor outside `redirect()`, credentials could be sent to a cross-origin redirect target. Undici now handles both tuple arrays and flat header arrays when removing sensitive headers.
+-
+-## CVE-2026-120222 / GHSA-3g9m-rv3r-w5w2 (medium)
+-
+-A downstream handler exception during cache replay could escape as an uncaught exception or unhandled promise rejection and terminate the process. This included `dump` size-limit failures, excessive `Content-Encoding` values in `decompress`, asynchronous cache-store failures, and cached-body replay after a `304`. These failures are now reported as request errors.
+-
+-## CVE-2026-120423 / GHSA-r4pc-4jcp-7pqc (medium)
+-
+-`fetch()` could skip Subresource Integrity verification when valid integrity metadata was separated or surrounded by ASCII whitespace other than a space, including a horizontal tab. Integrity metadata is now split on all ASCII whitespace before SHA-256, SHA-384, or SHA-512 verification.
 ```
 
 ---
 
-### Incident Patch 3: `39995739` (2026-11-03)
-**Commit Message**: build(deps-dev): bump jsondiffpatch from 0.7.6 to 0.7.7 (#6140)
+### Incident Patch 2: `6228fc59` (2026-11-04)
+**Commit Message**: docs: add security release notes
 
-Bumps [jsondiffpatch](https://github.com/benjamine/jsondiffpatch) from 0.7.6 to 0.7.7.
-- [Release notes](https://github.com/benjamine/jsondiffpatch/releases)
-- [Commits](https://github.com/benjamine/jsondiffpatch/commits)
+Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
+
+**File**: `changelogs/v7.30.2.md` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++# undici 7.30.2 security fixes
++
++This release fixes six vulnerabilities.
++
++## CVE-2026-116592 / GHSA-mqg3-3v4r-cm32 (high)
++
++Undici 7.30.1 could cache the final response from a redirect chain under the original request key without applying the origin, cache policy, freshness, or `Vary` requirements of every intermediate hop. This could poison a cache or expose one user's response to another user. The fix validates every redirect hop, combines their `Vary` fields, limits freshness and stale serving to the most restrictive hop, and invalidates persistent SQLite entries written by vulnerable releases.
++
++## CVE-2026-120474 / GHSA-7xg3-fphp-28hg (medium)
++
++In Undici 7.x, a shared cache used with `compose(redirect(), cache())` could store a credential-dependent response from a same-origin redirect under the original URL. A later authenticated or unauthenticated request could then receive another user's response. Redirected requests carrying `Authorization`, `Cookie`, or `Proxy-Authorization` are no longer stored under the original alias key.
++
++## CVE-2026-116630 / GHSA-5rm8-gv32-r954 (medium)
++
++In Undici 7.x, a cross-origin redirect during cache revalidation could let a `304 Not Modified` response from the redirect target validate a cached response from the original origin. Undici now checks that the revalidation target matches the cached URL and that any returned validator matches the stored representation before replaying the cached body.
++
++## CVE-2026-120415 / GHSA-9v6h-8rgp-m69f (medium)
++
++In Undici 7.x, the redirect interceptor did not strip credentials correctly when request headers were supplied as an array of `[name, value]` pairs. With a header-normalizing interceptor outside `redirect()`, credentials could be sent to a cross-origin redirect target. Undici now handles both tuple arrays and flat header arrays when removing sensitive headers.
++
++## CVE-2026-120222 / GHSA-3g9m-rv3r-w5w2 (medium)
++
++In Undici 7.x, a downstream handler exception during cache replay could escape as an uncaught exception or unhandled promise rejection and terminate the process. This included `dump` size-limit failures, excessive `Content-Encoding` values in `decompress`, asynchronous cache-store failures, and cached-body replay after a `304`. These failures are now reported as request errors.
++
++## CVE-2026-120423 / GHSA-r4pc-4jcp-7pqc (medium)
++
++Undici 7.15.0 through 7.30.1 could skip Subresource Integrity verification when valid integrity metadata was separated or surrounded by ASCII whitespace other than a space, including a horizontal tab. Integrity metadata is now split on all ASCII whitespace before SHA-256, SHA-384, or SHA-512 verification.
+```
+
+**File**: `changelogs/v8.12.4.md` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++# undici 8.12.4 security fixes
++
++This release fixes six vulnerabilities.
++
++## CVE-2026-116592 / GHSA-mqg3-3v4r-cm32 (high)
++
++Undici 8.12.2 and 8.12.3 could cache the final response from a redirect chain under the original request key without applying the origin, cache policy, freshness, or `Vary` requirements of every intermediate hop. This could poison a cache or expose one user's response to another user. The fix validates every redirect hop, combines their `Vary` fields, limits freshness and stale serving to the most restrictive hop, and invalidates persistent SQLite entries written by vulnerable releases.
++
++## CVE-2026-120474 / GHSA-7xg3-fphp-28hg (medium)
++
++A shared cache used with `compose(redirect(), cache())` could store a credential-dependent response from a same-origin redirect under the original URL. A later authenticated or unauthenticated request could then receive another user's response. Redirected requests carrying `Authorization`, `Cookie`, or `Proxy-Authorization` are no longer stored under the original alias key.
++
++## CVE-2026-116630 / GHSA-5rm8-gv32-r954 (medium)
++
++A cross-origin redirect during cache revalidation could let a `304 Not Modified` response from the redirect target validate a cached response from the original origin. Undici now checks that the revalidation target matches the cached URL and that any returned validator matches the stored representation before replaying the cached body.
++
++## CVE-2026-120415 / GHSA-9v6h-8rgp-m69f (medium)
++
++The redirect interceptor did not strip credentials correctly when request headers were supplied as an array of `[name, value]` pairs. With a header-normalizing interceptor outside `redirect()`, credentials could be sent to a cross-origin redirect target. Undici now handles both tuple arrays and flat header arrays when removing sensitive headers.
++
++## CVE-2026-120222 / GHSA-3g9m-rv3r-w5w2 (medium)
++
++A downstream handler exception during cache replay could escape as an uncaught exception or unhandled promise rejection and terminate the process. This included `dump` size-limit failures, excessive `Content-Encoding` values in `decompress`, asynchronous cache-store failures, and cached-body replay after a `304`. These failures are now reported as request errors.
++
++## CVE-2026-120423 / GHSA-r4pc-4jcp-7pqc (medium)
++
++`fetch()` could skip Subresource Integrity verification when valid integrity metadata was separated or surrounded by ASCII whitespace other than a space, including a horizontal tab. Integrity metadata is now split on all ASCII whitespace before SHA-256, SHA-384, or SHA-512 verification.
+```
 
 ---
-updated-dependencies:
-- dependency-name: jsondiffpatch
-  dependency-version: 0.7.7
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 3: `03feee27` (2026-10-24)
+**Commit Message**: fix(cache): prevent cross-origin redirect cache bypass
 
-**File**: `package-lock.json` (modified, +3/-3)
+A redirect that bounces through an untrusted intermediate origin and
+lands back on the trusted origin was cached under the original key
+because the origin guard only checked the final URL. Redirect hops also
+carried storage policies that were dropped (no-cache, must-revalidate,
+zero freshness, Vary: *, Vary: Authorization), letting a private or
+authenticated final response be served to unrelated callers.
+
+- Require every hop in the redirect chain to stay on the cache key origin.
+- Refuse to fold a final response under the original key when any hop is
+  not storable (no-store, private for shared caches, no-cache,
+  must-revalidate, zero freshness, Vary: *, or an uncacheable 3xx).
+- Union Vary across all hops and the final response.
+- Bound the stored freshness by the shortest hop freshness.
+
+Refs: GHSA-MQG3-3V4R-CM32
+Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
+
+**File**: `lib/handler/cache-handler.js` (modified, +163/-24)
 ```diff
-@@ -6733,9 +6733,9 @@
+@@ -10,6 +10,16 @@ const {
+   isInvalidOrWildcardVaryHeader,
+   isEtagUsable
+ } = require('../util/cache')
++
++/**
++ * A suppressed redirect hop recorded by the redirect handler. Carried on
++ * {@link kRedirectCacheControl} and inspected by the cache handler before the
++ * final response is stored under the original request key.
++ *
++ * @typedef {object} RedirectHop
++ * @property {number} statusCode The hop's response status code (e.g. 302).
++ * @property {import('../../types/header.d.ts').IncomingHttpHeaders} headers The hop's response headers.
++ */
+ const { parseHttpDate } = require('../util/date.js')
+ 
+ function noop () {}
+@@ -105,6 +115,16 @@ function arrayIncludes (array, value) {
+   return false
+ }
+ 
++function appendVaryValues (target, varyValue) {
++  if (Array.isArray(varyValue)) {
++    for (let i = 0; i < varyValue.length; i++) {
++      target.push(varyValue[i])
++    }
++  } else if (varyValue != null) {
++    target.push(varyValue)
++  }
++}
++
+ function appendConnectionHeaderTokens (headersToRemove, connectionHeader) {
+   const values = Array.isArray(connectionHeader) ? connectionHeader : [connectionHeader]
+ 
+@@ -220,7 +240,7 @@ class CacheHandler {
+   /**
+    * The URLs visited while following redirects, shared by reference from the
+    * redirect handler through the request context. Carries the suppressed hops'
+-   * cache-control under {@link kRedirectCacheControl}.
++   * status/headers under {@link kRedirectCacheControl}.
+    * @type {URL[] | undefined}
+    */
+   #history
+@@ -299,27 +319,29 @@ class CacheHandler {
+     // A cross-origin redirect can change the origin that actually produced the
+     // final response. Keying that response on the original (trusted) origin
+     // would let a redirect target control an entry for a URL the application
+-    // trusts. The final request is the last URL in the redirect history; only
+-    // cache when its origin still matches the cache key origin.
++    // trusts. Every hop in the redirect chain must stay on the cache key's
++    // origin. An intermediate cross-origin hop can bounce back to the trusted
++    // origin (or to any cacheable asset there) even when the final response
++    // comes from the trusted origin, so checking only the final URL is not
++    // enough.
+     if (this.#history && this.#history.length > 0) {
+-      const finalUrl = this.#history[this.#history.length - 1]
+-      if (!sameOrigin(finalUrl.origin, this.#cacheKey.origin)) {
+-        return downstreamOnHeaders()
++      for (const hopUrl of this.#history) {
++        if (!sameOrigin(hopUrl.origin, this.#cacheKey.origin)) {
++          return downstreamOnHeaders()
++        }
        }
-     },
-     "node_modules/jsondiffpatch": {
--      "version": "0.7.6",
--      "resolved": "https://registry.npmjs.org/jsondiffpatch/-/jsondiffpatch-0.7.6.tgz",
--      "integrity": "sha512-zE9+AXFq+MkTolDor2Cw1nJzLC0aleqPkYf52Kb4Kn4mJcka/gFHpGI2JBVEJCfWOvBl0OoxZS+wuLdislQcqg==",
-+      "version": "0.7.7",
-+      "resolved": "https://registry.npmjs.org/jsondiffpatch/-/jsondiffpatch-0.7.7.tgz",
-+      "integrity": "sha512-C3375q+xluwQYS6Je613YqXpZhW9uSi2YFRR+8QTJVYhdk0GZiDr7HD9bXNrdV9PJCpmwsCgJM9ZXXESSZPCzA==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
+     }
+ 
+-    // A redirect hop that is not forwarded can still carry a restrictive
+-    // storage policy (for example `no-store`, or `private` for a shared cache).
+-    // Honor it, otherwise a redirect that must not be stored could be laundered
+-    // into a cacheable final response under the original key.
+-    const redirectCacheControl = this.#history?.[kRedirectCacheControl]
+-    if (redirectCacheControl) {
+-      for (const hopCacheControl of redirectCacheControl) {
+-        const hopDirectives = hopCacheControl ? parseCacheControlHeader(hopCacheControl) : {}
+-        if (
+-          hopDirectives['no-store'] === true ||
+-          (this.#cacheType === 'shared' && hopDirectives.private === true)
+-        ) {
++    // A redirect hop that is not forwarded can still carry a storage policy
++    // (for example `no-store`, `private` for a shared cache, `no-cache`,
++    // `must-revalidate`, zero freshness, or `Vary: *`) that the final response
++    // body does not inherit. Honor it, otherwise a redirect that must not be
++    // stored (or that selects a private/authenticated target) could be
++    // laundered into a cacheable final response under the original key.
++    const redirectHopInfo = this.#history?.[kRedirectCacheControl]
++    if (redirectHopInfo) {
++      for (const hop of redirectHopInfo) {
++        if (!isHopStorable(this.#cacheType, this.#cacheKey.method, hop, this.#cacheKey.headers)) {
+           return downstreamOnHeaders()
+         }
+       }
+@@ -378,9 +400,17 @@ class CacheHandler {
+       (typeof resHeaders.etag === 'string' && isEtagUsable(resHeaders.etag)) ||
+       typeof resHeaders['last-modified'] === 'string'
+ 
+-    const staleAt =
++    let staleAt =
+       determineStaleAt(this.#cacheType, now, resAge, resHeaders, resDate, cacheControlDirectives, hasValidator) ??
+       this.#cacheByDefault
++    // Never let a redirect hop with a shorter explicit freshness lifetime
++    // outlive the final response's freshness. Otherwise a dynamic redirect
++    // (e.g. `max-age=60`) that points at a long-lived static asset would freeze
++    // the original URL for the asset's lifetime.
++    const hopStaleBound = getHopStaleBound(this.#cacheType, redirectHopInfo)
++    if (hopStaleBound !== undefined && staleAt !== undefined) {
++      staleAt = Math.min(staleAt, hopStaleBound)
++    }
+     // Zer
+```
+
+**File**: `lib/handler/redirect-handler.js` (modified, +9/-8)
+```diff
+@@ -38,11 +38,12 @@ class RedirectHandler {
+     this.maxRedirections = maxRedirections
+     this.handler = handler
+     this.history = []
+-    // `cache-control` of each intermediate (suppressed) redirect hop. An outer
+-    // cache uses it to preserve a hop's storage policy (e.g. `no-store`) that
+-    // would otherwise be lost because the hop's response is not forwarded. It
+-    // travels as a non-enumerable property of the history array so it reaches
+-    // the cache without becoming part of the public request/response context.
++    // Per-hop metadata for each intermediate (suppressed) redirect hop: the
++    // hop's status code and response headers. An outer cache uses it to honor a
++    // hop's storage policy (e.g. `no-store`, `no-cache`, `Vary: *`) that would
++    // otherwise be lost because the hop's response is not forwarded. It travels
++    // as a non-enumerable property of the history array so it reaches the cache
++    // without becoming part of the public request/response context.
+     Object.defineProperty(this.history, kRedirectCacheControl, {
+       value: [],
+       enumerable: false
+@@ -124,9 +125,9 @@ class RedirectHandler {
+     }
+ 
+     // This hop's response is suppressed (only its Location is used). Record its
+-    // cache-control so an outer cache can honor a restrictive policy that would
+-    // otherwise be lost when the final response is stored.
+-    this.history[kRedirectCacheControl].push(headers['cache-control'])
++    // status and headers so an outer cache can honor a restrictive policy that
++    // would otherwise be lost when the final response is stored.
++    this.history[kRedirectCacheControl].push({ statusCode, headers })
+ 
+     const baseUrl = requestOrigin
+       ? new URL(this.opts.path, requestOrigin)
+```
+
+**File**: `test/interceptors/cache-redirect-origin.js` (modified, +278/-1)
+```diff
+@@ -182,7 +182,9 @@ test('same-origin redirect responses are still cached by the cache interceptor',
+   const state = { redirectEnabled: true, targetHits: 0 }
+   const server = createServer((req, res) => {
+     if (state.redirectEnabled && req.url === '/resource') {
+-      res.writeHead(302, { location: '/target' })
++      // 301 is cacheable by default (RFC 9111 §3): a same-origin permanent
++      // redirect can be folded into a cached entry under the original key.
++      res.writeHead(301, { location: '/target' })
+       res.end()
+       return
+     }
+@@ -430,3 +432,278 @@ test('cache does not store a cross-origin redirect response for a deduplicated c
+     await Promise.all([closeServer(trusted), closeServer(attacker)])
+   }
+ })
++
++// GHSA-MQG3-3V4R-CM32, primitive 1: a redirect that bounces through an
++// untrusted intermediate origin and lands back on the trusted origin must not
++// be cached under the trusted origin's key. The final response origin matches
++// the original key, but an intermediate hop crossed the trust boundary, so the
++// attacker-controlled intermediate can bounce to any cacheable asset on the
++// trusted origin and poison the original URL.
++test('cache does not store a cross-origin bounce redirect under the original origin key', async () => {
++  const state = {
++    redirectEnabled: true,
++    trustedHits: 0,
++    attackerHits: 0
++  }
++
++  const attacker = createServer((_req, res) => {
++    state.attackerHits++
++    res.writeHead(302, {
++      location: `http://127.0.0.1:${trusted.address().port}/uploads/mallory-controlled.json`
++    })
++    res.end()
++  })
++
++  const trusted = createServer((req, res) => {
++    state.trustedHits++
++    if (state.redirectEnabled && req.url === '/resource') {
++      res.writeHead(302, {
++        location: `http://127.0.0.1:${attacker.address().port}/bounce`
++      })
++      res.end()
++      return
++    }
++    if (req.url === '/uploads/mallory-controlled.json') {
++      res.writeHead(200, {
++        'cache-control': 'public, max-age=86400',
++        'content-type': 'text/plain'
++      })
++      res.end('poisoned-attacker-bytes')
++      return
++    }
++    res.writeHead(200, {
++      'cache-control': 'no-store',
++      'content-type': 'text/plain'
++    })
++    res.end('legitimate-content')
++  })
++
++  await Promise.all([listen(trusted), listen(attacker)])
++  const trustedOrigin = `http://127.0.0.1:${trusted.address().port}`
++
++  const agent = new Agent().compose(
++    interceptors.redirect({ maxRedirections: 3 }),
++    interceptors.cache({
++      store: new cacheStores.MemoryCacheStore(),
++      type: 'shared'
++    })
++  )
++
++  try {
++    const mallory = await agent.request({ origin: trustedOrigin, path: '/resource', method: 'GET' })
++      .then(response => response.body.text())
++    assert.equal(mallory, 'poisoned-attacker-bytes')
++
++    state.redirectEnabled = false
++    const hitsBefore = [state.trustedHits, state.attackerHits]
++    const victim = await agent.request({ origin: trustedOrigin, path: '/resource', method: 'GET' })
++      .then(response => response.body.text())
++
++    // The bounced, attacker-influenced response must not have been stored under
++    // the trusted key, so the later request reaches the trusted origin again.
++    assert.equal(victim, 'legitimate-content')
++    assert.notDeepEqual([state.trustedHits, state.attackerHits], hitsBefore)
++  } finally {
++    await agent.close()
++    await Promise.all([closeServer(trusted), closeServer(attacker)])
++  }
++})
++
++// GHSA-MQG3-3V4R-CM32, primitive 2 & 3: a same-origin hop that carries `Vary: *`
++// (RFC 9111 §4.1) or that must be revalidated before use (`no-cache`/`must-revalidate`)
++// must not be folded into a cacheable final response under the original key. Here an
++// authenticated `/account` redirects to a credential-less public blob and would
++// otherwise leak Alice's response to anonymous callers.
++for (const hopHeaders of [
++  { vary: '*', 'cache-control': 'no-cache, max-age=0, s-maxage=0, must-revalidate' },
++  { vary: '*', 'cache-control': 'public, max-age=3600' },
++  { 'cache-control': 'no-cache, max-age=0, s-maxage=0, must-revalidate' },
++  { 'cache-control': 'private, no-store' }
++]) {
++  test(`cache does not store a redirect response whose hop has restrictive directives (${JSON.stringify(hopHeaders)})`, async () => {
++    const state = { authEnabled: true, objectHits: 0 }
++    const server = createServer((req, res) => {
++      if (req.url === '/account') {
++        if (state.authEnabled && req.headers.authorization === 'Bearer alice') {
++          res.writeHead(302, {
++            ...hopHeaders,
++            location: '/signed-object?token=alice'
++          })
++          res.end()
++          return
++        }
++        res.writeHead(403, { 'cache-control': 'no-store' })
++        res.end('denied')
++        return
++      }
++      if (req.url.startsWith('/signed-object')) {
++        state.objectHits++
++        res.writeHead(200, {
++          'cache-control': 'public, max-age=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6140** (2026-11-03): build(deps-dev): bump jsondiffpatch from 0.7.6 to 0.7.7 (@dependabot[bot])
-- **PR #6134** (2026-11-02): build(deps-dev): bump node-forge from 1.4.0 to 1.4.2 (@dependabot[bot])
-- **PR #6127** (2026-11-01): build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (@dependabot[bot])
-- **PR #6125** (2026-11-01): build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
-- **PR #6105** (closed): Backport 5926 v7.x (@subhaushsingh)
-- **PR #6103** (2026-10-26): build(deps-dev): bump undici from 6.29.0 to 6.29.1 (@dependabot[bot])
+- **PR #6170** (2026-11-06): fix(pool): release saturated h2 protocol probes after SETTINGS (@EpicHigh)
+- **PR #6166** (2026-11-05): [Release] v7.30.3 (@github-actions[bot])
+- **PR #6163** (2026-11-05): [Release] v7.30.2 (@github-actions[bot])
+- **PR #6162** (2026-11-05): [Release] v8.12.4 (@github-actions[bot])
+- **PR #6157** (2026-11-05): docs: fix typos (@tsctx)
+- **PR #6146** (closed): fix(fetch): honor user-provided Sec-Fetch-Mode (fixes #1305) (@61465)
 
 ---
 
@@ -840,34 +1158,3 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127)
-
-**RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `dfb38712`: build(deps): bump step-security/harden-runner from 2.21.1 to 2.22.3 (#6127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Verified production-grade fix pattern:
-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfb38712` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T05:28:23.577Z",
+  "last_updated": "2026-11-07T05:37:07.787Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
-      "verified_at": "2026-11-07T03:41:53.897Z",
+      "content_hash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
+      "verified_at": "2026-11-07T05:37:07.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:41:53.897Z"
+      "last_updated": "2026-11-07T05:37:07.786Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
-      "verified_at": "2026-11-05T18:23:19.126Z",
+      "content_hash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
+      "verified_at": "2026-11-07T05:37:05.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:23:19.126Z"
+      "last_updated": "2026-11-07T05:37:05.687Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -14406,14 +14406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nodejs-undici",
-      "content_hash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
-      "verified_at": "2026-11-03T23:39:18.962Z",
+      "content_hash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
+      "verified_at": "2026-11-07T05:37:01.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:39:18.962Z"
+      "last_updated": "2026-11-07T05:37:01.546Z"
     },
     "jordansinger/SwiftUI-Kit": {
       "repository": "jordansinger/SwiftUI-Kit",

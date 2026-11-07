@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T05:28:23.475Z",
+  "last_updated": "2026-11-07T05:37:07.663Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47727,14 +47727,19 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "588cf353",
-      "content_hash": "33b2f57d9dcb45dee26b0a2db8cb059a8bc45935ad2b1223b8c8134970fdeb8d",
+      "source_version": "90d45251",
+      "content_hash": "6038654eb3b2f2b78ed5ebb41df5f182fa823b77329ae27af5766f1980f6c088",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "persist local state bug in error path on first run",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "symbol libraries in plan snapshot",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47808,7 +47813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:23:19.001Z",
+      "verified_at": "2026-11-07T05:37:05.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73957,13 +73962,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "800f4c49",
-      "content_hash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74116,7 +74121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:41:53.746Z",
+      "verified_at": "2026-11-07T05:37:07.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78258,8 +78263,8 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "39995739",
-      "content_hash": "f195e0d8410823f7347a13fabcdad5583dd793baef95a3e5279781a66b47f4b3",
+      "source_version": "55bf2946",
+      "content_hash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
@@ -78289,7 +78294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:39:18.839Z",
+      "verified_at": "2026-11-07T05:37:01.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
