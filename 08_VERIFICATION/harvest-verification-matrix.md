@@ -8047,3 +8047,6 @@
 | `CYCLE-20261107-GV2G` | `2026-11-07T18:24:58.696Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a9cb7f7...`) |
 | `CYCLE-20261107-3J17` | `2026-11-07T18:42:36.187Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e083b1f4...`) |
 | `CYCLE-20261107-DDME` | `2026-11-07T18:50:15.734Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6e619367...`) |
+| `CYCLE-20261107-MBJW` | `2026-11-07T18:57:12.956Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6aeb66a6...`) |
+| `CYCLE-20261107-MC8Z` | `2026-11-07T18:57:13.859Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fa4949a8...`) |
+| `CYCLE-20261107-MG35` | `2026-11-07T18:57:18.833Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1954` | Yes (`7a9fe6d2...`) |

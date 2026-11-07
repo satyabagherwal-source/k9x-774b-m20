@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source**: github ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
-> **Source Version**: `5fa96bf0`  
+> **Source Version**: `79b7d505`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:44:29.020Z  
+> **Timestamp**: 2026-11-07T18:57:12.513Z  
 > **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:44:29.013Z  
+> **Harvest Timestamp**: 2026-11-07T18:57:11.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :gorilla: Kong for Kubernetes: The official Ingress Controller for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2414 stars
+- **Stars / Engagement**: 2415 stars
 
 ---
 
@@ -1560,105 +1560,56 @@ func CRDExists(restMapper meta.RESTMapper, gvr schema.GroupVersionResource) bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fa96bf0` (2026-10-28)
-**Commit Message**: add entries for releases 3.5.14 and 3.4.21 (#8136)
+### Incident Patch 1: `79b7d505` (2026-11-06)
+**Commit Message**: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141)
 
-**File**: `CHANGELOG.md` (modified, +33/-3)
+* Pin helm to v3 to fix conflicts in CRD installation
+
+* skip installing CRDs in integration tests
+
+**File**: `test/internal/helpers/ktf.go` (modified, +12/-0)
 ```diff
-@@ -8,6 +8,7 @@ Adding a new version? You'll need three changes:
-   This is all the way at the bottom. It's the thing we always forget.
- --->
+@@ -78,6 +78,7 @@ func GenerateKongBuilder(_ context.Context) (*kong.Builder, []string, error) {
+ }
  
-+- [3.5.14](#3514)
- - [3.5.13](#3513)
- - [3.5.12](#3512)
- - [3.5.11](#3511)
-@@ -22,6 +23,7 @@ Adding a new version? You'll need three changes:
- - [3.5.2](#352)
- - [3.5.1](#351)
- - [3.5.0](#350)
-+- [3.4.21](#3421)
- - [3.4.20](#3420)
- - [3.4.19](#3419)
- - [3.4.18](#3418)
-@@ -136,7 +138,9 @@ Adding a new version? You'll need three changes:
- - [0.0.5](#005)
- - [0.0.4 and prior](#004-and-prior)
+ // GenerateKongBuilderWithController generates a Kong builder that installs both KIC and Kong gateway.
++// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
+ func GenerateKongBuilderWithController() (*kong.Builder, error) {
+ 	kongbuilder := kong.NewBuilder().WithNamespace(consts.ControllerNamespace)
  
--## Unreleased
-+## [3.5.14]
+@@ -89,6 +90,9 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
+ 		kongbuilder = kongbuilder.WithProxyEnterpriseEnabled(licenseJSON)
+ 		if testenv.DBMode() != testenv.DBModeOff {
+ 			kongbuilder.WithProxyEnterpriseSuperAdminPassword(consts.KongTestPassword)
++			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
++			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
++			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
+ 		}
+ 	}
+ 
+@@ -123,5 +127,13 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
+ 
+ 	kongbuilder.WithProxyAdminServiceTypeLoadBalancer()
+ 
++	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
++	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
++	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
++	kongbuilder.WithControllerDisabled()
++	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
++	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
++	kongbuilder.WithProxyReadinessProbePath("/status/ready")
 +
-+> Release date: 2026-10-22
- 
- ### Fixed
- 
-@@ -153,8 +157,9 @@ Adding a new version? You'll need three changes:
- 
- ### Changed
- 
--- Bump Go to 1.27.2.
--  [#8110](https://github.com/Kong/kubernetes-ingress-controller/pull/8110)
-+- Bump Go to 1.27.3.
-+  [#8108](https://github.com/Kong/kubernetes-ingress-controller/pull/8108)
-+  [#8126](https://github.com/Kong/kubernetes-ingress-controller/pull/8126)
- 
- ## [3.5.13]
- 
-@@ -405,6 +410,29 @@ Adding a new version? You'll need three changes:
-   source is different than cookie).
-   [#7582](https://github.com/Kong/kubernetes-ingress-controller/pull/7582)
- 
-+## [3.4.21]
-+
-+> Release date: 2026-10-22
-+
-+### Fixed
-+
-+- Inherit the tags of the translated Kong certificate from the one with earliest
-+  creation timestamp, then lowest ID to keep the tags stable in merging certificates
-+  from multiple `Secret`s with the same certificate content.
-+  [#8085](https://github.com/Kong/kubernetes-ingress-controller/pull/8085)
-+- Generate a distinct Kong route for each match when its parent `HTTPRoute` rule
-+  contains `ReplacePrefixMatch` typed `URLRewrite` filter or `requestRedirect` filter.
-+  NOTE: This would make the generate routes from the affected `HTTPRoute` rules
-+  containing the filters to be deleted and re-created, and the names of the routes
-+  are changed.
-+  [#8081](https://github.com/Kong/kubernetes-ingress-controller/pull/8081)
-+
-+### Changed
-+
-+- Bump Go to 1.27.3.
-+  [#8109](https://github.com/Kong/kubernetes-ingress-controller/pull/8109)
-+  [#8125](https://github.com/Kong/kubernetes-ingress-controller/pull/8125)
-+
- ## [3.4.20]
- 
- > Release date: 2026-08-07
-@@ -4591,6 +4619,7 @@ Please read the changelog and test in your environment.
- - The initial versions were rapildy iterated to deliver
-   a working ingress controller.
- 
-+[3.5.14]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.13...v3.5.14
- [3.5.13]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.12...v3.5.13
- [3.5.12]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.11...v3.5.12
- [3.5.11]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.10...v3.5.11
-@@ -4605,6 +4634,7 @@ Please read the changelog and test in your environment.
- [3.5.2]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.1...v3.5.2
- [3.5.1]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.0...v3.5.1
- [3.5.0]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.7...v3.5.0
-+[3.4.21]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.20...v3.4.21
- [3.4.20]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.19...v3.4.20
- [3.4.19]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.18...v3.4.19
- [3.4.18]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.17...v3.4.18
+ 	return kongbuilder, nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8141** (2026-11-06): test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (@randmonkey)
+- **PR #8140** (closed): Chore(ci): Pin helm to v3 to fix conflicts in CRD installation (@randmonkey)
 - **PR #8136** (2026-10-28): docs(changelog): Add entries for releases 3.5.14 and 3.4.21 (@randmonkey)
 - **PR #8135** (2026-10-26): chore(deps): bump golang from `f241642` to `f20d83a` (@dependabot[bot])
 - **PR #8129** (2026-10-22): chore(changelog): update changelog for 3.5.14 (@randmonkey)
 - **PR #8128** (2026-10-22): chore(changelog): update changelog for 3.4.21 (@randmonkey)
-- **PR #8126** (2026-10-22): [Backport release/3.5.x] chore(build): Bump golang to 1.27.3 (@kong-k8s-team[bot])
-- **PR #8125** (2026-10-22): [Backport release/3.4.x] chore(build): Bump golang to 1.27.3 (@kong-k8s-team[bot])
 
 ---
 
@@ -1678,59 +1629,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add entries for releases 3.5.14 and 3.4.21 (#8136)
+## X. test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/internal/helpers/ktf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fa96bf0`: add entries for releases 3.5.14 and 3.4.21 (#8136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79b7d505`: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/internal/helpers/ktf.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [3.5.14](#3514)
-- [3.4.21](#3421)
-## [3.5.14]
+// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
+			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
+	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
+	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
+	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
+	kongbuilder.WithControllerDisabled()
+	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
+	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
+	kongbuilder.WithProxyReadinessProbePath("/status/ready")
 
-> Release date: 2026-10-22
-- Bump Go to 1.27.3.
-  [#8108](https://github.com/Kong/kubernetes-ingress-controller/pull/8108)
-  [#8126](https://github.com/Kong/kubernetes-ingress-controller/pull/8126)
-## [3.4.21]
-
-> Release date: 2026-10-22
-
-### Fixed
-
-- Inherit the tags of the translated Kong certificate from the one with earliest
-  creation timestamp, then lowest ID to keep the tags stable in merging certificates
-  from multiple `Secret`s with the same certificate content.
-  [#8085](https://github.com/Kong/kubernetes-ingress-controller/pull/8085)
-- Generate a distinct Kong route for each match when its parent `HTTPRoute` rule
-  contains `ReplacePrefixMatch` typed `URLRewrite` filter or `requestRedirect` filter.
-  NOTE: This would make the generate routes from the affected `HTTPRoute` rules
-  containing the filters to be deleted and re-created, and the names of the routes
-  are changed.
-  [#8081](https://github.com/Kong/kubernetes-ingress-controller/pull/8081)
-
-### Changed
-
-- Bump Go to 1.27.3.
-  [#8109](https://github.com/Kong/kubernetes-ingress-controller/pull/8109)
-  [#8125](https://github.com/Kong/kubernetes-ingress-controller/pull
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-## Unreleased
-- Bump Go to 1.27.2.
-  [#8110](https://github.com/Kong/kubernetes-ingress-controller/pull/8110)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fa96bf0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79b7d505` are properly handled with clean fallback behavior.

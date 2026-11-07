@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T18:50:15.760Z",
+  "last_updated": "2026-11-07T18:57:18.852Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6666,14 +6666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyzh-mini-lsm",
-      "content_hash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
-      "verified_at": "2026-10-19T01:07:25.197Z",
+      "content_hash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
+      "verified_at": "2026-11-07T18:57:18.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:07:25.197Z"
+      "last_updated": "2026-11-07T18:57:18.851Z"
     },
     "PaulLeCam/react-leaflet": {
       "repository": "PaulLeCam/react-leaflet",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
-      "verified_at": "2026-11-04T19:22:54.655Z",
+      "content_hash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
+      "verified_at": "2026-11-07T18:57:12.980Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:22:54.655Z"
+      "last_updated": "2026-11-07T18:57:12.980Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
-      "verified_at": "2026-10-28T20:44:29.300Z",
+      "content_hash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
+      "verified_at": "2026-11-07T18:57:13.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:44:29.300Z"
+      "last_updated": "2026-11-07T18:57:13.871Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",

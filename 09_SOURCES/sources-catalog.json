@@ -4363,10 +4363,10 @@
     "repository": "skyzh/mini-lsm",
     "platform": "github",
     "sourceUrl": "https://github.com/skyzh/mini-lsm",
-    "sourceVersion": "2f7ce315",
+    "sourceVersion": "df2120d7",
     "license": "Apache-2.0",
-    "contentHash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
-    "lastHarvestedAt": "2026-10-19T01:07:25.193Z",
+    "contentHash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
+    "lastHarvestedAt": "2026-11-07T18:57:18.836Z",
     "learningId": "learn-github-skyzh-mini-lsm"
   },
   "paullecam-react-leaflet": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "0fe172f5",
+    "sourceVersion": "35252cbb",
     "license": "GPL-3.0",
-    "contentHash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
-    "lastHarvestedAt": "2026-11-04T19:22:54.645Z",
+    "contentHash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
+    "lastHarvestedAt": "2026-11-07T18:57:12.959Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "5fa96bf0",
+    "sourceVersion": "79b7d505",
     "license": "Apache-2.0",
-    "contentHash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
-    "lastHarvestedAt": "2026-10-28T20:44:29.290Z",
+    "contentHash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
+    "lastHarvestedAt": "2026-11-07T18:57:13.863Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source**: github ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
-> **Source Version**: `0fe172f5`  
+> **Source Version**: `35252cbb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:22:53.785Z  
+> **Timestamp**: 2026-11-07T18:57:11.672Z  
 > **Learning ID**: `learn-github-gkd-kit-gkd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gkd-kit/gkd](https://github.com/gkd-kit/gkd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:22:53.203Z  
+> **Harvest Timestamp**: 2026-11-07T18:57:10.486Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 基于无障碍，高级选择器，订阅规则的自定义屏幕点击安卓应用 | An Android APP with custom screen tapping based on Accessibility, Advanced Selectors, and Subscription Rules
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44010 stars
+- **Stars / Engagement**: 44220 stars
 
 ---
 
@@ -755,6 +755,7 @@ import li.gkd.app.logging.LogUtils
 import li.gkd.app.matching.input.currentTopActivity
 import li.gkd.app.matching.input.updateTopActivity
 import li.gkd.app.priv.requestPrivilegeRecovery
+import li.gkd.app.settings.syncSystemLanguage
 import li.songe.codeorigin.CallSite
 
 private val visibleActivityCount = atomic(0)
@@ -785,6 +786,7 @@ private class MainActivityLifecycleObserver(
     }
 
     override fun onResume(owner: LifecycleOwner) {
+        syncSystemLanguage()
         LogUtils.i("MainActivity::onResume", loc = logLoc)
         requestPrivilegeRecovery()
         RuntimeStateSynchronizer.requestSync(loc = logLoc)
@@ -913,11 +915,21 @@ object PrivilegeOwnerLifecycle {
 package li.gkd.app.service
 
 import androidx.lifecycle.LifecycleService
+import li.gkd.app.notif.ForegroundNotification
+import li.gkd.app.notif.NotificationDispatcher
 import li.gkd.app.platform.lifecycle.LifecycleHooks
 import li.songe.codeorigin.CallSite
 
 abstract class LifecycleHookService : LifecycleService() {
     private val lifecycleHooks = LifecycleHooks()
+    private var foregroundNotificationId: Int? = null
+
+    @Synchronized
+    fun showForegroundNotification(notification: ForegroundNotification): Boolean {
+        if (!NotificationDispatcher.startForeground(this, notification)) return false
+        foregroundNotificationId = notification.id
+        return true
+    }
 
     fun onCreated(callback: () -> Unit) = lifecycleHooks.onCreated(callback)
 
@@ -936,6 +948,10 @@ abstract class LifecycleHookService : LifecycleService() {
     }
 
     final override fun onDestroy() {
+        synchronized(this) {
+            foregroundNotificationId?.let(NotificationDispatcher::forgetForeground)
+            foregroundNotificationId = null
+        }
         lifecycleHooks.dispatchDestroyed()
         super.onDestroy()
     }
@@ -1098,140 +1114,266 @@ class AndroidMainState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d3ad0521` (2026-11-01)
-**Commit Message**: fix: ignore dead binder during privilege cleanup
+### Incident Patch 1: `8c2b3856` (2026-11-07)
+**Commit Message**: fix: avoid overflow collisions when copying rule groups
 
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt` (modified, +13/-2)
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/AppRuleGroupCopy.kt` (modified, +5/-1)
 ```diff
-@@ -9,6 +9,7 @@ import android.content.Intent
- import android.content.pm.PackageInfo
- import android.content.pm.PackageManager
- import android.graphics.Bitmap
-+import android.os.DeadObjectException
- import android.os.IBinder
- import android.os.Process
- import android.view.IWindowManager
-@@ -76,7 +77,11 @@ private constructor(
-                     val previous = subscription ?: return
-                     subscription = null
-                     previous.deactivate()
--                    userService.setSystemSurfaceListener(null)
-+                    try {
-+                        userService.setSystemSurfaceListener(null)
-+                    } catch (_: DeadObjectException) {
-+                        // The remote process is gone; local cleanup is already complete.
-+                    }
-                 }
-                 try {
-                     combine(SettingsRepository.settings, uiAutomationFlow, A11yService.isRunning) {
-@@ -154,8 +159,14 @@ private constructor(
-                 activityManager.value.unregisterTaskStackListener(CompatTaskStackListener)
-                 taskStackListenerRegistered = false
+@@ -12,7 +12,11 @@ fun prepareAppGroupsForCopy(groups: List<Pair<Long, RawAppGroup>>): List<RawAppG
+             if (usedKeys.add(group.key)) {
+                 group.key
+             } else {
+-                (requireNotNull(usedKeys.maxOrNull()) + 1).also(usedKeys::add)
++                var candidate = requireNotNull(usedKeys.maxOrNull()) + 1
++                while (!usedKeys.add(candidate)) {
++                    candidate++
++                }
++                candidate
              }
-+        } catch (_: DeadObjectException) {
-+            // A dead remote process no longer needs its listeners unregistered.
-         } finally {
--            userServiceConnection.unbind()
-+            try {
-+                userServiceConnection.unbind()
-+            } catch (_: DeadObjectException) {
-+                // The UserService manager has already exited.
-+            }
-         }
+         (subsId to group.key) to key
+     }
+```
+
+**File**: `gkd-app/src/jvmTest/kotlin/li/gkd/app/subscription/AppRuleGroupCopyTest.kt` (modified, +20/-0)
+```diff
+@@ -39,6 +39,26 @@ class AppRuleGroupCopyTest {
+         )
      }
  
-```
-
----
-
-### Incident Patch 2: `59cdfd9a` (2026-11-03)
-**Commit Message**: fix: record recent app visits from Android task changes
-
-**File**: `gkd-app/src/androidMain/kotlin/li/gkd/app/matching/input/AndroidForegroundState.kt` (modified, +18/-5)
-```diff
-@@ -150,7 +150,15 @@ object AndroidForegroundState {
-                 AndroidAutomationSessions.service?.matchHost?.confirmForeground()
-         }
- 
--    private var lastAppId = Constants.systemUiAppId
-+    private var lastVisitedAppId = Constants.systemUiAppId
++    @Test
++    fun appImportKeepsGroupsAndScopeLinksWhenConflictingKeysOverflow() {
++        val first = group(Int.MAX_VALUE, "First")
++        val second = group(Int.MAX_VALUE, "Second", scopeKeys = listOf(Int.MIN_VALUE))
++        val linked = group(Int.MIN_VALUE, "Linked", scopeKeys = listOf(Int.MAX_VALUE))
 +
-+    private fun recordVisit(appId: String, time: Long, refresh: Boolean = false) {
-+        val previousAppId = lastVisitedAppId
-+        if (!refresh && previousAppId == appId) return
-+        lastVisitedAppId = appId
-+        val visit = AppVisitInput(previousAppId, appId, time)
-+        appScope.launchLogged { RuntimeRecordRepository.recordVisit(visit) }
++        val copied = parseCopiedApp(1L to first, 2L to second, 2L to linked)
++        val expected =
++            listOf(
++                first,
++                second.copy(key = Int.MIN_VALUE, scopeKeys = listOf(Int.MIN_VALUE + 1)),
++                linked.copy(key = Int.MIN_VALUE + 1, scopeKeys = listOf(Int.MIN_VALUE)),
++            )
++
++        assertEquals(expected, copied.groups)
++
++        val imported = destination().editResult { mergeApp(copied) }.expectValue()
++        assertEquals(expected, imported.apps.single().groups)
 +    }
- 
-     /** Returns whether this observation dispatched a top-task package change. */
-     fun updateTopActivity(
-@@ -184,6 +192,10 @@ object AndroidForegroundState {
-                 observedForegroundFlow.value =
-                     AndroidForegroundObservation(task = task, confirmed = decision.confirmed)
-                 if (taskAppChanged) {
-+                    // A short task visit can end before the matcher confirms its nodes.
-+                    if (decision.reason != ForegroundDecisionReason.TaskBelowSystemSurface) {
-+                        recordVisit(appId, System.currentTimeMillis())
-+                    }
-                     onTopTaskAppChanged(appId)
-                 }
-                 if (foregroundPending) {
-@@ -285,10 +297,11 @@ object AndroidForegroundState {
-                     blockMatch = SettingsRepository.checkAppBlockMatch(topActivity.appId),
-                 )
-             if (idChanged) {
--                val oldAppId = lastAppId
--                lastAppId = appId
--                val visit = AppVisitInput(oldAppId, appId, wallTime)
--                appScope.launchLogged { RuntimeRecordRepository.recordVisit(visit) }
-+                recordVisit(
-+                    appId,
-+                    wallTime,
-+                    refresh = appReentered || scene == ActivityScene.ScreenOn,
-+                )
-                 RuleExecutionHost.runtime.onAppChanged(t)
-                 ruleSummary.globalRules.forEach { it.resetState(t) }
-                 ruleSummary.appIdToRules[oldActivityRule.topActivity.appId]?.forEach {
++
+     @Test
+     fun scopeDoesNotBindToAnotherSubscriptionWhenGroupKeysAreUnique() {
+         val first = group(1, "First", scopeKeys = listOf(7))
 ```
 
 ---
 
-### Incident Patch 3: `975c890b` (2026-11-04)
-**Commit Message**: fix: enhance error logging for network failures in GithubUploadState
+### Incident Patch 2: `8ff8703d` (2026-11-05)
+**Commit Message**: fix: suppress compatible thread ID deprecation warning
 
-**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/upload/GithubUploadState.kt` (modified, +6/-1)
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/matching/query/MatchNodeReader.kt` (modified, +2/-1)
 ```diff
-@@ -20,6 +20,7 @@ import li.gkd.app.network.AppLinks
- import li.gkd.app.network.GithubCookieException
- import li.gkd.app.network.GithubPoliciesAsset
- import li.gkd.app.network.GithubUploader
-+import li.gkd.app.network.networkFailureSummary
- import li.gkd.app.resources.*
- import li.gkd.app.settings.GithubCookieStore
- import li.gkd.app.ui.component.GithubUploadStatus
-@@ -146,7 +147,11 @@ class GithubUploadState(
-                         pendingFromCookie = items.drop(index)
-                         break
-                     } catch (e: Exception) {
--                        LogUtils.e(e)
-+                        if (networkFailureSummary(e) != null) {
-+                            LogUtils.e(e.javaClass.simpleName)
-+                        } else {
-+                            LogUtils.e(e)
-+                        }
-                         request.failures.add(item.label to (e.displayMessage()))
-                     }
+@@ -205,7 +205,8 @@ class MatchNodeReader(private val diagnostics: MatchDiagnostics? = null) : AutoC
+             threads =
+                 threads.map { thread ->
+                     MatchNodeThreadSnapshot(
+-                        id = thread.id,
++                        // Keep getId() for Android versions without Thread.threadId().
++                        id = @Suppress("DEPRECATION") thread.id,
+                         name = thread.name,
+                         state = thread.state.name,
+                         alive = thread.isAlive,
+```
+
+---
+
+### Incident Patch 3: `8fb7ed01` (2026-11-06)
+**Commit Message**: fix(subscription): preserve groups copied across subscriptions
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/AppRuleGroupCopy.kt` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++package li.gkd.app.subscription
++
++import li.gkd.app.subscription.RawSubscription.RawAppGroup
++
++fun prepareAppGroupsForCopy(groups: List<Pair<Long, RawAppGroup>>): List<RawAppGroup> {
++    val firstSubsId = groups.firstOrNull()?.first ?: return emptyList()
++    if (groups.all { (subsId, _) -> subsId == firstSubsId }) return groups.map { it.second }
++
++    val usedKeys = mutableSetOf<Int>()
++    val copiedKeys = groups.associate { (subsId, group) ->
++        val key =
++            if (usedKeys.add(group.key)) {
++                group.key
++            } else {
++                (requireNotNull(usedKeys.maxOrNull()) + 1).also(usedKeys::add)
++            }
++        (subsId to group.key) to key
++    }
++
++    return groups.map { (subsId, group) ->
++        group.copy(
++            key = copiedKeys.getValue(subsId to group.key),
++            // A combined export can only identify selected groups from the same subscription
++            scopeKeys =
++                group.scopeKeys?.mapNotNull { scopeKey ->
++                    if (scopeKey == group.key) null else copiedKeys[subsId to scopeKey]
++                },
++        )
++    }
++}
+```
+
+**File**: `gkd-app/src/commonMain/kotlin/li/gkd/app/ui/subscription/AppConfigViewModel.kt` (modified, +13/-5)
+```diff
+@@ -23,6 +23,7 @@ import li.gkd.app.state.Loadable
+ import li.gkd.app.subscription.RawSubscription
+ import li.gkd.app.subscription.SubscriptionJson.toJson5String
+ import li.gkd.app.subscription.SubscriptionRepository
++import li.gkd.app.subscription.prepareAppGroupsForCopy
+ import li.gkd.app.ui.MainViewModel
+ import li.gkd.app.ui.component.MultiSelectionState
+ import li.gkd.app.ui.navigation.AppConfigRoute
+@@ -177,17 +178,24 @@ class AppConfigViewModel(
+                     Triple(it.subsId, it.groupType, it.groupKey)
                  }
+             val subsPairs = uiState.value.value?.subsPairs.orEmpty()
+-            val groups = subsPairs.flatMap { (entry, groups) ->
+-                groups.filterIsInstance<RawSubscription.RawAppGroup>().filter { group ->
+-                    Triple(entry.subsItem.id, RuleGroupType.App, group.key) in selectedKeys
++            val selectedAppGroups = subsPairs.flatMap { (entry, groups) ->
++                val subsId = entry.subsItem.id
++                groups.filterIsInstance<RawSubscription.RawAppGroup>().mapNotNull { group ->
++                    if (Triple(subsId, RuleGroupType.App, group.key) in selectedKeys) {
++                        subsId to group
++                    } else {
++                        null
++                    }
+                 }
+             }
+-            check(groups.isNotEmpty()) { Res.string.selected_app_rules_no_copyable.getSync() }
++            check(selectedAppGroups.isNotEmpty()) {
++                Res.string.selected_app_rules_no_copyable.getSync()
++            }
+             toJson5String(
+                 RawSubscription.RawApp(
+                     id = route.appId,
+                     name = AppInfoRepository.snapshot?.apps.orEmpty()[route.appId]?.name,
+-                    groups = groups,
++                    groups = prepareAppGroupsForCopy(selectedAppGroups),
+                 ),
+             )
+         }
+```
+
+**File**: `gkd-app/src/jvmTest/kotlin/li/gkd/app/subscription/AppRuleGroupCopyTest.kt` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++package li.gkd.app.subscription
++
++import kotlinx.serialization.json.jsonObject
++import li.gkd.app.subscription.RawSubscription.RawApp
++import li.gkd.app.subscription.RawSubscription.RawAppGroup
++import li.gkd.app.subscription.SubscriptionJson.toJson5String
++import li.songe.json5.Json5
++import org.junit.Assert.assertEquals
++import org.junit.Test
++
++class AppRuleGroupCopyTest {
++    @Test
++    fun appImportKeepsGroupsAndTheirScopeLinksAcrossKeyConflicts() {
++        val first = group(5, "First")
++        val second = group(5, "Second", scopeKeys = listOf(6, 5, 11))
++        val linked = group(6, "Linked", scopeKeys = listOf(5))
++
++        val copied = parseCopiedApp(1L to first, 2L to second, 2L to linked)
++        assertEquals(
++            listOf(
++                first,
++                second.copy(key = 6, scopeKeys = listOf(7)),
++                linked.copy(key = 7, scopeKeys = listOf(6)),
++            ),
++            copied.groups,
++        )
++
++        val existing = listOf(group(6, "Existing conflict"), group(11, "Existing external"))
++        val imported = destination(existing).editResult { mergeApp(copied) }.expectValue()
++
++        assertEquals(
++            existing +
++                listOf(
++                    first,
++                    second.copy(key = 12, scopeKeys = listOf(7)),
++                    linked.copy(key = 7, scopeKeys = listOf(12)),
++                ),
++            imported.apps.single().groups,
++        )
++    }
++
++    @Test
++    fun scopeDoesNotBindToAnotherSubscriptionWhenGroupKeysAreUnique() {
++        val first = group(1, "First", scopeKeys = listOf(7))
++        val unrelated = group(7, "Unrelated")
++
++        val copied = parseCopiedApp(1L to first, 2L to unrelated)
++
++        assertEquals(listOf(first.copy(scopeKeys = emptyList()), unrelated), copied.groups)
++    }
++
++    @Test
++    fun singleSubscriptionCopyKeepsScopeToExistingDestinationGroup() {
++        val first = group(1, "First", scopeKeys = listOf(7))
++        val second = group(2, "Second", scopeKeys = listOf(1))
++        val existing = group(7, "Existing")
++
++        val copied = parseCopiedApp(1L to first, 1L to second)
++        val imported = destination(listOf(existing)).editResult { mergeApp(copied) }.expectValue()
++
++        assertEquals(listOf(existing, first, second), imported.apps.single().groups)
++    }
++
++    @Test
++    fun duplicateNamesReachImportValidationEvenWithKeyCollision() {
++        val first = group(5, "Duplicate")
++        val second = group(5, "Other rule content").copy(name = first.name)
++
++        val copied = parseCopiedApp(1L to first, 2L to second)
++        assertEquals(listOf(first, second.copy(key = 6)), copied.groups)
++
++        val result = assertRejected { destination().editResult { mergeApp(copied) } }
++        assertEquals(SubscriptionFailureReason.RuleNameDuplicate, result.reason)
++    }
++
++    private fun parseCopiedApp(vararg groups: Pair<Long, RawAppGroup>): RawApp {
++        val copied = RawApp("app.id", null, prepareAppGroupsForCopy(groups.toList()))
++        return parseInput(toJson5String(copied)).parseApp().expectValue()
++    }
++
++    private fun destination(groups: List<RawAppGroup> = emptyList()) =
++        RawSubscription(
++            id = -2,
++            name = "Local",
++            version = 0,
++            apps = listOf(RawApp("app.id", null, groups)),
++        )
++
++    private fun group(key: Int, name: String, scopeKeys: List<Int>? = null): RawAppGroup =
++        RawSubscriptionParser.parseAppGroup(
++            Json5.parseToJsonElement(
++                    """{key: $key, name: '$name', scopeKeys: $scopeKeys, rules: [{matches: '[text="$name"]'}]}""",
++                )
++                .jsonObject,
++        )
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1520** (2026-11-07): fix: 修复跨订阅复制同 key 规则组时丢失规则的问题 (@INKCR0W)
 - **PR #1506** (closed): new (@hhz522)
 - **PR #1500** (2026-10-29): fix: remap scope keys when appending rule groups (@jjjj31)
 - **PR #1472** (closed): fix: 自动化模式下开机自启状态服务 (@LYYZZ)
 - **PR #1470** (closed): fix(a11y): 开机后自愈无障碍服务"假在线"状态 (@LYYZZ)
 - **PR #1467** (closed): Add Japanese localization across GKD UI (@okker24)
-- **PR #1466** (closed): translation for english (@theclumsypirate)
 
 ---
 
@@ -1251,41 +1393,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore dead binder during privilege cleanup
+## X. avoid overflow collisions when copying rule groups
 
 **RULE**:
-When implementing operations in `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/AppRuleGroupCopy.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gkd-kit/gkd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d3ad0521`: ignore dead binder during privilege cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c2b3856`: avoid overflow collisions when copying rule groups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gkd-app/src/androidMain/kotlin/li/gkd/app/priv/PrivilegeContext.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gkd-app/src/commonMain/kotlin/li/gkd/app/subscription/AppRuleGroupCopy.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import android.os.DeadObjectException
-                    try {
-                        userService.setSystemSurfaceListener(null)
-                    } catch (_: DeadObjectException) {
-                        // The remote process is gone; local cleanup is already complete.
-                    }
-        } catch (_: DeadObjectException) {
-            // A dead remote process no longer needs its listeners unregistered.
-            try {
-                userServiceConnection.unbind()
-            } catch (_: DeadObjectException) {
-                // The UserService manager has already exited.
-            }
+                var candidate = requireNotNull(usedKeys.maxOrNull()) + 1
+                while (!usedKeys.add(candidate)) {
+                    candidate++
+                }
+                candidate
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-                    userService.setSystemSurfaceListener(null)
-            userServiceConnection.unbind()
+                (requireNotNull(usedKeys.maxOrNull()) + 1).also(usedKeys::add)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d3ad0521` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c2b3856` are properly handled with clean fallback behavior.

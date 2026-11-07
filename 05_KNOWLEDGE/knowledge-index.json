@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:50:15.652Z",
+  "last_updated": "2026-11-07T18:57:18.751Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16031,11 +16031,16 @@
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "0fe172f5",
-      "content_hash": "5085768f4bbf77baf6a5fe07ea0825be5486aad96001a5c9469be19e938cc5ec",
+      "source_version": "35252cbb",
+      "content_hash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "avoid overflow collisions when copying rule groups",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2186,
           "title": "stabilize subscription failure indicators and centralize subscription IDs",
@@ -16062,7 +16067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:22:54.499Z",
+      "verified_at": "2026-11-07T18:57:12.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37319,11 +37324,16 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "5fa96bf0",
-      "content_hash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
+      "source_version": "79b7d505",
+      "content_hash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2297,
           "title": "Invariant Route Splitting on Context-Dependent Plugins",
@@ -37375,7 +37385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:44:29.167Z",
+      "verified_at": "2026-11-07T18:57:13.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55647,15 +55657,15 @@
       "slug": "skyzh-mini-lsm",
       "platform": "github",
       "source_url": "https://github.com/skyzh/mini-lsm",
-      "source_version": "2f7ce315",
-      "content_hash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
+      "source_version": "df2120d7",
+      "content_hash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
       "dossier_path": "07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
       "promoted_rules": [
         {
           "number": 1954,
           "title": "Make leveled simulator traces reproducible (#217)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55663,7 +55673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:07:25.141Z",
+      "verified_at": "2026-11-07T18:57:18.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103033,13 +103043,13 @@
       "rule_number": 1954,
       "title": "Make leveled simulator traces reproducible (#217)",
       "source_url": "https://github.com/skyzh/mini-lsm",
-      "source_version": "2f7ce315",
+      "source_version": "df2120d7",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T01:07:25.141Z"
+      "verified_at": "2026-11-07T18:57:18.730Z"
     },
     "rule-1955": {
       "learning_id": "rule-1955",

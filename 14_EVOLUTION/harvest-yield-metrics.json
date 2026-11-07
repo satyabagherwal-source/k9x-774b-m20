@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T18:50:15.755Z",
-  "total_cycles_completed": 8012,
-  "total_learnings_persisted": 8012,
-  "total_rules_promoted": 7661,
+  "last_updated": "2026-11-07T18:57:18.841Z",
+  "total_cycles_completed": 8015,
+  "total_learnings_persisted": 8015,
+  "total_rules_promoted": 7664,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:20:22.101Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:20:25.383Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:20:26.617Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:20:30.617Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1403,6 +1382,27 @@
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:57:12.976Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:57:13.868Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:57:18.841Z",
+      "repository": "skyzh/mini-lsm",
+      "learningId": "learn-github-skyzh-mini-lsm",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
