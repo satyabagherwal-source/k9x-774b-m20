@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T04:56:55.314Z",
+  "last_updated": "2026-11-07T05:09:09.534Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
-      "verified_at": "2026-11-05T17:57:30.780Z",
+      "content_hash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
+      "verified_at": "2026-11-07T05:09:09.533Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:57:30.780Z"
+      "last_updated": "2026-11-07T05:09:09.533Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
-      "verified_at": "2026-11-03T10:52:38.753Z",
+      "content_hash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
+      "verified_at": "2026-11-07T05:09:02.472Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T10:52:38.753Z"
+      "last_updated": "2026-11-07T05:09:02.472Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",

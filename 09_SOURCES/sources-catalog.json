@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "3ad9af7b",
+    "sourceVersion": "b04b69a0",
     "license": "Apache-2.0",
-    "contentHash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
-    "lastHarvestedAt": "2026-11-05T17:57:30.771Z",
+    "contentHash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
+    "lastHarvestedAt": "2026-11-07T05:09:09.515Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "42bbf805",
+    "sourceVersion": "cada1c61",
     "license": "MIT",
-    "contentHash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
-    "lastHarvestedAt": "2026-11-03T10:52:38.747Z",
+    "contentHash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
+    "lastHarvestedAt": "2026-11-07T05:09:02.462Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {

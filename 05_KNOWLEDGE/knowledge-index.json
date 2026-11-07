@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T04:56:55.208Z",
+  "last_updated": "2026-11-07T05:09:09.420Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9409,11 +9409,16 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "42bbf805",
-      "content_hash": "1894d7331302e64a74b4ccd1fec856f47b085072dd82dad94a148e1e8e91e189",
+      "source_version": "cada1c61",
+      "content_hash": "0e81c1a1f7f58148d5803b28fc19d5a78160716e5188ddd180ceb554502b27b5",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2237,
           "title": "build(deps): bump libc from 0.2.189 to 0.2.190",
@@ -9445,7 +9450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T10:52:38.663Z",
+      "verified_at": "2026-11-07T05:09:02.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47238,14 +47243,19 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "3ad9af7b",
-      "content_hash": "b7a05a6162363c441da776590ca823f47d1c1a3e53c8bb41c2d76aed1938f2ea",
+      "source_version": "b04b69a0",
+      "content_hash": "024082a2b28d920fa8a6e33a0220978805356519173a99a1796184980f881f65",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "eval: a few more fixes reducing allocations (#9514)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build: Move release builds off retired macos-14 runners (#9520)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47324,7 +47334,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:57:30.651Z",
+      "verified_at": "2026-11-07T05:09:09.395Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

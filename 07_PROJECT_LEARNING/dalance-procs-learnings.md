@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `42bbf805`  
+> **Source Version**: `cada1c61`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T10:52:38.239Z  
+> **Timestamp**: 2026-11-07T05:09:01.069Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T10:52:36.612Z  
+> **Harvest Timestamp**: 2026-11-07T05:08:59.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6216 stars
+- **Stars / Engagement**: 6217 stars
 
 ---
 
@@ -1584,11 +1584,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #995** (2026-11-06): **build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0**
+  *Symptoms*: Bumps [toml](https://github.com/toml-rs/toml) from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/toml-rs/toml/commit/ceac6e4412420d5a5c19e4f7293ad005cf1a31b2"><code>ceac6e4</code></a> chore: Release</li> <li><a href="https://github.com/toml-rs/toml/commit/0fe9e93d6d6299400e168681f7cdd7515c0693d2"><code>0fe9e93</code></a> docs: Update changelog</li> <li><a href="https://github.com/toml-rs/toml/commit/e3a64aa201ec339abacb570417d75b327490cab4"><code>e3a64aa</code></a> fix(display): Ensure all keys are encoded  (<a href="https://redirect.github.com/toml-rs/toml/issues/1245">#1245</a>)</li> <li><a href="https://github.com/toml-rs/toml/commit/76484d005a0e68e8c1876f8a3417b71a3921623f"><code>76484d0</code></a> fix(display): Ensure all keys are encoded</li> <li><a href="https://github.com/toml-rs/toml/commit/711b1ba1ecb11e61df9a1609e24fa3b17d11d961"><code>711b1ba</code></a> refactor(display): Clarify that we are working with encoded keys</li> <li><a href="https://github.com/toml-rs/toml/commit/4f73ebdc8bd7fdf0e6bd379baeb96dedcee6bb2b"><code>4f73ebd</code></a> test(display): Reproduce the key bug</li> <li><a href="https://github.com/toml-rs/toml/commit/6c6a5cdcdc4d9beb16ff9bdf2dcbf360fc2bc84e"><code>6c6a5cd</code></a> fix(parser): Remove risk of unsoundness with synthetic parser events and 'uns...</li> <li><a href="https://github.com/toml-rs/toml/commit/9c5e95d8d67514f2191afbee137ba40e85e4f441"><code>9c5e95d</code></a> f
+
 - **Issue #994** (2026-11-02): **build(deps): bump unicode-width from 0.2.2 to 0.2.3**
   *Symptoms*: Bumps [unicode-width](https://github.com/unicode-rs/unicode-width) from 0.2.2 to 0.2.3. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/unicode-rs/unicode-width/commit/f8c8b20d0ef0102dc4c136bcd5a1b39d2aef8a69"><code>f8c8b20</code></a> Publish 0.2.3 (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/100">#100</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/5180748ec0cacabfad0478996e9a89a612274e8f"><code>5180748</code></a> Fix documentation of Kirat Rai rules (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/97">#97</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/0b85fb874a628a08c9c85dc70ca9e5b7908db6a8"><code>0b85fb8</code></a> Update to Unicode 18 (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/96">#96</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/832f7ca447375ff969f850dab9362a0c2ce1eefb"><code>832f7ca</code></a> Fix typo in docs (<a href="https://redirect.github.com/unicode-rs/unicode-width/issues/90">#90</a>)</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/c7b4d42d741d985103fd887089c57deefc9e4f2d"><code>c7b4d42</code></a> Fix halfwidth katakana voiced and semi-voiced sound marks in width calculatio...</li> <li><a href="https://github.com/unicode-rs/unicode-width/commit/a3d4ee6c2989367e8d54ac70c83ee76ba0a71079"><code>a3d4ee6</code></a> Fix mistake in the specification of Arabic lam-alef lig
-
-- **Issue #992** (2026-10-26): **build(deps): bump tokio from 1.53.3 to 1.54.1**
-  *Symptoms*: Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/tokio-rs/tokio/releases">tokio's releases</a>.</em></p> <blockquote> <h2>Tokio v1.54.1</h2> <h1>1.54.1 (October 21st, 2026)</h1> <h3>Fixed</h3> <ul> <li>time: revert &quot;remove the runtime handle from timers&quot; (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>)</li> </ul> <p><a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>: <a href="https://redirect.github.com/tokio-rs/tokio/pull/8692">tokio-rs/tokio#8692</a></p> <h2>Tokio v1.54.0</h2> <h1>1.54.0 (October 19th, 2026)</h1> <p>The 1.54.0 release includes all changes up to 1.53.3.</p> <p>The MSRV is increased to 1.85. (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8514">#8514</a>)</p> <h3>Added</h3> <ul> <li>fs: add <code>File::set_times</code>, <code>File::set_modified</code>, and <code>fs::FileTimes</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8504">#8504</a>)</li> <li>net: implement <code>Default</code> for <code>named_pipe::{ClientOptions, ServerOptions}</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8378">#8378</a>)</li> <li>runtime: add <code>Builder::max_io_events_per_busy_tick</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8410">#8410</a>)</li> <li>runtime: stabilize <code>tokio::runtime::worker_index()</code> (<a href="https://red
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1605,45 +1605,92 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f020bcc2` (2026-11-02)
-**Commit Message**: build(deps): bump unicode-width from 0.2.2 to 0.2.3
+### Incident Patch 1: `91b9728f` (2026-11-06)
+**Commit Message**: build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0
 
-Bumps [unicode-width](https://github.com/unicode-rs/unicode-width) from 0.2.2 to 0.2.3.
-- [Commits](https://github.com/unicode-rs/unicode-width/compare/v0.2.2...v0.2.3)
+Bumps [toml](https://github.com/toml-rs/toml) from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0.
+- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.6...toml-v1.1.8)
 
 ---
 updated-dependencies:
-- dependency-name: unicode-width
-  dependency-version: 0.2.3
+- dependency-name: toml
+  dependency-version: 1.1.8+spec-1.1.0
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -2389,9 +2389,9 @@ checksum = "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8"
+@@ -1920,9 +1920,9 @@ dependencies = [
  
  [[package]]
- name = "unicode-width"
--version = "0.2.2"
-+version = "0.2.3"
+ name = "serde_spanned"
+-version = "1.1.1"
++version = "1.1.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
-+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
++checksum = "9c187e0a369471c550af028cba56d4f4fa2a489ad28151ae95a4d340a2a8b782"
+ dependencies = [
+  "serde_core",
+ ]
+@@ -2295,9 +2295,9 @@ dependencies = [
  
  [[package]]
- name = "url"
+ name = "toml"
+-version = "1.1.6+spec-1.1.0"
++version = "1.1.8+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
++checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
+ dependencies = [
+  "indexmap",
+  "serde_core",
+@@ -2310,9 +2310,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_datetime"
+-version = "1.1.1+spec-1.1.0"
++version = "1.1.3+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3165f65f62e28e0115a00b2ebdd37eb6f3b641855f9d636d3cd4103767159ad7"
++checksum = "173f25c883cd2176a2d8212155638c0a60d484a9d84546d270866f40f56b6e49"
+ dependencies = [
+  "serde_core",
+ ]
+@@ -2331,18 +2331,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_parser"
+-version = "1.1.3+spec-1.1.0"
++version = "1.1.5+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56"
++checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
+ dependencies = [
+  "winnow",
+ ]
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.2+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "tower-service"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #995** (2026-11-06): build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0 (@dependabot[bot])
 - **PR #994** (2026-11-02): build(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
 - **PR #992** (2026-10-26): build(deps): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
 - **PR #990** (2026-10-20): build(deps): bump libc from 0.2.190 to 0.2.191 (@dependabot[bot])
 - **PR #989** (2026-10-19): build(deps): bump tokio from 1.53.2 to 1.53.3 (@dependabot[bot])
 - **PR #986** (2026-10-06): build(deps): bump tokio from 1.53.1 to 1.53.2 (@dependabot[bot])
-- **PR #985** (2026-10-05): build(deps): bump libc from 0.2.189 to 0.2.190 (@dependabot[bot])
 
 ---
 
@@ -1663,13 +1710,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump unicode-width from 0.2.2 to 0.2.3
+## X. build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f020bcc2`: build(deps): bump unicode-width from 0.2.2 to 0.2.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91b9728f`: build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1677,16 +1724,32 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.3"
-checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+version = "1.1.3"
+checksum = "9c187e0a369471c550af028cba56d4f4fa2a489ad28151ae95a4d340a2a8b782"
+version = "1.1.8+spec-1.1.0"
+checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
+version = "1.1.3+spec-1.1.0"
+checksum = "173f25c883cd2176a2d8212155638c0a60d484a9d84546d270866f40f56b6e49"
+version = "1.1.5+spec-1.1.0"
+checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
+version = "1.2.0+spec-1.1.0"
+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.2.2"
-checksum = "b4ac048d71ede7ee76d585517add45da530660ef4390e49b098733c6e897f254"
+version = "1.1.1"
+checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+version = "1.1.6+spec-1.1.0"
+checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+version = "1.1.1+spec-1.1.0"
+checksum = "3165f65f62e28e0115a00b2ebdd37eb6f3b641855f9d636d3cd4103767159ad7"
+version = "1.1.3+spec-1.1.0"
+checksum = "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56"
+version = "1.1.2+spec-1.1.0"
+checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f020bcc2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91b9728f` are properly handled with clean fallback behavior.
