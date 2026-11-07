@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "bcf527e4",
+    "sourceVersion": "145de9c4",
     "license": "MPL-2.0",
-    "contentHash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
-    "lastHarvestedAt": "2026-11-05T19:06:59.934Z",
+    "contentHash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
+    "lastHarvestedAt": "2026-11-07T18:24:58.700Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "37d22916",
+    "sourceVersion": "4f3cb196",
     "license": "Apache-2.0",
-    "contentHash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
-    "lastHarvestedAt": "2026-11-05T20:00:13.993Z",
+    "contentHash": "56f1399d192480aded410dd53e218f963544e23125a88d0d86567d2ba91d7231",
+    "lastHarvestedAt": "2026-11-07T18:24:51.540Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

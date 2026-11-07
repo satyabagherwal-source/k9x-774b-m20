@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:17:11.570Z",
+  "last_updated": "2026-11-07T18:24:58.601Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15324,14 +15324,19 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "37d22916",
-      "content_hash": "7a1af57e829f5d1028783060cf877aa23d3eae27e440d1c8f4b23318e85540fa",
+      "source_version": "4f3cb196",
+      "content_hash": "56f1399d192480aded410dd53e218f963544e23125a88d0d86567d2ba91d7231",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "duplicate label for node name (#15971)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "extension deletion race (#16203)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15445,7 +15450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T20:00:13.861Z",
+      "verified_at": "2026-11-07T18:24:51.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61031,14 +61036,19 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "bcf527e4",
-      "content_hash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
+      "source_version": "145de9c4",
+      "content_hash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Make NotInitialised error classified as Unavailable (#8048)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Replace unimplemented panic with error for Cascade (#8049)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61097,7 +61107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:06:59.854Z",
+      "verified_at": "2026-11-07T18:24:58.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

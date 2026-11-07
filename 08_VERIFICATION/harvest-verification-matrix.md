@@ -8043,3 +8043,5 @@
 | `CYCLE-20261107-6SA4` | `2026-11-07T18:17:08.524Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7d6003e...`) |
 | `CYCLE-20261107-6SES` | `2026-11-07T18:17:08.692Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`53861e02...`) |
 | `CYCLE-20261107-6UP8` | `2026-11-07T18:17:11.660Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b6281a5...`) |
+| `CYCLE-20261107-GPJK` | `2026-11-07T18:24:51.536Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`56f1399d...`) |
+| `CYCLE-20261107-GV2G` | `2026-11-07T18:24:58.696Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a9cb7f7...`) |

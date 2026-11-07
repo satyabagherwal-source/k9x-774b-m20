@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T18:17:14.276Z",
-    "lastVerified": "2026-11-07T18:17:14.276Z",
+    "lastChecked": "2026-11-07T18:25:01.283Z",
+    "lastVerified": "2026-11-07T18:25:01.283Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T17:48:03.654Z",
+    "lastChecked": "2026-11-07T18:24:51.573Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T17:48:03.654Z"
+    "lastVerified": "2026-11-07T18:24:51.573Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -907,12 +907,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gardener-gardener": {
-    "name": "gardener/gardener",
+    "name": "gardener",
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T20:00:12.451Z",
-    "lastVerified": "2026-11-05T20:00:12.451Z",
+    "lastChecked": "2026-11-07T18:24:44.366Z",
+    "lastVerified": "2026-11-07T18:24:44.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
@@ -921,7 +921,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "37d22916"
   },
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
@@ -2330,8 +2331,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T03:29:37.038Z",
-    "lastVerified": "2026-11-07T03:29:37.038Z",
+    "lastChecked": "2026-11-07T18:24:46.743Z",
+    "lastVerified": "2026-11-07T18:24:46.743Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4836,14 +4837,14 @@
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:06:58.544Z",
-    "lastVerified": "2026-11-05T19:06:58.544Z",
+    "lastChecked": "2026-11-07T18:24:56.422Z",
+    "lastVerified": "2026-11-07T18:24:56.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
-    "contentHash": "52bb3d09e9d217059d6243c0900a6e8ad8e78ba5d7302837a9f6d6243e829734",
+    "contentHash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6252,9 +6253,9 @@
   "xinthink-react-native-material-kit": {
     "name": "react-native-material-kit",
     "officialUrl": "https://github.com/xinthink/react-native-material-kit",
-    "lastChecked": "2026-11-04T19:08:47.377Z",
+    "lastChecked": "2026-11-07T18:24:41.632Z",
     "revisionIdentifier": "3a1c7a7e",
-    "lastVerified": "2026-11-04T19:08:47.377Z"
+    "lastVerified": "2026-11-07T18:24:41.632Z"
   },
   "octodns-octodns": {
     "name": "octodns/octodns",
@@ -7836,9 +7837,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-05T14:29:56.375Z",
+    "lastChecked": "2026-11-07T18:24:36.586Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-05T14:29:56.375Z"
+    "lastVerified": "2026-11-07T18:24:36.586Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -11572,12 +11573,12 @@
     "lastVerified": "2026-11-05T17:21:51.931Z"
   },
   "digitalbazaar-pyld": {
-    "name": "digitalbazaar/pyld",
+    "name": "pyld",
     "officialUrl": "https://github.com/digitalbazaar/pyld",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T01:07:32.875Z",
-    "lastVerified": "2026-11-04T01:07:32.875Z",
+    "lastChecked": "2026-11-07T18:24:39.150Z",
+    "lastVerified": "2026-11-07T18:24:39.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-pyld",
@@ -11586,7 +11587,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bcdc7103"
   },
   "jtrivedi-wave": {
     "name": "Wave",

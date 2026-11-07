@@ -8052,3 +8052,5 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `e35d0d49` | Multi-dimensional audit evidence | 2026-11-07T18:17:08.528Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `f0b9c443` | Multi-dimensional audit evidence | 2026-11-07T18:17:08.696Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6183501e` | Multi-dimensional audit evidence | 2026-11-07T18:17:11.664Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `4f3cb196` | Multi-dimensional audit evidence | 2026-11-07T18:24:51.540Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `145de9c4` | Multi-dimensional audit evidence | 2026-11-07T18:24:58.700Z |
