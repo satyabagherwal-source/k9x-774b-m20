@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `a0016873`  
+> **Source Version**: `3852755e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:01:22.052Z  
+> **Timestamp**: 2026-11-07T19:37:21.254Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:01:21.651Z  
+> **Harvest Timestamp**: 2026-11-07T19:37:20.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29680 stars
+- **Stars / Engagement**: 29690 stars
 
 ---
 
@@ -444,7 +444,6 @@ def prepare_core(config_dict, with_trivy):
         core_env_template_path,
         core_conf_env,
         with_trivy=with_trivy,
-        csrf_key=generate_random_string(32),
         scan_robot_prefix=generate_random_string(8),
         **config_dict)
 
@@ -677,77 +676,530 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46d05cbf` (2026-11-05)
-**Commit Message**: fix(http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
+### Incident Patch 1: `5822576c` (2026-11-06)
+**Commit Message**: fix(csrf): replace gorilla/csrf with net/http.CrossOriginProtection (#23915)
 
-SameOrigin folded case on the whole host name, zone identifier
-included. A zone names a network interface and interface names are
-case-sensitive, so fe80::a%eth0 and fe80::a%ETH0 are different
-destinations. Keep the address comparison case-insensitive and require
-the zone to match exactly.
+* fix(csrf): replace gorilla/csrf with net/http.CrossOriginProtection
 
-Follow-up to GHSA-xgp2-5vxg-rgh2.
+Use Fetch Metadata and Origin checks for session-carrying requests,
+reject unsafe requests lacking both headers, and remove the gorilla/csrf
+and gorilla/securecookie dependencies.
+
+Preserve the original Host authority through the plain-HTTP nginx proxy
+so Origin validation includes the port. Extend regression tests for
+same-origin requests, cross-site and sibling-subdomain requests, and
+requests from a different port on the same host.
 
 Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
-Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
+Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
-**File**: `src/common/http/client.go` (modified, +9/-1)
+* fix(csrf): preserve Host port through the https nginx proxy
+
+Mirror the plain-HTTP template change: add the forwarded_host map and use
+it for Host in the /c/ and /api/ locations so core's cross-origin check
+sees the port when HTTPS runs on a non-default port.
+
+Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
+
+* fix(csrf): drop unused CSRF_KEY and document proxy Host requirement
+
+Core no longer reads CSRF_KEY since the switch to CrossOriginProtection, so stop generating and rendering it. Add a test for the HTT
+
+**File**: `make/photon/prepare/templates/core/env.jinja` (modified, +0/-1)
 ```diff
-@@ -275,10 +275,18 @@ func resolveNextLink(base *url.URL, link string) (*url.URL, error) {
- // SameOrigin reports whether a and b share scheme, host and effective port.
- func SameOrigin(a, b *url.URL) bool {
- 	return strings.EqualFold(a.Scheme, b.Scheme) &&
--		strings.EqualFold(a.Hostname(), b.Hostname()) &&
-+		sameHost(a.Hostname(), b.Hostname()) &&
- 		effectivePort(a) == effectivePort(b)
- }
- 
-+// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
-+// which names a network interface and must match exactly.
-+func sameHost(a, b string) bool {
-+	aHost, aZone, _ := strings.Cut(a, "%")
-+	bHost, bZone, _ := strings.Cut(b, "%")
-+	return strings.EqualFold(aHost, bHost) && aZone == bZone
-+}
-+
- // effectivePort returns the URL's port, substituting the scheme's default when none is set,
- // so that an alternate-port target is treated as a different origin.
- func effectivePort(u *url.URL) string {
+@@ -37,7 +37,6 @@ RELOAD_KEY={{reload_key}}
+ REGISTRY_CONTROLLER_URL={{registry_controller_url}}
+ REGISTRY_CREDENTIAL_USERNAME={{registry_username}}
+ REGISTRY_CREDENTIAL_PASSWORD={{registry_password}}
+-CSRF_KEY={{csrf_key}}
+ ROBOT_SCANNER_NAME_PREFIX={{scan_robot_prefix}}
+ PERMITTED_REGISTRY_TYPES_FOR_PROXY_CACHE=docker-hub,harbor,azure-acr,ali-acr,aws-ecr,google-gcr,docker-registry,github-ghcr,jfrog-artifactory
+ REPLICATION_ADAPTER_WHITELIST=ali-acr,aws-ecr,azure-acr,docker-hub,docker-registry,github-ghcr,google-gcr,harbor,huawei-SWR,jfrog-artifactory,tencent-tcr,volcengine-cr
 ```
 
-**File**: `src/common/http/client_test.go` (modified, +18/-0)
+**File**: `make/photon/prepare/templates/nginx/nginx.http.conf.jinja` (modified, +10/-3)
 ```diff
-@@ -174,3 +174,21 @@ func mustHost(t *testing.T, raw string) string {
- 	}
- 	return u.Host
- }
+@@ -46,6 +46,13 @@ http {
+     ""      $scheme;
+   }
+ 
++  # $host drops a non-default port, and core's cross-origin check compares
++  # Origin against Host port included. Fall back to $host for Host-less requests.
++  map $http_host $forwarded_host {
++    default $http_host;
++    ""      $host;
++  }
 +
-+// TestSameOriginIPv6Zone treats the IPv6 zone identifier as case-sensitive, since it names
-+// a network interface, while the address itself still compares case-insensitively.
-+func TestSameOriginIPv6Zone(t *testing.T) {
-+	parse := func(raw string) *url.URL {
-+		u, err := url.Parse(raw)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		return u
+   server {
+     listen 8080;
+     server_tokens off;
+@@ -94,7 +101,7 @@ http {
+ {% else %}
+       proxy_pass http://core/c/;
+ {% endif %}
+-      proxy_set_header Host $host;
++      proxy_set_header Host $forwarded_host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+@@ -119,7 +126,7 @@ http {
+ {% else %}
+       proxy_pass http://core/api/;
+ {% endif %}
+-      proxy_set_header Host $host;
++      proxy_set_header Host $forwarded_host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+@@ -169,7 +176,7 @@ http {
+ {% else %}
+       proxy_pass http://core/service/;
+ {% endif %}
+-      proxy_set_header Host $host;
++      proxy_set_header Host $forwarded_host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+```
+
+**File**: `make/photon/prepare/templates/nginx/nginx.https.conf.jinja` (modified, +9/-2)
+```diff
+@@ -47,6 +47,13 @@ http {
+     ""      $scheme;
+   }
+ 
++  # $host drops a non-default port, and core's cross-origin check compares
++  # Origin against Host port included. Fall back to $host for Host-less requests.
++  map $http_host $forwarded_host {
++    default $http_host;
++    ""      $host;
++  }
++
+   include /etc/nginx/conf.d/*.server.conf;
+ 
+   server {
+@@ -123,7 +130,7 @@ http {
+ {% else %}
+       proxy_pass http://core/c/;
+ {% endif %}
+-      proxy_set_header Host $host;
++      proxy_set_header Host $forwarded_host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+@@ -147,7 +154,7 @@ http {
+ {% else %}
+       proxy_pass http://core/api/;
+ {% endif %}
+-      proxy_set_header Host $host;
++      proxy_set_header Host $forwarded_host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
+```
+
+**File**: `make/photon/prepare/utils/core.py` (modified, +0/-1)
+```diff
+@@ -22,7 +22,6 @@ def prepare_core(config_dict, with_trivy):
+         core_env_template_path,
+         core_conf_env,
+         with_trivy=with_trivy,
+-        csrf_key=generate_random_string(32),
+         scan_robot_prefix=generate_random_string(8),
+         **config_dict)
+ 
+```
+
+**File**: `src/go.mod` (modified, +0/-3)
+```diff
+@@ -34,8 +34,6 @@ require (
+ 	github.com/gomodule/redigo v2.0.0+incompatible
+ 	github.com/google/go-containerregistry v0.21.3
+ 	github.com/google/uuid v1.6.0
+-	// pin the github.com/gorilla/csrf to v1.7.2 because of issue https://github.com/goharbor/harbor/issues/22010
+-	github.com/gorilla/csrf v1.7.2
+ 	github.com/gorilla/handlers v1.5.2
+ 	github.com/gorilla/mux v1.8.1
+ 	github.com/graph-gophers/dataloader v5.0.0+incompatible
+@@ -148,7 +146,6 @@ require (
+ 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+ 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+ 	github.com/google/go-querystring v1.1.0 // indirect
+-	github.com/gorilla/securecookie v1.1.2 // indirect
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
+ 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
+ 	github.com/hashicorp/golang-lru v1.0.2 // indirect
+```
+
+**File**: `src/go.sum` (modified, +0/-6)
+```diff
+@@ -427,8 +427,6 @@ github.com/google/go-containerregistry v0.21.3/go.mod h1:D5ZrJF1e6dMzvInpBPuMCX0
+ github.com/google/go-querystring v1.1.0 h1:AnCroh3fv4ZBgVIf1Iwtovgjaw/GiKJo8M8yD/fhyJ8=
+ github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
+ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+-github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
+-github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
+ github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
+ github.com/google/martian/v3 v3.0.0/go.mod h1:y5Zk1BBys9G+gd6Jrk0W3cC1+ELVxBWuIGO+w/tUAp0=
+ github.com/google/pprof v0.0.0-20190515194954-54271f7e092f/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
+@@ -447,17 +445,13 @@ github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORR
+ github.com/gopherjs/gopherjs v1.17.2 h1:fQnZVsXk8uxXIStYb0N4bGk7jeyTalG/wsZjQ25dO0g=
+ github.com/gopherjs/gopherjs v1.17.2/go.mod h1:pRRIvn/QzFLrKfvEz3qUuEhtE/zLCWfreZ6J5gM2i+k=
+ github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=
+-github.com/gorilla/csrf v1.7.2 h1:oTUjx0vyf2T+wkrx09Trsev1TE+/EbDAeHtSTbtC2eI=
+-github.com/gorilla/csrf v1.7.2/go.mod h1:F1Fj3KG23WYHE6gozCmBAezKookxbIvUJT+121wTuLk=
+ github.com/gorilla/handlers v1.5.2 h1:cLTUSsNkgcwhgRqvCNmdbRWG0A3N4F+M2nWKdScwyEE=
+ github.com/gorilla/handlers v1.5.2/go.mod h1:dX+xVpaxdSw+q0Qek8SSsl3dfMk3jNddUkMzo0GtH0w=
+ github.com/gorilla/mux v1.6.2/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
+ github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+ github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
+ github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
+ github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+HVt/4epWDjd4=
+-github.com/gorilla/securecookie v1.1.2 h1:YCIWL56dvtr73r6715mJs5ZvhtnY73hBvEF8kXD8ePA=
+-github.com/gorilla/securecookie v1.1.2/go.mod h1:NfCASbcHqRSY+3a8tlWJwsQap2VX5pwzwo4h3eOamfo=
+ github.com/gorilla/sessions v1.2.1/go.mod h1:dk2InVEVJ0sfLlnXv9EAgkf6ecYs/i80K/zI+bUmuGM=
+ github.com/graph-gophers/dataloader v5.0.0+incompatible h1:R+yjsbrNq1Mo3aPG+Z/EKYrXrXXUNJHOgbRt+U6jOug=
+ github.com/graph-gophers/dataloader v5.0.0+incompatible/go.mod h1:jk4jk0c5ZISbKaMe8WsVopGB5/15GvGHMdMdPtwlRp4=
+```
+
+**File**: `src/server/middleware/csrf/csrf.go` (modified, +49/-61)
+```diff
+@@ -16,77 +16,74 @@ package csrf
+ 
+ import (
+ 	"net/http"
+-	"os"
++	"slices"
+ 	"strings"
+-	"sync"
+ 
+-	"github.com/gorilla/csrf"
+-
+-	"github.com/goharbor/harbor/src/common/utils"
+ 	"github.com/goharbor/harbor/src/lib"
+-	"github.com/goharbor/harbor/src/lib/config"
+ 	"github.com/goharbor/harbor/src/lib/errors"
+ 	lib_http "github.com/goharbor/harbor/src/lib/http"
+ 	"github.com/goharbor/harbor/src/lib/log"
+ 	"github.com/goharbor/harbor/src/server/middleware"
+ )
+ 
+-const (
+-	csrfKeyEnv  = "CSRF_KEY"
+-	tokenHeader = "X-Harbor-CSRF-Token"
+-)
++// protect judges each request on the origin that browser actually used, so it
++// needs no configuration and is safe for concurrent use.
++var protect = http.NewCrossOriginProtection()
+ 
+-var (
+-	once       sync.Once
+-	secureFlag = true
+-	protect    func(handler http.Handler) http.Handler
+-)
++// safeMethods are the methods RFC 7231 defines as safe, which carry no state
++// change and so need no cross-origin check.
++var safeMethods = []string{http.MethodGet, http.MethodHead, http.MethodOptions}
+ 
+-// attachToken makes sure if csrf generate a new token it will be included in the response header
+-func attachToken(w http.ResponseWriter, r *http.Request) {
+-	if t := csrf.Token(r); len(t) > 0 {
+-		w.Header().Set(tokenHeader, t)
+-	} else {
+-		log.Warningf("token not found in context, skip attaching")
++// check applies the cross-origin protection, then closes the one gap it leaves
++// open by design.
++//
++// CrossOriginProtection admits a request carrying neither Sec-Fetch-Site nor
++// Origin, reading it as non-browser traffic. That is the right default for a
++// library, but not here: csrfSkipper has already excused the registry, API and
++// service routes that non-browser clients use, so an unsafe request arriving
++// without either header is one we cannot vouch for. Refusing it matches what the
++// previous token scheme did, which rejected any write that failed to present a
++// token.
++func check(req *http.Request) error {
++	// Origin must match Host port included, so the proxy has to forward the port.
++	if err := protect.Check(req); err != nil {
++		return err
+ 	}
+-}
+ 
+-func handleError(w http.ResponseWriter, r *http.Request) {
+-	attachToken(w, r)
+-	lib_http.SendError(w, errors.New(csrf.FailureReason(r)).WithCode(errors.ForbiddenCode))
+-}
++	if slices.Contains(safeMethods, req.Method) {
++		return nil
 +	}
-+	if !SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[FE80::A%25eth0]:5000/x")) {
-+		t.Fatal("address case must not matter")
++
++	if req.Header.Get("Sec-Fetch-Site") == "" && req.Header.Get("Origin") == "" {
++		return errors.New("request carries neither Sec-Fetch-Site nor Origin, cannot confirm its origin")
 +	}
-+	if SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[fe80::a%25ETH0]:5000/x")) {
-+		t.Fatal("zone identifiers differing in case must not be the same origin")
+ 
+-func attach(handler http.Handler) http.Handler {
+-	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+-		attachToken(rw, req)
+-		handler.ServeHTTP(rw, req)
+-	})
++	return nil
+ }
+ 
+-// Middleware initialize the middleware to apply csrf selectively
++// Middleware rejects cross-origin requests that carry a session. It reads the
++// Fetch metadata headers browsers have sent since 2023, falling back to
++// comparing Origin against the Host the client addressed.
++//
++// Without Sec-Fetch-Site, Origin is compared to the Host core receives, port
++// included and scheme ignored; X-Forwarded-Host is not consulted. Reverse
++// proxies must forward Host unchanged, e.g. nginx `proxy_set_header Host
++// $http_host;`.
++//
++// Deliberately no configured endpoint takes part in the decision. Harbor is
++// commonly reachable on several ingresses, over different schemes, behind
++// proxies that rewrite Host; a single configured origin describes none of that,
++// and every attempt to reconstruct "the" expected origin gets one of those
++// deployments wrong.
+ func Middleware() func(handler http.Handler) http.Handler {
+-	once.Do(func() {
+-		key := os.Getenv(csrfKeyEnv)
+-		if len(key) == 0 {
+-			key = utils.GenerateRandomString()
+-		} else if len(key) != 32 {
+-			log.Errorf("Invalid CSRF key length from the environment (%d characters). Please ensure the key length is 32 characters.", len(key))
+-			protect = func(_ http.Handler) http.Handler {
+-				return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+-					lib_http.SendError(w, errors.New("invalid CSRF key length from the environment. Please ensure the key length is 32 characters"))
+-				})
+-			}
++	return middleware.New(func(rw http.ResponseWriter, req *http.Request, next http.Handler) {
++		if err := check(req); err != nil {
++			log.Debugf("Rejected cross-origin request for %s: %v", lib.TrimLineBreaks(req.URL.Path), err)
++			lib_http.SendError(rw, errors.New(err).WithCode(errors.ForbiddenCode))
+ 			return
+ 		}
+-		secureFlag = secureCookie()
+-		protect = csrf.Protect([]byte(key), csrf.RequestHeader(tokenHeader),
+-			csrf.Secure(secureFlag),
+-			csrf.ErrorHandler(http.HandlerFunc(handleError)),
+-			csrf.SameSite(csrf.SameSiteStrictMode),
+-			csrf.Path("/"))
+-	})
+-	return middleware.New(func(rw http.ResponseWriter, req *http.Request, next http.Handler) {
+-		protect(attach(next)).ServeHTTP(rw, req)
++
++		next.ServeHTTP(rw, req)
+ 	}, csrf
+```
+
+**File**: `src/server/middleware/csrf/csrf_test.go` (modified, +236/-64)
+```diff
+@@ -1,105 +1,277 @@
++// Copyright Project Harbor Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
+ package csrf
+ 
+ import (
+ 	"net/http"
+ 	"net/http/httptest"
+-	"os"
+-	"sync"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+ 
+-	"github.com/goharbor/harbor/src/common"
+-	"github.com/goharbor/harbor/src/common/utils/test"
+-	"github.com/goharbor/harbor/src/lib/config"
+-	_ "github.com/goharbor/harbor/src/pkg/config/inmemory"
++	"github.com/goharbor/harbor/src/lib"
+ )
+ 
+-func resetMiddleware() {
+-	once = sync.Once{}
++// reached answers 200 and records that the request got past the middleware.
++type reached struct {
++	called bool
+ }
+ 
+-func TestMain(m *testing.M) {
+-	test.InitDatabaseFromEnv()
+-	conf := map[string]any{}
+-	config.InitWithSettings(conf)
+-	result := m.Run()
+-	if result != 0 {
+-		os.Exit(result)
+-	}
++func (r *reached) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
++	r.called = true
++	w.WriteHeader(http.StatusOK)
+ }
+ 
+-type handler struct {
+-}
++// serve runs one request through the middleware on the given host.
++func serve(t *testing.T, method, host, path string, headers map[string]string, carrySession bool) (int, bool) {
++	t.Helper()
+ 
+-func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+-	w.WriteHeader(http.StatusOK)
++	handler := &reached{}
++	req := httptest.NewRequest(method, "https://"+host+path, nil)
++	req.Host = host
++	for k, v := range headers {
++		req.Header.Set(k, v)
 +	}
-+}
++	if carrySession {
++		req = req.WithContext(lib.WithCarrySession(req.Context(), true))
++	}
++
++	rec := httptest.NewRecorder()
++	Middleware()(handler).ServeHTTP(rec, req)
++
++	return rec.Code, handler.called
+ }
+ 
+-func TestMiddleware(t *testing.T) {
++const host = "harbor.example.com"
++
++// TestMiddlewareAllows covers the traffic that must keep working. Note that no
++// case names a configured endpoint: each request is judged on the origin the
++// client actually used, which is what lets one Harbor answer on several
++// ingresses, over either scheme, on any port.
++func TestMiddlewareAllows(t *testing.T) {
+ 	cases := []struct {
+-		req         *http.Request
+-		statusCode  int
+-		returnToken bool
++		name    string
++		method  string
++		host    string
++		headers map[string]string
+ 	}{
+ 		{
+-			req:         httptest.NewRequest(http.MethodGet, "/", nil),
+-			statusCode:  http.StatusOK,
+-			returnToken: true,
++			name:    "same-origin write from a browser",
++			method:  http.MethodPost,
++			host:    host,
++			headers: map[string]string{"Sec-Fetch-Site": "same-origin", "Origin": "https://" + host},
++		},
++		{
++			name:    "top level navigation",
++			method:  http.MethodPost,
++			host:    host,
++			headers: map[string]string{"Sec-Fetch-Site": "none"},
++		},
++		{
++			name:    "a second ingress, unknown to any configuration",
++			method:  http.MethodPost,
++			host:    "eu." + host,
++			headers: map[string]string{"Sec-Fetch-Site": "same-origin", "Origin": "https://eu." + host},
++		},
++		{
++			name:    "browser predating Sec-Fetch-Site, Origin matches Host",
++			method:  http.MethodPost,
++			host:    host,
++			headers: map[string]string{"Origin": "https://" + host},
++		},
++		{
++			name:    "plain HTTP, proxy preserves the port, Origin matches exactly",
++			method:  http.MethodPost,
++			host:    host + ":8099",
++			headers: map[string]string{"Origin": "http://" + host + ":8099"},
++		},
++		{
++			name:    "HTTPS on a non-default port without Sec-Fetch-Site, Origin matches Host",
++			method:  http.MethodPost,
++			host:    host + ":8443",
++			headers: map[string]string{"Origin": "https://" + host + ":8443"},
++		},
++		{
++			name:    "plain HTTP to an IPv6 literal, Origin matches exactly",
++			method:  http.MethodPost,
++			host:    "[::1]:8099",
++			headers: map[string]string{"Origin": "http://[::1]:8099"},
+ 		},
+ 		{
+-			req:         httptest.NewRequest(http.MethodDelete, "/", nil),
+-			statusCode:  http.StatusForbidden,
+-			returnToken: true,
++			name:    "safe method is exempt even from a foreign origin",
++			method:  http.MethodGet,
++			host:    host,
++			headers: map[string]string{"Sec-Fetch-Site": "cross-site", "Origin": "https://evil.example.com"},
+ 		},
+ 		{
+-			req:         httptest.NewRequest(http.MethodGet, "/api/2.0/projects", nil), // should be skipped
+-			statusCode:  http.StatusOK,
+-			returnToken: false,
++			name:   "safe method needs no origin at all",
++			method: http.MethodGet,
++			host:   host,
+ 		},
+ 		{
+-			req:         httptest.NewRequest(http.MethodDelete, "/v2/library/hello-worl
+```
+
+---
+
+### Incident Patch 2: `3852755e` (2026-11-06)
+**Commit Message**: chore(deps): bump postcss-selector-parser from 7.1.1 to 7.1.7 in /src/portal/app-swagger-ui (#24238)
+
+chore(deps): bump postcss-selector-parser in /src/portal/app-swagger-ui
+
+Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 7.1.1 to 7.1.7.
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/v7.1.1...7.1.7)
+
+---
+updated-dependencies:
+- dependency-name: postcss-selector-parser
+  dependency-version: 7.1.7
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Prasanth Baskar <[REDACTED_EMAIL]>
+
+**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +3/-3)
+```diff
+@@ -5196,9 +5196,9 @@
+       }
+     },
+     "node_modules/postcss-selector-parser": {
+-      "version": "7.1.1",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.1.tgz",
+-      "integrity": "sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #24316** (2026-11-05): Bump up trivy adapter and distribution (@stonezdj)
 - **PR #24313** (2026-11-05): Bump up harbor version (@stonezdj)
+- **PR #24311** (2026-11-06): (cherry-pick) replace gorilla/csrf with net/http.CrossOriginProtection (@stonezdj)
 - **PR #24302** (2026-11-05): (cherry-pick)fix: restore robot member role assignment compatibility (@stonezdj)
 - **PR #24300** (2026-11-04): fix: restore robot member role assignment compatibility (@stonezdj)
 - **PR #24299** (closed):  fix: restore robot member role assignment compatibility (@stonezdj)
-- **PR #24286** (2026-11-04): Bump up go mod (@stonezdj)
 
 ---
 
@@ -761,42 +1213,3 @@ Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
-
-**RULE**:
-When implementing operations in `src/common/http/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `46d05cbf`: http): compare the IPv6 zone identifier exactly in SameOrigin (#24071). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/http/client.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-		sameHost(a.Hostname(), b.Hostname()) &&
-// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
-// which names a network interface and must match exactly.
-func sameHost(a, b string) bool {
-	aHost, aZone, _ := strings.Cut(a, "%")
-	bHost, bZone, _ := strings.Cut(b, "%")
-	return strings.EqualFold(aHost, bHost) && aZone == bZone
-}
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-		strings.EqualFold(a.Hostname(), b.Hostname()) &&
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46d05cbf` are properly handled with clean fallback behavior.

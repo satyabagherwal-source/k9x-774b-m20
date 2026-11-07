@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
-> **Source Version**: `2d93cdc5`  
+> **Source Version**: `90544c0b`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:58:20.051Z  
+> **Timestamp**: 2026-11-07T19:37:16.767Z  
 > **Learning ID**: `learn-github-scrapinghub-dateparser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:58:19.295Z  
+> **Harvest Timestamp**: 2026-11-07T19:37:15.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: python parser for human readable dates
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 2861 stars
+- **Stars / Engagement**: 2864 stars
 
 ---
 
@@ -636,7 +636,11 @@ def detect_time_span(text: str) -> dict[str, Any] | None:
             }
 
             if match.groups():
-                result["number"] = int(match.group(1))
+                try:
+                    result["number"] = int(match.group(1))
+                except ValueError:
+                    # More digits than int() accepts, so not a usable quantity.
+                    continue
 
             return result
 
@@ -788,7 +792,7 @@ def combine_dicts(
 
 ### Core Architecture Module: `dateparser/__init__.py`
 ```
-__version__ = "1.4.3"
+__version__ = "1.5.0"
 
 from collections.abc import Callable, Iterable
 from datetime import datetime
@@ -1299,11 +1303,11 @@ class HijriCalendar(CalendarBase):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1560** (2026-11-02): **Bump the github-actions group with 5 updates**
-  *Symptoms*: Bumps the github-actions group with 5 updates:  | Package | From | To | | --- | --- | --- | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |  Updates `actions/upload-artifact` from 7.0.1 to 7.0.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/upload-artifact/releases">actions/upload-artifact's releases</a>.</em></p> <blockquote> <h2>v7.0.2</h2> <h2>What's Changed</h2> <ul> <li>Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.</li> <li>Updates <code>@​actions/artifact</code> to v6.3.1.</li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> made their first contribution in <a href="https://redirect.github.com/actions/upload-artifact/pull/821">actions/upload-artifact#821</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2">https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2</a>
+- **Issue #1568** (2026-11-07): **Skip out-of-range month spans during date searches**
+  *Symptoms*: With `RETURN_TIME_SPAN=True`, an out-of-range month span raises `ValueError` and prevents `search_dates()` from returning other valid dates in the text:  ```python from datetime import datetime from dateparser.search import search_dates  search_dates(     "the past 120000 months. 2024-01-15",     languages=["en"],     settings={"RETURN_TIME_SPAN": True, "RELATIVE_BASE": datetime(2026, 11, 3)}, ) # Before: ValueError: year -7974 is out of range # After: [('2024-01-15', datetime(2024, 1, 15))] ```  The existing guard handles `OverflowError` from `timedelta` arithmetic, but month spans use `relativedelta`, which raises `ValueError` when the resulting year is outside the supported range. Catch both exceptions around span generation so an unrepresentable span is omitted while previously parsed dates are retained.  Six regression cases cover past and future month spans, including preservation of another date with both the `split` and `ngram` search strategies. All six fail on the unmodified base and pass with the fix.  Validation on macOS arm64, Python 3.12.13, with `TZ=UTC`:  - `pytest tests/test_long_digit_runs.py tests/test_search.py -q`: 462 passed, 31 subtests passed. - `pytest -q`: 25,313 passed, 9 skipped, 4 xfailed, 508 subtests passed. - `tox -e pre-commit`: passed (Ruff lint/format and zizmor).  Other supported Python versions and optional calendar/language-detection dependencies were not tested locally.  Assisted by Codex. 
 
-- **Issue #1557** (2026-10-30): **Replace the VERSION placeholders with 1.5.0**
-  *Symptoms*: The `versionadded` directives of the APIs added in 1.5.0 still say `VERSION`, a placeholder that bump-my-version does not replace (its `[[tool.bumpversion.files]]` entries only cover `pyproject.toml`, `dateparser/__init__.py`, `HISTORY.rst` and `SECURITY.md`). Without this change the 1.5.0 documentation would read "New in version VERSION".  It sets the six placeholders to `1.5.0`:  - `PartOfDay` and `PartsOfDay` (`dateparser/_parts_of_day.py`) - `DateData.part_of_day` (`dateparser/date.py`) - the `add_period` argument of `search_dates()` (`dateparser/search/__init__.py`) - the `TIMEZONE_ABBREVIATIONS` and `PARTS_OF_DAY` settings (`docs/settings.rst`)  `git grep -w VERSION` finds no other placeholder, and #1553, #1554 and #1556 add none. The change is text-only inside docstrings and docs, so it does not conflict with those PRs or with the advisory fixes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #1566** (2026-11-04): **Stop a Chinese date rule slowing down on long runs of spaces**
+  *Symptoms*: Regression from #1477, which is not in any release yet.  ## What was wrong  The rule that reads a date followed by a time ("2020年3月4日 5点6分") in the `zh`, `zh-Hans` and `zh-Hant` data was added by "Parse Chinese and Japanese dates with spaces around 年, 月 and 日" (#1477). It has two adjacent `\s*` around the optional `日`: `(\d{1,2})\s*(?:日)?\s*(\d{1,2})…`. When a date is followed by a long run of spaces and no time, the pattern tries every way of splitting the run between the two `\s*`, so the time grows with the square of the run. The rule only sees text whose spaces were not collapsed, for example `search_dates("1年1月1" + " " * n, languages=["zh"])`; `parse()` collapses spaces before it simplifies the text.  CPU seconds of one `search_dates("1年1月1" + " " * n, languages=["zh"])` call (`time.process_time()`, Python 3.12, one run each):  | n | master | this PR | |---|---|---| | 4,000 / 8,000 / 16,000 / 32,000 | 0.075 / 0.199 / 0.863 / 3.23 | 0.018 / 0.046 / 0.121 / 0.272 |  On master each doubling of the size multiplies the time by 2.7 to 4.3; with this PR it is 2.2 to 2.6.  ## How it is fixed  The optional `日` is written together with the spaces after it: `\s*(?:日\s*)?`. It matches the same strings and leaves one way to match a run of spaces. The rule is in `zh.yaml`, `zh-Hans.yaml` and `zh-Hant.yaml`; the three generated Python files were regenerated with `python -m dateparser_scripts.write_complete_data`, and nothing else in the generated data changed.  ## Tests and checks  * 1
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1320,120 +1324,200 @@ class HijriCalendar(CalendarBase):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d93cdc5` (2026-11-02)
-**Commit Message**: Bump the github-actions group with 5 updates (#1560)
+### Incident Patch 1: `679bae65` (2026-11-05)
+**Commit Message**: Fix parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362)
 
-Bumps the github-actions group with 5 updates:
+* Fix parsing time-only strings with a tz-aware RELATIVE_BASE
 
-| Package | From | To |
-| --- | --- | --- |
-| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` |
-| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
-| [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` |
-| [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` |
-| [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |
+When RELATIVE_BASE is offset-aware, _correct_for_time_frame localizes
+dateobj to UTC so it can be compared with self.now. The subsequent
+tz.utcoffset(dateobj) call then receives an aware datetime, which pytz
+rejects with "Not naive datetime (tzinfo is already set)". The exception
+is not one of the two caught pytz errors, so parsing aborts and
+dateparser.parse() returns None for inputs like "3pm".
 
+Pass a naive copy to utcoffset() so the offset lookup works regardless of
+whether dateobj was localized. Behaviour with a naive RELATIVE_BASE is
+unchanged.
 
-Updates `actions/upload-artifact` from 7.0.1 to 7.0.2
-- [Release notes](https://github.com/actions/upload-artifact/releases)
-- [Commits](https://github.com/actions/upload-artifact/compare/043fb46d1a93c77aae656e7c1c64a875d1fc6a0a...cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+Adds a regression test in tests/test_date_parser.py covering both
+PREFER_DATES_FROM directions with an offset-aware RELATIVE_BASE.
 
-Updates `github/codeql-action/upload-sarif` from 4.38.2 to 4.39.1
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0c
+Closes #1213
 
-**File**: `.github/workflows/cifuzz.yml` (modified, +2/-2)
+* Annotate the new test for the strict mypy check
+
+Master type-checks the tests with mypy in strict mode, so the new test needs
+parameter and return annotations.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Serhii A <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `dateparser/parser.py` (modified, +3/-1)
 ```diff
-@@ -21,14 +21,14 @@ jobs:
-         fuzz-seconds: 600
-         output-sarif: true
-     - name: Upload Crash
--      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-       if: failure() && steps.build.outcome == 'success'
-       with:
-         name: artifacts
-         path: ./out/artifacts
-     - name: Upload Sarif
-       if: always() && steps.build.outcome == 'success'
--      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         # Path to SARIF file relative to the root of the repository
-         sarif_file: cifuzz-sarif/results.sarif
-```
-
-**File**: `.github/workflows/codspeed.yml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - name: Set up Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.13"
-       - name: Install dependencies
-```
-
-**File**: `.github/workflows/main.yml` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - name: 'Set up Python ${{ matrix.python-version }}'
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: ${{ matrix.python-version }}
-       - name: Install language-pack-fr
-```
-
-**File**: `.github/workflows/publish.yml` (modified, +4/-4)
-```diff
-@@ -16,7 +16,7 @@ jobs:
-         with:
-           persist-credentials: false
-       - name: Set up Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.x"
-       - name: Install dependencies
-@@ -28,7 +28,7 @@ jobs:
-           python -m build .
-           twine check dist/*
-       - name: Upload package
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: packages
-           path: dist/
-@@ -49,12 +49,12 @@ jobs:
+@@ -811,7 +811,9 @@ def _correct_for_time_frame(  # noqa: PLR0912, PLR0915
+                 # Convert dateobj to utc time to compare with RELATIVE_BASE
+                 try:
+                     tz = tz or get_timezone_from_tz_string(self.settings.TIMEZONE)
+-                    tz_offset = tz.utcoffset(dateobj) or tz_offset
++                    # `dateobj` may have been localized above when `self.now` is
++                    # offset-aware; `utcoffset()` requires a naive datetime.
++                    tz_offset = tz.utcoffset(dateobj.replace(tzinfo=None)) or tz_offset
+                 except (pytz.UnknownTimeZoneError, pytz.NonExistentTimeError):
+                     pass
  
-     steps:
-       - name: Download package
--        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-         with:
-           name: packages
-           path: dist/
-       - name: Publish package
--        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
-         with:
-           print-hash: true
-           verbose: true
+```
+
+**File**: `tests/test_date_parser.py` (modified, +22/-0)
+```diff
+@@ -6,6 +6,7 @@
+ from unittest.mock import Mock, patch
+ 
+ import pytest
++import pytz
+ from parameterized import param, parameterized
+ 
+ import dateparser.timezone_parser
+@@ -788,6 +789,27 @@ def test_preferably_future_dates_leap_year(
+         self.then_date_was_parsed_by_date_parser()
+         self.then_date_obj_exactly_is(expected)
+ 
++    @parameterized.expand(
++        [
++            param("3pm", "past", datetime(2020, 6, 15, 18, 0)),
++            param("3pm", "future", datetime(2020, 6, 15, 12, 0)),
++        ]
++    )
++    def test_time_only_with_timezone_aware_relative_base(
++        self, date_string: str, prefer_dates_from: str, relative_base: datetime
++    ) -> None:
++        tz = pytz.timezone("America/Los_Angeles")
++        self.given_parser(
++            settings={
++                "TIMEZONE": "America/Los_Angeles",
++                "PREFER_DATES_FROM": prefer_dates_from,
++                "RELATIVE_BASE": tz.localize(relative_base),
++            }
++        )
++        self.when_date_is_parsed(date_string)
++        self.then_date_was_parsed_by_date_parser()
++        self.then_period_is("day")
++
+     @parameterized.expand(
+         [
+             param("29 Feb", datetime(2020, 1, 1), datetime(2020, 2, 29)),
+```
+
+---
+
+### Incident Patch 2: `31b6986d` (2026-11-04)
+**Commit Message**: Sort the 1.5.0 security fixes by advisory merge order
+
+**File**: `HISTORY.rst` (modified, +8/-9)
+```diff
+@@ -42,6 +42,14 @@ Deprecations:
+ 
+ Security fixes:
+ 
++- Make sentence splitting in ``search_dates()`` linear on long punctuation
++  runs, to prevent quadratic backtracking (ReDoS) for Arabic, Bengali,
++  Cantonese, Chinese, Hindi, Japanese and Persian (`GHSA-rx9v-94ff-9cc2
++  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-rx9v-94ff-9cc2>`_)
++- Prevent quadratic regex matching (ReDoS) on long digit runs in Chinese and
++  Japanese, and a ``ValueError`` on runs of more than 4,300 digits on Python
++  3.11 and later (`GHSA-g8fh-jxm9-6qfx
++  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-g8fh-jxm9-6qfx>`_)
+ - Bound the lookahead of the Chinese month simplification, to prevent quadratic
+   parsing time on long runs of numbers followed by 月 (`GHSA-q7fp-xwcm-6x9f
+   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-q7fp-xwcm-6x9f>`_)
+@@ -51,19 +59,10 @@ Security fixes:
+ - Strip trailing colons in linear time, to prevent quadratic backtracking
+   (ReDoS) on long colon runs (`GHSA-fmxc-97cw-ph6p
+   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-fmxc-97cw-ph6p>`_)
+-- Make sentence splitting in ``search_dates()`` linear on long punctuation
+-  runs, to prevent quadratic backtracking (ReDoS) for Arabic, Bengali,
+-  Cantonese, Chinese, Hindi, Japanese and Persian (`GHSA-rx9v-94ff-9cc2
+-  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-rx9v-94ff-9cc2>`_)
+-- Prevent quadratic regex matching (ReDoS) on long digit runs in Chinese and
+-  Japanese, and a ``ValueError`` on runs of more than 4,300 digits on Python
+-  3.11 and later (`GHSA-g8fh-jxm9-6qfx
+-  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-g8fh-jxm9-6qfx>`_)
+ - Split strings into known words in linear time, to prevent quadratic parsing
+   time on long runs of words like month names (`GHSA-jxmm-w6rw-32ch
+   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-jxmm-w6rw-32ch>`_)
+ 
+-
+ New features:
+ 
+ - Add a ``STRICT_DATE_ORDER`` setting that turns an explicit ``DATE_ORDER``
+```
+
+---
+
+### Incident Patch 3: `61022151` (2026-11-04)
+**Commit Message**: Reference the fixes of unreleased regressions in the 1.5.0 notes
+
+**File**: `HISTORY.rst` (modified, +6/-5)
+```diff
+@@ -57,7 +57,7 @@ New features:
+ - Parse parts of the day, such as "tomorrow morning", "this evening" or
+   "8 in the evening", at the times set by the new ``PARTS_OF_DAY`` setting;
+   the new ``DateData.part_of_day`` attribute tells which one was found
+-  (#1473)
++  (#1473, #1562)
+ - Add ``DateData.parts``, which lists the date parts (day, month, year,
+   time…) read from the input rather than filled in from defaults (#1408)
+ - Add an ``add_period`` argument to ``search_dates()`` to also return the
+@@ -103,7 +103,7 @@ New features:
+   - next to a relative date without a comma (#1385)
+   - joined by words that search skips, like "and" (#1488)
+   - inside parentheses, square brackets or straight quotes, e.g.
+-    ``'He said "May 5, 2020"'`` or "(Friday)" (#1401)
++    ``'He said "May 5, 2020"'`` or "(Friday)" (#1401, #1565)
+ 
+ Fixes:
+ 
+@@ -133,7 +133,7 @@ Fixes:
+   20 March 2021 instead of the 23rd of the current month (#1554)
+ - Return ``None`` for strings with only skipped words, such as "year" or
+   "hour minute", instead of today, which also stops ``search_dates()`` from
+-  returning them (#1440)
++  returning them (#1440, #1564)
+ - Stop ignoring numbers without a unit in relative dates, so "03/06/2020
+   hour", "03/06/2020 day" or "01.02.2011 godz. 08:39" no longer parse as a
+   number of hours or days ago (#1410)
+@@ -194,7 +194,8 @@ Improvements:
+ - Chinese: add the supplementary data of ``zh`` to ``zh-Hans`` and
+   ``zh-Hant`` (#1407), and parse 后天, 大后天 and 大前天 as relative days
+   (#1430)
+-- Chinese and Japanese: parse dates with spaces around 年, 月 and 日 (#1477)
++- Chinese and Japanese: parse dates with spaces around 年, 月 and 日 (#1477,
++  #1566)
+ - French: parse "midi" as noon, e.g. "demain à midi" ("après-midi" and
+   "avant midi" are still not read as noon); this also applies when no
+   ``languages`` are given, so ``search_dates()`` can return "MIDI" in an
+@@ -205,7 +206,7 @@ Improvements:
+ - Slovak: parse "pozajtra" (#1430)
+ - Swedish: parse ordinal day suffixes like "24:e" and "1:a" (#1484)
+ - Thai: parse relative dates with spaced ago/in words (#1411)
+-- Vietnamese: parse dates with zero-padded months (#1338)
++- Vietnamese: parse dates with zero-padded months (#1338, #1563)
+ - Add type hints (#1457)
+ - Document ``search_dates()`` in the API reference (#1468), add a
+   performance section (#1494), explain how ``DEFAULT_LANGUAGES`` relates to
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1560** (2026-11-02): Bump the github-actions group with 5 updates (@dependabot[bot])
-- **PR #1557** (2026-10-30): Replace the VERSION placeholders with 1.5.0 (@serhii73)
-- **PR #1556** (2026-10-30): Deprecate instead of remove (@AdrianAtZyte)
-- **PR #1555** (closed): stop rescanning the date string per redundant timezone token (@radhika1314)
-- **PR #1552** (2026-10-27): Limit the name readings tried for date_formats (@serhii73)
-- **PR #1550** (2026-10-26): Fix CI on the ubuntu-26.04 runner image (@AdrianAtZyte)
+- **PR #1568** (closed): Skip out-of-range month spans during date searches (@Yongthyuan)
+- **PR #1566** (2026-11-04): Stop a Chinese date rule slowing down on long runs of spaces (@serhii73)
+- **PR #1565** (2026-11-04): Stop search_dates() slowing down on long runs of brackets (@serhii73)
+- **PR #1564** (2026-11-04): Stop search_dates slowing down on long runs of words that do not parse (@serhii73)
+- **PR #1563** (2026-11-04): Stop zero-padded Vietnamese months making English text look Vietnamese (@serhii73)
+- **PR #1562** (2026-11-04): Fix importing dateparser_data.settings before dateparser (@serhii73)
 
 ---
 
@@ -1453,30 +1537,30 @@ Updates `github/codeql-action/upload-sarif` from 4.38.2 to 4.39.1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the github-actions group with 5 updates (#1560)
+## X. parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362)
 
 **RULE**:
-When implementing operations in `.github/workflows/cifuzz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dateparser/parser.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d93cdc5`: Bump the github-actions group with 5 updates (#1560). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `679bae65`: parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cifuzz.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/parser.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+                    # `dateobj` may have been localized above when `self.now` is
+                    # offset-aware; `utcoffset()` requires a naive datetime.
+                    tz_offset = tz.utcoffset(dateobj.replace(tzinfo=None)) or tz_offset
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+                    tz_offset = tz.utcoffset(dateobj) or tz_offset
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d93cdc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `679bae65` are properly handled with clean fallback behavior.

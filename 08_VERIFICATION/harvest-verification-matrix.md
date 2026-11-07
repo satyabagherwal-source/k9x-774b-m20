@@ -8057,3 +8057,6 @@
 | `CYCLE-20261107-KIAB` | `2026-11-07T19:23:47.987Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de08c5cd...`) |
 | `CYCLE-20261107-KJ07` | `2026-11-07T19:23:48.919Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa738012...`) |
 | `CYCLE-20261107-TIM2` | `2026-11-07T19:30:48.314Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c8f68488...`) |
+| `CYCLE-20261107-1V7V` | `2026-11-07T19:37:17.899Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`494054b5...`) |
+| `CYCLE-20261107-1V8R` | `2026-11-07T19:37:17.931Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a61bc65...`) |
+| `CYCLE-20261107-1XYU` | `2026-11-07T19:37:21.462Z` | `goharbor/harbor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | Yes (`1002b586...`) |

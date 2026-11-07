@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:30:48.327Z",
+  "last_updated": "2026-11-07T19:37:21.471Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
-      "verified_at": "2026-11-05T22:01:23.109Z",
+      "content_hash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
+      "verified_at": "2026-11-07T19:37:21.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:01:23.109Z"
+      "last_updated": "2026-11-07T19:37:21.470Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "ec1b26bcb48d06d5f07a77f0728ffa11f81a7961be93fa229ac7ee580cb5a5cd",
-      "verified_at": "2026-11-04T20:46:39.884Z",
+      "content_hash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
+      "verified_at": "2026-11-07T19:37:17.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:46:39.884Z"
+      "last_updated": "2026-11-07T19:37:17.908Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",
@@ -14931,14 +14931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-dateparser",
-      "content_hash": "f9074c6e4fc840147bd722795e498e66354aa7cd06ca976d22304a75fd3db4e2",
-      "verified_at": "2026-11-04T01:58:20.936Z",
+      "content_hash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
+      "verified_at": "2026-11-07T19:37:17.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:58:20.936Z"
+      "last_updated": "2026-11-07T19:37:17.962Z"
     },
     "google/closure-compiler": {
       "repository": "google/closure-compiler",

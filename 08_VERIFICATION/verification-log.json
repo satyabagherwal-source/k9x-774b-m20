@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-0D8M",
-    "timestamp": "2026-11-05T06:28:58.246Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "29fe7e61427d3884715d57c62dcc1161f44e790e2f759a9a689e1afa644c40d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-0E4W",
-    "timestamp": "2026-11-05T06:28:59.408Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "37a635731e8a41acddd750c38003966b81da163c6ede4b5fd382281d001d7a0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-9WML",
-    "timestamp": "2026-11-05T06:36:23.277Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "c44817b5b6b6be5fc707b2cc4e25d2fe2293913af7b6871938051aaca5e3c2ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-JNRG",
     "timestamp": "2026-11-05T06:43:58.348Z",
     "repository": "apache/pinot",
@@ -7492,6 +7447,51 @@
     "contentHash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1V7V",
+    "timestamp": "2026-11-07T19:37:17.899Z",
+    "repository": "bahdotsh/wrkflw",
+    "learningId": "learn-github-bahdotsh-wrkflw",
+    "contentHash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1V8R",
+    "timestamp": "2026-11-07T19:37:17.931Z",
+    "repository": "scrapinghub/dateparser",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1XYU",
+    "timestamp": "2026-11-07T19:37:21.462Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

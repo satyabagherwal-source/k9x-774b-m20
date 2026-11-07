@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:30:48.210Z",
+  "last_updated": "2026-11-07T19:37:21.392Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4706,11 +4706,16 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "c0299477",
-      "content_hash": "ec1b26bcb48d06d5f07a77f0728ffa11f81a7961be93fa229ac7ee580cb5a5cd",
+      "source_version": "553ecf53",
+      "content_hash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "address the review of #163 (#164)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2446,
           "title": "ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)",
@@ -4742,7 +4747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:46:39.752Z",
+      "verified_at": "2026-11-07T19:37:17.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16468,8 +16473,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "a0016873",
-      "content_hash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
+      "source_version": "3852755e",
+      "content_hash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -16554,7 +16559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:01:22.994Z",
+      "verified_at": "2026-11-07T19:37:21.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

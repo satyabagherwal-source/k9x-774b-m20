@@ -8066,3 +8066,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `abaf4047` | Multi-dimensional audit evidence | 2026-11-07T19:23:47.999Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `41efd866` | Multi-dimensional audit evidence | 2026-11-07T19:23:48.922Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `617dacbb` | Multi-dimensional audit evidence | 2026-11-07T19:30:48.318Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `553ecf53` | Multi-dimensional audit evidence | 2026-11-07T19:37:17.902Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `90544c0b` | Multi-dimensional audit evidence | 2026-11-07T19:37:17.933Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `3852755e` | Multi-dimensional audit evidence | 2026-11-07T19:37:21.464Z |

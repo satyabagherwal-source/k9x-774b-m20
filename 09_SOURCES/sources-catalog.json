@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "a0016873",
+    "sourceVersion": "3852755e",
     "license": "Apache-2.0",
-    "contentHash": "164f31f370403fb466857062b53ae1c4302d47f7b9f0f3b0f6dc37e4a767985c",
-    "lastHarvestedAt": "2026-11-05T22:01:23.101Z",
+    "contentHash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
+    "lastHarvestedAt": "2026-11-07T19:37:21.464Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "c0299477",
+    "sourceVersion": "553ecf53",
     "license": "MIT",
-    "contentHash": "ec1b26bcb48d06d5f07a77f0728ffa11f81a7961be93fa229ac7ee580cb5a5cd",
-    "lastHarvestedAt": "2026-11-04T20:46:39.866Z",
+    "contentHash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
+    "lastHarvestedAt": "2026-11-07T19:37:17.902Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "2d93cdc5",
+    "sourceVersion": "90544c0b",
     "license": "BSD-3-Clause",
-    "contentHash": "f9074c6e4fc840147bd722795e498e66354aa7cd06ca976d22304a75fd3db4e2",
-    "lastHarvestedAt": "2026-11-04T01:58:20.924Z",
+    "contentHash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
+    "lastHarvestedAt": "2026-11-07T19:37:17.933Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {
