@@ -8040,3 +8040,6 @@
 | `CYCLE-20261107-X85A` | `2026-11-07T18:09:42.526Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`84d5a672...`) |
 | `CYCLE-20261107-X86Z` | `2026-11-07T18:09:42.587Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1892fcd5...`) |
 | `CYCLE-20261107-XE3Q` | `2026-11-07T18:09:50.246Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b464172f...`) |
+| `CYCLE-20261107-6SA4` | `2026-11-07T18:17:08.524Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7d6003e...`) |
+| `CYCLE-20261107-6SES` | `2026-11-07T18:17:08.692Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`53861e02...`) |
+| `CYCLE-20261107-6UP8` | `2026-11-07T18:17:11.660Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b6281a5...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `46f93879`  
+> **Source Version**: `6183501e`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T03:21:45.090Z  
+> **Timestamp**: 2026-11-07T18:17:09.822Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T03:21:44.115Z  
+> **Harvest Timestamp**: 2026-11-07T18:17:09.591Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38737 stars
+- **Stars / Engagement**: 38760 stars
 
 ---
 
@@ -821,94 +821,17 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46f93879` (2026-11-06)
-**Commit Message**: go.mod: bump github.com/klauspost/compress for govulncheck
+### Incident Patch 1: `b31eb1c9` (2026-11-07)
+**Commit Message**: ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus
 
-Resolves GO-2026-6865
-Updates tailscale/corp#9497
+The test resumed a live session, so notifications already
+on the wire (notably, spurious health change notifications)
+could arrive ahead of the initial status.
 
-Change-Id: I5aa46a03de75e4c51baa7662d1573a08f338467b
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -173,4 +173,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-Au1/DgsJwHI37CHB2xXQGj8lyrh9xJKAOTAFVnY5dvA=
-+# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-tEM33M0EUHKeH2ZdbZzvdxiDqe/93zbXRT7vmBNvTTw=",
--    "sri": "sha256-Au1/DgsJwHI37CHB2xXQGj8lyrh9xJKAOTAFVnY5dvA="
-+    "goModSum": "sha256-dApQ2AxHOwZQIHeOmaDEkKT5vfZN1FY7XRiqK3XzU40=",
-+    "sri": "sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ require (
- 	github.com/jsimonetti/rtnetlink v1.4.2
- 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
- 	github.com/kdomanski/iso9660 v0.4.0
--	github.com/klauspost/compress v1.20.0
-+	github.com/klauspost/compress v1.20.2
- 	github.com/kortschak/wol v0.0.0-20200729010619-da482cc4850a
- 	github.com/mattn/go-colorable v0.1.15
- 	github.com/mattn/go-isatty v0.0.24
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -762,8 +762,8 @@ github.com/kisielk/errcheck v1.20.0/go.mod h1:O+f80MKNwX8Oor2jwgpeQ9An7uJm+hRSgT
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
- github.com/kkHAIKE/contextcheck v1.1.6 h1:7HIyRcnyzxL9Lz06NGhiKvenXq7Zw6Q0UQu/ttjfJCE=
- github.com/kkHAIKE/contextcheck v1.1.6/go.mod h1:3dDbMRNBFaq8HFXWC1JyvDSPm43CmE6IuHam8Wr0rkg=
--github.com/klauspost/compress v1.20.0 h1:a3C1ke2ohxFymNlb2HWAHjDeKCI90scRskErZkR0ezA=
--github.com/klauspost/compress v1.20.0/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
- github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
- github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-Au1/DgsJwHI37CHB2xXQGj8lyrh9xJKAOTAFVnY5dvA=
-+# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
-```
-
----
-
-### Incident Patch 2: `b706df60` (2026-11-06)
-**Commit Message**: ipn,client/local: let IPN bus watchers be suspended instead of disconnected
-
-Since edcc2c94, tailscaled closes the watch when a subscriber falls
-behind. That doesn't work well for GUIs where closing the watch has side
-effects. On Windows, the last client disconnecting can reset the backend
-state unless unattended or always-on mode is enabled. On Android and
-Apple platforms, nothing restarts a watch that ended this way, so the
-UI silently stops updating.
-
-Add ipn.NotifySuspendWhenBehind. A watcher that sets it stays connected
-when it falls behind, but gets a Notify with Suspended set and nothing
-else until the client resumes the session via the new resume-ipn-bus
-LocalAPI endpoint or LocalBackend.ResumeWatchNotifications. Resuming
-replays the initial Notify and new notifications follow from there.
+In this PR, we add LocalBackend.SuspendWatchNotifications,
+which suspends a session as if it had fallen behind,
+and update the test to suspend the session and drain
+pending notifications before resuming it.
 
 Updates tailscale/corp#51067
 Updates tailscale/corp#50256
@@ -916,453 +839,67 @@ Updates tailscale/corp#50907
 
 Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
-**File**: `client/local/local.go` (modified, +11/-0)
+**File**: `ipn/ipnlocal/local.go` (modified, +20/-0)
 ```diff
-@@ -1540,6 +1540,17 @@ func (lc *Client) WatchIPNBus(ctx context.Context, mask ipn.NotifyWatchOpt) (*IP
- 	}, nil
+@@ -4110,6 +4110,26 @@ func (b *LocalBackend) buildInitialNotifyLocked(sb *ipnstate.StatusBuilder, sess
+ 	return ini
  }
  
-+// ResumeIPNBus resumes a watch session that tailscaled suspended because the
-+// client fell behind. sessionID is the [ipn.Notify.SessionID] of that watch.
-+// See [ipn.NotifySuspendWhenBehind].
-+//
-+// API maturity: this method is not considered a stable API and is
-+// subject to change between releases.
-+func (lc *Client) ResumeIPNBus(ctx context.Context, sessionID string) error {
-+	_, err := lc.send(ctx, "POST", "/localapi/v0/resume-ipn-bus?session="+url.QueryEscape(sessionID), 204, nil)
-+	return err
++// SuspendWatchNotifications suspends the watch session with the given
++// [ipn.Notify.SessionID] as if it had fallen behind; see
++// [ipn.NotifySuspendWhenBehind]. It returns an error if the session
++// doesn't exist or didn't ask for that mode.
++func (b *LocalBackend) SuspendWatchNotifications(sessionID string) error {
++	b.mu.Lock()
++	defer b.mu.Unlock()
++	sess, ok := b.notifyWatchers[sessionID]
++	if !ok {
++		return fmt.Errorf("no IPN bus watch session %q", sessionID)
++	}
++	if sess.mask&ipn.NotifySuspendWhenBehind == 0 {
++		return fmt.Errorf("IPN bus watch session %q did not ask for NotifySuspendWhenBehind", sessionID)
++	}
++	if !sess.suspended {
++		b.suspendLaggingWatchSessionLocked(sess)
++	}
++	return nil
 +}
 +
- // CheckUpdate returns a [*tailcfg.ClientVersion] indicating whether or not an update is available
- // to be installed via the LocalAPI. In case the LocalAPI can't install updates, it returns a
- // ClientVersion that says that we are up to date.
+ // ResumeWatchNotifications resumes the watch session with the given
+ // [ipn.Notify.SessionID] after it was suspended for falling behind (see
+ // [ipn.NotifySuspendWhenBehind]). Whatever is still queued for the session
 ```
 
-**File**: `ipn/backend.go` (modified, +32/-0)
+**File**: `ipn/localapi/ipnbus_test.go` (modified, +12/-0)
 ```diff
-@@ -210,6 +210,21 @@ const (
- 	// non-zero peer states, and subsequent Notifies include per-peer
- 	// state changes.
- 	NotifyPeerWireGuardState NotifyWatchOpt = 1 << 18
-+
-+	// NotifySuspendWhenBehind, if set, makes tailscaled suspend the watcher
-+	// instead of closing the watch when it falls behind. The watcher gets a
-+	// [Notify] with [Notify.Suspended] set and nothing else until the client
-+	// resumes the session via the "resume-ipn-bus" LocalAPI endpoint or
-+	// LocalBackend.ResumeWatchNotifications. Resuming replays the initial
-+	// Notify and new notifications follow from there.
-+	//
-+	// GUI clients want this when closing the watch has side effects, such as
-+	// on Windows, where the last client disconnecting can reset the backend
-+	// state.
-+	//
-+	// It requires [NotifyInitialState] and cannot be combined with
-+	// [NotifyInProcessNoDisconnect].
-+	NotifySuspendWhenBehind NotifyWatchOpt = 1 << 19
- )
- 
- // String implements the [fmt.Stringer] interface.
-@@ -253,6 +268,7 @@ func (o NotifyWatchOpt) String() string {
- 	try(NotifyInProcessNoDisconnect, "NotifyInProcessNoDisconnect")
- 	try(NotifySysPolicyChanges, "NotifySysPolicyChanges")
- 	try(NotifyPeerWireGuardState, "NotifyPeerWireGuardState")
-+	try(NotifySuspendWhenBehind, "NotifySuspendWhenBehind")
- 
- 	if mask != o {
- 		bits = append(bits, fmt.Sprintf("%T(%#x)", o, uint64(o^mask))) // unknown
-@@ -297,6 +313,14 @@ func ValidateNotifyWatchOpt(mask NotifyWatchOpt) error {
- 	if mask&ObsoleteNotifyInitialNetMap != 0 {
- 		return errors.New("the NotifyInitialNetMap IPN bus subscription bit is no longer supported; seed from NotifyInitialStatus instead")
- 	}
-+	if mask&NotifySuspendWhenBehind != 0 {
-+		if mask&NotifyInitialState == 0 {
-+			return errors.New("NotifySuspendWhenBehind requires NotifyInitialState")
-+		}
-+		if mask&NotifyInProcessNoDisconnect != 0 {
-+			return errors.New("NotifySuspendWhenBehind is incompatible with NotifyInProcessNoDisconnect")
-+		}
-+	}
- 	return nil
- }
- 
-@@ -327,6 +351,11 @@ type Notify struct {
- 	// For State InUseOtherUser, ErrMessage is not critical and just contains the details.
- 	ErrMessage *string
- 
-+	// Suspended, if true, means the watcher fell behind and tailscaled has
-+	// stopped sending it notifications. Nothing else arrives until the
-+	// client resumes the session; see [NotifySuspendWhenBehind].
-+	Suspended bool `json:",omitzero"`
-+
- 	LoginFinished *empty.Message // non-nil when/if the login process succeeded
- 	State         *State         // if non-nil, the new or current IPN state
- 	Prefs         *PrefsView     // if non-nil && Valid, the new or current preferences
-@@ -564,6 +593,9 @@ func (n Notify) String() string {
- 	if n.ErrMessage != nil {
- 		fmt.Fprintf(&sb, "err=%q ", *n.ErrMessage)
- 	}
-+	if n.Suspended {
-+		sb.WriteString("Suspended ")
-+	}
- 	if n.LoginFinished != nil {
- 		sb.WriteString("LoginFinished ")
- 	}
-```
-
-**File**: `ipn/backend_test.go` (modified, +14/-0)
-```diff
-@@ -100,6 +100,20 @@ func TestValidateNotifyWatchOpt(t *testing.T) {
- 			name: "in-process-no-disconnect",
- 			mask: NotifyInProcessNoDisconnect | NotifyPeerChanges,
- 		},
-+		{
-+			name: "suspend-when-behind",
-+			mask: NotifySuspendWhenBehind | NotifyInitialState | NotifyPeerChanges,
-+		},
-+		{
-+			name:    "suspend-when-behind-without-initial-state",
-+			mask:    NotifySuspendWhenBehind | NotifyPeerChanges,
-+			wantErr: true,
-+		},
-+		{
-+			name:    "suspend-when-behind-with-in-process-no-disconnect",
-+			mask:    NotifySuspendWhenBehind | NotifyInitialState | NotifyInProcessNoDisconnect,
-+			wantErr: true,
-+		},
- 		{
- 			name:    "obsolete-rate-limit-only",
- 			mask:    ObsoleteNotifyRateLimit,
-```
-
-**File**: `ipn/ipnext/ipnext.go` (modified, +3/-3)
-```diff
-@@ -257,9 +257,9 @@ type NotifyWatcher interface {
- 	//
- 	// Failure to consume many notifications in a row will result in one final
- 	// notification with ErrMessage set, followed by the watch closing, unless mask
--	// includes ipn.NotifyInProcessNoDisconnect. Watchers using
--	// NotifyInProcessNoDisconnect must not call back into LocalBackend from fn or
--	// wait on work that might call back into LocalBackend.
-+	// includes ipn.NotifyInProcessNoDisconnect or ipn.NotifySuspendWhenBehind.
-+	// Watchers using NotifyInProcessNoDisconnect must not call back into
-+	// LocalBackend from fn or wait on work that might call back into LocalBackend.
- 	WatchNotifications(ctx context.Context, mask ipn.NotifyWatchOpt, onWatchAdded func(), fn func(roNotify *ipn.Notify) (keepGoing bool))
- }
- 
-```
-
-**File**: `ipn/ipnlocal/local.go` (modified, +200/-107)
-```diff
-@@ -215,6 +215,10 @@ type watchSession struct {
- 	// hiddenNetworkDevices is the parsed GUI visibility policy from the
- 	// most recent effective policy snapshot for this session.
- 	hiddenNetworkDevices hiddenNetworkDevices
-+
-+	// suspended is whether this session fell behind and is waiting for
-+	// [LocalBackend.ResumeWatchNotifications]. See [ipn.NotifySuspendWhenBehind].
-+	suspended bool
- }
- 
- var (
-@@ -2496,6 +2500,9 @@ func (b *LocalBackend) sysPolicyChangedForSession(sess *watchSession) {
- 	b.mu.Lock()
- 	defer b.mu.Unlock()
- 
-+	if sess.suspended {
-+		return
-+	}
- 	snapshot, err := b.polc.GetPolicySnapshot(sess.policyUID)
- 	if err != nil || snapshot == nil {
- 		return
-@@ -3901,9 +3908,9 @@ func applyConfigToHostinfo(hi *tailcfg.Hostinfo, c *conffile.Config) {
- //
- // Failure to consume many notifications in a row will result in one final
- // notification with ErrMessage set, followed by the watch closing, unless mask
--// includes [ipn.NotifyInProcessNoDisconnect]. Watchers using
--// NotifyInProcessNoDisconnect must not call back into LocalBackend from fn or
--// wait on work that might call back into LocalBackend.
-+// includes [ipn.NotifyInProcessNoDisconnect] or [ipn.NotifySuspendWhenBehind].
-+// Watchers using NotifyInProcessNoDisconnect must not call back into
-+// LocalBackend from fn or wait on work that might call back into LocalBackend.
- func (b *LocalBackend) WatchNotifications(ctx context.Context, mask ipn.NotifyWatchOpt, onWatchAdded func(), fn func(roNotify *ipn.Notify) (keepGoing bool)) {
- 	b.WatchNotificationsAs(ctx, nil, mask, onWatchAdded, fn)
- }
-@@ -3928,25 +3935,7 @@ func (b *LocalBackend) WatchNotificationsAs(ctx context.Context, actor ipnauth.A
- 		fn = appendHealthActions(fn)
+@@ -28,6 +28,18 @@ func TestResumeIPNBus(t *testing.T) {
+ 		t.Fatal("initial notification has no SessionID")
  	}
  
--	var ini *ipn.Notify
--
--	// Build the engine half of the InitialStatus before taking b.mu, since
--	// b.e.UpdateStatus has its own locking and shouldn't be called under
--	// b.mu (lock-ordering: outer-to-inner is b.mu -> engine, not the other
--	// way). The backend half is then populated under b.mu below, atomically
--	// with watcher registration so no events arrive on the watcher's
--	// channel before InitialStatus is delivered.
--	var statusSB *ipnstate.StatusBuilder
--	if mask&ipn.NotifyInitialStatus != 0 {
--		// The initial status is sized to the subscription: building the
--		// per-peer status entries is O(peers), so only do it for watchers
--		// that subscribed to peer deltas and thus need a peer baseline to
--		// apply them to. Self-only watchers get Status.Self and the
--		// scalar fields.
--		wantPeers := mask&(ipn.NotifyPeerChanges|ipn.NotifyPeerPatches) != 0
--		statusSB = &ipnstate.StatusBuilder{WantPeers: wantPeers}
--		b.e.UpdateStatus(statusSB)
--	}
-+	sb := b.initialStatusBuilder(mask)
- 	if mask&ipn.NotifyPeerWireGuardState != 0 {
- 		_ = b.peerWGStateQueue.Wait(ctx)
- 	}
-@@ -3957,86 +3946,34 @@ func (b *LocalBackend) WatchNotificationsAs(ctx context.Context, actor ipnauth.A
- 	deadlockDone := b.CheckDeadlocks()
- 	b.mu.Lock()
- 
--	var policyUID string
--	var hiddenNetworkDevices hiddenNetworkDevices
--	const initialBits = ipn.NotifyInitialState | ipn.NotifyInitialPrefs |
--		ipn.NotifyInitialStatus |
--		ipn.NotifyInitialDriveShares | ipn.NotifyInitialSuggestedExitNode |
--		ipn.NotifyInitialClientVersion | ipn.NotifySysPolicyChanges | ipn.NotifyPeerWireGuardState
--	if mask&initialBits != 0 {
--		ini = &ipn.Notify{Version: version.Long()}
--		if mask&ipn.NotifyInitialState != 0 {
--			ini.SessionID = sessionID
--			ini.State = new(b.state)
--			if b.state == ipn.NeedsLogin && b.authURL != "" {
--				ini.BrowseToURL = new(b.authURL)
--			}
--		}
--		if mask&ipn.NotifyInitialPrefs != 0 {
--			ini.Prefs = new(b.sanitizedPrefsLocked())
--		}
--		if statusSB != nil {
--			b.updateStatusLocked(statusSB)
--			ini.InitialStatus = statusSB.Status()
--		}
--		if mask&ipn.NotifyInitialDriveShares != 0 && b.DriveSharingEnabled() {
--			ini.DriveShares = b.pm.prefs.DriveShares()
--		}
--		if mask&ipn.NotifyInitialHealthState != 0 {
--			ini.Health = b.HealthTracker().CurrentState()
--		}
--		if mask&ipn.NotifyInitialSuggestedExitNode != 0 {
--			if en, err := b.suggestExitNodeLocked(); err == nil {
--				ini.SuggestedExitNode = &en.ID
--			}
--		}
--		if mask&ipn.NotifyInitialClientVersion != 0 {
--			if prefs := b.pm.CurrentPrefs(); prefs.Valid() && prefs.AutoUpdate().Check {
--				ini.ClientVersion = b.lastClientVersion
--			}
--		}
--		if mask&ipn.NotifySysPolicyChanges != 0 {
--			if actor != nil {
--				policyUID = string(actor.UserID())
--			}
--			var err error
--			ini.Policy, err = b.polc.GetPolicySnapshot(policyUID)
--			if err != nil {
--				b.logf("syspolicy: GetPolicySnapshot(%q): %v", policyUID, err)
--			} else if ini.Policy != nil {
--				hiddenNetworkDevices = hiddenNetworkDevicesFromPolicy(ini.Policy)
--				ini.NodeGUIVisibility = b.nodeGUIVisibilityLocked(hiddenNetworkDevices)
--			}
--		}
--	}
--
- 	ctx, cancel := context.WithCancel(ctx)
- 	defer cancel()
- 
- 	session := &watchSession{
--		ch:                   ch,
--		ctx:                  ctx,
--		ow
-```
-
-**File**: `ipn/ipnlocal/local_test.go` (modified, +81/-0)
-```diff
-@@ -2190,6 +2190,87 @@ func TestWatchNotificationsClosesSlowConsumer(t *testing.T) {
- 	}
- }
- 
-+func TestWatchNotificationsSuspendsSlowConsumer(t *testing.T) {
-+	b := newTestLocalBackend(t)
-+	ctx := t.Context()
-+
-+	watchAdded := make(chan struct{})
-+	releaseFirstNotify := make(chan struct{})
-+	got := make(chan *ipn.Notify, 256)
-+
-+	go func() {
-+		first := true
-+		b.WatchNotificationsAs(ctx, nil, ipn.NotifyInitialState|ipn.NotifySuspendWhenBehind, func() { close(watchAdded) }, func(n *ipn.Notify) bool {
-+			if first {
-+				first = false
-+				<-releaseFirstNotify
-+			}
-+			got <- n
-+			return true
-+		})
-+	}()
-+	<-watchAdded
-+
-+	next := func() *ipn.Notify {
-+		t.Helper()
-+		select {
-+		case n := <-got:
-+			return n
-+		case <-time.After(10 * time.Second):
-+			t.Fatal("timeout waiting for notification")
-+			return nil
-+		}
-+	}
-+	numWatchers := func() int {
-+		b.mu.Lock()
-+		defer b.mu.Unlock()
-+		return len(b.notifyWatchers)
++	if err := s.Backend().SuspendWatchNotifications(ini.SessionID); err != nil {
++		t.Fatalf("SuspendWatchNotifications: %v", err)
 +	}
 +
-+	// The watcher's callback is blocked on the initial notification. Fill
-+	// the 128-slot queue, then send one more notification to force overflow.
-+	running := ipn.Running
-+	for range 129 {
-+		b.send(ipn.Notify{State: &running})
++	// What was already on the wire still arrives, then the suspension.
++	n, err := w.Next()
++	for ; err == nil && !n.Suspended; n, err = w.Next() {
 +	}
-+	close(releaseFirstNotify)
-+
-+	ini := next()
-+	if ini.SessionID == "" || ini.State == nil {
-+		t.Fatalf("initial notification = %v; want SessionID and State", ini)
-+	}
-+	var n *ipn.Notify
-+	for n = next(); !n.Suspended; n = next() {
-+		if n.State == nil || *n.State != ipn.Running {
-+			t.Fatalf("got %v before suspension; want Running state", n)
-+		}
-+	}
-+	if got := numWatchers(); got != 1 {
-+		t.Fatalf("watchers after suspension = %d; want 1", got)
-+	}
-+
-+	// Nothing is delivered while suspended. Resuming re-delivers the
-+	// initial notification and then new notifications.
-+	stopped := ipn.Stopped
-+	b.send(ipn.Notify{State: &stopped})
-+	if err := b.ResumeWatchNotifications(ctx, "bogus"); err == nil {
-+		t.Fatal("ResumeWatchNotifications(bogus) succeeded; want error")
-+	}
-+	if err := b.ResumeWatchNotifications(ctx, ini.SessionID); err != nil {
-+		t.Fatalf("ResumeWatchNotifications: %v", err)
-+	}
-+	if n := next(); n.Suspended || n.SessionID != ini.SessionID || n.State == nil || *n.State != *ini.State {
-+		t.Fatalf("after resume got %v; want initial notification", n)
-+	}
-+	b.send(ipn.Notify{State: &stopped})
-+	if n := next(); n.State == nil || *n.State != ipn.Stopped {
-+		t.Fatalf("after resume got %v; want Stopped state", n)
-+	}
-+	if got := numWatchers(); got != 1 {
-+		t.Fatalf("watchers after resume = %d; want 1", got)
-+	}
-+}
-+
- func TestWatchNotificationsInProcessNoDisconnectBlocksSender(t *testing.T) {
- 	b := newTestLocalBackend(t)
- 	ctx, cancel := context.WithCancel(context.Background())
-```
-
-**File**: `ipn/localapi/ipnbus_test.go` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package localapi_test
-+
-+import (
-+	"testing"
-+
-+	"tailscale.com/ipn"
-+	"tailscale.com/ipn/lapitest"
-+)
-+
-+func TestResumeIPNBus(t *testing.T) {
-+	s := lapitest.NewServer(t, lapitest.WithLogging(false))
-+	c := s.Client()
-+	ctx := t.Context()
-+
-+	if err := c.ResumeIPNBus(ctx, "bogus"); err == nil {
-+		t.Fatal("ResumeIPNBus of an unknown session succeeded; want error")
-+	}
-+
-+	w, _ := c.WatchIPNBus(ctx, ipn.NotifyInitialState|ipn.NotifySuspendWhenBehind)
-+	ini, err := w.Next()
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	if ini.SessionID == "" {
-+		t.Fatal("initial notification has no SessionID")
-+	}
 +
-+	// Resuming replays the initial notification.
-+	if err := c.ResumeIPNBus(ctx, ini.SessionID); err != nil {
-+		t.Fatalf("ResumeIPNBus: %v", err)
-+	}
-+	again, err := w.Next()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if again.SessionID != ini.SessionID || again.State == nil {
-+		t.Errorf("after resume got %v; want initial notification %v", again, ini)
-+	}
-+}
-```
-
-**File**: `ipn/localapi/localapi.go` (modified, +19/-0)
-```diff
-@@ -124,6 +124,7 @@ func init() {
- 	}
- 	if buildfeatures.HasIPNBus {
- 		Register("watch-ipn-bus", (*Handler).serveWatchIPNBus)
-+		Register("resume-ipn-bus", (*Handler).serveResumeIPNBus)
- 	}
- 	if buildfeatures.HasDNS {
- 		Register("dns-osconfig", (*Handler).serveDNSOSConfig)
-@@ -927,6 +928,24 @@ func (h *Handler) serveWatchIPNBus(w http.ResponseWriter, r *http.Request) {
- 	})
- }
- 
-+// serveResumeIPNBus resumes a suspended watch-ipn-bus session.
-+// See [ipn.NotifySuspendWhenBehind].
-+func (h *Handler) serveResumeIPNBus(w http.ResponseWriter, r *http.Request) {
-+	if !h.PermitRead {
-+		http.Error(w, "watch ipn bus access denied", http.StatusForbidden)
-+		return
-+	}
-+	if r.Method != httpm.POST {
-+		http.Error(w, "want POST", http.StatusBadRequest)
-+		return
-+	}
-+	if err := h.b.ResumeWatchNotifications(r.Context(), r.FormValue("session")); err != nil {
-+		http.Error(w, err.Error(), http.StatusNotFound)
-+		return
-+	}
-+	w.WriteHeader(http.StatusNoContent)
-+}
-+
- func (h *Handler) serveLoginInteractive(w http.ResponseWriter, r *http.Request) {
- 	if !h.PermitWrite {
- 		http.Error(w, "login access denied", http.StatusForbidden)
+ 	// Resuming replays the initial notification.
+ 	if err := c.ResumeIPNBus(ctx, ini.SessionID); err != nil {
+ 		t.Fatalf("ResumeIPNBus: %v", err)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22234** (2026-11-07): flake.nix: resolve deprecation warning (@mikeodr)
+- **PR #22227** (2026-11-07): ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus (@nickkhyl)
 - **PR #22225** (2026-11-06): go.mod: bump github.com/klauspost/compress for govulncheck (@nickkhyl)
 - **PR #22222** (2026-11-06): ipn,client/local: let IPN bus watchers be suspended instead of disconnected (@nickkhyl)
 - **PR #22211** (2026-11-06): net/dns,tstest/natlab/vmtest: accept openresolv exit 1 as no snippets (@bcreane)
 - **PR #22210** (2026-11-06): feature/conn25: drop address assignments queued before a client.reset (@mazdakn)
-- **PR #22186** (2026-11-05): feature/conn25: drain the address assignment queue in client.reset (@mazdakn)
-- **PR #22184** (2026-11-06): ipn/ipnlocal: resolve exit node when it arrives by netmap delta (@bcreane)
 
 ---
 
@@ -1382,28 +919,47 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: bump github.com/klauspost/compress for govulncheck
+## X. ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46f93879`: go.mod: bump github.com/klauspost/compress for govulncheck. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b31eb1c9`: ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-tggEwThh7HDLv6kDuLF+n35wejmsJjduve4zASIneV4=
+// SuspendWatchNotifications suspends the watch session with the given
+// [ipn.Notify.SessionID] as if it had fallen behind; see
+// [ipn.NotifySuspendWhenBehind]. It returns an error if the session
+// doesn't exist or didn't ask for that mode.
+func (b *LocalBackend) SuspendWatchNotifications(sessionID string) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	sess, ok := b.notifyWatchers[sessionID]
+	if !ok {
+		return fmt.Errorf("no IPN bus watch session %q", sessionID)
+	}
+	if sess.mask&ipn.NotifySuspendWhenBehind == 0 {
+		return fmt.Errorf("IPN bus watch session %q did not ask for NotifySuspendWhenBehind", sessionID)
+	}
+	if !sess.suspended {
+		b.suspendLaggingWatchSessionLocked(sess)
+	}
+	return nil
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-# nix-direnv cache busting line: sha256-Au1/DgsJwHI37CHB2xXQGj8lyrh9xJKAOTAFVnY5dvA=
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46f93879` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b31eb1c9` are properly handled with clean fallback behavior.

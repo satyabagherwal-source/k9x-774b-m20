@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:09:50.149Z",
+  "last_updated": "2026-11-07T18:17:11.570Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6298,11 +6298,16 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "4abff15e",
-      "content_hash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
+      "source_version": "e35d0d49",
+      "content_hash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ios): preserve simulator app accessibility after runner teardown (#4276)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2167,
           "title": "daemon): replace fixed 15s startup kill with progress-aware startup budget (#379",
@@ -6354,7 +6359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:57:34.427Z",
+      "verified_at": "2026-11-07T18:17:08.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37668,14 +37673,19 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "660c438c",
-      "content_hash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
+      "source_version": "f0b9c443",
+      "content_hash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Show missing feature requirements on kube-client items in docs (#2141)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "nightly clippy and rustdoc warnings (#2146)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37729,7 +37739,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:52:52.761Z",
+      "verified_at": "2026-11-07T18:17:08.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58109,8 +58119,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "46f93879",
-      "content_hash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
+      "source_version": "6183501e",
+      "content_hash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -58127,6 +58137,11 @@
         {
           "number": null,
           "title": "go.mod: bump github.com/klauspost/compress for govulncheck",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ipn/ipnlocal,ipn/localapi: fix flaky TestResumeIPNBus",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58325,7 +58340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:21:46.923Z",
+      "verified_at": "2026-11-07T18:17:11.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

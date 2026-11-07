@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T18:09:52.842Z",
-    "lastVerified": "2026-11-07T18:09:52.842Z",
+    "lastChecked": "2026-11-07T18:17:14.276Z",
+    "lastVerified": "2026-11-07T18:17:14.276Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,12 +252,12 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T17:40:52.325Z",
-    "lastVerified": "2026-11-07T17:40:52.325Z",
+    "lastChecked": "2026-11-07T18:17:10.791Z",
+    "lastVerified": "2026-11-07T18:17:10.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -266,7 +266,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ccd0412c"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -790,14 +791,14 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:52:50.595Z",
-    "lastVerified": "2026-11-05T19:52:50.595Z",
+    "lastChecked": "2026-11-07T18:17:06.803Z",
+    "lastVerified": "2026-11-07T18:17:06.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
+    "contentHash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2257,14 +2258,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T03:21:44.115Z",
-    "lastVerified": "2026-11-07T03:21:44.115Z",
+    "lastChecked": "2026-11-07T18:17:09.591Z",
+    "lastVerified": "2026-11-07T18:17:09.591Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
+    "contentHash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4768,9 +4769,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-11-05T19:00:19.057Z",
+    "lastChecked": "2026-11-07T18:17:08.230Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-11-05T19:00:19.057Z"
+    "lastVerified": "2026-11-07T18:17:08.230Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -6166,12 +6167,12 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T18:57:33.397Z",
-    "lastVerified": "2026-11-04T18:57:33.397Z",
+    "lastChecked": "2026-11-07T18:17:05.338Z",
+    "lastVerified": "2026-11-07T18:17:05.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
+    "contentHash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
     "promotedRulesCount": 1,
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
@@ -7786,9 +7787,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-05T14:22:34.732Z",
+    "lastChecked": "2026-11-07T18:16:55.625Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-05T14:22:34.732Z"
+    "lastVerified": "2026-11-07T18:16:55.625Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -11559,9 +11560,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-11-04T01:00:39.306Z",
+    "lastChecked": "2026-11-07T18:16:58.167Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-11-04T01:00:39.306Z"
+    "lastVerified": "2026-11-07T18:16:58.167Z"
   },
   "iplug2-iplug2": {
     "name": "iPlug2",

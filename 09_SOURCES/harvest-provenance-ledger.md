@@ -8049,3 +8049,6 @@ Every entry in this ledger must capture:
 | `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `dcc81ba3` | Multi-dimensional audit evidence | 2026-11-07T18:09:42.535Z |
 | `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `cfc3bc8a` | Multi-dimensional audit evidence | 2026-11-07T18:09:42.590Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `30b864ff` | Multi-dimensional audit evidence | 2026-11-07T18:09:50.249Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `e35d0d49` | Multi-dimensional audit evidence | 2026-11-07T18:17:08.528Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `f0b9c443` | Multi-dimensional audit evidence | 2026-11-07T18:17:08.696Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6183501e` | Multi-dimensional audit evidence | 2026-11-07T18:17:11.664Z |

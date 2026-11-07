@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T18:09:50.255Z",
-  "total_cycles_completed": 8005,
-  "total_learnings_persisted": 8005,
-  "total_rules_promoted": 7652,
+  "last_updated": "2026-11-07T18:17:11.677Z",
+  "total_cycles_completed": 8008,
+  "total_learnings_persisted": 8008,
+  "total_rules_promoted": 7655,
   "history": [
-    {
-      "timestamp": "2026-11-05T23:55:41.538Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T00:02:44.027Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T00:02:51.502Z",
-      "repository": "Permify/permify",
-      "learningId": "learn-github-permify-permify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T00:02:55.300Z",
       "repository": "storybookjs/storybook",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T18:09:50.255Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:17:08.534Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:17:08.702Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:17:11.677Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

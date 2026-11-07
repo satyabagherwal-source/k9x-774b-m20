@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "46f93879",
+    "sourceVersion": "6183501e",
     "license": "BSD-3-Clause",
-    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
-    "lastHarvestedAt": "2026-11-07T03:21:47.050Z",
+    "contentHash": "1b6281a5343a613fb936ccbff4138b12e6a5d2c9203f49f235f8fd993fbf6e68",
+    "lastHarvestedAt": "2026-11-07T18:17:11.664Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "4abff15e",
+    "sourceVersion": "e35d0d49",
     "license": "MIT",
-    "contentHash": "427256d5640acf53ae92a08d520446d82b7a6dc974737d4ba44cec940ef2cf6c",
-    "lastHarvestedAt": "2026-11-04T18:57:34.541Z",
+    "contentHash": "b7d6003e58357ace7286079b828e57658563f9e438b77f1decd1806f8280dbde",
+    "lastHarvestedAt": "2026-11-07T18:17:08.528Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "660c438c",
+    "sourceVersion": "f0b9c443",
     "license": "Apache-2.0",
-    "contentHash": "31e8f199005376520054cf9023a3ce4fe658b8fdbef8a114897c6fd116c597dc",
-    "lastHarvestedAt": "2026-11-05T19:52:52.890Z",
+    "contentHash": "53861e02bc1cbfbca770378a66a146fe86c82da5c83ae9f3ba630608a4ed4d60",
+    "lastHarvestedAt": "2026-11-07T18:17:08.696Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
