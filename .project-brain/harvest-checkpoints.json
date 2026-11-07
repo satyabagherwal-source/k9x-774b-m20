@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T17:48:09.632Z",
+  "last_updated": "2026-11-07T18:02:49.307Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
-      "verified_at": "2026-11-06T22:36:17.988Z",
+      "content_hash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
+      "verified_at": "2026-11-07T17:57:53.320Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:36:17.988Z"
+      "last_updated": "2026-11-07T17:57:53.320Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
-      "verified_at": "2026-11-05T18:45:49.330Z",
+      "content_hash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
+      "verified_at": "2026-11-07T17:57:51.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:45:49.330Z"
+      "last_updated": "2026-11-07T17:57:51.075Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
-      "verified_at": "2026-11-05T19:38:09.699Z",
+      "content_hash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
+      "verified_at": "2026-11-07T18:02:49.306Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T19:38:09.699Z"
+      "last_updated": "2026-11-07T18:02:49.306Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",

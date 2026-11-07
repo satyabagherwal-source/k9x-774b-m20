@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T17:48:09.496Z",
+  "last_updated": "2026-11-07T18:02:49.172Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18194,14 +18194,19 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "48427266",
-      "content_hash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
+      "source_version": "06fcb151",
+      "content_hash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Document SQL across the query guides (#1249)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Validate secondary builds without fencing writers (#1271)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18255,7 +18260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:45:49.189Z",
+      "verified_at": "2026-11-07T17:57:50.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45838,8 +45843,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bd9f64d7",
-      "content_hash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
+      "source_version": "5f2b3ade",
+      "content_hash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -45871,6 +45876,11 @@
         {
           "number": null,
           "title": "Label orientation by shape in all ARC datasets",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Apply published Rust guidelines to the crate",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46164,7 +46174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:36:17.856Z",
+      "verified_at": "2026-11-07T17:57:53.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47250,14 +47260,19 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "47f009ff",
-      "content_hash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
+      "source_version": "763f4021",
+      "content_hash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bump follow-redirects from 1.16.1 to 1.16.2 in /website (#4908)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "harden audit violation export and enable it by default (beta) (#4901)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47286,7 +47301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T19:38:09.572Z",
+      "verified_at": "2026-11-07T18:02:49.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

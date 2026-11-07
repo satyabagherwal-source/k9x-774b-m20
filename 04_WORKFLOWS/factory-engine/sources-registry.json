@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T17:48:12.187Z",
-    "lastVerified": "2026-11-07T17:48:12.187Z",
+    "lastChecked": "2026-11-07T18:02:51.887Z",
+    "lastVerified": "2026-11-07T18:02:51.887Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -455,22 +455,21 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T06:24:29.285Z",
-    "lastVerified": "2026-11-07T06:24:29.285Z",
+    "lastChecked": "2026-11-07T17:57:50.495Z",
+    "lastVerified": "2026-11-07T17:57:50.495Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
+    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bd9f64d7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -622,12 +621,12 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T19:38:07.765Z",
-    "lastVerified": "2026-11-05T19:38:07.765Z",
+    "lastChecked": "2026-11-07T17:57:43.242Z",
+    "lastVerified": "2026-11-07T17:57:43.242Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
+    "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2067,12 +2066,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T03:01:26.945Z",
-    "lastVerified": "2026-11-07T03:01:26.945Z",
+    "lastChecked": "2026-11-07T17:57:42.540Z",
+    "lastVerified": "2026-11-07T17:57:42.540Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2081,7 +2080,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8cda9065"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4629,14 +4629,14 @@
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T18:45:47.780Z",
-    "lastVerified": "2026-11-05T18:45:47.780Z",
+    "lastChecked": "2026-11-07T17:57:48.592Z",
+    "lastVerified": "2026-11-07T17:57:48.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
+    "contentHash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6023,9 +6023,9 @@
   "tiajinsha-jkvideo": {
     "name": "JKVideo",
     "officialUrl": "https://github.com/tiajinsha/JKVideo",
-    "lastChecked": "2026-11-04T18:35:29.886Z",
+    "lastChecked": "2026-11-07T17:57:37.509Z",
     "revisionIdentifier": "3592d036",
-    "lastVerified": "2026-11-04T18:35:29.886Z"
+    "lastVerified": "2026-11-07T17:57:37.509Z"
   },
   "diggerhq-digger": {
     "name": "digger",
@@ -7705,12 +7705,12 @@
     "lastVerified": "2026-11-06T15:05:47.838Z"
   },
   "zvec-ai-zvec-grep": {
-    "name": "zvec-ai/zvec-grep",
+    "name": "zvec-grep",
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T14:02:29.005Z",
-    "lastVerified": "2026-11-05T14:02:29.005Z",
+    "lastChecked": "2026-11-07T17:57:32.532Z",
+    "lastVerified": "2026-11-07T17:57:32.532Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
@@ -7719,7 +7719,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "407a3851"
   },
   "hf-google-embeddinggemma-2": {
     "name": "google/embeddinggemma-2",
@@ -11496,12 +11497,12 @@
     "lastVerified": "2026-11-05T16:59:44.586Z"
   },
   "rdflib-rdflib": {
-    "name": "RDFLib/rdflib",
+    "name": "rdflib",
     "officialUrl": "https://github.com/RDFLib/rdflib",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T00:46:24.001Z",
-    "lastVerified": "2026-11-04T00:46:24.001Z",
+    "lastChecked": "2026-11-07T17:57:35.030Z",
+    "lastVerified": "2026-11-07T17:57:35.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdflib-rdflib",
@@ -11510,7 +11511,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "114dd59d"
   },
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",

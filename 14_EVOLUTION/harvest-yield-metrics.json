@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T17:48:09.628Z",
-  "total_cycles_completed": 7999,
-  "total_learnings_persisted": 7999,
-  "total_rules_promoted": 7646,
+  "last_updated": "2026-11-07T18:02:49.303Z",
+  "total_cycles_completed": 8002,
+  "total_learnings_persisted": 8002,
+  "total_rules_promoted": 7649,
   "history": [
-    {
-      "timestamp": "2026-11-05T23:39:57.961Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:39:59.406Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:40:02.937Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T23:49:01.839Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T17:48:09.628Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:57:51.072Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:57:53.317Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:02:49.303Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

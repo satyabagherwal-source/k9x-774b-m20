@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bd9f64d7",
+    "sourceVersion": "5f2b3ade",
     "license": "Apache-2.0",
-    "contentHash": "da79e20241f7dde513eb8dddaa5bda71c1febd349bcd307fe585ddd5f7d52822",
-    "lastHarvestedAt": "2026-11-06T22:36:17.971Z",
+    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
+    "lastHarvestedAt": "2026-11-07T17:57:53.312Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "48427266",
+    "sourceVersion": "06fcb151",
     "license": "Apache-2.0",
-    "contentHash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
-    "lastHarvestedAt": "2026-11-05T18:45:49.323Z",
+    "contentHash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
+    "lastHarvestedAt": "2026-11-07T17:57:51.067Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "47f009ff",
+    "sourceVersion": "763f4021",
     "license": "Apache-2.0",
-    "contentHash": "4c26ae80f4f40ac4d407e2a25351d03e7c856e9e7594c6070d2d8030a23f0962",
-    "lastHarvestedAt": "2026-11-05T19:38:09.689Z",
+    "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
+    "lastHarvestedAt": "2026-11-07T18:02:49.291Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {

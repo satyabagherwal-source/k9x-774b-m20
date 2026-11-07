@@ -8043,3 +8043,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ccd0412c` | Multi-dimensional audit evidence | 2026-11-07T17:40:54.425Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `fdcdb1e5` | Multi-dimensional audit evidence | 2026-11-07T17:48:03.429Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `d032b9f2` | Multi-dimensional audit evidence | 2026-11-07T17:48:09.616Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `06fcb151` | Multi-dimensional audit evidence | 2026-11-07T17:57:51.067Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5f2b3ade` | Multi-dimensional audit evidence | 2026-11-07T17:57:53.312Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `763f4021` | Multi-dimensional audit evidence | 2026-11-07T18:02:49.291Z |

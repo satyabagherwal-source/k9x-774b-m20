@@ -8034,3 +8034,6 @@
 | `CYCLE-20261107-W6QD` | `2026-11-07T17:40:54.421Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06f64857...`) |
 | `CYCLE-20261107-5DR6` | `2026-11-07T17:48:03.426Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3a3d97ab...`) |
 | `CYCLE-20261107-5IJ0` | `2026-11-07T17:48:09.612Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8dc056ed...`) |
+| `CYCLE-20261107-HZ6F` | `2026-11-07T17:57:51.063Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f406eb6a...`) |
+| `CYCLE-20261107-I0WM` | `2026-11-07T17:57:53.302Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ce3e89bc...`) |
+| `CYCLE-20261107-ODAF` | `2026-11-07T18:02:49.287Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3249e7c0...`) |

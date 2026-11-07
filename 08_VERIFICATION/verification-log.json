@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-85V0",
-    "timestamp": "2026-11-05T05:39:02.700Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "3343ba0b062c78a9efc21c20e2a60bba04e84d42ca472c73061d834b2ee980b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-87BA",
-    "timestamp": "2026-11-05T05:39:04.582Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "c2a767d38e9f3fa4f81f672f34d8776fc4234bb1c43423161bb2e30ad103afa5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-8H8V",
-    "timestamp": "2026-11-05T05:39:17.455Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "de98343513ae7564e3b29f5b245a41ea1ba18a21f77e4320dd889270f655604e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-HYS5",
     "timestamp": "2026-11-05T05:46:40.085Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7445,51 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-HZ6F",
+    "timestamp": "2026-11-07T17:57:51.063Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-I0WM",
+    "timestamp": "2026-11-07T17:57:53.302Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ce3e89bce76b56fc65ae64d0fcdec63997315ee1dad872005fcf4c2f583483d0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-ODAF",
+    "timestamp": "2026-11-07T18:02:49.287Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

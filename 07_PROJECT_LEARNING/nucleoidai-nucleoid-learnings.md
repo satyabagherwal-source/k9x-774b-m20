@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `bd9f64d7`  
+> **Source Version**: `5f2b3ade`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:36:16.199Z  
+> **Timestamp**: 2026-11-07T17:57:51.776Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:36:15.875Z  
+> **Harvest Timestamp**: 2026-11-07T17:57:50.495Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -37,18 +37,536 @@
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
+### Core Architecture Module: `src/lang/ast/generator/statement.rs`
+```
+use super::{has_binding_metadata, signature};
+use crate::lang::ast::{ClassDecl, Expr, Function, FunctionBody, Stmt};
+
+/// Renders a run of statements as the body of a block, which is what a block or
+/// branch is keyed by in the graph.
+pub fn generate_all(statements: &[Stmt]) -> String {
+    statements
+        .iter()
+        .map(generate)
+        .collect::<Vec<_>>()
+        .join(";")
+}
+
+#[must_use]
+pub fn generate(statement: &Stmt) -> String {
+    match statement {
+        Stmt::Assign { target, value } => format!("{target}={value}"),
+        Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
+        Stmt::Expression(expression) => expression.to_string(),
+        Stmt::If {
+            condition,
+            consequent,
+            alternate,
+        } => {
+            let alternate = alternate
+                .as_ref()
+                .map(|branch| format!("else{{{}}}", generate(branch)))
+                .unwrap_or_default();
+            format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
+        }
+        Stmt::Block(statements) => format!("{{{}}}", generate_all(statements)),
+        Stmt::Return(Some(expression)) => format!("return {expression}"),
+        Stmt::Return(None) => "return".to_string(),
+        Stmt::Throw(expression) => format!("throw {expression}"),
+        Stmt::Delete(expression) => format!("delete {expression}"),
+        Stmt::Class(declaration)
+            if has_binding_metadata(&declaration.parameters)
+                || declaration
+                    .methods
+                    .iter()
+                    .any(|method| has_binding_metadata(&method.parameters)) =>
+        {
+            class_source(declaration)
+        }
+        Stmt::Class(declaration) => format!("class {}", declaration.name),
+        Stmt::Function(function) if has_binding_metadata(&function.parameters) => {
+            function_source(function)
+        }
+        Stmt::Function(function) => match &function.name {
+            Some(name) => format!("def {name}"),
+            None => "def".to_string(),
+        },
+        Stmt::For {
+            variable, iterable, ..
+        } => format!("for {variable} of {iterable}"),
+        Stmt::ForEntries {
+            key,
+            value,
+            iterable,
+            ..
+        } => format!("for {key},{value} of {iterable}"),
+        Stmt::While { condition, body } => {
+            format!("while({condition}){{{}}}", generate_all(body))
+        }
+        Stmt::Try { .. } => "try".to_string(),
+        Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
+        Stmt::Pass => "pass".to_string(),
+        Stmt::Suppose { target, body } => {
+            format!(
+                "{}suppose{{{}}}",
+                suppose_target(target.as_ref()),
+                generate_all(body)
+            )
+        }
+    }
+}
+
+fn suppose_target(target: Option<&Expr>) -> String {
+    target
+        .map(|target| format!("{target}="))
+        .unwrap_or_default()
+}
+
+// Default/rest-bearing declarations must not discard signature metadata. Keep
+// established compact labels for every other declaration; render the new
+// declarations' bodies with real suite syntax, including init/method data.
+pub(super) fn indent(source: &str) -> String {
+    source
+        .lines()
+        .map(|line| format!("    {line}"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+pub(super) fn source_all(statements: &[Stmt]) -> String {
+    if statements.is_empty() {
+        return "pass".to_string();
+    }
+    statements.iter().map(source).collect::<Vec<_>>().join("\n")
+}
+
+fn function_source(function: &Function) -> String {
+    let name = function.name.as_deref().unwrap_or_default();
+    let header = format!("def {name}({})", signature(&function.parameters));
+    match &function.body {
+        FunctionBody::Expression(body) => format!("{header}=>{body}"),
+        FunctionBody::Block(body) => format!("{header}:\n{}", indent(&source_all(body))),
+    }
+}
+
+fn class_source(class: &ClassDecl) -> String {
+    let mut header = format!("class {}({})", class.name, signature(&class.parameters));
+    let mut body = class
+        .fields
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
+    body.extend(class.constructor.iter().map(source));
+    body.extend(class.methods.iter().map(|method| function_source(method)));
+    if class.parent.is_none() && body.is_empty() {
+        return header;
+    }
+    header.push(':');
+    if let Some(parent) = &class.parent {
+        header.push(' ');
+        header.push_str(parent);
+    }
+    let body = if body.is_empty() {
+        "pass".to_string()
+    } else {
+        body.join("\n")
+    };
+    format!("{header}\n{}", indent(&body))
+}
+
+/// Suite-aware rendering inside a new default/rest-bearing declaration. The
+/// public graph-label generator deliberately abbreviates legacy declarations.
+fn source(statement: &Stmt) -> String {
+    match statement {
+        Stmt::Function(function) => function_source(function),
+        Stmt::Class(class) => class_source(class),
+        Stmt::If {
+            condition,
+            consequent,
+            alternate,
+        } => {
+            let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
+            if let Some(alternate) = alternate {
+                let body = match alternate.as_ref() {
+                    Stmt::Block(body) => source_all(body),
+                    branch => source(branch),
+                };
+                rendered.push_str("\nelse:\n");
+                rendered.push_str(&indent(&body));
+            }
+            rendered
+        }
+        Stmt::For {
+            variable,
+            iterable,
+            body,
+        } => {
+            format!(
+                "for {variable} of {iterable}:\n{}",
+                indent(&source_all(body))
+            )
+        }
+        Stmt::ForEntries {
+            key,
+            value,
+            iterable,
+            body,
+        } => format!(
+            "for {key},{value} of {iterable}:\n{}",
+            indent(&source_all(body))
+        ),
+        Stmt::While { condition, body } => {
+            format!("while {condition}:\n{}", indent(&source_all(body)))
+        }
+        Stmt::Try {
+            body,
+            parameter,
+            catch,
+        } => format!(
+            "try:\n{}\ncatch {parameter}:\n{}",
+            indent(&source_all(body)),
+            indent(&source_all(catch))
+        ),
+        Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
+        Stmt::Suppose { target, body } => format!(
+            "{}suppose:\n{}",
+            suppose_target(target.as_ref()),
+            indent(&source_all(body))
+        ),
+        statement => generate(statement),
+    }
+}
+
+```
+
+### Core Architecture Module: `src/lang/ast/parser/statement.rs`
+```
+use super::{ArgumentContext, MAX_NESTING, Parser, Program, SupposePremise};
+use crate::error::Result;
+use crate::lang::ast::lexer::{Keyword, Token};
+use crate::lang::ast::{Expr, Stmt};
+
+fn simple_statement(expression: Expr) -> Stmt {
+    match expression {
+        Expr::Assign { target, value } => Stmt::Assign {
+            target: *target,
+            value: *value,
+        },
+        other => Stmt::Expression(other),
+    }
+}
+
+fn names_suppose(expression: &Expr) -> bool {
+    matches!(expression, Expr::Identifier(name) if name == "suppose")
+}
+
+pub(super) fn heads_suppose(expression: &Expr) -> bool {
+    match expression {
+        Expr::Assign { value, .. } => names_suppose(value),
+        _ => names_suppose(expression),
+    }
+}
+
+impl Parser {
+    pub(super) fn program(&mut self) -> Result<Program> {
+        let mut statements = Vec::new();
+        let mut positions = Vec::new();
+
+        loop {
+            self.skip_separators();
+
+            if self.check(&Token::Eof) {
+                break;
+            }
+
+            let position = self.here();
+            self.statement(&mut statements)?;
+            positions.resize(statements.len(), position);
+        }
+
+        Ok(Program {
+            statements,
+            positions,
+        })
+    }
+
+    /// Parses the body introduced by a `:`, accepting both an indented block and
+    /// a single statement written on the same line.
+    pub(super) fn suite(&mut self) -> Result<Vec<Stmt>> {
+        self.expect(&Token::Colon)?;
+        self.suite_body()
+    }
+
+    /// Shares the existing body parser with conditional and exception clauses
+    /// whose real indentation has already qualified for colon omission.
+    pub(super) fn suite_body(&mut self) -> Result<Vec<Stmt>> {
+        if self.eat(&Token::Newline) || self.check(&Token::Indent) {
+            self.skip_newlines();
+            self.expect(&Token::Indent)?;
+
+            let mut statements = Vec::new();
+
+            loop {
+                self.skip_newlines();
+
+                if self.check(&Token::Dedent) || self.check(&Token::Eof) {
+                    break;
+                }
+
+                self.statement(&mut statements)?;
+            }
+
+            self.eat(&Token::Dedent);
+            Ok(statements)
+        } else {
+            let mut statements = Vec::new();
+            self.statement(&mut statements)?;
+
+            while self.eat(&Token::Semicolon) {
+                if matches!(self.peek(), Token::Newline | Token::Eof) {
+                    break;
+                }
+                self.statement(&mut statements)?;
+            }
+
+            Ok(statements)
+        }
+    }
+
+    /// Parses the statements of a `{ ... }` block.
+    pub(super) fn braced(&mut self) -> Result<Vec<Stmt>> {
+        self.expect(&Token::LeftBrace)?;
+
+        let mut statements = Vec::new();
+
+        loop {
+            self.skip_separators();
+
+            if self.eat(&Token::RightBrace) {
+                break;
+            }
+
+            if self.check(&Token::Eof) {
+                return Err(self.error("Unterminated block"));
+            }
+
+            self.statement(&mut statements)?;
+        }
+
+        Ok(statements)
+    }
+
+    pub(super) fn statement(&mut self, statements: &mut Vec<Stmt>) -> Result<()> {
+        self.depth += 1;
+
+        if self.depth > MAX_NESTING {
+            self.depth -= 1;
+            return Err(self.error("Statements are nested too deeply"));
+        }
+
+        let depth = self.depth;
+        let result = self.within(false, |parser| {
+            match parser.destructuring()? {
+                Some(declarations) => statements.extend(declarations),
+                None => statements.push(parser.statement_inner()?),
+            }
+            Ok(())
+        });
+        debug_assert_eq!(self.depth, depth);
+        self.depth -= 1;
+        result
+    }
+
+    pub(super) fn starts_statement(&self) -> bool {
+        self.position
+            .checked_sub(1)
+            .and_then(|previous| self.tokens.get(previous))
+            .is_none_or(|previous| {
+                matches!(
+                    previous.token,
+                    Token::Newline
+                        | Token::Semicolon
+                        | Token::Indent
+                        | Token::Dedent
+                        | Token::LeftBrace
+                        | Token::Colon
+                )
+            })
+    }
+
+    fn statement_inner(&mut self) -> Result<Stmt> {
+        if let Some(condition) = self.while_condition() {
+            let body = self.suite()?;
+            return Ok(Stmt::While { condition, body });
+        }
+
+        match self.peek().clone() {
+            Token::Keyword(Keyword::If) => self.if_statement(),
+            Token::Keyword(Keyword::For) => self.for_statement(),
+            Token::Keyword(Keyword::Class) => self.class_statement(),
+            _ if self.starts_function_declaration() => self.function_statement(),
+            Token::Keyword(Keyword::Try) => self.try_statement(),
+            Token::Keyword(Keyword::Pass) => {
+                self.advance();
+                Ok(Stmt::Pass)
+            }
+            Token::Keyword(Keyword::Return) => self.return_statement(),
+            Token::Keyword(Keyword::Throw) => {
+                self.advance();
+                Ok(Stmt::Throw(self.expression()?))
+            }
+            Token::Keyword(Keyword::Delete) => {
+                self.advance();
+                Ok(Stmt::Delete(self.expression()?))
+            }
+            Token::LeftBrace => Ok(Stmt::Block(self.braced()?)),
+            Token::Identifier(name) if self.is_type_declaration() => {
+                let type_name = self.declared_type()?;
+                Ok(Stmt::Declaration { name, type_name })
+            }
+            Token::Identifier(_) if self.is_assertion_statement_at(0) => {
+                self.advance();
+                self.advance();
+                // An ordinary call has an outer expression level in addition
+                // to each argument's level. Preserve that same nesting budget.
+                self.nested_expression(Self::assertion_expression)
+                    .map(Stmt::Expression)
+            }
+            _ => {
+                let expression = self.expression()?;
+
+                if self.check(&Token::ColonAssign) {
+                    return self.value_assignment(expression);
+                }
+
+                if let Some(statement) = self.suppose_statement(&expression)? {
+                    return Ok(statement);
+                }
+
+                Ok(simple_statement(expression))
+            }
+        }
+    }
+
+    fn return_statement(&mut self) -> Result<Stmt> {
+        self.advance();
+
+        if matches!(
+            self.peek(),
+            Token::Newline | Token::Semicolon | Token::Dedent | Token::RightBrace | Token::Eof
+        ) {
+            Ok(Stmt::Return(None))
+        } else {
+            Ok(Stmt::Return(Some(self.expression()?)))
+        }
+    }
+
+    fn value_assignment(&mut self, target: Expr) -> Result<Stmt> {
+        self.check_path_target(&target, "Invalid value assignment target")?;
+        self.advance();
+        let value = self.expression()?;
+        Ok(Stmt::ValueAssign { target, value })
+    }
+
+    fn suppose_statement(&mut self, expression: &Expr) -> Result<Option<Stmt>> {
+        if !heads_suppose(expression) {
+            return Ok(None);
+        }
+        let target = match expression {
+            Expr::Assign { target, .. } => Some(target.as_ref().clone()),
+            _ => None,
+        };
+
+        let mut body = Vec::new();
+        if !self.check(&Token::Colon) {
+            let Some(premise) = self.suppose_premise() else {
+                return Ok(None);
+            };
+            body.push(premise);
+        }
+        body.extend(self.suite()?);
+
+        Ok(Some(Stmt::Suppose { target, body }))
+    }
+
+    pub(super) fn suppose_premise(&mut self) -> Option<Stmt> {
+        if self.starts_colon_statement_at(0)
+            || matches!(
+                self.peek(),
+                Token::Newline | Token::Semicolon | Token::Dedent | Token::RightBrace | Token::Eof
+            )
+        {
+            return None;
+        }
+
+        let attempt = (self.position, self.depth);
+        let outcome = if let Some(outcome) = self.suppose_premises.get(&attempt) {
+            outcome.clone()
+        } else {
+            let outcome = self.attempt_suppose_premise();
+            self.suppose_premises.insert(attempt, outcome.clone());
+            outcome
+        };
+        let SupposePremise { premise, end } = outcome?;
+        self.position = end;
+        Some(simple_statement(premise))
+    }
+
+    fn attempt_suppose_premise(&mut self) -> Option<SupposePremise> {
+        let start = self.position;
+        let outcome = self.clause_before_colon().map(|premise| SupposePremise {
+            premise,
+            end: self.position,
+        });
+        self.position = start;
+        let end = outcome.as_ref()?.end;
+        if self.words
+            && self.accepted(Self::attempt_suppose_premise).is_none()
+            && self.separates(start, end)
+        {
+            return None;
+        }
+        outcome
+    }
+
+    pub(super) fn accepted<T>(&mut self, parse: impl FnOnce(&mut Self) -> T) -> T {
+        let mut probe = Parser {
+            position: self.position,
+            depth: self.depth,
+            context: self.context,
+            options: self.options,
+            enclosed: self.enclosed,
+            ..Parser::new(std::mem::take(&mut self.tokens))
+        };
+        let parsed = parse(&mut probe);
+        self.tokens = probe.tokens;
+        parsed
+    }
+
+    pub(super) fn separates(&mut self, from: usize, colon: usize) -> bool {
+        self.accepted(|parser| {
+            parser.position = from;
+            parser.depth = parser.depth.saturating_sub(1);
+            let mut statements = Vec::new();
+            for _ in from..=colon {
+                if parser.position > colon {
+                    return true;
+                }
+                if parser.stat
+```
+
 ### Core Architecture Module: `src/state.rs`
 ```
+mod mutation;
+
 use indexmap::IndexMap;
 use std::fmt;
 use std::sync::Arc;
 
-use crate::graph::ShapeKey;
 use crate::history::{History, HistoryKey};
 use crate::lang::ast::VersionSelector;
 use crate::lang::ast::generator::generate_all;
 use crate::lang::ast::{Expr, Function, Parameter, Stmt};
-use crate::runtime::Runtime;
 use crate::value::{ObjectData, ObjectId, Value};
 
 /// What a class-level statement is filed under on its class.
@@ -137,7 +655,8 @@ impl ClassData {
 /// Variable and named-function bindings share a namespace; runtime writes keep
 /// their typed stores mutually exclusive.
 ///
-/// Runtime writes record before-images through the methods below.
+/// Runtime writes record before-images through the `Runtime` methods in
+/// `state::mutation`.
 /// [`Transaction::rollback`](crate::transaction::Transaction::rollback)
 /// restores those before-images without recording new writes.
 #[derive(Debug, Clone, Default)]
@@ -316,6 +835,19 @@ impl State {
     }
 }
 
+```
+
+### Core Architecture Module: `src/state/mutation.rs`
+```
+use std::sync::Arc;
+
+use super::ClassData;
+use crate::graph::ShapeKey;
+use crate::history::{History, HistoryKey};
+use crate::lang::ast::Function;
+use crate::runtime::Runtime;
+use crate::value::{ObjectData, ObjectId, Value};
+
 /// Every write to the state.
 ///
 /// Each operation records the before-image and performs the write together,
@@ -364,7 +896,155 @@ impl Runtime {
         property: &str,
         value: Value,
     ) -> bool {
-        if !self.state.objects.contains_key(obj
+        if !self.state.objects.contains_key(object) {
+            self.insert_object(object.clone(), ObjectData::new(None));
+        }
+
+        let before = self.state.property(object, property).cloned();
+        let changed = before
+            .as_ref()
+            .is_none_or(|before| !before.same_value(&value));
+        let added = before.is_none();
+        if added {
+            self.transaction.record_property_added(object, property);
+        } else {
+            self.transaction.record_property(object, property, before);
+        }
+        if changed {
+            self.append_history(
+                HistoryKey::Property(object.clone(), property.to_string()),
+                &value,
+            );
+        }
+
+        if let Some(data) = self.state.object_mut(object) {
+            data.properties.insert(property.to_string(), value);
+        }
+        if added {
+            self.queue_entries_change(object);
+        }
+        changed
+    }
+
+    fn queue_entries_change(&mut self, object: &ObjectId) {
+        self.queue_shape_change(&ShapeKey::Entries(object.clone()));
+    }
+
+    /// `state.delete` for a top-level name, reporting what was there.
+    pub(crate) fn remove_variable(&mut self, name: &str) -> Option<Value> {
+        let before = self.state.variables.get(name).cloned();
+        self.transaction.record_variable(name, before.clone());
+        self.state.variables.shift_remove(name);
+        self.remove_history(HistoryKey::Variable(name.to_string()));
+        before
+    }
+
+    /// `state.delete` for a property.
+    pub(crate) fn remove_property(&mut self, object: &ObjectId, property: &str) -> Option<Value> {
+        let removed = self
+            .state
+            .object_mut(object)
+            .and_then(|data| data.properties.shift_remove_full(property));
+        let before = if let Some((index, _, value)) = removed {
+            self.transaction
+                .record_property_removed(object, property, index, value.clone());
+            self.queue_entries_change(object);
+            Some(value)
+        } else {
+            self.transaction.record_property(object, property, None);
+            None
+        };
+        self.remove_history(HistoryKey::Property(object.clone(), property.to_string()));
+
+        before
+    }
+
+    pub(crate) fn insert_object(&mut self, id: ObjectId, data: ObjectData) {
+        if self.transaction.needs_object(&id) {
+            let before = self.state.objects.get(&id).cloned();
+            self.transaction.record_object(&id, before);
+        }
+
+        // Initial property maps (object literals and instance IDs) are writes
+        // too. Reusing a named identity preserves surviving slots and removes
+        // histories only for properties that actually cease to exist.
+        let removed: Vec<String> = self.state.object(&id).map_or_else(Vec::new, |before| {
+            before
+                .properties
+                .keys()
+                .filter(|property| !data.properties.contains_key(*property))
+                .cloned()
+                .collect()
+        });
+        let added = data
+            .properties
+            .keys()
+            .any(|property| self.state.property(&id, property).is_none());
+        if added || !removed.is_empty() {
+            self.queue_entries_change(&id);
+        }
+        for property in removed {
+            self.remove_history(HistoryKey::Property(id.clone(), property));
+        }
+        for (property, value) in &data.properties {
+            if self
+                .state
+                .property(&id, property)
+                .is_none_or(|before| !before.same_value(value))
+            {
+                self.append_history(HistoryKey::Property(id.clone(), property.clone()), value);
+            }
+        }
+        self.state.objects.insert(id, data);
+    }
+
+    pub(crate) fn remove_object(&mut self, id: &ObjectId) -> Option<ObjectData> {
+        let before = self.state.objects.get(id).cloned();
+        self.transaction.record_object(id, before.clone());
+        self.state.objects.shift_remove(id);
+        if let Some(data) = &before {
+            for property in data.properties.keys() {
+                self.remove_history(HistoryKey::Property(id.clone(), property.clone()));
+            }
+            if !data.properties.is_empty() {
+                self.queue_entries_change(id);
+            }
+        }
+        before
+    }
+
+    pub(crate) fn insert_class(&mut self, name: &str, data: ClassData) {
+        if self.transaction.needs_class(name) {
+            let before = self.state.classes.get(name).cloned();
+            self.transaction.record_class(name, before);
+        }
+
+        self.state.classes.insert(name.to_string(), data);
+    }
+
+    /// Changes a class in place â€” gaining an instance, or gaining a rule.
+    pub(crate) fn update_class(&mut self, name: &str, update: impl FnOnce(&mut ClassData)) {
+        if self.transaction.needs_class(name) {
+            let before = self.state.classes.get(name).cloned();
+            self.transaction.record_class(name, before);
+        }
+
+        if let Some(data) = self.state.classes.get_mut(name) {
+            update(data);
+        }
+    }
+
+    pub(crate) fn insert_function(&mut self, name: &str, function: Arc<Function>) {
+        if self.state.has_variable(name) {
+            self.remove_variable(name);
+        }
+
+        let before = self.state.functions.get(name).cloned();
+        self.transaction.record_function(name, before);
+        self.state.functions.insert(name.to_string(), function);
+    }
+}
+
 ```
 
 ### Core Architecture Module: `src/statement.rs`
@@ -436,7 +1116,6 @@ export async function declarations({
   const { declarations, output_canvas } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
-    crop_instances: false,
     messages: [
       {
         role: "user",
@@ -472,7 +1151,6 @@ export async function instances({
   const { instances } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
-    crop_instances: false,
     messages: [
       {
         role: "user",
@@ -514,10 +1192,49 @@ export async function value({
 
   const { x, y } = Matrix.locate(input_instance_matrix);
 
+  const { orientation } = await llm.generate({
+    puzzle_id,
+    only_puzzle_dataset,
+    few_shot: ({ dataset }) => ({
+      dataset: dataset.map(({ instances }) => ({
+        instances: instances.map(({ input_instance_matrix, input_value }) => ({
+          matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+          orientation: input_value.orientation,
+        })),
+      })),
+    }),
+    messages: [
+      {
+        role: "assistant",
+        content: `
+          instances:
+          ${JSON.stringify(
+            input_instances.map(({ input_instance_matrix, input_value }) => ({
+              matrix: Matrix.silhouette(Matrix.crop(input_instance_matrix)),
+              orientation: input_value.orientation,
+            }))
+          )}
+          `,
+      },
+      {
+        role: "user",
+        content: `
+          matrix:
+          ${JSON.stringify(
+            Matrix.silhouette(Matrix.crop(input_instance_matrix))
+          )}
+          json_format:
+          {
+            "orientation": <ORIENTATION>,
+          }
+        `,
+      },
+    ],
+  });
+
   const { implementation } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
-    crop_instances: true,
     messages: [
       {
         role: "assistant",
@@ -525,16 +1242,8 @@ export async function value({
           declarations:
           ${JSON.stringify(declarations)}
           input_instances:
-          ${JSON.stringify(
-            input_instances.map(
-              ({ instance_name, input_instance_matrix, implementation }) => ({
-                instance_name,
-                input_instance_matrix: Matrix.crop(input_instance_matrix),
-                implementation,
-              })
-            )
-          )}
-          `,
+          ${JSON.stringify(input_instances)}
+        `,
       },
       {
         role: "user",
@@ -545,9 +1254,9 @@ export async function value({
           ${JSON.stringify(Matrix.crop(input_instance_matrix))}
           input_x: ${x}
           input_y: ${y}
+          orientation: ${orientation}
           json_format:
           {
-            "orientation": <ORIENTATION>,
             "implementation": <IMPLEMENTATION>
           }
         `,
@@ -626,7 +1335,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "3aa6fb7a",
+  puzzle_id: string = "6d0aefbc",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -687,9 +1396,9 @@ export async function start(
         only_puzzle_dataset,
         instance_name,
         declarations,
-        input_instances: dataset.instances.filter(
-          ({ implementation }) => implementation
-        ),
+        input_instances: train_dataset.dataset
+          .flatMap(({ instances }) => instances)
+          .filter(({ implementation }) => implementation),
         input_matrix,
         input_instance_matrix,
         output_instance_matrix,
@@ -735,7 +1444,6 @@ export async function start(
       train_dataset,
       test_input_matrix,
       instance_name,
-      input_instances,
       input_instance_matrix,
     });
 
@@ -759,9 +1467,6 @@ export async function start(
       instance_name,
       test_input_matrix,
       train_dataset,
-      input_instances: input_instances.filter(
-        ({ output_instance_matrix }) => output_instance_matrix
-      ),
       input_instance_matrix,
       input_value,
       output_value,
@@ -852,216 +1557,6 @@ export { document } from "./dataset";
 
 ```
 
-### Core Architecture Module: `arc/src/lib/Markdown.ts`
-```
-export function json(markdown: string) {
-  const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
-
-  if (matches.length > 0) {
-    const lastMatch = matches[matches.length - 1];
-    return JSON.parse(lastMatch[1]);
-  }
-}
-
-```
-
-### Core Architecture Module: `arc/src/lib/Matrix.ts`
-```
-export function crop(matrix) {
-  return locate(matrix).matrix;
-}
-
-export function locate(matrix) {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0]?.length ?? 0;
-  let top: number = rows;
-  let bottom: number = -1;
-  let left: number = cols;
-  let right: number = -1;
-
-  for (let y: number = 0; y < rows; y++) {
-    const row = matrix[y];
-    if (row.length !== cols) {
-      throw new Error("Matrix must be rectangular for cropping");
-    }
-    for (let x: number = 0; x < cols; x++) {
-      const value: number = row[x];
-      if (value === 0) continue;
-      top = Math.min(top, y);
-      bottom = y;
-      left = Math.min(left, x);
-      right = Math.max(right, x);
-    }
-  }
-
-  if (bottom === -1) return { matrix: [], x: 0, y: 0 };
-  return {
-    matrix: matrix
-      .slice(top, bottom + 1)
-      .map((row) => row.slice(left, right + 1)),
-    x: left,
-    y: top,
-  };
-}
-
-export function pad(
-  matrix,
-  rows: number,
-  cols: number,
-  left: number,
-  top: number
-) {
-  if (rows < 0 || cols < 0) {
-    throw new Error("Padding dimensions must be non-negative");
-  }
-  if (left < 0 || top < 0) {
-    throw new Error("Padding offsets must be non-negative");
-  }
-  const sourceRows: number = matrix.length;
-  const sourceCols: number = matrix[0]?.length ?? 0;
-  const paddedRows: number = Math.max(rows, top + sourceRows);
-  const paddedCols: number = Math.max(cols, left + sourceCols);
-  const result = Array.from({ length: paddedRows }, () =>
-    Array(paddedCols).fill(0)
-  );
-
-  for (let y: number = 0; y < sourceRows; y++) {
-    const row = matrix[y];
-    if (row.length !== sourceCols) {
-      throw new Error("Matrix must be rectangular for padding");
-    }
-    for (let x: number = 0; x < sourceCols; x++) {
-      result[y + top][x + left] = row[x];
-    }
-  }
-
-  return result;
-}
-
-export function merge(...matrices) {
-  if (matrices.length === 0) {
-    throw new Error("At least one matrix is required for merging");
-  }
-  const numRows: number = Math.max(...matrices.map((matrix) => matrix.length));
-  const numCols: number = Math.max(
-    ...matrices.map((matrix) => matrix[0]?.length ?? 0)
-  );
-
-  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
-
-  for (const matrix of matrices) {
-    const padded = pad(matrix, numRows, numCols, 0, 0);
-    for (let i: number = 0; i < numRows; i++) {
-      for (let j: number = 0; j < numCols; j++) {
-        if (padded[i][j] !== 0) {
-          result[i][j] = padded[i][j];
-        }
-      }
-    }
-  }
-
-  return result;
-}
-
-export function canvas(matrix, type: string) {
-  switch (type) {
-    case "EXACT":
-      return matrix;
-    case "FIT":
-      return crop(matrix);
-    default:
-      throw new Error(`Unknown output canvas ${JSON.stringify(type)}`);
-  }
-}
-
-export function difference(matrix1, matrix2): number {
-  let mismatches: number = 0;
-  const rows: number = Math.max(matrix1.length, matrix2.length);
-
-  for (let i: number = 0; i < rows; i++) {
-    const row1 = matrix1[i];
-    const row2 = matrix2[i];
-
-    if (!row1 || !row2) {
-      // An extra empty row is still a shape mismatch.
-      mismatches += Math.max(row1?.length ?? 0, row2?.length ?? 0, 1);
-      continue;
-    }
-
-    const cols: number = Math.max(row1.length, row2.length);
-
-    for (let j: number = 0; j < cols; j++) {
-      if (row1[j] !== row2[j]) {
-        mismatches++;
-      }
-    }
-  }
-
-  return mismatches;
-}
-
-export function toString(matrix) {
-  matrix.forEach((row) => {
-    console.debug(`[${row.join(",")}]`);
-  });
-}
-
-```
-
-### Core Architecture Module: `arc/src/lib/Zoom.ts`
-```
-export function focus(matrix) {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0].length;
-
-  let xOffset: number = -1,
-    yOffset: number = -1,
-    xLength: number = 0,
-    yLength: number = 0;
-
-  for (let i: number = 0; i < rows; i++) {
-    for (let j: number = 0; j < cols; j++) {
-      if (matrix[i][j] !== 0) {
-        if (yOffset === -1) {
-          yOffset = i;
-        }
-        yLength = Math.max(yLength, i - yOffset + 1);
-
-        if (xOffset === -1 || j < xOffset) {
-          xOffset = j;
-        }
-        xLength = Math.max(xLength, j - xOffset + 1);
-      }
-    }
-  }
-
-  const object = matrix
-    .slice(yOffset, yOffset + yLength)
-    .map((row) => row.slice(xOffset, xOffset + xLength));
-
-  return {
-    x_position: xOffset,
-    y_position: yOffset,
-    object_matrix: object,
-  };
-}
-
-export function enlarge(matrix, rows: number, cols: number) {
-  const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
-
-  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
-
-  for (let i: number = 0; i < object_matrix.length; i++) {
-    for (let j: number = 0; j < object_matrix[i].length; j++) {
-      originalArray[yOffset + i][xOffset + j] = object_matrix[i][j];
-    }
-  }
-
-  return originalArray;
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1089,629 +1584,170 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd9f64d7` (2026-11-06)
-**Commit Message**: Label orientation by shape in all ARC datasets
+### Incident Patch 1: `8e5dcf14` (2026-11-07)
+**Commit Message**: Apply published Rust guidelines to the crate
 
-Give every state of every object in the 29 ARC instruction datasets the
-direction its own shape points, at the user's request to make
-`orientation` consistent, with their reference of directed 3-cell lines
-that point toward their heads:
+Add rust-guidelines.instructions.md, which makes the Rust API Guidelines,
+Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy
+required for the crate, ranked below the Power of 10 adaptation. It digests
+each source for the crate, records the deliberate divergences, including
+comment-free Rust source, and lists the static-verification gaps.
 
-- a straight line points toward its head, an end cell of its own color,
-  or takes its axis without one: vertical 0, horizontal 90, and the
-  diagonals 45 and 135
-- a corner or chevron points toward its vertex, and a marker keeps that
-- anything else is 0, and a turn adds its angle
+Index it in .claude/CLAUDE.md and reference it from CONTRIBUTING.md, the
+Rust and Rust-improvement rules, and the rust-improver agent.
 
-Relabelled datasets:
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 
-- 25d8a9c8, 25ff71a9, 9565186b, c9e6f938, 6150a2bd and ed36ccf7: their
-  rules already carry the new values into the outputs
-- 44f52bb0, 9af7a82c and e9afcf9a gain `$Obj.orientation = 0`, and
-  a85d4709 gains `$Obj.orientation = 90`
-- 794b24be and d631b094 set each output bar's orientation from its own
-  box
-- the genesis puzzle 3aa6fb7a, which the user chose to include: line
-  drops `endpoint_position` and points toward its color-8 endpoint (270,
-  90, 0 or 180), and curve's points are 0 while the color-4 rim makes a
-  V at 180
-
-The other 13 puzzle datasets, core and extension already followed the
-co
-
-**File**: `arc/README.md` (modified, +226/-107)
+**File**: `.claude/CLAUDE.md` (modified, +1/-0)
 ```diff
-@@ -288,16 +288,17 @@ one column wider when horizontal and one row taller when vertical. An
- extension corner keeps its 3 by 3 size, because its inside marker fills a
- cell of its own box. Every native output snapshot therefore carries its
- shape's output bounding box, so `output_value.x` and `output_value.y` equal
--`output_x` and `output_y`. The genesis rules match categorical colors,
--orientations, and endpoint sides with `is`, the spelling of `==` that
--[NUC 86](../docs/nuc-0086.md) adds, as in the line header
--`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
--such as `left` compares with its own text while nothing defines that name,
--and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
--and implementations keep their quoted strings, as in
--`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
--right operand of `is` reads as a word, and a bare name elsewhere would be
--undefined.
-+`output_x` and `output_y`. A line points toward its color-8 endpoint: its
-+orientation is 270, 90, 0, or 180 when the endpoint is on the left, on the
-+right, at the top, or at the bottom, and it keeps that orientation as it grows
-+away from the endpoint. A curve point, a single cell, is at orientation 0, and
-+its rim makes a V that points toward the point, its vertex: the color-4 rule
-+sets `$Obj.orientation = 180`, because its color-8 arms go up and the V points
-+down, while a color-9 point keeps 0, because its color-2 arms go down and the
-+V points up. The genesis rules match categorical colors and orientations with
-+`is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
-+line header `if $Obj.orientation is 270:`, and the line rules assign quoted
-+strings, as in `$Obj.extension_direction = 'right'`.
- 
- Instance `implementation` snippets use named constructor arguments whose names
- match the parameters in their class declarations. The canvas size is not one
-@@ -496,10 +497,17 @@ row's unchanged origin, as an erased output object keeps one in
- [composition](#8-visualize-output-instance). `output_canvas` is `EXACT`
- because each output keeps its input's canvas, including the cleared top or
- bottom rows that `FIT` would crop from every training output. Orientation is
--0 in both states because the rows are not turned and the bar is a distinct
--horizontal geometry. The declarations hold executable code only, without the
--`#` comments of the other datasets. The test pair follows the training pairs
--at the same level and is annotated by the same rules.
-+the direction each row points as a straight line of 3 cells. A row of exactly
-+two colors in which one end cell alone has its color has that cell as its head
-+and points toward it: 270 for the left end cells of `[2, 3, 3]`, `[7, 3, 3]`,
-+and `[3, 7, 7]`, and 90 for the right end cell of `[2, 2, 4]`. Every other
-+row, of one color or with its lone color in the middle cell, has no head and
-+takes the horizontal axis, 90. The rules leave `orientation` unchanged: each
-+bar keeps 90, and each cleared row, which has no output cell, keeps its input
-+orientation, 270 for three of the cleared rows and 90 for the other five. The
-+declarations hold executable code and one `#` comment, the orientation line
-+that every dataset places above its class. The test pair follows the training
-+pairs at the same level and is annotated by the same rules.
- 
- `dataset.25ff71a9.json` annotates the four original training pairs from
- `data\training\25ff71a9.json`, in order, followed by its two test pairs, six
-@@ -542,10 +550,15 @@ The `output_x`/`output_y` fields record the moved figure's nonzero
- bounding-box origin, equal to `output_value.x`/`output_value.y`.
- `output_canvas` is `EXACT` because each training output keeps its input's
- 3 by 3 canvas, including the empty top row that `FIT` would crop from every
--one of them. Orientation is 0 in both states of the training pairs because no
--training figure is turned. The declarations hold executable code only,
--without `#` comments. The test pairs follow the training pairs at the same
--level and are annotated by the same rules.
-+one of them. Orientation is the direction each figure points, the same in
-+both states because the figure moves without turning: 90 for the bars,
-+horizontal lines without a head; 135 and 45 for the trominoes, corners that
-+point toward their vertex, the bottom-right cell of the third figure's box and
-+the top-right cell of the fourth's; and 0 for the test pairs' vertical 2-cell
-+bar and single cell. The declarations hold executable code and one `#` comment,
-+the orientation line that every dataset places above its class. The test pairs
-+follow the training pairs at the same level and are annotated by the same
-+rules.
- 
- `dataset.27a28665.json` annotates the seven original training pairs from
- `data\training\27a28665.json`, in order, followed by its three test pairs,
-@@ -680,9 +693,10 @@ bounding-box origin, 0 and 0, equal to `output_value.x`/
+@@ -14,6 +14,7 @@ not a replacement for the policies it links to.
+ | [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, JSON-only LLM exchanges, and no automated ARC tests |
+ | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
+ | [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits and policy test that enforce them, and the known runtime-value recursion gap |
++| [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+ | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+ | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, and `NUC <number> <Title>` outcome commit messages |
 ```
 
-**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +41/-2)
+**File**: `.claude/agents/rust-improver.agent.md` (modified, +1/-1)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
--| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c` |
-+| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
- | Solver changes | None; one suggested change awaits review, not applied |
--| Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run |
-+| Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -35,7 +35,7 @@ other validation.
  
- ## Puzzle
-@@ -178,6 +178,38 @@ with the accepted runtime at `491512d`, and the caller replayed every pair
- offline against the unchanged grids, masks, positions and instance names. No
- solver run has measured this version yet.
+ ## Improvements
  
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+This dataset's labels already followed the convention, as the labeller
-+confirmed: the pattern and its continuation have no direction, so both states
-+are 0. Only the comment line changed, so the class, the rules, the grids,
-+masks, positions, instance names, implementations, and snapshots are as
-+before, and the gestalt overview above still holds.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -200,6 +232,10 @@ invocations and the dataset. It is not recorded here: its command, runtime,
- and result are unknown, so the difference before this dataset is unknown, not
- zero. The puzzle has not been in an **ARC puzzle report** workflow run.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **The runs saw the answer.** Resolved on 6-Nov-2026: the user decided this
-@@ -259,3 +295,6 @@ zero. The puzzle has not been in an **ARC puzzle report** workflow run.
-   `src/app.ts` is no longer this puzzle: commit `bca5ff6`, made after both
-   runs, set it to `44f52bb0`, and the pull that brought it in kept that later
-   value.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
+-- Apply current Rust idioms where they materially improve correctness, clarity, reliability, or maintainability. Do not manufacture cleanup or rewrite code that is already appropriate.
++- Apply current Rust idioms, as [rust-guidelines.instructions.md](../rules/rust-guidelines.instructions.md) and [power-of-ten.instructions.md](../rules/power-of-ten.instructions.md) define them, where they materially improve correctness, clarity, reliability, or maintainability. Do not manufacture cleanup or rewrite code that is already appropriate.
+ - Improve ownership and borrowing, concrete types, typed `Result` errors, API design, and shared helpers where needed. Avoid unnecessary cloning, casts, abstractions, and duplicated logic.
+ - Respect `Cargo.toml`'s `rust-version`, intended behavior, and public API semantic versioning. Do not upgrade dependencies or the minimum Rust version just to use a newer idiom.
+ - Reuse repository conventions and well-maintained crates rather than inventing infrastructure. Add dependencies only when the task requires them and document the choice.
 ```
 
-**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +40/-1)
+**File**: `.claude/rules/rust-guidelines.instructions.md` (added, +261/-0)
 ```diff
-@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
--| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026 |
-+| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
- | Solver changes | None specific to this puzzle |
-@@ -153,6 +153,38 @@ instance names stay unique across all datasets. `document()` loads it with
- the other 28 datasets. At the user's choice, no solver run has measured this
- version.
- 
-+### Orientation convention
+@@ -0,0 +1,261 @@
++---
++applyTo: "**"
++---
 +
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
++# Rust guidelines
 +
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
++The Rust crate (`Cargo.toml`, `src/`, `tests/`, `examples/`, `build.rs`)
++always follows the published principles below. They apply to every Rust
++change by every agent: features, fixes, refactors, NUC candidates and the
++[rust-improver](../agents/rust-improver.agent.md) pass.
 +
-+This dataset's labels already followed the convention, as the labeller
-+confirmed: each point is 0, and so is its output, the point with its ring of
-+markers. Only the comment line changed, so the class, the rules, the grids,
-+masks, positions, instance names, implementations, and snapshots are as
-+before, and the gestalt overview above still holds.
++| Source | Governs |
++| --- | --- |
++| [The Power of 10](https://spinroot.com/gerard/pdf/Power_of_Ten.pdf) | Control flow, bounds, assertions, checked results and zero warnings, adapted in [power-of-ten.instructions.md](power-of-ten.instructions.md) |
++| [Rust API Guidelines](https://rust-lang.github.io/api-guidelines) | The public API: naming, traits, type safety, dependability and future proofing |
++| [Google Rust Style Guide](https://google.github.io/styleguide/rustguide.html) | Code organization, imports, ownership, signatures, traits and implementation style |
++| [Microsoft Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guidelines/) | Universal, library, correctness, performance and AI-facing design |
++| [Clippy](https://clippy.rust-lang.org) | The lints that enforce much of the above |
 +
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
++## How they apply
 +
- ## Decision: locate the delta from the initial position (NUC 53 and NUC 55)
- 
- ### Why the world model has to move the object
-@@ -239,6 +271,10 @@ None of these runs measured the current version: the standard entries of
- chose offline verification for the respelling. Its difference is unknown, not
- zero.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
++- Every applicable guideline is required, not advisory. Deviate only where a
++  higher-ranked rule requires it, as recorded under
++  [Deliberate divergences](#deliberate-divergences).
++- The sections below digest each source for this crate. The source stays the
++  full text, and an item the digest leaves out still applies.
++- Precedence, highest first:
++  1. The user's explicit instructions and the other repository instruction
++     files.
++  2. The [Power of 10 adaptation](power-of-ten.instructions.md).
++  3. The Rust API Guidelines, which Google and Microsoft both build on.
++  4. The Microsoft and Google guidelines. Google's product-specific rules
++     (`[chrome]`, `[Fuchsia]`, per-codebase formatters and test frameworks)
++     do not apply.
++- Library API rules bind everything reachable from `src/lib.rs`; the binary
++  (`src/main.rs`, `src/terminal/`) follows the rest.
++- Apply the guidelines to new and touched code. Bring older code in line
++  incrementally under the
++  [Leave the world better](rust-improvement.instructions.md) policy, never
++  through unrelated rewrites. Report, rather than make, a conformance fix
++  that would break the public API; versions stay
++  [human-owned](versions.instructions.md).
++- Lints enforce what they can and review covers the rest. These guidelines add
++  no NUC hard criterion beyond the warning-denied Clippy build that the
++  [automatic acceptance rule](proposals.instructions.md#automatic-acceptance-caller-only)
++  already requires.
 +
- ## Open items
- 
- - **Runs from `c2fff09` on saw the answer.** Resolved on 6-Nov-2026: the user
-@@ -263,3 +299,6 @@ zero.
-   applied, because it is a redesign rather than the respelling the user asked
-   for: both branches repeat the four lines that shift the origin and grow the
-   point to 3 by 3, which a later model could state once.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
++## Rust API Guidelines
++
++- Naming: RFC 430 casing (C-CASE); `as_`, `to_` and `into_` conversions with
++  the matching `self` (C-CONV); getters without `get_` (C-GETTER); `iter`,
++  `iter_mut` and `into_iter`, with iterator types named after them (C-ITER,
++  C-ITER-TY); a consistent word order (C-WORD-ORDER); feature names without
++  placeholder words (C-FEATURE).
++- Interoperability: eagerly implement the common traits that fit (`Clone`,
++  `Copy`, `PartialEq`, `Eq`, `Hash`, `PartialOrd`, `Ord`, `Debug`, `Display`,
++  `Default`) (C-COMMON-TRAITS); convert through `From`, `TryFrom`, `AsRef`,
++  `AsMut` and `FromStr` (C-CONV-TRAITS); collections implement
++  `FromIterator` and `Extend` (C-COLLECT); types are `Send` and `Sync` where
++  possible (C-SEND-SYNC, M-TYPES-SEND); errors are meaningful and implement
++  `std::error::Error` (C-GOOD-ERR); generic readers and writers are taken by
++  value (C-RW-VALUE).
++- Predictability: constructors are static inherent functions (C-CTOR);
++  functions with a clear receiver are methods (C-METHOD); no out-parameters
++  (C-NO-OUT); operator overloads keep their usual meaning (C-OVERLOAD); only
++  smart pointers implement `Deref`, and they add no inherent methods
++  (C-DEREF, C-SMART-PTR); conversions live on the most specific type
++  (C-CONV-SPECIFIC).
++- Flexibility: expose intermediate results (C-INTERMEDIATE); let the caller
++  decide where data is copied (C-CALLER-CONTROL); minimize assumptions with
++  statically dispatched generics (C-GENERIC).
++- Type safety: newtypes for distinct values (C-NEWTYPE); enums and dedicated
++  types rather than `bool` or `Option` arguments (C-CUSTOM-TYPE); bit-flag
++  types for flag sets (C-BITFLAG); builders for complex values (C-BUILDER).
++- Dependability: validate arguments with typed errors (C-VALIDATE);
++  destructors never fail or block (C-DTOR-FAIL, C-DTOR-BLOCK).
++- Debuggability: every public type has a non-empty `Debug` (C-DEBUG,
++  C-DEBUG-NONEMPTY), which `missing_debug_implementations` enforces.
++- Future proofing: private struct fields (C-STRUCT-PRIVATE); newtypes hide
++  their representation (C-NEWTYPE-HIDE); sealed traits where downstream
++  implementations must not exist (C-SEALED); no derived bounds repeated on
++  data structures (C-STRUCT-BOUNDS); implementation details stay private 
 ```
 
-**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +40/-1)
+**File**: `.claude/rules/rust-improvement.instructions.md` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
--| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026 |
-+| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None; suggested changes await review, not applied |
-@@ -147,6 +147,38 @@ instance names stay unique across all datasets. `document()` loads it with
- the other 28 datasets. At the user's choice, no solver run has measured this
- version.
+@@ -4,7 +4,7 @@ applyTo: "**"
  
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+This dataset's labels already followed the convention, as the labeller
-+confirmed: each vertical stripe is a line without a head along the vertical
-+axis, 0 in both states. Only the comment line changed, so the class, the
-+rules, the grids, masks, positions, instance names, implementations, and
-+snapshots are as before, and the gestalt overview above still holds.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Runs
+ # Leave the world better than you found it
  
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -175,6 +207,10 @@ version with standard entries or the version with `is not` of 6-Nov-2026,
- which the user chose to verify offline, so their difference is unknown, not
- zero.
+-When adding a feature, review the code you touch and apply current Rust best practices where needed. Adopt improved idioms and methods incrementally, including ownership and borrowing, concrete types, typed errors, and maintainable APIs, so the codebase improves continuously.
++When adding a feature, review the code you touch and apply current Rust best practices, as [rust-guidelines.instructions.md](rust-guidelines.instructions.md) and [power-of-ten.instructions.md](power-of-ten.instructions.md) define them, where needed. Adopt improved idioms and methods incrementally, including ownership and borrowing, concrete types, typed errors, and maintainable APIs, so the codebase improves continuously.
  
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
+ Keep improvements focused on touched code and directly related helpers, proportional to the feature. Preserve intended behavior, respect public API semantic versioning, and cover affected non-ARC behavior with appropriate tests. For ARC-related changes, follow the no-tests policy in [arc.instructions.md](arc.instructions.md). Avoid unrelated rewrites, and follow the existing `cargo fmt` and warning-denied `cargo clippy` conventions.
  
- - **The run saw the answer.** Resolved on 6-Nov-2026: the user decided this is
-@@ -212,3 +248,6 @@ zero.
-   assignment value, such as `$Obj.flag = $Obj.color is 5`, gets `is` read as
-   a name and a `ReferenceError`. A dispatched **ARC Benchmark** run would
-   measure the effect.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
 ```
 
-**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +46/-1)
+**File**: `.claude/rules/rust.instructions.md` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
--| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026 |
-+| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
- | Solver changes | None; suggested changes await review, not applied |
-@@ -160,6 +160,44 @@ declarations, every snapshot replays on that runtime, and the instance names
- stay unique across all datasets. `document()` loads it with the other 28
- datasets. At the user's choice, no solver run has measured this version.
+@@ -10,4 +10,4 @@ Prefer popular, well-maintained crates over hand-rolled infrastructure — lexin
  
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+Each object is a row of three cells, a straight line. A row of one color, or
-+with its lone color in the middle cell, has no head and takes the horizontal
-+axis, 90; a row of exactly two colors whose one end cell alone has its color
-+points toward that head, 270 on the left and 90 on the right. All 15 rows
-+moved from 0, 12 to 90 and 3 to 270. The rules leave `orientation` unchanged,
-+so a row that becomes a gray bar keeps 90 and a cleared row, which has no
-+output cell, keeps its input orientation. No rule changed.
-+
-+The grids, masks, positions, instance names, tags, and every other property
-+are as before; only the orientation values changed, so the world model keeps
-+its level.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Runs
+ ## Open source
  
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -183,6 +221,10 @@ No solver run has measured any version of this dataset: the one run stopped
- before its first model request, and the user chose offline verification for
- the `is` version of 6-Nov-2026. The difference is unknown, not zero.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **No model credential.** The run's process had no `OPENROUTER_API_KEY` in
-@@ -224,3 +266,6 @@ the `is` version of 6-Nov-2026. The difference is unknown, not zero.
-   model that copies it straight into an assignment value, as above, gets `is`
-   read as a name and a `ReferenceError`. A dispatched **ARC Benchmark** run
-   would measure the effect.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
+-Nucleoid is published as open source under Apache-2.0, so everything is public-facing and follows mainstream Rust community practice rather than local invention: default `cargo fmt`, `cargo clippy` clean with warnings denied in CI, library in `src/lib.rs` with a thin binary, integration tests in `tests/`, examples in `examples/`, complete `Cargo.toml` metadata (`description`, `license`, `repository`, `readme`, `keywords`, `categories`, `rust-version`) before publishing, and semantic versioning on the public API. When a convention exists, default to it and flag any deliberate divergence.
++Nucleoid is published as open source under Apache-2.0, so everything is public-facing and follows mainstream Rust community practice rather than local invention: default `cargo fmt`, `cargo clippy` clean with warnings denied in CI, library in `src/lib.rs` with a thin binary, integration tests in `tests/`, examples in `examples/`, complete `Cargo.toml` metadata (`description`, `license`, `repository`, `readme`, `keywords`, `categories`, `rust-version`) before publishing, and semantic versioning on the public API. When a convention exists, default to it and flag any deliberate divergence. The published guidelines behind that practice, their precedence and the recorded divergences are in [rust-guidelines.instructions.md](rust-guidelines.instructions.md).
 ```
 
-**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +45/-2)
+**File**: `CONTRIBUTING.md` (modified, +5/-0)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
--| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record |
-+| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `EXACT` |
- | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
- | Solver changes | None; suggested changes await review, not applied |
--| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown |
-+| Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version |
- | Updated | 6-Nov-2026 |
+@@ -22,6 +22,11 @@ means no macros, trait objects or function pointers, and zero warnings from
+ pedantic Clippy and rustdoc. The lints in `src/lib.rs` and `src/main.rs`,
+ `clippy.toml` and `tests/power_of_ten.rs` enforce them.
  
- ## Puzzle
-@@ -113,6 +113,42 @@ regenerated every snapshot with the accepted runtime at `491512d`, and the
- caller replayed every pair offline against the unchanged grids, masks,
- positions and instance names. No solver run has measured this version yet.
++It also follows the Rust API Guidelines, Google's Rust Style Guide,
++Microsoft's Pragmatic Rust Guidelines and Clippy, ranked below the Power of 10
++rules in [rust-guidelines.instructions.md](.claude/rules/rust-guidelines.instructions.md),
++which digests them for the crate and records its deliberate divergences.
++
+ ### What lives where
  
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+Four of the six figures changed: the two horizontal bars are lines without a
-+head, 90, and the two three-cell corners point toward their vertices, 135 at
-+the bottom right and 45 at the top right. The vertical bar and the single cell
-+of the test pairs stay 0. A figure moves down without turning, so each output
-+keeps its input orientation, and no rule changed.
-+
-+The grids, masks, positions, instance names, tags, and every other property
-+are as before; only the orientation values changed, so the world model keeps
-+its level.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -134,6 +170,10 @@ runtime, the dataset, and `src/app.ts` were the same before and after the run.
- The invocation authorizes one run, so none was repeated. The puzzle has not
- been in an **ARC puzzle report** workflow run.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **No model credential.** As in the run of [25d8a9c8](ARC-NUC-25d8a9c8.md),
-@@ -164,3 +204,6 @@ been in an **ARC puzzle report** workflow run.
-   `ceil(listed puzzles / ARC_CONCURRENCY) * 30 + 20` minutes, within GitHub
-   Actions' 360-minute job limit. The workflow's 150-minute timeout covers its
-   20 listed puzzles.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
-```
-
-**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +41/-2)
-```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
--| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run |
-+| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `FIT` |
- | Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
- | Solver changes | None; two suggested changes await review, not applied |
--| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run |
-+| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run; none of the current version |
- | Updated | 6-Nov-2026 |
- 
- ## Puzzle
-@@ -144,6 +144,38 @@ runtime at `491512d`, and the caller replayed every pair offline against the
- unchanged grids, masks, positions and instance names. No solver run has
- measured this version yet.
- 
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+This dataset's labels already followed the convention, as the labeller
-+confirmed: each block has no direction, 0, and neither has its output point.
-+Only the comment line changed, so the class, the rules, the grids, masks,
-+positions, instance names, implementations, and snapshots are as before, and
-+the gestalt overview above still holds.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-@@ -163,6 +195,10 @@ report** workflow run.
- 
- Version 3 has not been run, so its difference is unknown, not zero.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **The run saw the answer.** Resolved on 6-Nov-2026: the user decided this is
-@@ -214,3 +250,6 @@ Version 3 has not been run, so its difference is unknown, not zero.
- - **Version 3 has no run.** `/arc-purposal 27a28665` stops without a run
-   while the dataset exists, so a run of version 3 needs the user's own
-   authorization, such as `bun start 27a28665` from `arc/`.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
-```
-
-**File**: `arc/docs/ARC-NUC-28bf18c6.md` (modified, +41/-2)
-```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/28bf18c6.json`](../data/training/28bf18c6.json) |
--| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances |
-+| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances; shared orientation comment added on 6-Nov-2026 |
- | Output canvas | `FIT` |
- | Nucleoid enhancements | None; the dataset uses accepted features only |
- | Solver changes | `output_canvas`, applied by `Matrix.canvas` |
--| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0 |
-+| Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version |
- | Updated | 6-Nov-2026 |
- 
- ## Puzzle
-@@ -93,6 +93,38 @@ regenerated every snapshot with the accepted runtime at `491512d`, and the
- caller replayed every pair offline against the unchanged grids, masks,
- positions and instance names. No solver run has measured this version yet.
- 
-+### Orientation convention
-+
-+On 6-Nov-2026 the user asked `/arc-purposal` to make `orientation` consistent
-+across all 29 instruction datasets, with a reference of eight directed 3-cell
-+lines, each of which points toward its head. Every state now takes the
-+direction its own shape points, by the convention in the
-+[README](../README.md#3-extract-instances): a line toward its head or along
-+its axis, a corner or chevron toward its vertex, and anything else 0, while a
-+turn adds its angle. Every dataset's first declaration also carries one shared
-+comment line, directly above its class, that states the convention for the
-+model:
-+
-+```nuc
-+# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)
-+```
-+
-+This dataset's labels already followed the convention, as the labeller
-+confirmed: each shape has no direction, so both states are 0. Only the comment
-+line changed, so the class, the rules, the grids, masks, positions, instance
-+names, implementations, and snapshots are as before, and the gestalt overview
-+above still holds.
-+
-+The arc-dataset worker made the change in an external staging directory with
-+the accepted runtime at `d3413e6` (last runtime change `7096171`), and every
-+snapshot reruns byte for byte on it. The caller's own offline check passed on
-+the staged file and again after integration: the pairs, grids, masks,
-+positions, and instance names are as before, every state's orientation matches
-+the convention's labeller, every snapshot replays on that runtime, and
-+`document()` loads the dataset with the other 28. No NUC was requested, so no
-+proposal strategy was selected and strategy learning did not apply. At the
-+user's choice, no solver run has measured this version.
-+
- ## Decision: `output_canvas` trims the composed matrix
- 
- ### Problem
-@@ -183,6 +215,10 @@ debug runtime and a 30-minute limit. The exit status is the difference score;
- seconds are the workflow's wall time for the puzzle, from each run's
- `arc-puzzle-report` artifact. No local `bun start 28bf18c6` run is recorded.
- 
-+None of these runs measured the orientation version of 6-Nov-2026: the user
-+chose offline verification for the batch, so its difference is unknown, not
-+zero.
-+
- ## Open items
- 
- - **Runs from `c2fff09` on saw the answer.** Resolved on 6-Nov-2026: the user
-@@ -195,3 +231,6 @@ seconds are the workflow's wall time for the puzzle, from each run's
-   expected output. The exact matches at `c2fff09`, `b90a525`, and `ed49ce3`
-   therefore do not show that the rule was inferred from the training pairs;
-   the runs at `3cca0aa` and `3f734a8`, which predate it, also matched exactly.
-+- **Orientation version unmeasured.** No solver run has measured the
-+  6-Nov-2026 orientation version, so whether consistent orientation labels
-+  change this puzzle's result is unknown.
+ | path | what it is |
 ```
 
 #### Recent Merged Pull Requests:
@@ -1740,60 +1776,28 @@ co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Label orientation by shape in all ARC datasets
+## X. Apply published Rust guidelines to the crate
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd9f64d7`: Label orientation by shape in all ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e5dcf14`: Apply published Rust guidelines to the crate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`output_x` and `output_y`. A line points toward its color-8 endpoint: its
-orientation is 270, 90, 0, or 180 when the endpoint is on the left, on the
-right, at the top, or at the bottom, and it keeps that orientation as it grows
-away from the endpoint. A curve point, a single cell, is at orientation 0, and
-its rim makes a V that points toward the point, its vertex: the color-4 rule
-sets `$Obj.orientation = 180`, because its color-8 arms go up and the V points
-down, while a color-9 point keeps 0, because its color-2 arms go down and the
-V points up. The genesis rules match categorical colors and orientations with
-`is`, the spelling of `==` that [NUC 86](../docs/nuc-0086.md) adds, as in the
-line header `if $Obj.orientation is 270:`, and the line rules assign quoted
-strings, as in `$Obj.extension_direction = 'right'`.
-the direction each row points as a straight line of 3 cells. A row of exactly
-two colors in which one end cell alone has its color has that cell as its head
-and points toward it: 270 for the left end cells of `[2, 3, 3]`, `[7, 3, 3]`,
-and `[3, 7, 7]`, and 90 for the right end cell of `[2, 2, 4]`. Every other
-row, of one color or with its lone color in the middle cell, has
+| [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`output_x` and `output_y`. The genesis rules match categorical colors,
-orientations, and endpoint sides with `is`, the spelling of `==` that
-[NUC 86](../docs/nuc-0086.md) adds, as in the line header
-`if $Obj.orientation is 90 and $Obj.endpoint_position is left:`. A bare word
-such as `left` compares with its own text while nothing defines that name,
-and no genesis program defines `left`, `right`, `up`, or `down`. Assignments
-and implementations keep their quoted strings, as in
-`$Obj.extension_direction = 'right'` and `endpoint_position='left'`: only the
-right operand of `is` reads as a word, and a bare name elsewhere would be
-undefined.
-0 in both states because the rows are not turned and the bar is a distinct
-horizontal geometry. The declarations hold executable code only, without the
-`#` comments of the other datasets. The test pair follows the training pairs
-at the same level and is annotated by the same rules.
-one of them. Orientation is 0 in both states of the training pairs because no
-training figure is turned. The declarations hold executable code only,
-without `#` comments. The test pairs follow the training pairs at the same
-level and are annotated by the same rules.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd9f64d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e5dcf14` are properly handled with clean fallback behavior.
