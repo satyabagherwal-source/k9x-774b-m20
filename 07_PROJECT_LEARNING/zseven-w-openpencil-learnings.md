@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `68d01235`  
+> **Source Version**: `2bbc658c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T09:29:35.778Z  
+> **Timestamp**: 2026-11-07T04:37:01.753Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T09:29:34.708Z  
+> **Harvest Timestamp**: 2026-11-07T04:37:00.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6991 stars
+- **Stars / Engagement**: 7093 stars
 
 ---
 
@@ -1802,15 +1802,11 @@ pub struct Account {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #231** (2026-08-30): **Mirror text first frame**
-  *Symptoms*: ### Version  v0.8.4  ### Platform  Web (browser)  ### Bug Description  Open AppImage v0.8.4 create frame create text field start typing (text starting from right side and mirrored)   ### Steps to Reproduce  https://github.com/user-attachments/assets/79f373f8-38d2-4dba-a3cb-ddd1e895cdae  ### Expected Behavior  Normal text  frame behaviour  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Bro, this isn't our project. Check out this post instead: https://x.com/FiniYang/status/2085410613581451267  Our interface doesn't look like this.
+- **Issue #280** (2026-11-06): **Memory cross-boundary**
+  *Symptoms*: ### Version  0.16  ### Platform  Web (browser)  ### Bug Description  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Steps to Reproduce  1. open openpencil 2. codex connects mcp for design   ### Expected Behavior  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
 
-- **Issue #230** (2026-08-30): **Very tiny interface font**
-  *Symptoms*: ### Version  0.8.4  ### Platform  Linux (native desktop)  ### Bug Description   in appImage v0.8.4 very small font! menu option - is correct, but interface elements are so small...  ### Steps to Reproduce  1) Open appImage 2) Interact with interface  ### Expected Behavior  In ideal - change interface font be myself or make same as menu font size   ### Screenshots / Recordings  <img width="1276" height="781" alt="Image" src="https://github.com/user-attachments/assets/271a2dc9-c81e-46cd-b886-0cf454439ca6" />  ### Additional Context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Bro, this isn't our project. Check out this post instead: https://x.com/FiniYang/status/2085410613581451267  Our interface doesn't look like this.
+- **Issue #267** (2026-10-31): **bug: duplicate BRUSH resource keys prevent a .fig file from opening**
+  *Symptoms*: Sorry, I opened this issue in the wrong repository. Closing it now.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1827,70 +1823,319 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68d01235` (2026-10-28)
-**Commit Message**: fix(install): fall back to the newest release when no stable release exists
+### Incident Patch 1: `be4cf9c8` (2026-10-29)
+**Commit Message**: fix(editor): add scoped ios account deletion
 
-`resolve_version` asks `/releases/latest`, which GitHub answers with 404 while every published tag
-is still a pre-release — the case for the whole pre-1.0 line. The documented default install command
-therefore failed with "could not resolve the latest release tag from GitHub" even though a usable
-release existed, and the error only mentioned the `OP_PRERELEASE` opt-in.
-
-When the stable lookup yields nothing and `OP_PRERELEASE` was not requested, read `/releases` and
-use the newest tag, printing a note that it is a pre-release and how to pin a version with
-`OP_VERSION`. With a stable release present the path is unchanged; `OP_PRERELEASE=1` and
-`OP_VERSION` keep their behaviour; when no release exists at all the existing error is unchanged.
-
-Both lookups now share `release_tag()`, so the JSON parsing is in one place.
-
-**File**: `scripts/install-op.sh` (modified, +17/-2)
+**File**: `crates/op-auth-bridge/src/hosted_access_tests.rs` (modified, +10/-0)
 ```diff
-@@ -49,6 +49,10 @@ detect_label() {
-   printf '%s-%s' "$os" "$arch"
+@@ -20,6 +20,7 @@ fn fixture() -> Value {
+         "issued_at_unix": NOW,
+         "expires_at_unix": NOW + 300,
+         "gateway_base_url": "https://gateway.example.test/v1",
++        "product": "openpencil",
+     })
  }
  
-+release_tag() {
-+  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
-+}
+@@ -237,3 +238,12 @@ fn development_v4_exports_fail_closed_before_runtime_initialization() {
+     ));
+     provider.cancel(id);
+ }
 +
- resolve_version() {
-   if [ -n "${OP_VERSION:-}" ]; then
-     printf '%s' "$OP_VERSION"
-@@ -59,13 +63,24 @@ resolve_version() {
-     return
-   fi
++#[test]
++fn legacy_or_other_product_access_cannot_bypass_product_deletion() {
++    let mut payload = fixture();
++    payload.as_object_mut().unwrap().remove("product");
++    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
++    payload["product"] = json!("another-product");
++    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
++}
+```
+
+**File**: `crates/op-auth-bridge/src/hosted_access_wire.rs` (modified, +4/-0)
+```diff
+@@ -16,6 +16,9 @@ struct AccessWire<'a> {
+     token_type: &'a str,
+     issuer: &'a str,
+     subject: &'a str,
++    // Mandatory for this consumer: an older signed runtime must not silently
++    // fall back to shared credentials when product deletion is enforced.
++    product: &'a str,
+     audience: &'a str,
+     scopes: [&'a str; 2],
+     issued_at_unix: u64,
+@@ -37,6 +40,7 @@ pub(crate) fn decode(bytes: &[u8], now: u64) -> Result<HostedAccess, HostedAcces
+         serde_json::from_slice(bytes).map_err(|_| HostedAccessError::InvalidPayload)?;
+     let lifetime = wire.expires_at_unix.checked_sub(wire.issued_at_unix);
+     if wire.version != 1
++        || wire.product != "openpencil"
+         || wire.token_type != "Bearer"
+         || wire.audience != "llm-gateway"
+         || wire.scopes != ["llm:models", "llm:invoke"]
+```
+
+**File**: `crates/op-auth-bridge/src/real.rs` (modified, +1/-0)
+```diff
+@@ -102,6 +102,7 @@ pub(crate) fn init(config: &AuthInitConfig) -> bool {
+         "device_name": config.device_name,
+         "platform": crate::platform_id(),
+         "app_version": config.app_version,
++        "hosted_product": "openpencil",
+     })
+     .to_string();
+     // SAFETY: pointer/length describe the live `json` buffer.
+```
+
+**File**: `crates/op-hosted-models/src/tests.rs` (modified, +1/-1)
+```diff
+@@ -280,7 +280,7 @@ impl op_auth_bridge::HostedAccessProvider for ReadyAfterSwitch {
+             "issuer":"https://sso.example.test", "subject":"01234567-89ab-cdef-0123-456789abcdef",
+             "audience":"llm-gateway", "scopes":["llm:models","llm:invoke"],
+             "issued_at_unix":now, "expires_at_unix":now+300,
+-            "gateway_base_url":"https://gateway.example.test/v1"})
++            "gateway_base_url":"https://gateway.example.test/v1", "product":"openpencil"})
+         .to_string()
+         .into_bytes();
+         Ok(HostedAccessPoll::Ready(HostedAccess::from_provider_json(
+```
+
+**File**: `packaging/ios/ACCOUNT_DELETION.md` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++# OpenPencil account deletion
++
++This feature deletes the OpenPencil product account. It preserves the shared
++ZSeven sign-in identity and other ZSeven products. Local source validation is
++not evidence that the new service endpoints or the replacement app build are
++deployed.
++
++## User flow
++
++1. In the iOS editor, open **More > Account > Delete OpenPencil Account**.
++2. Read the cloud and local deletion scope. The app opens the dedicated SSO
++   page in an in-app Safari sheet. Sign in again when recent authentication
++   is required, verify the displayed account, and confirm deletion.
++3. The service records a durable deletion job and blocks new OpenPencil
++   access. Both regional services must acknowledge cleanup. Previously
++   issued collaboration credentials require a 16-minute drain interval.
++   Outages can extend processing; an accepted request is not completion.
++4. The app verifies completion over HTTPS with its private receipt before
++   removing app-owned local data. Closing Safari, signing out, a callback,
++   an expired receipt, or an HTTP error cannot authorize local erasure.
++5. After cleanup, the app shows a completion/restart screen. Relaunch it
++   normally to start with clean local storage. The app never calls `exit(0)`.
++
++The pending receipt survives app restarts. An expired receipt can be renewed
++through identity verification without canceling or recreating the server
++job. A partial local cleanup retains its recovery marker and blocks editor
++startup until cleanup succeeds.
++
++## Data boundary
++
++| Removed or disabled | Preserved |
++| --- | --- |
++| Regional Hub session/profile copies, capture inbox, access-statistics profile, MCP credentials, explicitly OpenPencil-scoped Hosted credentials | Shared ZSeven user, email, password, linked identity providers, and other product sessions |
++| New OpenPencil collaboration and product-scoped Hosted access | Shared wallet, financial records, generic shared-service authorization and usage records |
++| This installation's OpenPencil-managed documents, autosaves, settings, bookmarks, local credentials and caches | Files exported outside this app's container, collaborators' copies, and files on other devices |
++
++A minimal product tombstone remains to reject old OpenPencil access; normal
++sign-in must not silently recreate the deleted product account. Shared
++identity and provider bindings are deliberately not deleted or globally
++revoked. Historical LLM tokens lack product ownership, so they cannot be
++bulk-erased without affecting other products. Older released clients can
++still use that generic shared-service path; do not describe it as revoked.
++
++## Completion contract
++
++- Native creation sends the current device ID and SHA-256 of a random
++  receipt secret to `/api/v1/openpencil/deletion-requests`. Only the hash
++  is stored server-side. The secret never appears in a URL or log.
++- The web review/confirmation routes check device ownership against the
++  authenticated SSO user and require authentication within 15 minutes for
++  confirmation. The confirmation literal is `DELETE_OPENPENCIL`.
++- Native status requests carry the receipt secret in `Authorization`.
++  Response request ID, device ID, scope and pinned origin must all match.
++  Only `state: deleted` authorizes local cleanup.
++- Unconfirmed requests last 30 minutes; confirmation extends the receipt
++  to seven days. New verified receipts can bind the same existing job.
++- Regional cleanup acknowledgements must match the exact subject, job,
++  scope and region. A redirect, partial response or one successful region
++  is insufficient.
++- Hub write permits stop new writes and drain admitted writes before
++  cleanup. Permits have no timeout that could let a slow writer resurrect
++  deleted data. Crash recovery requires the documented reconciliation tool
++  and proof that the exact recorded process has stopped.
++- Local cleanup stops all editor scenes and pending save work before
++  removing files. It must not follow symlinks into external storage or
++  delete shared browser cookies.
++
++## Release dependencies
++
++Complete these steps in the service repositories before submitting a build:
++
++1. Apply SSO migration `000010_openpencil_accounts` before deploying the
++   product guards. Existing shared-identity tables remain intact.
++2. Deploy the SSO status reader and the CN/Global Hub cleanup handlers with
++   dedicated mounted status/cleanup credentials. Verify exact region
++   acknowledgements and partial-failure recovery. Do not reuse billing,
++   canvas, LLM issuer, or user credentials.
++3. Deploy the Gateway change that bounds inference by credential expiry,
++   and the product-scoped Hosted endpoint/token implementation.
++4. Enable new deletion intake only after both cleanup services are ready.
++   Disabling intake must preserve existing tombstones, status checks and
++   job retries. Follow the service-specific configuration/runbooks.
++5. Rebuild, audit, sign an
+```
+
+**File**: `packaging/ios/AppReviewNotes.txt` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++DRAFT — DO NOT SUBMIT YET. Fill and verify every bracketed field. Deletion is implemented in source; service deployment, a new signed auth matrix/build, physical-device QA, video, reviewer credentials, commercial details and rights evidence remain required. This draft is not a completion claim.
++
++Hello App Review,
++
++Here are the six items requested under Guideline 2.1, also provided in App Review Information > Notes.
++
++1. Recording and physical-device QA
++Video: [ACCESSIBLE URL / ATTACHMENT]
++App version/build: [VERSION (BUILD)]
++Device, latest OS and test date: [IPHONE MODEL / OS / DATE]
++Other supported-device testing: [IPAD RESULTS]
++The video begins with launch and demonstrates editing, save/reopen/export, registration/login, deletion, AI and applicable sharing/paid-feature flows. [ADD VERIFIED TIMESTAMPS.]
++
++2. Purpose and audience
++OpenPencil is a vector design app for designers, developers and visual-document creators. It provides editable layouts, text, shapes, templates and exports. Optional AI helps create or revise designs. Local editing does not require an account; online features require sign-in.
++
++3. Access and main features
++Use More > New File or Open File. Save the attached [SAMPLE FILENAME] to Files, open it, edit text/shapes, then Save/Save As or Export to PNG, JPEG, SVG or PDF.
++Sign in through More > Sign In with the demo credentials in the private review fields. Region/account type: [DETAILS]. Other account types: [ACCESS DETAILS IF ANY].
++More > AI: select [VERIFIED MODEL], enter [PROMPT]; the demo account has [VERIFIED QUOTA/ENTITLEMENT]. Paid access/purchase method: [ACTUAL BUSINESS MODEL AND IAP IDS IF APPLICABLE].
++More > Account > Delete OpenPencil Account opens identity verification and confirmation. Both service regions are cleaned before verified local erasure. A 16-minute credential drain and any service outage can delay completion. Shared ZSeven identity, other products, shared billing/usage records and externally saved copies remain. [CONFIRM DEPLOYED BUILD AND DEVICE TEST.]
++Private collaboration uses invitations/addresses and owner-approved editor/viewer access. [DESCRIBE THE BUILD'S SHARING/REPORT/BLOCK CONTROLS; REPORT/BLOCK UI IS CURRENTLY MISSING.]
++
++4. External services
++ZSeven SSO provides authentication. Regional OpenPencil Hub services provide service discovery and collaboration support; Hosted AI uses a ZSeven gateway. Optional image search uses Openverse and Wikimedia.
++AI upstreams/models, collaboration infrastructure and payment/entitlement providers: [VERIFIED LIST AND ROLES]. Sign-in providers are listed below. [CONFIRM IMAGE ATTRIBUTION.]
++
++5. Regional differences
++The local editor is shared across regions. Mainland China uses sso.zseven.cn with WeChat, Alipay and Douyin; Global uses sso.zseven.tech with Apple, GitHub and Google. Saved choice or network/locale detection selects the region; changes apply on the next launch. Hosted models/entitlements depend on the regional service. [CONFIRM AI/CONTENT/COMMERCIAL DIFFERENCES.]
++
++6. Regulated services and protected material
++[CONFIRM REGULATED-SERVICE APPLICABILITY; ATTACH AUTHORIZATION IF APPLICABLE.]
++[LIST APPLICABLE FONT/ICON/TEMPLATE/SDK/OTHER MATERIAL LICENSES AND AUTHORIZATION ATTACHMENTS.]
++
++Thank you.
+```
+
+**File**: `packaging/ios/AppReviewRecordingChecklist.md` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++# iOS Guideline 2.1 补充材料与真机录屏
++
++对应英文回复及 Notes 草稿：[AppReviewNotes.txt](AppReviewNotes.txt)。必须按实际提交的构建补全，不能把源码检查或模拟器运行写成真机验收。当前这份文件是执行清单，不是已经完成的验收记录。
++
++## 当前阻塞项
++
++| 项目 | 当前证据与所需动作 |
++| --- | --- |
++| 真机 QA 与录屏 | 本次仅检测到模拟器。需要实际 iPhone 和 iPad 测试记录；录屏设备运行 Apple 要求的最新正式系统。 |
++| 账户删除 | 已按“仅注销 OpenPencil，保留共享 ZSeven 身份及其他产品”实现源代码；仍需部署两区服务、数据库迁移及新签名认证库，再用新构建完成端到端真机验收。详见 [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md)。 |
++| 审核登录 | 尚无已验证的审核账号。准备可持续使用且有足够权限/额度的账号，凭证只填 App Store Connect 的审核字段，不提交到 Git。 |
++| Hosted AI / 付费 | 源码有 Hosted 账号权益访问，iOS 未实现 StoreKit 购买流程。必须确认实际收费与权益来源、适用的购买方式以及审核账号访问，不得写成“没有付费功能”。 |
++| 协作与用户内容 | 通过邀请/地址加入，所有者接受或拒绝编辑者/查看者，访客确认所有者；未发现公开信息流。目前没有举报、屏蔽或移除已加入参与者的 UI。需要核对适用要求并补齐，不能直接填写“不适用”。 |
++| 第三方材料 | 已有项目和字体许可证文件，但尚未完成随包字体、图标、模板、SDK 及其他材料的完整授权核对。可选图片搜索使用 Openverse / Wikimedia；搜索来源不能代替每张图片的许可及署名核对。 |
++
++## 录制前
++
++- 安装将提交审核的同一版本和 build，记录 TestFlight 构建号、设备型号、系统版本和测试日期。代码修复必须进入新构建；旧构建不会随源码更新。
++- iPhone、iPad 都在当前支持范围内。分别测试启动、编辑、键盘、文件选择/保存/导出、登录、旋转及后台返回；保留结果和失败复现步骤。
++- 先按删除功能发布依赖完成部署，再用一次性测试账号验证。保持审核账号可用，勿用审核账号演示删除。用户将用 iPhone 录制；iPad 仍需独立真机测试。
++- 将 [Resources/sample.op](Resources/sample.op) 作为审核附件或提供可直接下载的地址，并在真机“文件”中准备好。该示例不会在正常启动时自动显示；通过 More > Open File 打开。
++- 审核账号在录屏地区可登录，并实际完成一次 Hosted AI 请求；仅看到模型列表不足以证明可以调用。
++- 本次源码验证 `bash packaging/ios/Tests/validate_sources.sh` 已通过；未生成新的 app/archive，也未做真机 QA。两地区隐私政策网页已返回 HTTP 200，内容一致；仍要在新构建中实测打开。
++- 不在录像里暴露密码、验证码、恢复码或私人设计。输入敏感信息时使用适当遮挡，但保留完整操作顺序和成功/失败结果。
++
++## 一次典型流程的录屏顺序
++
++1. 从设备主屏幕开始录制，点击 OpenPencil 图标，等待真实启动完成。记录语言和登录地区；不要从已打开的画布或模拟器开始。
++2. 打开 More > New File，创建文本和形状，修改文字、颜色或位置，演示撤销/重做与缩放。若实际启动进入其他首页，先录出进入编辑器的真实路径，并同步修改英文步骤。
++3. More > Save / Save As，通过系统“文件”保存；More > Open File 再次打开，确认内容一致。再打开提供给审核员的 `sample.op`。
++4. More > Export，选择 PNG、JPEG、SVG 或 PDF，展示系统保存界面和导出结果。iOS 不提供 WebP；iPad 额外测试其 Code 面板，别把桌面专属功能写进 iPhone 流程。
++5. More > Sign In，展示隐私政策入口、创建账户、验证邮箱及成功登录。用一次性邮箱完成注册；另演示已有审核账号的登录路径和 More > Account。若第三方登录在该地区提供，测试其实际返回流程。
++6. More > AI，选取该账号实际可用的 Hosted 模型，输入简短设计请求，等待真实结果，并展示结果可编辑。录出收费/权益入口及访问付费功能的实际步骤；若没有购买入口，说明其真实业务模式，不虚构 IAP 或绕过要求。
++7. 如果本构建允许用户向他人分享内容或协作，展示完整加入/共享流程和对应权限；根据适用情况录制举报内容、屏蔽用户及处理结果。相关能力欠缺时先修复，勿用文字代替未实现的机制。
++8. 用一次性测试账号，从 More > Account > Delete OpenPencil Account 进入删除流程，展示范围提示、身份确认、最终确认、“处理中”及完成结果。旧协作凭据需要 16 分钟失效等待，两区清理失败时可能更久；可以提供有时间标记的补充录像。确认 OpenPencil 专用账户及数据已清理，同时共享 ZSeven 身份、其他产品和钱包仍可用。不要声称通用共享 LLM 权限也已撤销。
++9. 重新启动应用，确认删除后的本地功能仍正常。展示任何需要联网/账号的功能如何提示用户。
++
++可以按设备或区域提供补充录像，但每段都标明对应 build、设备和系统。最终视频必须是实际设备操作记录；链接应能直接播放，不要求审核员注册额外账号。
++
++## 验收记录（完成后填写）
++
++| 设备 / 系统 | 版本 / build | 地区 | 启动编辑与文件 | 注册登录删除 | Hosted / 付费访问 | 协作 | 证据 |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| iPhone：待填 | 待填 | 待填 | 未测 | 未测 | 未测 | 未测 | 视频/日志待填 |
++| iPad：待填 | 待填 | 待填 | 未测 | 未测 | 未测 | 未测 | 视频/日志待填 |
++
++如某项不适用，写出提交构建中的依据及复核人，不把“未测”改写成“不适用”。模型、地区和权益由服务端决定时记录测试日期及所用账号类型，不将敏感凭证写入表格。
++
++## 填写与提交
++
++1. 补全英文草稿六项，删除所有占位符与草稿警告；每个“已完成”都要能对应上面的证据。
++2. 将相同内容填入 App Store Connect 的审核回复和 App Review Information > Notes。登录凭证填专用审核字段；多个账号类型需要分别提供访问说明。
++3. 上传/链接真机录屏、示例文件，以及适用的资质或授权材料。核对链接在未登录浏览器可访问。
++4. 选择包含修复的构建，检查实际界面截图和购买项目配置，再进行提审。上传成功、提交成功、等待审核和审核通过是不同状态，应分别记录。
++
++## 证据入口
++
++- [Apple App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)：2.1 完整性/审核访问、2.3.3 截图、3.1.1 购买及 5.1.1 隐私。
++- [Apple 账户删除说明](https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion)：支持创建账户时需提供应用内发起删除的路径；若网站完成删除，应直达删除页面。
++- [iOS README](README.md)：构建、认证依赖、文件操作与验证边界。
++- [设备支持配置](project.yml)：`TARGETED_DEVICE_FAMILY: "1,2"`。
++- [More 菜单](../../crates/op-editor-ui/src/widgets/mobile_more_panel.rs) 与 [触摸入口处理](../../crates/op-host-native/src/widget_host/press_chrome_tiers.rs)：文件、AI、登录/账户及协作入口。
++- [地区配置](Sources/SsoRegion.swift)、[SSO 客户端](Sources/SsoAuthClient.swift)、[账户页](Sources/AccountCenterViewController.swift)、[注册页](Sources/RegisterViewController.swift)：地区、登录注册及账户操作的源码依据。
++- [Hosted 运行时](../../crates/op-hosted-models/src/lib.rs) 与 [Hosted 认证桥](../../crates/op-auth-bridge/src/real_hosted_access.rs)：登录账号提供访问与模型服务，不能从公开源码推断某个付费账号已获授权。
++- [图片搜索](../../crates/op-engine-ffi/src/editor_image_search.rs)：可选 Openverse / Wikimedia 图片来源。
++- [项目许可证](../../LICENSE)、[字体声明](../shared/fonts/NOTICE.txt)、[私有认证桥声明](../../crates/op-auth-bridge/NOTICE)：授权核对起点，不代表全部第三方材料已审计完成。
+```
+
+**File**: `packaging/ios/README.md` (modified, +14/-0)
+```diff
+@@ -10,6 +10,11 @@ Gestures are interpreted by the engine, not the shell: single-finger tap selects
  
--  local api tag
-+  local api tag prerelease=0
-   if [ "${OP_PRERELEASE:-}" = "1" ] || [ "${OP_PRERELEASE:-}" = "true" ]; then
-     api="https://api.github.com/repos/${OWNER}/${REPO}/releases"
-+    prerelease=1
-   else
-     api="https://api.github.com/repos/${OWNER}/${REPO}/releases/latest"
-   fi
--  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
-+  tag="$(release_tag "$api")"
-+  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
-+    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
-+    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
-+    # documented default install command; OP_VERSION still pins an exact tag.
-+    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
-+    if [ -n "$tag" ]; then
-+      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
-+      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
-+    fi
-+  fi
-   if [ -z "$tag" ]; then
-     echo "error: could not resolve the latest release tag from GitHub" >&2
-     echo "       set OP_VERSION explicitly, e.g. OP_VERSION=X.Y.Z $0" >&2
+ Sign-in is platform-native: the engine's device-login flow hands its verification URL to a UIKit screen that performs email/password sign-in against the regional SSO JSON API and approves the pairing directly, while third-party providers stay inside the app: Apple runs the native AuthenticationServices sheet and exchanges its nonce-bound identity token at `POST /api/v1/auth/providers/apple/native-login` (a failure surfaces an inline error — the web page is never involved), and the other providers open the pairing login page in an in-app Safari sheet deep-linked to the tapped provider — the running pairing is approved there. Registration and password recovery are native sibling screens. The Account tile opens a native account center backed by the engine's read-only profile snapshot (the private auth runtime never exposes its device token). The third-party buttons are region-accurate: the login screen fetches `GET /api/v1/auth/providers?channel=web_mobile` from the pairing's origin, so the mainland site lists WeChat / Alipay / Douyin and the global site lists Apple / GitHub / Google without a hardcoded table. The sign-in region (Mainland China `sso.zseven.cn` / Global `sso.zseven.tech`) resolves from a persisted user choice, then an IP-informed probe of the global gateway's mainland redirect, then the device locale; changes apply on the next launch because the auth runtime initializes once per process.
+ 
++The login, registration, and account screens expose the regional iOS privacy
++policy in an in-app Safari sheet. Account management and privacy links follow
++the active authentication region even after the user saves a different
++next-launch preference. Region selection does not terminate the app.
++
+ ## Build inputs
+ 
+ From the repository root, build the archive matching the destination if it is
+@@ -71,6 +76,15 @@ hardening change requires a newly signed matrix and reviewed policy adoption.
+ 
+ ## App Store / TestFlight release
+ 
++For Guideline 2.1 responses, fill in [AppReviewNotes.txt](AppReviewNotes.txt)
++and follow [AppReviewRecordingChecklist.md](AppReviewRecordingChecklist.md).
++These are preparation documents, not evidence of a completed review or
++physical-device QA. [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md) describes the
++OpenPencil-only deletion flow, preserved shared ZSeven data, and required
++service/auth-matrix rollout. That rollout and the missing review evidence
++must be completed before resubmission; source validation alone does not
++establish App Store readiness.
++
+ The formal `v*` Rust release calls `.github/workflows/ios-app-store.yml` with
+ the exact release ref and source commit. The iOS upload is intentionally
+ independent of the GitHub Release asset job: an App Store Connect or review
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #264** (2026-10-29): fix(install): fall back to the newest release when no stable release exists (@PerryLink)
 - **PR #262** (2026-10-27): chore(nix): update release manifest to v0.8.5 (@Kayshen-X)
+- **PR #260** (2026-11-05): fix(codegen): export a text node's fill as its color (@jayhemnani9910)
+- **PR #256** (closed): feat(canvas): bind a time uniform to shader fills (@kemalcalak)
 - **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
 - **PR #251** (closed): feat(mcp): show agent cursor presence for client canvas writes (@gnoviawan)
-- **PR #248** (closed): feat(agent): add packaged browser snapshot capture tool (@caniko)
-- **PR #244** (closed): docs: sync README.zh.md with README.md (@PerryLink)
 
 ---
 
@@ -1910,45 +2155,37 @@ Both lookups now share `release_tag()`, so the JSON parsing is in one place.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. install): fall back to the newest release when no stable release exists
+## X. editor): add scoped ios account deletion
 
 **RULE**:
-When implementing operations in `scripts/install-op.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/op-auth-bridge/src/hosted_access_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68d01235`: install): fall back to the newest release when no stable release exists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be4cf9c8`: editor): add scoped ios account deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/install-op.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-auth-bridge/src/hosted_access_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-release_tag() {
-  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
-}
+        "product": "openpencil",
 
-  local api tag prerelease=0
-    prerelease=1
-  tag="$(release_tag "$api")"
-  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
-    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
-    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
-    # documented default install command; OP_VERSION still pins an exact tag.
-    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
-    if [ -n "$tag" ]; then
-      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
-      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
-    fi
-  fi
+#[test]
+fn legacy_or_other_product_access_cannot_bypass_product_deletion() {
+    let mut payload = fixture();
+    payload.as_object_mut().unwrap().remove("product");
+    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
+    payload["product"] = json!("another-product");
+    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  local api tag
-  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68d01235` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be4cf9c8` are properly handled with clean fallback behavior.

@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "68d01235",
+    "sourceVersion": "2bbc658c",
     "license": "MIT",
-    "contentHash": "6323c3e39c2f1384a46c976e25bb72ec104ab2267bf7ea71fd44e8663ac73a1d",
-    "lastHarvestedAt": "2026-10-31T09:29:36.468Z",
+    "contentHash": "1988674fdfd049579bf54afb9247ce0a83b4c7b63bd76addb16a4cf33ec52fd7",
+    "lastHarvestedAt": "2026-11-07T04:37:03.281Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "97b70a05",
+    "sourceVersion": "fd69a571",
     "license": "Apache-2.0",
-    "contentHash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
-    "lastHarvestedAt": "2026-11-05T17:29:05.990Z",
+    "contentHash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
+    "lastHarvestedAt": "2026-11-07T04:37:05.009Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

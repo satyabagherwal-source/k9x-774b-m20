@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T04:29:42.781Z",
-  "total_cycles_completed": 7958,
-  "total_learnings_persisted": 7958,
-  "total_rules_promoted": 7610,
+  "last_updated": "2026-11-07T04:37:05.016Z",
+  "total_cycles_completed": 7960,
+  "total_learnings_persisted": 7960,
+  "total_rules_promoted": 7612,
   "history": [
-    {
-      "timestamp": "2026-11-05T21:32:57.204Z",
-      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T21:40:04.330Z",
-      "repository": "davila7/claude-code-templates",
-      "learningId": "learn-github-davila7-claude-code-templates",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T21:40:19.288Z",
       "repository": "sfu-db/connector-x",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T04:29:42.781Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T04:37:03.287Z",
+      "repository": "ZSeven-W/openpencil",
+      "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T04:37:05.016Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

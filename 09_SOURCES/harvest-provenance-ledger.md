@@ -8002,3 +8002,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `0c4e2ab1` | Multi-dimensional audit evidence | 2026-11-07T04:10:36.998Z |
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `9c682911` | Multi-dimensional audit evidence | 2026-11-07T04:22:26.387Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `45e810c8` | Multi-dimensional audit evidence | 2026-11-07T04:29:42.775Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `2bbc658c` | Multi-dimensional audit evidence | 2026-11-07T04:37:03.281Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `fd69a571` | Multi-dimensional audit evidence | 2026-11-07T04:37:05.009Z |

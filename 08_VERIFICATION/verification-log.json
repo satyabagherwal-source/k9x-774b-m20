@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-PLXH",
-    "timestamp": "2026-11-05T03:32:38.597Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-YTZA",
-    "timestamp": "2026-11-05T03:39:48.934Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "2221b75f8f773dcf919db222fdb7cc1b74f2a40382abc259ccef06891db2b8e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-YVYN",
     "timestamp": "2026-11-05T03:39:51.503Z",
     "repository": "Jarvis322/macos-sysdata",
@@ -7490,6 +7460,36 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-W59O",
+    "timestamp": "2026-11-07T04:37:03.276Z",
+    "repository": "ZSeven-W/openpencil",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "1988674fdfd049579bf54afb9247ce0a83b4c7b63bd76addb16a4cf33ec52fd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-W6LP",
+    "timestamp": "2026-11-07T04:37:05.005Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T04:29:42.685Z",
+  "last_updated": "2026-11-07T04:37:04.913Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35964,14 +35964,19 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "97b70a05",
-      "content_hash": "4390e90e336b62b4b73348d865eeaf9e1eb52e8faaa79aa2a7cb659e0e147b7f",
+      "source_version": "fd69a571",
+      "content_hash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "meta: add --session-timeout to delay stale session cleanup (#7810)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (#7809)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -36045,7 +36050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:29:05.892Z",
+      "verified_at": "2026-11-07T04:37:04.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65269,11 +65274,16 @@
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "68d01235",
-      "content_hash": "6323c3e39c2f1384a46c976e25bb72ec104ab2267bf7ea71fd44e8663ac73a1d",
+      "source_version": "2bbc658c",
+      "content_hash": "1988674fdfd049579bf54afb9247ce0a83b4c7b63bd76addb16a4cf33ec52fd7",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "editor): add scoped ios account deletion",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2068,
           "title": "agent): route every Studio task family to the design pipeline",
@@ -65295,7 +65305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T09:29:36.365Z",
+      "verified_at": "2026-11-07T04:37:03.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

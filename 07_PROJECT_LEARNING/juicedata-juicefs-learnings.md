@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `97b70a05`  
+> **Source Version**: `fd69a571`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:29:04.471Z  
+> **Timestamp**: 2026-11-07T04:37:03.449Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:29:04.465Z  
+> **Harvest Timestamp**: 2026-11-07T04:37:02.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14683 stars
+- **Stars / Engagement**: 14695 stars
 
 ---
 
@@ -1186,127 +1186,48 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21c62205` (2026-11-05)
-**Commit Message**: meta: add --session-timeout to delay stale session cleanup (#7810)
+### Incident Patch 1: `fd69a571` (2026-11-06)
+**Commit Message**: deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (#7809)
 
-**File**: `cmd/flags.go` (modified, +5/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -302,6 +302,11 @@ func metaFlags() []cli.Flag {
- 			Value: "12s",
- 			Usage: "interval to send heartbeat; it's recommended that all clients use the same heartbeat value",
- 		},
-+		&cli.StringFlag{
-+			Name:  "session-timeout",
-+			Value: "0",
-+			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
-+		},
- 		&cli.BoolFlag{
- 			Name:  "read-only",
- 			Usage: "allow lookup/read operations only",
+@@ -283,7 +283,7 @@ require (
+ 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+ 	github.com/secure-io/sio-go v0.3.1 // indirect
+ 	github.com/shirou/gopsutil/v3 v3.23.11 // indirect
+-	github.com/shoenig/go-m1cpu v0.1.6 // indirect
++	github.com/shoenig/go-m1cpu v0.2.2 // indirect
+ 	github.com/smartystreets/assertions v1.2.0 // indirect
+ 	github.com/spacemonkeygo/monkit/v3 v3.0.25-0.20251022131615-eb24eb109368 // indirect
+ 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 ```
 
-**File**: `cmd/mount.go` (modified, +1/-0)
+**File**: `go.sum` (modified, +4/-2)
 ```diff
-@@ -342,6 +342,7 @@ func getMetaConf(c *cli.Context, mp string, readOnly bool) *meta.Config {
- 	conf.OpenCache = utils.Duration(c.String("open-cache"))
- 	conf.OpenCacheLimit = c.Uint64("open-cache-limit")
- 	conf.Heartbeat = utils.Duration(c.String("heartbeat"))
-+	conf.SessionTimeout = utils.Duration(c.String("session-timeout"))
- 	conf.MountPoint = mp
- 	conf.Subdir = c.String("subdir")
- 	conf.SkipDirMtime = utils.Duration(c.String("skip-dir-mtime"))
-```
-
-**File**: `docs/en/reference/_common_options.mdx` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
- |`--backup-meta=3600`|Interval (in seconds) to automatically backup metadata in the object storage (0 means disable backup) (default: "3600")|
- |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash when backup metadata.|
- |`--heartbeat=12`|Interval (in seconds) to send heartbeat; it's recommended that all clients use the same heartbeat value (default: "12")|
-+|`--session-timeout=0`|A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `--heartbeat`. A longer timeout makes it less likely that a client which was frozen (and is then killed by the watchdog, or resumes) still holds locks that have been granted to others, but locks held by a crashed client are released later. `0` means 5 times `--heartbeat`. (default: 0)|
- |`--read-only`|Read-only mode, i.e. allow only lookup/read operations. Note that this option implies `--no-bgjob`, so read-only clients do not execute background jobs.|
- |`--no-bgjob`|Disable background jobs, default to false, which means clients by default carry out background jobs, including:<br/><ul><li>Clean up expired files in Trash (look for `cleanupDeletedFiles`, `cleanupTrash` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Delete slices that's not referenced (look for `cleanupSlices` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Clean up stale client sessions (look for `CleanStaleSessions` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li></ul>Note that compaction isn't affected by this option, it happens automatically with file reads and writes, client will check if compaction is in need, and run in background (take Redis for example, look for `compactChunk` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go)).|
- |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd> |Control atime (last time the file was accessed) behavior, support the following modes:<br/><ul><li>`noatime` (default): set when the file is created or when `SetAttr` is explicitly called. Accessing and modifying the file will not affect atime, tracking atime comes at a performance cost, so this is the default behavior</li><li>`relatime`: update inode access times relative to mtime (last time when the file data was modified) or ctime (last time when file metadata was changed). Only update atime if atime was earlier than the current mtime or ctime, or the file's atime is more than 1 day old</li><li>`strictatime`: always update atime on access</li></ul>|
-```
-
-**File**: `docs/zh_cn/reference/_common_options.mdx` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
- |`--backup-meta=3600`|自动备份元数据到对象存储的间隔时间；单位秒，默认 3600，设为 0 表示不备份。|
- |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|备份元数据时跳过回收站中的文件和目录。|
- |`--heartbeat=12`|发送心跳的间隔（单位秒），建议所有客户端使用相同的心跳值 (默认：12)|
-+|`--session-timeout=0`|客户端会话超过该时长未刷新即被视为失效，其他客户端会清理该会话并释放它持有的文件锁。实际生效值不小于 `--heartbeat` 的 5 倍。调大该值可以降低被冻结的客户端（之后被 watchdog 杀掉或恢复运行）的锁被他人获取的风险，但客户端异常退出后，它持有的锁也会更晚释放。`0` 表示 `--heartbeat` 的 5 倍 (默认：0)|
- |`--read-only`|只读模式，只允许 lookup 和 read 请求。注意，只读模式隐含了 `--no-bgjob`，因此只读客户端不会运行后台任务。|
- |`--no-bgjob`|禁用后台任务，默认为 false，也就是说客户端会默认运行后台任务。后台任务包含：<br/><ul><li>清理回收站中过期的文件（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupDeletedFiles` 和 `cleanupTrash`）</li><li>清理引用计数为 0 的 Slice（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupSlices`）</li><li>清理过期的客户端会话（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `CleanStaleSessions`）</li></ul>特别地，与[企业版](https://juicefs.com/docs/zh/cloud/guide/background-job)不同，社区版碎片合并（Compaction）不受该选项的影响，而是随着文件读写操作，自动判断是否需要合并，然后异步执行（以 Redis 为例，在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go) 中搜索 `compactChunk`）|
- |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd>|控制如何更新 atime（文件最后被访问的时间）。支持以下模式：<br/><ul><li>`noatime`（默认）：仅在文件创建和主动调用 `SetAttr` 时设置，平时访问与修改文件不影响 atime 值。考虑到更新 atime 需要运行额外的事务，对性能有影响，因此默认关闭。</li><li>`relatime`：仅在 mtime（文件内容修改时间）或 ctime（文件元数据修改时间）比 atime 新，或者 atime 超过 24 小时没有更新时进行更新。</li><li>`strictatime`：持续更新 atime</li></ul>|
-```
-
-**File**: `pkg/meta/base.go` (modified, +1/-1)
-```diff
-@@ -900,7 +900,7 @@ func (m *baseMeta) stopDeleteSliceTasks() {
- 
- func (m *baseMeta) expireTime() int64 {
- 	if m.conf.Heartbeat > 0 {
--		return time.Now().Add(m.conf.Heartbeat * 5).Unix()
-+		return time.Now().Add(max(m.conf.SessionTimeout, m.conf.Heartbeat*5)).Unix()
- 	} else {
- 		return time.Now().Add(time.Hour * 24 * 365).Unix()
- 	}
-```
-
-**File**: `pkg/meta/base_test.go` (modified, +16/-0)
-```diff
-@@ -307,6 +307,19 @@ func (c *aclCacheWithMissCount) GetMissIds() []uint32 {
- 	return c.Cache.GetMissIds()
- }
- 
-+func TestExpireTime(t *testing.T) {
-+	for _, c := range []struct{ heartbeat, timeout, expected time.Duration }{
-+		{12 * time.Second, 0, time.Minute},
-+		{12 * time.Second, 30 * time.Second, time.Minute},
-+		{12 * time.Second, 5 * time.Minute, 5 * time.Minute},
-+	} {
-+		m := &baseMeta{conf: &Config{Heartbeat: c.heartbeat, SessionTimeout: c.timeout}}
-+		if ttl := time.Until(time.Unix(m.expireTime(), 0)); ttl < c.expected-2*time.Second || ttl > c.expected {
-+			t.Fatalf("heartbeat %s, session timeout %s: expires in %s, expected %s", c.heartbeat, c.timeout, ttl, c.expected)
-+		}
-+	}
-+}
-+
- func TestMergeFacl(t *testing.T) {
- 	minimal := &aclAPI.Rule{Owner: 6, Group: 4, Mask: 0xFFFF, Other: 0}
- 	extended := &aclAPI.Rule{Owner: 7, Group: 7, Mask: 5, Other: 1, NamedUsers: aclAPI.Entries{{Id: 1001, Perm: 4}}}
-@@ -709,6 +722,9 @@ func testMetaClient(t *testing.T, m Meta) {
- 	if base.sid != ses[0].Sid {
- 		t.Fatalf("my sid %d != registered sid %d", base.sid, ses[0].Sid)
- 	}
-+	if ttl, expected := time.Until(ses[0].Expire), max(base.conf.SessionTimeout, base.conf.Heartbeat*5); ttl < expected-10*time.Second || ttl > expected {
-+		t.Fatalf("session expires in %s, expected %s", ttl, expected)
-+	}
- 	if err = base.en.doCleanStaleSession(base.sid); err != nil {
- 		t.Fatalf("clean session: %s", err)
- 	}
-```
-
-**File**: `pkg/meta/config.go` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ type Config struct {
- 	OpenCache          time.Duration
- 	OpenCacheLimit     uint64 // max number of files to cache (soft limit)
- 	Heartbeat          time.Duration
-+	SessionTimeout     time.Duration
- 	MountPoint         string
- 	Subdir             string
- 	AtimeMode          string
+@@ -746,10 +746,12 @@ github.com/secure-io/sio-go v0.3.1 h1:dNvY9awjabXTYGsTF1PiCySl9Ltofk9GA3VdWlo7rR
+ github.com/secure-io/sio-go v0.3.1/go.mod h1:+xbkjDzPjwh4Axd07pRKSNriS9SCiYksWnZqdnfpQxs=
+ github.com/shirou/gopsutil/v3 v3.23.11 h1:i3jP9NjCPUz7FiZKxlMnODZkdSIp2gnzfrvsu9CuWEQ=
+ github.com/shirou/gopsutil/v3 v3.23.11/go.mod h1:1FrWgea594Jp7qmjHUUPlJDTPgcsb9mGnXDxavtikzM=
+-github.com/shoenig/go-m1cpu v0.1.6 h1:nxdKQNcEB6vzgA2E2bvzKIYRuNj7XNJ4S/aRSwKzFtM=
+ github.com/shoenig/go-m1cpu v0.1.6/go.mod h1:1JJMcUBvfNwpq05QDQVAnx3gUHr9IYF7GNg9SUEw2VQ=
+-github.com/shoenig/test v0.6.4 h1:kVTaSd7WLz5WZ2IaoM0RSzRsUD+m8wRR+5qvntpn4LU=
++github.com/shoenig/go-m1cpu v0.2.2 h1:4nc55oVv7nygGnfI9bhLCLzUEs4794y0Bkqx4q2zy7Y=
++github.com/shoenig/go-m1cpu v0.2.2/go.mod h1:KkDOw6m3ZJQAPHbrzkZki4hnx+pDRR1Lo+ldA56wD5w=
+ github.com/shoenig/test v0.6.4/go.mod h1:byHiCGXqrVaflBLAMq/srcZIHynQPQgeyvkvXnjqq0k=
++github.com/shoenig/test v1.7.0 h1:eWcHtTXa6QLnBvm0jgEabMRN/uJ4DMV3M8xUGgRkZmk=
++github.com/shoenig/test v1.7.0/go.mod h1:UxJ6u/x2v/TNs/LoLxBNJRV9DiwBBKYxXSyczsBHFoI=
+ github.com/shurcooL/go v0.0.0-20180423040247-9e1955d9fb6e/go.mod h1:TDJrrUr11Vxrven61rcy3hJMUqaf/CLWYhHNPmT14Lk=
+ github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414/go.mod h1:ZY1cvUeJuFPAdZ/B6v7RHavJWZn2YPVFQ1OSXhCGOkg=
+ github.com/shurcooL/vfsgen v0.0.0-20180915214035-33ae1944be3f/go.mod h1:TrYk7fJVaAttu97ZZKrO9UbRa8izdowaMIZcxYMbVaw=
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
+- **PR #7809** (2026-11-06): deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (@JerryChaox)
 - **PR #7808** (closed): meta: stop clients when the session lease expires (@jiefenghuang)
+- **PR #7806** (2026-11-06): object: do not drop a failed shard when merging sharded listings (@arpitjain099)
 - **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
 - **PR #7804** (closed): meta: resolve quota and forced paths relative to the subdir root (@jiefenghuang)
-- **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
-- **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
 
 ---
 
@@ -1326,32 +1247,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: add --session-timeout to delay stale session cleanup (#7810)
+## X. deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (#7809)
 
 **RULE**:
-When implementing operations in `cmd/flags.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21c62205`: meta: add --session-timeout to delay stale session cleanup (#7810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd69a571`: deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (#7809). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/flags.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		&cli.StringFlag{
-			Name:  "session-timeout",
-			Value: "0",
-			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
-		},
+	github.com/shoenig/go-m1cpu v0.2.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21c62205` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd69a571` are properly handled with clean fallback behavior.

@@ -7993,3 +7993,5 @@
 | `CYCLE-20261107-Y5AB` | `2026-11-07T04:10:36.995Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4ea818f0...`) |
 | `CYCLE-20261107-DCNK` | `2026-11-07T04:22:26.384Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06b53265...`) |
 | `CYCLE-20261107-MPDF` | `2026-11-07T04:29:42.771Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bd7c773f...`) |
+| `CYCLE-20261107-W59O` | `2026-11-07T04:37:03.276Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1988674f...`) |
+| `CYCLE-20261107-W6LP` | `2026-11-07T04:37:05.005Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ecf94fa1...`) |
