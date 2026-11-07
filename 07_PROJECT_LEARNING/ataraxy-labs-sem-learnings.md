@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `be77b50a`  
+> **Source Version**: `e527a5aa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:17:51.880Z  
+> **Timestamp**: 2026-11-07T04:10:23.310Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:17:51.673Z  
+> **Harvest Timestamp**: 2026-11-07T04:10:22.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3440 stars
+- **Stars / Engagement**: 3442 stars
 
 ---
 
@@ -1820,13 +1820,13 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #544** (2026-11-06): **Add jq support behind an opt-in lang-jq feature**
+  *Symptoms*: Adds jq (`.jq`) via `tree-sitter-jq` 1.0.2. Because that grammar is GPL-3.0-or-later, the feature is opt-in and **not** in `grammar-all`, pending your answer on #543. Moving it into `grammar-all` is a one-line change.  - Each top-level `def` is a `function` entity. A nested `def` stays inside its parent. A `def` after a top-level pipeline is still found. The trailing program is not an entity, so edits to it show up as orphan changes. - New `StripStrategy::HashLine` for jq. `//` is jq's alternative operator, so the generic stripper blanked every reference after `.x // …` on a line. - Edges come from the existing same-file word scan: `f(args)` is `calls`, a bare `f` is `TypeRef`. - Known limits: builtins and defs in other files are not resolved, and a `$name` variable that shares a def's name creates a false edge. That last one is an `#[ignore]`d test with the reason attached.  Tested on a real jq codebase: 11 defs across 6 files, no parse errors.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+
 - **Issue #542** (2026-11-04): **Parse Quarto documents (.qmd) as Markdown**
   *Symptoms*: Quarto's `.qmd` files are Markdown with a YAML header and executable code blocks. This registers `.qmd` with the Markdown plugin, so they get heading-based sections like `.md` and `.mdx`.  weave's merge setup reads its supported extensions from sem-core, so this is the change weave needs for Ataraxy-Labs/weave#216 (thanks @athyfr for the request).  Adds a test that `report.qmd` routes to the Markdown plugin and that its headings become entities, and lists `.qmd` in the README and docs.
   **Post-Mortem & Fix Analysis**:
   > [vc]: #VN8V8fvOIKoaR/1j8q2gWwkjIwlhqRq5irF5PPhvmSo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9HYW1RalQzbTg5OXdWZDlYNk1EVmMyUU56VDVMIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1xbWQtbWFya2Rvd24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiUEVORElORyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJzZW0tZG9jcy1naXQtcW1kLW1hcmtkb3duLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIn19XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9QXRhcmF4eS1MYWJzJnJlcG89c2VtJnByPTU0MiJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-p
-
-- **Issue #541** (2026-11-02): **chore(release): prepare Sem 0.29.1**
-  *Symptoms*: ## Changes Release Sem 0.29.1 with the already-merged intent-search ranking and agent hook fixes from #540. Plain-language lookup ranks code by body, name and path; scratch/log writes are no longer incorrectly rejected by the agent edit hook.  Synchronizes workspace crate versions, internal dependency versions, Cargo.lock and the npm wrapper, and records the patch release in the changelog. No additional runtime changes.  ## Validation - 9 package metadata and checksum tests passed. - git diff --check passed. - Existing main passed Windows, shared MCP lifecycle, lockfile and semver CI. - Modal: all 3 intent-search regression tests passed; the CLI tool-hook regression suite passed. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,292 +1843,348 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be77b50a` (2026-11-04)
-**Commit Message**: Parse Quarto documents (.qmd) as Markdown (#542)
+### Incident Patch 1: `e527a5aa` (2026-11-06)
+**Commit Message**: Add jq support behind an opt-in lang-jq feature (#544)
 
-Quarto's `.qmd` files are Markdown with a YAML header and executable
-code blocks. This registers `.qmd` with the Markdown plugin, so they get
-heading-based sections like `.md` and `.mdx`.
+Adds jq (`.jq`) via `tree-sitter-jq` 1.0.2. Because that grammar is
+GPL-3.0-or-later, the feature is opt-in and **not** in `grammar-all`,
+pending your answer on #543. Moving it into `grammar-all` is a one-line
+change.
 
-weave's merge setup reads its supported extensions from sem-core, so
-this is the change weave needs for Ataraxy-Labs/weave#216 (thanks
-@athyfr for the request).
+- Each top-level `def` is a `function` entity. A nested `def` stays
+inside its parent. A `def` after a top-level pipeline is still found.
+The trailing program is not an entity, so edits to it show up as orphan
+changes.
+- New `StripStrategy::HashLine` for jq. `//` is jq's alternative
+operator, so the generic stripper blanked every reference after `.x //
+…` on a line.
+- Edges come from the existing same-file word scan: `f(args)` is
+`calls`, a bare `f` is `TypeRef`.
+- Known limits: builtins and defs in other files are not resolved, and a
+`$name` variable that shares a def's name creates a false edge. That
+last one is an `#[ignore]`d test with the reason attached.
 
-Adds a test that `report.qmd` routes to the Markdown plugin and that its
-headings become entities, and lists `.qmd` in the README and docs.
+Tested on a real jq codebase: 11 defs across 6 files, no parse errors.
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -4,6 +4,10 @@ All notable changes to sem are documented in this file.
+@@ -7,6 +7,7 @@ All notable changes to sem are documented in this file.
+ ### Added
  
- ## [Unreleased]
+ - Quarto documents (`.qmd`) are parsed as Markdown, by heading. Thanks @athyfr for the request (Ataraxy-Labs/weave#216).
++- jq support, via the `tree-sitter-jq` grammar, behind an opt-in `lang-jq` feature that is **not** in `grammar-all`: the grammar is GPL-3.0-or-later, unlike every other grammar sem ships (#543). Each `def` in a `.jq` file is a `function` entity; a `def` nested in another stays part of the outer entity, and a `def` after a top-level pipeline (`expr | def f: ...;`) is still found. Defs that mention each other in the same file are connected, so `sem impact` and `sem find --callers` see them: `name(args)` is a `calls` edge, a bare `name` a type reference. jq's `//` alternative operator is no longer read as a comment when scanning for references. Known limits: the top-level program is not an entity, so edits there are orphan changes and calls from it make no edges; builtins and other files' defs are not resolved; a `$name` variable that shares a def's name produces a false edge.
  
-+### Added
-+
-+- Quarto documents (`.qmd`) are parsed as Markdown, by heading. Thanks @athyfr for the request (Ataraxy-Labs/weave#216).
-+
  ## [0.29.1] - 2026-11-02
  
- ### Fixed
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -572,7 +572,7 @@ Plus structured data formats:
- | TOML | `.toml` | sections, properties |
- | EDN | `.edn` | top-level map entries (keyword keys) |
- | CSV | `.csv` `.tsv` | rows (first column as identity) |
--| Markdown | `.md` `.mdx` | heading-based sections |
-+| Markdown | `.md` `.mdx` `.qmd` | heading-based sections |
- | LaTeX | `.tex` `.latex` `.cls` `.sty` | sections (part/chapter/section/…), plus theorem/lemma/proof/figure/table/algorithm and other tracked environments |
- 
- Everything else falls back to chunk-based diffing.
+@@ -543,6 +543,7 @@ If your team runs code review through sem cloud, `sem cloud review listen <diff-
+ | Elixir | `.ex` `.exs` | modules, functions, macros, guards, protocols |
+ | Bash | `.sh` | functions |
+ | Fish | `.fish` | functions |
++| jq (opt-in, `--features lang-jq`) | `.jq` | functions (`def`) |
+ | Lua | `.lua` | functions (global, local, table, and method forms) |
+ | HCL/Terraform | `.hcl` `.tf` `.tfvars` | blocks, attributes (qualified names for nested blocks) |
+ | Kotlin | `.kt` `.kts` | classes, interfaces, objects, functions, properties, companion objects |
 ```
 
-**File**: `crates/sem-core/src/parser/plugins/markdown.rs` (modified, +10/-1)
+**File**: `crates/Cargo.lock` (modified, +11/-0)
 ```diff
-@@ -13,7 +13,7 @@ impl SemanticParserPlugin for MarkdownParserPlugin {
+@@ -2384,6 +2384,7 @@ dependencies = [
+  "tree-sitter-htmlx-svelte",
+  "tree-sitter-java",
+  "tree-sitter-javascript",
++ "tree-sitter-jq",
+  "tree-sitter-kotlin-ng",
+  "tree-sitter-lua",
+  "tree-sitter-nix",
+@@ -3212,6 +3213,16 @@ dependencies = [
+  "tree-sitter-language",
+ ]
+ 
++[[package]]
++name = "tree-sitter-jq"
++version = "1.0.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4814471db98700a684f327e35ef0ed8fca3b25df50cf87aa5bece4bb60a29103"
++dependencies = [
++ "cc",
++ "tree-sitter-language",
++]
++
+ [[package]]
+ name = "tree-sitter-kotlin-ng"
+ version = "1.1.0"
+```
+
+**File**: `crates/sem-core/Cargo.toml` (modified, +5/-0)
+```diff
+@@ -98,6 +98,10 @@ lang-sql = ["dep:tree-sitter-sequel"]
+ lang-lua = ["dep:tree-sitter-lua"]
+ lang-fish = ["dep:tree-sitter-fish"]
+ lang-bsl = ["dep:tree-sitter-bsl"]
++# Opt-in only: tree-sitter-jq is GPL-3.0-or-later, unlike every other grammar
++# here, so it stays out of grammar-all (and the default build) pending
++# Ataraxy-Labs/sem#543.
++lang-jq = ["dep:tree-sitter-jq"]
+ 
+ [dependencies]
+ git2 = { version = "0.20", optional = true, default-features = false }
+@@ -147,6 +151,7 @@ tree-sitter-d = { version = "0.8.2", optional = true }
+ tree-sitter-lua = { version = "0.5.0", optional = true }
+ tree-sitter-fish = { version = "3.6", optional = true }
+ tree-sitter-bsl = { version = "0.1.7", optional = true }
++tree-sitter-jq = { version = "1.0", optional = true }
+ rustc-hash = "2"
+ # On-disk persistence for the red-green facts layer (parser::facts_store).
+ # Pure Rust, no C dependency (keeps the `wasm` feature viable). CBOR, not
+```
+
+**File**: `crates/sem-core/examples/facts_corpus_probe.rs` (modified, +1/-0)
+```diff
+@@ -351,6 +351,7 @@ const LANGUAGE_SALTS: &[(&str, &str)] = &[
+     ("d", "ts-0.8.2"),
+     ("lua", "ts-0.5.0"),
+     ("fish", "ts-3.6"),
++    ("jq", "ts-1.0"),
+     ("svelte", "ts-0.1.7"),
+     ("erb", "ts-0.25"),
+     ("toml", "handrolled-1"),
+```
+
+**File**: `crates/sem-core/src/parser/facts_store.rs` (modified, +1/-0)
+```diff
+@@ -910,6 +910,7 @@ pub const LANGUAGE_SALTS: &[(&str, &str)] = &[
+     ("d", "ts-0.8.2"),
+     ("lua", "ts-0.5.0"),
+     ("fish", "ts-3.6"),
++    ("jq", "ts-1.0"),
+     ("svelte", "ts-0.1.7"),
+     ("erb", "ts-0.25"),
+     ("toml", "handrolled-1"),
+```
+
+**File**: `crates/sem-core/src/parser/graph.rs` (modified, +142/-0)
+```diff
+@@ -7564,9 +7564,54 @@ fn strip_for_language(
+     match strategy {
+         StripStrategy::Generic => strip_comments_and_strings(content),
+         StripStrategy::Clojure => strip_clojure_line_comments(&strip_clojure_content(content)),
++        StripStrategy::HashLine => strip_hash_comments_and_strings(content),
      }
+ }
  
-     fn extensions(&self) -> &[&str] {
--        &[".md", ".mdx"]
-+        &[".md", ".mdx", ".qmd"]
-     }
- 
-     fn extract_entities(&self, content: &str, file_path: &str) -> Vec<SemanticEntity> {
-@@ -204,6 +204,15 @@ impl SemanticParserPlugin for MarkdownParserPlugin {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn quarto_documents_are_markdown() {
-+        let registry = crate::parser::plugins::create_default_registry();
-+        let plugin = registry.get_plugin("report.qmd").expect("a plugin for .qmd");
-+        assert_eq!(plugin.id(), "markdown");
-+        let entities = registry.extract_entities("report.qmd", "---\ntitle: Report\n---\n\n# Results\n\nbody\n");
-+        assert!(entities.iter().any(|e| e.name == "Results"));
++/// Blank `#` line comments and double-quoted strings, nothing else.
++///
++/// For jq, where `//` is the alternative operator, `/` is division and `'` is
++/// not a quote, so the generic stripper's C-style comment and single-quote
++/// rules would blank live code. Blanking (not removing) keeps byte offsets
++/// and line numbers aligned with the original content.
++fn strip_hash_comments_and_strings(content: &str) -> String {
++    let bytes = content.as_bytes();
++    let len = bytes.len();
++    let mut result = bytes.to_vec();
++    let mut i = 0;
++
++    while i < len {
++        match bytes[i] {
++            b'"' => {
++                let span_start = i;
++                i += 1;
++                while i < len {
++                    if bytes[i] == b'\\' {
++                        i = (i + 2).min(len);
++                        continue;
++                    }
++                    if bytes[i] == b'"' {
++                        i += 1;
++                        break;
++                    }
++                    i += 1;
++                }
++                blank_span_preserving_newlines(&mut result, bytes, span_start, i);
++            }
++            b'#' => {
++                let span_start = i;
++                while i < len && bytes[i] != b'\n' {
++                    i += 1;
++                }
++                blank_span_preserving_newlines(&mut result, bytes, span_start, i);
++            }
++            _ => i += 1,
++        }
 +    }
 +
-     #[test]
-     fn unique_heading_keeps_legacy_id() {
-         let content = "# Overview\n\nbody\n";
-```
-
-**File**: `docs/details.html` (modified, +1/-1)
-```diff
-@@ -635,7 +635,7 @@ <h2>All supported formats</h2>
-           <tr><td>YAML</td><td>.yml .yaml</td><td>sections, properties (dot paths)</td></tr>
-           <tr><td>TOML</td><td>.toml</td><td>sections, properties</td></tr>
-           <tr><td>CSV</td><td>.csv .tsv</td><td>rows (first column as ID)</td></tr>
--          <tr><td>Markdown</td><td>.md .mdx</td><td>heading-based sections</td></tr>
-+          <tr><td>Markdown</td><td>.md .mdx .qmd</td><td>heading-based sections</td></tr>
-         </tbody>
-       </table>
-     </section>
-```
-
-**File**: `docs/llms.txt` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ Plus structured data formats:
- | YAML | .yml .yaml | sections, properties (dot paths) |
- | TOML | .toml | sections, properties |
- | CSV | .csv .tsv | rows (first column as ID) |
--| Markdown | .md .mdx | heading-based sections |
-+| Markdown | .md .mdx .qmd | heading-based sections |
- 
- Everything else falls back to chunk-based diffing.
- 
-```
-
----
-
-### Incident Patch 2: `04f6990c` (2026-11-02)
-**Commit Message**: chore(release): prepare Sem 0.29.1 (#541)
-
-## Changes
-Release Sem 0.29.1 with the already-merged intent-search ranking and
-agent hook fixes from #540. Plain-language lookup ranks code by body,
-name and path; scratch/log writes are no longer incorrectly rejected by
-the agent edit hook.
-
-Synchronizes workspace crate versions, internal dependency versions,
-Cargo.lock and the npm wrapper, and records the patch release in the
-changelog. No additional runtime changes.
-
-## Validation
-- 9 package metadata and checksum tests passed.
-- git diff --check passed.
-- Existing main passed Windows, shared MCP lifecycle, lockfile and
-semver CI.
-- Modal: all 3 intent-search regression tests passed; the CLI tool-hook
-regression suite passed.
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -4,6 +4,8 @@ All notable changes to sem are documented in this file.
- 
- ## [Unreleased]
- 
-+## [0.29.1] - 2026-11-02
++    String::from_utf8(result).expect("stripped source preserves UTF-8 boundaries")
++}
 +
- ### Fixed
+ /// Extract dot-chains (receiver.member) from content for precise resolution.
+ /// Returns unique (receiver, member) pairs found in the content.
+ fn extract_dot_chains<'a>(content: &'a str) -> Vec<(&'a str, &'a str)> {
+@@ -8632,6 +8677,82 @@ function outer() {
+         assert!(!refs.iter().any(|(word, _)| *word == "nested"));
+     }
  
- - **Describing code finds it.** `sem_find` with `intent` matched the whole description against entity names, so a plain sentence returned nothing. It now ranks code by the words in its body, name and path, weighting rare words like a language name over common ones like "entity", and leaves out docs, licences and container blocks. C#, C++ and F# are understood.
++    /// Edges in a one-file jq graph as `(from_name, to_name, ref_type)`.
++    #[cfg(feature = "lang-jq")]
++    fn jq_edges(content: &str) -> Vec<(String, String, RefType)> {
++        let (dir, registry) = create_test_repo();
++        let root = dir.path();
++        write_file(root, "lib.jq", content);
++        let (graph, _) = EntityGraph::build(root, &["lib.jq".into()], &registry);
++        let name = |id: &EntityId| graph.entities[id.as_str()].name.clone();
++        graph
++            .edges
++            .iter()
++            .map(|e| (name(&e.from_entity), name(&e.to_entity), e.ref_type.clone()))
++            .collect()
++    }
++
++    // jq has no import extraction, so every edge below comes from the generic
++    // same-file word scan over HashLine-stripped content. Two scan rules shape
++    // the fixtures: names under three characters are not reference words, and
++    // only `name(` reads as `Calls`, so a bare jq call is a `TypeRef` edge.
++
++    #[cfg(feature = "lang-jq")]
++    #[test]
++    fn test_jq_bare_mention_creates_edge() {
++        let edges = jq_edges("def safe: tostring;\ndef wrap: safe | ascii_downcase;\n");
++        assert!(
++            edges.iter().any(|(f, t, _)| f == "wrap" && t == "safe"),
++            "got: {edges:?}"
++        );
++    }
++
++    #[cfg(feature = "lang-jq")]
++    #[test]
++    fn test_jq_call_with_arguments_is_calls_edge() {
++        let edges = jq_edges("def pick(f): f;\ndef run: pick(.x) | map(. + 1);\n");
++        assert!(
++            edges
++                .iter()
++                .any(|(f, t, r)| f == "run" && t == "pick" && *r == RefType::Calls),
++            "got: {edges:?}"
++        );
++        assert_eq!(
++            edges.len(),
++            1,
++            "builtins like map resolve to nothing: {edges:?}"
++        );
++    }
++
++    #[cfg(feature = "lang-jq")]
++    #[test]
++    fn test_jq_reference_after_alternative_operator_creates_edge() {
++        let edges = jq_edges("def helper: 1;\ndef run: .x // helper;\n");
++        assert!(
++            edges.iter().any(|(f, t, _)| f == "run" && t == "helper"),
++            "`//` must not be stripped as a comment; got: {edges:?}"
++        );
++    }
++
++    #[cfg(feature = "lang-jq")]
++    #[test]
++    fn test_jq_builtins_only_has_no_edges() {
++        let edges = jq_edges("def evens: map(select(. % 2 == 0));\ndef other: 1;\n");
++        assert!(edges.is_empty(), "got: {edges:?}");
++    }
++
++    #[cfg(feature = "lang-jq")]
++    #[test]
++    #[ignore = "known false positive: token_iter splits on `$`, so the variable \
++                `$words` tokenizes to `words` and matches the def of that name"]
++    fn test_jq_variable_shadowing_def_name_is_not_an_edge() {
++        let edges = jq_edges("def words: split(\" \");\ndef pick: . as $words | $words;\n");
++   
 ```
 
-**File**: `crates/Cargo.lock` (modified, +5/-5)
+**File**: `crates/sem-core/src/parser/plugins/code/languages.rs` (modified, +33/-0)
 ```diff
-@@ -2300,7 +2300,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+@@ -18,6 +18,10 @@ pub(crate) enum StripStrategy {
+     /// Clojure: blank double-quoted strings only (preserves `#` for gensyms and reader macros),
+     /// then strip `;` line comments in a second pass.
+     Clojure,
++    /// jq: blank `#` line comments and double-quoted strings only. `//` is the
++    /// alternative operator and `/` is division, so the generic stripper would
++    /// blank every reference after `.x // ...` on a line.
++    HashLine,
+ }
  
- [[package]]
- name = "sem-cli"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "axum",
-  "ciborium",
-@@ -2330,7 +2330,7 @@ dependencies = [
+ #[allow(dead_code)]
+@@ -49,6 +53,7 @@ impl LanguageConfig {
+     pub(crate) fn strip_strategy(&self) -> StripStrategy {
+         match self.id {
+             "clojure" | "edn" => StripStrategy::Clojure,
++            "jq" => StripStrategy::HashLine,
+             _ => StripStrategy::Generic,
+         }
+     }
+@@ -381,6 +386,11 @@ fn get_fish() -> Option<Language> {
+     Some(tree_sitter_fish::language())
+ }
  
- [[package]]
- name = "sem-cloud-client"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -2339,7 +2339,7 @@ dependencies = [
++#[cfg(feature = "lang-jq")]
++fn get_jq() -> Option<Language> {
++    Some(tree_sitter_jq::LANGUAGE.into())
++}
++
+ /// Inside JS/TS function bodies, suppress variable declarations so that local
+ /// variables are not extracted as nested entities. Inner function/class
+ /// declarations are still extracted for diff granularity.
+@@ -1366,6 +1376,27 @@ static FISH_CONFIG: LanguageConfig = LanguageConfig {
+     scope_resolve: Some(&FISH_SCOPE_CONFIG),
+ };
  
- [[package]]
- name = "sem-core"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "ciborium",
-  "criterion",
-@@ -2405,7 +2405,7 @@ dependencies = [
++#[cfg(feature = "lang-jq")]
++static JQ_CONFIG: LanguageConfig = LanguageConfig {
++    id: "jq",
++    extensions: &[".jq"],
++    // nverno/tree-sitter-jq: `def name(params): body;` is a
++    // `function_definition` with `name`/`parameters`/`body` fields. A def
++    // nested in another def's body stays part of the outer entity, as with
++    // fish: the body has no container node, and nested defs are lexically
++    // private to the outer def anyway. A def that follows a top-level
++    // pipeline (`expr | def f: ...; ...`) is reached by the general recursion.
++    // The trailing top-level program is not an entity; `sem diff` reports
++    // edits to it as orphan changes.
++    entity_node_types: &["function_definition"],
++    container_node_types: &[],
++    call_entity_identifiers: &[],
++    suppressed_nested_entities: &[],
++    scope_boundary_types: &[],
++    get_language: get_jq,
++    scope_resolve: None,
++};
++
+ // ─── Scope Resolve Configs for Supported Languages ────────────────────────────
  
- [[package]]
- name = "sem-mcp"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "axum",
-  "git2",
-@@ -2433,7 +2433,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-plugin"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "sem-core",
-  "serde",
-```
-
-**File**: `crates/sem-cli/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cli"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Semantic version control CLI. Shows what entities changed (functions, classes, methods) instead of lines."
-@@ -15,9 +15,9 @@ path = "src/main.rs"
- 
- [dependencies]
- tempfile = "3.24.0"
--sem-core = { path = "../sem-core", version = "0.29.0", features = ["disk-cache", "topology"] }
--sem-mcp = { path = "../sem-mcp", version = "0.29.0" }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.0" }
-+sem-core = { path = "../sem-core", version = "0.29.1", features = ["disk-cache", "topology"] }
-+sem-mcp = { path = "../sem-mcp", version = "0.29.1" }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.1" }
- serde = { version = "1", features = ["derive"] }
- clap = { version = "4", features = ["derive", "env"] }
- colored = "2"
-```
-
-**File**: `crates/sem-cloud-client/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cloud-client"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Shared client for sem-cloud: credentials, repo resolution, caching, and the metered graph API. Used by both the sem CLI and the sem MCP server."
-```
-
-**File**: `crates/sem-core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-core"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Entity-level semantic diff engine. Extracts functions, classes, and methods from 28 languages via tree-sitter and diffs at the entity level."
-```
-
-**File**: `crates/sem-mcp/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-mcp"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "MCP server for entity-level semantic code intelligence. 6 tools: sem_entities, sem_diff, sem_blame, sem_impact, sem_log, sem_context."
-@@ -14,8 +14,8 @@ name = "sem-mcp"
- path = "src/main.rs"
- 
- [dependencies]
--sem-core = { path = "../sem-core", version = "0.29.0", features = ["disk-cache"] }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.0" }
-+sem-core = { path = "../sem-core", version = "0.29.1", features = ["disk-cache"] }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.1" }
- git2 = { version = "0.20", default-features = false }
- lru = "0.16"
- rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server"] }
-```
-
-**File**: `crates/sem-plugin/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-plugin"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "WASI component plugin for semantic entity-level change detection"
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "@ataraxy-labs/sem",
-   "mcpName": "io.github.Ataraxy-Labs/sem",
--  "version": "0.29.0",
-+  "version": "0.29.1",
-   "description": "npm wrapper for the sem CLI. Downloads the matching release binary and exposes the sem command in node_modules/.bin.",
-   "license": "MIT OR Apache-2.0",
-   "type": "module",
+ static TS_SCOPE_CONFIG: ScopeResolveConfig = ScopeResolveConfig {
+@@ -2412,6 +2443,8 @@ macro_rules! all_configs {
+             &LUA_CONFIG,
+             #[cfg(feature = "lang-fish")]
+             &FISH_CONFIG,
++            #[cfg(feature = "lang-jq")]
++            &JQ_CONFIG,
+             #[cfg(feature = "lang-bsl")]
+             &BSL_CONFIG,
+         ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #544** (2026-11-06): Add jq support behind an opt-in lang-jq feature (@alycda)
 - **PR #542** (2026-11-04): Parse Quarto documents (.qmd) as Markdown (@rs545837)
 - **PR #541** (2026-11-02): chore(release): prepare Sem 0.29.1 (@rs545837)
 - **PR #540** (2026-10-31): Intent search ranks code by meaning; edit hook stops refusing scratch writes (@rs545837)
 - **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
 - **PR #538** (2026-10-30): fix(core): extract definitions sem used to miss across 7 languages (@rs545837)
-- **PR #537** (2026-10-29): release: Sem 0.28.3 (@rs545837)
 
 ---
 
@@ -2148,13 +2204,13 @@ regression suite passed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Parse Quarto documents (.qmd) as Markdown (#542)
+## X. Add jq support behind an opt-in lang-jq feature (#544)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be77b50a`: Parse Quarto documents (.qmd) as Markdown (#542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e527a5aa`: Add jq support behind an opt-in lang-jq feature (#544). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2162,10 +2218,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Added
-
-- Quarto documents (`.qmd`) are parsed as Markdown, by heading. Thanks @athyfr for the request (Ataraxy-Labs/weave#216).
-
+- jq support, via the `tree-sitter-jq` grammar, behind an opt-in `lang-jq` feature that is **not** in `grammar-all`: the grammar is GPL-3.0-or-later, unlike every other grammar sem ships (#543). Each `def` in a `.jq` file is a `function` entity; a `def` nested in another stays part of the outer entity, and a `def` after a top-level pipeline (`expr | def f: ...;`) is still found. Defs that mention each other in the same file are connected, so `sem impact` and `sem find --callers` see them: `name(args)` is a `calls` edge, a bare `name` a type reference. jq's `//` alternative operator is no longer read as a comment when scanning for references. Known limits: the top-level program is not an entity, so edits there are orphan changes and calls from it make no edges; builtins and other files' defs are not resolved; a `$name` variable that shares a def's name produces a false edge.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2175,4 +2228,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be77b50a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e527a5aa` are properly handled with clean fallback behavior.

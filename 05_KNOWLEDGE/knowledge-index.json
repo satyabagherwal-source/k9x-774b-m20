@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T04:03:14.958Z",
+  "last_updated": "2026-11-07T04:10:36.907Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4146,11 +4146,16 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "be77b50a",
-      "content_hash": "ecad872e0a577e15f6eb0cff8055641d6fe0bd98a534eaaddad6211a9ab79fb6",
+      "source_version": "e527a5aa",
+      "content_hash": "cc8b08467583e2144cdddbf067acbcc9b63877f4056a6a8caaf6ffaea037fda0",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add jq support behind an opt-in lang-jq feature (#544)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2201,
           "title": "cli): run on a 16 MB stack so Windows debug builds do not overflow",
@@ -4207,7 +4212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:17:52.538Z",
+      "verified_at": "2026-11-07T04:10:24.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39306,11 +39311,16 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "eff29b1f",
-      "content_hash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
+      "source_version": "0c4e2ab1",
+      "content_hash": "4ea818f0d266e14d6634334413798b24968fef16d50c492db61d03cff78c69bb",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #577 from CI-IISATO/fix/lightmemo-group-jieba-words",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1785,
           "title": "Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit",
@@ -39347,7 +39357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:37:38.078Z",
+      "verified_at": "2026-11-07T04:10:36.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55796,11 +55806,16 @@
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "754229cb",
-      "content_hash": "5edd4089c76dcee5f4efd3557013f7c44ef36d1b96c5214d4bb3cddb3e197a50",
+      "source_version": "474bdf2c",
+      "content_hash": "db9c051f9117114257b71e94e3f7bc4b553d71d6b55c7ce3b5907213603a194b",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update compatibility table for release 3.5.0 (#4676)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2009,
           "title": "[Android] Check the overflow ancestor pass against the detector child's bounds (",
@@ -55837,7 +55852,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T10:45:24.990Z",
+      "verified_at": "2026-11-07T04:10:29.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77780,11 +77795,16 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "9a76fe0e",
-      "content_hash": "e70ad226f76dbf0833db59b1b71efbc66817069e9738eb9000de1c98fa5dbdb7",
+      "source_version": "3a34d992",
+      "content_hash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2875,
           "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920)",
@@ -77811,7 +77831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:23:37.265Z",
+      "verified_at": "2026-11-07T04:10:26.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

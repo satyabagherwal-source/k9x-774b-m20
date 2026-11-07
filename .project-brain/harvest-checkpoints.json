@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T04:03:15.069Z",
+  "last_updated": "2026-11-07T04:10:37.016Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "5da2dea5d437bd37f606083cf5f987e860fa92e0e7cea421dc31b0a9c13b377e",
-      "verified_at": "2026-11-05T15:37:38.229Z",
+      "content_hash": "4ea818f0d266e14d6634334413798b24968fef16d50c492db61d03cff78c69bb",
+      "verified_at": "2026-11-07T04:10:37.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:37:38.229Z"
+      "last_updated": "2026-11-07T04:10:37.015Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -7311,14 +7311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
-      "content_hash": "5edd4089c76dcee5f4efd3557013f7c44ef36d1b96c5214d4bb3cddb3e197a50",
-      "verified_at": "2026-11-04T10:45:25.125Z",
+      "content_hash": "db9c051f9117114257b71e94e3f7bc4b553d71d6b55c7ce3b5907213603a194b",
+      "verified_at": "2026-11-07T04:10:29.155Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:45:25.125Z"
+      "last_updated": "2026-11-07T04:10:29.155Z"
     },
     "aws/aws-cdk": {
       "repository": "aws/aws-cdk",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "ecad872e0a577e15f6eb0cff8055641d6fe0bd98a534eaaddad6211a9ab79fb6",
-      "verified_at": "2026-11-04T17:17:52.661Z",
+      "content_hash": "cc8b08467583e2144cdddbf067acbcc9b63877f4056a6a8caaf6ffaea037fda0",
+      "verified_at": "2026-11-07T04:10:24.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:17:52.661Z"
+      "last_updated": "2026-11-07T04:10:24.714Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "e70ad226f76dbf0833db59b1b71efbc66817069e9738eb9000de1c98fa5dbdb7",
-      "verified_at": "2026-11-03T22:23:37.336Z",
+      "content_hash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
+      "verified_at": "2026-11-07T04:10:26.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:23:37.336Z"
+      "last_updated": "2026-11-07T04:10:26.884Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",

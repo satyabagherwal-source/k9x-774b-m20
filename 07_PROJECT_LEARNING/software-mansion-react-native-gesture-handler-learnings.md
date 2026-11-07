@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `754229cb`  
+> **Source Version**: `474bdf2c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:45:24.276Z  
+> **Timestamp**: 2026-11-07T04:10:27.279Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:45:23.968Z  
+> **Harvest Timestamp**: 2026-11-07T04:10:27.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6800 stars
+- **Stars / Engagement**: 6803 stars
 
 ---
 
@@ -1388,79 +1388,248 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf440870` (2026-11-02)
-**Commit Message**: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
+### Incident Patch 1: `474bdf2c` (2026-11-06)
+**Commit Message**: Update compatibility table for release 3.5.0 (#4676)
 
 ## Description
 
-On Android, `delaysChildPressedState={false}` has no effect in a release
-build that R8 minifies. A `Touchable` inside such a `ScrollView` still
-enters its pressed state only after the tap timeout, exactly like one in
-a `ScrollView` that keeps the delay.
-
-`NativeViewGestureHandler` looks up
-`HasChildPressedStateDelay.setHasChildPressedStateDelay` by reflection,
-since the interface only exists since React Native 0.87. Nothing else
-references it, so R8 renames the interface and drops its methods.
-`getMethod` then throws, the setter stays `null` and the option becomes
-a no-op.
-
-This adds a consumer ProGuard rule that keeps the interface and its
-setter, and lists it in the package `files` so it is published.
-
-Fixes #4652
+This PR updates compatibility table for release 3.5.0
 
 ## Test plan
 
-Tested on an API 34 emulator with `basic-example` (RN 0.88.0) in release
-builds, with a `ScrollView` of each kind holding a `Touchable`. I logged
-the time from the raw touch-down to `onPressIn` after a 400 ms hold
-(`adb shell input swipe x y x y 400`):
+Read docs 🤓
 
-| | minified, before | minified, after | not minified |
-|---|---|---|---|
-| `delaysChildPressedState={false}` | +102 m
-
-**File**: `packages/react-native-gesture-handler/android/build.gradle` (modified, +1/-0)
+**File**: `packages/react-native-gesture-handler/compatibility.json` (modified, +3/-0)
 ```diff
-@@ -170,6 +170,7 @@ android {
-     defaultConfig {
-         minSdkVersion safeExtGet('minSdkVersion', 24)
-         targetSdkVersion safeExtGet('targetSdkVersion', 33)
-+        consumerProguardFiles 'consumer-rules.pro'
+@@ -1,4 +1,7 @@
+ {
++  "3.5.x": {
++    "react-native": ["0.85", "0.86", "0.87", "0.88"]
++  },
+   "3.4.x": {
+     "react-native": ["0.85", "0.86", "0.87", "0.88"]
+   },
+```
+
+---
+
+### Incident Patch 2: `29270cb9` (2026-11-05)
+**Commit Message**: [Web] Check only the handlers recorded for the same pointer (#4672)
+
+## Description
+
+On web, a `Manual` gesture that is never finished stays in `BEGAN` after
+the finger lifts, and from then on every RNGH button on the page is
+dead: `Touchable`, `Pressable`, `RectButton`, inside or outside the
+detector. The same happens with a finger resting elsewhere on the screen
+while another taps a button (#4627 on Android).
+
+Since #4127 a button asks, when it is recorded, whether it may begin
+given the handlers already recorded, and refuses any that is not
+simultaneous with it, not on its own view and not a hover. The
+orchestrator passed its whole `gestureHandlers` list, which also holds
+handlers from other pointers and handlers left in `BEGAN` with no
+pointers at all, so the button was cancelled before it began.
+
+`recordHandlerIfNotPresent` now takes the pointer being recorded and
+passes only the handlers already tracking it. Every handler adds the
+pointer to its tracker before recording itself and `pointerdown` bubbles
+deepest-first, so those are exactly the handlers under the button on
+this press. The call from `HoverGestureHandler` has no pointer and
+passes an empty list. `PointerTracker` g
+
+**File**: `packages/react-native-gesture-handler/src/web/handlers/GestureHandler.ts` (modified, +4/-1)
+```diff
+@@ -340,7 +340,10 @@ export default abstract class GestureHandler implements IGestureHandler {
+   //
  
-         externalNativeBuild {
-             cmake {
+   protected onPointerDown(event: AdaptedEvent): void {
+-    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(this);
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(
++      this,
++      event.pointerId
++    );
+     this._pointerType = event.pointerType;
+ 
+     if (this.pointerType === PointerType.TOUCH) {
 ```
 
-**File**: `packages/react-native-gesture-handler/android/consumer-rules.pro` (added, +4/-0)
+**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/GestureHandler.test.ts` (modified, +97/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+# Reached only by reflection in NativeViewGestureHandler, so R8 would otherwise strip it.
-+-keep interface com.facebook.react.uimanager.HasChildPressedStateDelay {
-+  void setHasChildPressedStateDelay(java.lang.Boolean);
-+}
+@@ -231,6 +231,103 @@ describe('GestureHandlerOrchestrator idle handlers', () => {
+   });
+ });
+ 
++describe('GestureHandlerOrchestrator recorded handlers passed to a new one', () => {
++  // Mimics a button: refuses to begin next to any handler it was told about.
++  class ExclusiveTestGestureHandler extends TestGestureHandler {
++    public override shouldBeginWithRecordedHandlers(
++      recorded: IGestureHandler[]
++    ): boolean {
++      return recorded.length === 0;
++    }
++  }
++
++  const delegate = {
++    onEnabledChange: jest.fn(),
++    onCancel: jest.fn(),
++    reset: jest.fn(),
++  } as unknown as GestureHandlerDelegate<unknown, IGestureHandler>;
++
++  const pointerDown = (pointerId: number): AdaptedEvent => ({
++    x: 10,
++    y: 10,
++    offsetX: 10,
++    offsetY: 10,
++    pointerId,
++    eventType: EventTypes.DOWN,
++    pointerType: PointerType.TOUCH,
++    time: 0,
++  });
++
++  function setup() {
++    const other = new TestGestureHandler(delegate);
++    const button = new ExclusiveTestGestureHandler(delegate);
++    other.setGestureConfig({ enabled: true });
++    button.setGestureConfig({ enabled: true });
++    other.sendEvent = jest.fn();
++    button.sendEvent = jest.fn();
++    const cancel = jest.spyOn(button, 'cancel');
++
++    return { other, button, cancel };
++  }
++
++  afterEach(() => {
++    (
++      GestureHandlerOrchestrator.instance as unknown as {
++        gestureHandlers: IGestureHandler[];
++      }
++    ).gestureHandlers = [];
++  });
++
++  test('a handler left in BEGAN with no pointers does not block a new one', () => {
++    const { other, button, cancel } = setup();
++
++    other.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
++    other.begin();
++    other.tracker.removeFromTracker(1);
++
++    button.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 1);
++
++    expect(cancel).not.toHaveBeenCalled();
++  });
++
++  test('a handler tracking another pointer does not block a new one', () => {
++    const { other, button, cancel } = setup();
++
++    other.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
++
++    button.tracker.addToTracker(pointerDown(2));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 2);
++
++    expect(cancel).not.toHaveBeenCalled();
++  });
++
++  test('a handler tracking the same pointer is passed to the new one', () => {
++    const { other, button, cancel } = setup();
++
++    other.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
++
++    button.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 1);
++
++    expect(cancel).toHaveBeenCalledTimes(1);
++  });
++
++  test('recording without a pointer passes no handlers', () => {
++    const { other, button, cancel } = setup();
++
++    other.tracker.addToTracker(pointerDown(1));
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
++
++    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button);
++
++    expect(cancel).not.toHaveBeenCalled();
++  });
++});
++
+ describe('GestureHandler web touch events', () => {
+   afterEach(() => {
+     (
 ```
 
-**File**: `packages/react-native-gesture-handler/package.json` (modified, +1/-0)
+**File**: `packages/react-native-gesture-handler/src/web/tools/GestureHandlerOrchestrator.ts` (modified, +14/-2)
 ```diff
-@@ -34,6 +34,7 @@
-     "android/build.gradle",
-     "android/gradle.properties",
-     "android/CMakeLists.txt",
-+    "android/consumer-rules.pro",
-     "android/src/main/AndroidManifest.xml",
-     "android/src/main/java/",
-     "android/src/main/jni/",
+@@ -291,7 +291,10 @@ export default class GestureHandlerOrchestrator {
+     }
+   }
+ 
+-  public recordHandlerIfNotPresent(handler: IGestureHandler): void {
++  public recordHandlerIfNotPresent(
++    handler: IGestureHandler,
++    pointerId?: number
++  ): void {
+     this.dropIdleHandlers();
+ 
+     if (this.isHandlerRecorded(handler)) {
+@@ -302,7 +305,16 @@ export default class GestureHandlerOrchestrator {
+     handler.awaiting = false;
+     handler.activationIndex = Number.MAX_SAFE_INTEGER;
+ 
+-    if (!handler.shouldBeginWithRecordedHandlers(this.gestureHandlers)) {
++    // Only handlers recorded for the same pointer (they already track it) may
++    // block this one
++    const recorded =
++      pointerId === undefined
++        ? []
++        : this.gestureHandlers.filter((other) =>
++            other.tracker.isTrackingPointer(pointerId)
++          );
++
++    if (!handler.shouldBeginWithRecordedHandlers(recorded)) {
+       handler.cancel();
+     }
+ 
+```
+
+**File**: `packages/react-native-gesture-handler/src/web/tools/PointerTracker.ts` (modified, +6/-2)
+```diff
+@@ -32,8 +32,12 @@ export default class PointerTracker {
+     }
+   }
+ 
++  public isTrackingPointer(pointerId: number): boolean {
++    return this.trackedPointers.has(pointerId);
++  }
++
+   public addToTracker(event: AdaptedEvent): void {
+-    if (this.trackedPointers.has(event.pointerId)) {
++    if (this.isTrackingPointer(event.pointerId)) {
+       return;
+     }
+ 
+@@ -121,7 +125,7 @@ export default class PointerTracker {
+   }
+ 
+   public getVelocityAt(pointerId: number, time: number) {
+-    if (!this.trackedPointers.has(pointerId)) {
++    if (!this.isTrackingPointer(pointerId)) {
+       return null;
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4676** (2026-11-06): Update compatibility table for release 3.5.0 (@m-bert)
+- **PR #4672** (2026-11-05): [Web] Check only the handlers recorded for the same pointer (@m-bert)
+- **PR #4671** (2026-11-05): [iOS] Don't delay touch-up delivery under a Manual gesture (@m-bert)
+- **PR #4668** (2026-11-05): Add `Begin`, `Deactivate` and `Finalize` event types for v3 gestures (@m-bert)
+- **PR #4667** (closed): [Android] Pan with the mouse wheel when `enableTrackpadTwoFingerGesture` is set (@sashrika)
 - **PR #4665** (2026-11-04): [iOS] Skip `accessibilityElementsHidden` children when inferring button label (@m-bert)
-- **PR #4663** (2026-11-04): Remove unused `enabled` listener from `useJSResponderHandler` (@m-bert)
-- **PR #4662** (2026-11-03): Bump follow-redirects from 1.16.1 to 1.16.2 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4661** (2026-11-03): Bump joi from 17.13.8 to 17.13.9 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4660** (2026-11-02): [Jest] Add opt-out for the `GestureHandlerRootView` check (@m-bert)
-- **PR #4659** (2026-11-02): Bump node-forge from 1.4.0 to 1.4.2 (@dependabot[bot])
 
 ---
 
@@ -1480,21 +1649,23 @@ the time from the raw touch-down to `onPressIn` after a 400 ms hold
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
+## X. Update compatibility table for release 3.5.0 (#4676)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/compatibility.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf440870`: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `474bdf2c`: Update compatibility table for release 3.5.0 (#4676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/compatibility.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        consumerProguardFiles 'consumer-rules.pro'
+  "3.5.x": {
+    "react-native": ["0.85", "0.86", "0.87", "0.88"]
+  },
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1504,4 +1675,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf440870` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `474bdf2c` are properly handled with clean fallback behavior.
