@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T20:09:34.204Z",
-  "total_cycles_completed": 8034,
-  "total_learnings_persisted": 8034,
-  "total_rules_promoted": 7684,
+  "last_updated": "2026-11-07T20:16:32.187Z",
+  "total_cycles_completed": 8036,
+  "total_learnings_persisted": 8036,
+  "total_rules_promoted": 7686,
   "history": [
-    {
-      "timestamp": "2026-11-06T14:25:42.467Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T14:25:42.667Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T14:25:58.306Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T20:09:34.204Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:16:27.190Z",
+      "repository": "vitejs/vite",
+      "learningId": "learn-github-vitejs-vite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:16:32.187Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

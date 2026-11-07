@@ -8078,3 +8078,5 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `7775f73b` | Multi-dimensional audit evidence | 2026-11-07T20:02:04.867Z |
 | `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `f0e3f479` | Multi-dimensional audit evidence | 2026-11-07T20:02:07.009Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3c5c334e` | Multi-dimensional audit evidence | 2026-11-07T20:09:34.199Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `a579e352` | Multi-dimensional audit evidence | 2026-11-07T20:16:27.185Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `ab967ebc` | Multi-dimensional audit evidence | 2026-11-07T20:16:32.174Z |

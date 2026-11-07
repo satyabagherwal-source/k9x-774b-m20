@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:09:34.132Z",
+  "last_updated": "2026-11-07T20:16:32.097Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54868,14 +54868,19 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "d04aa46b",
-      "content_hash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
+      "source_version": "ab967ebc",
+      "content_hash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "avoid data race in block device inotify watcher",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "implement static endpoints list",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -54954,7 +54959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:40:12.894Z",
+      "verified_at": "2026-11-07T20:16:32.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79391,11 +79396,16 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "b3cb0575",
-      "content_hash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
+      "source_version": "a579e352",
+      "content_hash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "html): remove adjacent module tags on the first line (#23823)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2994,
           "title": "optimizer): skip patches dir hash for nub lockfile (#23761)",
@@ -79427,7 +79437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:26:09.602Z",
+      "verified_at": "2026-11-07T20:16:27.087Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

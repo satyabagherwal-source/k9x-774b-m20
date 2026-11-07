@@ -8069,3 +8069,5 @@
 | `CYCLE-20261107-XQKG` | `2026-11-07T20:02:04.864Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e64b4278...`) |
 | `CYCLE-20261107-XS7X` | `2026-11-07T20:02:07.005Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ff47fce6...`) |
 | `CYCLE-20261107-7D9S` | `2026-11-07T20:09:34.192Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fcd8924d...`) |
+| `CYCLE-20261107-G7XP` | `2026-11-07T20:16:27.181Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5613a320...`) |
+| `CYCLE-20261107-GBSB` | `2026-11-07T20:16:32.171Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9744180d...`) |

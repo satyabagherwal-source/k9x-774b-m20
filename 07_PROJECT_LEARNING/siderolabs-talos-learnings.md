@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `d04aa46b`  
+> **Source Version**: `ab967ebc`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:40:11.330Z  
+> **Timestamp**: 2026-11-07T20:16:30.607Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:40:11.324Z  
+> **Harvest Timestamp**: 2026-11-07T20:16:30.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11471 stars
+- **Stars / Engagement**: 11480 stars
 
 ---
 
@@ -1920,13 +1920,14 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14856** (2026-11-05): **fix: use the image pull returned reference for upgrade**
-  *Symptoms*: Fixes #14829 
+- **Issue #14874** (2026-11-07): **fix(security): let the CRI containerd run the installer of an upgrade**
+  *Symptoms*: In enforcing mode, the default `talosctl upgrade` of a node fails with `write /proc/self/attr/keycreate: permission denied`, and only `--namespace inmem` works.  By default, `talosctl upgrade` pulls and runs the installer in the system namespace of the CRI containerd, next to the images of etcd and the kubelet, but only the system containerd may start `installer_t`. This change lets the CRI containerd start the installer from the image it pulled and manage it as the system containerd does.  <details> <summary>Verification</summary>  On a real arm64 cluster (Turing RK1) in enforcing mode, the default `talosctl upgrade` of a worker failed with the error above before this change. With it, a worker and a control plane node were upgraded several times by the default path, from enforcing mode, without a denial.  </details> 
   **Post-Mortem & Fix Analysis**:
-  > /m
+  > I'm not sure it's a good idea, and open for discussion here. A workaround is to use system containerd for upgrades (available via the flags).
+  > makes sense, the CRI should not be able to start installer_t at all I dropped the same rules from #14876 and I'm closing this one
 
-- **Issue #14855** (2026-11-05): **feat: disable SELinux categories by default**
-  *Symptoms*: It turns out many custom container runtimes - gvisor, spin, etc. are not compatible.  So we will make this feature opt-in by default. 
+- **Issue #14867** (2026-11-06): **feat: add KubePrism /readyz check**
+  *Symptoms*: Starting with Talos 1.14+ Talos enables kube-apiserver unauthenticated health check endpoints.  Previously, only TCP check was performed which can only detect network connectivity and pod being up. The `/readyz` check can catch many more cases - whether etcd is healthy for example.  Fixes #14650 
   **Post-Mortem & Fix Analysis**:
   > /m
 
@@ -1945,180 +1946,343 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26cebd68` (2026-11-05)
-**Commit Message**: fix: avoid data race in block device inotify watcher
+### Incident Patch 1: `ab967ebc` (2026-11-04)
+**Commit Message**: feat: implement static endpoints list
 
-The event loop looked up a watch by descriptor and got back the
-shared *watch, then read its wd and path without the lock. Re-adding
-a watch for a path that was deleted and recreated rewrites the same
-struct under the lock in Add, so the two raced.
+Fixes #11597
 
-In the race-enabled build machined runs as PID 1, so the race report
-killed init and panicked the kernel on a worker during user volume
-tests in integration-qemu-race.
+This is not a replacement for Discovery, and it doesn't address things
+that require discovery like KubePrism or KubeSpan.
 
-Return a copy of the watch from the locked lookup instead.
+This is a way to feed the controlplane endpoints list which before this
+change is fed from three sources:
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+* Discovery Service
+* `kube-apiserver` endpoints
+* Kubernetes controlplane IP/hostname
 
-**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go` (modified, +10/-5)
+With Kubernetes disabled, only Discovery Service becomes the only source
+of endpoints, and these endpoints are critical for basic Talos
+operations - a worker joining the controlplane, etcd joining the etcd
+cluster, etc.
+
+Static list acts a fallback in case Discovery is down.
+
+It should be populated with same values across all machines in the
+cluster.
+
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yaml` (modified, +10/-1)
 ```diff
-@@ -61,11 +61,16 @@ func (w *watches) removePath(path string) (uint32, bool) {
- 	return wd, true
- }
+@@ -1,6 +1,6 @@
+ # THIS FILE WAS AUTOMATICALLY GENERATED BY KRES, PLEASE DO NOT EDIT.
+ #
+-# Generated on 2026-11-05T13:19:25Z by kres 7aae418.
++# Generated on 2026-11-05T16:48:20Z by kres 7aae418.
  
--func (w *watches) byWd(wd uint32) *watch {
-+func (w *watches) byWd(wd uint32) (watch, bool) {
- 	w.mu.RLock()
- 	defer w.mu.RUnlock()
- 
--	return w.wd[wd]
-+	existing, ok := w.wd[wd]
-+	if !ok {
-+		return watch{}, false
-+	}
-+
-+	return *existing, true
- }
- 
- func (w *watches) updatePath(path string, f func(*watch) (*watch, error)) error {
-@@ -189,16 +194,16 @@ func (w *Watcher) Run() (<-chan string, <-chan error) {
- 				// doesn't append the filename to the event, but we would like to always fill the
- 				// the "Name" field with a valid filename. We retrieve the path of the watch from
- 				// the "paths" map.
--				watch := w.watches.byWd(uint32(raw.Wd))
-+				watch, ok := w.watches.byWd(uint32(raw.Wd))
- 
- 				// inotify will automatically remove the watch on deletes; just need
- 				// to clean our state here.
--				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-+				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
- 					w.watches.remove(watch.wd)
- 				}
- 
- 				var name string
--				if watch != nil {
-+				if ok {
- 					name = watch.path
- 				}
- 
+ concurrency:
+   group: ${{ github.head_ref || github.run_id }}
+@@ -3640,6 +3640,12 @@ jobs:
+           - test: e2e-no-cluster-discovery
+             variant: default
+             withClusterDiscovery: "false"
++          - test: e2e-static-endpoints
++            testMode: skip-etcd-k8s
++            variant: default
++            withClusterDiscovery: "false"
++            withSkipEtcdK8s: "true"
++            withStaticEndpoints: "true"
+           - test: e2e-kubespan
+             variant: default
+             withClusterDiscovery: "true"
+@@ -3747,10 +3753,13 @@ jobs:
+           QEMU_SYSTEM_DISK_SIZE: ${{ matrix.qemuSystemDiskSize }}
+           SHORT_INTEGRATION_TEST: 'yes'
+           TAG_SUFFIX_IN: ${{ matrix.tagSuffixIn }}
++          TEST_MODE: ${{ matrix.testMode }}
+           VIA_MAINTENANCE_MODE: ${{ matrix.viaMaintenanceMode }}
+           WITH_CLUSTER_DISCOVERY: ${{ matrix.withClusterDiscovery }}
+           WITH_ENFORCING: ${{ matrix.withEnforcing }}
+           WITH_KUBESPAN: ${{ matrix.withKubespan }}
++          WITH_SKIP_ETCD_K8S: ${{ matrix.withSkipEtcdK8s }}
++          WITH_STATIC_ENDPOINTS: ${{ matrix.withStaticEndpoints }}
+         run: |
+           sudo -E make e2e-qemu
+       - name: save artifacts
 ```
 
-**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify_test.go` (modified, +44/-0)
+**File**: `.github/workflows/integration-misc-1-triggered.yaml` (modified, +10/-1)
 ```diff
-@@ -126,3 +126,47 @@ func TestWatcherDirectory(t *testing.T) {
+@@ -1,6 +1,6 @@
+ # THIS FILE WAS AUTOMATICALLY GENERATED BY KRES, PLEASE DO NOT EDIT.
+ #
+-# Generated on 2026-09-23T10:36:00Z by kres c0dd940.
++# Generated on 2026-11-05T16:48:20Z by kres 7aae418.
  
- 	require.NoError(t, watcher.Close())
+ concurrency:
+   group: ${{ github.head_ref || github.run_id }}
+@@ -26,6 +26,12 @@ jobs:
+           - test: e2e-no-cluster-discovery
+             variant: default
+             withClusterDiscovery: "false"
++          - test: e2e-static-endpoints
++            testMode: skip-etcd-k8s
++            variant: default
++            withClusterDiscovery: "false"
++            withSkipEtcdK8s: "true"
++            withStaticEndpoints: "true"
+           - test: e2e-kubespan
+             variant: default
+             withClusterDiscovery: "true"
+@@ -132,10 +138,13 @@ jobs:
+           QEMU_SYSTEM_DISK_SIZE: ${{ matrix.qemuSystemDiskSize }}
+           SHORT_INTEGRATION_TEST: 'yes'
+           TAG_SUFFIX_IN: ${{ matrix.tagSuffixIn }}
++          TEST_MODE: ${{ matrix.testMode }}
+           VIA_MAINTENANCE_MODE: ${{ matrix.viaMaintenanceMode }}
+           WITH_CLUSTER_DISCOVERY: ${{ matrix.withClusterDiscovery }}
+           WITH_ENFORCING: ${{ matrix.withEnforcing }}
+           WITH_KUBESPAN: ${{ matrix.withKubespan }}
++          WITH_SKIP_ETCD_K8S: ${{ matrix.withSkipEtcdK8s }}
++          WITH_STATIC_ENDPOINTS: ${{ matrix.withStaticEndpoints }}
+         run: |
+           sudo -E make e2e-qemu
+       - name: save artifacts
+```
+
+**File**: `.kres.yaml` (modified, +12/-0)
+```diff
+@@ -1195,6 +1195,15 @@ spec:
+           - variant: default
+             test: e2e-no-cluster-discovery
+             withClusterDiscovery: "false"
++          # Static endpoints are the only control plane endpoint source in this cluster: with discovery,
++          # etcd and Kubernetes disabled, workers reach trustd (to get Talos API certificates) only
++          # via the StaticEndpointsConfig document.
++          - variant: default
++            test: e2e-static-endpoints
++            withClusterDiscovery: "false"
++            withStaticEndpoints: "true"
++            withSkipEtcdK8s: "true"
++            testMode: skip-etcd-k8s
+           - variant: default
+             test: e2e-kubespan
+             withClusterDiscovery: "true"
+@@ -1250,6 +1259,9 @@ spec:
+             GITHUB_STEP_NAME: ${{ github.job}}-${{ matrix.test }}-${{ matrix.variant }}
+             SHORT_INTEGRATION_TEST: yes
+             WITH_CLUSTER_DISCOVERY: ${{ matrix.withClusterDiscovery }}
++            WITH_STATIC_ENDPOINTS: ${{ matrix.withStaticEndpoints }}
++            WITH_SKIP_ETCD_K8S: ${{ matrix.withSkipEtcdK8s }}
++            TEST_MODE: ${{ matrix.testMode }}
+             WITH_KUBESPAN: ${{ matrix.withKubespan }}
+             VIA_MAINTENANCE_MODE: ${{ matrix.viaMaintenanceMode }}
+             DISABLE_DHCP_HOSTNAME: ${{ matrix.disableDhcpHostname }}
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/common.go` (modified, +32/-0)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/siderolabs/talos/pkg/machinery/config/container"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/generate"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/machine"
++	clustercfg "github.com/siderolabs/talos/pkg/machinery/config/types/cluster"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/siderolink"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+ 	"github.com/siderolabs/talos/pkg/provision"
+@@ -206,9 +207,40 @@ func (m *Maker[T]) initConfigBundleOps() error {
+ 	m.ConfigBundleOps = []bundle.Option{}
+ 	m.userConfigBundleOps = configPatchBundleOps
+ 
++	if m.Ops.WithStaticEndpoints {
++		staticEndpointsPatch, err := m.getStaticEndpointsPatch()
++		if err != nil {
++			return err
++		}
++
++		m.ConfigBundleOps = append(m.ConfigBundleOps, bundle.WithPatch([]configpatcher.Patch{staticEndpointsPatch}))
++	}
++
+ 	return nil
+ }
+ 
++// getStaticEndpointsPatch builds a StaticEndpointsConfig document listing IPs of all controlplane nodes.
++func (m *Maker[T]) getStaticEndpointsPatch() (configpatcher.Patch, error) {
++	if !m.VersionContract.Greater(config.TalosVersion1_14) {
++		return nil, fmt.Errorf("static endpoints are not supported for Talos version %q", m.Ops.TalosVersion)
++	}
++
++	staticEndpoints := clustercfg.NewStaticEndpointsConfigV1Alpha1()
++
++	for _, node := range m.ClusterRequest.Nodes {
++		if node.Type.IsControlPlane() {
++			staticEndpoints.EndpointAddresses = append(staticEndpoints.EndpointAddresses, node.IPs...)
++		}
++	}
++
++	ctr, err := container.New(staticEndpoints)
++	if err != nil {
++		return nil, err
++	}
++
++	return configpatcher.NewStrategicMergePatch(ctr), nil
++}
++
+ func (m *Maker[T]) initVersionContract() error {
+ 	if m.Ops.TalosVersion == "latest" {
+ 		m.VersionContract = nil
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/common_test.go` (modified, +74/-0)
+```diff
+@@ -5,6 +5,7 @@
+ package makers_test
+ 
+ import (
++	"net/netip"
+ 	"regexp"
+ 	"testing"
+ 
+@@ -252,3 +253,76 @@ func assertMachineConfig(t *testing.T, in *generate.Input, node provision.NodeRe
+ 
+ 	assert.Equal(t, string(cfgExpectedBytes), string(cfgGotBytes))
  }
 +
-+func TestWatcherReAddDeletedPath(t *testing.T) {
-+	watcher, err := inotify.NewWatcher()
++func TestCommonMaker_StaticEndpoints(t *testing.T) {
++	cOps := clusterops.GetCommon()
++	cOps.Controlplanes = 3
++	cOps.Workers = 2
++	cOps.NetworkIPv6 = true
++	cOps.WithInitNode = true
++	cOps.WithStaticEndpoints = true
++
++	m := getInitializedTestMaker(t, cOps)
++
++	clusterCfgs, err := m.GetClusterConfigs()
 +	require.NoError(t, err)
 +
-+	path := filepath.Join(t.TempDir(), "dev")
++	require.Len(t, clusterCfgs.ClusterRequest.Nodes, 5)
 +
-+	require.NoError(t, os.WriteFile(path, nil, 0o644))
-+	require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
++	for _, node := range clusterCfgs.ClusterRequest.Nodes {
++		staticEndpoints := node.Config.StaticEndpointsConfig()
++		require.NotNil(t, staticEndpoints, "node %s", node.Name)
 +
-+	watchCh, errCh := watcher.Run()
-+
-+	done := make(chan struct{})
-+	drained := make(chan struct{})
-+
-+	go func() {
-+		defer close(drained)
-+
-+		for {
-+			select {
-+			case <-watchCh:
-+			case <-done:
-+				return
-+			}
-+		}
-+	}()
-+
-+	for range 2000 {
-+		require.NoError(t, os.Remove(path))
-+		require.NoError(t, os.WriteFile(path, nil, 0o644))
-+		require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
++		assert.Equal(t,
++			[]netip.Addr{
++				netip.MustParseAddr("10.5.0.2"), netip.MustParseAddr("fd74:616c:a05::2"),
++				netip.MustParseAddr("10.5.0.3"), netip.MustParseAddr("fd74:616c:a05::3"),
++				netip.MustParseAddr("10.5.0.4"), netip.MustParseAddr("fd74:616c:a05::4"),
++			},
++			staticEndpoints.Addresses(),
++			"node %s", node.Name,
++		)
++		assert.Empty(t, staticEndpoints.Hostnames())
 +	}
++}
 +
-+	select {
-+	case err = <-errCh:
-+		require.NoError(t, err)
-+	default:
-+	}
++func TestCommonMaker_StaticEndpointsUnsupportedVersion(t *testing.T) {
++	cOps := clusterops.GetCommon()
++	cOps.TalosVersion = "v1.14"
++	cOps.WithStaticEndpoints = true
 +
-+	close(done)
-+	<-drained
++	m, err := makers.New(makers.MakerOptions[any]{CommonOps: cOps, Provisioner: testProvisioner{}})
++	require.NoError(t, err)
 +
-+	require.NoError(t, watcher.Close())
++	m.SetExtraOptionsProvider(&nothingProvider{})
++
++	assert.ErrorContains(t, m.Init(), "static endpoints are not supported for Talos version \"v1.14\"")
++}
++
++func TestCommonMaker_StaticEndpointsSkipEtcdK8s(t *testing.T) {
++	cOps := clusterops.GetCommon()
++	cOps.Controlplanes = 2
++	cOps.Workers = 1
++	cOps.EnableClusterDiscovery = false
++	cOps.SkipEtcdK8sConfig = true
++	cOps.WithStaticEndpoints = true
++
++	m := getInitializedTestMaker(t, cOps)
++
++	clusterCfgs, err := m.GetClusterConfigs()
++	require.NoError(t, err)
++
++	workers := clusterCfgs.ClusterRequest.Nodes.WorkerNodes()
++	require.Len(t, workers, 1)
++
++	// the static endpoints are the only source of control plane endpoints on the worker
++	cfg := workers[0].Config
++	assert.Nil(t, cfg.K8sClusterConfig())
++	assert.Empty(t, cfg.DiscoveryServiceConfigs())
++
++	require.NotNil(t, cfg.StaticEndpointsConfig())
++	assert.Equal(t,
++		[]netip.Addr{netip.MustParseAddr("10.5.0.2"), netip.MustParseAddr("10.5.0.3")},
++		cfg.StaticEndpointsConfig().Addresses(),
++	)
 +}
 ```
 
----
-
-### Incident Patch 2: `45005426` (2026-11-05)
-**Commit Message**: fix: sync unpacked image layers to disk
-
-containerd writes the files of an unpacked layer without fsync but
-commits the snapshot to its metadata store right away. After a power
-loss or a hard reset a committed layer can be left with zero-length
-files, containers then fail with "exec format error", and later pulls
-reuse the broken snapshot, so the node stays broken until the image is
-removed by hand.
-
-syncfs setting makes containerd syncfs each layer after it is
-applied. It works with any pull path - CRI & Talos.
-
-Signed-off-by: Max Makarov <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `hack/cri-plugin.part` (modified, +3/-0)
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/options.go` (modified, +1/-0)
 ```diff
-@@ -4,6 +4,9 @@ version = 4
-   discard_unpacked_layers = true
-   use_local_image_pull = true
- 
-+[plugins."io.containerd.service.v1.diff-service"]
-+  sync_fs = true
-+
- [plugins."io.containerd.cri.v1.runtime"]
-   enable_cdi = true
-   cdi_spec_dirs = ["/run/cdi"]
+@@ -75,6 +75,7 @@ type Common struct {
+ 	SkipEtcdK8sConfig           bool
+ 	EnableKubeSpan              bool
+ 	EnableClusterDiscovery      bool
++	WithStaticEndpoints         bool
+ 	ConfigPatch                 []string
+ 	ConfigPatchControlPlane     []string
+ 	ConfigPatchWorker           []string
 ```
 
-**File**: `hack/release.toml` (modified, +25/-0)
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/cmd_dev.go` (modified, +3/-0)
 ```diff
-@@ -1090,6 +1090,31 @@ neighbors:
+@@ -127,6 +127,7 @@ func getCreateCmd(cmdName string, hidden bool) *cobra.Command {
+ 		configDebugFlag               = "with-debug"
+ 		dnsDomainFlag                 = "dns-domain"
+ 		withClusterDiscoveryFlag      = "with-cluster-discovery"
++		withStaticEndpointsFlag       = "with-static-endpoints"
+ 		registryInsecureFlag          = "registry-insecure-skip-verify"
+ 		customCNIUrlFlag              = "custom-cni-url"
+ 		encryptStatePartitionFlag     = "encrypt-state"
+@@ -201,6 +202,8 @@ func getCreateCmd(cmdName string, hidden bool) *cobra.Command {
+ 		common.BoolVar(&cOps.SkipInjectingConfig, skipInjectingConfigFlag, cOps.SkipInjectingConfig,
+ 			"skip injecting config from embedded metadata server, write config files to current directory")
+ 		common.BoolVar(&cOps.EnableClusterDiscovery, withClusterDiscoveryFlag, cOps.EnableClusterDiscovery, "enable cluster discovery")
++		common.BoolVar(&cOps.WithStaticEndpoints, withStaticEndpointsFlag, cOps.WithStaticEndpoints,
++			"generate a StaticEndpointsConfig document listing the IPs of all controlplane nodes and apply it to all nodes")
+ 		common.BoolVar(&cOps.EnableKubeSpan, enableKubeSpanFlag, cOps.EnableKubeSpan, "enable KubeSpan system")
+ 		common.IntVar(&cOps.KubePrismPort, kubePrismFlag, cOps.KubePrismPort, "KubePrism port (set to 0 to disable)")
+ 		common.BoolVar(&cOps.SkipK8sNodeReadinessCheck, skipK8sNodeReadinessCheckFlag, cOps.SkipK8sNodeReadinessCheck, "skip k8s node readiness checks")
+```
+
+**File**: `hack/release.toml` (modified, +21/-0)
+```diff
+@@ -1153,6 +1153,27 @@ content: |
  ```
  
- The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
+ Snapshots already broken by an earlier crash are not repaired: remove the affected image (e.g. `talosctl image rm`) so that it is pulled again.
 +"""
 +
-+    [notes.image_layers_sync_fs]
-+        title = "Image Layers Synced to Disk"
++    [notes.static_endpoints]
++        title = "Static Control Plane Endpoints"
 +        description = """\
-+The CRI containerd now syncs each unpacked image layer to disk (`syncfs`) before committing the snapshot.
-+Previously, a power loss or a hard reset shortly after an image pull could leave a committed layer with zero-length files:
-+containers using the image failed with `exec format error`, and the broken snapshot was reused until the image was removed by hand.
-+
-+This applies to all image layers unpacked by the CRI containerd: images pulled by the kubelet, the `kubelet` and `etcd` images pulled by Talos,
-+and images imported into the CRI containerd with `talosctl image import`.
-+
-+Each synced layer flushes all dirty data of the `EPHEMERAL` filesystem, which can slow down image pulls and add I/O latency on write-heavy nodes.
-+If image pull performance matters more than crash consistency, the sync can be disabled with a machine configuration patch:
++The new `StaticEndpointsConfig` document provides a static list of control plane node addresses and hostnames:
 +
 +```yaml
 +apiVersion: v1alpha1
-+kind: CRICustomizationConfig
-+name: disable-sync-fs
-+content: |
-+    [plugins."io.containerd.service.v1.diff-service"]
-+      sync_fs = false
++kind: StaticEndpointsConfig
++addresses:
++  - 10.0.0.11
++  - 10.0.0.12
++  - 10.0.0.13
 +```
 +
-+Snapshots already broken by an earlier crash are not repaired: remove the affected image (e.g. `talosctl image rm`) so that it is pulled again.
++The list is merged with the control plane endpoints discovered via the discovery service, the Kubernetes API server endpoints, and the cluster control plane endpoint.
++Worker nodes use these endpoints to reach trustd, and control plane nodes use them to join etcd.
++Distributing the list to all machines in the cluster makes these operations independent of the discovery service and Kubernetes.
++
++Every connection to the endpoints is authenticated with TLS, and unreachable endpoints are skipped, so a stale list doesn't break the cluster.
  """
  
  [make_deps]
@@ -2126,90 +2290,588 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 3: `f5c9f0fc` (2026-11-05)
-**Commit Message**: test: fix finalizer race in storage pool volume outage tests
+### Incident Patch 2: `f1116771` (2026-11-06)
+**Commit Message**: feat: add KubePrism /readyz check
 
-The outage tests drop a request or pool behind the controller by
-removing its finalizer and then destroying the resource. During the
-injected outage the controller keeps requeueing, and each pass re-adds
-its finalizer to every running spec and pool it holds. A reconcile
-between the two calls made the destroy fail with pending finalizers.
+Starting with Talos 1.14+ Talos enables kube-apiserver unauthenticated
+health check endpoints.
 
-Repeat the removal and destroy until the destroy succeeds.
+Previously, only TCP check was performed which can only detect network
+connectivity and pod being up. The `/readyz` check can catch many more
+cases - whether etcd is healthy for example.
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+Fixes #14650
 
-**File**: `internal/app/machined/pkg/controllers/storage/storage_pool_volume_test.go` (modified, +17/-8)
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +6/-0)
 ```diff
-@@ -655,8 +655,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			})
- 		}},
- 		{name: "request-incarnation", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
--			suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
-+			suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
- 			replacement := storageres.NewStoragePoolVolumeSpec(storageres.NamespaceName, f.request.Metadata().ID())
- 			*replacement.TypedSpec() = *f.request.TypedSpec()
- 			key, _ := f.request.Metadata().Labels().Get(libvirtstorage.CopyBindingLabel)
-@@ -679,8 +678,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			}, state.WithUpdateOwner("storage.StoragePoolController"))
- 		}},
- 		{name: "pool-incarnation", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
--			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
-+			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
- 
- 			replacement := storageres.NewStoragePoolStatus(storageres.NamespaceName, f.pool.Metadata().ID())
- 			*replacement.TypedSpec() = *f.pool.TypedSpec()
-@@ -692,8 +690,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			suite.Require().NoError(err)
- 		}},
- 		{name: "missing-pool", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
--			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
-+			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
- 		}},
- 		{name: "pool-mutation", change: func(f completedVolumeFixture) {
- 			suite.AddFinalizer(f.pool.Metadata(), "storage.StoragePoolController/mutating/backing")
-@@ -795,8 +792,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageRequestWithdrawal()
- 				suite.Require().NoError(err)
- 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
- 			case "missing-request":
--				suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
--				suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
-+				suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
- 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
- 			}
- 		})
-@@ -2497,6 +2493,19 @@ func (suite *StoragePoolVolumeSuite) changeCopySpec(spec *storageres.StoragePool
- 	}, state.WithUpdateOwner("hypervisor.VirtualMachineDiskController"))
+@@ -172,6 +172,12 @@ message KubePrismConfigSpec {
+   string host = 1;
+   int64 port = 2;
+   repeated KubePrismEndpoint endpoints = 3;
++  // ReadinessCheck enables upstream health checks via the API server readiness endpoint.
++  bool readiness_check = 4;
++  // TLSServerName is the server name used to verify the API server certificate (readiness check only).
++  string tls_server_name = 5;
++  // AcceptedCAs are the CAs used to verify the API server certificate (readiness check only).
++  repeated common.PEMEncodedCertificate accepted_c_as = 6;
  }
  
-+// forceDestroy destroys a resource behind the controller's back. A controller
-+// retrying through an outage can re-add its finalizer between the removal and
-+// the destroy, so both are repeated until the destroy wins.
-+func (suite *StoragePoolVolumeSuite) forceDestroy(ptr resource.Pointer, owner string) {
-+	suite.Require().EventuallyWithT(func(t *assert.CollectT) {
-+		if !assert.NoError(t, suite.State().RemoveFinalizer(suite.Ctx(), ptr, volumeFinalizer)) {
+ // KubePrismEndpoint holds data for control plane endpoint.
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -147,7 +147,7 @@ require (
+ 	github.com/siderolabs/go-kubeconfig v0.1.2
+ 	github.com/siderolabs/go-kubernetes v0.2.45
+ 	github.com/siderolabs/go-lldp v0.1.0
+-	github.com/siderolabs/go-loadbalancer v0.5.1
++	github.com/siderolabs/go-loadbalancer v0.5.2
+ 	github.com/siderolabs/go-pcidb v0.3.4
+ 	github.com/siderolabs/go-pointer v1.0.1
+ 	github.com/siderolabs/go-procfs v0.1.2
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1485,8 +1485,8 @@ github.com/siderolabs/go-kubernetes v0.2.45 h1:VvBqVAX25IENtBvdNcUoiuVcVHbEREMsg
+ github.com/siderolabs/go-kubernetes v0.2.45/go.mod h1:rN+k0Yfga5ZR65lYfNUIzGa+3NZfqdYX0Jr+EvfOdsw=
+ github.com/siderolabs/go-lldp v0.1.0 h1:kupYmC/gfBTndRIRNhfjiY/WXSmOlBW2M9So9UuO7gY=
+ github.com/siderolabs/go-lldp v0.1.0/go.mod h1:om5vsBjKsg+EJcGIXnIufV3BAk+WnDQ8AxjThm3X9To=
+-github.com/siderolabs/go-loadbalancer v0.5.1 h1:+z0uucx2cG1c5G3HhIekUMP2Q386Bze4B5aFjlieUmY=
+-github.com/siderolabs/go-loadbalancer v0.5.1/go.mod h1:VFbd7wf/bbX0iA/ES9rvvEFLHHL7Gc1cwtwDdHKyqVQ=
++github.com/siderolabs/go-loadbalancer v0.5.2 h1:X8kxnMpzZCcVMduy2jsY0NFDZQW7d9IfamRPafFw+3w=
++github.com/siderolabs/go-loadbalancer v0.5.2/go.mod h1:VFbd7wf/bbX0iA/ES9rvvEFLHHL7Gc1cwtwDdHKyqVQ=
+ github.com/siderolabs/go-pcidb v0.3.4 h1:gd4QkDjzarlz67zbvuEqo/LGmuidYSUU6drZrX92NOU=
+ github.com/siderolabs/go-pcidb v0.3.4/go.mod h1:MfOsA4XkYtfDdOOwycwod5ByjmnX/WU3i73zOc6T3iw=
+ github.com/siderolabs/go-pointer v1.0.1 h1:f7Yi4IK1jptS8yrT9GEbwhmGcVxvPQgBUG/weH3V3DM=
+```
+
+**File**: `hack/release.toml` (modified, +11/-0)
+```diff
+@@ -15,6 +15,17 @@ preface = """
+ """
+ 
+ [notes]
++    [notes.kubeprism_readiness_check]
++        title = "KubePrism Readiness Check"
++        description = """\
++KubePrism can now check the health of the Kubernetes API server upstreams via the readiness endpoint (`/readyz`), instead of a TCP connection attempt.
++This allows KubePrism to stop routing new connections to an API server which accepts TCP connections, but is not ready to serve requests
++(e.g. it lost connection to etcd, or it is shutting down).
++
++The readiness check is enabled with the `readinessCheck` field of the `KubePrismConfig` document, and it is enabled by default for machine configuration generated for Talos 1.15+.
++The readiness check requires unauthenticated access to the `/readyz` endpoint of the API server (the default since Talos 1.14, see `KubeAuthenticationConfig`).
++"""
++
+     [notes.trustd_ext_key_usage]
+         title = "trustd Server Certificate Verification"
+         description = """\
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/internal/kubeprism/readiness.go` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++// Package kubeprism implements KubePrism upstream health checks.
++package kubeprism
++
++import (
++	"bufio"
++	"context"
++	"crypto/tls"
++	stdx509 "crypto/x509"
++	"errors"
++	"fmt"
++	"io"
++	"net"
++	"net/http"
++	"net/url"
++	"strings"
++	"sync/atomic"
++	"time"
++
++	"github.com/siderolabs/crypto/x509"
++)
++
++// maxErrorBodySize limits the part of the response body included into the error message.
++const maxErrorBodySize = 512
++
++// ReadinessChecker checks the readiness of the Kubernetes API server via the `/readyz` endpoint.
++//
++// Each check opens a new connection to the upstream and closes it before returning,
++// so no connections are pooled between the checks.
++//
++// ReadinessChecker is safe for concurrent use, and the TLS configuration can be updated
++// while the checks are running.
++type ReadinessChecker struct {
++	tlsConfig atomic.Pointer[tls.Config]
++}
++
++// Update the CAs and the server name used to verify the API server certificate.
++func (checker *ReadinessChecker) Update(acceptedCAs []*x509.PEMEncodedCertificate, serverName string) error {
++	pool := stdx509.NewCertPool()
++
++	for _, ca := range acceptedCAs {
++		if !pool.AppendCertsFromPEM(ca.Crt) {
++			return errors.New("failed to parse Kubernetes CA certificate")
++		}
++	}
++
++	if len(acceptedCAs) == 0 {
++		return errors.New("no Kubernetes CA certificates")
++	}
++
++	checker.tlsConfig.Store(&tls.Config{
++		RootCAs:    pool,
++		ServerName: serverName,
++		MinVersion: tls.VersionTLS12,
++		NextProtos: []string{"http/1.1"},
++	})
++
++	return nil
++}
++
++// Check the readiness of the API server at the address (host:port).
++//
++// Check implements loadbalancer.HealthCheckFunc.
++func (checker *ReadinessChecker) Check(ctx context.Context, address string) error {
++	tlsConfig := checker.tlsConfig.Load()
++	if tlsConfig == nil {
++		return errors.New("readiness check is not configured")
++	}
++
++	conn, err := (&tls.Dialer{Config: tlsConfig}).DialContext(ctx, "tcp", address)
++	if err != nil {
++		return err
++	}
++
++	defer conn.Close() //nolint:errcheck
++
++	// abort any blocked read or write as soon as the context is done
++	stop := context.AfterFunc(ctx, func() {
++		conn.SetDeadline(time.Now()) //nolint:errcheck
++	})
++	defer stop()
++
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, (&url.URL{Scheme: "https", Host: address, Path: "/readyz"}).String(), nil)
++	if err != nil {
++		return err
++	}
++
++	req.Close = true
++
++	if err = req.Write(conn); err != nil {
++		return fmt.Errorf("error sending readiness request: %w", checkCtxErr(ctx, err))
++	}
++
++	resp, err := http.ReadResponse(bufio.NewReader(conn), req)
++	if err != nil {
++		return fmt.Errorf("error reading readiness response: %w", checkCtxErr(ctx, err))
++	}
++
++	defer resp.Body.Close() //nolint:errcheck
++
++	if resp.StatusCode != http.StatusOK {
++		body, _ := io.ReadAll(io.LimitReader(resp.Body, maxErrorBodySize)) //nolint:errcheck
++
++		return fmt.Errorf("API server is not ready: %s: %s", resp.Status, strings.TrimSpace(string(body)))
++	}
++
++	return nil
++}
++
++// checkCtxErr replaces the deadline error caused by the context cancellation with the context error.
++func checkCtxErr(ctx context.Context, err error) error {
++	var netErr net.Error
++
++	if ctx.Err() != nil && errors.As(err, &netErr) && netErr.Timeout() {
++		return context.Cause(ctx)
++	}
++
++	return err
++}
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/internal/kubeprism/readiness_test.go` (added, +280/-0)
+```diff
+@@ -0,0 +1,280 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package kubeprism_test
++
++import (
++	"context"
++	"encoding/pem"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/siderolabs/crypto/x509"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/goleak"
++
++	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s/internal/kubeprism"
++)
++
++func TestMain(m *testing.M) {
++	goleak.VerifyTestMain(m)
++}
++
++// newAPIServer starts a TLS server which serves /readyz with the given status.
++//
++// The server certificate is valid for 127.0.0.1 and example.com.
++func newAPIServer(t *testing.T, status *atomic.Int32) (*httptest.Server, *x509.PEMEncodedCertificate) {
++	t.Helper()
++
++	srv := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/readyz" {
++			w.WriteHeader(http.StatusNotFound)
++
 +			return
 +		}
 +
-+		assert.NoError(t, suite.State().Destroy(suite.Ctx(), ptr, state.WithDestroyOwner(owner)))
-+	}, 2*time.Second, 10*time.Millisecond)
++		code := int(status.Load())
++
++		w.WriteHeader(code)
++
++		if code == http.StatusOK {
++			w.Write([]byte("ok")) //nolint:errcheck
++		} else {
++			w.Write([]byte("[-]etcd failed: reason withheld\nreadyz check failed\n")) //nolint:errcheck
++		}
++	}))
++	srv.StartTLS()
++	t.Cleanup(srv.Close)
++
++	return srv, &x509.PEMEncodedCertificate{
++		Crt: pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: srv.Certificate().Raw}),
++	}
 +}
 +
- func (suite *StoragePoolVolumeSuite) TestCopyBackingChangeRejectsOldCompletion() {
- 	spec, copyCtx, release := suite.heldCopy("backing.raw")
- 	pool, err := safe.StateGetByID[*storageres.StoragePoolStatus](suite.Ctx(), suite.State(), volumePool)
++func newChecker(t *testing.T, ca *x509.PEMEncodedCertificate, serverName string) *kubeprism.ReadinessChecker {
++	t.Helper()
++
++	var checker kubeprism.ReadinessChecker
++
++	require.NoError(t, checker.Update([]*x509.PEMEncodedCertificate{ca}, serverName))
++
++	return &checker
++}
++
++func otherCA(t *testing.T) *x509.PEMEncodedCertificate {
++	t.Helper()
++
++	ca, err := x509.NewSelfSignedCertificateAuthority(x509.ECDSA(true))
++	require.NoError(t, err)
++
++	return &x509.PEMEncodedCertificate{Crt: ca.CrtPEM}
++}
++
++func TestReadinessCheck(t *testing.T) {
++	t.Parallel()
++
++	var status atomic.Int32
++
++	status.Store(http.StatusOK)
++
++	srv, ca := newAPIServer(t, &status)
++	address := srv.Listener.Addr().String()
++
++	checker := newChecker(t, ca, "127.0.0.1")
++
++	require.NoError(t, checker.Check(t.Context(), address))
++
++	status.Store(http.StatusInternalServerError)
++
++	err := checker.Check(t.Context(), address)
++	require.Error(t, err)
++	assert.ErrorContains(t, err, "500 Internal Server Error")
++	assert.ErrorContains(t, err, "etcd failed")
++
++	status.Store(http.StatusUnauthorized)
++
++	assert.ErrorContains(t, checker.Check(t.Context(), address), "401 Unauthorized")
++
++	// the TLS configuration can be updated on the fly
++	status.Store(http.StatusOK)
++
++	require.NoError(t, checker.Update([]*x509.PEMEncodedCertificate{otherCA(t), ca}, "127.0.0.1"))
++	require.NoError(t, checker.Check(t.Context(), address))
++}
++
++func TestReadinessCheckTLSVerification(t *testing.T) {
++	t.Parallel()
++
++	var status atomic.Int32
++
++	status.Store(http.StatusOK)
++
++	srv, ca := newAPIServer(t, &status)
++	address := srv.Listener.Addr().String()
++
++	for _, test := range []struct {
++		name       string
++		ca         *x509.PEMEncodedCertificate
++		serverName string
++
++		expectedErr string
++	}{
++		{
++			name:       "server name override",
++			ca:         ca,
++			serverName: "example.com",
++		},
++		{
++			name:        "wrong server name",
++			ca:          ca,
++			serverName:  "kubernetes",
++			expectedErr: "certificate is valid for",
++		},
++		{
++			name:        "wrong CA",
++			ca:          otherCA(t),
++			serverName:  "127.0.0.1",
++			expectedErr: "certificate signed by unknown authority",
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			err := newChecker(t, test.ca, test.serverName).Check(t.Context(), address)
++
++			if test.expectedErr == "" {
++				require.NoError(t, err)
++			} else {
++				require.ErrorContains(t, err, test.expectedErr)
++			}
++		})
++	}
++}
++
++func TestReadinessCheckNotConfigured(t *testing.T) {
++	t.Parallel()
++
++	var checker kubeprism.ReadinessChecker
++
++	require.ErrorContains(t, checker.Check(t.Context(), "127.0.0.1:6443"), "not configured")
++	require.Error(t, checker.Update(nil, "127.0.0.1"))
++	require.Error(t, checker.Update([]*x509.PEMEncodedCertificate{{Crt: []byte("garbage")}}, "127.0.0.1"))
++}
++
++func TestReadinessCheckTimeout(t *testing.T) {
++	t.Parallel()
++
++	t.Run("stuck handshake", func(t *testing.T) {
++		t.Parallel()
++
++		// a TCP listener which accepts connections, but never responds
++		lis, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
++		require.NoError(t, err)
++
++		t.Cleanup(func() { lis.Close() }) //nolint:errcheck
++
++		go func() {
++			for {
++				conn, err := lis.Accept()
++				if err != nil {
++					return
++				}
++
++				t.Cleanup(func() { conn.Close() }) //nolint:errcheck
++			}
++		}()
++
++		checker := newChecker(t, otherCA(t), 
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubeprism.go` (modified, +79/-10)
+```diff
+@@ -20,17 +20,36 @@ import (
+ 	"github.com/siderolabs/go-loadbalancer/upstream"
+ 	"go.uber.org/zap"
+ 
++	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s/internal/kubeprism"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/k8s"
+ )
+ 
++// readinessCheckTierThresholds are the upstream tier thresholds for the readiness check.
++//
++// The default thresholds are tuned for a TCP dial attempt (tens to hundreds of microseconds on a LAN).
++// A readiness check adds a TLS handshake, an HTTP round-trip and the API server readiness checks
++// (including a rate-limited etcd probe), which add about a millisecond on top of the dial,
++// and that overhead varies more than the network latency between the nodes in the same location.
++//
++// The upstream with the lowest tier is always preferred, and the tier is updated on each health check
++// without any smoothing, so the thresholds are coarse to avoid flapping between the upstreams in the same location,
++// while still deprioritizing remote (or overloaded) API servers.
++var readinessCheckTierThresholds = []time.Duration{
++	0,
++	10 * time.Millisecond,
++	100 * time.Millisecond,
++	time.Second,
++}
++
+ // KubePrismController creates KubePrism load balancer based on KubePrismEndpointsType resource.
+ type KubePrismController struct {
+-	balancerHost string
+-	balancerPort int
+-	lb           *controlplane.LoadBalancer
+-	ticker       *time.Ticker
+-	upstreamCh   chan []string
++	balancerHost     string
++	balancerPort     int
++	lb               *controlplane.LoadBalancer
++	readinessChecker *kubeprism.ReadinessChecker
++	ticker           *time.Ticker
++	upstreamCh       chan []string
+ }
+ 
+ // Name implements controller.Controller interface.
+@@ -105,7 +124,10 @@ func (ctrl *KubePrismController) Run(ctx context.Context, r controller.Runtime,
+ 				return err
+ 			}
+ 		case ctrl.lb != nil && lbCfg != nil:
+-			if lbCfg.TypedSpec().Host != ctrl.balancerHost || lbCfg.TypedSpec().Port != ctrl.balancerPort {
++			// switching the health check (TCP dial or readiness check) requires a restart
++			readinessCheckToggled := lbCfg.TypedSpec().ReadinessCheck != (ctrl.readinessChecker != nil)
++
++			if lbCfg.TypedSpec().Host != ctrl.balancerHost || lbCfg.TypedSpec().Port != ctrl.balancerPort || readinessCheckToggled {
+ 				err = ctrl.stopKubePrism(logger)
+ 				if err != nil {
+ 					return err
+@@ -116,6 +138,12 @@ func (ctrl *KubePrismController) Run(ctx context.Context, r controller.Runtime,
+ 					return err
+ 				}
+ 			} else {
++				if ctrl.readinessChecker != nil {
++					if err = updateReadinessChecker(ctrl.readinessChecker, lbCfg.TypedSpec()); err != nil {
++						return err
++					}
++				}
++
+ 				ctrl.upstreamChan() <- makeEndpoints(lbCfg.TypedSpec())
+ 			}
+ 		}
+@@ -187,9 +215,17 @@ func (ctrl *KubePrismController) startKubePrism(lbCfg *k8s.KubePrismConfig, logg
+ 	ctrl.balancerHost = spec.Host
+ 	ctrl.balancerPort = spec.Port
+ 
+-	lb, err := controlplane.NewLoadBalancer(
+-		ctrl.balancerHost, ctrl.balancerPort,
+-		logger.WithOptions(zap.IncreaseLevel(zap.ErrorLevel)), // silence the load balancer logs
++	var readinessChecker *kubeprism.ReadinessChecker
++
++	if spec.ReadinessCheck {
++		readinessChecker = &kubeprism.ReadinessChecker{}
++
++		if err := updateReadinessChecker(readinessChecker, spec); err != nil {
++			return err
++		}
++	}
++
++	lbOptions := []controlplane.LoadBalancerOption{
+ 		controlplane.WithDialTimeout(constants.KubePrismDialTimeout),
+ 		controlplane.WithKeepAlivePeriod(constants.KubePrismKeepAlivePeriod),
+ 		controlplane.WithTCPUserTimeout(constants.KubePrismTCPUserTimeout),
+@@ -204,6 +240,20 @@ func (ctrl *KubePrismController) startKubePrism(lbCfg *k8s.KubePrismConfig, logg
+ 			// a full cluster reboot.
+ 			upstream.WithUnhealthyHealthcheckInterval(constants.KubePrismUnhealthyHealthCheckInterval),
+ 		),
++	}
++
++	if readinessChecker != nil {
++		// a failure to connect to the upstream while proxying still lowers the upstream score
++		lbOptions = append(lbOptions,
++			controlplane.WithHealthCheck(readinessChecker.Check),
++			controlplane.WithTierThresholds(readinessCheckTierThresholds...),
++		)
++	}
++
++	lb, err := controlplane.NewLoadBalancer(
++		ctrl.balancerHost, ctrl.balancerPort,
++		logger.WithOptions(zap.IncreaseLevel(zap.ErrorLevel)), // silence the load balancer logs
++		lbOptions...,
+ 	)
+ 	if err != nil {
+ 		return fmt.Errorf("failed to create KubePrism: %w", err)
+@@ -214,11 +264,29 @@ func (ctrl *KubePrismController) startKubePrism(lbCfg *k8s.KubePrismConfig, logg
+ 		return fmt.Errorf("failed to start KubePrism: %w", err)
+ 	}
+ 
+-	logger.Info("KubePrism is enabled", zap.String("endpoint", ctrl.endpoint()))
++	logger.Info("KubePrism is enabled", zap.String("endpoint", ctrl.endpoint()), zap.Bool("readiness_check", readinessChecker != nil))
+ 
+ 	ctrl.upstreamChan() <- makeEndpoints(spec)
+ 
+ 	ctrl.lb = lb
++	ctrl.readinessChecker = readinessChecker
++
++	return nil
++}
++
++// updateReadinessChecker updates the readiness check TLS
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubeprism_config.go` (modified, +17/-1)
+```diff
+@@ -6,6 +6,7 @@ package k8s
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"strconv"
+ 
+ 	"github.com/cosi-project/runtime/pkg/controller"
+@@ -49,10 +50,25 @@ func NewKubePrismConfigController() *KubePrismConfigController {
+ 					return err
+ 				}
+ 
++				kubePrismConfig := cfg.Config().K8sKubePrismConfig()
++
+ 				spec := res.TypedSpec()
+ 				spec.Endpoints = endpt.TypedSpec().Endpoints
+ 				spec.Host = "127.0.0.1"
+-				spec.Port = cfg.Config().K8sKubePrismConfig().Port()
++				spec.Port = kubePrismConfig.Port()
++				spec.TLSServerName = kubePrismConfig.TLSServerName()
++				spec.ReadinessCheck = kubePrismConfig.ReadinessCheckEnabled()
++				spec.AcceptedCAs = nil
++
++				if spec.ReadinessCheck {
++					if k8sCAProvider := cfg.Config().K8sAPIServerCAConfig(); k8sCAProvider != nil {
++						spec.AcceptedCAs = k8sCAProvider.AcceptedCAs()
++					}
++
++					if len(spec.AcceptedCAs) == 0 {
++						return errors.New("missing accepted Kubernetes CAs for KubePrism readiness check")
++					}
++				}
+ 
+ 				return nil
+ 			},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14856** (2026-11-05): fix: use the image pull returned reference for upgrade (@smira)
-- **PR #14855** (2026-11-05): feat: disable SELinux categories by default (@smira)
-- **PR #14853** (2026-11-05): test: fix finalizer race in storage pool volume outage tests (@frezbo)
-- **PR #14852** (2026-11-05): fix: print detected upgrade image to stderr (@frezbo)
-- **PR #14851** (2026-11-05): chore: split unit-test actions (@smira)
-- **PR #14850** (2026-11-05): fix: avoid data race in block device inotify watcher (@frezbo)
+- **PR #14874** (closed): fix(security): let the CRI containerd run the installer of an upgrade (@rducom)
+- **PR #14867** (2026-11-06): feat: add KubePrism /readyz check (@smira)
+- **PR #14866** (2026-11-06): chore: drop image pull/list legacy from talosctl (@smira)
+- **PR #14865** (2026-11-06): test: cut down 110 seconds in hypervisor tests (@majabojarska)
+- **PR #14864** (2026-11-06): feat: update Kubernetes to 1.38.0-beta.0 (@smira)
+- **PR #14863** (2026-11-06): feat: update pkgs & tools (@smira)
 
 ---
 
@@ -2229,41 +2891,37 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid data race in block device inotify watcher
+## X. implement static endpoints list
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26cebd68`: avoid data race in block device inotify watcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab967ebc`: implement static endpoints list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (w *watches) byWd(wd uint32) (watch, bool) {
-	existing, ok := w.wd[wd]
-	if !ok {
-		return watch{}, false
-	}
-
-	return *existing, true
-				watch, ok := w.watches.byWd(uint32(raw.Wd))
-				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-				if ok {
+# Generated on 2026-11-05T16:48:20Z by kres 7aae418.
+          - test: e2e-static-endpoints
+            testMode: skip-etcd-k8s
+            variant: default
+            withClusterDiscovery: "false"
+            withSkipEtcdK8s: "true"
+            withStaticEndpoints: "true"
+          TEST_MODE: ${{ matrix.testMode }}
+          WITH_SKIP_ETCD_K8S: ${{ matrix.withSkipEtcdK8s }}
+          WITH_STATIC_ENDPOINTS: ${{ matrix.withStaticEndpoints }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (w *watches) byWd(wd uint32) *watch {
-	return w.wd[wd]
-				watch := w.watches.byWd(uint32(raw.Wd))
-				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-				if watch != nil {
+# Generated on 2026-11-05T13:19:25Z by kres 7aae418.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26cebd68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab967ebc` are properly handled with clean fallback behavior.

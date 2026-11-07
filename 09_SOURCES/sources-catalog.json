@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "d04aa46b",
+    "sourceVersion": "ab967ebc",
     "license": "MPL-2.0",
-    "contentHash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
-    "lastHarvestedAt": "2026-11-05T22:40:12.998Z",
+    "contentHash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
+    "lastHarvestedAt": "2026-11-07T20:16:32.174Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "b3cb0575",
+    "sourceVersion": "a579e352",
     "license": "MIT",
-    "contentHash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
-    "lastHarvestedAt": "2026-11-04T02:26:09.697Z",
+    "contentHash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
+    "lastHarvestedAt": "2026-11-07T20:16:27.185Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

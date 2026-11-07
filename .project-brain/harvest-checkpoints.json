@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:09:34.207Z",
+  "last_updated": "2026-11-07T20:16:32.191Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "c750ad7cf3cf012e10afe7a5a29e84457306812a016a0f682b6aa605c1166c14",
-      "verified_at": "2026-11-05T22:40:13.014Z",
+      "content_hash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
+      "verified_at": "2026-11-07T20:16:32.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:40:13.014Z"
+      "last_updated": "2026-11-07T20:16:32.190Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "9a3f9d538403553d2295cf7b828c2cc6e2d70c630b0098a420c4c178a9e5cab4",
-      "verified_at": "2026-11-04T02:26:09.705Z",
+      "content_hash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
+      "verified_at": "2026-11-07T20:16:27.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:26:09.705Z"
+      "last_updated": "2026-11-07T20:16:27.202Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",

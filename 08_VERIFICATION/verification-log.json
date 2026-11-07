@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-2DQG",
-    "timestamp": "2026-11-05T06:58:31.816Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "4682c9661d31c763c49ee57ae6911f132283deddb4779e02529c3379bc9cd8ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-2E5W",
-    "timestamp": "2026-11-05T06:58:32.372Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "bc34831a881007b5fbb0ce267abd003e645669ca30c10b2026d829ee83035aec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-BZLM",
     "timestamp": "2026-11-05T07:06:00.058Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-G7XP",
+    "timestamp": "2026-11-07T20:16:27.181Z",
+    "repository": "vitejs/vite",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-GBSB",
+    "timestamp": "2026-11-07T20:16:32.171Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "9744180d29c91ba4f4078b272c121083365c7f5768e3a4e50ae6dd03f5d4a822",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
