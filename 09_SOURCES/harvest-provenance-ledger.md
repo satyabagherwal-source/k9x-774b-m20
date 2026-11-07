@@ -8022,3 +8022,6 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `a81d62a2` | Multi-dimensional audit evidence | 2026-11-07T05:44:19.470Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `47409d6e` | Multi-dimensional audit evidence | 2026-11-07T05:44:26.545Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f4ff4fb7` | Multi-dimensional audit evidence | 2026-11-07T05:44:26.839Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `e4e3b80f` | Multi-dimensional audit evidence | 2026-11-07T05:50:49.667Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `348b2064` | Multi-dimensional audit evidence | 2026-11-07T05:50:52.953Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `082be7be` | Multi-dimensional audit evidence | 2026-11-07T05:50:56.359Z |

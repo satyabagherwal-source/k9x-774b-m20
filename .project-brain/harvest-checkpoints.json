@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T05:44:26.866Z",
+  "last_updated": "2026-11-07T05:50:56.372Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "e8dade68df2ab85133cfeea3c64acc4268faa4d7483b8c2a88cb1bfd3339fb70",
-      "verified_at": "2026-11-04T17:45:14.219Z",
+      "content_hash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
+      "verified_at": "2026-11-07T05:50:52.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:45:14.219Z"
+      "last_updated": "2026-11-07T05:50:52.969Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "bc2f44e19d7c7a962106e42aee587d7f43acb47970a72ecb9c2f16a6546afac1",
-      "verified_at": "2026-11-05T18:38:36.769Z",
+      "content_hash": "de664776ee1fc47211a591c649f33c1c7ba2426487e11cebfade4a714b0c1455",
+      "verified_at": "2026-11-07T05:50:56.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:38:36.769Z"
+      "last_updated": "2026-11-07T05:50:56.371Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "24c3a9ef6fe8f51d4fa108af3458070b6fe3571cb8fd69613fad7843a53bed51",
-      "verified_at": "2026-11-05T13:13:34.607Z",
+      "content_hash": "ac495028a115061844e1a863916ffa2825df5bb670a27112e7fa56dc07c94c1c",
+      "verified_at": "2026-11-07T05:50:49.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:13:34.607Z"
+      "last_updated": "2026-11-07T05:50:49.674Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

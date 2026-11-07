@@ -8013,3 +8013,6 @@
 | `CYCLE-20261107-ANM2` | `2026-11-07T05:44:19.466Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6ff7dec7...`) |
 | `CYCLE-20261107-AT2L` | `2026-11-07T05:44:26.541Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`563ff4e9...`) |
 | `CYCLE-20261107-ATAR` | `2026-11-07T05:44:26.835Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`02889094...`) |
+| `CYCLE-20261107-J0OV` | `2026-11-07T05:50:49.663Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac495028...`) |
+| `CYCLE-20261107-J387` | `2026-11-07T05:50:52.951Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`76f6566e...`) |
+| `CYCLE-20261107-J5US` | `2026-11-07T05:50:56.356Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de664776...`) |

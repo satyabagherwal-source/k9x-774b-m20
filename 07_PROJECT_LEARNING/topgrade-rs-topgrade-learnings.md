@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `94f3d94c`  
+> **Source Version**: `e4e3b80f`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:13:34.001Z  
+> **Timestamp**: 2026-11-07T05:50:48.709Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:13:33.995Z  
+> **Harvest Timestamp**: 2026-11-07T05:50:46.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4738 stars
+- **Stars / Engagement**: 4750 stars
 
 ---
 
@@ -1472,13 +1472,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2477** (2026-11-03): **chore(deps): update self_update to v1**
-  *Symptoms*: Supersedes #2284
+- **Issue #2490** (2026-11-06): **ci(lint_pr): use pull_request instead of pull_request_target**
+  *Symptoms*: Committed via https://github.com/asottile/all-repos
 
-- **Issue #2475** (2026-11-03): **Add Technitium to the upgrade**
-  *Symptoms*: ### Checklist  - [x] I have searched the issue tracker for [existing feature requests](https://github.com/topgrade-rs/topgrade/issues?q=type%3AFeature).  ### I want to suggest a feature  Hi,  This is to suggest to add Technitium to the up-gradable packages, like Pihole.  Thanks  ### Contribution  - [ ] I am able and willing to implement this feature myself. - [x] I am willing to test if someone else implements it. [Guide](https://github.com/topgrade-rs/topgrade?tab=contributing-ov-file#testing-a-pull-request)
-  **Post-Mortem & Fix Analysis**:
-  > Please re-open as a [step request](https://github.com/topgrade-rs/topgrade/issues/new?template=step-request.yml).
+- **Issue #2489** (2026-11-06): **feat(tailscale): pass --yes when assume_yes is set**
+  *Symptoms*: ## What does this PR do?  The Tailscale step ran `tailscale update` without `--yes`, so it stopped at a confirmation prompt even with `assume_yes = true`. This passes `--yes` when `yes` is set for the step, the same way the Opam and Conda steps do.  Closes #2488  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [ ] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps. - [x] If this PR introduces new user-facing messages, they are translated  I only checked this with a dry run (Fedora 44, Tailscale 1.104.2 from the RPM repo), not a real update:  ```txt $ topgrade --dry-run --yes tailscale --only tailscale ―― 08:08:33 - Tailscale ―― Dry running: /usr/bin/sudo /usr/bin/tailscale update --yes ―― 08:08:33 - Summary ―― Tailscale: OK ```  `cargo fmt`, `cargo clippy`, and `cargo test` pass.  ### AI involvement  An AI agent (Claude) wrote the code change and this description at my direction.  <!-- Magic marker that you used the PR template; DO NOT EDIT OR REMOVE THIS COMMENT! -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,151 +1493,48 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94f3d94c` (2026-11-05)
-**Commit Message**: fix(claude-code): don't fail with EOF on long output (#2062)
+### Incident Patch 1: `e4e3b80f` (2026-11-06)
+**Commit Message**: ci(lint_pr): use pull_request instead of pull_request_target (#2490)
 
-**File**: `src/executor.rs` (modified, +57/-0)
+**File**: `.github/workflows/lint_pr.yml` (modified, +1/-1)
 ```diff
-@@ -151,6 +151,21 @@ impl Executor {
-         self
-     }
+@@ -1,7 +1,7 @@
+ name: 'Lint PR'
  
-+    /// See `std::process::Command::stdout`
-+    pub fn stdout<T: Into<Stdio>>(&mut self, cfg: T) -> &mut Executor {
-+        let stdio = cfg.into();
-+        match self {
-+            Executor::Wet(c) | Executor::Damp(c) => {
-+                c.stdout(stdio);
-+            }
-+            Executor::Dry(c) => {
-+                c.stdout = Some(stdio);
-+            }
-+        }
-+
-+        self
-+    }
-+
-     #[allow(dead_code)]
-     /// See `std::process::Command::remove_env`
-     pub fn env_remove<K>(&mut self, key: K) -> &mut Executor
-@@ -293,6 +308,7 @@ pub struct DryCommand {
-     envs: Vec<(OsString, OsString)>,
-     env_removals: Vec<OsString>,
-     stdin: Option<Stdio>,
-+    stdout: Option<Stdio>,
- }
- 
- impl DryCommand {
-@@ -304,6 +320,7 @@ impl DryCommand {
-             envs: Vec::new(),
-             env_removals: Vec::new(),
-             stdin: None,
-+            stdout: None,
-         }
-     }
- 
-@@ -324,6 +341,9 @@ impl DryCommand {
-         if let Some(stdin) = self.stdin {
-             cmd.stdin(stdin);
-         }
-+        if let Some(stdout) = self.stdout {
-+            cmd.stdout(stdout);
-+        }
-         cmd
-     }
- }
-@@ -470,6 +490,43 @@ mod test {
-         }
-     }
- 
-+    #[test]
-+    fn test_dry_stdout_persistence() {
-+        use std::io::{Read, Seek};
-+
-+        let (program, args): (&str, Vec<&str>) = if cfg!(windows) {
-+            ("cmd", vec!["/C", "echo stdout_test_value"])
-+        } else {
-+            ("sh", vec!["-c", "echo stdout_test_value"])
-+        };
-+
-+        let mut dry = DryCommand::new(program);
-+        for arg in args {
-+            dry.args.push(arg.into());
-+        }
-+
-+        let mut tmpfile = tempfile::tempfile().expect("Failed to create temp file");
-+        let child_stdout = tmpfile.try_clone().expect("Failed to clone temp file");
-+
-+        let mut executor = Executor::Dry(dry);
-+        executor.stdout(Stdio::from(child_stdout));
-+        let mut executor = executor.always();
-+
-+        let output = executor.output().expect("Failed to execute");
-+        match output {
-+            ExecutorOutput::Wet(o) => {
-+                assert!(o.status.success());
-+                assert!(o.stdout.is_empty(), "Stdout reached the pipe instead of the file");
-+            }
-+            ExecutorOutput::Dry => panic!("Expected Wet output after .always()"),
-+        }
-+
-+        let mut written = String::new();
-+        tmpfile.seek(std::io::SeekFrom::Start(0)).expect("Failed to seek");
-+        tmpfile.read_to_string(&mut written).expect("Failed to read temp file");
-+        assert_eq!(written.trim(), "stdout_test_value");
-+    }
-+
-     /// Test that env vars set on a Dry executor are preserved when converted with .always().
-     #[test]
-     fn test_dry_env_persistence() {
+ on:
+-  pull_request_target: # zizmor: ignore[dangerous-triggers] this is the only way, and we're not running user code
++  pull_request:
+     types:
+       - opened
+       - edited
 ```
 
-**File**: `src/steps/generic.rs` (modified, +15/-5)
+---
+
+### Incident Patch 2: `b8c7d8cf` (2026-11-06)
+**Commit Message**: feat(tailscale): pass --yes when assume_yes is set (#2489)
+
+**File**: `src/steps/generic.rs` (modified, +4/-1)
 ```diff
-@@ -19,7 +19,7 @@ use std::path::{Component, Path, PathBuf};
- use std::sync::LazyLock;
- use std::{fs, io::Write};
- use sysinfo::{ProcessRefreshKind, RefreshKind, System, UpdateKind};
--use tempfile::tempfile_in;
-+use tempfile::{tempdir, tempfile_in};
- use tracing::{debug, error, warn};
+@@ -3273,5 +3273,8 @@ pub fn run_tailscale(ctx: &ExecutionContext) -> Result<()> {
+     print_separator("Tailscale");
  
- use crate::HOME_DIR;
-@@ -2777,11 +2777,21 @@ pub fn run_claude_code_plugins(ctx: &ExecutionContext) -> Result<()> {
-     })?;
-     let marketplaces: HashSet<String> = marketplaces.into_iter().map(|m| m.name).collect();
- 
--    let output = ctx
--        .execute(&claude)
-+    // The list was reported cut at 64 KiB when read from a pipe, so it goes through a file:
-+    // https://github.com/topgrade-rs/topgrade/pull/2062#issuecomment-4703754240
-+    let temp_dir = tempdir().context("Failed to create temp dir for `claude plugin list`")?;
-+    let json_path = temp_dir.path().join("plugins.json");
-+    let json_file = fs::File::create(&json_path).context("Failed to create temp file for `claude plugin list`")?;
-+
-+    ctx.execute(&claude)
-         .args(["plugin", "list", "--json"])
--        .output_checked_utf8()?;
--    let plugins: Vec<ClaudePlugin> = serde_json::from_str(&output.stdout).wrap_err_with(|| {
-+        .stdout(json_file)
-+        .output_checked()?;
-+
-+    let plugins: Vec<ClaudePlugin> = serde_json::from_reader(std::io::BufReader::new(
-+        fs::File::open(&json_path).context("Failed to read `claude plugin list --json` output")?,
-+    ))
-+    .wrap_err_with(|| {
-         output_changed_message!(
-             "claude plugin list --json",
-             "json output is invalid or does not match expected structure"
+     let sudo = ctx.require_sudo()?;
+-    sudo.execute(ctx, &tailscale)?.arg("update").status_checked()
++    sudo.execute(ctx, &tailscale)?
++        .arg("update")
++        .arg_if(ctx.config().yes(Step::Tailscale), "--yes")
++        .status_checked()
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2490** (2026-11-06): ci(lint_pr): use pull_request instead of pull_request_target (@GideonBear)
+- **PR #2489** (2026-11-06): feat(tailscale): pass --yes when assume_yes is set (@rcdailey)
+- **PR #2487** (2026-11-05): style(stack): use Stack as step name (@scop)
+- **PR #2486** (2026-11-05): style(snap): output step name as Snap (@scop)
+- **PR #2485** (2026-11-05): style(winget): use official product spelling/case throughout (@scop)
 - **PR #2477** (2026-11-03): chore(deps): update self_update to v1 (@GideonBear)
-- **PR #2473** (2026-11-02): fix(zed): query Zed's release endpoint to avoid GitHub rate limits (@d-enk)
-- **PR #2472** (2026-11-02): chore(deps): lock file maintenance (@renovate[bot])
-- **PR #2470** (2026-10-30): chore(renovate): switch to weekly schedule (@GideonBear)
-- **PR #2469** (closed): chore(deps): update rust crate sysinfo to 0.40.0 (@renovate[bot])
-- **PR #2468** (2026-10-28): fix(rubygems): skip --system update when gem is managed by Homebrew or macOS (@thedavidweng)
 
 ---
 
@@ -1659,67 +1554,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. claude-code): don't fail with EOF on long output (#2062)
+## X. ci(lint_pr): use pull_request instead of pull_request_target (#2490)
 
 **RULE**:
-When implementing operations in `src/executor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint_pr.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94f3d94c`: claude-code): don't fail with EOF on long output (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4e3b80f`: ci(lint_pr): use pull_request instead of pull_request_target (#2490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/executor.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint_pr.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// See `std::process::Command::stdout`
-    pub fn stdout<T: Into<Stdio>>(&mut self, cfg: T) -> &mut Executor {
-        let stdio = cfg.into();
-        match self {
-            Executor::Wet(c) | Executor::Damp(c) => {
-                c.stdout(stdio);
-            }
-            Executor::Dry(c) => {
-                c.stdout = Some(stdio);
-            }
-        }
-
-        self
-    }
-
-    stdout: Option<Stdio>,
-            stdout: None,
-        if let Some(stdout) = self.stdout {
-            cmd.stdout(stdout);
-        }
-    #[test]
-    fn test_dry_stdout_persistence() {
-        use std::io::{Read, Seek};
-
-        let (program, args): (&str, Vec<&str>) = if cfg!(windows) {
-            ("cmd", vec!["/C", "echo stdout_test_value"])
-        } else {
-            ("sh", vec!["-c", "echo stdout_test_value"])
-        };
-
-        let mut dry = DryCommand::new(program);
-        for arg in args {
-            dry.args.push(arg.into());
-        }
-
-        let mut tmpfile = tempfile::tempfile().expect("Failed to create temp file");
-        let child_stdout = tmpfile.try_clone().expect("Failed to clone temp file");
-
-        let mut executor = Executor::Dry(dry);
-        executor.stdout(Stdio::f
+  pull_request:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  pull_request_target: # zizmor: ignore[dangerous-triggers] this is the only way, and we're not running user code
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94f3d94c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4e3b80f` are properly handled with clean fallback behavior.

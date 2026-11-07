@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source**: github ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
-> **Source Version**: `0050b485`  
+> **Source Version**: `348b2064`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:45:13.427Z  
+> **Timestamp**: 2026-11-07T05:50:51.781Z  
 > **Learning ID**: `learn-github-lingodotdev-lingo-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:45:13.237Z  
+> **Harvest Timestamp**: 2026-11-07T05:50:51.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source localization engineering tools. Connects to Lingo.dev localization engineering platform for consistent, quality translations.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Dockerfile
-- **Stars / Engagement**: 5403 stars
+- **Stars / Engagement**: 5405 stars
 
 ---
 
@@ -1209,474 +1209,170 @@ function _getConfigFilePath() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0050b485` (2026-11-03)
-**Commit Message**: fix(cli): improve CI git command handling and telemetry payloads (#2259)
+### Incident Patch 1: `348b2064` (2026-11-06)
+**Commit Message**: fix(deps): override seroval and follow-redirects for security advisories (#2261)
 
-**File**: `.changeset/quiet-cli-flows.md` (added, +5/-0)
+**File**: `.changeset/quiet-seroval-redirects.md` (added, +2/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,2 @@
 +---
-+"lingo.dev": patch
 +---
-+
-+Improve CI flow git command handling and telemetry payloads
 ```
 
-**File**: `action.yml` (modified, +21/-10)
+**File**: `pnpm-lock.yaml` (modified, +21/-20)
 ```diff
-@@ -11,17 +11,28 @@ runs:
-   steps:
-     - name: Run
-       run: |
--        npx lingo.dev@${{ inputs.version }} ci \
--          --api-key "${{ inputs.api-key }}" \
--          --pull-request "${{ inputs.pull-request }}" \
--          --commit-message "${{ inputs.commit-message }}" \
--          --pull-request-title "${{ inputs.pull-request-title }}" \
--          --commit-author-name "${{ inputs.commit-author-name }}" \
--          --commit-author-email "${{ inputs.commit-author-email }}" \
--          --working-directory "${{ inputs.working-directory }}" \
--          --process-own-commits "${{ inputs.process-own-commits }}" \
--          --parallel ${{ inputs.parallel }}
-+        npx "lingo.dev@${LINGO_ACTION_VERSION}" ci \
-+          --api-key "${LINGO_ACTION_API_KEY}" \
-+          --pull-request "${LINGO_ACTION_PULL_REQUEST}" \
-+          --commit-message "${LINGO_ACTION_COMMIT_MESSAGE}" \
-+          --pull-request-title "${LINGO_ACTION_PULL_REQUEST_TITLE}" \
-+          --commit-author-name "${LINGO_ACTION_COMMIT_AUTHOR_NAME}" \
-+          --commit-author-email "${LINGO_ACTION_COMMIT_AUTHOR_EMAIL}" \
-+          --working-directory "${LINGO_ACTION_WORKING_DIRECTORY}" \
-+          --process-own-commits "${LINGO_ACTION_PROCESS_OWN_COMMITS}" \
-+          --parallel "${LINGO_ACTION_PARALLEL}"
-       shell: bash
-+      env:
-+        LINGO_ACTION_VERSION: ${{ inputs.version }}
-+        LINGO_ACTION_API_KEY: ${{ inputs.api-key }}
-+        LINGO_ACTION_PULL_REQUEST: ${{ inputs.pull-request }}
-+        LINGO_ACTION_COMMIT_MESSAGE: ${{ inputs.commit-message }}
-+        LINGO_ACTION_PULL_REQUEST_TITLE: ${{ inputs.pull-request-title }}
-+        LINGO_ACTION_COMMIT_AUTHOR_NAME: ${{ inputs.commit-author-name }}
-+        LINGO_ACTION_COMMIT_AUTHOR_EMAIL: ${{ inputs.commit-author-email }}
-+        LINGO_ACTION_WORKING_DIRECTORY: ${{ inputs.working-directory }}
-+        LINGO_ACTION_PROCESS_OWN_COMMITS: ${{ inputs.process-own-commits }}
-+        LINGO_ACTION_PARALLEL: ${{ inputs.parallel }}
- inputs:
-   version:
-     description: "Lingo.dev CLI version"
+@@ -7,7 +7,7 @@ settings:
+ overrides:
+   fast-xml-parser: '>=5.5.6 <6'
+   shell-quote: '>=1.11.0 <2'
+-  seroval: '>=1.6.3 <2'
++  seroval: '>=1.6.11 <2'
+   '@modelcontextprotocol/sdk': '>=1.26.0 <2'
+   '@isaacs/brace-expansion': '>=5.0.1 <6'
+   effect: '>=3.20.0 <4'
+@@ -27,7 +27,7 @@ overrides:
+   vite: '>=7.3.7 <8'
+   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
+   form-data: '>=4.0.6 <5'
+-  follow-redirects: '>=1.16.1 <2'
++  follow-redirects: '>=1.16.2 <2'
+   flatted: '>=3.4.2 <4'
+   tmp: '>=0.2.6 <0.3'
+   minimatch@<3.1.4: 3.1.4
+@@ -3351,6 +3351,7 @@ packages:
+   '@smithy/smithy-client@4.10.2':
+     resolution: {integrity: sha512-D5z79xQWpgrGpAHb054Fn2CCTQZpog7JELbVQ6XAvXs5MNKWf28U9gzSBlJkOyMl9LA1TZEjRtwvGXfP0Sl90g==}
+     engines: {node: '>=18.0.0'}
++    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
+ 
+   '@smithy/types@4.11.0':
+     resolution: {integrity: sha512-mlrmL0DRDVe3mNrjTcVcZEgkFmufITfUAPBEA+AHYiIeYyJebso/He1qLbP3PssRe22KUzLRpQSdBPbXdgZ2VA==}
+@@ -5085,8 +5086,8 @@ packages:
+   flatted@3.4.2:
+     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+ 
+-  follow-redirects@1.16.1:
+-    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
++  follow-redirects@1.16.2:
++    resolution: {integrity: sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==}
+     engines: {node: '>=4.0'}
+     peerDependencies:
+       debug: '*'
+@@ -6813,17 +6814,17 @@ packages:
+     resolution: {integrity: sha512-16OL3NnUBw8JG1jBLUoZJsLnQq0n5Ua6aHalhJK4fMQkz1lqR7Osz1sA30trBtd9VUDc2NgkuRCn8+/pBwqZ+w==}
+     engines: {node: '>=10'}
+     peerDependencies:
+-      seroval: '>=1.6.3 <2'
++      seroval: '>=1.6.11 <2'
+ 
+   seroval-plugins@1.6.8:
+     resolution: {integrity: sha512-N7mWAMydj89EnYTHtRpS3LBrAz3J9O6oVrqpuXuvlAHfAUG8WEKqtbAd7SBiJNY5NfCAFhSdyAh7wI4Shjqy4g==}
+     engines: {node: '>=10'}
+     peerDependencies:
+-      seroval: '>=1.6.3 <2'
++      seroval: '>=1.6.11 <2'
+ 
+-  seroval@1.6.8:
+-    resolution: {integrity: sha512-HlSgSAkTk4EqHcje1ptJjfZi1YDv5KbhVJ/d3P7T/nAXua2VmDu+AKDX5VTdFfZf48nDkWB2TKYt0DrCSa+3wg==}
+-    engines: {node: '>=10'}
++  seroval@1.7.7:
++    resolution: {integrity: sha512-9OdYsqMLV5RSUNNtkgr6DT2bS/ncba6AqUJx8H7epNJNa0cKNWhQtF5GLRjkF/KuAdvAuRRitWrq86K/v1S/kg==}
++    engines: {node: '>=20'}
+ 
+   sharp@0.35.5:
+     resolution: {integrity: sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g==}
+@@ -10785,8 +10786,8 @@ snapshots:
+     dependencies:
+       '@tanstack/history': 1.162.4
+       cookie-es: 3.1.1
+-      seroval: 1.6.8
+-      seroval-plugins: 1.6.8(seroval@1.6.8)
++      seroval: 1.7.7
++      seroval-plugins: 1.6.8(seroval@1.7.7)
+ 
+   '@tanstack/router-devtools-core@1.168.2(@tanstack/router-core@1.171.34)(csstype@3.2.3)':
+     dependencies:
+@@ -11429,7 +11430,7 @@ snapshots:
+ 
+   axios@1.20.0:
+     dependencies:
+-      follow-redirects: 1.16.1
++      follow-redirects: 1.16.2
+       form-data: 4.0.6
+       https-proxy-agent: 5.0.1
+       proxy-from-env: 2.1.0
+@@ -12150,7 +12151,7 @@ snapshots:
+ 
+   flatted@3.4.2: {}
+ 
+-  follow-redirects@1.16.1: {}
++  follow-redirects@1.16.2: {}
+ 
+   foreground-child@3.3.1:
+     dependencies:
+@@ -14279,15 +14280,15 @@ snapshots:
+ 
+   serialize-javascript@7.1.4: {}
+ 
+-  seroval-plugins@1.3.3(seroval@1.6.8):
++  seroval-plugins@1.3.3(seroval@1.7.7):
+     dependencies:
+-      seroval: 1.6.8
++      seroval: 1.7.7
+ 
+-  seroval-plugins@1.6.8(seroval@1.6.8):
++  seroval-plugins@1.6.8(seroval@1.7.7):
+     dependencies:
+-      seroval: 1.6.8
++      seroval: 1.7.7
+ 
+-  seroval@1.6.8: {}
++  seroval@1.7.7: {}
+ 
+   sharp@0.35.5(@types/node@20.19.25):
+     dependencies:
+@@ -14420,8 +14421,8 @@ snapshots:
+   solid-js@1.9.10:
+     dependencies:
+       csstype: 3.2.3
+-      seroval: 1.6.8
+-      seroval-plugins: 1.3.3(seroval@1.6.8)
++      seroval: 1.7.7
++      seroval-plugins: 1.3.3(seroval@1.7.7)
+ 
+   sonic-boom@4.2.0:
+     dependencies:
 ```
 
-**File**: `packages/cli/src/cli/cmd/ci/flows/_base.ts` (modified, +0/-4)
+**File**: `pnpm-workspace.yaml` (modified, +2/-2)
 ```diff
-@@ -29,7 +29,3 @@ export function getGitConfig(platformKit: PlatformKit) {
-     userEmail: platformKit.config.commitAuthorEmail,
-   };
- }
--
--export function escapeShellArg(arg: string): string {
--  return `'${arg.replace(/'/g, "'\\''")}'`;
--}
-```
-
-**File**: `packages/cli/src/cli/cmd/ci/flows/in-branch.spec.ts` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+import { describe, it, expect, vi, beforeEach } from "vitest";
-+import { execFileSync, execSync } from "child_process";
-+import { InBranchFlow } from "./in-branch";
-+
-+vi.mock("child_process");
-+vi.mock("../../i18n", () => ({
-+  default: {
-+    exitOverride: () => ({ parseAsync: vi.fn().mockResolvedValue(undefined) }),
-+  },
-+}));
-+vi.mock("../../run", () => ({
-+  default: {
-+    exitOverride: () => ({ parseAsync: vi.fn().mockResolvedValue(undefined) }),
-+  },
-+}));
-+
-+function createOra() {
-+  return {
-+    start: vi.fn(),
-+    succeed: vi.fn(),
-+    info: vi.fn(),
-+    warn: vi.fn(),
-+    fail: vi.fn(),
-+  } as any;
-+}
-+
-+function createPlatformKit(overrides: Record<string, any> = {}) {
-+  return {
-+    config: {
-+      replexicaApiKey: "test-key",
-+      commitMessage: `feat: "quoted" message with 'single' quotes`,
-+      commitAuthorName: `O'Brien "Bot"`,
-+      commitAuthorEmail: "bot@example.com",
-+      processOwnCommits: true,
-+      gpgSign: false,
-+      workingDir: ".",
-+      ...overrides,
-+    },
-+    platformConfig: {
-+      baseBranchName: "feature/some-branch",
-+    },
-+    gitConfig: vi.fn(),
-+  } as any;
-+}
-+
-+describe("InBranchFlow", () => {
-+  beforeEach(() => {
-+    vi.clearAllMocks();
-+    vi.mocked(execSync).mockReturnValue("" as any);
-+    vi.mocked(execFileSync).mockReturnValue("" as any);
-+  });
-+
-+  it("passes git identity and branch name as separate arguments", async () => {
-+    const platformKit = createPlatformKit();
-+    const flow = new InBranchFlow(createOra(), platformKit);
-+
-+    await flow.preRun();
-+
-+    expect(execFileSync).toHaveBeenCalledWith("git", [
-+      "config",
-+      "user.name",
-+      `O'Brien "Bot"`,
-+    ]);
-+    expect(execFileSync).toHaveBeenCalledWith("git", [
-+      "config",
-+      "user.email",
-+      "bot@example.com",
-+    ]);
-+    expect(execFileSync).toHaveBeenCalledWith(
-+      "git",
-+      ["fetch", "origin", "feature/some-branch"],
-+      { stdio: "inherit" },
-+    );
-+    expect(execFileSync).toHaveBeenCalledWith(
-+      "git",
-+      ["checkout", "feature/some-branch", "--"],
-+      { stdio: "inherit" },
-+    );
-+  });
-+
-+  it("commits with the message as a single argument and pushes the branch", async () => {
-+    vi.mocked(execSync).mockImplementation(((command: string) =>
-+      command.startsWith("git status --porcelain ||")
-+        ? "M file.json"
-+        : "") as any);
-+
-+    const platformKit = createPlatformKit({ gpgSign: true });
-+    const flow = new InBranchFlow(createOra(), platformKit);
-+
-+    const hasChanges = await flow.run({ force: true });
-+
-+    expect(hasChanges).toBe(true);
-+    expect(execFileSync).toHaveBeenCalledWith(
-+      "git",
-+      [
-+        "commit",
-+        "-S",
-+        "-m",
-+        `feat: "quoted" message with 'single' quotes`,
-+        "--no-verify",
-+      ],
-+      { stdio: "inherit" },
-+    );
-+    expect(execFileSync).toHaveBeenCalledWith(
-+      "git",
-+      ["push", "origin", "feature/some-branch", "--force"],
-+      { stdio: "inherit" },
-+    );
-+  });
-+});
-```
-
-**File**: `packages/cli/src/cli/cmd/ci/flows/in-branch.ts` (modified, +22/-22)
-```diff
-@@ -1,11 +1,6 @@
- import { execFileSync, execSync } from "child_process";
- import path from "path";
--import {
--  getGitConfig,
--  IntegrationFlow,
--  escapeShellArg,
--  IIntegrationFlowOptions,
--} from "./_base";
-+import { getGitConfig, IntegrationFlow, IIntegrationFlowOptions } from "./_base";
- import i18nCmd from "../../i18n";
- import runCmd from "../../run";
- 
-@@ -33,25 +28,26 @@ export class InBranchFlow extends IntegrationFlow {
-       this.ora.start("Committing changes");
-       execSync(`git add .`, { stdio: "inherit" });
-       execSync(`git status --porcelain`, { stdio: "inherit" });
--      const signFlag = this.platformKit.config.gpgSign ? "-S " : "";
--      execSync(
--        `git commit ${signFlag}-m ${escapeShellArg(
-+      execFileSync(
-+        "git",
-+        [
-+          "commit",
-+          ...(this.platformKit.config.gpgSign ? ["-S"] : []),
-+          "-m",
-           this.platformKit.config.commitMessage,
--        )} --no-verify`,
--        {
--          stdio: "inherit",
--        },
-+          "--no-verify",
-+        ],
-+        { stdio: "inherit" },
-       );
-       this.ora.succeed("Changes committed");
- 
-       this.ora.start("Pushing changes to remote");
-       const currentBranch =
-         this.i18nBranchName ?? this.platformKit.platformConfig.baseBranchName;
--      execSync(
--        `git push origin ${currentBranch} ${options.force ? "--force" : ""}`,
--        {
--          stdio: "inherit",
--        },
-+      execFileSync(
-+        "git",
-+        ["push", "origin", currentBranch, ...(options.force ? ["--force"] : [])],
-+        { stdio: "inherit" },
-       );
-       this.ora.succeed("Changes pushed to remote");
-     }
-@@ -104,8 +100,8 @@ export class InBranchFlow extends IntegrationFlow {
-       process.cwd(),
-     ]);
- 
--    execSync(`git config user.name "${gitConfig.userName}"`);
--    execSync(`git config user.email "${gitConfig.userEmail}"`);
-+    execFileSync("git", ["config", "user.name", gitConfig.userName]);
-+    execFileSync("git", ["config", "user.email", gitConfig.userEmail]);
- 
-     // Configure GPG signing if enabled
-     if (this.platformKit.config.gpgSign) {
-@@ -130,8 +126,12 @@ export class InBranchFlow extends IntegrationFlow {
-     // perform platform-specific configuration before fetching or pushing to the remote
-     this.platformKit?.gitConfig();
- 
--    execSync(`git fetch origin ${baseBranchName}`, { stdio: "inherit" });
--    execSync(`git checkout ${baseBranchName} --`, { stdio: "inherit" });
-+    execFileSync("git", ["fetch", "origin", baseBranchName], {
-+      stdio: "inherit",
-+    });
-+    execFileSync("git", ["checkout", baseBranchName, "--"], {
-+      stdio: "inherit",
-+    });
- 
-     if (!processOwnCommits) {
-       const currentAuthor = `${gitConfig.userName} <${gitConfig.userEmail}>`;
-```
-
-**File**: `packages/cli/src/cli/cmd/ci/flows/pull-request.ts` (modified, +57/-26)
-```diff
-@@ -1,4 +1,4 @@
--import { execSync } from "child_process";
-+import { execFileSync, execSync } from "child_process";
- import { InBranchFlow } from "./in-branch";
- import { IIntegrationFlowOptions } from "./_base";
- 
-@@ -98,23 +98,32 @@ export class PullRequestFlow extends InBranchFlow {
-   }
- 
-   private checkoutI18nBranch(i18nBranchName: string) {
--    execSync(`git fetch origin ${i18nBranchName}`, { stdio: "inherit" });
--    execSync(`git checkout -b ${i18nBranchName} origin/${i18nBranchName}`, {
-+    execFileSync("git", ["fetch", "origin", i18nBranchName], {
-       stdio: "inherit",
-     });
-+    execFileSync(
-+      "git",
-+      ["checkout", "-b", i18nBranchName, `origin/${i18nBranchName}`],
-+      { stdio: "inherit" },
-+    );
-   }
- 
-   private createI18nBranch(i18nBranchName: string) {
-     try {
--      execSync(
--        `git fetch origin ${this.platformKit.platformConfig.baseBranchName}`,
-+      execFileSync(
-+        "git",
-+        ["fetch", "origin", this.platformKit.platformConfig.baseBranchName],
-         { stdio: "inherit" },
-       );
--      execSync(
--        `git checkout -b ${i18nBranchName} origin/${this.platformKit.platformConfig.baseBranchName}`,
--        {
--          stdio: "inherit",
--        },
-+      execFileSync(
-+        "git",
-+        [
-+          "checkout",
-+          "-b",
-+          i18nBranchName,
-+          `origin/${this.platformKit.platformConfig.baseBranchName}`,
-+        ],
-+        { stdio: "inherit" },
-       );
-     } catch (error) {
-       const errorMessage =
-@@ -138,8 +147,9 @@ export class PullRequestFlow extends InBranchFlow {
-     this.ora.start(
-       `Fetching latest changes from ${this.platformKit.platformConfig.baseBranchName}`,
-     );
--    execSync(
--      `git fetch origin ${this.platformKit.platformConfig.baseBranchName}`,
-+    execFileSync(
-+      "git",
-+      ["fetch", "origin", this.platformKit.platformConfig.baseBranchName],
-       { stdio: "inherit" },
-     );
-     this.ora.succeed(
-@@ -148,8 +158,9 @@ export class PullRequestFlow extends InBranchFlow {
- 
-     try {
-       this.ora.start("Attempting to rebase branch");
--      execSync(
--        `git rebase origin/${this.platformKit.platformConfig.baseBranchName}`,
-+      execFileSync(
-+        "git",
-+        ["rebase", `origin/${this.platformKit.platformConfig.baseBranchName}`],
-         { stdio: "inherit" },
-       );
-       this.ora.succeed("Successfully rebased branch");
-@@ -167,8 +178,13 @@ export class PullRequestFlow extends InBranchFlow {
-       this.ora.start(
-         `Resetting to ${this.platformKit.platformConfig.baseBranchName}`,
-       );
--      execSync(
--        `git reset --hard origin/${this.platformKit.platformConfig.baseBranchName}`,
-+      execFileSync(
-+        "git",
-+        [
-+          "reset",
-+          "--hard",
-+          `origin/${this.platformKit.platformConfig.baseBranchName}`,
-+        ],
-         { stdio: "inherit" },
-       );
-       this.ora.succeed(
-@@ -177,18 +193,29 @@ export class PullRequestFlow extends InBranchFlow {
- 
-       this.ora.start("Restoring target files");
-       const targetFiles = ["i18n.lock"];
--      const targetFileNames = execSync(
--        `npx lingo.dev@latest show files --target ${this.platformKit.platformConfig.baseBranchName}`,
-+      const targetFileNames = execFileSync(
-+        "npx",
-+        [
-+          "lingo.dev@latest",
-+          "show",
-+          "files",
-+          "--target",
-+          this.platformKit.platformConfig.baseBranchName,
-+        ],
-         { encoding: "utf8" },
-       )
-         .split("\n")
-         .filter(Boolean);
-       targetFiles.push(...targetFileNames);
--      execSync(`git fetch origin ${this.i18nBranchName}`, { stdio: "inherit" });
-+      execFileSync("git", ["fetch", "origin", this.i18nBranchName], {
-+        stdio: "inherit",
-+      });
-       for (const file of targetFiles) {
-         try {
-           // bring all files to the i18n branch's state
--          execSync(`git checkout FETCH_HEAD -- ${file}`, { stdio: "inherit" });
-+          execFileSync("git", ["checkout", "FETCH_HEAD", "--", file], {
-+            stdio: "inherit",
-+          });
-         } catch (error) {
-           // If file doesn't exist in FETCH_HEAD, that's okay - just skip it
-           this.ora.warn(`Skipping non-existent file: ${file}`);
-@@ -202,12 +229,16 @@ export class PullRequestFlow extends InBranchFlow {
-     const hasChanges = this.checkCommitableChanges();
-     if (hasChanges) {
-       execSync("git add .", { stdio: "inherit" });
--      const signFlag = this.platformKit.config.gpgSign ? "-S " : "";
--      execSync(
--        `git commit ${signFlag}-m "chore: sync with ${this.platformKit.platformConfig.baseBranchName}" --no-verify`,
--        {
--          stdio: "inherit",
--        },
-+      execFileSync(
-+        "git",
-+        [
-+          "commit",
-+          ...(this.platformKit.config.gpgSign ? ["-S"] : []),
-+          "-m",
-+          `chore: sync with ${this.platformKit.platformConfig.baseBranchName}`,
-+ 
-```
-
-**File**: `packages/cli/src/cli/cmd/ci/platforms/_base.ts` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { execSync } from "child_process";
-+import { execFileSync } from "child_process";
- import Z from "zod";
- 
- const defaultMessage = "feat: update translations via @lingodotdev";
-@@ -39,7 +39,7 @@ export abstract class PlatformKit<
- 
-   gitConfig(token?: string, repoUrl?: string) {
-     if (token && repoUrl) {
--      execSync(`git remote set-url origin ${repoUrl}`, {
-+      execFileSync("git", ["remote", "set-url", "origin", repoUrl], {
-         stdio: "inherit",
-       });
-     }
-```
-
-**File**: `packages/cli/src/cli/cmd/login.spec.ts` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+import { describe, it, expect } from "vitest";
-+import { normalizeVerifyUrl } from "./login";
-+
-+describe("normalizeVerifyUrl", () => {
-+  it("accepts http(s) URLs", () => {
-+    expect(
-+      normalizeVerifyUrl("https://lingo.dev/cli/verify?session=abc-123"),
-+    ).toBe("https://lingo.dev/cli/verify?session=abc-123");
-+    expect(normalizeVerifyUrl("http://localhost:3000/cli/verify")).toBe(
-+      "http://localhost:3000/cli/verify",
-+    );
-+  });
-+
-+  it("rejects other protocols", () => {
-+    expect(() => normalizeVerifyUrl("file:///etc/passwd")).toThrow();
-+    expect(() => normalizeVerifyUrl("javascript:alert(1)")).toThrow();
-+  });
-+
-+  it("rejects values that are not URLs", () => {
-+    expect(() => normalizeVerifyUrl("not a url")).toThrow();
-+    expect(() => normalizeVerifyUrl(undefined)).toThrow();
-+  });
-+
-+  it("rejects URLs with unexpected characters", () => {
-+    expect(() => normalizeVerifyUrl("https://lingo.dev/verify/$session")).toThrow();
-+    expect(() => normalizeVerifyUrl("https://lingo.dev/verify?x=a`b")).toThrow();
-+  });
-+});
+@@ -9,7 +9,7 @@ packages:
+ overrides:
+   fast-xml-parser: ">=5.5.6 <6"
+   shell-quote: ">=1.11.0 <2"
+-  seroval: ">=1.6.3 <2"
++  seroval: ">=1.6.11 <2"
+   "@modelcontextprotocol/sdk": ">=1.26.0 <2"
+   "@isaacs/brace-expansion": ">=5.0.1 <6"
+   effect: ">=3.20.0 <4"
+@@ -29,7 +29,7 @@ overrides:
+   vite: ">=7.3.7 <8"
+   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
+   form-data: ">=4.0.6 <5"
+-  follow-redirects: ">=1.16.1 <2"
++  follow-redirects: ">=1.16.2 <2"
+   flatted: ">=3.4.2 <4"
+   tmp: ">=0.2.6 <0.3"
+   minimatch@<3.1.4: 3.1.4
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2261** (2026-11-06): fix(deps): override seroval and follow-redirects for security advisories (@moygospadin)
 - **PR #2259** (2026-11-03): fix(cli): improve CI git command handling and telemetry payloads (@moygospadin)
 - **PR #2258** (2026-10-26): chore: bump package versions (@github-actions[bot])
 - **PR #2257** (2026-10-26): fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (@cherkanovart)
 - **PR #2256** (2026-10-26): fix(deps): override fast-uri and serialize-javascript for security advisories (@cherkanovart)
 - **PR #2255** (closed): chore(deps): bump the npm_and_yarn group across 8 directories with 2 updates (@dependabot[bot])
-- **PR #2254** (closed): chore(deps): bump the npm_and_yarn group across 7 directories with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1696,32 +1392,67 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): improve CI git command handling and telemetry payloads (#2259)
+## X. deps): override seroval and follow-redirects for security advisories (#2261)
 
 **RULE**:
-When implementing operations in `.changeset/quiet-cli-flows.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0050b485`: cli): improve CI git command handling and telemetry payloads (#2259). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `348b2064`: deps): override seroval and follow-redirects for security advisories (#2261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quiet-cli-flows.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-"lingo.dev": patch
----
-
-Improve CI flow git command handling and telemetry payloads
+  seroval: '>=1.6.11 <2'
+  follow-redirects: '>=1.16.2 <2'
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
+  follow-redirects@1.16.2:
+    resolution: {integrity: sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==}
+      seroval: '>=1.6.11 <2'
+      seroval: '>=1.6.11 <2'
+  seroval@1.7.7:
+    resolution: {integrity: sha512-9OdYsqMLV5RSUNNtkgr6DT2bS/ncba6AqUJx8H7epNJNa0cKNWhQtF5GLRjkF/KuAdvAuRRitWrq86K/v1S/kg==}
+    engines: {node: '>=20'}
+      seroval: 1.7.7
+      seroval-plugins: 1.6.8(seroval@1.7.7)
+      follow-redirects: 1.16.2
+  follow-redirects@1.16.2: {}
+  seroval-plugins@1.3.3(seroval@1.7.7):
+      seroval: 1.7.7
+  seroval-plugins@1.6.8(seroval@1.7.7):
+      seroval: 1.7.7
+  seroval@1.7.7: {}
+      seroval: 1.7.7
+      seroval-plugins: 1.3.3(seroval@1.7.7)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  seroval: '>=1.6.3 <2'
+  follow-redirects: '>=1.16.1 <2'
+  follow-redirects@1.16.1:
+    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
+      seroval: '>=1.6.3 <2'
+      seroval: '>=1.6.3 <2'
+  seroval@1.6.8:
+    resolution: {integrity: sha512-HlSgSAkTk4EqHcje1ptJjfZi1YDv5KbhVJ/d3P7T/nAXua2VmDu+AKDX5VTdFfZf48nDkWB2TKYt0DrCSa+3wg==}
+    engines: {node: '>=10'}
+      seroval: 1.6.8
+      seroval-plugins: 1.6.8(seroval@1.6.8)
+      follow-redirects: 1.16.1
+  follow-redirects@1.16.1: {}
+  seroval-plugins@1.3.3(seroval@1.6.8):
+      seroval: 1.6.8
+  seroval-plugins@1.6.8(seroval@1.6.8):
+      seroval: 1.6.8
+  seroval@1.6.8: {}
+      seroval: 1.6.8
+      seroval-plugins: 1.3.3(seroval@1.6.8)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0050b485` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `348b2064` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `ce49cf62`  
+> **Source Version**: `082be7be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:38:35.603Z  
+> **Timestamp**: 2026-11-07T05:50:55.248Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:38:35.597Z  
+> **Harvest Timestamp**: 2026-11-07T05:50:54.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29185 stars
+- **Stars / Engagement**: 29190 stars
 
 ---
 
@@ -1052,14 +1052,16 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48991** (2026-11-05): **http: body_size_limit filter potential excessive logging**
+  *Symptoms*: The HTTP body_size_limit filter currently logs any breach of the limit via the application log at error level. If someone sends HTTP requests with the Content-Length header set to a value larger than the limit, an error-level message is logged. The request can be sent repeatedly, potentially overwhelming the logging infrastructure. 
+  **Post-Mortem & Fix Analysis**:
+  > I think this was just fixed with #48985 
+
 - **Issue #48897** (2026-11-03): **Fix unused variable warnings**
   *Symptoms*: Example warnings emitted when compiling using clang trunk (triggered by [libc++ update](https://github.com/llvm/llvm-project/pull/203084)):  envoy/src/source/common/common/utility.cc:683:15: error: unused variable 'ret' [-Werror,-Wunused-variable]   683 |   std::string ret;       |               ^~~  envoy/src/source/server/admin/admin_html_util.cc:106:27: error: unused variable 'buf3' [-Werror,-Wunused-variable]   106 |   std::string buf1, buf2, buf3;       |                           ^~~~   envoy/src/mobile/library/common/network/socket_tag_socket_option_impl.cc:50:22: error: unused variable 'name' [-Werror,-Wunused-variable]    50 |   static std::string name = "socket_tag";       |                      ^~~~  envoy/src/test/test_listener.cc:13:17: error: unused variable 'active_singletons' [-Werror,-Wunused-variable]    13 |     std::string active_singletons = Envoy::Test::Globals::describeActiveSingletons();       |                 ^~~~~~~~~~~~~~~~~  envoy/src/test/test_common/environment.cc:352:21: error: unused variable 'effective_workspace' [-Werror,-Wunused-variable]   352 |   const std::string effective_workspace = workspace.empty() ? resolveMainWorkspace() : workspace;       |                     ^~~~~~~~~~~~~~~~~~~  ```
   **Post-Mortem & Fix Analysis**:
   > Hi, I would like to work on this. Unless @nigham is already fixing it, could it be assigned to me?
   > I'm not working on this
-
-- **Issue #48758** (2026-11-05): **Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`**
-  *Symptoms*: *Title*: Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`  *Description*: An Envoy with a QUIC listener using the `envoy.quic.connection_id_generator.quic_lb` connection ID generator, whose `encryption_parameters` come from SDS, crashes with SIGSEGV every time the process exits, whenever hot restart is enabled (the default). That covers SIGTERM, any normal shutdown, and the parent's shutdown at the end of every hot restart.  The cause is a use-after-free during teardown. `HotRestartingChild` holds the last reference to every UDP listener's config and is destroyed after the server instance. So the QUIC-LB generator's `SdsApi` is destroyed after the objects it uses are gone.  The crashing process has already stopped serving. The harm is to availability, through supervisors that treat the crash as fatal. With `restarter/hot-restarter.py`, the old epoch crashing at the end of a hot restart makes the restarter force-kill the serving new epoch and exit. Every hot restart therefore becomes a full outage at the end of the parent shutdown time (default 900 s), and we hit this in production.  There is no remote or data-plane trigger that I could find, and no confidentiality or integrity impact. Reproduced on 1.39.3, 1.40.0, 1.40.1 and an older 1.36.0-dev.  **Ownership chain** (v1.40.0 line numbers):  1. `ListenerImpl::addSocketFactory` (`source/common/listener_manager/listener_impl.cc:1204`) registers a UDP    listener with t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1076,293 +1078,255 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce49cf62` (2026-11-05)
-**Commit Message**: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
+### Incident Patch 1: `6462dee5` (2026-11-06)
+**Commit Message**: dynamic_modules: fix `EnvoyBuffer::new` lifetime (#49063)
 
-Found by `decode_fuzz_test`
-([#49005](https://github.com/envoyproxy/envoy/pull/49005)), which checks
-that request decoding in `ai_protocol_manager` is invariant to HTTP body
-fragmentation.
+`EnvoyBuffer::new` returns a buffer whose lifetime is unrelated to its
+input slice. Safe code can return a buffer backed by a local `Vec` and
+read freed memory after the `Vec` is dropped.
 
-[`WuffsJsonCursor::feed()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L205-L225)
-caps unread `NUMBER` bytes buffered in `pending_bytes_` on `short_read`
-at [`kMaxPendingBytes` (64
-bytes)](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.h#L249-L259),
-but
-[`handleNumberOrLiteralToken()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L367-L389)
-did not enforce this limit when a `NUMBER` token finished parsing.
+This PR ties the buffer's lifetime to the slice and adds a compile-fail
+doc test for that case.
 
-As a result, whether a JSON number over 64 bytes was rejected depended
-on where chunk boundaries landed:
-1. **Completed in one chunk**: Accepted by
-`handleNumberOrLiteralToken()` without checking the 64-byte cap.
-2. **Split across chunks**: Rejected on `short_read` only if the
-incomplete prefix in the first chunk exceeded 64 bytes, but accepted if
-the first chunk
+Risk Level: Low
+Testing: Confirmed the regression compiled before the fix and is
+rejected afterward. Buffer unit tests and SDK doc tests pass.
+Docs Changes: Documented the constructor's borrow.
+Release Notes: Added a dynamic modules bug-fix fragment.
+Platform Specific Features: N/A
 
-**File**: `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst` (added, +3/-0)
+AI assistance was used; I reviewed and understand the changes.
+
+Signed-off-by: Gavin Bunney <[REDACTED_EMAIL]>
+
+**File**: `changelogs/current/bug_fixes/dynamic_modules__rust-sdk-buffer-lifetime.rst` (added, +1/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
-+is enforced when a number finishes parsing, rather than only when an incomplete number at the end
-+of a chunk exceeds 64 bytes.
+@@ -0,0 +1 @@
++Fixed the Rust SDK's ``EnvoyBuffer::new`` so buffers cannot outlive their input slice.
 ```
 
-**File**: `source/common/json/wuffs_json/wuffs_json_cursor.cc` (modified, +6/-4)
+**File**: `source/extensions/dynamic_modules/sdk/rust/src/buffer.rs` (modified, +12/-2)
 ```diff
-@@ -212,11 +212,10 @@ absl::Status WuffsJsonCursor::feed(absl::string_view chunk, bool closed) {
-       // keyword without advancing the cursor at all, so no rewind is needed.
-       if (source_buf.meta.ri < effective_chunk.size()) {
-         // LITERAL is always 4–5 bytes (null/true/false) — completely bounded.
--        // For NUMBER split across chunks: cap pending_bytes_ to kMaxPendingBytes (see its
--        // declaration). Numbers that arrive complete with their terminator in the same chunk
--        // never reach this path and are bounded by the upstream max_body_bytes limit instead.
-+        // For NUMBER split across chunks: cap pending_bytes_ to kMaxNumberBytes (see its
-+        // declaration).
-         const size_t leftover = effective_chunk.size() - source_buf.meta.ri;
--        if (leftover > kMaxPendingBytes) {
-+        if (leftover > kMaxNumberBytes) {
-           return absl::InvalidArgumentError("wuffs json: number token too large");
-         }
-         pending_bytes_.assign(effective_chunk.data() + source_buf.meta.ri, leftover);
-@@ -371,6 +370,9 @@ absl::Status WuffsJsonCursor::handleNumberOrLiteralToken(int64_t token_category,
-                                           ? absl::string_view(key_stack_[depth_])
-                                           : absl::string_view();
-   if (token_category == WUFFS_BASE__TOKEN__VBC__NUMBER) {
-+    if (raw.size() > kMaxNumberBytes) {
-+      return absl::InvalidArgumentError("wuffs json: number token too large");
-+    }
-     if (auto s = handler_.onNumber(value_key, raw, depth_, token_start, body_src_pos_); !s.ok()) {
-       return s;
-     }
-```
-
-**File**: `source/common/json/wuffs_json/wuffs_json_cursor.h` (modified, +5/-11)
-```diff
-@@ -246,17 +246,11 @@ class WuffsJsonCursor {
-   // (longest observed ~25B, e.g. "input_audio_transcription") while bounding
-   // per-key allocation and guarding against DoS via unbounded key lengths.
-   static constexpr size_t kMaxKeyBytes = 256;
--  // kMaxPendingBytes is a hard limit against the byte-at-a-time DoS when a NUMBER token is split
--  // across chunk boundaries, NUMBER tokens that arrive complete with their terminator in one chunk
--  // bypass this path entirely — those are bounded by the max_body_bytes limit instead. A legitimate
--  // number is at most ~25 chars (64-bit int ≤ 20 digits; float with sign/decimal/exponent ≤ ~25).
--  // 64 bytes gives generous headroom.
--  // TODO(penguingao): because the cap only fires on split NUMBER tokens, whether an over-long
--  // number is rejected depends on where the body happened to be chunked, not on the payload.
--  // Enforce the same limit on numbers that arrive complete within one chunk so acceptance is
--  // deterministic, and return a distinct error (resource limit exceeded vs. malformed JSON) so
--  // callers can map it to something clearer than a generic invalid-payload rejection.
--  static constexpr size_t kMaxPendingBytes = 64;
-+  // kMaxNumberBytes is a hard limit on NUMBER token length, guarding against the
-+  // byte-at-a-time DoS when a NUMBER token is split across chunk boundaries. A
-+  // legitimate number is at most ~25 chars (64-bit int ≤ 20 digits; float with
-+  // sign/decimal/exponent ≤ ~25). 64 bytes gives generous headroom.
-+  static constexpr size_t kMaxNumberBytes = 64;
-   int depth_{0};
-   bool is_dict_[kMaxTrackedDepth]{};
-   bool expecting_key_[kMaxTrackedDepth]{};
-```
-
-**File**: `test/common/json/wuffs_json/wuffs_json_cursor_fuzz_test.cc` (modified, +3/-4)
-```diff
-@@ -238,10 +238,9 @@ DEFINE_FUZZER(const uint8_t* buf, size_t len) {
-   // boundaries at other offsets within multi-byte tokens.
-   for (const size_t chunk_size : {size_t{1}, size_t{3}, size_t{7}}) {
-     const PassResult chunked = runPass(body, chunk_size, pattern, HandlerBehavior{});
--    // A body that parses only one way is not a mismatch: splitting a number
--    // across chunks routes it through the pending-bytes cap, which rejects
--    // over-long numbers that a single feed accepts.
--    if (reference.status.ok() && chunked.status.ok()) {
-+    RELEASE_ASSERT(reference.status.ok() == chunked.status.ok(),
-+                   absl::StrCat("chunked status diverged at chunk size ", chunk_size));
-+    if (reference.status.ok()) {
-       RELEASE_ASSERT(reference.trace == chunked.trace,
-                      absl::StrCat("chunked parse diverged at chunk size ", chunk_size));
-     }
-```
-
-**File**: `test/common/json/wuffs_json/wuffs_json_cursor_test.cc` (modified, +34/-17)
-```diff
-@@ -763,32 +763,49 @@ TEST(WuffsJsonCursorTest, UnicodeEscapeSplitChunkCorrectValue) {
-   EXPECT_EQ(h.fields[0].str_val, "aAb"); // U+0041 = 'A'
+@@ -25,11 +25,21 @@ impl Default for EnvoyBuffer<'_> {
+   }
  }
  
--// A NUMBER token that straddles a chunk boundary causes Wuffs to rewind its
--// read cursor and the cursor to save the unread bytes in pending_bytes_.
--// If those bytes exceed kMaxPendingBytes the cursor must reject immediately.
-+// Number-length enforcement tests
- 
--// A number whose in-flight byte count equals kMaxPendingBytes (64) must not
--// trigger the cap: the next chunk completes it normally.
--TEST(WuffsJsonCursorTest, NumberAtPendingCapAccepted) {
-+// A number at kMaxNumberBytes (64) must be accepted.
-+TEST(WuffsJsonCursorTest, NumberAtMaxBytesAccepted) {
-+  CapturingHandler h;
-+  const std::string num(64, '1');
-+  ASSERT_OK(parse(absl::StrCat("{\"n\":", num, "}"), h));
-+  ASSERT_EQ(h.fields.size(), 1u);
-+  EXPECT_EQ(h.fields[0].raw_val, num);
-+}
-+
-+// A number one byte over kMaxNumberBytes (65) must be rejected.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejected) {
-+  CapturingHandler h;
-+  const std::string num(65, '1');
-+  EXPECT_THAT(parse(absl::StrCat("{\"n\":", num, "}"), h), Not(IsOk()));
-+}
-+
-+// A 64-byte number split across two chunks must be accepted.
-+TEST(WuffsJsonCursorTest, NumberAtMaxBytesAcceptedSplitAcrossChunks) {
-   CapturingHandler h;
-   WuffsJsonCursor cursor(h);
--  // Feed structure first; no number in flight yet.
--  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
--  // Feed exactly 64 digit bytes with no terminator — pending_bytes_ = 64, not over cap.
--  ASSERT_OK(cursor.feed(std::string(64, '1'), /*closed=*/false));
--  // Close with '}': Wuffs now sees terminator and completes the NUMBER token.
--  ASSERT_OK(cursor.feed("}", /*closed=*/true));
-+  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
-+  ASSERT_OK(cursor.feed(absl::StrCat(std::string(32, '1'), "}"), /*closed=*/true));
-   ASSERT_EQ(h.fields.size(), 1u);
-   EXPECT_EQ(h.fields[0].raw_val, std::string(64, '1'));
- }
- 
--// A number with 65 in-flight bytes (one over kMaxPendingBytes) must be rejected.
--TEST(WuffsJsonCursorTest, NumberOverPendingCapRejected) {
-+// A 65-byte number split across two chunks must be rejected once reassembled.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedSplitAcrossChunks) {
-+  CapturingHandler h;
-+  WuffsJsonCursor cursor(h);
-+  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
-+  EXPECT_THAT(cursor.feed(absl::StrCat(std::string(33, '1'), "}"), /*closed=*/true), Not(IsOk()));
-+}
-+
-+// An unterminated number chunk that already exceeds kMaxNumberBytes (65) must
-+// be rejected immediately before buffering into pending_bytes_.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedInPendingChunk) {
-   CapturingHandler h;
-   WuffsJsonCursor cursor(h);
--  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
--  // 65 digit bytes with no terminator — leftover = 65 > 64 → error.
--  EXPECT_THAT(cursor.feed(std::string(65, '1'), /*closed=*/false), Not(IsOk()));
-+  EXPECT_THAT(cursor.feed(absl::StrCat("{\"n\":", std::string(65, '1')), /*closed=*/false),
-+              Not(IsOk()));
- }
- 
- } // namespace
+-impl EnvoyBuffer<'_> {
++impl<'a> EnvoyBuffer<'a> {
+   /// This is a helper function to create an [`EnvoyBuffer`] from a byte slice.
+   ///
+   /// This is meant for use by the end users in unit tests.
+-  pub fn new(s: &[u8]) -> Self {
++  /// The returned buffer cannot outlive the slice.
++  ///
++  /// ```compile_fail,E0515
++  /// use envoy_proxy_dynamic_modules_rust_sdk::EnvoyBuffer;
++  ///
++  /// fn dangling_buffer() -> EnvoyBuffer<'static> {
++  ///   let bytes = vec![1, 2, 3];
++  ///   EnvoyBuffer::new(&bytes)
++  /// }
++  /// ```
++  pub fn new(s: &'a [u8]) -> Self {
+     Self {
+       raw_ptr: s.as_ptr(),
+       length: s.len(),
 ```
 
 ---
 
-### Incident Patch 2: `36230011` (2026-11-05)
-**Commit Message**: hot restart: release udp listener configs during shutdown (#48782)
+### Incident Patch 2: `8a3f3749` (2026-11-06)
+**Commit Message**: deps: Update QUICHE to 35cbd03 (#49043)
 
-Commit Message: Release UDP forwarding's retained listener
-configurations during
-`HotRestartingChild::shutdown()`, after disabling its forwarding event.
-QUIC-LB
-listeners can own SDS providers that depend on the dispatcher and stats
-store.
-Previously those providers could be destroyed with `HotRestartImpl`,
-after the
-server and its resources had already been destroyed.
+deps: Update QUICHE to 35cbd03
 
-Additional Description: The fix preserves listener ownership and packet
-forwarding
-during operation, but clears the forwarding registry during the existing
-server
-shutdown path. The regression test relinquishes all other ownership of a
-listener
-config and checks that shutdown destroys it, removes its forwarding
-entry, and can
-be called repeatedly.
+Update QUICHE from f53fd81 to 35cbd03
+https://github.com/google/quiche/compare/f53fd81..35cbd03
 
-Risk Level: Low
+Registry:
+https://github.com/envoyproxy/bazel-registry/commit/05ecd55a93884ef065ade452ddba83bbcef97918
 
-Testing: Repository formatting, spelling, proto-format, changelog, and
-code checks
-passed. The macOS hot-restart test target contains zero tests and is not
-counted as
-regression evidence. Linux red/green CI passed:
-https://github.com/gsalisbury/envoy/actions/runs/40528463607
-The shutdown regression failed with an assertion against upstream
-production code.
-With the fixes restored, all 15 
+```
+$ git log f53fd81..35cbd03 --date=short --no-merges --format="%ad %an %s"
 
-**File**: `changelogs/current/bug_fixes/server__hot_restart_udp_listener_shutdown.rst` (added, +3/-0)
+2026-10-27 ricea Separate Balsa tests from quiche_tests
+2026-10-27 ricea Merge the BBRv2 and BBRv3 simulator tests into one parameterized test.
+2026-10-27 apaseltiner Round Structured Headers decimal ties to even across all in-range values.
+2026-10-28 QUICHE team Fix misaligned header pointer access in CreateTcpResetPacket.
+2026-10-28 QUICHE team #cana-http 1/2: Pass the HTTP/3 SETTINGS wire order to QuicSpdySession::OnSettingsFrame.
+2026-10-28 ricea Add QUICHE_EXPORT to ChunkedBuffer::AppendRegion
+2026-10-29 ricea Consolidate Http2StructureDecoder tests into a single test file.
+2026-10-29 ianswett No public description
+2026-10-29 martinduke Add PUBLISH_STATE_NOTIFY parser/framer and delete request-id from GOAWAY.
+2026-10-30 QUICHE team Add a QUIC protocol flag for the ack frequency used during ack decimation.
+2026-10-30 ianswett Add t
+
+**File**: `MODULE.bazel` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,3 @@
-+Fixed a crash on process exit when a UDP listener owns server-dependent resources, such as a QUIC-LB
-+connection ID generator using SDS. UDP forwarding now releases its retained listener configurations during server
-+shutdown, before the server resources they depend on are destroyed.
+@@ -78,7 +78,7 @@ bazel_dep(name = "proxy-wasm-rust-sdk", version = "0.2.5")
+ bazel_dep(name = "qat-zstd", version = "1.0.0.envoy")
+ bazel_dep(name = "qatlib", version = "26.02.0.envoy")
+ bazel_dep(name = "qatzip", version = "2.0.0.envoy")
+-bazel_dep(name = "quiche", version = "0.0.0-261027-f53fd81.envoy")
++bazel_dep(name = "quiche", version = "0.0.0-261105-35cbd03.envoy")
+ bazel_dep(name = "ragel", version = "7.0.4-211228-d4577c9.envoy")
+ bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
+ bazel_dep(name = "rules_apple", version = "5.3.1")
 ```
 
-**File**: `source/server/hot_restarting_child.cc` (modified, +6/-1)
+**File**: `MODULE.bazel.lock` (modified, +3/-3)
 ```diff
-@@ -110,7 +110,12 @@ void HotRestartingChild::initialize(Event::Dispatcher& dispatcher) {
-       Event::FileTriggerType::Edge, Event::FileReadyType::Read);
- }
- 
--void HotRestartingChild::shutdown() { socket_event_udp_forwarding_.reset(); }
-+void HotRestartingChild::shutdown() {
-+  socket_event_udp_forwarding_.reset();
-+  // Listener configs can own SDS providers and other server-dependent resources. Release them
-+  // while the server is still alive, rather than when the hot restart implementation is destroyed.
-+  udp_forwarding_context_.clear();
-+}
- 
- void HotRestartingChild::onForwardedUdpPacket(uint32_t worker_index,
-                                               const Network::Address::Instance& listener_address,
+@@ -460,7 +460,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -874,8 +874,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatlib/26.02.0.envoy/source.json": "c80a93b73f5ede0135ee815ef8af2298c6b0c97d6c776ce323f05a627c245a52",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/MODULE.bazel": "91a13182a0dcba4e582954ef45f2a3fc8132ef74a760fee29746528465d49680",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/source.json": "126a045e6b16e69fa9ba0e6c58a15fd716921b85c36eea30f76149eeed981c82",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "76d925ce189dfc57659530044a77e66951303a781124f59e7634935adf994ce6",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/source.json": "f03f4f1ea397b699f241883c43f999bf0e1552f48ce08502894c248a9e394620",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "cd0946393d4f6009720cf5be00fce5dc83bcfb1cde560748a5cf27d4661e2cb3",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/source.json": "5e2e5932704c0aa65bd7d07050256638313d4a93661a790ed2237c8d33782ffd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "7635a32860d8fccdf13449fb1ff52137a96d0c03f73b9030483d2a0ad1b6953b",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/source.json": "489ee8af503223d444a2b324f750f22a445da60c4f24cd445f5f208dc1aaf2ae",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
 ```
 
-**File**: `source/server/hot_restarting_child.h` (modified, +2/-0)
+**File**: `bazel/deps.yaml` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,8 @@ class HotRestartingChild : public HotRestartingBase,
-     void registerListener(Network::Address::InstanceConstSharedPtr address,
-                           std::shared_ptr<Network::UdpListenerConfig> listener_config);
- 
-+    void clear() { listener_map_.clear(); }
-+
-   private:
-     // Builds the map key for an address string within a network namespace.
-     static std::string key(absl::string_view network_namespace, absl::string_view address);
+@@ -1437,7 +1437,7 @@ zstd:
+   project_name: "zstd"
+   project_desc: "zstd compression library"
+   project_url: "https://facebook.github.io/zstd"
+-  release_date: "2026-10-27"
++  release_date: "2026-11-05"
+   use_category:
+   - dataplane_ext
+   extensions:
 ```
 
-**File**: `test/server/hot_restarting_child_test.cc` (modified, +16/-0)
+**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +3/-3)
 ```diff
-@@ -290,6 +290,22 @@ MATCHER_P4(IsUdpWith, local_addr, peer_addr, buffer, timestamp, "") {
-   return local_matched && peer_matched && buffer_matched && timestamp_matched;
- }
- 
-+TEST_F(HotRestartingChildTest, ShutdownReleasesUdpListenerConfigs) {
-+  auto listener_config = std::make_shared<testing::StrictMock<Network::MockUdpListenerConfig>>();
-+  std::weak_ptr<Network::UdpListenerConfig> weak_config = listener_config;
-+  auto listener_addr = *Network::Utility::resolveUrl("udp://127.0.0.1:1234");
-+  HotRestartUdpForwardingTestHelper helper(*hot_restarting_child_);
-+  helper.registerUdpForwardingListener(listener_addr, listener_config);
-+  listener_config.reset();
-+  EXPECT_FALSE(weak_config.expired());
-+
-+  hot_restarting_child_->shutdown();
-+
-+  EXPECT_TRUE(weak_config.expired());
-+  EXPECT_FALSE(helper.getListenerForDestination(*listener_addr).has_value());
-+  hot_restarting_child_->shutdown();
-+}
-+
- TEST_F(HotRestartingChildTest, ForwardsPacketToRegisteredListenerOnMatch) {
-   uint32_t worker_index = 12;
-   uint64_t packet_timestamp = 987654321;
+@@ -476,7 +476,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -890,8 +890,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatlib/26.02.0.envoy/source.json": "c80a93b73f5ede0135ee815ef8af2298c6b0c97d6c776ce323f05a627c245a52",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/MODULE.bazel": "91a13182a0dcba4e582954ef45f2a3fc8132ef74a760fee29746528465d49680",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/source.json": "126a045e6b16e69fa9ba0e6c58a15fd716921b85c36eea30f76149eeed981c82",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "76d925ce189dfc57659530044a77e66951303a781124f59e7634935adf994ce6",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/source.json": "f03f4f1ea397b699f241883c43f999bf0e1552f48ce08502894c248a9e394620",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "cd0946393d4f6009720cf5be00fce5dc83bcfb1cde560748a5cf27d4661e2cb3",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/source.json": "5e2e5932704c0aa65bd7d07050256638313d4a93661a790ed2237c8d33782ffd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "7635a32860d8fccdf13449fb1ff52137a96d0c03f73b9030483d2a0ad1b6953b",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/source.json": "489ee8af503223d444a2b324f750f22a445da60c4f24cd445f5f208dc1aaf2ae",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
+```
+
+**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +3/-3)
+```diff
+@@ -479,7 +479,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -899,8 +899,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatlib/26.02.0.envoy/source.json": "c80a93b73f5ede0135ee815ef8af2298c6b0c97d6c776ce323f05a627c245a52",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/MODULE.bazel": "91a13182a0dcba4e582954ef45f2a3fc8132ef74a760fee29746528465d49680",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/source.json": "126a045e6b16e69fa9ba0e6c58a15fd716921b85c36eea30f76149eeed981c82",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "76d925ce189dfc57659530044a77e66951303a781124f59e7634935adf994ce6",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/source.json": "f03f4f1ea397b699f241883c43f999bf0e1552f48ce08502894c248a9e394620",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "cd0946393d4f6009720cf5be00fce5dc83bcfb1cde560748a5cf27d4661e2cb3",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/source.json": "5e2e5932704c0aa65bd7d07050256638313d4a93661a790ed2237c8d33782ffd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "7635a32860d8fccdf13449fb1ff52137a96d0c03f73b9030483d2a0ad1b6953b",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/source.json": "489ee8af503223d444a2b324f750f22a445da60c4f24cd445f5f208dc1aaf2ae",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
+```
+
+**File**: `docs/MODULE.bazel.lock` (modified, +3/-3)
+```diff
+@@ -478,7 +478,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -898,8 +898,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatlib/26.02.0.envoy/source.json": "c80a93b73f5ede0135ee815ef8af2298c6b0c97d6c776ce323f05a627c245a52",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/MODULE.bazel": "91a13182a0dcba4e582954ef45f2a3fc8132ef74a760fee29746528465d49680",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/source.json": "126a045e6b16e69fa9ba0e6c58a15fd716921b85c36eea30f76149eeed981c82",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "76d925ce189dfc57659530044a77e66951303a781124f59e7634935adf994ce6",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/source.json": "f03f4f1ea397b699f241883c43f999bf0e1552f48ce08502894c248a9e394620",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "cd0946393d4f6009720cf5be00fce5dc83bcfb1cde560748a5cf27d4661e2cb3",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/source.json": "5e2e5932704c0aa65bd7d07050256638313d4a93661a790ed2237c8d33782ffd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "7635a32860d8fccdf13449fb1ff52137a96d0c03f73b9030483d2a0ad1b6953b",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/source.json": "489ee8af503223d444a2b324f750f22a445da60c4f24cd445f5f208dc1aaf2ae",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
+```
+
+**File**: `mobile/MODULE.bazel` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ bazel_dep(name = "platforms", version = "1.1.0")
+ bazel_dep(name = "protobuf", version = "35.1.bcr.envoy")
+ bazel_dep(name = "proxy-wasm-cpp-host", version = "0.0.0-260704-f2db56a.envoy.1")
+ bazel_dep(name = "pybind11_bazel", version = "3.0.3")
+-bazel_dep(name = "quiche", version = "0.0.0-261027-f53fd81.envoy")
++bazel_dep(name = "quiche", version = "0.0.0-261105-35cbd03.envoy")
+ bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
+ bazel_dep(name = "rules_android", version = "0.7.3")
+ bazel_dep(name = "rules_android_ndk", version = "0.1.5")
+```
+
+**File**: `mobile/MODULE.bazel.lock` (modified, +3/-3)
+```diff
+@@ -484,7 +484,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -914,8 +914,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatlib/26.02.0.envoy/source.json": "c80a93b73f5ede0135ee815ef8af2298c6b0c97d6c776ce323f05a627c245a52",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/MODULE.bazel": "91a13182a0dcba4e582954ef45f2a3fc8132ef74a760fee29746528465d49680",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/qatzip/2.0.0.envoy/source.json": "126a045e6b16e69fa9ba0e6c58a15fd716921b85c36eea30f76149eeed981c82",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "76d925ce189dfc57659530044a77e66951303a781124f59e7634935adf994ce6",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261027-f53fd81.envoy/source.json": "f03f4f1ea397b699f241883c43f999bf0e1552f48ce08502894c248a9e394620",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "cd0946393d4f6009720cf5be00fce5dc83bcfb1cde560748a5cf27d4661e2cb3",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/quiche/0.0.0-261105-35cbd03.envoy/source.json": "5e2e5932704c0aa65bd7d07050256638313d4a93661a790ed2237c8d33782ffd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "7635a32860d8fccdf13449fb1ff52137a96d0c03f73b9030483d2a0ad1b6953b",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/ragel/7.0.4-211228-d4577c9.envoy/source.json": "489ee8af503223d444a2b324f750f22a445da60c4f24cd445f5f208dc1aaf2ae",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/99aa31e2d4adaf1c58e12532ff14d29e81c62609/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49021** (2026-11-05): dynamic_modules: write HTTP metadata batch and bool entries in place (@agrawroh)
-- **PR #49020** (2026-11-05): wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (@chentianheng604)
-- **PR #49014** (2026-11-05): Datadog junit upload (@etruong42)
-- **PR #49013** (2026-11-05): dynamic_modules: add a bootstrap cluster writer and run_on_all_worker (@agrawroh)
-- **PR #49004** (2026-11-04): deps: Bump `bazel-compdb` -> 0.0.0-20220906-4086479.envoy.1 (@dependency-envoy[bot])
-- **PR #49001** (closed): network/udp_proxy: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #49067** (2026-11-06): dynamic_modules: prevent `EnvoyMutBuffer` aliases (@gavinbunney)
+- **PR #49063** (2026-11-06): dynamic_modules: fix `EnvoyBuffer::new` lifetime (@gavinbunney)
+- **PR #49060** (closed): [bp/1.39] CVE/wasmtime stack (@phlax)
+- **PR #49056** (2026-11-06): repo: remove derekargueta from emeritus code owners (@derekargueta)
+- **PR #49055** (2026-11-06): tests/coverage: Don't exec bazel in the coverage shim (@phlax)
+- **PR #49054** (2026-11-06): bazel: Bump -> 9.3.2 (@phlax)
 
 ---
 
@@ -1382,23 +1346,21 @@ With the fixes restored, all 15
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
+## X. dynamic_modules: fix `EnvoyBuffer::new` lifetime (#49063)
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__rust-sdk-buffer-lifetime.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce49cf62`: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6462dee5`: dynamic_modules: fix `EnvoyBuffer::new` lifetime (#49063). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/dynamic_modules__rust-sdk-buffer-lifetime.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
-is enforced when a number finishes parsing, rather than only when an incomplete number at the end
-of a chunk exceeds 64 bytes.
+Fixed the Rust SDK's ``EnvoyBuffer::new`` so buffers cannot outlive their input slice.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1408,4 +1370,4 @@ of a chunk exceeds 64 bytes.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce49cf62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6462dee5` are properly handled with clean fallback behavior.
