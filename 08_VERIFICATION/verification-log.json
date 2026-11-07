@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-IHFQ",
-    "timestamp": "2026-11-05T06:15:03.878Z",
-    "repository": "buresdv/Cork",
-    "learningId": "learn-github-buresdv-cork",
-    "contentHash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-IJ4F",
     "timestamp": "2026-11-05T06:15:06.063Z",
     "repository": "goharbor/harbor",
@@ -7490,6 +7475,21 @@
     "repository": "skyzh/mini-lsm",
     "learningId": "learn-github-skyzh-mini-lsm",
     "contentHash": "7a9fe6d2b099328049642815a1501125601e661ccbd60c787db28dfe7f278812",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-288Z",
+    "timestamp": "2026-11-07T19:09:35.171Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

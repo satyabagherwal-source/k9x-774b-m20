@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:57:18.751Z",
+  "last_updated": "2026-11-07T19:09:35.086Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47177,11 +47177,16 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "bd7a42f3",
-      "content_hash": "32a775c3ea1ad3a689a1d0333bdb1bd45cbf9f1db316bef33bd168a409bc9c35",
+      "source_version": "6d79729a",
+      "content_hash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "analytics): auto_select_done 补回丢失的属性, source_failed 按平台的参数预算分条, 数据源改记搜索地址的域名 (#3",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2197,
           "title": "build(datasource-test-mcp): CI 构建自带 JBR 的 Windows 发行包, 修复 probe_video 实播 (#3617)",
@@ -47228,7 +47233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:33:52.681Z",
+      "verified_at": "2026-11-07T19:09:35.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

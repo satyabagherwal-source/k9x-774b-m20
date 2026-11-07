@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "bd7a42f3",
+    "sourceVersion": "6d79729a",
     "license": "AGPL-3.0",
-    "contentHash": "32a775c3ea1ad3a689a1d0333bdb1bd45cbf9f1db316bef33bd168a409bc9c35",
-    "lastHarvestedAt": "2026-11-04T19:33:52.807Z",
+    "contentHash": "05d8e0e550041b847458fdf8e11470e27b434c68b57a250d35f361156938dfc3",
+    "lastHarvestedAt": "2026-11-07T19:09:35.174Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {

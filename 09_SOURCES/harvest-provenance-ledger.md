@@ -8059,3 +8059,4 @@ Every entry in this ledger must capture:
 | `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `35252cbb` | Multi-dimensional audit evidence | 2026-11-07T18:57:12.959Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `79b7d505` | Multi-dimensional audit evidence | 2026-11-07T18:57:13.863Z |
 | `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `df2120d7` | Multi-dimensional audit evidence | 2026-11-07T18:57:18.836Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `6d79729a` | Multi-dimensional audit evidence | 2026-11-07T19:09:35.174Z |

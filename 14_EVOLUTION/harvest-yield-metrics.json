@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T18:57:18.841Z",
-  "total_cycles_completed": 8015,
-  "total_learnings_persisted": 8015,
-  "total_rules_promoted": 7664,
+  "last_updated": "2026-11-07T19:09:35.180Z",
+  "total_cycles_completed": 8016,
+  "total_learnings_persisted": 8016,
+  "total_rules_promoted": 7665,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:20:30.617Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:27:09.065Z",
       "repository": "milind-soni/OpenMausBot",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T18:57:18.841Z",
       "repository": "skyzh/mini-lsm",
       "learningId": "learn-github-skyzh-mini-lsm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:09:35.180Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

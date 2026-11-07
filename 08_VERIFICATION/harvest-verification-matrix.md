@@ -8050,3 +8050,4 @@
 | `CYCLE-20261107-MBJW` | `2026-11-07T18:57:12.956Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6aeb66a6...`) |
 | `CYCLE-20261107-MC8Z` | `2026-11-07T18:57:13.859Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fa4949a8...`) |
 | `CYCLE-20261107-MG35` | `2026-11-07T18:57:18.833Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1954` | Yes (`7a9fe6d2...`) |
+| `CYCLE-20261107-288Z` | `2026-11-07T19:09:35.171Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05d8e0e5...`) |

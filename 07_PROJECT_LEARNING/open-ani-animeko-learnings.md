@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source**: github ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
-> **Source Version**: `bd7a42f3`  
+> **Source Version**: `6d79729a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:33:51.755Z  
+> **Timestamp**: 2026-11-07T19:09:33.845Z  
 > **Learning ID**: `learn-github-open-ani-animeko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:33:49.108Z  
+> **Harvest Timestamp**: 2026-11-07T19:04:31.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Multiplatform
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 21492 stars
+- **Stars / Engagement**: 21580 stars
 
 ---
 
@@ -1031,14 +1031,11 @@ class EpisodeFetchSelectPlayState(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3691** (2026-11-02): **fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持**
-  *Symptoms*: ## 背景  下载弹窗的选源步骤原先在会话里有 BT 源时默认落到 BT 页，用户每次下载都要先切回自动匹配。另外用户切过的模式存在选源页内部的 `rememberSaveable` 里，而选源与选集两步靠 `AnimatedContent` 切换，选源页在过渡结束后会被销毁：选集后点返回、或下滑隐藏弹窗再从剧集行打开，模式都会重置为初值。之前初值是 BT，从 BT 页选资源再返回的人碰巧还在 BT 页；初值改成自动后这个问题就会暴露出来。  ## 改动  - `DownloadMediaPickerContent` 的初始模式固定为自动匹配，不随 BT 源有无或播放偏好变化。播放页的初始模式仍按设置里的 preferKind 推导，不受影响。 - 用户切过的模式挂到 `DownloadMediaPickerState` 上。这个对象由 presenter 持有，同一查询会话的两步和隐藏重开共用同一实例，正好对应「本次会话内保持」的语义，也和播放页把模式放在 ViewModel 上的做法一致。选源页改为接收宿主传入的模式与回调。 - `DownloadRequestSheet` 的两步切换外面套一层 `SaveableStateHolder`，返回选源时 BT 列表的滚动位置等 `rememberSaveable` 状态也能保住。 - 文档 media-downloads.md 与 media-selector-ui.md 同步更新默认模式与保持规则。  ## 验证  - `:app:shared:ui-download:desktopTest` 全部通过（16 个测试类）。 - `DownloadMediaPickerTest` 原「有 BT 源时默认 BT」的用例改为「有 BT 源时仍默认自动，可从菜单切到 BT」；新增回归测试用 `AnimatedContent` 模拟两步切换，切到 BT 后离开再回来仍在 BT 页，离开期间断言选源页确实被销毁。 - 修复前用同样结构的探针测试确认过：离开再回来会落到自动匹配页。  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #3701** (2026-11-07): **build(deps): DataStore 升级到 1.3.0, 修复并发读写时设置读成默认值**
+  *Symptoms*: ## 背景  #3700 合并后 `main` 的 `Verify (macOS 26 AArch64 (GitHub))` 在桌面自动更新 E2E 的 `no-range` 场景超时失败 ([run 42361608806](https://github.com/open-ani/animeko/actions/runs/42361608806))。日志显示测试任务刚写完 `updateSettings` (autoDownloadUpdate=true), `AppUpdateViewModel` 紧接着读到的却是默认值 false, 于是只检查不下载, 等到 5 分钟超时。同一 run 的其他 5 个场景和 macOS 15 都读到了 true。  根因是 DataStore 1.2.0 的并发读写缺陷, 和 macOS 26 无关:  - 有写入进行中时, 新 collector 会绕过缓存直接读文件。JVM 上 DataStore 用不带 `ATOMIC_MOVE` 的 `Files.move` 换文件, JDK 的实现是先 unlink 旧文件再 rename, 这个间隙里读到 "文件不存在" 就返回空 Preferences, 所有设置都变成默认值。当时正好有另一个启动时的写入 (`watchTogetherSettings`) 在进行。 - 1.2.0 还会让这个 collector 漏掉紧接着的那次更新 (所有平台, 上游 b/431787506)。  真实用户在桌面端启动时也会以同样概率读到默认设置。iOS 走项目自定义的 FileStorage (kotlinx-io `atomicMove`), 不受文件缺失问题影响; Android 用 `renameTo`, 是原子的。  ## 改动  - `gradle/libs.versions.toml`: `datastore` 1.2.0 → 1.3.0 (2026-10-21 发布)。上游在 1.3.0 修了这两处: androidx `1ef22b89a3` "Prevent dropped updates during concurrent read/write" 和 `650ccfb4d4` "Add ATOMIC_MOVE copy option"。 - 对比过 1.2.0 → 1.3.0 的 `Storage` / `StorageConnection` / `InterProcessCoordinator` / `DataStoreFactory` 源码, 只是加了显式 `public`, 签名没变, 项目自定义的 iOS `FileStorage` 不用改。  ## 验证  本地 (macOS 26.2) 复现: 一边持续写别的 key, 一边 8 个协程并发对一个只写过一次的 key 做 `data.first()`, 跑 40 秒, 统计读到 null 的次数。  | DataStore | 读取次数 | 读到 null | |---|---|---| | 1.2.0 | 302 万 | 265 | | 1.3.0 | 3035 万 | 0 |  - 照搬 E2E 顺序 (写 `updateSettings` 后立即 `first()`) 的 300 次循环在两个版本上都没撞上, 和 CI 上几十次 run 才出一次的频率一致。 - `:app:shared:app-data` 的 desktop / iosArm64 / android 编译通过。 - 
 
-- **Issue #3681** (2026-11-01): **fix(datasource): JSON API 源保留条目级资源以支持播放器内切集**
-  *Symptoms*: ## 问题与行为  Closes #3680  稀饭动漫 Next 使用的 JSON API 数据源在 `fetch` 返回前按当前集裁剪资源。播放页通过 `SubjectMediaFetchSessions` 为同一条目复用查询结果，因此从第 1 集进入后，在播放器内切到第 2 集时没有 Next 的候选；退出再从详情进入第 2 集则能找到。  ## 修改  - `JsonApiMediaSource.selectMedia` 返回条目下全部可解析剧集与线路的资源，当前集筛选由现有 `MediaSelector` 完成，与 `MediaSource.fetch` 的条目级约定一致。在线查询和搜索缓存读取共用此方法。 - 保留资源 ID、集号解析、线路、播放参数与按需获取播放地址的逻辑。播放器、连播、切集、查询会话复用及其他数据源实现均未修改。 - 更新原有单集查询预期，验证各剧集的集号与各线路资源；新增在线、缓存两条路径下共用一份结果切集的回归测试，覆盖第 1、2、3 集、特别篇和切回第 1 集，并断言不额外查询或提前签发地址。特别篇继续遵守现有映射及选择器匹配规则。 - 播放地址来自剧集列表的测试使用一次查询返回的第 2、3 集资源，验证播放时列表响应仍可共用并在过期后刷新。  ## 验证  - 修复前两条新增回归测试失败；在线路径切到第 2 集时预期 4 个候选，实际为 0。 - 修复后桌面 JVM 上运行 92 个相关测试，全部通过，0 skipped：JSON API 数据源、引擎、模板与配置序列化，`SubjectMediaFetchSessionsTest`、`MediaSelectorFilterCharacterizationTest`、`MediaSelectorSubjectSeriesTest`。 - `git diff --check` 通过。  测试任务及筛选范围：  ```shell ./gradlew :app:shared:app-data:desktopTest   --tests '*domain.mediasource.jsonapi.*'   --tests '*SubjectMediaFetchSessionsTest'   --tests '*MediaSelectorFilterCharacterizationTest'   --tests '*MediaSelectorSubjectSeriesTest' ```  本机 Windows 使用项目 CI 同版本的 JBR 21（含 JCEF）；由于工作区路径含中文，测试运行时通过仓库外的临时 Gradle init script 将 classpath 映射到同一目录的英文 junction，并传入 `-Pandroid.overridePathCheck=true`。这些本地环境适配未纳入改动。  验证范围为自动化测试；未将修复打包替换已安装应用，也未对修复后的实际站点播放做运行验证。 
-  **Post-Mortem & Fix Analysis**:
-  > [`MediaSource.fetch` 的接口约定](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/datasource/api/src/commonMain/kotlin/source/MediaSource.kt#L108-L114)明确要求返回条目下全部剧集，由选择器按当前集筛选；现有 [`web-selector` 实现](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/app/shared/app-data/src/commonMain/kotlin/domain/mediasource/web/SelectorMediaSource.kt#L386-L395)也返回未按当前集裁剪的 `originalList`  似乎是这些部分干扰到了 codex  这个 PR 是希望让 JSON API 的查询行为与上述约定一致，但之前没有充分说明它会改变该配置为 `true` 时的行为  这里应仅由订阅侧调整 Next 配置并关闭 PR，还是继续统一 JSON API 的条目级查询行为，补充配置语义说明？
-  > > [`MediaSource.fetch` 的接口约定](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/datasource/api/src/commonMain/kotlin/source/MediaSource.kt#L108-L114)明确要求返回条目下全部剧集，由选择器按当前集筛选；现有 [`web-selector` 实现](https://github.com/open-ani/animeko/blob/8ca97e5d54f9a97dddb1a4fb2ec89d411e1b7802/app/shared/app-data/src/commonMain/kotlin/domain/mediasource/web/SelectorMediaSource.kt#L386-L395)也返回未按当前集裁剪的 `originalList` >  >  >  > 似乎是这些部分干扰到了 codex >  >  >  > 这个 PR 是希望让 JSON API 的查询行为与上述约定一致，但之前没有充分说明它会改变该配置为 `true` 时的行为 >  >  >  > 这里应仅由订阅侧调整 Next 配置并关闭 PR，还是继续统一 JSON API 的条目级查询行为，补充配置语义说明？  文档的问题，这个地方改数据源就行了
+- **Issue #3700** (2026-11-07): **ci(build): macOS 验证 job 从 macOS 14 换成 macOS 26**
+  *Symptoms*: ## 背景  GitHub 已于 2026-11-02 下线 macOS 14 runner。`Verify (macOS 14 AArch64 (GitHub))` 现在一启动就被取消, 注解是 "The configuration 'macos-14-arm64-us-default' is not supported" (#3697、#3699 都碰到了)。它是 `main` ruleset 里的必需 check, 所以每个 PR 都得手动绕过才能合并。  ## 改动  - `src.main.kts` 的 `GithubMacOS14` 换成 `GithubMacOS26` (label `macos-26`, Apple Silicon)。macOS AArch64 DMG 改为在 macOS 15 和 macOS 26 上验证, 覆盖当前 GitHub 提供的两个 Apple Silicon 系统版本。 - `build.yml` 由脚本重新生成, 差异只有这个 job 的 id、名字、runner label 和 e2e 产物名。`release.yml` 没有变化。 - `main` ruleset 的必需 check 已同步: 去掉 `Verify (macOS 14 AArch64 (GitHub))`, 加上 `Verify (macOS 26 AArch64 (GitHub))`。  ## 验证  - 本地运行 `src.main.kts` 生成, 与提交的 `build.yml` 一致 (CI 的 Workflow YAML Consistency Check 会再查一次)。 - 新 job 是否能在 macOS 26 上跑通验证脚本和自动更新 e2e, 以本 PR 的 CI 结果为准。  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1055,355 +1052,497 @@ class EpisodeFetchSelectPlayState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd7a42f3` (2026-11-02)
-**Commit Message**: fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)
+### Incident Patch 1: `d5fb0ed7` (2026-11-07)
+**Commit Message**: fix(analytics): auto_select_done 补回丢失的属性, source_failed 按平台的参数预算分条, 数据源改记搜索地址的域名 (#3690)
 
-下载弹窗的选源步骤原先在会话里有 BT 源时默认落到 BT 页, 现在初值固定为自动匹配,
-不随 BT 源有无或播放偏好变化; 要挑种子的用户自己切到 BT 页.
-
-用户切过的模式原先存在选源页内部的 rememberSaveable 里, 选源与选集两步靠
-AnimatedContent 切换, 选源页在过渡结束后被销毁, 选集后返回或隐藏弹窗再打开都会
-重置为初值. 现在模式挂在 DownloadMediaPickerState 上, 由 presenter 在本次会话内
-持有; 两步切换处再套一层 SaveableStateHolder, 列表滚动位置等状态返回时也能保住.
+- AutoSelectExtension 包装 record 时 build() 调到了 PlayFlowProps 自己的 build(), 传入的 lambda 从未执行,
+  线上 6.4.0 的 auto_select_done 只剩公共属性和 duration_ms. 改为 build(this).
+- GA4 的 25 个属性上限包含 analytics 实现附加的平台 / 版本 / 会话属性 (Android 4 个, 桌面 6 个),
+  source_failed 按 15 段装满后 GA4 会丢掉一部分属性 (含 step). IAnalytics 新增 extraPropertyCount,
+  PlayFlowRecorder.maxProperties 是扣除后的预算, source_failed 按它分段 (Android 11, 桌面 9).
+  记号里的常见异常归并成短词 (network / timeout / dns / tls / forbidden / unavailable / http_<状态码>),
+  一条事件能装更多源.
+- 订阅的 Web 源 id 是 UUID, 不可读. 查询会话创建时登记各源的网址, 事件里改记主机名 (Selector 源是搜索地址的主机名),
+  没有网址的源仍记 id. play_flow 各事件的 media_source_id 改名为 source, 既有事件 episode_exit.media_source_id
+  改为 source, media_fetch_result.selected_source_id 改为 selected_source.
 
 Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt` (modified, +32/-17)
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/EpisodeFlowExtension.kt` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,7 @@ import androidx.compose.runtime.key
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberCoroutineScope
--import androidx.compose.runtime.saveable.rememberSaveable
-+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
- import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
-@@ -119,7 +119,13 @@ class DownloadMediaPickerState(
-      * 本次选源会话的手动查找, 点选的一集作为本集的选择; 为 `null` 时没有手动查找.
-      */
-     val manualBrowse: ManualBrowseState? = null,
--)
-+) {
-+    /**
-+     * 用户在模式 chip 上选的模式, `null` 表示还没选 (用初值). 放在会话状态上而不是选源页里:
-+     * 选集后返回与弹窗隐藏重开都会重建选源页, 用户切过的模式要在本次会话内保持.
-+     */
-+    var userMode: MediaSelectorMode? by mutableStateOf(null)
-+}
+@@ -100,7 +100,7 @@ class EpisodeFlowExtension(
+         context.playFlow.record(PlayFlowStep.USER_SELECT, episode) {
+             put("sel_no", episode.selectionNoOf(media.mediaId))
+             put("entry", event.trigger.toPlayFlowEntry())
+-            put("media_source_id", media.mediaSourceId)
++            put("source", context.playFlow.sourceName(media.mediaSourceId))
+             put("kind", media.toPlayFlowKind())
+             put("match", (match as? MaybeExcludedMedia.Included)?.metadata?.subjectMatchKind?.toPlayFlowMatch())
+             put("tier", tiers?.tierOf(media))
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/PlayFlowFetchObserver.kt` (modified, +65/-26)
+```diff
+@@ -9,18 +9,27 @@
+ 
+ package me.him188.ani.app.domain.player.analytics
+ 
++import io.ktor.client.plugins.ResponseException
+ import kotlinx.atomicfu.locks.SynchronizedObject
+ import kotlinx.atomicfu.locks.synchronized
+ import kotlinx.coroutines.CoroutineName
+ import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.coroutineScope
+ import kotlinx.coroutines.launch
++import kotlinx.io.IOException
++import me.him188.ani.app.data.repository.RepositoryAuthorizationException
++import me.him188.ani.app.data.repository.RepositoryNetworkException
++import me.him188.ani.app.data.repository.RepositoryRateLimitedException
++import me.him188.ani.app.data.repository.RepositoryRequestError
++import me.him188.ani.app.data.repository.RepositoryServiceUnavailableException
++import me.him188.ani.app.data.repository.RepositoryUnknownException
+ import me.him188.ani.app.domain.media.fetch.MediaFetchSession
+ import me.him188.ani.app.domain.media.fetch.MediaSourceFetchResult
+ import me.him188.ani.app.domain.media.fetch.MediaSourceFetchState
+ import me.him188.ani.app.domain.media.fetch.isDisabled
+ import me.him188.ani.app.domain.media.fetch.isFinal
++import me.him188.ani.app.domain.mediasource.web.BlockReason
+ import me.him188.ani.app.domain.mediasource.web.BlockedException
+ import me.him188.ani.datasources.api.source.MediaSourceKind
+ import kotlin.time.Duration
+@@ -29,7 +38,7 @@ import kotlin.time.TimeMark
  
  /**
-  * 选集步骤: 用户已在 [DownloadMediaPickerState] 中选定 [chosen].
-@@ -203,21 +209,25 @@ private fun DownloadRequestSheet(
-         modifier = Modifier.desktopTitleBarPadding().statusBarsPadding(),
-         contentWindowInsets = { BottomSheetDefaults.windowInsets.add(WindowInsets.desktopTitleBar()) },
-     ) {
-+        // AnimatedContent 在两步切换时销毁另一步的内容; 用 SaveableStateHolder 保住各步的 rememberSaveable 状态 (列表滚动位置等), 返回选源时回到原处.
-+        val stateHolder = rememberSaveableStateHolder()
-         AnimatedContent(
-             targetState = episodePicker,
-             contentKey = { it != null },
-             contentAlignment = Alignment.TopCenter,
-         ) { picker ->
--            if (picker == null) {
--                DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
--            } else {
--                DownloadEpisodePicker(
--                    picker,
--                    onBack = onBack,
--                    onConfirm = onConfirmEpisodes,
--                    modifier = Modifier.padding(vertical = 12.dp)
--                        .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
--                )
-+            stateHolder.SaveableStateProvider(picker != null) {
-+                if (picker == null) {
-+                    DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
-+                } else {
-+                    DownloadEpisodePicker(
-+                        picker,
-+                        onBack = onBack,
-+                        onConfirm = onConfirmEpisodes,
-+                        modifier = Modifier.padding(vertical = 12.dp)
-+                            .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
-+                    )
-+                }
+  * 观察播放页的条目级查询会话: 一轮查询结束 (所有源到达终态, 或用户提前离开) 时, 先把这一轮里失败、限流、需要验证码,
+- * 或成功但耗时达到 [slowThreshold] 的源汇总成一条 `source_failed` (每个源一个 `域名=结果` 记号), 再记录一条 `search_done`;
++ * 或成功但耗时达到 [slowThreshold] 的源汇总成一条 `source_failed` (每个源一个 `源=结果` 记号, 源见 [PlayFlowRecorder.sourceName]), 再记录一条 `search_done`;
+  * 正常完成的源只计入 `search_done` 的 `count`, `media_count` 与 `cached_count`.
+  *
+  * 查询会话跨集共享, 因此本观察者是页级的, 事件归到记录时的当前剧集尝试 ([PlayFlowRecorder.currentEpisode]).
+@@ -45,10 +54,14 @@ class PlayFlowFetchObserver(
+     private val lock = SynchronizedObject()
+     private val sessions = HashMap<MediaFetchSession, SessionTrack>()
+ 
++    /** 一条 `source_failed` 最多装这么多段 `sources_N`, 更多时分成多条. */
++    val maxSourceChunks: Int = maxSourceChunks(recorder.maxProperties)
++
+     /**
+-     * 新会话创建. 开始观察它; 它替换掉的会话停止观察, 还没结束的查询记为 `search_done outcome=incomplete`.
++     * 新会话创建. 登记参与的源的网址, 开始观察它; 它替换掉的会话停止观察, 还没结束的查询记为 `search_done outcome=incomplete`.
+      */
+     fun onSessionCreated(session: MediaFetchSession) {
++        for (result in session.mediaSourceResults) recorder.registerSource(result.mediaSourceId, result.sourceInfo.websiteUrl)
+         val track = SessionTrack(session, recorder.markNow())
+         val replaced = synchronized(lock) {
+             sessions.values.toList().also {
+@@ -156,7 +169,7 @@ class PlayFlowFetchObserver(
+             source.reportedGeneration = source.generation
+             round.sourceCount++
+             if (source.result.searchStats.value?.isCacheOnly == true) round.cachedCount++
+-            source.problem(slowThreshold)?.let { round.problems += it }
++            source.problem(slowThreshold)?.let { round.problems += SourceProblem(recorder.sourceName(source.result.mediaSourceId), it) }
+         }
+         if (round.closed || !track.sources.all { it.state.isFinal }) return null
+         round.closed = true
+@@ -178,7 +191,7 @@ class PlayFlowFetchObserver(
+         // 失败类在前, 慢源在后
+         val problems = round.problems.sortedBy { it.outcome == SLOW_OUTCOME }
+         return {
+-            packPlayFlowTokens(problems.map { it.token }).chunked(MAX_SOURCE_CHUNKS).forEachIndexed { partIndex, chunks ->
++            packPlayFlowTokens(problems.map { it.token }).chunked(maxSourceChunks).forEachIndexed { partIndex, chunks ->
+                 recorder.record(PlayFlowStep.SOURCE_FAILED, episode) {
+                     put("round", number)
+                     put("count", problems.size)
+@@ -274,35 +287,24 @@ class PlayFlowFetchObserver(
+         }
+ 
+         /**
+-         * 这一代出的问题: 失败 (结果为异常简名或阻断原因)、限流、需要验证码, 或成功但耗时达到 [slowThreshold] (结果为 [SLOW_OUTCOME]).
++         * 这一代出的问题的结果: 失败 (见 [reasonName])、限流、需要验证码, 或成功但耗时达到 [slowThreshold] ([SLOW_OUTCOME]).
+          * 没有问题, 或被取消 (不是源本身的问题) 时为 `null`.
+          */
+-        fun problem(slowThreshold: Duration): SourceProblem? {
+-            val state = state
+-            val outcome = when (state) {
+-                is MediaSourceFetchState.Succeed -> if (duration?.let { it >= slowThreshold } == true) SLOW_OUTCOME else return null
+-                is MediaSourceFetchState.Failed -> state.cause.reasonName()
+-                is MediaSourceFetchState.CaptchaRequired -> "captcha_required"
+-                is MediaSourceFetchState.RateLimited -> "rate_limited"
+-                is MediaSourceFetchState.Abandoned, MediaSourceFetchState.Idle, MediaSourceFetchState.Working, MediaSourceFetchState.Disabled -> return null
+-            }
+-            // 源的标识: 网址的主机名, 没有网址时是 mediaSourceId
+-            val host = playFlowHost(result.sourceInfo.websiteUrl) ?: result.mediaSourceId
+-
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/PlayFlowMediaLoadListener.kt` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ internal class PlayFlowMediaLoadListener(
+             put("outcome", outcome)
+             put("stage", stage)
+             put("reason", reason)
+-            put("media_source_id", media.mediaSourceId)
++            put("source", recorder.sourceName(media.mediaSourceId))
+             put("kind", media.toPlayFlowKind())
+             put("engine", playFlowEngine(resolverName, engineKey))
+             put("duration_ms", elapsed)
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/PlayFlowRecorder.kt` (modified, +26/-9)
+```diff
+@@ -52,6 +52,13 @@ class PlayFlowRecorder(
+     private val seq = atomic(0L)
+     private val attempts = atomic(0L)
+     private val current = atomic<PlayFlowEpisode?>(null)
++    private val lock = SynchronizedObject()
++    private val sourceNames = HashMap<String, String>()
++
++    /**
++     * 一条事件最多可带的属性数: GA4 的上限减去 [analytics] 自己附加的属性 (平台、版本、会话等), 超出时 GA4 会丢掉一部分属性.
++     */
++    val maxProperties: Int = IAnalytics.MAX_EVENT_PROPERTIES - analytics.extraPropertyCount
+ 
+     /**
+      * 当前的剧集尝试. 只给无法在任务开始时捕获尝试的页级观察者使用 (条目级查询会话); 扩展应使用 `EpisodeSession.playFlowEpisode`.
+@@ -77,6 +84,20 @@ class PlayFlowRecorder(
+         return episode
+     }
+ 
++    /**
++     * 登记数据源 [mediaSourceId] 的网址, 之后 [sourceName] 返回它的主机名. 查询会话创建时登记参与的源.
++     */
++    fun registerSource(mediaSourceId: String, websiteUrl: String?) {
++        val host = playFlowHost(websiteUrl) ?: return
++        synchronized(lock) { sourceNames[mediaSourceId] = host }
++    }
++
++    /**
++     * 事件里数据源的标识 (`source`): 数据源网址的主机名 (小写, 去掉 `www.`); 没有网址或没登记过的源是 [mediaSourceId] 本身.
++     * 订阅的 Web 源 id 是 UUID, 主机名才可读.
++     */
++    fun sourceName(mediaSourceId: String): String = synchronized(lock) { sourceNames[mediaSourceId] } ?: mediaSourceId
++
+     /**
+      * 记录一条 [AnalyticsEvent.PlayFlow] 事件. [episode] 为 `null` 时不带 `episode_attempt` 与 `episode_id`.
+      */
+@@ -88,7 +109,7 @@ class PlayFlowRecorder(
+             }
+             return
+         }
+-        post(PlayFlowProps(commonProperties(step, episode, seq)).apply(build).build())
++        post(PlayFlowProps(commonProperties(step, episode, seq), maxProperties).apply(build).build())
+     }
+ 
+     private fun post(properties: Map<String, Any?>) {
+@@ -129,11 +150,6 @@ class PlayFlowRecorder(
+         /** 每条事件都带的公共属性, 顺序与 [commonProperties] 一致. */
+         val COMMON_KEYS: List<String> = listOf("step", "play_session_id", "episode_attempt", "seq", "t_ms", "subject_id", "episode_id")
+ 
+-        /**
+-         * GA4 单条事件的参数上限.
+-         */
+-        const val MAX_PROPERTIES = 25
+-
+         /**
+          * GA4 字符串参数值的长度上限.
+          */
+@@ -220,10 +236,11 @@ enum class PlayFlowStep(val value: String) {
+ 
+ /**
+  * 构造事件属性, 统一转换成 GA4 接受的类型: 整数为 `Long`, 布尔为 `1L` / `0L`, 时长为毫秒, 枚举为小写名称,
+- * 字符串截断到 [PlayFlowRecorder.MAX_STRING_LENGTH]; `null` 丢弃.
++ * 字符串截断到 [PlayFlowRecorder.MAX_STRING_LENGTH]; `null` 丢弃. 属性数不能超过 [maxProperties].
+  */
+ class PlayFlowProps internal constructor(
+     private val map: MutableMap<String, Any?>,
++    private val maxProperties: Int,
+ ) {
+     fun put(key: String, value: String?) {
+         map[key] = value?.take(PlayFlowRecorder.MAX_STRING_LENGTH)
+@@ -250,8 +267,8 @@ class PlayFlowProps internal constructor(
+     }
+ 
+     internal fun build(): Map<String, Any?> {
+-        check(map.size <= PlayFlowRecorder.MAX_PROPERTIES) {
+-            "play_flow event has ${map.size} properties, exceeding ${PlayFlowRecorder.MAX_PROPERTIES}: ${map.keys}"
++        check(map.size <= maxProperties) {
++            "play_flow event has ${map.size} properties, exceeding $maxProperties: ${map.keys}"
+         }
+         return map
+     }
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/PlayFlowValues.kt` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ internal fun MediaSelectorSourceTiers.tierOf(media: Media): Long? {
+ internal fun PlaybackException.toPlayFlowReason(): String = "player_" + code.name.lowercase()
+ 
+ /**
+- * 数据源网址的主机名 (同 [normalizedSessionHost]: 小写, 去掉 `www.`), 作为 `source_failed.sources_*` 里的源标识;
++ * 数据源网址的主机名 (同 [normalizedSessionHost]: 小写, 去掉 `www.`), 作为事件里的源标识 (见 [PlayFlowRecorder.sourceName]);
+  * 没有网址或解析不出主机名时为 `null`.
+  */
+ internal fun playFlowHost(websiteUrl: String?): String? {
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/PlaybackFlowExtension.kt` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ class PlaybackFlowExtension(
+                     context.player.state.first { it.isPlaying }
+                     recorder.record(PlayFlowStep.PLAYBACK_STARTED, episode) {
+                         put("sel_no", episode.selectionNoOf(media.mediaId))
+-                        put("media_source_id", media.mediaSourceId)
++                        put("source", recorder.sourceName(media.mediaSourceId))
+                         put("kind", media.toPlayFlowKind())
+                         put("is_first", !playedOnce)
+                         put("duration_ms", selectedAt.elapsedNow())
+```
+
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/extension/AutoSelectExtension.kt` (modified, +5/-4)
+```diff
+@@ -159,7 +159,7 @@ class AutoSelectExtension(
+                     put("outcome", "selected")
+                     put("method", outcome.reason.toMethod())
+                     put("reason", replayMiss)
+-                    put("media_source_id", outcome.media.mediaSourceId)
++                    put("source", context.playFlow.sourceName(outcome.media.mediaSourceId))
+                     put("kind", outcome.media.toPlayFlowKind())
+                     put("match", outcome.matchKind?.toPlayFlowMatch())
+                     put("tier", outcome.tier?.value?.toLong())
+@@ -170,7 +170,7 @@ class AutoSelectExtension(
+                     put("outcome", "preempted_by_user")
+                     put("method", outcome.reason.toMethod())
+                     put("reason", replayMiss)
+-                    put("media_source_id", outcome.media.mediaSourceId)
++                    put("source", context.playFlow.sourceName(outcome.media.mediaSourceId))
+                 }
+ 
+                 is MediaAutoSelectOutcome.Exhausted -> record {
+@@ -189,7 +189,7 @@ class AutoSelectExtension(
+             record {
+                 put("outcome", "selected")
+                 put("method", "browse_memory")
+-                put("media_source_id", media?.mediaSourceId)
++                put("source", media?.let { context.playFlow.sourceName(it.mediaSourceId) })
+                 put("kind", media?.toPlayFlowKind())
+                 put("sel_no", media?.let { episode.selectionNoOf(it.mediaId) })
+             }
+@@ -209,7 +209,8 @@ class AutoSelectExtension(
+             if (recorded) return
+             recorded = true
+             context.playFlow.record(PlayFlowStep.AUTO_SELECT_DONE, episode) {
+-                build()
++                // 不带参数的 build() 会调到接收者 PlayFlowProps 自己的 build(), 参数里的 lambda 不会执行
++                build(this)
+                 put("duration_ms", start.elapsedNow())
              }
          }
-     }
-@@ -256,6 +266,8 @@ private fun DownloadMediaPicker(
-         selectorState = selectorState,
-         sourceResults = presentation,
-         hasBt = hasBt,
-+        userMode = selection.userMode,
-+        onUserModeChange = { selection.userMode = it },
-         watching = watching,
-         fetchRequest = fetchRequest,
-         onFetchRequestChange = selection.fetchSession::setFetchRequest,
-@@ -267,10 +279,12 @@ private fun DownloadMediaPicker(
- 
- /**
-  * 选源步骤的界面: 标题行「数据源」+ 模式 chip, 下方按模式放自动匹配页、手动查找页或 BT 资源页.
-- * 模式在本次弹窗内保持; 初值有 BT 源 → BT, 否则 AUTO.
-+ * 初值总是 AUTO, 不随 BT 源有无或播放偏好变化: 下载走自动匹配最省事, 要挑种子的用户自己切到 BT 页.
-  * 弹窗宽 640dp, BT 页因此总是紧凑列表, 手动查找总是堆叠两页.
-  *
-  * @param hasBt 会话内是否有 BT 源 (含禁用源). 为 false 时模式菜单没有 BT 项.
-+ * @param userMode 用户切过的模式, `null` 用初值. 由宿主持有 ([DownloadMediaPickerState.userMode]): 本页在选集与返回之间会重建, 自己记不住.
-+ * @param onUserModeChange 模式 chip 或自动匹配页的救援按钮改了模式.
-  * @param watching 要下载的集; BT 页只用它画「第 N 话」chip, 不画「正在观看」卡片.
-  * @param fetchRequest 当前生效的查询请求, 供 BT 页搜索框回显与提交; 会话未就绪时为 null.
-  * @param onSelect 用户在自动匹配页或 BT 页点了资源; 宿主进入选集步骤, 不关闭弹窗.
-@@ -281,6 +295,8 @@ internal fun DownloadMediaPickerContent(
-     selectorState: MediaSelectorState,
-     sourceResults: MediaSourceResultListPresentation,
-     hasBt: Boolean,
-+    userMode: MediaSelectorMode?,
-+    onUserModeChange: (MediaSelectorMode) -> Unit,
-     watching: WatchingEpisode?,
-     fetchRequest: MediaFetchRequest?,
-     onFetchRequestChange: (MediaFetchRequest) -> Unit,
-@@ -289,9 +305,8 @@ internal fun DownloadMediaPickerContent(
-     modifier: Modifier = Modifier,
-     manualBrowse: ManualBrowseState? = null,
- ) {
--    var userMode by rememberSaveable { mutableStateOf<MediaSelectorMode?>(null) }
-     val mode = userMode?.takeIf { it != MediaSelectorMode.MANUAL || manualBrowse != null }
--        ?: if (hasBt) MediaSelectorMode.BT else MediaSelectorMode.AUTO
-+        ?: MediaSelectorMode.AUTO
- 
-     // 手动查找页自己处理水平边距, 并在第二页用自己的顶栏替换标题行, 所以标题行与另外两页各自加水平边距.
-     val titleRow = @Composable {
-@@ -306,7 +321,7 @@ internal fun DownloadMediaPickerContent(
-             )
-             MediaSelectorModeChip(
-                 mode,
--                onModeChange = { userMode = it },
-+                onModeChange = onUserModeChange,
-                 showBt = hasBt,
-                 showManual = manualBrowse != null,
-             )
-@@ -351,7 +366,7 @@ internal fun DownloadMediaPickerContent(
-                     selectorState,
-       
 ```
 
-**File**: `app/shared/ui-download/src/desktopTest/kotlin/ui/download/subject/DownloadMediaPickerTest.kt` (modified, +51/-7)
+**File**: `app/shared/app-data/src/commonMain/kotlin/domain/player/extension/EpisodeExitAnalyticsExtension.kt` (modified, +1/-1)
 ```diff
-@@ -9,8 +9,16 @@
- 
- package me.him188.ani.app.ui.download.subject
- 
-+import androidx.compose.animation.AnimatedContent
-+import androidx.compose.foundation.layout.Box
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.MutableState
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
-+import androidx.compose.runtime.setValue
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.test.ComposeUiTest
- import androidx.compose.ui.test.assertTextEquals
- import androidx.compose.ui.test.hasTestTag
-@@ -49,9 +57,14 @@ import org.jetbrains.compose.resources.getString
- class DownloadMediaPickerTest {
-     /**
-      * @param onManualPick 非 null 时提供手动查找, 点选的一集交给它; null 时宿主没有手动查找.
-+     * @param userMode 宿主持有的模式, 默认本次组合内的局部状态.
-      */
-     @Composable
--    private fun Picker(hasBt: Boolean, onManualPick: ((Media, ManualBrowseMemory?) -> Unit)? = null) {
-+    private fun Picker(
-+        hasBt: Boolean,
-+        onManualPick: ((Media, ManualBrowseMemory?) -> Unit)? = null,
-+        userMode: MutableState<MediaSelectorMode?> = remember { mutableStateOf(null) },
-+    ) {
-         ProvideCompositionLocalsForPreview {
-             val scope = rememberBackgroundScope()
-             val manualBrowse = remember {
-@@ -68,6 +81,8 @@ class DownloadMediaPickerTest {
-                 selectorState = rememberTestMediaSelectorState(),
-                 sourceResults = TestMediaSourceResultListPresentation,
-                 hasBt = hasBt,
-+                userMode = userMode.value,
-+                onUserModeChange = { userMode.value = it },
-                 watching = WatchingEpisode("01", "Episode 1"),
-                 fetchRequest = TestMediaFetchRequest,
-                 onFetchRequestChange = {},
-@@ -91,19 +106,48 @@ class DownloadMediaPickerTest {
-     }
- 
-     @Test
--    fun `defaults to BT with BT sources and switches to auto from the menu`() = runAniComposeUiTest {
-+    fun `defaults to auto even with BT sources and switches to BT from the menu`() = runAniComposeUiTest {
-         setContent { Picker(hasBt = true) }
-+        onNodeWithTag(AutoMatchPageTestTags.ROOT).assertExists()
-+        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertDoesNotExist()
-+        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.AUTO))
-+
-+        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).performClick()
-+        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.MANUAL)).assertDoesNotExist()
-+        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.BT)).performClick()
-+
-         onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
-         onNodeWithTag(AutoMatchPageTestTags.ROOT).assertDoesNotExist()
-         onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.BT))
-+    }
- 
-+    @Test
-+    fun `mode chosen in the picker survives leaving for the episode step and coming back`() = runAniComposeUiTest {
-+        // 与 DownloadRequestSheet 一样用 AnimatedContent 在选源与选集之间切换, 选源页会被销毁重建; 模式由宿主持有.
-+        val userMode = mutableStateOf<MediaSelectorMode?>(null)
-+        var step by mutableStateOf(0)
-+        setContent {
-+            AnimatedContent(targetState = step, contentKey = { it != 0 }) { s ->
-+                if (s == 0) Picker(hasBt = true, userMode = userMode) else Box(Modifier.testTag("episode_step"))
-+            }
-+        }
-         onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).performClick()
--        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.MANUAL)).assertDoesNotExist()
--        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.AUTO)).performClick()
-+        onNodeWithTag(MediaSelectorChromeTestTags.modeItem(MediaSelectorMode.BT)).performClick()
-+        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
- 
--        onNodeWithTag(AutoMatchPageTestTags.ROOT).assertExists()
--        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertDoesNotExist()
--        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.AUTO))
-+        step = 1
-+        waitForIdle()
-+        mainClock.advanceTimeBy(5_000)
-+        waitForIdle()
-+        onNodeWithTag("episode_step").assertExists()
-+        onNodeWithTag(DownloadMediaPickerTestTags.ROOT).assertDoesNotExist()
-+
-+        step = 0
-+        waitForIdle()
-+        mainClock.advanceTimeBy(5_000)
-+        waitForIdle()
-+        onNodeWithTag(BtResourcesPageTestTags.ROOT).assertExists()
-+        onNodeWithTag(MediaSelectorChromeTestTags.MODE_CHIP).assertTextEquals(modeName(MediaSelectorMode.BT))
-     }
- 
-     @Test
-```
-
-**File**: `docs/contributing/code/media/media-downloads.md` (modified, +1/-1)
-```diff
-@@ -113,7 +113,7 @@ presenter 持有当前会话并把会话状态映射为页面状态：
- - `AwaitingSelection` 与 `SelectingEpisodes` 共用同一个底部弹窗（`DownloadMediaPickerState` 以查询会话为准，
-   两步之间保持同一实例），分别显示选源视图与选集视图（`DownloadEpisodePicker`）。
-   选源视图与播放页的[选源界面](media-selector-ui.md)共用页面，有自动匹配、手动查找与 BT 资源三种模式；
--  会话里有 BT 源时默认 BT。手动查找的状态由 presenter 随 `DownloadMediaPickerState` 一起创建，
-+  默认自动匹配，不随 BT 源有无或播放偏好变化；切过的模式挂在 `DownloadMediaPickerState` 上，选集后返回或隐藏弹窗再打开都不重置。手动查找的状态由 presenter 随 `DownloadMediaPickerState` 一起创建，
-   点选的一集与自动匹配页点选的资源一样通过 `select` 交给会话，条目的其他集按线路里的位置生成的资源一起交给会话。底部弹窗的宽度不足以放表格，BT 列表与播放页 BT 资源页共用紧凑列表组件。
-   选集视图列出条目的全部剧集，可下载的集可勾选，默认勾选本话及之后，并提供仅本话 / 本话及之后 / 全部的快捷选择；
-   已下载与未匹配的集不可勾选。`Finished(error)` 对应添加失败的提示；取消或完成后不显示任何弹窗。
-```
-
-**File**: `docs/contributing/code/media/media-selector-ui.md` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ BT 候选与 WEB 不同：同一集有几十条来自不同字幕组、分辨率
-   侧边栏太矮时例外，见下。
- - **详情页，窄窗口**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内。
- - **播放器**：与详情页一样，侧边栏装全部三种模式。
--- **批量下载对话框**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内；会话里有 BT 源时默认 BT。
-+- **批量下载对话框**：底部弹窗，标题行「数据源」+ 模式下拉，三种模式都在弹窗内；默认自动匹配，不随 BT 源有无或播放偏好变化。
-   弹窗宽度不超过 640dp，手动查找总是堆叠两页。
-   资源选定后的选集步骤见[下载管理](media-downloads.md#添加下载)。
- 
+@@ -103,7 +103,7 @@ class EpisodeExitAnalyticsExtension(
+                 put("buffering_count", stats.buffering.count.toLong())
+                 put("buffering_ms", stats.buffering.total(now).inWholeMilliseconds)
+                 put("had_error", stats.hadError.toAnalyticsFlag())
+-                put("media_source_id", selected?.mediaSourceId?.take(100))
++                put("source", selected?.let { context.playFlow.sourceName(it.mediaSourceId) }?.take(100))
+                 put("is_cached", selected?.isLocalCache()?.toAnalyticsFlag())
+                 put("source_switch_count", stats.sourceSwitchCount.toLong())
+             }
 ```
 
 ---
 
-### Incident Patch 2: `e97ab2a1` (2026-11-01)
-**Commit Message**: fix(danmaku): honor location visibility settings (#3666)
+### Incident Patch 2: `6d79729a` (2026-11-07)
+**Commit Message**: build(deps): DataStore 升级到 1.3.0, 修复并发读写时设置读成默认值 (#3701)
 
-Check the configured location switch before placing live or repopulated danmakus, so disabled top, bottom, and floating comments cannot bypass the setting.
+DataStore 1.2.0 在有写入进行中时, 新 collector 会绕过缓存直接读文件; 而 JVM 上
+用不带 ATOMIC_MOVE 的 Files.move 换文件, JDK 先 unlink 旧文件再 rename, 这个
+间隙里读到 "文件不存在" 就返回空 Preferences, 所有设置变成默认值. 同时 1.2.0
+还会让该 collector 漏掉紧接着的那次更新 (所有平台). 桌面端的自动更新 E2E
+(no-range 场景) 在 CI 上偶发因此超时, 真实用户也会偶发读到默认设置.
 
-Fixes #3665
+1.3.0 已修复这两处 (androidx 1ef22b89a3 "Prevent dropped updates during
+concurrent read/write", 650ccfb4d4 "Add ATOMIC_MOVE copy option"). 公开 API
+只是加了显式 public, 签名没变, 项目自定义的 iOS FileStorage 不用改.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `danmaku/ui/src/commonMain/kotlin/DanmakuHostState.kt` (modified, +10/-0)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -539,20 +539,23 @@ class DanmakuHostState(
-         return withContext(Dispatchers.Main.immediate) {
-             when (danmaku.danmaku.location) {
-                 DanmakuLocation.NORMAL -> {
-+                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.NORMAL)) return@withContext false
-                     val floatingDanmaku = floatingTrack.firstNotNullOfOrNull {
-                         it.tryPlace(styledDanmaku, placeFrameTimeNanos, overrideSpeedMultiplier)
-                     }
-                     floatingDanmaku != null
-                 }
- 
-                 DanmakuLocation.TOP -> {
-+                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.TOP)) return@withContext false
-                     val floatingDanmaku = topTrack.firstNotNullOfOrNull {
-                         it.tryPlace(styledDanmaku, placeFrameTimeNanos)
-                     }
-                     floatingDanmaku != null
-                 }
- 
-                 DanmakuLocation.BOTTOM -> {
-+                    if (!danmakuConfig.isLocationEnabled(DanmakuLocation.BOTTOM)) return@withContext false
-                     val floatingDanmaku = bottomTrack.firstNotNullOfOrNull {
-                         it.tryPlace(styledDanmaku, placeFrameTimeNanos)
-                     }
-@@ -898,6 +901,13 @@ internal class DanmakuRepopulator(
+@@ -16,7 +16,7 @@ androidx-annotation = "1.9.1"
+ androidx-media3 = "1.9.0" # https://developer.android.com/jetpack/androidx/releases/media3
+ androidx-lifecycle = "2.11.0" # https://developer.android.com/jetpack/androidx/releases/lifecycle
+ paging = "3.4.1" # https://developer.android.com/jetpack/androidx/releases/paging
+-datastore = "1.2.0" # https://developer.android.com/jetpack/androidx/releases/datastore
++datastore = "1.3.0" # https://developer.android.com/jetpack/androidx/releases/datastore
+ ksp = "2.3.10" # https://github.com/google/ksp/releases
+ # note: room 2.7.0-rc01 cannot compile
+ room = "2.8.4" # https://developer.android.com/jetpack/androidx/releases/room#declaring_dependencies
+```
+
+---
+
+### Incident Patch 3: `821e3f67` (2026-11-07)
+**Commit Message**: fix(subject): 人物/角色详情的简介点击不再展开, 名字和基本信息可复制 (#3696)
+
+简介正文去掉 clickable, 展开只走「显示更多」按钮, 正文留在 SelectionContainer 里可拖选.
+头部行/标题块的中文名和原名、基本信息表包进 SelectionContainer; 基本信息键列不再单行省略.
+人物与角色的单栏页、多栏页、侧边预览共用这些组件, 一并生效.
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `app/shared/ui-subject/src/commonMain/kotlin/ui/subject/details/sections/SubjectDetailsSections.kt` (modified, +2/-1)
+```diff
+@@ -172,10 +172,11 @@ fun SubjectSummarySection(
+     var expanded by rememberSaveable { mutableStateOf(false) }
+     var hasOverflow by remember { mutableStateOf(false) }
+     Column(modifier.fillMaxWidth()) {
++        // 正文不响应点击: 点击/拖动留给文本选择 (复制), 展开只走下方按钮.
+         SelectionContainer {
+             Text(
+                 summary,
+-                Modifier.fillMaxWidth().clickable { expanded = !expanded },
++                Modifier.fillMaxWidth(),
+                 style = MaterialTheme.typography.bodyMedium,
+                 maxLines = if (expanded) Int.MAX_VALUE else collapsedMaxLines,
+                 overflow = TextOverflow.Ellipsis,
+```
+
+**File**: `app/shared/ui-subject/src/commonMain/kotlin/ui/subject/person/PeopleDetailsSections.kt` (modified, +61/-50)
+```diff
+@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.size
+ import androidx.compose.foundation.layout.width
+ import androidx.compose.foundation.lazy.LazyRow
+ import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.text.selection.SelectionContainer
+ import androidx.compose.material3.HorizontalDivider
+ import androidx.compose.material3.MaterialTheme
+ import androidx.compose.material3.ModalBottomSheet
+@@ -202,23 +203,28 @@ internal fun PeopleHeaderRow(
+             )
+         }
+         Column(Modifier.weight(1f)) {
+-            Text(
+-                displayName,
+-                Modifier.placeholder(isPlaceholder),
+-                style = MaterialTheme.typography.headlineSmall,
+-                fontWeight = FontWeight.Bold,
+-                maxLines = 2,
+-                overflow = TextOverflow.Ellipsis,
+-            )
+-            if (!originalName.isNullOrBlank() && originalName != displayName) {
+-                Text(
+-                    originalName,
+-                    Modifier.padding(top = 6.dp),
+-                    style = MaterialTheme.typography.bodyMedium,
+-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                    maxLines = 1,
+-                    overflow = TextOverflow.Ellipsis,
+-                )
++            // 名字 (中文名 + 原名) 可选中复制
++            SelectionContainer {
++                Column {
++                    Text(
++                        displayName,
++                        Modifier.placeholder(isPlaceholder),
++                        style = MaterialTheme.typography.headlineSmall,
++                        fontWeight = FontWeight.Bold,
++                        maxLines = 2,
++                        overflow = TextOverflow.Ellipsis,
++                    )
++                    if (!originalName.isNullOrBlank() && originalName != displayName) {
++                        Text(
++                            originalName,
++                            Modifier.padding(top = 6.dp),
++                            style = MaterialTheme.typography.bodyMedium,
++                            color = MaterialTheme.colorScheme.onSurfaceVariant,
++                            maxLines = 1,
++                            overflow = TextOverflow.Ellipsis,
++                        )
++                    }
++                }
+             }
+             Text(
+                 metaLine,
+@@ -241,22 +247,27 @@ internal fun PeopleTitleBlock(
+     isPlaceholder: Boolean = false,
+ ) {
+     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+-        Text(
+-            displayName,
+-            Modifier.placeholder(isPlaceholder),
+-            style = MaterialTheme.typography.headlineMedium,
+-            fontWeight = FontWeight.Bold,
+-            maxLines = 2,
+-            overflow = TextOverflow.Ellipsis,
+-        )
+-        if (!originalName.isNullOrBlank() && originalName != displayName) {
+-            Text(
+-                originalName,
+-                style = MaterialTheme.typography.bodyLarge,
+-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                maxLines = 1,
+-                overflow = TextOverflow.Ellipsis,
+-            )
++        // 名字 (中文名 + 原名) 可选中复制
++        SelectionContainer {
++            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
++                Text(
++                    displayName,
++                    Modifier.placeholder(isPlaceholder),
++                    style = MaterialTheme.typography.headlineMedium,
++                    fontWeight = FontWeight.Bold,
++                    maxLines = 2,
++                    overflow = TextOverflow.Ellipsis,
++                )
++                if (!originalName.isNullOrBlank() && originalName != displayName) {
++                    Text(
++                        originalName,
++                        style = MaterialTheme.typography.bodyLarge,
++                        color = MaterialTheme.colorScheme.onSurfaceVariant,
++                        maxLines = 1,
++                        overflow = TextOverflow.Ellipsis,
++                    )
++                }
++            }
+         }
+         Text(
+             metaLine,
+@@ -268,30 +279,30 @@ internal fun PeopleTitleBlock(
      }
  }
  
-+internal fun DanmakuConfig.isLocationEnabled(location: DanmakuLocation): Boolean =
-+    when (location) {
-+        DanmakuLocation.NORMAL -> enableFloating
-+        DanmakuLocation.TOP -> enableTop
-+        DanmakuLocation.BOTTOM -> enableBottom
-+    }
-+
- private fun <D : SizeSpecifiedDanmaku, DT, T : DanmakuTrack<D, DT>>
-         MutableList<T>.setTrackCountImpl(count: Int, newInstance: List<T>.(index: Int) -> T) {
-     when {
-```
-
-**File**: `danmaku/ui/src/commonTest/kotlin/DanmakuRepopulationTest.kt` (modified, +14/-0)
-```diff
-@@ -17,11 +17,25 @@ import me.him188.ani.danmaku.api.DanmakuLocation
- import me.him188.ani.danmaku.api.DanmakuServiceId
- import kotlin.test.Test
- import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
- import kotlin.test.assertTrue
- 
- 
- class DanmakuRepopulatorTest {
- 
-+    @Test
-+    fun `location enabled follows each danmaku setting`() {
-+        val config = DanmakuConfig(
-+            enableFloating = false,
-+            enableTop = true,
-+            enableBottom = false,
-+        )
-+
-+        assertFalse(config.isLocationEnabled(DanmakuLocation.NORMAL))
-+        assertTrue(config.isLocationEnabled(DanmakuLocation.TOP))
-+        assertFalse(config.isLocationEnabled(DanmakuLocation.BOTTOM))
-+    }
-+
-     @Test
-     fun `repopulate with empty list - onSend should not be called`() = runTest {
-         // Arrange
+-/** 基本信息键值表, 结构同条目详情的作品信息表. */
++/** 基本信息键值表, 结构同条目详情的作品信息表. 键和值都完整显示 (不截断) 且可选中复制. */
+ @Composable
+ internal fun PeopleInfoTable(
+     rows: List<InfoboxRowInfo>,
+     modifier: Modifier = Modifier,
+     labelWidth: Dp = 78.dp,
+     rowSpacing: Dp = 12.dp,
+ ) {
+-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
+-        for (row in rows) {
+-            Row(Modifier.fillMaxWidth()) {
+-                Text(
+-                    row.key,
+-                    Modifier.width(labelWidth),
+-                    style = MaterialTheme.typography.bodyMedium,
+-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                    maxLines = 1,
+-                    overflow = Text
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3701** (2026-11-07): build(deps): DataStore 升级到 1.3.0, 修复并发读写时设置读成默认值 (@Him188)
+- **PR #3700** (2026-11-07): ci(build): macOS 验证 job 从 macOS 14 换成 macOS 26 (@Him188)
+- **PR #3699** (2026-11-07): fix(player): 鼠标停在底栏或进度条上时控制器保持显示 (@Him188)
+- **PR #3697** (2026-11-06): fix(subject): 详情页封面先显示列表缩略图, 原图后台加载完成后再替换 (@Him188)
+- **PR #3696** (2026-11-07): fix(subject): 人物/角色详情的简介点击不再展开, 名字和基本信息可复制 (@Him188)
 - **PR #3691** (2026-11-02): fix(download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (@Him188)
-- **PR #3681** (closed): fix(datasource): JSON API 源保留条目级资源以支持播放器内切集 (@SXP-Simon)
-- **PR #3670** (2026-10-28): Complete Traditional Chinese (Taiwan) translation (@monarchsofchaos004-gif)
-- **PR #3666** (2026-11-01): fix(danmaku): honor location visibility settings (@bighamx)
-- **PR #3658** (2026-10-24): perf(update): 桌面端下载阶段就解压并校验安装包, 点「重启更新」后只剩交换目录 (@Him188)
-- **PR #3655** (2026-10-24): ci(release): release notes 生成失败时让 step 失败, 不再用空 notes 建 release (@Him188)
 
 ---
 
@@ -1423,68 +1562,28 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691)
+## X. analytics): auto_select_done 补回丢失的属性, source_failed 按平台的参数预算分条, 数据源改记搜索地址的域名 (#3
 
 **RULE**:
-When implementing operations in `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/EpisodeFlowExtension.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd7a42f3`: download): 下载弹窗选源默认自动匹配, 切过的模式在会话内保持 (#3691). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5fb0ed7`: analytics): auto_select_done 补回丢失的属性, source_failed 按平台的参数预算分条, 数据源改记搜索地址的域名 (#3690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/ui-download/src/commonMain/kotlin/ui/download/subject/SubjectDownloadRequestDialogs.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/app-data/src/commonMain/kotlin/domain/player/analytics/EpisodeFlowExtension.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-) {
-    /**
-     * 用户在模式 chip 上选的模式, `null` 表示还没选 (用初值). 放在会话状态上而不是选源页里:
-     * 选集后返回与弹窗隐藏重开都会重建选源页, 用户切过的模式要在本次会话内保持.
-     */
-    var userMode: MediaSelectorMode? by mutableStateOf(null)
-}
-        // AnimatedContent 在两步切换时销毁另一步的内容; 用 SaveableStateHolder 保住各步的 rememberSaveable 状态 (列表滚动位置等), 返回选源时回到原处.
-        val stateHolder = rememberSaveableStateHolder()
-            stateHolder.SaveableStateProvider(picker != null) {
-                if (picker == null) {
-                    DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
-                } else {
-                    DownloadEpisodePicker(
-                        picker,
-                        onBack = onBack,
-                        onConfirm = onConfirmEpisodes,
-                        modifier = Modifier.padding(vertical = 12.dp)
-                            .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
-                    )
-                }
-        userMode = selection.userMode,
-        onUserModeChange = { selection.userMode = it },
- * 初值总是 AUTO, 不随 BT 源有无或播放偏好变化: 下载走自动匹配最省事, 要挑种子的用户自己切到 BT 页.
- * @param userMode 用户切过的模式, `nu
+            put("source", context.playFlow.sourceName(media.mediaSourceId))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-import androidx.compose.runtime.saveable.rememberSaveable
-)
-            if (picker == null) {
-                DownloadMediaPicker(selection, sourceInfoProvider, settings, onSelect)
-            } else {
-                DownloadEpisodePicker(
-                    picker,
-                    onBack = onBack,
-                    onConfirm = onConfirmEpisodes,
-                    modifier = Modifier.padding(vertical = 12.dp)
-                        .navigationBarsPadding().fillMaxHeight().fillMaxWidth(),
-                )
- * 模式在本次弹窗内保持; 初值有 BT 源 → BT, 否则 AUTO.
-    var userMode by rememberSaveable { mutableStateOf<MediaSelectorMode?>(null) }
-        ?: if (hasBt) MediaSelectorMode.BT else MediaSelectorMode.AUTO
-                onModeChange = { userMode = it },
+            put("media_source_id", media.mediaSourceId)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd7a42f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5fb0ed7` are properly handled with clean fallback behavior.
