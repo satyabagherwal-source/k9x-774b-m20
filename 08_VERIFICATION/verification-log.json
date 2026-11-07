@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-JAY8",
-    "timestamp": "2026-11-05T03:27:44.432Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "06141b594a7c3b20b6a54e524e4c222acdbf8e9ff6f2ae1883af33f70a2bfe73",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-PLXH",
     "timestamp": "2026-11-05T03:32:38.597Z",
     "repository": "BAAI/bge-m3",
@@ -7490,6 +7475,21 @@
     "repository": "cheeriojs/dom-serializer",
     "learningId": "learn-github-cheeriojs-dom-serializer",
     "contentHash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-MPDF",
+    "timestamp": "2026-11-07T04:29:42.771Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

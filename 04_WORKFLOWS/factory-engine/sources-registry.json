@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T04:22:31.928Z",
-    "lastVerified": "2026-11-07T04:22:31.928Z",
+    "lastChecked": "2026-11-07T04:29:45.368Z",
+    "lastVerified": "2026-11-07T04:29:45.368Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T03:56:21.122Z",
+    "lastChecked": "2026-11-07T04:29:44.148Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T03:56:21.122Z"
+    "lastVerified": "2026-11-07T04:29:44.148Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -528,8 +528,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T22:06:28.816Z",
-    "lastVerified": "2026-11-06T22:06:28.816Z",
+    "lastChecked": "2026-11-07T04:29:39.125Z",
+    "lastVerified": "2026-11-07T04:29:39.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -3522,9 +3522,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-05T15:52:11.145Z",
+    "lastChecked": "2026-11-07T04:29:41.588Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-05T15:52:11.145Z"
+    "lastVerified": "2026-11-07T04:29:41.588Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -4934,9 +4934,9 @@
   "ivpusic-react-native-image-crop-picker": {
     "name": "react-native-image-crop-picker",
     "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
-    "lastChecked": "2026-11-04T11:09:16.436Z",
+    "lastChecked": "2026-11-07T04:29:34.083Z",
     "revisionIdentifier": "a18a50d4",
-    "lastVerified": "2026-11-04T11:09:16.436Z"
+    "lastVerified": "2026-11-07T04:29:34.083Z"
   },
   "vinceanalytics-vince": {
     "name": "vince",
@@ -6669,9 +6669,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-05T11:53:06.949Z",
+    "lastChecked": "2026-11-07T04:29:29.088Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-05T11:53:06.949Z"
+    "lastVerified": "2026-11-07T04:29:29.088Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -6824,14 +6824,14 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T17:21:59.713Z",
-    "lastVerified": "2026-11-05T17:21:59.713Z",
+    "lastChecked": "2026-11-07T04:29:40.170Z",
+    "lastVerified": "2026-11-07T04:29:40.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "68ef25a8f6ab5b961ffbbb3e8c676aecfe2c39708142b32eac92848f5c6b25b7",
+    "contentHash": "bd7c773f3f5c07ef56c8f509d9a78c2eb2359cde7c33e353e4089acff520499c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11142,9 +11142,9 @@
   "unifiedjs-unified": {
     "name": "unified",
     "officialUrl": "https://github.com/unifiedjs/unified",
-    "lastChecked": "2026-11-03T22:38:37.438Z",
+    "lastChecked": "2026-11-07T04:29:31.587Z",
     "revisionIdentifier": "dfaf172e",
-    "lastVerified": "2026-11-03T22:38:37.438Z"
+    "lastVerified": "2026-11-07T04:29:31.587Z"
   },
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
