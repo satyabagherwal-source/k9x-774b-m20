@@ -8021,3 +8021,6 @@
 | `CYCLE-20261107-SLXN` | `2026-11-07T05:58:17.100Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6eee219c...`) |
 | `CYCLE-20261107-1GIV` | `2026-11-07T06:05:09.991Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95da00a8...`) |
 | `CYCLE-20261107-7SFV` | `2026-11-07T06:10:05.371Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16593261...`) |
+| `CYCLE-20261107-HLX1` | `2026-11-07T06:17:43.477Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a31a02f...`) |
+| `CYCLE-20261107-HQVF` | `2026-11-07T06:17:49.899Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5a9616a...`) |
+| `CYCLE-20261107-HV3H` | `2026-11-07T06:17:55.373Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`80091f0b...`) |

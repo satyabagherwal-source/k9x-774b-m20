@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T06:10:07.964Z",
-    "lastVerified": "2026-11-07T06:10:07.964Z",
+    "lastChecked": "2026-11-07T06:17:57.983Z",
+    "lastVerified": "2026-11-07T06:17:57.983Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -98,11 +98,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "stakater-reloader": {
-    "name": "Reloader",
+    "name": "stakater/Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-11-05T19:00:14.044Z",
-    "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-11-05T19:00:14.044Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-07T06:17:47.727Z",
+    "lastVerified": "2026-11-07T06:17:47.727Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-stakater-reloader",
+    "contentHash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -357,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T05:44:26.405Z",
+    "lastChecked": "2026-11-07T06:17:51.154Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T05:44:26.405Z"
+    "lastVerified": "2026-11-07T06:17:51.154Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1593,9 +1603,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-07T02:15:00.946Z",
+    "lastChecked": "2026-11-07T06:17:46.205Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-07T02:15:00.946Z"
+    "lastVerified": "2026-11-07T06:17:46.205Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4277,22 +4287,21 @@
     "revisionIdentifier": "74462690"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable",
+    "name": "pixeltable/pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T18:07:59.482Z",
-    "lastVerified": "2026-11-05T18:07:59.482Z",
+    "lastChecked": "2026-11-07T06:17:53.307Z",
+    "lastVerified": "2026-11-07T06:17:53.307Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
+    "contentHash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "87375562"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -5753,9 +5762,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-11-04T18:05:59.245Z",
+    "lastChecked": "2026-11-07T06:17:41.084Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-11-04T18:05:59.245Z"
+    "lastVerified": "2026-11-07T06:17:41.084Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -7499,22 +7508,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jhspetersson-fselect": {
-    "name": "fselect",
+    "name": "jhspetersson/fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:33:33.643Z",
-    "lastVerified": "2026-11-05T13:33:33.643Z",
+    "lastChecked": "2026-11-07T06:17:40.605Z",
+    "lastVerified": "2026-11-07T06:17:40.605Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2b101ea5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -11398,9 +11406,9 @@
   "encode-httpx": {
     "name": "httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-04T00:17:14.908Z",
+    "lastChecked": "2026-11-07T06:17:38.690Z",
     "revisionIdentifier": "b5addb64",
-    "lastVerified": "2026-11-04T00:17:14.908Z"
+    "lastVerified": "2026-11-07T06:17:38.690Z"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T06:10:05.384Z",
-  "total_cycles_completed": 7986,
-  "total_learnings_persisted": 7986,
-  "total_rules_promoted": 7634,
+  "last_updated": "2026-11-07T06:17:55.383Z",
+  "total_cycles_completed": 7989,
+  "total_learnings_persisted": 7989,
+  "total_rules_promoted": 7637,
   "history": [
-    {
-      "timestamp": "2026-11-05T22:54:53.172Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:54:58.882Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:55:00.469Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T22:55:01.963Z",
       "repository": "pyannote/speaker-diarization-3.1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T06:10:05.384Z",
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:17:43.487Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:17:49.920Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:17:55.383Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T06:10:05.387Z",
+  "last_updated": "2026-11-07T06:17:55.388Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
-      "verified_at": "2026-11-04T03:23:45.676Z",
+      "content_hash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
+      "verified_at": "2026-11-07T06:17:55.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:23:45.676Z"
+      "last_updated": "2026-11-07T06:17:55.387Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
-      "verified_at": "2026-10-27T20:04:49.935Z",
+      "content_hash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
+      "verified_at": "2026-11-07T06:17:49.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:04:49.935Z"
+      "last_updated": "2026-11-07T06:17:49.923Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -10581,14 +10581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jhspetersson-fselect",
-      "content_hash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
-      "verified_at": "2026-10-30T16:51:23.180Z",
+      "content_hash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
+      "verified_at": "2026-11-07T06:17:43.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:51:23.180Z"
+      "last_updated": "2026-11-07T06:17:43.498Z"
     },
     "mikepenz/AboutLibraries": {
       "repository": "mikepenz/AboutLibraries",

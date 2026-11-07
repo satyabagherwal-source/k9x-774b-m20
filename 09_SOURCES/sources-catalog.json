@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "87375562",
+    "sourceVersion": "a9e0d7bd",
     "license": "Apache-2.0",
-    "contentHash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
-    "lastHarvestedAt": "2026-11-04T03:23:45.667Z",
+    "contentHash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
+    "lastHarvestedAt": "2026-11-07T06:17:55.377Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "41b3ad27",
+    "sourceVersion": "a2e3b24d",
     "license": "Apache-2.0",
-    "contentHash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
-    "lastHarvestedAt": "2026-10-27T20:04:49.929Z",
+    "contentHash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
+    "lastHarvestedAt": "2026-11-07T06:17:49.903Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "2b101ea5",
+    "sourceVersion": "9bba3273",
     "license": "Apache-2.0",
-    "contentHash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
-    "lastHarvestedAt": "2026-10-30T16:51:23.164Z",
+    "contentHash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
+    "lastHarvestedAt": "2026-11-07T06:17:43.481Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

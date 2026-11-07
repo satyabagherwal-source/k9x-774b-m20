@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T06:10:05.249Z",
+  "last_updated": "2026-11-07T06:17:55.276Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35520,8 +35520,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "2b101ea5",
-      "content_hash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
+      "source_version": "9bba3273",
+      "content_hash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -35546,6 +35546,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": null,
+          "title": "improve and fix subqueries parsing",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 3567,
           "title": "found regressions",
           "status": "PROMOTED_AND_VERIFIED"
@@ -35561,7 +35566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:51:23.036Z",
+      "verified_at": "2026-11-07T06:17:43.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49465,11 +49470,16 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "87375562",
-      "content_hash": "bf84c4c0426733c2164169f4f886cd4568020d6b0879ebed9b2e0c3d417526aa",
+      "source_version": "a9e0d7bd",
+      "content_hash": "80091f0b45951b9cd4487814821906e4bcbe48731aec764ea5f587e22e0d2775",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "openrouter): forward parallel_tool_calls=False to the API (#1895)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1874,
           "title": "two random-ops stress test failures: shared tmp dir and drop_column race (#1764)",
@@ -49516,7 +49526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:23:45.552Z",
+      "verified_at": "2026-11-07T06:17:55.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56481,11 +56491,16 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "41b3ad27",
-      "content_hash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
+      "source_version": "a2e3b24d",
+      "content_hash": "f5a9616a21e1a6e0fc1afcac38498ed55217e14d551f21cf3c0a9d853e60421c",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2219,
           "title": "Address review: fix no-op chart assertions, document enableHA gate, serialize du",
@@ -56512,7 +56527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:04:49.879Z",
+      "verified_at": "2026-11-07T06:17:49.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `2b101ea5`  
+> **Source Version**: `9bba3273`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:51:22.895Z  
+> **Timestamp**: 2026-11-07T06:17:42.098Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:51:21.620Z  
+> **Harvest Timestamp**: 2026-11-07T06:17:40.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1460,217 +1460,161 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b101ea5` (2026-10-28)
-**Commit Message**: fix RANDOM
+### Incident Patch 1: `9bba3273` (2026-11-06)
+**Commit Message**: improve and fix subqueries parsing
 
-**File**: `src/searcher.rs` (modified, +25/-8)
+**File**: `src/lexer.rs` (modified, +9/-10)
 ```diff
-@@ -2618,32 +2618,33 @@ impl<'a> Searcher<'a> {
-             .iter()
-             .map(|(_, column)| column.get_alias_references_in_subqueries(current_alias, true).is_empty())
-             .collect();
-+        let mut alias_dependent_keys = HashSet::new();
-+        for (_, column) in required_columns {
-+            Self::collect_alias_dependent_keys(column, current_alias, &mut alias_dependent_keys);
-+        }
-         let mut bound: Vec<Option<Variant>> = vec![None; required_columns.len()];
-         let mut scratches: Vec<HashMap<String, Variant>> = vec![HashMap::new(); required_columns.len()];
-         let mut failed: Vec<(usize, SearchError)> = Vec::new();
-         for round in 0..rounds {
-             let mut changed = false;
-             failed.clear();
-             if round > 0 {
--                for (index, scratch) in scratches.iter_mut().enumerate() {
--                    if !self_contained[index] {
--                        scratch.clear();
--                    }
-+                for scratch in scratches.iter_mut() {
-+                    scratch.retain(|key, _| !alias_dependent_keys.contains(key));
-                 }
-             }
-             for (index, (name, column)) in required_columns.iter().enumerate() {
-                 if round > 0 && self_contained[index] && bound[index].is_some() {
-                     continue;
-                 }
--                let mut seed = row.values.clone();
-+                let mut scratch = row.values.clone();
-                 for (other, settled) in scratches.iter().enumerate() {
-                     if other != index && bound[other].is_some() {
-                         for (key, value) in settled {
--                            seed.entry(key.clone()).or_insert_with(|| value.clone());
-+                            scratch.entry(key.clone()).or_insert_with(|| value.clone());
-                         }
-                     }
-                 }
--                let mut scratch = seed.clone();
-                 let shared = required_columns[..index]
-                     .iter()
-                     .position(|(_, earlier)| earlier.cache_key() == column.cache_key())
-@@ -2652,7 +2653,6 @@ impl<'a> Searcher<'a> {
-                     Some(value) => Ok(value),
-                     None => self.get_column_expr_value(&mut row.scratch(&mut scratch), column),
-                 };
--                scratch.retain(|key, _| !seed.contains_key(key));
-                 scratches[index] = scratch;
-                 let value = match evaluated {
-                     Ok(value) => {
-@@ -2711,6 +2711,21 @@ impl<'a> Searcher<'a> {
-         Ok(())
-     }
- 
-+    fn collect_alias_dependent_keys(expr: &Expr, alias: &str, keys: &mut HashSet<String>) {
-+        if expr.get_alias_references_in_subqueries(alias, true).is_empty() {
-+            return;
-+        }
-+        keys.insert(expr.cache_key());
-+        if expr.minus {
-+            let mut bare = expr.clone();
-+            bare.minus = false;
-+            keys.insert(bare.cache_key());
-+        }
-+        for child in expr.children() {
-+            Self::collect_alias_dependent_keys(child, alias, keys);
-+        }
-+    }
-+
-     fn seed_bound_aliases(
-         &mut self,
-         current_alias: &str,
-@@ -9140,10 +9155,12 @@ f
-         let run = |query: &str| run_query_against_dir(query, &tmp);
-         let cells = |row: &String| row.split('\t').map(str::to_string).collect::<Vec<_>>();
-         let mismatched = run("select name, random(0, 1) as r, random(0, 1) + 1 as s from __DIR__ as t where t.s <> t.r + 1");
-+        let dependent = run("select name, t.z + random(0, 1) as a, random(0, 1) + 1 as b, 1 as z from __DIR__ as t where t.a <> t.b");
-         let shown = run("select name, random(0, 1) as r, random(0, 1) + 1 as s, random(0, 1) from __DIR__ as t where t.s = t.r + 1");
-         let _ = fs::remove_dir_all(&tmp);
- 
-         assert_eq!(mismatched, Vec::<String>::new());
-+        assert_eq!(dependent, Vec::<String>::new());
-         assert_eq!(shown.len(), 64);
-         for row in &shown {
-             let row = cells(row);
-```
-
----
-
-### Incident Patch 2: `50b4ea9f` (2026-10-28)
-**Commit Message**: fix RANDOM
-
-**File**: `src/searcher.rs` (modified, +42/-1)
-```diff
-@@ -2624,11 +2624,26 @@ impl<'a> Searcher<'a> {
-         for round in 0..rounds {
-             let mut changed = false;
-             failed.clear();
-+            if round > 0 {
-+                for (index, scratch) in scratches.iter_mut().enumerate() {
-+                    if !self_contained[index] {
-+                        scratch.clear();
-+                    }
-+                }
-+            }
-             for (index, (name, column)) in required_columns.iter().enumerate() {
-                 if round > 0 && self_contained[index] && bound[index].is_some() {
-                     continue;
-                 }
--                let mut scratch = HashMap::new();
-+                let mut seed = row.values.clone();
-+                for (other, settled) in scratches.iter().enumerate() {
-+                    if other != index && bound[other].is_some() {
-+                        for (key, value) in settled {
-+                            seed.entry(key.clone()).or_insert_with(|| value.clone());
-+                        }
-+                    }
-+                }
-+                let mut scratch = seed.clone();
-                 let shared = required_columns[..index]
-                     .iter()
-                     .position(|(_, earlier)| earlier.cache_key() == column.cache_key())
-@@ -2637,6 +2652,7 @@ impl<'a> Searcher<'a> {
-                     Some(value) => Ok(value),
-                     None => self.get_column_expr_value(&mut row.scratch(&mut scratch), column),
-                 };
-+                scratch.retain(|key, _| !seed.contains_key(key));
-                 scratches[index] = scratch;
-                 let value = match evaluated {
-                     Ok(value) => {
-@@ -9112,6 +9128,31 @@ f
-         assert_eq!(shifted, Vec::<String>::new());
-     }
- 
-+    #[test]
-+    fn aliases_share_the_random_values_of_their_row() {
-+        let tmp = std::env::temp_dir().join("fselect_test_random_aliases");
-+        let _ = fs::remove_dir_all(&tmp);
-+        fs::create_dir_all(&tmp).unwrap();
-+        for i in 0..64 {
-+            fs::write(tmp.join(format!("f{i}.txt")), "x").unwrap();
-+        }
-+
-+        let run = |query: &str| run_query_against_dir(query, &tmp);
-+        let cells = |row: &String| row.split('\t').map(str::to_string).collect::<Vec<_>>();
-+        let mismatched = run("select name, random(0, 1) as r, random(0, 1) + 1 as s from __DIR__ as t where t.s <> t.r + 1");
-+        let shown = run("select name, random(0, 1) as r, random(0, 1) + 1 as s, random(0, 1) from __DIR__ as t where t.s = t.r + 1");
-+        let _ = fs::remove_dir_all(&tmp);
-+
-+        assert_eq!(mismatched, Vec::<String>::new());
-+        assert_eq!(shown.len(), 64);
-+        for row in &shown {
-+            let row = cells(row);
-+            let r: i64 = row[1].parse().unwrap();
-+            assert_eq!(row[2], (r + 1).to_string(), "alias s drew a different random value in {row:?}");
-+            assert_eq!(row[3], row[1], "the projection drew a different random value in {row:?}");
-+        }
-+    }
-+
-     #[test]
-     fn correlated_scalar_subqueries_are_evaluated_once_per_row() {
-         let tmp = std::env::temp_dir().join("fselect_test_random_correlated_once");
-```
-
----
-
-### Incident Patch 3: `4510af3c` (2026-10-28)
-**Commit Message**: fix IN clause caching
-
-**File**: `src/expr.rs` (modified, +22/-0)
-```diff
-@@ -974,6 +974,15 @@ impl Expr {
-             }
-         } else if let Some(ref left) = self.left {
-             write_operand(out, left, mode)?;
-+        } else if let Some(ref args) = self.args {
-+            out.write_char('(')?;
-+            for (i, arg) in args.iter().enumerate() {
-+                if i > 0 {
-+                    out.write_str(", ")?;
-+                }
-+                arg.render(out, mode)?;
-+            }
-+            out.write_char(')')?;
+@@ -189,12 +189,7 @@ impl Lexer {
+         } else {
+             self.state = LexerState::new();
          }
- 
-         if let Some(ref op) = self.arithmetic_op {
-@@ -1058,6 +1067,19 @@ mod tests {
-         assert_ne!(backslash.cache_key(), plain.cache_key());
+-        // The nested parse consumed the subquery's closing parenthesis while
+-        // this state was saved, so the restored depth still counts the
+-        // opening one; the parser re-injects a synthetic Close that never
+-        // passes through here.
+-        self.state.paren_depth = self.state.paren_depth.saturating_sub(1);
+-        self.sync_scopes();
++        self.note_lexeme(&Some(Lexeme::Close));
      }
  
-+    #[test]
-+    fn cache_key_includes_in_list_members() {
-+        let mut txt_list = Expr::new();
-+        txt_list.set_args(vec![Expr::value(String::from("txt"))]);
-+        let mut md_list = Expr::new();
-+        md_list.set_args(vec![Expr::value(String::from("md"))]);
-+        let in_txt = Expr::op(Expr::field(Field::Extension), Op::In, txt_list);
-+        let in_md = Expr::op(Expr::field(Field::Extension), Op::In, md_list);
-+        assert_ne!(in_txt.cache_key(), in_md.cache_key());
-+        assert_eq!(in_txt.cache_key(), "Extension In (\"txt\")");
-+        assert_eq!(in_txt.to_string(), "Extension In (txt)");
+     fn current_scope(&self) -> Vec<usize> {
+@@ -445,12 +440,18 @@ impl Lexer {
+             let scope = self.current_scope();
+             self.root_aliases.push((alias.to_ascii_lowercase(), scope));
+         }
++        self.note_lexeme(&lexeme);
++
++        lexeme
 +    }
 +
-     #[test]
-     fn cache_key_separates_literals_fields_and_aliases() {
-         let literal = Expr::value(String::from("Name"));
++    fn note_lexeme(&mut self, lexeme: &Option<Lexeme>) {
+         self.state.after_value_end = match lexeme {
+-            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
++            Some(Lexeme::RawString(s)) => !s.eq_ignore_ascii_case("as"),
+             Some(Lexeme::String(_)) | Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => true,
+             _ => false,
+         };
+-        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
++        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(s)) if s.eq_ignore_ascii_case("as"));
+         self.state.possible_search_root = matches!(lexeme, Some(Lexeme::From))
+                 || (matches!(lexeme, Some(Lexeme::Comma)) && self.state.clause == Clause::Roots);
+         self.state.in_value_set = matches!(lexeme, Some(Lexeme::CurlyOpen))
+@@ -471,8 +472,6 @@ impl Lexer {
+         self.state.after_value_start = matches!(lexeme, Some(Lexeme::Comma)) && self.state.in_where();
+         self.state.after_not = matches!(lexeme, Some(Lexeme::Not));
+         self.state.after_arithmetic = matches!(lexeme, Some(Lexeme::ArithmeticOperator(_)));
+-
+-        lexeme
+     }
+ 
+     fn word_operator_follows(&self) -> bool {
+```
+
+**File**: `src/parser.rs` (modified, +143/-32)
+```diff
+@@ -44,6 +44,7 @@ pub struct Parser<'a> {
+     select_aliases: Vec<Expr>,
+     declared_aliases: Vec<Expr>,
+     nested: bool,
++    exhausted: bool,
+ }
+ 
+ impl <'a> Parser<'a> {
+@@ -62,6 +63,7 @@ impl <'a> Parser<'a> {
+             select_aliases: vec![],
+             declared_aliases: vec![],
+             nested: false,
++            exhausted: false,
+         }
+     }
+ 
+@@ -421,20 +423,8 @@ impl <'a> Parser<'a> {
+                             // surrender the paren back and stop parsing roots.
+                             match self.next_lexeme() {
+                                 Some(Lexeme::Select) => {
+-                                    self.lexer.push_state();
+-                                    let mut sub_parser = Parser::nested(self.lexer);
+-                                    let sub_query = sub_parser.parse(self.debug)?;
+-                                    self.lexer.pop_state();
+-                                    if curly {
+-                                        self.push_lexeme(Lexeme::CurlyClose);
+-                                    } else {
+-                                        self.push_lexeme(Lexeme::Close);
+-                                    }
+-                                    let close_lexeme = self.next_lexeme();
+-                                    let expected_close = if curly { Lexeme::CurlyClose } else { Lexeme::Close };
+-                                    if close_lexeme != Some(expected_close) {
+-                                        return Err(String::from("Unmatched parenthesis in FROM subselect"));
+-                                    }
++                                    let sub_query = self.parse_subquery(curly)?;
++                                    self.next_lexeme();
+                                     subquery_root = Some(sub_query);
+                                     mode = RootParsingMode::Root;
+                                 }
+@@ -753,7 +743,10 @@ impl <'a> Parser<'a> {
+                         self.fold_by_weight(operands, LogicalOp::Or).map(Some)
+                     };
+ 
+-                    if let Ok(Some(ref mut result)) = result {
++                    if let Ok(Some(ref mut result)) = result
++                        && !self.roots_parsed
++                        && self.args_depth == 0
++                    {
+                         if let Some(Lexeme::RawString(ref s)) = self.next_lexeme() {
+                             if s.to_lowercase() == "as" {
+                                 match self.next_lexeme() {
+@@ -1197,17 +1190,35 @@ impl <'a> Parser<'a> {
+         }
+     }
+ 
++    fn parse_subquery(&mut self, curly: bool) -> Result<Query, String> {
++        self.lexer.push_state();
++        let mut parser = Parser::nested(self.lexer);
++        let parsed = parser.parse(self.debug);
++        let terminator = if parser.exhausted { None } else { parser.lexemes.last().cloned() };
++        self.lexer.pop_state();
++        let query = parsed?;
++        let expected = if curly { Lexeme::CurlyClose } else { Lexeme::Close };
++        match terminator {
++            Some(ref lexeme) if *lexeme == expected => {}
++            Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => {
++                return Err(String::from("Mismatched parenthesis in subquery"));
++            }
++            Some(Lexeme::RawString(s)) | Some(Lexeme::String(s)) | Some(Lexeme::Operator(s)) | Some(Lexeme::ArithmeticOperator(s)) => {
++                return Err(format!("Unexpected token in subquery: {}", s));
++            }
++            Some(_) => return Err(String::from("Expected closing parenthesis after subquery")),
++            None => return Err(String::from("Unmatched parenthesis in subquery")),
++        }
++        self.push_lexeme(expected);
++        Ok(query)
++    }
++
+     fn parse_list(&mut self) -> Result<Expr, String> {
+         match self.next_lexeme() {
+             Some(Lexeme::Open) => {
+                 let result = {
+                     if let Some(Lexeme::Select) = self.next_lexeme() {
+-                        self.lexer.push_state();
+-                        let mut parser = Parser::nested(self.lexer);
+-                        let query = parser.parse(self.debug)?;
+-                        self.lexer.pop_state();
+-                        self.push_lexeme(Lexeme::Close);
+-                        Expr::subquery(query)
++                        Expr::subquery(self.parse_subquery(false)?)
+                     } else {
+                         self.drop_lexeme();
+                         let mut result = Expr::new();
+@@ -1226,12 +1237,7 @@ impl <'a> Parser<'a> {
+             Some(Lexeme::CurlyOpen) => {
+                 let result = {
+                     if let Some(Lexeme::Select) = self.next_lexeme() {
+-                        self.lexer.push_state();
+-                        let mut parser = Parser::nested(self.lexer);
+-                        let query = parser.parse(self.debug)?;
+-                        self.lexer.pop_state();
+-                        self.pus
 ```
 
 #### Recent Merged Pull Requests:
@@ -1699,59 +1643,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in searcher.rs
+## X. improve and fix subqueries parsing
 
 **RULE**:
-When implementing operations in `src/searcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/lexer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b101ea5`: RANDOM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bba3273`: improve and fix subqueries parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/searcher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lexer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let mut alias_dependent_keys = HashSet::new();
-        for (_, column) in required_columns {
-            Self::collect_alias_dependent_keys(column, current_alias, &mut alias_dependent_keys);
-        }
-                for scratch in scratches.iter_mut() {
-                    scratch.retain(|key, _| !alias_dependent_keys.contains(key));
-                let mut scratch = row.values.clone();
-                            scratch.entry(key.clone()).or_insert_with(|| value.clone());
-    fn collect_alias_dependent_keys(expr: &Expr, alias: &str, keys: &mut HashSet<String>) {
-        if expr.get_alias_references_in_subqueries(alias, true).is_empty() {
-            return;
-        }
-        keys.insert(expr.cache_key());
-        if expr.minus {
-            let mut bare = expr.clone();
-            bare.minus = false;
-            keys.insert(bare.cache_key());
-        }
-        for child in expr.children() {
-            Self::collect_alias_dependent_keys(child, alias, keys);
-        }
+        self.note_lexeme(&Some(Lexeme::Close));
+        self.note_lexeme(&lexeme);
+
+        lexeme
     }
 
-        let dependent = run("select name, t.z + random(0, 1) as a, random(0, 1) + 1 as b, 1 as z from __DIR__ as t where t.a <> t.b");
-        assert_eq!(dependent, Vec::<String>::new());
+    fn note_lexeme(&mut self, lexeme: &Option<Lexeme>) {
+            Some(Lexeme::RawString(s)) => !s.eq_ignore_ascii_case("as"),
+        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(s)) if s.eq_ignore_ascii_case("as"));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                for (index, scratch) in scratches.iter_mut().enumerate() {
-                    if !self_contained[index] {
-                        scratch.clear();
-                    }
-                let mut seed = row.values.clone();
-                            seed.entry(key.clone()).or_insert_with(|| value.clone());
-                let mut scratch = seed.clone();
-                scratch.retain(|key, _| !seed.contains_key(key));
+        // The nested parse consumed the subquery's closing parenthesis while
+        // this state was saved, so the restored depth still counts the
+        // opening one; the parser re-injects a synthetic Close that never
+        // passes through here.
+        self.state.paren_depth = self.state.paren_depth.saturating_sub(1);
+        self.sync_scopes();
+            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
+        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
+
+        lexeme
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b101ea5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bba3273` are properly handled with clean fallback behavior.

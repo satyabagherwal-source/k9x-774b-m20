@@ -8030,3 +8030,6 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `dca306c8` | Multi-dimensional audit evidence | 2026-11-07T05:58:17.111Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `dd7aa6b0` | Multi-dimensional audit evidence | 2026-11-07T06:05:09.994Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `211a106f` | Multi-dimensional audit evidence | 2026-11-07T06:10:05.380Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `9bba3273` | Multi-dimensional audit evidence | 2026-11-07T06:17:43.481Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `a2e3b24d` | Multi-dimensional audit evidence | 2026-11-07T06:17:49.903Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `a9e0d7bd` | Multi-dimensional audit evidence | 2026-11-07T06:17:55.377Z |

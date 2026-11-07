@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `87375562`  
+> **Source Version**: `a9e0d7bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:23:44.877Z  
+> **Timestamp**: 2026-11-07T06:17:53.554Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:23:44.016Z  
+> **Harvest Timestamp**: 2026-11-07T06:17:53.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1656 stars
+- **Stars / Engagement**: 1659 stars
 
 ---
 
@@ -264,9 +264,11 @@ from pixeltable.metadata import schema
 
 from .column import Column
 from .globals import IndexSpec, MediaValidation
+from .path import Path
 from .types import TableVersionKey, TableVersionMd
 
 if TYPE_CHECKING:
+    from .table_metadata import TableMetadata
     from .table_version import TableVersion
 
 
@@ -503,11 +505,7 @@ def create_table_version_md(
         schema_version=0,
         user=user,
         update_status=None,
-        additional_md={},
-    )
-
-    schema_version_md = schema.SchemaVersionMd(
-        
+        additional_m
 ```
 
 ### Core Architecture Module: `pixeltable/functions/util.py`
@@ -938,12 +936,11 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any
 
 from pixeltable import exceptions as excs
-from pixeltable.catalog import ProhibitedWriteError, is_valid_identifier, model
+from pixeltable.catalog import Catalog, ProhibitedWriteError, is_valid_identifier, model
 from pixeltable.catalog.model import diff
 from pixeltable.config import Config
 from pixeltable.env import Env
 from pixeltable.func import FunctionRegistry
-from pixeltable.runtime import get_runtime
 from pixeltable.utils.project import in_environment
 from pixeltable_cli.types import CheckReport, RouteSpec, ServiceSpec
 
@@ -988,11 +985,9 @@ def load_app_module(file: str, *, subject: str) -> ModuleType:
     path = Path(file).resolve()
     name = module_name(file, subject=subject)
 
-    # resolve the catalog first: initializing it writes, which freeze() would refuse
-    catalog = get_runtime().catalog
     try:
         registry = FunctionRegistry.get()
-        with _lock, catalog.freeze():
+        with _lock, Catalog.freeze():
             _evict_project_modules()
             # a file written after this process started is invisible to a finder that cached its directory
             importlib.invalidate_caches()
@@ -1147,7 +1142,9 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 
 def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
-    """The local
+    """The local project files containing the udfs referenced by bases, relative to the project root."""
+    project_root = Config.get().project_root
+    assert project_ro
 ```
 
 
@@ -1156,13 +1153,13 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1899** (2026-11-04): **Module refactor**
-  *Symptoms*: Generic `globals.py` and `util(s).py` modules make it difficult to find code. This refactor moves their contents into modules named for their responsibilities, separating model support, media metadata, schema normalization, export preparation, and file writing. Function implementations and existing comments and docstrings are preserved.  No breaking changes to the public API.  All paths below are relative to `pixeltable/`.  #### `globals.py` to `api.py`  Identifies the implementation of the top-level SDK API.  Moved: `init()`, `create_table()`, `create_view()`, `create_snapshot()`, `get_table()`, `move()`, `drop_table()`, `get_dir_contents()`, `get_dir_tree()`, `list_tables()`, `create_dir()`, `drop_dir()`, `ls()`, `list_dirs()`, `list_functions()`, `tools()`, `tool()`, `array()`, `home()`; private helpers `_assemble_dir_contents()`, `_create_path_map()`, `_get_subtree()`, `_extract_paths()`; type aliases `RowData` and `TableDataSource`.  #### `func/globals.py` to `func/symbols.py`  Groups Python symbol resolution, validation, and introspection.  Moved: `resolve_symbol()`, `import_error_msg()`, `validate_symbol_path()`, `get_caller_module_path()`.  #### `exec/expr_eval/globals.py` to `exec/expr_eval/interfaces.py`  Names the shared execution contracts and context used by evaluators and schedulers.  Moved: `FnCallArgs`, `Scheduler`, `Dispatcher`, `Evaluator`, `ExprEvalCtx`.  #### `exprs/globals.py` to `exprs/operators.py`  Groups expression operator enums.  Moved: `Compa
+- **Issue #1915** (2026-11-07): **Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893)**
+  *Symptoms*: Replaces pixeltable/pixeltable#1893 by wbrennan899, which was approved but comes from an organization's fork that maintainers can't push to. This branch is #1893's commits plus a merge of `main`. The merge resolves the conflicts with #1892: both PRs added entries side by side in `docs/public_api.opml`, `docs/release/docs.json`, `configuration.mdx`, `pixeltable/config.py`, `pixeltable/functions/__init__.py` and `scripts/prepare-nb-tests.sh`, and both are kept. The `VLMRUN_API_KEY` line that #1893 added to `pytest.yml` is already on `main`, from #1892; the repo secret still has to be added for the live tests and the notebook to run in CI.  After the merge, `ruff check`, `ruff format` and `mypy` pass on the touched files, and the notebook checks pass. The tests weren't run locally; CI runs them.  The rest is #1893's description, by its author.  ## Summary  Adds `pixeltable.functions.vlmrun_gateway`, an integration with the [VLM Run Gateway](https://docs.vlm.run/gateway/introduction). The Gateway is an OpenAI-compatible API in front of vision and speech models (open-weight models plus paid partner models such as Gemini): OCR and document parsing, visual question answering, segmentation, pose estimation, multimodal embeddings, and speech-to-text. Most calls cost $0.001, and each response reports its cost in `usage.cost`.  | UDF | What it does | |---|---| | `chat_completions(messages, *, model, ...)` | Chat over image columns referenced in messages, and PDF and video by http(s) or 
 
-- **Issue #1898** (2026-11-03): **unpin the miniforge version**
-  *Symptoms*: miniforge [released](https://github.com/conda-forge/miniforge/releases/tag/26.9.4-1) a fix for the windows issue
+- **Issue #1914** (2026-11-06): **Fix is_deterministic default when @pxt.udf() has keyword arguments**
+  *Symptoms*: Reported in https://github.com/pixeltable/pixeltable/pull/1907#issuecomment-6674079653 (finding 1).
   **Post-Mortem & Fix Analysis**:
-  > agents review
+  > muse review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1179,692 +1176,367 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77772fc4` (2026-11-03)
-**Commit Message**: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868)
+### Incident Patch 1: `9a7faaf1` (2026-11-06)
+**Commit Message**: fix(openrouter): forward parallel_tool_calls=False to the API (#1895)
 
-PXT-1715: a query over a frame view left the video file open until
-garbage collection, so on Windows the file could not be deleted and
-test_frame_iterator_seek[proxy] hung.
+Fixes the `parallel_tool_calls=False` setting being silently dropped
+when calling OpenRouter chat completions.
 
-PXT-1726: lancedb 0.41 advances the export iterator on its own threads.
-export_lancedb() left an event loop open on one of them, and an export
-with a query UDF column failed partway through.
+**Cause.** `openrouter.chat_completions` maps `tool_choice` to the
+request's `tool_choice` field but never reads
+`tool_choice['parallel_tool_calls']`, so a request for sequential tool
+calls was sent without the flag and OpenRouter used its default
+(parallel). The groq, deepseek, nebius and openai integrations already
+forward it.
 
-Fixes
-- A query over a frame view closes the video file when it finishes,
-stops early or fails.
-- A query that stops early (a cursor loop that breaks, Ctrl-C during
-collect()) or fails releases its resources right away instead of at
-garbage collection.
-- When a query runs inside a running event loop (eg, Jupyter), a cursor
-that stops early cancels the batch in progress instead of waiting for
-it.
-- A filter with a limit no longer fetches another input batch after
-reaching the limit.
-- export_lancedb() runs the query on a thread of its own, so lancedb's
-threads only receive finished batches.
+**Fix.** When a `tool_choice` is given and `parallel_tool_calls` is
+false, add `parallel_tool_calls=False` to the request kwargs (same
+behaviour as the sibling integrations; the default `True` is left
+unsent).
 
-Tests
-- Queries, computed columns, failures, early stops, Ctrl-C and query
-UDFs over a frame view leave no video file open.
-- expor
+**Test.** `TestOpenRouterRequest.test_parallel_tool_calls_forwarded`
+(parametrized True/False) captures the kwargs passed to the OpenAI
+client and checks the flag. The `False` case fails before the change and
+passes after.
 
-**File**: `pixeltable/_query.py` (modified, +8/-8)
+---
+This pull request was prepared with the assistance of an AI coding agent
+(Claude Code) and submitted by Alex Castillo, who is responsible for its
+content.
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pixeltable/functions/openrouter.py` (modified, +3/-0)
 ```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
+@@ -121,6 +121,9 @@ async def chat_completions(
+             assert tool_choice['tool'] is not None
+             model_kwargs['tool_choice'] = {'type': 'function', 'function': {'name': tool_choice['tool']}}
  
-+import contextlib
- import copy
- import hashlib
- import json
-@@ -9,7 +10,7 @@
- from typing import (
-     TYPE_CHECKING,
-     Any,
--    AsyncIterator,
-+    AsyncGenerator,
-     Callable,
-     Generator,
-     Hashable,
-@@ -451,15 +452,16 @@ def _exec(self, args: dict[str, Any] | None = None) -> Iterator[exprs.DataRow]:
-             get_runtime().stop_progress()
-             yield row
- 
--    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
-+    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
-         """Run the query and yield rows."""
-         args = args or {}
-         self._validate_bound_args(args)
-         if self._resolved_limit(args) == 0:
-             return
-         plan = self._ensure_plan()
--        async for row in plan.aexec(args):
--            yield row
-+        async with contextlib.aclosing(plan.aexec(args)) as rows:
-+            async for row in rows:
-+                yield row
- 
-     def _ensure_plan(self) -> exec.ExecPlan:
-         assert get_runtime().in_xact
-@@ -744,10 +746,8 @@ async def _acollect(self, args: dict[str, Any] | None = None) -> ResultSet:
-         columns = {name: i for i, name in enumerate(schema)}
-         try:
-             planned_exprs = self._compiled_select_list()
--            result = [
--                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
--                async for row in self._aexec(args=args)
--            ]
-+            async with contextlib.aclosing(self._aexec(args=args)) as rows:
-+                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
-             return ResultSet(result, schema)
-         except excs.ExprEvalError as e:
-             self._raise_expr_eval_err(e)
++    if tool_choice is not None and not tool_choice['parallel_tool_calls']:
++        model_kwargs['parallel_tool_calls'] = False
++
+     # Prepare OpenRouter-specific parameters for extra_body
+     extra_body: dict[str, Any] = {}
+     if provider is not None:
 ```
 
-**File**: `pixeltable/exec/aggregation_node.py` (modified, +27/-25)
+**File**: `tests/functions/test_openrouter.py` (modified, +9/-2)
 ```diff
-@@ -1,8 +1,9 @@
- from __future__ import annotations
+@@ -3,7 +3,13 @@
+ import pixeltable as pxt
+ from tests.functions.tool_utils import run_tool_invocations_test
  
-+import contextlib
- import logging
- import sys
--from typing import Any, AsyncIterator, Iterable, cast
-+from typing import Any, AsyncGenerator, Iterable, cast
+-from ..utils import rerun_on_network_error, skip_test_if_no_client, skip_test_if_not_installed, validate_update_status
++from ..utils import (
++    rerun,
++    rerun_on_network_error,
++    skip_test_if_no_client,
++    skip_test_if_not_installed,
++    validate_update_status,
++)
  
- from pixeltable import catalog, exceptions as excs, exprs, telemetry
+ pytestmark = pytest.mark.db_roots('local', reason='UDF/integration test')
  
-@@ -82,37 +83,38 @@ def _update_agg_state(self, row: exprs.DataRow, row_num: int) -> None:
-                 input_vals = [row[d.slot_idx] for d in fn_call.dependencies()]
-                 raise excs.ExprEvalError(fn_call, expr_msg, exc, exc_tb, input_vals, row_num) from exc
+@@ -45,6 +51,7 @@ def test_chat_completions(self, uses_db: None) -> None:
+         assert 'Paris' in results['output'][0]['choices'][0]['message']['content']
+         assert 'Paris' in results['output2'][0]['choices'][0]['message']['content']
  
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         limit = self._resolve_positive_int(self.limit, 'limit') if self.limit is not None else None
-         if limit == 0:
-             return
-         prev_row: exprs.DataRow | None = None
-         current_group: list[Any] | None = None  # the values of the group-by exprs
-         num_input_rows = 0
-         num_output_rows = 0
--        async for row_batch in self.input:
--            self.set_var_slots(row_batch)
--            num_input_rows += len(row_batch)
--            for row in row_batch:
--                group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
--
--                if current_group is None:
--                    current_group = group
--                    self._reset_agg_state(0)
--
--                if group != current_group:
--                    # we're entering a new group, emit a row for the previous one
--                    with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
--                        self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
--                    self.output_batch.add_row(prev_row)
--                    num_output_rows += 1
--                    if limit is not None and num_output_rows == limit:
--                        yield self.output_batch
--                        return
--                    current_group = group
--                    self._reset_agg_state(0)
--                self._update_agg_state(row, 0)
--                prev_row = row
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for row_batch in input_iter:
-+                self.set_var_slots(row_batch)
-+                num_input_rows += len(row_batch)
-+                for row in row_batch:
-+                    group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
-+
-+                    if current_group is None:
-+                        current_group = group
-+                        self._reset_agg_state(0)
-+
-+                    if group != current_group:
-+                        # we're entering a new group, emit a row for the previous one
-+                        with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
-+                            self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
-+                        self.output_batch.add_row(prev_row)
-+                        num_output_rows += 1
-+                        if limit is not None and num_output_rows == limit:
-+                            yield self.output_batch
-+                            return
-+                        current_group = group
-+                        self._reset_agg_state(0)
-+                    self._update_agg_state(row, 0)
-+                    prev_row = row
++    @rerun(reruns=6, reruns_delay=8)
+     def test_tool_invocations(self, uses_db: None) -> None:
+         skip_test_if_not_installed('openai')
+         skip_test_if_no_client('openrouter')
+@@ -66,7 +73,7 @@ def make_table(tools: pxt.func.Tools, tool_choice: pxt.func.ToolChoice) -> pxt.T
+             t.add_computed_column(tool_calls=invoke_tools(tools, t.response))
+             return t
  
-         if prev_row is not None:
-             # emit the last group
+-        run_tool_invocations_test(make_table)
++        run_tool_invocations_test(make_table, test_tool_choice=True)
+ 
+     def test_transforms(self, uses_db: None) -> None:
+         skip_test_if_not_installed('openai')
 ```
 
-**File**: `pixeltable/exec/cache_prefetch_node.py` (modified, +36/-32)
+---
+
+### Incident Patch 2: `e13a19c8` (2026-11-06)
+**Commit Message**: Fix UDF and iterator issues found during #1907 review (#1913)
+
+Fix the issues found here
+https://github.com/pixeltable/pixeltable/pull/1907#issuecomment-6674079653.
+#1907 depends on this PR.
+
+1. A failed or null iterator argument skips that base row (no view rows)
+instead of aborting with an `AssertionError`.
+- `ComponentIterationNode`: if the iterator arguments failed to
+evaluate, the row is skipped. Arguments evaluated by the node itself
+follow the plan's error policy: view population always ignores errors,
+while `Table.compute()` follows its `on_error`.
+- `list_iterator()`: if any input list is null for a row, that row
+produces no output rows, in both the positional and the keyword form
+(also with `mode='padded'`).
+- During view population, the error of a failed iterator argument is not
+stored or counted, even with `on_error='abort'`. To keep it visible,
+compute the argument in a stored column first: its cell holds the error
+and the insert counts it.
+2. `@pxt.udf(...)` with parentheses now defaults `is_deterministic` to
+`True`, like bare `@pxt.udf`. This matches the documented `@overload`
+signature. Before, it was `None`, which the planner treats as
+nondeterministic, so these UD
+
+**File**: `pixeltable/exec/component_iteration_node.py` (modified, +4/-1)
 ```diff
-@@ -1,12 +1,13 @@
- from __future__ import annotations
- 
-+import contextlib
- import dataclasses
- import itertools
- import logging
- from collections import deque
- from concurrent import futures
- from pathlib import Path
--from typing import AsyncIterator, Iterator
-+from typing import AsyncGenerator, AsyncIterator, Iterator
- from uuid import UUID
- 
- from pixeltable import exceptions as excs, exprs, telemetry, telemetry_schemas
-@@ -95,37 +96,40 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             self.input_finished = True
-             return None
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        input_iter = aiter(self.input)
--        with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
--            while True:
--                # Create work to fill the queue to the high water mark ... ?without overrunning the in-flight row limit.
--                while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
--                    input_batch = await self.get_input_batch(input_iter)
--                    if input_batch is not None:
--                        self.__process_input_batch(input_batch, executor)
--
--                # Wait for enough completions to enable more queueing or if we're done
--                while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (self.input_finished and self.queued_work > 0):
--                    done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
--                    self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
--
--                # Emit results to meet batch size requirements or empty the in-flight row queue
--                if self.__has_ready_batch() or (
--                    len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
--                ):
--                    # create DataRowBatch from the first BATCH_SIZE ready rows
--                    batch = DataRowBatch(self.row_builder)
--                    rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
--                    for row in rows:
--                        assert row is not None
--                        batch.add_row(row)
--                    self.num_returned_rows += len(rows)
--                    _logger.debug(f'returning {len(rows)} rows')
--                    yield batch
--
--                if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
--                    return
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-+                while True:
-+                    # Create work to fill the queue to the high water mark,
-+                    # without overrunning the in-flight row limit.
-+                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                        input_batch = await self.get_input_batch(input_iter)
-+                        if input_batch is not None:
-+                            self.__process_input_batch(input_batch, executor)
-+
-+                    # Wait for enough completions to enable more queueing or if we're done
-+                    while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
-+                        self.input_finished and self.queued_work > 0
-+                    ):
-+                        done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-+                        self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
-+
-+                    # Emit results to meet batch size requirements or empty the in-flight row queue
-+                    if self.__has_ready_batch() or (
-+                        len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-+                    ):
-+                        # create DataRowBatch from the first BATCH_SIZE ready rows
-+                        batch = DataRowBatch(self.row_builder)
-+                        rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
-+                        for row in rows:
-+                            assert row is not None
-+                            batch.add_row(row)
-+                        self.num_returned_rows += len(rows)
-+                        _logger.debug(f'returning {len(rows)} rows')
-+                        yield batch
-+
-+                    if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
-+                        return
- 
-     def __has_ready_batch(self) -> bool:
-         """True if there are >= BATCH_SIZES entries in ready_rows and the first BATCH_SIZE ones are all non-None"""
+@@ -76,7 +76,10 @@ async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
+                 for input_row in input_batch:
+                     # usually computed by the input plan, which then garbage-collected the intermediates they depend on
+                     if not input_row.has_val[self.iterator_args_expr.slot_idx]:
+-                        self.row_builder.eval(input_row, self.iterator_args_ctx)
++                        self.row_builder.eval(input_row, self.iterator_args_ctx, ignore_errors=self.ctx.ignore_errors)
++                    if input_row.has_exc(self.iterator_args_expr.slot_idx):
++                        # an iterator argument failed to evaluate: this base row produces no output rows
++                        continue
+                     iterator_args = input_row[self.iterator_args_expr.slot_idx]
+                     assert isinstance(iterator_args, dict)
+                     # We need to ensure that all of the required (non-nullable) parameters of the iterator are
 ```
 
-**File**: `pixeltable/exec/cell_materialization_node.py` (modified, +32/-30)
+**File**: `pixeltable/exprs/data_row.py` (modified, +1/-0)
 ```diff
-@@ -1,13 +1,14 @@
- from __future__ import annotations
- 
- import asyncio
-+import contextlib
- import dataclasses
- import io
- import os
- from collections import deque
- from concurrent import futures
- from pathlib import Path
--from typing import Any, AsyncIterator
-+from typing import Any, AsyncGenerator
- 
- import numpy as np
- import PIL.Image
-@@ -101,35 +102,36 @@ def _init_exec_state(self) -> None:
-     def _open(self) -> None:
-         self._init_exec_state()
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        async for batch in self.input:
--            for row in batch:
--                for col, slot_idx in self.output_col_info.items():
--                    if row.has_exc(slot_idx):
--                        continue
--
--                    val = row[slot_idx]
--                    if val is None:
--                        row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
--                        row.cell_md[col.id] = None
--                        continue
--
--                    if col.col_type.is_json_type():
--                        self._materialize_json_cell(row, col, slot_idx, val)
--                    elif col.col_type.is_array_type():
--                        assert isinstance(val, np.ndarray)
--                        self._materialize_array_cell(row, col, val)
--                    else:
--                        assert col.col_type.is_binary_type()
--                        assert isinstance(val, bytes)
--                        self._materialize_binary_cell(row, col, val)
--
--                    # continue with only the currently open chunk
--                    self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
--
--                await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
--
--            yield batch
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for batch in input_iter:
-+                for row in batch:
-+                    for col, slot_idx in self.output_col_info.items():
-+                        if row.has_exc(slot_idx):
-+                            continue
-+
-+                        val = row[slot_idx]
-+                        if val is None:
-+                            row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
-+                            row.cell_md[col.id] = None
-+                            continue
-+
-+                        if col.col_type.is_json_type():
-+                            self._materialize_json_cell(row, col, slot_idx, val)
-+                        elif col.col_type.is_array_type():
-+                            assert isinstance(val, np.ndarray)
-+                            self._materialize_array_cell(row, col, val)
-+                        else:
-+                            assert col.col_type.is_binary_type()
-+                            assert isinstance(val, bytes)
-+                            self._materialize_binary_cell(row, col, val)
-+
-+                        # continue with only the currently open chunk
-+                        self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
-+
-+                    await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
-+
-+                yield batch
- 
-         self._flush_buffer(finalize=True)
-         # the rows reference the chunks' urls, so they can't be committed before all uploads have succeeded
+@@ -237,6 +237,7 @@ def copy(self, target: DataRow) -> None:
+         target.vals = self.vals.copy()
+         target.has_val = self.has_val.copy()
+         target.excs = self.excs.copy()
++        target._may_have_exc = self._may_have_exc
+         target.pk = self.pk
+         target.file_urls = self.file_urls.copy()
+         target.file_paths = self.file_paths.copy()
 ```
 
-**File**: `pixeltable/exec/cell_reconstruction_node.py` (modified, +48/-42)
+**File**: `pixeltable/exprs/function_call.py` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,13 @@
- from __future__ import annotations
+@@ -452,7 +452,7 @@ def fn_expr(self) -> Expr | None:
  
- import asyncio
-+import contextlib
- import io
- import itertools
- from concurrent import futures
- from pathlib import Path
- from types import NoneType
--from typing import IO, Any, AsyncIterator, Iterable
-+from typing import IO, Any, AsyncGenerator, Iterable
+     @property
+     def is_deterministic(self) -> bool:
+-        return self.fn.is_deterministic
++        return self.fn.is_deterministic and super().is_deterministic
  
- import numpy as np
- import PIL.Image
-@@ -232,47 +233,52 @@ def _init_exec_state(self) -> None:
-     def _open(self) -> None:
-         self._init_exec_state()
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        async for batch in self.input:
--            urls = self._chunk_urls(batch)
--            self.reader.release(keep=urls)
--            await self.reader.prefetch(urls)
--            for row in batch:
--                for col_ref in self.json_refs:
--                    val = row[col_ref.slot_idx]
--                    if val is None:
--                        continue
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(row[col_ref.slot_idx]):
--                        continue
--                    row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
--
--                for col_ref in self.json_path_anchors:
--                    val = row[col_ref.slot_idx]
--                    if val is None:
--                        continue
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
--                        continue
--                    row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
--
--                for col_ref in self.array_refs:
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is not None and cell_md.array_md is not None:
--                        assert row[col_ref.slot_idx] is None
--                        row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
--                    else:
--                        assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
--
--                for col_ref in self.binary_refs:
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is not None and cell_md.binary_md is not None:
--                        assert row[col_ref.slot_idx] is None
--                        row[col_ref.slot_idx] = self._reconstruct_binary(cell_md)
--                    else:
--                        assert isinstance(row[col_ref.slot_idx], (NoneType, bytes))
--
--            yield batch
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for batch in input_iter:
-+                urls = self._chunk_urls(batch)
-+                self.reader.release(keep=urls)
-+                await self.reader.prefetch(urls)
-+                for row in batch:
-+                    for col_ref in self.json_refs:
-+                        val = row[col_ref.slot_idx]
-+                        if val is None:
-+                            continue
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if (
-+                            cell_md is None
-+                            or cell_md.file_urls is None
-+                            or not json_has_inlined_objs(row[col_ref.slot_idx])
-+                        ):
-+                            continue
-+                        row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
-+
-+                    for col_ref in self.json_path_anchors:
-+                        val = row[col_ref.slot_idx]
-+                        if val is None:
-+                            continue
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
-+                            continue
-+                        row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
-+
-+                    for col_ref in self.array_refs:
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is not None and cell_md.array_md is not None:
-+                            assert row[col_ref.slot_idx] is None
-+                            row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
-+                        else:
-+                            assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
-+
-+                    for col_ref in self.binary_refs:
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is not None and cell_md.binary_md is not None:
-+                            assert row[col_ref.slot_idx] is None
-+                            row[col_ref.slot_idx] = self._reconstruct_bi
-```
-
-**File**: `pixeltable/exec/component_iteration_node.py` (modified, +29/-27)
-```diff
-@@ -1,4 +1,5 @@
--from typing import AsyncIterator, Iterator
-+import contextlib
-+from typing import AsyncGenerator, Iterator
- 
- from pixeltable import catalog, exceptions as excs, exprs, telemetry
- from pixeltable.func.iterator import GeneratingFunctionCall
-@@ -67,34 +68,35 @@ def _instrumented_iter(self, iterator: Iterator[dict]) -> Iterator[dict]:
-                     return
-             yield item
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         telemetry_active = telemetry.active()
-         output_batch = DataRowBatch(self.row_builder)
--        async for input_batch in self.input:
--            for input_row in input_batch:
--                # usually computed by the input plan, which then garbage-collected the intermediates they depend on
--                if not input_row.has_val[self.iterator_args_expr.slot_idx]:
--                    self.row_builder.eval(input_row, self.iterator_args_ctx)
--                iterator_args = input_row[self.iterator_args_expr.slot_idx]
--                assert isinstance(iterator_args, dict)
--                # We need to ensure that all of the required (non-nullable) parameters of the iterator are
--                # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
--                # output rows for this input row).
--                if self.__non_nullable_args_specified(iterator_args):
--                    iterator = self.view.get().iterator_call.eval(iterator_args)
--                    try:
--                        steps = self._instrumented_iter(iterator) if telemetry_active else iterator
--                        for pos, component_dict in enumerate(steps):
--                            output_row = self.row_builder.make_row()
--                            input_row.copy(output_row)
--                            # we're expanding the input and need to add the iterator position to the pk
--                            self.__populate_output_row(output_row, pos, component_dict)
--                            output_batch.add_row(output_row)
--                            if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
--                                yield output_batch
--                                output_batch = DataRowBatch(self.row_builder)
--                    finally:
--                        iterator.close()
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for input_batch in input_iter:
-+                for input_row in input_batch:
-+                    # usually computed by the input plan, which then garbage-collected the intermediates they depend on
-+                    if not input_row.has_val[self.iterator_args_expr.slot_idx]:
-+                        self.row_builder.eval(input_row, self.iterator_args_ctx)
-+                    iterator_args = input_row[self.iterator_args_expr.slot_idx]
-+                    assert isinstance(iterator_args, dict)
-+                    # We need to ensure that all of the required (non-nullable) parameters of the iterator are
-+                    # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
-+                    # output rows for this input row).
-+                    if self.__non_nullable_args_specified(iterator_args):
-+                        iterator = self.view.get().iterator_call.eval(iterator_args)
-+                        try:
-+                            steps = self._instrumented_iter(iterator) if telemetry_active else iterator
-+                            for pos, component_dict in enumerate(steps):
-+                                output_row = self.row_builder.make_row()
-+                                input_row.copy(output_row)
-+                                # we're expanding the input and need to add the iterator position to the pk
-+                                self.__populate_output_row(output_row, pos, component_dict)
-+                                output_batch.add_row(output_row)
-+                                if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
-+                                    yield output_batch
-+                                    output_batch = DataRowBatch(self.row_builder)
-+                        finally:
-+                            iterator.close()
- 
-         if len(output_batch) > 0:
-             yield output_batch
-```
-
-**File**: `pixeltable/exec/exec_node.py` (modified, +100/-19)
-```diff
-@@ -2,10 +2,12 @@
- 
- import abc
- import asyncio
-+import contextlib
- import queue
-+import signal
- import threading
--from types import TracebackType
--from typing import Any, AsyncIterator, Iterable, Iterator, Self, TypeVar
-+from types import FrameType, TracebackType
-+from typing import Any, AsyncGenerator, Generator, Iterable, Iterator, Self, TypeVar
- 
- import pixeltable.exceptions as excs
- import pixeltable.type_system as ts
-@@ -27,6 +29,15 @@ class ExecNode(abc.ABC):
-     3. bind_params()/iter() can then be called repeatedly to execute the same plan with different parameters
-     4. _open() initializes per-iteration execution state
- 
-+    Closing: an iteration can stop before its last batch (eg, a cursor loop that breaks), and its cleanup (eg,
-+    ColumnRef.release()) has to run right then, not at garbage collection.
-+    - __aiter__() returns an async generator, which Python doesn't close when its last reference goes away: it
-+      hands the generator to the event loop, which closes it later, if at all. Callers must therefore close it with
-+      aclose(), also after an early stop, and an implementation that iterates over self.input must close
-+      aiter(self.input) the same way, eg, with contextlib.aclosing().
-+    - __iter__() returns a generator, which CPython closes as soon as its last reference goes away, eg, when the for
-+      loop over it exits. Callers don't close it explicitly.
-+
-     Not thread-safe.
-     """
- 
-@@ -108,28 +119,72 @@ def set_var_slots(self, rows: Iterable[exprs.DataRow]) -> None:
-                 row[v.slot_idx] = val
- 
-     @abc.abstractmethod
--    def __aiter__(self) -> AsyncIterator[DataRowBatch]: ...
-+    def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:  # noqa: PYI058
-+        """Yield this node's output batches.
- 
--    def __iter__(self) -> Iterator[DataRowBatch]:
--        try:
--            running = asyncio.get_running_loop()
--        except RuntimeError:
--            running = None
-+        Callers must close the generator with aclose(); see the class docstring.
-+        """
- 
--        if running is None:
-+    def __iter__(self) -> Generator[DataRowBatch, None, None]:
-+        if asyncio._get_running_loop() is None:
-             # if we don't already have a running loop, we can run the async iterator directly and avoid the extra
-             # overhead introduced by _thread_iter()
-             loop = get_runtime().event_loop
-             aiter = self.__aiter__()
-+            step: asyncio.Future[DataRowBatch] | None = None
-             try:
-                 while True:
--                    batch: DataRowBatch = loop.run_until_complete(aiter.__anext__())
--                    yield batch
-+                    # wrap the next step in a Task, which the finally block can cancel
-+                    step = asyncio.ensure_future(aiter.__anext__(), loop=loop)
-+                    yield self._run_step(loop, step)
-             except StopAsyncIteration:
-                 pass
-+            finally:
-+                # skip the cleanup where run_until_complete() raises:
-+                # - the loop is closed: Runtime.close() has already closed aiter
-+                # - another loop is running in this thread (eg, async code closes this generator): the runtime loop's
-+                #   async generator finalizer schedules aiter.aclose() once aiter is garbage-collected
-+                if not loop.is_closed() and asyncio._get_running_loop() is None:
-+                    if step is not None and not step.done():
-+                        # an exception (eg, KeyboardInterrupt) left run_until_complete() while step was still running,
-+                        # and aclose() raises for a generator in the middle of __anext__(): cancel step and wait first
-+                        step.cancel()
-+                        loop.run_until_complete(asyncio.wait([step]))
-+                    loop.run_until_complete(aiter.aclose())
-         else:
-             yield from self._thread_iter()
- 
-+    def _run_step(self, loop: asyncio.AbstractEventLoop, step: asyncio.Future[DataRowBatch]) -> DataRowBatch:
-+        """Run step on loop; if SIGINT arrives, cancel step and raise KeyboardInterrupt once it has finished.
-+
-+        Like asyncio.Runner, this keeps KeyboardInterrupt out of tasks: one raised inside a task can leave a stop()
-+        call queued in loop, which then stops the cleanup in __iter__().
-+        """
-+        if threading.current_thread() is not threading.main_thread() or (
-+            signal.getsignal(signal.SIGINT) is not signal.default_int_handler
-+        ):
-+            return loop.run_until_complete(step)
-+
-+        interrupted = False
-+
-+        def on_sigint(signum: int, frame: FrameType | None) -> None:
-+            nonlocal interrupted
-+            if interrupted:
-+                raise KeyboardInterrupt
-+            interrupted = True
-+            step.cancel()
-+            # wake up the loop if it waits in select()
-+            loop.call_soon_threadsafe(lambda: None)
-
-```
-
-**File**: `pixeltable/exec/exec_plan.py` (modified, +10/-10)
-```diff
-@@ -1,8 +1,9 @@
- from __future__ import annotations
- 
- import asyncio
-+import contextlib
- from types import TracebackType
--from typing import Any, AsyncIterator, Iterator, Self
-+from typing import Any, AsyncGenerator, Iterator, Self
- from uuid import UUID
- 
- import pixeltable.exceptions as excs
-@@ -138,9 +139,6 @@ def __exit__(
-     def __iter__(self) -> Iterator[DataRowBatch]:
-         return iter(self.exec_root)
- 
--    def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        return self.exec_root.__aiter__()
--
-     def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
-         """Bind args, open the plan, and yield rows. Synchronous path.
- 
-@@ -158,16 +156,17 @@ def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
-             self._is_executing = False
-             raise
-         with self:
-+            # only the for loop references the batch iterator, so the iterator closes before __exit__()
-             for batch in self.exec_root:
-                 yield from batch
- 
--    async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
-+    async def aexec(self, args: dict[str, Any]) -> AsyncGenerator[exprs.DataRow, None]:
-         """Bind args, open the plan, and yield rows. Async path.
- 
-         Holds iter_lock for the lifetime of the iteration so concurrent async callers (e.g. a
-         per-row inner-query template invoked from an outer ExprEvalNode) don't interleave their
--        bind+iterate cycles on the same cached plan. Callers must drain the generator (or aclose
--        it); standard async-generator finalization releases the lock when the generator is closed.
-+        bind+iterate cycles on the same cached plan. Callers must drain the generator or aclose() it;
-+        both release the lock.
+     def update(self, data_row: DataRow) -> None:
          """
-         if self._iter_lock is None:
-             self._iter_lock = asyncio.Lock()
-@@ -179,6 +178,7 @@ async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
-                 self._is_executing = False
-                 raise
-             with self:
--                async for batch in self.exec_root:
--                    for row in batch:
--                        yield row
-+                async with contextlib.aclosing(aiter(self.exec_root)) as batches:
-+                    async for batch in batches:
-+                        for row in batch:
-+                            yield row
+```
+
+**File**: `pixeltable/func/udf.py` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ def udf(*args, **kwargs):  # type: ignore[no-untyped-def]
+         substitute_fn = kwargs.pop('substitute_fn', None)
+         is_method = kwargs.pop('is_method', None)
+         is_property = kwargs.pop('is_property', None)
+-        is_deterministic = kwargs.pop('is_deterministic', None)
++        is_deterministic = kwargs.pop('is_deterministic', True)
+         resource_pool = kwargs.pop('resource_pool', None)
+         type_substitutions = kwargs.pop('type_substitutions', None)
+         display_name = kwargs.pop('display_name', None)
+```
+
+**File**: `pixeltable/functions/bfl.py` (modified, +4/-4)
+```diff
+@@ -173,7 +173,7 @@ def _client() -> _BflClient:
+     return get_runtime().get_client('bfl')
+ 
+ 
+-@pxt.udf(resource_pool='request-rate:bfl')
++@pxt.udf(is_deterministic=False, resource_pool='request-rate:bfl')
+ async def generate(
+     prompt: str,
+     *,
+@@ -247,7 +247,7 @@ async def generate(
+     return await _client().generate(endpoint, payload)
+ 
+ 
+-@pxt.udf(resource_pool='request-rate:bfl')
++@pxt.udf(is_deterministic=False, resource_pool='request-rate:bfl')
+ async def edit(
+     prompt: str,
+     image: PIL.Image.Image,
+@@ -338,7 +338,7 @@ async def edit(
+     return await _client().generate(endpoint, payload)
+ 
+ 
+-@pxt.udf(resource_pool='request-rate:bfl')
++@pxt.udf(is_deterministic=False, resource_pool='request-rate:bfl')
+ async def fill(
+     prompt: str,
+     image: PIL.Image.Image,
+@@ -404,7 +404,7 @@ async def fill(
+     return await _client().generate(endpoint, payload)
+ 
+ 
+-@pxt.udf(resource_pool='request-rate:bfl')
++@pxt.udf(is_deterministic=False, resource_pool='request-rate:bfl')
+ async def expand(
+     prompt: str,
+     image: PIL.Image.Image,
+```
+
+**File**: `pixeltable/functions/json.py` (modified, +11/-5)
+```diff
+@@ -516,6 +516,8 @@ def list_iterator(
+     All of the inputs must be *typed* `Json` expressions. Untyped Json will be rejected (the type schema is
+     necessary in order for Pixeltable to determine the types of the output columns).
+ 
++    If any input list is null for a row, that row produces no output rows.
++
+     Args:
+         elements: A list of dictionaries to iterate over. The dictionary keys will be used as column names in the
+             output. Cannot be specified together with keyword arguments.
+@@ -529,15 +531,19 @@ def list_iterator(
+         **kwargs: One or more lists to iterate over. The kwarg names will be used as column names in the output.
+             Cannot be specified together with `elements`.
+     """
+-    assert (elements is None) != (builtins.len(kwargs) == 0)
+-
+-    if elements is not None:
+-        yield from elements
++    if builtins.len(kwargs) == 0:
++        # Positional form is used, e.g. list_iterator(t.col)
++        # elements is None if the argument is null for this base row
++        if elements is not None:
++            yield from elements
+ 
+     else:
++        # kwargs form is used, e.g. list_iterator(a=t.col_1, b=t.col_2)
+         # TODO: Clean up the way kwargs are passed to the iterator (this works, but it's a bit clunk with
+         #     unnecessary indirection)
+-        kwargs_: dict[str, list] = kwargs['kwargs']  # type: ignore[assignment]
++        kwargs_: dict[str, list | None] = kwargs['kwargs']  # type: ignore[assignment]
++        if any(val is None for val in kwargs_.values()):
++            return
+         zipped: Iterator[tuple]
+         match mode:
+             case 'strict':
+```
+
+**File**: `tests/functions/test_json.py` (modified, +18/-0)
+```diff
+@@ -16,6 +16,7 @@
+     rerun_on_network_error,
+     skip_test_if_no_config,
+     skip_test_if_not_installed,
++    validate_update_status,
+ )
+ 
+ pytestmark = pytest.mark.db_roots('local', reason='UDF/integration test')
+@@ -97,6 +98,23 @@ def test_list_iterator(self, uses_db: None) -> None:
+         assert res['my_int'] == [j for i in range(50) for j in range(i + 1)]
+         assert res['my_str'] == [f'string_{j}' if j < i else None for i in range(50) for j in range(i + 1)]
+ 
++    def test_list_iterator_null(self, uses_db: None) -> None:
++        schema = {'id': pxt.Int, 'col_1': pxt.Json[[{'a': pxt.Int}]] | None, 'col_2': pxt.Json[[int]] | None}
++        t = pxt.create_table('test_table', schema)
++        t.insert([{'id': 0, 'col_1': [{'a': 0}, {'a': 1}], 'col_2': [0, 1]}, {'id': 1, 'col_1': None, 'col_2': None}])
++        v1 = pxt.create_view('test_view_1', t, iterator=pxtf.json.list_iterator(t.col_1))
++        v2 = pxt.create_view('test_view_2', t, iterator=pxtf.json.list_iterator(x=t.col_2, mode='padded'))
++        validate_update_status(
++            t.insert([{'id': 2, 'col_1': None, 'col_2': None}, {'id': 3, 'col_1': [{'a': 3}], 'col_2': [3]}]),
++            expected_rows=4,
++        )
++        res = v1.order_by(v1.id, v1.pos).select(v1.id, v1.a).collect()
++        assert res['id'] == [0, 0, 3]
++        assert res['a'] == [0, 1, 3]
++        res = v2.order_by(v2.id, v2.pos).select(v2.id, v2.x).collect()
++        assert res['id'] == [0, 0, 3]
++        assert res['x'] == [0, 1, 3]
++
+     def test_list_iterator_type_cast(self, uses_db: None) -> None:
+         """Iterator args that cast paths into untyped json with astype()."""
+ 
+```
+
+**File**: `tests/test_component_view.py` (modified, +59/-0)
+```diff
+@@ -149,6 +149,20 @@ def close(self) -> None:
+         pass
+ 
+ 
++@pxt.udf
++def fail_on_odd(i: int) -> int:
++    if i % 2 == 1:
++        raise ValueError('odd')
++    return i
++
++
++@pxt.udf(is_deterministic=False)
++def fail_on_odd_nondeterministic(i: int) -> int:
++    if i % 2 == 1:
++        raise ValueError('odd')
++    return i
++
++
+ class TestComponentView:
+     @pytest.mark.skip(reason='surfaces a bug (DuplicateAlias)')
+     def test_same_base_join(self, db_root: DatabaseRoot) -> None:
+@@ -544,6 +558,51 @@ def test_create_view_error(self, db_root: DatabaseRoot) -> None:
+         # the second attempt succeeds
+         _ = pxt.create_view(p('view'), t, iterator=error_iterator(t.i, 100))
+ 
++    @pytest.mark.parametrize('deterministic', [True, False])
++    def test_failed_iterator_args(self, db_root: DatabaseRoot, deterministic: bool) -> None:
++        # a failed iterator argument produces no view rows for that base row
++        # deterministic and non-deterministic UDFs take different paths
++        fn = fail_on_odd if deterministic else fail_on_odd_nondeterministic
++        p = db_root.make_catalog_path
++        t = pxt.create_table(p('test'), {'i': pxt.Int})
++        t.insert({'i': i} for i in range(4))
++        v = pxt.create_view(p('view'), t, iterator=simple_iterator(fn(t.i)))
++        assert v.order_by(v.i, v.icol).select(v.i, v.icol).collect()['i'] == [2, 2]
++        validate_update_status(t.insert({'i': i} for i in range(4, 8)))
++        assert v.where(v.i >= 4).count() == 4 + 6
++
++        # compute() honors on_error instead
++        assert [row['icol'] for row in v.compute([{'i': 1}, {'i': 2}], on_error='ignore')] == [0, 1]
++        with pxt_raises(pxt.ErrorCode.UNSUPPORTED_OPERATION, match='odd'):
++            v.compute([{'i': 1}], on_error='abort')
++
++    def test_failed_view_column(self, db_root: DatabaseRoot) -> None:
++        # a deterministic view column over base columns is evaluated before the iterator; its error must survive
++        # the copy into each view row
++        p = db_root.make_catalog_path
++        t = pxt.create_table(p('test'), {'i': pxt.Int})
++        t.insert([{'i': 3}])
++        v = pxt.create_view(p('view'), t, iterator=simple_iterator(t.i), additional_columns={'c': fail_on_odd(t.i)})
++        status = t.insert([{'i': 5}, {'i': 2}], on_error='ignore')
++        assert status.num_excs == 5
++        res = v.order_by(v.i, v.icol).select(v.i, v.c, v.c.errortype).collect()
++        assert res['i'] == [2, 2, 3, 3, 3, 5, 5, 5, 5, 5]
++        assert res['c'] == [2, 2] + [None] * 8
++        assert res['c_errortype'] == [None, None] + ['ValueError'] * 8
++
++    def test_wrapped_nondeterministic_view_column(self, db_root: DatabaseRoot) -> None:
++        # a deterministic function of a nondeterministic value is nondeterministic, and is evaluated per view row
++        p = db_root.make_catalog_path
++        t = pxt.create_table(p('test'), {'i': pxt.Int})
++        t.insert([{'i': 3}])
++        v = pxt.create_view(
++            p('view'), t, iterator=simple_iterator(t.i), additional_columns={'id': pxtf.uuid.uuid4().to_string()}
++        )
++        t.insert([{'i': 2}])
++        ids = v.select(v.id).collect()['id']
++        assert len(ids) == 5
++        assert len(set(ids)) == 5
++
+     def test_update_iterator_param(self, db_root: DatabaseRoot) -> None:
+         """Updating a base table column used as an iterator parameter re-evaluates the iterator."""
+         p = db_root.make_catalog_path
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1899** (2026-11-04): Module refactor (@sergey-mkhitaryan)
-- **PR #1898** (2026-11-03): unpin the miniforge version (@sergey-mkhitaryan)
-- **PR #1897** (2026-11-03): cleanup the remaining arrays with pixeltable type dtypes in the docs … (@sergey-mkhitaryan)
-- **PR #1894** (2026-11-03): PXT-1735: Compare ImagesResponse adherence to SDK model fields (@pierrebrunelle)
-- **PR #1891** (2026-11-03): docs: add a DSPy retriever integration page (@pierrebrunelle)
-- **PR #1890** (2026-11-03): Automatic restart of CLI daemon after new package installs (@mkornacker)
+- **PR #1915** (2026-11-07): Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893) (@aaron-siegel)
+- **PR #1914** (closed): Fix is_deterministic default when @pxt.udf() has keyword arguments (@sergey-mkhitaryan)
+- **PR #1913** (2026-11-07): Fix UDF and iterator issues found during #1907 review (@sergey-mkhitaryan)
+- **PR #1912** (2026-11-07): PXT-1748: Mirror OpenAI ImagesResponse.svg_usage (openai 3.46) (@pierrebrunelle)
+- **PR #1911** (closed): Require Pillow >= 13.0 (CVE-2026-112900) (@jacobweiss2305)
+- **PR #1909** (2026-11-06): Start the local database on first use, not in Env.get() (@mkornacker)
 
 ---
 
@@ -1884,42 +1556,30 @@ UDFs over a frame view leave no video file open.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() wi
+## X. openrouter): forward parallel_tool_calls=False to the API (#1895)
 
 **RULE**:
-When implementing operations in `pixeltable/_query.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/functions/openrouter.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77772fc4`: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a7faaf1`: openrouter): forward parallel_tool_calls=False to the API (#1895). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/_query.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/functions/openrouter.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import contextlib
-    AsyncGenerator,
-    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
-        async with contextlib.aclosing(plan.aexec(args)) as rows:
-            async for row in rows:
-                yield row
-            async with contextlib.aclosing(self._aexec(args=args)) as rows:
-                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
+    if tool_choice is not None and not tool_choice['parallel_tool_calls']:
+        model_kwargs['parallel_tool_calls'] = False
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    AsyncIterator,
-    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
-        async for row in plan.aexec(args):
-            yield row
-            result = [
-                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
-                async for row in self._aexec(args=args)
-            ]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77772fc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a7faaf1` are properly handled with clean fallback behavior.
