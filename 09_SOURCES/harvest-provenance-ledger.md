@@ -8008,3 +8008,4 @@ Every entry in this ledger must capture:
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `0dc93c3a` | Multi-dimensional audit evidence | 2026-11-07T04:44:23.983Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `ad6e6fc9` | Multi-dimensional audit evidence | 2026-11-07T04:44:26.859Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `fdae7e29` | Multi-dimensional audit evidence | 2026-11-07T04:44:31.280Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `906848d5` | Multi-dimensional audit evidence | 2026-11-07T04:56:55.304Z |

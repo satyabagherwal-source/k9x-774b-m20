@@ -7999,3 +7999,4 @@
 | `CYCLE-20261107-5LBE` | `2026-11-07T04:44:23.978Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cd7d2da5...`) |
 | `CYCLE-20261107-5NJB` | `2026-11-07T04:44:26.855Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba3809d7...`) |
 | `CYCLE-20261107-5QY4` | `2026-11-07T04:44:31.276Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`138829b7...`) |
+| `CYCLE-20261107-LP1G` | `2026-11-07T04:56:55.300Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c2dc0f57...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T04:44:31.185Z",
+  "last_updated": "2026-11-07T04:56:55.208Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40555,14 +40555,19 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "74efd351",
-      "content_hash": "dbd2089c923e69e09a7a68293b64859b5c3e46a0f1dea19f6b6e2ba0f69c3006",
+      "source_version": "906848d5",
+      "content_hash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "plan): validate literal defaults in new DDL (#32139)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "consolidate stopped-upgrade cleanup and stabilize CI (#32307)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40626,7 +40631,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T16:52:51.214Z",
+      "verified_at": "2026-11-07T04:56:55.184Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

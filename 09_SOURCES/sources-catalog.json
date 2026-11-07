@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "74efd351",
+    "sourceVersion": "906848d5",
     "license": "Apache-2.0",
-    "contentHash": "dbd2089c923e69e09a7a68293b64859b5c3e46a0f1dea19f6b6e2ba0f69c3006",
-    "lastHarvestedAt": "2026-11-05T16:52:51.332Z",
+    "contentHash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
+    "lastHarvestedAt": "2026-11-07T04:56:55.304Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {

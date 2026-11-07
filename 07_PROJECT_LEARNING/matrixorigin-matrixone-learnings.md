@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `74efd351`  
+> **Source Version**: `906848d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:52:49.556Z  
+> **Timestamp**: 2026-11-07T04:56:53.905Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:52:49.224Z  
+> **Harvest Timestamp**: 2026-11-07T04:51:50.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32257** (2026-11-05): **perf(plan): optimize point-update index maintenance with missing statistics**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32221  ## What this PR does / why we need it:  When statistics are missing, a single-row primary-key update can estimate hundreds of build keys, reject runtime filters, and scan each secondary-index table. Retry the existing benefit check for eligible point-sourced joins and cap the newly admitted optional filter at one distinct key. The existing HashBuild fallback sends PASS if the actual key set is larger, preserving complete join results.  On a local 50,000-row table with two indexes, each index scan fell from 50,000 to 1 logical input row. A 20-sample transaction benchmark measured 18.86 ms before versus 2.14 ms with the final change (separate sequential local runs; the final run overlapped a race test).  Validation: full planner and HashBuild unit packages; full planner race and targeted HashBuild and broadcast-topology race tests; SQL BVT (29/29); real DATE-key and two-CN update/rollback, cancellation, and concurrent-write checks; and a two-CN split-key PASS counterexample with diagnostic admission. Incremental gofmt, vet, molint, and golangci-lint passed. 
+- **Issue #32342** (2026-11-07): **fix(sql): scan Decimal256 MIN/MAX aggregates without zonemap bounds**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32300  ## What this PR does / why we need it:  MIN/MAX over persisted DECIMAL columns with precision greater than 38 can silently return NULL because the zonemap fast path has no Decimal256 bounds. Decline that optimization for the whole aggregate node and retain the ordinary scan input. Keep Decimal64/Decimal128 optimization eligible. After rewriting COUNT(non-NULL literal) to COUNT(*), continue checking the remaining aggregates so COUNT before an unsupported MIN/MAX cannot bypass eligibility checks.  Add regressions for aggregate ordering, supported decimal neighbors and the real Scope.aggOptimize consumer, including preservation of its original data input when any aggregate is ineligible.  Validation on Linux/amd64 with CGO enabled and this worktree's native artifacts:  - Against upstream main `647eaf9dd36d4b8521114e5dedb9d99d4c148c68`, the four anchored owning roots pass with original exit 0 and nonzero selection: TestCheckAggOptimize_CountNotNull, TestCheckAggOptimize_ZmMinMaxEligibility, TestForceSingleScan_ZmMinMaxEligibility and TestScopeAggOptimizeDeclinesWholeNode. Each was selected and executed through `.agents/skills/mo-dev/scripts/mo-cgo-test` in `./pkg/sql/compile`. - `make static-check-selected STATIC_CHECK_PACKAGES="$PKGS"` passes both repository-pinned analyzers with orig
 
-- **Issue #32255** (2026-11-05): **vectorindex: IVF-PQ and CAGRA model tars through the index-file layer**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #31051 (index-file layer; IVF-PQ and CAGRA adopt it after FULLTEXT2 in #31773)  ## What this PR does / why we need it:  **Problem.** IVF-PQ and CAGRA streamed each sub-index's model tar from its chunk rows over SQL into a temp file and MD5-hashed it on every load, so every CN restart re-read every tar.  **Change.** The model tar now goes through the index-file layer (`pkg/vectorindex/indexfile`), following FULLTEXT2 (`pkg/fulltext2/indexfile.go`). - **Load:** `FetchArtifact` opens the tar from the CN's index-file cache, or rebuilds it there from the chunk rows and verifies the recorded size and MD5. The model holds the file through admission and `Unpack`, then releases it. A refused or failed load releases every tar it holds. A cache hit is not re-hashed; the full check after a restart follows `index-file-check-on-startup`. - **Write:** CREATE/REINDEX write the tar through `indexfile.Write` in their transaction (`PersistFiles` replaces `PersistChunks`), caching it under its MD5 on the building CN. The streamed bytes are checked against the recorded size and MD5, as FULLTEXT2 checks its segments. - **Unchanged:** the checksum stays MD5, the CDC event log (tag 1) stays chunk rows, and sync is unchanged. These are recorded as decisions in `docs/design/20261024-index-file-io.md` ("IVF-PQ and C
+- **Issue #32340** (2026-11-06): **fix(parser): preserve mixed-case UNIQUE constraint symbols**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #31659  ## What this PR does / why we need it:  The named-UNIQUE fix in #31791 still lowercases an explicit constraint symbol: `CONSTRAINT `Uq_MiXeD` UNIQUE(k)` exposes `uq_mixed` instead of the declared spelling. Preserve the original symbol for UNIQUE constraints, matching an equivalent explicitly named UNIQUE KEY. Keep the existing normalization for PRIMARY KEY, FOREIGN KEY and CHECK constraints and the existing case-insensitive duplicate-name and DROP behavior.  Regenerate the parser and add real-parser/planner regressions for CREATE, ALTER ADD, Unicode and embedded-backtick identifiers, explicit-name precedence, duplicate names and unchanged non-UNIQUE symbols. The test owns the parsed AST until its cleanup runs.  Validation on Linux/amd64 with CGO and this worktree's native artifacts, against upstream main `aeab8787f2b8acd4a80d47a2f23fd263d6f0ef2d`:  - The regression fails on the original parser. Focused final-source parser/planner regressions pass; the existing owning-parser package pass is reused for the unchanged grammar closure. - One real foreground service regression passes with original exit 0. SHOW INDEX, SHOW CREATE and information_schema preserve `Uq_MiXeD`; duplicate values return numeric 1062 without adding a row; case-variant duplicate names return 1061 without publishin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,8 +2370,890 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36d1ac51` (2026-11-05)
-**Commit Message**: fix(plan): validate literal defaults in new DDL (#32139)
+### Incident Patch 1: `606ae4fb` (2026-11-06)
+**Commit Message**: fix: consolidate stopped-upgrade cleanup and stabilize CI (#32307)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [x] Improvement
+- [x] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [x] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32288
+Fixes #32297
+Fixes #32298
+Fixes #32321
+Fixes #32260
+
+Related to #32278. The separate view-refresh work in #29433 remains
+open.
+
+## What this PR does / why we need it:
+
+Support a stopped 4.2 release upgraded directly to current main,
+including its existing data and snapshots.
+
+* Move historical orphan-grant cleanup into the existing 4.0.7 tenant
+upgrade and current system-view publication into the existing
+startup/admission owner. Remove the recurring per-CN repair loops.
+Current create, drop and restore paths retain their own catalog
+responsibilities.
+* Preserve the current physical-index filtering from main in TABLES,
+COLUMNS and PARTITIONS. The startup completion check includes
+PARTITIONS, so a missing or outdated system definition reaches the
+existing admission-gated reconciliation; the current state remains
+read-only and failures prevent ingress.
+* Stop creating retired transaction-trace tables on fresh clusters.
+Pres
+
+**File**: `docs/design/20261028-catalog-upgrade-407.md` (modified, +40/-6)
+```diff
+@@ -1,12 +1,12 @@
+-# Consolidate catalog upgrades for 4.1 and 4.2 sources
++# Catalog upgrade consolidation and 4.2 stopped-upgrade cleanup
+ 
+ Status: design reviewed; validation is required for the final change before delivery. Issue: [#31490](https://github.com/matrixorigin/matrixone/issues/31490). Main base: `f84780380228`; source controls: v4.1.0 `c58a0e62c382`, v4.2.6 `71498157cc21`, and 4.2-dev `86a45d39df3d`.
+ 
+ ## Scope and observed behavior
+ 
+-The requested source is a stopped, intact deployment whose current released version is 4.1 or 4.2. Direct upgrades from 3.x and all unreleased main catalogs (including prior 4.0.7 and 4.0.18/19 identities), downgrade and mixed-version operation are out of scope. This boundary does not erase older data: a 4.1 or 4.2 source can contain snapshots created before that release. The migration must preserve data, existing snapshot records and retention. Ambiguous historical snapshot ownership must follow the user's explicit decision: pause and obtain administrator confirmation by snapshot UUID; do not guess from the snapshot name alone.
++The original #31490 design considered stopped, intact 4.1 and 4.2 deployments. For the #32278 follow-up, the supported source is a stopped 4.2 release upgraded directly to current main; intermediate main versions, mixed-version operation and downgrade are out of scope. References to a 4.1 source below describe the earlier design, not an additional acceptance target for this follow-up. This boundary does not erase older data: a 4.2 source can contain snapshots created before that release. The migration must preserve data, existing snapshot records and retention. Ambiguous historical snapshot ownership must follow the user's explicit decision: pause and obtain administrator confirmation by snapshot UUID; do not guess from the snapshot name alone.
+ 
+-The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, preserving the existing version/tenant task owners and recurring maintenance. Do not register unpublished 4.0.8–4.0.19 identities as new upgrade steps. Before release, fold the later COLUMNS and prefix-aware STATISTICS refreshes into the existing 4.0.7 entries: 27 tenant entries and 14 cluster entries, offset 41. COLUMNS uses the current declared-type definition; STATISTICS uses the current numeric prefix-length projection, with SQL NULL for whole-column indexes. This explicitly supersedes the previous assumption that main's unreleased 4.0.7 was already frozen. Its identity becomes immutable when released, not merely when merged into main. Preserve unrelated current-main behavior and existing maintenance owners.
++The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, using the version/tenant task and startup reconciliation owners described below. Do not register unpublished 4.0.8–4.0.19 identities as new upgrade steps. Before release, fold the later COLUMNS and prefix-aware STATISTICS refreshes into the existing 4.0.7 entries: 27 tenant entries and 14 cluster entries, offset 41. COLUMNS uses the current declared-type definition; STATISTICS uses the current numeric prefix-length projection, with SQL NULL for whole-column indexes. This explicitly supersedes the previous assumption that main's unreleased 4.0.7 was already frozen. Its identity becomes immutable when released, not merely when merged into main. Preserve unrelated current-main behavior.
+ 
+ On a v4.2.6 source, unmodified main reached 4.0.17 and retained the sampled user rows, but lacked foreign-key metadata columns and UDF `arg_types`: main had appended them to the already-consumed 4.0.6 handler. On a freshly initialized v4.1.0 source, first startup on PR head timed out waiting for query-ready CN inventory while the older upgrade route had not yet created `mo_view_refresh`. On one unmodified restart, the route created that table and the CN appeared in query-ready inventory about two seconds later. The source fixture had working indexed/FK tables, a function, a procedure and account snapshots. After the resumed upgrade, table/tenant rows and FK enforcement remained, but the function, procedure and restoring the 4.1 account snapshot all failed because `sql_mode` was missing; historical table reads still worked.
+ 
+@@ -18,9 +18,9 @@ There is a separate SQL-semantics issue: on a fresh v4.1.0 source, both `select
+ 
+ The existing bootstrap framework remains the owner of catalog routing, tenant tasks and final readiness. A ready 4.1 source follows the 4.0.2–4.0.6 route before the new 4.0.7 step; a ready 4.2 source starts at 4.0.6. An interrupted published 4.1-to-4.2 route must finish us
+```
+
+**File**: `docs/guides/upgrade-4.2-to-main.md` (modified, +46/-23)
+```diff
+@@ -1,5 +1,9 @@
+ # Stopped upgrade from 4.2 to catalog 4.0.7
+ 
++This procedure upgrades a stopped 4.2 release directly to current main.
++Intermediate development versions, mixed-version operation and downgrade are
++outside this upgrade contract. Existing data and snapshots in 4.2 remain in scope.
++
+ Before starting any new-version service, connect to the running 4.2 deployment
+ as a system administrator and check for CDC tasks across all accounts:
+ 
+@@ -16,10 +20,10 @@ configuration and watermarks, decide how to rebuild the target, and remove all
+ such tasks using 4.2 before upgrading. Log in as an administrator of each task's
+ own account and run `DROP CDC TASK <name>` there; a system-account session does
+ not drop another account's task. `DROP CDC` removes task metadata and
+-watermarks. Return to the system account and confirm the query above is empty,
+-stop and drain every old CN, and
+-take a verified backup of the complete stopped deployment before starting the
+-new version. Recreate CDC after upgrading against a clean or independent
++watermarks. Return to the system account and confirm the query above is empty.
++Complete the snapshot preflight below while the 4.2 system account is still
++accessible, then stop and drain every old CN and take a verified backup of the
++complete stopped deployment before starting the new version. Recreate CDC after upgrading against a clean or independent
+ target; the old watermark does not prove that target is safe to resume.
+ 
+ Enable automatic catalog upgrade for this stopped migration. If it was disabled,
+@@ -58,32 +62,49 @@ metadata or job table as proof that remote writes have finished.
+ ## Ambiguous snapshot ownership
+ 
+ Some old system table snapshots can have names also used by branch protection.
+-If the upgrade reports undecided snapshots, it prints their complete preimages,
+-including the snapshot UUID and the branch edge (or `null`). An administrator
+-must determine each snapshot's ownership from independent records; the name
+-alone does not prove ownership. If ownership cannot be established, keep the
+-upgrade stopped rather than guessing.
++An administrator must determine each snapshot's ownership from independent
++records; its name alone does not prove ownership. If ownership cannot be
++established, keep the upgrade stopped rather than guessing.
++
++Before stopping the 4.2 CNs, stop snapshot and branch operations, including
++background jobs that modify them. Keep them stopped until the old deployment
++is shut down. From the new source tree, use a system-account connection to
++produce a complete template:
++
++```sh
++optools/upgrade-4.2-preflight.sh decisions.ndjson \
++  --defaults-extra-file=/secure/path/mysql-client.cnf
++```
+ 
+-Stop and drain all CNs. Create a UTF-8 newline-delimited JSON file with this
+-header on its first line:
++The MySQL option file must be readable only by the administrator and contain
++the connection details and credentials; configure TLS according to the source
++deployment. The script requires a MySQL-compatible client, `jq` and GNU
++coreutils. It reports the CDC task count and writes a private file without
++overwriting an existing path. Its temporary disk use is proportional to the
++number and size of snapshot and branch records; `TMPDIR` chooses the scratch
++filesystem. It scans both source catalogs, and its 16 MiB sort setting does not
++bound database-server or total process memory. Failures before publication leave
++no output file. If interruption races with publication, a complete file may
++already exist: inspect it before proceeding. Choose a new path when regenerating.
++
++Review each template record by UUID and replace its `"decision":null` with
++`"user"` or `"branch"`. Do not change the remaining fields or their order in the
++file; do not automatically classify records by name. A template containing
++only the header needs no decisions. The header is:
+ 
+ ```json
+ {"format":"matrixone-catalog-snapshot-decisions-v1","target":"4.0.7"}
+ ```
+ 
+-For each undecided snapshot, copy its entire JSON preimage from the diagnostic
+-to a separate line and add `"decision":"user"` or `"decision":"branch"`.
+ Preserve every field and its exact value, including explicit `null` values and
+-the entire edge object. Decimal IDs and timestamps are strings. Sort records
+-by snapshot name, with no duplicate names. For example, the following single
+-line illustrates the format only; replace every value with the reported
+-preimage and the administrator's independently verified decision:
++the entire edge object. Decimal IDs and timestamps are strings. Records are
++sorted by snapshot name, with no duplicate names. For example:
+ 
+ ```json
+ {"catalog_account_id":"0","snapshot_id":"01a17d34-05f1-752c-acbd-52c7a8fe04fe","name":"__mo_branch_42","timestamp":"123","level":"table","account_name":"sys","database_name":"db","table_name":"t","object_id":"9","prior_kind":"user","edge":{"table_id":"42","parent_id":"9","clone_ts":"123","creator":"0","level":"table","table_del
+```
+
+**File**: `optools/upgrade-4.2-preflight-test.py` (added, +387/-0)
+```diff
+@@ -0,0 +1,387 @@
++#!/usr/bin/env python3
++# Copyright 2026 Matrix Origin
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++import json
++import os
++from pathlib import Path
++import select
++import signal
++import subprocess
++import tempfile
++import unittest
++
++SCRIPT = Path(__file__).with_name("upgrade-4.2-preflight.sh").resolve()
++
++
++def encoded(value):
++    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
++
++
++def snapshot(child, account_name="sys"):
++    return {
++        "catalog_account_id": "0",
++        "snapshot_id": "01a17d34-05f1-752c-acbd-52c7a8fe04fe",
++        "name": "__mo_branch_" + child,
++        "timestamp": "123",
++        "level": "table",
++        "account_name": account_name,
++        "database_name": None,
++        "table_name": "tab\tline\n雪",
++        "object_id": "9",
++        "prior_kind": "user",
++        "edge": None,
++        "decision": None,
++    }
++
++
++def edge(child):
++    return {
++        "table_id": child,
++        "parent_id": "9",
++        "clone_ts": "123",
++        "creator": "0",
++        "level": "table",
++        "table_deleted": False,
++    }
++
++
++class PreflightTest(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.data = self.root / "mysql.tsv"
++        self.output = self.root / "decisions.ndjson"
++        mysql = self.root / "mysql"
++        mysql.write_text(
++            '#!/bin/sh\n'
++            'if [ "${TEST_MYSQL_BLOCK:-0}" = 1 ]; then\n'
++            '  eval "printf \'%s\\n\' $$ >&${TEST_READY_FD}"\n'
++            '  exec sleep 60\n'
++            'fi\n'
++            'if [ "${TEST_MYSQL_FORCE_FAILURE:-0}" = 1 ]; then\n'
++            '  printf "A\\t0\\t{}\\nC\\t0\\t{}\\n"\n'
++            '  for last do :; done\n'
++            '  if [ "$last" = --skip-force ]; then exit 1; fi\n'
++            '  printf "Z\\tdone\\t{}\\n"\nexit 0\n'
++            'fi\n'
++            'cat "$TEST_MYSQL_DATA"\nexit "${TEST_MYSQL_EXIT:-0}"\n'
++        )
++        mysql.chmod(0o700)
++        self.env = os.environ.copy()
++        self.env["PATH"] = str(self.root) + os.pathsep + self.env["PATH"]
++        self.env["TMPDIR"] = str(self.root)
++        self.env["TEST_MYSQL_DATA"] = str(self.data)
++
++    def run_export(self, lines, exit_code=0, newline=True, terminal=True):
++        rows = [*lines, "Z\tdone\t{}"] if terminal else lines
++        self.data.write_text("\n".join(rows) + ("\n" if newline else ""))
++        self.env["TEST_MYSQL_EXIT"] = str(exit_code)
++        return subprocess.run(
++            [str(SCRIPT), str(self.output), "--defaults-extra-file=protected.cnf"],
++            env=self.env, text=True, capture_output=True, check=False,
++        )
++
++    def test_merges_canonical_ids_without_guessing(self):
++        low, high = "18446744073709551614", "18446744073709551615"
++        values = [
++            "A\t0\t{}", "C\t3\t{}",
++            "S\t" + high + "\t" + encoded(snapshot(high, "sys\\name")),
++            "E\t" + low + "\t" + encoded(edge(low)),
++            "S\t0\t" + encoded(snapshot("0")),
++            "S\t" + low + "\t" + encoded(snapshot(low)),
++        ]
++        result = self.run_export(values)
++        self.assertEqual(0, result.returncode, result.stderr)
++        self.assertIn("CDC tasks: 3", result.stderr)
++        self.assertEqual(0o600, self.output.stat().st_mode & 0o777)
++        records = [json.loads(line) for line in self.output.read_text().splitlines()]
++        self.assertEqual({"format": "matrixone-catalog-snapshot-decisions-v1", "target": "4.0.7"}, records[0])
++        self.assertEqual(["__mo_branch_0", "__mo_branch_" + low, "__mo_branch_" + high], [r["name"] for r in records[1:]])
++        self.assertEqual(edge(low), records[2]["edge"])
++        self.assertIsNone(records[1]["edge"])
++        self.assertIsNone(records[3]["edge"])
++        self.assertTrue(all(r["decision"] is None for r in records[1:]))
++        self.assertEqual("tab\tline\n雪", records[2]["table_name"])
++        self.assertEqual("sys\\name", records[3]["account_name"])
++
++    def test_exports_more_than_one_startup_page(self):
++        values = ["A\t0\t{}", "C\t0\t{}"]
++        for i in range(129):
++            child = str(i)
++            row = snapshot(child)
++            row["snapshot_id"] = f"00000000-0000-4000-8000-{i:012x}"
++            values.append("S\t" + child + "\t" + encoded(row))
++            if i % 2:
++              
+```
+
+**File**: `optools/upgrade-4.2-preflight.sh` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++#!/usr/bin/env bash
++# Copyright 2026 Matrix Origin
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++set -euo pipefail
++export LC_ALL=C
++umask 077
++
++if (($# < 2)); then
++    echo "usage: $0 OUTPUT MYSQL_OPTIONS..." >&2
++    echo "Use a protected --defaults-extra-file as the first MySQL option." >&2
++    exit 2
++fi
++output=$1
++shift
++outdir=$(dirname -- "$output")
++tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/mo-upgrade-preflight.XXXXXXXX")
++outtmp=
++child=
++spawning=0
++cleanup() {
++    trap '' HUP INT TERM
++    if [[ -n $child ]]; then
++        kill "$child" 2>/dev/null || true
++        # A stopped child must be resumed to receive the termination signal.
++        kill -CONT "$child" 2>/dev/null || true
++        wait "$child" 2>/dev/null || true
++    fi
++    rm -rf -- "$tmpdir"
++    if [[ -n $outtmp ]]; then rm -f -- "$outtmp"; fi
++}
++on_signal() {
++    trap '' HUP INT TERM
++    local status=$1 pid job_info job_pattern
++    if ((spawning)); then
++        # run_cmd is serial and owns the only background job. A signal may
++        # arrive after Bash launches it but before child=$! has executed.
++        pid=${!:-}
++        if [[ -n $pid ]]; then
++            job_info=$(jobs -l)
++            job_pattern="^\\[[0-9]+\\][+-]?[[:space:]]+${pid}[[:space:]]+(Running|Stopped)([[:space:]]|$)"
++            if [[ $job_info =~ $job_pattern ]]; then child=$pid; fi
++        fi
++    fi
++    exit "$status"
++}
++trap cleanup EXIT
++trap 'on_signal 129' HUP
++trap 'on_signal 130' INT
++trap 'on_signal 143' TERM
++outtmp=$(mktemp "$outdir/.mo-upgrade-decisions.XXXXXXXX")
++export MO_CATALOG_PREFLIGHT_TMP=$tmpdir
++run_cmd() {
++    spawning=1
++    "$@" <&0 &
++    child=$!
++    spawning=0
++    local status=0
++    wait "$child" || status=$?
++    child=
++    return "$status"
++}
++
++# The snapshot and edge reads form one statement: 4.2 advances its snapshot
++# between statements even inside a transaction. Writers must still be drained.
++run_cmd mysql "$@" --quick --raw --batch --skip-column-names --default-character-set=utf8mb4 --skip-force > "$tmpdir/raw" <<'SQL'
++select 'A', cast(current_account_id() as varchar(32)), '{}';
++select 'C', cast(count(*) as varchar(32)), '{}' from mo_catalog.mo_cdc_task;
++select case when s.kind='user' then 'S' else 'X' end, substring(s.sname,13), json_object(
++  'catalog_account_id','0', 'snapshot_id',cast(s.snapshot_id as varchar(36)),
++  'name',s.sname, 'timestamp',cast(s.ts as varchar(32)),
++  'level',cast(s.level as varchar(32)), 'account_name',s.account_name,
++  'database_name',s.database_name, 'table_name',s.table_name,
++  'object_id',cast(s.obj_id as varchar(32)), 'prior_kind',s.kind,
++  'edge',null, 'decision',null)
++from mo_catalog.mo_snapshots s
++where (s.kind is null or s.kind<>'branch') and cast(s.level as varchar(32))='table'
++  and s.sname regexp '^__mo_branch_(0|[1-9][0-9]{0,19})$'
++  and (length(substring(s.sname,13))<20 or substring(s.sname,13)<='18446744073709551615')
++union all
++select 'E', cast(b.table_id as varchar(32)), json_object(
++  'table_id',cast(b.table_id as varchar(32)), 'parent_id',cast(b.p_table_id as varchar(32)),
++  'clone_ts',cast(b.clone_ts as varchar(32)), 'creator',cast(b.creator as varchar(32)),
++  'level',b.level, 'table_deleted',b.table_deleted)
++from mo_catalog.mo_branch_metadata b;
++select 'Z', 'done', '{}';
++SQL
++
++# A successful MySQL result has a complete final line, even for an empty set.
++last_byte=$(tail -c 1 "$tmpdir/raw" | od -An -tu1 | tr -d '[:space:]')
++if [[ $last_byte != 10 ]]; then
++    echo "incomplete MySQL output" >&2
++    exit 1
++fi
++: > "$tmpdir/snapshots"
++: > "$tmpdir/edges"
++run_cmd awk -F '\t' '
++        BEGIN { OFS="\t" }
++        NF != 3 { print "malformed preflight row" > "/dev/stderr"; exit 1 }
++        ended { print "rows after preflight completion" > "/dev/stderr"; exit 1 }
++        $1 == "Z" { if (++ends != 1 || $2 != "done") exit 1; ended=1; next }
++        $1 == "A" { if (++accounts != 1 || $2 != "0") exit 1; next }
++        $1 == "C" { if (++counts != 1 || $2 !~ /^[0-9]+$/) exit 1; print $2 > (ENVIRON["MO_CATALOG_PREFLIGHT_TMP"] "/cdc-count"); next }
++        $1 == "S" || $1 == "E" {
++            if ($2 !~ /^(0|[1-9][0-9]*)$/ || length($2) > 20 || length($3) >= 262144) exit 1
++            if ($1 == "S") print $2, $3 > (ENVIRON["MO_CATALOG_PREFLIGHT_TMP"] "/snapshots")
++            else print $2, $3 > (ENVIRON["MO_CATALOG_PREFLIGHT_TMP"] "/edges")
++            next
++        }
++        { print "unexpected snapshot kind or pre
+```
+
+**File**: `pkg/bootstrap/service.go` (modified, +27/-21)
+```diff
+@@ -41,7 +41,6 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/shardservice"
+ 	"github.com/matrixorigin/matrixone/pkg/txn/client"
+ 	"github.com/matrixorigin/matrixone/pkg/txn/clock"
+-	"github.com/matrixorigin/matrixone/pkg/txn/trace"
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
+ 	"github.com/matrixorigin/matrixone/pkg/util/metric/mometric"
+ 	"github.com/matrixorigin/matrixone/pkg/util/sysview"
+@@ -124,9 +123,6 @@ func init() {
+ 	sql = predefine.GenInitPublicationTaskSQL()
+ 	initSQLs = append(initSQLs, sql)
+ 
+-	// Retired collector catalog only; removal follows pkg/txn/trace's rollback gate.
+-	initSQLs = append(initSQLs, trace.InitSQLs...)
+-
+ 	initSQLs = append(initSQLs, shardservice.InitSQLs...)
+ 
+ 	initSQLs = append(initSQLs, partitionservice.InitSQLs...)
+@@ -147,21 +143,15 @@ type service struct {
+ 	}
+ 
+ 	upgrade struct {
+-		upgradeTenantBatch                       int
+-		catalogObjectLimit                       uint64
+-		decisionFileService                      fileservice.FileService
+-		checkUpgradeDuration                     time.Duration
+-		checkUpgradeTenantDuration               time.Duration
+-		upgradeTenantTasks                       int
+-		finalVersionCompleted                    atomic.Bool
+-		failure                                  atomic.Pointer[upgradeFailure]
+-		orphanPrivilegeMaintenanceWorkerRunning  atomic.Bool
+-		orphanPrivilegeMaintenanceRunning        atomic.Bool
+-		orphanPrivilegeMaintenanceState          orphanPrivilegeMaintenanceState
+-		orphanPrivilegeMaintenanceStart          func() string
+-		informationSchemaViewsMaintenanceRunning atomic.Bool
+-		informationSchemaViewsMaintenanceState   informationSchemaViewsMaintenanceState
+-		kek                                      string
++		upgradeTenantBatch         int
++		catalogObjectLimit         uint64
++		decisionFileService        fileservice.FileService
++		checkUpgradeDuration       time.Duration
++		checkUpgradeTenantDuration time.Duration
++		upgradeTenantTasks         int
++		finalVersionCompleted      atomic.Bool
++		failure                    atomic.Pointer[upgradeFailure]
++		kek                        string
+ 	}
+ }
+ 
+@@ -183,7 +173,6 @@ func NewService(
+ 		stopper: stopper.NewStopper("upgrade", stopper.WithLogger(getLogger(sid).RawLogger())),
+ 	}
+ 	s.mu.tenants = make(map[int32]bool)
+-	s.upgrade.orphanPrivilegeMaintenanceState.restartSeed = newOrphanPrivilegeMaintenanceRestartSeed()
+ 	s.initUpgrade()
+ 
+ 	for _, opt := range opts {
+@@ -495,6 +484,10 @@ func InitSystemViews(ctx context.Context, exec executor.SQLExecutor) error {
+ 			if err := entry.UpgradeAfterProtocolCheck(txn, catalog.System_Account); err != nil {
+ 				return err
+ 			}
++			views := versions.InformationSchemaViewsUpgradeEntry()
++			if err := views.UpgradeAfterProtocolCheck(txn, catalog.System_Account); err != nil {
++				return err
++			}
+ 
+ 			// Same-version refresh rail for PARTITIONS: a cluster already at
+ 			// the current version keeps its persisted definition until this
+@@ -548,7 +541,20 @@ func SystemViewsExist(ctx context.Context, exec executor.SQLExecutor) (bool, err
+ 	err := exec.ExecTxn(ctx, func(txn executor.TxnExecutor) error {
+ 		var err error
+ 		complete, err = motrace.SchemaViewsExistWithTxn(ctx, txn)
+-		return err
++		if err != nil || !complete {
++			return err
++		}
++		for _, entry := range []versions.UpgradeEntry{
++			versions.InformationSchemaTablesUpgradeEntry(),
++			versions.InformationSchemaViewsUpgradeEntry(),
++			versions.InformationSchemaPartitionsUpgradeEntry(),
++		} {
++			complete, err = entry.CheckFunc(txn, catalog.System_Account)
++			if err != nil || !complete {
++				return err
++			}
++		}
++		return nil
+ 	}, executor.Options{}.WithAccountID(catalog.System_Account))
+ 	return complete, err
+ }
+```
+
+**File**: `pkg/bootstrap/service_information_schema_views_maintenance.go` (removed, +0/-300)
+```diff
+@@ -1,300 +0,0 @@
+-// Copyright 2026 Matrix Origin
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package bootstrap
+-
+-import (
+-	"context"
+-	"errors"
+-	"fmt"
+-	"time"
+-
+-	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
+-	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+-	"github.com/matrixorigin/matrixone/pkg/catalog"
+-	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+-	"github.com/matrixorigin/matrixone/pkg/container/vector"
+-	"github.com/matrixorigin/matrixone/pkg/defines"
+-	"github.com/matrixorigin/matrixone/pkg/util/executor"
+-	"github.com/matrixorigin/matrixone/pkg/util/sysview"
+-)
+-
+-const informationSchemaViewsMaintenancePageSize = 32
+-
+-// informationSchemaPartitionsMaintenanceEntry keeps the PARTITIONS
+-// reconciliation on the same bounded page, cursor and transaction as VIEWS.
+-// The indirection only exists so the pre-existing VIEWS scenario tests can
+-// pin an already-current PARTITIONS entry and keep exercising exactly their
+-// original subjects; production always reconciles the live PARTITIONS
+-// definition against sysview's current DDL.
+-var informationSchemaPartitionsMaintenanceEntry = versions.InformationSchemaPartitionsUpgradeEntry
+-
+-var errInformationSchemaViewsProtocolUnavailable = moerr.NewNotSupportedNoCtx(
+-	"information schema views maintenance protocol is unavailable")
+-
+-// informationSchemaViewsMaintenanceState is process-local progress. The
+-// persisted VIEWS definition is the durable pending-work marker, so a fresh
+-// process can start at zero and a failed transaction can safely retry the same
+-// page without losing work.
+-type informationSchemaViewsMaintenanceState struct {
+-	accountCursor int32
+-}
+-
+-// maintainInformationSchemaViews repairs the system VIEWS and PARTITIONS
+-// definitions for every account, including tenants already at v4.0.6, v4.0.7,
+-// or the final version. It processes one bounded page per invocation after the
+-// v126 gate; the standalone repair does not alter any historical handler
+-// identity, and the page cursor publishes only when every definition staged
+-// on that page committed together.
+-func (s *service) maintainInformationSchemaViews(ctx context.Context) error {
+-	if !s.upgrade.informationSchemaViewsMaintenanceRunning.CompareAndSwap(false, true) {
+-		return nil
+-	}
+-	defer s.upgrade.informationSchemaViewsMaintenanceRunning.Store(false)
+-
+-	current := s.upgrade.informationSchemaViewsMaintenanceState
+-	next := current
+-	options := executor.Options{}.
+-		WithDatabase(catalog.MO_CATALOG).
+-		WithAccountID(catalog.System_Account).
+-		WithMinCommittedTS(s.now()).
+-		WithWaitCommittedLogApplied().
+-		WithTimeZone(time.Local)
+-
+-	err := s.exec.ExecTxn(ctx, func(txn executor.TxnExecutor) error {
+-		txn.Use(catalog.MO_CATALOG)
+-
+-		// Do not even enumerate tenants until the writer protocol is known to
+-		// be available everywhere. A NotSupported result is a normal rolling-
+-		// upgrade retry; actual catalog or transaction errors remain visible.
+-		if ready, err := informationSchemaViewsProtocolReady(txn); err != nil {
+-			return err
+-		} else if !ready {
+-			return nil
+-		}
+-
+-		accountIDs, err := loadInformationSchemaViewsMaintenanceAccounts(
+-			txn, current.accountCursor)
+-		if err != nil {
+-			return err
+-		}
+-		if len(accountIDs) == 0 {
+-			// Account IDs are monotonic. Starting the next pass at zero makes
+-			// late-created accounts and a restarted process discoverable.
+-			next = current
+-			next.accountCursor = 0
+-			return nil
+-		}
+-
+-		candidateCursor := nextInformationSchemaViewsMaintenanceCursor(accountIDs[len(accountIDs)-1])
+-		partitionsEntry := informationSchemaPartitionsMaintenanceEntry()
+-		for _, accountID := range accountIDs {
+-			exists, viewDefinition, err := v4_0_7.CheckInformationSchemaViewsDefinition(txn, uint32(accountID))
+-			if err != nil {
+-				if informationSchemaViewsAccountGone(accountID, err) {
+-					// DROP ACCOUNT removes the account-local mo_user and
+-					// information_schema objects while the system-account page
+-					// is being scanned. The account is no longer a valid repair
+-					// target; keep the page transactional and let the next pass
+-					// discover any surviving accounts.
+-					continue
+-				}
+-				return err
+-			}
+-			viewsCurrent := exists && sysview.InformationSchemaViewDefinitionMatches(
+-				viewDefinition, sysview.InformationSchemaViewsDDL)
+-
+-			// The same ready account can carry a current VIEWS definition next
+-			// to a stale PARTITIO
+```
+
+**File**: `pkg/bootstrap/service_information_schema_views_maintenance_test.go` (removed, +0/-1047)
+```diff
+@@ -1,1047 +0,0 @@
+-// Copyright 2026 Matrix Origin
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package bootstrap
+-
+-import (
+-	"context"
+-	"errors"
+-	"fmt"
+-	"strings"
+-	"sync"
+-	"sync/atomic"
+-	"testing"
+-	"time"
+-
+-	"github.com/golang/mock/gomock"
+-	"github.com/stretchr/testify/require"
+-
+-	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
+-	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+-	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+-	"github.com/matrixorigin/matrixone/pkg/container/types"
+-	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
+-	"github.com/matrixorigin/matrixone/pkg/pb/txn"
+-	"github.com/matrixorigin/matrixone/pkg/txn/client"
+-	"github.com/matrixorigin/matrixone/pkg/txn/clock"
+-	"github.com/matrixorigin/matrixone/pkg/util/executor"
+-	"github.com/matrixorigin/matrixone/pkg/util/sysview"
+-)
+-
+-func TestMaintainInformationSchemaViewsRetriesFailedReplacement(t *testing.T) {
+-	const accountID = int32(10)
+-	viewDefinition := sysview.InformationSchemaViewsLegacyDDL
+-	failReplacement := true
+-	var successfulReplacements int
+-	var executed []string
+-	var accountLookups int
+-
+-	oldCheck := versions.CheckViewDefinition
+-	versions.CheckViewDefinition = func(
+-		_ executor.TxnExecutor,
+-		id uint32,
+-		schema string,
+-		viewName string,
+-	) (bool, string, error) {
+-		require.Equal(t, uint32(accountID), id)
+-		require.Equal(t, sysview.InformationDBConst, schema)
+-		require.Contains(t, []string{"VIEWS", "views"}, viewName)
+-		if viewName == "VIEWS" {
+-			return false, "", nil
+-		}
+-		return true, viewDefinition, nil
+-	}
+-	t.Cleanup(func() { versions.CheckViewDefinition = oldCheck })
+-	// Keep this scenario about VIEWS: pin an already-current PARTITIONS
+-	// entry so the shared page does not run PARTITIONS reconciliation here.
+-	t.Cleanup(func() {
+-		informationSchemaPartitionsMaintenanceEntry = versions.InformationSchemaPartitionsUpgradeEntry
+-	})
+-	informationSchemaPartitionsMaintenanceEntry = currentPartitionsMaintenanceEntryForScenario
+-
+-	service := newInformationSchemaViewsMaintenanceTestService(t, func(sql string) (executor.Result, error) {
+-		switch {
+-		case sql == "SELECT mo_ctl('cn', 'GetProtocolVersion', '')":
+-			return newBootstrapStringResult(`{"method":"GETPROTOCOLVERSION","result":"cn-a:126"}`), nil
+-		case strings.HasPrefix(sql, "select account_id from mo_catalog.mo_account"):
+-			accountLookups++
+-			require.Contains(t, sql, "limit 32")
+-			if accountLookups == 1 || accountLookups == 2 || accountLookups == 4 {
+-				require.Contains(t, sql, "account_id >= 0")
+-				return buildInformationSchemaViewsMaintenanceAccountRows(accountID), nil
+-			}
+-			require.Equal(t, 3, accountLookups)
+-			require.Contains(t, sql, "account_id >= 11")
+-			return executor.Result{}, nil
+-		case sql == strings.Replace(sysview.InformationSchemaViewsDDL, "CREATE VIEW ", "CREATE OR REPLACE VIEW ", 1):
+-			executed = append(executed, sql)
+-			if failReplacement {
+-				failReplacement = false
+-				return executor.Result{}, errors.New("replace VIEWS failed")
+-			}
+-			viewDefinition = sysview.InformationSchemaViewsDDL
+-			successfulReplacements++
+-			return executor.Result{}, nil
+-		default:
+-			return executor.Result{}, fmt.Errorf("unexpected sql: %s", sql)
+-		}
+-	})
+-
+-	err := service.maintainInformationSchemaViews(t.Context())
+-	require.ErrorContains(t, err, "replace VIEWS failed")
+-	require.Equal(t, sysview.InformationSchemaViewsLegacyDDL, viewDefinition,
+-		"a failed transaction must leave the legacy definition as the retry marker")
+-	require.Zero(t, service.upgrade.informationSchemaViewsMaintenanceState.accountCursor,
+-		"a failed replacement must not publish the page cursor")
+-
+-	require.NoError(t, service.maintainInformationSchemaViews(t.Context()))
+-	require.Equal(t, sysview.InformationSchemaViewsDDL, viewDefinition)
+-	require.Equal(t, int32(accountID+1),
+-		service.upgrade.informationSchemaViewsMaintenanceState.accountCursor)
+-	require.Equal(t, 1, successfulReplacements)
+-	require.Equal(t, 2, len(executed), "the failed attempt and the committed retry each issue one replacement")
+-
+-	// The persisted definition is now the idempotence marker. A subsequent
+-	// pass first observes an empty page, then a wrapped scan rediscovers the
+-	// account and must still not replace it again.
+-	require.NoError(t, service.maintainInformationSchemaViews(t.Context()))
+-	require.Zero(t, service.upgrade.informationSchemaViewsMaintenanceState.accountCursor)
+-	require.NoE
+```
+
+**File**: `pkg/bootstrap/service_orphan_privilege_maintenance.go` (removed, +0/-368)
+```diff
+@@ -1,368 +0,0 @@
+-// Copyright 2026 Matrix Origin
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-package bootstrap
+-
+-import (
+-	"context"
+-	cryptorand "crypto/rand"
+-	"encoding/binary"
+-	"encoding/hex"
+-	"fmt"
+-	"math"
+-	"time"
+-
+-	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_6"
+-	"github.com/matrixorigin/matrixone/pkg/catalog"
+-	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+-	"github.com/matrixorigin/matrixone/pkg/container/types"
+-	"github.com/matrixorigin/matrixone/pkg/container/vector"
+-	"github.com/matrixorigin/matrixone/pkg/util/executor"
+-	"go.uber.org/zap"
+-)
+-
+-const orphanPrivilegeMaintenanceLongRunningPageInterval = 64
+-
+-// orphanPrivilegeMaintenanceState is intentionally process-local. An account
+-// round freezes account IDs at roundHighWater and walks the ring from roundStart
+-// back to (but not including) roundStart, so account creation cannot extend a
+-// live round. Every selected tenant independently walks a high-water-bounded
+-// physical-key ring across page snapshots. Fresh processes choose independent
+-// account and physical-key starts to avoid a fixed restart bias; they do not
+-// provide a finite restart-count or sustained-write completion guarantee.
+-type orphanPrivilegeMaintenanceState struct {
+-	restartSeed uint64
+-	round       uint64
+-
+-	roundInitialized bool
+-	roundHighWater   int32
+-	roundStart       int32
+-	accountCursor    int32
+-	wrapped          bool
+-
+-	tenantSelected       bool
+-	tenantID             int32
+-	tenantCommittedPages uint64
+-	tenantScan           v4_0_6.OrphanPrivilegeScan
+-}
+-
+-func newOrphanPrivilegeMaintenanceRestartSeed() uint64 {
+-	var value [8]byte
+-	if _, err := cryptorand.Read(value[:]); err == nil {
+-		return binary.LittleEndian.Uint64(value[:])
+-	}
+-	// Entropy failure must not restore the old deterministic "always start at
+-	// zero" behavior. Wall time is only a degraded seed, not correctness state.
+-	return uint64(time.Now().UnixNano())
+-}
+-
+-func newOrphanPrivilegeMaintenancePhysicalStart() string {
+-	// The current mo_role_privs composite key has an exact serial() upper bound
+-	// of 956 bytes: int32(6) + varchar(16)(131) + uint64(10) + int32(6) +
+-	// varchar(100)(803). Half of starts use a valid, magnitude-distributed key
+-	// shape so ordinary small role/object IDs are reached efficiently. The raw
+-	// half chooses every length in [0,956] and every byte with non-zero
+-	// probability, giving every possible physical key a non-zero,
+-	// table-size-independent chance to be the next ring threshold after restart.
+-	var seedBytes [8]byte
+-	seed := uint64(time.Now().UnixNano())
+-	if _, err := cryptorand.Read(seedBytes[:]); err == nil {
+-		seed = binary.LittleEndian.Uint64(seedBytes[:])
+-	}
+-	if seed&1 == 0 {
+-		return structuredOrphanPrivilegeMaintenancePhysicalStart(seed)
+-	}
+-	length := int(seed % (v4_0_6.OrphanPrivilegePhysicalKeyMaxSize + 1))
+-	value := make([]byte, length)
+-	if _, err := cryptorand.Read(value); err != nil {
+-		// Keep the degraded path non-constant if the host entropy source fails.
+-		// It remains bounded; uninterrupted scans still deterministically close
+-		// their physical-key ring.
+-		for i := 0; i < len(value); i += 8 {
+-			mixed := nextOrphanPrivilegeMaintenanceRandom(&seed)
+-			for j := 0; j < 8 && i+j < len(value); j++ {
+-				value[i+j] = byte(mixed >> (8 * j))
+-			}
+-		}
+-	}
+-	return hex.EncodeToString(value)
+-}
+-
+-func structuredOrphanPrivilegeMaintenancePhysicalStart(seed uint64) string {
+-	objectTypes := [...]string{"account", "database", "table", "view"}
+-	privilegeLevels := [...]string{"", "*", "*.*", "d", "d.*", "d.t", "t"}
+-	roleID := int32(orphanPrivilegeMaintenanceMagnitude(&seed, 31))
+-	objectType := objectTypes[nextOrphanPrivilegeMaintenanceRandom(&seed)%uint64(len(objectTypes))]
+-	objectID := orphanPrivilegeMaintenanceMagnitude(&seed, 64)
+-	privilegeID := int32(orphanPrivilegeMaintenanceMagnitude(&seed, 31))
+-	privilegeLevel := privilegeLevels[nextOrphanPrivilegeMaintenanceRandom(&seed)%uint64(len(privilegeLevels))]
+-
+-	var buffer [v4_0_6.OrphanPrivilegePhysicalKeyMaxSize]byte
+-	packer := types.NewPackerWithFixedBuffer(buffer[:])
+-	packer.EncodeInt32(roleID)
+-	packer.EncodeStringType([]byte(objectType))
+-	packer.EncodeUint64(objectID)
+-	packer.EncodeInt32(privilegeID)
+-	packer.EncodeStringType([]byte(privilegeLevel))
+-	if packer.Err() != nil {
+-		return ""
+-	}
+-	return hex.EncodeToString(packer.GetBuf())
+-}
+-
+-func orphanPrivilegeMaintenanceMagnitude(seed *uin
+```
+
+---
+
+### Incident Patch 2: `647eaf9d` (2026-11-06)
+**Commit Message**: fix: make INSERT IGNORE tolerate NOT NULL violations (#32299)
 
 ## What type of PR is this?
 
@@ -2380,320 +3262,174 @@ Observed empirical fixes and code patches:
 - [ ] Improvement
 - [ ] Documentation
 - [ ] Feature
-- [x] Test and CI
+- [ ] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31860
-Fixes #31894
+Related to #30906
 
 ## What this PR does / why we need it:
 
-Reject bare numeric DEFAULT values that exceed the destination
-CHAR/VARCHAR width in new DDL, and report bare numeric/string literal
-conversion failures in the invalid-value or out-of-range domain as
-ER_INVALID_DEFAULT (1067/42000). This covers CREATE TABLE, ADD, MODIFY,
-CHANGE and SET DEFAULT, including a single authored unary plus or minus.
-The width probe uses the real unbounded TEXT cast and constant fold, so
-the converted value is measured before capacity truncation; exact-fit
-CHAR(255) and VARCHAR(65535) COLLATE binary remain admissible while
-their overflowing controls are rejected.
+`INSERT IGNORE` already downgraded duplicate-key, foreign-key and CHECK
+failures to warnings, but a NULL supplied for a NOT NULL column aborted
+the whole statement, so a multi-row batch inserted nothing where MySQL
+keeps the good rows and replaces the offending cells with the column
+type's implicit default, publishing warning 1048 per adjusted cell:
 
-Preserve the existing owners for parenthesized expression defaults,
-hex/bit literals, persisted defaults and unrelated context, internal or
-resource errors. Bare signed decimals bind in the numeric domain and
-retain their actual sign and bare origin through subsequent
-INSERT-default binding, A
-
-**File**: `pkg/frontend/back_exec.go` (modified, +4/-4)
-```diff
-@@ -443,9 +443,9 @@ func doComQueryInBack(
- 	proc.Base.Lim.MaxMsgSize = pu.SV.MaxMessageSize
- 	proc.Base.Lim.PartitionRows = pu.SV.ProcessLimitationPartitionRows
- 	proc.Base.SessionInfo = process.SessionInfo{
--		User:          backSes.respr.GetStr(USERNAME),
-+		User:          backSes.GetResponser().GetStr(USERNAME),
- 		Host:          pu.SV.Host,
--		Database:      backSes.respr.GetStr(DBNAME),
-+		Database:      backSes.GetResponser().GetStr(DBNAME),
- 		Version:       makeServerVersion(pu, serverVersion.Load().(string)),
- 		TimeZone:      backSes.GetTimeZone(),
- 		StorageEngine: pu.StorageEngine,
-@@ -1236,7 +1236,7 @@ func (backSes *backSession) initFeSes(
- 	backSes.derivedStmt = false
- 	backSes.label = make(map[string]string)
- 	backSes.timeZone = ses.GetTimeZone()
--	backSes.respr = defResper
-+	backSes.setResponser(defResper)
- 	backSes.service = ses.GetService()
- 	if parent, ok := ses.(*backSession); ok {
- 		backSes.parentBackSession = parent
-@@ -1391,7 +1391,7 @@ func (backSes *backSession) getNextProcessId() string {
- 		temporary method:
- 		routineId + sqlCount
- 	*/
--	routineId := backSes.respr.GetU32(CONNID)
-+	routineId := backSes.GetResponser().GetU32(CONNID)
- 	// Optimize: use strconv instead of fmt.Sprintf
- 	var buf [24]byte
- 	b := strconv.AppendUint(buf[:0], uint64(routineId), 10)
+```
+mysql> insert ignore into ig(u,nn,c) values(2,null,1);
+ERROR 3819 (HY000): constraint violation: Column 'nn' cannot be null
 ```
 
-**File**: `pkg/frontend/internal_executor.go` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ func applyOverride(sess *Session, opts ie.SessionOverrideOptions) {
- 	}
- 
- 	if opts.Username != nil {
--		sess.respr.SetStr(USERNAME, *opts.Username)
-+		sess.GetResponser().SetStr(USERNAME, *opts.Username)
- 	}
- 
- 	if opts.IsInternal != nil {
-```
+Root cause: no value-adjustment stage existed between the constructed
+row image and the constraint consumers, so the NOT NULL gate in the
+insert path always raised the hard violation even under statement IGNORE
+(and the 3819 check-constraint class hid the NOT NULL origin). A second
+gap surfaced in review of this change: the planner's unique-index skip
+heuristic decided "this key is all-NULL" from pre-adju
 
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +2/-2)
+**File**: `pkg/sql/colexec/constraint_util.go` (modified, +303/-0)
 ```diff
-@@ -306,8 +306,8 @@ var RecordStatement = func(ctx context.Context, ses *Session, proc *process.Proc
- 	stm.RoleId = tenant.GetDefaultRoleID()
- 	//stm.RoleId = proc.GetSessionInfo().RoleId
- 	stm.User = tenant.GetUser()
--	stm.Host = ses.respr.GetStr(PEER)
--	stm.Database = ses.respr.GetStr(DBNAME)
-+	stm.Host = ses.GetResponser().GetStr(PEER)
-+	stm.Database = ses.GetResponser().GetStr(DBNAME)
- 	stm.StatementFingerprint = "" // fixme= (Reserved)
- 	stm.StatementTag = ""         // fixme= (Reserved)
- 	stm.SqlSourceType = sqlType
-```
-
-**File**: `pkg/frontend/session.go` (modified, +4/-4)
-```diff
-@@ -2288,7 +2288,7 @@ func (ses *Session) Close() {
- 	defer ses.mu.Unlock()
- 	ses.feSessionImpl.Close()
- 	ses.feSessionImpl.Clear()
--	ses.respr = nil
-+	ses.feSessionImpl.setResponser(nil)
- 	ses.mrs = nil
- 	ses.data = nil
- 	ses.ep = nil
-@@ -2756,7 +2756,7 @@ func (ses *Session) GetShareTxnBackgroundExec(ctx context.Context, newRawBatch b
- 		callback = fakeDataSetFetcher2
- 	}
+@@ -18,14 +18,18 @@ import (
+ 	"context"
+ 	"fmt"
  
--	be := ses.InitBackExec(txnOp, ses.respr.GetStr(DBNAME), callback)
-+	be := ses.InitBackExec(txnOp, ses.GetResponser().GetStr(DBNAME), callback)
- 	//the derived statement execute in a shared transaction in background session
- 	be.(*backExec).backSes.ReplaceDerivedStmt(true)
- 	return be
-@@ -3232,8 +3232,8 @@ func (ses *Session) getPrepareStmt(ctx context.Context, name string, allowInvali
- 		return prepareStmt, nil
- 	}
- 	var connID uint32
--	if ses.respr != nil {
--		connID = ses.respr.GetU32(CONNID)
-+	if r := ses.GetResponser(); r != nil {
-+		connID = r.GetU32(CONNID)
- 	}
- 	ses.Errorf(ctx, "prepared statement '%s' does not exist on connection %d", name, connID)
- 	return nil, moerr.NewInvalidStatef(ctx, "prepared statement '%s' does not exist", name)
-```
-
-**File**: `pkg/frontend/types.go` (modified, +20/-5)
-```diff
-@@ -1407,6 +1407,7 @@ type feSessionImpl struct {
- 	uuid         uuid.UUID
- 	debugStr     string
- 	respr        Responser
-+	resprMu      sync.RWMutex
- 	runSQLTokens []uint64
- 	//refreshed once
- 	staticTxnInfo string
-@@ -1484,8 +1485,10 @@ func (ses *feSessionImpl) currentRunSQLToken() uint64 {
- // Close releases all reference.
- // close txn handler also
- func (ses *feSessionImpl) Close() {
--	if ses.respr != nil && !ses.reserveConn {
--		ses.respr.Close()
-+	if !ses.reserveConn {
-+		if r := ses.GetResponser(); r != nil {
-+			r.Close()
-+		}
- 	}
- 	ses.Reset()
- }
-@@ -1539,16 +1542,16 @@ func (ses *feSessionImpl) Clear() {
- }
- 
- func (ses *feSessionImpl) SetDatabaseName(db string) {
--	ses.respr.SetStr(DBNAME, db)
-+	ses.GetResponser().SetStr(DBNAME, db)
- 	ses.txnCompileCtx.SetDatabase(db)
- }
- 
- func (ses *feSessionImpl) GetDatabaseName() string {
--	return ses.respr.GetStr(DBNAME)
-+	return ses.GetResponser().GetStr(DBNAME)
- }
- 
- func (ses *feSessionImpl) GetUserName() string {
--	return ses.respr.GetStr(USERNAME)
-+	return ses.GetResponser().GetStr(USERNAME)
- }
- 
- func (ses *feSessionImpl) SetMemPool(mp *mpool.MPool) {
-@@ -2189,12 +2192,24 @@ func (ses *feSessionImpl) GetUUIDString() string {
- }
- 
- func (ses *feSessionImpl) ReplaceResponser(resper Responser) Responser {
-+	ses.resprMu.Lock()
-+	defer ses.resprMu.Unlock()
- 	old := ses.respr
- 	ses.respr = resper
- 	return old
- }
- 
-+// setResponser is the single locked writer for the embedded Responser, used
-+// by teardown/copy paths that previously wrote ses.respr directly.
-+func (ses *feSessionImpl) setResponser(resper Responser) {
-+	ses.resprMu.Lock()
-+	defer ses.resprMu.Unlock()
-+	ses.respr = resper
-+}
++	"github.com/matrixorigin/matrixone/pkg/catalog"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
+ 	"github.com/matrixorigin/matrixone/pkg/container/nulls"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/process"
 +
- func (ses *feSessionImpl) GetResponser() Responser {
-+	ses.resprMu.RLock()
-+	defer ses.resprMu.RUnlock()
- 	return ses.respr
- }
- 
-```
-
-**File**: `pkg/sql/plan/build_util.go` (modified, +315/-1)
-```diff
-@@ -952,6 +952,24 @@ const (
- 	defaultExprForPersistedLegacyZero
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
  )
  
-+// buildDefaultExprWithColumnsObserved binds one default through the purpose's
-+// owning chain, and first discriminates the two producers of a persisted
-+// parenthesized signed plain-decimal origin into CHAR/VARCHAR: an older tree
-+// admitted the expression default and stored its historical fold (DEFAULT
-+// (-0.25) into VARCHAR(1) stores '0'; that expression owner keeps admitting
-+// it), while this tree authored the bare literal whose origin formatter
-+// parenthesizes the stored text ('-1.25' as '(-1.25)')). The stored value is
-+// the producer's witness: the historical expression binding is reproduced
-+// first, and only its inner conversion failure (bad value / out of range,
-+// raised at any stage of the chain, including constant folding) falls back
-+// to this tree's numeric-domain rebinding. When BOTH producers bind legally —
-+// a leading-zero raw text folds to its destination-truncated width with no
-+// error while this tree stored the normalized number — a first success
-+// cannot decide, so both witnesses are compared against the reader's real
-+// stored payload with the same expression equality the dump verifier uses,
-+// and the matching one wins; without a stored witness the reader keeps the
-+// historical order. A mismatched or tampered stored payload keeps failing
-+// the caller's comparison either way.
- func buildDefaultExprWithColumnsObserved(
- 	bindCtx context.Context,
- 	col *tree.ColumnTableDef,
-@@ -960,6 +978,80 @@ func buildDefaultExprWithColumnsObserved(
- 	columns []*ColDef,
- 	purpose defaultExprBindingPurpose,
- 	observe func(source, assigned *plan.Expr),
-+) (*plan.Default, error) {
-+	if purpose != defaultExprForDDL {
-+		var originExpr tree.Expr
-+		for _, attr := range col.Attributes {
-+			if attrDefault, ok := attr.(*tree.AttributeDefault); ok {
-+				originExpr = attrDefault.Expr
-+				break
-+			}
-+		}
-+		if _, isParenthesized := originExpr.(*tree.ParenExpr); isParenthesized &&
-+			bareSignedDecimalCharFamilyDefault(typ, unwrapParenExpr(originExpr)) {
-+			legacy, legacyErr := buildDefaultExprWithColumnsForceDomain(
-+				bindCtx, col, typ, proc, columns, purpose, observe, false)
-+			if legacyErr != nil {
-+				if moerr.IsMoErrCode(legacyErr, moerr.ErrInvalidArg) ||
-+					moerr.IsMoErrCode(legacyErr, moerr.ErrOutOfRange) {
-+					return buildDefaultExprWithColumnsForceDomain(
-+						bindCtx, col, typ, proc, columns, purpose, observe, true)
-+				}
-+				return nil, legacyErr
-+			}
-+			// Both legal producers of this shape bind without an error and
-+			// fold differently: the historical destination cast truncates a
-+			// leading-zero raw text to the column width and folds the
-+			// integer remainder ('(-000001.25)' into VARCHAR(5) folds '0'),
-+			// while this tree stores the normalized value ('-1.25'). Route
-+			// both witnesses through the real stored-expression comparison
-+			// and return the matching one; the caller re-verifies it.
-+			numeric, numericErr := buildDefaultExprWithColumnsForceDomain(
-+				bindCtx, col, typ, proc, columns, purpose, observe, true)
-+			if numericErr == nil && !sameTableDumpBoundExpression(legacy.Expr, numeric.Expr) {
-+				if stored := persistedStoredDefaultExpr(col, columns); stored != nil &&
-+					!sameTableDumpBoundExpression(legacy.Expr, stored) {
-+					return numeric, nil
-+				}
-+			}
-+			return legacy, nil
-+		}
-+	}
-+	return buildDefaultExprWithColumnsForceDomain(bindCtx, col, typ, proc, columns, purpose, observe, false)
+ func FilterRowIdForDel(proc *process.Process, retBat *batch.Batch, srcBat *batch.Batch,
+@@ -70,6 +74,305 @@ func BatchDataNotNullCheck(vecs []*vector.Vector, attrs []string, tableDef *plan
+ 	return nil
+ }
+ 
++// ColForbidsNull reports whether a table column enforces NOT NULL. Both plan
++// signals are honored: the explicit flag used by minimal external-insert
++// plans and the default-value descriptor the PreInsert check relies on.
++func ColForbidsNull(col *plan.ColDef) bool {
++	return col != nil && (col.NotNull || (col.Default != nil && !col.Default.NullAbility))
 +}
 +
-+// persistedStoredDefaultExpr returns the catalog-stored default expression
-+// of the named column for the persisted reading owners; exactly this payload
-+// is the witness that discriminates the two legal producers of a
-+// parenthesized signed-decimal origin.
-+func persistedStoredDefaultExpr(col *tree.ColumnTableDef, columns []*ColDef) *plan.Expr {
-+	if columns == nil {
-+		return nil
-+	}
-+	name := col.Name.ColNameOrigin()
-+	for _, column := range columns {
-+		if column != nil && column.Default != nil && column.Default.Expr != nil &&
-+			column.Name == name {
-+			return column.Default.Expr
-+		}
-+	}
-+	return nil
-+}
-+
-+// buildDefaultExprWithColumnsForceDomain is the single-chain binder behind
-+// buildDefaultExprWithColumnsObserved. With signedDecimalLiteralDomain the
-+// bare signed-decimal shape takes the numeric literal domain regardless of the
-+// parenthesized expression form; every other purpose keeps the chain that the
-+// existing owner verdicts already describe.
-+func buildDefaultExprWithColumnsForceDomain(
-+	bindCtx context.Context,
-+	col *tree.ColumnTableDef,
-+	typ plan.Type,
++// BatchDataNotNullFillForIgnore adapts one batch to the IGNORE statement rule
++// for NOT NULL columns: each NULL cell is replaced with the implicit default
++// of its column type and reported as one ER_BAD_NULL_ERROR warning, matching
++// the value adjustment MySQL applies for INSERT/UPDATE/LOAD with IGNORE. The
++// row itself is kept. vec indices whose vectors were modified are returned so
++// selector pipelines can mirror the adjustment into their un-shrunk output.
++// A constant NULL broadcast carries no backing storage, so it is replaced by
++// an equivalent constant of the implicit default instead of being written
++// in place.
++// A NOT NULL column whose type has no implicit default keeps the
++// constraint-violation error: storing NULL would trade the report for corruption.
++func BatchDataNotNullFillForIgnore(
++	vecs []*vector.Vector,
++	attrs []string,
++	cols []*plan.ColDef,
 +	proc *process.Process,
-+	columns []*ColDef,
-+	purpose defaultExprBindingPurpose,
-+	observe func(source, assigned *plan.Expr),
-+	signedDecimalLiteralDomain bool,
- ) (*plan.Default, error) {
- 	nullAbility := true
- 	var expr tree.Expr = nil
-@@ -1015,10 +1107,45 @@ func buildDefaultExprWithColumnsObserved(
- 	if isAttributedDecimalPlanType(typ) {
- 		binder.baseBinder.suppres
++) ([]int, error) {
++	var warnings process.WarningAccumulator
++	warnings.SetWarningRetentionForProcess(proc)
++	defer warnings.Reset()
++
++	var filled []int
++	for j := range vecs {
++		vec := vecs[j]
++		if vec == nil || j >= len(cols) || j >= len(attrs) || !ColForbidsNull(cols[j]) {
++			continue
++		}
++		attr := attrs[j]
++		if vec.IsConst() {
++			// A constant vector broadcasts its single physical slot, and a
++			// constant NULL owns no backing storage at all (NewConstNull
++			// allocates no data), so the in-place setters below would fail
++			// on it: LOAD legs project an omitted column's folded NULL
++			// default straight into this helper. Replace the broadcast with
++			// a constant carrying the implicit default - the sanctioned
++			// NewConstFixed shape - so every logical row keeps its row and
++			// one warning is published per adjusted row.
++			if !vec.IsNull(0) || vec.Length() <= 0 {
++				continue
++			}
++			rows := vec.Length()
++			fillVec, ok, err := constImplicitNotNullDefaultVec(vec, rows, proc.Mp())
++			if err != nil {
++				return nil, err
++			}
++			if !ok {
++				return nil, moerr.NewConstraintViolation(proc.Ctx,
++					fmt.Sprintf("Column '%s' cannot be null", attr))
++			}
++			for row := 0; row < rows; row++ {
++				warnings.Add(moerr.ER_BAD_NULL_ERROR,
++					fmt.Sprintf("Column '%s' cannot be null", attr))
++			}
++			vecs[j] = fillVec
++			filled = append(filled, j)
++			continue
++		}
++		slotCount := vec.Length()
++		adjusted := false
++		for slot := 0; slot < slotCount; slot++ {
++			if !vec.IsNull(uint64(slot)) {
++				continue
++			}
++			ok, err := setImplicitNotNullDefault(vec, slot, proc.Mp())
++			if err != nil {
++				return nil, err
++			}
++			if !ok {
++				return nil, moerr.NewConstraintViolation(proc.Ctx,
++					fmt.Sprintf("Column '%s' cannot be null", attr))
++			}
++			nulls.Del(vec.GetNulls(), uint64(slot))
++			adjusted = true
++			warnings.Add(moerr.ER_BAD_NULL_ERROR,
++				fmt.Sprintf("Column '%s' cannot be null", attr))
++		}
++		if adjusted {
++			filled = append(filled, j)
++		}
++	}
++	warnings.Flush(proc)
++	return filled, nil
++}
++
++// constImplicitNotNullDefaultVec builds the replacement for a constant NULL
++// broadcast: one physical slot carrying the implicit default of the column
++// type, broadcast over the original logical length. The value comes from the
++// shared per-type rule, so the broadcast fill and the in-place fill can never
++// diverge. It reports false when the type has no implicit default.
++func constImplicitNotNullDefaultVec(vec *vector.Vector, rows int, mp *mpool.MPool) (*vector.Vector, bool, error) {
++	dst := vector.NewVec(*vec.GetType())
++	if err := vector.AppendAny(dst, nil, true, mp); err != nil {
++		dst.Free(mp)
++		return nil, false, err
++	}
++	// The appended NULL slot is the cell the shared rule overwrites.
++	ok, err := setImplicitNotNullDefault(dst
 ```
 
-**File**: `pkg/sql/plan/literal_default_ddl_admission_test.go` (added, +683/-0)
+**File**: `pkg/sql/colexec/constraint_util_ignorefill_test.go` (added, +507/-0)
 ```diff
-@@ -0,0 +1,683 @@
+@@ -0,0 +1,507 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//     http://www.apache.org/licenses/LICENSE-2.0
++//      http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -2701,157 +3437,831 @@ INSERT-default binding, A
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package plan
++package colexec
 +
 +import (
-+	"context"
-+	"crypto/sha256"
-+	"encoding/json"
-+	"fmt"
-+	"os"
-+	"strings"
 +	"testing"
 +
-+	"github.com/gogo/protobuf/proto"
 +	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
 +	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
 +	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
 +	"github.com/matrixorigin/matrixone/pkg/testutil"
 +	"github.com/matrixorigin/matrixone/pkg/vm/process"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// parseDDLDefaultColumn parses a single-column CREATE TABLE declaration and
-+// returns its column definition. Callers own the parsed statement.
-+func parseDDLDefaultColumn(t testing.TB, decl string) *tree.ColumnTableDef {
-+	t.Helper()
-+	stmt, err := mysql.ParseOne(context.Background(), "create table t ("+decl+")", 1)
-+	require.NoError(t, err)
-+	createTable, ok := stmt.(*tree.CreateTable)
-+	require.True(t, ok)
-+	colDef, ok := createTable.Defs[0].(*tree.ColumnTableDef)
-+	require.True(t, ok)
-+	return colDef
++type notNullWarning struct {
++	code uint16
++	msg  string
 +}
 +
-+func buildDDLColumnDefault(t testing.TB, proc *process.Process, decl string) (*plan.Default, error) {
-+	t.Helper()
-+	colDef := parseDDLDefaultColumn(t, decl)
-+	typ, err := getTypeFromAst(context.Background(), colDef.Type)
-+	require.NoError(t, err)
-+	return buildDefaultExpr(proc.Ctx, colDef, typ, proc)
++type notNullWarningSession struct {
++	total    uint64
++	warnings []notNullWarning
 +}
 +
-+// #31860: a bare numeric literal DEFAULT whose converted value does not fit the
-+// destination CHAR/VARCHAR width must be rejected with ER_INVALID_DEFAULT, like
-+// an over-long string literal, instead of silently storing truncated text. The
-+// stored length is decided by the converted value, never by the source SQL text
-+// (signs, exponents and decimal scale make text length unrelated to the value).
-+func TestDDLNumericLiteralDefaultRejectsCharWidthOverflow(t *testing.T) {
-+	for _, mode := range []string{"STRICT_TRANS_TABLES", ""} {
-+		for _, tc := range []struct {
-+			name string
-+			decl string
-+			want string // folded stored default for admitted cases
-+			fail bool
-+		}{
-+			{name: "int wider than varchar", decl: "v varchar(3) default 12345", fail: true},
-+			{name: "int wider than char", decl: "v char(3) default 12345", fail: true},
-+			{name: "decimal wider than varchar", decl: "v varchar(3) default 1.25", fail: true},
-+			{name: "signed decimal wider than varchar", decl: "v varchar(3) default -1.25", fail: true},
-+			{name: "int one over boundary", decl: "v varchar(3) default 1234", fail: true},
-+			{name: "decimal scale keeps digits", decl: "v varchar(4) default 1.250", fail: true},
-+			{name: "int fits exactly", decl: "v varchar(3) default 123", want: "123"},
-+			{name: "decimal fits", decl: "v varchar(4) default 1.25", want: "1.25"},
-+			{name: "int fits char", decl: "v char(5) default 12345", want: "12345"},
-+			{name: "zero fits one char", decl: "v varchar(1) default 0", want: "0"},
-+			// #31860 P1: uint64 and scientific float64 literals bind raw
-+			// (baseBinder.bindNumVal returns uncast numeric), so the width probe
-+			// must measure the real destination conversion, not GetSval of a
-+			// numeric literal. Pairs cover overflow/exact-fit on both families.
-+			{name: "uint64 wider than varchar", decl: "v varchar(19) default 18446744073709551615", fail: true},
-+			{name: "uint64 fits varchar exactly", decl: "v varchar(20) default 18446744073709551615", want: "18446744073709551615"},
-+			{name: "uint64 wider than char", decl: "v char(19) default 18446744073709551615", fail: true},
-+			{name: "uint64 fits char exactly", decl: "v char(20) default 18446744073709551615", want: "18446744073709551615"},
-+			{name: "scientific wider than varchar", decl: "v varchar(5) default 1e5", fail: true},
-+			{name: "scientific fits varchar exactly", decl: "v varchar(6) default 1e5", want: "100000"},
-+			{name: "scientific wider than char", decl: "v char(5) default 1e5", fail: true},
-+			{name: "scientific fits char exactly", decl: "v char(6) default 1e5", want: "100000"},
-+			{name: "negative scientific wider than varchar", decl: "v varchar(6) default -1e5", fail: true},
-+			{name: "negative scientific fits varchar exactly", decl: "v varchar(7) default -1e5", want: "-100000"},
-+			{name: "sig
++func (*notNullWarningSession) GetTempTable(string, string) (string, bool) { return "", false }
++func (*notNullWarningSession) AddTempTable(string, string, string)        {}
++func (*notNullWarningSession) RemoveTempTable(string, string)             {}
++func (*notNullWarningSession) RemoveTempTableByRealName(string)           {}
++func (*notNullWarningSession) GetSqlModeNoAutoValueOnZero() (bool, bool)  { return false, false }
++func (s *notNullWarningSession) AppendWarningBatch(total uint64, codes []uint16, messages []string) {
++	s.total += total
++	for i := 0; i < len(codes) && i < len(messages); i++ {
++		s.warnings = append(s.warnings, notNullWarning{code: codes[i], msg: messages[i]})
++	}
++}
++
++func newIgnoreFillProc(t *testing.T) (*process.Process, *notNullWarningSession) {
++	proc := testutil.NewProc(t)
++	session := &notNullWarningSession{}
++	proc.Session = session
++	proc.SetStmtProfile(&process.StmtProfile{})
++	proc.GetStmtProfile().SetStatementRuntimeProfile("Insert", "DML", true)
++	return proc, session
++}
++
++func notNullCol(name string, oid types.T) *plan.ColDef {
++	return &plan.ColDef{
++		Name: name,
++		Typ:  plan.Type{Id: int32(oid)},
++		Default: &plan.Default{
++			NullAbility: false,
++		},
++	}
++}
++
++func nullableCol(name string, oid types.T) *plan.ColDef {
++	return &plan.ColDef{
++		Name: name,
++		Typ:  plan.Type{Id: int32(oid)},
++		Default: &plan.Default{
++			NullAbility: true,
++		},
++	}
++}
++
++// TestBatchDataNotNullFillForIgnoreAdjustsEveryFillableType pins the implicit
++// default written for each fillable column type. Every adjusted cell produces
++// one ER_BAD_NULL_ERROR warning carrying the MySQL message.
++func TestBatchDataNotNullFillForIgnoreAdjustsEveryFillableType(t *testing.T) {
++	proc, session := newIgnoreFillProc(t)
++	defer proc.Free()
++	mp := proc.Mp()
++
++	// Every type gets one kept value at slot 0 and one NULL cell at slot 1,
++	// so a single call proves both the implicit default and value retention.
++	// Uuid has no cheap non-null zero allocation here, so both of its cells
++	// are NULL and only the adjustment is asserted.
++	intVec := vector.NewVec(types.T_int32.ToType())
++	defer intVec.Free(mp)
++	require.NoError(t, vector.AppendFixed(intVec, int32(7), false, mp))
++	require.NoError(t, vector.AppendAny(intVec, nil, true, mp))
++
++	// fixedPair builds the (kept value, NULL cell) pair. The created vectors
++	// are registered for one test-scoped release; freeing inside the helper
++	// would release each vector as soon as it is built.
++	var pairVecs []*vector.Vector
++	fixedPair := func(vec *vector.Vector, value any) {
++		pairVecs = append(pairVecs, vec)
++		require.NoError(t, vector.AppendAny(vec, value, false, mp))
++		require.NoError(t, vector.AppendAny(vec, nil, true, mp))
++	}
++	t.Cleanup(func() {
++		for _, vec := range pairVecs {
++			vec.Free(mp)
++		}
++	})
++
++	floatVec := vector.NewVec(types.T_float64.ToType())
++	fixedPair(floatVec, float64(3))
++	// The low-precision float family stores +0 as all-zero bits, so the
++	// implicit default of each is the zero of its Go type; kept values stay
++	// exactly representable per format (bf16 2, float16 3, float8 4,
++	// float4 6 is the largest finite float4 magnitude).
++	bf16Vec := vector.NewVec(types.T_bf16.ToType())
++	fixedPair(bf16Vec, types.BF16FromFloat32(2))
++	f16Vec := vector.NewVec(types.T_float16.ToType())
++	fixedPair(f16Vec, types.Float16FromFloat32(3))
++	f8Vec := vector.NewVec(types.T_float8.ToType())
++	fixedPair(f8Vec, types.Float8FromFloat32(4))
++	f4Vec := vector.NewVec(types.T_float4.ToType())
++	fixedPair(f4Vec, types.Float4FromFloat32(6))
++	decVec := vector.NewVec(types.T_decimal64.ToType())
++	fixedPair(decVec, types.Decimal64(3))
++	boolVec := vector.NewVec(types.T_bool.ToType())
++	fixedPair(boolVec, true)
++	b
 ```
 
-**File**: `pkg/sql/plan/testdata/legacy_numeric_width_literal_default_ea184ad906.json` (added, +18/-0)
+**File**: `pkg/sql/colexec/insert/insert.go` (modified, +153/-0)
 ```diff
-@@ -0,0 +1,18 @@
-+{
-+  "base_commit": "ea184ad90624ae3dba8ced628ac019271a6c309c",
-+  "generator": "TestGenerateLegacyNumericWidthLiteralDefaultFixture",
-+  "go_version": "go1.27.1",
-+  "generated_at": "2026-11-02T05:04:14Z",
-+  "cases": {
-+    "wide_decimal": "create table t(v varchar(3) default 1.25)",
-+    "wide_int": "create table t(v varchar(3) default 12345)"
-+  },
-+  "stored_values": {
-+    "wide_decimal": "1.2",
-+    "wide_int": "123"
-+  },
-+  "fixtures": {
-+    "wide_decimal": "EgF0Ii4SAXYgASoGCD0gA0ADOhsKEQoICD0QASADQAMSBVoDMS4yEgQxLjI1GAGaAQF2IiIIARIQX19tb19mYWtlX3BrX2NvbBgBKgQIHBgBMAE6AGgBWiQiEF9fbW9fZmFrZV9wa19jb2wqEF9fbW9fZmFrZV9wa19jb2zKAVEKTwoMCgdyZWxraW5kEgFyCj8KDXJlbF9jcmVhdGVzcWwSLmNyZWF0ZSB0YWJsZSBgdGAgKGB2YCB2YXJjaGFyKDMpIGRlZmF1bHQgMS4yNSm4AgM=",
-+    "wide_int": "EgF0Ii8SAXYgASoGCD0gA0ADOhwKEQoICD0QASADQAMSBVoDMTIzEgUxMjM0NRgBmgEBdiIiCAESEF9fbW9fZmFrZV9wa19jb2wYASoECBwYATABOgBoAVokIhBfX21vX2Zha2VfcGtfY29sKhBfX21vX2Zha2VfcGtfY29sygFSClAKDAoHcmVsa2luZBIBcgpACg1yZWxfY3JlYXRlc3FsEi9jcmVhdGUgdGFibGUgYHRgIChgdmAgdmFyY2hhcigzKSBkZWZhdWx0IDEyMzQ1KbgCAw=="
-+  }
+@@ -18,6 +18,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	goruntime "runtime"
++	"slices"
+ 	"sync"
+ 	"sync/atomic"
+ 	"time"
+@@ -251,6 +252,43 @@ func (insert *Insert) Call(proc *process.Process) (vm.CallResult, error) {
+ // checkExternalNotNull rejects NULLs in NOT NULL columns. ctr.extCols is
+ // aligned with InsertCtx.Attrs (and therefore with the leading batch vectors).
+ func (insert *Insert) checkExternalNotNull(proc *process.Process, bat *batch.Batch) error {
++	if len(insert.ctr.extCols) == 0 {
++		return nil
++	}
++	if proc != nil && proc.GetStmtProfile() != nil &&
++		proc.GetStmtProfile().GetStatementIgnore() {
++		// A minimal external-insert plan runs no PreInsert, so this is the
++		// single NOT NULL gate. Under statement IGNORE apply the same rule
++		// PreInsert uses for normal tables: keep the row, set the implicit
++		// default of the column type, and warn per adjusted cell.
++		//
++		// The fill also replaces a constant NULL broadcast - the projected
++		// fold of an omitted column's NULL default - with a freshly
++		// allocated constant. That batch belongs to the child, which
++		// overwrites every slot on its next Call and frees only its own
++		// vectors, so this operator books the exchanged slots as its own
++		// allocations here and insert_external releases them once the write
++		// consumed the batch; otherwise each affected batch would leave one
++		// more replacement recorded in the pool with an owner nobody calls.
++		//
++		// The staged default of a dependent NOT NULL column
++		// (b DEFAULT (a)) lowers to a raw column reference while a stays
++		// nullable, and the child projection hands that reference the very
++		// vector holding a: one flat vector feeds two slots. The flat leg
++		// of the fill rewrites its destination in place, so it would also
++		// overwrite a's NULL cells with b's implicit default and drop
++		// a's null bitmap. PreInsert normally gives repeated vectors an
++		// independent copy, but this minimal external plan runs no
++		// PreInsert, so the detachment is booked here the same way.
++		if err := insert.detachAliasedFillDestinations(bat, proc); err != nil {
++			return err
++		}
++		before := insert.snapshotConstantNullSlots(bat)
++		_, err := colexec.BatchDataNotNullFillForIgnore(
++			bat.Vecs, insert.InsertCtx.Attrs, insert.ctr.extCols, proc)
++		insert.adoptExtFillReplacements(bat, before)
++		return err
++	}
+ 	for j, col := range insert.ctr.extCols {
+ 		if col == nil || j >= len(bat.Vecs) {
+ 			continue
+@@ -269,6 +307,113 @@ func (insert *Insert) checkExternalNotNull(proc *process.Process, bat *batch.Bat
+ 	return nil
+ }
+ 
++// snapshotConstantNullSlots keeps the batch's vector pointers while any slot
++// holds the one shape the fill exchanges for a fresh allocation - a constant
++// NULL broadcast of a NOT NULL column - and returns nil otherwise, so
++// ordinary batches take no snapshot at all. A constant NULL owns no backing
++// storage (NewConstNull allocates none), so the absorbed slot below is
++// guaranteed to be a child-owned broadcast the fill cannot free in place.
++func (insert *Insert) snapshotConstantNullSlots(bat *batch.Batch) []*vector.Vector {
++	for j, col := range insert.ctr.extCols {
++		if col == nil || j >= len(bat.Vecs) {
++			continue
++		}
++		vec := bat.Vecs[j]
++		if vec == nil || !vec.IsConst() || vec.Length() <= 0 || !vec.IsNull(0) {
++			continue
++		}
++		if !colexec.ColForbidsNull(col) {
++			continue
++		}
++		return slices.Clone(bat.Vecs)
++	}
++	return nil
 +}
-\ No newline at end of file
++
++// detachAliasedFillDestinations gives every fill destination whose flat
++// vector also occupies another slot independent storage before the IGNORE
++// fill runs. The in-place leg of the fill overwrites NULL cells and clears
++// the null bitmap of the vector holding them, so a shared vector would let
++// b's adjustment also set a's cell to the implicit default and clear a's
++// live NULL - the writer would emit a value where the row supplied NULL.
++// Only a vector that actually holds a NULL can be rewritten, so vectors
++// without one keep the single in-place fill. Every detachment is booked with
++// the same ownership the constant replacement uses: releaseExtFillOwned
++// hands the borrowed slot back to the child and frees the copy on each path
++// out of insert_external.
++func (insert *Insert) detachAliasedFillDestinations(bat *batch.Batch, proc *process.Process) error {
++	hasDestination := false
++	for _, col := range insert.ctr.extCols {
++		if colexec.ColForbidsNull(col) {
++			hasDestination = true
++			break
++		}
++	}
++	if !hasDestination {
++		return nil
++	}
++	shared := make(map[*vector.Vector]int, len(bat.Vecs))
++	for _, v := range bat.Vecs {
++		if v != nil && !v.IsConst() && nulls.Any(v.GetNulls()) {
++			shared[v]++
++		}
++	}
++	for j, v := range bat.Vecs {
++		if shared[v] < 2 || j >= len(insert.ctr.extCols) {
++			continue
++		}
++		if !colexec.ColForbidsNull(insert.ctr.extCols[j]) {
++			continue
++		}
++		detached := vector.NewVec(*v.GetType())
++		if err := detached.UnionBatch(v, 0, v.Length(), nil, proc
+```
+
+**File**: `pkg/sql/colexec/insert/insert_extwrite_test.go` (modified, +600/-0)
+```diff
+@@ -19,13 +19,15 @@ import (
+ 	"errors"
+ 	"testing"
+ 
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/container/batch"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/perfcounter"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec/projection"
+ 	"github.com/matrixorigin/matrixone/pkg/testutil"
+ 	"github.com/matrixorigin/matrixone/pkg/util/resource"
+ 	"github.com/matrixorigin/matrixone/pkg/vm"
+@@ -42,10 +44,17 @@ type mockExtWriter struct {
+ 	failure    error
+ 	writeBytes int64
+ 	closeBytes int64
++	// onWrite, when set, observes each batch inside its synchronous
++	// WriteBatch window - exactly the time the external IGNORE fill's
++	// per-batch adaptations are installed for.
++	onWrite func(*batch.Batch)
+ }
+ 
+ func (m *mockExtWriter) WriteBatch(ctx context.Context, bat *batch.Batch, analyzer process.Analyzer) error {
+ 	m.writes++
++	if m.onWrite != nil {
++		m.onWrite(bat)
++	}
+ 	err := process.MeasureFilesystemWaitErr(analyzer, func() error {
+ 		if m.writeBytes > 0 {
+ 			perfcounter.Update(ctx, func(counter *perfcounter.CounterSet) {
+@@ -158,6 +167,112 @@ func TestCheckExternalNotNull(t *testing.T) {
+ 	require.NoError(t, ins3.checkExternalNotNull(proc, bat5))
+ }
+ 
++// extIgnoreWarningSession collects flushed warning batches for the IGNORE leg.
++type extIgnoreWarningSession struct {
++	total    uint64
++	codes    []uint16
++	messages []string
++}
++
++func (*extIgnoreWarningSession) GetTempTable(string, string) (string, bool) { return "", false }
++func (*extIgnoreWarningSession) AddTempTable(string, string, string)        {}
++func (*extIgnoreWarningSession) RemoveTempTable(string, string)             {}
++func (*extIgnoreWarningSession) RemoveTempTableByRealName(string)           {}
++func (*extIgnoreWarningSession) GetSqlModeNoAutoValueOnZero() (bool, bool) {
++	return false, false
++}
++
++func (s *extIgnoreWarningSession) AppendWarningBatch(total uint64, codes []uint16, messages []string) {
++	s.total += total
++	for i := 0; i < len(codes) && i < len(messages); i++ {
++		s.codes = append(s.codes, codes[i])
++		s.messages = append(s.messages, messages[i])
++	}
++}
++
++// TestCheckExternalNotNullIgnoreAdjustsInsteadOfRejecting pins the writable
++// external-table gate: under statement IGNORE the same NULL cell that strict
++// mode rejects is adjusted to the implicit default with one warning and the
++// row is kept.
++func TestCheckExternalNotNullIgnoreAdjustsInsteadOfRejecting(t *testing.T) {
++	proc := testutil.NewProc(t)
++	session := &extIgnoreWarningSession{}
++	proc.Session = session
++	proc.SetStmtProfile(&process.StmtProfile{})
++	proc.GetStmtProfile().SetStatementRuntimeProfile("Insert", "DML", true)
++	defer proc.Free()
++	mp := mpool.MustNewZero()
++
++	ins := NewArgument()
++	ins.ToExternal = true
++	ins.InsertCtx = &InsertCtx{Attrs: []string{"a"}}
++	ins.ctr.extCols = []*plan.ColDef{notNullCol("a")}
++	defer ins.Release()
++
++	vec := vector.NewVec(types.T_int64.ToType())
++	require.NoError(t, vector.AppendFixed[int64](vec, 7, false, mp))
++	require.NoError(t, vector.AppendFixed[int64](vec, 0, true, mp))
++	bat := batch.New([]string{"a"})
++	bat.Vecs[0] = vec
++	bat.SetRowCount(2)
++	defer bat.Clean(mp)
++
++	require.NoError(t, ins.checkExternalNotNull(proc, bat))
++	require.Equal(t, int64(7), vector.GetFixedAtNoTypeCheck[int64](vec, 0))
++	require.False(t, vec.GetNulls().Contains(1))
++	require.Equal(t, int64(0), vector.GetFixedAtNoTypeCheck[int64](vec, 1),
++		"the NULL cell was adjusted to the implicit default")
++	require.Equal(t, uint64(1), session.total)
++	require.Equal(t, []uint16{moerr.ER_BAD_NULL_ERROR}, session.codes)
++	require.Equal(t, []string{"Column 'a' cannot be null"}, session.messages)
++}
++
++// TestCheckExternalNotNullIgnoreFillsConstNullVector extends the strict
++// const-null red leg with IGNORE coverage, mirroring the LOAD fact of the
++// review: a writable external-table load omits a NOT NULL column whose folded
++// default is a constant NULL (e.g. DEFAULT (abs(null))). The projection
++// delivers a NewConstNull broadcast with no backing storage; under statement
++// IGNORE the gate must still fill every logical row of the implicit default
++// with one warning per row instead of failing the load on the mutation.
++func TestCheckExternalNotNullIgnoreFillsConstNullVector(t *testing.T) {
++	proc := testutil.NewProc(t)
++	session := &extIgnoreWarningSession{}
++	proc.Session = session
++	proc.SetStmtProfile(&process.StmtProfile{})
++	proc.GetStmtProfile().SetStatementRuntimeProfile("Insert", "DML", true)
++	defer proc.Free()
++	mp := mpool.MustNewZero()
++
++	ins := NewArgument()
++	ins.ToExternal = true
++	ins.InsertCtx = &InsertCtx{Attrs: []string{"a"}}
++	ins.ctr.extCols = []*plan.ColDef{notNullCol("a")}
++	defer ins.Release()
++
+
+```
+
+**File**: `pkg/sql/colexec/insert/types.go` (modified, +25/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/common/reuse"
+ 	"github.com/matrixorigin/matrixone/pkg/common/rscthrottler"
+ 	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/objectio/ioutil"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/perfcounter"
+@@ -56,6 +57,30 @@ type container struct {
+ 	// extCols are the ColDefs aligned with InsertCtx.Attrs, for the external
+ 	// path's NOT NULL check.
+ 	extCols []*plan.ColDef
++	// extFillOwned holds the operator-owned vectors the external IGNORE fill
++	// booked for the child's batch during the current insert_external Call,
++	// each paired with the child-owned vector it displaced: the fresh
++	// constant a constant NULL broadcast was replaced with, and the detached
++	// copy an aliased flat fill destination got before its in-place fill.
++	// The external path writes the child's batch in place, but the child - a
++	// projection in the minimal external plan - reuses its batch and
++	// overwrites every slot on its next Call, freeing only its own vectors,
++	// so a replacement nobody owns would stay recorded in the mpool's pointer
++	// registry forever. The operator is that cleanup owner: insert_external
++	// drains the list on every path out of the Call (fill rejection, write
++	// failure, success and a panicking unwind alike), so no entry survives
++	// its batch and Reset/Free never carry one.
++	extFillOwned []extFillReplacement
++}
++
++// extFillReplacement pairs one operator-owned IGNORE-fill vector this
++// operator installs into the child's borrowed batch with the child-owned
++// vector that occupied the slot, so the slot can be returned and the
++// replacement's storage released once the batch was consumed.
++type extFillReplacement struct {
++	slot int
++	orig *vector.Vector
++	fill *vector.Vector
+ }
+ 
+ type Insert struct {
+```
+
+**File**: `pkg/sql/colexec/multi_update/insert.go` (modified, +19/-7)
+```diff
+@@ -64,11 +64,17 @@ func (update *MultiUpdate) insert_main_table(
+ 	}
+ 
+ 	// preinsert: check not null column
+-	for insertIdx, inputIdx := range updateCtx.InsertCols {
+-		col := updateCtx.TableDef.Cols[insertIdx]
+-		if col.Default != nil && !col.Default.NullAbility && !strings.HasPrefix(col.Name, catalog.PrefixCBColName) {
+-			if inputBatch.Vecs[inputIdx].HasNull() {
+-				return moerr.NewConstraintViolation(proc.Ctx, fmt.Sprintf("Column '%s' cannot be null", col.Name))
++	filled, _, fillErr := fillMainInsertNotNullForIgnore(proc, updateCtx, inputBatch, false, update.insertNotNullFillOwned())
++	if fillErr != nil {
++		return fillErr
++	}
++	if !filled {
++		for insertIdx, inputIdx := range updateCtx.InsertCols {
++			col := updateCtx.TableDef.Cols[insertIdx]
++			if col.Default != nil && !col.Default.NullAbility && !strings.HasPrefix(col.Name, catalog.PrefixCBColName) {
++				if inputBatch.Vecs[inputIdx].HasNull() {
++					return moerr.NewConstraintViolation(proc.Ctx, fmt.Sprintf("Column '%s' cannot be null", col.Name))
++				}
+ 			}
+ 		}
+ 	}
+@@ -135,8 +141,14 @@ func (update *MultiUpdate) check_null_and_insert_main_table(
+ 		return nil
+ 	}
+ 	insertBatch.SetRowCount(newRowCount)
+-	if err = checkMainTableNotNull(proc, updateCtx, insertBatch); err != nil {
+-		return err
++	filled, _, fillErr := fillMainInsertNotNullForIgnore(proc, updateCtx, insertBatch, true, update.insertNotNullFillOwned())
++	if fillErr != nil {
++		return fillErr
++	}
++	if !filled {
++		if err = checkMainTableNotNull(proc, updateCtx, insertBatch); err != nil {
++			return err
++		}
+ 	}
+ 	if err = checkZeroTemporalInStrictMode(update.RejectZeroTemporal, proc, insertBatch); err != nil {
+ 		return err
+```
+
+**File**: `pkg/sql/colexec/multi_update/insert_ignore_fill.go` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++// Copyright 2026 MatrixOne
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package multi_update
++
++import (
++	"strings"
++
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++)
++
++// insertNotNullFillOwned reports whether this operator is executing a
++// statement whose pipeline owns INSERT semantics for the IGNORE NOT NULL
++// adjustment: INSERT (plain and IGNORE), LOAD with the IGNORE duplicate
++// policy, and INSERT-shaped ON DUPLICATE KEY statements whose main target
++// only inserts. An UPDATE pipeline (and REPLACE) instead pairs every insert
++// leg with a delete leg, so the main context carries DeleteCols; for those
++// statements the fill and the row drop are not applied and the strict NOT
++// NULL error keeps its historical behavior, leaving UPDATE IGNORE and
++// REPLACE outside this INSERT-scoped fix.
++func (update *MultiUpdate) insertNotNullFillOwned() bool {
++	return len(update.MultiUpdateCtx) > 0 && len(update.MultiUpdateCtx[0].DeleteCols) == 0
++}
++
++// fillMainInsertNotNullForIgnore applies the statement IGNORE rule to the
++// main insert legs of INSERT-owned statements. Under IGNORE it first
++// adjusts every NULL cell of a NOT NULL column to the implicit default of
++// the column type with one ER_BAD_NULL_ERROR warning per cell, keeping the
++// row instead of failing the statement, like the pre-insert pipeline does.
++// It then drops every row whose resolvable single-column primary key still
++// carries its supplied NULL, publishing one further ER_BAD_NULL_ERROR
++// warning per dropped row: a main-table entry cannot carry a NULL primary
++// key, and adjusting it instead would let several adjusted rows claim the
++// same primary key inside one statement before any duplicate arbitration
++// can see it. Dropping such rows keeps the primary-key invariant and
++// matches the pinned skip-rows contract of the report; MySQL instead
++// adjusts the key to the implicit default and lets uniqueness filter the
++// duplicates, which is documented as a known divergence. The fill runs
++// before the drop so a dropped row still publishes the warnings of its
++// other supplied-NULL cells, exactly like a row the pre-insert pass drops.
++//
++// The pre-insert fill normally runs before this leg for INSERT IGNORE
++// statements (the planner forces the PRE_INSERT node whenever a supplied
++// column enforces NOT NULL), so this fill remains a no-op backstop there
++// and the live path for pipelines without that node, such as LOAD legs.
++//
++// useInsertIdx selects the vector layout. The operator's input batch keeps
++// table columns at InsertCols[inputIdx]; the shrunk write batch built by
++// check_null_and_insert_main_table keeps them at the InsertCols index
++// position. insertOwned is computed by the caller from the statement-owned
++// shape (see insertNotNullFillOwned) so UPDATE-style pipelines keep the
++// strict check. The function reports false when the statement does not run
++// under IGNORE so callers keep the strict check unchanged, and reports
++// droppedRows=true only when the batch also lost rows, so derived batches
++// sharing the vectors can be re-counted. Cluster-by helper columns are
++// skipped exactly like the strict check does.
++func fillMainInsertNotNullForIgnore(
++	proc *process.Process,
++	updateCtx *MultiUpdateCtx,
++	bat *batch.Batch,
++	useInsertIdx bool,
++	insertOwned bool,
++) (filled, droppedRows bool, err error) {
++	if !insertOwned ||
++		proc == nil || proc.GetStmtProfile() == nil || !proc.GetStmtProfile().GetStatementIgnore() {
++		return false, false, nil
++	}
++	// The pinned drop key is resolved from TableDef.Pkey by name: ordinary
++	// INSERT plans never populate InsertPkColIdx (it stays a REPLACE-only
++	// field), so any position taken from that field resolves the key to
++	// column 0 and moves the rule sideways for tables whose primary key is
++	// not the first column. The resolved key column is excluded from the
++	// fill so its cell keeps the NULL that identifies the row for the
++	// drop below.
++	pkColIdx := colexec.IgnoreNullPkColumnIdx(updateCtx.TableDef)
++	var (
++		vecs       = make([]*vector.Vector, 0, len(updateCtx.InsertCols))
++		attrs      = make([]string, 0, len(updateCtx.In
+```
+
+**File**: `pkg/sql/colexec/multi_update/insert_ignore_fill_test.go` (added, +663/-0)
+```diff
+@@ -0,0 +1,663 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package multi_update
++
++import (
++	"context"
++	"testing"
++
++	"github.com/golang/mock/gomock"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
++	pbPlan "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/stretchr/testify/require"
++)
++
++type multiUpdateIgnoreWarningSession struct {
++	total    uint64
++	codes    []uint16
++	messages []string
++}
++
++func (*multiUpdateIgnoreWarningSession) GetTempTable(string, string) (string, bool) { return "", false }
++func (*multiUpdateIgnoreWarningSession) AddTempTable(string, string, string)        {}
++func (*multiUpdateIgnoreWarningSession) RemoveTempTable(string, string)             {}
++func (*multiUpdateIgnoreWarningSession) RemoveTempTableByRealName(string)           {}
++func (*multiUpdateIgnoreWarningSession) GetSqlModeNoAutoValueOnZero() (bool, bool) {
++	return false, false
++}
++
++func (s *multiUpdateIgnoreWarningSession) AppendWarningBatch(total uint64, codes []uint16, messages []string) {
++	s.total += total
++	for i := 0; i < len(codes) && i < len(messages); i++ {
++		s.codes = append(s.codes, codes[i])
++		s.messages = append(s.messages, messages[i])
++	}
++}
++
++func newIgnoreProfiledProc(t *testing.T) (context.Context, *gomock.Controller, *process.Process, *multiUpdateIgnoreWarningSession) {
++	t.Helper()
++	ctx, ctrl, proc := prepareTestCtx(t, false)
++	session := &multiUpdateIgnoreWarningSession{}
++	proc.Session = session
++	proc.SetStmtProfile(&process.StmtProfile{})
++	proc.GetStmtProfile().SetStatementRuntimeProfile("Insert", "DML", true)
++	return ctx, ctrl, proc, session
++}
++
++func newIgnoreFillMainHarness(
++	t *testing.T,
++	ctrl *gomock.Controller,
++	withClusterByHelper bool,
++) (*MultiUpdate, *MultiUpdateCtx, *[]*batch.Batch) {
++	t.Helper()
++
++	cols := []*pbPlan.ColDef{
++		{ColId: 0, Name: "a", Typ: i32typ, Default: &pbPlan.Default{NullAbility: true}},
++		{ColId: 1, Name: "nn", Typ: i32typ, NotNull: true, Default: &pbPlan.Default{NullAbility: false}},
++	}
++	insertCols := []int{0, 1}
++	if withClusterByHelper {
++		cols = append(cols, &pbPlan.ColDef{
++			ColId: 2, Name: catalog.PrefixCBColName + "helper",
++			Typ: i32typ, Default: &pbPlan.Default{NullAbility: false},
++		})
++		insertCols = append(insertCols, 2)
++	}
++
++	tableDef := &pbPlan.TableDef{Name: "t_ig_fill", Cols: cols, Pkey: &pbPlan.PrimaryKeyDef{}}
++	updateCtx := &MultiUpdateCtx{TableDef: tableDef, InsertCols: insertCols}
++
++	written := make([]*batch.Batch, 0, 1)
++	rel := mock_frontend.NewMockRelation(ctrl)
++	rel.EXPECT().
++		Write(gomock.Any(), gomock.Any()).
++		DoAndReturn(func(_ context.Context, b *batch.Batch) error {
++			written = append(written, b)
++			return nil
++		}).AnyTimes()
++
++	op := &MultiUpdate{
++		MultiUpdateCtx: []*MultiUpdateCtx{updateCtx},
++		ctr: container{
++			updateCtxInfos: map[string]*updateCtxInfo{
++				tableDef.Name: {
++					Source:       rel,
++					tableType:    UpdateMainTable,
++					isContiguous: isContiguousMapping(updateCtx.InsertCols),
++				},
++			},
++			insertBuf: make([]*batch.Batch, 1),
++		},
++	}
++	op.addAffectedRowsFunc = op.doAddAffectedRows
++	return op, updateCtx, &written
++}
++
++func makeIgnoreFillInputBatch(mp *mpool.MPool, withClusterByHelper bool) *batch.Batch {
++	attrs := []string{"a", "nn"}
++	vecs := []*vector.Vector{
++		testutil.MakeInt32Vector([]int32{10, 11, 12}, nil, mp),
++		testutil.MakeInt32Vector([]int32{10, 7, 12}, []uint64{1}, mp),
++	}
++	if withClusterByHelper {
++		attrs = append(attrs, catalog.PrefixCBColName+"helper")
++		vecs = append(vecs,
++			testutil.MakeInt32Vector([]int32{4, 5, 6}, []uint64{0, 1, 2}, mp))
++	}
++	bat := batch.New(attrs)
++	bat.Vecs = vecs
++	bat.SetRowCount(3)
++	return bat
++}
++
++// TestInsertMainTableIgnoreFillsInsteadOfAborting is the multi_update-path
++// red/green pair for issue #30906: a batch with one NULL NOT NULL cell aborts
++// the statement without IGNORE, while statement IGNORE adjusts the cell to
++// the implicit default, keeps every row and publishes one warning.
++func TestInsertMainTableIgnoreFillsInsteadOfAborting
 ```
 
 ---
 
-### Incident Patch 2: `611f2777` (2026-11-05)
-**Commit Message**: fix(frontend): reject top-level JSON null in JSONLINE OUTFILE export (#32225)
+### Incident Patch 3: `bfbb2645` (2026-11-06)
+**Commit Message**: fix: restrict direct access to physical index relations (#32032)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
-- [ ] Improvement
+- [x] Improvement
 - [ ] Documentation
 - [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
+- [x] Test and CI
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #31277
+Fixes #31436
 
 ## What this PR does / why we need it:
 
-### Root cause
+An ordinary user who knows a physical index relation's name can
+otherwise read or mutate index rows independently of its base table.
+Restrict direct SQL, clone/restore, metadata and SQL-callable
+maintenance access while retaining sys/moadmin diagnostics and
+server-owned index maintenance.
 
-`pkg/frontend/export.go` `constructJSONLine` encodes a SQL NULL as
-`row[col]=nil`, while `vectorValueToJSON` encodes a top-level JSON
-literal `null` as `json.RawMessage("null")`; `json.Marshal` writes both
-as the identical member value `null`. The JSON-null/SQL-NULL distinction
-is therefore destroyed at export time (a representation collision in the
-format). The jsonline reader (`pkg/sql/colexec/external/reader_csv.go`
-`transJsonObject2Lines`/`transJsonArray2Lines`) converts every bare
-`null` into SQL NULL, so a `SELECT ... INTO OUTFILE ... FORMAT
-'jsonline'` followed by `LOAD DATA ... FORMAT 'jsonline'` silently
-changes a stored JSON literal `null` into SQL NULL — the exact
-round-trip reported in #31277.
+The frontend, planner and runtime use the existing relation
+classification and authorization boundaries. Generated maintenance
+carries the base and role-specific target identities along its existing
+path; plugin validation and runtime admission remain independent. Shared
+role selection, ordered operand projection and table-function admission
+remove repeated algorithm-specific paths while preserving each
+algorithm’s validation and reset behavior. Descriptor tests share a
+table while retaining the algorithm-specific cases. ISCP retains its own
+source admission and error policy. Authorization happens 
 
-One jsonline member cannot carry two states. Reinterpreting bare nulls
-on load would break SQL NULL round-trips, whose contract is pinned by
-exist
-
-**File**: `pkg/embed/jsonline_json_null_test.go` (added, +182/-0)
+**File**: `docs/design/physical-index-access.md` (added, +137/-0)
 ```diff
-@@ -0,0 +1,182 @@
+@@ -0,0 +1,137 @@
++# Physical index relation access
++
++MatrixOne's physical index relations are implementation details of their owning
++base table. [Issue #31436](https://github.com/matrixorigin/matrixone/issues/31436)
++and [PR #32032](https://github.com/matrixorigin/matrixone/pull/32032) address
++direct SQL and maintenance functions that otherwise expose those relations.
++
++## Boundary
++
++An authenticated sys/moadmin session may inspect a physical index relation.
++Other sessions cannot explicitly read, mutate, clone, or use table-specific
++metadata operations on one. Classification uses the requested and resolved
++names, relation kind, and durable index feature. Missing definitions fail closed.
++Server-authored index work is tied to its already-authorized base and exact
++generated relation, and does not confer access to a user expression, view,
++subquery, or stored routine.
++
++SHOW INDEX's generated metadata sources carry exact AST-node identities and
++their parent object. User-supplied WHERE expressions bind normally. Metadata
++listings exclude physical relations using their decoded feature as well as the
++legacy name and kind; current persisted information-schema views are upgraded
++through the catalog owner. Historical TABLES views bind a filtered catalog
++source without changing their stored definition. Clone source snapshots are
++resolved in the source account, while destination checks use the authorized
++destination account before mutation. Prepared cross-account clone validates its
++source during PREPARE and rechecks the destination at EXECUTE. New clones of
++system metadata views use the local listing policy. Existing user-owned views,
++including older clones, keep their definitions and grants and may expose catalog
++metadata; they do not grant direct access to index rows.
++
++## Index maintenance functions
++
++Every caller-configured relation consumed by a maintenance table function is
++resolved and classified before reads, persistence, cache eviction, or other
++effects. Internal SQL issued by that operator carries a restrictive relation
++policy, including full caller identity. A consumed view is recursively bound
++without executing or folding its expressions; actual child SQL is checked again
++when bound. Untrusted contexts cannot inherit an internal access capability.
++
++Each index plugin maps its own generated function and operands to the live base
++and child definitions. The SQL owner selects roles through that descriptor;
++callers supply the function and index name without repeating the role list.
++Maintenance matches the exact name from the owned definition; SQL spelling is
++normalized by the planner, preserving distinct Unicode index identities.
++Synchronous maintenance and ISCP share role projection while retaining their
++own source admission and error policy.
++Vector plugin validators share config decoding, while runtime admission retains
++its independent checks of the consumed relations. A bounded attestation carries the account, database,
++base, function, and role-specific child identities on exactly one generated
++operator. The internal codec transports this record when the operator runs on a
++different CN. A restricted nested statement may mark only the exact generated
++AST source nodes corresponding to that attestation. ISCP initialization derives
++a fresh record from the fenced source table ID and current index group; legacy
++non-function initialization SQL remains on its existing path. Admission is
++repeated after reset and operator reuse, without per-row catalog lookups.
++
++The CPU implementations cover fulltext2, HNSW, and IVF-FLAT; CAGRA and IVF-PQ
++use the same boundary without changing their distributed placement. GPU runtime
++behavior requires validation on a CUDA-capable runner.
++
++CAGRA and IVF-PQ ignored-row targets follow the same optional-operand contract as HNSW: the plugin validates and attests each present ignored relation, synchronous rebuild uses the descriptor's role list, and runtime admission checks that target before any effects. ISCP initialization derives the same role list from the fenced live index group. An absent optional target grants no authority.
++
++## Decisions and alternatives
++
++The security invariant is that knowing an internal relation name does not
++grant access to its rows or a way to invoke maintenance on it. A privileged
++sys/moadmin session can still inspect it; an ordinary session retains its
++existing access to authorized base tables. Current TABLES, PARTITIONS and
++COLUMNS listings exclude physical children, including a child renamed after
++its creation. The existing-user-view exception described above concerns
++metadata in previously saved definitions, not authority to read index rows.
++
++Leaving the existing behavior unchanged would preserve the direct-access
++exposure. Filtering only the reserved name prefix would miss a renamed child
++whose catalog identity still marks it as physical. Treating a complete internal
++executor or nested query
+```
+
+**File**: `pkg/bootstrap/versions/information_schema_tables.go` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ import (
+ // InformationSchemaTablesUpgradeEntry refreshes the current TABLES definition.
+ // Historical and forward handlers share the same idempotent view repair.
+ func InformationSchemaTablesUpgradeEntry() UpgradeEntry {
+-	return InformationSchemaViewUpgradeEntry("TABLES", sysview.InformationSchemaTablesV118DDL, defines.MORPCVersion118)
++	return InformationSchemaViewUpgradeEntry("TABLES", sysview.InformationSchemaTablesCurrentDDL, defines.MORPCVersion118)
+ }
+ 
+ // InformationSchemaPartitionsUpgradeEntry refreshes the current PARTITIONS
+```
+
+**File**: `pkg/bootstrap/versions/v1_2_0/partitions_legacy_test.go` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2866,911 +4276,244 @@ exist
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package embed
++package v1_2_0
 +
 +import (
-+	"context"
-+	"database/sql"
-+	"errors"
++	"crypto/sha256"
 +	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
 +	"testing"
-+	"time"
 +
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// TestJSONLineOutfileRejectsTopLevelJSONNullRoundTrip pins the #31277
-+// contract at SQL level. A JSON column can hold both a top-level JSON literal
-+// null and a SQL NULL, but a JSONLINE line carries both as the same bare
-+// null, which the loader reads back as SQL NULL. The export must therefore
-+// fail loudly for a top-level JSON null instead of silently changing the
-+// value, keep every representable value (SQL NULL, nested null, the JSON
-+// string "null", ordinary JSON) exactly round-trippable in both reader
-+// modes, and leave CSV as the lossless path for the full value space.
-+func TestJSONLineOutfileRejectsTopLevelJSONNullRoundTrip(t *testing.T) {
-+	RunSingleCNBaseClusterTests(t, func(c Cluster) {
-+		ctx, cancel := context.WithTimeout(t.Context(), 3*time.Minute)
-+		defer cancel()
-+		cn, err := c.GetCNService(0)
-+		require.NoError(t, err)
-+		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
-+		require.NoError(t, err)
-+		defer db.Close()
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+		exec := func(stmt string) {
-+			t.Helper()
-+			_, err := conn.ExecContext(ctx, stmt)
-+			require.NoError(t, err, stmt)
-+		}
-+		query := func(stmt string) *sql.Rows {
-+			t.Helper()
-+			rows, err := conn.QueryContext(ctx, stmt)
-+			require.NoError(t, err, stmt)
-+			return rows
-+		}
-+
-+		const database = "issue_31277_json_null"
-+		exec("create database " + database)
-+		defer func() { _, _ = conn.ExecContext(ctx, "drop database if exists "+database) }()
-+		exec("create table " + database + ".src (id int primary key, j json)")
-+		exec("insert into " + database + ".src values " +
-+			"(1, 'null'), (2, null), (3, '{\"a\":null}'), (4, '\"null\"'), (5, '{\"a\":1}')")
-+
-+		type jsonRow struct {
-+			ID     int
-+			IsNull bool
-+			Text   string
-+		}
-+		readRows := func(table string) []jsonRow {
-+			t.Helper()
-+			rows := query("select id, j is null, coalesce(cast(j as char), '#NULL') from " + database + "." + table + " order by id")
-+			defer rows.Close()
-+			var got []jsonRow
-+			for rows.Next() {
-+				var row jsonRow
-+				require.NoError(t, rows.Scan(&row.ID, &row.IsNull, &row.Text))
-+				got = append(got, row)
-+			}
-+			require.NoError(t, rows.Err())
-+			return got
-+		}
-+		// MO renders JSON objects MySQL-style with spaces after ':'; the
-+		// value identity and the IS NULL flag are what this test pins.
-+		wantSrc := []jsonRow{
-+			{ID: 1, IsNull: false, Text: "null"},
-+			{ID: 2, IsNull: true, Text: "#NULL"},
-+			{ID: 3, IsNull: false, Text: `{"a": null}`},
-+			{ID: 4, IsNull: false, Text: `"null"`},
-+			{ID: 5, IsNull: false, Text: `{"a": 1}`},
-+		}
-+		require.Equal(t, wantSrc, readRows("src"))
-+
-+		dir := t.TempDir()
-+
-+		// Exporting the whole table must fail on the top-level JSON null
-+		// instead of writing a line that loads back as SQL NULL.
-+		rejectPath := filepath.Join(dir, "reject.jsonl")
-+		failCtx, failCancel := context.WithTimeout(ctx, 15*time.Second)
-+		started := time.Now()
-+		_, err = conn.ExecContext(failCtx, fmt.Sprintf(
-+			"select id, j from %s.src order by id into outfile '%s' format 'jsonline'", database, rejectPath))
-+		failCancel()
-+		require.Error(t, err)
-+		require.Contains(t, strings.ToLower(err.Error()), "jsonline")
-+		require.Contains(t, strings.ToLower(err.Error()), "json null")
-+		t.Logf("top-level JSON null OUTFILE error after %s: %v", time.Since(started), err)
-+		if rejectBytes, readErr := os.ReadFile(rejectPath); readErr == nil {
-+			t.Logf("failed top-level JSON null target bytes=%x text=%q", rejectBytes, string(rejectBytes))
-+			require.NotContains(t, string(rejectBytes), `"id":1`,
-+				"the ambiguous row must not be published by a failed export")
-+		} else {
-+			require.True(t, errors.Is(readErr, os.ErrNotExist), "unexpected failed-target read error: %v", readErr)
-+		}
-+
-+		// The session stays usable after the rejected export.
-+		var sessionCheck int
-+		require.NoError(t, conn.QueryRowContext(ctx, "select 1").Scan(&sessionCheck))
-+		require.Equal(t, 1, sessionCheck)
-+
-+		// Every representable value exports with its exact encoding.
-+		jsonPath := filepath.Join(dir, "roundtrip.jsonl")
-+		exec(fmt.Spr
++func TestPartitionsUpgradeKeepsReleasedDefinition(t *testing.T) {
++	// SHA-256 of InformationSchemaPartitionsDDL evaluated from the published
++	// v4.2.8 source at 10d204b8763f19b2b37ba2147d1d4c1a7828d6d4.
++	digest := sha256.Sum256([]byte(upg_information_schema_partitions.UpgSql))
++	require.Equal(t, "5bef2546566ddf69d36e0cdffe281be1de3bad3672005b6ecaec623564261f17", fmt.Sprintf("%x", digest))
++}
 ```
 
-**File**: `pkg/frontend/export.go` (modified, +8/-0)
+**File**: `pkg/bootstrap/versions/v1_2_0/tenant_upgrade_list.go` (modified, +2/-2)
 ```diff
-@@ -2131,6 +2131,14 @@ func vectorValueToJSON(vec *vector.Vector, i int, ss *Session, backSes *backSess
- 	switch vec.GetType().Oid {
- 	case types.T_json:
- 		val := types.DecodeJson(vec.GetBytesAt(i))
-+		// #31277: a top-level JSON null marshals to the same "null" member
-+		// value as a SQL NULL, and the jsonline loader reads every bare null
-+		// back as SQL NULL, so the format cannot carry the distinction.
-+		// Reject the export instead of silently changing the value.
-+		if val.IsNull() {
-+			return nil, moerr.NewNotSupported(context.Background(),
-+				"JSONLINE OUTFILE cannot encode a top-level JSON null; it would load back as SQL NULL; use CSV to preserve the distinction")
-+		}
- 		// Return as raw JSON string to be embedded
- 		return json.RawMessage(val.String()), nil
- 	case types.T_bool:
-```
-
-**File**: `pkg/frontend/export_lifecycle_test.go` (modified, +62/-0)
-```diff
-@@ -362,6 +362,68 @@ func TestExportAuditPartialSplitFailureKeepsConfirmedLowerBoundAndAllowsReuse(t
- 	require.False(t, fs.closed.Load(), "the shared file service is borrowed")
- }
+@@ -372,14 +372,14 @@ var upg_information_schema_partitions = versions.UpgradeEntry{
+ 	Schema:    sysview.InformationDBConst,
+ 	TableName: "PARTITIONS",
+ 	UpgType:   versions.MODIFY_VIEW,
+-	UpgSql:    sysview.InformationSchemaPartitionsDDL,
++	UpgSql:    sysview.InformationSchemaPartitionsRelease428DDL,
+ 	CheckFunc: func(txn executor.TxnExecutor, accountId uint32) (bool, error) {
+ 		exists, viewDef, err := versions.CheckViewDefinition(txn, accountId, sysview.InformationDBConst, "PARTITIONS")
+ 		if err != nil {
+ 			return false, err
+ 		}
  
-+// TestExportJSONLineNullRejectKeepsCompletedSplits pins the #31277 failure
-+// semantics when file splitting has already published earlier batches: the
-+// top-level JSON null rejection fails the statement loudly, splits completed
-+// before the failing batch keep their faithful rows, the split active at the
-+// rejection is never installed, and no published line silently rewrites the
-+// JSON null as SQL NULL. Every export failure follows this
-+// completed-progress contract (see
-+// TestExportAuditPartialSplitFailureKeepsConfirmedLowerBoundAndAllowsReuse);
-+// the rejection does not weaken it.
-+func TestExportJSONLineNullRejectKeepsCompletedSplits(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+	dir := t.TempDir()
-+	mrs := &MysqlResultSet{}
-+	column := &MysqlColumn{}
-+	column.SetName("value")
-+	mrs.AddColumn(column)
-+	ep := &ExportConfig{ctx: context.Background(), proc: sysFileAccessTestProcess(), userConfig: newDiffCSVUserConfig(), mrs: mrs}
-+	ep.userConfig.ExportFormat = "jsonline"
-+	ep.userConfig.FilePath = filepath.Join(dir, "out.jsonl")
-+	// One 12-byte line exactly fills a split: the second batch rotates the
-+	// first split out, and the third batch's rejection lands while the second
-+	// split is active.
-+	ep.userConfig.SplitSize = 12
-+	initExportFileParam(ep, mrs)
-+	ep.init()
-+	defer ep.Close()
-+	require.NoError(t, openNewFile(ep.ctx, ep, ep.mrs))
+-		if exists && viewDef == sysview.InformationSchemaPartitionsDDL {
++		if exists && viewDef == sysview.InformationSchemaPartitionsRelease428DDL {
+ 			return true, nil
+ 		}
+ 		return false, nil
+```
+
+**File**: `pkg/bootstrap/versions/v4_0_7/catalog_upgrade_entries_test.go` (modified, +2/-2)
+```diff
+@@ -252,7 +252,7 @@ func TestDaemonClaimPrecisionCheckUsesStoredType(t *testing.T) {
+ func TestColumnsAndTablesAreIncludedInTenantUpgrade(t *testing.T) {
+ 	want := map[string]string{
+ 		"COLUMNS": sysview.InformationSchemaColumnsDDL,
+-		"TABLES":  sysview.InformationSchemaTablesV118DDL,
++		"TABLES":  sysview.InformationSchemaTablesCurrentDDL,
+ 	}
+ 	for _, entry := range tenantUpgEntries {
+ 		ddl, ok := want[entry.TableName]
+@@ -271,7 +271,7 @@ func TestInformationSchemaMetadataVisibilityUpgradeChecks(t *testing.T) {
+ 		entry versions.UpgradeEntry
+ 		ddl   string
+ 	}{
+-		{versions.InformationSchemaTablesUpgradeEntry(), sysview.InformationSchemaTablesV118DDL},
++		{versions.InformationSchemaTablesUpgradeEntry(), sysview.InformationSchemaTablesCurrentDDL},
+ 		{versions.InformationSchemaColumnsUpgradeEntry(), sysview.InformationSchemaColumnsDDL},
+ 		{upgradeInformationSchemaStatistics(), sysview.InformationSchemaStatisticsPrefixSubPartDDL},
+ 		{upgradeInformationSchemaTableConstraints(), sysview.InformationSchemaTableConstraintsDDL},
+```
+
+**File**: `pkg/catalog/index_relation_access.go` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+	ses := &backSession{feSessionImpl: feSessionImpl{pool: mp}}
-+	convert := func(text string, index int32) {
-+		bat := batch.NewOffHeapWithSize(1)
-+		bat.Vecs[0] = vector.NewOffHeapVecWithType(types.T_json.ToType())
-+		defer bat.Clean(mp)
-+		require.NoError(t, vector.AppendBytes(bat.Vecs[0], encodeJSONForExportTest(t, text), false, mp))
-+		bat.SetRowCount(1)
-+		constructJSONLine(ep.ctx, ses, bat, index, ep.ByteChan, ep)
++package catalog
++
++import (
++	"fmt"
++	"strings"
++
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/sql/features"
++)
++
++const PhysicalIndexPredicateFunction = "mo_is_physical_index"
++
++// NonIndexRelationSQLPredicate excludes physical index children from metadata
++// listings. It must not be used by clone or restore scans, which need children.
++func NonIndexRelationSQLPredicate(alias string) string {
++	prefix := ""
++	if alias != "" {
++		prefix = alias + "."
 +	}
-+	convert("1", 1)
-+	convert("2", 2)
-+	convert("null", 3)
-+	ep.Index.Store(3)
-+
-+	err := exportAllDataFromBatches(ep)
-+	require.Error(t, err)
-+	require.True(t, moerr.IsMoErrCode(err, moerr.ErrNotSupported), "%v", err)
-+	require.Contains(t, err.Error(), "top-level JSON null")
-+	require.ErrorIs(t, ep.finish(err), err)
-+	require.Zero(t, mp.CurrNB())
-+
-+	// The completed split keeps its faithful row.
-+	completed, readErr := os.ReadFile(filepath.Join(dir, "out.jsonl"))
-+	require.NoError(t, readErr)
-+	require.Equal(t, "{\"value\":1}\n", string(completed))
-+	// The active split is aborted: the row already written to it is never
-+	// installed, and no further output exists.
-+	_, statErr := os.Stat(filepath.Join(dir, "out.jsonl.1"))
-+	require.True(t, os.IsNotExist(statErr), "the active split must not be installed: %v", statErr)
-+	paths, globErr := filepath.Glob(filepath.Join(dir, "out.jsonl*"))
-+	require.NoError(t, globErr)
-+	require.Equal(t, []string{filepath.Join(dir, "out.jsonl")}, paths)
++	return NonIndexRelationSQLPredicateForColumns(prefix+SystemRelAttr_Name, prefix+SystemRelAttr_Kind, prefix+SystemRelAttr_ExtraInfo)
 +}
 +
- func TestExportAuditCountsCSVHeaderAndJSONLines(t *testing.T) {
- 	for _, tc := range []struct {
- 		name, format, payload, want string
-```
-
-**File**: `pkg/frontend/export_test.go` (modified, +120/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"bytes"
- 	"context"
- 	"encoding/csv"
-+	"encoding/json"
- 	"errors"
- 	"io"
- 	"os"
-@@ -34,6 +35,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
-@@ -1063,6 +1065,124 @@ func TestConstructJSONLineRejectsInvalidUTF8AndReleasesBatch(t *testing.T) {
- 	require.Zero(t, mp.CurrNB(), "successful batch must release its worker allocation")
- }
- 
-+// encodeJSONForExportTest encodes JSON text the same way the storage layer
-+// stores a JSON column value, for building export test vectors.
-+func encodeJSONForExportTest(t *testing.T, text string) []byte {
-+	t.Helper()
-+	var bj bytejson.ByteJson
-+	require.NoError(t, bj.UnmarshalJSON([]byte(text)))
-+	data, err := types.EncodeJson(bj)
-+	require.NoError(t, err)
-+	return data
++// NonIndexRelationSQLPredicateForColumns accepts the catalog column expressions
++// of a metadata source, including subscription columns whose name is att_relname.
++func NonIndexRelationSQLPredicateForColumns(name, kind, extra string) string {
++	return fmt.Sprintf("not %s(coalesce(%s, ''), coalesce(%s, ''), coalesce(%s, ''))", PhysicalIndexPredicateFunction, name, kind, extra)
 +}
 +
-+// TestVectorValueToJSONTopLevelJSONNull pins the #31277 contract: a top-level
-+// JSON literal null has no JSONLINE encoding that loads back as a JSON value,
-+// so the converter must reject it instead of colliding with SQL NULL, while
-+// nested nulls, the JSON string "null" and every other JSON value keep their
-+// exact raw encoding.
-+func TestVectorValueToJSONTopLevelJSONNull(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+
-+	t.Run("top-level JSON null is rejected", func(t *testing.T) {
-+		nullViaEncode, err := types.EncodeJson(bytejson.Null)
-+		require.NoError(t, err)
-+		for _, encoded := range [][]byte{
-+			encodeJSONForExportTest(t, "null"),
-+			nullViaEncode,
-+		} {
-+			func() {
-+				vec := vector.NewVec(types.T_json.ToType())
-+				defer func() {
-+					vec.Free(mp)
-+					require.Zero(t, mp.CurrNB())
-+				}()
-+				require.NoError(t, vector.AppendBytes(vec, encoded, false, mp))
-+				_, err := vectorValueToJSON(vec, 0, nil, nil)
-+				require.Error(t, err)
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrNotSupported), "%v", err)
-+				require.Contains(t, err.Error(), "JSONLINE")
-+				require.Contains(t, err.Error(), "JSON null")
-+			}()
-+		}
-+	})
-+
-+	t.Run("nested null, string null and other JSON values still encode", func(t *testing.T) {
-+		for _, tc := range []struct{ in, want string }{
-+			{`{"a":null}`, `{"a":null}`},
-+			{`[null]`, `[null]`},
-+			{`"null"`, `"null"`},
-+			{`true`, `true`},
-+			{`false`, `false`},
-+			{`0`, `0`},
-+			{`{"a":1}`, `{"a":1}`},
-+		} {
-+			func() {
-+				vec := vector.NewVec(types.T_json.ToType())
-+				defer func() {
-+					vec.Free(mp)
-+					require.Zero(t, mp.CurrNB())
-+				}()
-+				require.NoError(t, vector.AppendBytes(vec, encodeJSONForExportTest(t, tc.in), false, mp))
-+				got, err := vectorValueToJSON(vec, 0, nil, nil)
-+				require.NoError(t, err)
-+				// constructJSONLine embeds the value in a row map and marshals
-+				// it with encoding/json, which compacts the raw message; pin
-+				// the exact bytes that land in the export file.
-+				wire, err := json.Marshal(got)
-+				require.NoError(t, err)
-+				require.Equal(t, tc.want, string(wire))
-+			}()
-+		}
-+	})
-+}
-+
-+// TestConstructJSONLineRejectsTopLevelJSONNullAndReleasesBatch proves the
-+// batch worker reports the top-level JSON null error without publishing a
-+// partial prefix, releases the batch, and still exports SQL NULL, nested JSON
-+// null, the JSON string "null" and ordinary JSON with distinct encodings.
-+func TestConstructJSONLineRejectsTopLevelJSONNullAndReleasesBatch(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+	mrs := &MysqlResultSet{}
-+	column := &MysqlColumn{}
-+	column.SetName("value")
-+	mrs.AddColumn(column)
-+	ep := &ExportConfig{proc: sysFileAccessTestProcess(), mrs: mrs}
-+	ses := &backSession{feSessionImpl: feSessionImpl{pool: mp}}
-+	bytesChan := make(chan *BatchByte, 2)
-+
-+	badBatch := batch.NewOffHeapWithSize(1)
-+	badVec := vector.NewOffHeapVecWithType(types.T_json.ToType())
-+	badBatch.Vecs[0] = badVec
-+	defer badBatch.Clean(mp)
-+	require.NoError(t, vector.AppendBytes(badVec, encodeJSONForExportTest(t, `{"a":1}`), false, mp))
-+	require.NoError(t, vector.AppendBytes(badVec, encodeJSONForExportTest(t, `null`), false, mp))
-+	badBatch.SetRowCount(2)
-+	require.Positive(t, mp.CurrNB())
-+	constructJSONLine(context.Background(), ses, badBatch, 0, bytesChan, ep)
-+	failed := <-bytesChan
-+	require.Error(t, failed.err)
-+	require.True(t, moerr.IsMoErrCode(failed.err, moerr.ErrNotSupported), "%v", failed.err)
-+	require.Contains(t, failed.err.Error(), "JSON null")
-+	require.Zero(t, len(failed.writeByte), "do not publish a partial batch containing a valid prefix")
-+	require.Zero(t, mp.CurrNB(), "conversion failure must release the worker batch")
-+
-+	goodBatch := batch.NewOffHeapWithSize(1)
-+	goodVec := vector.NewOffHeapVecWithType(types.T_json.ToType())
-+	goodBatch.Vecs[0] = goodVec
-+	defer goodBatch.Clean(mp)
-+	require.N
-```
-
-**File**: `test/distributed/cases/load_data/issue_31277_jsonline_json_null.result` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+drop database if exists issue_31277;
-+create database issue_31277;
-+use issue_31277;
-+create table src (id int primary key, j json);
-+insert into src values (1, 'null'), (2, null), (3, '{"a":null}'), (4, '"null"'), (5, '{"a":1}');
-+select id, j, j is null from src order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+1  ¦  null  ¦  0  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+select id, j from src order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+-- @regex("JSONLINE OUTFILE cannot encode a top-level JSON null", true)
-+not supported: JSONLINE OUTFILE cannot encode a top-level JSON null; it would load back as SQL NULL; use CSV to preserve the distinction
-+select id, j from src where id <> 1 order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.jsonl' as datalink)) as jsonl_content;
-+➤ jsonl_content[-1,16383,0]  𝄀
-+{"id":2,"j":null}
-+{"id":3,"j":{"a":null}}
-+{"id":4,"j":"null"}
-+{"id":5,"j":{"a":1}}
-+
-+create table object_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/into_outfile/issue_31277.jsonl','format'='jsonline','jsondata'='object'} into table object_dst;
-+select id, j, j is null from object_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+create table array_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_array.jl','format'='jsonline','jsondata'='array'} into table array_dst;
-+select id, j, j is null from array_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+create table not_null_dst (j json not null);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_nullonly.jl','format'='jsonline','jsondata'='object'} into table not_null_dst;
-+-- @regex("cannot be null", true)
-+constraint violation: Column 'j' cannot be null
-+select count(*) as rows_after_rejected_null from not_null_dst;
-+➤ rows_after_rejected_null[-5,64,0]  𝄀
-+0
-+select id, j from src where id <> 4 order by id into outfile '$resources/into_outfile/issue_31277.csv' fields terminated by ',' optionally enclosed by '"' header 'false';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.csv' as datalink)) as csv_content;
-+➤ csv_content[-1,16383,0]  𝄀
-+1,"null"
-+2,\N
-+3,"{""a"": null}"
-+5,"{""a"": 1}"
-+
-+create table csv_dst (id int primary key, j json);
-+load data infile '$resources/into_outfile/issue_31277.csv' into table csv_dst fields terminated by ',' optionally enclosed by '"';
-+select id, j, j is null from csv_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+1  ¦  null  ¦  0  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+drop database issue_31277;
-+show databases like 'issue_31277';
-+➤ Database[12,5000,0]
-```
-
-**File**: `test/distributed/cases/load_data/issue_31277_jsonline_json_null.sql` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+-- Issue #31277: a JSON column can hold both a top-level JSON literal null
-+-- and a SQL NULL, but a JSONLINE line encodes both as the same bare null,
-+-- which the jsonline loader always reads back as SQL NULL. JSONLINE OUTFILE
-+-- must reject the unrepresentable top-level JSON null loudly instead of
-+-- silently changing the value, while SQL NULL, nested JSON null, the JSON
-+-- string "null" and ordinary JSON keep round-tripping exactly in both reader
-+-- modes. CSV OUTFILE/LOAD stays the lossless path for the full value space.
-+
-+drop database if exists issue_31277;
-+create database issue_31277;
-+use issue_31277;
-+
-+create table src (id int primary key, j json);
-+insert into src values (1, 'null'), (2, null), (3, '{"a":null}'), (4, '"null"'), (5, '{"a":1}');
-+-- Five distinct states: JSON literal null, SQL NULL, nested JSON null, the
-+-- JSON string "null" and ordinary JSON.
-+select id, j, j is null from src order by id;
-+
-+-- The full export is rejected: no JSONLINE line can carry id=1 faithfully.
-+-- @regex("JSONLINE OUTFILE cannot encode a top-level JSON null", true)
-+select id, j from src order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+
-+-- Every representable row exports with an exact, loadable encoding.
-+select id, j from src where id <> 1 order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.jsonl' as datalink)) as jsonl_content;
-+
-+-- Object mode loads every line back with the source semantics.
-+create table object_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/into_outfile/issue_31277.jsonl','format'='jsonline','jsondata'='object'} into table object_dst;
-+select id, j, j is null from object_dst order by id;
-+
-+-- The array-mode reader keeps the same bare-null -> SQL NULL contract.
-+create table array_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_array.jl','format'='jsonline','jsondata'='array'} into table array_dst;
-+select id, j, j is null from array_dst order by id;
-+
-+-- A bare null into a NOT NULL JSON column is rejected and leaves no rows.
-+create table not_null_dst (j json not null);
-+-- @regex("cannot be null", true)
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_nullonly.jl','format'='jsonline','jsondata'='object'} into table not_null_dst;
-+select count(*) as rows_after_rejected_null from not_null_dst;
-+
-+-- CSV is the lossless path for this issue's value space: the top-level JSON
-+-- null and the SQL NULL stay distinct tokens and objects round-trip exactly.
-+-- Top-level JSON string scalars are excluded: the pre-existing CSV JSON
-+-- loader trims surrounding quotes from every field, a separate contract
-+-- outside this issue.
-+select id, j from src where id <> 4 order by id into outfile '$resources/into_outfile/issue_31277.csv' fields terminated by ',' optionally enclosed by '"' header 'false';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.csv' as datalink)) as csv_content;
-+create table csv_dst (id int primary key, j json);
-+load data infile '$resources/into_outfile/issue_31277.csv' into table csv_dst fields terminated by ',' optionally enclosed by '"';
-+select id, j, j is null from csv_dst order by id;
-+
-+drop database issue_31277;
-+show databases like 'issue_31277';
-```
-
-**File**: `test/distributed/resources/load_data/issue_31277_jsonline_json_null_array.jl` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+[2,null]
-+[3,{"a":null}]
-+[4,"null"]
-+[5,{"a":1}]
-```
-
-**File**: `test/distributed/resources/load_data/issue_31277_jsonline_json_null_nullonly.jl` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"j":null}
-```
-
----
-
-### Incident Patch 3: `d37c4ba5` (2026-11-05)
-**Commit Message**: fix(planner): account for probe fanout in join index costing (#32231)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32013
-
-## What this PR does / why we need it:
-
-A small semijoin build can match many rows of a low-NDV probe index.
-Admitting index backfill based on build cardinality alone can overflow
-the backfill runtime filter, leaving a full table scan behind an extra
-dependency and a single-CN placement constraint.
-
-Estimate matching probe rows before publishing join-index candidates,
-then apply the existing backfill capacity and preparation-cost model.
-Preserve selective indexes, FORCE/IGNORE hints, and the existing
-fallback for unavailable statistics. Composite-key estimates do not
-assume independent columns. Only reject an existing index path when
-every probe-scan residual has proven stable evaluation; otherwise retain
-the path so invalid JSON on nonmatching rows is not newly evaluated. No
-runtime-filter execution protocol changes are needed.
-
-Validation (Go 1.27.1, darwin/arm64):
-- SQL-to-plan regressions cover low-NDV costing and
-
-**File**: `pkg/sql/plan/apply_indices.go` (modified, +72/-0)
-```diff
-@@ -4094,6 +4094,69 @@ func regularIndexBackfillPrepareWork(keys, packedWidth, readers float64) float64
- 	return keys * ((2*float64(sliceBytes)+packedWidth)*readers + regularIndexKeyEncodingWork)
- }
- 
-+// shouldSkipJoinIndexBackfill prices the rows returned by a lookup, not just
-+// the build keys. A small build can match most of a non-unique probe index and
-+// overflow the backfill filter, leaving a full scan behind an extra dependency.
-+func (ctx *encodedRegularIndexCostContext) shouldSkipJoinIndexBackfill(idxDef *IndexDef, buildRows float64) bool {
-+	if !ctx.valid || ctx.force || IsDefaultStats(ctx.node.Stats) || !finitePositive(buildRows) {
-+		return false
-+	}
-+	// Removing index pruning exposes scan residuals to more rows. Preserve
-+	// the established path unless evaluating every residual is provably safe.
-+	if !regularIndexFiltersHaveStableEvaluation(ctx.node) {
-+		return false
-+	}
-+	matches := min(ctx.node.Stats.TableCnt, buildRows)
-+	if !idxDef.Unique {
-+		wrapper := ctx.builder.getStatsInfoByTableID(ctx.node.TableDef.TblId)
-+		if wrapper == nil || wrapper.GetStats() == nil || !finitePositive(wrapper.GetStats().TableCnt) {
-+			return false
-+		}
-+		stats := wrapper.GetStats()
-+		keyNDV := 1.0
-+		// The final part of a non-unique index is the appended PK, not a
-+		// lookup key. Do not multiply component NDVs: they can be correlated.
-+		for _, part := range idxDef.Parts[:len(idxDef.Parts)-1] {
-+			ndv := stats.NdvMap[catalog.ResolveAlias(part)]
-+			if !finitePositive(ndv) || ndv > stats.TableCnt {
-+				return false // Unknown statistics retain the established fallback.
-+			}
-+			keyNDV = max(keyNDV, ndv)
-+		}
-+		// Build rows bound distinct lookup keys, including when the build has
-+		// duplicates. Its input selectivity does not describe the probe domain.
-+		matches = min(ctx.node.Stats.TableCnt, buildRows*(ctx.node.Stats.TableCnt/keyNDV))
-+	}
-+	if ctx.backfillCapacityExceeded(matches) {
++// RequiresPrivilegedRelationAccess checks an explicit physical relation target.
++// Unknown nonempty kinds fail closed: they may belong to an index plugin not
++// compiled into this binary. Empty kind remains valid for old ordinary tables
++// and name-only checks. New children also carry the durable IndexTable flag.
++func RequiresPrivilegedRelationAccess(name, kind string, flags uint64) bool {
++	if features.IsIndexTable(flags) {
 +		return true
 +	}
-+	if ctx.node.Stats.TableCnt < 50000 {
++	if len(name) >= len(IndexTableNamePrefix) && strings.EqualFold(name[:len(IndexTableNamePrefix)], IndexTableNamePrefix) {
++		return true
++	}
++	if len(name) >= len(defines.TempTableNamePrefix) && strings.EqualFold(name[:len(defines.TempTableNamePrefix)], defines.TempTableNamePrefix) {
++		lower := strings.ToLower(name)
++		if IsUniqueIndexTable(lower) || IsSecondaryIndexTable(lower) {
++			return true
++		}
++	}
++	if kind == "" {
 +		return false
 +	}
-+	pkPos, ok := ctx.node.TableDef.Name2ColIndex[ctx.node.TableDef.Pkey.PkeyColName]
-+	if !ok || pkPos < 0 || int(pkPos) >= len(ctx.columnWidths) {
++	if strings.EqualFold(kind, SystemTemporaryTable) || strings.EqualFold(kind, SystemPersistRel) || strings.EqualFold(kind, SystemTransientRel) {
 +		return false
 +	}
-+	encodedWidth := 0.0
-+	for _, part := range idxDef.Parts {
-+		colPos, ok := ctx.node.TableDef.Name2ColIndex[catalog.ResolveAlias(part)]
-+		if !ok || colPos < 0 || int(colPos) >= len(ctx.columnWidths) {
++	for _, coreKind := range userVisibleRelationKinds {
++		if strings.EqualFold(kind, coreKind) {
 +			return false
 +		}
-+		if len(idxDef.Parts) == 1 {
-+			encodedWidth += ctx.columnWidths[colPos]
-+		} else {
-+			encodedWidth += ctx.serialWidths[colPos]
-+		}
 +	}
-+	// Compare an optimistic lookup: index keys plus PKs, per-reader filter
-+	// preparation, and only matching base rows. Do not assume scattered PKs
-+	// or charge a second full scan; selective lookups must remain eligible.
-+	work := matches*(encodedWidth+ctx.columnWidths[pkPos]+ctx.baseWidth) +
-+		regularIndexBackfillPrepareWork(matches, ctx.serialWidths[pkPos], ctx.backfillReaders())
-+	return finitePositive(work) && work >= ctx.baseWork
++	return true
 +}
-+
- func (ctx *encodedRegularIndexCostContext) score(
- 	idxDef *IndexDef,
- 	leadingPos []int32,
-@@ -5367,6 +5430,7 @@ func (builder *QueryBuilder) applyIndicesForJoins(nodeID int32, node *plan.Node,
- 
- 	indexes := builder.filterRegularIndexesByJoinHints(leftChild, leftChild.TableDef.Indexes)
- 	condIdx := make([]indexJoinCondition, 0, len(col2Cond))
-+	var costCtx *encodedRegularIndexCostContext
- 	for _, idxDef := range indexes {
- 		if idxDef == nil || !idxDef.TableExist ||
- 			!catalog.IsRegularIndexAlgo(idxDef.IndexAlgo) ||
-@@ -5401,6 +5465,14 @@ func (builder *QueryBuilder) applyIndicesForJoins(nodeID int32, node *plan.Node,
- 		if len(condIdx) < numKeyParts {
- 			continue
- 		}
-+		if !forceJoinIndex {
-+			if costCtx == nil {
-+				costCtx = builder.newEncodedRegularIndexCostContext(leftChild, colRefCnt)
-+			}
-+			if costCtx.shouldSkipJoinIndexBackfill(idxDef, rightChild.Stats.Outcnt) {
-+				continue
-+			}
-+		}
- 
- 		idxObjRef, idxTableDef, err := builder.compCtx.ResolveIndexTableByRef(leftChild.ObjRef, idxDef.IndexTableName, scanSnapshot)
- 		if err != nil {
 ```
 
-**File**: `pkg/sql/plan/index_pruning_cost_regression_test.go` (modified, +132/-0)
+**File**: `pkg/catalog/index_relation_access_test.go` (added, +65/-0)
 ```diff
-@@ -24,6 +24,138 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestJoinIndexCostsProbeFanout(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		ndv       float64
-+		hint      string
-+		residual  string
-+		wantIndex bool
+@@ -0,0 +1,65 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package catalog
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/sql/features"
++)
++
++func TestPhysicalIndexRelationClassification(t *testing.T) {
++	id := "0198fa2b-7cc8-7ed1-b7ae-a3d9c29e75fd"
++	session := uuid.MustParse("018f1f76-7b9d-7f35-b2d9-9b8d7774bde8")
++	index := SecondaryIndexTableNamePrefix + id
++	cases := []struct {
++		name, kind string
++		want       bool
 +	}{
-+		{name: "many matches from few build keys", ndv: 1_000},
-+		{name: "selective index control", ndv: 600_000, wantIndex: true},
-+		{name: "force retains broad lookup", ndv: 1_000, hint: "force index(idx_membership)", wantIndex: true},
-+		{name: "ignore retains scan", ndv: 600_000, hint: "ignore index(idx_membership)"},
-+		{name: "safe residual permits costing", ndv: 1_000, residual: " and amount > 0"},
-+		{name: "JSON cast retains evaluation domain", ndv: 1_000, residual: " and cast(payload as json) is not null", wantIndex: true},
-+		{name: "JSON function retains evaluation domain", ndv: 1_000, residual: " and json_extract(payload, '$.x') is not null", wantIndex: true},
-+		{name: "nested unsafe residual retains evaluation domain", ndv: 1_000, residual: " and (amount > 0 or cast(payload as json) is not null)", wantIndex: true},
-+	} {
++		{index, "", true},
++		{strings.ToUpper(index), "", true},
++		{"nonreserved", SystemIndexRel, true},
++		{defines.GenTempTableName(session, "db", "generation_"+index), "", true},
++		{defines.GenTempTableName(session, index, "ordinary"), "", false},
++		{"orders__mo_index_secondary_not_an_index", SystemOrdinaryRel, false},
++		{"ordinary", SystemOrdinaryRel, false},
++	}
++	for _, tc := range cases {
 +		t.Run(tc.name, func(t *testing.T) {
-+			ctx := newEncodedExistsPlanTestContext(t, tc.ndv)
-+			// Isolate probe fanout from per-reader preparation costs and host CPU count.
-+			base := *ctx.MockCompilerContext
-+			ctx.ResolveVariableFunc = func(name string, system, global bool) (interface{}, error) {
-+				if name == "max_dop" {
-+					return int64(1), nil
-+				}
-+				return base.ResolveVariable(name, system, global)
-+			}
-+			activity := ctx.tables["cost_activity"]
-+			activity.Cols[2].Typ = activity.Cols[0].Typ
-+			activity.Name2ColIndex["payload"] = int32(len(activity.Cols))
-+			activity.Cols = append(activity.Cols, &planpb.ColDef{
-+				Name: "payload", Typ: planpb.Type{Id: int32(types.T_varchar), Width: 16}, Default: &planpb.Default{},
-+			})
-+			activity.Indexes = nil
-+			addCostActivityRegularIndex(t, ctx, "idx_membership", []string{
-+				"state", catalog.CreateAlias(catalog.CPrimaryKeyColName),
-+			}, false)
-+			buildStats := ctx.statsByID[ctx.tables["cost_tags"].TblId]
-+			buildStats.TableCnt = 100_000
-+			buildStats.NdvMap["tenant_id"] = 50_000
-+			buildStats.MinValMap["tenant_id"] = 0
-+			buildStats.MaxValMap["tenant_id"] = 49_999
-+			ctx.statsCache.Set(ctx.tables["cost_tags"].TblId, buildStats)
-+			optimizer := &encodedIndexPlanTestOptimizer{ctx: ctx}
-+			query, err := runOneStmt(optimizer, t, "select count(*) from cost_activity "+tc.hint+
-+				" where state in (select tenant_id from cost_tags where tenant_id < 100)"+tc.residual)
-+			require.NoError(t, err)
-+			require.Equal(t, int64(1), query.GetQuery().MaxDop)
-+			require.True(t, reachablePlanHasJoinType(query.GetQuery(), planpb.Node_SEMI))
-+			require.Equal(t, tc.wantIndex, planHasIndexJoin(query))
-+			if !tc.wantIndex {
-+				require.Empty(t, findFirstIndexScanName(query))
-+			}
++			require.Equal(t, tc.want, RequiresPrivilegedRelationAccess(tc.name, tc.kind, 0))
 +		})
 +	}
++	for _, kind := range append(userVisibleRelationKinds[:], "", SystemTemporaryTable, SystemPersistRel, SystemTransientRel, "V") {
++		t.Run("core/"+kind, func(t *testing.T) {
++			require.False(t, RequiresPrivilegedRelationAccess("ordinary", kind, 0))
++			require.False(t, RequiresPrivilegedRelationAccess("ordinary", kind, features.Partition))
++			require.True(t, RequiresPrivilegedRelationAccess("ordinary", kind, features.IndexTable))
++		})
++	}
++	for _, kind := range []string{SystemIndexRel, "unregistered_plugin_kind", Cagra_TblType_Storage, Ivfpq_TblType_Metadata} {
++		require.True(t, RequiresPrivilegedRelationAccess("ordinary", kind, 0), kind)
++	}
 +}
 +
-+func TestJoinIndexBackfillAdmission(t *testing.T) {
-+	for _, tc := range []struct {
-+		name         string
-+		ndv          float64
-+		buildRows    float64
-+		tableRows    float64
-+		secondNDV    float64
-+		unique       bool
-+		hiddenPK     bool
-+		force        bool
-+		missingStats bool
-+		defaultStats bool
-+		wantSkip     bool
-+	}{
-+		{name: "broad lookup preparation", ndv: 1_000, buildRows: 200, wantSkip: true},
-+		{name: "selective lookup", ndv: 1_000_000, buildRows: 200},
-+		{name: "unique lookup bounds fanout", ndv: 1_000, buildRows: 200, unique: true},
-+		{name: "correlated composite keys", ndv: 1_000, secondNDV: 1_000, buildRows: 200, wantSkip: true},
-+		{name: "selective composite component", ndv: 1_000, secondNDV: 1_000_000, buildRows: 200},
-+		{name: "hidden PK below capacity", ndv: 20_000, buildRows: 199, hiddenPK: true},
-+		{name: "hidden PK at capacity", ndv: 20_000, buildRows: 200, hiddenPK: true},
-+		{name: "hidden PK above capacity", ndv: 20_000, buildRows: 201, hiddenPK: true, wantSkip: true},
-+		{name: "small table preference", ndv: 10, buildRows: 200, tableRows: 10_000},
-+		{name: "force bypasses cost", ndv: 1_000, buildRows: 200, force: true},
-+		{name: "unknown NDV", buildRows: 200},
-+		{name: "negative NDV", ndv: -1, buildRows: 200},
-+		{name: "NaN NDV", ndv: math.NaN(), buildRows: 200},
-+		{name: "infinite NDV", ndv: math.Inf(1), buildRows: 200},
-+		{name: "inconsistent NDV", ndv: 1_000_001, buildRows: 200},
-+		{name: "missing statistics", ndv: 1_000, buildRows: 200, missingStats: true},
-+		{name: "default statistics", ndv: 1_000, buildRows: 200, defaultStats: true},
-+		{name: "empty build", ndv: 1_000},
-+		{name: "NaN build", ndv: 1_000, buildRows: math.NaN()},
-+		{name: "infinite build", ndv: 1_000, buildRows: math.Inf(1)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			rows := tc.tableRows
-+			if rows == 0 {
-+				rows = 1_000_000
-+			}
-+			builder, scanID, index, refs := newEncodedIndexCostTestCase(t,
-+				[]string{"tenant_id", catalog.CreateAlias(catalog.CPrimaryKeyColName)}, nil,
-+				&planpb.Stats{TableCnt: rows, Outcnt: rows, Cost: rows,
++func TestNonIndexRelationSQLPredicate(t *testing.T) {
++	require.Equal(t, "not mo_is_physical_index(coalesce(relname, ''), coalesce(relkind, ''), coalesce(extra_info, ''))", NonIndexRelationSQLPredicate(""))
++	require.Equal(t, "not mo_is_physical_index(coalesce(tbl.relname, ''), coalesce(tbl.relkind, ''), coalesce(tbl.extra_info, ''))", NonIndexRelationSQLPredicate("tbl"))
++	require.Equal(t, "not mo_is_physical_index(coalesce(mc.att_relname, ''), coalesce(mc.relkind, ''), coalesce(mc.extra_info, ''))", NonIndexRelationSQLPredicateForColumns("mc.att_relname", "mc.relkind", "mc.extra_info"))
++}
 ```
 
-**File**: `test/distributed/cases/optimizer/nopk_index_mem_runtime_filter.result` (modified, +98/-0)
+**File**: `pkg/catalog/temp_table.go` (modified, +9/-1)
 ```diff
-@@ -13,6 +13,35 @@ select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- 1  ¦  7  ¦  a  𝄀
- 2  ¦  7  ¦  b  𝄀
- 3  ¦  8  ¦  c
-+create table members (k int);
-+insert into members values (7),(7),(8),(null);
-+select id,k,payload from t where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select t.id,t.k,t.payload from t join (select distinct k from members where k < 9) m on t.k=m.k order by t.id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t where k in (select k from members) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t where k in (select k from members where k > 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]
- prepare idx_points from 'select id,k,payload from t force index(idx_k) where k in (?, ?) order by id';
- set @k1='7';
- set @k2='8';
-@@ -56,4 +85,73 @@ select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- ➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
- 1  ¦  7  ¦  a  𝄀
- 2  ¦  7  ¦  updated
-+select id,k,payload from t where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+truncate table t;
-+truncate table members;
-+insert into t values (1,1,'{"x":1}');
-+insert into t select result,10,'bad' from generate_series(2,10)g;
-+insert into members values (1),(10),(10);
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
-+➤ mo_ctl(dn, flush, nopk_index_mem_runtime_filter.t)[12,65535,0]  𝄀
-+{
-+  "method": "Flush",
-+  "result": [
-+    {
-+      "returnStr": "OK"
-+    }
-+  ]
+@@ -24,9 +24,17 @@ import (
+ const (
+ 	legacyTemporaryTableNameRegexp = `^__mo_tmp_[0-9a-f]{32}_`
+ 	legacyTemporaryTableFunction   = `mo_is_legacy_temporary_table`
+-	userVisibleRelationKindsSQL    = "'" + SystemOrdinaryRel + "', '" + SystemViewRel + "', '" + SystemExternalRel + "', '" + SystemMaterializedRel + "', '" + SystemSourceRel + "', '" + SystemClusterRel + "', '" + SystemPartitionRel + "', '" + SystemSequenceRel + "'"
+ )
+ 
++// Keep the SQL filter and explicit-relation admission on the same set of
++// catalog relation kinds. The order is part of the generated SQL's shape.
++var userVisibleRelationKinds = [...]string{
++	SystemOrdinaryRel, SystemViewRel, SystemExternalRel, SystemMaterializedRel,
++	SystemSourceRel, SystemClusterRel, SystemPartitionRel, SystemSequenceRel,
 +}
 +
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.members');
-+➤ mo_ctl(dn, flush, nopk_index_mem_runtime_filter.members)[12,65535,0]  𝄀
-+{
-+  "method": "Flush",
-+  "result": [
-+    {
-+      "returnStr": "OK"
-+    }
-+  ]
-+}
++var userVisibleRelationKindsSQL = "'" + strings.Join(userVisibleRelationKinds[:], "', '") + "'"
 +
-+analyze table t(k) fullscan;
-+➤ table_name[12,0,0]  ¦  mode[12,0,0]  ¦  coverage[12,0,0]  ¦  columns_analyzed[-5,0,0]  ¦  population_rows[-5,0,0]  ¦  population_exact[-6,0,0]  ¦  sample_rows[-5,0,0]  ¦  sample_blocks[-5,0,0]  ¦  sample_bytes[-5,0,0]  ¦  status[12,0,0]  ¦  message[12,0,0]  𝄀
-+nopk_index_mem_runtime_filter.t  ¦  FULLSCAN  ¦  SNAPSHOT_VISIBLE_V1  ¦  1  ¦  10  ¦  1  ¦  10  ¦  2  ¦  280  ¦  OK  ¦  q=1/1
-+analyze table members(k) fullscan;
-+➤ table_name[12,0,0]  ¦  mode[12,0,0]  ¦  coverage[12,0,0]  ¦  columns_analyzed[-5,0,0]  ¦  population_rows[-5,0,0]  ¦  population_exact[-6,0,0]  ¦  sample_rows[-5,0,0]  ¦  sample_blocks[-5,0,0]  ¦  sample_bytes[-5,0,0]  ¦  status[12,0,0]  ¦  message[12,0,0]  𝄀
-+nopk_index_mem_runtime_filter.members  ¦  FULLSCAN  ¦  SNAPSHOT_VISIBLE_V1  ¦  1  ¦  3  ¦  1  ¦  3  ¦  2  ¦  84  ¦  OK  ¦  q=1/1
-+set @saved_join_in_limit = @@session.runtime_filter_limit_in;
-+set runtime_filter_limit_in = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t where k in (select k from members where k < 2) and payload = '{"x":1}';
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+update t set payload = 'bad' where id = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+invalid input: json text bad
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+invalid input: json text bad
-+set runtime_filter_limit_in = cas
-```
-
-**File**: `test/distributed/cases/optimizer/nopk_index_mem_runtime_filter.sql` (modified, +46/-0)
-```diff
-@@ -13,6 +13,16 @@ insert into t values (1,7,'a'),(2,7,'b'),(3,8,'c'),(4,null,'n'),(5,9,'x');
- select id,k,payload from t force index(idx_k) where k in (7,8) order by id;
- select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- 
-+-- 子查询的重复键不放大外表结果，NULL 不产生匹配。
-+create table members (k int);
-+insert into members values (7),(7),(8),(null);
-+select id,k,payload from t where k in (select k from members where k < 9) order by id;
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) order by id;
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) order by id;
-+select t.id,t.k,t.payload from t join (select distinct k from members where k < 9) m on t.k=m.k order by t.id;
-+select id,k,payload from t where k in (select k from members) order by id;
-+select id,k,payload from t where k in (select k from members where k > 9) order by id;
-+
- prepare idx_points from 'select id,k,payload from t force index(idx_k) where k in (?, ?) order by id';
- set @k1='7';
- set @k2='8';
-@@ -30,4 +40,40 @@ select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
- select id,k,payload from t force index(idx_k) where k in (7,8) order by id;
- select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- 
-+-- 同一半连接在持久化数据和残余谓词上保持结果等价。
-+select id,k,payload from t where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+
-+-- 降低容量，在小数据上覆盖会扩大残余谓词求值范围的成本拒绝。
-+truncate table t;
-+truncate table members;
-+insert into t values (1,1,'{"x":1}');
-+insert into t select result,10,'bad' from generate_series(2,10)g;
-+insert into members values (1),(10),(10);
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.members');
-+-- 物理采样块数和字节数不是本用例契约，保留总体行数和完成状态检查。
-+-- @ignore:7,8
-+analyze table t(k) fullscan;
-+-- @ignore:7,8
-+analyze table members(k) fullscan;
-+set @saved_join_in_limit = @@session.runtime_filter_limit_in;
-+set runtime_filter_limit_in = 1;
-+
-+-- 非匹配行的非法 JSON 不得因访问路径替换而被求值。
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+select count(*) from t where k in (select k from members where k < 2) and payload = '{"x":1}';
-+
-+-- 匹配行上的真实转换错误仍必须报告。
-+update t set payload = 'bad' where id = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+set runtime_filter_limit_in = cast(@saved_join_in_limit as signed);
-+select @@session.runtime_filter_limit_in = @saved_join_in_limit as restored_limit;
-+set @saved_join_in_limit = null;
-+
- drop database nopk_index_mem_runtime_filter;
+ // NonTemporaryTableSQLPredicate returns the catalog predicate used to exclude
+ // temporary objects from metadata and clone/restore queries.
+ //
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32257** (2026-11-05): perf(plan): optimize point-update index maintenance with missing statistics (@XuPeng-SH)
-- **PR #32255** (2026-11-05): vectorindex: IVF-PQ and CAGRA model tars through the index-file layer (@cpegeric)
-- **PR #32252** (2026-11-05): fix: rebuild indexes when COPY ALTER changes primary keys (@iamlinjunhong)
-- **PR #32239** (2026-11-05): fix: stabilize Top typed-NULL layout on 4.1.6-hotfix (@ck89119)
-- **PR #32231** (2026-11-05): fix(planner): account for probe fanout in join index costing (@ck89119)
-- **PR #32230** (2026-11-05): fix(plan): push outer pagination into derived-table sorts (@ck89119)
+- **PR #32342** (2026-11-07): fix(sql): scan Decimal256 MIN/MAX aggregates without zonemap bounds (@aptend)
+- **PR #32340** (2026-11-06): fix(parser): preserve mixed-case UNIQUE constraint symbols (@aptend)
+- **PR #32337** (2026-11-06): fix(mo-service): apply max-processor after flag parsing (@aptend)
+- **PR #32335** (2026-11-06): fix(frontend): reject unsupported SET PASSWORD statements (@aptend)
+- **PR #32319** (2026-11-06): fix: harden two-node HA deployment and DRBD fencing (@wangxiaoze-orange)
+- **PR #32307** (2026-11-06): fix: consolidate stopped-upgrade cleanup and stabilize CI (@XuPeng-SH)
 
 ---
 
@@ -3790,34 +4533,32 @@ Validation (Go 1.27.1, darwin/arm64):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plan): validate literal defaults in new DDL (#32139)
+## X. consolidate stopped-upgrade cleanup and stabilize CI (#32307)
 
 **RULE**:
-When implementing operations in `pkg/frontend/back_exec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/20261028-catalog-upgrade-407.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36d1ac51`: plan): validate literal defaults in new DDL (#32139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `606ae4fb`: consolidate stopped-upgrade cleanup and stabilize CI (#32307). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/back_exec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261028-catalog-upgrade-407.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		User:          backSes.GetResponser().GetStr(USERNAME),
-		Database:      backSes.GetResponser().GetStr(DBNAME),
-	backSes.setResponser(defResper)
-	routineId := backSes.GetResponser().GetU32(CONNID)
+# Catalog upgrade consolidation and 4.2 stopped-upgrade cleanup
+The original #31490 design considered stopped, intact 4.1 and 4.2 deployments. For the #32278 follow-up, the supported source is a stopped 4.2 release upgraded directly to current main; intermediate main versions, mixed-version operation and downgrade are out of scope. References to a 4.1 source below describe the earlier design, not an additional acceptance target for this follow-up. This boundary does not erase older data: a 4.2 source can contain snapshots created before that release. The migration must preserve data, existing snapshot records and retention. Ambiguous historical snapshot ownership must follow the user's explicit decision: pause and obtain administrator confirmation by snapshot UUID; do not guess from the snapshot name alone.
+The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, using the version/tenant task and startup reconciliation owners described below. Do not register unpublished 4.0.8–4.0.19 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		User:          backSes.respr.GetStr(USERNAME),
-		Database:      backSes.respr.GetStr(DBNAME),
-	backSes.respr = defResper
-	routineId := backSes.respr.GetU32(CONNID)
+# Consolidate catalog upgrades for 4.1 and 4.2 sources
+The requested source is a stopped, intact deployment whose current released version is 4.1 or 4.2. Direct upgrades from 3.x and all unreleased main catalogs (including prior 4.0.7 and 4.0.18/19 identities), downgrade and mixed-version operation are out of scope. This boundary does not erase older data: a 4.1 or 4.2 source can contain snapshots created before that release. The migration must preserve data, existing snapshot records and retention. Ambiguous historical snapshot ownership must follow the user's explicit decision: pause and obtain administrator confirmation by snapshot UUID; do not guess from the snapshot name alone.
+The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, preserving the existing version/tenant task owners and recurring maintenance. Do not register unpublished 4.0.8–4.0.19 identities as new upgrade steps. Before release, fold the later COLUMNS and prefix-aware STATISTICS refreshes into the existing 4.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36d1ac51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `606ae4fb` are properly handled with clean fallback behavior.

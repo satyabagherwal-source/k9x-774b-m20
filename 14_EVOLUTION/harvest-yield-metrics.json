@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T04:44:31.293Z",
-  "total_cycles_completed": 7964,
-  "total_learnings_persisted": 7964,
-  "total_rules_promoted": 7615,
+  "last_updated": "2026-11-07T04:56:55.310Z",
+  "total_cycles_completed": 7965,
+  "total_learnings_persisted": 7965,
+  "total_rules_promoted": 7616,
   "history": [
-    {
-      "timestamp": "2026-11-05T21:54:43.954Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T21:54:49.476Z",
       "repository": "wcandillon/react-native-skia",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T04:44:31.293Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T04:56:55.310Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

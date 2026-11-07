@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-7EF0",
-    "timestamp": "2026-11-05T03:46:28.668Z",
-    "repository": "jacklandrin/OnlySwitch",
-    "learningId": "learn-github-jacklandrin-onlyswitch",
-    "contentHash": "2124b75464d19edf2d80d3906aaddae9b5f713993244ba49784a7a2a0475aea0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-7FOT",
     "timestamp": "2026-11-05T03:46:30.317Z",
     "repository": "opentofu/opentofu",
@@ -7490,6 +7475,21 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-LP1G",
+    "timestamp": "2026-11-07T04:56:55.300Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
