@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:23:48.847Z",
+  "last_updated": "2026-11-07T19:30:48.210Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55710,11 +55710,16 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "d14c0804",
-      "content_hash": "8f4cbfe17c04d8520fb6c296c090c5d6099f60ae2a04f65572ac6eff4e2979db",
+      "source_version": "617dacbb",
+      "content_hash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Validate writer ownership after WAL replay (#2231)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1979,
           "title": "Fix/external compaction concurrency cap (#2110)",
@@ -55766,7 +55771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:28:54.587Z",
+      "verified_at": "2026-11-07T19:30:48.189Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

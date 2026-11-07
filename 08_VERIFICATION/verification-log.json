@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-0CMV",
-    "timestamp": "2026-11-05T06:28:57.463Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "40aa3ba9cd4f17e5dc48884f6c64af700bf2ffbfdad6830816e8b244d9da5192",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-0D8M",
     "timestamp": "2026-11-05T06:28:58.246Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7475,21 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-TIM2",
+    "timestamp": "2026-11-07T19:30:48.314Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "c8f68488a2184b283053c4c99dcdd59f5fc7ad99d67f93cd9c9bf009e45b4965",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

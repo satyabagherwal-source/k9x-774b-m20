@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `d14c0804`  
+> **Source Version**: `617dacbb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:28:54.095Z  
+> **Timestamp**: 2026-11-07T19:30:47.131Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:28:53.930Z  
+> **Harvest Timestamp**: 2026-11-07T19:30:45.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3615 stars
+- **Stars / Engagement**: 3625 stars
 
 ---
 
@@ -2346,633 +2346,291 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e21ba01` (2026-11-04)
-**Commit Message**: Lazily build and skip sources in recency scans (#2221)
+### Incident Patch 1: `617dacbb` (2026-11-07)
+**Commit Message**: Validate writer ownership after WAL replay (#2231)
 
-**File**: `slatedb/Cargo.toml` (modified, +5/-0)
+**File**: `slatedb/src/db.rs` (modified, +118/-26)
 ```diff
-@@ -169,6 +169,11 @@ harness = false
- name = "memtable_seek"
- harness = false
+@@ -459,11 +459,10 @@ impl DbInner {
+             .value
+             .core
+             .replay_after_wal_id;
+-        let writer_epoch = self.state.read().state().manifest.value.writer_epoch;
+         fail_point!(
+             Arc::clone(&self.fp_registry),
+             "replay-wal-pause",
+-            writer_epoch == 1,
++            self.state.read().state().manifest.value.writer_epoch == 1,
+             |_| -> Result<(), SlateDBError> { Ok(()) }
+         );
  
-+[[bench]]
-+name = "recency_scan_bench"
-+harness = false
-+required-features = ["foyer"]
-+
- [lints]
- workspace = true
+@@ -489,10 +488,8 @@ impl DbInner {
+                 // the GC has removed this WAL entry. Check the latest manifest's
+                 // writer_epoch to see if this client is fenced.
+                 Err(SlateDBError::WalTruncated(wal_id)) => {
++                    // Refresh checks the manifest epoch and returns Fenced if it has advanced.
+                     self.memtable_flusher.refresh_manifest().await?;
+-                    if self.state.read().state().manifest.value.writer_epoch > writer_epoch {
+-                        return Err(SlateDBError::Fenced);
+-                    }
+                     return Err(SlateDBError::WalTruncated(wal_id));
+                 }
+                 Err(err) => return Err(err),
+@@ -534,6 +531,9 @@ impl DbInner {
+             current_memtable_wal_id = replayed_table_last_wal_id;
+         }
  
-```
-
-**File**: `slatedb/benches/recency_scan_bench.rs` (added, +361/-0)
-```diff
-@@ -0,0 +1,361 @@
-+// our microbenchmarks use pprof, but it doesn't work on windows
-+#![cfg(not(windows))]
++        // Reject a writer that lost its epoch during replay (#2225).
++        self.memtable_flusher.refresh_manifest().await?;
 +
-+//! Measures `scan_prefix_by_recency` when every block is already in the block
-+//! cache, so the cost comes from work on the CPU, not from I/O.
-+//!
-+//! The database has the active memtable, 4 immutable memtables, 8 L0 SSTs,
-+//! and 4 sorted runs. Every SST holds keys at both ends of the key space, so
-+//! only the prefix bloom filter can rule an SST out. The recency walk visits
-+//! the memtables from newest to oldest, then the L0 SSTs from newest to
-+//! oldest, then the sorted runs from newest to oldest. A fail point pauses the
-+//! upload of immutable memtables to L0, so they stay in memory.
-+//!
-+//! The `first_entry` cases read the first entry of a prefix whose keys are in:
-+//!
-+//! - `in_memtable`: the active memtable only, so the walk stops at the first
-+//!   source.
-+//! - `in_newest_l0`: the newest L0 SST only, so the walk passes every memtable
-+//!   first.
-+//! - `in_sorted_run`: the oldest sorted run only, so the walk reaches every
-+//!   source.
-+//! - `absent`: no source, so the walk reaches every source and finds nothing.
-+//!
-+//! The `all_entries/everywhere` case reads every entry of a prefix whose keys
-+//! are in every source, so the walk builds every source and can skip none.
-+//!
-+//! Run: cargo bench -p slatedb --bench recency_scan_bench
-+
-+use std::collections::HashMap;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::Arc;
-+use std::time::Duration;
-+
-+use chrono::TimeDelta;
-+use criterion::{criterion_group, criterion_main, Criterion};
-+use fail_parallel::FailPointRegistry;
-+use object_store::memory::InMemory;
-+use object_store::ObjectStore;
-+use pprof::criterion::{Output, PProfProfiler};
-+use slatedb::config::{CompactorOptions, FlushOptions, FlushType, ScanOptions, Settings};
-+use slatedb::db_cache::foyer::{FoyerCache, FoyerCacheOptions};
-+use slatedb::db_cache::SplitCache;
-+use slatedb::{BloomFilterPolicy, Db, FilterPolicy, PrefixExtractor, PrefixTarget};
-+use slatedb_common::clock::{DefaultSystemClock, SystemClock};
-+use tokio::runtime::Runtime;
-+
-+const PATH: &str = "/bench/recency";
-+const PREFIX_LEN: usize = 6;
-+const PREFIXES_PER_GROUP: usize = 100;
-+const KEYS_PER_PREFIX: usize = 4;
-+/// SSTs flushed before each compaction that builds a sorted run.
-+const SORTED_RUN_SOURCES: usize = 4;
-+const SORTED_RUNS: usize = 4;
-+const L0_SSTS: usize = 8;
-+const IMM_MEMTABLES: usize = 4;
-+/// A memtable larger than this is frozen into an immutable memtable. Every
-+/// group of keys is smaller, so only an `IMM_VALUE_BYTES` value freezes one.
-+const L0_SST_SIZE_BYTES: usize = 256 * 1024;
-+const IMM_VALUE_BYTES: usize = 300 * 1024;
-+/// Pausing this fail point keeps immutable memtables from being uploaded.
-+const L0_UPLOAD_FAIL_POINT: &str = "write-compacted-sst-io-error";
-+
-+/// Each group of prefixes has its keys in one place. A prefix is
-+/// `pk` followed by four digits, and each group starts at a multiple of 1000.
-+#[derive(Clone, Copy)]
-+enum Group {
-+    /// The first and last prefixes, written to every SST so that every SST
-+    /// covers the whole key space.
-+    Sentinel,
-+    /// Written to every SST, so no SST is empty apart from its sentinels.
-+    Filler,
-+    SortedRun,
-+    NewestL0,
-+    Memtable,
-+    Absent,
-+    Everywhere,
-+    /// One key per immutable memtable, with a value large enough to freeze it.
-+    ImmMemtable,
-+}
-+
-+impl Group {
-+    fn first_prefix(self) -> usize {
-+        match self {
-+            Group::Sentinel => 0,
-+            Group::SortedRun => 1000,
-+            Group::Filler => 2000,
-+            Group::NewestL0 => 3000,
-+            Group::Memtable => 4000,
-+            Group::Absent => 5000,
-+            Group::Everywhere => 6000,
-+            Group::ImmMemtable => 7000,
-+        }
-+    }
-+
-+    fn prefixes(self) -> Vec<usize> {
-+        match self {
-+            Group::Sentinel => vec![0, 9999],
-+            _ => (0..PREFIXES_PER_GROUP)
-+                .map(|i| self.first_prefix() + i)
-+                .collect(),
-+        }
-+    }
-+}
-+
-+struct FixedPrefixExtractor;
-+
-+impl PrefixExtractor for FixedPrefixExtractor {
-+    fn name(&self) -> &str {
-+        "fixed6"
-+    }
-+
-+    fn prefix_len(&self, target: &PrefixTarget) -> Option<usize> {
-+        let input = match target {
-+            PrefixTarget::Point(k) => k.as_ref(),
-+            PrefixTarget::Prefix(p) => p.as_ref(),
-+        };
-+        (input.len() >= PREFIX_LEN).then_some(PREFIX_LEN)
-+    }
-+}
-+
-+fn prefix(prefix_idx: usize) -> Vec<u8> {
-+    format!("pk{:04}", prefix_idx).into_bytes()
-+}
-+
-+fn key(prefix_idx: usize, key_idx: usize) -> Vec<u8> {
-+    format!("pk{:04}:{:04}", prefix_idx, key_idx).into_bytes()
-+}
-+
-+fn filter_policies() -> Vec<Arc<dyn FilterPolicy>> {
-+    vec![Arc::new(
-+        BloomFilterPolicy::new(10).with_prefix_extractor(Arc::new(FixedPrefixExtractor)),
-+    )]
-+}
-+
-+fn cache() -> Arc<SplitCache> {
-+    let cache = |capacity| {
-+     
-```
-
-**File**: `slatedb/src/db.rs` (modified, +353/-8)
-```diff
-@@ -1200,14 +1200,14 @@ impl Db {
-     /// ## Examples
-     ///
-     /// Pull entries from the freshest source under the prefix and stop.
--    /// Because sources are walked newest-first and lazily initialized, an
--    /// early-return like this only touches the source that holds the
--    /// freshest data. Note that *within* a source the order is set by
--    /// `options.order` (ascending by default), so the first yielded entry
--    /// is the smallest key in the freshest source, not necessarily the
--    /// most recently written key. Across sources the same key may appear
--    /// more than once, so callers that want only the freshest value per
--    /// key should dedupe.
-+    /// Because sources are walked newest-first, and each source's iterator is
-+    /// built only when the walk reaches it, an early return like this builds
-+    /// no iterators for the sources after the first source that holds a
-+    /// match. Note that *within* a source the order is set by `options.order`
-+    /// (ascending by default), so the first yielded entry is the smallest key
-+    /// in the freshest source, not necessarily the most recently written key.
-+    /// Across sources the same key may appear more than once, so callers that
-+    /// want only the freshest value per key should dedupe.
-     ///
-     /// ```
-     /// use slatedb::{Db, Error};
-@@ -2930,6 +2930,111 @@ mod tests {
-         db.close().await.unwrap();
+         let guard = self.state.read();
+         self.status_manager
+             .report_memtable_segments(collect_touched_segments(&guard.view()));
+@@ -6800,7 +6800,8 @@ mod tests {
+         kv_store.close().await.unwrap();
      }
  
-+    #[tokio::test]
-+    async fn test_scan_prefix_by_recency_counts_each_l0_filter_once() {
-+        use crate::db_stats::{
-+            FILTER_KIND_LABEL, FILTER_KIND_PREFIX, SST_FILTER_FALSE_POSITIVE_COUNT,
-+            SST_FILTER_NEGATIVE_COUNT, SST_FILTER_POSITIVE_COUNT,
+-    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    // Two paused uploads block workers; keep others free for manifest refresh.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+     async fn test_should_recover_imm_from_wal() {
+         let fp_registry = Arc::new(FailPointRegistry::new());
+         fail_parallel::cfg(fp_registry.clone(), "write-compacted-sst-io-error", "pause").unwrap();
+@@ -7547,8 +7548,7 @@ mod tests {
+         //   enters replay_wal. We pause it inside replay_wal.
+         // - W2 starts opening: claims writer_epoch=2, writes its own fence WAL
+         //   (above W1's), replays, and finishes init.
+-        // - W1 unpauses, finishes replay_wal, and returns its Db handle.
+-        // - W1 issues a put. This put should fail because W1's next WAL id is taken.
++        // - W1 resumes replay and fails to open because W2 owns a newer epoch.
+         let object_store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
+         let path = "/tmp/test_writer_paused_in_replay_wal_race";
+         let fp_registry = Arc::new(FailPointRegistry::new());
+@@ -7615,26 +7615,15 @@ mod tests {
+             2
+         );
+ 
+-        // Release W1. It finishes replay_wal and returns a Db handle.
++        // Release W1. The manifest check after replay must reject its stale epoch.
+         fail_parallel::cfg(fp_registry.clone(), "replay-wal-pause", "off").unwrap();
+-        let db1 = w1_handle.await.unwrap().unwrap();
+-        assert_eq!(
+-            db1.inner.state.read().state().manifest.value.writer_epoch,
+-            1
+-        );
++        let err = match w1_handle.await.unwrap() {
++            Ok(_) => panic!("expected W1 open to fail"),
++            Err(err) => err,
 +        };
-+        use crate::filter_policy::{BloomFilterPolicy, FilterPolicy};
-+        use crate::test_utils::FixedThreeBytePrefixExtractor;
-+
++        assert_eq!(err.kind(), crate::ErrorKind::Closed(CloseReason::Fenced));
+ 
+-        // W1's put should fail because its now fenced
+-        let result = db1
+-            .put_with_options(
+-                b"w1",
+-                b"value",
+-                &PutOptions::default(),
+-                &WriteOptions::default(),
+-            )
+-            .await;
+-        if let Ok(handle) = result {
+-            assert!(handle.await_durable().await.is_err());
+-        }
++        db2.close().await.unwrap();
+     }
+ 
+     async fn wait_for_wal_sst_count(wal_store: &WalTableStore, min_count: usize, context: &str) {
+@@ -7648,6 +7637,109 @@ mod tests {
+         panic!("{context}");
+     }
+ 
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn wal_replay_should_preserve_data_when_gc_slot_is_reused() {
 +        let object_store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
-+        let metrics_recorder = Arc::new(DefaultMetricsRecorder::new());
-+        let filter_policy: Arc<dyn FilterPolicy> = Arc::new(
-+            BloomFilterPolicy::new(10)
-+                .with_prefix_extractor(Arc::new(FixedThreeBytePrefixExtractor)),
++        let path = "/tmp/wal_replay_should_preserve_data_when_gc_slot_is_reused";
++        let wal_store = WalTableStore::new(
++            object_store.clone(),
++            SsTableFormat::default(),
++            path,
++            TableStoreKind::Main,
 +        );
-+        let db = Db::builder("/tmp/test_recency_skips_filtered_l0", object_store)
-+            .with_settings(test_db_options(0, 64 * 1024, None))
-+            .with_filter_policies(vec![filter_policy])
-+            .with_metrics_recorder(metrics_recorder.clone())
-+            .build()
-+            .await
-+            .unwrap();
 +
-+        // Three L0 SSTs that all span `px:`, so only the prefix filter can
-+        // rule one out. Only the oldest holds `px:`.
-+        for prefix in [b"px:", b"qx:", b"rx:"] {
-+            db.put(b"aa:a", b"v").await.unwrap();
-+            db.put([prefix.as_slice(), b"a"].concat(), b"v")
++        // 1. Seed the two committed WALs from issue #2225.
++        for (id, key, value) in [(1, b"k1", b"v1"), (2, b"k2", b"v2")] {
++            let mut builder = wal_store.table_builder();
++            builder
++                .add(RowEntry::new_value(key, value, id))
 +                .await
 +                .unwrap();
-+            db.put(b"zz:a", b"v").await.unwrap();
-+            db.flush_with_options(FlushOptions {
-+                flush_type: FlushType::MemTable,
-+            })
-+            .await
-+            .unwrap();
-+        }
-+
-+        let mut iter = db.scan_prefix_by_recency(b"px:").await.unwrap();
-+        let entry = iter.next_entry().await.unwrap().unwrap();
-+        assert_eq!(entry.key.as_ref(), b"px:a");
-+        assert!(iter.next_entry().await.unwrap().is_none());
-+
-+        // Each SST's filter is checked once: the two newer SSTs are ruled out,
-+        // and the oldest passes and holds the key.
-+        let prefix_count = |name| {
-+            lookup_metric_with_labels(
-+                &metrics_recorder,
-+                name,
-+                &[(FILTER_KIND_LABEL, FILTER_KIND_PREFIX)],
-+            )
-+            .unwrap_or(0)
-+        };
-+        assert_eq!(prefix_count(SST_FILTER_NEGATIVE_COUNT), 2);
-+        assert_eq!(prefix_count(SST_FILTER_POSITIVE_COUNT), 1);
-+        assert_eq!(prefix_count(SST_FILTER_FALSE_POSITIVE_COUNT), 0);
-+
-+        db.close().await.unwrap();
-+    }
-+
-+    #[tokio::test]
-+    async fn test_scan_prefix_by_recency_resumes_a_source_after_a_dropped_next_entry() {
-+        let inner: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
-+        let gated = Arc::new(GatedObjectStore::new(inner));
-+        // No manifest polls during the test, so the only read that reaches
-+        // the gate below is the scan's own.
-+        let mut settings = test_db_options(0, 64 * 1024, None);
-+        settings.manifest_poll_interval = Duration::from_secs(3600);
-+        let db = Db::builder("/tmp/test_recency_dropped_next_entry", gated.clone())
-+            .with_settings(settings)
-+            .with_db_cache_disabled()
-+            .build()
-+            .await
-+            .unwrap();
-+
-+        // Older L0 SST, then newer L0 SST, each with a version of px:a.
-+        // Nothing for the prefix stays in the memtable.
-+        for value in [b"old_a", b"new_a"] {
-+            db.put(b"px:a", value).await.unwrap();
-+            db.flush_with_options(FlushOptions
++            wal_store
++                .write_sst(id.into(), &builder.buil
 ```
 
-**File**: `slatedb/src/db_iter.rs` (modified, +163/-35)
+**File**: `slatedb/src/fence.rs` (modified, +3/-8)
 ```diff
-@@ -1,15 +1,21 @@
- use crate::batch::WriteBatchIterator;
- use crate::bytes_range::BytesRange;
-+use crate::db_state::{SortedRun, SsTableView};
-+use crate::db_stats::DbStats;
- use crate::error::SlateDBError;
- use crate::filter_iterator::FilterIterator;
- use crate::iter::{EmptyIterator, IterationOrder, RowEntryIterator};
- use crate::manifest::LsmTreeState;
-+use crate::mem_table::KVTable;
- use crate::merge_iterator::MergeIterator;
- use crate::merge_operator::{
-     MergeOperatorIterator, MergeOperatorRequiredIterator, MergeOperatorType,
- };
--use crate::read_trace::ReadTrace;
-+use crate::read_trace::{ReadTrace, SstTraceLevel};
- use crate::segment_iterator::{build_l0_point_iters, build_sr_point_iters, SegmentScanContext};
-+use crate::sorted_run_iterator::SortedRunIterator;
-+use crate::sst_iter::{SstIterator, SstIteratorOptions, SstTracingContext};
-+use crate::tablestore::TableStore;
- use crate::types::{KeyValue, RowEntry, ValueDeletable};
+@@ -84,6 +84,7 @@ impl WriterFencer {
+     /// a new `FenceableManifest` with a bumped epoch, and (2) delegating WAL fencing and recovery
+     /// to the configured [`WriterInit`]. Returns the fenced manifest, the initialized WAL writer,
+     /// and the iterator that must be replayed to recover up to the current epoch.
++    /// The caller must validate epoch ownership after replay, before serving reads or writes.
+     pub(crate) async fn fence(
+         mut self,
+         stored_manifest: StoredManifest,
+@@ -116,14 +117,9 @@ impl WriterFencer {
  
- use async_trait::async_trait;
-@@ -18,6 +24,7 @@ use futures::stream::{self, BoxStream, StreamExt};
- use parking_lot::Mutex;
- use std::collections::VecDeque;
- use std::ops::RangeBounds;
-+use std::sync::Arc;
- use tracing::Instrument;
- 
- /// [`DbIteratorRangeTracker`] records the *requested* scan range of a
-@@ -464,32 +471,30 @@ where
- 
- /// See [`crate::Db::scan_prefix_by_recency`] for the full contract.
- pub struct DbRecencyIterator {
--    /// Source iterators ordered from most recent to least recent. The
--    /// front of the deque is the source currently being drained;
--    /// exhausted sources are popped off as the walk proceeds. Each
--    /// source has already been wrapped with the sequence-number filter
--    /// at construction time.
--    iters: VecDeque<Box<dyn RowEntryIterator + 'static>>,
--    /// Whether the current front-of-deque iterator has had `init`
--    /// called. Reset to false whenever the front is popped, so the
--    /// next source's `init` is invoked lazily on the next pull.
--    current_initialized: bool,
--    /// Sticky error. Once any underlying `init` or `next` call fails,
--    /// the error is stashed here and every subsequent `next_entry`
--    /// returns it instead of advancing, since after a failure the
--    /// iterator's underlying state is unsafe to keep using.
-+    /// Sources not yet drained, from most recent to least recent.
-+    sources: VecDeque<RecencySource>,
-+    /// The initialized iterator of the source being drained.
-+    current: Option<Box<dyn RowEntryIterator + 'static>>,
-+    /// The context used to build the iterator of a source.
-+    context: RecencySourceContext,
-+    /// Sticky error. Once building a source, or any underlying `init` or
-+    /// `next` call, fails, the error is stashed here and every subsequent
-+    /// `next_entry` returns it instead of advancing, since after a failure
-+    /// the iterator's underlying state is unsafe to keep using.
-     invalidated_error: Option<SlateDBError>,
-     read_span: tracing::Span,
- }
- 
- impl DbRecencyIterator {
-     pub(crate) fn new(
--        iters: VecDeque<Box<dyn RowEntryIterator + 'static>>,
-+        sources: VecDeque<RecencySource>,
-+        context: RecencySourceContext,
-         read_span: tracing::Span,
-     ) -> Self {
-         Self {
--            iters,
--            current_initialized: false,
-+            sources,
-+            current: None,
-+            context,
-             invalidated_error: None,
-             read_span,
-         }
-@@ -510,33 +515,156 @@ impl DbRecencyIterator {
-         }
- 
-         loop {
--            let Some(iter) = self.iters.front_mut() else {
--                return Ok(None);
--            };
+         let mut manifest = manifest.into();
+         let result = wal_writer_init.fence_and_init(&mut manifest).await?;
+-        let mut manifest: FenceableManifest = manifest.into();
 -
--            if !self.current_initialized {
--                if let Err(e) = iter.init().await {
--                    self.invalidated_error = Some(e.clone());
--                    return Err(e.into());
-+            let Some(iter) = &mut self.current else {
-+                let Some(source) = self.sources.front() else {
-+                    return Ok(None);
-+                };
-+                match self.context.build_and_init_iterator(source).await {
-+                    Ok(iter) => self.current = iter,
-+                    Err(e) => return Err(self.invalidate(e)),
-                 }
--                self.current_initialized = true;
--            }
-+                // The front source leaves the queue only after its iterator is
-+                // built and initialized, so a dropped `next_entry` call builds
-+                // it again rather than skipping it.
-+                self.sources.pop_front();
-+                continue;
-+            };
+-        // Refresh validates that we own the latest epoch still.
+-        manifest.refresh().await?;
+-        fail_point_send!(self.fp_tx, "FinalRefreshManifest");
  
-             let next = iter.next().await;
-             // Keep cached iteration cooperative.
-             tokio::task::coop::consume_budget().await;
-             match next {
-                 Ok(Some(entry)) => return Ok(Some(entry)),
--                Ok(None) => {
--                    self.iters.pop_front();
--                    self.current_initialized = false;
-+                Ok(None) => self.current = No
+         Ok(WriterFenceResult {
+-            manifest,
++            manifest: manifest.into(),
+             wal_writer: result.wal_writer,
+             replay_iterator: result.replay_iterator,
+         })
+@@ -530,8 +526,7 @@ mod tests {
+         // resume the fencer
+         fail_parallel::cfg(h.fp_registry.clone(), case.pause_event, "off").unwrap();
+ 
+-        // validate that its fenced — the fencer's manifest.refresh sees the new db's
+-        // bumped epoch and returns Fenced.
++        // The refresh after WAL ID recomputation or a failed fence write detects the newer epoch.
+         let result = jh.await.unwrap();
+         assert!(
+             matches!(result, Err(SlateDBError::Fenced)),
 ```
 
-**File**: `slatedb/src/mem_table.rs` (modified, +61/-0)
+**File**: `slatedb/src/wal/mod.rs` (modified, +3/-3)
 ```diff
-@@ -254,6 +254,14 @@ impl MemTableIterator {
-         self.next_sync();
+@@ -114,9 +114,9 @@ impl WriterManifest {
+         self.manifest().writer_epoch()
      }
  
-+    /// Whether the iterator has no entries left to return.
-+    ///
-+    /// In descending order, older versions of a key wait in the stack after
-+    /// `item` is already `None`, so both must be empty.
-+    pub(crate) fn is_exhausted(&self) -> bool {
-+        self.borrow_item().is_none() && self.borrow_descending_stack().is_empty()
-+    }
-+
-     pub(crate) fn next_sync(&mut self) -> Option<RowEntry> {
-         let span = self.borrow_read_trace().new_memtable_span();
-         let _guard = span.enter();
-@@ -1135,6 +1143,59 @@ mod tests {
-         .await;
-     }
- 
-+    #[rstest]
-+    #[case::key_with_prefix(b"bb".as_slice(), false)]
-+    #[case::key_equal_to_prefix(b"bbbb".as_slice(), false)]
-+    #[case::tombstone_only(b"dd".as_slice(), false)]
-+    #[case::between_keys(b"bc".as_slice(), true)]
-+    #[case::before_first_key(b"a".as_slice(), true)]
-+    #[case::after_last_key(b"zz".as_slice(), true)]
-+    fn test_memtable_prefix_range_is_exhausted(
-+        #[case] prefix: &[u8],
-+        #[case] expected: bool,
-+        #[values(IterationOrder::Ascending, IterationOrder::Descending)] order: IterationOrder,
-+    ) {
-+        let table = WritableKVTable::new();
-+        table.put(RowEntry::new_value(b"bbbb", b"old", 1));
-+        table.put(RowEntry::new_value(b"bbbb", b"new", 2));
-+        table.put(RowEntry::new_value(b"cccc", b"v", 3));
-+        table.put(RowEntry::new_tombstone(b"dddd", 4));
-+
-+        let iter = table
-+            .table()
-+            .range(BytesRange::from_prefix(prefix), order, ReadTrace::none());
-+        assert_eq!(iter.is_exhausted(), expected);
-+    }
-+
-+    #[test]
-+    fn test_empty_memtable_iterator_is_exhausted() {
-+        let table = WritableKVTable::new();
-+        let iter = table
-+            .table()
-+            .range(.., IterationOrder::Ascending, ReadTrace::none());
-+        assert!(iter.is_exhausted());
-+    }
-+
-+    #[rstest]
-+    #[tokio::test]
-+    async fn test_memtable_iterator_is_exhausted_only_after_last_entry(
-+        #[values(IterationOrder::Ascending, IterationOrder::Descending)] order: IterationOrder,
-+    ) {
-+        // Two versions of one key: in descending order the older one waits in
-+        // the stack after `item` is already `None`.
-+        let table = WritableKVTable::new();
-+        table.put(RowEntry::new_value(b"bbbb", b"old", 1));
-+        table.put(RowEntry::new_value(b"bbbb", b"new", 2));
-+
-+        let mut iter = table.table().range(.., order, ReadTrace::none());
-+        assert!(!iter.is_exhausted());
-+        assert!(iter.next().await.unwrap().is_some());
-+        assert!(!iter.is_exhausted());
-+        assert!(iter.next().await.unwrap().is_some());
-+        assert!(iter.is_exhausted());
-+        assert!(iter.next().await.unwrap().is_none());
-+    }
-+
-     fn seek_test_table() -> WritableKVTable {
-         let table = WritableKVTable::new();
-         table.put(RowEntry::new_value(b"abc111", b"value1", 1));
+-    /// Refreshes the current manifest. Implementations of `WriterInit::fence_and_init` can
+-    /// use this to detect whether the manifest has been fenced while executing the fencing
+-    /// protocol. SlateDB will call this after calling [`WriterInit::fence_and_init`]
++    /// Refreshes the manifest and checks that this writer still owns its epoch.
++    /// [`WriterInit::fence_and_init`] implementations can call this during WAL fencing.
++    /// SlateDB also validates epoch ownership after WAL replay, before opening the database.
+     pub async fn refresh(&mut self) -> Result<(), WalError> {
+         self.manifest.refresh().await?;
+         Ok(())
 ```
 
-**File**: `slatedb/src/reader.rs` (modified, +30/-48)
+**File**: `specs/fizzbee/WalProtocol.fizz` (modified, +52/-57)
 ```diff
-@@ -2,17 +2,16 @@ use crate::batch::WriteBatchIterator;
- use crate::bytes_range::BytesRange;
- use crate::clock::MonotonicClock;
- use crate::config::{DurabilityLevel, ReadOptions, ScanOptions, TracingOptions};
--use crate::db_iter::{apply_filters, DbRecencyIterator};
-+use crate::db_iter::{DbRecencyIterator, RecencySource, RecencySourceContext};
- use crate::db_stats::DbStats;
- use crate::iter::{IterationOrder, RowEntryIterator};
- use crate::manifest::{ManifestCore, Segment};
- use crate::mem_table::{ImmutableMemtable, KVTable};
- use crate::merge_operator::{instrument_merge_operator, MergeOperatorType};
- use crate::oracle::Oracle;
--use crate::read_trace::{ReadTrace, SstTraceLevel};
-+use crate::read_trace::ReadTrace;
- use crate::segment_iterator::{build_segment_iter, SegmentScanContext};
--use crate::sorted_run_iterator::SortedRunIterator;
--use crate::sst_iter::{SstIterator, SstIteratorOptions, SstTracingContext};
-+use crate::sst_iter::SstIteratorOptions;
- use crate::tablestore::TableStore;
- use crate::types::KeyValue;
- use crate::{error::SlateDBError, DbIterator};
-@@ -419,14 +418,16 @@ impl Reader {
-         let max_seq = self.prepare_max_seq(None, options.durability_filter, options.dirty);
+@@ -19,9 +19,9 @@ options:
+ # - wal/00000000000000000013.sst
+ #
+ # A writer claims a new writer epoch, writes a fence object into the next
+-# available WAL slot with create-if-absent, validates that the fence is still
+-# useful, replays the WAL range from the previous replay boundary through that
+-# fence, and then writes normal WAL data objects. A newer writer can fence an
++# available WAL slot with create-if-absent, and replays from its manifest boundary
++# through that fence. It then validates epoch ownership before accepting reads
++# or normal WAL data writes. A newer writer can fence an
+ # older writer by claiming a higher epoch and occupying later WAL slots.
+ #
+ # This model abstracts the WAL namespace and the manifest field that makes old
+@@ -35,20 +35,20 @@ options:
+ #   have been flushed to L0 and no longer need to be replayed. In this model,
+ #   garbage collection may delete `DATA` objects strictly below this boundary.
+ # - each `WalWriter` lists the latest WAL object to choose the next ID, claims a
+-#   fresh epoch, writes a fence object, validates the fence against the current
+-#   epoch and `replay_after_wal_id`, replays WALs in that validated range, and
+-#   then appends `DATA` objects until it is fenced or reaches the model bound.
++#   fresh epoch, saves the replay boundary, writes a fence object, and replays WALs.
++#   It then validates its epoch and appends `DATA` objects until it is fenced or
++#   reaches the model bound.
+ # - each `GarbageCollector` deletes old `DATA` objects behind
+ #   `replay_after_wal_id`. Fence objects remain as durable evidence that a WAL
+ #   slot was occupied by a writer.
+ #
+-# `WriteFence` and `ValidateFence` are separate actions because the important
+-# race is between the fence create and the validation step. During that window,
+-# another writer can claim a later epoch or a flush can advance
+-# `replay_after_wal_id`, making the just-written fence unusable.
++# `ValidateFence` runs after replay. During replay, another writer can claim a
++# later epoch and flush WALs. GC can then remove data that this writer still needs.
++# A delayed fence write can replace that data. Validation rejects the stale writer
++# before it can serve reads from this incomplete history.
+ #
+-# `ReplayWal` models the recovery step returned by fence validation. The replay
+-# range is half-open, and includes the writer's empty fence WAL so a later flush
++# `ReplayWal` uses the manifest boundary saved when the writer claimed its epoch.
++# The range is half-open and includes the writer's empty fence WAL so a later flush
+ # can advance `replay_after_wal_id` through the fence before normal writes resume.
+ #
+ # `Flush` nondeterministically advances `replay_after_wal_id` to a WAL ID that
+@@ -72,13 +72,12 @@ options:
+ #            └─────────┬─────────┘          │                        │
+ #            ┌─────────┴─────────┐          │                        │
+ #  ┌─────────▼─────────┐┌────────▼────────┐ │                        │
+-#  │   ValidateFence   ││   CheckFenced   ├─┘                        │
+-#  └─────────┬─────┬───┘└────────┬────────┘                          │
+-#            │     └─────────────┤                                   │
+-#      ┌─────▼─────┐             │                                   │
+-#  ┌───▶ ReplayWal ├─────────────┤                                   │
+-#  │   └─────┬─────┘             │                                   │
+-#  └─────────┤                   │                                   │
++#┌─▶     ReplayWal     ││   CheckFenced   ├─┘                        │
++#│ └─────────┬─────┬───┘└────────┬────────┘                          │
++#└───────────┤     └─────────────┤                                   │
++#      ┌─────▼─────────┐         │                                   │
++#      │ ValidateFence ├─────────┤                                   │
++#      └─────┬─────────┘         │                                   │
+ #      ┌─────▼─────┐       ┌─────▼─────┐                             │
+ #  ┌───▶ WriteWal  ├───────▶  Fenced   ◀─────────────────────────────┘
+ #  │   └─────┬─────┘       └───────────┘
+@@ -91,7 +90,7 @@ options:
+ # - live WAL object epochs are nondecreasing by WAL ID;
+ # - acknowledged epochs are nondecreasing by WAL ID;
+ # - WALs being replayed still exist;
+-# - replay consumes a contiguous prefix with no newer-epoch WALs;
++# - validated replay covers its range, preserves committed data, and has no newer-epoch WALs;
+ # - `replay_after_wal_id` is monotonic and never exceeds the latest object;
+ # - deletes only remove WAL IDs already covered by `replay_after_wal_id`; and
+ # - the latest object is never deleted.
+@@ -121,6 +120,7 @@ MAX_FENCE_ATTEMPTS_PER_WRITER = 3
+ DATA = "d"
+ FENCE = "f"
  
-         let range = BytesRange::from_prefix(prefix.as_ref());
--        let sst_iter_options = SstIteratorOptions {
-+        let mut sst_iter_options = SstIteratorOptions {
-             max_fetch_tasks: options.max_fetch_tasks,
-             target_bytes_to_fetch: options.read_ahead_bytes,
-             cache_blocks: options.cache_blocks,
-             cache_metadata: true,
-             // Recency scans are designed for early-stop. Eager spawning would
--            // proactively fetch blocks for sources the caller may never reach,
--            // defeating the early-stop savings.
-+            // fetch blocks for sources the caller may never reach, defeating
-+            // the early-stop savings. Today it only acts in `init`, which the
-+            // walk calls lazily only on the sources it reaches, so this is a
-+            // safeguard.
-             eager_spawn: false,
-             order: options.order,
-             prefix: Some(prefix),
-@@ -449,36 +450,22 @@ impl Reader {
-             None => Some(db_state.core().default_segment()),
-         };
++# Set NUM_WRITERS to 4 to reproduce the error in #2225.
+ NUM_WRITERS = 3
+ NUM_GCS = 2
  
-+        // Sources are only listed here. The iterator for each one is built
-+        // when the recency walk reaches it, so a walk that stops early never
-+        // builds the iterators behind it.
-+        let mut sources = VecDeque::new();
-+
-         // Memtables drain first (newest data, always in memory).
--        let mut all_iters = Self::build_memtable_iters(
--            &range,
--            db_state,
--            sst_iter_options.order,
--            read_trace.clone(),
--        );
-+        sources.push_back(RecencySource::MemTable(db_state.memtable()));
-+        for memtable in db_state.imm_memtable() {
-+            sources.push_back(RecencySource::MemTable(memtable.table()));
-+        }
- 
-         // Single-segment chain: L0 newest-first, then sorted runs newest-first.
--        // SST and SortedRun iterators are constructed without `init`, so the
--        // filter check / index load / first-block fetch only happens when the
--        // recency walk reaches the source.
-         if let Some(segment) = segment {
--            let mut segment_options = sst_iter_options.clone();
--            segment_options.segment = Some(segment.prefix.clone());
-+            sst_iter_options.segment = Some(segment.prefix.clone());
-             for sst in segment.tree.l0.iter().cloned() {
--                let iter = SstIterator::new_owned_with_stats(
--                    range.clone(),
--                    sst,
--                    self.table_store.clone(),
--                    segment_options.clone(),
--                    Some(SstTracingContext::new(
--                        SstTraceLevel::L0,
--                        read_trace.clone(),
--                    )),
--                    Some(self.db_stats.clone()),
--                )?;
--                if let Some(iter) = iter {
--                    all_iters.push(Box::new(iter));
--                }
-+                sources.push_back(RecencySource::L0(sst));
-             }
-             for sr in segment
-                 .tree
-@@ -487,26 +474,21 @@ impl Reader {
-                 .filter(|sr| sr.overlaps_range(&range))
-                 .cloned()
-             {
--                let sst_tracing_context = Some(SstTracingContext::new(
--                    SstTraceLevel::SortedRun(sr.id),
--                    read_trace.clone(),
--                ));
--                let iter = SortedRunIterator::new_owned(
--                    range.clone(),
--                    sr,
--                    self.table_store.clone(),
--                    segment_options.clone(),
--                    sst_tracing_context,
--                    Some(self.db_stats.clone()),
--                )
--                .await?;
--                all_iters.push(Box::new(iter));
-+          
+@@ -201,6 +201,8 @@ symmetric role WalWriter:
+         self.epoch = None
+         # WALs in current manifest.
+         self.manifest_wals = set()
++        # Replay boundary from the
 ```
 
-**File**: `slatedb/src/sorted_run_iterator.rs` (modified, +22/-2)
+---
+
+### Incident Patch 2: `83fb3c82` (2026-11-06)
+**Commit Message**: Add siddontang to VOUCHED team members (#2229)
+
+**File**: `.github/VOUCHED.td` (modified, +1/-0)
 ```diff
-@@ -173,9 +173,29 @@ impl<'a> SortedRunIterator<'a> {
-     ) -> Result<Self, SlateDBError> {
-         let range = BytesRange::from(range);
-         let tables = sorted_run.into_tables_covering_range(&range);
--        let view = SortedRunView::Owned(tables, range);
-+        SortedRunIterator::new_owned_from_tables(
-+            tables,
-+            range,
-+            table_store,
-+            sst_iter_options,
-+            sst_tracing_context,
-+            db_stats,
-+        )
-+        .await
-+    }
-+
-+    /// Builds an iterator over `tables`, the SSTs of one sorted run that cover
-+    /// `range`, in run order.
-+    pub(crate) async fn new_owned_from_tables(
-+        tables: VecDeque<SsTableView>,
-+        range: BytesRange,
-+        table_store: Arc<TableStore>,
-+        sst_iter_options: SstIteratorOptions,
-+        sst_tracing_context: Option<SstTracingContext>,
-+        db_stats: Option<DbStats>,
-+    ) -> Result<Self, SlateDBError> {
-         SortedRunIterator::new(
--            view,
-+            SortedRunView::Owned(tables, range),
-             table_store,
-             sst_iter_options,
-             sst_tracing_context,
+@@ -11,3 +11,4 @@ cadonna
+ hzhou0
+ kumarUjjawal
+ yiming-fang
++siddontang
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2231** (2026-11-07): Validate writer ownership after WAL replay (@criccomini)
+- **PR #2229** (2026-11-06): Add siddontang to VOUCHED team members (@criccomini)
+- **PR #2226** (2026-11-06): Avoid buffered source queues for sequential point lookups (@criccomini)
+- **PR #2224** (closed): fix(wal): increase WAL replay SST batch size with memory bounding (@Tyagiquamar)
 - **PR #2223** (2026-11-04): Inline SST single-block fetches with no prefetches (@yiming-fang)
 - **PR #2222** (2026-11-04): Add yiming-fang as contributor (@nomiero)
-- **PR #2221** (2026-11-04): Lazily build and skip sources in recency scans (@yiming-fang)
-- **PR #2220** (2026-11-03): Further deprecation of CachedObjectStore (@nomiero)
-- **PR #2219** (2026-11-03): Add `DbTransaction::put_bytes/put_bytes_with_options` (@criccomini)
-- **PR #2218** (2026-11-05): Expose point lookup concurrency through `ReadOptions::max_concurrent_sources` (@criccomini)
 
 ---
 
@@ -2992,32 +2650,72 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Lazily build and skip sources in recency scans (#2221)
+## X. Validate writer ownership after WAL replay (#2231)
 
 **RULE**:
-When implementing operations in `slatedb/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/db.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e21ba01`: Lazily build and skip sources in recency scans (#2221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `617dacbb`: Validate writer ownership after WAL replay (#2231). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/db.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[bench]]
-name = "recency_scan_bench"
-harness = false
-required-features = ["foyer"]
+            self.state.read().state().manifest.value.writer_epoch == 1,
+                    // Refresh checks the manifest epoch and returns Fenced if it has advanced.
+        // Reject a writer that lost its epoch during replay (#2225).
+        self.memtable_flusher.refresh_manifest().await?;
 
+    // Two paused uploads block workers; keep others free for manifest refresh.
+    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+        // - W1 resumes replay and fails to open because W2 owns a newer epoch.
+        // Release W1. The manifest check after replay must reject its stale epoch.
+        let err = match w1_handle.await.unwrap() {
+            Ok(_) => panic!("expected W1 open to fail"),
+            Err(err) => err,
+        };
+        assert_eq!(err.kind(), crate::ErrorKind::Closed(CloseReason::Fenced));
+        db2.close().await.unwrap();
+    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+    async fn wal_replay_should_preserve_data_when_gc_slot_is_reused() {
+        let object_store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
+        let path = "/tmp/wal_replay_should_preserve_data_when_gc_slot_is_reused";
+        let wal_store = WalTableStore::
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let writer_epoch = self.state.read().state().manifest.value.writer_epoch;
+            writer_epoch == 1,
+                    if self.state.read().state().manifest.value.writer_epoch > writer_epoch {
+                        return Err(SlateDBError::Fenced);
+                    }
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+        // - W1 unpauses, finishes replay_wal, and returns its Db handle.
+        // - W1 issues a put. This put should fail because W1's next WAL id is taken.
+        // Release W1. It finishes replay_wal and returns a Db handle.
+        let db1 = w1_handle.await.unwrap().unwrap();
+        assert_eq!(
+            db1.inner.state.read().state().manifest.value.writer_epoch,
+            1
+        );
+        // W1's put should fail because its now fenced
+        let result = db1
+            .put_with_options(
+                b"w1",
+                b"value",
+                &PutOptions::default(),
+                &WriteOptions::default(),
+            )
+            .await;
+        if let Ok(handle) = result {
+            assert!(handle.await_durable().await.is_err());
+        }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e21ba01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `617dacbb` are properly handled with clean fallback behavior.

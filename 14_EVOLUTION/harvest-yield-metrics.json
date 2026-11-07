@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T19:23:48.927Z",
-  "total_cycles_completed": 8021,
-  "total_learnings_persisted": 8021,
-  "total_rules_promoted": 7671,
+  "last_updated": "2026-11-07T19:30:48.323Z",
+  "total_cycles_completed": 8022,
+  "total_learnings_persisted": 8022,
+  "total_rules_promoted": 7672,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:27:26.663Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:34:46.658Z",
       "repository": "asciinema/asciinema",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T19:23:48.927Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:30:48.323Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
