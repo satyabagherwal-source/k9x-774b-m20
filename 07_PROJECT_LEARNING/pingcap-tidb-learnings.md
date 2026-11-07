@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `49d87f99`  
+> **Source Version**: `41efd866`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:47:37.238Z  
+> **Timestamp**: 2026-11-07T19:23:47.309Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:47:36.411Z  
+> **Harvest Timestamp**: 2026-11-07T19:23:46.818Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40712 stars
+- **Stars / Engagement**: 40719 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72744** (2026-11-05): **parser: new ADDDATE interval view cannot be read by v8.5.8 TiDB during mixed-version upgrade**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  Use two TiDB frontends sharing one cluster: an old v8.5.8 reader and a newer v8.5.9 writer. Direct each connection to the intended frontend.  On the old frontend: ```sql CREATE DATABASE view_interval_repro; CREATE TABLE view_interval_repro.t (d DATE NOT NULL, q INT NOT NULL); INSERT INTO view_interval_repro.t VALUES ('2026-01-15', 2); ```  On the new frontend: ```sql CREATE VIEW view_interval_repro.v_add AS SELECT ADDDATE(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t;  CREATE VIEW view_interval_repro.v_control AS SELECT DATE_ADD(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t; ```  On each frontend: ```sql SELECT @@hostname, VERSION(), TIDB_VERSION(); SHOW CREATE VIEW view_interval_repro.v_add; SELECT * FROM view_interval_repro.t; SELECT x FROM view_interval_repro.v_control; SELECT x FROM view_interval_repro.v_add; ```  Cleanup: ```sql DROP DATABASE view_interval_repro; ```  ### 2. What did you expect to see? (Required)  Reads of the persisted view should remain compatible while old and new frontends coexist during rolling upgrade, or creation of incompatible persisted definitions should be guarded during that phase. Both view reads should return 2026-04-15.  ### 3. What did you see instead (Required)  The new frontend creates and reads the ADDDATE view successfully. The old frontend sees the identical stored definition and reads the base table and DATE_ADD control successfully, but reading t
+- **Issue #72822** (2026-11-07): **executor: honor table ID filters for unmapped TiKV regions (#72820) [release-8.5]**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #57477  Problem Summary:  Ports the NULL-row predicate fix from #72820 to `release-8.5`. `INFORMATION_SCHEMA.TIKV_REGION_STATUS` can return an extra row with NULL table metadata when a `TABLE_ID` predicate is extracted. A partitioned table without a global index can have an unmapped logical-prefix region; the consumed predicate no longer filters its NULL `TABLE_ID`, so table-ID filtering differs from filtering by database and table name.  The original missing-index-region range in #57477 was already fixed by #67444 and backported in #72398. This change only addresses the remaining consumed-predicate boundary.  ### What changed and how does it work?  Skip unmapped regions when a table-ID predicate has been extracted. Keep existing record, local-index and global-index mapping behavior.  Extend `TestTikvRegionStatus` with equality queries before and after a partitioned table gains a local index. Compare a genuine two-table `IN` predicate with a database-qualified table-name query, and assert that EXPLA
 
-- **Issue #72735** (2026-11-05): **util: fix incorrect statement summary Others rows (#69914)**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69913  Problem Summary:  Backport #69914 to release-8.5. The current v1 statement summary can include the evicted `Others` row from a previous interval. Reapplying `tidb_stmt_summary_internal_query=OFF` also changes the LRU order and can evict hot statements in both v1 and persistent v2.  ### What changed and how does it work?  - Apply the current interval boundary to the v1 evicted row. Initialize the internal-only flag from the first execution and retain mixed internal/external digests. - Use a non-promoting LRU lookup when removing internal entries in v1 and v2. Lock each v2 record while reading its mutable internal flag. - Carry the original regressions. The Domain test uses the 8.5 factory and sysvar APIs, and the v1 tests use this branch's column layout. Regenerate the affected 8.5 Bazel targets.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] 
+- **Issue #72821** (2026-11-07): **ddl: reject unsafe standalone recovery of foreign keys (release-8.5)**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69777  Problem Summary:  Backport #71074 to release-8.5. Standalone recovery can restore historical foreign-key rows against a different table that reused the parent name, allowing later cascade actions to change those historical rows.  ### What changed and how does it work?  Reject standalone `RECOVER TABLE` and `FLASHBACK TABLE` for managed external foreign-key relationships. Check before job submission and again in the DDL owner against current InfoSchema so concurrent changes cannot bypass the frontend check. Self-referencing tables remain recoverable, and `FLASHBACK TABLE ... TO` updates their self references. `FLASHBACK DATABASE` retains its database-level behavior.  Port the original SQL regressions and deterministic owner-revalidation test to the release executor package. Both owner cases verify an actual job and persisted history: the unchanged-parent case restores row 1, while the replacement-parent case rejects recovery without publishing the historical table.  Full `make bazel_prepare` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,451 +1940,705 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `adee1920` (2026-11-05)
-**Commit Message**: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
+### Incident Patch 1: `13377f09` (2026-11-06)
+**Commit Message**: *: cache unredacted slow query in the memory (#72410)
 
-close pingcap/tidb#71286
+close pingcap/tidb#72414
 
-**File**: `pkg/ddl/index.go` (modified, +42/-26)
+**File**: `pkg/executor/BUILD.bazel` (modified, +5/-0)
 ```diff
-@@ -4047,16 +4047,25 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
- 		loc, ec := evalCtx.Location(), evalCtx.ErrCtx()
- 		n := len(w.indexes)
- 		globalIndexKeys := make([]kv.Key, 0, len(idxRecords))
--		allKeys := make([]kv.Key, 0, len(idxRecords))
-+		// Keep the fetched records intact: i%n identifies the index even when an
-+		// array expands to zero or multiple entries, and progress is per record.
-+		recordValues := make([][][]types.Datum, len(idxRecords))
-+		recordKeys := make([][]kv.Key, len(idxRecords))
- 		for i, idxRecord := range idxRecords {
--			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
--			if err != nil {
--				return errors.Trace(err)
--			}
--			if distinct {
--				globalIndexKeys = append(globalIndexKeys, key)
-+			index := w.indexes[i%n]
-+			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
-+			for iter.Valid() {
-+				values := iter.PeekIndexedValues()
-+				key, _, distinct, err := iter.Next(nil, nil)
-+				if err != nil {
-+					return errors.Trace(err)
-+				}
-+				recordValues[i] = append(recordValues[i], values)
-+				if distinct {
-+					globalIndexKeys = append(globalIndexKeys, key)
-+				}
-+				recordKeys[i] = append(recordKeys[i], key)
- 			}
--			allKeys = append(allKeys, key)
- 		}
- 
- 		var found map[string][]byte
-@@ -4067,31 +4076,38 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
- 
- 		for i, idxRecord := range idxRecords {
- 			taskCtx.scanCount++
--			if val, ok := found[string(allKeys[i])]; ok {
--				// Only delete if it is from the partition it was read from.
--				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
--				if errPart != nil {
--					return errors.Trace(errPart)
--				}
--				if partHandle, ok := handle.(kv.PartitionHandle); ok {
--					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
--						continue
-+			// Count records with empty arrays as processed even though they have no index keys to delete.
-+			cleaned := len(recordKeys[i]) == 0
-+			for j, key := range recordKeys[i] {
-+				if val, ok := found[string(key)]; ok {
-+					// Only delete if it is from the partition it was read from.
-+					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-+					if errPart != nil {
-+						return errors.Trace(errPart)
-+					}
-+					if partHandle, ok := handle.(kv.PartitionHandle); ok {
-+						if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
-+							continue
-+						}
-+					}
-+					// Mark the entry for transactional conflict checking. A concurrent
-+					// takeover causes the optimistic transaction to conflict and retry.
-+					err = txn.LockKeys(ctx, lockCtx, key)
-+					if err != nil {
-+						return errors.Trace(err)
- 					}
- 				}
--				// Lock the global index entry, to prevent deleting something that is concurrently added.
--				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
-+				// Delete only the checked element, not the original array: another
-+				// element of the same row may now belong to a surviving partition.
-+				err = w.indexes[i%n].Delete(w.tblCtx, txn, recordValues[i][j], idxRecord.handle)
- 				if err != nil {
- 					return errors.Trace(err)
- 				}
-+				cleaned = true
- 			}
--			// we fetch records row by row, so records will belong to
--			// index[0], index[1] ... index[n-1], index[0], index[1] ...
--			// respectively. So indexes[i%n] is the index of idxRecords[i].
--			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
--			if err != nil {
--				return errors.Trace(err)
-+			if cleaned {
-+				taskCtx.addedCount++
- 			}
--			taskCtx.addedCount++
- 		}
- 		taskCtx.writtenBytes = txn.Size()
- 		return nil
-```
-
-**File**: `pkg/ddl/tests/partition/global_index_version_test.go` (modified, +84/-0)
-```diff
-@@ -17,14 +17,17 @@ package partition
- import (
- 	"context"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 
- 	"github.com/pingcap/failpoint"
- 	"github.com/pingcap/tidb/pkg/config/kerneltype"
-+	"github.com/pingcap/tidb/pkg/ddl"
- 	"github.com/pingcap/tidb/pkg/domain"
- 	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -509,6 +512,87 @@ func TestGlobalIndexTruncateAndDropPartition(t *testing.T) {
- 	tk.MustExec("ADMIN CHECK TABLE tp_null")
- }
- 
-+// TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry reproduces issue #71286.
-+//
-+// While a partition is being truncated, a concurrent write may legitimately take over an
-+// element key that the truncated partition used to own, and then `Delete` must not remove it.
-+// The cleanup used to derive its check key with `GenIndexKey`, which encodes a multi-valued
-+// index column as the whole array instead of one key per element. `BatchGet` therefore never
-+// found the entry, the partition-owner check was skipped, and `Delete` removed the element key
-+// that the new row owns. A second element of the same old row, which nobody took over, still
-+// has to be cleaned up, so the decision must be made per element rather than per row.
-+func TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec(`CREATE TABLE t (
-+		p INT PRIMARY KEY,
-+		j JSON,
-+		UNIQUE KEY m ((CAST(j AS UNSIGNED ARRAY))) GLOBAL
-+	) PARTITION BY RANGE (p) (
-+		PARTITION p0 VALUES LESS THAN (10),
-+		PARTITION p1 VALUES LESS THAN (20),
-+		PARTITION p2 VALUES LESS THAN MAXVALUE
-+	)`)
-+	tk.MustExec("INSERT INTO t VALUES (1, '[100]')")   // p0, only here to give p0 a row to clean first
-+	tk.MustExec("INSERT INTO t VALUES (11, '[7, 8]')") // p1, owns elements 7 and 8
-+
-+	tk1 := testkit.NewTestKit(t, store)
-+	tk1.MustExec("use test")
-+	// `MockDMLExecution` runs between the cleanup of p0 and the cleanup of p1, which is the
-+	// window in which a real concurrent write can take over element 7. Element 8 is left
-+	// alone on purpose so that the cleanup still has to remove it.
-+	var hookRan atomic.Bool
-+	ddl.MockDMLExecution = func() {
-+		hookRan.Store(true)
-+		_, err := tk1.Exec("INSERT INTO t VALUES (21, '[7]')")
-+		assert.NoError(t, err)
-+	}
-+	t.Cleanup(func() {
-+		assert.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
-+		ddl.MockDMLExecution = nil
-+	})
-+	require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution", "1*return(true)->return(false)"))
-+	tk.MustExec("ALTER TABLE t TRUNCATE PARTITION p0, p1")
-+	require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
-+	ddl.MockDMLExecution = nil
-+	require.True(t, hookRan.Load(), "mockDMLExecution never fired, the test premise is broken")
-+
-+	// The row inserted during the DDL must keep its global index entry.
-+	tk.MustQuery("SELECT p FROM t ORDER BY p").Check(testkit.Rows("21"))
-+	tk.MustExec("ADMIN CHECK TABLE t")
-+	tk.MustQuery("SELECT p FROM t WHERE 7 MEMBER OF (j)").Check(testkit.Rows("21"))
-+
-+	// The UNIQUE constraint must still hold for the taken-over element.
-+	err := tk.ExecToErr("INSERT INTO t VALUES (22, '[7]')")
-+	require.Error(t, err)
-+	require.Contains(t, err.Error(), "Duplicate entry")
-+
-+	// Element 8 was owned only by the truncated partition, so it must be reusable.
-+	tk.MustExec("INSERT INTO t VALUES (23, '[8]')")
-+	tk.MustQuery("SELECT p FROM t WHERE 8 MEMBER OF (j)").Check(testkit.Rows("23"))
-+	tk.MustExec("ADMIN CHECK TABLE t")
-+
-+	// Empty arrays must not shift the record-to-index mapping. Exercise a
-+	// composite MV index alongside another global index, including NULL and
-+	// repeated elements, whose expansion must match ordinary index writes.
-+	tk.MustExec(`CREATE TABLE t_cleanup (
-+		p INT PRIMARY KEY, c INT, j JSON,
-+		UNIQUE KEY m (c, (CAST(j AS UNSIGNED ARRAY))) GLOBAL,
-+		UNIQUE KEY g (c) GLOBAL
-+	) PARTITION BY RANGE (p) (
-+		PARTITION p0 VALUES LESS THAN (10),
-+		PARTITION p1 VALUES LESS THAN MAXVALUE
-+	)`)
-+	tk.MustExec("INSERT INTO t_cleanup VALUES (1, 1, '[]'), (2, 2, NULL), (3, 3, '[7, 7, 8]'), (11, 4, '[9]')")
-+	tk.MustExec("ALTER TABLE t_cleanup TRUNCATE PARTITION p0")
-+	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
-+	tk.MustQuery("SELECT p FROM t_cleanup USE INDEX(g)").Check(testkit.Rows("11"))
-+	tk.MustExec("INSERT INTO t_cleanup VALUES (12, 1, '[]'), (13, 2, NULL), (14, 3, '[7, 8]')")
-+	tk.MustQuery("SELECT p FROM t_cleanup WHERE c = 3 AND 7 MEMBER OF (j)").Check(testkit.Rows("14"))
-+	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
-+}
-+
- // TestUpdateIndexesResetsGlobalIndexVersion verifies that UPDATE INDEXES resets
- // GlobalIndexVersion to 0 when switching an index from GLOBAL to local.
- // Without this fix, the stale GlobalIndexVersion=V1 on a local in
-```
-
-**File**: `pkg/table/index.go` (modified, +15/-7)
-```diff
-@@ -174,15 +174,23 @@ func NewPlainIndexKVGenerator(
- 	}
- }
- 
--// Next returns the next index key and value.
--// For non multi-value indexes, there is only one index kv.
--func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
--	var val []types.Datum
-+// PeekIndexedValues returns the scalar indexed values for the next entry without advancing.
-+// It must only be called while Valid returns true. After a successful Next,
-+// it refers to the following entry. The returned slice is borrowed and must not be
-+// modified by the caller. Key generation may normalize the values in place, but
-+// advancing to subsequent entries does not reuse the slice.
-+func (iter *IndexKVGenerator) PeekIndexedValues() []types.Datum {
- 	if iter.isMultiValue {
--		val = iter.allIdxVals[iter.i]
--	} else {
--		val = iter.idxVals
-+		return iter.allIdxVals[iter.i]
- 	}
-+	return iter.idxVals
-+}
-+
-+// Next returns the next index key and value, advancing only on success.
-+// It must only be called while Valid returns true.
-+// For non multi-value indexes, there is only one index kv.
-+func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
-+	val := iter.PeekIndexedValues()
- 	key, distinct, err := iter.index.GenIndexKey(iter.ec, iter.loc, val, iter.handle, keyBuf)
- 	if err != nil {
- 		return nil, nil, false, err
-```
-
-**File**: `pkg/table/tables/BUILD.bazel` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ go_test(
-     ],
-     embed = [":tables"],
-     flaky = True,
--    shard_count = 44,
-+    shard_count = 46,
-     deps = [
+@@ -91,6 +91,7 @@ go_library(
+         "shuffle.go",
+         "simple.go",
+         "slow_query.go",
++        "slow_query_cache.go",
+         "split.go",
+         "statement_ru_mpp.go",
+         "statement_ru_plan_walk.go",
+@@ -117,6 +118,7 @@ go_library(
+         "//pkg/bindinfo",
+         "//pkg/config",
+         "//pkg/config/deploymode",
++        "//pkg/config/diagnosticmode",
+         "//pkg/config/kerneltype",
          "//pkg/ddl",
-         "//pkg/domain",
+         "//pkg/ddl/label",
+@@ -431,6 +433,7 @@ go_test(
+         "shuffle_test.go",
+         "simple_internal_test.go",
+         "simple_test.go",
++        "slow_query_cache_test.go",
+         "slow_query_sql_test.go",
+         "slow_query_test.go",
+         "split_test.go",
+@@ -459,6 +462,7 @@ go_test(
+     deps = [
+         "//pkg/config",
+         "//pkg/config/deploymode",
++        "//pkg/config/diagnosticmode",
+         "//pkg/config/kerneltype",
+         "//pkg/ddl",
+         "//pkg/ddl/label",
+@@ -560,6 +564,7 @@ go_test(
+         "//pkg/util/disk",
+         "//pkg/util/execdetails",
+         "//pkg/util/hint",
++        "//pkg/util/intest",
+         "//pkg/util/logutil",
+         "//pkg/util/memory",
+         "//pkg/util/mock",
 ```
 
-**File**: `pkg/table/tables/index_test.go` (modified, +83/-0)
+**File**: `pkg/executor/adapter.go` (modified, +38/-0)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"time"
+@@ -2129,6 +2129,20 @@ func (a *ExecStmt) LogSlowQuery(txnTS uint64, succ bool, hasMoreResults bool, st
+ 	if slowItems == nil {
+ 		slowItems = &variable.SlowQueryLogItems{}
+ 	}
++
++	var unredactedSQL string
++	// tidb_redact_log off already writes the original SQL to the slow log, so
++	// skip the cache. ON and MARKER redact that line. Only non-sensitive SELECT
++	// statements are queued, and SensitiveStmtNode must never retain its
++	// original SQL in memory.
++	if sessVars.EnableRedactLog != errors.RedactLogDisable && a.isSlowQueryCacheable() {
++		// Capture the original text before it is redacted into the slow log line.
++		// Only this SQL string is retained in memory.
++		// OriginalSQL may be a substring of a much larger multi-statement request;
++		// clone it so the cache does not retain that request's backing buffer.
++		unredactedSQL = strings.Clone(sessVars.StmtCtx.OriginalSQL)
++	}
++
+ 	SetSlowLogItems(a, txnTS, hasMoreResults, slowItems)
+ 	slowItems.RUDetails = a.ruDetailsForStatementLog(slowItems.RUDetails, statementRUTotal)
+ 	failpoint.Inject("assertSyncStatsFailed", func(val failpoint.Value) {
+@@ -2138,6 +2152,16 @@ func (a *ExecStmt) LogSlowQuery(txnTS uint64, succ bool, hasMoreResults bool, st
+ 			}
+ 		}
+ 	})
++
++	if unredactedSQL != "" {
++		// Queue the plaintext before the redacted line is written. A full queue
++		// drops the cache entry and the disk write below still happens.
++		globalSlowQueryCache.putIntoCache(
++			slowQueryKeyOf(slowItems.TxnTS, slowQueryTimeKey(slowItems.TimeTotal), slowItems.Digest),
++			unredactedSQL,
++		)
++	}
++
+ 	slowLog := sessVars.SlowLogFormat(slowItems)
+ 	logutil.SlowQueryLogger.Warn(slowLog)
  
- 	"github.com/pingcap/tidb/pkg/ddl"
-+	"github.com/pingcap/tidb/pkg/errctx"
- 	"github.com/pingcap/tidb/pkg/errno"
- 	"github.com/pingcap/tidb/pkg/expression/exprstatic"
- 	"github.com/pingcap/tidb/pkg/kv"
-@@ -183,6 +184,88 @@ func buildTableInfo(t *testing.T, sql string) *model.TableInfo {
- 	return tblInfo
+@@ -2523,6 +2547,20 @@ func (a *ExecStmt) GetTextToLog(keepHint bool) string {
+ 	return sql
  }
  
-+func TestIndexKVGenerator(t *testing.T) {
-+	sc := mock.NewContext().GetSessionVars().StmtCtx
-+	for _, tc := range []struct {
-+		name   string
-+		sql    string
-+		values []types.Datum
-+		want   [][]types.Datum
-+	}{
-+		{"plain", "create table t (a int, unique index i(a))", types.MakeDatums(7), [][]types.Datum{types.MakeDatums(7)}},
-+		{"plain null", "create table t (a int, unique index i(a))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
-+		{"multi", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(7), types.MakeDatums(8)}},
-+		{"empty", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{})), nil},
-+		{"null", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
-+		{"composite", "create table t (a json, b int, unique index i(b, (cast(a as signed array))))", types.MakeDatums(3, types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(3, 7), types.MakeDatums(3, 8)}},
-+		{"composite prefix", "create table t (a json, b varchar(8), unique index i(b(2), (cast(a as signed array))))", types.MakeDatums("abcd", types.CreateBinaryJSON([]any{int64(7), int64(8)})), [][]types.Datum{types.MakeDatums("abcd", 7), types.MakeDatums("abcd", 8)}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			tblInfo := buildTableInfo(t, tc.sql)
-+			idx, err := tables.NewIndex(tblInfo.ID, tblInfo, tblInfo.Indices[0])
-+			require.NoError(t, err)
-+			iter := idx.GenIndexKVIter(sc.ErrCtx(), sc.TimeZone(), tc.values, kv.IntHandle(1), nil)
-+			var retained [][]types.Datum
-+			for _, want := range tc.want {
-+				require.True(t, iter.Valid())
-+				values := iter.PeekIndexedValues()
-+				require.Equal(t, want, values)
-+				require.Equal(t, values, iter.PeekIndexedValues()) // Access does not advance.
-+				retained = append(retained, values)
-+				wantKey, wantDistinct, err := idx.GenIndexKey(sc.ErrCtx(), sc.TimeZone(), want, kv.IntHandle(1), nil)
-+				require.NoError(t, err)
-+				key, value, distinct, err := iter.Next(nil, nil)
-+				require.NoError(t, err)
-+				require.Equal(t, wantKey, key)
-+				require.Equal(t, wantDistinct, distinct)
-+				wantValue, err := idx.GenIndexValue(sc.ErrCtx(), sc.TimeZone(), distinct, false, want, kv.IntHandle(1), nil, nil)
-+				require.NoError(t, err)
-+				require.Equal(t, wantValue, value)
++// isSlowQueryCacheable reports whether this statement may keep its original SQL
++// in the plaintext slow-query cache. Only a directly executed SELECT qualifies.
++// Prepared executions, TABLE, VALUES, and sensitive statements do not.
++func (a *ExecStmt) isSlowQueryCacheable() bool {
++	if a.isPreparedStmt {
++		return false
++	}
++	if _, sensitive := a.StmtNode.(ast.SensitiveStmtNode); sensitive {
++		return false
++	}
++	sel, ok := a.StmtNode.(*ast.SelectStmt)
++	return ok && sel.Kind == ast.SelectStmtKindSelect
++}
++
+ func restoreStmtTextForSlowLogWhenEmptySQL(stmt ast.StmtNode) string {
+ 	implementStmt, ok := stmt.(*ast.RefreshMaterializedViewImplementStmt)
+ 	if !ok || implementStmt.RefreshStmt == nil {
+```
+
+**File**: `pkg/executor/cluster_table_test.go` (modified, +49/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"fmt"
+ 	"net"
+ 	"os"
++	"path/filepath"
+ 	"strconv"
+ 	"strings"
+ 	"testing"
+@@ -34,8 +35,10 @@ import (
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/server"
+ 	"github.com/pingcap/tidb/pkg/session/sessmgr"
++	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
+ 	"github.com/pingcap/tidb/pkg/testkit"
+ 	"github.com/pingcap/tidb/pkg/testkit/testutil"
++	"github.com/pingcap/tidb/pkg/util/logutil"
+ 	"github.com/stretchr/testify/require"
+ 	"google.golang.org/grpc"
+ )
+@@ -82,6 +85,52 @@ func createRPCServer(t *testing.T, dom *domain.Domain) *grpc.Server {
+ 	return srv
+ }
+ 
++func TestClusterTableSlowQueryInMemoryOriginalQuery(t *testing.T) {
++	executor.StartSlowQueryCache()
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	srv := createRPCServer(t, dom)
++	t.Cleanup(srv.Stop)
++
++	slowLogFile := filepath.Join(t.TempDir(), "tidb-slow.log")
++	config.UpdateGlobal(func(conf *config.Config) {
++		conf.Log.SlowQueryFile = slowLogFile
++	})
++	require.NoError(t, logutil.InitLogger(config.GetGlobalConfig().Log.ToLogConfig()))
++	tk := testkit.NewTestKit(t, store)
++	originalMode := tk.MustQuery("select @@global.tidb_redact_log").Rows()[0][0].(string)
++	originalThreshold := fmt.Sprint(tk.MustQuery("select @@tidb_slow_log_threshold").Rows()[0][0])
++	t.Cleanup(func() {
++		tk.MustExec("set tidb_slow_log_threshold = " + originalThreshold)
++		tk.MustExec("set global tidb_redact_log = '" + originalMode + "'")
++	})
++	tk.MustExec("set tidb_slow_log_threshold = 0")
++	tk.MustExec("set global tidb_redact_log = 'ON'")
++	tk.MustExec("select 7123456789")
++
++	// Establish that the SQL was cached locally before exercising the remote
++	// session created by the cluster table's coprocessor request.
++	tk.EventuallyMustQueryAndCheck(
++		"select query, in_memory_original_query from information_schema.slow_query where query = 'select ?;'",
++		nil, testkit.Rows("select ?; select 7123456789"), 3*time.Second, 20*time.Millisecond,
++	)
++
++	for _, mode := range []string{vardef.On, vardef.Off, vardef.Marker, vardef.On} {
++		t.Run(mode, func(t *testing.T) {
++			tk := testkit.NewTestKitWithSession(t, store, tk.Session())
++			tk.MustExec("set global tidb_redact_log = '" + mode + "'")
++			// Reading ignores tidb_redact_log, including a requesting session whose
++			// value differs from the global mode and the coprocessor session.
++			vars := tk.Session().GetSessionVars()
++			vars.EnableRedactLog = vardef.Off
++			if mode == vardef.Off {
++				vars.EnableRedactLog = vardef.On
 +			}
-+			require.False(t, iter.Valid())
-+			require.Equal(t, tc.want, retained) // Advancing does not reuse entry slices.
++			tk.MustQuery("select query, in_memory_original_query from information_schema.cluster_slow_query where query = 'select ?;'").
++				Check(testkit.Rows("select ?; select 7123456789"))
 +		})
 +	}
 +}
 +
-+type failingGeneratorIndex struct {
-+	table.Index
-+	keyErr, valueErr error
-+}
-+
-+func (idx *failingGeneratorIndex) GenIndexKey(_ errctx.Context, _ *time.Location, _ []types.Datum, _ kv.Handle, _ []byte) ([]byte, bool, error) {
-+	return []byte("key"), true, idx.keyErr
-+}
-+
-+func (idx *failingGeneratorIndex) GenIndexValue(_ errctx.Context, _ *time.Location, _, _ bool, _ []types.Datum, _ kv.Handle, _ []types.Datum, _ []byte) ([]byte, error) {
-+	return nil, idx.valueErr
-+}
-+
-+func TestIndexKVGeneratorErrors(t *testing.T) {
-+	sc := mock.NewContext().GetSessionVars().StmtCtx
-+	keyErr, valueErr := fmt.Errorf("key error"), fmt.Errorf("value error")
-+	idx := &failingGeneratorIndex{keyErr: keyErr, valueErr: valueErr}
-+	values := types.MakeDatums(7)
-+	iter := table.NewPlainIndexKVGenerator(idx, sc.ErrCtx(), sc.TimeZone(), kv.IntHandle(1), nil, values)
-+	_, _, _, err := iter.Next(nil, nil)
-+	require.ErrorIs(t, err, keyErr)
-+	require.True(t, iter.Valid())
-+	require.Equal(t, values, iter.PeekIndexedValues())
-+
-+	idx.keyErr = nil
-+	_, _, _, err = iter.Next(nil, nil)
-+	require.ErrorIs(t, err, valueErr)
-+	require.True(t, iter.Valid())
-+	require.Equal(t, values, iter.PeekIndexedValues())
-+
-+	idx.valueErr = nil
-+	key, _, distinct, err := iter.Next(nil, nil)
-+	require.NoError(t, err)
-+	require.Equal(t, []byte("key"), key)
-+	require.True(t, distinct)
-+	require.False(t, iter.Valid())
-+}
-+
- func TestGenIndexValueFromIndex(t *testing.T) {
- 	tblInfo := buildTableInfo(t, "create table a (a int primary key, b int not null, c text, unique key key_b(b));")
- 	tblInfo.State = model.StatePublic
+ func TestClusterTableSlowQuery(t *testing.T) {
+ 	store, dom := testkit.CreateMockStoreAndDomain(t)
+ 	srv := createRPCServer(t, dom)
 ```
 
----
-
-### Incident Patch 2: `4c0b274a` (2026-11-05)
-**Commit Message**: test: stabilize flaky TestSubscriptionIdleTimeoutWhileSendingEvents (#72456)
-
-close pingcap/tidb#70687
-
-**File**: `br/pkg/streamhelper/subscription_test.go` (modified, +31/-23)
+**File**: `pkg/executor/compact_table_test.go` (modified, +81/-0)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"strings"
- 	"sync"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	"github.com/pingcap/failpoint"
-@@ -329,29 +330,36 @@ func TestSubscriptionIdleTimeoutClearsCacheBeforeRetry(t *testing.T) {
+@@ -55,6 +55,87 @@ func withMockTiFlash(nodes int) mockstore.MockTiKVStoreOption {
+ 	)
  }
  
- func TestSubscriptionIdleTimeoutWhileSendingEvents(t *testing.T) {
--	req := require.New(t)
--	ctx := context.Background()
--	c := createFakeCluster(t, 4, true)
--	c.splitAndScatter(manyRegions(0, 1500)...)
--	installSubscribeSupport(c)
--
--	sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
--	defer sub.Drop()
--	req.NoError(sub.UpdateStoreTopology(ctx))
--
--	c.advanceCheckpoints()
--	c.flushAll()
-+	// Advance idle time only after setup and event forwarding have blocked,
-+	// so scheduler delays cannot expire subscriptions before the output fills.
-+	synctest.Test(t, func(t *testing.T) {
-+		req := require.New(t)
-+		ctx := context.Background()
-+		c := createFakeCluster(t, 4, true)
-+		c.splitAndScatter(manyRegions(0, 1500)...)
-+		installSubscribeSupport(c)
++// withMockTiFlashCluster is withMockTiFlash that also keeps the cluster handle.
++// Table splits after bootstrap only keep the TiKV peer, so callers can place
++// TiFlash peers on those regions before reading from TiFlash.
++func withMockTiFlashCluster(nodes int, cluster **unistore.Cluster) mockstore.MockTiKVStoreOption {
++	return mockstore.WithMultipleOptions(
++		mockstore.WithClusterInspector(func(c testutils.Cluster) {
++			mockCluster := c.(*unistore.Cluster)
++			if cluster != nil {
++				*cluster = mockCluster
++			}
++			_, _, regionID := mockstore.BootstrapWithSingleStore(c)
++			for i := range nodes {
++				storeID := c.AllocID()
++				peerID := c.AllocID()
++				mockCluster.AddStore(storeID, fmt.Sprintf("tiflash%d", i), &metapb.StoreLabel{Key: "engine", Value: "tiflash"})
++				mockCluster.AddPeer(regionID, storeID, peerID)
++			}
++		}),
++		mockstore.WithStoreType(mockstore.EmbedUnistore),
++	)
++}
 +
-+		sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
-+		defer sub.Drop()
-+		req.NoError(sub.UpdateStoreTopology(ctx))
++// addTiFlashPeersToAllRegions gives every region a peer on each TiFlash store.
++// Table splits keep only the TiKV peer on the new region. A later TiFlash read
++// then retries with no_tiflash_access_store until tikv:9012 TiFlash server timeout.
++// store is the kv store returned with cluster; its region cache is dropped so the
++// next read reloads the peers just added.
++func addTiFlashPeersToAllRegions(t *testing.T, cluster *unistore.Cluster, store any) {
++	t.Helper()
++	require.NotNil(t, cluster)
++	cacheStore, ok := store.(interface{ GetRegionCache() *tikv.RegionCache })
++	require.True(t, ok)
++	cache := cacheStore.GetRegionCache()
++	require.NotNil(t, cache)
 +
-+		c.advanceCheckpoints()
-+		c.flushAll()
-+		synctest.Wait()
-+		req.Len(sub.Events(), cap(sub.Events()))
-+		req.NoError(sub.PendingErrors())
- 
--	deadline := time.Now().Add(3 * time.Second)
--	var lastErr error
--	for {
--		lastErr = sub.PendingErrors()
--		if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
--			break
--		}
--		if time.Now().After(deadline) {
--			t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
-+		deadline := time.Now().Add(3 * time.Second)
-+		var lastErr error
-+		for {
-+			lastErr = sub.PendingErrors()
-+			if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
++	var storeIDs []uint64
++	for _, st := range cluster.GetAllStores() {
++		for _, label := range st.Labels {
++			if label.Key == "engine" && label.Value == "tiflash" {
++				storeIDs = append(storeIDs, st.Id)
 +				break
 +			}
-+			if time.Now().After(deadline) {
-+				t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
++		}
++	}
++	require.NotEmpty(t, storeIDs)
++
++	key := []byte{}
++	seen := make(map[uint64]struct{})
++	for range 10000 {
++		region, _, _, _ := cluster.GetRegionByKey(key)
++		if region == nil && len(key) == 0 {
++			region, _, _, _ = cluster.GetRegionByKey([]byte{0})
++		}
++		if region == nil {
++			break
++		}
++		if _, dup := seen[region.Id]; dup {
++			break
++		}
++		seen[region.Id] = struct{}{}
++		if region.RegionEpoch != nil {
++			cache.InvalidateCachedRegion(tikv.NewRegionVerID(region.Id, region.RegionEpoch.ConfVer, region.RegionEpoch.Version))
++		}
++		have := make(map[uint64]struct{}, len(region.Peers))
++		for _, peer := range region.Peers {
++			have[peer.StoreId] = struct{}{}
++		}
++		for _, storeID := range storeIDs {
++			if _, exists := have[storeID]; exists {
++				continue
 +			}
-+			time.Sleep(10 * time.Millisecond)
- 		}
--		time.Sleep(10 * time.Millisecond)
--	}
-+	})
++			cluster.AddPeer(region.Id, storeID, cluster.AllocID())
++		}
++		if len(region.EndKey) == 0 {
++			break
++		}
++		key = append([]byte(nil), region.EndKey...)
++	}
++	require.NotEmpty(t, seen)
++}
++
+ func TestCompactTableTooBusy(t *testing.T) {
+ 	mocker := newCompactRequestMocker(t)
+ 	mocker.MockFrom(`tiflash0/#1`, func(req *kvrpcpb.CompactRequest) (*kvrpcpb.CompactResponse, error) {
+```
+
+**File**: `pkg/executor/main_test.go` (modified, +1/-0)
+```diff
+@@ -61,6 +61,7 @@ func TestMain(m *testing.M) {
+ 		goleak.IgnoreTopFunction("github.com/pingcap/tidb/pkg/ttl/ttlworker.(*JobManager).jobLoop"),
+ 		// backoff function will lead to sleep, so there is a high probability of goroutine leak while it's doing backoff.
+ 		goleak.IgnoreTopFunction("github.com/tikv/client-go/v2/config/retry.(*Config).createBackoffFn.newBackoffFn.func2"),
++		goleak.IgnoreTopFunction("github.com/pingcap/tidb/pkg/executor.(*slowQueryCache).loop"),
+ 		goleak.IgnoreTopFunction("github.com/tikv/client-go/v2/config/retry.newBackoffFn.func1"),
+ 	}
+ 	callback := func(i int) int {
+```
+
+**File**: `pkg/executor/slow_query.go` (modified, +83/-22)
+```diff
+@@ -32,6 +32,7 @@ import (
+ 
+ 	"github.com/pingcap/errors"
+ 	"github.com/pingcap/failpoint"
++	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
+ 	"github.com/pingcap/tidb/pkg/infoschema"
+ 	"github.com/pingcap/tidb/pkg/meta/metadef"
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+@@ -68,17 +69,18 @@ const slowLogTimeRangeInternalTolerance = time.Second
+ 
+ // slowQueryRetriever is used to read slow log data.
+ type slowQueryRetriever struct {
+-	table                 *model.TableInfo
+-	outputCols            []*model.ColumnInfo
+-	initialized           bool
+-	extractor             *plannercore.SlowQueryExtractor
+-	limit                 uint64
+-	files                 []logFile
+-	fileIdx               int
+-	fileLine              int
+-	checker               *slowLogChecker
+-	columnValueFactoryMap map[string]slowQueryColumnValueFactory
+-	instanceFactory       func([]types.Datum)
++	table                      *model.TableInfo
++	outputCols                 []*model.ColumnInfo
++	initialized                bool
++	extractor                  *plannercore.SlowQueryExtractor
++	limit                      uint64
++	files                      []logFile
++	fileIdx                    int
++	fileLine                   int
++	checker                    *slowLogChecker
++	columnValueFactoryMap      map[string]slowQueryColumnValueFactory
++	instanceFactory            func([]types.Datum)
++	inMemoryOriginalQueryIndex int
+ 
+ 	taskList      chan slowLogTask
+ 	stats         *slowQueryRuntimeStats
+@@ -108,7 +110,12 @@ func (e *slowQueryRetriever) initialize(ctx context.Context, sctx sessionctx.Con
+ 	}
+ 	// initialize column value factories.
+ 	e.columnValueFactoryMap = make(map[string]slowQueryColumnValueFactory, len(e.outputCols))
++	e.inMemoryOriginalQueryIndex = -1
+ 	for idx, col := range e.outputCols {
++		if strings.EqualFold(col.Name.O, variable.SlowLogInMemoryOriginalQueryStr) {
++			e.inMemoryOriginalQueryIndex = idx
++			continue
++		}
+ 		if col.Name.O == metadef.ClusterTableInstanceColumnName {
+ 			e.instanceFactory, err = getInstanceColumnValueFactory(sctx, idx)
+ 			if err != nil {
+@@ -169,6 +176,10 @@ func (e *slowQueryRetriever) close() error {
+ 
+ type parsedSlowLog struct {
+ 	rows [][]types.Datum
++	// keys is the slow-query cache lookup for rows. keys[i] identifies rows[i]
++	// by Txn_start_ts, Query_time, and the digest prefix. parseLog appends them
++	// together, and a limit truncates both slices to the same length.
++	keys []slowQueryKey
+ 	err  error
  }
+ 
+@@ -276,12 +287,39 @@ func (e *slowQueryRetriever) dataForSlowLog(ctx context.Context) ([][]types.Datu
+ 		if len(rows) == 0 {
+ 			continue
+ 		}
++
++		// parseLog already charged the pre-fill row size. Measure again after the
++		// plaintext and instance columns are filled so the next fetch releases
++		// the same number of bytes.
++		accounted := calculateDatumsSize(rows)
++
++		// Diagnostic mode does not read the cache; in_memory_original_query stays at the
++		// zero value set while parsing. Lookups do not consult tidb_redact_log.
++		// A nil result also leaves that zero value in place. A successful lookup
++		// returns one string per key, and parseLog keeps keys aligned with rows.
++		if !diagnosticmode.Enabled() && e.inMemoryOriginalQueryIndex >= 0 {
++			unredactedQueries, err := globalSlowQueryCache.getUnredactedQueries(ctx, result.keys)
++			if err != nil {
++				return nil, err
++			}
++
++			if unredactedQueries != nil {
++				for i := range rows {
++					rows[i][e.inMemoryOriginalQueryIndex] = types.NewStringDatum(unredactedQueries[i])
++				}
++			}
++		}
++
+ 		if e.instanceFactory != nil {
+ 			for i := range rows {
+ 				e.instanceFactory(rows[i])
+ 			}
+ 		}
+-		e.lastFetchSize = calculateDatumsSize(rows)
++		updated := calculateDatumsSize(rows)
++		if delta := updated - accounted; delta != 0 {
++			e.memConsume(delta)
++		}
++		e.lastFetchSize = updated
+ 		return rows, nil
+ 	}
+ }
+@@ -685,7 +723,7 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetter(
+ 				return
+ 			case e.taskList <- t:
+ 			}
+-			e.sendParsedSlowLogCh(t, parsedSlowLog{nil, err})
++			e.sendParsedSlowLogCh(t, parsedSlowLog{err: err})
+ 			return
+ 		}
+ 		if len(log) == 0 {
+@@ -709,8 +747,8 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetter(
+ 		e.wg.Add(1)
+ 		go func(log []string, start offset, t slowLogTask) {
+ 			defer e.wg.Done()
+-			result, err := e.parseLog(ctx, sctx, log, start)
+-			e.sendParsedSlowLogCh(t, parsedSlowLog{result, err})
++			result, keys, err := e.parseLog(ctx, sctx, log, start)
++			e.sendParsedSlowLogCh(t, parsedSlowLog{rows: result, keys: keys, err: err})
+ 			<-ch
+ 		}(log, start, t)
+ 		if afterBatch != nil {
+@@ -750,7 +788,7 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetterWithLimit(
+ 				return
+ 			case e.taskList <- t:
+ 			}
+-			e.sendParsedSlowLogCh(t, parsedSlowLog{nil, err})
++			e.sendParsedSlowLogCh(t, parsedSlowLog{err: err})
+ 			return
+ 		}
+ 		if len(log) == 0 {
+@@ -770,16 +808,17 @@ func (e *slowQueryRetriever) parseSlowLogByBatchGetterWithLimit(
+ 			return
+ 		case e.taskList <- t:
+ 		}
+```
+
+**File**: `pkg/executor/slow_query_cache.go` (added, +382/-0)
+```diff
+@@ -0,0 +1,382 @@
++// Copyright 2026 PingCAP, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package executor
++
++import (
++	"context"
++	"time"
++	"unsafe"
++
++	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
++	"github.com/pingcap/tidb/pkg/util"
++)
++
++const (
++	// slowQueryCacheCapacity is the number of entries retained by the cache.
++	// The backing array is allocated when the cache is initialized. The slice
++	// grows until this capacity is reached, then writes reuse its oldest slot.
++	slowQueryCacheCapacity = 50000
++	// slowQueryCacheMaxMem is the budget for entries the worker has retained.
++	// Plaintext waiting on writeCh is not included. Once appending an entry
++	// would pass the budget, the unused slots are abandoned and the ring stays
++	// frozen. A later statement can reuse an existing slot; the replaced
++	// entry's bytes are released when that write lands. The index map and the
++	// preallocated backing array are not counted.
++	slowQueryCacheMaxMem        = 50 * 1024 * 1024
++	slowQueryCacheWriteChanSize = 10
++	slowQueryCacheReadChanSize  = 100
++)
++
++// slowQueryKey identifies one slow query in the plaintext cache. Digest is
++// shortened to 10 characters. The three fields are the same ones written to
++// the slow log, so a later read can find the row again.
++type slowQueryKey struct {
++	txnStartTS uint64
++	queryTime  float64
++	digest     string
++}
++
++// slowQuery is one cached slow query. Only the unredacted SQL is retained;
++// the key is kept so the slot can be removed from the index when it is reused.
++// Every element of slowQueries is occupied. A slot that no longer holds its
++// original key is identified by comparing Key with the lookup key.
++type slowQuery struct {
++	Key           slowQueryKey
++	UnredactedSQL string
++}
++
++type slowQueryCacheWriteTask struct {
++	key slowQueryKey
++	sql string
++}
++
++// slowQueryCacheReadTask is one batch lookup. values is filled by the cache
++// worker and done wakes the reader after that fill finishes.
++type slowQueryCacheReadTask struct {
++	keys   []slowQueryKey
++	values []string
++	done   chan struct{}
++}
++
++// slowQueryCache is owned by one background goroutine. Callers only send tasks.
++// memoryUsage is updated only by that goroutine. A producer drops a statement
++// when writeCh is full, without consulting the memory budget. Readers block
++// until woken or their context ends. Non-diagnostic TiDB starts the worker in
++// Server.Run. Read and write entrypoints check that lifecycle state before
++// sending tasks; diagnostic mode neither starts the worker nor enqueues reads
++// or writes.
++type slowQueryCache struct {
++	writeCh chan slowQueryCacheWriteTask
++	readCh  chan *slowQueryCacheReadTask
++	running bool
++	// stopCh is closed by stop after the test has finished sending. exited is
++	// closed by the worker after that loop returns. Production never closes
++	// stopCh. Both stay nil until start.
++	stopCh chan struct{}
++	exited chan struct{}
++
++	slowQueries []slowQuery
++	writePos    int
++	// frozen stays set after the first insert that cannot be appended. A later
++	// shorter replacement may free memory, but growing again would leave
++	// writePos behind the chronological order of the slots.
++	frozen      bool
++	locations   map[slowQueryKey]int
++	memoryUsage int64
++	maxMemUsage int64
++}
++
++var globalSlowQueryCache = newSlowQueryCache()
++
++func newSlowQueryCache() *slowQueryCache {
++	return newSlowQueryCacheWithLimits(slowQueryCacheCapacity, slowQueryCacheMaxMem, slowQueryCacheWriteChanSize)
++}
++
++func newSlowQueryCacheWithLimits(capacity int, maxMem int64, writeChanSize int) *slowQueryCache {
++	if capacity < 0 {
++		capacity = 0
++	}
++	return &slowQueryCache{
++		writeCh:     make(chan slowQueryCacheWriteTask, writeChanSize),
++		readCh:      make(chan *slowQueryCacheReadTask, slowQueryCacheReadChanSize),
++		slowQueries: make([]slowQuery, 0, capacity),
++		locations:   make(map[slowQueryKey]int),
++		maxMemUsage: maxMem,
++	}
++}
++
++// StartSlowQueryCache starts the process-wide worker that retains plaintext
++// slow-query SQL. Server.Run calls it before accepting connections, whether or
++// not tidb_redact_log is enabled. That setting only decides whether a slow
++// query is inserted. Lookups always read the cache. Extra calls do not start
++// another worker. Diagnostic mode leaves the worker unstarted.
++func StartSlowQueryCache() {
++	globalSlowQueryCache.start()
++}
++
++func (c *slowQueryCache) start() {
++	if diagnosticmode.Enabled() {
++		
+```
+
+**File**: `pkg/executor/slow_query_cache_test.go` (added, +411/-0)
+```diff
+@@ -0,0 +1,411 @@
++// Copyright 2026 PingCAP, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package executor
++
++import (
++	"context"
++	"strconv"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/pingcap/tidb/pkg/config/diagnosticmode"
++	"github.com/pingcap/tidb/pkg/types"
++	"github.com/pingcap/tidb/pkg/util/intest"
++	"github.com/stretchr/testify/require"
++)
++
++func TestSlowQueryCacheReadWrite(t *testing.T) {
++	cache := newSlowQueryCache()
++	key := slowQueryKeyOf(123, 1.25, "0123456789abcdef")
++	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 123;"})
++
++	result := &slowQueryCacheReadTask{
++		keys:   []slowQueryKey{key, slowQueryKeyOf(456, 2.5, "another")},
++		values: make([]string, 2),
++		done:   make(chan struct{}),
++	}
++	cache.handleRead(result)
++
++	require.Equal(t, []string{"select 123;", ""}, result.values)
++	require.Equal(t, "0123456789", key.digest)
++}
++
++func TestSlowQueryCacheDuplicateKeyUsesLatestValue(t *testing.T) {
++	cache := newSlowQueryCache()
++	key := slowQueryKeyOf(123, 1.25, "0123456789abcdef")
++	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 1;"})
++	cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "select 2;"})
++
++	result := &slowQueryCacheReadTask{
++		keys:   []slowQueryKey{key},
++		values: make([]string, 1),
++		done:   make(chan struct{}),
++	}
++	cache.handleRead(result)
++	require.Equal(t, []string{"select 2;"}, result.values)
++	// Both values stay. The index map is not charged.
++	require.Equal(t, getSlowQueryValueMemUsage(key, "select 1;")+getSlowQueryValueMemUsage(key, "select 2;"), cache.memoryUsage)
++}
++
++func TestSlowQueryCacheUsesPreallocatedRing(t *testing.T) {
++	cache := newSlowQueryCache()
++	require.Zero(t, len(cache.slowQueries))
++	require.Equal(t, slowQueryCacheCapacity, cap(cache.slowQueries))
++	require.Equal(t, 10, cap(cache.writeCh))
++	require.Zero(t, cache.writePos)
++	for i := 0; i < slowQueryCacheCapacity; i++ {
++		key := slowQueryKeyOf(uint64(i), 1, strconv.Itoa(i))
++		cache.handleWrite(slowQueryCacheWriteTask{key: key, sql: "x"})
++	}
++
++	require.Len(t, cache.slowQueries, slowQueryCacheCapacity)
++	require.Equal(t, 0, cache.writePos)
++	require.Equal(t, "x", lookupSlowQueryCache(cache, slowQueryKeyOf(0, 1, "0"))[0])
++
++	newKey := slowQueryKeyOf(slowQueryCacheCapacity, 1, strconv.Itoa(slowQueryCacheCapacity))
++	cache.handleWrite(slowQueryCacheWriteTask{key: newKey, sql: "new"})
++	require.Equal(t, "", lookupSlowQueryCache(cache, slowQueryKeyOf(0, 1, "0"))[0])
++	require.Equal(t, "new", lookupSlowQueryCache(cache, newKey)[0])
++	require.Equal(t, 1, cache.writePos)
++}
++
++func TestSlowQueryCacheEvictsOldestAndFreezesRing(t *testing.T) {
++	first := slowQueryKeyOf(1, 1, "first-key")
++	second := slowQueryKeyOf(2, 1, "second-key")
++	third := slowQueryKeyOf(3, 1, "third-key")
++	droppedKey := slowQueryKeyOf(4, 1, "dropped")
++	firstSQL, secondSQL, thirdSQL := "12345", "12345", "123456"
++	droppedSQL := "123456789012"
++	twoEntries := getSlowQueryValueMemUsage(first, firstSQL) + getSlowQueryValueMemUsage(second, secondSQL)
++	afterThird := getSlowQueryValueMemUsage(second, secondSQL) + getSlowQueryValueMemUsage(third, thirdSQL)
++	afterDropped := getSlowQueryValueMemUsage(third, thirdSQL) + getSlowQueryValueMemUsage(droppedKey, droppedSQL)
++	require.Greater(t, afterDropped, afterThird)
++
++	cache := newSlowQueryCacheWithLimits(4, afterThird, 8)
++	cache.handleWrite(slowQueryCacheWriteTask{key: first, sql: firstSQL})
++	cache.handleWrite(slowQueryCacheWriteTask{key: second, sql: secondSQL})
++	require.Equal(t, twoEntries, cache.memoryUsage)
++
++	cache.handleWrite(slowQueryCacheWriteTask{key: third, sql: thirdSQL})
++	require.Equal(t, afterThird, cache.memoryUsage)
++	// The two unused slots are abandoned once the memory budget is reached.
++	require.Len(t, cache.slowQueries, 2)
++	require.Equal(t, 4, cap(cache.slowQueries))
++	require.True(t, cache.frozen)
++	require.Equal(t, []string{"", secondSQL, thirdSQL}, lookupSlowQueryCache(cache, first, second, third))
++
++	// Replacing the next slot would pass the frozen ceiling, so the SQL is discarded.
++	before := cache.memoryUsage
++	pos := cache.writePos
++	cache.handleWrite(slowQueryCacheWriteTask{key: droppedKey, sql: droppedSQL})
++	require.Equal(t, before, cache.memoryUsage)
++	require.Equal(t, pos, cache.writePos)
++	require.True(t, cache.frozen)
++	require.Equal(t, []string{secondSQL}, lookupSlowQueryCache(cache, second))
++
++	// Capacity 4, budget 300, one-byte digests, SQL lengths 100, 100, 1, 1,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72735** (closed): util: fix incorrect statement summary Others rows (#69914) (@jiong-nba)
-- **PR #72734** (closed): stmtsummary: fix DOUBLE metric values (#69708) (release-8.5) (@jiong-nba)
-- **PR #72733** (closed): stmtsummary: fix AVG_ROCKSDB_* columns returning subnormal floats (#69708) (@jiong-nba)
-- **PR #72730** (2026-11-05): executor, planner: prevent SQL injection in plan replayer capture (@qw4990)
-- **PR #72723** (2026-11-05): ddl, executor: allow dropping expired MV shadow tables (@windtalker)
-- **PR #72722** (2026-11-05): session, lightning: enable log redaction by default (#72666) | tidb-test=pr/2810 (@ti-chi-bot)
+- **PR #72822** (closed): executor: honor table ID filters for unmapped TiKV regions (#72820) [release-8.5] (@wjhuang2016)
+- **PR #72821** (closed): ddl: reject unsafe standalone recovery of foreign keys (release-8.5) (@wjhuang2016)
+- **PR #72799** (closed): executor: fix foreign key checks with IGNORE (#66873) (@wjhuang2016)
+- **PR #72798** (2026-11-06): dumpling: close test service connections during cleanup (@YuJuncen)
+- **PR #72791** (2026-11-06): *: update security dependencies for materialized views (@windtalker)
+- **PR #72787** (2026-11-06): planner: backport join reorder and constant propagation improvements | tidb-test=pr/2812 (@qw4990)
 
 ---
 
@@ -2404,80 +2658,32 @@ close pingcap/tidb#70687
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
+## X. *: cache unredacted slow query in the memory (#72410)
 
 **RULE**:
-When implementing operations in `pkg/ddl/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/executor/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `adee1920`: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13377f09`: *: cache unredacted slow query in the memory (#72410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/index.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/BUILD.bazel`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Keep the fetched records intact: i%n identifies the index even when an
-		// array expands to zero or multiple entries, and progress is per record.
-		recordValues := make([][][]types.Datum, len(idxRecords))
-		recordKeys := make([][]kv.Key, len(idxRecords))
-			index := w.indexes[i%n]
-			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
-			for iter.Valid() {
-				values := iter.PeekIndexedValues()
-				key, _, distinct, err := iter.Next(nil, nil)
-				if err != nil {
-					return errors.Trace(err)
-				}
-				recordValues[i] = append(recordValues[i], values)
-				if distinct {
-					globalIndexKeys = append(globalIndexKeys, key)
-				}
-				recordKeys[i] = append(recordKeys[i], key)
-			// Count records with empty arrays as processed even though they have no index keys to delete.
-			cleaned := len(recordKeys[i]) == 0
-			for j, key := range recordKeys[i] {
-				if val, ok := found[string(key)]; ok {
-					// Only delete if it is from the partition it was read from.
-					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-					if errPart != nil {
-						return errors.Trace(errPart)
-					}
-					if partHandle, ok := handle.(kv.PartitionHandle); ok {
-
+        "slow_query_cache.go",
+        "//pkg/config/diagnosticmode",
+        "slow_query_cache_test.go",
+        "//pkg/config/diagnosticmode",
+        "//pkg/util/intest",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		allKeys := make([]kv.Key, 0, len(idxRecords))
-			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
-			if err != nil {
-				return errors.Trace(err)
-			}
-			if distinct {
-				globalIndexKeys = append(globalIndexKeys, key)
-			allKeys = append(allKeys, key)
-			if val, ok := found[string(allKeys[i])]; ok {
-				// Only delete if it is from the partition it was read from.
-				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-				if errPart != nil {
-					return errors.Trace(errPart)
-				}
-				if partHandle, ok := handle.(kv.PartitionHandle); ok {
-					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
-						continue
-				// Lock the global index entry, to prevent deleting something that is concurrently added.
-				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
-			// we fetch records row by row, so records will belong to
-			// index[0], index[1] ... index[n-1], index[0], index[1] ...
-			// respectively. So indexes[i%n] is the index of idxRecords[i].
-			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
-			if err != nil {
-				return errors.Trace(err)
-			taskCtx.addedCount++
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `adee1920` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13377f09` are properly handled with clean fallback behavior.

@@ -8062,3 +8062,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `6d79729a` | Multi-dimensional audit evidence | 2026-11-07T19:09:35.174Z |
 | `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-07T19:16:47.924Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `cf4e7963` | Multi-dimensional audit evidence | 2026-11-07T19:16:48.702Z |
+| `learn-github-alchaincyf-nuwa-skill` | `https://github.com/alchaincyf/nuwa-skill` | `5bb9b659` | Multi-dimensional audit evidence | 2026-11-07T19:23:31.737Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `abaf4047` | Multi-dimensional audit evidence | 2026-11-07T19:23:47.999Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `41efd866` | Multi-dimensional audit evidence | 2026-11-07T19:23:48.922Z |

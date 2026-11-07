@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:16:48.604Z",
-  "total_verified_learnings": 1233,
+  "last_updated": "2026-11-07T19:23:48.847Z",
+  "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -42031,14 +42031,19 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "ea260c54",
-      "content_hash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
+      "source_version": "abaf4047",
+      "content_hash": "de08c5cd9cb1b16a8804c20cf7452215597de436373e4ee0a7ba8618113e7228",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "agent-lightning): count only accepted spans in emit_to_store (#4487)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "a2a-protocol): keep a task's error when fail() is rejected (#4488)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42172,7 +42177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T20:06:49.755Z",
+      "verified_at": "2026-11-07T19:23:47.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49359,14 +49364,19 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "49d87f99",
-      "content_hash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
+      "source_version": "41efd866",
+      "content_hash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "*: cache unredacted slow query in the memory (#72410)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49465,7 +49475,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:47:38.493Z",
+      "verified_at": "2026-11-07T19:23:48.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185416,6 +185426,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-07T19:16:47.721Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-alchaincyf-nuwa-skill": {
+      "learning_id": "learn-github-alchaincyf-nuwa-skill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alchaincyf/nuwa-skill",
+      "repository": "alchaincyf/nuwa-skill",
+      "slug": "alchaincyf-nuwa-skill",
+      "platform": "github",
+      "source_url": "https://github.com/alchaincyf/nuwa-skill",
+      "source_version": "5bb9b659",
+      "content_hash": "cecff6b07c042b17515a54ab62bc8a685419ba59f3424551b50966a2c1b031a8",
+      "dossier_path": "07_PROJECT_LEARNING/alchaincyf-nuwa-skill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alchaincyf-nuwa-skill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "README: 13位→14位人物，补张雪峰/孙宇晨表格行",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T19:23:31.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

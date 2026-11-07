@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:16:48.713Z",
+  "last_updated": "2026-11-07T19:23:48.937Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "21f9bf6236ed2bf9b4b2d375a9ab35ecb8ffdb651511d205641777ed1ef6c591",
-      "verified_at": "2026-11-05T20:06:49.865Z",
+      "content_hash": "de08c5cd9cb1b16a8804c20cf7452215597de436373e4ee0a7ba8618113e7228",
+      "verified_at": "2026-11-07T19:23:48.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T20:06:49.865Z"
+      "last_updated": "2026-11-07T19:23:48.009Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "be8b9dcbf0345465be69194cc0b84b95999ef7ea3d9a59118256b3d2240de064",
-      "verified_at": "2026-11-05T21:47:38.630Z",
+      "content_hash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
+      "verified_at": "2026-11-07T19:23:48.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:47:38.630Z"
+      "last_updated": "2026-11-07T19:23:48.937Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -18284,6 +18284,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-07T19:16:47.937Z"
+    },
+    "alchaincyf/nuwa-skill": {
+      "repository": "alchaincyf/nuwa-skill",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alchaincyf-nuwa-skill",
+      "content_hash": "cecff6b07c042b17515a54ab62bc8a685419ba59f3424551b50966a2c1b031a8",
+      "verified_at": "2026-11-07T19:23:31.745Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-07T19:23:31.745Z"
     }
   },
   "repos": {

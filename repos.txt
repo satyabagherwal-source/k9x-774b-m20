@@ -4930,3 +4930,7 @@ https://huggingface.co/PrunaAI/P-H3-Image
 # --- Automatically Discovered by AI Scout Engine [2026-11-07T19:16:31.075Z] ---
 # [HUGGINGFACE-AI-MODELS] Viggle/Viggle-Remake (3570 score) - Verified Hugging Face Model: Viggle/Viggle-Remake (157 likes, 64942 downloads)
 https://huggingface.co/Viggle/Viggle-Remake
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T19:23:25.797Z] ---
+# [AI-AGENTS] alchaincyf/nuwa-skill (20639 score) - 你想蒸馏的下一个员工，何必是同事。蒸馏任何人的思维方式——心智模型、决策启发式、表达DNA。Distill how anyone thinks.
+https://github.com/alchaincyf/nuwa-skill

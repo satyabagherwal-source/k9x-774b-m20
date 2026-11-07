@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T19:16:48.707Z",
-  "total_cycles_completed": 8018,
-  "total_learnings_persisted": 8018,
-  "total_rules_promoted": 7668,
+  "last_updated": "2026-11-07T19:23:48.927Z",
+  "total_cycles_completed": 8021,
+  "total_learnings_persisted": 8021,
+  "total_rules_promoted": 7671,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:27:19.296Z",
-      "repository": "microsoft/Florence-2-base",
-      "learningId": "learn-huggingface-microsoft-florence-2-base",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:27:20.233Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:27:23.534Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:27:26.663Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T19:16:48.707Z",
       "repository": "emberstack/kubernetes-reflector",
       "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:23:31.742Z",
+      "repository": "alchaincyf/nuwa-skill",
+      "learningId": "learn-github-alchaincyf-nuwa-skill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:23:48.006Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:23:48.927Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -20608,5 +20608,20 @@
     "downloads": 64942,
     "qualityScore": 3570,
     "discoveredAt": "2026-11-07T19:14:22.933Z"
+  },
+  {
+    "name": "nuwa-skill",
+    "fullName": "alchaincyf/nuwa-skill",
+    "url": "https://github.com/alchaincyf/nuwa-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "你想蒸馏的下一个员工，何必是同事。蒸馏任何人的思维方式——心智模型、决策启发式、表达DNA。Distill how anyone thinks.",
+    "stars": 37747,
+    "forks": 4857,
+    "openIssues": 29,
+    "language": "Python",
+    "qualityScore": 20639,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-07T19:19:39.346Z"
   }
 ]

@@ -8053,3 +8053,6 @@
 | `CYCLE-20261107-288Z` | `2026-11-07T19:09:35.171Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05d8e0e5...`) |
 | `CYCLE-20261107-BI5S` | `2026-11-07T19:16:47.920Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`f9fc6692...`) |
 | `CYCLE-20261107-BIRE` | `2026-11-07T19:16:48.698Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`23a637a9...`) |
+| `CYCLE-20261107-K5QT` | `2026-11-07T19:23:31.733Z` | `alchaincyf/nuwa-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cecff6b0...`) |
+| `CYCLE-20261107-KIAB` | `2026-11-07T19:23:47.987Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de08c5cd...`) |
+| `CYCLE-20261107-KJ07` | `2026-11-07T19:23:48.919Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa738012...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-INFQ",
-    "timestamp": "2026-11-05T06:15:11.654Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "7ae8f3178431430593b1d7453378c97f380020bd82bd301d1b67e591a3fd49a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-QVHV",
-    "timestamp": "2026-11-05T06:21:35.347Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "4df4459b8dbe5f074d61ac96f78ae296d7ddd469bb15f169626a2381279e8e68",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-081Z",
-    "timestamp": "2026-11-05T06:28:51.527Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "637dcf1c1ab8fc3d03ba7e9fb8612ee685e57dd7188c0e36dc1cb68449e1e05b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-0CMV",
     "timestamp": "2026-11-05T06:28:57.463Z",
     "repository": "meta-llama/Llama-2-7b",
@@ -7490,6 +7445,51 @@
     "repository": "emberstack/kubernetes-reflector",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
     "contentHash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-K5QT",
+    "timestamp": "2026-11-07T19:23:31.733Z",
+    "repository": "alchaincyf/nuwa-skill",
+    "learningId": "learn-github-alchaincyf-nuwa-skill",
+    "contentHash": "cecff6b07c042b17515a54ab62bc8a685419ba59f3424551b50966a2c1b031a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-KIAB",
+    "timestamp": "2026-11-07T19:23:47.987Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "de08c5cd9cb1b16a8804c20cf7452215597de436373e4ee0a7ba8618113e7228",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-KJ07",
+    "timestamp": "2026-11-07T19:23:48.919Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "aa73801260ae7fd9075843fd9f5d41e8cd68bb09d534d87d25a19d1b70b61483",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
