@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T19:55:26.794Z",
-    "lastVerified": "2026-11-07T19:55:26.794Z",
+    "lastChecked": "2026-11-07T20:02:11.160Z",
+    "lastVerified": "2026-11-07T20:02:11.160Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T19:30:44.633Z",
-    "lastVerified": "2026-11-07T19:30:44.633Z",
+    "lastChecked": "2026-11-07T20:02:11.150Z",
+    "lastVerified": "2026-11-07T20:02:11.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -808,8 +808,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T04:51:43.998Z",
-    "lastVerified": "2026-11-07T04:51:43.998Z",
+    "lastChecked": "2026-11-07T20:02:06.225Z",
+    "lastVerified": "2026-11-07T20:02:06.225Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -1772,9 +1772,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-05T22:25:05.921Z",
+    "lastChecked": "2026-11-07T20:02:03.654Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-05T22:25:05.921Z"
+    "lastVerified": "2026-11-07T20:02:03.654Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -5499,9 +5499,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-05T21:32:54.190Z",
+    "lastChecked": "2026-11-07T20:02:08.669Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-05T21:32:54.190Z"
+    "lastVerified": "2026-11-07T20:02:08.669Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -6917,14 +6917,14 @@
     "officialUrl": "https://github.com/lysine-dev/okio",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-04T20:25:06.143Z",
-    "lastVerified": "2026-11-04T20:25:06.143Z",
+    "lastChecked": "2026-11-07T20:02:05.278Z",
+    "lastVerified": "2026-11-07T20:02:05.278Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lysine-dev-okio",
-    "contentHash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
+    "contentHash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8225,9 +8225,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-05T15:37:18.252Z",
+    "lastChecked": "2026-11-07T20:01:56.102Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-05T15:37:18.252Z"
+    "lastVerified": "2026-11-07T20:01:56.102Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11787,14 +11787,14 @@
     "officialUrl": "https://github.com/sveltejs/svelte",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T02:12:01.078Z",
-    "lastVerified": "2026-11-04T02:12:01.078Z",
+    "lastChecked": "2026-11-07T20:02:02.496Z",
+    "lastVerified": "2026-11-07T20:02:02.496Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
+    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -8066,3 +8066,5 @@
 | `CYCLE-20261107-FK0W` | `2026-11-07T19:47:56.576Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ccbb1bb5...`) |
 | `CYCLE-20261107-P29E` | `2026-11-07T19:55:20.114Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`467cbedf...`) |
 | `CYCLE-20261107-P5F2` | `2026-11-07T19:55:24.206Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1288007e...`) |
+| `CYCLE-20261107-XQKG` | `2026-11-07T20:02:04.864Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e64b4278...`) |
+| `CYCLE-20261107-XS7X` | `2026-11-07T20:02:07.005Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ff47fce6...`) |

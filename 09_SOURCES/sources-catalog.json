@@ -6653,10 +6653,10 @@
     "repository": "lysine-dev/okio",
     "platform": "github",
     "sourceUrl": "https://github.com/lysine-dev/okio",
-    "sourceVersion": "1926f022",
+    "sourceVersion": "f0e3f479",
     "license": "Apache-2.0",
-    "contentHash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
-    "lastHarvestedAt": "2026-11-04T20:25:07.156Z",
+    "contentHash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
+    "lastHarvestedAt": "2026-11-07T20:02:07.009Z",
     "learningId": "learn-github-lysine-dev-okio"
   },
   "nginx-kubernetes-ingress": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "628098d2",
+    "sourceVersion": "7775f73b",
     "license": "MIT",
-    "contentHash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
-    "lastHarvestedAt": "2026-11-04T02:12:03.457Z",
+    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
+    "lastHarvestedAt": "2026-11-07T20:02:04.867Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

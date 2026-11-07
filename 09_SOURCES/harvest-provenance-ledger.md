@@ -8075,3 +8075,5 @@ Every entry in this ledger must capture:
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `85975331` | Multi-dimensional audit evidence | 2026-11-07T19:47:56.580Z |
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `51d80993` | Multi-dimensional audit evidence | 2026-11-07T19:55:20.118Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `59bf235a` | Multi-dimensional audit evidence | 2026-11-07T19:55:24.210Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `7775f73b` | Multi-dimensional audit evidence | 2026-11-07T20:02:04.867Z |
+| `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `f0e3f479` | Multi-dimensional audit evidence | 2026-11-07T20:02:07.009Z |

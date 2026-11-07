@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:55:24.071Z",
+  "last_updated": "2026-11-07T20:02:06.927Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40088,11 +40088,16 @@
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "1926f022",
-      "content_hash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
+      "source_version": "f0e3f479",
+      "content_hash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update dependency me.champeau.jmh:jmh-gradle-plugin to v0.7.4 (#1895)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 4235,
           "title": "Allow throttler to apply the new rate immediately (#1880)",
@@ -40119,7 +40124,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:25:07.061Z",
+      "verified_at": "2026-11-07T20:02:06.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79290,11 +79295,16 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "628098d2",
-      "content_hash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
+      "source_version": "7775f73b",
+      "content_hash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "remove all of the server-rendered content when hydrating a different branch that",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2987,
           "title": "prevent duplicate derived subscriptions on reconnect (#18899)",
@@ -79321,7 +79331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:12:03.335Z",
+      "verified_at": "2026-11-07T20:02:04.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

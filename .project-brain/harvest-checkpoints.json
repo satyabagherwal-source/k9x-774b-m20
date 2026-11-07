@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:55:24.229Z",
+  "last_updated": "2026-11-07T20:02:07.024Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10041,14 +10041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lysine-dev-okio",
-      "content_hash": "ec0cfead71c047dbe6b202219034d66de3578fb2c99fca4ded10c59bf16c6b79",
-      "verified_at": "2026-11-04T20:25:07.170Z",
+      "content_hash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
+      "verified_at": "2026-11-07T20:02:07.023Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:25:07.170Z"
+      "last_updated": "2026-11-07T20:02:07.023Z"
     },
     "nginx/kubernetes-ingress": {
       "repository": "nginx/kubernetes-ingress",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "9fd83d2ae41adf8ca888a1a7616118be5c1dabcb78ce404efa4f1a7670bc7406",
-      "verified_at": "2026-11-04T02:12:03.466Z",
+      "content_hash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
+      "verified_at": "2026-11-07T20:02:04.882Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:12:03.466Z"
+      "last_updated": "2026-11-07T20:02:04.882Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",
