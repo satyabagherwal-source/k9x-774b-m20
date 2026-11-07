@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "511a3044",
+    "sourceVersion": "034a10b2",
     "license": "NOASSERTION",
-    "contentHash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
-    "lastHarvestedAt": "2026-11-05T22:31:53.902Z",
+    "contentHash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
+    "lastHarvestedAt": "2026-11-07T21:10:32.662Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -7023,10 +7023,10 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "697e4d15",
+    "sourceVersion": "0eb18c80",
     "license": "Apache-2.0",
-    "contentHash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
-    "lastHarvestedAt": "2026-11-04T21:26:15.261Z",
+    "contentHash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
+    "lastHarvestedAt": "2026-11-07T21:10:24.185Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "695a07dd",
+    "sourceVersion": "c0c77a7a",
     "license": "MIT",
-    "contentHash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
-    "lastHarvestedAt": "2026-11-04T22:12:34.830Z",
+    "contentHash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
+    "lastHarvestedAt": "2026-11-07T21:10:20.002Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "d5781a49",
+    "sourceVersion": "8f6da1e2",
     "license": "MIT",
-    "contentHash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
-    "lastHarvestedAt": "2026-11-04T03:09:05.487Z",
+    "contentHash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+    "lastHarvestedAt": "2026-11-07T21:10:22.540Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

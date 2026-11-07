@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:03:30.066Z",
-  "total_cycles_completed": 8056,
-  "total_learnings_persisted": 8056,
-  "total_rules_promoted": 7715,
+  "last_updated": "2026-11-07T21:10:32.667Z",
+  "total_cycles_completed": 8060,
+  "total_learnings_persisted": 8060,
+  "total_rules_promoted": 7719,
   "history": [
-    {
-      "timestamp": "2026-11-06T15:20:44.518Z",
-      "repository": "react-navigation/react-navigation",
-      "learningId": "learn-github-react-navigation-react-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:20:46.993Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:20:49.249Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:20:53.693Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T15:27:36.297Z",
       "repository": "tickernelz/opencode-mem",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-07T21:03:30.066Z",
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:10:20.009Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:10:22.564Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:10:24.199Z",
+      "repository": "mikepenz/AboutLibraries",
+      "learningId": "learn-github-mikepenz-aboutlibraries",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:10:32.667Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

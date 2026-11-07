@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-TFVU",
-    "timestamp": "2026-11-05T08:15:33.546Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "ac4acbd4d685d00aad0060ca87b1bafddcc4c8a4de98ebe98236117ea7f690e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-EDXH",
-    "timestamp": "2026-11-05T08:31:50.789Z",
-    "repository": "rainbow-me/rainbow",
-    "learningId": "learn-github-rainbow-me-rainbow",
-    "contentHash": "2023ae52dfd82e0586f0681d613f46b6f288d12f8d83625b2e3a584311ad5588",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-EEMF",
-    "timestamp": "2026-11-05T08:31:51.687Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "38eefabb86be96b62e61198b82637355f98dccac4443a8efed24c6d676a8dc8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-FMJN",
-    "timestamp": "2026-11-05T08:32:48.611Z",
-    "repository": "easegress-io/easegress",
-    "learningId": "learn-github-easegress-io-easegress",
-    "contentHash": "6b485ff75094ce7d3eed0e72e7c0666b4f077a1af3d131114b513e50db5f1502",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-Q6BC",
     "timestamp": "2026-11-05T08:41:00.792Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7430,66 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "3f545a33095de7d8792140cc60da784fcb53589087a73a1f04ca19bb0122e8a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DIE7",
+    "timestamp": "2026-11-07T21:10:19.999Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DKCN",
+    "timestamp": "2026-11-07T21:10:22.535Z",
+    "repository": "TanStack/query",
+    "learningId": "learn-github-tanstack-query",
+    "contentHash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DLME",
+    "timestamp": "2026-11-07T21:10:24.182Z",
+    "repository": "mikepenz/AboutLibraries",
+    "learningId": "learn-github-mikepenz-aboutlibraries",
+    "contentHash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DS5U",
+    "timestamp": "2026-11-07T21:10:32.658Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

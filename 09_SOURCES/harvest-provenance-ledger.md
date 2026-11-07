@@ -8100,3 +8100,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `1091a8b5` | Multi-dimensional audit evidence | 2026-11-07T21:03:19.480Z |
 | `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `20c0f2ed` | Multi-dimensional audit evidence | 2026-11-07T21:03:20.788Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `7e7611f8` | Multi-dimensional audit evidence | 2026-11-07T21:03:30.060Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `c0c77a7a` | Multi-dimensional audit evidence | 2026-11-07T21:10:20.002Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `8f6da1e2` | Multi-dimensional audit evidence | 2026-11-07T21:10:22.540Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `0eb18c80` | Multi-dimensional audit evidence | 2026-11-07T21:10:24.185Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `034a10b2` | Multi-dimensional audit evidence | 2026-11-07T21:10:32.662Z |

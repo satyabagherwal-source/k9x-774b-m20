@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T21:03:30.070Z",
+  "last_updated": "2026-11-07T21:10:32.671Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
-      "verified_at": "2026-11-05T22:31:53.909Z",
+      "content_hash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
+      "verified_at": "2026-11-07T21:10:32.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:31:53.909Z"
+      "last_updated": "2026-11-07T21:10:32.670Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
-      "verified_at": "2026-11-04T21:26:15.278Z",
+      "content_hash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
+      "verified_at": "2026-11-07T21:10:24.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:26:15.278Z"
+      "last_updated": "2026-11-07T21:10:24.202Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
-      "verified_at": "2026-11-04T22:12:34.848Z",
+      "content_hash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
+      "verified_at": "2026-11-07T21:10:20.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:12:34.848Z"
+      "last_updated": "2026-11-07T21:10:20.012Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
-      "verified_at": "2026-11-04T03:09:05.496Z",
+      "content_hash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+      "verified_at": "2026-11-07T21:10:22.569Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:09:05.496Z"
+      "last_updated": "2026-11-07T21:10:22.569Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

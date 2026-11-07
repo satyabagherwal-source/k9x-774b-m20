@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:03:29.958Z",
+  "last_updated": "2026-11-07T21:10:32.564Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3174,14 +3174,19 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "511a3044",
-      "content_hash": "8df3a10948a28016fd671d3508bb0d600a3050c3adc1fffa9cba0fce698fb1ac",
+      "source_version": "034a10b2",
+      "content_hash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #23595 from arangodb/bug-fix/bts-2437",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (#23604)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3245,7 +3250,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:31:53.812Z",
+      "verified_at": "2026-11-07T21:10:32.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42686,11 +42691,16 @@
       "slug": "mikepenz-aboutlibraries",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/AboutLibraries",
-      "source_version": "697e4d15",
-      "content_hash": "8167195c1b3f545d95e9bfc9a310772278bf5322648cb02a17358d68f60ab15f",
+      "source_version": "0eb18c80",
+      "content_hash": "e694e2bc14ae504b934930ab0484f0308908dcfae0194b554b428ea4fe72a303",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2307,
           "title": "Fail-Safe Builder Degradation Invariant",
@@ -42712,7 +42722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:26:15.143Z",
+      "verified_at": "2026-11-07T21:10:24.085Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59783,11 +59793,16 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "695a07dd",
-      "content_hash": "64da2c26b1a8603db211229b24970020ccb5494d385d31fe401add3168c735c9",
+      "source_version": "c0c77a7a",
+      "content_hash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "rt: handle transient windows thread spawn errors (#8766)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2506,
           "title": "Invariant Preservation Across Stream Lifecycle and EOF Boundaries",
@@ -59854,7 +59869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:12:34.706Z",
+      "verified_at": "2026-11-07T21:10:19.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79849,11 +79864,16 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "d5781a49",
-      "content_hash": "11f50c59538a7d61fd49837ce91c2eafc8079edbf6e32a9c86ae63e54c471f1d",
+      "source_version": "8f6da1e2",
+      "content_hash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "{query,react-query,preact-query}-devtools): always render the devtools left-to-r",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3004,
           "title": "examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock",
@@ -79885,7 +79905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:09:05.376Z",
+      "verified_at": "2026-11-07T21:10:22.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
