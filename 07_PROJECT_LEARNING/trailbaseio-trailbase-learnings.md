@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `a106ce63`  
+> **Source Version**: `30b864ff`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T04:04:56.539Z  
+> **Timestamp**: 2026-11-07T18:09:48.637Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T04:04:55.470Z  
+> **Harvest Timestamp**: 2026-11-07T18:09:48.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5740 stars
+- **Stars / Engagement**: 5746 stars
 
 ---
 
@@ -948,374 +948,306 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ddc107b` (2026-11-03)
-**Commit Message**: Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if explicitly requested or non-JSON request. Fix OpenApi documentation. #310
+### Incident Patch 1: `7215627f` (2026-11-06)
+**Commit Message**: Minor: more consistent UUID parsing.
 
-**File**: `Cargo.lock` (modified, +47/-0)
+**File**: `crates/core/src/auth/api/avatar.rs` (modified, +1/-1)
 ```diff
-@@ -631,6 +631,26 @@ dependencies = [
-  "tracing",
- ]
- 
-+[[package]]
-+name = "axum-extra"
-+version = "0.12.6"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "be44683b41ccb9ab2d23a5230015c9c3c55be97a25e4428366de8873103f7970"
-+dependencies = [
-+ "axum-core",
-+ "bytes",
-+ "futures-core",
-+ "futures-util",
-+ "headers",
-+ "http",
-+ "http-body",
-+ "http-body-util",
-+ "mime",
-+ "pin-project-lite",
-+ "tower-layer",
-+ "tower-service",
-+]
-+
- [[package]]
- name = "axum-test"
- version = "21.1.0"
-@@ -3135,6 +3155,30 @@ dependencies = [
-  "hashbrown 0.17.1",
- ]
- 
-+[[package]]
-+name = "headers"
-+version = "0.4.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "fc2700e3fe555c3310aa7286cac6167449f2c87e0eb58769c9208a1c58a1d106"
-+dependencies = [
-+ "base64 0.22.1",
-+ "bytes",
-+ "headers-core",
-+ "http",
-+ "httpdate",
-+ "mime",
-+ "sha1 0.10.7",
-+]
-+
-+[[package]]
-+name = "headers-core"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4"
-+dependencies = [
-+ "http",
-+]
-+
- [[package]]
- name = "heapless"
- version = "0.6.1"
-@@ -7903,6 +7947,7 @@ dependencies = [
-  "async-channel 2.5.0",
-  "async-trait",
-  "axum",
-+ "axum-extra",
-  "axum-test",
-  "axum-tracing-opentelemetry",
-  "base32",
-@@ -7924,6 +7969,7 @@ dependencies = [
-  "geos",
-  "getrandom 0.4.3",
-  "governor",
-+ "headers",
-  "hex",
-  "http-body-util",
-  "hyper",
-@@ -7939,6 +7985,7 @@ dependencies = [
-  "litegis",
-  "log",
-  "mimalloc",
-+ "mime",
-  "mini-moka",
-  "minijinja",
-  "oauth2",
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@ arc-swap = { version = "1.9.3", default-features = false }
- argon2 = { version = "^0.6.0", default-features = false, features = ["alloc", "getrandom", "password-hash"] }
- askama = { version = "0.16.1", default-features = false, features = ["derive", "std", "config"] }
- axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
-+axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
- base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
- bytes = { version = "1.12.1", features = ["serde"] }
- chrono = { version = "0.4.45", default-features = false }
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -43,6 +43,7 @@ askama = { workspace = true }
- async-channel = "2.5.0"
- async-trait = "0.1.92"
- axum = { workspace = true }
-+axum-extra = { workspace = true }
- axum-tracing-opentelemetry = { version = "0.42.1", optional = true }
- base32 = "0.5.1"
- base64 = { workspace = true }
-@@ -60,6 +61,7 @@ futures-util = { workspace = true }
- geos = { workspace = true, optional = true }
- getrandom = "0.4.3"
- governor = "0.10.4"
-+headers = "0.4.2"
- hex = "0.4.3"
- http-body-util = { workspace = true }
- hyper = { workspace = true }
-@@ -73,6 +75,7 @@ lazy_static = "1.5.1"
- lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
- litegis = { workspace = true, optional = true }
- log = { workspace = true }
-+mime = "0.3.17"
- mini-moka = "0.10.3"
- minijinja = { workspace = true }
- oauth2 = { version = "5.0.0", default-features = false, features = ["rustls-tls"] }
-```
-
-**File**: `crates/core/src/auth/api/logout.rs` (modified, +19/-11)
-```diff
-@@ -1,6 +1,7 @@
- use axum::extract::{Extension, Json, Query, State};
- use axum::http::StatusCode;
- use axum::response::{IntoResponse, Redirect, Response};
-+use axum_extra::TypedHeader;
- use serde::Deserialize;
- use tower_cookies::Cookies;
- use ts_rs::TS;
-@@ -28,31 +29,38 @@ pub struct LogoutParams {
-   tag = "auth",
-   params(LogoutParams),
-   responses(
--    (status = 200, description = "Auth & refresh tokens.")
-+    (status = 200, description = "Sessions deleted. JWT auth token remains valid until expiry but refresh is no longer possible."),
-+    (status = 303, description = "Sessions deleted. JWT auth token remains valid until expiry but refresh is no longer possible. (?redirect_to= provided or non-json Content-Type with root path installed)"),
-+    (status = 401, description = "Failed to delete sessions (missing or invalid JWT)."),
-   )
- )]
- pub async fn logout_handler(
+@@ -27,7 +27,7 @@ pub async fn get_avatar_handler(
    State(state): State<AppState>,
-   Query(query): Query<LogoutParams>,
-   Extension(HasRoot(has_root)): Extension<HasRoot>,
--  user: Option<User>,
-+  content_type: Option<TypedHeader<headers::ContentType>>,
-+  user: User,
-   cookies: Cookies,
+   Path(b64_user_id): Path<String>,
  ) -> Result<Response, AuthError> {
-   let redirect_uri = validate_redirect(&state, query.redirect_uri)?;
+-  let Ok(user_id) = crate::util::b64_to_uuid(&b64_user_id) else {
++  let Ok(user_id) = crate::util::parse_uuid(&b64_user_id) else {
+     return Err(AuthError::BadRequest("Invalid user id"));
+   };
  
-+  delete_all_sessions_for_user(state.session_conn(), user.id).await?;
+```
+
+**File**: `crates/core/src/auth/api/login.rs` (modified, +2/-2)
+```diff
+@@ -28,7 +28,7 @@ use crate::constants::{
+ };
+ use crate::extract::Either;
+ use crate::rand::random_alphanumeric;
+-use crate::util::{b64_to_uuid, urlencode};
++use crate::util::urlencode;
+ 
+ #[derive(Debug, Deserialize, TS, ToSchema)]
+ #[serde(untagged)]
+@@ -488,7 +488,7 @@ pub(crate) async fn login_mfa_handler(
+   // Check credentials.
+   let db_user: DbUser = user_by_id(
+     &state,
+-    &b64_to_uuid(&sub).map_err(|_err| AuthError::Unauthorized)?,
++    &crate::util::b64_to_uuid(&sub).map_err(|_err| AuthError::Unauthorized)?,
+   )
+   .await
+   .map_err(|_| {
+```
+
+**File**: `crates/core/src/auth/cli.rs` (modified, +7/-10)
+```diff
+@@ -1,4 +1,3 @@
+-use base64::prelude::*;
+ use chrono::Duration;
+ use const_format::formatcp;
+ use serde::{Deserialize, Serialize};
+@@ -26,22 +25,18 @@ pub enum UserReference {
+ 
+ impl UserReference {
+   pub fn parse(user: impl AsRef<str>) -> Result<Self, String> {
+-    let user = user.as_ref().trim().to_string();
++    let user = user.as_ref().trim();
+     if user.contains("@") {
+       if !user.validate_email() {
+         return Err(format!("invalid email address: {user}"));
+       }
+-      return Ok(Self::Email(user));
++      return Ok(Self::Email(user.to_string()));
+     }
+ 
+     // TODO: We could do more validation, e.g. username characters, UUID version, etc.
+-    return match user.len() {
+-      36 if let Ok(uuid) = Uuid::parse_str(&user) => Ok(Self::Id(uuid)),
+-      24 if let Ok(base64) = BASE64_URL_SAFE.decode(&user) => Ok(Self::Id(
+-        Uuid::from_slice(&base64).map_err(|err| err.to_string())?,
+-      )),
+-      _ => Ok(Self::Username(user)),
+-    };
++    return Ok(
++      crate::util::parse_uuid(user).map_or_else(|_err| Self::Username(user.to_string()), Self::Id),
++    );
+   }
+ 
+   async fn lookup_user(&self, user_conn: &Connection) -> Result<DbUser, AuthError> {
+@@ -312,6 +307,8 @@ pub async fn import_users(
+ mod tests {
+   use super::*;
+ 
++  use base64::prelude::*;
 +
-   remove_all_cookies(&cookies);
+   #[test]
+   fn test_parse_user_reference() {
+     let UserReference::Email(email) = UserReference::parse("  user@test.org ").unwrap() else {
+```
+
+**File**: `crates/core/src/auth/user.rs` (modified, +3/-2)
+```diff
+@@ -6,10 +6,10 @@ use compact_str::CompactString;
+ use trailbase_sqlite::Row;
+ use uuid::Uuid;
  
--  if let Some(user) = user {
--    delete_all_sessions_for_user(state.session_conn(), user.id).await?;
-+  if let Some(redirect) = redirect_uri {
-+    return Ok(Redirect::to(&redirect).into_response());
++use crate::app_state::AppState;
+ use crate::auth::AuthError;
+ use crate::auth::jwt::AuthTokenClaims;
+ use crate::auth::tokens::extract_tokens_from_request_parts;
+-use crate::{app_state::AppState, util::b64_to_uuid};
+ 
+ #[derive(Debug, Default, Clone)]
+ pub struct DbUser {
+@@ -125,7 +125,8 @@ impl User {
+   /// Construct new verified [User] from [AuthTokenClaims]. This is used when picking
+   /// credentials/tokens from headers/cookies.
+   pub(crate) fn from_token_claims(claims: AuthTokenClaims) -> Result<Self, AuthError> {
+-    let id = b64_to_uuid(&claims.sub).map_err(|_err| AuthError::BadRequest("invalid user id"))?;
++    let id = crate::util::b64_to_uuid(&claims.sub)
++      .map_err(|_err| AuthError::BadRequest("invalid user id"))?;
+ 
+     return Ok(Self {
+       id,
+```
+
+**File**: `crates/core/src/records/params/error.rs` (modified, +3/-0)
+```diff
+@@ -12,6 +12,8 @@ pub enum ParamsError {
+   UnexpectedType(&'static str, String),
+   #[error("Decoding: {0}")]
+   Base64Decode(base64::DecodeError),
++  #[error("Id: {0}")]
++  Id(trailbase_schema::IdError),
+   #[error("Nested object: {0}")]
+   NestedObject(String),
+   #[error("Nested array: {0}")]
+@@ -43,6 +45,7 @@ impl From<trailbase_schema::json::JsonError> for ParamsError {
+       trailbase_schema::json::JsonError::ColumnMismatch => Self::Column("mismatch"),
+       trailbase_schema::json::JsonError::NotSupported => Self::UnexpectedType("?", "?".to_string()),
+       trailbase_schema::json::JsonError::Decode(err) => Self::Base64Decode(err),
++      trailbase_schema::json::JsonError::Id(err) => Self::Id(err),
+       trailbase_schema::json::JsonError::UnexpectedType(expected, got) => {
+         Self::UnexpectedType(expected, format!("{got:?}"))
+       }
+```
+
+**File**: `crates/core/src/util.rs` (modified, +29/-19)
+```diff
+@@ -5,6 +5,8 @@ use std::borrow::Cow;
+ use trailbase_sqlite::ConnectionType;
+ use uuid::Uuid;
+ 
++pub use trailbase_schema::{IdError, parse_uuid};
++
+ #[inline]
+ pub fn row_id_column(connection_type: ConnectionType) -> &'static str {
+   return match connection_type {
+@@ -13,33 +15,26 @@ pub fn row_id_column(connection_type: ConnectionType) -> &'static str {
+   };
+ }
+ 
+-#[derive(Clone, Debug, thiserror::Error)]
+-pub enum IdError {
+-  #[error("Id error: {0}")]
+-  InvalidLength(usize),
+-  #[error("Id error: {0}")]
+-  Decode(#[from] base64::DecodeSliceError),
+-}
+-
+-pub fn b64_to_id(b64_id: &str) -> Result<[u8; 16], IdError> {
+-  let mut buffer: [u8; 16] = [0; 16];
+-  let len = BASE64_URL_SAFE.decode_slice(b64_id, &mut buffer)?;
+-  if len != 16 {
+-    return Err(IdError::InvalidLength(len));
+-  }
+-  return Ok(buffer);
+-}
+-
+ pub fn id_to_b64(id: &[u8; 16]) -> String {
+   return BASE64_URL_SAFE.encode(id);
+ }
+ 
+ pub fn uuid_to_b64(uuid: &Uuid) -> String {
+-  return BASE64_URL_SAFE.encode(uuid.into_bytes());
++  return BASE64_URL_SAFE.encode(uuid.as_bytes());
+ }
+ 
++#[inline]
+ pub fn b64_to_uuid(b64_id: &str) -> Result<Uuid, IdError> {
+-  return Ok(Uuid::from_bytes(b64_to_id(b64_id)?));
++  let s = b64_id.trim();
++  return match s.len() {
++    24 => Ok(Uuid::from_slice(&BASE64_URL_SAFE.decode(&s)?)?),
++    len => Err(IdError::InvalidLength(len)),
++  };
++}
++
++#[cfg(test)]
++pub fn b64_to_id(b64_id: &str) -> Result<[u8; 16], IdError> {
++  return Ok(b64_to_uuid(b64_id)?.into_bytes());
+ }
+ 
+ pub fn urlencode(s: &str) -> String {
+@@ -69,4 +64,19 @@ mod tests {
+   fn test_urlencode() {
+     assert_eq!(urlencode("+col0,-col1"), "%2Bcol0%2C-col1");
+   }
++
++  #[test]
++  fn test_parse_uuid() {
++    let uuid = Uuid::new_v4();
++
++    assert_eq!(uuid, parse_uuid(&uuid.to_string()).unwrap());
++    assert_eq!(
++      uuid,
++      parse_uuid(&BASE64_URL_SAFE.encode(uuid.as_bytes())).unwrap()
++    );
++    assert_eq!(
++      uuid,
++      parse_uuid(&BASE64_URL_SAFE_NO_PAD.encode(uuid.as_bytes())).unwrap()
++    );
 +  }
-+
-+  if has_root {
-+    let is_json =
-+      content_type.is_some_and(|TypedHeader(c)| mime::Mime::from(c) == mime::APPLICATION_JSON);
-+    if !is_json {
-+      return Ok(Redirect::to("/").into_response());
-+    }
-   }
- 
--  return if let Some(redirect) = redirect_uri {
--    Ok(Redirect::to(&redirect).into_response())
--  } else if has_root {
--    Ok(Redirect::to("/").into_response())
--  } else {
--    Ok((StatusCode::OK, "logged out").into_response())
--  };
-+  return Ok((StatusCode::OK, "logged out").into_response());
- }
- 
- #[derive(Clone, Debug, Deserialize, ToSchema, TS)]
-```
-
-**File**: `crates/core/src/auth/auth_test.rs` (modified, +8/-4)
-```diff
-@@ -511,7 +511,8 @@ async fn test_auth_password_login_flow_with_pkce() {
-     State(state.clone()),
-     Query(LogoutParams::default()),
-     Extension(HasRoot(false)),
--    Some(user.clone()),
-+    None,
-+    user.clone(),
-     Cookies::default(),
-   )
-   .await
-@@ -627,7 +628,8 @@ async fn test_auth_password_login_flow_without_pkce() {
-     State(state.clone()),
-     Query(LogoutParams::default()),
-     Extension(HasRoot(false)),
--    Some(user.clone()),
-+    None,
-+    user.clone(),
-     Cookies::default(),
-   )
-   .await
-@@ -851,7 +853,8 @@ async fn test_auth_reset_password_flow() {
-     State(state.clone()),
-     Query(LogoutParams::default()),
-     Extension(HasRoot(false)),
--    Some(user.clone()),
-+    None,
-+    user.clone(),
-     Cookies::default(),
-   )
-   .await
-@@ -1186,7 +1189,8 @@ async fn test_auth_change_username_and_unset_email_flow() {
-     State(state.clone()),
-     Query(LogoutParams::default()),
-     Extension(HasRoot(false)),
--    Some(user.clone()),
-+    None,
-+    user.clone(),
-     Cookies::default(),
-   )
-   .await
-```
-
-**File**: `crates/core/src/extract/content_type.rs` (modified, +6/-6)
-```diff
-@@ -1,8 +1,8 @@
--use axum::extract::{FromRequest, Request};
-+use axum::extract::FromRequestParts;
- use axum::http::header::{ACCEPT, CONTENT_TYPE};
-+use axum::http::request::Parts;
- use axum::http::{HeaderMap, StatusCode};
- use axum::response::{IntoResponse, Response};
--use thiserror::Error;
- 
- /// Supported request content types.
- ///
-@@ -15,7 +15,7 @@ pub enum RequestContentType {
-   Form,
- }
- 
--#[derive(Debug, Error)]
-+#[derive(Debug, thiserror::Error)]
- pub enum ContentTypeRejection {
-   #[error("Unsupported Content-Type: {0}")]
-   UnsupportedContentType(String),
-@@ -77,13 +77,13 @@ impl ResponseContentType {
-   }
- }
- 
--impl<S> FromRequest<S> for ResponseContentType
-+impl<S> FromRequestParts<S> for ResponseContentType
- where
-   S: Send + Sync,
- {
-   type Rejection = ContentTypeRejection;
- 
--  async fn from_request(req: Request, _state: &S) -> Result<Self, Self::Rejection> {
--    return Self::from_headers(req.headers());
-+  async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-+    return Self::from_headers(&parts.headers);
-   }
  }
 ```
 
----
-
-### Incident Patch 2: `4505dd95` (2026-11-02)
-**Commit Message**: Update admin UI's `rapidoc` to v12.
-
-**File**: `crates/assets/js/admin/package.json` (modified, +1/-1)
+**File**: `crates/schema/src/json/error.rs` (modified, +2/-0)
 ```diff
-@@ -45,7 +45,7 @@
-     "long": "^5.3.2",
-     "maplibre-gl": "^6.16.0",
-     "nanostores": "^1.5.5",
--    "rapidoc": "^9.3.8",
-+    "rapidoc": "^12.0.0",
-     "solid-icons": "^1.2.0",
-     "solid-js": "^1.9.18",
-     "tailwind-merge": "^3.7.0",
+@@ -8,6 +8,8 @@ pub enum JsonError {
+   NotSupported,
+   #[error("ColumnMismatch")]
+   ColumnMismatch,
++  #[error("Id")]
++  Id(#[from] crate::IdError),
+   #[error("Decoding")]
+   Decode(#[from] base64::DecodeError),
+   #[error("UnexpectedT: {0}, expected {1:?}")]
 ```
 
-**File**: `crates/assets/js/admin/src/components/openapi/OpenApiPage.tsx` (modified, +9/-10)
+**File**: `crates/schema/src/json/mod.rs` (modified, +19/-27)
 ```diff
-@@ -97,13 +97,12 @@ export default function Page() {
-   });
- 
-   return (
--    <div class="max-md:min-h-dvh">
-+    <div class="max-md:min-h-dvh md:max-h-full md:overflow-y-auto">
-       <rapi-doc
-         ref={
-           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-           ref as any
-         }
--        load-fonts="false"
-         sort-tags="true"
-         render-style="view" // "read" | "view" | "focused"
-         layout="row" // "row" | "column"
-@@ -116,6 +115,9 @@ export default function Page() {
-         persist-auth="false"
-         allow-authentication="false"
-         allow-server-selection="false"
-+        style={{
-+          "--background": theme() === "light" ? "#f8fafc" : "#121821",
-+        }}
-         {...(theme() === "light" ? lightTheme : darkTheme)}
-       >
-         {/* Contents */}
-@@ -134,6 +136,8 @@ export default function Page() {
-             </Popover>
-           }
-         />
-+
-+        <div class="py-1" />
-       </rapi-doc>
-     </div>
-   );
-@@ -179,22 +183,17 @@ function TokenPopoverContent(props: {
+@@ -81,21 +81,18 @@ pub fn parse_string_to_sqlite_value(
+   data_type: ColumnDataType,
+   value: String,
+ ) -> Result<SqliteValue, JsonError> {
+-  return Ok(match data_type {
++  return match data_type {
+     // Strict/storage types
+-    ColumnDataType::Text | ColumnDataType::Any => SqliteValue::Text(value),
+-    ColumnDataType::Blob => SqliteValue::Blob(match (value.len(), value) {
+-      // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
+-      // would be more explicit rely on CHECK(...) column options.
+-      // NOTE: That UUIDs also parse as url-safe base64, that's why we treat it as a fall-first.
+-      (36, v) => uuid::Uuid::parse_str(&v)
+-        .map(|v| v.into())
+-        .or_else(|_| BASE64_URL_SAFE.decode(&v))?,
+-      (_, v) => BASE64_URL_SAFE.decode(&v)?,
+-    }),
+-    ColumnDataType::Integer => SqliteValue::Integer(value.parse::<i64>()?),
+-    ColumnDataType::Real => SqliteValue::Real(value.parse::<f64>()?),
+-  });
++    ColumnDataType::Text | ColumnDataType::Any => Ok(SqliteValue::Text(value)),
++    // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
++    // would be more explicit rely on CHECK(...) column options.
++    ColumnDataType::Blob => match crate::parse_uuid_vec(&value) {
++      Ok(uuid) => Ok(SqliteValue::Blob(uuid.into())),
++      Err(_) => Ok(SqliteValue::Blob(BASE64_URL_SAFE.decode(&value)?)),
++    },
++    ColumnDataType::Integer => Ok(SqliteValue::Integer(value.parse::<i64>()?)),
++    ColumnDataType::Real => Ok(SqliteValue::Real(value.parse::<f64>()?)),
++  };
  }
  
- type Theme = {
--  theme: "light" | "dark";
--  "bg-color": string;
-+  "color-scheme": "light" | "dark";
-   "primary-color": string;
--  "text-color"?: string;
--  "header-color"?: string;
- };
+ /// Strictly parse string to SqliteValue, i.e. w/o trying to parse e.g. strings into INT or REAL.
+@@ -106,15 +103,12 @@ fn strict_parse_string_to_sqlite_value(
+ ) -> Result<SqliteValue, JsonError> {
+   return match data_type {
+     ColumnDataType::Text | ColumnDataType::Any => Ok(SqliteValue::Text(value)),
+-    ColumnDataType::Blob => Ok(SqliteValue::Blob(match (value.len(), value) {
+-      // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
+-      // would be more explicit rely on CHECK(...) column options.
+-      // NOTE: That uuids also parse as url-safe base64, that's why we treat it as a fall-first.
+-      (36, v) => uuid::Uuid::parse_str(&v)
+-        .map(|v| v.into())
+-        .or_else(|_| BASE64_URL_SAFE.decode(&v))?,
+-      (_, v) => BASE64_URL_SAFE.decode(&v)?,
+-    })),
++    // Special handling for text encoded UUIDs. Right now we're guessing based on length, it
++    // would be more explicit rely on CHECK(...) column options.
++    ColumnDataType::Blob => match crate::parse_uuid_vec(&value) {
++      Ok(uuid) => Ok(SqliteValue::Blob(uuid.into())),
++      Err(_) => Ok(SqliteValue::Blob(BASE64_URL_SAFE.decode(&value)?)),
++    },
+     _ => Err(JsonError::UnexpectedType("string", data_type)),
+   };
+ }
+@@ -144,8 +138,7 @@ mod tests {
+       .await
+       .unwrap();
  
- const lightTheme: Theme = {
--  theme: "light",
--  "bg-color": "#f8fafc",
-+  "color-scheme": "light",
-   "primary-color": "#0073a8",
- };
+-    let id_string = "01950408-de17-7f13-8ef5-66d90b890bfd";
+-    let id = uuid::Uuid::parse_str(id_string).unwrap();
++    let id = uuid::Uuid::new_v4();
  
- const darkTheme: Theme = {
--  theme: "dark",
--  "bg-color": "#121821",
-+  "color-scheme": "dark",
-   "primary-color": "#34b7f4",
- };
+     conn
+       .execute(
+@@ -155,8 +148,7 @@ mod tests {
+       .await
+       .unwrap();
  
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +1/-3)
-```diff
-@@ -32,6 +32,4 @@ overrides:
-   form-data@>=4.0.0 <4.0.6: ^4.0.6
- auditConfig:
-   ignoreGhsas:
--    - GHSA-ch52-4w7c-c8xp
--    - GHSA-gcqx-w48m-w2h4
--    - GHSA-g3hv-75wg-m249 # minimatch via rapidoc: client-side only.
-+    # - GHSA-ch52-4w7c-c8xp  # example
+-    let value =
+-      strict_parse_string_to_sqlite_value(ColumnDataType::Blob, id_string.to_string()).unwrap();
++    let value = strict_parse_string_to_sqlite_value(ColumnDataType::Blob, id.to_string()).unwrap();
+     let blob = match value {
+       trailbase_sqlite::Value::Blob(ref blob) => blob.clone(),
+       _ => panic!("Not a blob"),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1344,74 +1276,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if exp
+## X. Minor: more consistent UUID parsing.
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/auth/api/avatar.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ddc107b`: Return error from `/api/auth/v1/logout` if unauthenticated. Only redirect if explicitly requested or non-JSON request. Fix OpenApi documentation. #310. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7215627f`: Minor: more consistent UUID parsing.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/auth/api/avatar.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "axum-extra"
-version = "0.12.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be44683b41ccb9ab2d23a5230015c9c3c55be97a25e4428366de8873103f7970"
-dependencies = [
- "axum-core",
- "bytes",
- "futures-core",
- "futures-util",
- "headers",
- "http",
- "http-body",
- "http-body-util",
- "mime",
- "pin-project-lite",
- "tower-layer",
- "tower-service",
-]
-
-[[package]]
-name = "headers"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc2700e3fe555c3310aa7286cac6167449f2c87e0eb58769c9208a1c58a1d106"
-dependencies = [
- "base64 0.22.1",
- "bytes",
- "headers-core",
- "http",
- "httpdate",
- "mime",
- "sha1 0.10.7",
-]
-
-[[package]]
-name = "headers-core"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4"
-dependencies = [
- "http",
-]
-
- "axum-extra",
- "headers",
- "mime",
+  let Ok(user_id) = crate::util::parse_uuid(&b64_user_id) else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  let Ok(user_id) = crate::util::b64_to_uuid(&b64_user_id) else {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ddc107b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7215627f` are properly handled with clean fallback behavior.

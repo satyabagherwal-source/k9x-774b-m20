@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T18:02:49.303Z",
-  "total_cycles_completed": 8002,
-  "total_learnings_persisted": 8002,
-  "total_rules_promoted": 7649,
+  "last_updated": "2026-11-07T18:09:50.255Z",
+  "total_cycles_completed": 8005,
+  "total_learnings_persisted": 8005,
+  "total_rules_promoted": 7652,
   "history": [
-    {
-      "timestamp": "2026-11-05T23:49:01.839Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:49:02.020Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:49:04.183Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T23:55:41.538Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T18:02:49.303Z",
       "repository": "open-policy-agent/gatekeeper",
       "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:09:42.541Z",
+      "repository": "matthart1983/netwatch",
+      "learningId": "learn-github-matthart1983-netwatch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:09:42.595Z",
+      "repository": "shoutem/ui",
+      "learningId": "learn-github-shoutem-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T18:09:50.255Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

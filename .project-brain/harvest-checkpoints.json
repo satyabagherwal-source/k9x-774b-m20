@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T18:02:49.307Z",
+  "last_updated": "2026-11-07T18:09:50.258Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
-      "verified_at": "2026-11-04T04:04:57.283Z",
+      "content_hash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
+      "verified_at": "2026-11-07T18:09:50.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T04:04:57.283Z"
+      "last_updated": "2026-11-07T18:09:50.258Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -9201,14 +9201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shoutem-ui",
-      "content_hash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
-      "verified_at": "2026-10-27T20:52:51.135Z",
+      "content_hash": "1892fcd5b069a5906eeae69ae8cf2e23c6f517e670581e2f867684bc47037e75",
+      "verified_at": "2026-11-07T18:09:42.598Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:52:51.135Z"
+      "last_updated": "2026-11-07T18:09:42.598Z"
     },
     "databricks/click": {
       "repository": "databricks/click",
@@ -17931,14 +17931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matthart1983-netwatch",
-      "content_hash": "662f844b747902face96d04b281ed3e94cd19bd746028dce3ea8c6368c864364",
-      "verified_at": "2026-11-04T19:55:21.518Z",
+      "content_hash": "84d5a6720462e80949bdfa5d58a0743445c4124af1436286a84a7ea4bd4ac9c4",
+      "verified_at": "2026-11-07T18:09:42.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:55:21.518Z"
+      "last_updated": "2026-11-07T18:09:42.559Z"
     },
     "PrunaAI/P-H3-Image-Comfy": {
       "repository": "PrunaAI/P-H3-Image-Comfy",

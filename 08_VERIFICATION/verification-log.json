@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-HYS5",
-    "timestamp": "2026-11-05T05:46:40.085Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "4f81ebc5f513cee917097ba2e7039dd49e3dcf5352f45b7633a58cde14db3470",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-Q88P",
-    "timestamp": "2026-11-05T05:53:05.593Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "0ea95747389f57ea6fa5d5032bab868f1c9adff924aba0a4a8a3d63981efecde",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-QEC6",
-    "timestamp": "2026-11-05T05:53:13.494Z",
-    "repository": "maziyarpanahi/openmed",
-    "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "b65be4522dc9aac763753aafb001f83bc44ba631e71ed26a0baf673ee41ff280",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-QEER",
     "timestamp": "2026-11-05T05:53:13.587Z",
     "repository": "emberstack/kubernetes-reflector",
@@ -7490,6 +7445,51 @@
     "repository": "open-policy-agent/gatekeeper",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
     "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-X85A",
+    "timestamp": "2026-11-07T18:09:42.526Z",
+    "repository": "matthart1983/netwatch",
+    "learningId": "learn-github-matthart1983-netwatch",
+    "contentHash": "84d5a6720462e80949bdfa5d58a0743445c4124af1436286a84a7ea4bd4ac9c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-X86Z",
+    "timestamp": "2026-11-07T18:09:42.587Z",
+    "repository": "shoutem/ui",
+    "learningId": "learn-github-shoutem-ui",
+    "contentHash": "1892fcd5b069a5906eeae69ae8cf2e23c6f517e670581e2f867684bc47037e75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-XE3Q",
+    "timestamp": "2026-11-07T18:09:50.246Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

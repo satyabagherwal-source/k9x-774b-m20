@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:02:49.172Z",
+  "last_updated": "2026-11-07T18:09:50.149Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54620,11 +54620,16 @@
       "slug": "shoutem-ui",
       "platform": "github",
       "source_url": "https://github.com/shoutem/ui",
-      "source_version": "92e3f530",
-      "content_hash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
+      "source_version": "cfc3bc8a",
+      "content_hash": "1892fcd5b069a5906eeae69ae8cf2e23c6f517e670581e2f867684bc47037e75",
       "dossier_path": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #945 from shoutem/release/9.3.1",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2160,
           "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
@@ -54646,7 +54651,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:52:51.020Z",
+      "verified_at": "2026-11-07T18:09:42.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60057,11 +60062,16 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "a106ce63",
-      "content_hash": "167cf0b849226f5d9cd96938bb0fbf59b125a63e0d6a182eadd44fe202fd24dc",
+      "source_version": "30b864ff",
+      "content_hash": "b464172f8b27841b40719d26fbeff421fca52a08362eabc07186860e8a8e8aa7",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Minor: more consistent UUID parsing.",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1914,
           "title": "Update Rust dependencies to address Wasmtime security advisory.",
@@ -60108,7 +60118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T04:04:57.163Z",
+      "verified_at": "2026-11-07T18:09:50.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
