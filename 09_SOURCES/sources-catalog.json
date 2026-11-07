@@ -12098,5 +12098,15 @@
     "contentHash": "3368cadd5902e796c27e1efdc1bc77d59fb3c2f38d8da8671f191d9466db11f3",
     "lastHarvestedAt": "2026-11-06T23:04:50.054Z",
     "learningId": "learn-github-github-squad"
+  },
+  "aquasecurity-trivy-operator": {
+    "repository": "aquasecurity/trivy-operator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aquasecurity/trivy-operator",
+    "sourceVersion": "b40091af",
+    "license": "Apache-2.0",
+    "contentHash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
+    "lastHarvestedAt": "2026-11-07T17:27:27.845Z",
+    "learningId": "learn-github-aquasecurity-trivy-operator"
   }
 }

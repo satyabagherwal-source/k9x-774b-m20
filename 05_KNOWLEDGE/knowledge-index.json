@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T06:29:23.635Z",
-  "total_verified_learnings": 1228,
+  "last_updated": "2026-11-07T17:27:27.783Z",
+  "total_verified_learnings": 1229,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -185143,6 +185143,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-06T23:04:49.944Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-aquasecurity-trivy-operator": {
+      "learning_id": "learn-github-aquasecurity-trivy-operator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aquasecurity/trivy-operator",
+      "repository": "aquasecurity/trivy-operator",
+      "slug": "aquasecurity-trivy-operator",
+      "platform": "github",
+      "source_url": "https://github.com/aquasecurity/trivy-operator",
+      "source_version": "b40091af",
+      "content_hash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
+      "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-operator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-operator-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "configaudit): restore ConfigMap data for content-based… (#3054)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T17:27:27.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

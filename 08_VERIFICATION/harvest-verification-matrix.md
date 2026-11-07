@@ -8026,3 +8026,4 @@
 | `CYCLE-20261107-HV3H` | `2026-11-07T06:17:55.373Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`80091f0b...`) |
 | `CYCLE-20261107-QE3C` | `2026-11-07T06:24:33.240Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95eb4ff6...`) |
 | `CYCLE-20261107-WM8A` | `2026-11-07T06:29:23.722Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47d0aa19...`) |
+| `CYCLE-20261107-EWDE` | `2026-11-07T17:27:27.842Z` | `aquasecurity/trivy-operator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3289560b...`) |

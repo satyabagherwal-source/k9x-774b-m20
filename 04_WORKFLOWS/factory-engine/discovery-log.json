@@ -20545,5 +20545,20 @@
     "qualityScore": 2269,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-06T22:59:07.642Z"
+  },
+  {
+    "name": "trivy-operator",
+    "fullName": "aquasecurity/trivy-operator",
+    "url": "https://github.com/aquasecurity/trivy-operator",
+    "type": "github",
+    "domain": "devops-cloud-infrastructure",
+    "description": "Kubernetes-native security toolkit",
+    "stars": 2001,
+    "forks": 304,
+    "openIssues": 255,
+    "language": "Go",
+    "qualityScore": 1542,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-07T17:20:55.832Z"
   }
 ]

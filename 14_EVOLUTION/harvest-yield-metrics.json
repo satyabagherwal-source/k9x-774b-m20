@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T06:29:23.734Z",
-  "total_cycles_completed": 7991,
-  "total_learnings_persisted": 7991,
-  "total_rules_promoted": 7639,
+  "last_updated": "2026-11-07T17:27:27.850Z",
+  "total_cycles_completed": 7992,
+  "total_learnings_persisted": 7992,
+  "total_rules_promoted": 7640,
   "history": [
-    {
-      "timestamp": "2026-11-05T23:02:12.955Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T23:09:26.377Z",
       "repository": "flox/flox",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T06:29:23.734Z",
       "repository": "aio-libs/aiohttp",
       "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:27:27.850Z",
+      "repository": "aquasecurity/trivy-operator",
+      "learningId": "learn-github-aquasecurity-trivy-operator",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

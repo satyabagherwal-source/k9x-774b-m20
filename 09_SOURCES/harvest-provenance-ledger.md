@@ -8035,3 +8035,4 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `a9e0d7bd` | Multi-dimensional audit evidence | 2026-11-07T06:17:55.377Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `88b98114` | Multi-dimensional audit evidence | 2026-11-07T06:24:33.243Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `0ae5b96b` | Multi-dimensional audit evidence | 2026-11-07T06:29:23.724Z |
+| `learn-github-aquasecurity-trivy-operator` | `https://github.com/aquasecurity/trivy-operator` | `b40091af` | Multi-dimensional audit evidence | 2026-11-07T17:27:27.845Z |
