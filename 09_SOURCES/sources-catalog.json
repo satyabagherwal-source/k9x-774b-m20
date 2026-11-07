@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "8cda9065",
+    "sourceVersion": "40d08ee4",
     "license": "MIT",
-    "contentHash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
-    "lastHarvestedAt": "2026-11-07T03:01:28.765Z",
+    "contentHash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
+    "lastHarvestedAt": "2026-11-07T22:07:35.859Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "677c36f0",
+    "sourceVersion": "eddfda29",
     "license": "NOASSERTION",
-    "contentHash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
-    "lastHarvestedAt": "2026-11-04T22:12:40.188Z",
+    "contentHash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
+    "lastHarvestedAt": "2026-11-07T22:09:36.916Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "4661544e",
+    "sourceVersion": "985ebd5d",
     "license": "Apache-2.0",
-    "contentHash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
-    "lastHarvestedAt": "2026-11-05T18:07:56.908Z",
+    "contentHash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
+    "lastHarvestedAt": "2026-11-07T22:09:05.285Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "0a53497f",
+    "sourceVersion": "f60f17fd",
     "license": "Apache-2.0",
-    "contentHash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
-    "lastHarvestedAt": "2026-11-05T23:17:17.420Z",
+    "contentHash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
+    "lastHarvestedAt": "2026-11-07T22:08:03.840Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-08W4",
-    "timestamp": "2026-11-05T09:44:49.924Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "7fcd3ca82bfa2b3233c9ac55fa432a054d7cb4106d989fd7453acd35e6123df3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-8FQ1",
-    "timestamp": "2026-11-05T09:51:12.025Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "b9ee8b3ba53efd7e55f390c3c8155571601bab95a16ecd9e73633c32b75906f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-GRQI",
-    "timestamp": "2026-11-05T09:57:40.842Z",
-    "repository": "cloudwego/volo",
-    "learningId": "learn-github-cloudwego-volo",
-    "contentHash": "46d10f58ac22bc05117bf17948e1f2adced6d50b29ca54a8eb78e51d7b49d3b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-GW0B",
-    "timestamp": "2026-11-05T09:57:46.379Z",
-    "repository": "SimonSchubert/Kai",
-    "learningId": "learn-github-simonschubert-kai",
-    "contentHash": "1754b948dbc58a412ae5aba83ac5f97923a5e122a84e0f59f01a2a93c3dd9a91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-GWUP",
     "timestamp": "2026-11-05T09:57:47.473Z",
     "repository": "google/vit-base-patch16-224",
@@ -7492,6 +7432,66 @@
     "contentHash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-F5IO",
+    "timestamp": "2026-11-07T22:07:35.856Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FR3W",
+    "timestamp": "2026-11-07T22:08:03.836Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-H2IP",
+    "timestamp": "2026-11-07T22:09:05.281Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-HQXD",
+    "timestamp": "2026-11-07T22:09:36.913Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:55:47.342Z",
-  "total_cycles_completed": 8076,
-  "total_learnings_persisted": 8076,
-  "total_rules_promoted": 7735,
+  "last_updated": "2026-11-07T22:09:36.929Z",
+  "total_cycles_completed": 8080,
+  "total_learnings_persisted": 8080,
+  "total_rules_promoted": 7746,
   "history": [
-    {
-      "timestamp": "2026-11-06T20:45:40.200Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:52:09.365Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:52:13.922Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:52:15.588Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T20:52:21.434Z",
       "repository": "VectifyAI/PageIndex",
@@ -1403,6 +1375,34 @@
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:07:35.864Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:08:03.845Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:09:05.298Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:09:36.929Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

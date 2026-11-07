@@ -8111,3 +8111,7 @@
 | `CYCLE-20261107-KXCL` | `2026-11-07T21:44:05.589Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8a1574a7...`) |
 | `CYCLE-20261107-ZY2T` | `2026-11-07T21:55:46.373Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a1caf76d...`) |
 | `CYCLE-20261107-ZYTG` | `2026-11-07T21:55:47.332Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fcb5c240...`) |
+| `CYCLE-20261107-F5IO` | `2026-11-07T22:07:35.856Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e8400bf8...`) |
+| `CYCLE-20261107-FR3W` | `2026-11-07T22:08:03.836Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`e83da4bb...`) |
+| `CYCLE-20261107-H2IP` | `2026-11-07T22:09:05.281Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`c25ac39d...`) |
+| `CYCLE-20261107-HQXD` | `2026-11-07T22:09:36.913Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`790e2496...`) |

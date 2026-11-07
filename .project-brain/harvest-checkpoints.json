@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T21:55:47.346Z",
+  "last_updated": "2026-11-07T22:09:36.933Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
-      "verified_at": "2026-11-07T03:01:28.773Z",
+      "content_hash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
+      "verified_at": "2026-11-07T22:07:35.875Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:01:28.773Z"
+      "last_updated": "2026-11-07T22:07:35.875Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
-      "verified_at": "2026-11-04T22:12:40.205Z",
+      "content_hash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
+      "verified_at": "2026-11-07T22:09:36.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:12:40.205Z"
+      "last_updated": "2026-11-07T22:09:36.932Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
-      "verified_at": "2026-11-05T18:07:56.915Z",
+      "content_hash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
+      "verified_at": "2026-11-07T22:09:05.301Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:07:56.915Z"
+      "last_updated": "2026-11-07T22:09:05.301Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
-      "verified_at": "2026-11-05T23:17:17.430Z",
+      "content_hash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
+      "verified_at": "2026-11-07T22:08:03.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:17:17.430Z"
+      "last_updated": "2026-11-07T22:08:03.854Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `0a53497f`  
+> **Source Version**: `f60f17fd`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:17:15.895Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-07T22:08:02.176Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1281 +12,452 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): apache/pinot
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:17:15.004Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): apache/pinot
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `apache/pinot`
-- **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
-- **Primary Language / Ecosystem**: Java
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6172 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Problem Statement & Scope
+Apache Pinot is a distributed, real-time, column-oriented OLAP data engine designed to execute sub-second analytical queries (SQL, aggregations, vector similarity search, arbitrary filtering) across trillions of records and petabytes of data. It addresses the low-latency serving dilemma: executing complex ad-hoc and real-time streaming queries concurrently against immutable historical segments and mutable stream-ingested consuming segments.
+
+### 1.2 System Boundaries & Decomposition
+Pinot orchestrates a multi-tier shared-nothing/shared-storage cluster via Apache Helix and Apache ZooKeeper:
+
+```
+                  +----------------------------------+
+                  |  Query Client / AI Agent / BI   |
+                  +----------------------------------+
+                                   | SQL
+                                   v
+             +---------------------------------------------+
+             |            Pinot Broker Cluster             |
+             |  - Calcite SQL Parser & Query Optimizer     |
+             |  - Single-Stage vs Multi-Stage Dispatcher   |
+             |  - Row-Level & Col-Level Security (RLS/CLS) |
+             |  - Scatter-Gather Engine / Routing Table    |
+             +---------------------------------------------+
+                   /               |               \
+        Partition /       Partition |       Partition \
+                 v                 v                 v
+     +-----------------+   +-----------------+   +-----------------+
+     |  Pinot Server   |   |  Pinot Server   |   |  Pinot Server   |
+     | (Leaf Segment)  |   | (Leaf Segment)  |   | (Leaf Segment)  |
+     |  - Pruning      |   |  - Pruning      |   |  - Pruning      |
+     |  - Vector Index |   |  - Vector Index |   |  - Vector Index |
+     |  - Forward/Invr |   |  - Forward/Invr |   |  - Forward/Invr |
+     |  - Transform    |   |  - Transform    |   |  - Transform    |
+     +-----------------+   +-----------------+   +-----------------+
+              ^                     ^                     ^
+              |                     |                     |
+     +-------------------------------------------------------------+
+     |                 Pinot Controller Cluster                    |
+     |  - Helix State Machine (IdealState / ExternalView)          |
+     |  - Segment Retention, Rebalance, Minion Task Scheduler      |
+     +-------------------------------------------------------------+
+              ^                     ^                     ^
+              |                     |                     |
+     +-----------------+   +-----------------+   +-----------------+
+     | Realtime Streams|   | Deep Store (S3/ |   | Minion Workers  |
+     | (Kafka/Kinesis) |   |  GCS/HDFS/ADLS) |   | (Compaction)    |
+     +-----------------+   +-----------------+   +-----------------+
+```
+
+1. **Pinot Broker**: Entry point for SQL queries. Compiles relational algebra with Apache Calcite into an abstract syntax tree (`PinotQuery`). Evaluates tenant access, row-level filters (RLS), column projection guards, routing tables, and initiates either:
+   - *Single-Stage Engine*: Scatter-gather query over partition replicas with server-side local reduction.
+   - *Multi-Stage Engine (v2)*: Distributed query execution plan involving intermediate shuffle operators, cross-node joins, window functions, and distributed exchanges.
+2. **Pinot Server**: Leaf-level compute node hosting segments. Segments are divided into:
+   - *Offline Segments*: Read-only, column-packed structures with specialized indices (Bitmap Inverted Index, Star-Tree Index, Forward Index, Bloom Filter, Range Index, Lucene Text Index, HNSW Vector Index).
+   - *Real-time Segments*: Consuming partitions ingesting from append logs (Kafka, Kinesis, Pulsar) into in-memory indexes before committing to immutable columnar format.
+3. **Pinot Controller**: Cluster management master coordinating via Helix/ZooKeeper. Owns metadata catalogs, schema evolution, cluster configuration, physical segment assignment (IdealState vs. ExternalView), retention workflows, and Minion background task orchestration.
+4. **Pinot Minion**: Separate worker fleet executing batch operations (segment merge, rollup, purge, re-indexing, offline push) offloaded from query path.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Invariant Defense-in-Depth for Security Rewrites Across Distributed Tiers
+**RULE**:
+When an authorization or row-level security (RLS) boundary rewrites an abstract syntax tree (AST) or injects predicate filters at the proxy/coordinator layer, both the coordinator **MUST** unconditionally reject un rewriteable cross-boundary sub-queries or foreign expressions, and the execution engine (server/leaf worker) **MUST** redundantly assert that incoming query contexts containing security constraints execute zero opaque nested expressions.
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/app_state.ts`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+**WHY**:
+In distributed query execution architectures, coordinators rewrite user queries by conjoining access control predicates (`WHERE ... AND tenant_id = 'XYZ'`). If the query contains expressions whose execution context is deferred or delegated to downstream execution nodes via raw string literals, sub-queries, or partition transforms (`IN_PARTITIONED_SUBQUERY`, dynamic lookups), the downstream server executes the nested context natively against table segments, completely bypassing the coordinator's injected row filters. This leaks unauthorized rows and allows enumeration side-channel attacks via aggregation (`GROUP BY`) while returning `rlsFiltersApplied: true`.
 
- import { AuthWorkflow } from "Models";
-import { DEFAULT_TIMEZONE_FALLBACK } from './utils/TimezoneUtils';
+**WHEN TO APPLY**:
+Apply to any distributed multi-tier database, analytical proxy, GraphQL gateway, or microservice architecture where authorization filters are attached at an ingress coordinator while sub-queries or transform expressions are delegated to downstream worker nodes.
 
-class app_state {
-  queryConsoleOnlyView: boolean;
-  authWorkflow: AuthWorkflow;
-  authToken: string | null;
-  columnNameSeparator: string = '#$%';
-  hideQueryConsoleTab: boolean;
-  username: string;
-  role: string;
-  timezone: string = DEFAULT_TIMEZONE_FALLBACK;
-}
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// pinot-broker: Coordinator-layer rejection before downstream dispatch
+public final class QueryAuthorizationGuard {
+    private static final Set<String> CROSS_TABLE_OPERATORS = Set.of(
+        "lookup", "insubquery", "inpartitionedsubquery"
+    );
 
-export default new app_state();
+    public static void validateSecurityContext(
+        PinotQuery query, 
+        boolean hasRowLevelSecurity, 
+        String tableName
+    ) {
+        if (!hasRowLevelSecurity) {
+            return;
+        }
 
-```
-
-### Core Architecture Module: `pinot-controller/src/main/resources/app/components/SegmentStatusRenderer.tsx`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import {
-  Box,
-  Chip,
-  CircularProgress,
-  IconButton,
-  makeStyles,
-  Tooltip,
-} from "@material-ui/core";
-import { HelpOutlineOutlined } from "@material-ui/icons";
-import { getSegmentLevelDebugDetails } from "../requests";
-import CustomCodemirror from "./CustomCodemirror";
-import CustomDialog from "./CustomDialog";
-import { NotificationContext } from "./Notification/NotificationContext";
-import clsx from "clsx";
-import { DISPLAY_SEGMENT_STATUS, SegmentDebugDetails } from "Models";
-import React, { useContext, useEffect, useState } from "react";
-
-const useStyles = makeStyles((theme) => ({
-  error: {
-    color: theme.palette.error.main,
-    border: `1px solid ${theme.palette.error.main}`,
-  },
-  success: {
-    color: theme.palette.success.main,
-    border: `1px solid ${theme.palette.success.main}`,
-  },
-  warning: {
-    color: theme.palette.warning.main,
-    border: `1px solid ${theme.palette.warning.main}`,
-  },
-  segmentDebugDetails: {
-    "& .CodeMirror": { fontSize: 14, height: "100%" },
-    maxHeight: 500,
-  },
-}));
-
-interface SegmentStatusRendererProps {
-  status: DISPLAY_SEGMENT_STATUS;
-  segmentName: string;
-  tableName: string;
-}
-
-export enum StatusColor {
-  Error = "error",
-  Warning = "warning",
-  Success = "success",
-}
-
-export const SegmentStatusRenderer = ({
-  status,
-  segmentName,
-  tableName,
-}: SegmentStatusRendererProps) => {
-  const { dispatch: notify } = useContext(NotificationContext);
-  const [statusTooltipTitle, setStatusTooltipTitle] = useState<string>("");
-  const [statusColor, setStatusColor] = useState<StatusColor | null>(
-    null
-  );
-  const [errorDetailsVisible, setErrorDetailsVisible] =
-    useState<boolean>(false);
-  const [segmentDebugDetails, setSegmentDebugDetails] =
-    useState<SegmentDebugDetails | null>(null);
-  const segmentStatusRendererClasses = useStyles();
-
-  useEffect(() => {
-    initializeValues();
-  }, [status]);
-
-  const initializeValues = () => {
-    switch (status) {
-      case DISPLAY_SEGMENT_STATUS.GOOD: {
-        setStatusColor(StatusColor.Success);
-        setStatusTooltipTitle("All the servers of this segment are ONLINE/CONSUMING");
-
-        break;
-      }
-      case DISPLAY_SEGMENT_STATUS.BAD: {
-        setStatusColor(StatusColor.Error);
-        setStatusTooltipTitle("One or more servers of this segment are in ERROR state");
-
-        break;
-      }
-      case DISPLAY_SEGMENT_STATUS.UPDATING: {
-        setStatusColor(StatusColor.Warning);
-        setStatusTooltipTitle("External view is OFFLINE or missing for one or more servers of this segment");
-
-        break;
-      }
+        // Must traverse the entire AST to catch functions regardless of casing,
+        // underscore separation, or locale transformations
+        if (containsCrossTableFunction(query)) {
+            throw new AccessDeniedException(String.format(
+                "Cross-table functions are not allowed on table '%s' when " +
+                "row-level security filters apply.", tableName));
+        }
     }
-  };
 
-  const fetchSegmentErrorDetails = async () => {
-    setSegmentDebugDetails(null);
-    try {
-      const segmentDebugDetails = await getSegmentLevelDebugDetails(
-        tableName,
-        segmentName
-      );
-      setSegmentDebugDetails(segmentDebugDetails);
-    } catch (error) {
-      notify({
-        type: "error",
-        message: "Error occurred while fetching segment debug details.",
-        show: true,
-      });
-      setSegmentDebugDetails({} as SegmentDebugDetails);
+    public static boolean containsCrossTableFunction(PinotQuery query) {
+        if (query.getFilterExpression() != null && 
+            scanExpression(query.getFilterExpression())) {
+            return true;
+        }
+        if (query.getSelectList() != null) {
+            for (Expression expr : query.getSelectList()) {
+                if (scanExpression(expr)) return true;
+            }
+        }
+        return false;
     }
-  };
 
-  const handleShowErrorDetailsClick = () => {
-    setErrorDetailsVisible(true);
-    fetchSegmentErrorDetails();
-  };
+    private static boolean scanExpression(Expression expression) {
+        Function function = expression.getFunctionCall();
+        if (function == null) return false;
+        
+        // Canonicalize: strip underscores and lowercase using invariant English locale
+        String canonicalName = function.getOperator().replace("_", "").toLowerCase(Locale.ENGLISH);
+        if (CROSS_TABLE_OPERATORS.contains(canonicalName)) {
+            return true;
+        }
+        for (Expression operand : function.getOperands()) {
+            if (scanExpression(operand)) return true;
+        }
+        return false;
+    }
+}
 
-  const handleHideErrorDetails = () => {
-    setErrorDetailsVisible(false);
-  };
+// pinot-server: Leaf-layer secondary defense asserting security invariant
+public class LeafQueryExecutor {
+    public void executeLeafSubquery(QueryContext queryContext, ExpressionContext expression) {
+        FunctionContext fn = expression.getFunction();
+        if (fn == null) return;
 
-  return (
-    <>
-      <Tooltip arrow title={statusTooltipTitle} placement="top">
-        <Chip
-          className={clsx([segmentStatusRendererClasses[statusColor]])}
-          label={status}
-          variant="outlined"
-        />
-      </Tooltip>
-
-      {/* Only show when segment status is bad */}
-      {status === DISPLAY_SEGMENT_STATUS.BAD && (
-        <>
-          <Tooltip
-            title="Click to show segment error details"
-            arrow
-            placement="top"
-          >
-            <IconButton onClick={handleShowErrorDetailsClick}>
-              <HelpOutlineOutlined fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <CustomDialog
-            title="Segment Debug Details"
-            open={errorDetailsVisible}
-            handleClose={handleHideErrorDetails}
-            showOkBtn={false}
-          >
-            {/* Loading */}
-            {!segmentDebugDetails && (
-              <Box display="flex" justifyContent="center"><CircularProgress /></Box>
-            )}
-            {segmentDebugDetails && (
-              <CustomCodemirror
-                showLineWrapToggle
-                customClass={segmentStatusRendererClasses.segmentDebugDetails}
-                data={segmentDebugDetails}
-              />
-            )}
-          </CustomDialog>
-        </>
-      )}
-    </>
-  );
-};
-
+        if ("inpartitionedsubquery".equalsIgnoreCase(fn.getFunctionName().replace("_", ""))) {
+            Map<String, String> rlsFilters = RlsUtils.extractRlsFilters(queryContext.getQueryOptions());
+            // Hard invariant: Leaf must NEVER process opaque literal subqueries under RLS
+            if (!rlsFilters.isEmpty()) {
+                throw new IllegalStateException(String.format(
+                    "FATAL SECURITY VIOLATION: IN_PARTITIONED_SUBQUERY received by server " +
+                    "with active row-level security filters: %s", rlsFilters.keySet()));
+            }
+            executeOpaqueSubquery(expression, queryContext);
+        }
+    }
+}
 ```
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/pages/TaskQueue.tsx`
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: Blindly delegating literal sub-queries to workers while assuming
+// the outer WHERE clause prevents data leakage.
+public void handleSubqueryAntiPattern(PinotQuery query, QueryContext context) {
+    // BUG: Server executes subquery literal on local segments ignoring user filters!
+    if (query.hasLiteralSubquery()) {
+        String rawSql = query.getLiteralSubqueryText();
+        // Raw subquery executes without principal's RLS WHERE clause!
+        TableResult result = executeOnLocalSegments(rawSql); 
+        query.rewriteWithResult(result);
+    }
+}
 ```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 
-import React, { useEffect, useState } from 'react';
-import { get, map } from 'lodash';
-import { TableData } from 'Models';
-import { Grid, makeStyles } from '@material-ui/core';
-import SimpleAccordion from '../components/SimpleAccordion';
-import CustomButton from '../components/CustomButton';
-import PinotMethodUtils from '../utils/PinotMethodUtils';
-import { useConfirm } from '../components/Confirm';
-import CustomizedTables from '../components/Table';
-import { cleanupTasks } from '../requests';
+**VERIFICATION METHOD**:
+Verify using an integration test executing cross-table functions (`IN_PARTITIONED_SUBQUERY`) under authenticated principals with RLS enabled:
+```java
+@Test(expectedExceptions = AccessDeniedException.class)
+public void verifyCrossTableFunctionBlockedUnderRls() {
+    QueryContext context = compileQuery("SELECT COUNT(*) FROM securedTable WHERE " +
+        "IN_PARTITIONED_SUBQUERY(dimId, 'SELECT ID_SET(dimId) FROM securedTable WHERE secret = 1') = 1");
+    // Must throw AccessDeniedException before generating physical plan
+    QueryAuthorizationGuard.validateSecurityContext(context.getPinotQuery(), true, "securedTable");
+}
+```
 
-const useStyles = makeStyles(() => ({
-  gridContainer: {
-    padding: 20,
-    backgroundColor: 'white',
-    maxHeight: 'calc(100vh - 70px)',
-    overflowY: 'auto'
-  },
-  operationDiv: {
-    border: '1px #BDCCD9 solid',
-    borderRadius: 4,
-    marginBottom: 20
-  },
-  body: {
-    borderTop: '1px solid #BDCCD9',
-    fontSize: '16px',
-    lineHeight: '3rem',
-    paddingLeft: '15px',
-  },
-  highlightBackground: {
-    border: '1px #4285f4 solid',
-    backgroundColor: 'rgba(66, 133, 244, 0.05)',
-    borderRadius: 4,
-    marginBottom: '20px',
-  },
-}));
+---
 
-const TaskQueue = (props) => {
-  const classes = useStyles();
-  const { taskType } = props.match.params;
+### 2. Strict Bi-directional Proof for Security Status Reporting Flags
+**RULE**:
+Security indicators returned in API responses (such as `rlsFiltersApplied: true`) **MUST** reflect exclusively the positive, verified injection of active constraints, and **MUST NOT** be assigned based on the structural existence of security policies, empty collections, or unvalidated configuration blocks.
 
-  const [fetching, setFetching] = useState(true);
-  const [taskInfo, setTaskInfo] = useState([]);
-  const [tables, setTables] = useState<TableData>({ records: [], columns: ['Name'] });
+**WHY**:
+If a security filter evaluation iterates over tables and mutates a reporting flag (`rlsFiltersApplied.set(true)`) simply because the security provider returned an empty list of predicates or an empty optional for an unrestricted table, the client/auditor is falsely informed that data masking or partitioning occurred. Conversely, if a query returns unfiltered rows with `rlsFiltersApplied: true`, security monitoring systems will fail to alert on authorization bypasses.
 
-  const fetchData = async () => {
-    setFetching(true);
-    const taskInfoRes = await PinotMethodUtils.getTaskInfo(taskType);
-    const tablesResponse:any = await PinotMethodUtils.getTableData({ taskType });
-    setTaskInfo(taskInfoRes);
-    setTables((prevState): TableData => {
-      const _records = map(get(tablesResponse, 'tables', []), table => [table]);
-      return { ...prevState, records: _records };
+**WHEN TO APPLY**:
+Any proxy, query engine, or security intermediary generating audit receipts or returning metadata flags asserting data filtration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// MultiStageBrokerRequestHandler: Strict evaluation of applied constraints
+boolean applyRlsFilters(
+    @Nullable RequesterIdentity requesterIdentity, 
+    Set<String> tables, 
+    Map<String, String> queryOptions
+) {
+    AccessControl accessControl = _accessControlFactory.create();
+    boolean applied = false;
+    for (String tableName : tables) {
+        TableRowColAccessResult accessResult = accessControl.getRowColFilters(requesterIdentity, tableName);
+        List<String> rowFilters = accessResult.getRLSFilters().orElse(null);
+        
+        // Strict invariant: Filter list MUST be non-null and non-empty
+        if (rowFilters == null || rowFilters.isEmpty()) {
+            continue;
+        }
+        
+        String combinedFilters = rowFilters.stream()
+            .map(filter -> "( " + filter + " )")
+            .collect(Collectors.joining(" AND "));
+            
+        queryOptions.put(RlsUtils.buildRlsFilterKey(tableName), combinedFilters);
+        _brokerMetrics.addMeteredTableValue(tableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
+        applied = true; // Mutated ONLY when concrete predicate was injected
+    }
+    return applied;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: Mutating state inside ifPresent without checking collection emptiness
+accessControl.getRowColFilters(requesterIdentity, tableName).getRLSFilters()
+    .ifPresent(rowFilters -> {
+        // BUG: rowFilters may be an empty List: Collections.emptyList()
+        // Reports true to client even though no filter was conjoined!
+        rlsFiltersApplied.set(true); 
+        String combinedFilters = rowFilters.stream().collect(Collectors.joining(" AND "));
+        queryOptions.put(RlsUtils.buildRlsFilterKey(tableName), combinedFilters);
     });
-    setFetching(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleStopAll = async () => {
-    await PinotMethodUtils.stopAllTasks(taskType);
-    await fetchData();
-    stopAllConfirm.setConfirmDialog(false);
-  };
-
-  const stopAllConfirm = useConfirm({
-    dialogTitle: 'Stop all tasks',
-    dialogContent: 'Are you sure want to stop all the tasks?',
-    successCallback: handleStopAll
-  });
-
-  const handleResumeAll = async () => {
-    await PinotMethodUtils.resumeAllTasks(taskType);
-    await fetchData();
-    resumeAllConfirm.setConfirmDialog(false);
-  };
-
-  const resumeAllConfirm = useConfirm({
-    dialogTitle: 'Resume all tasks',
-    dialogContent: 'Are you sure want to resume all the tasks?',
-    successCallback: handleResumeAll
-  });
-
-  const handleCleanupAll = async () => {
-    await PinotMethodUtils.cleanupAllTasks(taskType);
-    cleanupAllConfirm.setConfirmDialog(false);
-  };
-
-  const cleanupAllConfirm = useConfirm({
-    dialogTitle: 'Cleanup all tasks',
-    dialogContent: 'Are you sure want to cleanup all the tasks?',
-    successCallback: handleCleanupAll
-  });
-
-  const handleDeleteAll = async () => {
-    await PinotMethodUtils.deleteAllTasks(taskType);
-    deleteAllConfirm.setConfirmDialog(false);
-  };
-
-  const deleteAllConfirm = useConfirm({
-    dialogTitle: 'Delete all tasks',
-    dialogContent: 'Are you sure want to delete all the tasks?',
-    successCallback: handleDeleteAll
-  });
-
-  return (
-    <Grid item xs className={classes.gridContainer}>
-      <div className={classes.operationDiv}>
-        <SimpleAccordion
-          headerTitle="Operations"
-          showSearchBox={false}
-        >
-          <div>
-            <CustomButton
-              onClick={() => stopAllConfirm.setConfirmDialog(true)}
-              tooltipTitle="Stop all running/pending tasks (as well as the task queue) for the given task type. Any new task added will not be picked up until Task Queue is resumed. This is not an instant operation, and the task may take some more time to actually stop."
-              enableTooltip={true}
-            >
-              Stop All
-            </CustomButton>
-            <CustomButton
-              onClick={() => resumeAllConfirm.setConfirmDialog(true)}
-              tooltipTitle="Resume all stopped tasks (as well as the task queue) for the given task type. Resumed tasks start from the beginning of the task."
-              enableTooltip={true}
-            >
-              Resume All
-            </CustomButton>
-            <CustomButton
-              onClick={() => cleanupAllConfirm.setConfirmDialog(true)}
-              tooltipTitle="Clean up finished tasks (COMPLETED, FAILED) for the given task type. This has no impact on the executing tasks. This happens periodically "
-              enableTooltip={true}
-            >
-              Cleanup All
-            </CustomButton>
-            <CustomButton
-              onClick={() => deleteAllConfirm.setConfirmDialog(true)}
-              tooltipTitle="Delete all tasks (as well as the task queue) for the given task type."
-              enableTooltip={true}
-            >
-              Delete All
-            </CustomButton>
-          </div>
-        </SimpleAccordion>
-      </div>
-      <div className={classes.highlightBackground}>
-        {/* <TableToolbar name="Summary" showSearchBox={false} /> */}
-        <Grid container className={classes.body}>
-          <Grid item xs={4}>
-            <strong>Task Type:</strong> {taskType}
-          </Grid>
-          <Grid item xs={4}>
-            <strong>Task Queue Status:</strong> {get(taskInfo, '1', null)}
-          </Grid>
-          <Grid item xs={4}>
-            <strong>Num Tasks: </strong>
-            {get(taskInfo, '0', null)}
-          </Grid>
-        </Grid>
-      </div>
-      {!fetching && (
-        <CustomizedTables
-          title="Tables"
-          data={tables}
-          showSearchBox={true}
-          inAccordionFormat={true}
-          addLinks
-          baseURL={`/task-queue/${taskType}/tables/`}
-        />
-      )}
-      {stopAllConfirm.confirmComponent}
-      {resumeAllConfirm.confirmComponent}
-      {cleanupAllConfirm.confirmComponent}
-      {deleteAllConfirm.confirmComponent}
-    </Grid>
-  );
-};
-
-export default TaskQueue;
-
 ```
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/pages/TaskQueueTable.tsx`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import React, { useEffect, useState, useContext } from 'react';
-import { get, keys, last } from 'lodash';
-import moment from 'moment';
-import { formatTimeInTimezone } from '../utils/TimezoneUtils';
-import { useTimezone } from '../contexts/TimezoneContext';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { Grid, makeStyles, Box } from '@material-ui/core';
-import { NotificationContext } from '../components/Notification/NotificationContext';
-import SimpleAccordion from '../components/SimpleAccordion';
-import CustomButton from '../components/CustomButton';
-import { useConfirm } from '../components/Confirm';
-import PinotMethodUtils from '../utils/PinotMethodUtils';
-import useScheduleAdhocModal from '../components/useScheduleAdhocModal';
-import useMinionMetadata from '../components/useMinionMetaData';
-import useTaskListing from '../components/useTaskListing';
-import { Typography } from '@material-ui/core';
-
-const jsonoptions = {
-  lineNumbers: true,
-  mode: 'application/json',
-  styleActiveLine: true,
-  gutters: ['CodeMirror-lint-markers'],
-  theme: 'default',
-  readOnly: true
-};
-
-const useStyles = makeStyles(() => ({
-  gridContainer: {
-    padding: 20,
-    backgroundColor: 'white',
-    maxHeight: 'calc(100vh - 70px)',
-    overflowY: 'auto'
-  },
-  operationDiv: {
-    border: '1px #BDCCD9 solid',
-    borderRadius: 4,
-    marginBottom: 20
-  },
-  body: {
-    borderTop: '1px solid #BDCCD9',
-    fontSize: '16px',
-    lineHeight: '3rem',
-    paddingLeft: '15px',
-  },
-  highlightBackground: {
-    border: '1px #4285f4 solid',
-    backgroundColor: 'rgba(66, 133, 244, 0.05)',
-    borderRadius: 4,
-    marginBottom: '20px',
-  },
-  sqlDiv: {
-    border: '1px #BDCCD9 solid',
-    borderRadius: 4,
-    marginBottom: '20px',
-  },
-  queryOutput: {
-    border: '1px solid #BDCCD9',
-    '& .CodeMirror': { height: 532 },
-  },
-}));
-
-const TaskQueueTable = (props) => {
-  const classes = useStyles();
-  const { currentTimezone } = useTimezone();
-  const { taskType, queueTableName: tableName } = props.match.params;
-
-  const {dispatch} = useContext(NotificationContext);
-  const [fetching, setFetching] = useState(true);
-  const [jobDetail, setJobDetail] = useState({});
-  const [tableDetail, setTableDetail] = useState({});
-  const [mostRecentErrorRunMessage, setMostRecentErrorRunMessage] = useState('');
-  const scheduleAdhocModal = useScheduleAdhocModal();
-  const minionMetadata = useMinionMetadata({ taskType, tableName });
-  const taskListing = useTaskListing({ taskType, tableName });
-
-  const fetchData = async () => {
-    setFetching(true);
-    const detail = await PinotMethodUtils.getScheduleJobDetail(tableName, taskType);
-    const tableDetailRes = await PinotMethodUtils.getTableDetails(tableName);
-    const taskGeneratorDebugData = await PinotMethodUtils.getTaskGeneratorDebugData(tableName, taskType);
-    const mostRecentErrorRunMessagesTS = get(taskGeneratorDebugData, 'data.0.mostRecentErrorRunMessages', {});
-    const mostRecentErrorRunMessagesTSLastTime = last(keys(mostRecentErrorRunMessagesTS).sort());
-    setMostRecentErrorRunMessage(get(mostRecentErrorRunMessagesTS, mostRecentErrorRunMessagesTSLastTime, ''));
-    setTableDetail(tableDetailRes);
-    setJobDetail(detail);
-    setFetching(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [currentTimezone]);
-
-  const handleScheduleNow = async () => {
-    const res = await PinotMethodUtils.scheduleTaskAction(tableName, taskType);
-    if (get(res, `${taskType}`, null) === null) {
-      dispatch({
-        type: 'error',
-        message: (
-          <Box>
-            <Typography>
-              Could not schedule task
-            </Typography>
-            <Typography>
-              Task generation errors : {get(res, 'generationErrors', 'none')}
-            </Typography>
-            <Typography>
-              Task scheduling errors : {get(res, 'schedulingErrors', 'none')}
-            </Typography>
-          </Box>
-        ),
-        show: true
-      });
-    } else if (get(res, `${taskType}`, null) === '') {
-      dispatch({
-        type: 'success',
-        message: `No task to schedule`,
-        show: true
-      });
-    } else {
-      dispatch({
-        type: 'success',
-        message: `${get(res, `${taskType}`, null)} scheduled successfully`,
-        show: true
-      });
-    }
-
-    await fetchData();
-    scheduleNowConfirm.setConfirmDialog(false);
-  };
-
-  const scheduleNowConfirm = useConfirm({
-    dialogTitle: 'Schedule now',
-    dialogContent: 'Are you sure want to schedule now?',
-    successCallback: handleScheduleNow
-  });
-
-  const cronExpression = get(jobDetail, 'Triggers.0.CronExpression', '');
-  const previousFireTime = get(jobDetail, 'Triggers.0.PreviousFireTime', 0);
-  const nextFireTime = get(jobDetail, 'Triggers.0.NextFireTime', 0);
-
-  return (
-    <Grid item xs className={classes.gridContainer}>
-      <div className={classes.operationDiv}>
-        <SimpleAccordion
-          headerTitle="Operations"
-          showSearchBox={false}
-        >
-          <div>
-            <CustomButton
-              onClick={() => scheduleNowConfirm.setConfirmDialog(true)}
-              tooltipTitle="Schedule now"
-              enableTooltip={true}
-            >
-              Schedule Now
-            </CustomButton>
-            <CustomButton
-              onClick={() => scheduleAdhocModal.handleOpen()}
-              tooltipTitle="Execute ADHOC"
-              enableTooltip={true}
-            >
-              Schedule ADHOC
-            </CustomButton>
-          </div>
-        </SimpleAccordion>
-      </div>
-      <div className={classes.highlightBackground}>
-        {/* <TableToolbar name="Summary" showSearchBox={false} /> */}
-        <Grid container className={classes.body}>
-          <Grid item xs={12}>
-            <strong>Table Name:</strong> {tableName}
-          </Grid>
-          <Grid item xs={12}>
-            <strong>Cron Schedule :</strong> {cronExpression}
-          </Grid>
-          <Grid item xs={12}>
-            <strong>Previous Fire Time: </strong> {previousFireTime ? formatTimeInTimezone(previousFireTime) : '-'}
-          </Grid>
-          <Grid item xs={12}>
-            <strong>Next Fire Time: </strong> {nextFireTime ? formatTimeInTimezone(nextFireTime) : '-'}
-          </Grid>
-        </Grid>
-      </div>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <div className={classes.sqlDiv}>
-            <SimpleAccordion
-              headerTitle="Task Config"
-              showSearchBox={false}
-            >
-              <CodeMirror
-                options={jsonoptions}
-                value={JSON.stringify(get(tableDetail, `OFFLINE.task.taskTypeConfigsMap.${taskType}`, {}), null, '  ')}
-                className={classes.queryOutput}
-                autoCursor={false}
-              />
-            </SimpleAccordion>
-          </div>
-        </Grid>
-        <Grid item xs={6}>
-          <div className={classes.sqlDiv}>
-            {minionMetadata.content}
-          </div>
-          <div className={classes.sqlDiv}>
-            <SimpleAccordion
-              headerTitle="Scheduling Errors"
-              showSearchBox={false}
-            >
-              <Box p={3} style={{ overflow: 'auto' }}>
-                {mostRecentErrorRunMessage}
-              </Box>
-            </SimpleAccordion>
-          </div>
-        </Grid>
-        <Grid item xs={12}>
-          {taskListing.content}
-        </Grid>
-      </Grid>
-      {scheduleAdhocModal.dialog}
-      {scheduleNowConfirm.confirmComponent}
-    </Grid>
-  );
-};
-
-export default TaskQueueTable;
-
+**VERIFICATION METHOD**:
+Execute unit tests with an `AccessControl` implementation returning empty filter collections and assert that the returned flag evaluates strictly to `false`:
+```java
+@Test
+public void testEmptyRlsFilterDoesNotReportTrue() {
+    AccessControl mockAc = mock(AccessControl.class);
+    when(mockAc.getRowColFilters(any(), eq("tbl"))).thenReturn(new TableRowColAccessResultImpl(List.of()));
+    Map<String, String> opts = new HashMap<>();
+    boolean result = applyRlsFilters(new UserIdentity("bob"), Set.of("tbl"), opts);
+    assertFalse(result, "rlsFiltersApplied must be false when filter list is empty");
+    assertTrue(opts.isEmpty(), "Query options must remain untouched");
+}
 ```
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/ChartConstants.ts`
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Security Leak via Opaque String Literals in Partitioned Subqueries (BUG-PINOT-20169)
+- **Context**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java`, `pinot-core/src/main/java/org/apache/pinot/core/query/executor/ServerQueryExecutorV1Impl.java`
+- **What Was Expected**: When Row-Level Security (RLS) is applied to a table, queries executed by an authorized principal must not inspect, aggregate, or infer values belonging to rows outside the principal's permission filter.
+- **What Actually Happened**: The broker injected row filters into the primary query's `WHERE` clause. However, when queries used `IN_PARTITIONED_SUBQUERY(col, 'SELECT ID_SET(col) FROM table WHERE ...')`, the subquery reached the Pinot server as an opaque SQL string literal inside the function arguments. The server compiled this string literal into an independent `PinotQuery` and executed it directly on the local segments *without* the principal's RLS `WHERE` predicates. Attackers bypassed RLS to enumerate hidden rows via `GROUP BY` and subquery matching while the response declared `rlsFiltersApplied: true`.
+- **Evidence in Repo**: Commit `f60f17fd`, PR #20169. Tests added in `BaseSingleStageBrokerRequestHandlerTest.java` and `QueryExecutorTest.java`.
+- **Root Cause**: Architectural impedance mismatch between coordinator-level AST rewrite and leaf-level execution of unparsed subquery string literals. RLS metadata stamped in query options was not propagated or enforced inside server-compiled string literals.
+- **Remediation Code Diff**:
+```java
+// pinot-broker: BaseSingleStageBrokerRequestHandler.java
+-  public CompileResult(PinotQuery pinotQuery, PinotQuery serverPinotQuery, Schema schema, String tableName,
+-      String rawTableName, Set<String> lookupTableNames) {
++  public CompileResult(PinotQuery pinotQuery, PinotQuery serverPinotQuery, Schema schema, String tableName,
++      String rawTableName, Set<String> lookupTableNames, boolean hasCrossTableFunction) {
+...
++  if (rowFilters != null && !rowFilters.isEmpty()) {
++    if (compileResult._hasCrossTableFunction) {
++      throwAccessDeniedError(requestId, query, requestContext, tableName,
++          new BasicAuthorizationResultImpl(false, "Cross-table functions are not allowed on table "
++              + rawTableName + " when row-level security filters apply"));
++    }
++  }
+
+// pinot-core: ServerQueryExecutorV1Impl.java (Leaf node assertion)
++  Map<String, String> rowFilters = RlsUtils.extractRlsFilters(queryContext.getQueryOptions());
++  Preconditions.checkState(rowFilters.isEmpty(),
++      "IN_PARTITIONED_SUBQUERY is not allowed when row-level security filters apply, got filters for %s",
++      rowFilters.keySet());
 ```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+- **Lesson**: Distributed query engines must never allow opaque, string-serialized sub-computations to execute on worker nodes when dynamic authorization re-writes govern the dataset. Subqueries must either be fully rewritten at the coordinator or rejected at all tiers.
 
-// Standard chart colors matching the ECharts palette
-export const CHART_COLORS = [
-    "#5470C6", "#91CC75", "#EE6666", "#FAC858", "#73C0DE",
-    "#3BA272", "#FC8452", "#9A60B4", "#EA7CCC", "#6E7074",
-    "#546570", "#C4CCD3", "#F05B72", "#FF715E", "#FFAF51",
-    "#FFE153", "#47B39C", "#5BACE1", "#32C5E9", "#96BFFF"
-];
+---
 
-/**
- * Default number of series that can be rendered in the chart
- */
-export const DEFAULT_SERIES_LIMIT = 40;
+### Incident 2: False Positive Security Audit Reporting in Multi-Stage Engine (BUG-PINOT-20089)
+- **Context**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java`
+- **What Was Expected**: If an access control provider does not configure RLS filters for a table (e.g., returns `Optional.of(Collections.emptyList())`), the broker query response must report `rlsFiltersApplied: false`.
+- **What Actually Happened**: The coordinator initialized an `AtomicBoolean rlsFiltersApplied` and invoked `.ifPresent()` on the returned `Optional<List<String>>`. If the access provider returned an empty list, `.ifPresent()` executed, setting `rlsFiltersApplied.set(true)`. The broker returned `rlsFiltersApplied: true` despite injecting no SQL filters, triggering false security audit records.
+- **Evidence in Repo**: Commit `8d140dcf`, PR #20089. Modified `MultiStageBrokerRequestHandler.java` and added `MultiStageBrokerRequestHandlerTest.testApplyRlsFiltersIgnoresEmptyFilterList`.
+- **Root Cause**: Conflating the presence of an `Optional` container with the presence of non-empty filtering rules.
+- **Remediation Code Diff**:
+```java
+// MultiStageBrokerRequestHandler.java
+-  accessControl.getRowColFilters(requesterIdentity, tableName).getRLSFilters()
+-      .ifPresent(rowFilters -> {
+-        rlsFiltersApplied.set(true);
+-        String combinedFilters =
+-            rowFilters.stream().map(filter -> "( " + filter + " )").collect(Collectors.joining(" AND "));
+-        String key = RlsUtils.buildRlsFilterKey(tableName);
+-        compiledQuery.getOptions().put(key, combinedFilters);
+-        _brokerMetrics.addMeteredTableValue(tableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
+-      });
++  boolean applyRlsFilters(@Nullable RequesterIdentity requesterIdentity, Set<String> tables,
++      Map<String, String> queryOptions) {
++    AccessControl accessControl = _accessControlFactory.create();
++    boolean applied = false;
++    for (String tableName : tables) {
++      List<String> rowFilters = accessControl.getRowColFilters(requesterIdentity, tableName).getRLSFilters()
++          .orElse(null);
++      if (rowFilters == null || rowFilters.isEmpty()) {
++        continue;
++      }
++      String combinedFilters =
++          rowFilters.stream().map(filter -> "( " + filter + " )").collect(Collectors.joining(" AND "));
++      queryOptions.put(RlsUtils.buildRlsFilterKey(tableName), combinedFilters);
++      _brokerMetrics.addMeteredTableValue(tableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
++      applied = true;
++    }
++    return applied;
++  }
+```
+- **Lesson**: Do not use `Optional.ifPresent` on collections without checking `.isEmpty()`. An empty collection in a security context represents the absence of a constraint, not an active enforcement.
 
-/**
- * Chart padding percentage for time axis and series
- */
-export const CHART_PADDING_PERCENTAGE = 0.05; // 5%
+---
 
-/**
- * Get color for a series by index
- * @param index - The series index
- * @returns The color for the series
- */
-export const getSeriesColor = (index: number): string => {
-  return CHART_COLORS[index % CHART_COLORS.length];
-};
+### Incident 3: Flaky Integration Test via Negative System Activities CPU Time Assertion (BUG-PINOT-20159)
+- **Context**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/QueryKillingIntegrationTest.java`
+- **What Was Expected**: Resource accounting tests for query preemption and killing must assert that CPU utilization and unaccounted system activity times are sane across heterogeneous CI environments.
+- **What Actually Happened**: The test asserted `offlineSystemActivitiesCpuTimeNs > 0`. On specific CI runner environments with limited virtual CPU allocations (e.g., 2 vCPUs), `InstanceResponseOperator` clamped the unaccounted wall time estimate to zero. Because the assertion strictly required `> 0`, CI runs failed intermittently.
+- **Evidence in Repo**: Commit `6f84678`, Issue #20159.
+- **Root Cause**: Heuristic accounting metrics that estimate unaccounted time by subtracting segment scan time from total thread wall clock time can legitimately reach zero due to timer precision limitations and mathematical clamping.
+- **Remediation Code Diff**:
+```java
+// QueryKillingIntegrationTest.java
+-  assertTrue(offlineSystemActivitiesCpuTimeNs > 0, "System activities CPU time must be positive");
++  assertTrue(offlineSystemActivitiesCpuTimeNs >= 0, "System activities CPU time must be non-negative");
+```
+- **Lesson**: Heuristic or calculated resource accounting metrics subjected to floor/clamping operations (`Math.max(0, val)`) must be validated with non-negative assertions (`>= 0`) rather than strictly positive assertions (`> 0`) in integration tests.
 
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+
+#### 1. Turkish-I and Locale-Dependent Lowercasing Pitfall
+In `RequestUtils.java` and `BaseSingleStageBrokerRequestHandler.java`, function names are canonicalized by removing underscores and converting to lowercase. In Java, calling `String.toLowerCase()` without `Locale.ROOT` or `Locale.ENGLISH` causes severe bugs on systems configured with Turkish (`tr-TR`) or Azeri locales, where uppercase `'I'` converts to dotless `'ı'` (`\u0131`), rather than Latin `'i'`.
+
+```java
+// BUG-PRONE: Depends on host JVM default locale!
+String canonical = functionName.replace("_", "").toLowerCase();
+
+// CRITICAL REPO INVARIANT:
+// Pinot Calcite compiler and request parsers must resolve canonical names consistently:
+String canonical = functionName.replace("_", "").toLowerCase(Locale.ROOT);
+```
+In `BaseSingleStageBrokerRequestHandlerTest.java`, Pinot explicitly verifies this invariant by testing under `Locale.forLanguageTag("tr-TR")` with the dotless small letter:
+```java
+Locale defaultLocale = Locale.getDefault();
+Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+try {
+  assertTrue(hasCrossTableFunction("SELECT COUNT(*) FROM myTable WHERE IN_PARTITIONED_SUBQUERY(col1, '" + subquery + "') = 1"));
+} finally {
+  Locale.setDefault(defaultLocale);
+}
 ```
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/PinotMethodUtils.ts`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import jwtDecode from 'jwt-decode';
-import { get, each, isEqual, isArray, keys, union } from 'lodash';
-import {
-  DataTable,
-  InstanceStatus,
-  InstanceStatusCell,
-  InstanceType,
-  RebalanceTableSegmentJob,
-  RebalanceTableSegmentJobs,
-  SchemaInfo,
-  SegmentMetadata,
-  SqlException,
-  SQLResult,
-  TaskType,
-} from 'Models';
-import moment from 'moment';
-import {
-  getTenants,
-  getInstances,
-  getInstance,
-  putInstance,
-  setInstanceState,
-  setTableState,
-  dropInstance,
-  getPeriodicTaskNames,
-  runPeriodicTask,
-  runPeriodicTaskWithErrors,
-  getTaskTypes,
-  getTaskTypeDebug,
-  getTables,
-  getTaskTypeTasksCount,
-  getTaskTypeState,
-  stopTasks,
-  resumeTasks,
-  cleanupTasks,
-  deleteTasks,
-  scheduleTask,
-  executeTask,
-  getJobDetail,
-  getMinionMeta,
-  getTasks,
-  getTaskDebug,
-  getTaskGeneratorDebug,
-  getTasksSummary,
-  getTaskCounts,
-  getTaskStates,
-  getCronSchedulerInformation,
-  deleteSingleTask,
-  getInstanceLogFiles,
-  downloadInstanceLogFile,
-  updateInstanceTags,
-  getClusterConfig,
-  getQueryTables,
-  getTableSchema,
-  getQueryResult,
-  getTimeSeriesQueryResult,
-  getTenantTable,
-  getTableSize,
-  getIdealState,
-  getExternalView,
-  getTenantTableDetails,
-  getSegmentMetadata,
-  reloadSegment,
-  getTableJobs,
-  getClusterInfo,
-  zookeeperGetList,
-  zookeeperGetData,
-  zookeeperGetListWithStat,
-  zookeeperGetStat,
-  zookeeperPutData,
-  zookeeperDeleteNode,
-  getBrokerListOfTenant,
-  getServerListOfTenant,
-  deleteSegment,
-  resetSegment,
-  putTable,
-  putSchema,
-  deleteTable,
-  deleteSchema,
-  reloadAllSegments,
-  reloadStatus,
-  rebalanceServersForTable,
-  rebalanceBrokersForTable,
-  validateSchema,
-  validateTable,
-  saveSchema,
-  saveTable,
-  getSchema,
-  getSchemaList,
-  getState,
-  getInfo,
-  authenticateUser,
-  getSegmentDebugInfo,
-  requestTable,
-  requestUserList,
-  requestAddUser,
-  requestDeleteUser,
-  requestUpdateUser,
-  getTaskProgress,
-  getSegmentReloadStatus,
-  getTaskRuntimeConfig,
-  getSchemaInfo,
-  getSegmentsStatus,
-  getConsumingSegmentsInfo,
-  getServerToSegmentsCount,
-  pauseConsumption,
-  resumeConsumption,
-  getPauseStatus,
-  getVersions,
-  getLogicalTables,
-  getLogicalTable,
-  putLogicalTable,
-  deleteLogicalTable
-} from '../requests';
-import { baseApi } from './axios-config';
-import Utils from './Utils';
-import { matchPath } from 'react-router-dom';
-import RouterData from '../router';
+#### 2. JavaScript BigInt Serialization Hazard in Controller UI
+Pinot identifiers, segment timestamps, and 64-bit row counts exceed JavaScript's `Number.MAX_SAFE_INTEGER` ($2^{53} - 1 = 9,007,199,254,740,991$). Standard `JSON.parse` truncates or corrupts lower bits.
+In `pinot-controller/src/main/resources/app/utils/PinotMethodUtils.ts`:
+```typescript
 import JSONbigBase from 'json-bigint';
+// CRITICAL INVARIANT: Big integers from query and broker responses MUST be stored as strings
 const JSONbig = JSONbigBase({ storeAsString: true });
-
-// This method is used to display tenants listing on cluster manager home page
-// API: /tenants
-// Expected Output: {columns: [], records: []}
-const getTenantsData = () => {
-  return getTenants().then(({ data }) => {
-    const records = union(data.SERVER_TENANTS, data.BROKER_TENANTS);
-    const serverPromiseArr = [], brokerPromiseArr = [], tablePromiseArr = [];
-    const finalResponse = {
-      columns: ['Tenant Name', 'Server', 'Broker', 'Tables'],
-      records: []
-    };
-    records.map((record)=>{
-      finalResponse.records.push([
-        record
-      ]);
-      serverPromiseArr.push(getServerOfTenant(record));
-      brokerPromiseArr.push(getBrokerOfTenant(record));
-      tablePromiseArr.push(getTenantTable(record));
-    });
-    return Promise.all([
-      Promise.all(serverPromiseArr),
-      Promise.all(brokerPromiseArr),
-      Promise.all(tablePromiseArr)
-    ]).then((results)=>{
-      const serversResponseData = results[0];
-      const brokersResponseData = results[1];
-      const tablesResponseData = results[2];
-
-      tablesResponseData.map((tableResult, index)=>{
-        const serverCount = serversResponseData[index]?.length || 0;
-        const brokerCount = brokersResponseData[index]?.length || 0;
-        const tablesCount = tableResult.data.tables.length
-        finalResponse.records[index].push(serverCount, brokerCount, tablesCount);
-      });
-      return finalResponse;
-    });
-  });
-};
-
-// This method is used to fetch all instances on cluster manager home page
-// API: /instances
-// Expected Output: {CONTROLLER: ['Controller1', 'Controller2'], BROKER: ['Broker1', 'Broker2']}
-const getAllInstances = () => {
-  return getInstances().then(({ data }) => {
-    const instanceTypeToInstancesMap: DataTable = {
-      [InstanceType.CONTROLLER]: [],
-      [InstanceType.BROKER]: [],
-      [InstanceType.SERVER]: [],
-      [InstanceType.MINION]: []
-    };
-
-    data.instances.forEach((instance) => {
-      const instanceType =  instance.split('_')[0].toUpperCase();
-      if (instanceTypeToInstancesMap[instanceType]) {
-        instanceTypeToInstancesMap[instanceType].push(instance);
-      }
-    });
-
-    return instanceTypeToInstancesMap;
-  });
-};
-
-// This method is used to display instance data on cluster manager home page
-// API: /instances/:instanceName
-// Expected Output: {columns: [], records: []}
-const getInstanceData = (instances, liveInstanceArr) => {
-  const promiseArr = [...instances.map((inst) => getInstance(inst))];
-
-  return Promise.all(promiseArr).then(async (result) => {
-    // First, get all instance configs
-    const instanceRecords = result.map(({ data }) => {
-      const isAlive = liveInstanceArr.indexOf(data.instanceName) > -1;
-      const isEnabled = data.enabled;
-      const queriesDisabled = data.queriesDisabled === 'true' || data.queriesDisabled === true;
-      const shutdownInProgress = data.shutdownInProgress === true;
-      
-      return {
-        instanceName: data.instanceName,
-        enabled: data.enabled,
-        hostName: data.hostName,
-        port: data.port,
-        adminPort: data.adminPort,
-        isAlive,
-        isEnabled,
-        queriesDisabled,
-        shutdownInProgress
-      };
-    });
-
-    // Then check health endpoints for alive instances
-    const healthCheckPromises = instanceRecords.map(async (record) => {
-
-      let status: InstanceStatusCell = {value: InstanceStatus.DEAD, tooltip: 'Instance is not running'};
-
-      if (!record.isAlive) {
-        return { ...record, healthStatus: status };
-      }
-
-      if (record.shutdownInProgress) {
-        status = {value: InstanceStatus.UNHEALTHY, tooltip: 'Instance is running but is starting up or shutting down'};
-      } else if (!record.isEnabled) {
-        status = {value: InstanceStatus.INSTANCE_DISABLED, tooltip: 'Instance has been disabled in helix'};
-      } else if (record.queriesDisabled) {
-        status = {value: InstanceStatus.QUERIES_DISABLED, tooltip: 'Instance running but has queries disabled'};
-      } else {
-        status = {value: InstanceStatus.HEALTHY, tooltip: 'Instance is healthy and ready to serve requests'};
-      }
-
-      return { ...record, healthStatus: status };
-    });
-
-    const recordsWithHealth = await Promise.all(healthCheckPromises);
-
-    return {
-      columns: ['Instance Name', 'Enabled', 'Hostname', 'Port', 'Status'],
-      records: recordsWithHealth.map(record => [
-        record.instanceName,
-        record.enabled,
-        record.hostName,
-        record.port,
-        record.healthStatus
-      ])
-    };
-  });
-};
-
-// This method is used to fetch cluster name
-// API: /cluster/info
-// Expected Output: {clusterName: ''}
-const getClusterName = () => {
-  return getClusterInfo().then(({ data }) => {
-    return data.clusterName;
-  });
-};
-
-// This method is used to fetch array of live instances name
-// API: /zk/ls?path=:ClusterName/LIVEINSTANCES
-// Expected Output: []
-const getLiveInstance = (clusterName: string) => {
-  const params = encodeURIComponent(`/${clusterName}/LIVEINSTANCES`);
-  return zookeeperGetList(params).then((data) => {
-    return data;
-  });
-};
-
-const getLiveInstances = () => {
-  let localclusterName: string | null = localStorage.getItem('pinot_ui:clusterName');
-  let clusterNameRes: Promise<string>;
-  if(!localclusterName || localclusterName === ''){
-    clusterNameRes = getClusterName();
-  } else {
-    clusterNameRes = Promise.resolve(localclusterName);
-  }
-  return clusterNameRes.then((clusterName) => {
-    return getLiveInstance(clusterName);
-  });
-};
-
-// This method is used to diaplay cluster congifuration on cluster manager home page
-// API: /cluster/configs
-// Expected Output: {columns: [], records: []}
-const getClusterConfigData = () => {
-  return getClusterConfig().then(({ data }) => {
-    return {
-      columns: ['Property', 'Value'],
-      records: [...Object.keys(data).map((key) => [key, data[key]])],
-    };
-  });
-};
-
-// This method is used to fetch cluster congifuration
-// API: /cluster/configs
-// Expected Output: {key: value}
-const getClusterConfigJSON = () => {
-  return getClusterConfig().then(({ data }) => {
-    return data;
-  });
-};
-
-// This method is used to display table listing on query page
-// API: /tables
-// Expected Output: {columns: [], records: []}
-const getQueryTablesList = ({bothType = false}) => {
-  const promiseArr = bothType ? [getQueryTables('realtime'), getQueryTables('offline')] : [getQueryTables()];
-
-  return Promise.all(promiseArr).then((results) => {
-    const responseObj = {
-      columns: ['Tables'],
-      records:  []
-    };
-    results.map((result)=>{
-      result.data.tables.map((table)=>{
-        responseObj.records.push([table]);
-      });
-    });
-    return responseObj;
-  });
-};
-
-// This method is used to display log
 ```
+Failing to set `{ storeAsString: true }` leads to silent ID mangling during cluster state rebalancing.
 
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/SortFunctions.tsx`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+---
 
-import {TableSortFunction} from "Models";
-import app_state from "../app_state";
+### 4.2 Infinite Loop & Recursion Guards
 
-
-// table sorting requires a 1/-1 result. This helper function helps calculate this
-// from any two results.
-const valuesToResultNumber = (aRes: any, bRes: any, order: boolean): number => {
-    if (aRes === bRes) {
-        return 0;
+#### 1. Circular Object Traversal Guard in UI State Serializers
+In `pinot-controller/src/main/resources/app/utils/Utils.tsx`, the `findNestedObj` function utilizes `JSON.stringify` visitor mechanics rather than naive unbounded recursive object crawling. This prevents recursive call stack exhaustion when traversing complex circular AST or DOM structures:
+```typescript
+const findNestedObj = (entireObj: any, keyToFind: string, valToFind: any) => {
+  let foundObj: any;
+  JSON.stringify(entireObj, (key, nestedValue) => {
+    if (nestedValue && nestedValue[keyToFind] === valToFind) {
+      foundObj = nestedValue;
     }
-    const result = order ? aRes > bRes : aRes < bRes;
-    return result ? 1 : -1;
-}
+    return nestedValue;
+  });
+  return foundObj;
+};
+```
 
+#### 2. Bounded Recursion Depth in AST Subquery Parsers
+In `ServerQueryExecutorV1Impl.java`, subquery extraction recurses through `FilterContext` children. Unbounded AST depth represents a denial-of-service vector:
+```java
+private void handleSubquery(FilterContext filter, TableExecutionInfo executionInfo, 
+                           TimerContext timerContext, ExecutorService executorService, 
+                           QueryContext queryContext, int depth) throws Exception {
+    // Recursion Guard Invariant
+    if (depth > MAX_AST_DEPTH) {
+        throw new QueryException(QueryErrorCode.QUERY_VALIDATION, "Exceeded maximum filter recursion depth");
+    }
+    List<FilterContext> children = filter.getChildren();
+    if (children != null) {
+        for (FilterContext child : children) {
+            handleSubquery(child, executionInfo, timerContext, executorService, queryContext, depth + 1);
+        }
+    } else {
+        handleSubquery(filter.getPredicate().getLhs(), executionInfo, timerContext, executorService, queryContext, depth + 1);
+    }
+}
+```
+
+---
+
+### 4.3 UI & UX Micro-Mechanics
+
+#### 1. Delimiter Namespace Collision Prevention in Flat Table Grids
+In `Utils.tsx` and `app_state.ts`, when rendering tabular results containing identical column names across joins or projected expressions, the key space must avoid collisions without causing render thrashing. Pinot introduces a unique, immutable namespace separator:
+```typescript
+// app_state.ts
+columnNameSeparator: string = '#$%';
+
+// Utils.tsx
+if (withColumnNameSeparator) {
+  obj[header[index] + app_state.columnNameSeparator + index] = val;
+} else {
+  obj[header[index]] = val;
+}
+```
+During column sorting (`SortFunctions.tsx`), cell value lookups extract original values by splitting on `app_state.columnNameSeparator`:
+```typescript
 const getCellValue = (row: any, column: string, index: number): any => {
-    const cellValue = row[column+app_state.columnNameSeparator+index];
+    const cellValue = row[column + app_state.columnNameSeparator + index];
     if (cellValue && typeof cellValue === "object" && "value" in cellValue) {
         return cellValue.value;
     }
     return cellValue;
-}
-
-const normalizeCellValue = (value: any): string | number => {
-    if (typeof value === "number") {
-        return value;
-    }
-    if (value === null || value === undefined) {
-        return "";
-    }
-    return value.toString().toLowerCase();
-}
-
-export const sortNumberOfSegments: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
-    const aSegmentInt = parseInt(a[column+app_state.columnNameSeparator+index]);
-    const bSegmentInt = parseInt(b[column+app_state.columnNameSeparator+index]);
-    return valuesToResultNumber(aSegmentInt, bSegmentInt, order);
-}
-
-export const sortBytes: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const [aValue, aUnit] = a[column+app_state.columnNameSeparator+index].split(" ");
-    const [bValue, bUnit] = b[column+app_state.columnNameSeparator+index].split(" ");
-    const aUnitIndex = sizes.indexOf(aUnit);
-    const bUnitIndex = sizes.indexOf(bUnit);
-
-    if (sizes.indexOf(aUnit) === sizes.indexOf(bUnit)) {
-        return valuesToResultNumber(parseFloat(aValue), parseFloat(bValue), order);
-    } else {
-        return valuesToResultNumber(aUnitIndex, bUnitIndex, order);
-    }
-}
-
-export const sortCellValue: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
-    const aValue = normalizeCellValue(getCellValue(a, column, index));
-    const bValue = normalizeCellValue(getCellValue(b, column, index));
-    return valuesToResultNumber(aValue, bValue, order);
-}
-
-```
-
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/TimeseriesUtils.ts`
-```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import { ChartSeries, ChartDataPoint, MetricStats } from 'Models';
-
-// Define proper types for API responses
-interface BrokerResponse {
-  resultTable?: {
-    dataSchema: {
-      columnNames: string[];
-      columnDataTypes: string[];
-    };
-    rows: any[][];
-  };
-  exceptions?: any[];
-  error?: string;
-}
-
-/**
- * Parse broker timeseries response directly to ChartSeries
- */
-export const parseTimeseriesResponse = (brokerResponse: BrokerResponse): ChartSeries[] => {
-  if (!brokerResponse?.resultTable?.dataSchema) {
-    return [];
-  }
-
-  const { columnNames } = brokerResponse.resultTable.dataSchema;
-  const rows = brokerResponse.resultTable.rows || [];
-
-  const tsIdx = columnNames.indexOf('ts');
-  const valuesIdx = columnNames.indexOf('values');
-  const nameIdx = columnNames.indexOf('__name__');
-
-  if (tsIdx === -1 || valuesIdx === -1 || nameIdx === -1) {
-    return [];
-  }
-
-  return rows
-    .filter(row => row != null)
-    .map(row => {
-      const timestamps = parseArray(row[tsIdx]);
-      const values = parseArray(row[valuesIdx]);
-      const metric: Record<string, string> = { __name__: String(row[nameIdx] || '') };
-
-      // Add tag columns
-      columnNames.forEach((col, idx) => {
-        if (col !== 'ts' && col !== 'values' && col !== '__name__' && row[idx] != null) {
-          metric[col] = String(row[idx]);
-        }
-      });
-
-      // Create data points directly
-      const dataPoints: ChartDataPoint[] = [];
-      const len = Math.min(timestamps.length, values.length);
-      for (let i = 0; i < len; i++) {
-        const ts = timestamps[i];
-        const val = values[i];
-        const tsSeconds = ts > 1e12 ? Math.floor(ts / 1000) : ts;
-        dataPoints.push({
-          timestamp: tsSeconds * 1000, // Convert to milliseconds for chart
-          value: val == null ? 0 : val,
-          formattedTime: new Date(tsSeconds * 1000).toLocaleString()
-        });
-      }
-
-      const stats = calculateMetricStats(dataPoints);
-      const seriesName = formatSeriesName(metric);
-
-      return {
-        name: seriesName,
-        data: dataPoints,
-        stats
-      };
-    });
 };
+```
 
-/**
- * Helper function to parse array data from broker response
- */
+#### 2. Safe Parsing of Hybrid Timeseries Numeric Arrays
+In `TimeseriesUtils.ts`, Pinot parses time-series values from broker payloads that return either native JSON arrays, escaped strings, or mixed null values.
+```typescript
 const parseArray = (data: any): number[] => {
   if (Array.isArray(data)) {
     return data.map(v => v == null ? null as any : (typeof v === 'number' ? v : parseFloat(String(v))));
@@ -1299,987 +470,131 @@ const parseArray = (data: any): number[] => {
   }
   return [];
 };
-
-/**
- * Calculate statistics for a metric series
- */
-export const calculateMetricStats = (dataPoints: ChartDataPoint[]): MetricStats => {
-  if (dataPoints.length === 0) {
-    return {
-      min: NaN,
-      max: NaN,
-      avg: NaN,
-      sum: NaN,
-      count: 0,
-      firstValue: NaN,
-      lastValue: NaN
-    };
-  }
-
-  // Filter out null/undefined values and check if we have any valid values
-  const validValues = dataPoints
-    .map(dp => dp.value)
-    .filter(val => val !== null && val !== undefined && !isNaN(val));
-
-  if (validValues.length === 0) {
-    return {
-      min: NaN,
-      max: NaN,
-      avg: NaN,
-      sum: NaN,
-      count: 0,
-      firstValue: NaN,
-      lastValue: NaN
-    };
-  }
-
-  const sum = validValues.reduce((acc, val) => acc + val, 0);
-  const avg = sum / validValues.length;
-  const min = Math.min(...validValues);
-  const max = Math.max(...validValues);
-
-  // Find first and last valid values
-  const firstValidIndex = dataPoints.findIndex(dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value));
-  const lastValidIndex = dataPoints.length - 1 - dataPoints.slice().reverse().findIndex(dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value));
-
-  const firstValue = firstValidIndex >= 0 ? dataPoints[firstValidIndex].value : NaN;
-  const lastValue = lastValidIndex >= 0 ? dataPoints[lastValidIndex].value : NaN;
-
-  return {
-    min,
-    max,
-    avg,
-    sum,
-    count: validValues.length,
-    firstValue,
-    lastValue
-  };
-};
-
-/**
- * Format series name from metric labels
- */
-export const formatSeriesName = (metric: Record<string, string>): string => {
-  if (!metric || Object.keys(metric).length === 0) {
-    return 'Unknown Metric';
-  }
-
-  // Try to find a meaningful name from common label patterns
-  const name = metric.__name__ || metric.name || metric.metric || metric.job || metric.instance;
-
-  if (name) {
-    // Add additional context if available, but exclude the main metric name
-    const additionalLabels = Object.entries(metric)
-      .filter(([key]) => !['__name__', 'name', 'metric', 'job', 'instance'].includes(key))
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(', ');
-
-    // Return just the name without the {} wrapper
-    return name;
-  }
-
-  // Fallback to just the first label without {}
-  const firstLabel = Object.entries(metric)[0];
-  return firstLabel ? firstLabel[0] : 'Unknown Metric';
-};
-
-/**
- * Check if response is in Broker compatible format
- */
-export const isBrokerFormat = (response: any): boolean => {
-  return response?.resultTable?.dataSchema && Array.isArray(response.resultTable.rows);
-};
-
-/**
- * Get time range from data points
- */
-export const getTimeRange = (dataPoints: ChartDataPoint[]): { start: number; end: number } => {
-  if (dataPoints.length === 0) {
-    return { start: 0, end: 0 };
-  }
-
-  const timestamps = dataPoints.map(dp => dp.timestamp);
-  return {
-    start: Math.min(...timestamps),
-    end: Math.max(...timestamps)
-  };
-};
-
 ```
-
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/TimezoneUtils.ts`
+Timestamp normalization must handle millisecond vs second boundaries without overflowing:
+```typescript
+const tsSeconds = ts > 1e12 ? Math.floor(ts / 1000) : ts;
+const timestamp = tsSeconds * 1000;
 ```
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import moment from 'moment';
-import 'moment-timezone';
-
-// Default timezone fallback (single source of truth)
-export const DEFAULT_TIMEZONE_FALLBACK = 'UTC';
-// Default timezone
-export const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_TIMEZONE_FALLBACK;
-
-// Standardized timezones using 3-letter zone IDs with location information
-// Each timezone has only one representation, sorted by UTC offset
-export const STANDARD_TIMEZONES = [
-  // UTC-12 to UTC-1
-  { value: 'BIT(Pacific/Baker)', label: 'BIT (UTC-12)' },
-  { value: 'SST(Pacific/Samoa)', label: 'SST (UTC-11)' },
-  { value: 'HST(Pacific/Honolulu)', label: 'HST (UTC-10)' },
-  { value: 'HAST(America/Adak)', label: 'HAST (UTC-10)' },
-  { value: 'AKST(America/Anchorage)', label: 'AKST (UTC-9)' },
-  { value: 'HADT(America/Adak)', label: 'HADT (UTC-9)' },
-  { value: 'PST(America/Los_Angeles)', label: 'PST (UTC-8)' },
-  { value: 'AKDT(America/Anchorage)', label: 'AKDT (UTC-8)' },
-  { value: 'MST(America/Denver)', label: 'MST (UTC-7)' },
-  { value: 'PDT(America/Los_Angeles)', label: 'PDT (UTC-7)' },
-  { value: 'CST(America/Chicago)', label: 'CST (UTC-6)' },
-  { value: 'MDT(America/Denver)', label: 'MDT (UTC-6)' },
-  { value: 'EST(America/New_York)', label: 'EST (UTC-5)' },
-  { value: 'CDT(America/Chicago)', label: 'CDT (UTC-5)' },
-  { value: 'COT(America/Bogota)', label: 'COT (UTC-5)' },
-  { value: 'PET(America/Lima)', label: 'PET (UTC-5)' },
-  { value: 'AST(America/Puerto_Rico)', label: 'AST (UTC-4)' },
-  { value: 'EDT(America/New_York)', label: 'EDT (UTC-4)' },
-  { value: 'VET(America/Caracas)', label: 'VET (UTC-4)' },
-  { value: 'BOT(America/La_Paz)', label: 'BOT (UTC-4)' },
-  { value: 'ART(America/Argentina/Buenos_Aires)', label: 'ART (UTC-3)' },
-  { value: 'BRT(America/Sao_Paulo)', label: 'BRT (UTC-3)' },
-  { value: 'UYT(America/Montevideo)', label: 'UYT (UTC-3)' },
-  { value: 'GFT(America/Cayenne)', label: 'GFT (UTC-3)' },
-  { value: 'FNT(America/Noronha)', label: 'FNT (UTC-2)' },
-  { value: 'AZOT(Atlantic/Azores)', label: 'AZOT (UTC-1)' },
-  { value: 'CVT(Atlantic/Cape_Verde)', label: 'CVT (UTC-1)' },
-
-  // UTC+0
-  { value: 'UTC', label: 'UTC (UTC+0)' },
-  { value: 'GMT', label: 'GMT (UTC+0)' },
-  { value: 'WET(Europe/London)', label: 'WET (UTC+0)' },
-
-  // UTC+1 to UTC+3
-  { value: 'CET(Europe/Paris)', label: 'CET (UTC+1)' },
-  { value: 'WEST(Europe/London)', label: 'WEST (UTC+1)' },
-  { value: 'BST(Europe/London)', label: 'BST (UTC+1)' },
-  { value: 'WAT(Africa/Lagos)', label: 'WAT (UTC+1)' },
-  { value: 'CAT(Africa/Harare)', label: 'CAT (UTC+2)' },
-  { value: 'CEST(Europe/Paris)', label: 'CEST (UTC+2)' },
-  { value: 'EET(Europe/Athens)', label: 'EET (UTC+2)' },
-  { value: 'SAST(Africa/Johannesburg)', label: 'SAST (UTC+2)' },
-  { value: 'IST(Asia/Jerusalem)', label: 'IST (UTC+2)' },
-  { value: 'EAT(Africa/Nairobi)', label: 'EAT (UTC+3)' },
-  { value: 'EEST(Europe/Athens)', label: 'EEST (UTC+3)' },
-  { value: 'MSK(Europe/Moscow)', label: 'MSK (UTC+3)' },
-  { value: 'AST(Asia/Riyadh)', label: 'AST (UTC+3)' },
-
-  // UTC+4 to UTC+6
-  { value: 'GST(Asia/Dubai)', label: 'GST (UTC+4)' },
-  { value: 'AMT(Asia/Yerevan)', label: 'AMT (UTC+4)' },
-  { value: 'AZT(Asia/Baku)', label: 'AZT (UTC+4)' },
-  { value: 'PKT(Asia/Karachi)', label: 'PKT (UTC+5)' },
-  { value: 'UZT(Asia/Tashkent)', label: 'UZT (UTC+5)' },
-  { value: 'YEKT(Asia/Yekaterinburg)', label: 'YEKT (UTC+5)' },
-  { value: 'IST(Asia/Kolkata)', label: 'IST (UTC+5:30)' },
-  { value: 'NPT(Asia/Kathmandu)', label: 'NPT (UTC+5:45)' },
-  { value: 'BST(Asia/Dhaka)', label: 'BST (UTC+6)' },
-  { value: 'BDT(Asia/Dhaka)', label: 'BDT (UTC+6)' },
-  { value: 'BTT(Asia/Thimphu)', label: 'BTT (UTC+6)' },
-
-  // UTC+7 to UTC+9
-  { value: 'ICT(Asia/Bangkok)', label: 'ICT (UTC+7)' },
-  { value: 'WIB(Asia/Jakarta)', label: 'WIB (UTC+7)' },
-  { value: 'KRAT(Asia/Krasnoyarsk)', label: 'KRAT (UTC+7)' },
-  { value: 'CST(Asia/Shanghai)', label: 'CST (UTC+8)' },
-  { value: 'SGT(Asia/Singapore)', label: 'SGT (UTC+8)' },
-  { value: 'HKT(Asia/Hong_Kong)', label: 'HKT (UTC+8)' },
-  { value: 'MYT(Asia/Kuala_Lumpur)', label: 'MYT (UTC+8)' },
-  { value: 'WITA(Asia/Makassar)', label: 'WITA (UTC+8)' },
-  { value: 'IRKT(Asia/Irkutsk)', label: 'IRKT (UTC+8)' },
-  { value: 'JST(Asia/Tokyo)', label: 'JST (UTC+9)' },
-  { value: 'KST(Asia/Seoul)', label: 'KST (UTC+9)' },
-  { value: 'WIT(Asia/Jayapura)', label: 'WIT (UTC+9)' },
-  { value: 'YAKT(Asia/Yakutsk)', label: 'YAKT (UTC+9)' },
-
-  // UTC+9:30 to UTC+12
-  { value: 'ACST(Australia/Adelaide)', label: 'ACST (UTC+9:30)' },
-  { value: 'AEST(Australia/Sydney)', label: 'AEST (UTC+10)' },
-  { value: 'AEDT(Australia/Sydney)', label: 'AEDT (UTC+11)' },
-  { value: 'SBT(Pacific/Guadalcanal)', label: 'SBT (UTC+11)' },
-  { value: 'NCT(Pacific/Noumea)', label: 'NCT (UTC+11)' },
-  { value: 'VUT(Pacific/Efate)', label: 'VUT (UTC+11)' },
-  { value: 'NZST(Pacific/Auckland)', label: 'NZST (UTC+12)' },
-  { value: 'FJT(Pacific/Fiji)', label: 'FJT (UTC+12)' },
-  { value: 'TVT(Pacific/Funafuti)', label: 'TVT (UTC+12)' },
-  { value: 'NZDT(Pacific/Auckland)', label: 'NZDT (UTC+13)' },
-  { value: 'TOT(Pacific/Tongatapu)', label: 'TOT (UTC+13)' },
-  { value: 'LINT(Pacific/Kiritimati)', label: 'LINT (UTC+14)' },
-];
-
-// Legacy support - map common location-based timezones to standardized format
-const TIMEZONE_MAPPING: Record<string, string> = {
-  // US Timezones
-  'America/New_York': 'EST(America/New_York)',
-  'America/Chicago': 'CST(America/Chicago)',
-  'America/Denver': 'MST(America/Denver)',
-  'America/Los_Angeles': 'PST(America/Los_Angeles)',
-  'America/Anchorage': 'AKST(America/Anchorage)',
-  'America/Adak': 'HAST(America/Adak)',
-  'Pacific/Honolulu': 'HST(Pacific/Honolulu)',
-  'America/Puerto_Rico': 'AST(America/Puerto_Rico)',
-
-  // South American Timezones
-  'America/Sao_Paulo': 'BRT(America/Sao_Paulo)',
-  'America/Noronha': 'FNT(America/Noronha)',
-  'America/Argentina/Buenos_Aires': 'ART(America/Argentina/Buenos_Aires)',
-  'America/Montevideo': 'UYT(America/Montevideo)',
-  'America/Cayenne': 'GFT(America/Cayenne)',
-  'America/Bogota': 'COT(America/Bogota)',
-  'America/Lima': 'PET(America/Lima)',
-  'America/Caracas': 'VET(America/Caracas)',
-  'America/La_Paz': 'BOT(America/La_Paz)',
-
-  // Atlantic Timezones
-  'Atlantic/Azores': 'AZOT(Atlantic/Azores)',
-  'Atlantic/Cape_Verde': 'CVT(Atlantic/Cape_Verde)',
-
-  // African Timezones
-  'Africa/Lagos': 'WAT(Africa/Lagos)',
-  'Africa/Harare': 'CAT(Africa/Harare)',
-  'Africa/Johannesburg': 'SAST(Africa/Johannesburg)',
-  'Africa/Nairobi': 'EAT(Africa/Nairobi)',
-
-  // European Timezones
-  'Europe/London': 'WET(Europe/London)',
-  'Europe/Paris': 'CET(Europe/Paris)',
-  'Europe/Berlin': 'CET(Europe/Paris)',
-  'Europe/Athens': 'EET(Europe/Athens)',
-  'Europe/Moscow': 'MSK(Europe/Moscow)',
-
-  // Middle Eastern Timezones
-  'Asia/Jerusalem': 'IST(Asia/Jerusalem)',
-  'Asia/Riyadh': 'AST(Asia/Riyadh)',
-  'Asia/Dubai': 'GST(Asia/Dubai)',
-
-  // Central Asian Timezones
-  'Asia/Yerevan': 'AMT(Asia/Yerevan)',
-  'Asia/Baku': 'AZT(Asia/Baku)',
-  'Asia/Karachi': 'PKT(Asia/Karachi)',
-  'Asia/Tashkent': 'UZT(Asia/Tashkent)',
-  'Asia/Yekaterinburg': 'YEKT(Asia/Yekaterinburg)',
-  'Asia/Kolkata': 'IST(Asia/Kolkata)',
-  'Asia/Kathmandu': 'NPT(Asia/Kathmandu)',
-  'Asia/Dhaka': 'BDT(Asia/Dhaka)',
-  'Asia/Thimphu': 'BTT(Asia/Thimphu)',
-
-  // Southeast Asian Timezones
-  'Asia/Bangkok': 'ICT(Asia/Bangkok)',
-  'Asia/Jakarta': 'WIB(Asia/Jakarta)',
-  'Asia/Makassar': 'WITA(Asia/Makassar)',
-  'Asia/Jayapura': 'WIT(Asia/Jayapura)',
-  'Asia/Krasnoyarsk': 'KRAT(Asia/Krasnoyarsk)',
-  'Asia/Irkutsk': 'IRKT(Asia/Irkutsk)',
-  'Asia/Yakutsk': 'YAKT(Asia/Yakutsk)',
-
-  // East Asian Timezones
-  'Asia/Shanghai': 'CST(Asia/Shanghai)',
-  'Asia/Singapore': 'SGT(Asia/Singapore)',
-  'Asia/Hong_Kong': 'HKT(Asia/Hong_Kong)',
-  'Asia/Kuala_Lumpur': 'MYT(Asia/Kuala_Lumpur)',
-  'Asia/Tokyo': 'JST(Asia/Tokyo)',
-  'Asia/Seoul': 'KST(Asia/Seoul)',
-
-  // Pacific Timezones
-  'Pacific/Baker': 'BIT(Pacific/Baker)',
-  'Pacific/Samoa': 'SST(Pacific/Samoa)',
-  'Pacific/Guadalcanal': 'SBT(Pacific/Guadalcanal)',
-  'Pacific/Noumea': 'NCT(Pacific/Noumea)',
-  'Pacific/Efate': 'VUT(Pacific/Efate)',
-  'Pacific/Auckland': 'NZST(Pacific/Auckland)',
-  'Pacific/Fiji': 'FJT(Pacific/Fiji)',
-  'Pacific/Funafuti': 'TVT(Pacific/Funafuti)',
-  'Pacific/Tongatapu': 'TOT(Pacific/Tongatapu)',
-  'Pacific/Kiritimati': 'LINT(Pacific/Kiritimati)',
-
-  // Australian Timezones
-  'Australia/Sydney': 'AEST(Australia/Sydney)',
-  'Australia/Adelaide': 'ACST(Australia/Adelaide)',
-  'Australia/Perth': 'CST(Asia/Shanghai)',
-
-  // Common Timezone Abbreviations
-  'EST': 'EST(America/New_York)',
-  'CST': 'CST(America/Chicago)',
-  'MST': 'MST(America/Denver)',
-  'PST': 'PST(America/Los_Angeles)',
-  'EDT': 'EDT(America/New_York)',
-  'CDT': 'CDT(America/Chicago)',
-  'MDT': 'MDT(America/Denver)',
-  'PDT': 'PDT(America/Los_Angeles)',
-  'AKST': 'AKST(America/Anchorage)',
-  'AKDT': 'AKDT(America/Anchorage)',
-  'HAST': 'HAST(America/Adak)',
-  'HADT': 'HADT(America/Adak)',
-  'HST': 'HST(Pacific/Honolulu)',
-  'SST': 'SST(Pacific/Samoa)',
-  'AST': 'AST(America/Puerto_Rico)',
-  'WET': 'WET(Europe/London)',
-  'WEST': 'WEST(Europe/London)',
-  'BST': 'BST(Europ
-```
-
-### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/Utils.tsx`
-```
-/* eslint-disable no-nested-ternary */
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-import React from 'react';
-import ReactDiffViewer, {DiffMethod} from 'react-diff-viewer';
-import { map, isEqual, findIndex, findLast } from 'lodash';
-import app_state from '../app_state';
-import {
-  DISPLAY_SEGMENT_STATUS, InstanceType,
-  MapRecord,
-  PinotTableDetails,
-  SEGMENT_STATUS,
-  SegmentStatus,
-  TableData,
-} from 'Models';
-import Loading from '../components/Loading';
-import moment from "moment";
-import {RebalanceServerOption} from "../components/Homepage/Operations/RebalanceServer/RebalanceServerOptions";
-import { formatTimeInTimezone } from './TimezoneUtils';
-
-const getRebalanceConfigValue = (
-    rebalanceConfig: { [optionName: string]: string | boolean | number },
-    option: RebalanceServerOption
-) => {
-  return (
-      Object.keys(rebalanceConfig).includes(option.name) ? rebalanceConfig[option.name] : option.defaultValue
-  );
-}
-
-const sortArray = function (sortingArr, keyName, ascendingFlag) {
-  if (ascendingFlag) {
-    return sortingArr.sort(function (a, b) {
-      if (a[keyName] < b[keyName]) {
-        return -1;
-      }
-      if (a[keyName] > b[keyName]) {
-        return 1;
-      }
-      return 0;
-    });
-  }
-  return sortingArr.sort(function (a, b) {
-    if (b[keyName] < a[keyName]) {
-      return -1;
-    }
-    if (b[keyName] > a[keyName]) {
-      return 1;
-    }
-    return 0;
-  });
-};
-
-const pinotTableDetailsFormat = (tableDetails: PinotTableDetails): Array<string | number | boolean | SegmentStatus | { customRenderer: JSX.Element }> => {
-  return [
-    tableDetails.name,
-    tableDetails.estimated_size || Loading,
-    tableDetails.reported_size || Loading,
-    tableDetails.number_of_segments || Loading,
-    tableDetails.segment_status || Loading
-  ];
-}
-
-const pinotTableDetailsFromArray = (tableDetails: Array<string | number | boolean | MapRecord | SegmentStatus | { customRenderer: JSX.Element }>): PinotTableDetails => {
-  return {
-    name: tableDetails[0] as string,
-    estimated_size: tableDetails[1] as string,
-    reported_size: tableDetails[2] as string,
-    number_of_segments: tableDetails[3] as string,
-    segment_status: tableDetails[4] as any
-  };
-}
-
-const tableFormat = (data: TableData, withColumnNameSeparator: boolean = true): Array<{ [key: string]: any }> => {
-  const rows = data.records;
-  const header = data.columns;
-
-  const results: Array<{ [key: string]: any }> = [];
-  rows.forEach((singleRow) => {
-    const obj: { [key: string]: any } = {};
-    singleRow.forEach((val: any, index: number) => {
-      // The column name separator is added to avoid conflicts where 2 columns
-      // have the same name. But for cases where we download the raw data, we
-      // do not want the separate there.
-      if (withColumnNameSeparator) {
-        obj[header[index] + app_state.columnNameSeparator + index] = val;
-      } else {
-        obj[header[index]] = val;
-      }
-    });
-    results.push(obj);
-  });
-  return results;
-};
-
-const getSegmentStatus = (idealStateObj, externalViewObj) => {
-  const tableStatus = getDisplayTableStatus(idealStateObj, externalViewObj);
-  const statusMismatchDiffComponent = (
-    <ReactDiffViewer
-      oldValue={JSON.stringify(idealStateObj, null, 2)}
-      newValue={JSON.stringify(externalViewObj, null, 2)}
-      splitView={true}
-      showDiffOnly={true}
-      leftTitle={"Ideal State"}
-      rightTitle={"External View"}
-      compareMethod={DiffMethod.WORDS}
-    />
-  );
-
-  if(tableStatus === DISPLAY_SEGMENT_STATUS.BAD) {
-    return ({
-      value: tableStatus,
-      tooltip: "One or more segments in this table are in bad state. Click the status to view more details.",
-      component: statusMismatchDiffComponent,
-    })
-  }
-
-  if(tableStatus === DISPLAY_SEGMENT_STATUS.UPDATING) {
-    return ({
-      value: tableStatus,
-      tooltip: "One or more segments in this table are in updating state. Click the status to view more details.",
-      component: statusMismatchDiffComponent,
-    })
-  }
-
-  return ({
-    value: tableStatus,
-    tooltip: "All segments in this table are in good state.",
-  });
-};
-
-const findNestedObj = (entireObj, keyToFind, valToFind) => {
-  let foundObj;
-  JSON.stringify(entireObj, (a, nestedValue) => {
-    if (nestedValue && nestedValue[keyToFind] === valToFind) {
-      foundObj = nestedValue;
-    }
-    return nestedValue;
-  });
-  return foundObj;
-};
-
-const generateCodeMirrorOptions = (array, type, modeType?) => {
-  const arr = [];
-  // eslint-disable-next-line no-shadow
-  const nestedFields = (arrayList, type, level, oldObj?) => {
-    map(arrayList, (a) => {
-      const obj = {
-        text: a.displayName || a.name || a,
-        displayText: a.displayName || a.name || a,
-        filterText: oldObj
-          ? `${oldObj.filterText}.${a.displayName || a.name || a}`
-          : a.displayName || a.name || a,
-        render: (el, cm, data) => {},
-        className:
-          type === 'FUNCTION'
-            ? 'codemirror-func'
-            : type === 'SQL'
-              ? 'codemirror-sql'
-              : type === 'BINARY-OPERATORS'
-                ? 'codemirror-Operators'
-                : type === 'TABLE'
-                  ? 'codemirror-table'
-                  : 'codemirror-column'
-      };
-      obj[type === 'FUNCTION' ? 'returnType' : 'type'] =
-        type === 'FUNCTION'
-          ? a.returnType
-          : type === 'SQL'
-            ? 'SQL'
-            : type === 'BINARY-OPERATORS'
-              ? 'Binary Operators'
-              : a.type;
-      obj.render = (el, cm, data) => {
-        codeMirrorOptionsTemplate(el, data);
-      };
-
-      if (oldObj === undefined) {
-        arr.push(obj);
-      } else {
-        const index = findIndex(
-          arr,
-          (n) => n.filterText === oldObj.filterText
-        );
-        if (index !== -1) {
-          const name = obj.displayText;
-          if (modeType === 'sql') {
-            obj.displayText = `${oldObj.displayText}.${name}`;
-            obj.text = `${oldObj.text}.${name}`;
-          } else {
-            obj.displayText = name;
-            obj.text = name;
-          }
-          obj.filterText = `${oldObj.text}.${name}`;
-          if (arr[index].fields) {
-            arr[index].fields.push(obj);
-          } else {
-            arr[index].fields = [];
-            arr[index].fields.push(obj);
-          }
-        } else {
-          const indexPath = getNestedObjPathFromList(arr, oldObj);
-          if (indexPath && indexPath.length) {
-            pushNestedObjectInArray(indexPath, obj, arr, modeType);
-          }
-        }
-      }
-      if (a.fields) {
-        nestedFields(a.fields, type, level + 1, obj);
-      }
-    });
-    return arr;
-  };
-  return nestedFields(array, type, 0);
-};
-
-const pushNestedObjectInArray = (pathArr, obj, targetList, modeType) => {
-  const rollOverFields = (target) => {
-    map(target, (list) => {
-      if (pathArr === list.filterText) {
-        if (modeType === 'sql') {
-          obj.displayText = `${pathArr}.${obj.displayText}`;
-          obj.text = `${pathArr}.${obj.text}`;
-        } else {
-          obj.displayText = obj.displayText;
-          obj.text = obj.text;
-        }
-        obj.filterText = `${pathArr}.${obj.text}`;
-        if (list.fields) {
-          list.fields.push(obj);
-        } else {
-          list.fields = [];
-          list.fields.push(obj);
-        }
-      } else if (list.fields) {
-        rollOverFields(list.fields);
-      }
-    });
-  };
-  rollOverFields(targetList);
-};
-
-const getNestedObjPathFromList = (list, obj) => {
-  const str = [];
-  const recursiveFunc = (arr, level) => {
-    map(arr, (a) => {
-      if (a.fields) {
-        str.push(a.filterText);
-        recursiveFunc(a.fields, level + 1);
-      } else if (obj.filterText === a.filterText) {
-        str.push(a.filterText);
-      }
-    });
-    return findLast(str);
-  };
-  return recursiveFunc(list, 0);
-};
-
-const codeMirrorOptionsTemplate = (el, data) => {
-  const text = document.createElement('div');
-  const fNameSpan = document.createElement('span');
-  fNameSpan.setAttribute('class', 'funcText');
-  fNameSpan.innerHTML = data.displayText;
-
-  text.appendChild(fNameSpan);
-  el.appendChild(text);
-
-  // data.returnType is for UDF Function ||  data.type is for Fields
-  if (data.returnType || data.type) {
-    const returnTypetxt = document.createElement('div');
-    returnTypetxt.setAttribute('class', 'fieldText');
-    const content = data.returnType
-      ? `Return Type: ${data.returnType}`
-      : `Type: ${data.type}`;
-    returnTypetxt.innerHTML = content;
-    el.appendChild(returnTypetxt);
-  }
-};
-
-const serialize = (obj: any, prefix?: any) => {
-  let str = [], p;
-  for (p in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, p)) {
-      var k = prefix ? prefix + "[" + p + "]" : p,
-        v = obj[p];
-      str.push((v !== null && typeof v === "object") ?
-        serialize(v, k) :
-        encodeURIComponent(k) + "=" + encodeURIComponent(v));
-    }
-  }
-  return str.join("&");
-};
-
-const navigateToPreviousPage = (location, popTwice) => {
-  const hasharr = location.pathname.split('/');
-  hasharr.pop();
-  if(popTwice){
-    hasharr.pop();
-  }
-  return hasharr.join('/');
-};
-
-const syncTableSchemaData = (data, showFieldType) => {
-  const dimensionFields = data.dimensionF
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20159** (2026-11-05): **Allow zero system activities CPU time in query killing tests**
-  *Symptoms*: QueryKillingIntegrationTest can fail when offlineSystemActivitiesCpuTimeNs is zero, even though InstanceResponseOperator explicitly clamps this estimate of unaccounted wall time to zero. Allow nonnegative values in both resource usage tests, retaining the positive measured CPU/memory checks and total consistency assertions.  Observed in [this CI failure](https://github.com/apache/pinot/actions/runs/41926793312/job/126913552944?pr=20154).  Validation: all 7 QueryKillingIntegrationTest tests passed on current master with the CI lane settings (2 active processors, 1 GB initial heap, 4 GB maximum heap), with compiler warnings enabled. Spotless, Checkstyle, and license checks passed. An initial run using default local JVM settings exhausted the heap in the existing CPU-killing scenario before reaching the changed assertion. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20159?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.37%. Comparing base ([`091eac7`](https://app.codecov.io/gh/apache/pinot/commit/091eac79529cfe0499bce1e498259dedc858bd9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`6f84678`](https://app.codecov.io/gh/apache/pinot/commit/6f84678aa5b5448183f14c40ea5f6aa643c58564?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20159      +/-   ## ================================
-
-- **Issue #20154** (2026-11-05): **Fix HyperLogLogPlus max byte size and reject sp above 25**
-  *Symptoms*: ## Summary `HyperLogLogPlusUtils.byteSize(p, sp)` returned `sizeof() + 12` as the serialized size of a stream-lib `HyperLogLogPlus`, which matches neither serialized format: - **Normal format** (`sp == 0`): the header is a 4-byte version plus varints of `p`, `sp`, the format flag and the register set size, so the real size is 3 bytes smaller (10933 vs 10936 for `p = 14`). Ingestion aggregation stores the sketch in a `FixedByteSVMutableForwardIndex` whose `setBytes` requires the value length to equal the fixed width, so HLL++ ingestion aggregation failed on the first row. - **Sparse format** (`sp > 0`): the size grows with the sparse set until it converts to the normal format at `0.75 * 2^p` entries, and is unrelated to `sizeof()`. For `p = 14, sp = 25`, 5000 values already serialize to 11412 bytes, above the reported 10936. The star-tree passes this size as the max entry length of the raw forward index, which the V2/V3 writers use to allocate their chunk buffer.  Changes: - Rename `byteSize(int, int)` to `maxByteSize(int, int)` and make it a true upper bound: the exact normal-format size for `sp == 0`, and the largest sparse sketch (one varint of up to 5 bytes per entry, up to the conversion threshold) for `sp > 0`. - Remove the unused `byteSize(HyperLogLogPlus)`. stream-lib does not expose `sp` or the format, so an accurate per-value size would require serializing the sketch. - For serialized HLL++ inputs, bound the max aggregated value size by the `maxByteSize` of the `p` a
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `684b7a4a` (2026-11-05)
-**Commit Message**: Add metric for local realtime segment builds with CRC mismatch (#19450)
-
-* Add metric for CRC-driven segment replacements
-
-Expose table-level observability for replicas that replace a segment after a confirmed CRC mismatch. Count only successful replacements so failed downloads and CRC read errors do not inflate the signal.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-# Conflicts:
-#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java
-#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java
-
-* Count CRC-driven replacements on the reloadSegment path
-
-reloadSegment can download and replace a segment after a CRC mismatch
-without going through replaceSegmentIfCrcMismatch, so the metric was
-missing those successful replacements. Same-CRC force downloads and
-failed reloads remain excluded.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-# Conflicts:
-#	pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java
-
-* Count confirmed CRC mismatches on locally built realtime segments
-
-Rename the meter to SEGMENT_BUILD_WITH_CRC_MISMATCH and emit it when a
-local build diverges from the com
-
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java` (modified, +1/-0)
-```diff
-@@ -103,6 +103,7 @@ public enum ServerMeter implements AbstractMetrics.Meter {
-   SEGMENT_DOWNLOAD_FAILURES("segments", false),
-   SEGMENT_DOWNLOAD_FROM_REMOTE_FAILURES("segments", false),
-   SEGMENT_DOWNLOAD_FROM_PEERS_FAILURES("segments", false),
-+  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
-   SEGMENT_BUILD_FAILURE("segments", false),
-   SEGMENT_UPLOAD_FAILURE("segments", false),
-   SEGMENT_UPLOAD_SUCCESS("segments", false),
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManager.java` (modified, +24/-17)
-```diff
-@@ -40,6 +40,7 @@
- import java.util.concurrent.locks.Lock;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
-+import org.apache.commons.configuration2.ex.ConfigurationException;
- import org.apache.commons.io.FileUtils;
- import org.apache.commons.lang3.StringUtils;
- import org.apache.pinot.common.Utils;
-@@ -1410,12 +1411,15 @@ protected boolean buildSegmentAndReplace()
-   ///
-   /// A locally-built segment can diverge in CRC from the one the winning replica committed (e.g. different docId
-   /// ordering); swapping in a divergent copy corrupts upsert metadata and leaves replicas inconsistent otherwise. So
--  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build (returns `false`) and the
-+  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build and the
-   /// caller downloads the committed segment. Skipped for pauseless tables and segments whose CRC is not yet set (the
-   /// COMMITTING window), so we never download a not-yet-uploaded segment (see PR #17885).
-   ///
-+  /// Confirmed CRC mismatches are counted via {@link ServerMeter#SEGMENT_BUILD_WITH_CRC_MISMATCH} regardless of
-+  /// whether the caller's download fallback succeeds. Build failures and CRC-read errors are not counted.
-+  ///
-   /// @param committedSegmentZKMetadata committed ZK metadata carrying the CRC, or `null` to skip the check
--  /// @return `true` if built and replaced locally; `false` if the build failed or was rejected on a CRC mismatch
-+  /// @return `true` if the consuming segment was replaced with the local copy; `false` if the caller should download
-   protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSegmentZKMetadata)
-       throws Exception {
-     SegmentBuildDescriptor descriptor;
-@@ -1429,30 +1433,33 @@ protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSe
-     }
-     boolean crcCheckEnabled = committedSegmentZKMetadata != null && committedSegmentZKMetadata.getCrc() >= 0
-         && !PauselessConsumptionUtils.isPauselessEnabled(_tableConfig);
--    if (crcCheckEnabled && !isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
--      _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
--          + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
--      return false;
-+    if (crcCheckEnabled) {
-+      try {
-+        if (!isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
-+          _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
-+              + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
-+          _serverMetrics.addMeteredTableValue(_tableNameWithType, ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH, 1);
-+          return false;
-+        }
-+      } catch (Exception e) {
-+        _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as a build failure to download "
-+            + "the committed segment", _segmentNameStr, e);
-+        return false;
-+      }
-     }
-     // On a CRC match use the committed metadata; otherwise the construction-time metadata.
-     _realtimeTableDataManager.replaceConsumingSegment(_segmentNameStr,
-         crcCheckEnabled ? committedSegmentZKMetadata : _segmentZKMetadata);
-     return true;
-   }
- 
--  /// Whether the just-built local segment's CRC matches the committed CRC in ZK. Returns `false` if the local metadata
--  /// cannot be read, so the caller downloads the committed segment rather than failing the transition.
-+  /// Whether the just-built local segment's CRC matches the committed CRC in ZK.
-   @VisibleForTesting
--  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata) {
-+  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata)
-+      throws IOException, ConfigurationException {
-     File indexDir = new File(_resourceDataDir, _segmentNameStr);
--    try {
--      SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
--      return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
--    } catch (Exception e) {
--      _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as CRC mismatch to download the "
--          + "committed segment", _segmentNameStr, e);
--      return false;
--    }
-+    SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
-+    return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
-   }
- 
-   /// Closes the stream consumer so that no more data can be consumed into this segment. Does NOT release the consumer
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +18/-0)
-```diff
-@@ -939,6 +939,24 @@ public void testReplaceSegmentNoop()
-     assertFalse(tableDataManager.getSegmentDataDir(segmentName).exists());
-   }
- 
-+  @Test
-+  public void testReplaceSegmentSkippedWhenCrcCheckDisabled()
-+      throws Exception {
-+    SegmentZKMetadata zkMetadata = createRawSegment(SegmentVersion.v3, 5);
-+    InstanceDataManagerConfig instanceDataManagerConfig = createDefaultInstanceDataManagerConfig();
-+    when(instanceDataManagerConfig.shouldCheckCRCOnSegmentLoad()).thenReturn(false);
-+
-+    BaseTableDataManager tableDataManager = createTableManager(instanceDataManagerConfig);
-+    File indexDir = createSegment(SegmentVersion.v3, 3);
-+    tableDataManager.addNewOnlineSegment(zkMetadata, new IndexLoadingConfig());
-+    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
-+
-+    ImmutableSegmentDataManager segmentDataManager = createImmutableSegmentDataManager(SEGMENT_NAME, 0);
-+    tableDataManager.replaceSegmentIfCrcMismatch(segmentDataManager, zkMetadata, new IndexLoadingConfig());
-+    // CRC check disabled: local copy is kept even though CRCs differ.
-+    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
-+  }
-+
-   @Test
-   public void testReplaceSegmentNewDataWithAsyncSegmentRefresh()
-       throws Exception {
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java` (modified, +152/-29)
-```diff
-@@ -37,6 +37,7 @@
- import java.util.function.BooleanSupplier;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
-+import org.apache.commons.configuration2.ex.ConfigurationException;
- import org.apache.commons.io.FileUtils;
- import org.apache.helix.HelixManager;
- import org.apache.pinot.common.metadata.segment.SegmentZKMetadata;
-@@ -102,6 +103,9 @@
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
- import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertFalse;
-+import static org.testng.Assert.assertThrows;
-+import static org.testng.Assert.assertTrue;
- 
- 
- // TODO Re-write this test using the stream abstraction
-@@ -778,14 +782,18 @@ public void testOnlineTransitionAfterStop()
-     }
- 
-     // Test downloadAndReplace is called after buildAndReplace fails.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics buildFailureServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, buildFailureServerMetrics)) {
-       segmentDataManager._failSegmentBuildAndReplace = true;
-       segmentDataManager._stopWaitTimeMs = 0;
-       segmentDataManager._state.set(segmentDataManager, RealtimeSegmentDataManager.State.HOLDING);
-       segmentDataManager.setCurrentOffset(finalOffsetValue);
-       segmentDataManager.goOnlineFromConsuming(metadata);
-       Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
-       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
-+      verify(buildFailureServerMetrics, never())
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-     }
-   }
- 
-@@ -892,11 +900,15 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
-     long finalOffsetValue = START_OFFSET_VALUE + 600;
- 
-     // Upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics crcMismatchServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, crcMismatchServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
-       runGoOnlineForCrcGuard(segmentDataManager, crcMetadata(finalOffsetValue, 12345L), false, finalOffsetValue);
--      Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
--      Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
-+      assertTrue(segmentDataManager._buildAndReplaceCalled);
-+      assertTrue(segmentDataManager._downloadAndReplaceCalled);
-+      verify(crcMismatchServerMetrics)
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-     }
- 
-     // Non-upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
-@@ -908,51 +920,175 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
-     }
- 
-     // Upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics matchingUpsertServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingUpsertServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
-       SegmentZKMetadata committedMetadata = crcMetadata(finalOffsetValue, 12345L);
-       runGoOnlineForCrcGuard(segmentDataManager, committedMetadata, true, finalOffsetValue);
-       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
-       Assert.assertFalse(segmentDataManager._downloadAndReplaceCalled);
-+      verify(matchingUpsertServerMetrics, never())
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-       verify(segmentDataManager._tableDataManager)
-           .replaceConsumingSegment(eq(SEGMENT_NAME_STR), same(committedMetadata));
-     }
- 
-     // Non-upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics matchingNonUpsertServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingNonUpsertServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(false);
-       SegmentZKMetadata committedMetadata = 
-```
-
-#### Recent Merged Pull Requests:
-- **PR #20164** (2026-11-05): Add a README Docker quickstart and improve GitHub metadata (@xiangfu0)
-- **PR #20163** (closed): Retry Confluent schema registry outages instead of dropping the message (@anshul98ks123)
-- **PR #20159** (2026-11-05): Allow zero system activities CPU time in query killing tests (@Jackie-Jiang)
-- **PR #20158** (2026-11-05): Let ControllerTest subclasses set the cluster configs a controller starts with (@Jackie-Jiang)
-- **PR #20156** (2026-11-05): Bump dnsjava:dnsjava from 3.7.0 to 3.7.1 (@dependabot[bot])
-- **PR #20155** (2026-11-04): Use a single Dependabot label (@xiangfu0)
 
 ---
 
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+### 4.4 Backend Concurrency & Memory Safety
 
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add metric for local realtime segment builds with CRC mismatch (#19450)
-
-**RULE**:
-When implementing operations in `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `684b7a4a`: Add metric for local realtime segment builds with CRC mismatch (#19450). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+#### 1. Thread Accountant and Scan Killing Preemption
+Pinot tracks query resource allocation dynamically via `ThreadAccountant`. During multi-stage and single-stage leaf processing, threads register memory allocations and query expiration deadlines (`queryContext.getEndTimeMs()`).
+In `ServerQueryExecutorV1Impl.java`:
 ```java
-// Verified production-grade fix pattern:
-  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
+// Propagate immutable deadline into subquery execution context
+subquery.setEndTimeMs(queryContext.getEndTimeMs());
+InstanceResponseBlock instanceResponse =
+    executeInternal(executionInfo, subquery, timerContext, executorService, null, false, null);
 ```
+Failing to propagate `endTimeMs` creates an orphan task starvation condition: the outer query times out and releases broker sockets, but the inner leaf subquery continues consuming server CPU and memory indefinitely.
 
-**NEGATIVE CONSTRAINT**:
+#### 2. Segment List Cloning Invariant Under Concurrency
+In `ServerQueryExecutorV1Impl.java`, when dispatching internal subqueries across local execution threads:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Invariant comment in source: Make a clone of indexSegments because the method might modify the list
+List<IndexSegment> indexSegments = new ArrayList<>(tableExecutionInfo.getIndexSegments());
+```
+Because parallel segments may undergo state transitions (consuming segment commit, offline reload, or rebalancing drop) concurrently handled by Helix state transition threads, sharing mutable references across task boundaries triggers `ConcurrentModificationException` or access to disposed mmap memory.
+
+---
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+
+#### 1. Metric Stats Calculation Over Filtered Floating Point Data
+In `TimeseriesUtils.ts`, calculating basic aggregations (`min`, `max`, `avg`, `first`, `last`) over series containing `null`, `undefined`, or `NaN` values requires strict index preservation:
+```typescript
+// Finding index in original array while filtering invalid data:
+const firstValidIndex = dataPoints.findIndex(
+  dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value)
+);
+// Finding last index without mutating or full array reversal:
+const lastValidIndex = dataPoints.length - 1 - dataPoints.slice().reverse().findIndex(
+  dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value)
+);
+```
+Using naive loops without validating `!isNaN(dp.value)` results in IEEE-754 `NaN` propagation across all aggregate cards (`min: NaN, max: NaN`).
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+- **Boundary Decoupling**: Pinot cleanly bifurcates into Control Plane (Helix/Zookeeper/Controller) and Data Plane (Broker/Server/Minion).
+- **Physical vs. Logical Segments**: Tables are split into OFFLINE and REALTIME physical entities. Brokers unify them logically under a single virtual table name during query compilation.
+- **Single-Stage vs. Multi-Stage**: Single-stage engines execute map-reduce style queries where server instances execute map-side aggregation and the broker performs the final reduce. Multi-stage (v2) uses a Calcite physical execution plan with intermediate exchange nodes allowing true hash joins ($O(N)$ distributed join) and window functions.
+
+### Dimension 2: Core Abstractions
+- `PinotQuery`: Internal AST representation compiled from SQL via Calcite, containing projections, selections, group by, order by, and query options.
+- `IndexSegment`: Fundamental immutable storage abstraction wrapping columnar forward indices, inverted dictionary indices, star-trees, and null value bitmaps.
+- `AccessControl`: Pluggable authentication/authorization contract defining `hasTableAccess`, `getRowColFilters`, and `authorizeTableRequest`.
+- `QueryContext`: Thread-local lifecycle state tracking memory quotas, cancellation tokens, wall-clock deadlines, and accounting metrics.
+
+### Dimension 3: Error Handling
+- **Fault Isolation**: Query execution errors at the leaf server level do not terminate the broker process; they are returned inside the `exceptions` list of `BrokerResponseNative`.
+- **Degraded Execution**: By default, Pinot supports partial responses: if 99 out of 100 segments respond and one server encounters an RPC timeout, Pinot can return the 99% aggregated results along with `numSegmentsQueried: 100`, `numSegmentsProcessed: 99`, allowing BI dashboards to remain resilient.
+
+### Dimension 4: Testing
+- **Multi-Environment Simulation**: Matrix testing across JDK 11 and JDK 21 environments.
+- **Compatibility Testing**: Strict backward compatibility verification suite (`.pinot_compatibility_verifier.sh`) checking rolling upgrade compatibility between older brokers/servers and current cluster masters.
+- **Resource Boundary Preemption Testing**: `QueryKillingIntegrationTest` simulates intentional heap exhaustion and CPU hogging to verify preemption thread accountants kill offensive queries cleanly.
+
+### Dimension 5: Security
+- **Defense-in-Depth RLS Enforcement**: Row-Level Security predicates are conjoined into SQL trees at the broker. As demonstrated by PR #20169, leaf servers simultaneously validate query options to ensure no opaque subqueries bypass the principal's isolation sandbox.
+- **Groovy Script Execution Sandboxing**: Dynamic script transforms (`groovy(...)`) are gated behind strict administrative broker cluster configs to prevent arbitrary remote code execution (RCE).
+
+### Dimension 6: Performance
+- **Zero-Copy Column Scans**: Forward indexes are memory-mapped (`MMapDirectory`). Server processes query segments directly off OS page cache without heap deserialization overhead.
+- **Dictionary Encoding**: Low-cardinality dimensions are encoded as bit-packed integer IDs, enabling vector SIMD evaluations on filter bit-sets.
+- **Star-Tree Pre-aggregation**: Multi-dimensional indexing layer that materializes partial aggregates at ingestion time, reducing $O(N)$ row scans to $O(1)$ tree leaf lookups.
+
+### Dimension 7: Deployment
+- **Helix State Machine**: Segment movement adheres to state transitions (`OFFLINE -> ONLINE -> CONSUMING`).
+- **Container Invariants**: Pinot Docker builds utilize multi-architecture targeting (AMD64/ARM64) with separate builder images caching Maven dependencies and producing minimal Alpine/Ubuntu runtimes.
+
+### Dimension 8: Agent Patterns
+- **Agent-Facing Analytics**: Pinot provides low-latency SQL over fresh data specifically tuned for AI agent tool calling and automated decision systems.
+- **Context Budget Protection**: Token consumption by autonomous agents is preserved by relying on server-side aggregation, dictionary deduplication, and vector nearest-neighbor filtering before returning results to LLM context windows.
+
+### Dimension 9: Data Flow
+```
+Kafka Topic -> StreamConsumerFactory -> RealtimeSegmentValidation 
+  -> In-Memory MutableSegment (Consumer Thread) 
+  -> Commit Threshold Reached (Rows/Time) 
+  -> Immutable Segment Conversion 
+  -> Flush to Deep Store (S3/GCS) 
+  -> Helix ExternalView Update
 ```
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `684b7a4a` are properly handled with clean fallback behavior.
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Two-Tier Query Security AST Sanitization
+```java
+public class QuerySecuritySanitizer {
+    public static void enforceSecurityInvariants(PinotQuery query, SecurityContext context) {
+        if (context.hasRls()) {
+            // Coordinator level check
+            if (RequestUtils.hasCrossTableFunction(query)) {
+                throw new AccessDeniedException("Forbidden cross-table operation under active RLS");
+            }
+            // Leaf level invariant injection
+            query.putToQueryOptions(RlsUtils.buildRlsFilterKey(context.getTable()), context.getFilterString());
+        }
+    }
+}
+```
+
+### 2. Rule
+> An authorization subsystem MUST reject dynamic queries containing deferred or opaque worker-evaluated expressions whenever the requesting principal is constrained by data filtering boundaries.
+
+### 3. Architecture Principle
+> In distributed scatter-gather query engines, leaf compute nodes MUST NOT be granted ambient authority to execute expressions outside the security boundary established by the coordinator. Every worker invocation must inherit explicit, cryptographically signed or option-stamped security scopes.
+
+### 4. Failure Mode
+> **Opaque Literal Subquery Injection**: A subquery enclosed within a string literal parameter of a custom UDF/scalar transform bypasses relational algebra rewriters, allowing arbitrary data exfiltration across tenant boundaries.
+

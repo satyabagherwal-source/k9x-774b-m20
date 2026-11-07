@@ -8120,3 +8120,7 @@ Every entry in this ledger must capture:
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7dd66e74` | Multi-dimensional audit evidence | 2026-11-07T21:44:05.593Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `1ebb9379` | Multi-dimensional audit evidence | 2026-11-07T21:55:46.377Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `33a17ec7` | Multi-dimensional audit evidence | 2026-11-07T21:55:47.336Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `40d08ee4` | Multi-dimensional audit evidence | 2026-11-07T22:07:35.859Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `f60f17fd` | Multi-dimensional audit evidence | 2026-11-07T22:08:03.840Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `985ebd5d` | Multi-dimensional audit evidence | 2026-11-07T22:09:05.285Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `eddfda29` | Multi-dimensional audit evidence | 2026-11-07T22:09:36.916Z |

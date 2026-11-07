@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:55:47.244Z",
+  "last_updated": "2026-11-07T22:09:36.813Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50388,8 +50388,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "8cda9065",
-      "content_hash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
+      "source_version": "40d08ee4",
+      "content_hash": "e8400bf822830e95f9e317772d537251b2a9d905884ee0128e19bf870a8da682",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -50407,6 +50407,21 @@
           "number": null,
           "title": "core): avoid nested workflow deadlock at template concurrency limit (#8076)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Two-Phase Resource Resize Before Reservation (Release-Before-Acquire Invariant)",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hierarchical Worker-Pool Inheritance Release Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Non-Destructive In-Flight Execution Tracking (State Decoupling)",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1841,
@@ -50544,7 +50559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:01:28.625Z",
+      "verified_at": "2026-11-07T22:07:35.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59169,11 +59184,26 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "677c36f0",
-      "content_hash": "b01b3fa9ca5e8f937cf9048689aba8fa7690db53bb0911737c072941d7b624c0",
+      "source_version": "eddfda29",
+      "content_hash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Cross-Reactivity Boundary State Propagation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Event-Level Notification Deduplication vs. State Cache Decoupling",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Targeted Weak-Reference Observer Ledgers for C++ Destructors",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2385,
           "title": "Snapshot Read Observation Isolation in Measure Passes",
@@ -59225,7 +59255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:12:40.064Z",
+      "verified_at": "2026-11-07T22:09:36.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157240,8 +157270,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "4661544e",
-      "content_hash": "4b3e04e75246804f5feea15f39938509a19fd266da0e264afa383625c0189ea5",
+      "source_version": "985ebd5d",
+      "content_hash": "c25ac39d05d58c6c195aca2b701af5a9be117b66f20dba30682de563f608d9d4",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -157249,6 +157279,21 @@
           "number": null,
           "title": "Build folly::Future and folly::Promise on wasi",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "The POSIX `close()` Non-Retry Invariant Under `EINTR`",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Monotonic Seqlock Optimistic Lock Coupling (OLC) with Typed Atomic Brackets",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Explicit SIMD Vector Reinterpretation Over Platform-Dependent Lax Conversion Flags",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 5437,
@@ -157276,7 +157321,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:07:56.797Z",
+      "verified_at": "2026-11-07T22:09:05.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -183176,8 +183221,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "0a53497f",
-      "content_hash": "efabc6c9db04c37a74aeefd545976e0530217a7b59dbe7335be68526de34b3c1",
+      "source_version": "f60f17fd",
+      "content_hash": "e83da4bba5015fe9ce6507bf74fad45aaedf60206364b2fc7c3312313df2e254",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -183185,6 +183230,16 @@
           "number": null,
           "title": "Add metric for local realtime segment builds with CRC mismatch (#19450)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Invariant Defense-in-Depth for Security Rewrites Across Distributed Tiers",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Bi-directional Proof for Security Status Reporting Flags",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 7139,
@@ -183197,7 +183252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:17:17.234Z",
+      "verified_at": "2026-11-07T22:08:03.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
