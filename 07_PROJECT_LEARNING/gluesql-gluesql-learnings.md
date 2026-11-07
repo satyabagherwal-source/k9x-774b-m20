@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `0daf9b82`  
+> **Source Version**: `85975331`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:43:46.380Z  
+> **Timestamp**: 2026-11-07T19:47:54.775Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:43:46.372Z  
+> **Harvest Timestamp**: 2026-11-07T19:47:54.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3135 stars
+- **Stars / Engagement**: 3134 stars
 
 ---
 
@@ -2058,900 +2058,727 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0daf9b82` (2026-11-04)
-**Commit Message**: Expand review policies for testing and code structure (#2062)
+### Incident Patch 1: `85975331` (2026-11-06)
+**Commit Message**: Fix redb schema migration with storage format v4 (#2056)
 
-Organize the review policy into dedicated Errors, Testing, and Code
-Structure pages. Update contributor guidance and documentation navigation
-to link the topic policies.
+Adding Expr::Regex in v0.20.0 shifted bincode variant indices, while
+the existing redb upgrade retained v0.19.0 schema bytes. A v3 database
+can therefore contain both historical and current schema encodings.
 
-Define unit tests around each implementation's reachable branches.
-Describe SQL fixtures as executable documentation that also tests
-SQL-reachable executor branches. Require independent expected results
-and visible case-specific inputs and setup.
+Introduce storage format v4 with migration paths from v1, v2, and v3.
+Restore historical schemas, compare both interpretations for v3, and
+reject ambiguous or unrecoverable schemas. Validate referenced row
+tables before upgrading, and commit logical payload changes together
+with the storage version metadata.
 
-Add minimum visibility rules and guidance for minimizing design margin
-and arranging declarations for top-to-bottom reading. Apply the policies
-to new and modified code while keeping unrelated cleanup separate.
+Keep historical types and conversions within their migration modules
+and preserve typed error causes. Add focused unit tests, released
+database fixtures, and redb-owned structure checks that flag changes
+to persisted core types for compatibility review.
 
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +3/-0)
 ```diff
-@@ -1,5 +1,5 @@
- # AGENTS.md
--- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
-+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
- - After editing code, run `cargo clippy --all-targets -- -D warnings`.
- - Then run `cargo fmt --all`.
- - When importing items, group them under a single `use` statement whenever possible.
+@@ -1232,10 +1232,13 @@ dependencies = [
+ name = "gluesql-redb-storage"
+ version = "0.20.0"
+ dependencies = [
++ "bigdecimal",
+  "bincode",
+  "gluesql-core",
+  "gluesql-test-suite",
++ "ordered-float 4.2.2",
+  "redb",
++ "rust_decimal",
+  "serde",
+  "thiserror 2.0.3",
+  "uuid",
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `storages/redb-storage/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -121,7 +121,7 @@ GlueSQL is designed to be adaptable to a wide variety of environments, including
+@@ -16,6 +16,9 @@ bincode = "1.3.3"
+ uuid = { version = "1.11.0", features = ["v7"] }
  
- GlueSQL is simpler to contribute to than it may look. Its test suite and continuous integration provide guardrails that catch regressions before changes are merged, so don't hesitate to open an issue or pull request.
+ [dev-dependencies]
++bigdecimal = { version = "0.4.10", features = ["serde", "string-only"] }
++ordered-float = { version = "4", features = ["serde"] }
++rust_decimal = { version = "1", features = ["serde-str"] }
+ test-suite.workspace = true
  
--Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It defines error naming conventions and how to check the corresponding error paths.
-+Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It covers change scope, code structure, error conventions, and test design.
- 
- If you're not sure where to start, explore the [test suite](test-suite). The [SQL fixtures](test-suite/fixtures) are a good starting point for getting a sense of GlueSQL's overall capabilities. Try contributing a feature you'd like to use, or browse the [GitHub issues](https://github.com/gluesql/gluesql/issues) for more ideas.
- 
+ [lints]
 ```
 
-**File**: `docs/docs/development/review-policy.md` (modified, +10/-132)
+**File**: `storages/redb-storage/src/bincode_layout.rs` (added, +706/-0)
 ```diff
-@@ -1,138 +1,16 @@
- # Review Policy
- 
--Use this policy when implementing and reviewing changes to GlueSQL.
-+Apply this policy to new and modified code and tests in GlueSQL. The linked
-+topic documents are part of this policy; read and apply the rules relevant to
-+the change. Keep unrelated migrations of existing code in separate changes.
- 
--## Error ownership
--
--For an error created in a module, search that module and then its parents.
--Use the first existing error type declared along that path, adding a variant
--there if needed. A module's own `error.rs` counts as its declaration site;
--imports and re-exports do not.
--
--Choose by declaration location, regardless of feature, SQL statement, or
--user-facing message. Reapply this rule when moving a check to another module.
--
--An error propagated from a call keeps the type chosen where it was created.
--The caller's location does not change its ownership.
--
--Ownership selects the error type. Variants distinguish failures; prefixes
--classify their conditions.
--
--## Error variants
--
--Give independent failure conditions distinct variants, even when their messages
--would be similar. Do not reuse a broad variant across unrelated checks.
--
--Represent distinctions within a variant with enum payloads, not string tags or
--message text. String fields may carry diagnostic data such as table names.
--
--For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
--target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
--holds the table name; the variants identify the failed checks.
--
--An error produced by the same check in a shared function may be propagated
--unchanged by multiple callers.
--
--## Error prefixes
--
--The following error-variant prefixes have specific meanings. Choose a prefix by
--examining the condition that produces the error and how that condition can be
--reached.
--
--| Prefix | Meaning |
-+| Topic | Rules |
- | --- | --- |
--| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
--| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
--| `Unplanned` | Planning required before execution has not been completed. |
--| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
--
--Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
--invalid values or formats. `Invalid` does not have a special classification
--meaning and is not reserved for malformed plans.
--
--### Unreachable
--
--Use `Unreachable` only when the current code makes the error branch impossible.
--For example:
--
--```rust
--let values = [1, 2, 3];
--let first = values.get(0);
--```
--
--Here, `first` is always `Some`. A branch handling `None` would be unreachable
--because both the array length and the index are fixed by the code.
--
--The claim must hold for the inputs the code accepts. A branch that can be reached
--by constructing an AST or plan directly, or by changing storage contents, does
--not qualify merely because normal SQL execution never reaches it. A planner
--guarantee alone is insufficient when callers can supply their own plans.
--
--During review, identify the code conditions that make the branch impossible. An
--untested branch is not evidence of unreachability.
--
--### Conflict
--
--Use `Conflict` when stored state violates an invariant that normal executor
--operations preserve. For example, a stored row can have fewer values than its
--schema requires if a caller writes it directly through the storage interface.
--Reading a missing column during validation can then produce
--`ConflictOnStorageColumnIndex`.
--
--Test this kind of guard by constructing the inconsistent storage state and
--executing the operation that detects it. Assert the returned error and its
--details. A normal SQL statement rejected before it changes storage does not
--exercise that guard.
--
--### Unplanned
--
--`Unplanned` also names plan states that still need processing by a responsible
--planner. AST conversion or direct plan construction can produce these states.
--The planner consumes them and produces the representation needed for execution.
--
--For custom function calls, the transition is:
--
--```text
--UnplannedCustom { name, exprs }
--    -- custom function planner -->
--Custom { function_id, exprs }
--```
--
--If an unplanned state reaches the executor, return an `Unplanned...` error with
--the information needed to identify the unfinished work. For example,
--`UnplannedCustomFunction` retains the function name. The executor must not perform
--the missing planning step or make the state executable through a fallback.
--
--Test the executor guard with an unplanned value that has not passed through its
--required planner. Also check that the supported planning path consumes that
--state before execution.
--
--### MalformedPlan
--
--Use `MalformedPla
-```
-
-**File**: `docs/docs/development/review-policy/code-structure.md` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+# Code Structure
+@@ -0,0 +1,706 @@
++//! Expected layouts of the current core types persisted by redb.
++//!
++//! Review storage compatibility before changing these declarations. Compatible
++//! changes only need a declaration update; incompatible changes also need a
++//! migration. Keep one current baseline here; historical types belong to migration.
++//! These checks cover type structure, not changes to custom Serde implementations
++//! or the comparison-key encoding.
++
++mod macros;
++mod serde_metadata;
 +
-+## Minimize margin (guidance)
-+
-+Margin is the gap between what a design allows or requires and what the code
-+actually needs. Keep that gap as small as practical when designing types,
-+functions, and modules.
-+
-+### Represent valid states directly
-+
-+Suppose a job has three states: pending, running, and finished. Two boolean
-+fields can represent them, but also allow a fourth combination:
-+
-+```rust
-+struct Job {
-+    started: bool,
-+    finished: bool,
-+}
-+```
-+
-+| `started` | `finished` | Meaning |
-+| --- | --- | --- |
-+| `false` | `false` | Pending |
-+| `true` | `false` | Running |
-+| `true` | `true` | Finished |
-+| `false` | `true` | Invalid: finished without starting |
-+
-+Use an enum to represent the three valid states directly:
-+
-+```rust
-+enum JobState {
-+    Pending,
-+    Running,
-+    Finished,
-+}
-+
-+struct Job {
-+    state: JobState,
-+}
-+```
-+
-+The invalid combination is no longer representable. Callers do not need to
-+preserve a relationship between two independent fields.
-+
-+### Share common work without forcing operations together
-+
-+Suppose tags must be trimmed and lowercased, while titles must only be trimmed.
-+Combining these operations introduces a flag and a branch:
-+
-+```rust
-+fn normalize(text: &str, for_tag: bool) -> String {
-+    let text = text.trim();
-+
-+    if for_tag {
-+        text.to_lowercase()
-+    } else {
-+        text.to_owned()
-+    }
-+}
-+```
-+
-+In this example, callers always pass `true` for tags and `false` for titles.
-+The flag was added only to combine the two operations. Keep them separate:
-+
-+```rust
-+fn normalize_tag(text: &str) -> String {
-+    text.trim().to_lowercase()
-+}
-+
-+fn normalize_title(text: &str) -> String {
-+    text.trim().to_owned()
-+}
-+```
-+
-+Repeating the small `trim()` call keeps each function's behavior explicit and
-+removes the mode flag and branch. Common work can still be shared without
-+combining the operations.
-+
-+Apply the same reasoning to module boundaries. Sharing a helper should not
-+require moving unrelated caller-specific types or dependencies into the shared
-+module.
-+
-+These are design guidelines. Some margin may remain when removing it would
-+make the overall design more complex.
-+
-+## Visibility
-+
-+Use the narrowest visibility needed by callers and the intended API. Apply
-+this to functions, types, fields, and re-exports. Sharing code does not
-+automatically require `pub(crate)` or `pub`.
-+
-+Check both module visibility and re-exports to see who can access an item.
-+For example, a `pub` function in a private module can be exposed through a
-+`pub(super)` re-export.
-+
-+## Declaration order (guidance)
-+
-+Prefer an order that lets readers follow the code from top to bottom with
-+fewer jumps between declarations.
-+
-+Use this as a guide for new modules. Leave unrelated code in place when
-+editing existing files.
-```
-
-**File**: `docs/docs/development/review-policy/errors.md` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+# Errors
-+
-+## Error ownership
-+
-+For an error created in a module, search that module and then its parents.
-+Use the first existing error type declared along that path, adding a variant
-+there if needed. A module's own `error.rs` counts as its declaration site;
-+imports and re-exports do not.
-+
-+Choose by declaration location, regardless of feature, SQL statement, or
-+user-facing message. Reapply this rule when moving a check to another module.
-+
-+An error propagated from a call keeps the type chosen where it was created.
-+The caller's location does not change its ownership.
-+
-+Ownership selects the error type. Variants distinguish failures; prefixes
-+classify their conditions.
-+
-+## Error variants
-+
-+Give independent failure conditions distinct variants, even when their messages
-+would be similar. Do not reuse a broad variant across unrelated checks.
-+
-+Represent distinctions within a variant with enum payloads, not string tags or
-+message text. String fields may carry diagnostic data such as table names.
-+
-+For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
-+target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
-+holds the table name; the variants identify the failed checks.
-+
-+An error produced by the same check in a shared function may be propagated
-+unchanged by multiple callers.
-+
-+## Error prefixes
-+
-+The following error-variant prefixes have specific meanings. Choose a prefix by
-+examining the condition that produces the error and how that condition can be
-+reached.
-+
-+| Prefix | Meaning |
-+| --- | --- |
-+| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
-+| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
-+| `Unplanned` | Planning required before execution has not been completed. |
-+| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
-+
-+Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
-+invalid values or formats. `Invalid` does not have a special classification
-+meaning and is not reserved for malformed plans.
-+
-+### Unreachable
-+
-+Use `Unreachable` only when the current code makes the error branch impossible.
-+For example:
-+
-+```rust
-+let values = [1, 2, 3];
-+let first = values.get(0);
-+```
-+
-+Here, `first` is always `Some`. A branch handling `None` would be unreachable
-+because both the array length and the index are fixed by the code.
-+
-+The claim must hold for the inputs the code accepts. A branch that can be reached
-+by constructing an AST or plan directly, or by changing storage contents, does
-+not qualify merely because normal SQL execution never reaches it. A planner
-+guarantee alone is insufficient when callers can supply their own plans.
-+
-+During review, identify the code conditions that make the branch impossible. An
-+untested branch is not evidence of unreachability.
-+
-+### Conflict
-+
-+Use `Conflict` when stored state violates an invariant that normal executor
-+operations preserve. For example, a stored row can have fewer values than its
-+schema requires if a caller writes it directly through the storage interface.
-+Reading a missing column during validation can then produce
-+`ConflictOnStorageColumnIndex`.
-+
-+Test this kind of guard by constructing the inconsistent storage state and
-+executing the operation that detects it. Assert the returned error and its
-+details. A normal SQL statement rejected before it changes storage does not
-+exercise that guard.
-+
-+### Unplanned
-+
-+`Unplanned` also names plan states that still need processing by a responsible
-+planner. AST conversion or direct plan construction can produce these states.
-+The planner consumes them and produces the representation needed for execution.
-+
-+For custom function calls, the transition is:
-+
-+```text
-+UnplannedCustom { name, exprs }
-+    -- custom function planner -->
-+Custom { function_id, exprs }
-+```
-+
-+If an unplanned state reaches the executor, return an `Unplanned...` error with
-+the information needed to identify the unfinished work. For example,
-+`UnplannedCustomFunction` retains the function name. The executor must not perform
-+the missing planning step or make the state executable through a fallback.
-+
-+Test the executor guard with an unplanned value that has not passed through its
-+required planner. Also check that the supported planning path consumes that
-+state before execution.
-+
-+### MalformedPlan
-+
-+Use `MalformedPlan` when a plan uses an execution representation but violates its
-+structural requirements. For example, a `Custom` call with `function_id: 10`
-+cannot refer to a definition when the statement's function list is empty. The
-+guard returns `MalformedPlanCustomFunctionIndex(10)`.
-+
-+This differs from `UnplannedCustom`: the call alrea
-```
-
-**File**: `docs/docs/development/review-policy/testing.md` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+# Testing
-+
-+## Unit tests
-+
-+Test every reachable branch of the implementation. Use inputs that reach each
-+branch, and assert its result or state change. A test that fails earlier in the
-+pipeline does not cover that branch.
-+
-+Put unit tests in an inline `#[cfg(test)] mod tests` in the module that contains
-+the implementation. Do not put them in a separate `tests.rs` file or a module
-+that only re-exports the implementation.
-+
-+Move the tests when you move the implementation. Do not widen production
-+visibility just to let tests access private code.
-+
-+Test the branches of shared code in its own module. Caller tests cover the
-+caller's branches, including how it uses results and handles errors from shared
-+code.
-+
-+For a planner pass, prepare the inputs it needs and call the pass directly.
-+Use separate test cases to check that the full planner pipeline runs the pass.
-+
-+Test an execution entry point's own branches in its unit tests.
-+
-+## SQL fixtures
-+
-+The SQL fixtures in `test-suite/fixtures` are executable documentation for
-+people and tools. Group cases by SQL feature and behavior. Use representative
-+examples that show successful usage and expected errors. Give each case a clear
-+name, and keep its setup, SQL, and expected results easy to read.
-+
-+The fixtures also serve a unit-testing role for the execution layer.
-+For each behavior covered by a fixture, test every executor branch and error
-+path that SQL can reach. Run the cases through the production SQL pipeline and
-+assert their results. When a case tests storage behavior, also check the stored
-+state. Readable examples and branch coverage are both required.
-+
-+One scenario can cover several branches. Different SQL behaviors may need
-+separate examples even when they use the same branch.
-+
-+Constructing an AST or plan directly does not prove that SQL can reach the same
-+behavior. For guards that require a manually constructed plan or inconsistent
-+storage, use the setup and assertions in [Error prefixes](errors.md#error-prefixes).
-+
-+## Expected results
-+
-+Assert the expected result:
-+
-+- For a plan transformation, check the expected plan structure.
-+- For an error, check the variant and its relevant fields.
-+- For formatting, compare the exact output.
-+
-+Use success or failure checks alone only when no result value or structure
-+needs to be verified.
-+
-+Write expected values explicitly. Do not copy or modify the actual output to
-+create them. Do not calculate them with the code being tested.
-+
-+A helper may convert an expected value to the type used by the assertion.
-+For example, a planner test may parse and translate expected SQL into a plan.
-+Do not run the planner being tested to build the expected plan.
-+
-+## Inputs and helpers
-+
-+Keep the inputs and expected results visible in each test case. Also show the
-+setup that determines the behavior being tested.
-+
-+Use helpers for repeated parsing, calls, and assertions. Do not hide choices
-+that the test checks inside a helper, such as variants, IDs, defaults, or
-+traversal rules.
-```
-
-**File**: `docs/zensical.toml` (modified, +6/-1)
-```diff
-@@ -253,7 +253,12 @@ nav = [
-     ]},
-   ]},
-   {"Development" = [
--    "development/review-policy.md",
-+    {"Review Policy" = [
-+      {"Overview" = "development/review-policy.md"},
-+      "development/review-policy/errors.md",
-+      "development/review-policy/testing.md",
-+      "development/review-policy/code-structure.md",
-+    ]},
-   ]},
-   {"Archive" = [
-     {"Articles" = [
-```
-
----
-
-### Incident Patch 2: `943afa57` (2026-11-04)
-**Commit Message**: Move CREATE INDEX validation into the planner (#2061)
-
-Collect the target schema and validate CREATE INDEX definitions in a
-dedicated planner step in both the default and Sled pipelines.
-
-Pass the original index definition directly to storage during execution,
-removing the core executor's last plan_scalar_expr call. Report definition
-errors through PlannerError, with distinct variants for missing tables,
-missing columns, unsupported expressions, and missing column references.
-
-Document error-variant conventions for independent failure conditions,
-enum payloads, and diagnostic strings.
-
-**File**: `core/src/executor/alter.rs` (modified, +0/-2)
-```diff
-@@ -1,7 +1,6 @@
- mod alter_table;
- mod error;
- mod function;
--mod index;
- mod table;
- mod validate;
- 
-@@ -11,6 +10,5 @@ pub use {
-     alter_table::alter_table,
-     error::AlterError,
-     function::{delete_function, insert_function},
--    index::create_index,
-     table::{CreateTableOptions, Referencing, create_table, drop_table},
- };
-```
-
-**File**: `core/src/executor/alter/error.rs` (modified, +1/-8)
-```diff
-@@ -18,7 +18,7 @@ pub enum AlterError {
-     #[error("function does not exist: {0}")]
-     FunctionNotFound(String),
- 
--    // CREATE INDEX, DROP TABLE
-+    // DROP TABLE, ALTER TABLE
-     #[error("table does not exist: {0}")]
-     TableNotFound(String),
- 
-@@ -32,17 +32,10 @@ pub enum AlterError {
-     #[error("column '{0}' of data type '{1:?}' is unsupported for unique constraint")]
-     UnsupportedDataTypeForUniqueColumn(String, DataType),
- 
--    // validate index expr
--    #[error("unsupported index expression")]
--    UnsupportedIndexExpr,
--
-     // validate index expr
-     #[error("unsupported unnamed argument")]
-     UnsupportedUnnamedArg,
- 
--    #[error("index expression must reference at least one column")]
--    IndexExprRequiresColumnReference,
--
-     #[error("duplicate column name: {0}")]
-     DuplicateColumnName(String),
- 
-```
-
-**File**: `core/src/executor/alter/index.rs` (removed, +0/-57)
-```diff
-@@ -1,57 +0,0 @@
--use {
--    super::AlterError,
--    crate::{
--        ast::{ColumnDef, OrderByExpr},
--        data::Schema,
--        plan::{ExprPlan, FunctionPlan, plan_scalar_expr},
--        result::Result,
--        store::{GStore, GStoreMut},
--    },
--};
--
--pub fn create_index<T: GStore + GStoreMut>(
--    storage: &mut T,
--    table_name: &str,
--    index_name: &str,
--    column: &OrderByExpr,
--) -> Result<()> {
--    let expr = plan_scalar_expr(column.expr.clone());
--    let Schema { column_defs, .. } = storage
--        .fetch_schema(table_name)?
--        .ok_or_else(|| AlterError::TableNotFound(table_name.to_owned()))?;
--    let columns = column_defs
--        .unwrap_or_default()
--        .into_iter()
--        .map(|ColumnDef { name, .. }| name)
--        .collect::<Vec<_>>();
--
--    let (valid, has_ident) = validate_index_expr(&columns, &expr);
--    if !valid {
--        return Err(AlterError::UnsupportedIndexExpr.into());
--    } else if !has_ident {
--        return Err(AlterError::IndexExprRequiresColumnReference.into());
--    }
--
--    storage.create_index(table_name, index_name, column)
--}
--
--fn validate_index_expr(columns: &[String], expr: &ExprPlan) -> (bool, bool) {
--    let validate = |expr| validate_index_expr(columns, expr);
--
--    match expr {
--        ExprPlan::Identifier(ident) => (columns.iter().any(|column| column == ident), true),
--        ExprPlan::Literal(_) | ExprPlan::TypedString { .. } => (true, false),
--        ExprPlan::Nested(expr) | ExprPlan::UnaryOp { expr, .. } => validate(expr),
--        ExprPlan::BinaryOp { left, right, .. } => {
--            let (valid_l, has_ident_l) = validate(left);
--            let (valid_r, has_ident_r) = validate(right);
--
--            (valid_l && valid_r, has_ident_l || has_ident_r)
--        }
--        ExprPlan::Function(func) => match func.as_ref() {
--            FunctionPlan::Cast { expr, .. } => validate(expr),
--            _ => (false, false),
--        },
--        _ => (false, false),
--    }
--}
-```
-
-**File**: `core/src/executor/execute.rs` (modified, +5/-3)
-```diff
-@@ -1,8 +1,8 @@
- use {
-     super::{
-         alter::{
--            CreateTableOptions, alter_table, create_index, create_table, delete_function,
--            drop_table, insert_function,
-+            CreateTableOptions, alter_table, create_table, delete_function, drop_table,
-+            insert_function,
-         },
-         delete::delete,
-         fetch::fetch,
-@@ -176,7 +176,9 @@ fn execute_inner<T: GStore + GStoreMut>(
-             name,
-             table_name,
-             column,
--        } => create_index(storage, table_name, name, column).map(|()| Payload::CreateIndex),
-+        } => storage
-+            .create_index(table_name, name, column)
-+            .map(|()| Payload::CreateIndex),
-         StatementPlanKind::DropIndex { name, table_name } => storage
-             .drop_index(table_name, name)
-             .map(|()| Payload::DropIndex),
-```
-
-**File**: `core/src/planner.rs` (modified, +2/-0)
-```diff
-@@ -12,6 +12,7 @@ mod query;
- mod schema;
- mod schemaless;
- mod validate;
-+mod validate_create_index;
- mod visit;
- mod visit_mut;
- 
-@@ -27,4 +28,5 @@ pub use {
-     primary_key::plan as plan_primary_key,
-     schema::fetch_schema_map,
-     schemaless::plan as plan_schemaless,
-+    validate_create_index::validate as validate_create_index,
- };
-```
-
-**File**: `core/src/planner/error.rs` (modified, +12/-0)
-```diff
-@@ -2,6 +2,18 @@ use {serde::Serialize, std::fmt::Debug, thiserror::Error as ThisError};
- 
- #[derive(ThisError, Serialize, Debug, PartialEq, Eq)]
- pub enum PlannerError {
-+    #[error("CREATE INDEX target table does not exist: {0}")]
-+    CreateIndexTableNotFound(String),
-+
-+    #[error("CREATE INDEX column does not exist: {0}")]
-+    CreateIndexColumnNotFound(String),
-+
-+    #[error("unsupported index expression")]
-+    UnsupportedIndexExpr,
-+
-+    #[error("index expression must reference at least one column")]
-+    IndexExprRequiresColumnReference,
-+
-     #[error("CTAS source table does not exist: {0}")]
-     CtasSourceTableNotFound(String),
- 
-```
-
-**File**: `core/src/planner/schema.rs` (modified, +42/-1)
-```diff
-@@ -50,6 +50,15 @@ pub fn fetch_schema_map<T: Store + ?Sized>(
- 
-             Ok(schema_list)
-         }
-+        StatementPlanKind::CreateIndex { table_name, .. } => {
-+            let schema_map = storage
-+                .fetch_schema(table_name)?
-+                .map_or_else(HashMap::new, |schema| {
-+                    HashMap::from([(table_name.to_owned(), schema)])
-+                });
-+
-+            Ok(schema_map)
-+        }
-         StatementPlanKind::DropTable { names, .. } => {
-             let mut schema_map = HashMap::new();
-             for table_name in names {
-@@ -408,7 +417,7 @@ mod tests {
-         crate::{
-             mock::{MockStorage, run},
-             parse_sql::parse,
--            result::Result,
-+            result::{Error, Result},
-             translate::translate,
-         },
-     };
-@@ -447,6 +456,38 @@ mod tests {
-         test("DELETE FROM Foo;", &["Foo"]);
-     }
- 
-+    #[test]
-+    fn create_index() {
-+        let storage = run("CREATE TABLE Foo (id INTEGER)");
-+        let test = |sql: &str, expected: &[&str], name: &str| {
-+            let actual = plan(&storage, sql).expect(sql);
-+            assert_eq!(actual.as_slice(), expected, "{name}: {sql}");
-+        };
-+
-+        let actual = "CREATE INDEX idx ON Foo (id)";
-+        let expected = &["Foo"];
-+        test(actual, expected, "index target schema");
-+
-+        let actual = "CREATE INDEX idx ON Missing (id)";
-+        let expected = &[];
-+        test(actual, expected, "missing schema is left to validation");
-+
-+        let actual = "CREATE INDEX idx ON Foo ((SELECT id FROM __Err__))";
-+        let expected = &["Foo"];
-+        test(
-+            actual,
-+            expected,
-+            "unsupported index subquery is not scanned",
-+        );
-+
-+        let sql = "CREATE INDEX idx ON __Err__ (id)";
-+        let actual = plan(&storage, sql);
-+        let expected = Err(Error::StorageMsg(
-+            "[MockStorage] fetch_schema - user triggered error".to_owned(),
-+        ));
-+        assert_eq!(actual, expected, "target schema error propagates: {sql}");
-+    }
-+
-     #[test]
-     fn expr() {
-         let storage = run("
-```
-
-**File**: `core/src/planner/validate_create_index.rs` (added, +273/-0)
-```diff
-@@ -0,0 +1,273 @@
 +use {
-+    super::PlannerError,
-+    crate::{
-+        ast::{ColumnDef, Expr, Function},
-+        data::Schema,
-+        plan::{StatementPlan, StatementPlanKind},
-+        result::Result,
++    self::macros::{enum_layout, struct_layout},
++    bigdecimal::BigDecimal,
++    gluesql_core::{
++        ast::{
++            Aggregate, AggregateFunction, BinaryOperator, ColumnDef, ColumnUniqueOption,
++            CountArgExpr, DataType, DateTimeField, Dictionary, Expr, ForeignKey, Function, Join,
++            JoinConstraint, JoinOperator, Literal, OrderByExpr, Projection, Query,
++            ReferentialAction, Select, SelectItem, SetExpr, TableAlias, TableFactor,
++            TableWithJoins, TrimWhereField, UnaryOperator, Values,
++        },
++        chrono::{NaiveDate, NaiveDateTime, NaiveTime},
++        data::{Interval, Key, Point, Schema, SchemaIndex, SchemaIndexOrd, Value},
 +    },
-+    std::{collections::HashMap, hash::BuildHasher},
++    ordered_float::OrderedFloat,
++    rust_decimal::Decimal,
++    std::{collections::BTreeMap, net::IpAddr},
 +};
 +
-+pub fn validate<S: BuildHasher>(
-+    schema_map: &HashMap<String, Schema, S>,
-+    statement: &StatementPlan,
-+) -> Result<()> {
-+    if let StatementPlanKind::CreateIndex {
-+        table_name, column, ..
-+    } = &statement.kind
-+    {
-+        let schema = schema_map
-+            .get(table_name)
-+            .ok_or_else(|| PlannerError::CreateIndexTableNotFound(table_name.clone()))?;
-+        let columns = schema.column_defs.as_deref().unwrap_or_default();
++// Schema and column definitions
 +
-+        let has_ident = validate_index_expr(columns, &column.expr)?;
-+        if !has_ident {
-+            return Err(PlannerError::IndexExprRequiresColumnReference.into());
-+        }
++struct_layout! {
++    schema_layout: Schema {
++        table_name: String,
++        column_defs: Option<Vec<ColumnDef>>,
++        indexes: Vec<SchemaIndex>,
++        engine: Option<String>,
++        foreign_keys: Vec<ForeignKey>,
++        comment: Option<String>,
 +    }
-+
-+    Ok(())
 +}
 +
-+fn validate_index_expr(columns: &[ColumnDef], expr: &Expr) -> Result<bool> {
-+    let validate = |expr| validate_index_expr(columns, expr);
++struct_layout! {
++    schema_index_layout: SchemaIndex {
++        name: String,
++        expr: Expr,
++        order: SchemaIndexOrd,
++        created: NaiveDateTime,
++    }
++}
 +
-+    match expr {
-+        Expr::Identifier(ident) => {
-+            if columns.iter().any(|column| column.name == *ident) {
-+                Ok(true)
-+            } else {
-+                Err(PlannerError::CreateIndexColumnNotFound(ident.to_owned()).into())
++enum_layout! {
++    schema_index_ord_layout: SchemaIndexOrd {
++        Asc,
++        Desc,
++        Both,
++    }
++}
++
++struct_layout! {
++    column_def_layout: ColumnDef {
++        name: String,
++        data_type: DataType,
++        nullable: bool,
++        default: Option<Expr>,
++        unique: Option<ColumnUniqueOption>,
++        comment: Option<String>,
++    }
++}
++
++struct_layout! {
++    column_unique_option_layout: ColumnUniqueOption {
++        is_primary: bool,
++    }
++}
++
++struct_layout! {
++    foreign_key_layout: ForeignKey {
++        name: String,
++        referencing_column_name: String,
++        referenced_table_name: String,
++        referenced_column_name: String,
++        on_delete: ReferentialAction,
++        on_update: ReferentialAction,
++    }
++}
++
++enum_layout! {
++    referential_action_layout: ReferentialAction {
++        NoAction,
++    }
++}
++
++// Expressions and scalar types
++
++enum_layout! {
++    expr_layout: Expr {
++        Identifier(value: String),
++        CompoundIdentifier {
++            alias: String,
++            ident: String,
++        },
++        IsNull(value: Box<Expr>),
++        IsNotNull(value: Box<Expr>),
++        InList {
++            expr: Box<Expr>,
++            list: Vec<Expr>,
++            negated: bool,
++        },
++        InSubquery {
++            expr: Box<Expr>,
++            subquery: Box<Query>,
++            negated: bool,
++        },
++        Between {
++            expr: Box<Expr>,
++            negated: bool,
++            low: Box<Expr>,
++            high: Box<Expr>,
++        },
++        Like {
++            expr: Box<Expr>,
++            negated: bool,
++            pattern: Box<Expr>,
++        },
++        ILike {
++            expr: Box<Expr>,
++            negated: bool,
++            pattern: Box<Expr>,
++        },
++        Regex {
++            expr: Box<Expr>,
++            negated: bool,
++            pattern: Box<Expr>,
++            case_sensitive: bool,
++        },
++        BinaryOp {
++            left: Box<Expr>,
++            op: BinaryOperator,
++            right: Box<Expr>,
++        },
++        UnaryOp {
++            op: UnaryOperator,
++            expr: Box<Expr>,
++        },
++        Nested(value: Box<Expr>),
++        Literal(value: Literal),
++        Value(value: Value),
++        TypedString {
++            data_type: DataType,
++            value: String,
++        },
++        Function(value: Box<Function>),
++        Aggregate(value: Box<Aggregate>),
++        Exists {
++            subquery: Box<Query>,
++            negated: bool,
++        },
++        Subquery(value: Box<Query>),
++        Case {
++            operand: Option<Box<Expr>>,
++            when_then: Vec<(Expr, Expr)>,
++            else_result: Option<Box<Expr>>,
++        },
++        ArrayIndex {
++            obj: Box<Expr>,
++            indexes: Vec<Expr>,
++        },
++        Interval {
++            expr: Box<Expr>,
++            leading_field: Option<DateTimeField>,
++            last_field: Option<DateTimeField>,
++        },
++        Array {
++            elem: Vec<Expr>,
++        },
++    }
++}
++
++enum_layout! {
++    function_layout: Function {
++        Abs(value: Expr),
++        AddMonth {
++            expr: Expr,
++       
+```
+
+**File**: `storages/redb-storage/src/bincode_layout/macros.rs` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++//! Generate independent layout tests from a single expected declaration.
++
++macro_rules! enum_layout {
++    (
++        $test:ident: $target:ident {
++            $(
++                $variant:ident
++                $( ( $( $arg:ident : $arg_type:ty ),* $(,)? ) )?
++                $( { $( $field:ident : $field_type:ty ),* $(,)? } )?
++            ),+ $(,)?
++        }
++    ) => {
++        #[test]
++        fn $test() {
++            use $target as Target;
++            fn field_types(value: Target) {
++                match value {
++                    $(
++                        Target::$variant
++                        $( ( $( $arg ),* ) )?
++                        $( { $( $field ),* } )? => {
++                            $( $( let _: $arg_type = $arg; )* )?
++                            $( $( let _: $field_type = $field; )* )?
++                        }
++                    ),+
++                }
 +            }
++            let _: fn(Target) = field_types;
++            let expected = [
++                $(
++                    (
++                        stringify!($variant),
++                        $crate::bincode_layout::macros::enum_layout!(
++                            @shape
++                            $( ( $( $arg : $arg_type ),* ) )?
++                            $( { $( $field : $field_type ),* } )?
++                        ),
++                    )
++                ),+
++            ];
++            assert_eq!(
++                $crate::bincode_layout::serde_metadata::enum_layout::<Target>(),
++                expected,
++                "{} changed; review redb storage compatibility before updating this declaration",
++                stringify!($target),
++            );
 +        }
-+        Expr::Literal(_) | Expr::TypedString { .. } => Ok(false),
-+        Expr::Nested(expr) | Expr::UnaryOp { expr, .. } => validate(expr),
-+        Expr::BinaryOp { left, right, .. } => {
-+            let has_ident_l = validate(left)?;
-+            let has_ident_r = validate(right)?;
-+
-+            Ok(has_ident_l || has_ident_r)
-+        }
-+        Expr::Function(func) => match func.as_ref() {
-+            Function::Cast { expr, .. } => validate(expr),
-+            _ => Err(PlannerError::UnsupportedIndexExpr.into()),
-+        },
-+        _ => Err(PlannerError::UnsupportedIndexExpr.into()),
-+    }
++    };
++    (@shape) => {
++        $crate::bincode_layout::serde_metadata::Shape::Unit
++    };
++    (@shape ()) => {
++        $crate::bincode_layout::serde_metadata::Shape::Tuple(0)
++    };
++    (@shape ($arg:ident : $arg_type:ty)) => {
++        $crate::bincode_layout::serde_metadata::Shape::Newtype
++    };
++    (@shape ($( $arg:ident : $arg_type:ty ),+)) => {
++        $crate::bincode_layout::serde_metadata::Shape::Tuple(
++            [$( stringify!($arg) ),+].len()
++        )
++    };
++    (@shape { $( $field:ident : $field_type:ty ),* }) => {
++        $crate::bincode_layout::serde_metadata::Shape::Struct(
++            &[$( stringify!($field) ),*]
++        )
++    };
 +}
 +
-+#[cfg(test)]
-+mod tests {
-+    use {
-+        super::{validate, validate_index_expr},
-+        crate::{
-+            ast::{ColumnDef, Expr},
-+            data::Value,
-+            mock::run,
-+            parse_sql::{parse, parse_expr},
-+            plan::StatementPlan,
-+            planner::{PlannerError, fetch_schema_map},
-+            query_builder::ColumnDefNode,
-+            result::Error,
-+            store::Planner,
-+            translate::{NO_PARAMS, translate, translate_expr},
-+        },
++macro_rules! struct_layout {
++    ($test:ident: $target:ident { $( $field:ident : $field_type:ty ),* $(,)? }) => {
++        #[test]
++        fn $test() {
++            use $target as Target;
++            fn field_types(value: Target) {
++                let Target { $( $field ),* } = value;
++                $( let _: $field_type = $field; )*
++            }
++            let _: fn(Target) = field_types;
++            let expected = $crate::bincode_layout::serde_metadata::Shape::Struct(
++                &[$( stringify!($field) ),*]
++            );
++            assert_eq!(
++                $crate::bincode_layout::serde_metadata::struct_layout::<Target>(),
++                expected,
++                "{} changed; review redb storage compatibility before updating this declaration",
++                stringify!($target),
++            );
++        }
 +    };
 +
-+    fn statement(sql: &str) -> StatementPlan {
-+        translate(&parse(sql).expect(sql)[0]).expect(sql).into()
++    ($test:ident: $target:ident ( $field:ident : $field_type:ty $(,)? )) => {
++        #[test]
++        fn $test() {
++            use $target as Target;
++            fn field_types(value: Target) {
++                let Target($field) = value;
++                let _: $field_type = $field;
++            }
++            let _: fn(Target) = field_types;
++            let expected = $crate::bincode_layout::serde_metadata::Shape::Newtype;
++            assert_eq!(
++                $crate::bincode_layout::serde_metadata::struct_layout::<Target>(),
++                expected,
++                "{} changed; review redb storage compatibility before updating this declaration",
++                stringify!($target),
++            );
++        }
++    };
++
++}
++
++pub(super) use {enum_layout, struct_layout};
+```
+
+**File**: `storages/redb-storage/src/bincode_layout/serde_metadata.rs` (added, +155/-0)
+```diff
+@@ -0,0 +1,155 @@
++//! Read the metadata emitted by Serde derives without constructing sample values.
++
++use serde::de::{self, DeserializeOwned, DeserializeSeed, EnumAccess, VariantAccess, Visitor};
++
++type Error = de::value::Error;
++const CAPTURED: &str = "layout metadata captured";
++
++#[derive(Debug, PartialEq, Eq)]
++pub(super) enum Shape {
++    Unit,
++    Newtype,
++    Tuple(usize),
++    Struct(&'static [&'static str]),
++}
++
++// Stopping before field values is intentional: the metadata is all we need.
++fn captured<T>(result: &Result<T, Error>) {
++    assert!(
++        matches!(result, Err(error) if error.to_string() == CAPTURED),
++        "expected the metadata reader to stop before reading field values"
++    );
++}
++
++struct EnumProbe<'a> {
++    index: u32,
++    names: &'a mut Option<&'static [&'static str]>,
++    shape: &'a mut Option<Shape>,
++}
++
++impl<'de> de::Deserializer<'de> for EnumProbe<'_> {
++    type Error = Error;
++
++    fn deserialize_any<V: Visitor<'de>>(self, _: V) -> Result<V::Value, Error> {
++        Err(de::Error::custom("expected an externally tagged enum"))
 +    }
 +
-+    #[test]
-+    fn create_index() {
-+        let storage = run("
-+            CREATE TABLE Item (id INTEGER);
-+            CREATE TABLE Documents;
-+        ");
-+        let test = |sql: &str, expected, name: &str| {
-+            let statement = statement(sql);
-+            let schema_map = fetch_schema_map(&storage, &statement).expect(sql);
-+            let actual = validate(&schema_map, &statement);
-+            assert_eq!(actual, expected, "{name}: {sql}");
-+        };
++    fn deserialize_enum<V: Visitor<'de>>(
++        self,
++        _: &'static str,
++        names: &'static [&'static str],
++        visitor: V,
++    ) -> Result<V::Value, Error> {
++        *self.names = Some(names);
++        visitor.visit_enum(self)
++    }
 +
-+        let actual = "CREATE INDEX idx ON Item (id)";
-+        let expected = Ok(());
-+        test(actual, expected, "valid column reference");
++    serde::forward_to_deserialize_any! {
++        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
++        bytes byte_buf option unit unit_struct newtype_struct seq tuple
++        tuple_struct map struct identifier ignored_any
++    }
++}
 +
-+        let actual = "CREATE INDEX idx ON Missing (ABS(id))";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexTableNotFound(
-+            "Missing".to_owned(),
-+        )));
-+        test(
-+            actual,
-+            expected,
-+            "missing table precedes invalid expression",
++impl<'de> EnumAccess<'de> for EnumProbe<'_> {
++    type Error = Error;
++    type Variant = Self;
++
++    fn variant_seed<T: DeserializeSeed<'de>>(self, seed: T) -> Result<(T::Value, Self), Error> {
++        let variant = seed.deserialize(de::value::U32Deserializer::<Error>::new(self.index))?;
++        Ok((variant, self))
++    }
++}
++
++impl<'de> VariantAccess<'de> for EnumProbe<'_> {
++    type Error = Error;
++
++    fn unit_variant(self) -> Result<(), Error> {
++        *self.shape = Some(Shape::Unit);
++        Err(de::Error::custom(CAPTURED))
++    }
++
++    fn newtype_variant_seed<T: DeserializeSeed<'de>>(self, _: T) -> Result<T::Value, Error> {
++        *self.shape = Some(Shape::Newtype);
++        Err(de::Error::custom(CAPTURED))
++    }
++
++    fn tuple_variant<V: Visitor<'de>>(self, len: usize, _: V) -> Result<V::Value, Error> {
++        *self.shape = Some(Shape::Tuple(len));
++        Err(de::Error::custom(CAPTURED))
++    }
++
++    fn struct_variant<V: Visitor<'de>>(
++        self,
++        fields: &'static [&'static str],
++        _: V,
++    ) -> Result<V::Value, Error> {
++        *self.shape = Some(Shape::Struct(fields));
++        Err(de::Error::custom(CAPTURED))
++    }
++}
++
++fn enum_variant<T: DeserializeOwned>(index: u32) -> (&'static [&'static str], Shape) {
++    let mut names = None;
++    let mut shape = None;
++    captured(&T::deserialize(EnumProbe {
++        index,
++        names: &mut names,
++        shape: &mut shape,
++    }));
++    (
++        names.expect("enum variant names"),
++        shape.expect("enum variant shape"),
++    )
++}
++
++pub(super) fn enum_layout<T: DeserializeOwned>() -> Vec<(&'static str, Shape)> {
++    let (names, first) = enum_variant::<T>(0);
++    let mut variants = vec![(names[0], first)];
++    for (index, name) in names.iter().enumerate().skip(1) {
++        let index = u32::try_from(index).expect("Serde enum variant index fits u32");
++        let (_, shape) = enum_variant::<T>(index);
++        variants.push((*name, shape));
++    }
++    variants
++}
++
++struct StructProbe<'a>(&'a mut Option<Shape>);
++
++impl<'de> de::Deserializer<'de> for StructProbe<'_> {
++    type Error = Error;
++
++    fn deserialize_any<V: Visitor<'de>>(self, _: V) -> Result<V::Value, Error> {
++        Err(de::Error::custom("expected a struct"))
++    }
++
++    fn deserialize_struct<V: Visitor<'de>>(
++        self,
++        _: &'static str,
++        fields: &'static [&'static str],
++        _: V,
++    ) -> Result<V::Value, Error> {
++        *self.0 = Some(Shape::Struct(fields));
++        Err(de::Error::custom(CAPTURED))
++    }
++
++    fn deserialize_newtype_struct<V: Visitor<'de>>(
++        self,
++        _: &'static str,
++        _: V,
++    ) -> Result<V::Value, Error> {
++        *self.0 = Some(Shape::Newtype);
++        Err(de::Error::custom(CAPTURED))
++    }
++
++    serde::forward_to_deserialize_any! {
++        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
++        bytes byte_buf option unit unit_struct seq tuple tuple_struct map enum identifier ignored_any
++    }
++}
++
++pub(super) fn struct_layout<T: DeserializeOwned>() -> Shape {
++    let mut shape = None;
++    captured(&T::deserialize(StructProbe(&mut shape)));
++    shape.expect("struct shape")
++}
+```
+
+**File**: `storages/redb-storage/src/error.rs` (modified, +11/-13)
+```diff
+@@ -1,39 +1,37 @@
+-use {gluesql_core::error::Error, thiserror::Error as ThisError};
++use {crate::migration::MigrationError, gluesql_core::error::Error, thiserror::Error as ThisError};
+ 
+ #[derive(ThisError, Debug)]
+ pub enum StorageError {
+     #[error("nested transaction is not supported")]
+     NestedTransactionNotSupported,
++
+     #[error("transaction not found")]
+     TransactionNotFound,
++
+     #[error("cannot create table with reserved name: {0}")]
+     ReservedTableName(String),
+-    #[error(
+-        "[RedbStorage] migration required (found v{found}, expected v{expected}); migrate redb-storage data to the latest format before opening"
+-    )]
+-    MigrationRequired { found: u32, expected: u32 },
+-    #[error("[RedbStorage] unsupported format version v{0}")]
+-    UnsupportedFormatVersion(u32),
+-    #[error("[RedbStorage] unsupported newer format version v{0}")]
+-    UnsupportedNewerFormatVersion(u32),
+-    #[error("[RedbStorage] invalid storage format metadata: missing format version key")]
+-    MissingFormatVersionMetadata,
+-    #[error("[RedbStorage] failed to parse v1 row payload in table '{0}'")]
+-    InvalidV1RowPayload(String),
++
++    #[error(transparent)]
++    Migration(#[from] MigrationError),
+ 
+     #[error(transparent)]
+     Glue(#[from] Error),
+ 
+     #[error(transparent)]
+     RedbDatabase(#[from] redb::DatabaseError),
++
+     #[error(transparent)]
+     RedbStorage(#[from] redb::StorageError),
++
+     #[error(transparent)]
+     RedbTable(#[from] redb::TableError),
++
+     #[error(transparent)]
+     RedbTransaction(Box<redb::TransactionError>),
++
+     #[error(transparent)]
+     RedbCommit(#[from] redb::CommitError),
++
+     #[error(transparent)]
+     RedbUpgrade(#[from] redb::UpgradeError),
+ 
+```
+
+**File**: `storages/redb-storage/src/lib.rs` (modified, +3/-0)
+```diff
+@@ -4,6 +4,9 @@ mod core;
+ mod error;
+ mod migration;
+ 
++#[cfg(test)]
++mod bincode_layout;
++
+ pub use migration::{MigrationReport, REDB_STORAGE_FORMAT_VERSION, migrate_to_latest};
+ 
+ use {
+```
+
+**File**: `storages/redb-storage/src/migration.rs` (modified, +496/-80)
+```diff
+@@ -1,25 +1,35 @@
++mod decode;
++mod error;
++mod schema_rewrites;
+ mod v1_to_v2;
+ mod v2_to_v3;
++mod v2_to_v4;
++mod v3_to_v4;
++
++pub(super) use error::MigrationError;
+ 
+ use {
+     crate::{
+         core::{SCHEMA_TABLE_NAME, STORAGE_META_TABLE_NAME},
+         error::StorageError,
+     },
+-    gluesql_core::error::{Error, Result},
++    gluesql_core::error::Result,
+     redb::{Database, ReadTransaction, ReadableTable, TableDefinition, WriteTransaction},
++    schema_rewrites::SchemaRewrites,
+     std::path::Path,
+ };
+ 
+ /// `GlueSQL`'s redb storage format version.
+ ///
+ /// This is stored in the `__GLUESQL_META__` table and is independent of both
+ /// the redb crate version and redb's internal file format version. Storage
+-/// format v3 keeps the v2 row serialization and requires redb file format v3.
+-pub const REDB_STORAGE_FORMAT_VERSION: u32 = 3;
++/// format v4 uses the current core bincode schema layout, keeps the v2 row
++/// serialization and requires redb file format v3.
++pub const REDB_STORAGE_FORMAT_VERSION: u32 = 4;
+ 
+ const V1_REDB_STORAGE_FORMAT_VERSION: u32 = 1;
+ const V2_REDB_STORAGE_FORMAT_VERSION: u32 = 2;
++const V3_REDB_STORAGE_FORMAT_VERSION: u32 = 3;
+ 
+ #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+ pub struct MigrationReport {
+@@ -40,6 +50,7 @@ enum DetectedStorageFormatVersion {
+     V1,
+     V2,
+     V3,
++    V4,
+     UnsupportedNewer(u32),
+     Unsupported(u32),
+ }
+@@ -54,37 +65,44 @@ pub(super) fn initialize_storage_format_version(db: &Database) -> StorageResult<
+ 
+ pub(super) fn ensure_storage_format_version_supported(db: &Database) -> StorageResult<()> {
+     match detect_storage_format_version(db)? {
+-        DetectedStorageFormatVersion::V1 => Err(StorageError::MigrationRequired {
++        DetectedStorageFormatVersion::V1 => Err(MigrationError::MigrationRequired {
+             found: V1_REDB_STORAGE_FORMAT_VERSION,
+             expected: REDB_STORAGE_FORMAT_VERSION,
+-        }),
+-        DetectedStorageFormatVersion::V2 => Err(StorageError::MigrationRequired {
++        }
++        .into()),
++        DetectedStorageFormatVersion::V2 => Err(MigrationError::MigrationRequired {
+             found: V2_REDB_STORAGE_FORMAT_VERSION,
+             expected: REDB_STORAGE_FORMAT_VERSION,
+-        }),
+-        DetectedStorageFormatVersion::V3 => Ok(()),
++        }
++        .into()),
++        DetectedStorageFormatVersion::V3 => Err(MigrationError::MigrationRequired {
++            found: V3_REDB_STORAGE_FORMAT_VERSION,
++            expected: REDB_STORAGE_FORMAT_VERSION,
++        }
++        .into()),
++        DetectedStorageFormatVersion::V4 => Ok(()),
+         DetectedStorageFormatVersion::UnsupportedNewer(version) => {
+-            Err(StorageError::UnsupportedNewerFormatVersion(version))
++            Err(MigrationError::UnsupportedNewerFormatVersion(version).into())
+         }
+         DetectedStorageFormatVersion::Unsupported(version) => {
+-            Err(StorageError::UnsupportedFormatVersion(version))
++            Err(MigrationError::UnsupportedFormatVersion(version).into())
+         }
+     }
+ }
+ 
+ pub fn migrate_to_latest<P: AsRef<Path>>(filename: P) -> Result<MigrationReport> {
+     let path = filename.as_ref();
+     if !path.exists() {
+-        return Err(Error::StorageMsg(format!(
+-            "[RedbStorage] storage path '{}' does not exist",
+-            path.display()
+-        )));
++        return Err(
++            StorageError::Migration(MigrationError::StoragePathDoesNotExist(path.to_path_buf()))
++                .into(),
 +        );
-+
-+        let actual = "CREATE INDEX idx ON Item (missing)";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
-+            "missing".to_owned(),
-+        )));
-+        test(actual, expected, "missing column");
-+
-+        let actual = "CREATE INDEX idx ON Item (ABS(id))";
-+        let expected = Err(Error::Planner(PlannerError::UnsupportedIndexExpr));
-+        test(
-+            actual,
-+            expected,
-+            "invalid expression precedes missing reference",
-+        );
-+
-+        let actual = "CREATE INDEX idx ON Item (100)";
-+        let expected = Err(Error::Planner(
-+            PlannerError::IndexExprRequiresColumnReference,
-+        ));
-+        test(actual, expected, "constant requires a column reference");
-+
-+        let actual = "CREATE INDEX idx ON Documents (id)";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
-+            "id".to_owned(),
-+        )));
-+        test(actual, expected, "schemaless table has no declared columns");
-+
-+        let actual = "CREATE INDEX idx ON Documents (100)";
-+        let expected = Err(Error::Planner(
-+            PlannerError::IndexExprRequiresColumnReference,
-+        ));
-+        test(
-+            actual,
-+            expected,
-+            "schemaless constant still requires a reference",
-+        );
-+
-+        let actual = "DROP INDEX Missing.idx";
-+        let
+     }
+     if !path.is_file() {
+-        return Err(Error::StorageMsg(format!(
+-            "[RedbStorage] storage path '{}' is not a file",
+-            path.display()
+-        )));
++        return Err(StorageError::Migration(MigrationError::StoragePathNotFile(
++            path.to_path_buf(),
++        ))
++        .into());
+     }
+ 
+     let mut db = Database::open(path).map_err(StorageError::from)?;
+@@ -93,79 +111,69 @@ pub fn migrate_to_latest<P: AsRef<Path>>(filename: P) -> Result<MigrationReport>
+ 
+ fn migrate_database_to_latest(db: &mut Database) -> StorageResult<MigrationReport> {
+     match detect_storage_format_version(db)? {
+-        DetectedStorageFormatVersion::V1 => {
+-            // Phase 1: rewrite rows from GlueSQL v1 serialisation to v2 format.
+-            let mut report = MigrationReport::default();
+-            let txn = db.begin_write()?;
+-            let table_names = list_user_table_names(&txn)?;
+-            report.migrated_tables = table_names.len();
+-
+-            for table_name in &table_names {
+-                let rewritten_rows = v1_to_v2::migrate_table_rows(&txn, table_name)?;
+-                report.rewritten_rows += rewritten_rows;
+-            }
+-
+-            txn.commit()?;
+-
+-            // Phase 2: upgrade redb internal file format v2 → v3.
+-            v2_to_v3::migrate(db)?;
+-
+-            // Phase 3: record GlueSQL storage version 3.
+-            let txn = db.begin_write()?;
+-            write_storage_format_v
 ```
 
 #### Recent Merged Pull Requests:
@@ -2959,8 +2786,8 @@ enum payloads, and diagnostic strings.
 - **PR #2061** (2026-11-04): Move CREATE INDEX validation into the planner (@panarch)
 - **PR #2060** (2026-11-04): Apply table alias column names when copying CTAS schemas (@chiliec)
 - **PR #2057** (2026-11-04): Move CTAS column default planning out of the executor (@panarch)
+- **PR #2056** (2026-11-06): Fix redb schema migration with storage format v4 (@panarch)
 - **PR #2053** (2026-11-03): Plan custom functions before execution (@panarch)
-- **PR #2048** (2026-11-01): Avoid AST conversion during INSERT uniqueness validation (@panarch)
 
 ---
 
@@ -2980,28 +2807,30 @@ enum payloads, and diagnostic strings.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Expand review policies for testing and code structure (#2062)
+## X. redb schema migration with storage format v4 (#2056)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0daf9b82`: Expand review policies for testing and code structure (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85975331`: redb schema migration with storage format v4 (#2056). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
+ "bigdecimal",
+ "ordered-float 4.2.2",
+ "rust_decimal",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0daf9b82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85975331` are properly handled with clean fallback behavior.

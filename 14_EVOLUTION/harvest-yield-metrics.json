@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T19:37:21.468Z",
-  "total_cycles_completed": 8025,
-  "total_learnings_persisted": 8025,
-  "total_rules_promoted": 7674,
+  "last_updated": "2026-11-07T19:47:56.595Z",
+  "total_cycles_completed": 8029,
+  "total_learnings_persisted": 8029,
+  "total_rules_promoted": 7679,
   "history": [
-    {
-      "timestamp": "2026-11-06T13:42:07.798Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:52:01.020Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:52:03.043Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T13:52:08.195Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T13:58:50.970Z",
       "repository": "vespa-engine/vespa",
@@ -1403,6 +1375,34 @@
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:47:44.327Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:47:49.582Z",
+      "repository": "amir1376/ab-download-manager",
+      "learningId": "learn-github-amir1376-ab-download-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:47:52.109Z",
+      "repository": "microsoft/Mage-VL-Cowork",
+      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T19:47:56.595Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

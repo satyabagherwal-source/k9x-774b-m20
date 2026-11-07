@@ -8069,3 +8069,7 @@ Every entry in this ledger must capture:
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `553ecf53` | Multi-dimensional audit evidence | 2026-11-07T19:37:17.902Z |
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `90544c0b` | Multi-dimensional audit evidence | 2026-11-07T19:37:17.933Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `3852755e` | Multi-dimensional audit evidence | 2026-11-07T19:37:21.464Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `1974d5ac` | Multi-dimensional audit evidence | 2026-11-07T19:47:44.321Z |
+| `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `68f0ea6e` | Multi-dimensional audit evidence | 2026-11-07T19:47:49.568Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-07T19:47:52.100Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `85975331` | Multi-dimensional audit evidence | 2026-11-07T19:47:56.580Z |

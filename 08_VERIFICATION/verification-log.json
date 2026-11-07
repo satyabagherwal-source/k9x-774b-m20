@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-JNRG",
-    "timestamp": "2026-11-05T06:43:58.348Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "2f9dc2e45af9b668861343c9e29ff3a92e315399c4dca5cc721918da495b9c56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JQX9",
-    "timestamp": "2026-11-05T06:44:02.445Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-    "contentHash": "9dd0d0cba17622c46954f5ea9a78f1ade88aa7457b2c6079b7da5eed8411ed1b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-JXQ7",
-    "timestamp": "2026-11-05T06:44:11.263Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "5fd1b8748405c1c7e67c92edb59cc6f981520dbeaa199742368a8b69070fc83c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-SLXZ",
-    "timestamp": "2026-11-05T06:50:55.895Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "0468a447e87d4b58b77cb21fef723f7bc656712fb68564fe9877675ed84b98b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-SS96",
     "timestamp": "2026-11-05T06:51:04.074Z",
     "repository": "siderolabs/talos",
@@ -7492,6 +7432,66 @@
     "contentHash": "1002b5867f9e12721f9e7f3b4f3289119e309a46f4a47fe5dcfdd4e7add16fdc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FAKD",
+    "timestamp": "2026-11-07T19:47:44.317Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FEM4",
+    "timestamp": "2026-11-07T19:47:49.564Z",
+    "repository": "amir1376/ab-download-manager",
+    "learningId": "learn-github-amir1376-ab-download-manager",
+    "contentHash": "f06be1456d30970d16defeb060291c6f2e4213cf1444794532b55a1c0bb1a817",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FGKG",
+    "timestamp": "2026-11-07T19:47:52.096Z",
+    "repository": "microsoft/Mage-VL-Cowork",
+    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+    "contentHash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FK0W",
+    "timestamp": "2026-11-07T19:47:56.576Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

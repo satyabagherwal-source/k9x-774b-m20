@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `1f674d07`  
+> **Source Version**: `1974d5ac`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:20:35.133Z  
+> **Timestamp**: 2026-11-07T19:47:42.869Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:20:34.922Z  
+> **Harvest Timestamp**: 2026-11-07T19:47:42.630Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3602 stars
+- **Stars / Engagement**: 3690 stars
 
 ---
 
@@ -504,6 +504,121 @@ export function createAgentStream(
 
 ```
 
+### Core Architecture Module: `scripts/check-no-claude-in-core.py`
+```
+#!/usr/bin/env python3
+"""Fail if core mentions Claude outside the allowlist (epic #5308, "zero Claude in core").
+
+Claude support moves to the Claude plugin. Once it has, `claude`, `claudeCode`
+and `CLAUDE_` must not reappear in the core trees below. The match is
+case-insensitive, so it also catches `Claude` in prose.
+
+Scanned: tracked files under src/, web/src/, docker/ and acp-worker/.
+
+Allowlist (the only places Claude may stay):
+  - src/migrations/                  immutable migrations rewrite persisted Claude data
+  - src/telemetry/sanitize.rs        model-family bucket for Anthropic model names
+  - acp-worker/aoe-agent/            the aoe-agent Anthropic provider and default model,
+                                     an Anthropic API choice, not Claude Code
+  - CHANGELOG.md                     outside the scanned trees, listed for completeness
+
+CI wires this in disabled form until the removal work (C25 to C29) has landed on
+integration/claude-removal; see .github/workflows/ci.yml.
+
+Usage:
+    python3 scripts/check-no-claude-in-core.py [--self-test]
+"""
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+SCANNED = ("src/", "web/src/", "docker/", "acp-worker/")
+
+ALLOWLIST = (
+    "src/migrations/",
+    "src/telemetry/sanitize.rs",
+    "acp-worker/aoe-agent/",
+    "CHANGELOG.md",
+)
+
+PATTERN = re.compile(r"claude", re.IGNORECASE)
+
+
+def is_scanned(path):
+    return path.startswith(SCANNED) and not path.startswith(ALLOWLIST)
+
+
+def find_hits(path, text):
+    return [
+        (path, number, line.strip())
+        for number, line in enumerate(text.splitlines(), 1)
+        if PATTERN.search(line)
+    ]
+
+
+def tracked_files():
+    out = subprocess.run(
+        ["git", "ls-files", "-z"], cwd=REPO_ROOT, capture_output=True, check=True
+    ).stdout
+    return [p for p in out.decode().split("\0") if p]
+
+
+def self_test():
+    cases = [
+        ("src/agents.rs", True),
+        ("web/src/App.tsx", True),
+        ("docker/Dockerfile", True),
+        ("acp-worker/adapters/package.json", True),
+        ("src/migrations/v012_acp_rename.rs", False),
+        ("src/telemetry/sanitize.rs", False),
+        ("src/telemetry/mod.rs", True),
+        ("acp-worker/aoe-agent/index.ts", False),
+        ("CHANGELOG.md", False),
+        ("docs/claude.md", False),
+        ("tests/e2e/harness.rs", False),
+    ]
+    for path, expected in cases:
+        assert is_scanned(path) == expected, path
+
+    for line in ("let c = claudeCode;", "env CLAUDE_CONFIG_DIR", "Claude Code", "claude"):
+        assert find_hits("f", line), line
+    assert not find_hits("f", "let agent = codex;")
+    assert find_hits("f", "a\nb claude\nc") == [("f", 2, "b claude")]
+    print("self-test ok")
+
+
+def main():
+    if "--self-test" in sys.argv[1:]:
+        self_test()
+        return 0
+
+    hits = []
+    for path in tracked_files():
+        if not is_scanned(path):
+            continue
+        try:
+            text = (REPO_ROOT / path).read_text(encoding="utf-8", errors="replace")
+        except FileNotFoundError:
+            continue
+        hits.extend(find_hits(path, text))
+
+    for path, number, line in hits:
+        print(f"{path}:{number}: {line}")
+    if hits:
+        print(f"\n{len(hits)} Claude reference(s) in core outside the allowlist", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+```
+
 ### Core Architecture Module: `src/acp/acp_client/connection/command_loop.rs`
 ```
 //! The between-prompt command loop over an established session, including
@@ -817,15 +932,32 @@ pub(super) fn classify_lifecycle_signal(update: &SessionUpdate) -> Option<Lifecy
         SessionUpdate::AgentThoughtChunk(_)
         | SessionUpdate::Plan(_)
         | SessionUpdate::CompactionSummaryChunk(_) => Some(LifecycleSignal::Progress),
-        SessionUpdate::ToolCall(tc) => Some(LifecycleSignal::ToolStarted {
-            id: tc.tool_call_id.0.to_string(),
-            is_background_task: tc
-                .raw_input
-                .as_ref()
-                .and_then(|v| v.get("run_in_background"))
-                .and_then(|v| v.as_bool())
-                .unwrap_or(false),
-        }),
+        SessionUpdate::ToolCall(tc) => {
+            let id = tc.tool_call_id.0.to_string();
+            // Replay reports a final status on the initial call (#5206); a
+            // `ToolStarted` here would never be closed.
+            Some(match tc.status {
+                ToolCallStatus::Completed => LifecycleSignal::ToolCompleted {
+                    id,
+                    succeeded: true,
+                    off_protocol_work: detect_off_protocol_work_completed(&tc.content),
+                },
+                ToolCallStatus::Failed => LifecycleSignal::ToolCompleted {
+                    id,
+                    succeeded: false,
+                    off_protocol_work: None,
+                },
+                _ => LifecycleSignal::ToolStarted {
+                    id,
+                    is_background_task: tc
+                        .raw_input
+                        .as_ref()
+                        .and_then(|v| v.get("run_in_background"))
+                        .and_then(|v| v.as_bool())
+                        .unwrap_or(false),
+                },
+            })
+        }
         SessionUpdate::ToolCallUpdate(update) => {
             let id = update.tool_call_id.0.to_string();
             Some(match update.fields.status {
@@ -833,7 +965,9 @@ pub(super) fn classify_lifecycle_signal(update: &SessionUpdate) -> Option<Lifecy
                 Some(ToolCallStatus::Completed) => LifecycleSignal::ToolCompleted {
                     id,
                     succeeded: true,
-                    off_protocol_work: detect_off_protocol_work_completed(&update.fields.content),
+                    off_protocol_work: detect_off_protocol_work_completed(
+                        update.fields.content.as_deref().unwrap_or_default(),
+                    ),
                 },
                 Some(ToolCallStatus::Failed) => LifecycleSignal::ToolCompleted {
                     id,
@@ -953,11 +1087,10 @@ pub(super) async fn forward_lifecycle_signals(
 /// Matches SDK markers only at line starts so echoed output does not extend
 /// watchdog grace.
 pub(super) fn detect_off_protocol_work_completed(
-    content: &Option<Vec<ToolCallContent>>,
+    content: &[ToolCallContent],
 ) -> Option<OffProtocolWorkKind> {
     content
         .iter()
-        .flatten()
         .filter_map(|block| match block {
             ToolCallContent::Content(c) => match &c.content {
                 ContentBlock::Text(t) => Some(t.text.as_str()),
@@ -985,31 +1118,6 @@ pub(super) fn detect_off_protocol_work_completed(
 pub(super) fn wakeup_lifecycle_signal_from_update(
     update: &SessionUpdate,
     restored_title: Option<&str>,
-    profile: &agent_profiles::AgentProfile,
-) -> Option<LifecycleSignal> {
-    if !profile.supports_wakeup_tools {
-        return None;
-    }
-    let SessionUpdate::ToolCallUpdate(u) = update else {
-        return None;
-    };
-    if matches!(u.fields.status, Some(ToolCallStatus::Failed))
-        || u.fields.title.as_deref().or(restored_title) != Some("ScheduleWakeup")
-    {
-        return None;
-    }
-    match wakeup_event_from_raw(u.fields.raw_input.as_ref()?)? {
-        Event::WakeupScheduled { at, .. } => Some(LifecycleSignal::WakeupPending { at }),
-        _ => None,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::acp::acp_client::test_helpers::{compaction_chunk, compaction_update, text_chunk};
-    use agent_client_protocol::v1::schema::{
-        Content
 ```
 
 ### Core Architecture Module: `src/acp/runner_lifecycle.rs`
@@ -1848,275 +1956,17 @@ fn print_disclosure(profile: &str) {
 
 ```
 
-### Core Architecture Module: `src/cli/runtime_read/render.rs`
-```
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::fmt::Write as _;
-use std::path::Path;
-
-use serde::Serialize;
-
-use super::dto::{
-    component_healthy, freshness_observed, profile_component_healthy, ProfileRead, ProjectRead,
-    ProjectScope, SessionRead, SnapshotData, WireState,
-};
-use super::endpoint::{selected_profile_source, ProfileSource};
-use super::{ReadFailure, ScopedCommand};
-use crate::cli::group::GroupListArgs;
-use crate::cli::list::{self, ListArgs, SessionJson, StateFilter, WorkspaceRepoJson, WorktreeJson};
-use crate::cli::project::{ProjectListArgs, ScopeFilter};
-use crate::cli::session::ShowArgs;
-use crate::cli::status::{self, VERBOSE_GROUPS};
-
-/// One rendered read: the text the command prints, and whether it printed the
-/// human session table, which is the only place the update notice belongs.
-#[derive(Debug)]
-pub(crate) struct Projection {
-    pub stdout: String,
-    pub session_table: bool,
-    pub stderr: Option<String>,
-    pub exit: i32,
-}
-
-impl Projection {
-    fn text(stdout: String) -> Self {
-        Self {
-            stdout,
-            session_table: false,
-            stderr: None,
-            exit: 0,
-        }
-    }
-}
-
-pub(crate) fn evaluate(
-    command: &ScopedCommand<'_>,
-    snapshot: &SnapshotData,
-    source: &super::endpoint::ReadRequestSource,
-    local_home: Option<&Path>,
-) -> Result<Projection, ReadFailure> {
-    match command {
-        ScopedCommand::List(args) => render_list(args, snapshot, source, local_home.is_some()),
-        ScopedCommand::Status(args) => render_status(args, snapshot, source, local_home),
-        ScopedCommand::Show(args) => render_show(args, snapshot, source),
-        ScopedCommand::ListTrash => render_trash(snapshot, source).map(Projection::text),
-        ScopedCommand::GroupList(args) => {
-            render_groups(args, snapshot, source).map(Projection::text)
-        }
-        ScopedCommand::Profile => render_profiles(snapshot).map(Projection::text),
-        ScopedCommand::ProjectList(args) => {
-            render_projects(args, snapshot, source).map(Projection::text)
-        }
-    }
-}
-
-fn terminal_text(value: &str) -> Cow<'_, str> {
-    let Some((start, _)) = value.char_indices().find(|(_, ch)| ch.is_control()) else {
-        return Cow::Borrowed(value);
-    };
-    let mut clean = String::with_capacity(value.len());
-    clean.push_str(&value[..start]);
-    clean.extend(value[start..].chars().filter(|ch| !ch.is_control()));
-    Cow::Owned(clean)
-}
-
-fn selected_profile<'a>(
-    snapshot: &'a SnapshotData,
-    source: &'a super::endpoint::ReadRequestSource,
-) -> Result<(&'a str, &'a ProfileRead), ReadFailure> {
-    let selected = match selected_profile_source(source) {
-        ProfileSource::Explicit(value) => value,
-        ProfileSource::Environment(value) => value.to_str().ok_or_else(|| {
-            // Match clap's invalid-environment-profile exit status.
-            ReadFailure::exit(2, "error: AGENT_OF_EMPIRES_PROFILE must be valid UTF-8\n")
-        })?,
-        ProfileSource::Default => match snapshot.default_profile.as_deref() {
-            Some(value) => value,
-            // A resolved but absent default is a user-state refusal.
-            None => match &snapshot.resolved_default_profile {
-                Some(name) => {
-                    crate::session::validate_profile_name(name).map_err(|error| {
-                        ReadFailure::exit(
-                            1,
-                            format!("Error: {}\n", terminal_text(&error.to_string())),
-                        )
-                    })?;
-                    return Err(profile_absent("default_missing", name));
-                }
-                // Nothing was resolved, because resolving would have created
-                // the profile this read has to stay out of.
-                None => return Err(ReadFailure::post("default_missing")),
-            },
-        },
-    };
-    crate::session::validate_profile_name(selected).map_err(|error| {
-        ReadFailure::exit(1, format!("Error: {}\n", terminal_text(&error.to_string())))
-    })?;
-    snapshot
-        .profiles
-        .iter()
-        .find(|profile| {
-            profile.name == selected || profile.aliases.iter().any(|alias| alias == selected)
-        })
-        .map(|profile| (selected, profile))
-        .ok_or_else(|| profile_absent("profile_missing", selected))
-}
-
-/// Preserve the local CLI's profile-creation guidance and exit status.
-fn profile_absent(code: &'static str, name: &str) -> ReadFailure {
-    let name = terminal_text(name);
-    ReadFailure::refuse(
-        code,
-        1,
-        format!(
-            "Error: Profile '{name}' does not exist. Create it with: aoe profile create {name}\n"
-        ),
-    )
-}
-
-/// Preserve the local resolver's sorted ambiguity candidates.
-fn ambiguous_prefix(identifier: &str, candidates: &[&SessionRead]) -> ReadFailure {
-    let mut lines: Vec<String> = candidates
-        .iter()
-        .map(|session| format!("  {} ({})", session.id, terminal_text(&session.title)))
-        .collect();
-    lines.sort();
-    ReadFailure::refuse(
-        "session_ambiguous",
-        1,
-        format!(
-            "Error: Ambiguous session identifier {identifier:?} matches {} sessions:\n{}\n\
-             Use a longer prefix or the full ID.\n",
-            candidates.len(),
-            lines.join("\n")
-        ),
-    )
-}
-
-fn render_list(
-    args: &ListArgs,
-    snapshot: &SnapshotData,
-    source: &super::endpoint::ReadRequestSource,
-    local_peer: bool,
-) -> Result<Projection, ReadFailure> {
-    let state = args.state;
-    if args.all {
-        if !component_healthy(&snapshot.health.global_enumeration) {
-            return Err(unreadable("The profile registry"));
-        }
-        // Local empty-inventory output precedes JSON formatting.
-        if !snapshot.profiles.iter().any(|profile| profile.listed) {
-            return Ok(Projection::text("No profiles found.\n".into()));
-        }
-        let mut stderr = String::new();
-        if args.json {
-            let systemd_active = local_peer && list::systemd_scopes_active();
-            let mut rows = Vec::new();
-            for profile in snapshot.profiles.iter().filter(|profile| profile.listed) {
-                if !profile_sessions_healthy(profile) {
-                    let _ = writeln!(
-                        stderr,
-                        "warning: profile '{}': unavailable for this listing",
-                        terminal_text(&profile.name)
-                    );
-                    continue;
-                }
-                for session in sessions_for_profile(snapshot, &profile.name)
-                    .filter(|session| matches_state(session.state, state))
-                {
-                    rows.push(session_json(session, &profile.name, systemd_active)?);
-                }
-            }
-            let incomplete = !stderr.is_empty();
-            if incomplete {
-                stderr.push_str("Error: the listing is incomplete\n");
-            }
-            return Ok(Projection {
-                stdout: json_lines(&rows)?,
-                session_table: false,
-                stderr: incomplete.then_some(stderr),
-                exit: i32::from(incomplete),
-            });
-        }
-        let show_state = state == StateFilter::All;
-        let mut output = String::new();
-        let mut total = 0usize;
-        for profile in snapshot.profiles.iter().filter(|profile| profile.listed) {
-            if !profile_sessions_healthy(profile) {
-                let _ = writeln!(
-                    stderr,
-                    "warning: profile '{}': unavailable for this listing",
-                    terminal_text(&profile.name)
-                );
-                continue;
-            }
-            let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
-                .filter(|session| matches_state(session.state, state))
-                .collect();
-            // Empty profiles have no banner.
-            if sessions.is_empty() {
-                continue;
-            }
-            output.push_str(&format!(
-                "\n═══ Profile: {} ═══\n\n",
-                terminal_text(&profile.name)
-            ));
-            output.push_str(&list::table_header(show_state));
-            for (session, depth) in tree_order(&sessions) {
-                output.push_str(&list::table_row(
-                    &list::table_title(&terminal_text(&session.title), depth),
-                    &terminal_text(&session.group_path),
-                    &terminal_text(&session.project_path),
-                    show_state.then(|| session.state.as_str()),
-                    &session.id,
-                ));
-            }
-            output.push_str(&format!("({} sessions)\n", sessions.len()));
-            total += sessions.len();
-        }
-        output.push_str(&format!(
-            "\n═══════════════════════════════════════\nTotal: {total} sessions across {} profiles\n",
-            snapshot.profiles.iter().filter(|profile| profile.listed).count()
-        ));
-        return Ok(Projection {
-            stdout: output,
-            session_table: false,
-            stderr: (!stderr.is_empty()).then_some(stderr),
-            exit: 0,
-        });
-    }
-
-    let (profile_name, profile) = selected_profile(snapshot, source)?;
-    let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
-        .filter(|session| matches_state(session.state, state))
-        .collect();
-    require_selected_profile_health(snapshot, profile, profile_name)?;
-
-    if args.json {
-        let systemd_active = local_peer && list::systemd_scopes_active();
-        let rows: Vec<SessionJson> = sessions
-            .iter()
-            .map(|session| session_json(session, profile_name, systemd_active))
-            .collect::<Result<_, _>>()?;
-        return json_lines(&rows).map(Projection::text);
-    }
-    if sessions.is_empty() {
-        let profile_name = terminal_text(profile_name);
-        return Ok(Projection::text(fo
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5226** (2026-11-03): **Dependabot: group Vitest and its V8 coverage provider across major updates**
-  *Symptoms*: ## What happened?  Dependabot opened separate major upgrades for `vitest` (#5191) and `@vitest/coverage-v8` (#5193). Each PR updates only one direct dependency, leaving incompatible peers and preventing normal npm installation.  At [main@9ffbbf24](https://github.com/agent-of-empires/agent-of-empires/blob/9ffbbf24be690929ea6a61d02fc4cbdefc1db924/.github/dependabot.yml#L91-L138), minor/patch upgrades already match `web-minor-patch`. Major upgrades match no group and therefore receive individual PRs, as [documented by GitHub](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).  The coverage provider requires an exact Vitest peer: [4.1.11](https://registry.npmjs.org/@vitest/coverage-v8/4.1.11) requires `vitest: 4.1.11`; [5.0.3](https://registry.npmjs.org/@vitest/coverage-v8/5.0.3) requires `vitest: 5.0.3`.  ## Reproduction and evidence  Copy `web/package.json`, `web/package-lock.json` and `web/.npmrc` from each revision into an isolated temporary directory, then run:  ```sh npm ci --dry-run --ignore-scripts --no-audit --no-fund \   --legacy-peer-deps=false --force=false ```  Observed locally:  | Revision | Exit | Result | | --- | --- | --- | | `main@9ffbbf24` | 0 | Dependency resolution succeeds | | #5191 at `2564fdbe1bd6e1d0737b5606939d5eb8744dced5` | 1 | `ERESOLVE`: coverage 4.1.11 requires Vitest 4.1.11, but Vitest resolves to 5.0.3 | | #5193 at `932bfaf06365868baf74ed378e18adb32430ece6` | 1 | `ERESOLVE`: coverage 5.
+- **Issue #5382** (2026-11-06): **aoe add leaves a worktree and branch behind when it refuses --agent or --structured-view**
+  *Symptoms*: ### What happened?  `aoe add` provisions the worktree, the branch (`-b`) and the workspace first, and only then decides the session's view. Two refusals in that view decision return with `bail!` and never call `cleanup_partial_session`, so they leave the worktree and branch behind with no session (`src/cli/add.rs` at 4062e0c21, #5244's head):  - `add.rs:627`: `--agent <name>` for an Agent that isn't ACP-capable ("agent `x` is not ACP-capable…"). - `add.rs:636`: `--structured-view` with a tool that isn't ACP-capable ("tool `x` is not ACP-capable, so --structured-view has no effect…").  The refusals around them already clean up: - the duplicate-title exit (`:535`); - the missing-adapter exit with `--agent` (`:719`); - the `--effort` without Structured view exit (`:756`).  **Steps** (run once, in an isolated `HOME`, with a debug build of main at 1f674d07e, whose `add.rs` has the same two exits. Paths are shortened, and the `git fetch` and daemon-start noise is trimmed):  ``` $ git init repo && git -C repo commit --allow-empty -m init $ aoe add ~/repo -w feat/x -b --agent not-an-acp-agent Creating worktree at: /tmp/r/repo-worktrees/feat-x ⚠ git fetch origin master failed for /tmp/r/repo/: fatal: 'origin' does not appear to be a git repository ✓ Worktree created successfully Error: agent `not-an-acp-agent` is not ACP-capable: it has no registry entry and no `[session.agent_acp_cmd]` command. Run `aoe acp doctor` to see configured agents, or omit --agent for a terminal-view session
 
-- **Issue #5224** (2026-11-04): **[bug] Structured view (ACP): every UserPromptSent stored and rendered twice with vibe-acp**
-  *Symptoms*: ### What happened?  In Structured view sessions (ACP, agent: vibe / vibe-acp), every user prompt is stored twice in `acp_events.db` (~30 ms apart) and therefore rendered twice in the TUI and web transcript. Terminal sessions are unaffected. The agent itself receives and processes the prompt exactly once — only the event/transcript is duplicated.  ### Environment  - AoE 1.21.0 (binary install), current latest release - Vibe 3.0.4, vibe-acp 3.0.4 (current latest) - Debian 12/13, reproduced on two hosts  ### Evidence  ```sql sqlite3 ~/.config/agent-of-empires/acp_events.db "SELECT seq, discriminant, substr(event_json,1,300), created_at FROM acp_events WHERE session_id='16f71f008d6d424f' AND discriminant='UserPromptSent' ORDER BY seq LIMIT 6;" ```  ``` seq=4953   UserPromptSent | {"UserPromptSent":{"text":"...","prompt_id":"abc-123...","synthesized"\:false}} | 1730285358156 seq=4954 | UserPromptSent | {"UserPromptSent":{"text":"...","synthesized"\:false}}                          | 1730285358391 ```  - 44 `UserPromptSent` events in one session = 22 prompts × 2, gap 27–156 ms (avg 39 ms) - First copy usually carries `prompt_id`, second copy has none (on a second host both copies lacked `prompt_id`, so dedup on `prompt_id` alone is not reliable) - `synthesized: false` in **both** copies → the synthesized suppression introduced in #4041 does not apply - No `rate_limited`/`Stopped` events, no idle phase, not a replay pattern  Reproduced again after updating to Vibe/vibe-acp 3.0.4, so
+- **Issue #5272** (2026-11-05): **Web dashboard: a failed /api/about shows write actions on a read-only server**
+  *Symptoms*: ### What happened?  Web dashboard: when `/api/about` fails, the dashboard treats the server as writable, so a read-only server shows its write actions. Pressing one is refused by the server, so nothing changes, but the action shouldn't be offered.  **Steps:** 1. Start `aoe serve --read-only`. 2. Make the first `GET /api/about` fail (for example a dropped connection or a 5xx from a proxy) while the rest of the API works. 3. Open a Structured view Session whose Agent reports it isn't signed in, and open the sign-in popover.  **Expected:** no **Restart Agent**, the same as when `/api/about` answers `read_only: true`.  **Actual:** **Restart Agent** shows, and pressing it fails with "Couldn't restart the Agent".  **Cause:** the shell renders once `serverAboutLoaded` is true, which is also set after a failed fetch (`web/src/App.tsx:1182-1184`, `:1205`), and `serverAbout` stays null. The gates read `!serverAbout?.read_only`, so null counts as writable. `canRestartAgent` (`App.tsx:1411`) is the case CodeRabbit flagged on #5246. The same pattern gates `canSwitchToTerminal` (`:1409`), the terminal docks' new-terminal buttons (`:2134`, `:2147`) and the `readOnly` props passed down (`:1932`, `:1962`, `:2027`, `:2093`, `:2192`, `:2205`).  **Suggested fix:** decide once what the dashboard does when `/api/about` fails (treat it as read-only, or retry before rendering), and apply it to every `read_only` gate, with a Vitest row for the failed fetch. Not just `canRestartAgent`.  **Docs:** `doc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2133,957 +1983,1393 @@ fn render_list(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95c5d66c` (2026-11-05)
-**Commit Message**: ci: cancel obsolete queue runs and validate npm before builds (#5306)
+### Incident Patch 1: `02c46190` (2026-11-06)
+**Commit Message**: ci: run Linux compile jobs on RunsOn runners (#5248)
 
-* ci: cancel superseded queue generations and validate npm before builds
+* ci: run Linux compile jobs on RunsOn runners
 
-* ci: preserve manual queue reruns during cleanup
+Move clippy, msrv, docs, nix-build, nix-build-web, the cargo-linux legs,
+playwright-live and the e2e recording job to 8 vCPU spot runners from
+the org's RunsOn stack. Fork PRs stay on ubuntu-latest so untrusted code
+never runs in our AWS account.
 
-* ci: shorten web dependency step names
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/scripts/cancel-obsolete-queue-runs.cjs` (added, +75/-0)
+* ci: install liblzma on Linux runners that lack it
+
+xz2 links system liblzma. GitHub-hosted images ship liblzma-dev but the
+RunsOn image does not, so every job that links the main binary failed
+with `unable to find library -llzma`. The step is a no-op where the
+package is present or apt-get is unavailable (release containers).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: credit RunsOn for the CI runner license
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci: use the Ubuntu 26.04 image on RunsOn runners
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci: enable RunsOn Magic Cache on RunsOn jobs
+
+Adds extras=s3-cache and runs-on/action so actions/cache and setup-node
+npm caches go to the RunsOn S3 bucket instead of GitHub's 10 GB cache.
+The action is a no-
+
+**File**: `.github/actions/rust-toolchain/action.yml` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,75 @@
-+const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
-+const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
-+
-+function entry(branch) {
-+  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
-+  return match && { base: match[1], number: Number(match[2]) };
-+}
-+
-+function sameWorkflow(run, current, repositoryId) {
-+  return run.event === 'merge_group' && paths.has(run.path) &&
-+    run.path === current.path && run.workflow_id === current.workflow_id &&
-+    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
-+}
-+
-+module.exports = async ({ github, context, core }) => {
-+  const event = context.payload.workflow_run;
-+  const repositoryId = context.payload.repository.id;
-+  const { data: current } = await github.rest.actions.getWorkflowRun({
-+    ...context.repo, run_id: event.id,
-+  });
-+  const key = entry(current.head_branch);
-+  if (!key || !sameWorkflow(current, current, repositoryId) ||
-+      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
-+
-+  // Queue state, rather than event delivery order, identifies the current generation.
-+  const isCurrent = async () => {
-+    const { repository } = await github.graphql(`
-+      query($owner: String!, $repo: String!, $number: Int!) {
-+        repository(owner: $owner, name: $repo) {
-+          pullRequest(number: $number) {
-+            baseRefName
-+            mergeQueueEntry { headCommit { oid } }
-+          }
-+        }
-+      }`, { ...context.repo, number: key.number });
-+    const pr = repository?.pullRequest;
-+    return pr?.baseRefName === key.base &&
-+      pr.mergeQueueEntry?.headCommit?.oid === current.head_sha;
-+  };
-+  if (!await isCurrent()) return;
-+
-+  const obsolete = run => {
-+    const candidate = entry(run.head_branch);
-+    return sameWorkflow(run, current, repositoryId) &&
-+      candidate?.base === key.base && candidate.number === key.number &&
-+      run.run_number < current.run_number && run.head_sha !== current.head_sha &&
-+      run.run_attempt === 1 && active.includes(run.status);
-+  };
-+  // Snapshot every page before cancelling: mutations can shift API pagination.
-+  const candidates = new Map();
-+  for (const status of active) {
-+    const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
-+      ...context.repo, workflow_id: current.workflow_id,
-+      event: 'merge_group', status, per_page: 100,
-+    });
-+    for (const run of runs) if (obsolete(run)) candidates.set(run.id, run);
-+  }
-+  for (const candidate of candidates.values()) {
-+    const { data: run } = await github.rest.actions.getWorkflowRun({
-+      ...context.repo, run_id: candidate.id,
-+    });
-+    if (!obsolete(run) || run.head_sha !== candidate.head_sha) continue;
-+    if (!await isCurrent()) return;
-+    try {
-+      await github.rest.actions.cancelWorkflowRun({ ...context.repo, run_id: run.id });
-+      core.notice(`Cancelled obsolete queue run ${run.id} for ${key.base}/${key.number}`);
-+    } catch (error) {
-+      if (error.status !== 409) throw error;
-+      const { data: latest } = await github.rest.actions.getWorkflowRun({
-+        ...context.repo, run_id: run.id,
-+      });
-+      if (latest.status !== 'completed') throw error;
-+    }
-+  }
-+};
+@@ -37,3 +37,11 @@ runs:
+         toolchain: ${{ steps.pin.outputs.channel }}
+         components: ${{ inputs.components }}
+         targets: ${{ inputs.targets }}
++    # xz2 links system liblzma. GitHub-hosted images ship it; RunsOn images do not.
++    - name: Install liblzma
++      if: runner.os == 'Linux'
++      shell: bash
++      run: |
++        if command -v apt-get >/dev/null && ! dpkg -s liblzma-dev >/dev/null 2>&1; then
++          sudo apt-get update && sudo apt-get install -y liblzma-dev
++        fi
 ```
 
-**File**: `.github/scripts/cancel-obsolete-queue-runs.test.cjs` (added, +139/-0)
+**File**: `.github/workflows/ci.yml` (modified, +18/-5)
 ```diff
-@@ -0,0 +1,139 @@
-+const { test } = require('node:test');
-+const assert = require('node:assert/strict');
-+const cancel = require('./cancel-obsolete-queue-runs.cjs');
-+
-+const branch = (pr = 42, base = 'main', sha = 'a') =>
-+  `gh-readonly-queue/${base}/pr-${pr}-${sha.repeat(40)}`;
-+const current = {
-+  id: 20, run_number: 10, run_attempt: 1, workflow_id: 100, event: 'merge_group',
-+  path: '.github/workflows/ci.yml', head_branch: branch(), head_sha: 'b'.repeat(40),
-+  repository: { id: 1 }, head_repository: { id: 1 }, status: 'queued',
-+};
-+const old = { ...current, id: 19, run_number: 9, head_branch: branch(42, 'main', 'c'), head_sha: 'd'.repeat(40) };
-+
-+async function exercise({ trigger = {}, candidates = [old], fresh = {}, queueSha = current.head_sha, queueBase = 'main',
-+  queueError, cancelError, latest, pageError, leaveQueue = false, advanceQueue = () => false, event = current } = {}) {
-+  const run = { ...current, ...trigger };
-+  const cancelled = [];
-+  const queries = [];
-+  const reads = [];
-+  let queueReads = 0;
-+  const github = {
-+    rest: {
-+      actions: {
-+        listWorkflowRuns: () => {},
-+        getWorkflowRun: async ({ run_id }) => {
-+          reads.push(run_id);
-+          if (run_id === run.id) return { data: run };
-+          const candidate = candidates.find(c => c.id === run_id);
-+          return { data: latest && reads.filter(id => id === run_id).length > 1
-+            ? { ...candidate, ...latest } : { ...candidate, ...fresh } };
-+        },
-+        cancelWorkflowRun: async ({ run_id }) => {
-+          assert.equal(queries.length, 5, 'snapshot all statuses before mutating');
-+          cancelled.push(run_id);
-+          if (cancelError) throw cancelError;
-+        },
-+      },
-+    },
-+    graphql: async (query, args) => {
-+      assert.equal(args.number, 42);
-+      assert.match(query, /mergeQueueEntry/);
-+      queueReads++;
-+      if (queueError) throw queueError;
-+      return { repository: { pullRequest: {
-+        baseRefName: queueBase,
-+        mergeQueueEntry: leaveQueue ? null : {
-+          headCommit: { oid: advanceQueue({ reads: queueReads, cancelled }) ? 'new-generation' : queueSha },
-+        },
-+      } } };
-+    },
-+    paginate: async (method, args) => {
-+      assert.equal(method, github.rest.actions.listWorkflowRuns);
-+      assert.equal(args.event, 'merge_group');
-+      assert.equal(args.workflow_id, run.workflow_id);
-+      assert.equal(args.per_page, 100);
-+      queries.push(args.status);
-+      if (pageError) throw pageError;
-+      return candidates.filter(c => c.status === args.status);
-+    },
-+  };
-+  await cancel({ github, context: {
-+    repo: { owner: 'owner', repo: 'repo' },
-+    payload: { repository: { id: 1 }, workflow_run: event },
-+  }, core: { notice() {} } });
-+  return { cancelled, queries, reads };
-+}
-+
-+test('cancels obsolete CI and Tests generations, including more than 100 returned candidates', async () => {
-+  for (const path of ['.github/workflows/ci.yml', '.github/workflows/tests.yml']) {
-+    const candidates = Array.from({ length: 105 }, (_, i) => ({ ...old, path, id: 1000 + i }));
-+    candidates.push({ ...old, path, id: 2000, status: 'in_progress' });
-+    const result = await exercise({ trigger: { path }, event: { ...current, path }, candidates });
-+    assert.deepEqual(result.cancelled, candidates.map(c => c.id));
-+    assert.deepEqual(result.queries, ['queued', 'in_progress', 'waiting', 'pending', 'requested']);
-+  }
-+});
-+
-+test('leaves unrelated, newer, completed and same-SHA runs alone', async () => {
-+  const cases = [
-+    { head_branch: branch(43) }, { head_branch: branch(42, 'release/main') },
-+    { head_branch: 'feature/fake-queue' }, { head_branch: branch() + '-suffix' },
-+    { event: 'pull_request' }, { workflow_id: 101 },
-+    { path: '.github/workflows/tests.yml' }, { repository: { id: 2 } },
-+    { head_repository: { id: 2 } }, { run_number: 10 }, { run_number: 11 },
-+    { head_sha: current.head_sha }, { status: 'completed' }, { run_attempt: 2 },
-+  ];
-+  for (const change of cases) {
-+    assert.deepEqual((await exercise({ candidates: [{ ...old, ...change }] })).cancelled, [], JSON.stringify(change));
-+  }
-+});
-+
-+test('rejects untrusted triggers and generations no longer current in the queue', async () => {
-+  for (const trigger of [
-+    { event: 'pull_request' }, { path: '.github/workflows/release.yml' },
-+    { head_branch: 'main' }, { head_sha: 'changed' }, { workflow_id: 101 },
-+    { repository: { id: 2 } }, { head_repository: { id: 2 } },
-+  ]) {
-+    assert.deepEqual((await exercise({ trigger })).queries, [], JSON.stringify(trigger));
-+  }
-+  assert.deepEqual((await exercise({ queueSha: 'changed' })).cancelled, []);
-+  assert.deepEqual((await exercise({ queueBase: 'release' })).cancelled, []);
-+  assert.deepEqual((await exercise({ leaveQueue: true })).cancelled, []);
-+  assert.deepEqual((await exercise({ advanceQueue: ({ reads }) => reads > 1 })).cancelled, []);
-+  await assert.rejects(exer
-```
-
-**File**: `.github/workflows/cancel-obsolete-queue-runs.yml` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+name: Cancel obsolete queue runs
-+
-+on:
-+  # Default-branch code only; no queue checkout, cache restoration or artifacts.
-+  workflow_run: # zizmor: ignore[dangerous-triggers]
-+    workflows: [CI, Tests]
-+    types: [requested]
-+
-+permissions:
-+  contents: read
-+  actions: write
-+  pull-requests: read
-+
-+jobs:
-+  cancel:
-+    if: github.event.workflow_run.event == 'merge_group'
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+    steps:
-+      # workflow_run's SHA belongs to the default branch, never the queue head.
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          ref: ${{ github.sha }}
-+          persist-credentials: false
-+          sparse-checkout: .github/scripts
-+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-+        with:
-+          script: |
-+            const cancel = require('./.github/scripts/cancel-obsolete-queue-runs.cjs');
-+            await cancel({ github, context, core });
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
-```diff
-@@ -10,7 +10,7 @@ on:
-   merge_group:
+@@ -44,11 +44,14 @@ jobs:
  
- # The event keeps a queue run and the push of its fast-forwarded commit apart.
--# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
-+# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
- concurrency:
-   group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
-@@ -215,6 +215,7 @@ jobs:
+   clippy:
+     name: Clippy
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 20
+     permissions:
+       contents: read
+       id-token: write
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - uses: ./.github/actions/rust-toolchain
+         with:
+@@ -95,11 +98,14 @@ jobs:
+ 
+   msrv:
+     name: MSRV
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 20
+     permissions:
+       contents: read
+       id-token: write
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: Read rust-version
+         id: msrv
+@@ -165,11 +171,14 @@ jobs:
+   docs:
+     # Also the skill check: both build xtask.
+     name: Docs
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 25
+     permissions:
+       contents: read
+       id-token: write
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - uses: ./.github/actions/rust-toolchain
+       - uses: ./.github/actions/kache
+@@ -294,7 +303,7 @@ jobs:
+ 
+   nix-build:
+     name: Nix Build
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
+     timeout-minutes: 45
+     # Builds the default (aoe) crate through crane. Nix Eval only evaluates
+     # derivations, so a flake recipe that compiles nowhere (a bad source filter,
+@@ -310,6 +319,8 @@ jobs:
+     # `src/**`, `Cargo.*`, the build scripts or an embedded-asset directory
+     # (see its `paths:` list), so wider breakage still surfaces there.
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
          with:
-           persist-credentials: false
-+      - run: node --test .github/scripts/cancel-obsolete-queue-runs.test.cjs
-       - run: scripts/verify-shared-target.sh --self-test
-       - run: python3 .github/scripts/select-internal-pr.py --self-test
-       - run: python3 .github/scripts/check-dependabot-pr.py --self-test
-```
-
-**File**: `.github/workflows/tests.yml` (modified, +15/-11)
-```diff
-@@ -8,7 +8,7 @@ on:
-   merge_group:
+           fetch-depth: 0
+@@ -360,11 +371,13 @@ jobs:
  
- # The event keeps a queue run and the push of its fast-forwarded commit apart.
--# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
-+# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
- concurrency:
-   group: tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
-@@ -41,6 +41,17 @@ jobs:
-           # (zizmor artipacked). Matches the hardened convention in ci.yml and
-           # release.yml.
-           persist-credentials: false
-+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-+        with:
-+          node-version: '22'
-+          cache: npm
-+          cache-dependency-path: |
-+            web/package-lock.json
-+            acp-worker/test-shim/package-lock.json
-+      - name: Validate web lockfile
-+        if: matrix.leg == 'web-e2e'
-+        working-directory: web
-+        run: npm ci --dry-run --ignore-scripts --no-audit --no-fund
-       - uses: ./.github/actions/rust-toolchain
-       - uses: ./.github/actions/kache
+   nix-build-web:
+     name: Nix Build Web
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
+     timeout-minutes: 30
+     # Catches npmDepsHash desync at PR time even if the nix-npm-hash bot
+     # is offline. Path-gated so Rust-only PRs keep fast feedback.
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
          with:
-@@ -63,13 +74,6 @@ jobs:
-             userns,
-           }
-           PROFILE
--      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
--        with:
--          node-version: '22'
--          cache: npm
--          cache-dependency-path: |
--            web/package-lock.json
--            acp-worker/test-shim/package-lock.json
-       # tests/integration/acp_smoke.rs spawns the Node ACP shim under
-       # acp-worker/test-shim/. The shim depends on @agentclientprotocol/sdk,
-       # so its deps must be installed before the integration crate runs. Only
-@@ -558,6 +562,9 @@ jobs:
-           node-version: '22'
-           cache: npm
-           cache-dependency-path: web/package-lock.json
-+      - name: Install web deps
-+        working-directory: web
-+        run: npm ci
+           fetch-depth: 0
+```
+
+**File**: `.github/workflows/e2e-recording.yml` (modified, +9/-1)
+```diff
+@@ -11,11 +11,14 @@ jobs:
+   record:
+     name: Record E2E Tests
+     if: github.event.label.name == 'needs-recording'
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 45
+     permissions:
+       contents: write
+       pull-requests: write
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
        - uses: ./.github/actions/rust-toolchain
-       - uses: ./.github/actions/kache
-         with:
-@@ -579,9 +586,6 @@ jobs:
-           # smaller `.js`, far faster navigation); see web/vite.config.ts.
-           AOE_COVERAGE_INLINE_SOURCEMAP: '1'
-         run: cargo build --features web
--      - name: Install web deps
--        working-directory: web
--        run: npm ci
-       # Same scheme as the mocked job: cache Chromium under
-       # ~/.cache/ms-playwright, key on the lockfile, skip --with-deps
-       # because ubuntu-latest already has the apt prerequisites.
-```
-
----
-
-### Incident Patch 2: `db073acb` (2026-11-05)
-**Commit Message**: chore(deps): bump @assistant-ui/react from 0.15.21 to 0.15.32 in /web in the web-pre1-patch group across 1 directory (#5190)
-
-* chore(deps): bump @assistant-ui/react
-
-Bumps the web-pre1-patch group with 1 update in the /web directory: [@assistant-ui/react](https://github.com/assistant-ui/assistant-ui/tree/HEAD/packages/react).
-
-
-Updates `@assistant-ui/react` from 0.15.21 to 0.15.32
-- [Release notes](https://github.com/assistant-ui/assistant-ui/releases)
-- [Changelog](https://github.com/assistant-ui/assistant-ui/blob/main/packages/react/CHANGELOG.md)
-- [Commits](https://github.com/assistant-ui/assistant-ui/commits/@assistant-ui/react@0.15.32/packages/react)
-
----
-updated-dependencies:
-- dependency-name: "@assistant-ui/react"
-  dependency-version: 0.15.31
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: web-pre1-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* chore: update Nix npmDepsHash for web dependencies
-
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.no
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@
-             pname = "agent-of-empires-web";
-             version = "0";
-             src = ./web;
--            npmDepsHash = "sha256-zITYrFhy9ewkgUsnF1Uazp46NaJbY5svOsuFdwk0HiY=";
-+            npmDepsHash = "sha256-ACTtB+XehAX4DxRmwMj+cU1aJl3R41Xv5TW2IRyTOKk=";
-             # tsc -b && vite build; output goes to web/dist
-             installPhase = ''
-               mkdir $out
-```
-
-**File**: `web/package-lock.json` (modified, +503/-495)
-```diff
-@@ -8,7 +8,7 @@
-       "name": "web",
-       "version": "0.0.0",
-       "dependencies": {
--        "@assistant-ui/react": "^0.15.21",
-+        "@assistant-ui/react": "^0.15.32",
-         "@assistant-ui/react-markdown": "^0.14.15",
-         "@dnd-kit/core": "^6.3.1",
-         "@dnd-kit/sortable": "^10.0.0",
-@@ -199,49 +199,46 @@
-       }
-     },
-     "node_modules/@assistant-ui/core": {
--      "version": "0.3.20",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.20.tgz",
--      "integrity": "sha512-gSY7kI5crnbaXFaF2tObBVekXvQCpBz0D8CqzEkDJrKOwe57gn2K52qBr2hL0o36Ssyg0DmiEAi0LjPG5ZSGqQ==",
-+      "version": "0.3.32",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.32.tgz",
-+      "integrity": "sha512-eEOuM3K0HWoetfFW8WwGJrhFu7lAfn/Su9us6xMk9HbHUc3/5jL6EOa2VsxrWeZbPqu/yXxGT2KaaFVvzZtCbA==",
-       "license": "MIT",
-       "dependencies": {
--        "assistant-stream": "^0.3.44",
--        "nanoid": "^6.0.1"
-+        "assistant-cloud": "^0.2.9",
-+        "assistant-stream": "^0.3.55",
-+        "nanoid": "^6.0.2"
-       },
-       "peerDependencies": {
--        "@assistant-ui/store": "^0.3.14",
--        "@assistant-ui/tap": "^0.9.18",
-+        "@assistant-ui/store": "^0.3.22",
-+        "@assistant-ui/tap": "^0.9.24",
-         "@types/react": "*",
--        "assistant-cloud": "^0.2.1",
-         "react": "^18 || ^19"
-       },
-       "peerDependenciesMeta": {
-         "@types/react": {
-           "optional": true
-         },
--        "assistant-cloud": {
--          "optional": true
--        },
-         "react": {
-           "optional": true
-         }
-       }
-     },
-     "node_modules/@assistant-ui/react": {
--      "version": "0.15.21",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.21.tgz",
--      "integrity": "sha512-5VID3r2YpYFbx6LLfyOSWwRVf4WOJXYsfSN/C67sbCsJsqqBbxeQpn4MB9g73HcyriBkRwqvHY5XXCguyNqP6Q==",
-+      "version": "0.15.32",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.32.tgz",
-+      "integrity": "sha512-cw+8UQRnJocyHEaNc3+S+ulZaFp4UoVnbjyRmVFZcq8XSHpe4onz7ZkXkBl7L8IZftgvNdHS9ZEujnqohwzibw==",
-       "license": "MIT",
-       "dependencies": {
--        "@assistant-ui/core": "^0.3.20",
--        "@assistant-ui/store": "^0.3.14",
--        "@assistant-ui/tap": "^0.9.18",
--        "assistant-cloud": "^0.2.2",
--        "assistant-stream": "^0.3.44",
--        "radix-ui": "^1.6.7",
-+        "@assistant-ui/core": "^0.3.32",
-+        "@assistant-ui/store": "^0.3.22",
-+        "@assistant-ui/tap": "^0.9.24",
-+        "assistant-cloud": "^0.2.9",
-+        "assistant-stream": "^0.3.55",
-+        "radix-ui": "^1.8.1",
-         "react-textarea-autosize": "^8.5.9",
--        "safe-content-frame": "^0.0.31",
--        "zod": "^4.6.5",
--        "zustand": "^5.0.15"
-+        "safe-content-frame": "^0.0.34",
-+        "zod": "^4.6.7",
-+        "zustand": "^5.0.16"
-       },
-       "peerDependencies": {
-         "@types/react": "*",
-@@ -282,12 +279,12 @@
-       }
-     },
-     "node_modules/@assistant-ui/store": {
--      "version": "0.3.14",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.14.tgz",
--      "integrity": "sha512-GqHYBD4TfSBTynyBYs2DDnyskfTVNtKHNaXws6dG5//18fb5PJyTYhXjkOSvDqF+dKX5rlOk9Bbd7G0CfJ+xkQ==",
-+      "version": "0.3.22",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.22.tgz",
-+      "integrity": "sha512-aXp4m42mmtZOQUE0lzxJ8Z9EZKknOWBk+DDg1Pj2gNhhBGYXmfrScYD1N1e/9/8wTKSwL0g4z2fSZqr+5fWbxg==",
-       "license": "MIT",
-       "peerDependencies": {
--        "@assistant-ui/tap": "^0.9.18",
-+        "@assistant-ui/tap": "^0.9.24",
-         "@types/react": "*",
-         "react": "^18 || ^19"
-       },
-@@ -301,9 +298,9 @@
-       }
-     },
-     "node_modules/@assistant-ui/tap": {
--      "version": "0.9.18",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.18.tgz",
--      "integrity": "sha512-JowBf+JbzQRarun3DWy/4H6XZ7v/1fJ154By00Kn7b30thmlA/bh2lOPa9hPPeYaMcsTiYYYu6yWEM+AFMvdIw==",
-+      "version": "0.9.24",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.24.tgz",
-+      "integrity": "sha512-6O0hf2HkKbrylIwNlFUimHf2V/6Gq5UXF0y0r2Fbw5wSvvO8ZDmv0AEkMwwygSfJgbpnQgiC8Xs+2VFaeO0RBw==",
-       "license": "MIT",
-       "peerDependencies": {
-         "@types/react": "*",
-@@ -1968,18 +1965,18 @@
-       "license": "MIT"
-     },
-     "node_modules/@radix-ui/primitive": {
--      "version": "1.1.7",
--      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
--      "integrity": "sha512-rqWnm76nYT8HoNNqEjpgJ7Pw/DrBj5iBTrmEPo6HTX5+VJyBNOqTdv4g89G63HuR5g0AaENoAcH7Is5fF2kZ8Q==",
-+      "version": "1.2.0",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.2.0.tgz",
-+      "integrity": "sha512-KABY+VMIRPJL+Vyzv/335FEhXXD/xDv8BMb1kl48/aXJZMH0LtHCTx5ga5RnxaEP3nZHtmTLf1P9vanmFX46bw==",
-       "license": "MIT"
-     },
-     "node_modules/@rad
-```
-
-**File**: `web/package.json` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-     "coverage:all": "rm -rf coverage && AOE_COVERAGE=1 npm run test:unit -- --coverage && AOE_COVERAGE=1 npx playwright test && npm run coverage:merge"
-   },
-   "dependencies": {
--    "@assistant-ui/react": "^0.15.21",
-+    "@assistant-ui/react": "^0.15.32",
-     "@assistant-ui/react-markdown": "^0.14.15",
-     "@dnd-kit/core": "^6.3.1",
-     "@dnd-kit/sortable": "^10.0.0",
-```
-
----
-
-### Incident Patch 3: `259bdfb5` (2026-11-05)
-**Commit Message**: fix(web): stop retrying an unknown profile's agent list and key the list by profile (#5279)
-
-* fix(web): stop retrying an unknown profile's agent list and key the list by profile
-
-The wizard's agent list now records the profile it was loaded for and reads
-as loading for any other, so a profile switch never shows the previous
-list as ready. A 404 profile_not_found from /api/agents is no longer
-retried; the footer says the profile is gone and Launch stays off.
-
-Closes #5063
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(web): drop the last Profile's agents on a failed switch, and name a deleted Profile first
-
-A failed agent list for a newly chosen Profile kept the previous
-Profile's agents, so the Agent picker and the Yolo and View rows read
-them for the new one. A failure for another Profile now clears the list;
-a retry for the same Profile keeps it.
-
-A deleted Profile also fails the project lookup, and the footer showed
-that error, which reselecting the project can't fix. The missing-Profile
-message now comes first.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(web): offer the Profile row for a deleted Profile with one Profile left
-
-**File**: `web/src/components/session-wizard/SessionWizard.tsx` (modified, +29/-21)
-```diff
-@@ -1,4 +1,4 @@
--import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
- import { createPortal } from "react-dom";
- import type {
-   CreateFailure,
-@@ -10,7 +10,7 @@ import type {
- } from "../../lib/types";
- import { setAgentNames } from "../../lib/agentDisplayName";
- import {
--  fetchAgents,
-+  fetchProfileAgents,
-   fetchGroups,
-   fetchDockerStatus,
-   fetchProfiles,
-@@ -58,7 +58,7 @@ import { failureView, type FailureAction } from "./createFailureView";
- import { CreateProgressView } from "./CreateProgressView";
- import { FieldRow, NavRow, PanelHeader, ROW_INPUT, RowGroup, SegmentedRow, SwitchRow } from "./WizardRows";
- import { LaunchFooter } from "./LaunchFooter";
--import { initialData, reducer, type WizardData } from "./wizardReducer";
-+import { agentsView, initialData, reducer, type WizardData } from "./wizardReducer";
- import { buildCreateRequest, launchEligible } from "./createRequest";
- import { commandMapsFromSettings, EMPTY_COMMAND_MAPS, type CommandMaps } from "./commandMaps";
- import { profileDefaults, type ProfileDefaults } from "./profileDefaults";
-@@ -134,6 +134,8 @@ const MAX_RETRY_DELAY_MS = 30_000;
- const UNKNOWN_OUTCOME_ERROR =
-   "Lost connection while creating. The session may still be created; Launch retries the same request.";
- const AGENTS_UNAVAILABLE_ERROR = "Couldn't load the agent list, so Yolo mode can't be shown yet. Retrying…";
-+const profileMissingError = (profile: string) =>
-+  `The profile "${profile}" no longer exists. Choose another profile to launch.`;
+@@ -29,6 +32,11 @@ jobs:
+       - name: Install tmux
+         run: sudo apt-get update && sudo apt-get install -y tmux
  
- const REGISTRY_UNRESOLVED_ERROR =
-   "Could not load this project's settings, so its sandbox and worktree defaults are unknown. Select the project again to retry.";
-@@ -213,6 +215,7 @@ export function SessionWizard({
-     failure: restore?.failure ?? null,
-     agents: [],
-     agentsStatus: "loading",
-+    agentsFor: null,
-     groups: [],
-     groupsFor: null,
-     profiles: [],
-@@ -315,29 +318,32 @@ export function SessionWizard({
-     };
-   }, [state.data.profile, groupsKey]);
- 
--  // A custom agent's base comes from the profile the session is created in.
-+  // A custom agent's base comes from the profile the session is created in. Like Groups, a list
-+  // is read only for the profile it was fetched for, so a switch never shows the last one as ready.
-   const agentsProfile = state.data.profile || servedProfile;
-+  const agentsKey = agentsProfile ?? "";
-+  const { agents, agentsStatus } = useMemo(() => agentsView(state, agentsKey), [state, agentsKey]);
-   useEffect(() => {
-     let alive = true;
-     let retry: ReturnType<typeof setTimeout> | undefined;
--    dispatch({ type: "AGENTS_LOADING" });
-     const load = (attempt: number) =>
--      void fetchAgents(agentsProfile || undefined).then((agents) => {
-+      void fetchProfileAgents(agentsProfile || undefined).then((list) => {
-         if (!alive) return;
--        if (agents) {
-+        if (Array.isArray(list)) {
-           // The app-wide names describe the served profile, not the one being created in.
--          if (agentsProfile === servedProfile) setAgentNames(agents);
--          return dispatch({ type: "SET_AGENTS", agents });
-+          if (agentsProfile === servedProfile) setAgentNames(list);
-+          return dispatch({ type: "SET_AGENTS", agents: list, agentsFor: agentsKey });
-         }
--        dispatch({ type: "AGENTS_FAILED" });
--        retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
-+        const missing = list === "profile_not_found";
-+        dispatch({ type: "AGENTS_FAILED", agentsFor: agentsKey, missing });
-+        if (!missing) retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
-       });
-     load(0);
-     return () => {
-       alive = false;
-       clearTimeout(retry);
-     };
--  }, [agentsProfile, servedProfile]);
-+  }, [agentsProfile, agentsKey, servedProfile]);
- 
-   useEffect(() => {
-     const generations = defaultsGeneration;
-@@ -693,7 +699,7 @@ export function SessionWizard({
-         d,
-         isAcpEligible(
-           d.tool,
--          state.agents.find((a) => a.name === d.tool),
-+          agents.find((a) => a.name === d.tool),
-         ),
-       ),
-       idempotency_key: newIdempotencyKey(),
-@@ -809,8 +815,7 @@ export function SessionWizard({
-   // A scratch session has no project whose overrides could be unknown.
-   const projectUnresolved = registryUnresolved && !d.scratch && !d.importAcpSessionId;
-   // Only the Yolo row needs the agent list, and a name-only form has none.
--  const formReady =
--    defaultsReady && (nameOnly || state.agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
-+  const formReady = defaultsReady && (nameOnly || agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
-   const canResend = launchEligible(d, { ready: formReady, offline, nameOnly });
-   const canResendRef = useRef(canResend);
-   us
-```
-
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.lastProject.test.tsx` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
--  fetchAgents: vi.fn().mockResolvedValue([]),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: (...args: unknown[]) => fetchIsGitRepo(...args),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-   fetchDockerStatus: vi.fn().mockResolvedValue({ available: true }),
-```
-
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.projectWorktreeOverride.test.tsx` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
--  fetchAgents: vi.fn().mockResolvedValue([]),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-   fetchProfiles: (...args: unknown[]) => fetchProfiles(...args),
-```
-
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.test.tsx` (modified, +108/-21)
-```diff
-@@ -7,7 +7,7 @@ import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@t
- import { SessionWizard, type WizardPrefill } from "../SessionWizard";
- import { initialData } from "../wizardReducer";
- import {
--  fetchAgents,
-+  fetchProfileAgents,
-   fetchCreateProgress,
-   fetchDockerStatus,
-   fetchGroups,
-@@ -37,6 +37,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: vi.fn().mockResolvedValue({}),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-@@ -72,7 +73,7 @@ const INSTRUCTION_KEY = "aoe-new-session-last-instruction";
- beforeEach(() => {
-   vi.clearAllMocks();
-   // clearAllMocks keeps queued answers, and a test can leave some unread.
--  vi.mocked(fetchAgents).mockReset().mockResolvedValue([]);
-+  vi.mocked(fetchProfileAgents).mockReset().mockResolvedValue([]);
-   localStorage.clear();
-   createSession.mockResolvedValue({ ok: true, session: { id: "s1" } });
-   reviewCreationTrust.mockResolvedValue({
-@@ -140,7 +141,7 @@ describe("SessionWizard native import late defaults", () => {
-             resolveSettings = resolve;
-           }),
-       );
--      vi.mocked(fetchAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
-+      vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
-       renderWizard({ path: "/tmp/proj", worktreeEnabled: true, sandboxEnabled: true });
-       fireEvent.click(screen.getByText("Project"));
-       fireEvent.click(await screen.findByRole("button", { name: "Import session" }));
-@@ -232,7 +233,7 @@ describe("SessionWizard structured view payload", () => {
-       acp: { acp_defaults: { opencode: { model: "openai/gpt-5.5", effort: "high" } } },
-       sandbox: {},
-     } as never);
--    vi.mocked(fetchAgents).mockResolvedValueOnce([
-+    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([
-       agent("opencode", { acp_installed: true }),
-       agent("claude", { acp_installed: true }),
-     ]);
-@@ -410,7 +411,7 @@ describe("SessionWizard rows", () => {
-     ["sandbox_enabled", "Sandbox unavailable: settl runs on the host only"],
-     ["worktree_enabled", "Worktree unavailable: settl runs on the host only"],
-   ])("refuses a host-only agent with a seeded %s project override", async (field, message) => {
--    vi.mocked(fetchAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
-+    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
-     vi.mocked(fetchProjects).mockResolvedValueOnce([
-       {
-         name: "proj",
-@@ -433,7 +434,7 @@ describe("SessionWizard rows", () => {
-     ["helper", [agent("helper", { kind: "custom", acp_capable: false })], true, /needs agent_acp_cmd/],
-     ["claude", [agent("claude", { acp_allowed: false })], true, /not on the allowed agents list/],
-   ])("gates the structured view for %s", async (tool, agents, disabled, summary) => {
--    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
-+    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
-     renderWizard({ path: "/tmp/proj", tool });
-     await waitFor(() => expect(viewSwitch().disabled).toBe(disabled));
-     expect(screen.getByTestId("wizard-view-row").textContent).toMatch(summary);
-@@ -462,7 +463,7 @@ describe("SessionWizard rows", () => {
-     [undefined, "Run in a safe container", "Docker is not running"],
-     [[agent("settl", { host_only: true })], "Create a worktree", "settl runs on the host only"],
-   ])("a blocked switch left on shows on and turns off: %#", async (agents, name, reason) => {
--    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
-+    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
-     const tool = agents ? "settl" : "claude";
-     renderWizard({ path: "/tmp/proj", tool, sandboxEnabled: true, worktreeEnabled: true });
-     const toggle = () => screen.getByRole("switch", { name }) as HTMLButtonElement;
-@@ -1160,7 +1161,10 @@ describe("SessionWizard Yolo mode", () => {
-   });
- 
-   it("locks on for an agent that always runs in Yolo mode, and gives the value back after", async () => {
--    vi.mocked(fetchAgents).mockResolvedValue([agent("claude"), agent("pi", { always_yolo: true, acp_capable: false })]);
-+    vi.mocked(fetchProfileAgents).mockResolvedValue([
-+      agent("claude"),
-+      agent("pi", { always_yolo: true, acp_capable: false }),
-+    ]);
-     vi.mocked(fetchSettings).mockResolvedValueOnce({ session: { yolo_mode_default: false }, sandbox: {} } as never);
-     renderWizard({ path: "/tmp/proj", tool: "pi" });
-     await waitFor(() => expect(yoloRow()).toContain("always on for pi"));
-@@ -1180,7 +1184,10 @@ describe("SessionWizard Yolo mode", () => {
-   });
- 
-   it("keeps a profi
-```
-
-**File**: `web/src/components/session-wizard/wizardReducer.test.ts` (modified, +24/-1)
-```diff
-@@ -1,7 +1,7 @@
- import { describe, expect, it } from "vitest";
- 
- import type { CreateStage } from "../../lib/types";
--import { initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
-+import { agentsView, initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
- 
- function makeState(data: Partial<WizardData> = {}): WizardState {
-   return {
-@@ -11,6 +11,7 @@ function makeState(data: Partial<WizardData> = {}): WizardState {
-     failure: null,
-     agents: [],
-     agentsStatus: "ready",
-+    agentsFor: null,
-     groups: [],
-     groupsFor: null,
-     profiles: [],
-@@ -398,6 +399,28 @@ describe("SEED_PROJECT_OVERRIDES sandbox", () => {
-   });
- });
- 
-+describe("agent list per profile", () => {
-+  const claude = { name: "claude" } as WizardState["agents"][number];
-+  const failed = (agentsFor: string, missing = false): Action => ({ type: "AGENTS_FAILED", agentsFor, missing });
-+  // Each row starts from a list loaded for alpha.
-+  it.each([
-+    ["alpha's list reads as itself for alpha", [], "alpha", "ready", 1],
-+    ["alpha's list is still loading for beta", [], "beta", "loading", 0],
-+    ["a failed load for beta drops alpha's list", [failed("beta")], "beta", "failed", 0],
-+    ["a missing beta drops alpha's list", [failed("beta", true)], "beta", "missing", 0],
-+    ["a failed retry for alpha keeps alpha's list", [failed("alpha")], "alpha", "failed", 1],
-+    ["a missing alpha keeps alpha's list", [failed("alpha", true)], "alpha", "missing", 1],
-+  ] as const)("%s", (_label, actions, profile, status, count) => {
-+    const loaded = reducer(
-+      { ...makeState(), agentsStatus: "loading" },
-+      { type: "SET_AGENTS", agents: [claude], agentsFor: "alpha" },
-+    );
-+    const view = agentsView(actions.reduce<WizardState>(reducer, loaded), profile);
-+    expect(view.agentsStatus).toBe(status);
-+    expect(view.agents).toHaveLength(count);
-+  });
-+});
++      # RunsOn appends `. /etc/environment` to /etc/profile, so every login shell
++      # resets PATH and aoe's login-shell launches lose the e2e stub dirs.
++      - name: Keep inherited PATH in login shells
++        run: sudo sed -i '/runs-on\/env/d' /etc/profile
 +
- describe("submit failures", () => {
-   const failure = { code: "hook_failed", message: "m", stage: "running_hooks" as const, reference: "r" };
-   it.each<[string, Action, Partial<WizardState>]>([
+       - name: Install asciinema
+         run: pipx install asciinema
+ 
 ```
 
-**File**: `web/src/components/session-wizard/wizardReducer.ts` (modified, +26/-9)
+**File**: `.github/workflows/tests.yml` (modified, +22/-6)
 ```diff
-@@ -67,8 +67,10 @@ export interface WizardState {
-   /** A create the server refused, shown as the failure box instead of `error`. */
-   failure: CreateFailure | null;
-   agents: AgentInfo[];
--  /** Until "ready", which agents always run in Yolo mode is unknown. */
--  agentsStatus: "loading" | "ready" | "failed";
-+  /** Until "ready", which agents always run in Yolo mode is unknown. "missing": the profile is gone. */
-+  agentsStatus: "loading" | "ready" | "failed" | "missing";
-+  /** Which profile `agents` and `agentsStatus` describe; any other profile is still loading. */
-+  agentsFor: string | null;
-   groups: GroupInfo[];
-   /** Which profile `groups` was fetched for; any other profile sees no Groups. */
-   groupsFor: string | null;
-@@ -87,9 +89,8 @@ export type Action =
-   | { type: "SUBMIT_FAILED"; failure: CreateFailure }
-   | { type: "SUBMIT_SUCCESS" }
-   | { type: "SUBMIT_CANCEL" }
--  | { type: "SET_AGENTS"; agents: AgentInfo[] }
--  | { type: "AGENTS_FAILED" }
--  | { type: "AGENTS_LOADING" }
-+  | { type: "SET_AGENTS"; agents: AgentInfo[]; agentsFor: string }
-+  | { type: "AGENTS_FAILED"; agentsFor: string; missing: boolean }
-   | { type: "SET_GROUPS"; groups: GroupInfo[]; groupsFor: string }
-   | { type: "SET_PROFILES"; profiles: ProfileInfo[] }
-   | { type: "SET_DOCKER"; available: boolean; runtimeName: string | null }
-@@ -228,6 +229,18 @@ function seededStructuredView(data: WizardData, action: { useStructuredView?: bo
-   return action.useStructuredView ?? data.useStructuredView;
+@@ -25,7 +25,8 @@ jobs:
+     # branch ruleset requires every leg's context by name; keep it in sync if
+     # the leg set changes.
+     name: Cargo Test (linux, ${{ matrix.leg }})
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=8cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 40
+     permissions:
+       contents: read
+       id-token: write
+@@ -34,6 +35,8 @@ jobs:
+       matrix:
+         leg: [web-e2e, core-rest, bare-core]
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           # These jobs run repository-controlled build/test code after checkout
+@@ -62,6 +65,10 @@ jobs:
+           tool: cargo-nextest
+       - name: Install tmux
+         run: sudo apt-get update && sudo apt-get install -y tmux
++      # RunsOn appends `. /etc/environment` to /etc/profile, so every login shell
++      # resets PATH and aoe's login-shell launches lose the e2e stub dirs.
++      - name: Keep inherited PATH in login shells
++        run: sudo sed -i '/runs-on\/env/d' /etc/profile
+       - name: Install confined Local test prerequisites
+         if: matrix.leg == 'web-e2e'
+         run: |
+@@ -212,8 +219,8 @@ jobs:
+       # binary, and the privdrop tests are core, so they are present in it.
+       # Reusing that binary makes the privileged run nearly free.
+       #
+-      # The privileged step is safe only on a disposable GitHub-hosted runner.
+-      # Do not move this leg to a persistent or self-hosted machine.
++      # The privileged step is safe only on a disposable runner (GitHub-hosted
++      # or single-job RunsOn). Do not move this leg to a persistent machine.
+       - name: Exercise alien uid guards (privdrop)
+         if: matrix.leg == 'core-rest'
+         shell: bash
+@@ -348,8 +355,11 @@ jobs:
+ 
+   vitest:
+     name: Vitest
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=4cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 15
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           # These jobs run repository-controlled build/test code after checkout
+@@ -454,8 +464,11 @@ jobs:
+ 
+   playwright:
+     name: Playwright (mocked)
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=4cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 20
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           # These jobs run repository-controlled build/test code after checkout
+@@ -545,11 +558,14 @@ jobs:
+     # Unsharded: shards each repeat the ~2 min cargo build and hold a runner
+     # from the shared concurrency pool, which costs more wall than it saves.
+     name: Playwright (live)
+-    runs-on: ubuntu-latest
++    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || format('runs-on={0}/runner=4cpu-linux-x64/image=ubuntu26-full-x64/volume=80gb/extras=s3-cache', github.run_id) }}
++    timeout-minutes: 30
+     permissions:
+       contents: read
+       id-token: write
+     steps:
++      # Routes actions/cache to the RunsOn S3 bucket (Magic Cache); no-op on GitHub-hosted runners.
++      - uses: runs-on/action@284bff869d4a825f778ac7c38e50f1e31ef198fd # v2.6.0
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           # These jobs run repository-controlled build/test code after checkout
+```
+
+**File**: `README.md` (modified, +4/-1)
+```diff
+@@ -6,6 +6,7 @@
+   </p>
+   <p align="center">
+     <a href="https://github.com/agent-of-empires/agent-of-empires/actions/workflows/ci.yml"><img src="https://github.com/agent-of-empires/agent-of-empires/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
++    <a href="https://runs-on.com"><img src="https://img.shields.io/badge/CI%20runners-RunsOn-2ea44f" alt="CI runners: RunsOn"></a>
+     <a href="https://formulae.brew.sh/formula/aoe"><img src="https://img.shields.io/homebrew/v/aoe" alt="Homebrew"></a>
+     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+     <a href="https://clawhub.ai/njbrake/aoe"><img src="https://img.shields.io/badge/ClawHub-aoe-blue" alt="ClawHub"></a>
+@@ -110,7 +111,9 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md). Area owners and merge rules are
+ in [MAINTAINERS.md](MAINTAINERS.md); local builds are in
+ [docs/development.md](docs/development.md). AoE is supported by
+ [Mozilla.ai](https://www.mozilla.ai/) and inspired by
+-[agent-deck](https://github.com/asheshgoplani/agent-deck).
++[agent-deck](https://github.com/asheshgoplani/agent-deck). Thanks to
++[RunsOn](https://runs-on.com) for the free license that powers our CI
++runners.
+ 
+ ## License
+ 
+```
+
+**File**: `src/migrations/mod.rs` (modified, +3/-1)
+```diff
+@@ -399,8 +399,10 @@ fn run_migrations_inner(
+     // both before the first schema write; standalone callers include the TUI.
+     let owned_transaction;
+     let transaction = if (current < CURRENT_VERSION || announce) && transaction.is_none() {
++        // A concurrent migrator holds this through its migration and the daemon
++        // start it hands off to; match the async acquire bound.
+         owned_transaction = crate::daemon::lifecycle::Transaction::acquire_blocking_for(
+-            std::time::Duration::from_secs(10),
++            std::time::Duration::from_secs(60),
+         )?;
+         Some(&owned_transaction)
+     } else {
+```
+
+**File**: `src/server/acp_events.rs` (modified, +119/-10)
+```diff
+@@ -476,6 +476,18 @@ pub(super) async fn acp_event_listener(state: Arc<AppState>) {
+             Some(lock) => Some(lock.lock().await),
+             None => None,
+         };
++        // A stop holds this lock while it removes the worker, so a retired
++        // worker's queued identity frame lands after the stop has committed. It
++        // keeps its id for a later resume but must not wake the stopped row.
++        let live_worker = match (frame.worker_generation, &acp_change) {
++            (Some(generation), Some(_)) => {
++                state
++                    .acp_supervisor
++                    .is_current_worker_generation(&frame.session_id, generation)
++                    .await
++            }
++            _ => true,
++        };
+ 
+         // #4127: the worker's own store is the only observation of the route
+         // this launch applied. Read it for the id the worker just assigned, and
+@@ -536,15 +548,15 @@ pub(super) async fn acp_event_listener(state: Arc<AppState>) {
+             // between. A future refactor that makes `apply_status_intent`
+             // assign `status` more than once has to revisit this.
+             let old_status = inst.status;
+-            if let Some((policy, projected)) = status_update {
++            if let Some((policy, projected)) = status_update.filter(|_| live_worker) {
+                 apply_status_intent(inst, policy, projected, &state.status_tx);
+             }
+             canonical_changed |= old_status != inst.status;
+             let unread_profile =
+                 should_mark_acp_unread(inst, old_status, crate::session::unread_enabled())
+                     .then(|| inst.source_profile.clone());
+             let profile_to_save =
+-                apply_acp_session_change(inst, &frame.session_id, acp_change.as_ref());
++                apply_acp_session_change(inst, &frame.session_id, acp_change.as_ref(), live_worker);
+             canonical_changed |= profile_to_save.is_some();
+             // An attestation alone still has to reach the disk: the durable
+             // write below stamps it, and the mirror is only allowed to show it
+@@ -615,6 +627,7 @@ pub(super) async fn acp_event_listener(state: Arc<AppState>) {
+                             inst,
+                             &session_id_for_save,
+                             acp_change_for_save.as_ref(),
++                            live_worker,
+                         );
+                         if let Some(AcpSessionChange::Assigned(new_id)) =
+                             acp_change_for_save.as_ref()
+@@ -787,8 +800,9 @@ pub(crate) fn apply_status_intent(
+                 return;
+             }
+         }
+-        // Only from AcpSessionAssigned / RateLimitAutoResumed, both emitted
+-        // when a fresh worker attaches and never as trailing post-stop events.
++        // Only from AcpSessionAssigned / RateLimitAutoResumed, emitted when a
++        // fresh worker attaches. The listener drops a retired worker's identity
++        // frame before it gets here, since it can trail the stop.
+         StatusPolicy::Heal => {
+             if !matches!(inst.status, Status::Error | Status::Stopped) {
+                 return;
+@@ -971,6 +985,7 @@ pub(super) fn apply_acp_session_change(
+     inst: &mut Instance,
+     session_id: &str,
+     change: Option<&AcpSessionChange>,
++    live_worker: bool,
+ ) -> Option<String> {
+     if !inst.is_structured()
+         || inst.terminal_handoff.as_ref().is_some_and(|intent| {
+@@ -981,9 +996,9 @@ pub(super) fn apply_acp_session_change(
+     }
+     match change? {
+         AcpSessionChange::Assigned(new_id) => {
+-            // A worker just initialized (session/new or session/load), so the session is by
+-            // definition no longer idle-dormant.
+-            let cleared_stale_dormant = inst.idle_dormant_since.take().is_some();
++            // A live worker just initialized (session/new or session/load), so the
++            // session is no longer idle-dormant; a retired worker's frame proves nothing.
++            let cleared_stale_dormant = live_worker && inst.idle_dormant_since.take().is_some();
+             let same_acp_session = inst.acp_session_id.as_deref() == Some(new_id.as_str());
+             // #2276.
+             let cleared_import_pending = if same_acp_session {
+@@ -1751,6 +1766,92 @@ mod tests {
+         listener.abort();
+         let _ = listener.await;
+     }
++
++    #[tokio::test]
++    async fn a_retired_workers_assigned_id_does_not_wake_a_committed_stop() {
++        for live in [false, true] {
++            let _app_dir = crate::session::test_support::isolate_app_dir();
++            let mut inst = Instance::new("acp-session", "/tmp/acp");
++            inst.source_profile = "listener-retired-identity".into();
++            inst.view = crate::session::View::Structured;
++            inst.status = Status::Stopped;
++            inst.idle_dormant_since = Some(chrono::Utc::now());
++            let id = inst.id.clone();
++            let storage = crate::s
+```
+
+**File**: `src/server/api/acp/view.rs` (modified, +6/-1)
+```diff
+@@ -838,7 +838,12 @@ fn record_retired_handoff_in(
+         );
+         if let Some(event) = final_context_event.as_ref() {
+             let change = crate::server::acp_events::derive_acp_session_change(event);
+-            crate::server::acp_events::apply_acp_session_change(row, session_id, change.as_ref());
++            crate::server::acp_events::apply_acp_session_change(
++                row,
++                session_id,
++                change.as_ref(),
++                true,
++            );
+         }
+         let terminal = match &intent.context {
+             TerminalHandoffContext::Keep { native_store } => {
+```
+
+---
+
+### Incident Patch 2: `abe012db` (2026-11-06)
+**Commit Message**: feat(plugin): dev installs for reserved-namespace plugins and AOE_NODE for build steps (#5363)
+
+* feat(plugin): add --dev install for reserved-namespace local plugins
+
+A local directory installed with `aoe plugin install --dev` may claim an
+aoe.* or agent-of-empires.* id. It is recorded as dev in config and the
+lockfile, outranks featured detection, and update keeps it dev.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* feat(plugin): pass AOE_NODE to build steps and workers, refuse dev plugins remotely
+
+Build steps and workers get AOE_NODE and a PATH led by the resolved Node
+directory. Install downloads the pinned Node when a build step needs one
+and none resolves. aoe serve --remote refuses to start with an active dev
+plugin, and a dev worker will not spawn once remote exposure is set.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* docs(plugin): document --dev installs and AOE_NODE
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(plugin): deactivate dev plugins under remote exposure
+
+An elevated remote client could enable a dev plugin and activate its
+pages, commands and agent launch commands even though its worker would
+not spawn. active() now excl
+
+**File**: `docs/cli/reference.md` (modified, +1/-0)
+```diff
+@@ -990,6 +990,7 @@ Install an external plugin from a `gh:owner/repo[@ref]` slug or a local director
+ ###### **Options:**
+ 
+ * `--yes` — Grant all requested capabilities without prompting
++* `--dev` — Install a local directory as a dev plugin: it may claim a reserved `aoe.*` / `agent-of-empires.*` id, is never featured, and is refused under `aoe serve --remote`
+ 
+ 
+ 
+```
+
+**File**: `docs/development/writing-plugins.md` (modified, +2/-0)
+```diff
+@@ -90,6 +90,8 @@ aoe plugin update my-plugin        # re-runs the build, re-approves changed gran
+ aoe plugin uninstall my-plugin
+ ```
+ 
++To work on a plugin whose id is in a reserved namespace (`aoe.*`, `agent-of-empires.*`), install the checkout with `--dev`. TypeScript plugins can run Node through `AOE_NODE`, which build steps and workers receive.
++
+ Drive the worker by hand before installing, to confirm the protocol:
+ 
+ ```sh
+```
+
+**File**: `docs/plugins.md` (modified, +4/-2)
+```diff
+@@ -44,14 +44,16 @@ With no `@ref`, install resolves the repo's latest stable GitHub release and rec
+ 
+ A plugin lands in `<app_dir>/plugins/<id>/`, with a GitHub source pinned to its exact commit and any release-binary worker downloaded for your platform. Set `AOE_GITHUB_CLONE_BASE` to install from a GitHub Enterprise host. Resolved versions (commit, manifest hash, release asset) live in `<app_dir>/plugins.lock`, so an install is reproducible.
+ 
++Build steps and workers run with `AOE_NODE` set to the resolved Node and its directory first on `PATH`. If no Node is found when a plugin declares a build step or a non-system worker, install downloads the pinned one on Linux and macOS. Elsewhere, put Node on `PATH` or set `AOE_ACP_NODE`.
++
+ Every update, including the opt-in auto-update, restarts the plugin's worker in a running `aoe serve`. If the CLI or TUI cannot reach the daemon it warns, and the worker keeps the previous build until the daemon restarts.
+ 
+ The web dashboard's Plugins settings does the same things, with a marketplace searching the `aoe-plugin` GitHub topic; every mutating action confirms the plugin's capabilities first.
+ 
+ ## Trust and capabilities
+ 
+-Bundled plugins are `builtin` and fully trusted. Installed plugins are `community` and untrusted: the manifest declares the capabilities they need (network, filesystem, spawning processes, and so on) and install prompts once to grant that exact set. `--yes` grants without prompting, and a capability this version does not recognize is rejected rather than granted. An external plugin cannot claim the reserved `aoe.*` or `agent-of-empires.*` id namespace unless its release hash is pinned in the featured index.
++Bundled plugins are `builtin` and fully trusted. Installed plugins are `community` and untrusted: the manifest declares the capabilities they need (network, filesystem, spawning processes, and so on) and install prompts once to grant that exact set. `--yes` grants without prompting, and a capability this version does not recognize is rejected rather than granted. An external plugin cannot claim the reserved `aoe.*` or `agent-of-empires.*` id namespace unless its release hash is pinned in the featured index. `aoe plugin install --dev <dir>` is the exception for a local checkout: the plugin is marked `dev`, is never featured, stays `dev` across `aoe plugin update`, and `aoe serve --remote` refuses to start while one is active.
+ 
+ A grant is pinned to the installed manifest, so an update that widens what the plugin can do (new capabilities, changed build steps or UI slots, a runtime or trust change) must be approved before it becomes active. Approve with `aoe plugin update <id>` (`--yes` skips the prompt), or in-app: the web and TUI plugin managers show an Update action with a popup describing what changed. Declining keeps the current version and stops the prompt until the next version. Approval is pinned to the exact fetched content, so an update that changed since you reviewed it is refused rather than applied.
+ 
+-`aoe plugin list` and `aoe plugin info <id>` show each plugin's validation (`builtin`, `featured`, `community`, or `local`) and whether it is granted.
++`aoe plugin list` and `aoe plugin info <id>` show each plugin's validation (`builtin`, `featured`, `community`, `local`, or `dev`) and whether it is granted.
+```
+
+**File**: `src/acp/node.rs` (modified, +153/-1)
+```diff
+@@ -1,8 +1,11 @@
+ //! Node.js runtime resolution for acp-worker subprocesses.
+ 
+ use std::path::{Path, PathBuf};
++use std::process::{Command, Stdio};
++use std::time::Duration;
+ 
+ use thiserror::Error;
++use tokio_util::sync::CancellationToken;
+ use tracing::{debug, info, warn};
+ 
+ /// The Node major floor for every adapter.
+@@ -85,8 +88,32 @@ pub fn resolve_for(
+     Err(NodeError::NoNode(MIN_NODE_MAJOR))
  }
  
-+const NO_AGENTS: AgentInfo[] = [];
++/// How long `node --version` may run before the probe is killed.
++const PROBE_TIMEOUT: Duration = Duration::from_secs(5);
 +
-+/** The agent list for `profile`: one loaded for another profile reads as still loading. */
-+export function agentsView(
-+  state: Pick<WizardState, "agents" | "agentsStatus" | "agentsFor">,
-+  profile: string,
-+): { agents: AgentInfo[]; agentsStatus: WizardState["agentsStatus"] } {
-+  return state.agentsFor === profile
-+    ? { agents: state.agents, agentsStatus: state.agentsStatus }
-+    : { agents: NO_AGENTS, agentsStatus: "loading" };
++fn probe_version(
++    path: &Path,
++    timeout: Duration,
++    cancel: &CancellationToken,
++) -> std::io::Result<std::process::Output> {
++    let mut cmd = Command::new(path);
++    cmd.arg("--version").stdin(Stdio::null());
++    crate::process::run_until_cancelled_process_group(&mut cmd, timeout, cancel)?.ok_or_else(|| {
++        std::io::Error::new(std::io::ErrorKind::TimedOut, "node --version timed out")
++    })
 +}
 +
- export function reducer(state: WizardState, action: Action): WizardState {
-   const next = reduce(state, action);
-   const { failure } = next;
-@@ -278,11 +291,15 @@ function reduce(state: WizardState, action: Action): WizardState {
-     case "SUBMIT_CANCEL":
-       return { ...state, isSubmitting: false, error: null, failure: null };
-     case "SET_AGENTS":
--      return { ...state, agents: action.agents, agentsStatus: "ready" };
-+      return { ...state, agents: action.agents, agentsStatus: "ready", agentsFor: action.agentsFor };
-     case "AGENTS_FAILED":
--      return { ...state, agentsStatus: "failed" };
--    case "AGENTS_LOADING":
--      return { ...state, agentsStatus: "loading" };
-+      return {
-+        ...state,
-+        // A retry for the same Profile keeps its list; another Profile's list must not be read for it.
-+        agents: action.agentsFor === state.agentsFor ? state.agents : [],
-+        agentsStatus: action.missing ? "missing" : "failed",
-+        agentsFor: action.agentsFor,
-+      };
-     case "SET_GROUPS":
-       return { ...state, groups: action.groups, groupsFor: action.groupsFor };
-     case "SET_PROFILES":
-```
-
-**File**: `web/src/lib/api.test.ts` (modified, +20/-0)
-```diff
-@@ -780,6 +780,7 @@ const failureCases: [string, () => Promise<unknown>, unknown][] = [
-   ["invokePluginAction", () => api.invokePluginAction("p", "m"), null],
-   ["resolvePluginOptions", () => api.resolvePluginOptions("p", "s", []), []],
-   ["fetchSoundBlob", () => api.fetchSoundBlob("x.wav"), null],
-+  ["fetchProfileAgents", () => api.fetchProfileAgents("work"), null],
-   ["pullSandboxImage", () => api.pullSandboxImage(), { ok: false }],
-   ["dismissSandboxImage", () => api.dismissSandboxImage("sha256:new"), false],
- ];
-@@ -1046,6 +1047,25 @@ describe("project mutations", () => {
-   });
- });
- 
-+describe("fetchProfileAgents", () => {
-+  it.each([
-+    ["a list", () => json([{ id: "claude" }]), [{ id: "claude" }]],
-+    ["an unknown profile", () => json({ error: "profile_not_found", message: "no" }, 404), "profile_not_found"],
-+    ["another 404", () => json({ error: "not_found" }, 404), null],
-+    ["a 404 without JSON", () => new Response("gone", { status: 404 }), null],
-+    ["a server error", () => json({ error: "profile_not_found" }, 500), null],
-+  ])("reads %s", async (_name, respond, result) => {
-+    fetchSpy.mockResolvedValueOnce(respond());
-+    expect(await api.fetchProfileAgents("work")).toEqual(result);
-+    expect(lastCall().url).toBe("/api/agents?profile=work");
-+  });
-+
-+  it("is null for fetchAgents when the profile is unknown", async () => {
-+    fetchSpy.mockResolvedValueOnce(json({ error: "profile_not_found" }, 404));
-+    expect(await api.fetchAgents("work")).toBeNull();
-+  });
-+});
-+
- describe("createSession errors", () => {
-   const body = { path: "/repo", tool: "claude" } as CreateSessionRequest;
- 
-```
-
-**File**: `web/src/lib/api.ts` (modified, +15/-1)
-```diff
-@@ -1969,8 +1969,22 @@ export async function signOutAllDevices(): Promise<boolean> {
- 
- /** Null when the request failed, so callers can tell "no agents" from "unknown". */
- export async function fetchAgents(profile?: string): Promise<AgentInfo[] | null> {
-+  const agents = await fetchProfileAgents(profile);
-+  return Array.isArray(agents) ? agents : null;
+ fn verify_path(path: &Path, source: NodeSource) -> Result<ResolvedNode, NodeError> {
+-    let output = std::process::Command::new(path).arg("--version").output()?;
++    verify_path_within(path, source, PROBE_TIMEOUT, &CancellationToken::new())
 +}
 +
-+/** Like `fetchAgents`, but says when the Daemon has no such profile, which no retry fixes. */
-+export async function fetchProfileAgents(profile?: string): Promise<AgentInfo[] | "profile_not_found" | null> {
-   const query = profile ? `?profile=${encodeURIComponent(profile)}` : "";
--  return fetchJson<AgentInfo[]>(`/api/agents${query}`);
-+  try {
-+    const res = await fetch(`/api/agents${query}`);
-+    if (res.ok) return (await res.json()) as AgentInfo[];
-+    if (res.status !== 404) return null;
-+    const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
-+    return body?.error === "profile_not_found" ? "profile_not_found" : null;
-+  } catch {
-+    return null;
++fn verify_path_within(
++    path: &Path,
++    source: NodeSource,
++    timeout: Duration,
++    cancel: &CancellationToken,
++) -> Result<ResolvedNode, NodeError> {
++    let output = probe_version(path, timeout, cancel)?;
+     if !output.status.success() {
+         return Err(NodeError::TooOld {
+             path: path.to_path_buf(),
+@@ -330,6 +357,131 @@ mod tests {
+         assert_eq!(parse_major_minor("not a version"), None);
+     }
+ 
++    #[cfg(unix)]
++    #[test]
++    fn a_hanging_node_probe_is_killed_after_the_timeout() {
++        use std::os::unix::fs::PermissionsExt;
++        use std::time::Instant;
++        let temp = tempfile::tempdir().unwrap();
++        let node = temp.path().join("node");
++        std::fs::write(&node, "#!/bin/sh\nexec sleep 30\n").unwrap();
++        std::fs::set_permissions(&node, std::fs::Permissions::from_mode(0o755)).unwrap();
++
++        let started = Instant::now();
++        let err = verify_path_within(
++            &node,
++            NodeSource::Env,
++            Duration::from_millis(200),
++            &CancellationToken::new(),
++        )
++        .expect_err("a hanging probe must fail");
++        assert!(
++            matches!(&err, NodeError::Io(e) if e.kind() == std::io::ErrorKind::TimedOut),
++            "{err}"
++        );
++        assert!(started.elapsed() < Duration::from_secs(10));
++    }
++
++    #[cfg(unix)]
++    struct KillDescendant(std::path::PathBuf);
++    impl Drop for KillDescendant {
++        fn drop(&mut self) {
++            let pid = std::fs::read_to_string(&self.0)
++                .ok()
++                .and_then(|s| s.trim().parse::<libc::pid_t>().ok());
++            if let Some(pid) = pid {
++                unsafe { libc::kill(pid, libc::SIGKILL) };
++            }
++        }
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn an_interrupted_probe_kills_its_descendants() {
++        use std::os::unix::fs::PermissionsExt;
++        let temp = tempfile::tempdir().unwrap();
++        let node = temp.path().join("node");
++        let pid_file = temp.path().join("descendant.pid");
++        std::fs::write(
++            &node,
++            "#!/bin/sh\nsleep 30 &\necho $! > \"${0%/*}/descendant.pid\"\nwait\n",
++        )
++        .unwrap();
++        std::fs::set_permissions(&node, std::fs::Permissions::from_mode(0o755)).unwrap();
++        let _cleanup = KillDescendant(pid_file.clone());
++
++        // Cancel once the script has published the descendant, so the group is
++        // never killed before the pid exists.
++        let cancel = CancellationToken::new();
++        std::thread::scope(|scope| {
++            scope.spawn(|| {
++                let deadline = std::time::Instant::now() + Duration::from_secs(10);
++                while std::time::Instant::now() < deadline
++                    && !std::fs::read_to_string(&pid_file)
++                        .is_ok_and(|s| s.trim().parse::<u32>().is_ok())
++                {
++                    std::thread::sleep(Duration::from_millis(10));
++                }
++                cancel.cancel();
++            });
++            verify_path_within(&node, NodeSource::Env, Duration::from_secs(30), &cancel)
++                .expect_err("a cancelled probe must fail");
++        });
++
++        let pid: libc::pid_t = std::fs::read_to_string(&pid_file)
++            .expect("the script records the descendant before the probe is cancelled")
++            .trim()
++            .parse()
++            .unwrap();
++        // `kill(pid, 0)` also succeeds for a zombie that a non-reaping PID 1 never collects.
++        let is_running = |pid: libc::pid_t| {
++            let output = Command::new("ps")
++                .args(["-o", "stat=", "-p", &pid.to_string()])
++                .output()
++                .expect("ps should inspect descendant state");
++
+```
+
+**File**: `src/cli/plugin.rs` (modified, +8/-3)
+```diff
+@@ -38,6 +38,11 @@ pub enum PluginCommands {
+         /// Grant all requested capabilities without prompting
+         #[arg(long)]
+         yes: bool,
++        /// Install a local directory as a dev plugin: it may claim a reserved
++        /// `aoe.*` / `agent-of-empires.*` id, is never featured, and is refused
++        /// under `aoe serve --remote`
++        #[arg(long)]
++        dev: bool,
+     },
+     /// Update an installed external plugin from its recorded source and restart
+     /// its worker in a running daemon. Prompts to re-approve capabilities if the
+@@ -76,7 +81,7 @@ pub async fn run(command: PluginCommands) -> Result<()> {
+         PluginCommands::Logs { id } => run_logs(&id),
+         PluginCommands::Enable { id } => run_set_enabled(&id, true).await,
+         PluginCommands::Disable { id } => run_set_enabled(&id, false).await,
+-        PluginCommands::Install { source, yes } => run_install(&source, yes).await,
++        PluginCommands::Install { source, yes, dev } => run_install(&source, yes, dev).await,
+         PluginCommands::Update { id, yes } => run_update(&id, yes).await,
+         PluginCommands::Uninstall { id } => run_uninstall(&id),
+         PluginCommands::Hash { path } => run_hash(&path),
+@@ -212,8 +217,8 @@ fn print_report(report: &crate::plugin::install::InstallReport, verb: &str) {
+     println!("{}", format_report(report, verb));
+ }
+ 
+-async fn run_install(source: &str, yes: bool) -> Result<()> {
+-    let report = crate::plugin::install::install(source, yes).await?;
++async fn run_install(source: &str, yes: bool, dev: bool) -> Result<()> {
++    let report = crate::plugin::install::install(source, yes, dev).await?;
+     print_report(&report, "Installed");
+     Ok(())
+ }
+```
+
+**File**: `src/cli/serve.rs` (modified, +80/-0)
+```diff
+@@ -1260,6 +1260,17 @@ async fn validate_launch_args(profile: &str, args: &ServeArgs) -> Result<AuthMod
+         if args.passphrase.is_none() {
+             bail!("Remote exposure requires --passphrase or AOE_SERVE_PASSPHRASE");
+         }
++        let dev_plugins: Vec<String> = crate::plugin::registry()
++            .active()
++            .filter(|p| p.validation == crate::plugin::registry::ValidationState::Dev)
++            .map(|p| p.id().to_string())
++            .collect();
++        if !dev_plugins.is_empty() {
++            bail!(
++                "Remote exposure is refused while dev plugins are active: {}. Disable or uninstall them first.",
++                dev_plugins.join(", ")
++            );
++        }
+         // The same decision `start_server` makes, so a wedged Tailscale fails here with the
+         // probe's `--no-tailscale` advice rather than the cloudflared install error below.
+         use crate::server::tunnel::{skips_tailscale, tailscale_probe};
+@@ -1307,6 +1318,9 @@ pub async fn run(profile: &str, mut args: ServeArgs, startup: Option<ServeStartu
+     } = startup;
+ 
+     let auth_mode = validate_launch_args(profile, &args).await?;
++    if args.remote {
++        crate::plugin::set_remote_exposure();
++    }
+     let is_localhost = host_is_localhost(&args.host);
+ 
+     if args.behind_proxy && args.remote {
+@@ -3155,6 +3169,72 @@ mod tests {
+             }
+         }
+     }
++    mod dev_plugin_refusal {
++        use super::super::validate_launch_args;
++        use crate::cli::{Cli, Commands};
++        use crate::session::{update_config, CapabilityGrant, PluginConfig};
++        use clap::Parser;
++        use serial_test::serial;
++
++        fn serve_args(argv: &[&str]) -> super::super::ServeArgs {
++            match Cli::try_parse_from(argv).expect("argv parses").command {
++                Some(Commands::Serve(args)) => args,
++                _ => panic!("expected a serve invocation"),
++            }
++        }
++
++        fn install_dev_plugin(id: &str, enabled: bool) {
++            let manifest =
++                format!("id = \"{id}\"\nname = \"Dev\"\nversion = \"1.0.0\"\napi_version = 2\n");
++            let dir = crate::plugin::plugins_dir().unwrap().join(id);
++            std::fs::create_dir_all(&dir).unwrap();
++            std::fs::write(dir.join("aoe-plugin.toml"), &manifest).unwrap();
++            update_config(|config| {
++                config.plugins.insert(
++                    id.to_string(),
++                    PluginConfig {
++                        enabled,
++                        source: Some("/src/dev".to_string()),
++                        dev: true,
++                        grant: Some(CapabilityGrant {
++                            manifest_hash: aoe_plugin_api::PluginManifest::hash_bytes(
++                                manifest.as_bytes(),
++                            ),
++                            capabilities: vec![],
++                            granted_at: chrono::Utc::now(),
++                        }),
++                        ..PluginConfig::default()
++                    },
++                );
++            })
++            .unwrap();
++            crate::plugin::reload_registry();
++        }
++
++        #[tokio::test]
++        #[serial]
++        async fn remote_exposure_is_refused_only_while_a_dev_plugin_is_active() {
++            let _guard = crate::session::test_support::isolate_app_dir();
++            let _reload = crate::plugin::ReloadRegistryOnDrop;
++            let remote = serve_args(&["aoe", "serve", "--remote", "--passphrase", "pw"]);
++            let local = serve_args(&["aoe", "serve"]);
++
++            install_dev_plugin("acme.dev", true);
++            let err = validate_launch_args("default", &remote)
++                .await
++                .expect_err("remote with an active dev plugin must be refused");
++            assert!(
++                err.to_string().contains("dev plugins are active: acme.dev"),
++                "{err}"
++            );
++            validate_launch_args("default", &local).await.unwrap();
++
++            install_dev_plugin("acme.dev", false);
++            if let Err(err) = validate_launch_args("default", &remote).await {
++                assert!(!err.to_string().contains("dev plugins"), "{err}");
++            }
++        }
++    }
+     mod profile_guard {
+         use super::super::{run, run_control};
+         use crate::cli::{Cli, Commands};
+```
+
+**File**: `src/plugin/host.rs` (modified, +7/-1)
+```diff
+@@ -668,7 +668,12 @@ impl PluginHost {
+             .map(|u| u.id.clone())
+             .collect();
+ 
+-        let launch = resolve_launch(plugin, &OsLaunchResolver)?;
++        let node_env = if crate::plugin::needs_node(&plugin.manifest) {
++            tokio::task::spawn_blocking(crate::plugin::node_env).await?
++        } else {
++            crate::plugin::NodeEnv::new()
++        };
++        let launch = resolve_launch(plugin, &OsLaunchResolver::new(node_env.clone()))?;
+         let prepared = self.sandbox.prepare(&launch)?;
+ 
+         let worker_id = uuid::Uuid::new_v4().to_string();
+@@ -687,6 +692,7 @@ impl PluginHost {
+             .stdout(Stdio::piped())
+             .stderr(Stdio::from(log))
+             .kill_on_drop(true);
++        cmd.envs(node_env);
+         for (k, v) in &prepared.env {
+             cmd.env(k, v);
+         }
+```
+
+**File**: `src/plugin/install.rs` (modified, +224/-58)
+```diff
+@@ -18,6 +18,7 @@ use super::fetch::{self, FetchedPlugin};
+ use super::lockfile::{LockedPlugin, Lockfile};
+ use super::registry::ValidationState;
+ use super::source::PluginSource;
++use super::NodeEnv;
+ 
+ pub enum OperationLog {
+     Inherit,
+@@ -156,8 +157,10 @@ pub struct InstallReport {
+     pub validation: ValidationState,
+ }
+ 
+-fn install_validation(featured_verified: bool, source: &str) -> ValidationState {
+-    if featured_verified {
++fn install_validation(featured_verified: bool, dev: bool, source: &str) -> ValidationState {
++    if dev {
++        ValidationState::Dev
++    } else if featured_verified {
+         ValidationState::Featured
+     } else if source.starts_with("gh:") {
+         ValidationState::Community
+@@ -166,6 +169,16 @@ fn install_validation(featured_verified: bool, source: &str) -> ValidationState
+     }
+ }
+ 
++fn trust_label(featured_verified: bool, dev: bool) -> &'static str {
++    if dev {
++        "dev"
++    } else if featured_verified {
++        "featured"
++    } else {
++        "community"
++    }
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum ConsentMode {
+     Interactive,
+@@ -229,6 +242,7 @@ struct PreparedInstall {
+     notice: String,
+     fetched: FetchedPlugin,
+     featured_verified: bool,
++    dev: bool,
+     id: String,
+     capabilities: Vec<String>,
+     manifest_hash: String,
+@@ -251,14 +265,17 @@ pub struct InstallConsent {
+     pub fingerprint: String,
+ }
+ 
+-async fn prepare_install(input: &str) -> Result<PreparedInstall> {
++async fn prepare_install(input: &str, dev: bool) -> Result<PreparedInstall> {
+     let source = PluginSource::parse(input)?;
++    if dev && !matches!(source, PluginSource::Local(_)) {
++        bail!("--dev requires a local plugin directory");
++    }
+     let resolved = resolve_source(source, true).await?;
+     let fetched = fetch::fetch(&resolved.source).await?;
+ 
+     let id = fetched.manifest.id.as_str().to_string();
+-    let featured_verified = verify_featured(&FeaturedIndex::load()?, &fetched)?;
+-    reject_reserved_or_builtin(&fetched.manifest, featured_verified)?;
++    let featured_verified = !dev && verify_featured(&FeaturedIndex::load()?, &fetched)?;
++    reject_reserved_or_builtin(&fetched.manifest, featured_verified || dev)?;
+     reject_incompatible_host(&fetched.manifest)?;
+ 
+     if super::plugins_dir()?.join(&id).exists() {
+@@ -267,21 +284,18 @@ async fn prepare_install(input: &str) -> Result<PreparedInstall> {
+ 
+     let capabilities = capability_strings(&fetched)?;
+     let manifest_hash = PluginManifest::hash_bytes(&fetched.manifest_bytes);
+-    let trust = if featured_verified {
+-        "featured"
+-    } else {
+-        "community"
+-    };
++    let trust = trust_label(featured_verified, dev);
+     let fingerprint = fingerprint(&fetched.tree_hash, fetched.asset_sha256.as_deref(), trust);
+     let persisted_source = persisted_source(&resolved.source, input);
+-    let validation = install_validation(featured_verified, &persisted_source);
++    let validation = install_validation(featured_verified, dev, &persisted_source);
+ 
+     Ok(PreparedInstall {
+         persisted_source,
+         unverified: resolved.unverified,
+         notice: resolved.notice,
+         fetched,
+         featured_verified,
++        dev,
+         id,
+         capabilities,
+         manifest_hash,
+@@ -290,7 +304,11 @@ async fn prepare_install(input: &str) -> Result<PreparedInstall> {
+     })
+ }
+ 
+-fn apply_prepared_install(p: &PreparedInstall, log: &OperationLog) -> Result<InstallReport> {
++fn apply_prepared_install(
++    p: &PreparedInstall,
++    node_env: &NodeEnv,
++    log: &OperationLog,
++) -> Result<InstallReport> {
+     let final_dir = super::plugins_dir()?.join(&p.id);
+     if final_dir.exists() {
+         bail!(
+@@ -305,7 +323,7 @@ fn apply_prepared_install(p: &PreparedInstall, log: &OperationLog) -> Result<Ins
+         p.id, p.fetched.manifest.version
+     ));
+     move_into_place(&p.fetched, &final_dir)?;
+-    if let Err(e) = build_in_place(&p.id, &final_dir, &p.fetched.manifest, log) {
++    if let Err(e) = build_in_place(&p.id, &final_dir, &p.fetched.manifest, node_env, log) {
+         let _ = std::fs::remove_dir_all(&final_dir);
+         return Err(e);
+     }
+@@ -316,8 +334,14 @@ fn apply_prepared_install(p: &PreparedInstall, log: &OperationLog) -> Result<Ins
+             &p.id,
+             &p.capabilities,
+             &p.manifest_hash,
++            p.dev,
+         )?;
+-        write_lock(&p.id, &p.fetched, &p.manifest_hash, p.featured_verified)
++        write_lock(
++            &p.id,
++            &p.fetched,
++            &p.manifest_hash,
++            trust_label(p.featured_verified, p.dev),
++        )
+     })();
+     if let Err(e) = persisted {
+         // Not `uninstall`: nothing finished installing, so nothing is announced as uninstalled.
+@@ -354,8 +378,8 @@ fn apply_prepared_install(p: &PreparedInstall, log: &OperationLog) -> Result<Ins
+     })
+ }
+ 
+-pub async fn install(input: &str, assume_yes: bool) -> Result<InstallReport> 
+```
+
+---
+
+### Incident Patch 3: `b91486e1` (2026-11-06)
+**Commit Message**: refactor(tui): delegate sandbox store preparation to daemon (#5160)
+
+* refactor(tui): delegate sandbox store preparation
+
+Keep store migration inside daemon lifecycle operations and publish owner-only progress. Remove the local migration worker and action replay; retain canonical attachment fences and cross-process migration locks.
+
+Refs #3899
+
+* fix(tui): retain long sandbox preparation receipts
+
+Give sandbox lifecycle requests their own deadline and fence the new advisory frame with runtime protocol v4. Migrate the exhaustive e2e consumer and cover delayed preparation across the short RPC deadline.
+
+Refs #3899
+
+* fix(tui): keep commands live during sandbox copies
+
+Own long lifecycle requests in a separate task set so migration cannot block another session's stop. Preserve row fences, dispatch-time authority checks, receipt processing and writer-owned cancellation.
+
+Refs #3899
+
+* fix(runtime): fence sandbox preparation and report known failures
+
+Revalidate the original launch reservation after migration and each
+reentrant hook before container effects. Hold launch flocks through effects.
+
+Return sanitized migration failures with canonical receipts from terminal,
+structured restart
+
+**File**: `docs/api.md` (modified, +48/-3)
+```diff
+@@ -277,6 +277,41 @@ Wire members declared nullable must still be present. CLI JSON is a separate con
+ 
+ Background daemon maintenance can recover missing native session IDs from validated publications after the agent pane exits. Read requests do not perform these writes.
+ 
++## GET /api/runtime/ws
++
++The native runtime stream carries canonical snapshots and advisory progress.
++Protocol 4 reports sandbox store migration progress with this frame:
++
++```json
++{
++  "kind": "sandbox",
++  "data": {
++    "epoch": "daemon-epoch",
++    "progress": [
++      {
++        "operation_id": "migration-attempt",
++        "session_id": "session-id",
++        "profile": "default",
++        "activity": "copying an agent store"
++      }
++    ]
 +  }
++}
++```
++
++`epoch` must match the connection's `Hello`. Each initial or updated `progress`
++list replaces the previous list, and updates may coalesce. `operation_id`
++identifies one migration attempt; concurrent attempts have separate entries.
++An empty list clears displayed migration progress.
++
++Activity is bounded display text, not a stable machine-readable phase. It may
++contain host paths, so only a Daemon-authorized local-owner stream receives this
++frame. TCP bearer clients, including loopback clients, and remote clients do not.
++Progress is not a canonical revision, completion receipt, or attachment grant.
++Display-update failures must not fail the migration.
++Use canonical snapshots and mutation receipts to settle the original operation;
++a disconnect does not cancel admitted work or authorize replay.
++
+ ## GET /api/sessions
+ 
+ List sessions. Returns every session by default, including trashed and
+@@ -358,7 +393,7 @@ consuming both surfaces must not compare the two directly.
+ 
+ | Value | Meaning |
+ | --- | --- |
+-| `Starting` | Session was just created or restarted; the agent process is not yet up. |
++| `Starting` | Session was just created or restarted; activity detection may lag an already-live agent pane. |
+ | `Running` | Agent is actively working. |
+ | `Waiting` | Agent has stopped and is waiting for user input. This is the signal a dispatcher should treat as "needs a prompt". |
+ | `Idle` | The agent's turn has finished with no pending question. This is the signal a dispatcher should treat as "task complete". |
+@@ -605,6 +640,8 @@ structured sessions). The receipt cursor is carried in `aoe-runtime-epoch` and
+ `aoe-runtime-revision` response headers, not in the JSON body. Native clients
+ attach only after applying a snapshot at or beyond that receipt in the same
+ epoch, with matching lifecycle generation, profile, and live terminal identity.
++A successful terminal restart can still have canonical status `Starting`.
++Clients must not wait for `Idle` as an additional attachment grant.
+ 
+ ## POST /api/sessions/{id}/send
+ 
+@@ -730,8 +767,9 @@ A failed launch can still commit a lifecycle generation. The finite
+ acknowledge that preparation commit, not a successful
+ launch. Clients must apply its snapshot before retrying. A later send or target
+ probe failure can likewise retain a preparation cursor; it does not acknowledge
+-message delivery. Transport loss or malformed mutation receipts remain unknown;
+-effect-free daemon refusals do not acknowledge a commit.
++message delivery. Transport loss, local request-task failure, or malformed
++mutation receipts remain unknown; effect-free daemon refusals do not acknowledge
++a commit.
+ 
+ `409 managed_resume_refused` preserves the managed conversation. Its finite
+ `aoe-managed-resume-cause` header supplies an application-owned recovery reason.
+@@ -744,6 +782,13 @@ the refusal generic; native clients do not read response bodies to derive that
+ reason. See
+ [managed resume recovery](guides/session-resume.md#common-managed-resume-and-fork-refusals).
+ 
++Sandbox preparation failures use `409 sandbox_migration_deferred` or
++`500 sandbox_migration_failed`, with the finite code header and canonical receipt.
++Clients apply that snapshot before offering an explicit retry. These known
++failures do not quarantine mutation authority. Missing or invalid receipt headers
++remain an unknown outcome. Public messages omit migration paths and underlying
++filesystem errors. Daemon logs retain the full cause and session ID.
++
+ A failed purge can commit a retained-row failure marker. `409 purge_failed`
+ includes the finite code header and its canonical receipt; clients wait for that
+ snapshot before retrying or escalating. Unlike an unknown outcome, this committed
+```
+
+**File**: `docs/guides/configuration.md` (modified, +3/-1)
+```diff
+@@ -431,7 +431,9 @@ A launch runs exactly one of `before_start` (sandboxed) and `before_session` (ho
+ 
+ `before_start` runs when a container is created or restarted, including after a runtime restart. An already-running container reuses its last values, backfilling only when none are stored. Stdout `KEY=VALUE` lines become inherited container environment variables, never Docker argv; other lines are ignored and stdout is never logged. A non-zero exit aborts startup. Invalid identifier keys are warned and dropped; diagnostic keys containing spaces are ignored.
+ 
+-Paired-container creation retains its durable lifecycle reservation while host hooks run, but releases title, lifecycle and store-transition flocks. Native HTTP and WebSocket entrypoints release their API locks too, so hooks can call the Daemon. Competing lifecycle operations receive a conflict. Before creating or publishing the replacement runtime, AoE reacquires locks and revalidates the reservation and current session.
++Sandbox preparation retains its durable lifecycle reservation while host hooks run, but releases title, lifecycle and store-transition flocks, including native-content admission. Native HTTP and WebSocket entrypoints release their API locks too, so hooks can call the Daemon. Competing lifecycle operations receive a conflict. Before runtime effects, AoE reacquires locks, revalidates the reservation and session, and re-admits native content.
++
++Sandbox launch reservations use a minimum 30-minute recovery window, shared with native preparation request deadlines. Ordinary lifecycle reservations retain their 10-minute window. This finite lease does not cancel filesystem I/O or admitted Daemon work; after expiry a newer generation can take ownership and fence late results.
+ 
+ `before_session` runs before every host agent launch, including restart and a view switch that respawns it. It uses the same stdout and failure contract as `before_start`, and persists no values between launches.
+ 
+```
+
+**File**: `docs/guides/sandbox.md` (modified, +12/-6)
+```diff
+@@ -199,19 +199,25 @@ isolated history is not replayed automatically.
+ 
+ Sessions created under the older shared-store layout move to a private store the next time they start. Once every session that used the shared store has moved, AoE preserves that store intact under `.aoe-sandbox-recovery/v027-<transaction>/original` instead of deleting it. A session that already had a private store receives only the shared store's top-level configuration and credentials, not its directories of caches, logs, plugins, or unrelated conversation history. If a live sandbox can see the recovery directory, preservation is deferred until that mount is gone.
+ 
+-The first start can therefore be slower; the TUI shows progress. `aoe migrate`
+-moves every eligible session at once. Trashed and archived sessions keep the
+-shared store until they are started again.
++The first start can therefore be slower. The Daemon prepares the store within
++the existing ensure, start or restart operation; the TUI displays its progress
++and attaches only after the canonical result. An unavailable Daemon never
++triggers a local copy or launch. Cancelling an attachment does not roll back a
++copy already in flight, and reconnecting does not repeat the operation.
++Other sessions remain controllable while preparation runs.
++`aoe migrate` moves every eligible session at once. Trashed and archived
++sessions keep the shared store until they are started again.
+ 
+ A sandbox still running during an upgrade remains pending: transcript capture
+ pauses until it is stopped, isolated and launched again. If native configuration
+ changes throughout isolation, that session remains pending; `aoe migrate`
+ continues with other sessions and retries later. A running sandbox whose mounts
+ AoE cannot prove clear of `.aoe-sandbox-recovery` holds back moving any original
+ there, and `aoe migrate` names it; launches that retire no original proceed.
+-`AOE_DEFER_SANDBOX_MIGRATION=1` skips the move for that launch. A running sandbox
+-carries on on the shared store; a stopped one cannot start until its store has
+-moved, so drop the variable or run `aoe migrate` before launching it.
++In the Daemon's environment, `AOE_DEFER_SANDBOX_MIGRATION=1` skips the move for
++that launch. A running sandbox carries on on the shared store; a stopped one
++cannot start until its store has moved. Relaunch the Daemon without this variable,
++or stop it and run `aoe migrate` before launching the session.
+ 
+ ### Shared credentials
+ 
+```
+
+**File**: `src/acp/sandbox.rs` (modified, +2/-0)
+```diff
+@@ -86,6 +86,7 @@ pub(crate) async fn ensure_container_for_session(
+             .ensure_container_with_hook_in(
+                 &*store,
+                 &tokio_util::sync::CancellationToken::new(),
++                None,
+                 |instance, config| exclusion.mint_before_start(instance, config, &store),
+             )
+             .context("ensuring sandbox container")?;
+@@ -289,6 +290,7 @@ mod tests {
+             let (container, created) = instance.ensure_container_with_hook_in(
+                 &*store,
+                 &tokio_util::sync::CancellationToken::new(),
++                None,
+                 Instance::mint_before_start_env,
+             )?;
+             Ok((instance, container, created))
+```
+
+**File**: `src/daemon/error.rs` (modified, +20/-1)
+```diff
+@@ -20,6 +20,8 @@ pub enum ApiErrorCode {
+     ResumeFailed,
+     ManagedResumeRefused(ManagedResumeCause),
+     StartFailed,
++    SandboxMigrationDeferred,
++    SandboxMigrationFailed,
+     PurgeFailed,
+     NoRevive,
+     CreationTrustChanged,
+@@ -48,6 +50,8 @@ impl ApiErrorCode {
+             Self::LifecycleSuperseded => "lifecycle_superseded",
+             Self::PendingTargetGone => "pending_target_gone",
+             Self::StartFailed => "start_failed",
++            Self::SandboxMigrationDeferred => "sandbox_migration_deferred",
++            Self::SandboxMigrationFailed => "sandbox_migration_failed",
+             Self::PurgeFailed => "purge_failed",
+             Self::TlsRequired => "tls_required",
+             Self::RuntimeEpochMismatch => "runtime_epoch_mismatch",
+@@ -81,6 +85,7 @@ impl ApiErrorCode {
+             | Self::RuntimeEpochMismatch
+             | Self::ResumeFailed
+             | Self::ManagedResumeRefused(_)
++            | Self::SandboxMigrationDeferred
+             | Self::PurgeFailed
+             | Self::NoRevive
+             | Self::CreationTrustChanged
+@@ -98,7 +103,19 @@ impl ApiErrorCode {
+             Self::SmartRenameSkipped => StatusCode::CONFLICT,
+             Self::SmartRenameFailed => StatusCode::BAD_GATEWAY,
+             Self::SmartRenameTimeout => StatusCode::GATEWAY_TIMEOUT,
+-            Self::StartFailed => StatusCode::INTERNAL_SERVER_ERROR,
++            Self::StartFailed | Self::SandboxMigrationFailed => StatusCode::INTERNAL_SERVER_ERROR,
++        }
++    }
++
++    pub(crate) const fn sandbox_migration_message(self) -> Option<&'static str> {
++        match self {
++            Self::SandboxMigrationDeferred => Some(
++                "Sandbox migration is pending. Stop other sandbox users, then retry. For bulk migration, stop the daemon and run `aoe migrate`.",
++            ),
++            Self::SandboxMigrationFailed => Some(
++                "Sandbox migration failed. Apply the canonical state and check daemon logs before retrying.",
++            ),
++            _ => None,
+         }
+     }
+ 
+@@ -135,6 +152,8 @@ impl ApiErrorCode {
+             b"creation_trust_changed" => Self::CreationTrustChanged,
+             b"creation_cancelled" => Self::CreationCancelled,
+             b"start_failed" => Self::StartFailed,
++            b"sandbox_migration_deferred" => Self::SandboxMigrationDeferred,
++            b"sandbox_migration_failed" => Self::SandboxMigrationFailed,
+             b"purge_failed" => Self::PurgeFailed,
+             b"creation_not_pending" => Self::CreationNotPending,
+             b"create_hook_failed" => Self::CreateHookFailed,
+```
+
+**File**: `src/daemon/mod.rs` (modified, +163/-13)
+```diff
+@@ -13,8 +13,8 @@ pub use runtime::{
+     CreationPhase, CreationProgress, MutationReceipt, OwnerLoadDiagnostic, ProfileMutation,
+     ProfileSnapshot, ProjectMutation, ProjectResponse, ProjectTarget, ReloadFailureCode,
+     RuntimeCapabilities, RuntimeContents, RuntimeCursor, RuntimeFrame, RuntimeHealth, RuntimeInfo,
+-    RuntimeSnapshot, SessionMutation, RUNTIME_EPOCH_HEADER, RUNTIME_PROTOCOL_VERSION,
+-    RUNTIME_REVISION_HEADER,
++    RuntimeSnapshot, SandboxProgress, SessionMutation, RUNTIME_EPOCH_HEADER,
++    RUNTIME_PROTOCOL_VERSION, RUNTIME_REVISION_HEADER,
+ };
+ pub(crate) use runtime::{NamespaceMutation, NamespaceOutcome};
+ pub use runtime_connection::{RuntimeConnection, RuntimeConnectionError, RuntimeEvent};
+@@ -52,6 +52,9 @@ pub use wire::{
+ };
+ 
+ const DEFAULT_TIMEOUT: Duration = Duration::from_secs(15);
++/// Sandbox copies, image pulls and launch hooks can take minutes.
++const LIFECYCLE_TIMEOUT: Duration =
++    Duration::from_secs(crate::session::Instance::SANDBOX_PREPARATION_WINDOW.num_seconds() as u64);
+ /// A destroy hook may run for minutes per row, so the bulk purge outlives `DEFAULT_TIMEOUT`.
+ const EMPTY_TRASH_TIMEOUT: Duration = Duration::from_secs(30 * 60);
+ const MAX_ERROR_BODY_BYTES: usize = 8 * 1024;
+@@ -146,6 +149,9 @@ pub(crate) enum LocalRuntimeError {
  }
  
- export async function fetchProfiles(): Promise<ProfileInfo[]> {
+ fn committed_failure_message(code: ApiErrorCode) -> &'static str {
++    if let Some(message) = code.sandbox_migration_message() {
++        return message;
++    }
+     match code {
+         ApiErrorCode::ManagedResumeRefused(cause) => cause.message(),
+         ApiErrorCode::PurgeFailed => "Purge failed; apply its committed state before retrying",
+@@ -157,6 +163,9 @@ fn committed_failure_message(code: ApiErrorCode) -> &'static str {
+ }
+ 
+ fn daemon_status_message(status: StatusCode, code: Option<ApiErrorCode>, body: &str) -> String {
++    if let Some(message) = code.and_then(ApiErrorCode::sandbox_migration_message) {
++        return message.into();
++    }
+     match code {
+         Some(ApiErrorCode::ManagedResumeRefused(cause)) => cause.message().into(),
+         Some(ApiErrorCode::AgentHooksNotApproved) =>
+@@ -443,10 +452,7 @@ impl DaemonClient {
+             transport::path_segment(session_id)?
+         );
+         self.request_mutation_with_outcome(
+-            self.http
+-                .post(url)
+-                .timeout(Duration::from_secs(30 * 60))
+-                .json(body),
++            self.http.post(url).json(body).timeout(LIFECYCLE_TIMEOUT),
+             epoch,
+         )
+         .await
+@@ -484,7 +490,11 @@ impl DaemonClient {
+             transport::path_segment(session_id)?
+         );
+         self.request_mutation_with_outcome(
+-            self.http.post(url).query(&[("index", index)]).json(body),
++            self.http
++                .post(url)
++                .query(&[("index", index)])
++                .json(body)
++                .timeout(LIFECYCLE_TIMEOUT),
+             epoch,
+         )
+         .await
+@@ -503,8 +513,11 @@ impl DaemonClient {
+             self.sessions_url,
+             transport::path_segment(session_id)?
+         );
+-        self.request_mutation_with_outcome(self.http.post(url).json(body), epoch)
+-            .await
++        self.request_mutation_with_outcome(
++            self.http.post(url).json(body).timeout(LIFECYCLE_TIMEOUT),
++            epoch,
++        )
++        .await
+     }
+ 
+     pub async fn restart_session(
+@@ -523,7 +536,10 @@ impl DaemonClient {
+             outcome: RestartOutcome,
+         }
+         let receipt: MutationReceipt<Body> = self
+-            .request_mutation_with_outcome(self.http.post(url).json(body), epoch)
++            .request_mutation_with_outcome(
++                self.http.post(url).json(body).timeout(LIFECYCLE_TIMEOUT),
++                epoch,
++            )
+             .await?;
+         Ok(MutationReceipt {
+             cursor: receipt.cursor,
+@@ -545,8 +561,12 @@ impl DaemonClient {
+             mutation.route(),
+         );
+         let request = match mutation {
+-            SessionMutation::Start(body) => self.http.post(url).json(body),
+-            SessionMutation::Restart(body) => self.http.post(url).json(body),
++            SessionMutation::Start(body) => {
++                self.http.post(url).json(body).timeout(LIFECYCLE_TIMEOUT)
++            }
++            SessionMutation::Restart(body) => {
++                self.http.post(url).json(body).timeout(LIFECYCLE_TIMEOUT)
++            }
+             SessionMutation::AbandonPurge(body) => self.http.post(url).json(body),
+             SessionMutation::StopAuxiliary(target) => self.http.post(url).json(target),
+             SessionMutation::Stop => self.http.post(url),
+@@ -980,6 +1000,8 @@ impl DaemonClient {
+                 code,
+                 Some(
+                     ApiErrorCode::StartFailed
++                        | ApiErrorCode::SandboxMigrationDeferred
++                        | ApiErrorCode::SandboxMigrationFailed
+                         | ApiErrorCode::ResumeFailed
+         
+```
+
+**File**: `src/daemon/runtime.rs` (modified, +14/-1)
+```diff
+@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
+ 
+ use super::SessionResponse;
+ 
+-pub const RUNTIME_PROTOCOL_VERSION: u16 = 3;
++pub const RUNTIME_PROTOCOL_VERSION: u16 = 4;
+ pub const RUNTIME_EPOCH_HEADER: &str = "aoe-runtime-epoch";
+ pub const RUNTIME_REVISION_HEADER: &str = "aoe-runtime-revision";
+ 
+@@ -219,6 +219,15 @@ pub enum CreationPhase {
+     LaunchHooks,
+ }
+ 
++/// Advisory progress of a daemon-owned sandbox preparation.
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++pub struct SandboxProgress {
++    pub operation_id: String,
++    pub session_id: String,
++    pub profile: String,
++    pub activity: String,
++}
++
+ #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+ pub struct RuntimeContents {
+     pub health: RuntimeHealth,
+@@ -245,6 +254,10 @@ pub enum RuntimeFrame<T = RuntimeSnapshot> {
+     /// Creation progress, sent only to streams the daemon authorized as the
+     /// local owner. See [`CreationProgress`].
+     Creation(Vec<CreationProgress>),
++    Sandbox {
++        epoch: String,
++        progress: Vec<SandboxProgress>,
++    },
+     OwnerDiagnostics {
+         epoch: String,
+         diagnostics: Vec<OwnerLoadDiagnostic>,
+```
+
+**File**: `src/daemon/runtime_connection.rs` (modified, +10/-1)
+```diff
+@@ -41,6 +41,7 @@ pub enum RuntimeEvent {
+     Snapshot(Arc<RuntimeSnapshot>),
+     Progress(Vec<CreationProgress>),
+     OwnerDiagnostics(Vec<super::OwnerLoadDiagnostic>),
++    Sandbox(Vec<super::SandboxProgress>),
+ }
+ 
+ impl RuntimeConnection {
+@@ -158,7 +159,9 @@ impl RuntimeConnection {
+         loop {
+             match self.next_event().await? {
+                 RuntimeEvent::Snapshot(snapshot) => return Ok(snapshot),
+-                RuntimeEvent::Progress(_) | RuntimeEvent::OwnerDiagnostics(_) => {}
++                RuntimeEvent::Progress(_)
++                | RuntimeEvent::Sandbox(_)
++                | RuntimeEvent::OwnerDiagnostics(_) => {}
+             }
+         }
+     }
+@@ -182,6 +185,12 @@ impl RuntimeConnection {
+                     self.creation_progress = progress;
+                     return Ok(RuntimeEvent::Progress(self.creation_progress.clone()));
+                 }
++                RuntimeFrame::Sandbox { epoch, progress } => {
++                    if !self.info.local_owner || epoch != self.info.epoch {
++                        return Err(RuntimeConnectionError::Protocol);
++                    }
++                    return Ok(RuntimeEvent::Sandbox(progress));
++                }
+                 RuntimeFrame::OwnerDiagnostics { epoch, diagnostics } => {
+                     if !self.info.local_owner || epoch != self.info.epoch {
+                         return Err(RuntimeConnectionError::Protocol);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5374** (closed): chore: add a fix-and-respond skill for review feedback (@ZelZorgia)
-- **PR #5356** (2026-11-05): perf(server): compress /api JSON responses with gzip and zstd (@cwrau)
-- **PR #5351** (closed): chore(review): review dependency updates and plan ready issues (@athal7)
-- **PR #5306** (2026-11-05): ci: cancel obsolete queue runs and validate npm before builds (@jerome-benoit)
-- **PR #5298** (2026-11-04): chore(deps): bump agent-client-protocol from 2.2.0 to 3.1.0 (@dependabot[bot])
-- **PR #5297** (closed): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 in the cargo-minor-patch group (@dependabot[bot])
+- **PR #5447** (2026-11-07): test(session): pin sandboxed on_create during aoe add (@njbrake)
+- **PR #5445** (2026-11-07): fix(web): release stale terminal focus after an iOS app switch (@njbrake)
+- **PR #5438** (2026-11-07): fix(server): log the full create-failure chain and record unawaited panics (@Seluj78)
+- **PR #5437** (2026-11-07): fix(test): root integration temp home in /tmp so Daemon socket fits on macOS (@Seluj78)
+- **PR #5436** (2026-11-07): test(web): wait for settled save outcome in theme PATCH 500 story (@Seluj78)
+- **PR #5435** (2026-11-07): fix(session): accept --thinking for managed pi conversations (@Seluj78)
 
 ---
 
@@ -3103,46 +3389,28 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: cancel obsolete queue runs and validate npm before builds (#5306)
+## X. ci: run Linux compile jobs on RunsOn runners (#5248)
 
 **RULE**:
-When implementing operations in `.github/scripts/cancel-obsolete-queue-runs.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/rust-toolchain/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95c5d66c`: ci: cancel obsolete queue runs and validate npm before builds (#5306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02c46190`: ci: run Linux compile jobs on RunsOn runners (#5248). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/cancel-obsolete-queue-runs.cjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/rust-toolchain/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
-const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
-
-function entry(branch) {
-  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
-  return match && { base: match[1], number: Number(match[2]) };
-}
-
-function sameWorkflow(run, current, repositoryId) {
-  return run.event === 'merge_group' && paths.has(run.path) &&
-    run.path === current.path && run.workflow_id === current.workflow_id &&
-    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
-}
-
-module.exports = async ({ github, context, core }) => {
-  const event = context.payload.workflow_run;
-  const repositoryId = context.payload.repository.id;
-  const { data: current } = await github.rest.actions.getWorkflowRun({
-    ...context.repo, run_id: event.id,
-  });
-  const key = entry(current.head_branch);
-  if (!key || !sameWorkflow(current, current, repositoryId) ||
-      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
-
-  // Queue state, rather than event delivery order, identifies the current generation.
-  const isCurr
+    # xz2 links system liblzma. GitHub-hosted images ship it; RunsOn images do not.
+    - name: Install liblzma
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        if command -v apt-get >/dev/null && ! dpkg -s liblzma-dev >/dev/null 2>&1; then
+          sudo apt-get update && sudo apt-get install -y liblzma-dev
+        fi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3152,4 +3420,4 @@ module.exports = async ({ github, context, core }) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95c5d66c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02c46190` are properly handled with clean fallback behavior.

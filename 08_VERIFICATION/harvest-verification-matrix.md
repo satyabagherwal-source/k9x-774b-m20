@@ -8060,3 +8060,7 @@
 | `CYCLE-20261107-1V7V` | `2026-11-07T19:37:17.899Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`494054b5...`) |
 | `CYCLE-20261107-1V8R` | `2026-11-07T19:37:17.931Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a61bc65...`) |
 | `CYCLE-20261107-1XYU` | `2026-11-07T19:37:21.462Z` | `goharbor/harbor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | Yes (`1002b586...`) |
+| `CYCLE-20261107-FAKD` | `2026-11-07T19:47:44.317Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ef387e3b...`) |
+| `CYCLE-20261107-FEM4` | `2026-11-07T19:47:49.564Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f06be145...`) |
+| `CYCLE-20261107-FGKG` | `2026-11-07T19:47:52.096Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`8befd3d5...`) |
+| `CYCLE-20261107-FK0W` | `2026-11-07T19:47:56.576Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ccbb1bb5...`) |

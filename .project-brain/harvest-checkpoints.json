@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:37:21.471Z",
+  "last_updated": "2026-11-07T19:47:56.599Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
-      "verified_at": "2026-11-05T04:43:47.230Z",
+      "content_hash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
+      "verified_at": "2026-11-07T19:47:56.598Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:43:47.230Z"
+      "last_updated": "2026-11-07T19:47:56.598Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -9876,14 +9876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-amir1376-ab-download-manager",
-      "content_hash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
-      "verified_at": "2026-11-04T20:10:03.798Z",
+      "content_hash": "f06be1456d30970d16defeb060291c6f2e4213cf1444794532b55a1c0bb1a817",
+      "verified_at": "2026-11-07T19:47:49.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:10:03.798Z"
+      "last_updated": "2026-11-07T19:47:49.585Z"
     },
     "bitnami/sealed-secrets": {
       "repository": "bitnami/sealed-secrets",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
-      "verified_at": "2026-11-05T15:20:35.932Z",
+      "content_hash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
+      "verified_at": "2026-11-07T19:47:44.331Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T15:20:35.932Z"
+      "last_updated": "2026-11-07T19:47:44.331Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -17841,14 +17841,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-mage-vl-cowork",
-      "content_hash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
-      "verified_at": "2026-11-04T02:04:45.011Z",
+      "content_hash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
+      "verified_at": "2026-11-07T19:47:52.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:04:45.011Z"
+      "last_updated": "2026-11-07T19:47:52.123Z"
     },
     "Qwen/Qwen3-Embedding-0.6B": {
       "repository": "Qwen/Qwen3-Embedding-0.6B",

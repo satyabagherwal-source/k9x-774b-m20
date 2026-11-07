@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "0daf9b82",
+    "sourceVersion": "85975331",
     "license": "Apache-2.0",
-    "contentHash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
-    "lastHarvestedAt": "2026-11-05T04:43:47.214Z",
+    "contentHash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
+    "lastHarvestedAt": "2026-11-07T19:47:56.580Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -6533,10 +6533,10 @@
     "repository": "amir1376/ab-download-manager",
     "platform": "github",
     "sourceUrl": "https://github.com/amir1376/ab-download-manager",
-    "sourceVersion": "28150ded",
+    "sourceVersion": "68f0ea6e",
     "license": "Apache-2.0",
-    "contentHash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
-    "lastHarvestedAt": "2026-11-04T20:10:03.788Z",
+    "contentHash": "f06be1456d30970d16defeb060291c6f2e4213cf1444794532b55a1c0bb1a817",
+    "lastHarvestedAt": "2026-11-07T19:47:49.568Z",
     "learningId": "learn-github-amir1376-ab-download-manager"
   },
   "bitnami-sealed-secrets": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "1f674d07",
+    "sourceVersion": "1974d5ac",
     "license": "MIT",
-    "contentHash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
-    "lastHarvestedAt": "2026-11-05T15:20:35.913Z",
+    "contentHash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
+    "lastHarvestedAt": "2026-11-07T19:47:44.321Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -11855,8 +11855,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceVersion": "hf-microsoft-mage-vl-cowork",
     "license": "Open-Source",
-    "contentHash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
-    "lastHarvestedAt": "2026-11-04T02:04:45.006Z",
+    "contentHash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
+    "lastHarvestedAt": "2026-11-07T19:47:52.100Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   },
   "hf-qwen-qwen3-embedding-0.6b": {

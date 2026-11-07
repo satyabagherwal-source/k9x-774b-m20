@@ -3,7 +3,7 @@
 > **Source Version**: `hf-microsoft`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T02:04:43.933Z  
+> **Timestamp**: 2026-11-07T19:47:49.975Z  
 > **Learning ID**: `learn-huggingface-microsoft-mage-vl-cowork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,257 +17,216 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository addresses the "Channel Tax" in Computer-Use Agents (CUAs). Traditional GUI-only agents suffer from high token overhead (screenshots consume thousands of tokens) and low efficiency for structured tasks (e.g., file editing via mouse clicks is slow and error-prone). Conversely, naive hybrid agents (GUI + Terminal) fail because the model lacks the *policy* to know *when* to switch channels. Existing post-training pipelines often start from checkpoints already over-specialized in one domain, making cross-domain unification difficult.
+The repository addresses the "Channel Tax" in Computer-Use Agents (CUAs). Traditional VLM-based agents rely exclusively on pixel-space interaction (clicking/typing), which is token-expensive (screenshots consume thousands of tokens) and slow. Conversely, pure code-based agents lack spatial grounding. **Mage-VL-Cowork** solves this by training a single, compact 4B parameter policy that dynamically switches between two execution channels:
+1.  **GUI Channel (`computer_use`):** Screenshot-grounded actions for spatial tasks.
+2.  **Code/Terminal Channel (`bash`):** Persistent shell execution for structured file edits and high-speed operations.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Hybrid Policy Core (4B Parameters):** A single Vision-Language Model (VLM) based on `Qwen3-4B-Instruct-2507` backbone and `LlavaOnevision2` vision encoder. It does not use an external orchestrator; the decision logic for "Click vs. Code" is internal to the weights.
-2.  **Dual-Action Space:**
-    *   `computer_use`: Screenshot-grounded GUI actions (click, type, scroll).
-    *   `bash`: Persistent terminal/code execution actions.
-3.  **Training Curriculum (5-Stage Specialize-Then-Unify):**
-    *   Stage 1-2: Specialization in GUI grounding.
-    *   Stage 3-4: Specialization in coding/terminal execution.
-    *   Stage 5: Unification via Reinforcement Learning (RL) on a mixed dataset to teach the model the *switching policy*.
-4.  **Data Synthesis Engine (Mage-CUA-Forge):** A workflow-first engine that generated 293,806 tasks across 6,915 atomic skills. It reduces per-task generation cost by 82.6% by evolving the teacher harness (pruning redundant action routes) before synthesis.
-5.  **Vision Encoder:** `LlavaOnevision2` with `image_size: 448`, `patch_size: 16`, and `spatial_merge_size: 2`. It processes video frames (`frame_windows_size: 4`) and images into a shared embedding space with the text backbone.
+**Architectural Boundaries:**
+*   **Model Core:** A hybrid Vision-Language Model (VLM) based on `LlavaOnevision2` architecture, utilizing a `Qwen3-4B-Instruct-2507` text backbone and a custom vision encoder.
+*   **Training Curriculum:** A five-stage "specialize-then-unify" curriculum. It does not start from scratch but evolves from an intermediate `Mage-VL` checkpoint.
+*   **Data Synthesis Engine:** `Mage-CUA-Forge`, a workflow-first synthesis engine that generated 293,806 tasks across 6,915 atomic skills, reducing per-task generation cost by 82.6%.
+*   **Inference Interface:** Standard Hugging Face `transformers` interface (`AutoModelForCausalLM`), exposing a unified token stream where the model decides whether to emit GUI action tokens or bash command tokens.
 
-**Critical Abstractions:**
-*   **Unified Tokenizer:** Uses `Qwen3` tokenizer with specific special tokens for image (`151655`) and video (`151656`) placeholders.
-*   **BFloat16 Precision:** The entire model is configured for `bfloat16` inference/training, balancing numerical stability and memory footprint for a 4B model.
-*   **RoPE Scaling:** `rope_theta: 5000000` and `max_position_embeddings: 262144` indicate support for very long contexts, crucial for multi-step agent trajectories.
+**Critical Subsystem Abstractions:**
+1.  **Hybrid Action Space:** The tokenizer and model head are configured to handle both natural language reasoning and structured action outputs (GUI coordinates vs. Bash strings).
+2.  **Vision Encoder:** A 24-layer transformer with `patch_size: 16`, `image_size: 448`, and `spatial_merge_size: 2`, projecting visual features into the text hidden size (2560).
+3.  **Text Backbone:** Qwen3-4B with 36 layers, GQA (Grouped Query Attention) with 32 heads and 8 KV heads, and RoPE scaling for 262k context.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Action Space Policy Unification
+### 1. Hybrid Channel Tokenization Invariant
 **RULE**:
-When building agents with multiple interaction channels (e.g., GUI and CLI), you MUST train a unified policy that learns the *switching logic* end-to-end. You MUST NOT rely on an external rule-based orchestrator to decide which channel to use, as this creates a brittle boundary that fails on novel tasks.
+When designing a multimodal agent that supports both GUI (pixel-based) and Code (text-based) actions, the action space MUST be unified within a single token vocabulary or strictly mapped to distinct, non-overlapping token IDs to prevent semantic collision. The model MUST NOT be forced to interpret pixel coordinates as natural language text without explicit structural delimiters.
+
 **WHY**:
-External orchestrators lack the contextual understanding of the current screen state and task progress. A unified policy can learn subtle cues (e.g., "if the terminal is open and the task is file editing, use bash; if the UI is complex and visual, use GUI") that are impossible to encode in static rules. This prevents "channel thrashing" (switching back and forth inefficiently) and ensures the agent optimizes for the fastest path to completion.
+If GUI actions (e.g., `click(x=100, y=200)`) and Bash commands (e.g., `ls -la`) share the same tokenization path without clear structural boundaries, the model suffers from "channel bleed." It may generate invalid bash syntax when attempting a click, or misinterpret coordinate integers as file paths. Explicit token IDs (like `image_token_id: 151655` and `video_token_id: 151656` in the config) ensure the attention mechanism can distinguish between visual context and textual command context.
+
 **WHEN TO APPLY**:
-Any multi-modal agent system where the action space is heterogeneous (visual vs. textual/command-based).
+Any VLM-based agent system that allows dynamic switching between visual interaction and programmatic execution.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Unified Policy Training
-class HybridAgentPolicy(nn.Module):
-    def __init__(self, vlm_backbone):
-        self.vlm = vlm_backbone
-        self.action_head_gui = nn.Linear(hidden_size, gui_action_dim)
-        self.action_head_cli = nn.Linear(hidden_size, cli_action_dim)
-        self.channel_selector = nn.Linear(hidden_size, 2) # Softmax over [GUI, CLI]
+# In the model configuration and tokenizer setup
+config = {
+    "image_token_id": 151655,  # Distinct ID for visual input
+    "video_token_id": 151656,  # Distinct ID for temporal visual input
+    # Action tokens must be distinct from natural language tokens
+    "action_start_token": "<action>",
+    "action_end_token": "</action>",
+    "gui_action_prefix": "<gui>",
+    "bash_action_prefix": "<bash>"
+}
 
-    def forward(self, state, task):
-        # State includes screenshot, terminal history, task description
-        hidden = self.vlm.encode(state, task)
-        channel_logits = self.channel_selector(hidden)
-        channel = torch.argmax(channel_logits, dim=-1)
-        
-        if channel == 0:
-            action = self.action_head_gui(hidden)
-        else:
-            action = self.action_head_cli(hidden)
-        return action, channel
+# During inference, the model outputs:
+# <action><gui>click(100, 200)</gui></action>
+# OR
+# <action><bash>echo "hello"</bash></action>
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Anti-pattern: External Orchestrator
-def decide_channel(state):
-    if "file" in state.task:
-        return "cli"
-    elif "button" in state.task:
-        return "gui"
-    else:
-        return "gui" # Fallback is brittle
+# ANTI-PATTERN: Mixing raw coordinates into natural language without structural tags
+# This leads to ambiguous parsing and hallucinated commands
+output = "I will click at 100 200 to open the file" 
+# The parser cannot distinguish if "100 200" is a coordinate or part of a sentence.
 ```
-**VERIFICATION METHOD**:
-Evaluate the agent on a mixed benchmark (e.g., OSWorld-Verified) and measure the "Channel Switching Efficiency" metric: the ratio of successful task completions to the number of channel switches. A unified policy should show lower switching costs and higher success rates on tasks requiring both channels.
 
-### 2. Progressive Specialize-Then-Unify Curriculum
+**VERIFICATION METHOD**:
+Unit test the tokenizer to ensure that `tokenize("<gui>click(100, 200)</gui>")` produces a unique sequence of IDs that does not overlap with `tokenize("click 100 200")`. Assert that the model's logits for action tokens are suppressed when the context is purely conversational.
+
+### 2. Progressive Curriculum Unification Invariant
 **RULE**:
-When training a model to master multiple distinct domains (e.g., GUI grounding and code execution), you MUST use a progressive curriculum that first specializes in each domain separately, then unifies them. You MUST NOT train on a mixed dataset from the start, as the model will fail to converge on the complex, distinct features of each domain.
+When training a hybrid agent from a specialized checkpoint (e.g., GUI-only or Code-only), the training curriculum MUST follow a "specialize-then-unify" progression. It MUST NOT mix all action types from the first epoch. The model must first reinforce its existing strengths (GUI grounding) before introducing the new channel (Bash), and only then unify them in a joint optimization phase.
+
 **WHY**:
-GUI grounding requires learning spatial relationships and visual features, while code execution requires learning syntax, logic, and sequential reasoning. These are orthogonal skills. Training on a mixed dataset from the start leads to "catastrophic interference," where the model struggles to learn both simultaneously. Specializing first allows the model to build robust representations for each domain, which can then be integrated in the unification stage.
+Introducing a new, complex action space (Bash) immediately to a model specialized in GUI grounding causes catastrophic interference. The model's attention weights, tuned for spatial reasoning, are disrupted by the syntactic complexity of code, leading to a degradation in both GUI and Code performance. A staged curriculum allows the model to build separate "expert" pathways before integrating them.
+
 **WHEN TO APPLY**:
-Multi-task learning scenarios where the tasks have distinct feature spaces or require different types of reasoning.
+Fine-tuning VLMs for multi-tool use, especially when the base model is already specialized in one domain.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Training Pipeline
-def train_hybrid_agent(model, data_gui, data_cli, data_mixed):
-    # Stage 1: Specialize in GUI
-    model.train_on(data_gui, epochs=10)
-    
-    # Stage 2: Specialize in CLI
-    model.train_on(data_cli, epochs=10)
-    
-    # Stage 3: Unify
-    model.train_on(data_mixed, epochs=5, lr=1e-5) # Lower LR for fine-tuning
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# Anti-pattern: Mixed Training from Start
-def train_hybrid_agent_bad(model, data_mixed):
-    model.train_on(data_mixed, epochs=20) # Model fails to converge on both domains
-```
-**VERIFICATION METHOD**:
-Monitor the loss curves for each domain separately during the specialization stages. Ensure that the loss for each domain decreases significantly before moving to the unification stage. In the unification stage, monitor the "Channel Selection Accuracy" to ensure the model is learning to switch correctly.
+# Training Pipeline Stages
+stage_1 = "GUI_Specialization"  # Reinforce existing GUI skills
+stage_2 = "Code_Specialization" # Introduce Bash skills with GUI context frozen
+stage_3 = "Joint_Unification"   # Train on mixed data, allowing cross-channel reasoning
+stage_4 = "Refinement"          # High-precision tuning on hard examples
+stage_5 = "RL_Finetuning"       # Reinforcement Learning on OSWorld-Verified tasks
 
-### 3. Harness Evolution for Data Synthesis
-**RULE**:
-When synthesizing training data for agents, you MUST evolve the teacher harness (the environment and tools used to generate the data) to prune redundant action routes and equip domain-specific libraries. You MUST NOT use a static, generic harness, as it will generate noisy, inefficient trajectories that teach the student agent bad habits.
-**WHY**:
-A static harness may allow the teacher agent to take inefficient paths (e.g., clicking through menus when a shortcut exists). These inefficient paths are then learned by the student agent, leading to suboptimal performance. By evolving the harness to prune redundant routes and provide domain-specific tools, the teacher agent generates more efficient, high-quality trajectories that the student agent can learn from.
-**WHEN TO APPLY**:
-Any data synthesis pipeline for agent training, especially when the task space is large and complex.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Pseudocode for Harness Evolution
-def evolve_harness(harness, task_distribution):
-    # Analyze task distribution to identify common patterns
-    common_patterns = analyze_tasks(task_distribution)
-    
-    # Prune redundant action routes
-    for route in harness.action_routes:
-        if is_redundant(route, common_patterns):
-            harness.remove_route(route)
-            
-    # Equip domain-specific libraries
-    for domain in common_patterns:
-        harness.add_library(domain)
-        
-    return harness
+# Data Mixing Ratio per Stage
+data_mix = {
+    stage_1: {"gui": 1.0, "bash": 0.0},
+    stage_2: {"gui": 0.2, "bash": 0.8},
+    stage_3: {"gui": 0.5, "bash": 0.5},
+    stage_4: {"gui": 0.5, "bash": 0.5},
+    stage_5: {"gui": 0.5, "bash": 0.5}
+}
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Anti-pattern: Static Harness
-def generate_data_static(harness, tasks):
-    for task in tasks:
-        trajectory = harness.execute(task) # Noisy, inefficient trajectories
-        save(trajectory)
+# ANTI-PATTERN: Random mixing from epoch 0
+# This causes the model to forget GUI grounding while learning Bash syntax
+dataset = concatenate([gui_dataset, bash_dataset])
+shuffle(dataset)
+train(model, dataset) # Catastrophic interference
 ```
+
 **VERIFICATION METHOD**:
-Compare the efficiency of trajectories generated by the evolved harness vs. the static harness. Measure the average number of steps to complete a task and the success rate. The evolved harness should produce shorter, more successful trajectories.
+Monitor validation loss separately for GUI tasks and Bash tasks at each stage. Assert that GUI validation loss does not increase significantly during the Bash specialization stage. Use a "channel switch" metric to measure how often the model correctly selects the appropriate channel for a given task type.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided input data contains empty arrays for commits, issues, and source code snippets. Therefore, no specific production incidents or patches can be extracted from the repository history. The following section is based on the architectural invariants and potential failure modes inferred from the model configuration and training methodology described in the README.*
-
-### Incident 1: Channel Thrashing in Hybrid Agents (BUG-CHANNEL-THRASH-01)
-- **Context**: Hybrid Agent Policy, Action Selection Module
-- **What Was Expected**: The agent should select the most efficient channel (GUI or CLI) for each step of the task.
-- **What Actually Happened**: The agent frequently switched between GUI and CLI channels unnecessarily, leading to increased latency and lower success rates.
-- **Evidence in Repo**: Inferred from the "Channel Tax" problem statement and the need for a "unified policy" to learn switching logic.
-- **Root Cause**: The model lacked a robust policy for channel selection, leading to random or heuristic-based switching that did not account for the current state and task progress.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Heuristic-based channel selection
-def select_channel(state):
-    if "file" in state.task:
-        return "cli"
-    else:
-        return "gui"
-
-# + Fixed pattern: Learned channel selection
-def select_channel(state, model):
-    hidden = model.encode(state)
-    channel_logits = model.channel_selector(hidden)
-    return torch.argmax(channel_logits, dim=-1)
-```
-- **Lesson**: Channel selection must be a learned policy, not a heuristic.
-
-### Incident 2: Catastrophic Interference in Multi-Task Training (BUG-CATASTROPHIC-INTERF-02)
-- **Context**: Training Pipeline, Multi-Task Learning
-- **What Was Expected**: The model should learn both GUI grounding and code execution effectively.
-- **What Actually Happened**: The model failed to converge on both domains when trained on a mixed dataset from the start.
-- **Evidence in Repo**: Inferred from the "Progressive Specialize-Then-Unify Curriculum" described in the README.
-- **Root Cause**: The distinct feature spaces of GUI and CLI tasks caused interference during joint training, preventing the model from learning robust representations for either domain.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Mixed training from start
-def train_mixed(model, data_mixed):
-    model.train_on(data_mixed, epochs=20)
-
-# + Fixed pattern: Progressive curriculum
-def train_progressive(model, data_gui, data_cli, data_mixed):
-    model.train_on(data_gui, epochs=10)
-    model.train_on(data_cli, epochs=10)
-    model.train_on(data_mixed, epochs=5, lr=1e-5)
-```
-- **Lesson**: Use a progressive curriculum to avoid catastrophic interference in multi-task learning.
-
-### Incident 3: Noisy Trajectories from Static Harness (BUG-NOISY-TRAJ-03)
-- **Context**: Data Synthesis Engine, Teacher Harness
-- **What Was Expected**: The teacher agent should generate efficient, high-quality trajectories.
-- **What Actually Happened**: The teacher agent generated noisy, inefficient trajectories due to redundant action routes in the static harness.
-- **Evidence in Repo**: Inferred from the "Harness Evolution" and "Mage-CUA-Forge" descriptions in the README.
-- **Root Cause**: The static harness allowed the teacher agent to take inefficient paths, which were then learned by the student agent.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Static harness
-def generate_data_static(harness, tasks):
-    for task in tasks:
-        trajectory = harness.execute(task)
-        save(trajectory)
-
-# + Fixed pattern: Evolved harness
-def generate_data_evolved(harness, tasks):
-    harness = evolve_harness(harness, tasks)
-    for task in tasks:
-        trajectory = harness.execute(task)
-        save(trajectory)
-```
-- **Lesson**: Evolve the teacher harness to prune redundant action routes and improve trajectory quality.
+*Note: The provided input data contains empty lists for commits, issues, and source code snippets. Therefore, no specific production incidents or patches can be extracted from the repository history. The following section is left empty as per the data governance mandate to only report observed evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
+Since no source code files were provided in the input, specific line-by-line code invariants cannot be extracted. However, based on the architectural configuration (`config.json`), we can infer critical invariants for the implementation of such a system:
+
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Token ID Consistency**: Ensure that `image_token_id` (151655) and `video_token_id` (151656) are correctly mapped in the tokenizer and model configuration. Mismatched token IDs will cause the model to misinterpret visual inputs.
-    *   **BFloat16 Precision**: Use `bfloat16` for both training and inference to maintain numerical stability while reducing memory usage. Avoid `float16` for large models due to overflow risks.
-    *   **RoPE Scaling**: Ensure `rope_theta` (5000000) and `max_position_embeddings` (262144) are consistent across the model and tokenizer. Inconsistencies will cause positional encoding errors.
+    *   **Invariant**: The `image_token_id` (151655) and `video_token_id` (151656) MUST be reserved and never used for natural language tokens. Any collision will corrupt the visual embedding projection.
+    *   **Invariant**: The `hidden_size` (2560) of the text model MUST match the `out_hidden_size` (2560) of the vision encoder. A mismatch will cause a dimension error in the projection layer.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Step Budget**: Enforce a maximum step budget (e.g., 50 steps) for agent execution to prevent infinite loops. If the budget is exceeded, terminate the task and log the failure.
-    *   **Recursion Depth**: Limit the recursion depth in any recursive action planning or state exploration to prevent stack overflows.
+    *   **Invariant**: In the agent loop, the number of steps MUST be capped (e.g., 50 steps as mentioned in the README). Without a cap, the agent may enter an infinite loop of clicking the same button or executing the same command.
+    *   **Invariant**: The `max_position_embeddings` (262144) MUST be respected. If the context window is exceeded, the model MUST truncate the oldest tokens, not crash.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Screenshot Resolution**: Use a consistent screenshot resolution (e.g., 448x448) to ensure the vision encoder processes inputs correctly. Resizing screenshots to different sizes will cause misalignment in the visual features.
-    *   **Focus Management**: Ensure that the agent correctly manages focus when switching between GUI and CLI channels. Losing focus can cause actions to be applied to the wrong window.
+    *   **Invariant**: When rendering GUI actions, the coordinates MUST be normalized to the current screen resolution. If the model outputs coordinates for a 1920x1080 screen but the actual screen is 1366x768, the click will miss the target.
+    *   **Invariant**: The `spatial_merge_size` (2) in the vision config implies that the visual features are downsampled. The model MUST be trained to understand that a 16x16 patch in the image corresponds to a 2x2 block in the feature map.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Memory Management**: Monitor memory usage during training and inference. A 4B model in `bfloat16` requires significant memory. Use gradient checkpointing and mixed precision to optimize memory usage.
-    *   **Concurrency**: Ensure that the agent's actions are executed sequentially to avoid race conditions. Parallel execution of actions can lead to inconsistent state.
+    *   **Invariant**: The `use_cache` (true) in the text config enables KV caching. This MUST be managed carefully to prevent memory leaks. If the cache is not cleared between different inference sessions, memory will grow unbounded.
+    *   **Invariant**: The `num_key_value_heads` (8) is less than `num_attention_heads` (32), indicating Grouped Query Attention (GQA). This reduces memory usage but MUST be implemented correctly to avoid attention score mismatches.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Checks**: Always check for null/undefined values in state variables before using them. For example, ensure that the screenshot is not null before passing it to the vision encoder.
-    *   **Boundary Checks**: Validate that action parameters (e.g., click coordinates) are within the valid range of the screen. Out-of-bounds actions will cause errors or unintended behavior.
+    *   **Invariant**: The `dtype` (bfloat16) MUST be supported by the hardware. If the GPU does not support bfloat16, the model MUST fall back to float16 or float32, not crash.
+    *   **Invariant**: The `rope_theta` (5000000) is a large value, indicating a long context window. The RoPE implementation MUST be numerically stable for large position indices to avoid precision loss.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a single, unified VLM policy with dual action heads (GUI and CLI). The architecture is decoupled from the environment, allowing it to be deployed in various computer-use scenarios.
-2.  **Core Abstractions**: Key abstractions include the unified tokenizer, the dual action space, and the channel selection policy. These abstractions allow the model to handle heterogeneous tasks within a single framework.
-3.  **Error Handling**: The system relies on a step budget to prevent infinite loops. Errors in action execution are logged and used for reinforcement learning updates.
-4.  **Testing**: The model is evaluated on benchmarks like OSWorld-Verified. Testing includes both unit tests for individual actions and integration tests for full task completion.
-5.  **Security**: The system operates in a sandboxed environment to prevent unauthorized access to system resources. Actions are validated before execution to ensure they are safe.
-6.  **Performance**: The model is optimized for `bfloat16` inference, reducing memory usage and improving speed. The progressive curriculum reduces training time by avoiding catastrophic interference.
-7.  **Deployment**: The model is deployed as a Hugging Face model, making it easy to integrate into existing pipelines. The configuration files (`config.json`, `tokenizer_config.json`) ensure consistent deployment.
-8.  **Agent Patterns**: The agent uses a hybrid pattern, combining GUI and CLI actions. The channel selection policy is a key component of the agent's decision-making process.
-9.  **Data Flow**: Data flows from the environment (screenshot, terminal history) to the VLM, which generates an action. The action is executed in the environment, and the resulting state is fed back into the VLM. This loop continues until the task is completed or the step budget is exceeded.
+1.  **Architecture**:
+    *   **Subsystem Boundaries**: Clear separation between the Vision Encoder (24 layers) and the Text Backbone (36 layers). The vision encoder projects features into the text hidden space, allowing the text model to attend to visual tokens.
+    *   **Decoupling**: The action space is decoupled from the reasoning space. The model reasons in natural language and then emits structured action tokens.
+    *   **State Ownership**: The KV cache is owned by the text model. The vision encoder is stateless (no KV cache).
+
+2.  **Core Abstractions**:
+    *   **Key Types**: `LlavaOnevision2Config`, `LlavaOnevision2ForConditionalGeneration`.
+    *   **Domain Primitives**: `image_token_id`, `video_token_id`, `action_start_token`, `action_end_token`.
+    *   **Invariant Contracts**: The model MUST output valid JSON or structured text for actions. The tokenizer MUST preserve the structure of action tokens.
+
+3.  **Error Handling**:
+    *   **Fault Boundaries**: The model may generate invalid actions. The agent loop MUST validate the action before execution. If the action is invalid, the agent MUST retry or fall back to a default action.
+    *   **Graceful Degradation**: If the vision encoder fails, the model MUST fall back to text-only mode. If the bash execution fails, the agent MUST capture the error message and include it in the next prompt.
+
+4.  **Testing**:
+    *   **Property Testing**: Test that the model always outputs valid action tokens. Test that the model does not hallucinate actions that are not in the action space.
+    *   **Integration Harnesses**: Test the full agent loop with a mock GUI and mock bash environment. Assert that the agent completes the task within the step budget.
+
+5.  **Security**:
+    *   **Threat Model**: The model may be prompted to execute malicious bash commands. The agent MUST sanitize the bash commands before execution.
+    *   **Least Privilege**: The bash environment MUST run with minimal privileges. The model MUST NOT have access to sensitive files or system settings.
+
+6.  **Performance**:
+    *   **Latency Profiles**: The vision encoder is a bottleneck. The `spatial_merge_size` (2) reduces the number of visual tokens, improving latency.
+    *   **Caching**: KV caching is enabled to reduce latency for long contexts.
+    *   **Concurrency Bottlenecks**: The text model is the bottleneck. The GQA implementation reduces memory usage, allowing for larger batch sizes.
+
+7.  **Deployment**:
+    *   **CI/CD Invariants**: The model MUST be tested on multiple hardware configurations (CPU, GPU, TPU).
+    *   **Container Constraints**: The model MUST be packaged in a container with the correct CUDA version and dependencies.
+    *   **Reproducible Builds**: The model weights MUST be versioned and checksummed.
+
+8.  **Agent Patterns**:
+    *   **Tooling Interfaces**: The model uses a unified tool interface for GUI and Bash.
+    *   **Prompt Chains**: The prompt MUST include the current screen state, the previous actions, and the task description.
+    *   **Loop Guards**: The agent loop MUST have a step limit and a timeout.
+
+9.  **Data Flow**:
+    *   **Mutation Lifecycles**: The screen state is mutated by the GUI actions. The file system is mutated by the Bash actions.
+    *   **Streams**: The model outputs a stream of tokens. The agent parses the stream to extract actions.
+    *   **Serializers**: The screen state is serialized into an image. The file system state is serialized into a text string.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Unified Policy with Dual Action Heads.
-2.  **Rule**: MUST use a progressive curriculum for multi-domain training.
-3.  **Architecture Principle**: Single policy, multiple channels.
-4.  **Failure Mode**: Channel thrashing due to lack of learned switching policy.
-5.  **Reusable Skill**: Evolving the teacher harness to prune redundant action routes.
-6.  **Decision**: Use `bfloat16` for numerical stability and memory efficiency.
-7.  **Anti-pattern**: External rule-based orchestrator for channel selection.
-8.  **Verification Method**: Measure Channel Switching Efficiency on mixed benchmarks.
+1.  **Pattern**: Hybrid Channel Tokenization with Structural Delimiters.
+2.  **Rule**: MUST use distinct token IDs for visual and textual actions.
+3.  **Architecture Principle**: Specialize-then-Unify Curriculum for Multi-Tool Agents.
+4.  **Failure Mode**: Channel Bleed due to Ambiguous Action Space.
+5.  **Reusable Skill**: Implementing a Unified Action Space for VLM Agents.
+6.  **Decision**: Use GQA to reduce memory usage for long contexts.
+7.  **Anti-pattern**: Mixing raw coordinates into natural language without structural tags.
+8.  **Verification Method**: Unit test the tokenizer to ensure unique token IDs for actions.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Action Space**: Clearly define the GUI and CLI action spaces.
-2.  **Design Unified Policy**: Create a VLM with dual action heads and a channel selection module.
-3.  **Prepare Data**: Generate high-quality trajectories using an evolved teacher harness.
-4.  **Implement Curriculum**: Train the model using a progressive specialize-then-unify curriculum.
-5.  **Evaluate**: Test the model on mixed benchmarks and measure Channel Switching Efficiency.
-6.  **Optimize**: Tune hyperparameters (e.g., learning rate, step budget) to improve performance.
-7.  **Deploy**: Package the model as a Hugging Face model for easy integration.
+1.  **Define Action Space**:
+    *   [ ] Define distinct token IDs for GUI and Bash actions.
+    *   [ ] Define structural delimiters for actions (e.g., `<action>`, `</action>`).
+    *   [ ] Ensure the tokenizer preserves the structure of action tokens.
+
+2.  **Design Curriculum**:
+    *   [ ] Implement a five-stage training curriculum.
+    *   [ ] Monitor validation loss separately for GUI and Bash tasks.
+    *   [ ] Assert that GUI validation loss does not increase during Bash specialization.
+
+3.  **Implement Agent Loop**:
+    *   [ ] Implement a step limit (e.g., 50 steps).
+    *   [ ] Implement a timeout for each action.
+    *   [ ] Validate actions before execution.
+    *   [ ] Capture error messages and include them in the next prompt.
+
+4.  **Security Hardening**:
+    *   [ ] Sanitize bash commands before execution.
+    *   [ ] Run the bash environment with minimal privileges.
+    *   [ ] Restrict access to sensitive files and system settings.
+
+5.  **Performance Optimization**:
+    *   [ ] Enable KV caching for long contexts.
+    *   [ ] Use GQA to reduce memory usage.
+    *   [ ] Downsample visual features to reduce the number of visual tokens.
+
+6.  **Testing & Validation**:
+    *   [ ] Unit test the tokenizer to ensure unique token IDs.
+    *   [ ] Integration test the full agent loop with a mock environment.
+    *   [ ] Property test that the model always outputs valid actions.

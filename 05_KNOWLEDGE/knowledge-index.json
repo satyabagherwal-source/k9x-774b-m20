@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:37:21.392Z",
+  "last_updated": "2026-11-07T19:47:56.487Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -904,11 +904,16 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "1f674d07",
-      "content_hash": "cb28df1b710a94f0e3d241698b61ab6864fc27e700bc030233391798be09a0d6",
+      "source_version": "1974d5ac",
+      "content_hash": "ef387e3bef36915bc9a75b042c50acd64f81d2bb47f7adc73a19a9bd0566bebf",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci: run Linux compile jobs on RunsOn runners (#5248)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2453,
           "title": "serve): keep status probes from deleting a replacement daemon's state (#4629)",
@@ -990,7 +995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:20:35.797Z",
+      "verified_at": "2026-11-07T19:47:44.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -1898,11 +1903,16 @@
       "slug": "amir1376-ab-download-manager",
       "platform": "github",
       "source_url": "https://github.com/amir1376/ab-download-manager",
-      "source_version": "28150ded",
-      "content_hash": "711bf7813e5f75199569e02a4505c29be11d9dc2629ad7a6388120559b6c4942",
+      "source_version": "68f0ea6e",
+      "content_hash": "f06be1456d30970d16defeb060291c6f2e4213cf1444794532b55a1c0bb1a817",
       "dossier_path": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "enable parallel sync for Gradle 9.4+",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2221,
           "title": "directory picker crash on linux (#1479)",
@@ -1924,7 +1934,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:10:03.673Z",
+      "verified_at": "2026-11-07T19:47:49.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16094,11 +16104,16 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "0daf9b82",
-      "content_hash": "1ce2062e82233ca408ac9f332506fe54a70049c71f0484e15bca1c9c4165ab91",
+      "source_version": "85975331",
+      "content_hash": "ccbb1bb53e3a281d5adae9985965e2fcffff4990d1ce3412cad756e75406a941",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "redb schema migration with storage format v4 (#2056)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 6502,
           "title": "Plan custom functions before execution (#2053)",
@@ -16120,7 +16135,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:43:47.091Z",
+      "verified_at": "2026-11-07T19:47:56.463Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -176625,10 +176640,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Mage-VL-Cowork",
       "source_version": "hf-microsoft-mage-vl-cowork",
-      "content_hash": "0b64c5e5da4831b05f56904e443ce71c4f7df6d47ecb6a4b49ca6af732b921fd",
+      "content_hash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Channel Tokenization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Progressive Curriculum Unification Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 6715,
           "title": "Hybrid Action Space Policy Unification",
@@ -176650,7 +176675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:04:44.941Z",
+      "verified_at": "2026-11-07T19:47:51.980Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
