@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "8397827b",
+    "sourceVersion": "59bf235a",
     "license": "Apache-2.0",
-    "contentHash": "4b0aa5c64a392dfaf1b0395c8dc5e09a8ca02f25f13367ce605587dd478dd1f7",
-    "lastHarvestedAt": "2026-11-05T22:16:10.008Z",
+    "contentHash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
+    "lastHarvestedAt": "2026-11-07T19:55:24.210Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "e2d3152d",
+    "sourceVersion": "51d80993",
     "license": "Apache-2.0",
-    "contentHash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
-    "lastHarvestedAt": "2026-11-04T02:04:42.868Z",
+    "contentHash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
+    "lastHarvestedAt": "2026-11-07T19:55:20.118Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

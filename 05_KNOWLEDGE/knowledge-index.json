@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T19:47:56.487Z",
+  "last_updated": "2026-11-07T19:55:24.071Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44509,14 +44509,19 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "8397827b",
-      "content_hash": "4b0aa5c64a392dfaf1b0395c8dc5e09a8ca02f25f13367ce605587dd478dd1f7",
+      "source_version": "59bf235a",
+      "content_hash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44580,7 +44585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:16:09.891Z",
+      "verified_at": "2026-11-07T19:55:24.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79227,11 +79232,16 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "e2d3152d",
-      "content_hash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
+      "source_version": "51d80993",
+      "content_hash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #4372 from rajath201:split-null-separator",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2983,
           "title": "NullPointerException in InlineObjectLiterals when encountering unreferenced vari",
@@ -79263,7 +79273,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:04:42.803Z",
+      "verified_at": "2026-11-07T19:55:19.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

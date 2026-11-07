@@ -8073,3 +8073,5 @@ Every entry in this ledger must capture:
 | `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `68f0ea6e` | Multi-dimensional audit evidence | 2026-11-07T19:47:49.568Z |
 | `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-07T19:47:52.100Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `85975331` | Multi-dimensional audit evidence | 2026-11-07T19:47:56.580Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `51d80993` | Multi-dimensional audit evidence | 2026-11-07T19:55:20.118Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `59bf235a` | Multi-dimensional audit evidence | 2026-11-07T19:55:24.210Z |

@@ -8064,3 +8064,5 @@
 | `CYCLE-20261107-FEM4` | `2026-11-07T19:47:49.564Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f06be145...`) |
 | `CYCLE-20261107-FGKG` | `2026-11-07T19:47:52.096Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`8befd3d5...`) |
 | `CYCLE-20261107-FK0W` | `2026-11-07T19:47:56.576Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ccbb1bb5...`) |
+| `CYCLE-20261107-P29E` | `2026-11-07T19:55:20.114Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`467cbedf...`) |
+| `CYCLE-20261107-P5F2` | `2026-11-07T19:55:24.206Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1288007e...`) |

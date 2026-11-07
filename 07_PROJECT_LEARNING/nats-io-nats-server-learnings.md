@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `8397827b`  
+> **Source Version**: `59bf235a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:16:08.145Z  
+> **Timestamp**: 2026-11-07T19:55:22.272Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:16:08.137Z  
+> **Harvest Timestamp**: 2026-11-07T19:55:21.655Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21001 stars
+- **Stars / Engagement**: 21009 stars
 
 ---
 
@@ -2726,273 +2726,210 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c17e8e0` (2026-11-05)
-**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
+### Incident Patch 1: `59bf235a` (2026-11-06)
+**Commit Message**: JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635)
 
-In interest-only mode a gateway message's arrival can race with removal
-of an account's last subscription. If there are no subscriptions when
-the message arrives `gatewayHandleSubjectNoInterest` calls
-`sendAccountUnsubToGateway` and replaces the `InterestOnly` inbound
-entry with `nil` then sends `A-`. After that the account stops receiving
-messages across the gateway until the connection restarts even if new
-subscriptions are created.
+## Summary
 
-### Trace
+Advance the redelivery slice head instead of shifting every remaining
+entry on each dequeue. The current operation copies O(n) sequence
+numbers while holding the consumer mutex; draining a large retry
+population involves quadratic copying and delays delivery and ACK
+processing.
 
-Two servers with `NoSystemAccount` `west` and `east` and one client in
-west's `$G`:
+At 12 million queued entries, an initial dequeue copies approximately 96
+MB of sequence numbers. The change removes that copy without changing
+FIFO order, membership tracking, empty-queue cleanup, ACK semantics, or
+persistence behavior.
 
-```
-west ->> RS- $G hb     last subscription removed
-                       an hb message east sent before receiving the RS- arrives at west
-west ->> A- $G         $G has no subscriptions -> sendAccountUnsubToGateway
-east <<- A- $G         processGatewayAccountUnsub: outsim[$G] InterestOnly entry -> nil
-west ->> A+ $G         new SUB: insim[$G] == nil -> A+, insim entry deleted
-east <<- A+ $G         processGatewayAccountSub: outsim[$G] deleted
-east                   gatewayInterest: !accountInMap && interestOnlyMode -> no interest, forever
-```
+Includes deterministic queue-operation tests and a dequeue/requeue
+benchmark. Sustained dequeue/requeue consumes slice capacity and
+occasionally reallocates; the churn benchmark measures that trade-off.
+This does not change consumer-store flushing or ACK scheduling.
 
-West has no inbound entry so i
+## Reproduction
 
-**File**: `server/gateway.go` (modified, +10/-0)
+A synthetic JetStream experiment seeds 12 million pending/redelivery
+entries, then uses real connections for pulls, progress ACKs, and
+server-confirmed final ACKs. With a target 20k progress commands/s and
+100 final ACKs/s over approximately 20 seconds:
+
+| Two runs per variant | Baseline | Fix |
+| ---
+
+**File**: `server/consumer.go` (modified, +1/-1)
 ```diff
-@@ -2776,6 +2776,16 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
- 	// Check if we have sent the A- or not.
- 	c.mu.Lock()
- 	e, sent := c.gw.insim[string(accName)]
-+	// Once the account has left optimistic mode (interest-only, or switching
-+	// to it), an A- would replace the remote's entry with nil: it then drops
-+	// our RS+ and the switch-complete command, and after the next A+ it never
-+	// sends on this account again. In interest-only mode a message we have
-+	// no interest in crossed our last RS-; while switching, the remote may
-+	// still be sending optimistically. Either way, dropping it is enough.
-+	if e != nil && e.mode != Optimistic {
-+		c.mu.Unlock()
-+		return
-+	}
- 	if e != nil || !sent {
- 		// Add a nil value to indicate that we have sent an A-
- 		// so that we know to send A+ when needed.
+@@ -6230,7 +6230,7 @@ func (o *consumer) getNextToRedeliver() uint64 {
+ 		o.rdq = nil
+ 		o.rdqi.Empty()
+ 	} else {
+-		o.rdq = append(o.rdq[:0], o.rdq[1:]...)
++		o.rdq = o.rdq[1:]
+ 		o.rdqi.Delete(seq)
+ 	}
+ 	return seq
 ```
 
-**File**: `server/gateway_test.go` (modified, +96/-0)
+**File**: `server/jetstream_consumer_test.go` (modified, +82/-1)
 ```diff
-@@ -8078,3 +8078,99 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
- 	s1.Shutdown()
- 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
+@@ -14329,7 +14329,7 @@ func TestJetStreamConsumerResetPendingHoldsDeliveries(t *testing.T) {
+ }
+ 
+ // https://github.com/nats-io/nats-server/issues/8704
+-func TestJetStreamDurableConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
++func TestJetStreamConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
+ 	s := RunBasicJetStreamServer(t)
+ 	defer s.Shutdown()
+ 
+@@ -14386,3 +14386,84 @@ func TestJetStreamDurableConsumerInactiveThresholdRestartsOnBoot(t *testing.T) {
+ 		return nil
+ 	})
  }
 +
-+// A message can still be in flight from the remote when the last subscription
-+// on an interest-only account goes away. Its arrival must not produce an A-:
-+// that would take the account out of interest-only mode on both sides, the
-+// following A+ would leave the remote with no entry for the account, and an
-+// interest-only remote then never sends on it again.
-+func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
-+
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+
-+	ncA := natsConnect(t, sa.ClientURL())
-+	defer ncA.Close()
-+	sub := natsSubSync(t, ncA, "foo")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
-+
-+	natsUnsub(t, sub)
-+	natsFlush(t, ncA)
-+	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
-+		c := sb.getOutboundGatewayConnection("A")
-+		ei, _ := c.gw.outsim.Load(globalAccountName)
-+		if ei == nil {
-+			return fmt.Errorf("no entry for account %q", globalAccountName)
-+		}
-+		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
-+			return fmt.Errorf("interest on %q still registered", "foo")
-+		}
-+		return nil
-+	})
-+
-+	// Deliver, on A, a message from B that crossed the RS- for "foo": the
-+	// account now has no subscriptions at all.
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	require_Len(t, len(gws), 1)
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
-+
-+	sub = natsSubSync(t, ncA, "bar")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
-+
-+	ncB := natsConnect(t, sb.ClientURL())
-+	defer ncB.Close()
-+	natsPub(t, ncB, "bar", []byte("hello"))
-+	natsFlush(t, ncB)
-+	natsNexMsg(t, sub, time.Second)
++func TestJetStreamConsumerRedeliveryQueueOperations(t *testing.T) {
++	var o consumer
++	o.mu.Lock()
++	defer o.mu.Unlock()
++	require_Equal(t, o.getNextToRedeliver(), uint64(0))
++	o.addToRedeliverQueue(10, 20, 30, 40)
++	require_Equal(t, o.getNextToRedeliver(), uint64(10))
++	require_False(t, o.onRedeliverQueue(10))
++	// Exercise removal and append after the head has advanced.
++	require_True(t, o.removeFromRedeliverQueue(30))
++	require_False(t, o.removeFromRedeliverQueue(30))
++	o.addToRedeliverQueue(50, 60)
++	for _, seq := range []uint64{20, 40, 50, 60} {
++		require_Equal(t, o.getNextToRedeliver(), seq)
++		require_False(t, o.onRedeliverQueue(seq))
++	}
++	require_True(t, o.rdq == nil)
++	require_Equal(t, o.rdqi.Size(), 0)
++	require_False(t, o.hasRedeliveries())
++	o.addToRedeliverQueue(70)
++	require_Equal(t, o.getNextToRedeliver(), uint64(70))
++	require_Equal(t, o.getNextToRedeliver(), uint64(0))
++	require_True(t, o.rdq == nil)
++	require_Equal(t, o.rdqi.Size(), 0)
 +}
 +
-+// Same as above, but the message arrives while the account is switching to
-+// interest-only mode, before the switch completes.
-+func TestGatewayNoAccountUnsubWhileSwitchingToInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
++func TestJetStreamConsumerRedeliveryQueueInterleaved(t *testing.T) {
++	var o consumer
++	o.mu.Lock()
++	defer o.mu.Unlock()
++	rng := rand.New(rand.NewPCG(42, 42))
++	var expected []uint64
++	var next uint64
++	for i := 0; i < 10000; i++ {
++		switch rng.IntN(3) {
++		case 0:
++			next++
++			o.addToRedeliverQueue(next)
++			expected = append(expected, next)
++		case 1:
++			var want uint64
++			if len(expected) > 0 {
++				want, expected = expected[0], expected[1:]
++			}
++			require_Equal(t, o.getNextToRedeliver(), want)
++		case 2:
++			if len(expected) > 0 {
++				index := rng.IntN(len(expected))
++				require_True(t, o.removeFromRedeliverQueue(expected[index]))
++				expected = slices.Delete(expected, index, index+1)
++			}
++		}
++		require_True(t, slices.Equal(o.rdq, expected))
++		require_Equal(t, o.rdqi.Size(), len(expected))
++		for _, seq := range expected {
++			require_True(t, o.onRedeliverQueue(seq))
++		}
++	}
++}
 +
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	require_Len(t, len(gws), 1)
-+	gwc := gws[0]
-+	gwc.mu.Lock()
-+	e := gwc.gw.insim[globalAccountName]
-+	require_NotNil(t, e)
-+	e.mode = Transitioning
-+	gwc.mu.Unlock()
-+
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gwc, acc, []byte(acc.Name), []byte("foo"))
-+
-+	gwc.mu.Lock()
-+	e = gwc.gw.insim[globalAccountName]
-+	gwc.mu.Unlock()
-+	require_NotNil(t, e)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
++func BenchmarkJetStreamConsumerRedeliveryQueue(b *testing.B) {
++	for _, size := range []int{1, 64, 4096, 1000000} {
++		b.Run(strconv.Itoa(size), func(b *testing.B) {
++			var o consumer
++			seqs := make([]uint64, size)
++			for i := range seqs {
++				seqs[i] = uint64(i) + 1
++			}
++			o.addToRedeliverQueue(seqs...)
++			o.mu.Lock()
++			defer o.mu.Unlock()
++			b.ReportAllocs()
++			b.ResetTimer()
++			for i := 0; i < b.N; i++ {
++				seq := o.getNextToRedeliver()
++				o.addToRedeliverQueue(seq)
++			}
++		})
++	}
 +}
 ```
 
 ---
 
-### Incident Patch 2: `96b92df5` (2026-11-04)
-**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account
+### Incident Patch 2: `ae1af06f` (2026-11-02)
+**Commit Message**: [FIXED] Config check -t skips option validation
 
-In interest-only mode, a gateway message can still be in flight when the last
-subscription on an account goes away. When it lands on an account with no
-subscriptions, sendAccountUnsubToGateway replaced the interest-only inbound
-entry with nil and sent an A-. The remote then replaced its interest-only
-outbound entry with nil, and the A+ sent for the next subscription deleted it.
-With interestOnlyMode set, an account with no entry gets no messages, and no
-RS+ follows because the inbound entry is gone too, so the account stops
-receiving across that gateway until the connection is re-established.
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-In interest-only mode the remote already sends only on registered interest,
-so skip the A-.
-
-Signed-off-by: Paul Wells <[REDACTED_EMAIL]>
-
-**File**: `server/gateway.go` (modified, +8/-0)
+**File**: `server/opts.go` (modified, +9/-3)
 ```diff
-@@ -2776,6 +2776,14 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
- 	// Check if we have sent the A- or not.
- 	c.mu.Lock()
- 	e, sent := c.gw.insim[string(accName)]
-+	// In interest-only mode the remote sends only on interest we registered,
-+	// so a message we have no interest in crossed our last RS-. An A- would
-+	// take the account out of interest-only mode on both sides, and after the
-+	// next A+ the remote would never send on this account again.
-+	if e != nil && e.mode == InterestOnly {
-+		c.mu.Unlock()
-+		return
+@@ -6527,9 +6527,6 @@ func ConfigureOptions(fs *flag.FlagSet, args []string, printVersion, printHelp,
+ 			}
+ 			// If we get here we only have warnings and can still continue
+ 			fmt.Fprint(os.Stderr, err)
+-		} else if opts.CheckConfig {
+-			// Report configuration file syntax test was successful and exit.
+-			return opts, nil
+ 		}
+ 
+ 		// Call this again to override config file options with options from command line.
+@@ -6608,6 +6605,15 @@ func ConfigureOptions(fs *flag.FlagSet, args []string, printVersion, printHelp,
+ 		return nil, errors.New("solicited routes require cluster capabilities, e.g. --cluster")
+ 	}
+ 
++	// Validate the same way server startup does, on a copy to not change the options.
++	if opts.CheckConfig {
++		copts := opts.Clone()
++		setBaselineOptions(copts)
++		if err = validateOptions(copts); err != nil {
++			return nil, err
++		}
 +	}
- 	if e != nil || !sent {
- 		// Add a nil value to indicate that we have sent an A-
- 		// so that we know to send A+ when needed.
++
+ 	return opts, nil
+ }
+ 
 ```
 
-**File**: `server/gateway_test.go` (modified, +61/-0)
+**File**: `server/opts_test.go` (modified, +7/-0)
 ```diff
-@@ -8078,3 +8078,64 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
- 	s1.Shutdown()
- 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
+@@ -1611,6 +1611,13 @@ func TestConfigureOptions(t *testing.T) {
+ 	if !reflect.DeepEqual(opts.TLSConfig.CipherSuites, defaultCipherSuites()) {
+ 		t.Fatalf("Default ciphers not set, expected %v, got %v", defaultCipherSuites(), opts.TLSConfig.CipherSuites)
+ 	}
++
++	// Checking the config validates the options, not just the syntax.
++	mustNotFail([]string{"-t", "-c", "./configs/test.conf"})
++	conf := createConfFile(t, []byte("max_payload: 2MB\nmax_pending: 1MB\n"))
++	expectToFail([]string{"-t", "-c", conf}, "cannot be higher than max_pending")
++	// Command line flags are applied before validating.
++	expectToFail([]string{"-t", "-c", "./configs/test.conf", "-n", "a b"}, "server name cannot contain spaces")
  }
-+
-+// A message can still be in flight from the remote when the last subscription
-+// on an interest-only account goes away. Its arrival must not produce an A-:
-+// that would take the account out of interest-only mode on both sides, the
-+// following A+ would leave the remote with no entry for the account, and an
-+// interest-only remote then never sends on it again.
-+func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
-+
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+
-+	ncA := natsConnect(t, sa.ClientURL())
-+	defer ncA.Close()
-+	sub := natsSubSync(t, ncA, "foo")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
-+
-+	natsUnsub(t, sub)
-+	natsFlush(t, ncA)
-+	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
-+		c := sb.getOutboundGatewayConnection("A")
-+		ei, _ := c.gw.outsim.Load(globalAccountName)
-+		if ei == nil {
-+			return fmt.Errorf("no entry for account %q", globalAccountName)
-+		}
-+		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
-+			return fmt.Errorf("interest on %q still registered", "foo")
-+		}
-+		return nil
-+	})
-+
-+	// Deliver, on A, a message from B that crossed the RS- for "foo": the
-+	// account now has no subscriptions at all.
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	if len(gws) != 1 {
-+		t.Fatalf("Expected 1 inbound gateway connection, got %d", len(gws))
-+	}
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
-+
-+	sub = natsSubSync(t, ncA, "bar")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
-+
-+	ncB := natsConnect(t, sb.ClientURL())
-+	defer ncB.Close()
-+	natsPub(t, ncB, "bar", []byte("hello"))
-+	natsFlush(t, ncB)
-+	natsNexMsg(t, sub, time.Second)
-+}
+ 
+ func TestClusterPermissionsConfig(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8865** (2026-11-06): Cherry-picks for v2.14.10-RC.2 (@neilalexander)
+- **PR #8863** (2026-11-06): Cherry-picks for 2.15.3-RC.2 (@neilalexander)
+- **PR #8861** (2026-11-06): Update dependencies (@neilalexander)
 - **PR #8855** (2026-11-05): [IMPROVED] Avoid copying filtered messages in single filter scans (@sciascid)
 - **PR #8854** (2026-11-05): [IMPROVED] Avoid copying filtered messages in first/last matching multi (@sciascid)
 - **PR #8853** (2026-11-05): [FIXED] Gateway: A- in interest-only mode stops delivery for the account (@paulwe)
-- **PR #8851** (2026-11-04): [FIXED] Revocations re-check importers on every account update (@MauriceVanVeen)
-- **PR #8850** (2026-11-04): [FIXED] Clustered healthz ignores write errors on R1 streams (@MauriceVanVeen)
-- **PR #8849** (2026-11-04): [FIXED] Recovery scans not persisted & walking every block (@MauriceVanVeen)
 
 ---
 
@@ -3012,37 +2949,28 @@ Signed-off-by: Paul Wells <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
+## X. JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635
 
 **RULE**:
-When implementing operations in `server/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/consumer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c17e8e0`: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59bf235a`: JetStream: fix quadratic redelivery queue copying under the consumer lock (#8635). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/gateway.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/consumer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Once the account has left optimistic mode (interest-only, or switching
-	// to it), an A- would replace the remote's entry with nil: it then drops
-	// our RS+ and the switch-complete command, and after the next A+ it never
-	// sends on this account again. In interest-only mode a message we have
-	// no interest in crossed our last RS-; while switching, the remote may
-	// still be sending optimistically. Either way, dropping it is enough.
-	if e != nil && e.mode != Optimistic {
-		c.mu.Unlock()
-		return
-	}
+		o.rdq = o.rdq[1:]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		o.rdq = append(o.rdq[:0], o.rdq[1:]...)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c17e8e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59bf235a` are properly handled with clean fallback behavior.

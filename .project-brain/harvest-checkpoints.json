@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T19:47:56.599Z",
+  "last_updated": "2026-11-07T19:55:24.229Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "4b0aa5c64a392dfaf1b0395c8dc5e09a8ca02f25f13367ce605587dd478dd1f7",
-      "verified_at": "2026-11-05T22:16:10.026Z",
+      "content_hash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
+      "verified_at": "2026-11-07T19:55:24.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:16:10.026Z"
+      "last_updated": "2026-11-07T19:55:24.228Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
-      "verified_at": "2026-11-04T02:04:42.875Z",
+      "content_hash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
+      "verified_at": "2026-11-07T19:55:20.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:04:42.875Z"
+      "last_updated": "2026-11-07T19:55:20.129Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",

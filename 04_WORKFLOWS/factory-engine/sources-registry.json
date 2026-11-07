@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T19:47:59.196Z",
-    "lastVerified": "2026-11-07T19:47:59.196Z",
+    "lastChecked": "2026-11-07T19:55:26.794Z",
+    "lastVerified": "2026-11-07T19:55:26.794Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -459,8 +459,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T19:23:46.341Z",
-    "lastVerified": "2026-11-07T19:23:46.341Z",
+    "lastChecked": "2026-11-07T19:55:24.992Z",
+    "lastVerified": "2026-11-07T19:55:24.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -741,9 +741,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-07T04:44:22.994Z",
+    "lastChecked": "2026-11-07T19:55:20.089Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-07T04:44:22.994Z"
+    "lastVerified": "2026-11-07T19:55:20.089Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1680,12 +1680,12 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T22:16:08.137Z",
-    "lastVerified": "2026-11-05T22:16:08.137Z",
+    "lastChecked": "2026-11-07T19:55:21.655Z",
+    "lastVerified": "2026-11-07T19:55:21.655Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "4b0aa5c64a392dfaf1b0395c8dc5e09a8ca02f25f13367ce605587dd478dd1f7",
+    "contentHash": "1288007e7e66cf7dd243c4ce900bc43150b53b18dc1060ec20bbb157ff63f5e5",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -5444,9 +5444,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-05T21:25:49.257Z",
+    "lastChecked": "2026-11-07T19:55:22.499Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-05T21:25:49.257Z"
+    "lastVerified": "2026-11-07T19:55:22.499Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -6830,8 +6830,8 @@
     "officialUrl": "https://github.com/InsertKoinIO/koin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-04T20:18:04.621Z",
-    "lastVerified": "2026-11-04T20:18:04.621Z",
+    "lastChecked": "2026-11-07T19:55:14.998Z",
+    "lastVerified": "2026-11-07T19:55:14.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-insertkoinio-koin",
@@ -8184,9 +8184,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-05T15:30:00.939Z",
+    "lastChecked": "2026-11-07T19:55:10.033Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-05T15:30:00.940Z"
+    "lastVerified": "2026-11-07T19:55:10.033Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -11763,14 +11763,14 @@
     "officialUrl": "https://github.com/google/closure-compiler",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T02:04:41.919Z",
-    "lastVerified": "2026-11-04T02:04:41.919Z",
+    "lastChecked": "2026-11-07T19:55:17.510Z",
+    "lastVerified": "2026-11-07T19:55:17.510Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "066c0451fedb82ad568d51874e7ca73a333b3e0c86f4677fb6db672874207775",
+    "contentHash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
