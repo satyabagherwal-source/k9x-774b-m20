@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T02:54:31.937Z",
+  "last_updated": "2026-11-07T03:02:03.071Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
-      "verified_at": "2026-11-04T00:46:35.956Z",
+      "content_hash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
+      "verified_at": "2026-11-07T03:01:31.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:46:35.956Z"
+      "last_updated": "2026-11-07T03:01:31.304Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
-      "verified_at": "2026-11-06T20:45:38.234Z",
+      "content_hash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
+      "verified_at": "2026-11-07T03:01:28.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:45:38.234Z"
+      "last_updated": "2026-11-07T03:01:28.773Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
-      "verified_at": "2026-11-05T01:33:23.611Z",
+      "content_hash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
+      "verified_at": "2026-11-07T03:01:26.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:33:23.611Z"
+      "last_updated": "2026-11-07T03:01:26.873Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -17391,14 +17391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "content_hash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
-      "verified_at": "2026-11-03T21:17:07.497Z",
+      "content_hash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+      "verified_at": "2026-11-07T03:02:03.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:17:07.497Z"
+      "last_updated": "2026-11-07T03:02:03.070Z"
     },
     "mobile-next/mobile-mcp": {
       "repository": "mobile-next/mobile-mcp",

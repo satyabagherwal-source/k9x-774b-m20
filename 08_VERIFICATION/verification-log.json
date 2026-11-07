@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-BQXD",
-    "timestamp": "2026-11-05T02:25:52.657Z",
-    "repository": "bee-san/Ciphey",
-    "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "71af2ccfee13af4271b2f71df880eabab3c202073265b56e6501f32b2fd2cc25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-BUEO",
-    "timestamp": "2026-11-05T02:25:57.168Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "69ce0805e65d92f2d2c4ef99724fac3250601cce7235d5c796a747e8743bd4cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-KVK5",
-    "timestamp": "2026-11-05T02:32:58.565Z",
-    "repository": "PrunaAI/P-H3-Image-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "dce9b9247c55fe1c5ed06fc1e676d4dfbd6178e8a6dca066c6715ca5395178ed",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-KWZO",
-    "timestamp": "2026-11-05T02:33:00.420Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "cefe03a3ef0816bb5a6f82e4d0079a16ed53453939b7d7630c46f17524a63515",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-UBXQ",
     "timestamp": "2026-11-05T02:40:19.695Z",
     "repository": "flox/flox",
@@ -7492,6 +7432,66 @@
     "contentHash": "92f91a70eed14c69a0581e2a00c543e9a623d503ce3c116521206aba10683dc1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-H70P",
+    "timestamp": "2026-11-07T03:01:26.857Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-H8HM",
+    "timestamp": "2026-11-07T03:01:28.762Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-HAFN",
+    "timestamp": "2026-11-07T03:01:31.283Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-HYYB",
+    "timestamp": "2026-11-07T03:02:03.059Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

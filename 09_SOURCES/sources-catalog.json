@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "59764058",
+    "sourceVersion": "50d59c21",
     "license": "Apache-2.0",
-    "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
-    "lastHarvestedAt": "2026-11-04T00:46:35.946Z",
+    "contentHash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
+    "lastHarvestedAt": "2026-11-07T03:01:31.286Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "bbebeba8",
+    "sourceVersion": "8cda9065",
     "license": "MIT",
-    "contentHash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
-    "lastHarvestedAt": "2026-11-06T20:45:38.224Z",
+    "contentHash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
+    "lastHarvestedAt": "2026-11-07T03:01:28.765Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "1a192aab",
+    "sourceVersion": "ff1fd540",
     "license": "MIT",
-    "contentHash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
-    "lastHarvestedAt": "2026-11-05T01:33:23.597Z",
+    "contentHash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
+    "lastHarvestedAt": "2026-11-07T03:01:26.862Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -11565,8 +11565,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceVersion": "hf-liquidai-lfm3-audio-2b",
     "license": "Open-Source",
-    "contentHash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
-    "lastHarvestedAt": "2026-11-03T21:17:07.491Z",
+    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+    "lastHarvestedAt": "2026-11-07T03:02:03.063Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   },
   "mobile-next-mobile-mcp": {

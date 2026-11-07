@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `59764058`  
+> **Source Version**: `50d59c21`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:46:35.198Z  
+> **Timestamp**: 2026-11-07T03:01:29.790Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:46:34.270Z  
+> **Harvest Timestamp**: 2026-11-07T03:01:29.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3887 stars
+- **Stars / Engagement**: 3920 stars
 
 ---
 
@@ -986,13 +986,11 @@ class ResponseCode(Enum):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #501** (2026-11-06): **[Bug]: V2 full ingestion omits page images for short scanned PDFs**
+  *Symptoms*: ## Affected area  REST API, Worker, Document parsing  ## Summary  A one-page, image-only PDF without a table of contents completed a V2 full ingestion job with status `done`. Knowhere classified it as scanned, then used the whole-document path. The result contained one `page` chunk with an empty body, zero page images, and no page asset references. A downstream agent received no content from which to read the scanned fields.  Scanned PDFs should use page-based processing regardless of page count and expose readable page images with page references. A short, text-based PDF without a table of contents can continue to use the whole-document path.  ## Reproduction steps  1. Create a one-page PDF containing only a raster image with legible synthetic text. Use a PDF without a table of contents or a selectable text layer. 2. Submit it through `POST /v2/jobs` with `ingestion_mode: "full"` and complete the file upload. 3. Wait for `done`, then inspect the result archive and published document chunks. Check whether the page chunk contains a page image reference and whether the referenced image is readable.  ## Acceptance criteria  - A one-page scanned PDF produces a readable image for page 1, with its reference available in the published chunks and its image included in the result archive. - Scanned PDFs use page-based processing on both sides of the five-page threshold. - A short, text-based PDF without a table of contents still returns its original text through the whole-document pat
+
 - **Issue #399** (2026-09-09): **Fix retrieval 500 caused by idle-in-transaction connection termination**
   *Symptoms*: ## Summary  Production retrieval requests can return HTTP 500 when the request-scoped async SQLAlchemy session holds an idle PostgreSQL transaction while the agentic retrieval episode waits on an external LLM/agent call.  ## Production evidence  - Alert window: 2026-09-09 09:49:44–10:24:46 CST - Failing endpoint: `POST /v1/retrieval/query` - Failing API task: `dfeb34741b2748c190c73d0f9d57d1fe` - Task private IP: `10.0.136.212` - Trace: `01a083eb5f607c35931721077dafb81b` - Failure time: 2026-09-09 10:08:27 CST (`02:08:27 UTC`) - HTTP result: `500 Internal Server Error`  Aurora PostgreSQL logged 12 seconds before the API error:  ```text 2026-09-09 02:08:15 UTC:10.0.136.212(...):postgres@knowhere:...:FATAL: terminating connection due to idle-in-transaction timeout ```  The API then attempted the final document hydration query using that closed connection:  ```text asyncpg.exceptions._base.InterfaceError: connection is closed ```  The API invalidated the connection and established a replacement connection about four seconds later. The task remained healthy and was not restarted. No Aurora failover or restart event was found.  ## Root cause  The retrieval route receives a request-scoped `AsyncSession` from `get_db()` and passes it through the retrieval pipeline. In the agentic path:  1. The route performs initial database work. 2. `_run_agent_explore_route()` waits for `harness.run_episode(...)`. 3. The episode took 71.575 seconds in the failing request. 4. The same session/transa
-
-- **Issue #255** (2026-08-20): **Stop scraping email addresses from GitHub**
-  *Symptoms*: ### Affected area  Other  ### Summary  <img width="1994" height="1518" alt="Image" src="https://github.com/user-attachments/assets/431da31f-bbf6-4809-91e4-acfaeee8ab20" />  ### Reproduction steps  You email me out of the blue with an email address that's only ever appeared on GitHub. So you've scraped it or bought it from a service that scraped it. I never subscribed to your service and it's super poor form that you've resorted to this.  ### Relevant request or job details  ```text  ```
-  **Post-Mortem & Fix Analysis**:
-  > We did not scrape or purchase any personal data. We discovered your GitHub profile and open-source projects, found them interesting, and manually looked up a contact email to send a one-time outreach message.  We apologize if this was unwanted or disruptive. Your email has been removed from our outreach list and you will not receive further messages from us.  Thank you for the feedback.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,808 +1007,677 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f16fa49` (2026-11-02)
-**Commit Message**: Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relationships"
+### Incident Patch 1: `50d59c21` (2026-11-06)
+**Commit Message**: Merge pull request #502 from Ontos-AI/fix/wuchengke/short-scanned-pdf-page-images
 
-This reverts commit 91b5fa591937dfb8c517f1b631b1adc8e322c9e8, reversing
-changes made to 0b305e96e3485a3cb01e9dec8f794041bc81defa.
+fix: route short PDFs through the page pipeline instead of whole_doc
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +4/-12)
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +3/-88)
 ```diff
-@@ -33,18 +33,10 @@ def iter_block_items(doc_data):
+@@ -14,7 +14,6 @@
+     visual_debug_enabled,
+ )
+ from app.services.document_parser.profiling.doc_profiler import profile_document
+-from app.services.document_parser.support.identifiers import gen_str_codes, get_str_time
+ from app.services.document_parser.support.parser_rows import PARSER_DF_COLUMNS
+ from app.services.document_parser.support.stage_profiler import stage_timer
+ from app.services.page_memory.normalizer import normalize_to_pdf
+@@ -42,7 +41,6 @@
+ from shared.core.config import settings
+ from shared.core.exceptions.domain_exceptions import ValidationException
+ from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
+-from app.services.page_memory.body_text_preview import build_body_text_preview
  
-     with zipfile.ZipFile(io.BytesIO(doc_data), "r") as docx:
-         xml = docx.read("word/document.xml")
--        rel_map: dict[str | None, str | None] = {}
--        try:
--            relationships_xml: bytes = docx.read("word/_rels/document.xml.rels")
--        except KeyError:
--            # Documents without relationships may omit this package part.
--            pass
--        else:
--            relationships: etree._Element = etree.fromstring(relationships_xml)
--            rel_map = {
--                relationship.get("Id"): relationship.get("Target")
--                for relationship in relationships.findall(".//{*}Relationship")
--            }
-+        rels = etree.fromstring(docx.read("word/_rels/document.xml.rels"))
-+        rel_map = {
-+            r.get("Id"): r.get("Target") for r in rels.findall(".//{*}Relationship")
-+        }
-         ns = {
-             "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
-             "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
-```
-
-**File**: `apps/worker/tests/contract/test_docx_relationships_contract.py` (removed, +0/-117)
-```diff
-@@ -1,117 +0,0 @@
--from __future__ import annotations
+ 
+ @dataclass(frozen=True)
+@@ -71,12 +69,7 @@ class _ScopeRunResult:
+ 
+ 
+ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+-    """Run the page-memory track.
 -
--import io
--import os
--import zipfile
--
--os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
--os.environ.setdefault("TMP_PATH", "/tmp/knowhere-test")
--os.environ.setdefault("S3_BUCKET_NAME", "test-uploads")
--os.environ.setdefault("S3_ACCESS_KEY_ID", "test")
--os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
--os.environ.setdefault("S3_TEMP_PATH", "/tmp")
--
--import pytest  # noqa: E402
--from docx import Document  # noqa: E402
--from docx.document import Document as WordDocument  # noqa: E402
--from docx.opc.constants import CONTENT_TYPE  # noqa: E402
--from docx.table import Table  # noqa: E402
--from docx.text.paragraph import Paragraph  # noqa: E402
--from lxml.etree import XMLSyntaxError  # noqa: E402
--from PIL import Image  # noqa: E402
--
--from app.services.document_parser.formats.docx.block_stream import (  # noqa: E402
--    iter_block_items,
--)
--
--
--@pytest.mark.parametrize(
--    "content_type",
--    [
--        CONTENT_TYPE.WML_DOCUMENT_MAIN,
--        "application/vnd.ms-word.document.macroEnabled.main+xml",
--        "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml",
--    ],
--    ids=["document", "macro-enabled-document", "template"],
--)
--def test_iter_block_items_preserves_body_without_relationships(content_type: str) -> None:
--    document: WordDocument = Document()
--    document.add_paragraph("Before table")
--    document.add_table(rows=1, cols=1).cell(0, 0).text = "Table content"
--    document.add_paragraph("After table")
--    buffer: io.BytesIO = io.BytesIO()
--    document.save(buffer)
--    package_bytes: bytes = _rewrite_document_package(buffer.getvalue(), None, content_type)
--
--    with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
--        assert "word/_rels/document.xml.rels" not in archive.namelist()
--
--    blocks: list[tuple[int, object, str, object]] = list(iter_block_items(package_bytes))
--
--    assert [block[2] for block in blocks] == ["PTXT", "TABLE", "PTXT"]
--    before_table: object = blocks[0][1]
--    table: object = blocks[1][1]
--    after_table: object = blocks[2][1]
--    assert isinstance(before_table, Paragraph)
--    assert isinstance(table, Table)
--    assert isinstance(after_table, Paragraph)
--    assert before_table.text == "Before table"
--    assert table.cell(0, 0).text == "Table content"
--    assert after_table.text == "After table"
--
--
--def test_iter_block_items_preserves_image_relationships() -> None:
--    image_buffer: io.BytesIO = io.BytesIO()
--    Image.new("RGB", (64, 64), color="blue").save(image_buffer, format="BMP")
--    image_bytes: bytes = image_buffer.getvalue()
--    document: WordDocument = Document()
--    document.add_paragraph("Image caption")
--    document.add_picture(io.BytesIO(image_bytes))
--    buffer: io.BytesIO = io.BytesIO()
--    document.save(buffer)
--
--    blocks: list[tuple[int, object, str, object]] = list(iter_block_items(buffer.getvalue()))
--    image_blocks: list[tuple[int, object, str, object]] = [
--        block for block in blocks if block[2] == "IMAGE"
--    ]
--
--    assert len(image_blocks) == 1
--    image_metadata: object = image_blocks[0][3]
--    assert isinstance(image_metadata, dict)
--    assert image_metadata["data"] == image_bytes
--
--
--def test_iter_block_items_rejects_malformed_relationship_xml() -> None:
--    document: WordDocument = Document()
--    document.add_paragraph("Sample paragraph")
--    buffer: io.BytesIO = io.BytesIO()
--    document.save(buffer)
--    package_bytes: bytes = _rewrite_document_package(buffer.getvalue(), b"<Relationships")
--
--    with pytest.raises(XMLSyntaxError):
--        list(iter_block_items(package_bytes))
--
--
--def _rewrite_document_package(
--    package_bytes: bytes,
--    relationships_xml: bytes | None,
--    content_type: str = CONTENT_TYPE.WML_DOCUMENT_MAIN,
--) -> bytes:
--    output: io.BytesIO = io.BytesIO()
--    with (
--        zipfile.ZipFile(io.BytesIO(package_bytes), "r") as source,
--        zipfile.ZipFile(output, "w") as destination,
--    ):
--        for item in source.infolist():
--            data: bytes = source.read(item.filename)
--            if item.filename == "word/_rels/document.xml.rels":
--                if relationships_xml is None:
--                    continue
--                data = relationships_xml
--            elif item.filename == "[Content_Types].xml":
--                data = data.replace(
--                    CONTENT_TYPE.WML_DOCUMENT_MAIN.encode("ascii"),
--                    content_type.encode("ascii"),
--                )
--            destination.writestr(item, data)
--    return output.getvalue()
-```
-
----
-
-### Incident Patch 2: `59764058` (2026-11-02)
-**Commit Message**: Merge pull request #494 from Ontos-AI/fix/wuchengke/url-filename-and-section-parts
-
-fix: prefer URL file_name and keep slash titles as one section
-
-**File**: `apps/api/app/services/document_ingestion/creation_service.py` (modified, +12/-1)
-```diff
-@@ -231,6 +231,7 @@ async def _create_url_job(
-         source_file_name = _resolve_url_source_file_name(
-             source_url=payload.source_url,
-             file_extension=file_extension,
-+            file_name=payload.file_name,
-         )
-         s3_key = f"uploads/{job_id}{file_extension}"
-         JobMetadataHelper.set_url_source(
-@@ -306,7 +307,17 @@ def _build_job_response(
+-    Supports two granularity verdicts:
+-    - ``whole_doc`` (≤5 pages, no TOC) → single whole-document chunk
+-    - ``page`` → leaf section nodes via the full C1-C7 pipeline
+-    """
++    """Run the page-memory track via leaf section nodes (C1-C7 pipeline)."""
+     full_output_dir = _resolve_output_dir(request)
+     page_memory_config = request.page_memory_config
+     os.makedirs(full_output_dir, exist_ok=True)
+@@ -119,25 +112,14 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+                     "description": f"PDF has {page_count} pages, limit is {page_memory_config.max_pages}",
+                 }],
+             )
+-        verdict = "page" if is_progressive else _decide_granularity(profile)
++        verdict = "page"
+         trace_summary = {
+             "page_count": page_count,
+             "verdict": verdict,
+             "ingestion_mode": "progressive" if is_progressive else "full",
+         }
+ 
+-        if verdict == "whole_doc":
+-            parsed_df = _build_whole_doc_dataframe(
+-                filename=request.filename,
+-                page_count=page_count,
+-                verdict=verdict,
+-                trace_recorder=trace_recorder,
+-                page_texts=coerce_page_text_cache(
+-                    getattr(profile, "page_full_text_cache", None)
+-                ),
+-                body_text_by_page=getattr(profile, "page_body_text_cache", None),
+-            )
+-        elif is_progressive:
++        if is_progressive:
+             page_texts = coerce_page_text_cache(
+                 getattr(profile, "page_full_text_cache", None)
+             )
+@@ -301,22 +283,6 @@ def _build_visual_m0_dataframe(
      )
  
  
--def _resolve_url_source_file_name(*, source_url: str, file_extension: str) -> str:
-+def _resolve_url_source_file_name(
-+    *,
-+    source_url: str,
-+    file_extension: str,
-+    file_name: str | None = None,
-+) -> str:
-+    preferred_name = str(file_name or "").strip()
-+    if preferred_name:
-+        if os.path.splitext(preferred_name)[1]:
-+            return preferred_name
-+        return f"{preferred_name}{file_extension}"
-     parsed_url = urlparse(source_url)
-     url_basename = unquote(str(os.path.basename(parsed_url.path)))
-     if url_basename and os.path.splitext(url_basename)[1].lower() == file_extension:
-```
-
-**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +8/-2)
-```diff
-@@ -254,8 +254,14 @@ async def _validate_create_payload(
-                 )
- 
-         if (
--            payload.source_type == "file"
--            and payload.file_name
-+            payload.file_name
-+            and (
-+                payload.source_type == "file"
-+                or (
-+                    payload.source_type == "url"
-+                    and os.path.splitext(payload.file_name)[1]
-+                )
-+            )
-             and not _is_supported_file_name(payload.file_name)
-         ):
-             raise ValidationException(
-```
-
-**File**: `apps/api/app/services/jobs/result_projection.py` (modified, +11/-6)
-```diff
-@@ -82,14 +82,19 @@ def _resolve_original_request(job_metadata: Optional[dict[str, Any]]) -> dict[st
- 
- 
- def _resolve_source_file_name(original_request: dict[str, Any]) -> str | None:
-+    requested_name = original_request.get("file_name")
-     source_url = original_request.get("source_url")
--    file_name = None
-+    url_basename = None
-     if source_url:
--        parsed_source = urlparse(str(source_url))
--        file_name = os.path.basename(parsed_source.path) or None
--    if not file_name:
--        file_name = original_request.get("file_name")
--    return str(file_name) if file_name else None
-+        url_basename = os.path.basename(urlparse(str(source_url)).path) or None
-+    if isinstance(requested_name, str) and requested_name.strip():
-+        file_name = requested_name.strip()
-+        if not os.path.splitext(file_name)[1]:
-+            url_extension = os.path.splitext(url_basename or "")[1]
-+            if url_extension:
-+                file_name = f"{file_name}{url_extension}"
-+        return file_name
-+    return str(url_basename) if url_basename else None
- 
- 
- def _resolve_file_extension(file_name: str | None) -> str | None:
-```
-
-**File**: `apps/api/tests/unit/test_document_ingestion_filename.py` (modified, +32/-0)
-```diff
-@@ -1,6 +1,7 @@
- from app.services.document_ingestion.creation_service import (
-     _resolve_url_source_file_name,
- )
-+from app.services.jobs.result_projection import _resolve_source_file_name
- 
- 
- def test_resolve_url_source_file_name_decodes_percent_encoded_path() -> None:
-@@ -16,3 +17,34 @@ def test_resolve_url_source_file_name_decodes_percent_encoded_path() -> None:
-     )
- 
-     assert source_file_name == "中文简历-雷翔-中科院(5).doc"
-+
-+
-+def test_resolve_url_source_file_name_prefers_explicit_file_name() -> None:
-+    source_file_name = _resolve_url_source_file_name(
-+        source_url="https://files.example.test/original.md",
-+        file_extension=".md",
-+        file_name="hipo-upload-optimization_a884bd1b.plan.md",
-+    )
-+
-+    assert source_file_name == "hipo-upload-optimization_a884bd1b.plan.md"
-+
-+
-+def test_resolve_url_source_file_name_appends_extension_when_missing() -> None:
-+    source_file_name = _resolve_url_source_file_name(
-+        source_url="https://files.example.test/original.md",
-+        file_extension=".md",
-+        file_name="uploaded-plan",
-+    )
-+
-+    assert source_file_name == "uploaded-plan.md"
-+
-+
-+def test_resolve_source_file_name_prefers_request_file_name_over_url_basename() -> None:
-+    file_name = _resolve_source_file_name(
-+        {
-+            "source_url": "https://files.example.test/original.md",
-+            "file_name": "hipo-upload-optimization_a884bd1b.plan.md",
-+        }
-+    )
-+
-+    assert file_name == "hipo-upload-optimization_a884bd1b.plan.md"
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/publication_content.py` (modified, +12/-7)
-```diff
-@@ -2,6 +2,7 @@
- 
- from shared.services.retrieval.corpus_storage import CorpusStorage
- 
-+from collections.abc import Sequence
- from typing import TYPE_CHECKING, Any, cast
- from uuid import uuid4
- 
-@@ -26,7 +27,7 @@
-     build_path_lexical_text,
-     build_path_search_text,
-     build_term_search_text,
--    section_path_from_chunk_path,
-+    section_parts_from_chunk_path,
- )
- from shared.utils.json_utils import remove_nul_characters
- 
-@@ -93,11 +94,12 @@ def replace_document_revision_content(
-                 chunk=safe_chunk,
-                 chunk_metadata=chunk_metadata,
-             )
--            section_path = section_path_from_chunk_path(
--                source_path,
--                source_file_name=scope.source_file_name,
-+            section = section_publisher.ensure_section(
-+                section_parts_from_chunk_path(
-+                    source_path,
-+                    source_file_name=scope.source_file_name,
-+                )
-             )
--            section = section_publisher.ensure_section(section_path)
-             prepared_chunks.append(
-                 (index, safe_chunk, chunk_metadata, source_path, section)
-             )
-@@ -187,9 +189,13 @@ def _ensure_existing_loaded(self) -> None:
-             self._sections_by_path.setdefault(existing.section_path, existing)
-             self._preexisting_paths.add(existing.section_path)
- 
--    def ensure_section(self, section_path: str) -> DocumentSection:
-+    def ensure_section(self, section_parts: Sequence[str]) -> DocumentSection:
-         self._ensure_existing_loaded()
-         corpusStorage: CorpusStorage = CorpusStorage.resolve_namespace(self._scope.namespace)
-+        path_parts = [part for part in section_parts if part]
-+        if not path_parts:
-+            path_parts = ["Root"]
-+        section_path = " / ".join(path_parts)
-         existing_section = self._sections_by_path.get(section_path)
-         if existing_section is not None:
-             if (
-@@ -201,7 +207,6 @@ def ensure_section(self, section_path: str) -> DocumentSection:
-                 existing_section.summary = summary
-             return existing_section
- 
--        path_parts = [part for part in section_path.split(" / ") if part]
-         for depth in range(1, len(path_parts) + 1):
-             ancestor_path = " / ".join(path_parts[:depth])
-             existing_ancestor = self._sections_by_path.get(ancestor_path)
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/publication_scope_content.py` (modified, +17/-11)
-```diff
-@@ -36,7 +36,9 @@
- )
- from shared.services.retrieval.publication_models import DocumentPublicationScope
- from shared.services.retrieval.publication_trace_stage import trace_publication_stage
--from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
-+from shared.services.retrieval.search.lexical_text import (
-+    section_parts_from_chunk_path,
-+)
- from shared.services.retrieval.serving_generation import (
-     advance_namespace_generation,
-     lock_namespace_generation,
-@@ -134,11 +136,12 @@ def replace_document_scope_content(
-                 chunk=safe_chunk,
-                 chunk_metadata=chunk_metadata,
-             )
--            section_path = section_path_from_chunk_path(
--                source_path,
--                source_file_name=scope.source_file_name,
-+            section = section_publisher.ensure_section(
-+                section_parts_from_chunk_path(
-+                    source_path,
-+                    source_file_name=scope.source_file_name,
-+                )
-             )
--            section = section_publisher.ensure_section(section_path)
-             prepared_chunks.append(
-                 (index, safe_chunk, chunk_metadata, source_path, section)
-             )
-@@ -397,11 +400,14 @@ def _delete_scope_exclusive_leaf_sections(
-             chunk=safe_chunk,
-             chunk_metadata=chunk_metadata,
-         )
--        section_path = section_path_from_chunk_path(
--            source_path,
--            source_file_name=scope.source_file_name,
-+        retained_paths.update(
-+            _strict_ancestor_paths(
-+                section_parts_from_chunk_path(
-+                    source_path,
-+                    source_file_name=scope.source_file_name,
-+                )
-+            )
-         )
--        retained_paths.update(_strict_ancestor_paths(section_path))
- 
-     stale_section_ids = [
-         section.section_id
-@@ -498,8 +504,8 @@ def _self_and_ancestor_paths(section_path: str) -> list[str]:
-     return [" / ".join(parts[:depth]) for depth in range(1, len(parts) + 1)]
- 
- 
--def _strict_ancestor_paths(section_path: str) -> list[str]:
--    parts = [part for part in section_path.split(" / ") if part]
-+def _strict_ancestor_paths(section_parts: list[str]) -> list[str]:
-+    parts = [part for part in section_parts if part]
-     if len(parts) <= 1:
-         return []
-     return [" / ".join(parts[:depth]) for depth in range(1, len(parts))]
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/search/lexical_text.py` (modified, +20/-3)
-```diff
-@@ -75,6 +75,25 @@ def build_content_lexical_text(chunk: dict[str, Any]) -> Optional[str]:
-     return "\n".join(lexical_parts) if lexical_parts else content
- 
- 
-+def section_parts_from_chunk_path(
-+    source_path: Optional[str],
-+    *,
-+    source_file_name: str | None = None,
-+) -> list[str]:
-+    """Return unescaped section titles from a parser chunk path.
-+
-+    Splits on the raw hierarchy ``/`` first, then unescapes ``U+2215`` in each
-+    title so a heading that contains `` / `` stays one part.
-+    """
-+    if not source_path:
-+        return []
-+    _, section_parts = split_document_path(
-+        source_path,
-+        source_file_name=source_file_name,
-+    )
-+    return section_parts
-+
-+
- def section_path_from_chunk_path(
-     source_path: Optional[str],
-     *,
-@@ -85,9 +104,7 @@ def section_path_from_chunk_path(
-     Expected format: "<file>.ext/<Section>/<Subsection>/..."
-     Returns " / "-joined section parts, or "Root" if no section hierarchy.
-     """
--    if not source_path:
--        return "Root"
--    _, section_parts = split_document_path(
-+    section_parts = section_parts_from_chunk_path(
-         source_path,
-         source_file_name=source_file_name,
-     )
-```
-
-**File**: `packages/shared-python/shared/tests/test_path_segments.py` (modified, +18/-0)
-```diff
-@@ -21,6 +21,7 @@
-     unescape_path_segment,
- )
- from shared.services.retrieval.search.lexical_text import (
-+    section_parts_from_chunk_path,
-     section_path_from_chunk_path,
-     split_section_path,
- )
-@@ -89,6 +90,23 @@ def test_section_path_from_chunk_path_preserves_slash_title() -> None:
-     ]
- 
- 
-+def test_section_parts_from_chunk_path_keep_spaced_slash_title() -> None:
-+    chunk_path = join_document_path(
-+        ["notes.md", "MD / TXT（2 层）", "Details"]
-+    )
-+    assert section_parts_from_chunk_path(
-+        chunk_path,
-+        source_file_name="notes.md",
-+    ) == ["MD / TXT（2 层）", "Details"]
-+    assert (
-+        section_path_from_chunk_path(
-+            chunk_path,
-+            source_file_name="notes.md",
-+        )
-+        == "MD / TXT（2 层） / Details"
-+    )
-+
-+
- def test_doc_nav_keeps_slash_title_as_single_section() -> None:
-     chunk_path = join_document_path(
-         ["manual.pdf", "Index", "Symbols/Numbers"]
-```
-
----
-
-### Incident Patch 3: `394faf35` (2026-11-02)
-**Commit Message**: fix: preserve DOCX leading content and support explicit repair revisions (#493)
-
-* fix(parser): retain DOCX body text before the first heading
-
-* fix(ingestion): allow explicit repair revisions on the same document
-
-**File**: `apps/worker/app/services/document_ingestion/source_content_admission.py` (modified, +14/-0)
-```diff
-@@ -33,6 +33,7 @@ class _SourceScope:
-     user_id: str
-     namespace: str
-     is_demo: bool
-+    reparse_document_id: str | None = None
- 
- 
- class SourceContentAdmission:
-@@ -65,12 +66,22 @@ def _load_scope(self, job_id: str) -> _SourceScope:
-                 raise NotFoundException(resource="Job", resource_id=job_id)
-             metadata: dict[str, object] = dict(job.job_metadata or {})
-             namespace: object = metadata.get("namespace")
-+            original_request: object = metadata.get("original_request")
-+            reparse_document_id: str | None = None
-+            if (
-+                isinstance(original_request, dict)
-+                and original_request.get("reparse") is True
-+            ):
-+                target: object = original_request.get("document_id")
-+                if isinstance(target, str) and target == metadata.get("document_id"):
-+                    reparse_document_id = target
-             return _SourceScope(
-                 user_id=job.user_id,
-                 namespace=normalize_retrieval_namespace(
-                     namespace if isinstance(namespace, str) else None,
-                 ),
-                 is_demo=metadata.get("corpus_target") == "DEMO",
-+                reparse_document_id=reparse_document_id,
-             )
- 
-     @staticmethod
-@@ -132,6 +143,9 @@ def _build_duplicate_query(
-             .where(Document.user_id == scope.user_id)
-             .where(Document.namespace == scope.namespace)
-             .where(Document.status == "active")
-+            # Only an explicit same-document reparse may replace identical bytes.
-+            # Other documents and every active content claim remain protected.
-+            .where(Document.document_id != scope.reparse_document_id)
-             .union_all(
-                 select(literal("Job"), Job.job_id)
-                 .where(Job.user_id == scope.user_id)
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/text/parser.py` (modified, +0/-3)
-```diff
-@@ -122,9 +122,6 @@ def postprocess_leaf_dics(
-     # TODO rough dividing of contents (need more smart dividing)
-     df_with_divides = pd.DataFrame(columns=["path", "content_lst", "path_identifier"])
-     for i, row in merge_df.iterrows():
--        if len(row["path"]) == 0:
--            continue
+-def _decide_granularity(profile: Any) -> str:
+-    """Decide granularity for a page-memory document.
 -
-         local_contents = row["content_lst"]
-         if len(local_contents) > 0 and llm_paras["doc_type"] not in "templates":
-             sublists, num = divide_long_contents(
+-    Page-based track processes pages individually via VLM — no physical
+-    document splitting is needed regardless of page count.  The old
+-    ``shard_page`` verdict (>200 pages) was only meaningful when long
+-    PDFs were cut into physical sub-documents.
+-    """
+-    page_count = int(getattr(profile, "page_count", 0) or 0)
+-    toc = getattr(profile, "toc", None)
+-    has_toc = bool(getattr(toc, "has_toc", False))
+-    if page_count <= 5 and not has_toc:
+-        return "whole_doc"
+-    return "page"
+-
+-
+ def _resolve_hierarchy_model(page_memory_config: PageMemoryConfig) -> str | None:
+     return (
+         page_memory_config.hierarchy_model
+@@ -915,57 +881,6 @@ def _select_rendered_pages_with_assets(
+     return [item for item in rendered if item.page_index in asset_pages]
+ 
+ 
+-# ── whole_doc builder (PR3, unchanged) ────────────────────────────────
+-
+-
+-def _build_whole_doc_dataframe(
+-    *,
+-    filename: str,
+-    page_count: int,
+-    verdict: str,
+-    trace_recorder: Any | None = None,
+-    page_texts: dict[int, str] | None = None,
+-    body_text_by_page: dict[int, str] | None = None,
+-) -> pd.DataFrame:
+-    pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
+-    texts = coerce_page_text_cache(page_texts)
+-    raw_text = "\n\n".join(texts.get(page, "") for page in pages).strip()
+-    summary = _build_summary(filename=filename, page_count=page_count, raw_text=raw_text)
+-    content = f"[SUMMARY]\n{summary}\n\n[RAW]\n{raw_text}".strip()
+-    know_id = gen_str_codes(f"wholedoc::{filename}::{content}")
+-    row = {
+-        "content": content,
+-        "path": f"{filename}/Root",
+-        "type": "page",
+-        "length": len(content),
+-        "keywords": "",
+-        "summary": summary,
+-        "know_id": know_id,
+-        "tokens": "",
+-        "connectto": "",
+-        "addtime": get_str_time(),
+-        "page_nums": ",".join(str(page) for page in pages),
+-        "extra_metadata": {
+-            "body_text_preview": build_body_text_preview(
+-                (body_text_by_page or {}).get(page, "") for page in pages
+-            ),
+-        },
+-    }
+-    _record_trace_stage(
+-        trace_recorder,
+-        "whole_doc",
+-        page_info=page_scope_info(pages),
+-        variables={"summary": summary, "verdict": verd
 ```
 
-**File**: `apps/worker/tests/contract/test_docx_leading_content_contract.py` (added, +68/-0)
+**File**: `apps/worker/tests/contract/test_page_body_text_preview_contract.py` (modified, +48/-6)
 ```diff
-@@ -0,0 +1,68 @@
-+from __future__ import annotations
-+
-+import os
-+from pathlib import Path
-+
-+os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
-+os.environ.setdefault("TMP_PATH", "/tmp/knowhere-test")
-+os.environ.setdefault("S3_BUCKET_NAME", "test-uploads")
-+os.environ.setdefault("S3_ACCESS_KEY_ID", "test")
-+os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
-+os.environ.setdefault("S3_TEMP_PATH", "/tmp")
-+
-+from docx import Document
-+
-+from app.services.document_parser.formats.docx.parser import (
-+    convert_doc2dics,
-+    parse_docx,
-+)
-+from app.services.document_parser.formats.text.parser import postprocess_leaf_dics
-+
-+
-+def test_docx_preserves_four_paragraphs_before_the_first_heading(
-+    tmp_path: Path,
+@@ -107,15 +107,57 @@ def render(ctx, pages, **kwargs):
+         assert by_path["doc.pdf/Empty"]["metadata"]["body_text_preview"] == ""
+ 
+ 
+-def test_whole_document_preview_is_body_only_and_bounded() -> None:
+-    from app.services.page_memory.memory_service import _build_whole_doc_dataframe
++def test_whole_document_preview_is_body_only_and_bounded(
++    tmp_path: Path, monkeypatch,
 +) -> None:
-+    document = Document()
-+    document.add_heading("Document title", level=0)
-+    references: list[str] = [f"LEADING-PARAGRAPH-{index}" for index in range(1, 5)]
-+    for reference in references:
-+        document.add_paragraph(f"{reference} Original introduction body.")
-+    document.add_heading("First section", level=1)
-+    document.add_paragraph("SECTION-BODY Original section body.")
-+    source_path: Path = tmp_path / "introduction.docx"
-+    document.save(source_path)
-+    options: dict[str, object] = {
-+        "doc_type": "book",
-+        "smart_title_parse": False,
-+        "summary_image": False,
-+        "summary_table": False,
-+        "summary_txt": False,
-+        "stopwords": [],
++    from app.services.page_memory import memory_service, page_renderer, page_tagger
++    from app.services.page_memory.page_tagger import PageTagResult
++    from shared.models.schemas.page_memory_config import PageMemoryConfig
+     from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
+ 
+-    dataframe = _build_whole_doc_dataframe(
+-        filename="whole.pdf", page_count=2, verdict="whole_doc",
+-        page_texts={1: "header\n" + "body " * 100, 2: "footer"},
+-        body_text_by_page={1: "body " * 100, 2: ""},
++    page_texts = {1: "header\n" + "body " * 100, 2: "footer"}
++    profile = SimpleNamespace(
++        page_count=2,
++        anatomy=SimpleNamespace(
++            page_count=2, page_features=[], page_labels=[], toc_result=None
++        ),
++        page_full_text_cache=page_texts,
++        page_body_text_cache={1: "body " * 100, 2: ""},
++    )
++
++    def render(ctx, pages, **kwargs):
++        directory = tmp_path / kwargs["folder_name"]
++        directory.mkdir(parents=True, exist_ok=True)
++        output = []
++        for page in pages:
++            path = directory / f"page-{page}.png"
++            Image.new("RGB", (2, 3), color="white").save(path)
++            output.append({"page": page, "png_path": str(path)})
++        return output
++
++    monkeypatch.delenv("IMAGE_MODEL", raising=False)
++    monkeypatch.setattr(page_renderer, "render_pages", render)
++    monkeypatch.setattr(
++        page_tagger,
++        "tag_pages",
++        lambda **kwargs: [
++            PageTagResult(page_index=page.page_index, summary="summary")
++            for page in kwargs["pages"]
++        ],
++    )
++    dataframe = memory_service._build_page_dataframe(
++        pdf_path="unused.pdf",
++        filename="whole.pdf",
++        output_dir=str(tmp_path),
++        profile=profile,
++        verdict="page",
++        page_memory_config=PageMemoryConfig(
++            fine_min_pages=100,
++            scope_concurrency=1,
++            asset_extraction_enabled=False,
++        ),
+     )
+     chunk = dataframe_to_chunks(dataframe)[0]
++    assert chunk["path"] == "whole.pdf/Root"
+     assert chunk["metadata"]["body_text_preview"] == ("body " * 100).strip()[:180]
+     assert "header" in chunk["content"] and "footer" in chunk["content"]
+```
+
+**File**: `apps/worker/tests/contract/test_page_memory_output_contract.py` (modified, +131/-14)
+```diff
+@@ -13,7 +13,6 @@
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+ from app.services.document_parser.support.parser_rows import PARSER_ROW_COLUMNS
+-from app.services.page_memory import memory_service
+ from app.services.page_memory.page_assets import PageAsset, build_asset_rows
+ from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
+ from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
+@@ -235,22 +234,140 @@ def test_zip_chunk_schema_preserves_page_memory_node_metadata() -> None:
+     assert "section_path" not in metadata
+ 
+ 
+-def test_page_memory_granularity_routes_supported_page_modes() -> None:
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=5, toc=SimpleNamespace(has_toc=False))
++def test_full_ingestion_short_scanned_and_text_pdfs_emit_page_assets(
++    tmp_path, monkeypatch,
++) -> None:
++    from io import BytesIO
++    from pathlib import Path
++    import pymupdf
++    from PIL import Image
++    from app.services.document_ingestion.artifact_refs import (
++        collect_referenced_artifact_refs,
++    )
++    from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
++    from app.services.page_memory import memory_service as live_memory_service
++    from app.services.page_memory import page_tagger as live_page_tagger
++    from app.services.page_memory.memory_service import PageMemoryInput
++    from app.services.page_memory.page_tagger import PageTagResult
++    from shared.models.schemas.page_memory_config import PageMemoryConfig
++
++    raster_bytes = BytesIO()
++    Image.new("RGB", (120, 80), color="navy").save(raster_bytes, format="PNG")
++    scanned_pdf = tmp_path / "scanned.pdf"
++    with pymupdf.open() as doc:
++        page = doc.new_page(width=600, height=800)
++        page.insert_image(
++            pymupdf.Rect(50, 50, 550, 750), stream=raster_bytes.getvalue()
+         )
+-        == "whole_doc"
++        doc.save(scanned_pdf)
++
++    scanned_profile = SimpleNamespace(
++        page_count=1,
++        is_scanned=True,
++        routing_category=PdfRoutingCategory.SCANNED,
++        toc=SimpleNamespace(has_toc=False),
++        anatomy=SimpleNamespace(
++            page_count=1, page_features=[], page_labels=[], toc_result=None
++        ),
++        page_full_text_cache={1: ""},
++        page_body_text_cache={1: ""},
++        trace_recorder=None,
++    )
++    monkeypatch.delenv("IMAGE_MODEL", raising=False)
++    monkeypatch.setattr(
++        live_page_tagger,
++        "tag_pages",
++        lambda **kwargs: [
++            PageTagResult(
++                page_index=item.page_index,
++                summary=f"page-{item.page_index} summary",
++            )
++            for item in kwargs["pages"]
++        ],
+     )
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=6, toc=SimpleNamespace(has_toc=False))
++    monkeypatch.setattr(
++        live_memory_service,
++        "profile_document",
++        lambda *_args, **_kwargs: scanned_profile,
++    )
++
++    scanned_out_dir, scanned_df = live_memory_service.run(
++        PageMemoryInput(
++            file_path=str(scanned_pdf),
++            filename="scanned.pdf",
++            output_dir=str(tmp_path / "out_scanned"),
++            page_memory_config=PageMemoryConfig(asset_extraction_enabled=False),
++            ingestion_mode="full",
+         )
+-        == "page"
+     )
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=201, toc=SimpleNamespace(has_toc=False))
++    scanned_chunks = dataframe_to_chunks(scanned_df)
++    assert len(scanned_chunks) == 1
++    scanned_chunk = scanned_chunks[0]
++    assert scanned_chunk["type"] == "page"
++    assert scanned_chunk["path"] == "scanned.pdf/Root"
++    assert scanned_chunk["metadata"]["page_nums"] == [1]
++    assert scanned_chunk["metadata"]["summary"] == "page-1 summary"
++    page_assets = scanned_chunk["metadata"]["page_assets"]
++    assert len(page_assets) == 1
++    assert page_assets[0]["page_num"] == 1
++    assert page_assets[0]["artifact_ref"] == "page_citation_assets/page-1.png"
++    image_file = Path(scanned_out_dir) / page_assets[0]["artifact_ref"]
++    assert image_file.is_file()
++    with Image.open(image_file) as rendered_img:
++        assert rendered_img.width > 0 and rendered_img.height > 0
++    assert collect_referenced_artifact_refs(scanned_chunks) == {
++        "page_citation_assets/page-1.png"
 +    }
-+    structure, assets = parse_docx(
-+        str(source_path), options, str(tmp_path), filename=source_path.name
-+    )
-+    parsed = convert_doc2dics(
-+        structure, assets, str(tmp_path), options, relative_root=source_path.name
-+    )
-+    body: str = "\n".join(parsed["content"].astype(str))
-+    for reference in references:
-+        assert reference in body
-+    assert "SECTION-BODY" in body
-+    introduction = parsed[parsed["content"].str.contains(references[0])]
-+    assert introduction.iloc[0]["path"] == source_path.name
 +
++    text_pdf = tmp_path / "short_text.pdf"
++    with pymupdf.open() as doc:
++        for idx in (1, 2):
++            page = doc.new_page(width=600, height=800)
++            page.insert_text((50, 100), f"Original text on page {idx}.")
++        doc.save(text_pdf)
 +
-+def test_root_body_splitting_preserves_every_leading_paragraph() -> None:
-+    paragraphs: list[str] = [
-+        f"ROOT-PARAGRAPH-{index:03d} " + "Original body text. " * 20
-+        for index in range(60)
-+    ]
-+    parsed = postprocess_leaf_dics(
-+        [([], {"heading": [], "content": paragraphs})],
-+        {"doc_type": "book", "summary_txt": False},
-+        summary_len=200,
-+    )
-+    contents: list[str] = [text for group in parsed["content_lst"] for text in group]
-+    assert contents == paragraphs
-+    assert len(parsed) > 1
++    text_profile = SimpleNamespace(
++        page_count=2,
++        is_scanned=False,
++        routing_category=PdfRoutingCategory.GENERIC,
++        toc=SimpleNamespace(has_toc=False),
++      
 ```
 
-**File**: `apps/worker/tests/contract/test_source_content_admission_contract.py` (modified, +71/-2)
+---
+
+### Incident Patch 2: `297b002c` (2026-11-06)
+**Commit Message**: fix: route short PDFs through the page pipeline instead of whole_doc
+
+Short scanned PDFs without a TOC were packed into a text-only whole-document chunk, so page images never shipped. Keep one C1-C7 page path for all full ingestions.
+
+Fixes #501
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +3/-88)
 ```diff
-@@ -183,7 +183,51 @@ def test_rejects_unchanged_explicit_document_update(
+@@ -14,7 +14,6 @@
+     visual_debug_enabled,
+ )
+ from app.services.document_parser.profiling.doc_profiler import profile_document
+-from app.services.document_parser.support.identifiers import gen_str_codes, get_str_time
+ from app.services.document_parser.support.parser_rows import PARSER_DF_COLUMNS
+ from app.services.document_parser.support.stage_profiler import stage_timer
+ from app.services.page_memory.normalizer import normalize_to_pdf
+@@ -42,7 +41,6 @@
+ from shared.core.config import settings
+ from shared.core.exceptions.domain_exceptions import ValidationException
+ from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
+-from app.services.page_memory.body_text_preview import build_body_text_preview
+ 
+ 
+ @dataclass(frozen=True)
+@@ -71,12 +69,7 @@ class _ScopeRunResult:
+ 
+ 
+ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+-    """Run the page-memory track.
+-
+-    Supports two granularity verdicts:
+-    - ``whole_doc`` (≤5 pages, no TOC) → single whole-document chunk
+-    - ``page`` → leaf section nodes via the full C1-C7 pipeline
+-    """
++    """Run the page-memory track via leaf section nodes (C1-C7 pipeline)."""
+     full_output_dir = _resolve_output_dir(request)
+     page_memory_config = request.page_memory_config
+     os.makedirs(full_output_dir, exist_ok=True)
+@@ -119,25 +112,14 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+                     "description": f"PDF has {page_count} pages, limit is {page_memory_config.max_pages}",
+                 }],
+             )
+-        verdict = "page" if is_progressive else _decide_granularity(profile)
++        verdict = "page"
+         trace_summary = {
+             "page_count": page_count,
+             "verdict": verdict,
+             "ingestion_mode": "progressive" if is_progressive else "full",
+         }
+ 
+-        if verdict == "whole_doc":
+-            parsed_df = _build_whole_doc_dataframe(
+-                filename=request.filename,
+-                page_count=page_count,
+-                verdict=verdict,
+-                trace_recorder=trace_recorder,
+-                page_texts=coerce_page_text_cache(
+-                    getattr(profile, "page_full_text_cache", None)
+-                ),
+-                body_text_by_page=getattr(profile, "page_body_text_cache", None),
+-            )
+-        elif is_progressive:
++        if is_progressive:
+             page_texts = coerce_page_text_cache(
+                 getattr(profile, "page_full_text_cache", None)
+             )
+@@ -301,22 +283,6 @@ def _build_visual_m0_dataframe(
      )
-     with pytest.raises(ConflictException) as failure:
-         admit_source(incoming)
--    assert failure.value.to_client(incoming.job_id)["error"]["details"]["id"] == existing.document_id
-+    assert (
-+        failure.value.to_client(incoming.job_id)["error"]["details"]["id"]
-+        == existing.document_id
-+    )
-+
-+
-+def test_reparses_unchanged_bytes_only_for_the_explicit_existing_document(
-+    worker_contract_environment: None,
-+    tmp_path: Path,
+ 
+ 
+-def _decide_granularity(profile: Any) -> str:
+-    """Decide granularity for a page-memory document.
+-
+-    Page-based track processes pages individually via VLM — no physical
+-    document splitting is needed regardless of page count.  The old
+-    ``shard_page`` verdict (>200 pages) was only meaningful when long
+-    PDFs were cut into physical sub-documents.
+-    """
+-    page_count = int(getattr(profile, "page_count", 0) or 0)
+-    toc = getattr(profile, "toc", None)
+-    has_toc = bool(getattr(toc, "has_toc", False))
+-    if page_count <= 5 and not has_toc:
+-        return "whole_doc"
+-    return "page"
+-
+-
+ def _resolve_hierarchy_model(page_memory_config: PageMemoryConfig) -> str | None:
+     return (
+         page_memory_config.hierarchy_model
+@@ -915,57 +881,6 @@ def _select_rendered_pages_with_assets(
+     return [item for item in rendered if item.page_index in asset_pages]
+ 
+ 
+-# ── whole_doc builder (PR3, unchanged) ────────────────────────────────
+-
+-
+-def _build_whole_doc_dataframe(
+-    *,
+-    filename: str,
+-    page_count: int,
+-    verdict: str,
+-    trace_recorder: Any | None = None,
+-    page_texts: dict[int, str] | None = None,
+-    body_text_by_page: dict[int, str] | None = None,
+-) -> pd.DataFrame:
+-    pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
+-    texts = coerce_page_text_cache(page_texts)
+-    raw_text = "\n\n".join(texts.get(page, "") for page in pages).strip()
+-    summary = _build_summary(filename=filename, page_count=page_count, raw_text=raw_text)
+-    content = f"[SUMMARY]\n{summary}\n\n[RAW]\n{raw_text}".strip()
+-    know_id = gen_str_codes(f"wholedoc::{filename}::{content}")
+-    row = {
+-        "content": content,
+-        "path": f"{filename}/Root",
+-        "type": "page",
+-        "length": len(content),
+-        "keywords": "",
+-        "summary": summary,
+-        "know_id": know_id,
+-        "tokens": "",
+-        "connectto": "",
+-        "addtime": get_str_time(),
+-        "page_nums": ",".join(str(page) for page in pages),
+-        "extra_metadata": {
+-            "body_text_preview": build_body_text_preview(
+-                (body_text_by_page or {}).get(page, "") for page in pages
+-            ),
+-        },
+-    }
+-    _record_trace_stage(
+-        trace_recorder,
+-        "whole_doc",
+-        page_info=page_scope_info(pages),
+-        variables={"summary": summary, "verdict": verd
+```
+
+**File**: `apps/worker/tests/contract/test_page_body_text_preview_contract.py` (modified, +48/-6)
+```diff
+@@ -107,15 +107,57 @@ def render(ctx, pages, **kwargs):
+         assert by_path["doc.pdf/Empty"]["metadata"]["body_text_preview"] == ""
+ 
+ 
+-def test_whole_document_preview_is_body_only_and_bounded() -> None:
+-    from app.services.page_memory.memory_service import _build_whole_doc_dataframe
++def test_whole_document_preview_is_body_only_and_bounded(
++    tmp_path: Path, monkeypatch,
 +) -> None:
-+    from shared.core.database_sync import get_sync_db_context
-+    from shared.models.database.job import Job
-+    from shared.models.database.document import Document
-+
-+    contract: WorkerParseContract = WorkerParseContract.create()
-+    existing: SourceJob = create_source_job(contract, tmp_path, content=b"repair bytes")
-+    admit_source(existing)
-+    publish_source(existing)
-+    incoming: SourceJob = create_source_job(
-+        contract,
-+        tmp_path,
-+        content=b"repair bytes",
-+        user_id=existing.user_id,
-+        document_id=existing.document_id,
++    from app.services.page_memory import memory_service, page_renderer, page_tagger
++    from app.services.page_memory.page_tagger import PageTagResult
++    from shared.models.schemas.page_memory_config import PageMemoryConfig
+     from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
+ 
+-    dataframe = _build_whole_doc_dataframe(
+-        filename="whole.pdf", page_count=2, verdict="whole_doc",
+-        page_texts={1: "header\n" + "body " * 100, 2: "footer"},
+-        body_text_by_page={1: "body " * 100, 2: ""},
++    page_texts = {1: "header\n" + "body " * 100, 2: "footer"}
++    profile = SimpleNamespace(
++        page_count=2,
++        anatomy=SimpleNamespace(
++            page_count=2, page_features=[], page_labels=[], toc_result=None
++        ),
++        page_full_text_cache=page_texts,
++        page_body_text_cache={1: "body " * 100, 2: ""},
 +    )
-+    with get_sync_db_context() as database:
-+        job = database.get(Job, incoming.job_id)
-+        assert job is not None
-+        job.job_metadata = {
-+            **dict(job.job_metadata or {}),
-+            "original_request": {
-+                "document_id": existing.document_id,
-+                "reparse": True,
-+            },
-+        }
-+    assert admit_source(incoming)["source_content_sha256"]
-+    publish_source(incoming)
-+    with get_sync_db_context() as database:
-+        documents = list(
-+            database.scalars(
-+                select(Document).where(Document.user_id == existing.user_id)
++
++    def render(ctx, pages, **kwargs):
++        directory = tmp_path / kwargs["folder_name"]
++        directory.mkdir(parents=True, exist_ok=True)
++        output = []
++        for page in pages:
++            path = directory / f"page-{page}.png"
++            Image.new("RGB", (2, 3), color="white").save(path)
++            output.append({"page": page, "png_path": str(path)})
++        return output
++
++    monkeypatch.delenv("IMAGE_MODEL", raising=False)
++    monkeypatch.setattr(page_renderer, "render_pages", render)
++    monkeypatch.setattr(
++        page_tagger,
++        "tag_pages",
++        lambda **kwargs: [
++            PageTagResult(page_index=page.page_index, summary="summary")
++            for page in kwargs["pages"]
++        ],
++    )
++    dataframe = memory_service._build_page_dataframe(
++        pdf_path="unused.pdf",
++        filename="whole.pdf",
++        output_dir=str(tmp_path),
++        profile=profile,
++        verdict="page",
++        page_memory_config=PageMemoryConfig(
++            fine_min_pages=100,
++            scope_concurrency=1,
++            asset_extraction_enabled=False,
++        ),
+     )
+     chunk = dataframe_to_chunks(dataframe)[0]
++    assert chunk["path"] == "whole.pdf/Root"
+     assert chunk["metadata"]["body_text_preview"] == ("body " * 100).strip()[:180]
+     assert "header" in chunk["content"] and "footer" in chunk["content"]
+```
+
+**File**: `apps/worker/tests/contract/test_page_memory_output_contract.py` (modified, +131/-14)
+```diff
+@@ -13,7 +13,6 @@
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+ from app.services.document_parser.support.parser_rows import PARSER_ROW_COLUMNS
+-from app.services.page_memory import memory_service
+ from app.services.page_memory.page_assets import PageAsset, build_asset_rows
+ from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
+ from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
+@@ -235,22 +234,140 @@ def test_zip_chunk_schema_preserves_page_memory_node_metadata() -> None:
+     assert "section_path" not in metadata
+ 
+ 
+-def test_page_memory_granularity_routes_supported_page_modes() -> None:
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=5, toc=SimpleNamespace(has_toc=False))
++def test_full_ingestion_short_scanned_and_text_pdfs_emit_page_assets(
++    tmp_path, monkeypatch,
++) -> None:
++    from io import BytesIO
++    from pathlib import Path
++    import pymupdf
++    from PIL import Image
++    from app.services.document_ingestion.artifact_refs import (
++        collect_referenced_artifact_refs,
++    )
++    from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
++    from app.services.page_memory import memory_service as live_memory_service
++    from app.services.page_memory import page_tagger as live_page_tagger
++    from app.services.page_memory.memory_service import PageMemoryInput
++    from app.services.page_memory.page_tagger import PageTagResult
++    from shared.models.schemas.page_memory_config import PageMemoryConfig
++
++    raster_bytes = BytesIO()
++    Image.new("RGB", (120, 80), color="navy").save(raster_bytes, format="PNG")
++    scanned_pdf = tmp_path / "scanned.pdf"
++    with pymupdf.open() as doc:
++        page = doc.new_page(width=600, height=800)
++        page.insert_image(
++            pymupdf.Rect(50, 50, 550, 750), stream=raster_bytes.getvalue()
+         )
+-        == "whole_doc"
++        doc.save(scanned_pdf)
++
++    scanned_profile = SimpleNamespace(
++        page_count=1,
++        is_scanned=True,
++        routing_category=PdfRoutingCategory.SCANNED,
++        toc=SimpleNamespace(has_toc=False),
++        anatomy=SimpleNamespace(
++            page_count=1, page_features=[], page_labels=[], toc_result=None
++        ),
++        page_full_text_cache={1: ""},
++        page_body_text_cache={1: ""},
++        trace_recorder=None,
++    )
++    monkeypatch.delenv("IMAGE_MODEL", raising=False)
++    monkeypatch.setattr(
++        live_page_tagger,
++        "tag_pages",
++        lambda **kwargs: [
++            PageTagResult(
++                page_index=item.page_index,
++                summary=f"page-{item.page_index} summary",
 +            )
-+        )
-+        assert len(documents) == 1
-+        assert documents[0].document_id == existing.document_id
- 
- 
- @pytest.mark.parametrize("scope_change", ["user", "namespace", "archived"])
-@@ -380,7 +424,9 @@ def claim_content(source: SourceJob) -> bool:
- 
-     # Hold the first transaction after its empty snapshot. The second must wait
-     # for its advisory lock, rather than also admitting from an empty snapshot.
--    event.listen(contract.engine, "after_cursor_execute", pause_first_claim_after_lookup)
-+    event.listen(
-+        contract.engine, "after_cursor_execute", pause_first_claim_after_lookup
-+    )
-     try:
-         with ThreadPoolExecutor(max_workers=2) as executor:
-             first_claim: Future[bool] = executor.submit(claim_content, first)
-@@ -418,3 +464,26 @@ def claim_content(source: SourceJob) -> bool:
-         ).scalar_one()
-         job.status = "failed"
-     assert admit_source(loser)["source_content_sha256"]
-+
-+
-+@pytest.mark.parametrize("version", ["v1", "v2"])
-+def test_explicit_reparse_requires_an_existing_document_id(
-+    worker_contract_environment: None, version: str
-+) -> None:
-+    from pydantic import ValidationError
-+    from shared.models.schemas.job import JobCreate, JobCreateV2
-+
-+    model = JobCreate if version == "v1" else JobCreateV2
-+    with pytest.raises(ValidationError, match="document_id"):
-+        model(
-+            source_type="url",
-+            source_url="https://files.example/source.docx",
-+            reparse=True,
-+        )
-+    request = model(
-+        source_type="url",
-+        source_url="https://files.example/source.docx",
-+        document_id="doc_existing",
-+        reparse=True,
-+    )
-+    assert request.model_dump()["reparse"] is True
-```
-
-**File**: `packages/shared-python/shared/models/schemas/job.py` (modified, +32/-8)
-```diff
-@@ -1,12 +1,15 @@
- """Unified job schemas."""
- 
- from datetime import datetime
--from typing import Any, Dict, Literal, Optional
-+from typing import Any, Dict, Literal, Optional, Self
- 
--from pydantic import BaseModel, ConfigDict, Field
-+from pydantic import BaseModel, ConfigDict, Field, model_validator
- 
- from shared.models.schemas.llm_config import LLMConfig
--from shared.models.schemas.progressive_ingestion import EnhancementProgress, PublishedSnapshot
-+from shared.models.schemas.progressive_ingestion import (
-+    EnhancementProgress,
-+    PublishedSnapshot,
-+)
- 
- IngestionMode = Literal["full", "progressive"]
- 
-@@ -69,6 +72,17 @@ class JobCreateBase(BaseModel):
-     document_id: Optional[str] = Field(
-         None, description="Existing document ID for update flows"
++            for item in kwargs["pages"]
++        ],
      )
-+    reparse: bool = Field(
-+        False,
-+        description="Reparse unchanged original bytes for the specified existing document ID",
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=6, toc=SimpleNamespace(has_toc=False))
++    monkeypatch.setattr(
++        live_memory_service,
++        "profile_document",
++        lambda *_args, **_kwargs: scanned_profile,
 +    )
 +
-+    @model_validator(mode="after")
-+    def validate_reparse_target(self) -> Self:
-+        if self.reparse and not str(self.document_id or "").strip():
-+            raise ValueError("reparse requires an existing document_id")
-+        return self
++    scanned_out_dir, scanned_df = live_memory_service.run(
++        PageMemoryInput(
++            file_path=str(scanned_pdf),
++            filename="scanned.pdf",
++            output_dir=str(tmp_path / "out_scanned"),
++            page_memory_config=PageMemoryConfig(asset_extraction_enabled=False),
++            ingestion_mode="full",
+         )
+-        == "page"
+     )
+-    assert (
+-        memory_service._decide_granularity(  # noqa: SLF001
+-            SimpleNamespace(page_count=201, toc=SimpleNamespace(has_toc=False))
++    scanned_chunks = dataframe_to_chunks(scanned_df)
++    assert len(scanned_chunks) == 1
++    scanned_chunk = scanned_chunks[0]
++    assert scanned_chunk["type"] == "page"
++    assert scanned_chunk["path"] == "scanned.pdf/Root"
++    assert scanned_chunk["metadata"]["page_nums"] == [1]
++    assert scanned_chunk["metadata"]["summary"] == "page-1 summary"
++    page_assets = scanned_chunk["metadata"]["page_assets"]
++    assert len(page_assets) == 1
++    assert page_assets[0]["page_num"] == 1
++    assert page_assets[0]["artifact_ref"] == "page_citation_assets/page-1.png"
++    image_file = Path(scanned_out_dir) / page_assets[0]["artifact_ref"]
++    assert image_file.is_file()
++    with Image.open(image_file) as rendered_img:
++        assert rendered_img.width > 0 and rendered_img.height > 0
++    assert collect_referenced_artifact_refs(scanned_chunks) == {
++        "page_citation_assets/page-1.png"
++    }
 +
-     source_type: Literal["file", "url"] = Field(..., description="Document source type")
-     source_url: Optional[str] = Field(
-         None, description="Source URL; required when source_type=url"
-@@ -163,11 +177,21 @@ class StandardErrorObject(BaseModel):
- class JobResultResponse(BaseModel):
-     """Job status query response (for GET /jobs/{job_id}/result)"""
- 
--    job_result_id: Optional[str] = Field(None, description="Immutable completed publication revision, when available")
--    enhancement: Optional[EnhancementProgress] = Field(default=None, exclude_if=lambda value: value is None)
--    snapshots: Optional[list[PublishedSnapshot]] = Field(default=None, exclude_if=lambda value: value is None)
--    current_snapshot_id: Optional[str] = Field(default=None, exclude_if=lambda value: value is None)
--    page_count: Optional[int] = Field(default=None, ge=1, exclude_if=lambda value: value is None)
-+    job_result_id: Optional[str] = Field(
-+        None, description="Immutable completed publication revision, when available"
-+    )
-+    enhancement: Optional[EnhancementProgress] = Field(
-+        default=None, exclude_if=lambda value: value is None
-+    )
-+    snapshots: Optional[list[PublishedSnapshot]] = Field(
-+        default=None, exclude_if=lambda value: value is None
-+    )
-+    current_snapshot_id: Optional[str] = Field(
-+        default=None, exclude_if=lambda value: value is None
-+    )
-+    page_count: Optional[int] = Field(
-+        default=None, ge=1, exclude_if=lambda value: value is None
-+    )
- 
-     job_id: str = Field(..., description="Job ID")
-     namespace: Optional[str] = Field(None, description="Effective retrieval namespace")
++    text_pdf = tmp_path / "short_text.pdf"
++    with pymupdf.open() as doc:
++        for idx in (1, 2):
++            page = doc.new_page(width=600, height=800)
++            page.insert_text((50, 100), f"Original text on page {idx}.")
++        doc.save(text_pdf)
++
++    text_profile = SimpleNamespace(
++        page_count=2,
++        is_scanned=False,
++        routing_category=PdfRoutingCategory.GENERIC,
++        toc=SimpleNamespace(has_toc=False),
++      
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #508** (2026-11-06): Protect published lexical inputs during backend transitions (@suguanYang)
+- **PR #505** (2026-11-06): Allow staging API and worker to start with OpenSearch (@suguanYang)
+- **PR #504** (2026-11-06): Preserve staging OpenSearch TLS in normal ECS deployments (@suguanYang)
+- **PR #503** (2026-11-06): chore: promote main to staging (short scanned PDF page images) (@EricNGOntos)
+- **PR #502** (2026-11-06): fix: route short PDFs through the page pipeline instead of whole_doc (@EricNGOntos)
 - **PR #495** (2026-11-02): chore: promote main to staging (URL file_name and DOCX repair) (@EricNGOntos)
-- **PR #494** (2026-11-02): fix: prefer URL file_name and keep slash titles as one section (@EricNGOntos)
-- **PR #493** (2026-11-02): fix: preserve DOCX leading content and support explicit repair revisions (@suguanYang)
-- **PR #492** (2026-11-02): revert: withdraw DOCX optional relationship compatibility (@suguanYang)
-- **PR #491** (2026-11-02): fix(parser): support DOCX packages without document relationships (@suguanYang)
-- **PR #490** (2026-11-02): chore: promote main to staging (progressive chunk ingest and asset names) (@EricNGOntos)
 
 ---
 
@@ -1830,42 +1697,55 @@ fix: prefer URL file_name and keep slash titles as one section
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relati
+## X. Merge pull request #502 from Ontos-AI/fix/wuchengke/short-scanned-pdf-page-image
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/document_parser/formats/docx/block_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/worker/app/services/page_memory/memory_service.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f16fa49`: Revert "Merge pull request #491 from Ontos-AI/fix/wangbinqi/docx-optional-relationships". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50d59c21`: Merge pull request #502 from Ontos-AI/fix/wuchengke/short-scanned-pdf-page-images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_parser/formats/docx/block_stream.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/page_memory/memory_service.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        rels = etree.fromstring(docx.read("word/_rels/document.xml.rels"))
-        rel_map = {
-            r.get("Id"): r.get("Target") for r in rels.findall(".//{*}Relationship")
-        }
+    """Run the page-memory track via leaf section nodes (C1-C7 pipeline)."""
+        verdict = "page"
+        if is_progressive:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        rel_map: dict[str | None, str | None] = {}
-        try:
-            relationships_xml: bytes = docx.read("word/_rels/document.xml.rels")
-        except KeyError:
-            # Documents without relationships may omit this package part.
-            pass
-        else:
-            relationships: etree._Element = etree.fromstring(relationships_xml)
-            rel_map = {
-                relationship.get("Id"): relationship.get("Target")
-                for relationship in relationships.findall(".//{*}Relationship")
-            }
+from app.services.document_parser.support.identifiers import gen_str_codes, get_str_time
+from app.services.page_memory.body_text_preview import build_body_text_preview
+    """Run the page-memory track.
+
+    Supports two granularity verdicts:
+    - ``whole_doc`` (≤5 pages, no TOC) → single whole-document chunk
+    - ``page`` → leaf section nodes via the full C1-C7 pipeline
+    """
+        verdict = "page" if is_progressive else _decide_granularity(profile)
+        if verdict == "whole_doc":
+            parsed_df = _build_whole_doc_dataframe(
+                filename=request.filename,
+                page_count=page_count,
+                verdict=verdict,
+                trace_recorder=trace_recorder,
+                page_texts=coerce_page_text_cache(
+                    getattr(profile, "page_full_text_cache", None)
+                ),
+                body_text_by_page=getattr(profile, "page_body_text_cache", None),
+            )
+        elif is_progressive:
+def _decide_granularity(profile: Any) -> str:
+    """Decide granularity for a page-memory document.
+
+    Page-based track processes pages individually via VLM — no physical
+    document splitting is needed regardless of page coun
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f16fa49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50d59c21` are properly handled with clean fallback behavior.

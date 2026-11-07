@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T02:54:34.508Z",
-    "lastVerified": "2026-11-07T02:54:34.508Z",
+    "lastChecked": "2026-11-07T03:02:05.658Z",
+    "lastVerified": "2026-11-07T03:02:05.658Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,12 +140,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T02:22:10.182Z",
-    "lastVerified": "2026-11-07T02:22:10.182Z",
+    "lastChecked": "2026-11-07T03:01:27.284Z",
+    "lastVerified": "2026-11-07T03:01:27.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -154,7 +154,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fe15ee33"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -2061,14 +2062,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:45:35.138Z",
-    "lastVerified": "2026-11-06T20:45:35.138Z",
+    "lastChecked": "2026-11-07T03:01:26.945Z",
+    "lastVerified": "2026-11-07T03:01:26.945Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
+    "contentHash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2864,22 +2865,21 @@
     "revisionIdentifier": "b8d95290"
   },
   "ontos-ai-knowhere": {
-    "name": "knowhere",
+    "name": "Ontos-AI/knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T14:30:08.976Z",
-    "lastVerified": "2026-11-05T14:30:08.976Z",
+    "lastChecked": "2026-11-07T03:01:29.579Z",
+    "lastVerified": "2026-11-07T03:01:29.579Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
+    "contentHash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "59764058"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -4256,9 +4256,9 @@
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-11-04T09:32:55.269Z",
+    "lastChecked": "2026-11-07T03:01:17.213Z",
     "revisionIdentifier": "ca5acf0c",
-    "lastVerified": "2026-11-04T09:32:55.269Z"
+    "lastVerified": "2026-11-07T03:01:17.213Z"
   },
   "krakend-krakend-ce": {
     "name": "krakend-ce",
@@ -5991,9 +5991,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-05T10:32:47.419Z",
+    "lastChecked": "2026-11-07T03:01:12.217Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-05T10:32:47.419Z"
+    "lastVerified": "2026-11-07T03:01:12.217Z"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -6162,22 +6162,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dnscontrol-dnscontrol": {
-    "name": "dnscontrol",
+    "name": "DNSControl/dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T15:30:08.468Z",
-    "lastVerified": "2026-11-05T15:30:08.468Z",
+    "lastChecked": "2026-11-07T03:01:25.195Z",
+    "lastVerified": "2026-11-07T03:01:25.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
+    "contentHash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1a192aab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -10927,13 +10926,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-03T21:17:06.533Z",
-    "lastVerified": "2026-11-03T21:17:06.533Z",
+    "lastChecked": "2026-11-07T03:01:15.102Z",
+    "lastVerified": "2026-11-07T03:01:15.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-    "contentHash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
-    "promotedRulesCount": 0,
+    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

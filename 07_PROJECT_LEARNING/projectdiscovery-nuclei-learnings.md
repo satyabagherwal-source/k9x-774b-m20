@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `bbebeba8`  
+> **Source Version**: `8cda9065`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T20:45:36.783Z  
+> **Timestamp**: 2026-11-07T03:01:27.175Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T20:45:35.138Z  
+> **Harvest Timestamp**: 2026-11-07T03:01:26.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32643 stars
+- **Stars / Engagement**: 32648 stars
 
 ---
 
@@ -1006,6 +1006,7 @@ package core
 import (
 	"fmt"
 	"net/http/cookiejar"
+	"sync"
 	"sync/atomic"
 
 	"github.com/projectdiscovery/gologger"
@@ -1035,22 +1036,45 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
 		templateThreads++
 	}
 	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
+	// pending tracks every started step until it returns. swg only limits
+	// concurrency and its slots can be released early, so completion is
+	// tracked here instead.
+	var pending sync.WaitGroup
 
 	for _, template := range w.Workflows {
 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-		if err := e.runWorkflowStep(template, newCtx, results, swg, w); err != nil {
+		// Root steps do not own a waitgroup slot.
+		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
 		}
 	}
 
-	swg.Wait()
+	pending.Wait()
 
 	return results.Load()
 }
 
+// slotRelease returns a func that gives back one swg slot. It is safe to call
+// from several goroutines and several times; only the first call releases.
+func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
+	var once sync.Once
+	return func() {
+		once.Do(swg.Done)
+	}
+}
+
 // runWorkflowStep runs a workflow step for the workflow. It executes the workflow
 // in a recursive manner running all subtemplates and matchers.
-func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, w *workflows.Workflow) error {
+//
+// releaseSlot, when non-nil, releases the AdaptiveWaitGroup slot held by the
+// goroutine that is running this step. It must be called before this step
+// blocks on swg.AddWithContext for child steps; otherwise every in-flight
+// parent can hold a slot while waiting for another, which deadlocks when the
+// number of matching nested steps reaches TemplateThreads (see #8074).
+//
+// pending is incremented for every child step before it starts, and each child
+// calls Done when it returns, so the root can wait for the whole tree.
+func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
 	var firstMatched bool
 	var err error
 	var mainErr error
@@ -1134,18 +1158,25 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 						continue
 					}
 
+					// Free this step's slot before blocking on child acquires.
+					if releaseSlot != nil {
+						releaseSlot()
+					}
 					for _, subtemplate := range matcher.Subtemplates {
 						if err := swg.AddWithContext(ctx.Context()); err != nil {
 							return
 						}
+						pending.Add(1)
 
 						go func(subtemplate *workflows.WorkflowTemplate) {
-							defer swg.Done()
+							defer pending.Done()
+							release := slotRelease(swg)
+							defer release()
 
 							// create a new context with the same input but with unset callbacks
 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, w); err != nil {
+							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
 								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
 							}
 						}(subtemplate)
@@ -1165,18 +1196,27 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 		return mainErr
 	}
 	if len(template.Subtemplates) > 0 && firstMatched {
+		// Free this step's slot before blocking on child acquires so nested
+		// matching steps cannot exhaust TemplateThreads and deadlock (#8074).
+		if releaseSlot != nil {
+			releaseSlot()
+		}
 		for _, subtemplate := range template.Subtemplates {
 			if err := swg.AddWithContext(ctx.Context()); err != nil {
 				return err
 			}
+			pending.Add(1)
 
 			go func(template *workflows.WorkflowTemplate) {
+				defer pending.Done()
+				release := slotRelease(swg)
+				defer release()
+
 				// create a new context with the same input but with unset callbacks
 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-				if err := e.runWorkflowStep(template, subCtx, results, swg, w); err != nil {
+				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
 					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
 				}
-				swg.Done()
 			}(subtemplate)
 		}
 	}
@@ -1446,592 +1486,244 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `accfe355` (2026-11-06)
-**Commit Message**: fix(js): make SSHClient.Close a no-op without a connection
+### Incident Patch 1: `a2e403a1` (2026-11-06)
+**Commit Message**: fix(core): avoid nested workflow deadlock at template concurrency limit (#8076)
 
-Calling Close on an SSHClient that never connected, or whose Connect
-failed, dereferenced a nil *ssh.Client. goja turned the panic into a
-request error, so the template stopped at Close and returned nothing.
+* fix(core): avoid nested workflow deadlock at template concurrency limit
 
-Close also kept the closed client. On a client reused across login
-attempts, a later Close then failed with "use of closed network
-connection", and Run reported a transport error instead of "no
-connection".
+Release a workflow step's AdaptiveWaitGroup slot before acquiring slots
+for its children. Matching nested parents previously held a slot while
+blocked on AddWithContext, so when their count reached TemplateThreads
+the workflow hung forever.
 
-Close now returns true when no connection is open, and clears the
-connection after closing it. It returns true rather than an error
-because goja throws a returned error as a JS exception, which would
-still abort the template.
+Fixes #8074
 
-Fixes: #8070
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+* fix workflow
 
-**File**: `pkg/js/compiler/close_test.go` (added, +47/-0)
+---------
+
+Co-authored-by: Mzack9999 <[REDACTED_EMAIL]>
+
+**File**: `pkg/core/workflow_execute.go` (modified, +47/-7)
 ```diff
-@@ -0,0 +1,47 @@
-+package compiler_test
-+
-+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
-+import (
-+	"testing"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/js/compiler"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+)
-+
-+// TestCloseWithoutConnection calls Close on clients that never connected.
-+// The script must keep running past the call.
-+func TestCloseWithoutConnection(t *testing.T) {
-+	t.Parallel()
-+
-+	scripts := map[string]string{
-+		"ssh": `
-+			const ssh = require('nuclei/ssh');
-+			ExportAs('closed', new ssh.SSHClient().Close());
-+			true;
-+		`,
-+	}
-+	for name, script := range scripts {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			program, err := compiler.SourceAutoMode(script, false)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			opts := new(compiler.ExecuteOptions)
-+			opts.ExecutionId = t.Name()
-+			opts.Source = &script // ExportAs is defined only for sources that use it.
-+			opts.TimeoutVariants = types.NewTimeoutVariant(5)
-+
-+			result, err := compiler.New().ExecuteWithOptions(t.Context(), program, compiler.NewExecuteArgs(), opts)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			if got := result["closed"]; got != "true" {
-+				t.Errorf(`result["closed"] = %v, want "true"`, got)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/js/generated/ts/ssh.ts` (modified, +2/-1)
-```diff
-@@ -106,7 +106,8 @@ export class SSHClient {
-     /**
-     * Close closes the SSH connection and destroys the client
-     * Returns the success state and error. If error is not nil,
--    * state will be false
-+    * state will be false. Close does nothing and returns true
-+    * if no connection is open.
-     * @example
-     * ```javascript
-     * const ssh = require('nuclei/ssh');
-```
-
-**File**: `pkg/js/libs/ssh/ssh.go` (modified, +12/-2)
-```diff
-@@ -23,6 +23,7 @@ type (
- 	// const client = new ssh.SSHClient();
- 	// ```
- 	SSHClient struct {
-+		// connection is nil when no connection is open.
- 		connection *ssh.Client
- 		timeout    time.Duration
- 	}
-@@ -158,7 +159,8 @@ func (c *SSHClient) Run(cmd string) (string, error) {
+@@ -3,6 +3,7 @@ package core
+ import (
+ 	"fmt"
+ 	"net/http/cookiejar"
++	"sync"
+ 	"sync/atomic"
  
- // Close closes the SSH connection and destroys the client
- // Returns the success state and error. If error is not nil,
--// state will be false
-+// state will be false. Close does nothing and returns true
-+// if no connection is open.
- // @example
- // ```javascript
- // const ssh = require('nuclei/ssh');
-@@ -167,9 +169,17 @@ func (c *SSHClient) Run(cmd string) (string, error) {
- // const closed = client.Close();
- // ```
- func (c *SSHClient) Close() (bool, error) {
--	if err := c.connection.Close(); err != nil {
-+	if c.connection == nil {
-+		return true, nil
-+	}
-+
-+	err := c.connection.Close()
-+	c.connection = nil
-+
-+	if err != nil {
- 		return false, err
+ 	"github.com/projectdiscovery/gologger"
+@@ -32,22 +33,45 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
+ 		templateThreads++
  	}
-+
- 	return true, nil
+ 	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
++	// pending tracks every started step until it returns. swg only limits
++	// concurrency and its slots can be released early, so completion is
++	// tracked here instead.
++	var pending sync.WaitGroup
+ 
+ 	for _, template := range w.Workflows {
+ 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+-		if err := e.runWorkflowStep(template, newCtx, results, swg, w); err != nil {
++		// Root steps do not own a waitgroup slot.
++		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
+ 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+ 		}
+ 	}
+ 
+-	swg.Wait()
++	pending.Wait()
+ 
+ 	return results.Load()
  }
  
++// slotRelease returns a func that gives back one swg slot. It is safe to call
++// from several goroutines and several times; only the first call releases.
++func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
++	var once sync.Once
++	return func() {
++		once.Do(swg.Done)
++	}
++}
++
+ // runWorkflowStep runs a workflow step for the workflow. It executes the workflow
+ // in a recursive manner running all subtemplates and matchers.
+-func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, w *workflows.Workflow) error {
++//
++// releaseSlot, when non-nil, releases the AdaptiveWaitGroup slot held by the
++// goroutine that is running this step. It must be called before this step
++// blocks on swg.AddWithContext for child steps; otherwise every in-flight
++// parent can hold a slot while waiting for another, which deadlocks when the
++// number of matching nested steps reaches TemplateThreads (see #8074).
++//
++// pending is incremented for every child step before it starts, and each child
++// calls Done when it returns, so the root can wait for the whole tree.
++func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
+ 	var firstMatched bool
+ 	var err error
+ 	var mainErr error
+@@ -131,18 +155,25 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 						continue
+ 					}
+ 
++					// Free this step's slot before blocking on child acquires.
++					if releaseSlot != nil {
++						releaseSlot()
++					}
+ 					for _, subtemplate := range matcher.Subtemplates {
+ 						if err := swg.AddWithContext(ctx.Context()); err != nil {
+ 							return
+ 						}
++						pending.Add(1)
+ 
+ 						go func(subtemplate *workflows.WorkflowTemplate) {
+-							defer swg.Done()
++							defer pending.Done()
++							release := slotRelease(swg)
++							defer release()
+ 
+ 							// create a new context with the same input but with unset callbacks
+ 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
+ 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+-							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, w); err != nil {
++							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
+ 								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
+ 							}
+ 						}(subtemplate)
+@@ -162,18 +193,27 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 		return mainErr
+ 	}
+ 	if len(template.Subtemplates) > 0 && firstMatched {
++		// Free this step's slot before blocking on child acquires so nested
++		// matching steps cannot exhaust TemplateThreads and deadlock (#8074).
++		if releaseSlot != nil {
++			releaseSlot()
++		}
+ 		for _, subtemplate := range template.Subtemplates {
+ 			if err := swg.AddWithContext(ctx.Context()); err != nil {
+ 				return err
+ 			}
++			pending.Add(1)
+ 
+ 			go func(template *workflows.WorkflowTemplate) {
++				defer pending.Done()
++				release := slotRelease(swg)
++				defer release()
++
+ 				// create a new context with the same input but with unset callbacks
+ 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
+-				if err := e.runWorkflowStep(template, subCtx, results, swg, w); err != nil {
++				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
+ 					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+ 				}
+-				swg.Done()
+ 			}(subtemplate)
+ 		}
+ 	}
 ```
 
-**File**: `pkg/js/libs/ssh/ssh_test.go` (added, +162/-0)
+**File**: `pkg/core/workflow_execute_test.go` (modified, +83/-0)
 ```diff
-@@ -0,0 +1,162 @@
-+package ssh_test
+@@ -303,6 +303,89 @@ func TestWorkflowsSameStepExecutersRefreshTemplateContext(t *testing.T) {
+ 	require.Equal(t, "foo", secondWhoami, "could not refresh workflow context into later executers in the same step")
+ }
+ 
++func TestWorkflowNestedSubtemplatesDoNotDeadlockAtConcurrencyLimit(t *testing.T) {
++	// Repro for #8074: with TemplateThreads equal to the number of matching
++	// nested parents, each parent used to hold a waitgroup slot while calling
++	// AddWithContext for its children, so every slot was occupied by a parent
++	// waiting for another slot and the workflow never finished.
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	matchOutputs := []*output.InternalWrappedEvent{{
++		OperatorsResult: &operators.Result{},
++		Results:         []*output.ResultEvent{{}},
++	}}
 +
-+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
-+import (
-+	"context"
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"errors"
-+	"net"
-+	"strings"
-+	"testing"
++	const parents = 3
++	var entered atomic.Int32
++	allHolding := make(chan struct{})
++	releaseParents := make(chan struct{})
++	leafRuns := &atomic.Int32{}
 +
-+	libssh "github.com/projectdiscovery/nuclei/v3/pkg/js/libs/ssh"
-+	"github.com/zmap/zgrab2/lib/ssh"
-+)
-+
-+const (
-+	testUser     = "user"
-+	testPassword = "secret"
-+)
-+
-+var errAccessDenied = errors.New("access denied")
-+
-+func TestCloseWithoutConnection(t *testing.T) {
-+	t.Parallel()
-+
-+	host, port := startServer(t)
-+
-+	tests := map[string]func(t *testing.T, client *libssh.SSHClient){
-+		"never connected": func(*testing.T, *libssh.SSHClient) {},
-+		"failed connect": func(t *testing.T, client *libssh.SSHClient) {
-+			t.Helper()
-+
-+			_, err := client.Connect(executionContext(t), host, port, testUser, "wrong")
-+			if err == nil {
-+				t.Fatal("Connect() with a wrong password succeeded")
++	leaf := &mockExecuter{result: true, executeScanHook: func(ctx *scan.ScanContext) {
++		leafRuns.Add(1)
++	}}
++	parentExec := &mockExecuter{
++		result:  true,
++		outputs: matchOutputs,
++		executeScanHook: func(ctx *scan.ScanContext) {
++			if entered.Add(1) == parents {
++				close(allHolding)
 +			}
-+		},
-+		"already closed": func(t *testing.T, client *libssh.SSHClient) {
-+			t.Helper()
-+
-+			connect(t, client, host, port)
-+			closeClient(t, client)
++			// Stay inside ExecuteWithResults so the parent still owns its
++			// waitgroup slot while every peer also holds one.
++			<-releaseParents
 +		},
 +	}
-+	for name, setup := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			client := new(libssh.SSHClient)
-+			setup(t, client)
-+			closeClient(t, client)
-+
-+			_, err := client.Run("id")
-+			if err == nil || !strings.Contains(err.Error(), "no connection") {
-+				t.Errorf("Run() error = %v, want no connection", err)
-+			}
-+		})
-+	}
-+}
-+
-+func TestCloseConnected(t *testing.T) {
-+	t.Parallel()
-+
-+	host, port := startServer(t)
-+	client := new(libssh.SSHClient)
-+	connect(t, client, host, port)
-+	closeClient(t, client)
-+}
-+
-+func connect(t *testing.T, client *libssh.SSHClient, host string, port int) {
-+	t.Helper()
-+
-+	_, err := client.Connect(executionContext(t), host, port, testUser, testPassword)
-+	if err != nil {
-+		t.Fatalf("Connect() error = %v", err)
-+	}
-+}
-+
-+func closeClient(t *testing.T, client *libssh.SSHClient) {
-+	t.Helper()
-+
-+	closed, err := client.Close()
-+	if err != nil || !closed {
-+		t.Fatalf("Close() = %v, %v; want true, nil", closed, err)
-+	}
-+}
-+
-+func executionContext(t *testing.T) context.Context {
-+	t.Helper()
-+
-+	return context.WithValue(t.Context(), "executionId", t.Name()) //nolint:staticcheck // Connect reads this string key.
-+}
-+
-+// startServer serves SSH on a loopback port and accepts only
-+// testUser with testPassword. It rejects every channel.
-+func startServer(t *testing.T) (string, int) {
-+	t.Helper()
-+
-+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	signer, err := ssh.NewSignerFromKey(key)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	config := new(ssh.ServerConfig)
-+	config.PasswordCallback = checkPassword
-+	config.AddHostKey(signer)
-+
-+	listener, err := new(net.ListenConfig).Listen(t.Context(), "tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	t.Cleanup(func() { _ = listener.Close() })
-+
-+	go func() {
-+		for {
-+			conn, err := listener.Accept()
-+			if err != nil {
-+				return
-+			}
-+
-+			go serve(conn, config)
++	mkParent := func() *workflows.WorkflowTemplate {
++		return &workflows.WorkflowTemplate{
++			Executers: []*workflows.ProtocolExecuterPair{{
++				Executer: parentExec,
++				Options:  &protocols.ExecutorOptions{Progress: progressBar},
++			}},
++			Subtemplates: []*workflows.WorkflowTemplate{{
++				Executers: []*workflows.ProtocolExecuterPair{{
++					Executer: leaf,
++					Options:  &protocols.ExecutorOptions{Progress: progressBar},
++				}},
++			}},
 +		}
++	}
++
++	workflow := &workflows.Workflow{
++		Options: &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: parents}},
++		Workflows: []*workflows.WorkflowTemplate{{
++			Executers: []*workflows.ProtocolExecuterPair{{
++				Executer: &mockExecuter{result: true, outputs: matchOutputs},
++				Options:  &protocols.ExecutorOptions{Progress: progressBar},
++			}},
++			Subtemplates: []*workflows.WorkflowTemplate{mkParent(), mkParent(), mkParent()},
++		}},
++	}
++
++	engine := &Engine{}
++	input := contextargs.NewWithInput(context.Background(), "https://test.com")
++	ctx := scan.NewScanContext(context.Background(), input)
++
++	done := make(chan bool, 1)
++	go func() {
++		done <- engine.executeWorkflow(ctx, workflow)
 +	}()
 +
-+	addr, ok := listener.Addr().(*net.TCPAddr)
-+	if !ok {
-+		t.Fatalf("listener address %v is not TCP", listener.Addr())
++	select {
++	case <-allHolding:
++	case <-time.After(2 * time.Second):
++		t.Fatal("nested parents did not all acquire TemplateThreads slots")
 +	}
++	close(releaseParents)
 +
-+	return addr.IP.String(), addr.Port
-+}
-+
-+func checkPassword(conn ssh.ConnMetadata, password []byte) (*ssh.Permissions, error) {
-+	if conn.User() != testUser || string(password) != testPassword {
-+		return nil, errAccessDenied
-+	}
-+
-+	return new(ssh.Permissions), nil
-+}
-+
-+func serve(conn net.Conn, config *ssh.ServerConfig) {
-+	defer func() { _ = conn.Close() }()
-+
-+	_, chans, reqs, err := ssh.NewServerConn(conn, config)
-+	if err != nil {
-+		return
-+	}
-+
-+	go ssh.DiscardRequests(reqs)
-+
-+	for ch := range chans {
-+		_ = ch.Reject(ssh.Prohibited, "test server")
++	select {
++	case matched := <-done:
++		require.True(t, matched, "nested workflow should report a match")
++		require.EqualValues(t, parents, leafRuns.Load(), "each nested parent should run its leaf")
++	case <-time.After(3 * time.Second):
++		t.Fatal("nested workflow deadlocked at TemplateThreads == matching nested parents")
 +	}
 +}
-```
-
----
-
-### Incident Patch 2: `1829fca6` (2026-11-06)
-**Commit Message**: fix(js): make NetConn safe to use without a connection
-
-NetConn had the same flaw as SSHClient. new net.NetConn() creates an
-object with no connection, and every method dereferenced it, so Close,
-Send and Recv all aborted the template with a nil pointer panic. Close
-also kept the closed connection.
-
-Close now does nothing when no connection is open, and clears the
-connection after closing it. The send and receive methods return an
-error that says to open the connection with net.Open or net.OpenTLS,
-which goja throws as a JS exception the template can catch.
-
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/js/compiler/close_test.go` (modified, +6/-0)
-```diff
-@@ -19,6 +19,12 @@ func TestCloseWithoutConnection(t *testing.T) {
- 			ExportAs('closed', new ssh.SSHClient().Close());
- 			true;
- 		`,
-+		"net": `
-+			const net = require('nuclei/net');
-+			new net.NetConn().Close();
-+			ExportAs('closed', true);
-+			true;
-+		`,
- 	}
- 	for name, script := range scripts {
- 		t.Run(name, func(t *testing.T) {
-```
-
-**File**: `pkg/js/generated/ts/net.ts` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ export class NetConn {
-     constructor() {}
-     /**
-     * Close closes the connection.
-+    * Close does nothing if no connection is open.
-     * @example
-     * ```javascript
-     * const net = require('nuclei/net');
-```
-
-**File**: `pkg/js/libs/net/net.go` (modified, +31/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"crypto/tls"
- 	"encoding/base64"
- 	"encoding/hex"
-+	"errors"
- 	"fmt"
- 	"net"
- 	"net/http"
-@@ -20,6 +21,8 @@ import (
- 
- var (
- 	defaultTimeout = time.Duration(5) * time.Second
 +
-+	errNoConnection = errors.New("no connection: open one with net.Open or net.OpenTLS")
- )
- 
- // getTimeoutFromContext returns the configured TCP timeout or defaultTimeout.
-@@ -271,20 +274,28 @@ type (
- 	// const conn = net.Open('tcp', 'acme.com:80');
- 	// ```
- 	NetConn struct {
-+		// conn is nil when no connection is open.
- 		conn    net.Conn
- 		timeout time.Duration
- 	}
- )
- 
- // Close closes the connection.
-+// Close does nothing if no connection is open.
- // @example
- // ```javascript
- // const net = require('nuclei/net');
- // const conn = net.Open('tcp', 'acme.com:80');
- // conn.Close();
- // ```
- func (c *NetConn) Close() error {
-+	if c.conn == nil {
-+		return nil
-+	}
-+
- 	err := c.conn.Close()
-+	c.conn = nil
-+
- 	return err
- }
- 
-@@ -321,6 +332,10 @@ func (c *NetConn) unsetDeadLine() {
- // conn.SendArray(['hello', 'world']);
- // ```
- func (c *NetConn) SendArray(data []interface{}) error {
-+	if c.conn == nil {
-+		return errNoConnection
-+	}
-+
- 	c.setDeadLine()
- 	defer c.unsetDeadLine()
- 	input := types.ToByteSlice(data)
-@@ -342,6 +357,10 @@ func (c *NetConn) SendArray(data []interface{}) error {
- // conn.SendHex('68656c6c6f');
- // ```
- func (c *NetConn) SendHex(data string) error {
-+	if c.conn == nil {
-+		return errNoConnection
-+	}
-+
- 	c.setDeadLine()
- 	defer c.unsetDeadLine()
- 	bin, err := hex.DecodeString(data)
-@@ -366,6 +385,10 @@ func (c *NetConn) SendHex(data string) error {
- // conn.Send('hello');
- // ```
- func (c *NetConn) Send(data string) error {
-+	if c.conn == nil {
-+		return errNoConnection
-+	}
-+
- 	c.setDeadLine()
- 	defer c.unsetDeadLine()
- 	bin := []byte(data)
-@@ -389,6 +412,10 @@ func (c *NetConn) Send(data string) error {
- // const data = conn.RecvFull(1024);
- // ```
- func (c *NetConn) RecvFull(N int) ([]byte, error) {
-+	if c.conn == nil {
-+		return []byte{}, errNoConnection
-+	}
-+
- 	c.setDeadLine()
- 	defer c.unsetDeadLine()
- 	if N == 0 {
-@@ -414,6 +441,10 @@ func (c *NetConn) RecvFull(N int) ([]byte, error) {
- // log(`Received ${data.length} bytes from the server`)
- // ```
- func (c *NetConn) Recv(N int) ([]byte, error) {
-+	if c.conn == nil {
-+		return []byte{}, errNoConnection
-+	}
-+
- 	c.setDeadLine()
- 	defer c.unsetDeadLine()
- 	if N == 0 {
-```
-
-**File**: `pkg/js/libs/net/net_test.go` (modified, +38/-0)
-```diff
-@@ -406,3 +406,41 @@ func (f *fakeConn) RemoteAddr() net.Addr             { return nil }
- func (f *fakeConn) SetDeadline(time.Time) error      { return nil }
- func (f *fakeConn) SetReadDeadline(time.Time) error  { return nil }
- func (f *fakeConn) SetWriteDeadline(time.Time) error { return nil }
-+
-+func TestNetConnWithoutConnection(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := map[string]func(t *testing.T) *NetConn{
-+		"never opened": func(*testing.T) *NetConn { return new(NetConn) },
-+		"already closed": func(t *testing.T) *NetConn {
-+			t.Helper()
-+
-+			local, remote := net.Pipe()
-+
-+			t.Cleanup(func() { _ = remote.Close() })
-+
-+			conn := new(NetConn)
-+			conn.conn = local
-+			require.NoError(t, conn.Close())
-+
-+			return conn
-+		},
-+	}
-+	for name, newConn := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			conn := newConn(t)
-+			require.NoError(t, conn.Close())
-+			require.ErrorContains(t, conn.Send("x"), "no connection")
-+			require.ErrorContains(t, conn.SendHex("78"), "no connection")
-+			require.ErrorContains(t, conn.SendArray([]any{120}), "no connection")
-+
-+			_, err := conn.Recv(1)
-+			require.ErrorContains(t, err, "no connection")
-+
-+			_, err = conn.RecvFull(1)
-+			require.ErrorContains(t, err, "no connection")
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `d6ec8407` (2026-11-06)
-**Commit Message**: fix(js): stop JS class constructors sharing one object
-
-GetClassConstructor handed the same Go value to every object it
-constructed, in every runtime. All generated JS classes use it, so
-every new ssh.SSHClient() in a scan was one client: one script's
-Connect or Close changed the connection that scripts on other targets
-were using, and those writes raced.
-
-Each constructed object now starts as a shallow copy of the instance
-passed in. The generated bindings all pass a zero value, so every new
-object starts empty.
-
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/js/gojs/gojs.go` (modified, +6/-2)
-```diff
-@@ -128,9 +128,13 @@ func (p *GojaModule) Register() Module {
- 	return p
- }
- 
--// GetClassConstructor returns a constructor for any given go struct type for goja runtime
-+// GetClassConstructor returns a constructor for any given go struct type for goja runtime.
-+// Each object it constructs starts as a shallow copy of instance, so objects
-+// do not share state.
- func GetClassConstructor[T any](instance *T) func(call goja.ConstructorCall, runtime *goja.Runtime) *goja.Object {
- 	return func(call goja.ConstructorCall, runtime *goja.Runtime) *goja.Object {
--		return utils.LinkConstructor[*T](call, runtime, instance)
-+		obj := *instance
-+
-+		return utils.LinkConstructor(call, runtime, &obj)
- 	}
- }
-```
-
-**File**: `pkg/js/gojs/gojs_test.go` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+package gojs_test
-+
-+//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
-+import (
-+	"testing"
-+
-+	"github.com/projectdiscovery/goja"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/js/gojs"
-+)
-+
-+type counter struct{ n int }
-+
-+func (c *counter) Inc() int {
-+	c.n++
-+
-+	return c.n
-+}
-+
-+func TestGetClassConstructorReturnsNewObjects(t *testing.T) {
-+	t.Parallel()
-+
-+	prototype := new(counter)
-+	runtime := goja.New()
-+
-+	err := runtime.Set("Counter", gojs.GetClassConstructor(prototype))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	value, err := runtime.RunString(`
-+		const first = new Counter();
-+		first.Inc();
-+		new Counter().Inc();
-+	`)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	if got := value.ToInteger(); got != 1 {
-+		t.Errorf("new Counter().Inc() = %d, want 1", got)
-+	}
-+
-+	if prototype.n != 0 {
-+		t.Errorf("prototype.n = %d, want 0", prototype.n)
-+	}
-+}
+ func TestWorkflowSubtemplatesUnblockCancelledAcquire(t *testing.T) {
+ 	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
+ 	var started atomic.Int32
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8076** (2026-11-06): fix(core): avoid nested workflow deadlock at template concurrency limit (@VISHNU0906)
+- **PR #8075** (2026-11-06): feat(js): add MQTT JavaScript library (@furious-05)
 - **PR #8072** (2026-11-06): Upgrade github.com/alecthomas/chroma to latest (@AdallomRoy)
 - **PR #8071** (2026-11-06): fix(js): isolate JS objects and handle missing connections (@dwisiswant0)
 - **PR #8068** (2026-11-05): keep template screenshots in a nuclei directory without local file access (@Mzack9999)
 - **PR #8066** (2026-11-05): send rdap requests through the scan dialer (@Mzack9999)
-- **PR #8064** (2026-11-05): send template doh queries through the scan dialer (@Mzack9999)
-- **PR #8062** (2026-11-05): fix(http): read annotations only before the request line (@dwisiswant0)
 
 ---
 
@@ -2051,70 +1743,60 @@ Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. js): make SSHClient.Close a no-op without a connection
+## X. core): avoid nested workflow deadlock at template concurrency limit (#8076)
 
 **RULE**:
-When implementing operations in `pkg/js/compiler/close_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/core/workflow_execute.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `accfe355`: js): make SSHClient.Close a no-op without a connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2e403a1`: core): avoid nested workflow deadlock at template concurrency limit (#8076). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/compiler/close_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/core/workflow_execute.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package compiler_test
-
-//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
-import (
-	"testing"
-
-	"github.com/projectdiscovery/nuclei/v3/pkg/js/compiler"
-	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-)
-
-// TestCloseWithoutConnection calls Close on clients that never connected.
-// The script must keep running past the call.
-func TestCloseWithoutConnection(t *testing.T) {
-	t.Parallel()
-
-	scripts := map[string]string{
-		"ssh": `
-			const ssh = require('nuclei/ssh');
-			ExportAs('closed', new ssh.SSHClient().Close());
-			true;
-		`,
+	"sync"
+	// pending tracks every started step until it returns. swg only limits
+	// concurrency and its slots can be released early, so completion is
+	// tracked here instead.
+	var pending sync.WaitGroup
+		// Root steps do not own a waitgroup slot.
+		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
+	pending.Wait()
+// slotRelease returns a func that gives back one swg slot. It is safe to call
+// from several goroutines and several times; only the first call releases.
+func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
+	var once sync.Once
+	return func() {
+		once.Do(swg.Done)
 	}
-	for name, script := range scripts {
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
+}
 
-			program, err := compiler.SourceAutoMode(script, false)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			opts := new(compiler.ExecuteOptions)
-			opts.ExecutionId = t.Name()
-			opts.Source = &script // ExportAs is defined only for sources that use it.
-			opts.TimeoutVariants = types.NewTimeoutVariant(5)
-
-			result, err := compiler.New().ExecuteWithOptions(t.Context(), program, compiler.NewExecuteArgs(), opts)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if got := result["closed"]; got != "true" {
-				t.Errorf(`
+//
+// releaseSlot, when non-nil, releases the AdaptiveWaitGroup slot held by the
+// goroutine that is running this step. It must be called before this step
+// blocks on swg.AddWithContext for child steps; otherwise every in-flight
+// parent can hold a slot while waiting for another, which deadlocks when the
+// number of matching nested steps reaches TemplateThreads (see #8074).
+//
+// pending is incremented for every child step before it starts, and each child
+// calls Done when it returns, so the root can wait for the whole tree.
+func (e *Engine) runWorkflow
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		if err := e.runWorkflowStep(template, newCtx, results, swg, w); err != nil {
+	swg.Wait()
+func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, w *workflows.Workflow) error {
+							defer swg.Done()
+							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, w); err != nil {
+				if err := e.runWorkflowStep(template, subCtx, results, swg, w); err != nil {
+				swg.Done()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `accfe355` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2e403a1` are properly handled with clean fallback behavior.

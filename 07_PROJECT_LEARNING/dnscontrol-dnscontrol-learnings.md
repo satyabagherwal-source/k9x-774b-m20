@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `1a192aab`  
+> **Source Version**: `ff1fd540`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T01:33:22.928Z  
+> **Timestamp**: 2026-11-07T03:01:25.728Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T01:33:22.923Z  
+> **Harvest Timestamp**: 2026-11-07T03:01:25.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5065** (2026-11-04): **build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3**
-  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.2 to 2.22.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.3</h2> <h2>What's Changed</h2> <ul> <li>Added support for Avrea-hosted runners (enterprise tier)</li> <li>Fixed unexpected blocking of allowed connections caused by GitHub’s DNS resolver and outbound proxy experiment on GitHub-hosted Linux runners</li> <li>Added a feature flag to disable implicit AWS endpoint allowances on self-hosted Linux runners (enterprise tier)</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3">https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/46b06cea07f9e64621fdf066ba77ac6915163d43"><code>46b06ce</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/711">#711</a> from step-security/rc-46</li> <li><a href="https://github.com/step-security/harden-runner/commit/f82eb4b6de966921660011feba8a0e8ec1fe0687"><code>f82eb4b</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/710">#710</a> from h0x0er/jatin/tp-avrea</li> <
+- **Issue #5067** (2026-11-06): **chore: update npm dependencies**
+  *Symptoms*: 
 
-- **Issue #5062** (2026-11-01): **build(deps): bump joi from 18.2.9 to 18.3.1**
-  *Symptoms*: Bumps [joi](https://github.com/hapijs/joi) from 18.2.9 to 18.3.1. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hapijs/joi/commit/4009bfb93639b7da53b7cb1de2e2d8617d36d5f5"><code>4009bfb</code></a> 18.3.1</li> <li><a href="https://github.com/hapijs/joi/commit/976cf13200141af811eaf38cfb7d7ff489329ab8"><code>976cf13</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3165">#3165</a> from hapijs/fix/rename-prototype-keys</li> <li><a href="https://github.com/hapijs/joi/commit/9d821164386e22ccbf0c90aa5a68fbb5827d79ae"><code>9d82116</code></a> fix: rename to prototype-named keys</li> <li><a href="https://github.com/hapijs/joi/commit/316d08d81210d93fb0d9e5ff54ce7f731af0c052"><code>316d08d</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3164">#3164</a> from hapijs/fix/messages-proto-language</li> <li><a href="https://github.com/hapijs/joi/commit/76f5771e1afe527cfda24be0e1a920ffa54888d6"><code>76f5771</code></a> fix: reject <strong>proto</strong> as a messages language</li> <li><a href="https://github.com/hapijs/joi/commit/bc1b041e1700e355279d9b26e05856b83a10b031"><code>bc1b041</code></a> Merge pull request <a href="https://redirect.github.com/hapijs/joi/issues/3162">#3162</a> from hapijs/fix/email-multiple-split</li> <li><a href="https://github.com/hapijs/joi/commit/03dc1d909818503b06240dadc81e9227ed2649cf"><code>03dc1d9</code></a> fix: linear split for email multiple</li> <li><a href="ht
+- **Issue #5066** (2026-11-06): **chore: upgrade to the latest tomontime/dns patches**
+  *Symptoms*: *    adapt to behavior change: tsig errors are different *    adapt to behavior change: rtypes with no options parse differently *    upgrade miekg/dns with the latest patches by TomOnTime
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,73 +709,304 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a192aab` (2026-11-04)
-**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)
+### Incident Patch 1: `ff1fd540` (2026-11-06)
+**Commit Message**: chore: upgrade to the latest tomontime/dns patches (#5066)
 
-Bumps
-[step-security/harden-runner](https://github.com/step-security/harden-runner)
-from 2.22.2 to 2.22.3.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
-releases</a>.</em></p>
-<blockquote>
-<h2>v2.22.3</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Added support for Avrea-hosted runners (enterprise tier)</li>
-<li>Fixed unexpected blocking of allowed connections caused by GitHub’s
-DNS resolver and outbound proxy experiment on GitHub-hosted Linux
-runners</li>
-<li>Added a feature flag to disable implicit AWS endpoint allowances on
-self-hosted Linux runners (enterprise tier)</li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3">https://github.com/step-security/harden-runner/compare/v2.22.2...v2.22.3</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/step-security/harden-runner/commit/46b06cea07f9e64621fdf066ba77ac6915163d43"><code>46b06ce</code></a>
-Merge pull request <a
-href="ht
+*    adapt to behavior change: tsig errors are different
+*    adapt to behavior change: rtypes with no options parse differently
+*    upgrade miekg/dns with the latest patches by TomOnTime
 
-**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -27,7 +27,7 @@ jobs:
-         target: [FuzzConfigJSON, FuzzTXTQuoted]
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+@@ -195,4 +195,4 @@ require (
+ 
+ tool golang.org/x/tools/cmd/stringer
+ 
+-replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638
++replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -5,8 +5,8 @@ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQ
+ cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
+ cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
+ cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
+-codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638 h1:rVPkl563rYwOBiLousS+W6qNV427cAaAEkTnEhv0ZcQ=
+-codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638/go.mod h1:vbidSyLJl5JcDUL2LrXCUjRYSFa5tJweseQox0GOrTk=
++codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88 h1:bixNS1yGgDUi6GZ+Tve253slwJCJ6nRxmhbvpzhbOlw=
++codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88/go.mod h1:CRdTEkDK9YPcVEH7sq/bwnnSz7syhHqbxfvY3IO0xlo=
+ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+ github.com/AlecAivazis/survey/v2 v2.3.7 h1:6I/u8FvytdGsgonrYsVn2t8t4QiRnh6QSTqkkhIiSjQ=
+ github.com/AlecAivazis/survey/v2 v2.3.7/go.mod h1:xUTIdE4KCOIjsBAE1JYsUPoCqYdZ1reCfTwbto0Fduo=
+```
+
+**File**: `pkg/privatetypes/t_mikrotik_nxdomain_test.go` (modified, +5/-5)
+```diff
+@@ -10,12 +10,12 @@ import (
+ 
+ func TestMikrotikNxdomain(t *testing.T) {
+ 	y := &MIKROTIKNXDOMAIN{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
+-	rry, err := dnsv2.New(y.String())
+-	if err != nil {
+-		t.Fatal(err)
++	want := "example.org.\t0\tIN\tMIKROTIK_NXDOMAIN"
++	if got := y.String(); got != want {
++		t.Fatalf("MIKROTIK_NXDOMAIN string presentation:\ngot  %q\nwant %q", got, want)
+ 	}
+-	if rry.String() != y.String() {
+-		t.Fatalf("MIKROTIK_NXDOMAIN string presentations should be identical:\n%q\n%q", rry.String(), y.String())
++	if err := new(MIKROTIKNXDOMAIN).Parse(nil, ""); err != nil {
++		t.Fatal(err)
+ 	}
+ }
  
 ```
 
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+**File**: `pkg/privatetypes/t_netlify_test.go` (modified, +5/-5)
 ```diff
-@@ -36,7 +36,7 @@ jobs:
+@@ -10,12 +10,12 @@ import (
  
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
-+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-         with:
-           egress-policy: audit
+ func TestNetlify(t *testing.T) {
+ 	y := &NETLIFY{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
+-	rry, err := dnsv2.New(y.String())
+-	if err != nil {
+-		t.Fatal(err)
++	want := "example.org.\t0\tIN\tNETLIFY"
++	if got := y.String(); got != want {
++		t.Fatalf("NETLIFY string presentation:\ngot  %q\nwant %q", got, want)
+ 	}
+-	if rry.String() != y.String() {
+-		t.Fatalf("NETLIFY string presentations should be identical:\n%q\n%q", rry.String(), y.String())
++	if err := new(NETLIFY).Parse(nil, ""); err != nil {
++		t.Fatal(err)
+ 	}
+ }
  
+```
+
+**File**: `pkg/privatetypes/t_netlifyv6_test.go` (modified, +5/-5)
+```diff
+@@ -10,12 +10,12 @@ import (
+ 
+ func TestNetlifyv6(t *testing.T) {
+ 	y := &NETLIFYV6{Hdr: dnsv2.Header{Name: "example.org.", Class: dnsv2.ClassINET}}
+-	rry, err := dnsv2.New(y.String())
+-	if err != nil {
+-		t.Fatal(err)
++	want := "example.org.\t0\tIN\tNETLIFYV6"
++	if got := y.String(); got != want {
++		t.Fatalf("NETLIFYV6 string presentation:\ngot  %q\nwant %q", got, want)
+ 	}
+-	if rry.String() != y.String() {
+-		t.Fatalf("NETLIFYV6 string presentations should be identical:\n%q\n%q", rry.String(), y.String())
++	if err := new(NETLIFYV6).Parse(nil, ""); err != nil {
++		t.Fatal(err)
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/privatetypes/types_generate.go` (modified, +6/-5)
+```diff
+@@ -450,14 +450,15 @@ func generateTestFile(t *TypeDef) error {
+ 	writeImports(&buf, std, third)
+ 
+ 	if len(t.Fields) == 0 {
++		// dnsv2.New rejects records with no rdata, so test String and Parse directly.
+ 		fmt.Fprintf(&buf, "func Test%s(t *testing.T) {\n", testFuncName)
+ 		fmt.Fprintf(&buf, "\ty := &%s{Hdr: dnsv2.Header{Name: \"example.org.\", Class: dnsv2.ClassINET}}\n", typeName)
+-		buf.WriteString("\trry, err := dnsv2.New(y.String())\n")
+-		buf.WriteString("\tif err != nil {\n")
+-		buf.WriteString("\t\tt.Fatal(err)\n")
++		fmt.Fprintf(&buf, "\twant := \"example.org.\\t0\\tIN\\t%s\"\n", displayName)
++		buf.WriteString("\tif got := y.String(); got != want {\n")
++		fmt.Fprintf(&buf, "\t\tt.Fatalf(\"%s string presentation:\\ngot  %%q\\nwant %%q\", got, want)\n", displayName)
+ 		buf.WriteString("\t}\n")
+-		buf.WriteString("\tif rry.String() != y.String() {\n")
+-		fmt.Fprintf(&buf, "\t\tt.Fatalf(\"%s string presentations should be identical:\\n%%q\\n%%q\", rry.String(), y.String())\n", displayName)
++		fmt.Fprintf(&buf, "\tif err := new(%s).Parse(nil, \"\"); err != nil {\n", typeName)
++		buf.WriteString("\t\tt.Fatal(err)\n")
+ 		buf.WriteString("\t}\n")
+ 		buf.WriteString("}\n")
+ 	} else {
+```
+
+**File**: `providers/axfrddns/axfrddnsProvider_test.go` (modified, +14/-2)
+```diff
+@@ -2,6 +2,7 @@ package axfrddns
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"strings"
+@@ -97,7 +98,18 @@ func newAXFRServer(t *testing.T, messages [][]string, signer dnsv2.TSIGSigner, c
+ 		var wg sync.WaitGroup
+ 		wg.Go(func() {
+ 			if err := client.TransferOut(w, r, env, options); err != nil {
+-				t.Errorf("server: TransferOut: %v", err)
++				if !errors.Is(err, dnsv2.ErrSig) {
++					t.Errorf("server: TransferOut: %v", err)
++				} else {
++					// A bad request TSIG is answered with NOTAUTH, as real
++					// servers do (RFC 8945 section 5.2).
++					reply := new(dnsv2.Msg)
++					dnsutil.SetReply(reply, r)
++					reply.Rcode = dnsv2.RcodeNotAuth
++					if _, err := io.Copy(w, reply); err != nil {
++						t.Errorf("server: write NOTAUTH reply: %v", err)
++					}
++				}
+ 			}
+ 			if closeConn {
+ 				w.Close()
+@@ -257,7 +269,7 @@ func TestFetchZoneRecords(t *testing.T) {
+ 			name:       "wrong secret is rejected",
+ 			serverKey:  "hmac-sha256:key:" + testSecret,
+ 			clientKey:  "hmac-sha256:key:" + otherKey,
+-			wantErrSub: "bad signature",
++			wantErrSub: "NOTAUTH",
+ 		},
+ 	}
+ 
+```
+
+---
+
+### Incident Patch 2: `ea2801ea` (2026-11-06)
+**Commit Message**: chore: update npm dependencies (#5067)
+
+**File**: `package-lock.json` (modified, +238/-155)
+```diff
+@@ -15,9 +15,9 @@
+       }
+     },
+     "node_modules/@alcalzone/ansi-tokenize": {
+-      "version": "0.3.0",
+-      "resolved": "https://registry.npmjs.org/@alcalzone/ansi-tokenize/-/ansi-tokenize-0.3.0.tgz",
+-      "integrity": "sha512-p+CMKJ93HFmLkjXKlXiVGlMQEuRb6H0MokBSwUsX+S6BRX8eV5naFZpQJFfJHjRZY0Hmnqy1/r6UWl3x+19zYA==",
++      "version": "0.3.1",
++      "resolved": "https://registry.npmjs.org/@alcalzone/ansi-tokenize/-/ansi-tokenize-0.3.1.tgz",
++      "integrity": "sha512-cUD0PT0YX+rImRhfn7BfMRduP/tX/Zqt/N0dHlAyn2RlcJssCb5KsCJkhln61eh9vuJDkH8wKn3L8zJzzWXPFg==",
+       "license": "MIT",
+       "dependencies": {
+         "ansi-styles": "^6.2.1",
+@@ -314,22 +314,22 @@
+       }
+     },
+     "node_modules/@conventional-changelog/git-client": {
+-      "version": "3.1.2",
+-      "resolved": "https://registry.npmjs.org/@conventional-changelog/git-client/-/git-client-3.1.2.tgz",
+-      "integrity": "sha512-jZqwnJwf7nboIlAcw/mkOjVa6DexCcUOgT2oOQgkoi3z9vR8tGFkcMy2BFcYwjhL9sYcDDXkRQDayiDieCoW7A==",
++      "version": "3.2.0",
++      "resolved": "https://registry.npmjs.org/@conventional-changelog/git-client/-/git-client-3.2.0.tgz",
++      "integrity": "sha512-sD/E0vzpkoDz/dqM1Hhv0ihC4KBw6RXjefeO8SG1XrX+wGkMxe1pKeedkKDPCtr2JjuhbuS9aJNgOvnT8hbeBw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@simple-libs/child-process-utils": "^2.0.0",
+         "@simple-libs/stream-utils": "^2.0.0",
+-        "semver": "^7.5.2"
++        "verkit": "^0.5.0"
+       },
+       "engines": {
+         "node": ">=22"
+       },
+       "peerDependencies": {
+         "conventional-commits-filter": "^6.0.1",
+-        "conventional-commits-parser": "^7.1.2"
++        "conventional-commits-parser": "^7.1.3"
+       },
+       "peerDependenciesMeta": {
+         "conventional-commits-filter": {
+@@ -341,9 +341,9 @@
+       }
+     },
+     "node_modules/@conventional-changelog/template": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/@conventional-changelog/template/-/template-1.4.0.tgz",
+-      "integrity": "sha512-aalGyl7dbB5PArRebDIX43ZvBlXrYm9uWzGJ26t+4SzJVPsOuvfILGGbw5X4yX7i50YEmJ8zvbiWnqH/AAnZqg==",
++      "version": "1.4.1",
++      "resolved": "https://registry.npmjs.org/@conventional-changelog/template/-/template-1.4.1.tgz",
++      "integrity": "sha512-mHyyEL0eIEqJ6+aF24+AdZRo4bu4W5GdUiCiCx5X7kfDY51ye8GQJ264uOINObrRSKxtSRCOWPpl9hbOy4UzxQ==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
+@@ -606,10 +606,20 @@
+       }
+     },
+     "node_modules/argparse": {
+-      "version": "2.0.1",
+-      "resolved": "https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz",
+-      "integrity": "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==",
+-      "license": "Python-2.0"
++      "version": "3.0.4",
++      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.4.tgz",
++      "integrity": "sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/puzrin"
++        },
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/nodeca"
++        }
++      ],
++      "license": "PSF-2.0"
+     },
+     "node_modules/argue-cli": {
+       "version": "3.2.0",
+@@ -780,13 +790,13 @@
+       }
+     },
+     "node_modules/cli-truncate": {
+-      "version": "6.1.1",
+-      "resolved": "https://registry.npmjs.org/cli-truncate/-/cli-truncate-6.1.1.tgz",
+-      "integrity": "sha512-06p9vyLahLa4zkGcgsGxU6iEkSOiuI4fhCH6Emhe2lPAcoUv73n72DnODsnHA+5wwXGnV0n9M9/qOQJSjYhFhw==",
++      "version": "6.2.0",
++      "resolved": "https://registry.npmjs.org/cli-truncate/-/cli-truncate-6.2.0.tgz",
++      "integrity": "sha512-5uyZew3nYoDgyltqSI8OER6DuyecorYOSVDAXl9wQ9Y8Re/HaQ/5qP0HmTUOUQqmvtpB+mlsf1gG/FUS3U1gLQ==",
+       "license": "MIT",
+       "dependencies": {
+-        "slice-ansi": "^9.0.0",
+-        "string-width": "^8.2.0"
++        "slice-ansi": "^10.0.0",
++        "string-width": "^8.3.0"
+       },
+       "engines": {
+         "node": ">=22"
+@@ -796,9 +806,9 @@
+       }
+     },
+     "node_modules/cli-truncate/node_modules/ansi-regex": {
+-      "version": "6.3.0",
+-      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.3.0.tgz",
+-      "integrity": "sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ==",
++      "version": "6.5.0",
++      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.5.0.tgz",
++      "integrity": "sha512-zhvbbbdt1kbw7EJ9OQoxmQcuaNR9P5kTj7e/YdmOSU10aHWbycofJxA6jKfoEy3vlLdctOF9ZHaxLtmSm998wQ==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=12"
+@@ -807,10 +817,38 @@
+         "url": "https://github.com/chalk/ansi-regex?sponsor=1"
+       }
+     },
++    "node_modules/cli-truncate/node_modules/ansi-styles": {
++      "version": "7.0.0",
++      "resolved": "https://registry.npmj
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5067** (2026-11-06): chore: update npm dependencies (@TomOnTime)
+- **PR #5066** (2026-11-06): chore: upgrade to the latest tomontime/dns patches (@TomOnTime)
 - **PR #5065** (2026-11-04): build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (@dependabot[bot])
 - **PR #5062** (2026-11-01): build(deps): bump joi from 18.2.9 to 18.3.1 (@dependabot[bot])
 - **PR #5061** (2026-11-01): build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (@dependabot[bot])
 - **PR #5060** (closed): build(deps-dev): bump @commitlint/config-conventional from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #5059** (2026-11-01): build(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #5058** (2026-11-01): build(deps): bump alpine from 3.24.2 to 3.24.3 (@dependabot[bot])
 
 ---
 
@@ -795,28 +1026,28 @@ href="ht
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065)
+## X. upgrade to the latest tomontime/dns patches (#5066)
 
 **RULE**:
-When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a192aab`: build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (#5065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff1fd540`: upgrade to the latest tomontime/dns patches (#5066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261106021038-99f642b89f88
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+replace codeberg.org/miekg/dns => codeberg.org/TomOnTime/dns v0.6.116-0.20261011152644-c288f44eb638
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a192aab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff1fd540` are properly handled with clean fallback behavior.

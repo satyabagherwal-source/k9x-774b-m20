@@ -7979,3 +7979,7 @@ Every entry in this ledger must capture:
 | `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `7ed01936` | Multi-dimensional audit evidence | 2026-11-07T02:54:24.589Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `703f25d7` | Multi-dimensional audit evidence | 2026-11-07T02:54:26.323Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `05ca843b` | Multi-dimensional audit evidence | 2026-11-07T02:54:31.919Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `ff1fd540` | Multi-dimensional audit evidence | 2026-11-07T03:01:26.862Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `8cda9065` | Multi-dimensional audit evidence | 2026-11-07T03:01:28.765Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `50d59c21` | Multi-dimensional audit evidence | 2026-11-07T03:01:31.286Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-07T03:02:03.063Z |

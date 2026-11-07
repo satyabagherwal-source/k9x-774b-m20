@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:54:31.818Z",
+  "last_updated": "2026-11-07T03:02:02.975Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11018,11 +11018,16 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "1a192aab",
-      "content_hash": "bad63c997932c638acaea9a5c91100c6dbb2ccbb6482e5c58931dcf8f46d92c7",
+      "source_version": "ff1fd540",
+      "content_hash": "85d62eb80c43cd84e7f13a5d6c1bea7a05019b2d71f185aaf8bcf51058bd7ea1",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "upgrade to the latest tomontime/dns patches (#5066)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2083,
           "title": "build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (#5005)",
@@ -11069,7 +11074,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:33:23.482Z",
+      "verified_at": "2026-11-07T03:01:26.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46909,11 +46914,16 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "59764058",
-      "content_hash": "b936822d2198f0d49ecbc0bbd8bc88a38d5bb90801dc9235d47e0810aad89523",
+      "source_version": "50d59c21",
+      "content_hash": "da2d92fd031f6e95201059dea81e167ffc53c811df84542ccc6ecef7c7f879ba",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #502 from Ontos-AI/fix/wuchengke/short-scanned-pdf-page-image",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1711,
           "title": "Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-de",
@@ -46975,7 +46985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:46:35.833Z",
+      "verified_at": "2026-11-07T03:01:31.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50013,8 +50023,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "bbebeba8",
-      "content_hash": "f4cfd87c3212f4d9f924b3e839c8de45fdea9ba20bde04bc8908cb659570c3b3",
+      "source_version": "8cda9065",
+      "content_hash": "ac74fa5de5cbe17eb0ccbb91fd2f9d03e7c5729b632b7c9058c62f12af2931da",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -50026,6 +50036,11 @@
         {
           "number": null,
           "title": "js): make SSHClient.Close a no-op without a connection",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core): avoid nested workflow deadlock at template concurrency limit (#8076)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50164,7 +50179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:45:38.106Z",
+      "verified_at": "2026-11-07T03:01:28.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -161384,10 +161399,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "7f77da2b680b69759dc0281fc505e388da51ef30bf34ea3b90d3d8038eab9d5c",
+      "content_hash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Local-Global Attention Interleaving for Temporal Signals",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "MaskGIT Iterative Decoding for Non-Autoregressive Generation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Audio Feature Normalization Invariants",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5733,
           "title": "Bifurcated Modality Sampling Disconnection",
@@ -161409,7 +161439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:17:07.417Z",
+      "verified_at": "2026-11-07T03:02:02.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

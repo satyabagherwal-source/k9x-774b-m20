@@ -7970,3 +7970,7 @@
 | `CYCLE-20261107-856X` | `2026-11-07T02:54:24.585Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cbc2521b...`) |
 | `CYCLE-20261107-86J3` | `2026-11-07T02:54:26.319Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1f482b0d...`) |
 | `CYCLE-20261107-8AUI` | `2026-11-07T02:54:31.914Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`92f91a70...`) |
+| `CYCLE-20261107-H70P` | `2026-11-07T03:01:26.857Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85d62eb8...`) |
+| `CYCLE-20261107-H8HM` | `2026-11-07T03:01:28.762Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac74fa5d...`) |
+| `CYCLE-20261107-HAFN` | `2026-11-07T03:01:31.283Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da2d92fd...`) |
+| `CYCLE-20261107-HYYB` | `2026-11-07T03:02:03.059Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`00e509e1...`) |

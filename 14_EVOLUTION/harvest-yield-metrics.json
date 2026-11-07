@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T02:54:31.933Z",
-  "total_cycles_completed": 7935,
-  "total_learnings_persisted": 7935,
-  "total_rules_promoted": 7585,
+  "last_updated": "2026-11-07T03:02:03.068Z",
+  "total_cycles_completed": 7939,
+  "total_learnings_persisted": 7939,
+  "total_rules_promoted": 7591,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:53:43.370Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:00:17.999Z",
-      "repository": "pointfreeco/sqlite-data",
-      "learningId": "learn-github-pointfreeco-sqlite-data",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:00:24.230Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:06:49.610Z",
-      "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T19:06:59.945Z",
       "repository": "typedb/typedb",
@@ -1403,6 +1375,34 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:01:26.869Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:01:28.770Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:01:31.300Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:02:03.068Z",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
