@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T05:58:19.682Z",
-    "lastVerified": "2026-11-07T05:58:19.682Z",
+    "lastChecked": "2026-11-07T06:10:07.964Z",
+    "lastVerified": "2026-11-07T06:10:07.964Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T05:37:09.131Z",
-    "lastVerified": "2026-11-07T05:37:09.131Z",
+    "lastChecked": "2026-11-07T06:05:11.092Z",
+    "lastVerified": "2026-11-07T06:05:11.092Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1520,9 +1520,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-07T02:01:25.288Z",
+    "lastChecked": "2026-11-07T06:05:05.713Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-07T02:01:25.288Z"
+    "lastVerified": "2026-11-07T06:05:05.713Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4223,9 +4223,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-05T17:57:29.826Z",
+    "lastChecked": "2026-11-07T06:05:08.195Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-05T17:57:29.826Z"
+    "lastVerified": "2026-11-07T06:05:08.195Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -5676,9 +5676,9 @@
   "benoitvallon-react-native-nw-react-calculator": {
     "name": "react-native-nw-react-calculator",
     "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
-    "lastChecked": "2026-11-04T17:59:23.662Z",
+    "lastChecked": "2026-11-07T06:05:00.688Z",
     "revisionIdentifier": "4f9628fa",
-    "lastVerified": "2026-11-04T17:59:23.662Z"
+    "lastVerified": "2026-11-07T06:05:00.688Z"
   },
   "bridgecrewio-checkov": {
     "name": "checkov",
@@ -7418,14 +7418,14 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:27:02.571Z",
-    "lastVerified": "2026-11-05T13:27:02.571Z",
+    "lastChecked": "2026-11-07T06:05:01.719Z",
+    "lastVerified": "2026-11-07T06:05:01.719Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
+    "contentHash": "165932617dd5e7730d82691f14b5bbdc5ac03bae25b6db1e675f4705efe0aba1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7631,14 +7631,14 @@
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T18:53:41.979Z",
-    "lastVerified": "2026-11-05T18:53:41.979Z",
+    "lastChecked": "2026-11-07T06:05:08.551Z",
+    "lastVerified": "2026-11-07T06:05:08.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
+    "contentHash": "95da00a884b8c89942d6842e549999720929cb1f139461d25c65e0b69b845655",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11371,12 +11371,12 @@
     "revisionIdentifier": "1e16dfd2"
   },
   "urllib3-urllib3": {
-    "name": "urllib3/urllib3",
+    "name": "urllib3",
     "officialUrl": "https://github.com/urllib3/urllib3",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-04T00:10:45.749Z",
-    "lastVerified": "2026-11-04T00:10:45.749Z",
+    "lastChecked": "2026-11-07T06:04:58.198Z",
+    "lastVerified": "2026-11-07T06:04:58.198Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-urllib3-urllib3",
@@ -11385,7 +11385,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5347bbd"
   },
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",

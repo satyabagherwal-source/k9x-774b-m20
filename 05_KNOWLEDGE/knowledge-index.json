@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T05:58:17.004Z",
+  "last_updated": "2026-11-07T06:10:05.249Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50306,14 +50306,19 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "62aca180",
-      "content_hash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
+      "source_version": "dd7aa6b0",
+      "content_hash": "95da00a884b8c89942d6842e549999720929cb1f139461d25c65e0b69b845655",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs: require raw benchstat output and commit links in AGENTS.md (#20332)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "scrape [PERF]: acquire storage appender after reading HTTP response (#20319)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50402,7 +50407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:53:43.246Z",
+      "verified_at": "2026-11-07T06:05:09.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52151,11 +52156,16 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "9886a813",
-      "content_hash": "0a2d652b9d4e573c0081c268eb35de1999d310bba7271be1dd89fbcb6359f932",
+      "source_version": "211a106f",
+      "content_hash": "165932617dd5e7730d82691f14b5bbdc5ac03bae25b6db1e675f4705efe0aba1",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[ci] Let PR docker builds reuse a dependency layer warmed on main (#5753)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2294,
           "title": "Deterministic Entity ID Derivation in Distributed State Machine Replicas",
@@ -52237,7 +52247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:27:03.139Z",
+      "verified_at": "2026-11-07T06:10:05.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

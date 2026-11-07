@@ -8028,3 +8028,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-07T05:58:07.118Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `b7bd8dc7` | Multi-dimensional audit evidence | 2026-11-07T05:58:08.623Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `dca306c8` | Multi-dimensional audit evidence | 2026-11-07T05:58:17.111Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `dd7aa6b0` | Multi-dimensional audit evidence | 2026-11-07T06:05:09.994Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `211a106f` | Multi-dimensional audit evidence | 2026-11-07T06:10:05.380Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T05:58:17.116Z",
-  "total_cycles_completed": 7984,
-  "total_learnings_persisted": 7984,
-  "total_rules_promoted": 7632,
+  "last_updated": "2026-11-07T06:10:05.384Z",
+  "total_cycles_completed": 7986,
+  "total_learnings_persisted": 7986,
+  "total_rules_promoted": 7634,
   "history": [
-    {
-      "timestamp": "2026-11-05T22:47:57.442Z",
-      "repository": "Diffuspace/Clover-35B-A3B-Preview",
-      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:47:58.843Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T22:54:53.172Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T05:58:17.116Z",
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:05:09.998Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:10:05.384Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

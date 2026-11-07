@@ -8019,3 +8019,5 @@
 | `CYCLE-20261107-SE8A` | `2026-11-07T05:58:07.114Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`2220770e...`) |
 | `CYCLE-20261107-SFE2` | `2026-11-07T05:58:08.618Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3cff1c54...`) |
 | `CYCLE-20261107-SLXN` | `2026-11-07T05:58:17.100Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6eee219c...`) |
+| `CYCLE-20261107-1GIV` | `2026-11-07T06:05:09.991Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95da00a8...`) |
+| `CYCLE-20261107-7SFV` | `2026-11-07T06:10:05.371Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`16593261...`) |

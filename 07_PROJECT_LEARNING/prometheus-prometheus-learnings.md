@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `62aca180`  
+> **Source Version**: `dd7aa6b0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:53:41.986Z  
+> **Timestamp**: 2026-11-07T06:05:09.092Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:53:41.979Z  
+> **Harvest Timestamp**: 2026-11-07T06:05:08.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66981 stars
+- **Stars / Engagement**: 67232 stars
 
 ---
 
@@ -1781,14 +1781,11 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20344** (2026-11-05): **merge release-3.16 into main**
-  *Symptoms*: Merging release-3.16 branch into main  ```release-notes NONE ``` 
-  **Post-Mortem & Fix Analysis**:
-  > I am assuming it's ok to have this be a bit of a messy merge.  Or should I squash it down?
-  > I can't fix the conflicts so I'll do that in another branch
+- **Issue #20356** (2026-11-06): **chore: fix the 3.16.0 changelog and harden the release version bump**
+  *Symptoms*: Fixes for #20346, proposed against its head branch `owilliams/release-3.16-fixes`, on top of its current head (`f6beddd49`).  ### Changelog  All three entries still sitting in `## main / unreleased` are already released, so they would be listed again in the next release's notes:  - the exporter-toolkit HTTP/2 fix is in 3.16.0 as #19848 (the unreleased entry cited #19807, which is the *issue*, not the PR); - the promtool `--allow-incompatible-block-duration` entry is in 3.16.0 as #19363; - the sigv4 v0.5.0 upgrade shipped in 3.15.0 as #19569.  Also rewords the two subquery-statistics entries in the 3.16.0 block so they no longer contradict each other: subqueries contribute their *underlying* sample consumption to `TotalSamples` (#19165), while #19873 stopped counting their *materialized* results a second time — the previous wording said both "included" and "not counted".  ### Release version bump  `scripts/bump_changelog_version.sh` (added in this release cycle) replaced the first non-`main / unreleased` heading no matter which release it belonged to, so a run before the release notes were pasted silently relabelled the *previous* release's section. Now:  - only a heading for the version in `VERSION`, or for a pre-release of the same version, is rewritten, which covers the renames a release performs (rc.N → rc.N+1, rc.N → final); any other heading is refused; - a `VERSION` that is not a release version is refused, so a trailing space or CR cannot end up in the heading; - `gene
 
-- **Issue #20335** (2026-11-05): **promql: accept unquoted colons in grouping labels again**
-  *Symptoms*: #### Which issue(s) does the PR fix:  Follow-up to #20169. Enabling unquoted UTF-8 names by default made `sum by (a:b) (foo)` and `foo + on (a:b) bar` fail with `invalid label name for grouping: "a:b"`. Both parsed before. UTF-8 validation has been the default since 3.0, so labels like `a:b` can exist, and queries and rules that group by them stop working. While the feature was behind a flag, the parser still accepted these with the flag off (see https://github.com/prometheus/prometheus/pull/19683#discussion_r4357854697).  This drops the quoting check for grouping labels. The printer still quotes them (`sum by ("a:b") (foo)`), because selectors don't accept unquoted colons, so printed queries still parse. The docs now mention the exception.  #20169 isn't in a release yet, so users never see the regression.  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes NONE ``` 
+- **Issue #20345** (2026-11-06): **promql: restore conservative name printing by default**
+  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1805,31 +1802,855 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bfb6bb5` (2026-11-05)
-**Commit Message**: docs: require raw benchstat output and commit links in AGENTS.md (#20332)
+### Incident Patch 1: `06503461` (2026-11-06)
+**Commit Message**: scrape [PERF]: acquire storage appender after reading HTTP response (#20319)
+
+* scrape [PERF]: acquire storage appender after reading HTTP response
+
+Previously scrapeAndReport acquired the storage Appender/AppenderV2 at the start of each scrape before issuing the HTTP request and reading the response body. Slow or blocked targets therefore held open storage appenders for up to scrape_timeout, pinning pooled tsdb/agent appenders and keeping tsdb.Head appendID isolation watermarks and activeAppenders open across network I/O.
+
+Defer acquiring the appender and registering the report/commit defers until after the HTTP scrape and response body read finish, while still skipping the HTTP request when forcedErr is set.
 
 Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +1/-1)
+* scrape: report scrapeErr to errc after appending stale markers
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* scrape: expand TestScrapeLoopScrapeAndReportLazyAppender error coverage
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* scrape: assert zero active appenders during blocked scrapes in benchmark
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+Signed-
+
+**File**: `scrape/scrape.go` (modified, +59/-52)
 ```diff
-@@ -112,7 +112,7 @@ Maintainers take performance seriously. For any PERF PR:
+@@ -1575,7 +1575,57 @@ func (sl *scrapeLoop) scrapeAndReport(last, appendTime time.Time, errc chan<- er
  
- - Performance improvements require a benchmark that demonstrates the improvement.
- - Run benchmarks before and after the change using `go test -count=6 -benchmem -bench <directory changed in PR>`
--- Provide benchmark numbers in the PR body using `benchstat` output.
-+- Always output benchmark results in raw `benchstat` format in the PR body (and review comments), and always include a link to the exact commit(s) (`before` and `after`) that the benchmark refers to. Rerun benchmarks and update the commit link whenever addressing review comments that touch benchmarked code or benchmarks.
- - If a subset of benchmark results show a regression, address this or explain why the case is not important.
- - Reuse allocations in hot paths where possible (slices, buffers). 
- - When reusing buffers passed to interfaces, document that callers must copy
+ 	var total, added, seriesAdded, bytesRead int
+ 	var err, appErr, scrapeErr error
++	var contentType string
++	var b []byte
+ 
++	forcedErr := sl.getForcedError()
++	if forcedErr != nil {
++		scrapeErr = forcedErr
++	} else {
++		var resp *http.Response
++		var buf *bytes.Buffer
++		scrapeCtx, cancel := context.WithTimeout(trace.ContextWithSpan(sl.parentCtx, span), sl.timeout)
++		resp, scrapeErr = sl.scraper.scrape(scrapeCtx)
++		if scrapeErr == nil {
++			// Avoid copying the body when bytes.Buffer.ReadFrom grows before reading EOF.
++			b = sl.buffers.Get(sl.lastScrapeSize + bytes.MinRead).([]byte)
++			defer sl.buffers.Put(b)
++			buf = bytes.NewBuffer(b)
++			// Trace the response body read and decompression into the buffer.
++			_, readSpan := otel.Tracer("").Start(spanCtx, "scrapeRead")
++			contentType, scrapeErr = sl.scraper.readResponse(scrapeCtx, resp, buf)
++			if scrapeErr != nil {
++				readSpan.RecordError(scrapeErr)
++				readSpan.SetStatus(codes.Error, scrapeErr.Error())
++			}
++			readSpan.End()
++		}
++		cancel()
++
++		if scrapeErr == nil {
++			b = buf.Bytes()
++			// NOTE: There were issues with misbehaving clients in the past
++			// that occasionally returned empty results. We don't want those
++			// to falsely reset our buffer size.
++			if len(b) > 0 {
++				sl.lastScrapeSize = len(b)
++			}
++			bytesRead = len(b)
++		} else {
++			sl.l.Debug("Scrape failed", "err", scrapeErr)
++			sl.scrapeFailureLoggerMtx.RLock()
++			if sl.scrapeFailureLogger != nil {
++				slog.New(sl.scrapeFailureLogger).Error(scrapeErr.Error())
++			}
++			sl.scrapeFailureLoggerMtx.RUnlock()
++			if errors.Is(scrapeErr, errBodySizeLimit) {
++				bytesRead = -1
++			}
++		}
++	}
++
++	// Acquire the storage appender only after the HTTP scrape and body read finish
++	// so slow or blocked targets do not hold open storage appenders during network I/O.
+ 	_, appenderSpan := otel.Tracer("").Start(spanCtx, "newAppender")
+ 	app := sl.appender()
+ 	appenderSpan.End()
+@@ -1614,8 +1664,7 @@ func (sl *scrapeLoop) scrapeAndReport(last, appendTime time.Time, errc chan<- er
+ 		}
+ 	}()
+ 
+-	if forcedErr := sl.getForcedError(); forcedErr != nil {
+-		scrapeErr = forcedErr
++	if forcedErr != nil {
+ 		// Add stale markers.
+ 		if _, _, _, err := app.append([]byte{}, "", appendTime); err != nil {
+ 			_ = app.Rollback()
+@@ -1632,55 +1681,6 @@ func (sl *scrapeLoop) scrapeAndReport(last, appendTime time.Time, errc chan<- er
+ 		return start
+ 	}
+ 
+-	var contentType string
+-	var resp *http.Response
+-	var b []byte
+-	var buf *bytes.Buffer
+-	scrapeCtx, cancel := context.WithTimeout(trace.ContextWithSpan(sl.parentCtx, span), sl.timeout)
+-	resp, scrapeErr = sl.scraper.scrape(scrapeCtx)
+-	if scrapeErr == nil {
+-		// Avoid copying the body when bytes.Buffer.ReadFrom grows before reading EOF.
+-		b = sl.buffers.Get(sl.lastScrapeSize + bytes.MinRead).([]byte)
+-		defer sl.buffers.Put(b)
+-		buf = bytes.NewBuffer(b)
+-		// Trace the response body read and decompression into the buffer.
+-		_, readSpan := otel.Tracer("").Start(spanCtx, "scrapeRead")
+-		contentType, scrapeErr = sl.scraper.readResponse(scrapeCtx, resp, buf)
+-		if scrapeErr != nil {
+-			readSpan.RecordError(scrapeErr)
+-			readSpan.SetStatus(codes.Error, scrapeErr.Error())
+-		}
+-		readSpan.End()
+-	}
+-	cancel()
+-
+-	if scrapeErr == nil {
+-		b = buf.Bytes()
+-		// NOTE: There were issues with misbehaving clients in the past
+-		// that occasionally returned empty results. We don't want those
+-		// to falsely reset our buffer size.
+-		if len(b) > 0 {
+-			sl.lastScrapeSize = len(b)
+-		}
+-		bytesRead = len(b)
+-	} else {
+-		sl.l.Debug("Scrape failed", "err", scrapeErr)
+-		sl.scrapeFailureLoggerMtx.RLock()
+-		if sl.scrapeFailureLogger != nil {
+-			slog.New(sl.scrapeFailureLogger).Error(scrapeErr.Error())
+-		}
+-		sl.scrapeFailureLoggerMtx.RUnlock()
+-		if errc != nil {
+-			select {
+-			case errc <- scrapeErr:
+-			case <-sl.ctx.Done():
+-			}
+-		}
+-		if errors.Is(scrapeErr, errBodySizeLimit) {
+-			bytesRead = -1
+-		}
+-	}
+-
+ 	// A failed scrape is the same as an empty scrape,
+ 	// we still call sl.append to trigger stale markers.
+ 	_, appendSpan := otel.Tracer("").Start(spanCtx, "scrapeAppend")
+@@ -1703,7 +1703,14 @@ func (sl *scrapeLoop) scrapeAndReport(last, appendTime time.Time, errc chan<- er
+ 		}
+ 	}
+ 
+-	if scrapeErr == nil {
++	if scrapeErr != nil {
++		if errc != nil {
++			select {
++			case errc <- scrapeErr:
++			case <-sl.ctx.Done():
++			}
++		}
++	} else {
+ 		scrapeErr = appErr
+ 	}
+ 
+```
+
+**File**: `scrape/scrape_test.go` (modified, +417/-3)
+```diff
+@@ -3461,6 +3461,416 @@ func BenchmarkScrapeLoopScrapeAndReport(b *testing.B) {
+ 	}
+ }
+ 
++func TestScrapeLoopScrapeAndReportLazyAppender(t *testing.T) {
++	foreachAppendable(t, func(t *testing.T, appV2 bool) {
++		newCountingLoop := func(t *testing.T) (*scrapeLoop, *testScraper, *teststorage.Appendable, *atomic.Int64) {
++			t.Helper()
++			appTest := teststorage.NewAppendable()
++			appenderCalls := atomic.NewInt64(0)
++			sl, scraper := newTestScrapeLoop(t, func(sl *scrapeLoop) {
++				sl.fallbackScrapeProtocol = "text/plain"
++				if appV2 {
++					sl.appendableV2 = appendableV2Func(func(ctx context.Context) storage.AppenderV2 {
++						appenderCalls.Inc()
++						return appTest.AppenderV2(ctx)
++					})
++				} else {
++					sl.appendable = appendableFunc(func(ctx context.Context) storage.Appender {
++						appenderCalls.Inc()
++						return appTest.Appender(ctx)
++					})
++				}
++			})
++			return sl, scraper, appTest, appenderCalls
++		}
++
++		t.Run("success", func(t *testing.T) {
++			sl, scraper, appTest, appenderCalls := newCountingLoop(t)
++
++			inScrape := make(chan struct{})
++			unblockScrape := make(chan struct{})
++			inRead := make(chan struct{})
++			unblockRead := make(chan struct{})
++
++			scraper.scrapeReqFunc = func(context.Context) (*http.Response, error) {
++				close(inScrape)
++				<-unblockScrape
++				return &http.Response{StatusCode: http.StatusOK}, nil
++			}
++			scraper.scrapeFunc = func(_ context.Context, w io.Writer) error {
++				close(inRead)
++				<-unblockRead
++				_, err := w.Write([]byte("metric_a 42\n"))
++				return err
++			}
++
++			done := make(chan struct{})
++			ts := time.Unix(1000, 0)
++			go func() {
++				defer close(done)
++				sl.scrapeAndReport(time.Time{}, ts, nil)
++			}()
++
++			<-inScrape
++			callsDuringScrape := appenderCalls.Load()
++			close(unblockScrape)
++
++			<-inRead
++			callsDuringRead := appenderCalls.Load()
++			close(unblockRead)
++
++			<-done
++			require.Zero(t, callsDuringScrape, "appender must not be acquired while HTTP scrape is in-flight")
++			require.Zero(t, callsDuringRead, "appender must not be acquired while HTTP body read is in-flight")
++			require.Equal(t, int64(1), appenderCalls.Load())
++			require.NoError(t, scraper.lastError)
++			// 1 target sample + 5 report samples.
++			got := appTest.ResultSamples()
++			require.Len(t, got, 6)
++			require.Equal(t, 42.0, got[0].V)
++			require.Equal(t, 1.0, got[1].V)
++		})
++
++		scrapeBoom := errors.New("dial timeout")
++		forcedBoom := errors.New("forced target error")
++
++		for _, tc := range []struct {
++			name               string
++			reportExtraMetrics bool
++			forcedErr          error
++			blockScrape        bool
++			scrapeErr          error
++			blockRead          bool
++			readPayload        []byte
++			readErr            error
++			wantAppenderCalls  int64
++			wantErrc           error
++			wantBodySizeBytes  float64
++		}{
++			{
++				name:              "scrape_error",
++				blockScrape:       true,
++				scrapeErr:         scrapeBoom,
++				wantAppenderCalls: 1,
++				wantErrc:          scrapeBoom,
++			},
++			{
++				name:               "read_error",
++				reportExtraMetrics: true,
++				blockRead:          true,
++				readPayload:        []byte("metric_a 99\n"),
++				readErr:            errBodySizeLimit,
++				wantAppenderCalls:  1,
++				wantErrc:           errBodySizeLimit,
++				wantBodySizeBytes:  -1,
++			},
++			{
++				name:              "forced_error",
++				forcedErr:         forcedBoom,
++				wantAppenderCalls: 1,
++				wantErrc:          forcedBoom,
++			},
++			{
++				name:              "append_error",
++				blockScrape:       true,
++				blockRead:         true,
++				readPayload:       []byte("invalid_metric_line\n"),
++				wantAppenderCalls: 2,
++			},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				sl, scraper, appTest, appenderCalls := newCountingLoop(t)
++				sl.reportExtraMetrics = tc.reportExtraMetrics
++				scraper.scrapeFunc = func(_ context.Context, w io.Writer) error {
++					_, err := w.Write([]byte("metric_a 42\n"))
++					return err
++				}
++
++				ts := time.Unix(1000, 0)
++				sl.scrapeAndReport(time.Time{}, ts, nil)
++				require.Equal(t, int64(1), appenderCalls.Load())
++				appenderCalls.Store(0)
++				appTest.ResultReset()
++
++				inScrape := make(chan struct{})
++				unblockScrape := make(chan struct{})
++				inRead := make(chan struct{})
++				unblockRead := make(chan struct{})
++
++				if tc.forcedErr != nil {
++					sl.setForcedError(tc.forcedErr)
++					scraper.scrapeReqFunc = func(context.Context) (*http.Response, error) {
++						t.Error("HTTP scrape must not be called when forcedErr is set")
++						return nil, nil
++					}
++				} else {
++					scraper.scrapeReqFunc = func(context.Context) (*http.Response, error) {
++						if tc.blockScrape {
++							close(inScrape)
++							<-unblockScrape
++						}
++						if tc.scrapeErr != nil {
++							return nil, tc.scrapeErr
++						}
++						return &http.Response{StatusCode: http.StatusOK}, nil
++					}
++				}
++
++				if tc.forcedErr != nil || tc.scrapeErr != nil {
++					scraper.scrapeFunc = func(context.C
+```
+
+---
+
+### Incident Patch 2: `c9a79182` (2026-11-06)
+**Commit Message**: tsdb: fix appends after mmap-only recovery (#19722)
+
+* tsdb: fix appends after mmap-only recovery
+
+appendable treated a series without a head chunk as freshly created even
+when it still had mmapped chunks, which skipped the timestamp checks. A
+valid out-of-order sample could pass Append and Commit and still be
+dropped silently, as could a conflicting value at an existing timestamp.
+
+Only treat a series as fresh when it has neither a head chunk nor mmapped
+chunks. For mmap-only series, route samples at or before the last mapped
+timestamp through the existing out-of-order checks instead of comparing
+against a cached last value that may not match the last mmapped sample.
+
+---------
+
+Signed-off-by: Dan Mattheiss <[REDACTED_EMAIL]>
+Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Arve Knudsen <[REDACTED_EMAIL]>
+
+**File**: `tsdb/head_append.go` (modified, +101/-44)
+```diff
+@@ -488,7 +488,7 @@ func (a *headAppender) Append(ref storage.SeriesRef, lset labels.Labels, t int64
+ 	defer s.Unlock()
+ 	// TODO(codesome): If we definitely know at this point that the sample is ooo, then optimise
+ 	// to skip that sample from the WAL and write only in the WBL.
+-	isOOO, delta, err := s.appendable(t, v, a.headMaxt, a.minValidTime, a.oooTimeWindow)
++	isOOO, delta, err := s.appendable(t, v, a.headMaxt, a.minValidTime, a.oooTimeWindow, a.head)
+ 	if err == nil {
+ 		if isOOO && a.hints != nil && a.hints.DiscardOutOfOrder {
+ 			a.head.metrics.outOfOrderSamples.WithLabelValues(sampleMetricTypeFloat).Inc()
+@@ -543,7 +543,7 @@ func (a *headAppender) AppendSTZeroSample(ref storage.SeriesRef, lset labels.Lab
+ 	if err != nil {
+ 		return 0, err
+ 	}
+-	isOOO, _, err := s.appendable(st, 0, a.headMaxt, a.minValidTime, a.oooTimeWindow)
++	isOOO, _, err := s.appendable(st, 0, a.headMaxt, a.minValidTime, a.oooTimeWindow, a.head)
+ 	if err != nil {
+ 		s.Unlock()
+ 		return 0, err
+@@ -698,14 +698,52 @@ func (a *headAppenderBase) getCurrentBatch(st sampleType, s chunks.HeadSeriesRef
+ 	}
+ }
+ 
++// lastInOrderSample returns the series' most recent in-order sample for
++// duplicate detection. With a head chunk the cached last-value fields are
++// authoritative. Without one, the newest sample lives in the last mmapped
++// chunk and the cached fields may not reflect it (e.g. after WAL repair), so
++// the sample is read back from the chunk on demand; this only happens for
++// equal-timestamp appends to mmap-only series, not during recovery. ok is
++// false if the chunk cannot be read, in which case no duplicate detection is
++// possible. The caller must have ruled out series without any samples.
++func (s *memSeries) lastInOrderSample(head *Head) (v float64, h *histogram.Histogram, fh *histogram.FloatHistogram, ok bool) {
++	if s.headChunks != nil {
++		return s.lastValue, s.lastHistogramValue, s.lastFloatHistogramValue, true
++	}
++	mmc := s.mmappedChunks[len(s.mmappedChunks)-1]
++	chunk, err := head.chunkDiskMapper.Chunk(mmc.ref)
++	if err == nil {
++		it := chunk.Iterator(nil)
++		switch it.Seek(mmc.maxTime) {
++		case chunkenc.ValFloat:
++			_, v = it.At()
++			return v, nil, nil, true
++		case chunkenc.ValHistogram:
++			_, h = it.AtHistogram(nil)
++			return 0, h, nil, true
++		case chunkenc.ValFloatHistogram:
++			_, fh = it.AtFloatHistogram(nil)
++			return 0, nil, fh, true
++		}
++		if err = it.Err(); err == nil {
++			err = fmt.Errorf("no sample at max time %d", mmc.maxTime)
++		}
++	}
++	// Surface unreadable mmapped chunks: appends fall back to the out-of-order
++	// checks, which would otherwise hide the corruption.
++	head.logger.Warn("Failed to read last mmapped sample for duplicate detection, falling back to out-of-order checks",
++		"seriesRef", s.ref, "chunkRef", mmc.ref, "err", err)
++	return 0, nil, nil, false
++}
++
+ // appendable checks whether the given sample is valid for appending to the series.
+ // If the sample is valid and in-order, it returns false with no error.
+ // If the sample belongs to the out-of-order chunk, it returns true with no error.
+ // If the sample cannot be handled, it returns an error.
+-func (s *memSeries) appendable(t int64, v float64, headMaxt, minValidTime, oooTimeWindow int64) (isOOO bool, oooDelta int64, err error) {
++func (s *memSeries) appendable(t int64, v float64, headMaxt, minValidTime, oooTimeWindow int64, head *Head) (isOOO bool, oooDelta int64, err error) {
+ 	// Check if we can append in the in-order chunk.
+ 	if t >= minValidTime {
+-		if s.headChunks == nil {
++		if s.headChunks == nil && len(s.mmappedChunks) == 0 {
+ 			// The series has no sample and was freshly created.
+ 			return false, 0, nil
+ 		}
+@@ -714,18 +752,23 @@ func (s *memSeries) appendable(t int64, v float64, headMaxt, minValidTime, oooTi
+ 			return false, 0, nil
+ 		}
+ 		if t == msMaxt {
+-			// We are allowing exact duplicates as we can encounter them in valid cases
+-			// like federation and erroring out at that time would be extremely noisy.
+-			// This only checks against the latest in-order sample.
+-			// The OOO headchunk has its own method to detect these duplicates.
+-			if s.lastHistogramValue != nil || s.lastFloatHistogramValue != nil {
+-				return false, 0, storage.NewDuplicateHistogramToFloatErr(t, v)
+-			}
+-			if math.Float64bits(s.lastValue) != math.Float64bits(v) {
+-				return false, 0, storage.NewDuplicateFloatErr(t, s.lastValue, v)
++			lastValue, lastHistogramValue, lastFloatHistogramValue, ok := s.lastInOrderSample(head)
++			if ok {
++				// We are allowing exact duplicates as we can encounter them in valid cases
++				// like federation and erroring out at that time would be extremely noisy.
++				// This only checks against the latest in-order sample.
++				// The OOO headchunk has its own method to detect these duplicates.
++				if lastHistogramValue != nil || lastFloatHistogramValue != nil {
++					return false, 0, storage.NewDuplicateHistogramToFloatErr(t, v)
++				}
++				if math.Float64bits(lastValue) != math.Float64
+```
+
+**File**: `tsdb/head_append_v2.go` (modified, +3/-3)
+```diff
+@@ -270,7 +270,7 @@ func (a *headAppenderV2) appendFloat(s *memSeries, st, t int64, v float64, fastR
+ 	}
+ 	// TODO(codesome): If we definitely know at this point that the sample is ooo, then optimise
+ 	// to skip that sample from the WAL and write only in the WBL.
+-	isOOO, delta, err := s.appendable(t, v, a.headMaxt, a.minValidTime, a.oooTimeWindow)
++	isOOO, delta, err := s.appendable(t, v, a.headMaxt, a.minValidTime, a.oooTimeWindow, a.head)
+ 	if isOOO && fastRejectOOO {
+ 		s.Unlock()
+ 		return nil, storage.ErrOutOfOrderSample
+@@ -301,7 +301,7 @@ func (a *headAppenderV2) appendHistogram(s *memSeries, st, t int64, h *histogram
+ 	}
+ 	// TODO(codesome): If we definitely know at this point that the sample is ooo, then optimise
+ 	// to skip that sample from the WAL and write only in the WBL.
+-	isOOO, delta, err := s.appendableHistogram(t, h, a.headMaxt, a.minValidTime, a.oooTimeWindow)
++	isOOO, delta, err := s.appendableHistogram(t, h, a.headMaxt, a.minValidTime, a.oooTimeWindow, a.head)
+ 	if isOOO && fastRejectOOO {
+ 		s.Unlock()
+ 		return nil, storage.ErrOutOfOrderSample
+@@ -336,7 +336,7 @@ func (a *headAppenderV2) appendFloatHistogram(s *memSeries, st, t int64, fh *his
+ 	}
+ 	// TODO(codesome): If we definitely know at this point that the sample is ooo, then optimise
+ 	// to skip that sample from the WAL and write only in the WBL.
+-	isOOO, delta, err := s.appendableFloatHistogram(t, fh, a.headMaxt, a.minValidTime, a.oooTimeWindow)
++	isOOO, delta, err := s.appendableFloatHistogram(t, fh, a.headMaxt, a.minValidTime, a.oooTimeWindow, a.head)
+ 	if isOOO && fastRejectOOO {
+ 		s.Unlock()
+ 		return nil, storage.ErrOutOfOrderSample
+```
+
+**File**: `tsdb/head_mmap_append_test.go` (added, +357/-0)
+```diff
+@@ -0,0 +1,357 @@
++// Copyright The Prometheus Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package tsdb
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/prometheus/prometheus/model/labels"
++	"github.com/prometheus/prometheus/storage"
++	"github.com/prometheus/prometheus/tsdb/chunkenc"
++	"github.com/prometheus/prometheus/tsdb/chunks"
++	"github.com/prometheus/prometheus/tsdb/tsdbutil"
++	"github.com/prometheus/prometheus/tsdb/wlog"
++	"github.com/prometheus/prometheus/util/compression"
++)
++
++// reopenHeadMmapOnly persists the series' only head chunk and reopens the head.
++// WAL replay skips samples already covered by mmapped chunks, leaving the series
++// with mmapped chunks but no head chunk, as after recovery without a newer WAL tail.
++func reopenHeadMmapOnly(t *testing.T, opts *HeadOptions, h *Head, ref chunks.HeadSeriesRef) (*Head, *memSeries) {
++	t.Helper()
++	ms := h.series.getByID(ref)
++	c := ms.headChunks
++	// The callback may run on the chunk write queue goroutine, so check its error here.
++	writeErr := make(chan error, 1)
++	h.chunkDiskMapper.WriteChunk(ms.ref, c.minTime, c.maxTime, c.chunk, false, func(err error) { writeErr <- err })
++	require.NoError(t, <-writeErr)
++	require.NoError(t, h.Close())
++	wal, err := wlog.NewSize(nil, nil, filepath.Join(opts.ChunkDirRoot, "wal"), 32768, compression.None)
++	require.NoError(t, err)
++	h, err = NewHead(nil, nil, wal, nil, opts, nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, h.Close()) })
++	require.NoError(t, h.Init(0))
++	ms = h.series.getByID(ref)
++	require.Nil(t, ms.headChunks)
++	require.NotEmpty(t, ms.mmappedChunks)
++	return h, ms
++}
++
++func TestMemSeries_appendable(t *testing.T) {
++	t.Run("recovery", func(t *testing.T) {
++		for _, snapshot := range []bool{false, true} {
++			for name, scenario := range sampleTypeScenarios {
++				for _, tc := range []struct {
++					name    string
++					window  int64
++					wantErr error
++				}{
++					{name: "ooo disabled", wantErr: storage.ErrOutOfOrderSample},
++					{name: "within ooo window", window: 1000},
++					{name: "outside ooo window", window: 40, wantErr: storage.ErrTooOldSample},
++				} {
++					t.Run(fmt.Sprintf("snapshot=%t/%s/%s", snapshot, name, tc.name), func(t *testing.T) {
++						opts := newTestHeadDefaultOptions(DefaultBlockDuration, false)
++						opts.OutOfOrderTimeWindow.Store(tc.window)
++						opts.EnableMemorySnapshotOnShutdown = snapshot
++						h, _ := newTestHeadWithOptions(t, compression.None, opts)
++						require.NoError(t, h.Init(0))
++						ls := labels.FromStrings("metric", "mmap_recovery")
++						app := h.AppenderV2(t.Context())
++						ref, _, err := scenario.appendFunc(app, ls, 100, 1)
++						require.NoError(t, err)
++						_, _, err = scenario.appendFunc(app, ls, 200, 2)
++						require.NoError(t, err)
++						// WAL also contains a conflicting sample that Commit does not store.
++						_, _, err = scenario.appendFunc(app, ls, 200, 999)
++						require.NoError(t, err)
++						require.NoError(t, app.Commit())
++						h, ms := reopenHeadMmapOnly(t, opts, h, chunks.HeadSeriesRef(ref))
++						newAppender := func() storage.AppenderV2 {
++							return h.AppenderV2(t.Context())
++						}
++						a := newAppender()
++						_, _, err = scenario.appendFunc(a, ls, 150, 3)
++						if tc.wantErr == nil {
++							require.NoError(t, err)
++						} else {
++							require.ErrorIs(t, err, tc.wantErr)
++						}
++						require.NoError(t, a.Commit())
++						require.Nil(t, ms.headChunks, "an OOO append must not create an in-order head chunk")
++						// The last mmapped sample is read back from its chunk, so a
++						// conflicting value at its timestamp is rejected as a duplicate,
++						// while an exact duplicate is accepted without being stored again.
++						a = newAppender()
++						_, _, err = scenario.appendFunc(a, ls, 200, 999)
++						require.ErrorIs(t, err, storage.ErrDuplicateSampleForTimestamp, "the last mmapped sample must be used for conflict detection")
++						require.NoError(t, a.Commit())
++						a = newAppender()
++						_, _, err = scenario.appendFunc(a, ls, 200, 2)
++						require.NoError(t, err, "an exact duplicate of the last mmapped sample is accepted")
++						require.NoError(t, a.Commit())
++						require.Nil(t, ms.headChunks, "an equal-timestamp append must not create an in-order head chunk")
++						if ms.ooo != nil && ms.ooo.oooHeadChunk != nil {
++							require.NotContains(t, ms.ooo.oooHeadChunk.chunk.sampl
+```
+
+---
+
+### Incident Patch 3: `0e622865` (2026-11-06)
+**Commit Message**: Merge pull request #20343 from roidelapluie/roidelapluie/ui-unquoted-name-compatibility
+
+ui: accept colons in grouping labels and leading colons in names
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +6/-0)
+```diff
+@@ -333,6 +333,12 @@ describe('analyzeCompletion test', () => {
+       pos: 11, // cursor is between the bracket after the string myL
+       expectedContext: [{ kind: ContextKind.LabelName }],
+     },
++    {
++      title: 'continue to autocomplete a grouping label containing a colon',
++      expr: 'sum by (a:b)',
++      pos: 11,
++      expectedContext: [{ kind: ContextKind.LabelName }],
++    },
+     {
+       title: 'continue to autocomplete QuotedLabelName in aggregate modifier',
+       expr: 'sum by ("myL")',
+```
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +2/-0)
+```diff
+@@ -30,6 +30,7 @@ import {
+   EqlSingle,
+   FunctionCallBody,
+   GroupingLabels,
++  GroupingLabelName,
+   Gte,
+   Gtr,
+   LabelMatchers,
+@@ -542,6 +543,7 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, pos: num
+       result.push({ kind: ContextKind.LabelName, metricName: getMetricNameInVectorSelector(node, state) });
+       break;
+     }
++    case GroupingLabelName:
+     case LabelName:
+       if (node.parent?.type.id === GroupingLabels) {
+         // In this case we are in the given situation:
+```
+
+**File**: `web/ui/module/codemirror-promql/src/parser/parser.test.ts` (modified, +15/-0)
+```diff
+@@ -19,6 +19,21 @@ import { ValueType } from '../types';
+ 
+ describe('promql operations', () => {
+   const testCases = [
++    {
++      expr: ':node_memory_MemAvailable_bytes',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'sum by (a:b) (:温度)',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'foo + on (a:b) group_left (:label) bar',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
+     {
+       expr: 'foo{service.name="api"}',
+       expectedValueType: ValueType.vector,
+```
+
+**File**: `web/ui/module/codemirror-promql/src/parser/vector.test.ts` (modified, +10/-0)
+```diff
+@@ -21,6 +21,16 @@ const noFill = { fill: { lhs: null, rhs: null } };
+ 
+ describe('buildVectorMatching test', () => {
+   const testCases: { binaryExpr: string; expectedVectorMatching: VectorMatching }[] = [
++    {
++      binaryExpr: 'foo + on (a:b) group_left (:label) bar',
++      expectedVectorMatching: {
++        card: VectorMatchCardinality.CardManyToOne,
++        matchingLabels: ['a:b'],
++        on: true,
++        include: [':label'],
++        ...noFill,
++      },
++    },
+     {
+       binaryExpr: 'foo * bar',
+       expectedVectorMatching: { card: VectorMatchCardinality.CardOneToOne, matchingLabels: [], on: false, include: [], ...noFill },
+```
+
+**File**: `web/ui/module/codemirror-promql/src/parser/vector.ts` (modified, +3/-3)
+```diff
+@@ -17,7 +17,7 @@ import {
+   And,
+   BinaryExpr,
+   MatchingModifierClause,
+-  LabelName,
++  GroupingLabelName,
+   GroupingLabels,
+   GroupLeft,
+   GroupRight,
+@@ -51,7 +51,7 @@ export function buildVectorMatching(state: EditorState, binaryNode: SyntaxNode):
+   if (modifierClause) {
+     result.on = modifierClause.getChild(On) !== null;
+     const labelNode = modifierClause.getChild(GroupingLabels);
+-    const labels = labelNode ? labelNode.getChildren(LabelName) : [];
++    const labels = labelNode ? labelNode.getChildren(GroupingLabelName) : [];
+     for (const label of labels) {
+       result.matchingLabels.push(state.sliceDoc(label.from, label.to));
+     }
+@@ -62,7 +62,7 @@ export function buildVectorMatching(state: EditorState, binaryNode: SyntaxNode):
+     if (group) {
+       result.card = groupLeft ? VectorMatchCardinality.CardManyToOne : VectorMatchCardinality.CardOneToMany;
+       const labelNode = group.nextSibling;
+-      const labels = labelNode?.getChildren(LabelName) || [];
++      const labels = labelNode?.getChildren(GroupingLabelName) || [];
+       for (const label of labels) {
+         result.include.push(state.sliceDoc(label.from, label.to));
+       }
+```
+
+**File**: `web/ui/module/lezer-promql/src/promql.grammar` (modified, +8/-3)
+```diff
+@@ -133,7 +133,7 @@ binModifiers {
+ }
+ 
+ GroupingLabels {
+-  "(" ((LabelName | QuotedLabelName) ("," (LabelName | QuotedLabelName))* ","?)? ")"
++  "(" ((GroupingLabelName | QuotedLabelName) ("," (GroupingLabelName | QuotedLabelName))* ","?)? ")"
+ }
+ 
+ FunctionCall {
+@@ -334,6 +334,13 @@ durationPrimary[@inline] {
+ 
+ @skip { whitespace | LineComment }
+ 
++// Names take precedence over punctuation so metric names can start with a colon.
++@external tokens names from "./tokens" {
++  Identifier,
++  LabelName,
++  GroupingLabelName[@name=LabelName]
++}
++
+ @tokens {
+   whitespace { std.whitespace+ }
+   LineComment { "#" ![\n]* }
+@@ -383,8 +390,6 @@ durationPrimary[@inline] {
+   At { "@" }
+ }
+ 
+-@external tokens names from "./tokens" { Identifier, LabelName }
+-
+ // Keywords
+ 
+ @external specialize {Identifier} specializeIdentifier from "./tokens" {
+```
+
+**File**: `web/ui/module/lezer-promql/src/tokens.js` (modified, +7/-5)
+```diff
+@@ -16,6 +16,7 @@ import { ExternalTokenizer } from "@lezer/lr";
+ import {
+   Identifier,
+   LabelName,
++  GroupingLabelName,
+   And,
+   Avg,
+   Atan2,
+@@ -79,15 +80,16 @@ function isNameStart(ch) {
+ 
+ export const names = new ExternalTokenizer(
+   (input, stack) => {
+-    const label = stack.canShift(LabelName);
++    const selectorLabel = stack.canShift(LabelName);
++    const groupingLabel = stack.canShift(GroupingLabelName);
+     let ch = readCodePoint(input);
+-    if (!isNameStart(ch) && (label || ch !== 58)) return;
+-    // Dots and ASCII digits can follow; only metric names allow colons.
++    if (!isNameStart(ch) && (selectorLabel || ch !== 58)) return;
++    // Grouping labels allow colons for compatibility, unlike selector labels.
+     do {
+       input.advance(ch > 0xffff ? 2 : 1);
+       ch = readCodePoint(input);
+-    } while (isNameStart(ch) || (ch >= 48 && ch <= 57) || ch === 46 || (!label && ch === 58));
+-    input.acceptToken(label ? LabelName : Identifier);
++    } while (isNameStart(ch) || (ch >= 48 && ch <= 57) || ch === 46 || (!selectorLabel && ch === 58));
++    input.acceptToken(selectorLabel ? LabelName : groupingLabel ? GroupingLabelName : Identifier);
+   },
+   { contextual: true }
+ );
+```
+
+**File**: `web/ui/module/lezer-promql/test/promql.test.js` (modified, +15/-2)
+```diff
+@@ -29,6 +29,19 @@ describe('unquoted UTF-8 names', () => {
+         'requests_total + ignoring (service.name) group_right (équipe) service_info',
+         'foo{a..="b"}',
+         '_:温度.total',
++        ':node_memory_MemAvailable_bytes',
++        ':温度{場所="東京"}',
++        ':foo[5m]',
++        'foo + :bar',
++        'sum by (a:b, :label, label:, :) (foo)',
++        'sum without (a:b) (foo)',
++        'foo + on (a:b) bar',
++        'foo + ignoring (a:b) bar',
++        'foo + on (job) group_left (a:b) bar',
++        'foo + on (job) group_right (a:b) bar',
++        'sum by (場所:名前) (温度)',
++        'foo[5m:]',
++        'foo[5m:step()]',
+         'foo.',
+         'foo..bar',
+         'Inf.total + Inf',
+@@ -49,14 +62,14 @@ describe('unquoted UTF-8 names', () => {
+         '.foo', '5foo', 'foo{.label="x"}', 'foo{5label="x"}', 'foo{a:b="x"}',
+         'foo😀', 'foo١', 'foo²', 'o\u0308', 'foo·bar', 'foo\u200dbar', 'foo\ufffd',
+         'foo\ud800', 'foo\udc00', 'sum by (o\u0308) (foo)', 'foo{é😀="x"}',
+-        'sum by (a:b) (foo)', 'foo + on (a:b) bar', 'topK(1, foo)',
++        'foo{:label="x"}', 'foo{label:="x"}', 'foo{:="x"}', 'topK(1, foo)',
+     ];
+     for (const query of invalid) {
+         it(`rejects ${query}`, () => {
+             expect(() => strictParser.parse(query)).toThrow();
+         });
+     }
+-    for (const name of ['İnf', 'topK', 'İGNORING', 'on.total', 'sum.total', '𐐀']) {
++    for (const name of ['İnf', 'topK', 'İGNORING', 'on.total', 'sum.total', '𐐀', ':', ':foo', ':温度']) {
+         it(`preserves ${name} as a metric name`, () => {
+             expect(strictParser.parse(name).toString()).toBe('PromQL(VectorSelector(Identifier))');
+         });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20356** (2026-11-06): chore: fix the 3.16.0 changelog and harden the release version bump (@aknuds1)
+- **PR #20345** (2026-11-06): promql: restore conservative name printing by default (@roidelapluie)
 - **PR #20344** (closed): merge release-3.16 into main (@ywwg)
-- **PR #20335** (2026-11-05): promql: accept unquoted colons in grouping labels again (@aknuds1)
-- **PR #20332** (2026-11-05): docs: require raw benchstat output and commit links in AGENTS.md (@bwplotka)
-- **PR #20324** (2026-11-05): Release 3.16.0 (@ywwg)
-- **PR #20320** (2026-11-05): tsdb/agent [PERF]: clear pooled appender references and preallocate sampleSeries (@bwplotka)
-- **PR #20317** (2026-11-05): tsdb/agent: implement storage.GetRef on appenders (@bwplotka)
+- **PR #20343** (2026-11-06): ui: accept colons in grouping labels and leading colons in names (@roidelapluie)
+- **PR #20338** (closed): ui: keep lexing keywords before numbers such as bool.5 (@aknuds1)
+- **PR #20337** (closed): promql: keep lexing keywords before numbers such as bool.5 (@aknuds1)
 
 ---
 
@@ -1849,28 +2670,96 @@ Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: require raw benchstat output and commit links in AGENTS.md (#20332)
+## X. scrape [PERF]: acquire storage appender after reading HTTP response (#20319)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scrape/scrape.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bfb6bb5`: docs: require raw benchstat output and commit links in AGENTS.md (#20332). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06503461`: scrape [PERF]: acquire storage appender after reading HTTP response (#20319). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scrape/scrape.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Always output benchmark results in raw `benchstat` format in the PR body (and review comments), and always include a link to the exact commit(s) (`before` and `after`) that the benchmark refers to. Rerun benchmarks and update the commit link whenever addressing review comments that touch benchmarked code or benchmarks.
+	var contentType string
+	var b []byte
+	forcedErr := sl.getForcedError()
+	if forcedErr != nil {
+		scrapeErr = forcedErr
+	} else {
+		var resp *http.Response
+		var buf *bytes.Buffer
+		scrapeCtx, cancel := context.WithTimeout(trace.ContextWithSpan(sl.parentCtx, span), sl.timeout)
+		resp, scrapeErr = sl.scraper.scrape(scrapeCtx)
+		if scrapeErr == nil {
+			// Avoid copying the body when bytes.Buffer.ReadFrom grows before reading EOF.
+			b = sl.buffers.Get(sl.lastScrapeSize + bytes.MinRead).([]byte)
+			defer sl.buffers.Put(b)
+			buf = bytes.NewBuffer(b)
+			// Trace the response body read and decompression into the buffer.
+			_, readSpan := otel.Tracer("").Start(spanCtx, "scrapeRead")
+			contentType, scrapeErr = sl.scraper.readResponse(scrapeCtx, resp, buf)
+			if scrapeErr != nil {
+				readSpan.RecordError(scrapeErr)
+				readSpan.SetStatus(codes.Error, scrapeErr.Error())
+			}
+			readSpan.End()
+		}
+		cancel()
+
+		if scrapeErr == nil {
+			b = buf.Bytes()
+			// NOTE: There were issues with misbehaving clients in the past
+			// that occasionally returned empty results. We don't want those
+			// to falsely reset our buffer size.
+			if len(b) > 0 {
+				sl.lastScrapeSize = len(b)
+			}
+			bytesRead
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- Provide benchmark numbers in the PR body using `benchstat` output.
+	if forcedErr := sl.getForcedError(); forcedErr != nil {
+		scrapeErr = forcedErr
+	var contentType string
+	var resp *http.Response
+	var b []byte
+	var buf *bytes.Buffer
+	scrapeCtx, cancel := context.WithTimeout(trace.ContextWithSpan(sl.parentCtx, span), sl.timeout)
+	resp, scrapeErr = sl.scraper.scrape(scrapeCtx)
+	if scrapeErr == nil {
+		// Avoid copying the body when bytes.Buffer.ReadFrom grows before reading EOF.
+		b = sl.buffers.Get(sl.lastScrapeSize + bytes.MinRead).([]byte)
+		defer sl.buffers.Put(b)
+		buf = bytes.NewBuffer(b)
+		// Trace the response body read and decompression into the buffer.
+		_, readSpan := otel.Tracer("").Start(spanCtx, "scrapeRead")
+		contentType, scrapeErr = sl.scraper.readResponse(scrapeCtx, resp, buf)
+		if scrapeErr != nil {
+			readSpan.RecordError(scrapeErr)
+			readSpan.SetStatus(codes.Error, scrapeErr.Error())
+		}
+		readSpan.End()
+	}
+	cancel()
+
+	if scrapeErr == nil {
+		b = buf.Bytes()
+		// NOTE: There were issues with misbehaving clients in the past
+		// that occasionally returned empty results. We don't want those
+		// to falsely reset our buffer size.
+		if len(b) > 0 {
+			sl.lastScrapeSize = len(b)
+		}
+		bytesRead = len(b)
+	} else {
+		sl.l.Debug("Scra
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bfb6bb5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06503461` are properly handled with clean fallback behavior.
