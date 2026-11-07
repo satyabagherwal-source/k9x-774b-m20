@@ -7995,3 +7995,7 @@
 | `CYCLE-20261107-MPDF` | `2026-11-07T04:29:42.771Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bd7c773f...`) |
 | `CYCLE-20261107-W59O` | `2026-11-07T04:37:03.276Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1988674f...`) |
 | `CYCLE-20261107-W6LP` | `2026-11-07T04:37:05.005Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ecf94fa1...`) |
+| `CYCLE-20261107-5I30` | `2026-11-07T04:44:19.788Z` | `syntax-tree/hast-util-from-html` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md` | Yes (`2d475334...`) |
+| `CYCLE-20261107-5LBE` | `2026-11-07T04:44:23.978Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cd7d2da5...`) |
+| `CYCLE-20261107-5NJB` | `2026-11-07T04:44:26.855Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba3809d7...`) |
+| `CYCLE-20261107-5QY4` | `2026-11-07T04:44:31.276Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`138829b7...`) |

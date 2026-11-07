@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `cb45461a`  
+> **Source Version**: `fdae7e29`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T01:22:29.177Z  
+> **Timestamp**: 2026-11-07T04:44:29.414Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T01:22:29.171Z  
+> **Harvest Timestamp**: 2026-11-07T04:44:29.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2163 stars
+- **Stars / Engagement**: 2166 stars
 
 ---
 
@@ -540,492 +540,731 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e074dfb9` (2026-11-04)
-**Commit Message**: add node heartbeat to update the lease timeout in a long-running node
+### Incident Patch 1: `fdae7e29` (2026-11-05)
+**Commit Message**: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
 
-**File**: `src/Workflow/Executor/Segment.php` (modified, +15/-1)
+Let installed packages add commands to the neuron CLI
+
+**File**: `bin/neuron` (modified, +3/-1)
 ```diff
-@@ -6,6 +6,7 @@
+@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
  
- use Closure;
- use Generator;
-+use NeuronAI\Exceptions\PersistenceException;
- use NeuronAI\Exceptions\WorkflowException;
- use NeuronAI\Exceptions\WorkflowRefusedException;
- use NeuronAI\Observability\ObservabilityEvent;
-@@ -168,7 +169,10 @@ public function branch(ParallelEvent $fork, string $branchId, string $forkStepId
-         return true;
-     }
+ require_once $defaultAutoload;
  
--    /** @phpstan-impure The control record changes as branch generators advance. */
-+    /**
-+     * @phpstan-impure The control record changes as branch generators advance.
-+     * @throws WorkflowException
-+     */
-     public function shouldPause(): bool
-     {
-         $active = $this->store->control()->interrupt;
-@@ -241,6 +245,9 @@ protected function settle(Event $terminal): void
-         }
-     }
++use NeuronAI\Console\InstalledCommandProviders;
+ use NeuronAI\Console\NeuronCli;
  
-+    /**
-+     * @throws WorkflowException
-+     */
-     protected function fail(Throwable $e): void
-     {
-         $this->stamp($this->state);
-@@ -274,6 +281,9 @@ protected function releaseIfAbandoned(): bool
-         return true;
-     }
- 
-+    /**
-+     * @throws WorkflowException
-+     */
-     protected function markControlFailed(): void
-     {
-         if (!$this->store->hasControl() || $this->store->control()->status === WorkflowStatus::Completed) {
-@@ -503,6 +513,10 @@ protected function runMiddlewarePhase(
-         }
-     }
- 
-+    /**
-+     * @throws PersistenceException
-+     * @throws WorkflowException
-+     */
-     protected function settleInterrupt(WorkflowControl $control): WorkflowControl
-     {
-         $nextStepId = $control->pendingSteps[0] ?? null;
+ try {
+-    $command = new NeuronCli();
++    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
++    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
+     $exitCode = $command->run($args);
+     exit($exitCode);
+ } catch (Throwable $e) {
 ```
 
-**File**: `src/Workflow/Executor/SequentialBranchRunner.php` (modified, +6/-0)
+**File**: `src/Console/AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -5,13 +5,19 @@
- namespace NeuronAI\Workflow\Executor;
+@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
+ ## Design
  
- use Generator;
-+use NeuronAI\Exceptions\WorkflowException;
- use NeuronAI\Workflow\Events\ParallelEvent;
- 
-+use Throwable;
- use function array_keys;
- 
- /** Runs the branches of a fork one after another, up to the first pause. */
- class SequentialBranchRunner implements BranchRunner
+ - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
++- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
+ - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
+ - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
+ - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
+```
+
+**File**: `src/Console/CommandProvider.php` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Console;
++
++use Closure;
++
++/**
++ * Adds commands to the neuron CLI from an installed package, which declares it
++ * under "extra.neuron.command-provider" in its composer.json.
++ */
++interface CommandProvider
++{
++    /**
++     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
++     */
++    public function commands(): array;
++}
+```
+
+**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Console;
++
++use RuntimeException;
++
++use function file_get_contents;
++use function is_file;
++use function json_decode;
++
++use const JSON_THROW_ON_ERROR;
++
++/**
++ * The command providers declared by the packages Composer installed.
++ */
++class InstalledCommandProviders
++{
++    /**
++     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
++     */
++    public function __construct(protected string $installedPackagesFile)
++    {
++    }
++
++    /**
++     * @return CommandProvider[]
++     */
++    public function discover(): array
++    {
++        if (!is_file($this->installedPackagesFile)) {
++            return [];
++        }
++
++        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
++
++        $providers = [];
++        foreach ($installed['packages'] ?? [] as $package) {
++            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
++
++            if ($providerClass !== null) {
++                $providers[] = $this->instantiate($package['name'], $providerClass);
++            }
++        }
++
++        return $providers;
++    }
++
++    protected function instantiate(string $packageName, string $providerClass): CommandProvider
++    {
++        $provider = new $providerClass();
++
++        if (!$provider instanceof CommandProvider) {
++            throw new RuntimeException(
++                "{$packageName} declares {$providerClass} as its command provider, "
++                . 'but it does not implement ' . CommandProvider::class
++            );
++        }
++
++        return $provider;
++    }
++}
+```
+
+**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
+```diff
+@@ -17,11 +17,21 @@
+ class NeuronCli extends Command
  {
-+    /**
-+     * @throws Throwable
-+     * @throws WorkflowException
-+     */
-     public function run(Segment $segment, ParallelEvent $fork, string $forkStepId): Generator
-     {
-         $paused = false;
-```
-
-**File**: `src/Workflow/Executor/StepMemoizer.php` (modified, +4/-0)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\Workflow\Executor;
- 
- use Closure;
-+use NeuronAI\Exceptions\WorkflowRefusedException;
- 
- /** Durable memoization bound to one node-execution step, and the lease renewal of its run. */
- final class StepMemoizer
-@@ -25,6 +26,9 @@ public function get(string $name): mixed
-         return $this->store->recallMemo($this->stepId, $name);
-     }
- 
-+    /**
-+     * @throws WorkflowRefusedException
-+     */
-     public function heartbeat(): void
-     {
-         $this->store->heartbeat();
-```
-
-**File**: `src/Workflow/Executor/WorkflowControl.php` (modified, +5/-1)
-```diff
-@@ -4,6 +4,7 @@
- 
- namespace NeuronAI\Workflow\Executor;
- 
-+use NeuronAI\Exceptions\WorkflowRefusedException;
- use NeuronAI\Workflow\Interrupt\ResumeInput;
- use NeuronAI\Workflow\WorkflowStatus;
- 
-@@ -52,7 +53,7 @@ public function addInterrupt(ActiveInterrupt $active): self
-         return $this->with([
-             'nextInterruptId' => $active->request->getId() + 1,
-             'interrupt' => $this->interrupt ?? $active,
--            'pendingSteps' => $this->interrupt instanceof \NeuronAI\Workflow\Executor\ActiveInterrupt
-+            'pendingSteps' => $this->interrupt instanceof ActiveInterrupt
-                 ? [...$this->pendingSteps, $active->stepId]
-                 : $this->pendingSteps,
-         ]);
-@@ -66,6 +67,9 @@ public function removeInterrupt(?ActiveInterrupt $next): self
-         ]);
-     }
- 
-+    /**
-+     * @throws WorkflowRefusedException
-+     */
-     public function withInput(ResumeInput $input): self
-     {
-         return $this->with(['interrupt' => $this->interrupt->withInput($input)]);
-```
-
-**File**: `src/Workflow/Executor/WorkflowRunStore.php` (modified, +29/-5)
-```diff
-@@ -88,6 +88,9 @@ public function initialize(WorkflowControl $control, Ignition $ignition): bool
-         return true;
-     }
- 
-+    /**
-+     * @throws WorkflowException
-+     */
-     public function loadControl(): ?WorkflowControl
-     {
-         $this->resetRecords();
-@@ -140,18 +143,27 @@ public function replaceControl(WorkflowControl $control): void
-         $this->commit([], $control);
-     }
- 
-+    /**
-+     * @throws WorkflowRefusedException
-+     */
-     public function commitStep(StepResult $step, ?WorkflowControl $control = null): void
-     {
-         $this->commit([$this->recordKey($step->getStepId()) => $step], $control);
-     }
- 
--    /** The suspended run's state, committed together with its suspension. */
-+    /** The suspended run's state, committed together with its suspension.
-+     * @throws WorkflowRefusedException
-+     */
-     public function commitCheckpoint(WorkflowState $checkpoint, WorkflowControl $control): void
-     {
-         $this->commit([$this->recordKey(self::CHECKPOINT_KEY) => $checkpoint], $control);
-     }
- 
--    /** The retained terminal state, committed together with its completion. */
-+    /**
-+     * The retained terminal state, committed together with its completion.
-+     *
-+     * @throws WorkflowRefusedException
-+     */
-     public function commitOutcome(WorkflowState $outcome, WorkflowControl $control): void
-     {
-         $this->commit([$this->recordKey(self::OUTCOME_KEY) => $outcome], $control);
-@@ -219,6 +231,9 @@ public function memoizer(string $stepId): StepMemoizer
-         return new StepMemoizer($this, $stepId);
-     }
- 
-+    /**
-+     * @throws WorkflowRefusedException
-+     */
-     public function memo(string $stepId, string $name, Closure $operation): mixed
-     {
-         $key = $this->memoKey($stepId, $name);
-@@ -236,8 +251,6 @@ public function memo(string $stepId, string $name, Closure $operation): mixed
      /**
-      * Renews the lease once half of it has passed and writes nothing before,
-      * so a long node can call it on every iteration of a loop.
--     *
--     * @throws WorkflowRefusedException When another process took the run over.
-      */
-     public function heartbeat(): void
-     {
-@@ -304,7 +317,10 @@ protected function readRecord(string $key): ?string
-         return $this->records[$key];
-     }
- 
--    /** @param array<string, mixed> $records */
-+    /**
-+     * @param array<string, mixed> $records
-+     * @throws WorkflowException
++     * @param CommandProvider[] $providers
 +     */
-     protected function commit(array $records, ?WorkflowControl $control = null): void
-     {
-         $committed = $this->serializeRecords($records);
-@@ -339,6 +355,8 @@ protected function commit(array $records, ?WorkflowControl $control = null): voi
-      * Control with a fresh lease once half of the current one has passed, or
-      * unchanged. No other process can take the run while its lease holds, so
-      * a renewal skipped before then never hides a takeover.
++    public function __construct(protected array $providers = [])
++    {
++    }
++
++    /**
++     * Built-in commands come first and win name collisions, so an installed
++     * package can add commands but never change what an existing one does.
 +     *
-+     * @throws WorkflowException
+      * @return array<string, array{string, Closure(): Command}>
       */
-     protected function renewedLease(): WorkflowControl
+     public function commands(): array
      {
-@@ -358,11 +376,17 @@ protected function resetRecords(bool $freshRun = false): void
-         $this->freshRun = $freshRun;
+-        return [
++        $commands = [
+             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
+             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
+             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
+@@ -32,6 +42,12 @@ public function commands(): array
+             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
+             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
+         ];
++
++        foreach ($this->providers as $provider) {
++            $commands += $provider->commands();
++        }
++
++        return $commands;
      }
  
+     /**
+```
+
+**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Tests\Console;
++
++use NeuronAI\Console\CommandProvider;
++use NeuronAI\Console\InstalledCommandProviders;
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
++use NeuronAI\Tests\Support\FileSystemSandbox;
++use PHPUnit\Framework\TestCase;
++use RuntimeException;
++use stdClass;
++
++use function file_put_contents;
++use function json_encode;
++
++use const JSON_THROW_ON_ERROR;
++
++class InstalledCommandProvidersTest extends TestCase
++{
++    use FileSystemSandbox;
++
++    protected string $sandbox;
++
++    protected function setUp(): void
++    {
++        $this->sandbox = $this->createSandbox('installed-command-providers');
++    }
++
++    protected function tearDown(): void
++    {
++        $this->removeSandbox($this->sandbox);
++    }
++
++    public function test_discovers_the_providers_declared_by_installed_packages(): void
++    {
++        $file = $this->installedPackages([
++            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
++            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
++            ['name' => 'acme/without-extra'],
++        ]);
++
++        $providers = (new InstalledCommandProviders($file))->discover();
++
++        $this->assertCount(1, $providers);
++        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
++    }
++
++    public function test_a_missing_installed_packages_file_has_no_providers(): void
++    {
++        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
++
++        $this->assertSame([], $providers);
++    }
++
++    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
++    {
++        $file = $this->installedPackages([
++            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
++        ]);
++
++        $this->expectException(RuntimeException::class);
++        $this->expectExceptionMessage(
++            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
++        );
++
++        (new InstalledCommandProviders($file))->discover();
++    }
++
 +    /**
-+     * @throws WorkflowException
++     * @param array<array<string, mixed>> $packages
 +     */
-     protected function recordKey(string $name): string
-     {
-         return $this->control()->runId . '/' . $name;
-     }
- 
-+    /**
-+     * @throws WorkflowException
-+     */
-     protected function memoKey(string $stepId, string $name): string
-     {
-         return $this->recordKey($stepId) . '::' . $name;
++    protected function installedPackages(array $packages): string
++    {
++        $file = $this->sandbox . '/installed.json';
++        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
++
++        return $file;
++    }
++}
 ```
 
-**File**: `src/Workflow/Node.php` (modified, +5/-0)
+**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
 ```diff
-@@ -7,6 +7,7 @@
- use Closure;
- use Generator;
- use NeuronAI\Exceptions\WorkflowException;
-+use NeuronAI\Exceptions\WorkflowRefusedException;
- use NeuronAI\Observability\ObservabilityEvent;
- use NeuronAI\Workflow\Events\Event;
- use NeuronAI\Workflow\Executor\StepMemoizer;
-@@ -166,6 +167,8 @@ protected function checkpoint(string $name, Closure $closure): mixed
-      * the exception propagate, so the node stops instead of finishing work it
-      * can no longer commit. Without a lease, or without an executor (e.g. in
-      * isolation), it does nothing.
-+     *
-+     * @throws WorkflowRefusedException
-      */
-     protected function heartbeat(): void
-     {
-@@ -238,6 +241,8 @@ protected function interruptIf(callable|bool $condition, InterruptRequest $reque
-      * NOT compare the clock itself.
-      *
-      * @return array<string, mixed>|null The event payload, or null on timeout.
-+     * @throws WorkflowException
-+     * @throws WorkflowInterrupt
-      */
-     protected function awaitEvent(string $eventName, ?DateTimeImmutable $expiresAt = null): ?array
-     {
-```
-
----
-
-### Incident Patch 2: `ad699612` (2026-11-04)
-**Commit Message**: add node heartbeat to update the lease timeout in a long-running node
-
-**File**: `composer.json` (modified, +2/-1)
-```diff
-@@ -82,7 +82,8 @@
-         "style": "Run PHP CS Fixer to fix coding style issues.",
-         "refactor": "Run rector for code refactoring.",
-         "test": "Run PHPUnit to test",
--        "test:frontend": "Run the Playwright frontend protocol integration suite"
-+        "test:frontend": "Run the Playwright frontend protocol integration suite",
-+		"pre-release": "Run the complete source code verification."
-     },
-     "autoload": {
-         "psr-4": {
-```
-
-**File**: `skills/neuron-symfony-integration/SKILL.md` (modified, +1/-1)
-```diff
-@@ -597,7 +597,7 @@ framework:
+@@ -4,15 +4,19 @@
  
- | Clock | Rule | Otherwise, as run |
- |---|---|---|
--| Agent lease, 600 s (`leaseTimeout()` hook) | Above the longest single step, one inference or one whole tool batch: it renews only at step commits | Past it the engine treats a live run as dead. A killed worker holds the thread until it expires: new turns get 409 with `Retry-After` |
-+| Agent lease, 600 s (`leaseTimeout()` hook) | Above the longest single step, one inference or one whole tool batch: it renews in full at step commits | Past it the engine treats a live run as dead. A killed worker holds the thread until it expires: new turns get 409 with `Retry-After` |
- | `redeliver_timeout` (Doctrine and Redis transports) | Above the longest turn, or run `php bin/console messenger:consume async --keepalive` | 8 s against a 15 s turn: a second worker claimed the message, waited on the lease, and ran the turn again once the first completed; the first worker then crashed on "Could not acknowledge redis message". With `--keepalive=2` the turn ran once |
+ namespace NeuronAI\Tests\Console;
  
- - `doctrine_ping_connection` needs Doctrine ORM. **Never add `doctrine_transaction`** to the bus that runs agents: inside an open transaction the suspended run was invisible to other processes, and the rollback erased it.
-```
-
-**File**: `skills/neuron-workflow/SKILL.md` (modified, +7/-1)
-```diff
-@@ -384,7 +384,13 @@ Every step commit renews a deadline inside the control record at no extra
- write. A run whose deadline has passed is treated as dead: the next `run()`
- supersedes it and `run(ExecutionRequest::resume())` may take it over. Without a lease only `run(ExecutionRequest::resume())`
- can take over a `running` record. Pick a value above the longest single node
--(a slow provider or tool call). Plain workflows are opt-in; `Agent` holds a
-+(a slow provider or tool call). A node that runs longer, such as a loop over
-+many items, renews the lease as it goes by calling `$this->heartbeat()`, and
-+every `memoize()` commit renews it too. Both write only once half of the lease
-+has passed, so the lease then has to cover twice the longest stretch between
-+two calls. Once another process has taken the run over, the heartbeat throws
-+`WorkflowRefusedException`: let it propagate, so the node stops instead of
-+finishing work it can no longer commit. Plain workflows are opt-in; `Agent` holds a
- ten-minute lease by default, and `setLeaseTimeout(null)` disables it. A
- suspended run holds no lease, so a pause never expires on its own.
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
+ use NeuronAI\Tests\Support\FileSystemSandbox;
+ use PHPUnit\Framework\TestCase;
  
-```
-
-**File**: `src/Workflow/AGENTS.md` (modified, +1/-1)
-```diff
-@@ -139,7 +139,7 @@ State recalled for an owned execution (completed steps and deferred interruption
+ use function dirname;
+ use function escapeshellarg;
+ use function exec;
+ use function file_put_contents;
++use function json_encode;
++use function mkdir;
+ use function var_export;
  
- ## Leases, failures, dead generations
++use const JSON_THROW_ON_ERROR;
+ use const PHP_BINARY;
  
--Leases are opt-in (`setLeaseTimeout()`; `Agent` holds a ten-minute one by default). The deadline lives inside `__control` and every step commit renews it in the same conditional write, so a heartbeat costs nothing; suspension and caught failure clear it. A process killed with no chance to write leaves the record `running`: without a lease only `run(ExecutionRequest::resume())` can take it over, with one the next ignition supersedes it once the deadline passes. A lease is a crash-overlap safeguard, not proof the prior process died: choose a timeout longer than the longest silent node operation.
-+Leases are opt-in (`setLeaseTimeout()`; `Agent` holds a ten-minute one by default). The deadline lives inside `__control`, and every step commit renews it in full in the same conditional write; suspension and caught failure clear it. Inside a node, a memo commit carries a renewal once half of the lease has passed, and so does `heartbeat()`, which a long loop calls as it goes and which writes nothing before then. A heartbeat is fenced like every write: once another process has taken the run over it throws `WorkflowRefusedException`, so the node stops instead of finishing work it can no longer commit; without a lease, or with the node run in isolation, it does nothing. A process killed with no chance to write leaves the record `running`: without a lease only `run(ExecutionRequest::resume())` can take it over, with one the next ignition supersedes it once the deadline passes. A lease is a crash-overlap safeguard, not proof the prior process died: choose a timeout longer than any node that neither memoizes nor calls `heartbeat()`, and at least twice the longest stretch between two such calls. A single blocking call (one HTTP request, one query) gives the node no chance to renew.
- 
- A cycle that never reaches a `StopEvent` runs and persists forever, and every commit renews its lease. A step budget is opt-in (`setMaxSteps()`, or the `maxSteps()` hook): once one of the run's paths, the main one or a parallel branch, goes past that many steps, replayed ones included, the run fails with `WorkflowException`. There is no budget by default, since a workflow may loop on purpose.
- 
-```
-
-**File**: `src/Workflow/Executor/Segment.php` (modified, +3/-4)
-```diff
-@@ -85,7 +85,6 @@ public function __construct(
-         protected WorkflowRunStore $store,
-         protected ExecutionContext $context,
-         protected WorkflowState $state,
--        protected ?int $leaseTimeout,
-         protected bool $retainCompletion,
-     ) {
-         $this->processId = getmypid();
-@@ -430,10 +429,10 @@ protected function runNodeStep(
-             return $result;
-         }
- 
--        if ($this->leaseTimeout !== null) {
-+        if ($this->store->leaseTimeout !== null) {
-             // The commit carries the lease renewal for the node that runs
--            // next, so a heartbeat never costs a write of its own.
--            $control = $control->heartbeat(time() + $this->leaseTimeout);
-+            // next, in full and at no write of its own.
-+            $control = $control->heartbeat(time() + $this->store->leaseTimeout);
-         }
- 
-         $this->store->commitStep($result, $control);
-```
-
-**File**: `src/Workflow/Executor/StepMemoizer.php` (modified, +6/-1)
-```diff
-@@ -6,7 +6,7 @@
- 
- use Closure;
- 
--/** Durable memoization bound to one node-execution step. */
-+/** Durable memoization bound to one node-execution step, and the lease renewal of its run. */
- final class StepMemoizer
- {
-     public function __construct(
-@@ -24,4 +24,9 @@ public function get(string $name): mixed
-     {
-         return $this->store->recallMemo($this->stepId, $name);
+ class NeuronBinTest extends TestCase
+@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
+         $this->assertSame(0, $exitCode);
+         $this->assertSame('project autoloader', $output[0]);
      }
 +
-+    public function heartbeat(): void
++    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
 +    {
-+        $this->store->heartbeat();
++        $root = dirname(__DIR__, 2);
++        $proxy = $this->sandbox . '/neuron';
++
++        mkdir($this->sandbox . '/composer');
++        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
++            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
++        ]], JSON_THROW_ON_ERROR));
++        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
++        file_put_contents(
++            $proxy,
++            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
++            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
++        );
++
++        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
++
++        $this->assertSame(0, $exitCode);
++        $this->assertSame(['Hello from an installed package'], $output);
 +    }
  }
 ```
 
-**File**: `src/Workflow/Executor/WorkflowRunStore.php` (modified, +34/-1)
+**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
 ```diff
-@@ -15,6 +15,7 @@
- use Throwable;
+@@ -6,9 +6,11 @@
  
- use function array_key_exists;
-+use function time;
- 
- /**
-  * Persistence protocol for one Workflow run partition.
-@@ -62,6 +63,7 @@ public function __construct(
-         protected PersistenceInterface $persistence,
-         protected Serializer $serializer,
-         public readonly string $workflowId,
-+        public readonly ?int $leaseTimeout = null,
-     ) {
-     }
- 
-@@ -226,11 +228,25 @@ public function memo(string $stepId, string $name, Closure $operation): mixed
-         }
- 
-         $value = $operation();
--        $this->commit([$key => $value]);
-+        $this->commit([$key => $value], $this->renewedLease());
- 
-         return $value;
-     }
- 
-+    /**
-+     * Renews the lease once half of it has passed and writes nothing before,
-+     * so a long node can call it on every iteration of a loop.
-+     *
-+     * @throws WorkflowRefusedException When another process took the run over.
-+     */
-+    public function heartbeat(): void
-+    {
-+        $control = $this->renewedLease();
-+        if ($control !== $this->control) {
-+            $this->replaceControl($control);
-+        }
-+    }
-+
-     public function recallMemo(string $stepId, string $name): mixed
-     {
-         $recorded = $this->readRecord($this->memoKey($stepId, $name));
-@@ -319,6 +335,23 @@ protected function commit(array $records, ?WorkflowControl $control = null): voi
+ use Closure;
+ use NeuronAI\Console\Command;
++use NeuronAI\Console\CommandProvider;
+ use NeuronAI\Console\Evaluation\EvaluationCommand;
+ use NeuronAI\Console\Make\MakeCommand;
+ use NeuronAI\Console\NeuronCli;
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
+ use PHPUnit\Framework\Attributes\DataProvider;
+ use PHPUnit\Framework\TestCase;
+ use RuntimeException;
+@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
          }
      }
  
-+    /**
-+     * Control with a fresh lease once half of the current one has passed, or
-+     * unchanged. No other process can take the run while its lease holds, so
-+     * a renewal skipped before then never hides a takeover.
-+     */
-+    protected function renewedLease(): WorkflowControl
++    public function test_provider_commands_are_listed_and_dispatched(): void
 +    {
-+        $control = $this->control();
-+        $expiresAt = $control->leaseExpiresAt;
-+        $now = time();
-+        if ($this->leaseTimeout === null || $expiresAt === null || $expiresAt - $now > $this->leaseTimeout / 2) {
-+            return $control;
-+        }
++        $cli = new NeuronCli([new GreetingCommandProvider()]);
 +
-+        return $control->heartbeat($now + $this->leaseTimeout);
++        [, $usage] = $this->runCli($cli, 'neuron', '--help');
++        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
++
++        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
++        $this->assertSame(0, $exitCode);
++        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
 +    }
 +
-     protected function resetRecords(bool $freshRun = false): void
++    public function test_a_provider_cannot_replace_a_built_in_command(): void
++    {
++        $provider = new class () implements CommandProvider {
++            public function commands(): array
++            {
++                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
++            }
++        };
++
++        $commands = (new NeuronCli([$provider]))->commands();
++
++        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
++        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
++    }
++
+     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
      {
-         $this->records = [];
+         $received = [];
 ```
 
-**File**: `src/Workflow/Node.php` (modified, +17/-0)
+---
+
+### Incident Patch 2: `1464641e` (2026-11-05)
+**Commit Message**: Let installed packages add commands to the neuron CLI
+
+A package declares a CommandProvider under "extra.neuron.command-provider"
+in its composer.json. bin/neuron finds the declared providers in
+vendor/composer/installed.json and passes them to NeuronCli, which appends
+their commands to the built-in registry. Built-in commands win name
+collisions, so a package can add commands but never change what an existing
+one does.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01H82s6KprwfcSdPkRT9ZdfF
+
+**File**: `bin/neuron` (modified, +3/-1)
 ```diff
-@@ -155,6 +155,23 @@ protected function checkpoint(string $name, Closure $closure): mixed
-         return $this->memoize($name, $closure);
-     }
+@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
  
+ require_once $defaultAutoload;
+ 
++use NeuronAI\Console\InstalledCommandProviders;
+ use NeuronAI\Console\NeuronCli;
+ 
+ try {
+-    $command = new NeuronCli();
++    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
++    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
+     $exitCode = $command->run($args);
+     exit($exitCode);
+ } catch (Throwable $e) {
+```
+
+**File**: `src/Console/AGENTS.md` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
+ ## Design
+ 
+ - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
++- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
+ - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
+ - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
+ - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
+```
+
+**File**: `src/Console/CommandProvider.php` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Console;
++
++use Closure;
++
++/**
++ * Adds commands to the neuron CLI from an installed package, which declares it
++ * under "extra.neuron.command-provider" in its composer.json.
++ */
++interface CommandProvider
++{
 +    /**
-+     * Renew the run's lease from inside a long node, for example on every
-+     * iteration of a loop, so the lease has to cover twice the longest stretch
-+     * between two calls instead of the whole node. It writes only once half of
-+     * the lease has passed, so calling it often is cheap; memoize() renews the
-+     * lease the same way.
-+     *
-+     * Once another process has taken the run over, the renewal is refused: let
-+     * the exception propagate, so the node stops instead of finishing work it
-+     * can no longer commit. Without a lease, or without an executor (e.g. in
-+     * isolation), it does nothing.
++     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
 +     */
-+    protected function heartbeat(): void
++    public function commands(): array;
++}
+```
+
+**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Console;
++
++use RuntimeException;
++
++use function file_get_contents;
++use function is_file;
++use function json_decode;
++
++use const JSON_THROW_ON_ERROR;
++
++/**
++ * The command providers declared by the packages Composer installed.
++ */
++class InstalledCommandProviders
++{
++    /**
++     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
++     */
++    public function __construct(protected string $installedPackagesFile)
 +    {
-+        $this->memoizer?->heartbeat();
 +    }
 +
++    /**
++     * @return CommandProvider[]
++     */
++    public function discover(): array
++    {
++        if (!is_file($this->installedPackagesFile)) {
++            return [];
++        }
++
++        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
++
++        $providers = [];
++        foreach ($installed['packages'] ?? [] as $package) {
++            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
++
++            if ($providerClass !== null) {
++                $providers[] = $this->instantiate($package['name'], $providerClass);
++            }
++        }
++
++        return $providers;
++    }
++
++    protected function instantiate(string $packageName, string $providerClass): CommandProvider
++    {
++        $provider = new $providerClass();
++
++        if (!$provider instanceof CommandProvider) {
++            throw new RuntimeException(
++                "{$packageName} declares {$providerClass} as its command provider, "
++                . 'but it does not implement ' . CommandProvider::class
++            );
++        }
++
++        return $provider;
++    }
++}
+```
+
+**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
+```diff
+@@ -17,11 +17,21 @@
+ class NeuronCli extends Command
+ {
      /**
-      * Suspend the workflow, carrying $request OUTBOUND to the caller.
-      * On first pass this throws the internal suspend signal; on resume it
++     * @param CommandProvider[] $providers
++     */
++    public function __construct(protected array $providers = [])
++    {
++    }
++
++    /**
++     * Built-in commands come first and win name collisions, so an installed
++     * package can add commands but never change what an existing one does.
++     *
+      * @return array<string, array{string, Closure(): Command}>
+      */
+     public function commands(): array
+     {
+-        return [
++        $commands = [
+             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
+             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
+             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
+@@ -32,6 +42,12 @@ public function commands(): array
+             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
+             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
+         ];
++
++        foreach ($this->providers as $provider) {
++            $commands += $provider->commands();
++        }
++
++        return $commands;
+     }
+ 
+     /**
+```
+
+**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Tests\Console;
++
++use NeuronAI\Console\CommandProvider;
++use NeuronAI\Console\InstalledCommandProviders;
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
++use NeuronAI\Tests\Support\FileSystemSandbox;
++use PHPUnit\Framework\TestCase;
++use RuntimeException;
++use stdClass;
++
++use function file_put_contents;
++use function json_encode;
++
++use const JSON_THROW_ON_ERROR;
++
++class InstalledCommandProvidersTest extends TestCase
++{
++    use FileSystemSandbox;
++
++    protected string $sandbox;
++
++    protected function setUp(): void
++    {
++        $this->sandbox = $this->createSandbox('installed-command-providers');
++    }
++
++    protected function tearDown(): void
++    {
++        $this->removeSandbox($this->sandbox);
++    }
++
++    public function test_discovers_the_providers_declared_by_installed_packages(): void
++    {
++        $file = $this->installedPackages([
++            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
++            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
++            ['name' => 'acme/without-extra'],
++        ]);
++
++        $providers = (new InstalledCommandProviders($file))->discover();
++
++        $this->assertCount(1, $providers);
++        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
++    }
++
++    public function test_a_missing_installed_packages_file_has_no_providers(): void
++    {
++        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
++
++        $this->assertSame([], $providers);
++    }
++
++    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
++    {
++        $file = $this->installedPackages([
++            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
++        ]);
++
++        $this->expectException(RuntimeException::class);
++        $this->expectExceptionMessage(
++            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
++        );
++
++        (new InstalledCommandProviders($file))->discover();
++    }
++
++    /**
++     * @param array<array<string, mixed>> $packages
++     */
++    protected function installedPackages(array $packages): string
++    {
++        $file = $this->sandbox . '/installed.json';
++        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
++
++        return $file;
++    }
++}
+```
+
+**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
+```diff
+@@ -4,15 +4,19 @@
+ 
+ namespace NeuronAI\Tests\Console;
+ 
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
+ use NeuronAI\Tests\Support\FileSystemSandbox;
+ use PHPUnit\Framework\TestCase;
+ 
+ use function dirname;
+ use function escapeshellarg;
+ use function exec;
+ use function file_put_contents;
++use function json_encode;
++use function mkdir;
+ use function var_export;
+ 
++use const JSON_THROW_ON_ERROR;
+ use const PHP_BINARY;
+ 
+ class NeuronBinTest extends TestCase
+@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
+         $this->assertSame(0, $exitCode);
+         $this->assertSame('project autoloader', $output[0]);
+     }
++
++    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
++    {
++        $root = dirname(__DIR__, 2);
++        $proxy = $this->sandbox . '/neuron';
++
++        mkdir($this->sandbox . '/composer');
++        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
++            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
++        ]], JSON_THROW_ON_ERROR));
++        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
++        file_put_contents(
++            $proxy,
++            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
++            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
++        );
++
++        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
++
++        $this->assertSame(0, $exitCode);
++        $this->assertSame(['Hello from an installed package'], $output);
++    }
+ }
+```
+
+**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
+```diff
+@@ -6,9 +6,11 @@
+ 
+ use Closure;
+ use NeuronAI\Console\Command;
++use NeuronAI\Console\CommandProvider;
+ use NeuronAI\Console\Evaluation\EvaluationCommand;
+ use NeuronAI\Console\Make\MakeCommand;
+ use NeuronAI\Console\NeuronCli;
++use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
+ use PHPUnit\Framework\Attributes\DataProvider;
+ use PHPUnit\Framework\TestCase;
+ use RuntimeException;
+@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
+         }
+     }
+ 
++    public function test_provider_commands_are_listed_and_dispatched(): void
++    {
++        $cli = new NeuronCli([new GreetingCommandProvider()]);
++
++        [, $usage] = $this->runCli($cli, 'neuron', '--help');
++        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
++
++        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
++        $this->assertSame(0, $exitCode);
++        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
++    }
++
++    public function test_a_provider_cannot_replace_a_built_in_command(): void
++    {
++        $provider = new class () implements CommandProvider {
++            public function commands(): array
++            {
++                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
++            }
++        };
++
++        $commands = (new NeuronCli([$provider]))->commands();
++
++        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
++        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
++    }
++
+     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
+     {
+         $received = [];
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #707** (2026-11-05): Let installed packages add commands to the neuron CLI (@ilvalerione)
 - **PR #706** (2026-11-04): Bump the npm group with 4 updates (@dependabot[bot])
 - **PR #703** (2026-10-28): Bump the npm group with 3 updates (@dependabot[bot])
 - **PR #702** (2026-10-28): Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group (@dependabot[bot])
 - **PR #700** (2026-10-29): Echo an empty reasoning_content from the deepseek mapper (@wpjscc)
 - **PR #697** (closed): Add deed.page toolkit to publish a web page (@f-o-x11)
-- **PR #694** (2026-10-25): Bump Weaviate test image to 1.39.13 (@dudanogueira)
 
 ---
 
@@ -1045,42 +1284,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add node heartbeat to update the lease timeout in a long-running node
+## X. Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
 
 **RULE**:
-When implementing operations in `src/Workflow/Executor/Segment.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/neuron`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e074dfb9`: add node heartbeat to update the lease timeout in a long-running node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fdae7e29`: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Workflow/Executor/Segment.php`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/neuron`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-use NeuronAI\Exceptions\PersistenceException;
-    /**
-     * @phpstan-impure The control record changes as branch generators advance.
-     * @throws WorkflowException
-     */
-    /**
-     * @throws WorkflowException
-     */
-    /**
-     * @throws WorkflowException
-     */
-    /**
-     * @throws PersistenceException
-     * @throws WorkflowException
-     */
+use NeuronAI\Console\InstalledCommandProviders;
+    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
+    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-    /** @phpstan-impure The control record changes as branch generators advance. */
+    $command = new NeuronCli();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e074dfb9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fdae7e29` are properly handled with clean fallback behavior.

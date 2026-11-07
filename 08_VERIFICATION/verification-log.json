@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-YVYN",
-    "timestamp": "2026-11-05T03:39:51.503Z",
-    "repository": "Jarvis322/macos-sysdata",
-    "learningId": "learn-github-jarvis322-macos-sysdata",
-    "contentHash": "1da88a084814287d334b4f534257c32fae4ab635be955f5ed8e11cdb8348adad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-Z37L",
-    "timestamp": "2026-11-05T03:40:00.897Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "8a863012643527d248b60bd0b41b3981656cd44f629507e49d84bad1feca346f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-77G0",
-    "timestamp": "2026-11-05T03:46:19.632Z",
-    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-    "contentHash": "cf5270dded6d39d0b643c2148f30a944369134c882e01283db776eac03c1fae9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-78TQ",
-    "timestamp": "2026-11-05T03:46:21.422Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "b1ced98aba699cc367f3544a3afb40647187c390303b5fd739ee404cd64bff92",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-7EF0",
     "timestamp": "2026-11-05T03:46:28.668Z",
     "repository": "jacklandrin/OnlySwitch",
@@ -7490,6 +7430,66 @@
     "repository": "juicedata/juicefs",
     "learningId": "learn-github-juicedata-juicefs",
     "contentHash": "ecf94fa1690715160a398725557cdf7431d5fbc195feff139942f0706c4bad74",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-5I30",
+    "timestamp": "2026-11-07T04:44:19.788Z",
+    "repository": "syntax-tree/hast-util-from-html",
+    "learningId": "learn-github-syntax-tree-hast-util-from-html",
+    "contentHash": "2d4753343f730bda917e9162ca14fa4ba1ae8d5648780dab2d420f238d497954",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-5LBE",
+    "timestamp": "2026-11-07T04:44:23.978Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-5NJB",
+    "timestamp": "2026-11-07T04:44:26.855Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-5QY4",
+    "timestamp": "2026-11-07T04:44:31.276Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

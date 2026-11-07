@@ -8004,3 +8004,7 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `45e810c8` | Multi-dimensional audit evidence | 2026-11-07T04:29:42.775Z |
 | `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `2bbc658c` | Multi-dimensional audit evidence | 2026-11-07T04:37:03.281Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `fd69a571` | Multi-dimensional audit evidence | 2026-11-07T04:37:05.009Z |
+| `learn-github-syntax-tree-hast-util-from-html` | `https://github.com/syntax-tree/hast-util-from-html` | `3bf56434` | Multi-dimensional audit evidence | 2026-11-07T04:44:19.793Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `0dc93c3a` | Multi-dimensional audit evidence | 2026-11-07T04:44:23.983Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `ad6e6fc9` | Multi-dimensional audit evidence | 2026-11-07T04:44:26.859Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `fdae7e29` | Multi-dimensional audit evidence | 2026-11-07T04:44:31.280Z |

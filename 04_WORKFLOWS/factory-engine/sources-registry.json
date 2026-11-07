@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T04:37:07.601Z",
-    "lastVerified": "2026-11-07T04:37:07.601Z",
+    "lastChecked": "2026-11-07T04:44:33.898Z",
+    "lastVerified": "2026-11-07T04:44:33.898Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T04:10:32.441Z",
-    "lastVerified": "2026-11-07T04:10:32.441Z",
+    "lastChecked": "2026-11-07T04:44:27.995Z",
+    "lastVerified": "2026-11-07T04:44:27.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -733,9 +733,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-06T22:21:13.592Z",
+    "lastChecked": "2026-11-07T04:44:22.994Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-06T22:21:13.592Z"
+    "lastVerified": "2026-11-07T04:44:22.994Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3641,22 +3641,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-ai",
+    "name": "neuron-core/neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-05T16:06:10.919Z",
-    "lastVerified": "2026-11-05T16:06:10.919Z",
+    "lastChecked": "2026-11-07T04:44:29.256Z",
+    "lastVerified": "2026-11-07T04:44:29.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "6a41203745c1766a9c1e5de4831b5edb359d3bd07fea5fed6a83af5b73d4ea23",
+    "contentHash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cb45461a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kuberwastaken-claurst": {
     "name": "claurst",
@@ -5068,12 +5067,12 @@
     "officialUrl": "https://github.com/czy0729/Bangumi",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T16:43:09.685Z",
-    "lastVerified": "2026-11-04T16:43:09.685Z",
+    "lastChecked": "2026-11-07T04:44:22.361Z",
+    "lastVerified": "2026-11-07T04:44:22.361Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "2d40adf177cf713dd57eb21ac2776a3ae1fbdc48f6a936a0458ffa0e6c7b54fd",
+    "contentHash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -6779,9 +6778,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-05T12:06:55.708Z",
+    "lastChecked": "2026-11-07T04:44:12.919Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-05T12:06:55.708Z"
+    "lastVerified": "2026-11-07T04:44:12.919Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -6975,14 +6974,14 @@
     "officialUrl": "https://github.com/rook/rook",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T17:36:39.378Z",
-    "lastVerified": "2026-11-05T17:36:39.378Z",
+    "lastChecked": "2026-11-07T04:44:24.754Z",
+    "lastVerified": "2026-11-07T04:44:24.754Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rook-rook",
-    "contentHash": "b5974e7f0dedda029afdeff23bb2060e164c90c3c55a0490451afac9871b0668",
+    "contentHash": "ba3809d7926c71fa1da3fcd169f975c7d45e1953fe785a1b93c6289ec8022a14",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11178,11 +11177,21 @@
     "revisionIdentifier": "3799543a"
   },
   "syntax-tree-hast-util-from-html": {
-    "name": "hast-util-from-html",
+    "name": "syntax-tree/hast-util-from-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
-    "lastChecked": "2026-11-03T22:59:00.198Z",
-    "revisionIdentifier": "1ade8935",
-    "lastVerified": "2026-11-03T22:59:00.198Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-07T04:44:18.597Z",
+    "lastVerified": "2026-11-07T04:44:18.597Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-syntax-tree-hast-util-from-html",
+    "contentHash": "2d4753343f730bda917e9162ca14fa4ba1ae8d5648780dab2d420f238d497954",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kitlangton-hex": {
     "name": "Hex",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
-> **Source Version**: `36f62871`  
+> **Source Version**: `0dc93c3a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T16:43:09.938Z  
+> **Timestamp**: 2026-11-07T04:44:22.541Z  
 > **Learning ID**: `learn-github-czy0729-bangumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T16:43:09.685Z  
+> **Harvest Timestamp**: 2026-11-07T04:44:22.361Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6215 stars
+- **Stars / Engagement**: 6218 stars
 
 ---
 
@@ -1228,1254 +1228,743 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36f62871` (2026-11-03)
-**Commit Message**: - [重构] 重写网络探针页面，检测更快、结果更稳定
+### Incident Patch 1: `0dc93c3a` (2026-11-06)
+**Commit Message**: - [iOS] 升级到 Expo SDK 58（React Native 0.88），适配相关 API 变更
 
-**File**: `src/screens/user/server-status/ds.ts` (modified, +26/-2)
+**File**: `.claude/docs/architecture.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,31 @@
+@@ -2,7 +2,7 @@
+ 
+ ## 技术栈
+ 
+-- **框架**: React Native + Expo SDK 54
++- **框架**: React Native 0.88 + Expo SDK 58（ios 为根目录当前环境；`packages/android` 备份环境为 RN 0.72.10 + Expo 49 + React 18.2，`packages/web` 为 RN 0.70.5 + Expo 47 + React 18.3.1）
+ - **状态管理**: MobX 6 + mobx-react 9
+ - **导航**: React Navigation 6（native-stack + bottom-tabs）
+ - **样式**: StyleSheet + 自定义 memoStyles() 缓存
+```
+
+**File**: `.nvmrc` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++22.20.0
+```
+
+**File**: `package.json` (modified, +37/-33)
+```diff
+@@ -36,65 +36,66 @@
+     "@react-native-async-storage/async-storage": "2.2.0",
+     "@react-native-community/blur": "4.4.1",
+     "@react-native-community/cameraroll": "4.0.4",
+-    "@react-native-community/slider": "5.2.0",
++    "@react-native-community/slider": "5.2.1",
+     "@react-native-masked-view/masked-view": "0.3.2",
+     "@react-navigation/bottom-tabs": "6.5.8",
+     "@react-navigation/native": "6.1.7",
+     "@react-navigation/native-stack": "6.9.13",
+     "@sdcx/nested-scroll": "^0.14.0",
+-    "@types/react": "~19.2.2",
+-    "expo": "~57.0.21",
+-    "expo-asset": "~57.0.16",
+-    "expo-blur": "~57.0.2",
+-    "expo-calendar": "~57.0.2",
+-    "expo-constants": "~57.0.17",
+-    "expo-device": "~57.0.1",
+-    "expo-file-system": "~57.0.6",
+-    "expo-font": "~57.0.3",
+-    "expo-haptics": "~57.0.2",
+-    "expo-image": "~57.0.4",
+-    "expo-linear-gradient": "~57.0.1",
+-    "expo-screen-orientation": "~57.0.2",
+-    "expo-speech": "~57.0.2",
+-    "expo-splash-screen": "~57.0.8",
+-    "expo-updates": "~57.0.21",
+-    "expo-web-browser": "~57.0.2",
++    "@types/react": "~19.3.0",
++    "expo": "~58.0.23",
++    "expo-asset": "~58.0.20",
++    "expo-blur": "~58.0.5",
++    "expo-calendar": "~58.0.6",
++    "expo-constants": "~58.0.15",
++    "expo-device": "~58.0.5",
++    "expo-file-system": "~58.0.13",
++    "expo-font": "~58.0.11",
++    "expo-haptics": "~58.0.7",
++    "expo-image": "~58.0.18",
++    "expo-linear-gradient": "~58.0.3",
++    "expo-screen-orientation": "~58.0.4",
++    "expo-speech": "~58.0.3",
++    "expo-splash-screen": "~58.0.13",
++    "expo-updates": "~58.0.21",
++    "expo-web-browser": "~58.0.7",
+     "htmlparser2": "^3.9.0",
+     "mobx": "6.12.3",
+     "mobx-react": "9.1.1",
+     "patch-package": "6.4.7",
+     "postinstall-postinstall": "2.1.0",
+-    "react": "19.2.3",
+-    "react-native": "0.86.3",
++    "react": "19.3.0",
++    "react-native": "0.88.1",
+     "react-native-exception-handler": "^2.10.8",
+     "react-native-fast-image": "8.5.11",
+     "react-native-fs": "2.18.0",
+-    "react-native-gesture-handler": "~2.32.0",
+-    "react-native-pager-view": "8.0.2",
++    "react-native-gesture-handler": "~3.3.0",
++    "react-native-pager-view": "9.0.7",
+     "react-native-realtimeblurview": "1.1.3",
+-    "react-native-reanimated": "4.5.1",
++    "react-native-reanimated": "4.7.1",
+     "react-native-render-html": "4.1.1",
+     "react-native-restart": "0.0.14",
+-    "react-native-safe-area-context": "~5.7.0",
+-    "react-native-screens": "~4.26.0",
++    "react-native-safe-area-context": "~5.11.1",
++    "react-native-screens": "~4.30.1",
+     "react-native-smb": "^0.2.4",
+-    "react-native-svg": "15.15.4",
++    "react-native-svg": "15.16.0",
+     "react-native-tab-view": "3.5.2",
+-    "react-native-webview": "13.16.1",
+-    "react-native-worklets": "0.10.1",
++    "react-native-webview": "14.0.1",
++    "react-native-worklets": "0.13.0",
+     "rn-fetch-blob": "^0.12.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+     "@babel/preset-react": "^7.27.1",
+     "@react-native-community/eslint-config": "^3.0.1",
+-    "@react-native/jest-preset": "~0.86.3",
++    "@react-native/jest-preset": "~0.88.1",
+     "@testing-library/jest-native": "^5.4.3",
+     "@testing-library/react-native": "^13.3.3",
+-    "@types/jest": "29.5.14",
++    "@types/jest": "30.0.0",
+     "@typescript-eslint/eslint-plugin": "^8.59.0",
+     "@typescript-eslint/parser": "^8.59.0",
+     "babel-plugin-module-resolver": "^5.0.2",
++    "babel-preset-expo": "~58.0.24",
+     "cheerio": "1.0.0",
+     "cheerio-without-node-native": "0.20.2",
+     "crypto-js": "^4.2.0",
+@@ -106,8 +107,8 @@
+     "eslint-plugin-react": "^7.26.1",
+     "eslint-plugin-react-hooks": "^4.6.0",
+     "eslint-plugin-react-native": "^4.0.0",
+-    "jest": "^29.7.0",
+-    "jest-expo": "57.0.5",
++    "jest": "~30.5.2",
++    "jest-expo": "~58.0.14",
+     "prettier": "^2.6.2",
+     "protobufjs": "^8.8.0",
+     "stream-browserify": "^3.0.0",
+@@ -123,5 +124,8 @@
+       }
+     }
+   },
+-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
++  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
++  "engines": {
++    "node": ">=22.13.0"
++  }
+ }
+```
+
+**File**: `packages/ios/package.json` (modified, +34/-33)
+```diff
+@@ -36,62 +36,62 @@
+     "@react-native-async-storage/async-storage": "2.2.0",
+     "@react-native-community/blur": "4.4.1",
+     "@react-native-community/cameraroll": "4.0.4",
+-    "@react-native-community/slider": "5.2.0",
++    "@react-native-community/slider": "5.2.1",
+     "@react-native-masked-view/masked-view": "0.3.2",
+     "@react-navigation/bottom-tabs": "6.5.8",
+     "@react-navigation/native": "6.1.7",
+     "@react-navigation/native-stack": "6.9.13",
+     "@sdcx/nested-scroll": "^0.14.0",
+-    "@types/react": "~19.2.2",
+-    "expo": "~57.0.21",
+-    "expo-asset": "~57.0.16",
+-    "expo-blur": "~57.0.2",
+-    "expo-calendar": "~57.0.2",
+-    "expo-constants": "~57.0.17",
+-    "expo-device": "~57.0.1",
+-    "expo-file-system": "~57.0.6",
+-    "expo-font": "~57.0.3",
+-    "expo-haptics": "~57.0.2",
+-    "expo-image": "~57.0.4",
+-    "expo-linear-gradient": "~57.0.1",
+-    "expo-screen-orientation": "~57.0.2",
+-    "expo-speech": "~57.0.2",
+-    "expo-splash-screen": "~57.0.8",
+-    "expo-updates": "~57.0.21",
+-    "expo-web-browser": "~57.0.2",
++    "@types/react": "~19.3.0",
++    "expo": "~58.0.23",
++    "expo-asset": "~58.0.20",
++    "expo-blur": "~58.0.5",
++    "expo-calendar": "~58.0.6",
++    "expo-constants": "~58.0.15",
++    "expo-device": "~58.0.5",
++    "expo-file-system": "~58.0.13",
++    "expo-font": "~58.0.11",
++    "expo-haptics": "~58.0.7",
++    "expo-image": "~58.0.18",
++    "expo-linear-gradient": "~58.0.3",
++    "expo-screen-orientation": "~58.0.4",
++    "expo-speech": "~58.0.3",
++    "expo-splash-screen": "~58.0.13",
++    "expo-updates": "~58.0.21",
++    "expo-web-browser": "~58.0.7",
+     "htmlparser2": "^3.9.0",
+     "mobx": "6.12.3",
+     "mobx-react": "9.1.1",
+     "patch-package": "6.4.7",
+     "postinstall-postinstall": "2.1.0",
+-    "react": "19.2.3",
+-    "react-native": "0.86.3",
++    "react": "19.3.0",
++    "react-native": "0.88.1",
+     "react-native-exception-handler": "^2.10.8",
+     "react-native-fast-image": "8.5.11",
+     "react-native-fs": "2.18.0",
+-    "react-native-gesture-handler": "~2.32.0",
+-    "react-native-pager-view": "8.0.2",
++    "react-native-gesture-handler": "~3.3.0",
++    "react-native-pager-view": "9.0.7",
+     "react-native-realtimeblurview": "1.1.3",
+-    "react-native-reanimated": "4.5.1",
++    "react-native-reanimated": "4.7.1",
+     "react-native-render-html": "4.1.1",
+     "react-native-restart": "0.0.14",
+-    "react-native-safe-area-context": "~5.7.0",
+-    "react-native-screens": "~4.26.0",
++    "react-native-safe-area-context": "~5.11.1",
++    "react-native-screens": "~4.30.1",
+     "react-native-smb": "^0.2.4",
+-    "react-native-svg": "15.15.4",
++    "react-native-svg": "15.16.0",
+     "react-native-tab-view": "3.5.2",
+-    "react-native-webview": "13.16.1",
+-    "react-native-worklets": "0.10.1",
++    "react-native-webview": "14.0.1",
++    "react-native-worklets": "0.13.0",
+     "rn-fetch-blob": "^0.12.0"
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+     "@babel/preset-react": "^7.27.1",
+     "@react-native-community/eslint-config": "^3.0.1",
+-    "@react-native/jest-preset": "~0.86.3",
++    "@react-native/jest-preset": "~0.88.1",
+     "@testing-library/jest-native": "^5.4.3",
+     "@testing-library/react-native": "^13.3.3",
+-    "@types/jest": "29.5.14",
++    "@types/jest": "30.0.0",
+     "@typescript-eslint/eslint-plugin": "^8.59.0",
+     "@typescript-eslint/parser": "^8.59.0",
+     "babel-plugin-module-resolver": "^5.0.2",
+@@ -106,12 +106,13 @@
+     "eslint-plugin-react": "^7.26.1",
+     "eslint-plugin-react-hooks": "^4.6.0",
+     "eslint-plugin-react-native": "^4.0.0",
+-    "jest": "^29.7.0",
+-    "jest-expo": "57.0.5",
++    "jest": "~30.5.2",
++    "jest-expo": "~58.0.14",
+     "prettier": "^2.6.2",
+     "protobufjs": "^8.8.0",
+     "stream-browserify": "^3.0.0",
+-    "typescript": "^6.0.3"
++    "typescript": "^6.0.3",
++    "babel-preset-expo": "~58.0.24"
+   },
+   "expo": {
+     "autolinking": {
+```
+
+**File**: `src/components/carousel/hooks.ts` (modified, +6/-6)
+```diff
+@@ -1,15 +1,15 @@
  /*
   * @Author: czy0729
-  * @Date: 2024-12-11 20:43:05
+  * @Date: 2026-08-12 10:00:00
 - * @Last Modified by:   czy0729
-- * @Last Modified time: 2024-12-11 20:43:05
+- * @Last Modified time: 2026-08-12 10:00:00
 + * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 页面标识、探测地址与检测参数
++ * @Last Modified time: 2026-11-06 00:06:21
   */
-+import { HOST_AC_API } from '@constants'
-+
-+export const COMPONENT = 'ServerStatus'
-+
- export const HM = ['server-status', 'ServerStatus'] as const
-+
-+/** 探针请求: bilibili 番剧分区, 只用于检测延迟 */
-+export const URL_PROBE_BILIBILI = `${HOST_AC_API}/pgc/web/season/section?season_id=1`
-+
-+/** 探针请求: youku 番剧预览, 只用于检测延迟 */
-+export const URL_PROBE_YOUKU = 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery'
-+
-+/** 每个站点最多检测次数, 失败即停止 */
-+export const PING_COUNTS = 4
-+
-+/** 单次检测超时 (毫秒) */
-+export const PING_TIMEOUT = 5000
-+
-+/** 平均延迟低于此值显示绿色 (毫秒) */
-+export const STATUS_FAST = 150
-+
-+/** 平均延迟低于此值显示黄色, 超过或失败显示红色 (毫秒) */
-+export const STATUS_OK = 1000
-```
-
-**File**: `src/screens/user/server-status/hooks.ts` (added, +140/-0)
-```diff
-@@ -0,0 +1,140 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-04 12:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 站点逐个串行检测的状态机
-+ */
-+import { useCallback, useEffect, useRef, useState } from 'react'
-+import { subjectStore } from '@stores'
-+import { err, ping, t } from '@utils/fetch'
-+import { PING_COUNTS, PING_TIMEOUT } from './ds'
-+import { getSitesList } from './utils'
-+
-+import type { ProbeMode, Site } from './types'
-+
-+export function useServerStatusPage() {
-+  const [list, setList] = useState<Site[]>(() => getSitesList(subjectStore.origin))
-+  const [mode, setMode] = useState<ProbeMode>('idle')
-+
-+  /** 最新清单: 检测流程从这里取站点, 让对外回调保持稳定引用 */
-+  const listRef = useRef(list)
-+  useEffect(() => {
-+    listRef.current = list
-+  }, [list])
-+
-+  /** 运行序号, 页面卸载后递增让在途结果作废 */
-+  const runIdRef = useRef(0)
-+
-+  /** 同一时间只允许一次检测 */
-+  const runningRef = useRef(false)
-+
-+  useEffect(
-+    () => () => {
-+      runIdRef.current += 1
-+      runningRef.current = false
-+    },
-+    []
-+  )
-+
-+  const patchSite = useCallback((index: number, patch: Partial<Site>) => {
-+    setList(prev => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)))
-+  }, [])
-+
-+  const runSites = useCallback(
-+    async (sites: Site[], indices: number[]) => {
-+      const runId = runIdRef.current
-+
-+      for (const index of indices) {
-+        if (runId !== runIdRef.current) return
-+
-+        const site = sites[index]
-+        if (!site) continue
-+
-+        patchSite(index, { msg: [], loading: true })
-+
-+        /** 单个站点出错不影响后续站点, 且必须复位自身的检测中标记 */
-+        try {
-+          const msg: number[] = []
-+          for (let i = 0; i < PING_COUNTS; i += 1) {
-+            if (runId !== runIdRef.current) return
-+
-+            const latency = await ping(site.url, site.headers, PING_TIMEOUT, 'headers')
-+            if (runId !== runIdRef.current) return
-+
-+            msg.push(latency)
-+            patchSite(index, { msg: [...msg] })
-+
-+            /** 失败与超时不再重试, 站点已不可用 */
-+            if (!latency) break
-+          }
-+        } catch (error) {
-+          err(`ServerStatus pingSites ${site.url}: ${String(error)}`)
-+        } finally {
-+          if (runId === runIdRef.current) patchSite(index, { loading: false })
-+        }
-+      }
-+
-+      if (runId === runIdRef.current) {
-+        runningRef.current = false
-+        setMode('idle')
-+      }
-+    },
-+    [patchSite]
-+  )
-+
-+  /** 启动检测, 已有任务在跑时返回 false */
-+  const start = useCallback(
-+    (sites: Site[], indices: number[], nextMode: ProbeMode) => {
-+      if (runningRef.current) return false
-+
-+      runningRef.current = true
-+      setMode(nextMode)
-+      runSites(sites, indices)
-+
-+      return true
-+    },
-+    [runSites]
-+  )
-+
-+  const pingOne = useCallback(
-+    (index: number) => {
-+      const sites = listRef.current
-+      if (!start(sites, [index], 'one')) return
-+
-+      /** 埋点置于业务逻辑之后 */
-+      t('网络探针.检测', { desc: sites[index]?.desc, url: sites[index]?.url })
-+    },
-+    [start]
-+  )
-+
-+  const pingAll = useCallback(() => {
-+    if (runningRef.current) return
-+
-+    const sites = getSitesList(subjectStore.origin)
-+    setList(sites)
-+    start(
-+      sites,
-+      sites.map((_item, index) => index),
-+      'all'
-+    )
-+
-+    /** 埋点置于业务逻辑之后 */
-+    t('网络探针.全部检测')
-+  }, [start])
-+
-+  return {
-+    /** 站点清单与各自的检测结果 */
-+    list,
-+
-+    /** 当前运行模式 */
-+    mode,
-+
-+    /** 检测单个站点 */
-+    pingOne,
-+
-+    /** 重新取站点清单并逐个检测 */
-+    pingAll
-+  }
-+}
-```
-
-**File**: `src/screens/user/server-status/index.stories.tsx` (modified, +3/-9)
-```diff
-@@ -4,8 +4,7 @@
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2024-09-11 19:54:58
-  */
--import React from 'react'
--import { getStorybookArgs, StorybookList, StorybookSPA } from '@components'
-+import { StorybookList, StorybookSPA } from '@components'
- import { ServerStatus as Component } from '@screens'
+ import { useCallback, useEffect, useRef, useState } from 'react'
+ import { Platform } from 'react-native'
+ import { runAfter } from '@utils'
+ import { getInitialIndex, getNextOffset, getUpdatedIndex, getVisibleIndex } from './utils'
  
- export default {
-@@ -15,13 +14,8 @@ export default {
+-import type { ScrollView, NativeSyntheticEvent } from 'react-native'
++import type { NativeSyntheticEvent, ScrollViewInstance } from 'react-native'
+ import type { TimerRef } from '@types'
+ import type { CarouselEvent, UseCarouselOptions } from './types'
  
- export const ServerStatus = () => (
-   <StorybookSPA>
--    <StorybookList
--      style={{
--        // @ts-expect-error
--        overflowY: 'scroll'
--      }}
--    >
--      <Component {...getStorybookArgs('ServerStatus')} />
-+    <StorybookList>
-+      <Component />
-     </StorybookList>
-   </StorybookSPA>
- )
+@@ -33,12 +33,12 @@ export const useCarousel = ({
+   const [isScrolling, setIsScrolling] = useState(false)
+   const [autoplayEnd, setAutoplayEnd] = useState(false)
+ 
+-  const scrollRef = useRef<ScrollView>(null)
++  const scrollRef = useRef<ScrollViewInstance>(null)
+   const currentRef = useRef(current)
+   const offsetRef = useRef({ x: 0, y: 0 })
+   const isScrollingRef = useRef(false)
+-  const autoplayTimerRef = useRef<TimerRef>()
+-  const scrollEndTimerRef = useRef<TimerRef>()
++  const autoplayTimerRef = useRef<TimerRef>(null)
++  const scrollEndTimerRef = useRef<TimerRef>(null)
+ 
+   const step = vertical ? size.height : size.width
+ 
 ```
 
-**File**: `src/screens/user/server-status/index.tsx` (modified, +87/-201)
+**File**: `src/components/component/index.tsx` (modified, +2/-2)
 ```diff
-@@ -2,9 +2,10 @@
+@@ -2,11 +2,11 @@
   * @Author: czy0729
-  * @Date: 2020-10-13 17:10:17
+  * @Date: 2023-11-08 14:11:56
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-04-21 14:15:55
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 逐个检测客户端依赖的站点与服务延迟
+- * @Last Modified time: 2026-07-25 06:08:21
++ * @Last Modified time: 2026-11-06 00:06:48
   */
 -import React from 'react'
  import { View } from 'react-native'
- import { observer } from 'mobx-react'
- import {
-@@ -20,214 +21,99 @@ import {
- } from '@components'
- import { Notice } from '@_'
- import { _ } from '@stores'
--import { ping, t } from '@utils/fetch'
--import { getSitesList } from './utils'
--import { HM } from './ds'
-+import { stl } from '@utils'
-+import { useServerStatusPage } from './hooks'
-+import { getStatus } from './utils'
-+import { HM, PING_TIMEOUT, STATUS_FAST, STATUS_OK } from './ds'
- import { memoStyles } from './styles'
  
--/** 最大尝试访问次数 */
--const PING_COUNTS = 4
--
- /** 网络探针 */
--class ServerStatus extends React.Component {
--  state = {
--    list: getSitesList(),
--    pinging: false
--  }
--
--  private _isUnmounted = false
--
--  componentWillUnmount() {
--    this._isUnmounted = true
--  }
--
--  /** 单个检测 */
--  onPingOne = (index: number) => {
--    const { list, pinging } = this.state
--    if (pinging) return
--
--    // 跳过非 http 链接
--    if (!list[index].url?.startsWith('http')) {
--      return
--    }
--
--    t('网络探针.检测', { index })
--
--    list[index].msg = []
--    list[index].loading = true
--
--    this.setState({ list, pinging: true }, async () => {
--      const { list } = this.state
--
--      for (let ii = 0; ii < PING_COUNTS; ii += 1) {
--        if (this._isUnmounted) return
--
--        const detail = await ping(list[index].url, list[index].headers)
--
--        if (!this._isUnmounted) {
--          list[index].msg.push(detail)
--          this.setState({ list })
--        }
--      }
--
--      if (!this._isUnmounted) {
--        list[index].loading = false
--        this.setState({ list, pinging: false })
--      }
--    })
--  }
--
--  /** 全部检测 */
--  onPing = () => {
--    const { pinging } = this.state
--    if (pinging) return
--
--    t('网络探针.全部检测')
--
--    this.setState(
--      {
--        list: getSitesList(),
--        pinging: true
--      },
--      async () => {
--        const { list } = this.state
--        for (let i = 0; i < list.length; i += 1) {
--          if (this._isUnmounted) return
--
--          // 跳过非 http 链接
--          if (!list[i].url?.startsWith('http')) continue
--
--          list[i].loading = true
--          this.setState({ list })
--
--          for (let ii = 0; ii < PING_COUNTS; ii += 1) {
--            if (this._isUnmounted) return
--            const detail = await ping(list[i].url, list[i].headers)
--
--            if (!this._isUnmounted) {
--              list[i].msg.push(detail)
--              this.setState({ list })
--            }
--          }
--
--          if (!this._isUnmounted) {
--            list[i].loading = false
--            this.setState({ list })
--          }
--        }
--
--        if (!this._isUnmounted) {
--          this.setState({ pinging: false })
--        }
--      }
--    )
--  }
--
--  computedStatus = (msg: any[]) => {
--    let sum = 0
--
--    // 通常第一个记录不准确很慢, 排除
--    msg.filter((_item, index) => !!index).forEach(item => (sum += item || 5000))
--
--    const avg = sum / msg.length
--    if (avg <= 150) return 'Success'
--    if (avg <= 1000) return 'Warning'
--    return 'Danger'
--  }
--
--  render() {
--    const { list } = this.state
--    return (
--      <Component id='screen-server-status'>
--        <HeaderPlaceholder />
--
--        <Notice>
--          <Text size={12} lineHeight={13} bold>
--            这是一个过时的功能，目前已不作维护。
-+function ServerStatus() {
-+  const { list, mode, pingOne, pingAll } = useServerStatusPage()
-+
-+  const styles = memoStyles()
-+
-+  return (
-+    <Component id='screen-server-status'>
-+      <HeaderPlaceholder />
-+      <Notice>
-+        <Text size={12} lineHeight={13} bold>
-+          旧探针已废弃，请点击设置页面右上角电波图标查看新探针。
-+        </Text>
-+      </Notice>
-+      <ScrollView
-+        style={_.container.plain}
-+        contentContainerStyle={stl(_.container.bottom, _.container.wind)}
-+        scrollToTop
-+      >
-+        <Text style={_.mt.md} size={12} lineHeight={14} type='sub'>
-+          <Text size={12} lineHeight={14} type='success'>
-+            绿色 {'<'} {STATUS_FAST}ms
-           </Text>
--        </Notice>
--
--        <ScrollView
--          style={_.container.plain}
--          contentContainerStyle={this.styles.contentContainerStyle}
--          scrollToTop
--        >
--          <Text style={_.mt.md} size={12} lineHeight={14} type='sub'>
--            <Text size={12} lineHeight={14} type='success'>
--              绿色 {'<'} 150ms
--            </Text>
--            ，
--            <Text size={12} lineHeight={14} type='warning'>
--              黄色 {'<'} 1000ms
--            </Text>
--            ，
--            <Text size={12} lineHeight={14} type='danger'>
--              红色 (或超时) {'>'} 1000ms (5000ms)
--            </Text>{' '}
--            ，若必要服务为红色则严重影响 App 的正常使用
-+          ，
-+          <Text size={12} lineHeight={14} type='warning'>
-+            黄色 {'<'} {STATUS_OK}ms
-
++import type { JSX } from 'react'
+ import type { Props as ComponentProps } from './types'
+ export type { ComponentProps }
+ 
 ```
 
-**File**: `src/screens/user/server-status/styles.ts` (modified, +6/-8)
+**File**: `src/components/fixed-textarea/index.tsx` (modified, +3/-3)
 ```diff
-@@ -2,15 +2,13 @@
-  * @Author: czy0729
-  * @Date: 2022-08-20 10:30:40
+@@ -26,7 +26,7 @@ import ToolBar from './tool-bar'
+ import { getSubmitValue } from './utils'
+ import { COMPONENT } from './ds'
+ 
+-import type { TextInput } from 'react-native'
++import type { TextInputInstance } from 'react-native'
+ import type { Props as FixedTextareaProps, FixedTextareaInstance } from './types'
+ export type { Props as FixedTextareaProps, FixedTextareaInstance } from './types'
+ 
+@@ -51,7 +51,7 @@ const FixedTextarea = observer(
+     r(COMPONENT)
+ 
+     /** 输入框内部 TextInput 引用 */
+-    const textAreaRef = useRef<TextInput | null>(null)
++    const textAreaRef = useRef<TextInputInstance | null>(null)
+     /** 最新输入值镜像, 供提交 / 卸载存草稿等非渲染期读取 */
+     const valueRef = useRef('')
+ 
+@@ -62,7 +62,7 @@ const FixedTextarea = observer(
+       simpleRef.current = simple
+     }, [simple])
+ 
+-    const forwardTextareaRef = useCallback((handle: { textAreaRef: TextInput }) => {
++    const forwardTextareaRef = useCallback((handle: { textAreaRef: TextInputInstance }) => {
+       textAreaRef.current = handle?.textAreaRef ?? null
+     }, [])
+ 
+```
+
+**File**: `src/components/fixed-textarea/textarea/types.ts` (modified, +2/-2)
+```diff
+@@ -4,15 +4,15 @@
   * @Last Modified by: czy0729
-- * @Last Modified time: 2025-12-24 19:08:06
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 列表行、状态点与底部按钮
+  * @Last Modified time: 2026-07-27 08:24:07
   */
- import { _ } from '@stores'
+-import type { TextInput, TextInputSelectionChangeEvent } from 'react-native'
++import type { TextInputInstance, TextInputSelectionChangeEvent } from 'react-native'
+ import type { Props as FixedTextareaProps, State as FixedTextareaState } from '../types'
  
- export const memoStyles = _.memoStyles(() => ({
--  contentContainerStyle: {
--    paddingHorizontal: _.wind,
--    paddingBottom: _.bottom + _.lg
--  },
-   desc: {
-     width: '52%'
-   },
-@@ -29,13 +27,13 @@ export const memoStyles = _.memoStyles(() => ({
-     marginRight: _.md,
-     borderRadius: 4
-   },
--  statusSuccess: {
-+  success: {
-     backgroundColor: _.colorSuccess
-   },
--  statusWarning: {
-+  warning: {
-     backgroundColor: _.colorWarning
-   },
--  statusDanger: {
-+  danger: {
-     backgroundColor: _.colorDanger
-   },
-   loading: {
-```
-
-**File**: `src/screens/user/server-status/types.ts` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-04 12:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 站点、探测档位与运行模式
-+ */
-+
-+/** 探测档位, 同时作为状态点样式键 */
-+export type ProbeStatus = 'success' | 'warning' | 'danger'
-+
-+/** 运行模式: 空闲 / 单个站点 / 全部站点 */
-+export type ProbeMode = 'idle' | 'one' | 'all'
-+
-+/** 待检测站点 */
-+export type Site = {
-+  /** 说明文案 */
-+  desc: string
-+
-+  /** 请求地址, 展示与实际请求共用 */
-+  url: string
-+
-+  /** 每次检测的延迟 (毫秒), 0 表示失败或超时 */
-+  msg: number[]
-+
-+  /** 是否检测中 */
-+  loading: boolean
-+
-+  /** 额外请求头 */
-+  headers?: Record<string, string>
-+}
-```
-
-**File**: `src/screens/user/server-status/utils.ts` (modified, +81/-101)
-```diff
-@@ -2,124 +2,104 @@
-  * @Author: czy0729
-  * @Date: 2022-08-20 10:24:28
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-04-21 13:54:01
-+ * @Last Modified time: 2026-11-04 12:00:00
-+ *
-+ * 网络探针: 站点清单与延迟档位判定
-  */
--import { subjectStore } from '@stores'
- import {
-   API_CALENDAR,
--  API_HOST,
-   API_HOST_TINYGRAIL,
-+  API_MK_STATUS_HOST,
-   GITHUB_RELEASE_REPOS,
-   HOST,
-   HOST_AC,
--  HOST_AC_API,
-   HOST_IMAGE_UPLOAD_RYMK,
-   HOST_NETABA,
-   SITE_AGEFANS,
-   URL_OAUTH
- } from '@constants'
- import { getOriginConfig } from '../origin-setting/utils'
-+import { PING_TIMEOUT, STATUS_FAST, STATUS_OK, URL_PROBE_BILIBILI, URL_PROBE_YOUKU } from './ds'
- 
--/** 获取需要检测的站点 */
--export function getSitesList() {
--  const OriginUrls = []
-+import type { Origin } from '@types'
-+import type { ProbeStatus, Site } from './types'
- 
-+/**
-+ * 生成一条待检测站点
-+ *
-+ * @param desc 说明文案
-+ * @param url 请求地址
-+ * @param headers 额外请求头
-+ */
-+function createSite(desc: string, url: string, headers?: Record<string, string>): Site {
-+  return {
-+    desc,
-+    url,
-+    msg: [],
-+    loading: false,
-+    headers
-+  }
-+}
-+
-+/**
-+ * 用户配置的源头, 只取启用且为 http 地址的项
-+ *
-+ * @param origin 用户的源头配置
-+ */
-+function getOriginSites(origin: Origin): Site[] {
-   try {
--    const origins = getOriginConfig(subjectStore.origin)
--    Object.keys(origins).forEach(type => {
--      origins[type].forEach(item => {
--        if (item.active === 1 && String(item.url).startsWith('http')) {
--          OriginUrls.push({
--            title: item.url,
--            desc: `${item.name} (源头)`,
--            url: item.url,
--            msg: [],
--            loading: false
--          })
--        }
--      })
--    })
--  } catch {}
-+    return Object.values(getOriginConfig(origin))
-+      .flat()
-+      .filter(item => item.active === 1 && String(item.url).startsWith('http'))
-+      .map(item => createSite(`${item.name} (源头)`, item.url))
-+  } catch {
-+    return []
-+  }
-+}
- 
-+/**
-+ * 站点清单: 固定依赖 + 用户配置的源头
-+ *
-+ * @param origin 用户的源头配置
-+ */
-+export function getSitesList(origin: Origin): Site[] {
-   return [
--    ...[
--      {
--        title: HOST,
--        desc: '主站 (必要)',
--        url: `${HOST}/about/copyright`,
--        msg: [],
--        loading: false
--      },
--      {
--        title: URL_OAUTH,
--        desc: '授权登录服务 (登录必要)',
--        url: URL_OAUTH,
--        msg: [],
--        loading: false
--      },
--      {
--        title: API_HOST,
--        desc: '主站 API (必要)',
--        url: API_CALENDAR(),
--        msg: [],
--        loading: false
--      },
--      {
--        title: API_HOST_TINYGRAIL,
--        desc: '小圣杯 API',
--        url: API_HOST_TINYGRAIL,
--        msg: [],
--        loading: false
--      },
--      {
--        title: GITHUB_RELEASE_REPOS,
--        desc: '客户端版本检测',
--        url: GITHUB_RELEASE_REPOS,
--        msg: [],
--        loading: false
--      },
--      {
--        title: `${SITE_AGEFANS()}/update`,
--        desc: 'Agefans',
--        url: `${SITE_AGEFANS()}/update`,
--        msg: [],
--        loading: false
--      },
--      {
--        title: `${HOST_AC_API}/pgc/web/season/section?season_id=1`,
--        desc: 'bilibili 番剧预览图',
--        url: `${HOST_AC_API}/pgc/web/season/section?season_id=1`,
--        headers: {
--          Referer: `${HOST_AC}/`
--        },
--        msg: [],
--        loading: false
--      },
--      {
--        title: 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery',
--        desc: 'youku 番剧预览图',
--        url: 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery',
--        headers: {
--          Referer: 'https://list.youku.com/'
--        },
--        msg: [],
--        loading: false
--      },
--      {
--        title: HOST_NETABA,
--        desc: 'netaba.re',
--        url: HOST_NETABA,
--        msg: [],
--        loading: false
--      },
--      {
--        title: HOST_IMAGE_UPLOAD_RYMK,
--        desc: '免费图床',
--        url: HOST_IMAGE_UPLOAD_RYMK,
--        msg: [],
--        loading: false
--      }
--    ],
--    ...OriginUrls
-+    createSite('主站 (必要)', `${HOST}/about/copyright`),
-+    createSite('主站 API (必要)', API_CALENDAR()),
-+    createSite('授权登录服务 (登录必要)', URL_OAUTH),
-+    createSite('服务状态', `${API_MK_STATUS_HOST}/api/mini`),
-+    createSite('小圣杯 API', API_HOST_TINYGRAIL),
-+    createSite('客户端版本检测', GITHUB_RELEASE_REPOS),
-+    createSite('免费图床', HOST_IMAGE_UPLOAD_RYMK),
-+    createSite('bilibili 番剧预览图', URL_PROBE_BILIBILI, {
-+      Referer: `${HOST_AC}/`
-+    }),
-+    createSite('youku 番剧预览图', URL_PROBE_YOUKU, {
-+      Referer: 'https://list.youku.com/'
-+    }),
-+    createSite('Agefans', `${SITE_AGEFANS()}/update`),
-+    createSite('netaba.re', HOST_NETABA),
-+    ...getOriginSites(origin)
-   ]
- }
-+
-+/**
-+ * 延迟中位数: 只统计成功样本, 首次建连与偶发抖动不会拉偏判定; 全部失败按超时计
-+ */
-+export function getMedianLatency(msg: number[]) {
-+  const valid = msg.filter(item => item > 0).sort((a, b) => a - b)
-+  if (!valid.length) return PING_TIMEOUT
-+
-+  const mid = Math.floor(valid.length / 2)
-+  return valid.length % 2 ? valid[mid] : Math.round((valid[mid - 1] + v
-```
-
-**File**: `src/screens/user/setting/component/zhinan/app-zhinan/index.tsx` (modified, +0/-1)
-```diff
-@@ -4,7 +4,6 @@
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-07-24 21:52:16
-  */
--import React from 'react'
- import { observer } from 'mobx-react'
- import { Heatmap } from '@components'
- import { ItemSetting } from '@_'
+ export type Props = Pick<
+   FixedTextareaProps,
+   'simple' | 'marks' | 'source' | 'placeholder' | 'onChange' | 'onSubmit'
+ > &
+   Pick<FixedTextareaState, 'value' | 'showSource' | 'showSourceText' | 'showTextarea'> & {
+-    forwardRef: (ref: { textAreaRef: TextInput }) => void
++    forwardRef: (ref: { textAreaRef: TextInputInstance }) => void
+     selection: FixedTextareaState['selection']
+     editing: boolean
+     onFocus: () => void
 ```
 
 ---
 
-### Incident Patch 2: `3e1fdd0c` (2026-11-03)
-**Commit Message**: - [重构] 整理关于客户端页面的代码组织与写法
+### Incident Patch 2: `2cd18e0a` (2026-11-05)
+**Commit Message**: - [时间线] 热力图支持切换全部、时间胶囊、社区、Wiki 四种数据
 
-**File**: `src/screens/user/qiafan/component/section-1/bar-chart/index.tsx` (modified, +37/-94)
+**File**: `src/screens/_/base/mosaic-tile/ds.ts` (modified, +26/-15)
 ```diff
-@@ -3,75 +3,36 @@
-  * @Date: 2026-09-23 12:00:00
+@@ -2,24 +2,35 @@
+  * @Author: czy0729
+  * @Date: 2024-02-29 18:42:44
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:35:17
+- * @Last Modified time: 2026-02-02 15:25:55
++ * @Last Modified time: 2026-11-05 12:00:00
 + *
-+ * 每周提交数柱状图: 触摸平移查看某周明细
++ * 瓷砖热力图: 页面标识与数据类型选项
   */
--import { useCallback, useMemo, useRef, useState } from 'react'
-+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
- import { View } from 'react-native'
- import { Gesture, GestureDetector } from 'react-native-gesture-handler'
- import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
- import Svg, { Line, Rect } from 'react-native-svg'
--import { observer } from 'mobx-react'
- import { Flex, Text } from '@components'
--import { feedback } from '@utils'
-+import { feedback, stl } from '@utils'
- import { scheduleOnRN } from '@utils/worklets'
--import {
--  BADGE_HEIGHT,
--  BAR_BOTTOM,
--  BAR_GAP,
--  BAR_INSET,
--  BAR_MIN_HEIGHT,
--  BAR_MIN_WIDTH,
--  COLOR,
--  TICK_TEXT_MIN_BOTTOM,
--  YEAR_MIN_GAP
--} from '../ds'
--import { formatWeek, getEvenMonthLabels, getMaxCount, getMonthLabels, getTicks } from '../utils'
-+import { BADGE_HALF_WIDTH, BAR_BOTTOM, COLOR, TICK_TEXT_MIN_BOTTOM } from '../ds'
-+import { formatWeek, getBarStat } from '../utils'
- import { styles } from './styles'
+ import { rc } from '@utils/dev'
+ import { COMPONENT as PARENT } from '../ds'
  
- import type { Props } from './types'
++import type { HeatmapType } from '@utils/kv/type'
++
+ export const COMPONENT = rc(PARENT, 'MosaicTile')
  
--/** badge 半宽估算, 用于跟手平移时居中 */
--const BADGE_HALF_WIDTH = 52
-+/** 触点横坐标换算为柱位下标, 超出范围收敛到首尾柱 (worklet) */
-+function toBarIndex(x: number, barWidth: number, count: number) {
-+  'worklet'
-+  return Math.max(0, Math.min(Math.floor(x / barWidth), count - 1))
+-export const MEASURE_DAYS = {
+-  '01-25': 0,
+-  '02-22': 0,
+-  '03-25': 0,
+-  '04-24': 0,
+-  '05-25': 0,
+-  '06-24': 0,
+-  '07-25': 0,
+-  '08-25': 0,
+-  '09-24': 0,
+-  '10-25': 0,
+-  '11-24': 0,
+-  '12-25': 0
+-} as const
++/** 各类型的统计单位 */
++export const TYPE_UNITS: Record<HeatmapType, string> = {
++  all: '次活动',
++  timeline: '次动态',
++  community: '次活动',
++  contributions: '次贡献'
 +}
- 
- /** 每周提交数柱状图, 触摸平移查看某周明细 */
- function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
-   /** 刻度、年份、柱子位置只与数据尺寸有关 */
--  const stat = useMemo(() => {
--    if (!weeks.length) return null
--
--    const max = getMaxCount(weeks)
--    const barWidth = width / weeks.length
--
--    /** 坐标系底部抬离图表下缘, 0 刻度与柱子不再贴底 */
--    const bottom = height - BAR_BOTTOM
--    const usableHeight = bottom - BAR_INSET
--
--    /** 每格给右侧留 BAR_GAP 缝, 密集时柱子之间仍有分割 */
--    const gap = Math.min(BAR_GAP, Math.max(barWidth - BAR_MIN_WIDTH, 0))
--    const w = Math.max(BAR_MIN_WIDTH, barWidth - gap)
--
--    return {
--      max,
--      bottom,
--      barWidth,
--      ticks: getTicks(max),
--      months: withYearLabel
--        ? getEvenMonthLabels(weeks, width, 5, true)
--        : getMonthLabels(weeks, width, YEAR_MIN_GAP),
--      bars: weeks.map((item, index) => {
--        const barHeight = Math.max(BAR_MIN_HEIGHT, (item.c / max) * usableHeight)
--        return {
--          key: item.w,
--          w: item.w,
--          c: item.c,
--          index,
--          x: index * barWidth,
--          y: bottom - barHeight,
--          width: w,
--          height: barHeight
--        }
--      })
--    }
--  }, [weeks, width, height, withYearLabel])
-+  const stat = useMemo(
-+    () => getBarStat(weeks, width, height, withYearLabel),
-+    [weeks, width, height, withYearLabel]
-+  )
- 
-   /** 当前探查的周下标, -1 表示未触摸 */
-   const [active, setActive] = useState(-1)
-@@ -83,12 +44,14 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
-   const showBadge = useSharedValue(false)
- 
-   /** worklet 里读不到组件变量, 用 shared value 传图表参数 */
--  const barWidthSV = useSharedValue(0)
-+  const barWidthSV = useSharedValue(stat?.barWidth || 0)
-   const widthSV = useSharedValue(width)
--  const countSV = useSharedValue(0)
--  barWidthSV.value = stat?.barWidth || 0
--  widthSV.value = width
--  countSV.value = stat?.bars.length || 0
-+  const countSV = useSharedValue(stat?.bars.length || 0)
-+  useEffect(() => {
-+    barWidthSV.value = stat?.barWidth || 0
-+    widthSV.value = width
-+    countSV.value = stat?.bars.length || 0
-+  }, [stat, width, barWidthSV, widthSV, countSV])
- 
-   /** index 变化时更新 state + 震动; 稳定引用供 worklet 调用 */
-   const applyIndex = useCallback((index: number) => {
-@@ -105,13 +68,13 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
-   const panGesture = Gesture.Pan()
-     .activeOffsetX([-2, 2])
-     .onStart(event => {
--      const index = Math.max(0, Math.min(Math.floor(event.x / barWidthSV.value), countSV.value - 1))
-+      const index = toBarIndex(event.x, barWidthSV.value, countSV.value)
-       showBadge.value = true
-       badgeX.value = (index + 0.5) * barWidthSV.value
-       scheduleOnRN(applyIndex, index)
-     })
-     .onUpdate(event => {
--      const index = Math.max(0, Math.min(Math.floor(event.x / barWidthSV.value), countSV.value - 1))
-+      const index = toBarIndex(event.x, barWidthSV.value, countSV.value)
-       badgeX.value = (index + 0.5) * barWidthSV.value
-       scheduleOnRN(applyIndex, index)
-     })
-@@ -142,26 +105,23 @@ function BarChart({ weeks, width, height, label, withYearLabel }: Props) {
- 
-   return (
-     <Flex>
--      <View style={[styles.axis, { height }]}>
-+      <View style={stl(styles.axis, { height })}>
-         {stat.ticks.map(tick => (
-           <Text
-             key={tick}
--            style={[
--              styles.tick,
--              {
--                /** 0 刻度兜底上移, 避免文字中心压底边线被裁 */
--                bottom: Math.max(
--  
++
++/** 数据类型选项, 与 web 版 Heatmap 脚本的选项卡一致 */
++export const HEATMAP_TYPES: {
++  /** 展示文案 */
++  label: string
++
++  /** 数据类型 */
++  value: HeatmapType
++}[] = [
++  { label: '全部', value: 'all' },
++  { label: '时间胶囊', value: 'timeline' },
++  { label: '社区', value: 'community' },
++  { label: 'Wiki', value: 'contributions' }
++]
 ```
 
-**File**: `src/screens/user/qiafan/component/section-1/bar-chart/styles.ts` (modified, +21/-13)
+**File**: `src/screens/_/base/mosaic-tile/footer/index.tsx` (added, +57/-0)
 ```diff
-@@ -3,23 +3,28 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:53:08
-+ *
-+ * 柱状图: 纵轴刻度、横轴月份、触摸探查 badge 与右侧说明
-  */
- import { _ } from '@stores'
--import { AXIS_WIDTH, COLOR } from '../ds'
-+import { AXIS_WIDTH, BADGE_HEIGHT, BADGE_WIDTH, COLOR, SIDE_WIDTH } from '../ds'
- 
- export const styles = _.create({
-   axis: {
--    width: AXIS_WIDTH,
--    position: 'relative'
-+    position: 'relative',
-+    width: AXIS_WIDTH
-+  },
-+  main: {
-+    flex: 1
-   },
-   tick: {
-     position: 'absolute',
-     right: 6,
-     width: 18,
-     fontSize: 9,
-     lineHeight: 10,
--    textAlign: 'right',
--    color: COLOR.sub
-+    color: COLOR.sub,
-+    textAlign: 'right'
-   },
-   months: {
-     position: 'relative',
-@@ -31,19 +36,22 @@ export const styles = _.create({
-     width: 44,
-     fontSize: 10,
-     lineHeight: 12,
--    textAlign: 'center',
--    color: COLOR.sub
-+    color: COLOR.sub,
-+    textAlign: 'center'
-   },
--  /** 触摸探查 badge: 跟手平移的时间+数值气泡 */
-+  /** 触摸探查 badge: 跟手平移的时间+数值气泡, 定宽保证居中位置稳定 */
-   badge: {
-     position: 'absolute',
-     top: 0,
-+    width: BADGE_WIDTH,
-+    height: BADGE_HEIGHT,
-+    alignItems: 'center',
-     paddingHorizontal: 8,
-     paddingVertical: 4,
--    borderRadius: 6,
-     backgroundColor: COLOR.miniBg,
-     borderWidth: 1,
--    borderColor: COLOR.border
-+    borderColor: COLOR.border,
-+    borderRadius: 6
-   },
-   badgeText: {
-     fontSize: 10,
-@@ -56,16 +64,16 @@ export const styles = _.create({
-     color: COLOR.miniSelect
-   },
-   side: {
--    width: 14,
-     alignItems: 'center',
--    justifyContent: 'center'
-+    justifyContent: 'center',
-+    width: SIDE_WIDTH
-   },
-   sideText: {
-     width: 90,
-     fontSize: 9,
-     lineHeight: 14,
--    textAlign: 'center',
-     color: COLOR.sub,
-+    textAlign: 'center',
-     transform: [
-       {
-         rotate: '90deg'
-```
-
-**File**: `src/screens/user/qiafan/component/section-1/bar-chart/types.ts` (modified, +3/-0)
-```diff
-@@ -3,10 +3,13 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:16:36
-+ *
-+ * 柱状图 Props
-  */
- import type { Week } from '../../../github'
- 
- export type Props = {
-+  /** 每周提交数 */
-   weeks: Week[]
- 
-   /** 图表区宽度 */
-```
-
-**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/ds.ts` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,57 @@
 +/*
 + * @Author: czy0729
-+ * @Date: 2026-11-03 12:00:00
++ * @Date: 2026-11-05 12:00:00
 + * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-03 12:00:00
++ * @Last Modified time: 2026-11-05 12:00:00
 + *
-+ * 提交趋势卡片: 大图与总览缩略图的固定高度
++ * 热力图底部: 数据类型切换与区间总数
 + */
++import { observer } from 'mobx-react'
++import { Flex, Iconfont, Popover, Text } from '@components'
++import { _ } from '@stores'
++import { HEATMAP_TYPES } from '../ds'
++import { memoStyles } from './styles'
 +
-+/** 图表区高度 */
-+export const CHART_HEIGHT = 110
++import type { Props } from './types'
 +
-+/** 总览缩略图高度 */
-+export const MINI_HEIGHT = 34
++function Footer({ type, loading, total, unit, onTypeChange }: Props) {
++  const styles = memoStyles()
++
++  const currentTypeLabel =
++    HEATMAP_TYPES.find(item => item.value === type)?.label || HEATMAP_TYPES[0].label
++
++  return (
++    <Flex style={styles.footer} align='center'>
++      {!!onTypeChange && (
++        <Popover
++          style={styles.popover}
++          data={HEATMAP_TYPES.map(item => item.label)}
++          value={currentTypeLabel}
++          onSelect={label => {
++            const next = HEATMAP_TYPES.find(item => item.label === label)
++            if (next) onTypeChange(next.value)
++          }}
++        >
++          <Flex style={styles.trigger} justify='center'>
++            <Text type={_.select('sub', 'icon')} size={12} bold>
++              {currentTypeLabel}
++            </Text>
++            <Iconfont
++              style={_.ml.xxs}
++              name='md-filter-list'
++              size={14}
++              color={_.select(_.colorSub, _.colorIcon)}
++            />
++          </Flex>
++        </Popover>
++      )}
++      <Flex.Item>
++        <Text type={_.select('sub', 'icon')} size={12} bold align='right'>
++          {loading ? '正在获取数据…' : `过去一年共 ${total} ${unit}`}
++        </Text>
++      </Flex.Item>
++    </Flex>
++  )
++}
++
++export default observer(Footer)
 ```
 
-**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/index.tsx` (modified, +6/-9)
+**File**: `src/screens/_/base/mosaic-tile/footer/styles.ts` (added, +25/-0)
 ```diff
-@@ -3,18 +3,22 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:37:42
+@@ -0,0 +1,25 @@
++/*
++ * @Author: czy0729
++ * @Date: 2022-08-20 15:53:15
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-04-20 12:33:29
 + *
-+ * 提交趋势卡片: 大图 + 总览缩略图联动
++ * 热力图底部样式
++ */
++import { _ } from '@stores'
++
++export const memoStyles = _.memoStyles(() => ({
++  /** 与上方星期列左对齐 */
++  footer: {
++    marginLeft: _.wind,
++    marginRight: _.wind - _._wind + _.sm
++  },
++  popover: {
++    borderRadius: _.radiusXs,
++    overflow: 'hidden'
++  },
++  trigger: {
++    height: 24,
++    paddingRight: 4
++  }
++}))
+```
+
+**File**: `src/screens/_/base/mosaic-tile/footer/types.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-05 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-05 12:00:00
++ *
++ * 热力图底部 Props
++ */
++import type { HeatmapType } from '@utils/kv/type'
++
++export type Props = {
++  /** 当前数据类型 */
++  type: HeatmapType
++
++  /** 是否正在拉取数据 */
++  loading?: boolean
++
++  /** 区间内的活动总数 */
++  total: number
++
++  /** 统计单位 (次活动 / 次动态 / 次贡献) */
++  unit: string
++
++  /** 切换数据类型, 不传则不显示入口 */
++  onTypeChange?: (type: HeatmapType) => void
++}
+```
+
+**File**: `src/screens/_/base/mosaic-tile/grid/ds.ts` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-05 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-05 12:00:00
++ *
++ * 热力图网格: 格子尺寸与刻度常量
++ */
++import { _ } from '@stores'
++
++/** 单格边长 */
++export const PX = _.r(12)
++
++/** 单格间距 */
++export const MARGIN = _.r(3)
++
++/** 星期标签, 隔行展示 */
++export const WEEK_DAYS = ['日', '二', '四', '六'] as const
++
++/** 月份标签相对所在列的左偏移 */
++export const MONTH_LABEL_OFFSET = 2
+```
+
+**File**: `src/screens/_/base/mosaic-tile/grid/index.tsx` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++/*
++ * @Author: czy0729
++ * @Date: 2020-07-20 16:34:09
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-05 12:00:00
++ *
++ * 热力图网格: 星期列、月份刻度与按次数的色阶
++ */
++import { View } from 'react-native'
++import { observer } from 'mobx-react'
++import { Flex, Heatmap, ScrollView, Text, Touchable } from '@components'
++import { _ } from '@stores'
++import { feedback, info, stl } from '@utils'
++import { MARGIN, MONTH_LABEL_OFFSET, PX, WEEK_DAYS } from './ds'
++import { memoStyles } from './styles'
++
++import type { Props } from './types'
++
++function Grid({ days, monthColumns, mosaicTile, todayStr, unit }: Props) {
++  const styles = memoStyles()
++
++  /** 配色, 按次数分档 */
++  const colors: Record<number, string> = {
++    1: _.select('#ffd8db', 'rgba(254, 138, 149, 0.32)'),
++    2: _.select('#fe9da7', 'rgba(254, 138, 149, 0.48)'),
++    3: _.select('#fe8a95', 'rgba(254, 138, 149, 0.64)'),
++    4: _.select('#fe5060', 'rgba(254, 138, 149, 0.8)'),
++    5: _.select('#fd293d', 'rgba(254, 138, 149, 1)')
++  }
++
++  return (
++    <Flex style={styles.container} align='start'>
++      <View style={styles.days}>
++        {WEEK_DAYS.map((day, index) => (
++          <Text
++            key={day}
++            style={stl(styles.day, { top: (PX + MARGIN) * (index * 2 + 1) })}
++            size={10}
++            type='sub'
++          >
++            {day}
++          </Text>
++        ))}
++      </View>
++
++      <Flex.Item>
++        <ScrollView contentContainerStyle={styles.contentContainerStyle} horizontal>
++          <View>
++            <Flex style={styles.months}>
++              {Object.entries(monthColumns).map(([month, weekIndex]) => (
++                <Text
++                  key={month}
++                  style={stl(styles.month, {
++                    left: weekIndex * (PX + MARGIN) + MONTH_LABEL_OFFSET
++                  })}
++                  size={10}
++                  type='sub'
++                >
++                  {month}月
++                </Text>
++              ))}
++            </Flex>
++            <Flex style={styles.items} direction='column' wrap='wrap'>
++              {days.map(item => {
++                const value = mosaicTile[item] || 0
++                const isToday = item === todayStr
++                const bgColor =
++                  colors[value] || (value ? colors[5] : _.select(_.colorBg, _._colorDarkModeLevel1))
++
++                const itemStyle = stl(styles.item, isToday && styles.itemToday, {
++                  backgroundColor: bgColor
++                })
++
++                return value === 0 ? (
++                  <View key={item} style={itemStyle} />
++                ) : (
++                  <Touchable
++                    key={item}
++                    style={itemStyle}
++                    onPress={() => {
++                      info(`${item}：${value} ${unit}`)
++                      feedback(true)
++                    }}
++                  />
++                )
++              })}
++            </Flex>
++          </View>
++        </ScrollView>
++      </Flex.Item>
++
++      <Heatmap id='时间线.点击瓷砖' />
++    </Flex>
++  )
++}
++
++export default observer(Grid)
+```
+
+**File**: `src/screens/_/base/mosaic-tile/grid/styles.ts` (renamed, +3/-7)
+```diff
+@@ -3,12 +3,11 @@
+  * @Date: 2022-08-20 15:53:15
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2026-04-20 12:33:29
++ *
++ * 热力图网格样式
   */
- import { useMemo } from 'react'
- import { View } from 'react-native'
- import { observer } from 'mobx-react'
- import { Flex, Text } from '@components'
  import { _ } from '@stores'
-+import { stl } from '@utils'
- import { AXIS_WIDTH } from '../ds'
- import BarChart from '../bar-chart'
- import { useWeekRange } from '../hooks'
- import { formatWeek, getChartWidth } from '../utils'
- import MiniChart from './mini-chart'
--import { CHART_HEIGHT, MINI_HEIGHT, styles } from './styles'
-+import { CHART_HEIGHT, MINI_HEIGHT } from './ds'
-+import { styles } from './styles'
- 
- import type { Props } from './types'
- 
-@@ -31,14 +35,7 @@ function CommitsOverTime({ width, weeks }: Props) {
-   const to = visibleWeeks[visibleWeeks.length - 1]?.w
- 
-   return (
--    <View
--      style={[
--        styles.card,
--        {
--          width
--        }
--      ]}
--    >
-+    <View style={stl(styles.card, { width })}>
-       <Flex align='center'>
-         <Flex.Item>
-           <Text style={styles.title}>Commits over time</Text>
-```
-
-**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/mini-chart/index.tsx` (modified, +24/-57)
-```diff
-@@ -3,14 +3,16 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:16:40
-+ *
-+ * 总览缩略图: 折线 + 可拖动的区间选择框
-  */
--import { useCallback, useEffect, useMemo, useRef } from 'react'
-+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
- import { View } from 'react-native'
- import { Gesture, GestureDetector } from 'react-native-gesture-handler'
- import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
- import Svg, { Path, Polyline, Rect } from 'react-native-svg'
--import { observer } from 'mobx-react'
- import { Text } from '@components'
-+import { stl } from '@utils'
- import { scheduleOnRN } from '@utils/worklets'
- import { COLOR, MINI_HANDLE_INSET, MINI_PADDING_BOTTOM, MINI_PADDING_TOP } from '../../ds'
- import { getEvenYearLabels, getMaxCount } from '../../utils'
-@@ -51,20 +53,23 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
-   const widthSV = useSharedValue(width)
-   const maxSelectXSV = useSharedValue(maxSelectX)
-   const spanSV = useSharedValue(span)
--  widthSV.value = width
--  maxSelectXSV.value = maxSelectX
--  spanSV.value = span
-+  useEffect(() => {
-+    widthSV.value = width
-+    maxSelectXSV.value = maxSelectX
-+    spanSV.value = span
-+  }, [width, maxSelectX, span, widthSV, maxSelectXSV, spanSV])
- 
-   /** 手势基准: 拖动开始时的选择框左偏移 */
-   const dragStartX = useSharedValue(0)
-   const isDragging = useSharedValue(false)
-   const translateX = useSharedValue(restX)
-+  const restXSV = useSharedValue(restX)
- 
-   /** 数据刷新或外部 start 变化时, 非拖动态下选择框归位到对应周 */
-   useEffect(() => {
-+    restXSV.value = restX
-     if (!isDragging.value) translateX.value = restX
--    // eslint-disable-next-line react-hooks/exhaustive-deps
--  }, [restX])
-+  }, [isDragging, restX, translateX, restXSV])
- 
-   /** 松手提交: worklet 里只能捕获稳定引用, 内部再读最新的 onMove */
-   const onMoveRef = useRef(onMove)
-@@ -84,14 +89,18 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
-       translateX.value = Math.max(0, Math.min(next, maxSelectXSV.value))
-     })
-     .onEnd(() => {
--      isDragging.value = false
 -
-       /** 像素位置 -> 起始周下标, 吸附到整格后提交给 JS 侧更新大图 */
-       const nextStart = Math.round((translateX.value / widthSV.value) * spanSV.value)
-       const snappedX = Math.min((nextStart / spanSV.value) * widthSV.value, maxSelectXSV.value)
-       translateX.value = withTiming(snappedX, { duration: 120 })
-       scheduleOnRN(submit, nextStart)
-     })
-+    .onFinalize((_event, success) => {
-+      isDragging.value = false
-+
-+      /** 被外层滚动抢走而取消时 onEnd 不执行, 选择框回到当前区间对应的位置 */
-+      if (!success) translateX.value = withTiming(restXSV.value, { duration: 120 })
-+    })
+-export const PX = _.r(12)
+-
+-export const MARGIN = _.r(3)
++import { MARGIN, PX } from './ds'
  
-   /** 选择框位置完全由 translateX 驱动: 拖动中跟手, 松手时已吸附 */
-   const selectStyle = useAnimatedStyle(() => ({
-@@ -103,69 +112,27 @@ function MiniChart({ weeks, width, height, start, end, onMove }: MiniChartProps)
-   const handleHeight = height - MINI_HANDLE_INSET * 2 - 2
- 
-   return (
--    <View
--      style={[
--        styles.mini,
--        {
--          width,
--          height
--        }
--      ]}
--    >
-+    <View style={stl(styles.mini, { width, height })}>
-       <Svg width={width} height={height}>
-         <Rect x={0} y={0} width={width} height={height} rx={2} fill={COLOR.miniBg} />
-         <Path d={stat.area} fill={COLOR.miniArea} />
-         <Polyline points={stat.line} fill='none' stroke={COLOR.miniLine} strokeWidth={1} />
-       </Svg>
-       {stat.years.map(item => (
--        <Text
--          key={item.label}
--          style={[
--            styles.miniYear,
--            {
--              left: item.left - 14
--            }
--          ]}
--        >
-+        <Text key={item.label} style={stl(styles.miniYear, { left: item.left - 14 })}>
-           {item.label}
-         </Text>
-       ))}
-       <GestureDetector gesture={panGesture}>
-         <Animated.View
--          style={[
--            styles.selectBox,
--            {
--              top: 1,
--              width: selectWidth,
--              height: height - 2
--            },
--            selectStyle
--          ]}
-+          style={stl(styles.selectBox, { width: selectWidth, height: height - 2 }, selectStyle)}
-         >
--          <View
--            style={[
--              styles.handle,
--              {
--                left: 0,
--                top: MINI_HANDLE_INSET - 1,
--                height: handleHeight
--              }
--            ]}
--          />
--          <View
--            style={[
--              styles.handle,
--              {
--                right: 0,
--                top: MINI_HANDLE_INSET - 1,
--                height: handleHeight
--              }
--            ]}
--          />
-+          <View style={stl(styles.handle, styles.handleLeft, { height: handleHeight })} />
-+          <View style={stl(styles.handle, styles.handleRight, { height: handleHeight })} />
-         </Animated.View>
-       </GestureDetector>
-     </View>
-   )
- }
- 
--export default observer(MiniChart)
-+e
-```
-
-**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/mini-chart/styles.ts` (modified, +15/-5)
-```diff
-@@ -3,9 +3,11 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-24 13:16:43
-+ *
-+ * 缩略图: 年份刻度与区间选择框
-  */
- import { _ } from '@stores'
--import { COLOR, MINI_HANDLE_WIDTH } from '../../ds'
-+import { COLOR, MINI_HANDLE_INSET, MINI_HANDLE_WIDTH } from '../../ds'
- 
- export const styles = _.create({
-   mini: {
-@@ -15,6 +17,7 @@ export const styles = _.create({
-   /** 选择框: 跟手平移, 边框即区间范围 */
-   selectBox: {
-     position: 'absolute',
-+    top: 1,
-     left: 0,
+ export const memoStyles = _.memoStyles(() => ({
+   container: {
+@@ -57,8 +56,5 @@ export const memoStyles = _.memoStyles(() => ({
+   itemToday: {
      borderWidth: 1,
-     borderColor: COLOR.miniSelect,
-@@ -23,17 +26,24 @@ export const styles = _.create({
-   /** 选择框两侧把手 */
-   handle: {
-     position: 'absolute',
-+    top: MINI_HANDLE_INSET - 1,
-     width: MINI_HANDLE_WIDTH,
--    borderRadius: 1,
--    backgroundColor: COLOR.handle
-+    backgroundColor: COLOR.handle,
-+    borderRadius: 1
-+  },
-+  handleLeft: {
-+    left: 0
-+  },
-+  handleRight: {
-+    right: 0
-   },
-   miniYear: {
-     position: 'absolute',
-     bottom: 3,
-     width: 28,
-     fontSize: 8,
-     lineHeight: 10,
--    textAlign: 'center',
--    color: COLOR.text
-+    color: COLOR.text,
-+    textAlign: 'center'
+     borderColor: _.colorTitle
+-  },
+-  footer: {
+-    marginRight: _.wind - _._wind + _.sm
    }
- })
+ }))
 ```
 
-**File**: `src/screens/user/qiafan/component/section-1/commits-over-time/styles.ts` (modified, +4/-8)
+**File**: `src/screens/_/base/mosaic-tile/grid/types.ts` (added, +26/-0)
 ```diff
-@@ -3,21 +3,17 @@
-  * @Date: 2026-09-23 12:00:00
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-23 12:00:00
+@@ -0,0 +1,26 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-05 12:00:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-05 12:00:00
 + *
-+ * 提交趋势卡片: 深色卡片与标题排版
-  */
- import { _ } from '@stores'
- import { CARD_WIND, COLOR } from '../ds'
- 
--/** 图表区高度 */
--export const CHART_HEIGHT = 110
--
--/** 总览缩略图高度 */
--export const MINI_HEIGHT = 34
--
- export const styles = _.create({
-   card: {
-     padding: CARD_WIND,
--    borderRadius: _.radiusSm,
--    backgroundColor: COLOR.card
-+    backgroundColor: COLOR.card,
-+    borderRadius: _.radiusSm
-   },
-   title: {
-     fontSize: 13,
++ * 热力图网格 Props
++ */
++import type { MosaicTileType } from '../types'
++
++export type Props = {
++  /** 格子日期, 从最近到最早 */
++  days: string[]
++
++  /** 每个月首次出现的列下标 */
++  monthColumns: Record<number, number>
++
++  /** 日期 -> 次数 */
++  mosaicTile: MosaicTileType
++
++  /** 今天 (Y-m-d) */
++  todayStr: string
++
++  /** 统计单位 (次活动 / 次动态 / 次贡献) */
++  unit: string
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2504,54 +1993,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [重构] 重写网络探针页面，检测更快、结果更稳定
+## X. - [iOS] 升级到 Expo SDK 58（React Native 0.88），适配相关 API 变更
 
 **RULE**:
-When implementing operations in `src/screens/user/server-status/ds.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/docs/architecture.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36f62871`: - [重构] 重写网络探针页面，检测更快、结果更稳定. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dc93c3a`: - [iOS] 升级到 Expo SDK 58（React Native 0.88），适配相关 API 变更. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/screens/user/server-status/ds.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/docs/architecture.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- * @Last Modified by: czy0729
- * @Last Modified time: 2026-11-04 12:00:00
- *
- * 网络探针: 页面标识、探测地址与检测参数
-import { HOST_AC_API } from '@constants'
-
-export const COMPONENT = 'ServerStatus'
-
-
-/** 探针请求: bilibili 番剧分区, 只用于检测延迟 */
-export const URL_PROBE_BILIBILI = `${HOST_AC_API}/pgc/web/season/section?season_id=1`
-
-/** 探针请求: youku 番剧预览, 只用于检测延迟 */
-export const URL_PROBE_YOUKU = 'https://list.youku.com/show/module?id=1&tab=point&callback=jQuery'
-
-/** 每个站点最多检测次数, 失败即停止 */
-export const PING_COUNTS = 4
-
-/** 单次检测超时 (毫秒) */
-export const PING_TIMEOUT = 5000
-
-/** 平均延迟低于此值显示绿色 (毫秒) */
-export const STATUS_FAST = 150
-
-/** 平均延迟低于此值显示黄色, 超过或失败显示红色 (毫秒) */
-export const STATUS_OK = 1000
+- **框架**: React Native 0.88 + Expo SDK 58（ios 为根目录当前环境；`packages/android` 备份环境为 RN 0.72.10 + Expo 49 + React 18.2，`packages/web` 为 RN 0.70.5 + Expo 47 + React 18.3.1）
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
- * @Last Modified by:   czy0729
- * @Last Modified time: 2024-12-11 20:43:05
+- **框架**: React Native + Expo SDK 54
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36f62871` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dc93c3a` are properly handled with clean fallback behavior.
