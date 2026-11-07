@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T17:40:54.331Z",
+  "last_updated": "2026-11-07T17:48:09.496Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37832,11 +37832,16 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "46813afa",
-      "content_hash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
+      "source_version": "fdcdb1e5",
+      "content_hash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #4828 from BojanZelic-DD/add-match-conditions",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2245,
           "title": "networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)",
@@ -37898,7 +37903,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:33:05.482Z",
+      "verified_at": "2026-11-07T17:48:03.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40492,14 +40497,19 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "15f9a3fa",
-      "content_hash": "7be60daff658beb0b309a9f444e2b87d6022a40f38b82d2b2fc76ca1b2654969",
+      "source_version": "d032b9f2",
+      "content_hash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the for",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update dependency ip-address to v10.7.4 [security] (#40553)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40588,7 +40598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:38:42.132Z",
+      "verified_at": "2026-11-07T17:48:09.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

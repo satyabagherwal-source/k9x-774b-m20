@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `15f9a3fa`  
+> **Source Version**: `d032b9f2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:38:40.708Z  
+> **Timestamp**: 2026-11-07T17:48:07.937Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:38:40.702Z  
+> **Harvest Timestamp**: 2026-11-07T17:48:07.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6395 stars
+- **Stars / Engagement**: 6396 stars
 
 ---
 
@@ -1081,11 +1081,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40511** (2026-11-05): **enabled freshness page for self-managed**
-  *Symptoms*: Enable Freshness page for all customers. 
+- **Issue #40555** (2026-11-07): **ci: Nightly fixes (2026-11-07)**
+  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18696  platform-checks: Fix version for ItemColumns change  terraform test: mz-debug was missing, so can't investigate flakes. Also remove unused code  build: Just timed out, unfortunately we've gotten a bit slower  test run: https://buildkite.com/materialize/nightly/builds/18697
 
-- **Issue #40507** (2026-11-05): **sql-parser: only take `WITH` as part of `WITH TIME ZONE`**
-  *Symptoms*: Parsing a `time`/`timestamp` type consumed any following `WITH` and then required `TIME ZONE`, so a cast right before a clause's `WITH` failed to parse, e.g. `COPY t TO 's3://b/' || now()::timestamp WITH (FORMAT = 'csv')`. Since it failed to parse, nothing needed to migrate.  Seen in https://buildkite.com/materialize/release-qualification/builds/1426#01a1a2ff-5b36-4ef2-88b5-9d6d00854ed1
+- **Issue #40554** (2026-11-07): **chore(deps): update dependency glob to v14 [security]**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [glob](https://redirect.github.com/isaacs/node-glob) | [`^12.0.0` → `^14.0.0`](https://renovatebot.com/diffs/npm/glob/12.0.0/14.0.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/glob/14.0.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/glob/12.0.0/14.0.2?slim=true) |  ---  ### Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal [CVE-2026-118773](https://nvd.nist.gov/vuln/detail/CVE-2026-118773) / [GHSA-3g3m-2fjr-6pw4](https://redirect.github.com/advisories/GHSA-3g3m-2fjr-6pw4)  <details> <summary>More information</summary>  #### Details ##### Summary  In glob 13.0.6, an aborted async walk rejects or emits an error but continues recursively reading directories in the background.  The root cause is that abort branches in src/walker.ts call cb() without returning. As a result, callers that rely on signal or AbortSignal.timeout() to bound glob traversal cost can still incur filesystem I/O and CPU work after the request has already been rejected.  ##### Details  This was reproduced on glob v13.0.6 (commit e80cb38ae60d6cbff9e75f39032a994858994d35).  The README documents that the signal option cancels the glob walk. However, in src/walker.ts, the following methods call cb() when this.signal?.aborted is true but 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1102,367 +1102,328 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77ae0a30` (2026-11-05)
-**Commit Message**: build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the forms group (#40471)
+### Incident Patch 1: `eb4903a1` (2026-11-07)
+**Commit Message**: chore(deps): update dependency ip-address to v10.7.4 [security] (#40553)
 
-Bumps the forms group in /console with 1 update:
-[@hookform/resolvers](https://github.com/react-hook-form/resolvers).
+> [!NOTE]
+> This PR body was truncated due to platform limits.
 
-Updates `@hookform/resolvers` from 7.0.0 to 7.0.1
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [ip-address](https://redirect.github.com/beaugunderson/ip-address) |
+[`10.4.0` →
+`10.7.4`](https://renovatebot.com/diffs/npm/ip-address/10.4.0/10.7.4) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/ip-address/10.7.4?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/ip-address/10.4.0/10.7.4?slim=true)
+|
+
+---
+
+### ip-address: no classifier recognizes the NAT64 local-use range
+64:ff9b:1::/48, allowing SSRF and trust-boundary bypass
+[CVE-2026-101910](https://nvd.nist.gov/vuln/detail/CVE-2026-101910) /
+[GHSA-2vr4-cq9g-pvrc](https://redirect.github.com/advisories/GHSA-2vr4-cq9g-pvrc)
+
 <details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/react-hook-form/resolvers/releases">@​hookform/resolvers's
-releases</a>.</em></p>
-<blockquote>
-<h2>v7.0.1</h2>
-<h2><a
-href="https://github.com/react-hook-form/resolvers/compare/v7.0.0...v7.0.1">7.0.1</a>
-(2026-11-01)</h2>
-<h3>Bug Fixes</h3>
-<ul>
-<li><strong>fluentvalidation-ts:</strong> preserve primitive array error
-messages (<a
-href="https://redirect.github.com/react-hook-form/resolvers/issues/889">#889</a>)
-(<a
-href="https://github.com/react-hook-form/resolvers/commit/5845b81fba4d5e63f501c6f2a48cd9b2b04f31e3">5845b81</a>)</li>
-</ul>
-</blockquote>
-</details>
+<summary>More information</summary>
+
+#### Details
+##### Summary
+
+No classifier on `Address6` recognizes the NAT64 local-use range
+`64:ff9b:1::/48` (RFC 8215). `isPrivate()`, `isLoopback()`,
+`isLinkLocal()` and their sibling
+
+**File**: `console/yarn.lock` (modified, +3/-3)
+```diff
+@@ -9237,9 +9237,9 @@ __metadata:
+   linkType: hard
+ 
+ "ip-address@npm:^10.4.0":
+-  version: 10.4.0
+-  resolution: "ip-address@npm:10.4.0"
+-  checksum: 10c0/d7b0bd2624fd861afbae6e49036a9b56f9506eaff7ff38592b7b4492dd5c272b53f5356dc8cc019e318acf29a96c90a3d1af1df761960267d23efa96858270fa
++  version: 10.7.6
++  resolution: "ip-address@npm:10.7.6"
++  checksum: 10c0/b1877874793345a00ef46877e18b8ff38d91ce4d07195f8e26d1381a0248b296cfad73e2ec1ba7c5c39e347d365971e036fbb6ffbc672b7d3f0d9648ed2fafa5
+   languageName: node
+   linkType: hard
+ 
+```
+
+---
+
+### Incident Patch 2: `c9f2ace1` (2026-11-07)
+**Commit Message**: fix(deps): update dependency org.postgresql:postgresql to v42.7.12 [security] (#40552)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [org.postgresql:postgresql](https://jdbc.postgresql.org)
+([source](https://redirect.github.com/pgjdbc/pgjdbc)) | `42.7.11` →
+`42.7.12` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.postgresql:postgresql/42.7.12?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.postgresql:postgresql/42.7.11/42.7.12?slim=true)
+|
+
+---
+
+### PostgreSQL JDBC Driver: Silent channel-binding authentication
+downgrade via unsupported certificate algorithms
+BIT-postgresql-jdbc-driver-2026-54291 /
+[CVE-2026-54291](https://nvd.nist.gov/vuln/detail/CVE-2026-54291) /
+[GHSA-j92g-9f8w-j867](https://redirect.github.com/advisories/GHSA-j92g-9f8w-j867)
+
 <details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/react-hook-form/resolvers/commit/5845b81fba4d5e63f501c6f2a48cd9b2b04f31e3"><code>5845b81</code></a>
-fix(fluentvalidation-ts): preserve primitive array error messages (<a
-href="https://redirect.github.
+<summary>More information</summary>
+
+#### Details
+##### Impact
+
+`channelBinding=require` connections can be silently downgraded from
+`SCRAM-SHA-256-PLUS` (with channel binding) to plain `SCRAM-SHA-256`
+(without it), losing
+
+**File**: `test/lang/java/smoketest/pom.xml` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ the Business Source License, use of this software will be governed
+     <dependency>
+       <groupId>org.postgresql</groupId>
+       <artifactId>postgresql</artifactId>
+-      <version>42.7.11</version>
++      <version>42.7.12</version>
+     </dependency>
+     <dependency>
+       <groupId>org.junit.jupiter</groupId>
+```
+
+---
+
+### Incident Patch 3: `0229fa20` (2026-11-07)
+**Commit Message**: chore(deps): update dependency glob to v14 [security] (#40554)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [glob](https://redirect.github.com/isaacs/node-glob) | [`^12.0.0` →
+`^14.0.0`](https://renovatebot.com/diffs/npm/glob/12.0.0/14.0.2) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/glob/14.0.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/glob/12.0.0/14.0.2?slim=true)
+|
+
+---
+
+### Glob: AbortSignal cancellation bypass allows post-timeout filesystem
+traversal
+[CVE-2026-118773](https://nvd.nist.gov/vuln/detail/CVE-2026-118773) /
+[GHSA-3g3m-2fjr-6pw4](https://redirect.github.com/advisories/GHSA-3g3m-2fjr-6pw4)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+##### Summary
+
+In glob 13.0.6, an aborted async walk rejects or emits an error but
+continues recursively reading directories in the background.
+
+The root cause is that abort branches in src/walker.ts call cb() without
+returning. As a result, callers that rely on signal or
+AbortSignal.timeout() to bound glob traversa
 
 **File**: `console/package.json` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,7 @@
-     "@emotion/styled": "^11.14.1",
-     "@fontsource/roboto-mono": "^5.3.0",
-     "@frontegg/react": "^7.2.0",
--    "@hookform/resolvers": "^7.0.0",
-+    "@hookform/resolvers": "^7.0.1",
-     "@intercom/messenger-js-sdk": "^0.0.20",
-     "@juggle/resize-observer": "^3.4.0",
-     "@lezer/common": "^1.5.3",
+@@ -198,7 +198,7 @@
+     "@codemirror/view": "^6.43.13",
+     "diff": "^4.0.4",
+     "esbuild": "^0.25.0",
+-    "glob": "^12.0.0",
++    "glob": "^14.0.0",
+     "ip-address": "^10.4.0",
+     "js-cookie": "^3.0.7",
+     "js-yaml": "^4.3.2",
 ```
 
-**File**: `console/yarn.lock` (modified, +5/-5)
+**File**: `console/yarn.lock` (modified, +32/-53)
 ```diff
-@@ -2732,9 +2732,9 @@ __metadata:
+@@ -1827,13 +1827,6 @@ __metadata:
    languageName: node
    linkType: hard
  
--"@hookform/resolvers@npm:^7.0.0":
--  version: 7.0.0
--  resolution: "@hookform/resolvers@npm:7.0.0"
-+"@hookform/resolvers@npm:^7.0.1":
-+  version: 7.0.1
-+  resolution: "@hookform/resolvers@npm:7.0.1"
-   dependencies:
-     "@standard-schema/utils": "npm:^0.3.0"
-   peerDependencies:
-@@ -2809,7 +2809,7 @@ __metadata:
-       optional: true
-     zod:
-       optional: true
--  checksum: 10c0/9ee4ce5f8f08dc73268ddad451b21f38d3367f61b3ec75b54dc77691650af336514dd948d09a36cb4caab730c2901bbaa07428239f187e335a9ca2f97a2b69fd
-+  checksum: 10c0/d0af589e638d4879e37a19cc7e0af0c2380ed72b179080516a17b525a9e3ee48f2e8dcac49a381353cd87a062aca42e28caca55ac0d2e8d9ec3aa6fc684a4f65
+-"@isaacs/cliui@npm:^9.0.0":
+-  version: 9.0.0
+-  resolution: "@isaacs/cliui@npm:9.0.0"
+-  checksum: 10c0/971063b7296419f85053dacd0a0285dcadaa3dfc139228b23e016c1a9848121ad4aa5e7fcca7522062014e1eb6239a7424188b9f2cba893a79c90aae5710319c
+-  languageName: node
+-  linkType: hard
+-
+ "@isaacs/fs-minipass@npm:^4.0.0":
+   version: 4.0.1
+   resolution: "@isaacs/fs-minipass@npm:4.0.1"
+@@ -1843,6 +1836,13 @@ __metadata:
    languageName: node
    linkType: hard
  
-@@ -11760,7 +11760,7 @@ __metadata:
-     "@fontsource/roboto-mono": "npm:^5.3.0"
-     "@frontegg/client": "npm:^5.3.2"
-     "@frontegg/react": "npm:^7.2.0"
--    "@hookform/resolvers": "npm:^7.0.0"
-+    "@hookform/resolvers": "npm:^7.0.1"
-     "@intercom/messenger-js-sdk": "npm:^0.0.20"
-     "@juggle/resize-observer": "npm:^3.4.0"
-     "@lezer/common": "npm:^1.5.3"
-```
-
----
-
-### Incident Patch 2: `962b6a3c` (2026-11-05)
-**Commit Message**: build(deps): bump the tanstack-query group in /console with 2 updates (#40472)
-
-Bumps the tanstack-query group in /console with 2 updates:
-[@tanstack/react-query](https://github.com/TanStack/query/tree/HEAD/packages/react-query)
-and
-[@tanstack/react-query-devtools](https://github.com/TanStack/query/tree/HEAD/packages/react-query-devtools).
-
-Updates `@tanstack/react-query` from 5.105.0 to 5.105.1
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/TanStack/query/releases">@​tanstack/react-query's
-releases</a>.</em></p>
-<blockquote>
-<h2><code>@​tanstack/react-query-devtools</code><a
-href="https://github.com/5"><code>@​5</code></a>.105.1</h2>
-<h3>Patch Changes</h3>
-<ul>
-<li>Updated dependencies [<a
-href="https://github.com/TanStack/query/commit/7ccba6e959fcb9c51e691db9e2b09ff41d21e0b6"><code>7ccba6e</code></a>,
-<a
-href="https://github.com/TanStack/query/commit/18e54bfac3dc3756afdb8840418d831c61bc15bf"><code>18e54bf</code></a>]:
-<ul>
-<li><code>@​tanstack/react-query</code><a
-href="https://github.com/5"><code>@​5</code></a>.105.1</li>
-<li><code>@​tanstack/query-devtools</code><a
-href="https://github.com/5"><code>@​5</code></a>.105.1</li>
-</ul>
-</li
-
-**File**: `console/package.json` (modified, +2/-2)
-```diff
-@@ -59,8 +59,8 @@
-     "@stripe/stripe-js": "^10.0.0",
-     "@tanstack/db": "0.15.2",
-     "@tanstack/react-db": "0.5.12",
--    "@tanstack/react-query": "^5.105.0",
--    "@tanstack/react-query-devtools": "^5.105.0",
-+    "@tanstack/react-query": "^5.105.1",
-+    "@tanstack/react-query-devtools": "^5.105.1",
-     "@tanstack/react-table": "^8.21.3",
-     "@types/d3": "^7.4.3",
-     "@types/d3-graphviz": "^3.1.0",
-```
-
-**File**: `console/yarn.lock` (modified, +22/-22)
-```diff
-@@ -4720,29 +4720,29 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/query-core@npm:5.105.0":
--  version: 5.105.0
--  resolution: "@tanstack/query-core@npm:5.105.0"
--  checksum: 10c0/1b4baa128a95810b677d93f91156e3d32eb07dbe9e062fe0a2651089569f3fca275e43dc9fe569efd55b9e5a00d0d2e18b78de6fa9ed65b1ad54f24e5a90106e
-+"@tanstack/query-core@npm:5.105.1":
-+  version: 5.105.1
-+  resolution: "@tanstack/query-core@npm:5.105.1"
-+  checksum: 10c0/2e13312a127e82a54024230ccb3e3644141cebb51719443767de39e90188f9b235b87abd2c0074addd02bf226f9eebf0371fc3e39577bbfaa19545cd4402b5de
-   languageName: node
-   linkType: hard
- 
--"@tanstack/query-devtools@npm:5.105.0":
--  version: 5.105.0
--  resolution: "@tanstack/query-devtools@npm:5.105.0"
-+"@tanstack/query-devtools@npm:5.105.1":
-+  version: 5.105.1
-+  resolution: "@tanstack/query-devtools@npm:5.105.1"
-   dependencies:
-     "@kobalte/core": "npm:^0.13.14"
-     "@solid-primitives/keyed": "npm:^1.5.3"
-     "@solid-primitives/resize-observer": "npm:^2.2.0"
-     "@solid-primitives/storage": "npm:^1.3.11"
-     "@tanstack/match-sorter-utils": "npm:^9.1.2"
--    "@tanstack/query-core": "npm:5.105.0"
-+    "@tanstack/query-core": "npm:5.105.1"
-     clsx: "npm:^2.1.1"
-     goober: "npm:^2.1.19"
-     solid-js: "npm:^1.9.15"
-     solid-transition-group: "npm:^0.2.3"
-     superjson: "npm:^2.2.6"
--  checksum: 10c0/cd3381ea1167570cbc6270fc1dc3e1b364085e012e53540f8803257c617a7a920e5362d4ef060a85789f47a52bc889aa17e93fd9812b7409c14816ae42f53da7
-+  checksum: 10c0/3671e30a7da10f9e9e647df30ec895fbff321404f598e8518e91db093446783c5ffdbfc5ef0ce1de9fdf8975569586b401393516b6a787464d815776750421ee
-   languageName: node
-   linkType: hard
- 
-@@ -4757,34 +4757,34 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/react-query-devtools@npm:^5.105.0":
--  version: 5.105.0
--  resolution: "@tanstack/react-query-devtools@npm:5.105.0"
-+"@tanstack/react-query-devtools@npm:^5.105.1":
-+  version: 5.105.1
-+  resolution: "@tanstack/react-query-devtools@npm:5.105.1"
-   dependencies:
--    "@tanstack/query-devtools": "npm:5.105.0"
-+    "@tanstack/query-devtools": "npm:5.105.1"
-   peerDependencies:
--    "@tanstack/react-query": ^5.105.0
-+    "@tanstack/react-query": ^5.105.1
-     "@types/react": ^18 || ^19
-     react: ^18 || ^19
-   peerDependenciesMeta:
-     "@types/react":
-       optional: true
--  checksum: 10c0/a9564a298fe164e8d067fd8d409844b188babfa0a4f54e58674b13e9d606df81d7b557ea98b6af73ede71b3636f5ce6fbf06a7fb5ab1817e3ced0300348196a5
-+  checksum: 10c0/39d6ba0435b0a2ee8fc5aa17be8363cf474ccba2fad8ee021c171f37309ffcca6966c87935347536cd913a5c17090613c76d820c9c623e54625cf69d83a7fb1e
-   languageName: node
-   linkType: hard
- 
--"@tanstack/react-query@npm:^5.105.0":
--  version: 5.105.0
--  resolution: "@tanstack/react-query@npm:5.105.0"
-+"@tanstack/react-query@npm:^5.105.1":
-+  version: 5.105.1
-+  resolution: "@tanstack/react-query@npm:5.105.1"
-   dependencies:
--    "@tanstack/query-core": "npm:5.105.0"
-+    "@tanstack/query-core": "npm:5.105.1"
-   peerDependencies:
-     "@types/react": ^18 || ^19
-     react: ^18 || ^19
-   peerDependenciesMeta:
-     "@types/react":
-       optional: true
--  checksum: 10c0/7c9e8d073a0a9192937d0996b18ff6c27a769efb93a3a9cf6cf31c811c9187229573c0746849f1f99c0c96af63e7d738c475e445e53cea6c3a8b0718d8b16f7d
-+  checksum: 10c0/2cb228aa68476e743b3a39fc6e657aa6f8f8226427f3d92940feda671b147cd5ac417477f48eba670a360f1c563dc1f51c6a5dc2e43203d5d47f2b299a432a0b
-   languageName: node
-   linkType: hard
- 
-@@ -11780,8 +11780,8 @@ __metadata:
-     "@tanstack/db": "npm:0.15.2"
-     "@tanstack/eslint-plugin-query": "npm:^5.105.1"
-     "@tanstack/react-db": "npm:0.5.12"
--    "@tanstack/react-query": "npm:^5.105.0"
--    "@tanstack/react-query-devtools": "npm:^5.105.0"
-+    "@tanstack/react-query": "npm:^5.105.1"
-+    "@tanstack/react-query-devtools": "npm:^5.105.1"
-     "@tanstack/react-table": "npm:^8.21.3"
-     "@testing-library/dom": "npm:^10.4.2"
-     "@testing-library/jest-dom": "npm:^7.0.1"
-```
-
----
-
-### Incident Patch 3: `f488ce42` (2026-11-05)
-**Commit Message**: build(deps-dev): bump the typescript-and-eslint group in /console with 2 updates (#40470)
-
-Bumps the typescript-and-eslint group in /console with 2 updates:
-[@tanstack/eslint-plugin-query](https://github.com/TanStack/query/tree/HEAD/packages/eslint-plugin-query)
-and [globals](https://github.com/sindresorhus/globals).
-
-Updates `@tanstack/eslint-plugin-query` from 5.105.0 to 5.105.1
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/TanStack/query/releases">@​tanstack/eslint-plugin-query's
-releases</a>.</em></p>
-<blockquote>
-<h2><code>@​tanstack/eslint-plugin-query</code><a
-href="https://github.com/5"><code>@​5</code></a>.105.1</h2>
-<h3>Patch Changes</h3>
-<ul>
-<li><a
-href="https://redirect.github.com/TanStack/query/pull/12409">#12409</a>
-<a
-href="https://github.com/TanStack/query/commit/ec1910188588b182394a589313678714bc6a1798"><code>ec19101</code></a>
-- Fix stable-query-client detection for arrow functions, function
-expressions, and clients created directly in JSX. Keep state
-initializers and nested helper functions valid.</li>
-</ul>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com
-
-**File**: `console/package.json` (modified, +2/-2)
-```diff
-@@ -132,7 +132,7 @@
-     "@sentry/vite-plugin": "^5.4.0",
-     "@storybook/react-vite": "^10",
-     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
--    "@tanstack/eslint-plugin-query": "^5.105.0",
-+    "@tanstack/eslint-plugin-query": "^5.105.1",
-     "@testing-library/dom": "^10.4.2",
-     "@testing-library/jest-dom": "^7.0.1",
-     "@testing-library/react": "^16.3.3",
-@@ -165,7 +165,7 @@
-     "eslint-plugin-simple-import-sort": "^14.0.0",
-     "eslint-plugin-unicorn": "^79.0.0",
-     "fast-xml-parser": "^5.11.2",
--    "globals": "^17.13.0",
-+    "globals": "^17.14.0",
-     "intersection-observer": "^0.12.2",
-     "jotai-devtools": "^0.10.1",
-     "jsdom": "^29.1.1",
-```
-
-**File**: `console/yarn.lock` (modified, +14/-7)
-```diff
-@@ -4689,9 +4689,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/eslint-plugin-query@npm:^5.105.0":
--  version: 5.105.0
--  resolution: "@tanstack/eslint-plugin-query@npm:5.105.0"
-+"@tanstack/eslint-plugin-query@npm:^5.105.1":
-+  version: 5.105.1
-+  resolution: "@tanstack/eslint-plugin-query@npm:5.105.1"
-   dependencies:
-     "@typescript-eslint/utils": "npm:^8.71.0"
-   peerDependencies:
-@@ -4700,7 +4700,7 @@ __metadata:
-   peerDependenciesMeta:
-     typescript:
-       optional: true
--  checksum: 10c0/009aa34de317547c47525c99995408dfdc2c868aba0ed552f19959dc612b79d1f2859ce7f6800d09d5ee17cefb56230331861f77b056e03acd3d50ef02b54e8f
-+  checksum: 10c0/9e1201c9763e3bb92f19d1af879f7c6afa75743756a4d709bd983ed008bb9bd2a9953b5cd84a03f27d98f93a37ccbc779d814c42565d93c99799e552e405021c
-   languageName: node
-   linkType: hard
- 
-@@ -9817,13 +9817,20 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"globals@npm:^17.12.0, globals@npm:^17.13.0":
-+"globals@npm:^17.12.0":
-   version: 17.13.0
-   resolution: "globals@npm:17.13.0"
-   checksum: 10c0/8371d9e4e5581640141b5cce70a098edd765d2e3ab063b14998e590698071e0afb4a4a6739ccfbdcbdeb2565c5553697ba07d95703c51039912cf341a7dba7a7
-   languageName: node
-   linkType: hard
- 
-+"globals@npm:^17.14.0":
-+  version: 17.14.0
-+  resolution: "globals@npm:17.14.0"
-+  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
++"@isaacs/nonrecursive-glob-match@npm:^1.0.3":
++  version: 1.0.3
++  resolution: "@isaacs/nonrecursive-glob-match@npm:1.0.3"
++  checksum: 10c0/dc2eb2b9cffc8d4b22b0de8beb8ecdc903b7bef1cb094d83fe0a7e454f0c7e1a8bcb4a168f66299eb17e1620fdf3c8cdf69545d11933845a122a10393b86c40a
 +  languageName: node
 +  linkType: hard
 +
- "globalthis@npm:^1.0.3":
-   version: 1.0.3
-   resolution: "globalthis@npm:1.0.3"
-@@ -11771,7 +11778,7 @@ __metadata:
-     "@stripe/stripe-js": "npm:^10.0.0"
-     "@svgr/babel-plugin-transform-svg-component": "npm:^8.0.0"
-     "@tanstack/db": "npm:0.15.2"
--    "@tanstack/eslint-plugin-query": "npm:^5.105.0"
-+    "@tanstack/eslint-plugin-query": "npm:^5.105.1"
-     "@tanstack/react-db": "npm:0.5.12"
-     "@tanstack/react-query": "npm:^5.105.0"
-     "@tanstack/react-query-devtools": "npm:^5.105.0"
-@@ -11834,7 +11841,7 @@ __metadata:
-     fast-deep-equal: "npm:^3.1.3"
-     fast-xml-parser: "npm:^5.11.2"
-     framer-motion: "npm:^14.0.0"
--    globals: "npm:^17.13.0"
-+    globals: "npm:^17.14.0"
-     intersection-observer: "npm:^0.12.2"
-     jotai: "npm:^2.9.3"
-     jotai-devtools: "npm:^0.10.1"
+ "@joshwooding/vite-plugin-react-docgen-typescript@npm:^0.7.0":
+   version: 0.7.0
+   resolution: "@joshwooding/vite-plugin-react-docgen-typescript@npm:0.7.0"
+@@ -5679,7 +5679,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.8":
++"brace-expansion@npm:^5.0.12, brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.8":
+   version: 5.0.12
+   resolution: "brace-expansion@npm:5.0.12"
+   dependencies:
+@@ -8350,16 +8350,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"foreground-child@npm:^3.3.1":
+-  version: 3.3.1
+-  resolution: "foreground-child@npm:3.3.1"
+-  dependencies:
+-    cross-spawn: "npm:^7.0.6"
+-    signal-exit: "npm:^4.0.1"
+-  checksum: 10c0/8986e4af2430896e65bc2788d6679067294d6aee9545daefc84923a0a4b399ad9c7a3ea7bd8c0b2b80fdf4a92de4c69df3f628233ff3224260e9c1541a9e9ed3
+-  languageName: node
+-  linkType: hard
+-
+ "form-data@npm:^4.0.6":
+   version: 4.0.6
+   resolution: "form-data@npm:4.0.6"
+@@ -8702,19 +8692,14 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"glob@npm:^12.0.0":
+-  version: 12.0.0
+-  resolution: "glob@npm:12.0.0"
++"glob@npm:^14.0.0":
++  version: 14.0.3
++  resolution: "glob@npm:14.0.3"
+   dependencies:
+-    foreground-child: "npm:^3.3.1"
+-    jackspeak: "npm:^4.1.1"
+-    minimatch: "npm:^10.1.1"
+-    minipass: "npm:^7.1.2"
+-    package-json-from-dist: "npm:^1.0.0"
+-    path-scurry: "npm:^2.0.0"
+-  bin:
+-    glob: dist/esm/bin.mjs
+-  checksum: 10c0/923fbb7e30913496dc1c30191edb7ebb610a26edac81710a5f697c718b08694bce7fb0245baceba5383472778a8431ff7c36571703507cc6563602d3c139c993
++    minimatch: "npm:^11.0.2"
++    minipass: "npm:^7.1.3"
++    path-scurry: "npm:^3.0.0"
++  checksum: 10c0/762d4b6e2dc3648e7dbc7f7aa4264fe62cce85014d004c0d0690f9e64471d898ba828c69d2dcd449ac949908fdf02934a9d2c51e444a84171a8f4158a42ef496
+   languageName: node
+   linkType: hard
+ 
+@@ -9805,15 +9790,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"jackspeak@npm:^4.1.1":
+-  version: 4.2.3
+-  resolution: "jackspeak@npm:4.2.3"
+-  dependencies:
+-    "@isaacs/cliui": "npm:^9.0.0"
+-  checksum: 10c0/b5c0c414f1607c2aa0597f4bf2c03b8443897fccd5fd3c2b3e4f77d556b2bc7c3d3413828ba91e0789f6fb40ad90242f7f89fb20aee9e9d705bc1681f7564f67
+-  languageName: node
+-  linkType: hard
+-
+ "jake@npm:^10.8.5":
+   version: 10.9.2
+   resolution: "jake@npm:10.9.2"
+@@ -11142,7 +11118,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"minimatch@npm:^10.1.1, minimatch@npm:^10.2.2":
++"minimatch@npm:^10.2.2":
+   version: 10.2.4
+   resolution: "minimatch@npm:10.2.4"
+   dependencies:
+@@ -11160,6 +11136,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"minimatch@npm:^11.0.2":
++  version: 11.0.4
++  resolution: "minimatch@npm:11.0.4"
++  dependencies:
++    "@isaacs/nonrecursive-glob-match": "npm:^1.0.3"
++    brace-expansion: "npm:^5.0.12"
++  checksum: 10c0/e342a036ce841615715727957c644df8fb167137035e7ec380c5dbd637a47dd10ba33b2e25ff3a8dd01c6483624cdd1942de5bafb5f4a342b450343bb63e29dc
++  languageName: node
++  linkType: hard
++
+ "minimatch@npm:^3.1.2":
+   version: 3.1.5
+   resolution: "minimatch@npm:3.1.5"
+@@ -11243,7 +11229,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"minipass@npm:^7.0.4":
++"minipass@npm:^7.0.4, minipass@npm:^7.1.3":
+   version: 7.1.3
+   resolution: "minipass@npm:7.1.3"
+   checksum: 10c0/539da88daca16533211ea5a9ee98dc62ff5742f531f54640dd34429e621955e91cc280a91a776026264b7f9f6735947629f920944e9c1558369e8bf22eb33fbb
+@@ -11908,13 +11894,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"package-json-from-dist@npm:^1.0.0":
+-  version: 1.0.0
+-  resolution: "package-json-from-dist@npm:1.0.0"
+-  checksum: 10c0/e3ffaf6ac1040ab6082a658230c041ad14e72fabe99076a2081bb1d5d41210f11872403fc09082daf4387fc0baa6577f96c9c0e94c90c394fd57794b66aa4033
+-  languageName: node
+-  linkType: hard
+-
+ "papaparse@npm:^5.7.0":
+   version: 5.7.0
+   resolution: "papaparse@npm:5.7.0"
+@@ -12011,13 +11990,13 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"path-scurry@npm:^2.0.0":
+-  version: 2.0.2
+-  resolution: "path-scurry@npm:2.0.2"
++"path-scurry@npm:^3.0.0":
++  version: 3.0.0
++  resolution: "path-scurry@npm:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40511** (2026-11-05): enabled freshness page for self-managed (@jdonelson)
-- **PR #40507** (2026-11-05): sql-parser: only take `WITH` as part of `WITH TIME ZONE` (@def-)
-- **PR #40506** (2026-11-05): ci: Nightly fixes (2026-11-05) (@def-)
-- **PR #40505** (closed): build(deps): bump the simple group across 1 directory with 17 updates (@dependabot[bot])
-- **PR #40504** (closed): compute: arrange through a Materialize-owned copy of differential's trace agent (@antiguru)
-- **PR #40502** (2026-11-05): release: mark v26.49 as released (@materialize-bot)
+- **PR #40555** (2026-11-07): ci: Nightly fixes (2026-11-07) (@def-)
+- **PR #40554** (2026-11-07): chore(deps): update dependency glob to v14 [security] (@renovate[bot])
+- **PR #40553** (2026-11-07): chore(deps): update dependency ip-address to v10.7.4 [security] (@renovate[bot])
+- **PR #40552** (2026-11-07): fix(deps): update dependency org.postgresql:postgresql to v42.7.12 [security] (@renovate[bot])
+- **PR #40550** (2026-11-06): console: bump kysely to 0.29 and fix yarn gen:types (@leedqin)
+- **PR #40548** (2026-11-06): ci: Nightly fixes (2026-11-06) (@def-)
 
 ---
 
@@ -1482,28 +1443,32 @@ href="https://github.com
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the for
+## X. deps): update dependency ip-address to v10.7.4 [security] (#40553)
 
 **RULE**:
-When implementing operations in `console/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `console/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77ae0a30`: build(deps): bump @hookform/resolvers from 7.0.0 to 7.0.1 in /console in the forms group (#40471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb4903a1`: deps): update dependency ip-address to v10.7.4 [security] (#40553). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "@hookform/resolvers": "^7.0.1",
+  version: 10.7.6
+  resolution: "ip-address@npm:10.7.6"
+  checksum: 10c0/b1877874793345a00ef46877e18b8ff38d91ce4d07195f8e26d1381a0248b296cfad73e2ec1ba7c5c39e347d365971e036fbb6ffbc672b7d3f0d9648ed2fafa5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "@hookform/resolvers": "^7.0.0",
+  version: 10.4.0
+  resolution: "ip-address@npm:10.4.0"
+  checksum: 10c0/d7b0bd2624fd861afbae6e49036a9b56f9506eaff7ff38592b7b4492dd5c272b53f5356dc8cc019e318acf29a96c90a3d1af1df761960267d23efa96858270fa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77ae0a30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb4903a1` are properly handled with clean fallback behavior.

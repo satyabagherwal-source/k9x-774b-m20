@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `46813afa`  
+> **Source Version**: `fdcdb1e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:33:04.847Z  
+> **Timestamp**: 2026-11-07T17:48:02.165Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:33:01.530Z  
+> **Harvest Timestamp**: 2026-11-07T17:48:00.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1611,225 +1611,64 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a652844` (2026-11-03)
-**Commit Message**: fix(endpoint): add node ready time for pods that are ready as well (#4941)
+### Incident Patch 1: `fdcdb1e5` (2026-11-06)
+**Commit Message**: Merge pull request #4828 from BojanZelic-DD/add-match-conditions
 
-**File**: `pkg/backend/endpoint_resolver.go` (modified, +25/-5)
+add support for matchConditions in the helm chart
+
+**File**: `helm/aws-load-balancer-controller/README.md` (modified, +1/-0)
 ```diff
-@@ -170,6 +170,12 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
- 				podEndpoint := buildPodEndpoint(pod, epAddr, epPort)
- 				// Recommendation from Kubernetes is to consider unknown ready status as ready (ready == nil)
- 				if ep.Conditions.Ready == nil || *ep.Conditions.Ready {
-+					// The node only annotates the endpoint here; failing to read it must not drop a ready endpoint.
-+					if node, err := r.getNode(ctx, pod.NodeName); err != nil {
-+						r.logger.V(1).Info("unable to read node of ready pod endpoint, NodeReadyTime left unset", "podKey", podKey.String(), "error", err.Error())
-+					} else {
-+						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
-+					}
- 					readyPodEndpoints = append(readyPodEndpoints, podEndpoint)
- 					continue
- 				}
-@@ -178,24 +184,22 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
- 					continue
- 				}
- 
--				node := &corev1.Node{}
--				if err := r.k8sClient.Get(ctx, types.NamespacedName{Name: pod.NodeName}, node); err != nil {
-+				node, err := r.getNode(ctx, pod.NodeName)
-+				if err != nil {
- 					r.logger.Error(err, "ignore pod Endpoint without non-exist nodeInfo", "podKey", podKey.String())
- 					continue
- 				}
- 
- 				nodeReadyCondStatus := corev1.ConditionFalse
--				var nodeReadyTime metav1.Time
- 				if readyCond := k8s.GetNodeCondition(node, corev1.NodeReady); readyCond != nil {
- 					nodeReadyCondStatus = readyCond.Status
--					nodeReadyTime = readyCond.LastTransitionTime
- 				}
- 				switch nodeReadyCondStatus {
- 				case corev1.ConditionTrue:
- 					// start from 1.22+, terminating pods are included in endpointSlices,
- 					// and we don't want to include these pods if the node is known to be healthy.
- 					if ep.Conditions.Terminating == nil || !*ep.Conditions.Terminating {
--						podEndpoint.NodeReadyTime = nodeReadyTime
-+						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
- 						readyPodEndpoints = append(readyPodEndpoints, podEndpoint)
- 					}
- 				case corev1.ConditionUnknown:
-@@ -211,6 +215,22 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
- 	return podEndpoints, nil
- }
- 
-+func (r *defaultEndpointResolver) getNode(ctx context.Context, nodeName string) (*corev1.Node, error) {
-+	node := &corev1.Node{}
-+	if err := r.k8sClient.Get(ctx, types.NamespacedName{Name: nodeName}, node); err != nil {
-+		return nil, err
-+	}
-+	return node, nil
-+}
-+
-+// nodeReadyTimeIfReady returns the LastTransitionTime of the node's Ready condition when it is True, zero otherwise.
-+func nodeReadyTimeIfReady(node *corev1.Node) metav1.Time {
-+	if readyCond := k8s.GetNodeCondition(node, corev1.NodeReady); readyCond != nil && readyCond.Status == corev1.ConditionTrue {
-+		return readyCond.LastTransitionTime
-+	}
-+	return metav1.Time{}
-+}
-+
- func (r *defaultEndpointResolver) findServiceAndServicePort(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString) (*corev1.Service, corev1.ServicePort, error) {
- 	svc := &corev1.Service{}
- 	if err := r.k8sClient.Get(ctx, svcKey, svc); err != nil {
+@@ -296,6 +296,7 @@ The default values set by the application itself can be confirmed [here](https:/
+ | `serviceMutatorWebhookConfig.failurePolicy`                         | Failure policy for the Service Mutator webhook                                                                                                                                                                                                                                                                                               | `Fail`                                            |
+ | `serviceMutatorWebhookConfig.objectSelector`                        | Object selector(s) to limit which objects will be mutated by the Service Mutator webhook                                                                                                                                                                                                                                                     | `[]`                                              |
+ | `serviceMutatorWebhookConfig.operations`                            | List of operations that will trigger the the Service Mutator webhook                                                                                                                                                                                                                                                                         | `[ CREATE ]`                                      |
++| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
+ | `autoscaling`                                                       | If `autoscaling.enabled=true`, enable the HPA on the controller mainly to survive load induced failure by the calls to the `aws-load-balancer-webhook-service`. Please keep in mind that the controller pods have `priorityClassName: system-cluster-critical`, enabling HPA may lead to the eviction of other low-priority pods in the node | `false`                                           |
+ | `serviceTargetENISGTags`                                            | set of `key=value` pairs of AWS tags in addition to cluster name for finding the target ENI security group to which to add inbound rules from NLBs                                                                                                                                                                                           | None                                              |
+ | `loadBalancerClass`                                                 | Sets the AWS load balancer type to be used when the Kubernetes service requests an external load balancer                                                                                                                                                                                                                                    | `service.k8s.aws/nlb`                             |
 ```
 
-**File**: `pkg/backend/endpoint_resolver_test.go` (modified, +130/-0)
+**File**: `helm/aws-load-balancer-controller/templates/webhook.yaml` (modified, +4/-0)
 ```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"fmt"
- 	"testing"
-+	"time"
- 
- 	awssdk "github.com/aws/aws-sdk-go-v2/aws"
- 	"github.com/go-logr/logr"
-@@ -3000,3 +3001,132 @@ func Test_convertCoreEndpointAddressToDiscoveryEndpoint(t *testing.T) {
- 		})
- 	}
- }
-+
-+func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeReadyTime(t *testing.T) {
-+	testNS := "test-ns"
-+	// metav1.Time round-trips through the fake client at second granularity.
-+	readyAt := metav1.NewTime(time.Now().Add(-10 * time.Minute).Truncate(time.Second))
-+	unknownAt := metav1.NewTime(time.Now().Add(-5 * time.Minute).Truncate(time.Second))
-+	newNode := func(name string, status corev1.ConditionStatus, at metav1.Time) *corev1.Node {
-+		return &corev1.Node{
-+			ObjectMeta: metav1.ObjectMeta{Name: name},
-+			Status: corev1.NodeStatus{
-+				Conditions: []corev1.NodeCondition{{Type: corev1.NodeReady, Status: status, LastTransitionTime: at}},
-+			},
-+		}
-+	}
-+	newPod := func(name, nodeName, ip string, podReady corev1.ConditionStatus) k8s.PodInfo {
-+		return k8s.PodInfo{
-+			Key: types.NamespacedName{Namespace: testNS, Name: name},
-+			Conditions: []corev1.PodCondition{
-+				{Type: corev1.PodReady, Status: podReady},
-+				{Type: corev1.ContainersReady, Status: corev1.ConditionTrue},
-+			},
-+			NodeName: nodeName,
-+			PodIP:    ip,
-+		}
-+	}
-+	addr := func(pod k8s.PodInfo) corev1.EndpointAddress {
-+		return corev1.EndpointAddress{
-+			IP:        pod.PodIP,
-+			TargetRef: &corev1.ObjectReference{Kind: "Pod", Namespace: testNS, Name: pod.Key.Name},
-+		}
-+	}
-+	svc := &corev1.Service{
-+		ObjectMeta: metav1.ObjectMeta{Namespace: testNS, Name: "svc-1"},
-+		Spec: corev1.ServiceSpec{
-+			Type:  corev1.ServiceTypeClusterIP,
-+			Ports: []corev1.ServicePort{{Name: "http", Port: 80}},
-+		},
-+	}
-+
-+	tests := []struct {
-+		name              string
-+		nodes             []*corev1.Node
-+		pod               k8s.PodInfo
-+		endpointReady     bool
-+		failOpenEnabled   bool
-+		wantNodeReadyTime metav1.Time
-+	}{
-+		{
-+			name:              "ready endpoint on Ready node records node ready time",
-+			nodes:             []*corev1.Node{newNode("node-a", corev1.ConditionTrue, readyAt)},
-+			pod:               newPod("pod-1", "node-a", "192.168.1.1", corev1.ConditionTrue),
-+			endpointReady:     true,
-+			wantNodeReadyTime: readyAt,
-+		},
-+		{
-+			name:          "ready endpoint on Unknown node is included without node ready time",
-+			nodes:         []*corev1.Node{newNode("node-b", corev1.ConditionUnknown, unknownAt)},
-+			pod:           newPod("pod-2", "node-b", "192.168.1.2", corev1.ConditionTrue),
-+			endpointReady: true,
-+		},
-+		{
-+			name:          "ready endpoint on NotReady node is included without node ready time",
-+			nodes:         []*corev1.Node{newNode("node-c", corev1.ConditionFalse, unknownAt)},
-+			pod:           newPod("pod-3", "node-c", "192.168.1.3", corev1.ConditionTrue),
-+			endpointReady: true,
-+		},
-+		{
-+			name:          "ready endpoint whose node cannot be read is still included",
-+			pod:           newPod("pod-4", "node-missing", "192.168.1.4", corev1.ConditionTrue),
-+			endpointReady: true,
-+		},
-+		{
-+			name:              "not ready endpoint with ready containers on Ready node records node ready time",
-+			nodes:             []*corev1.Node{newNode("node-a", corev1.ConditionTrue, readyAt)},
-+			pod:               newPod("pod-5", "node-a", "192.168.1.5", corev1.ConditionFalse),
-+			endpointReady:     false,
-+			wantNodeReadyTime: readyAt,
-+		},
-+		{
-+			name:            "fail-open endpoint on Unknown node has no node ready time",
-+			nodes:           []*corev1.Node{newNode("node-b", corev1.ConditionUnknown, unknownAt)},
-+			pod:             newPod("pod-6", "node-b", "192.168.1.6", corev1.ConditionFalse),
-+			endpointReady:   false,
-+			failOpenEnabled: true,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			defer ctrl.Finish()
-+			podInfoRepo := k8s.NewMockPodInfoRepo(ctrl)
-+			podInfoRepo.EXPECT().Get(gomock.Any(), tt.pod.Key).Return(tt.pod, true, nil)
-+
-+			k8sSchema := runtime.NewScheme()
-+			clientgoscheme.AddToScheme(k8sSchema)
-+			k8sClient := testclient.NewClientBuilder().WithScheme(k8sSchema).Build()
-+			ctx := context.Background()
-+			for _, node := range tt.nodes {
-+				assert.NoError(t, k8sClient.Create(ctx, node.DeepCopy()))
-+			}
-+			assert.NoError(t, k8sClient.Create(ctx, svc.DeepCopy()))
-+			subset := corev1.EndpointSubset{Ports: []corev1.EndpointPort{{Name: "http", Port: 8080}}}
-+			if tt.endpointReady {
-+				subset.Addresses = []corev1.EndpointAddress{addr(tt.pod)}
-+			} else {
-+				subset.NotReadyAddresses = []corev1.EndpointAddress{addr(tt.pod)}
-+			}
-+			assert.NoError(t, k8sClient.Create(ctx, &corev1.Endpoints{
-+				ObjectMeta: metav1.ObjectMeta{Namespace: testNS, Name: "svc-1"},
-+				Subsets:    []corev1.EndpointSubset{subset},
-+			}))
-+
-+			r := &defaultEndpointResolver{
-+				k8sClient:       k8sClient,
-+				podInfoRepo:     podInfoRepo,
-+				failOpenEnabled: tt.failOp
+@@ -133,6 +133,10 @@ webhooks:
+     matchLabels:
+     {{- toYaml .Values.serviceMutatorWebhookConfig.objectSelector.matchLabels | nindent 6 }}
+     {{- end }}
++  {{- if .Values.serviceMutatorWebhookConfig.matchConditions }}
++  matchConditions:
++  {{- toYaml .Values.serviceMutatorWebhookConfig.matchConditions | nindent 2 }}
++  {{- end }}
+   rules:
+   - apiGroups:
+     - ""
 ```
 
-**File**: `pkg/backend/endpoint_types.go` (modified, +4/-2)
+**File**: `helm/aws-load-balancer-controller/test.yaml` (modified, +3/-0)
 ```diff
-@@ -24,8 +24,10 @@ type PodEndpoint struct {
- 	// Pod that provides this endpoint.
- 	Pod k8s.PodInfo
- 	// NodeReadyTime is the LastTransitionTime of the Ready condition of the pod's node. It is set
--	// only when the endpoint was not ready and was admitted because the pod's containers were
--	// ready and its node was Ready; otherwise it is zero.
-+	// for every returned endpoint whose node is Ready, including endpoints that were already ready:
-+	// after a node NotReady blip the kubelet restores the pod's Ready condition with its original
-+	// transition time, so this is the only signal of when the pod became eligible again.
-+	// It is zero when the node is not Ready (fail-open endpoints) or could not be read.
- 	NodeReadyTime metav1.Time
- }
- 
+@@ -351,6 +351,9 @@ serviceMutatorWebhookConfig:
+     #   - <value>
+     matchLabels: {}
+       # key: value
++  matchConditions: []
++  # - name: <key>
++  #   expression: <value>
+   # which operations trigger the webhook
+   operations:
+   - CREATE
+```
+
+**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +3/-0)
+```diff
+@@ -503,6 +503,9 @@ serviceMutatorWebhookConfig:
+   #   operator: <operator>
+   #   values:
+   #   - <value>
++  matchConditions: []
++  # - name: include-load-balancer-services
++  #   expression: object.spec.type == 'LoadBalancer'
+   # which operations trigger the webhook
+   operations:
+   - CREATE
 ```
 
 #### Recent Merged Pull Requests:
@@ -1858,56 +1697,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. endpoint): add node ready time for pods that are ready as well (#4941)
+## X. Merge pull request #4828 from BojanZelic-DD/add-match-conditions
 
 **RULE**:
-When implementing operations in `pkg/backend/endpoint_resolver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `helm/aws-load-balancer-controller/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a652844`: endpoint): add node ready time for pods that are ready as well (#4941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fdcdb1e5`: Merge pull request #4828 from BojanZelic-DD/add-match-conditions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/backend/endpoint_resolver.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `helm/aws-load-balancer-controller/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					// The node only annotates the endpoint here; failing to read it must not drop a ready endpoint.
-					if node, err := r.getNode(ctx, pod.NodeName); err != nil {
-						r.logger.V(1).Info("unable to read node of ready pod endpoint, NodeReadyTime left unset", "podKey", podKey.String(), "error", err.Error())
-					} else {
-						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
-					}
-				node, err := r.getNode(ctx, pod.NodeName)
-				if err != nil {
-						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
-func (r *defaultEndpointResolver) getNode(ctx context.Context, nodeName string) (*corev1.Node, error) {
-	node := &corev1.Node{}
-	if err := r.k8sClient.Get(ctx, types.NamespacedName{Name: nodeName}, node); err != nil {
-		return nil, err
-	}
-	return node, nil
-}
-
-// nodeReadyTimeIfReady returns the LastTransitionTime of the node's Ready condition when it is True, zero otherwise.
-func nodeReadyTimeIfReady(node *corev1.Node) metav1.Time {
-	if readyCond := k8s.GetNodeCondition(node, corev1.NodeReady); readyCond != nil && readyCond.Status == corev1.ConditionTrue {
-		return readyCond.LastTransitionTime
-	}
-	return metav1.Time{}
-}
-
+| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				node := &corev1.Node{}
-				if err := r.k8sClient.Get(ctx, types.NamespacedName{Name: pod.NodeName}, node); err != nil {
-				var nodeReadyTime metav1.Time
-					nodeReadyTime = readyCond.LastTransitionTime
-						podEndpoint.NodeReadyTime = nodeReadyTime
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a652844` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fdcdb1e5` are properly handled with clean fallback behavior.

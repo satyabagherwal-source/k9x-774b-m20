@@ -8041,3 +8041,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-07T17:40:43.287Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `b8f388c7` | Multi-dimensional audit evidence | 2026-11-07T17:40:46.335Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ccd0412c` | Multi-dimensional audit evidence | 2026-11-07T17:40:54.425Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `fdcdb1e5` | Multi-dimensional audit evidence | 2026-11-07T17:48:03.429Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `d032b9f2` | Multi-dimensional audit evidence | 2026-11-07T17:48:09.616Z |

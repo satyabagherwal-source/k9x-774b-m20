@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "15f9a3fa",
+    "sourceVersion": "d032b9f2",
     "license": "NOASSERTION",
-    "contentHash": "7be60daff658beb0b309a9f444e2b87d6022a40f38b82d2b2fc76ca1b2654969",
-    "lastHarvestedAt": "2026-11-05T18:38:42.270Z",
+    "contentHash": "8dc056edd59cfdc32ae42ef86aa111bc5473e609648e45fcee549055b952e7e8",
+    "lastHarvestedAt": "2026-11-07T17:48:09.616Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "46813afa",
+    "sourceVersion": "fdcdb1e5",
     "license": "Apache-2.0",
-    "contentHash": "fcc5198580cecf83d65ea86f1ddfe3d51e0279a6f9bb553c127e79c3c24dab8a",
-    "lastHarvestedAt": "2026-11-04T09:33:05.593Z",
+    "contentHash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
+    "lastHarvestedAt": "2026-11-07T17:48:03.429Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
