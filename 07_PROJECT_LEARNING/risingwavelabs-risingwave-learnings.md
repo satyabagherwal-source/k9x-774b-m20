@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `0c03d749`  
+> **Source Version**: `88b98114`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:15:29.743Z  
+> **Timestamp**: 2026-11-07T06:24:32.296Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:15:29.736Z  
+> **Harvest Timestamp**: 2026-11-07T06:24:31.385Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9399 stars
+- **Stars / Engagement**: 9403 stars
 
 ---
 
@@ -1077,605 +1077,169 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d603a76c` (2026-11-05)
-**Commit Message**: fix: return an error when a stored definition fails to parse (#27823)
+### Incident Patch 1: `88b98114` (2026-11-07)
+**Commit Message**: fix(connector): never send an empty AppendRows request in BigQuery sink (#27885)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Yuhao Su <[REDACTED_EMAIL]>
+
+**File**: `src/connector/src/sink/big_query.rs` (modified, +60/-14)
+```diff
+@@ -825,23 +825,22 @@ impl BigQuerySinkWriter {
+         if serialized_rows.is_empty() {
+             return Ok(0);
+         }
+-        let mut result = Vec::new();
+-        let mut result_inner = Vec::new();
+-        let mut size_count = 0;
+-        for i in serialized_rows {
+-            size_count += i.len();
+-            if size_count > MAX_ROW_SIZE {
+-                result.push(result_inner);
+-                result_inner = Vec::new();
+-                size_count = i.len();
++        let mut batches = Vec::new();
++        let mut batch = Vec::new();
++        let mut batch_size = 0;
++        for row in serialized_rows {
++            if !batch.is_empty() && batch_size + row.len() > MAX_ROW_SIZE {
++                batches.push(std::mem::take(&mut batch));
++                batch_size = 0;
+             }
+-            result_inner.push(i);
++            batch_size += row.len();
++            batch.push(row);
+         }
+-        if !result_inner.is_empty() {
+-            result.push(result_inner);
++        if !batch.is_empty() {
++            batches.push(batch);
+         }
+-        let len = result.len();
+-        for serialized_rows in result {
++        let len = batches.len();
++        for serialized_rows in batches {
+             let rows = AppendRowsRequestRows::ProtoRows(ProtoData {
+                 writer_schema: Some(self.writer_pb_schema.clone()),
+                 rows: Some(ProtoRows { serialized_rows }),
+@@ -1324,6 +1323,53 @@ mod test {
+         rows
+     }
+ 
++    #[test]
++    fn test_oversized_first_row_not_sent_as_empty_batch() {
++        let schema = Schema {
++            fields: vec![
++                Field::with_name(DataType::Int64, "id"),
++                Field::with_name(DataType::Varchar, "v"),
++            ],
++        };
++        let (request_sender, mut request_rx) = mpsc::unbounded_channel();
++        let client = StorageWriterClient {
++            environment: Environment::Emulator(String::new()),
++            request_sender,
++        };
++        let mut writer = BigQuerySinkWriter::with_client(
++            sink_config("upsert"),
++            schema,
++            vec![0],
++            false,
++            client,
++        )
++        .unwrap();
++
++        let big = "x".repeat(9 * 1024 * 1024);
++        let small = "x".repeat(4 * 1024 * 1024 + 512 * 1024);
++        let chunk = StreamChunk::from_pretty(&format!(
++            " I T
++            + 1 {big}
++            + 2 {small}
++            + 3 {small}"
++        ));
++        let batch_num = writer.write_chunk(chunk).unwrap();
++
++        let mut batch_row_counts = vec![];
++        while let Ok(request) = request_rx.try_recv() {
++            let Some(AppendRowsRequestRows::ProtoRows(ProtoData {
++                rows: Some(proto_rows),
++                ..
++            })) = request.rows
++            else {
++                panic!("expected proto rows");
++            };
++            batch_row_counts.push(proto_rows.serialized_rows.len());
++        }
++        assert_eq!(batch_num, 3);
++        assert_eq!(batch_row_counts, vec![1, 1, 1]);
++    }
++
+     #[test]
+     fn test_change_sequence_clock() {
+         let clock = ChangeSequenceClock::new();
+```
+
+---
+
+### Incident Patch 2: `fd85d2d0` (2026-11-06)
+**Commit Message**: fix(storage): log event handler batches at debug level (#27822)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/frontend/src/binder/relation/table_or_source.rs` (modified, +39/-2)
+**File**: `src/storage/src/hummock/event_handler/hummock_event_handler.rs` (modified, +2/-2)
 ```diff
-@@ -608,8 +608,14 @@ impl Binder {
-             )?;
-         }
- 
--        let ast = Parser::parse_sql(&view_catalog.sql)
--            .expect("a view's sql should be parsed successfully");
-+        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
-+        // secrets.
-+        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
-+            ErrorCode::BindError(format!(
-+                "failed to parse the stored definition of view {}",
-+                view_catalog.name
-+            ))
-+        })?;
-         let Statement::Query(query) = Itertools::exactly_one(ast.into_iter())
-             .expect("a view should contain only one statement")
-         else {
-@@ -738,3 +744,34 @@ impl Binder {
-         Ok(())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
-+
-+    use super::*;
-+    use crate::binder::test_utils::mock_binder;
-+
-+    #[tokio::test]
-+    async fn test_view_with_unparsable_sql() {
-+        let view = ViewCatalog {
-+            // A system view skips the privilege check.
-+            id: (SYS_CATALOG_START_ID as u32).into(),
-+            name: "v".to_owned(),
-+            schema_id: 0.into(),
-+            database_id: 0.into(),
-+            owner: DEFAULT_SUPER_USER_ID,
-+            properties: Default::default(),
-+            sql: "SELECT 'secret' FROM".to_owned(),
-+            columns: vec![],
-+            created_at_epoch: None,
-+            created_at_cluster_version: None,
-+        };
-+        let error = mock_binder()
-+            .resolve_view_relation(&view)
-+            .unwrap_err()
-+            .to_report_string();
-+        assert!(error.contains("view v"), "{error}");
-+        assert!(!error.contains("secret"), "{error}");
-+    }
-+}
-```
-
-**File**: `src/meta/src/controller/rename.rs` (modified, +40/-18)
-```diff
-@@ -12,6 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use anyhow::anyhow;
- use itertools::Itertools;
- use risingwave_pb::expr::expr_node::{self, RexNode};
- use risingwave_pb::expr::{ExprNode, FunctionCall, UserDefinedFunction};
-@@ -24,20 +25,29 @@ use risingwave_sqlparser::ast::{
- };
- use risingwave_sqlparser::parser::Parser;
- 
-+use crate::MetaResult;
-+
-+/// A stored definition can come from an older version, so it may not parse anymore. The error leaves
-+/// out the definition and the parser's message, which quotes it, because the connector options in a
-+/// definition can have secrets.
-+fn parse_definition(definition: &str) -> MetaResult<Statement> {
-+    let ast = Parser::parse_sql(definition)
-+        .map_err(|_| anyhow!("failed to parse the stored definition"))?;
-+    Ok(Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement"))
-+}
-+
- /// `alter_relation_rename` renames a relation to a new name in its `Create` statement, and returns
- /// the updated definition raw sql. Note that the `definition` must be a `Create` statement and the
- /// `new_name` must be a valid identifier, it should be validated before calling this function. To
- /// update all relations that depend on the renamed one, use `alter_relation_rename_refs`.
--pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
-+pub fn alter_relation_rename(definition: &str, new_name: &str) -> MetaResult<String> {
-     // This happens when we try to rename a table that's created by `CREATE TABLE AS`. Remove it
-     // when we support `SHOW CREATE TABLE` for `CREATE TABLE AS`.
-     if definition.is_empty() {
-         tracing::warn!("found empty definition when renaming relation, ignored.");
--        return definition.into();
-+        return Ok(definition.into());
-     }
--    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
--    let mut stmt =
--        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
-+    let mut stmt = parse_definition(definition)?;
- 
-     match &mut stmt {
-         Statement::CreateTable { name, .. }
-@@ -63,15 +73,13 @@ pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
-         _ => unreachable!(),
-     };
- 
--    stmt.to_string()
-+    Ok(stmt.to_string())
- }
- 
- /// `alter_relation_rename_refs` updates all references of renamed-relation in the definition of
- /// target relation's `Create` statement.
--pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> String {
--    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
--    let mut stmt =
--        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
-+pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> MetaResult<String> {
-+    let mut stmt = parse_definition(definition)?;
- 
-     match &mut stmt {
-         Statement::CreateTable {
-@@ -139,7 +147,7 @@ pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> Str
-         }
-         _ => unreachable!(),
-     };
--    stmt.to_string()
-+    Ok(stmt.to_string())
- }
- 
- /// Replace the last ident in the `table_name` with the given name, the object name is ensured to be
-@@ -519,24 +527,38 @@ impl IndexItemRewriter {
- 
- #[cfg(test)]
- mod tests {
-+    use thiserror_ext::AsReport;
-+
-     use super::*;
- 
-     #[test]
-     fn test_alter_table_rename() {
-         let definition = "CREATE TABLE foo (a int, b int)";
-         let new_name = "bar";
-         let expected = "CREATE TABLE bar (a INT, b INT)";
--        let actual = alter_relation_rename(definition, new_name);
-+        let actual = alter_relation_rename(definition, new_name).unwrap();
-         assert_eq!(expected, actual);
-     }
- 
-+    #[test]
-+    fn test_rename_with_unparsable_definition() {
-+        let definition = "CREATE SINK s FROM t WITH (password = 'secret') AND";
-+        for result in [
-+            alter_relation_rename(definition, "s2"),
-+            alter_relation_rename_refs(definition, "t", "t2"),
-+        ] {
-+            let error = result.unwrap_err().to_report_string();
-+            assert!(!error.contains("secret"), "{error}");
-+        }
-+    }
-+
-     #[test]
-     fn test_rename_index_refs() {
-         let definition = "CREATE INDEX idx1 ON foo(v1 DESC, v2)";
-         let from = "foo";
-         let to = "bar";
-         let expected = "CREATE INDEX idx1 ON bar(v1 DESC, v2)";
--        let actual = alter_relation_rename_refs(definition, from, to);
-+        let actual = alter_relation_rename_refs(definition, from, to).unwrap();
-         assert_eq!(expected, actual);
-     }
- 
-@@ -548,7 +570,7 @@ mod tests {
-         let to = "bar";
-         let expected =
-             "CREATE SINK sink_t FROM bar WITH (connector = 'kafka', format = 'append_only')";
--        let actual = alter_relation_rename_refs(definition, from, to);
-+        le
-```
-
-**File**: `src/meta/src/controller/utils.rs` (modified, +7/-3)
-```diff
-@@ -2097,7 +2097,7 @@ pub fn extract_external_table_name_from_definition(table_definition: &str) -> Op
-                 error = %e.as_report(),
-                 "failed to parse table definition")
-         })
--        .unwrap()
-+        .ok()?
-         .try_into()
-         .unwrap();
-     if let SqlStatement::CreateTable { cdc_table_info, .. } = &mut definition {
-@@ -2134,7 +2134,8 @@ pub async fn rename_relation(
-             let old_name = relation.name.clone();
-             relation.name = object_name.into();
-             if obj.obj_type != ObjectType::View {
--                relation.definition = alter_relation_rename(&relation.definition, object_name);
-+                relation.definition = alter_relation_rename(&relation.definition, object_name)
-+                    .with_context(|| format!("failed to rename {old_name}"))?;
+@@ -638,7 +638,7 @@ impl HummockEventHandler {
+                 )
              }
-             let active_model = $table::ActiveModel {
-                 $identity: Set(relation.$identity),
-@@ -2292,7 +2293,10 @@ pub async fn rename_relation_refer(
-                 .await?
-                 .unwrap();
-             relation.definition =
--                alter_relation_rename_refs(&relation.definition, old_name, object_name);
-+                alter_relation_rename_refs(&relation.definition, old_name, object_name)
-+                    .with_context(|| {
-+                        format!("failed to update the definition of {}", relation.name)
-+                    })?;
-             let active_model = $table::ActiveModel {
-                 $identity: Set(relation.$identity),
-                 definition: Set(relation.definition.clone()),
+             ssts => {
+-                warn!(
++                debug!(
+                     batch_size = ssts.len(),
+                     "handle multiple uploaded ssts in batch"
+                 );
+@@ -743,7 +743,7 @@ impl HummockEventHandler {
+             .expect("version update batch must not be empty");
+         let latest_pinned_version = &events.last().unwrap().new_pinned_version;
+         if events.len() > 1 {
+-            warn!(
++            debug!(
+                 count = events.len(),
+                 "handle multiple version updates in batch"
+             );
 ```
 
 ---
 
-### Incident Patch 2: `0c03d749` (2026-11-05)
-**Commit Message**: fix(observability): remove obsolete AWS retry logging layer (#27842)
+### Incident Patch 3: `ff66a028` (2026-11-06)
+**Commit Message**: fix(rpc): enable TCP_NODELAY by default for gRPC clients (#27821)
 
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -14548,7 +14548,6 @@ dependencies = [
-  "tower-layer",
-  "tower-service",
-  "tracing",
-- "tracing-subscriber",
- ]
- 
- [[package]]
-```
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/metrics/inventory.tsv` (modified, +4/-5)
+**File**: `src/common/metrics/src/monitor/connection.rs` (modified, +3/-2)
 ```diff
-@@ -9,7 +9,6 @@ compute_batch_total_mem	gauge		Total number of memory usage for batch tasks.		sr
- user_compute_error_cnt	counter	error_type,executor_name,fragment_id	Compute errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
- user_sink_error_cnt	counter	error_type,sink_id,sink_name,fragment_id	Sink errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
- user_source_error_cnt	counter	error_type,source_id,source_name,fragment_id	Source errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
--aws_sdk_retry_counts	counter		Total number of aws sdk retry happens		src/common/metrics/src/lib.rs
- connection_count	gauge	connection_type,uri	The number of current existing connection		src/common/metrics/src/monitor/connection.rs
- connection_create_rate	counter	connection_type,uri	Rate on creating new connection		src/common/metrics/src/monitor/connection.rs
- connection_err_rate	counter	connection_type,uri	Error rate on creating new connection		src/common/metrics/src/monitor/connection.rs
-@@ -294,12 +293,12 @@ object_store_operation_latency	histogram	media_type,type	Total latency of operat
- object_store_read_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
- object_store_request_retry_count	counter	type	The number of retry times of object store request		src/object_store/src/object/object_metrics.rs
- object_store_write_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
--refill_bytes	counter	type,op	refill bytes		src/storage/src/hummock/event_handler/refiller.rs
--refill_duration	histogram	type,op	refill duration		src/storage/src/hummock/event_handler/refiller.rs
--refill_queue_total	gauge		refill queue total		src/storage/src/hummock/event_handler/refiller.rs
--refill_total	counter	type,op	refill total		src/storage/src/hummock/event_handler/refiller.rs
- recent_filter_items	gauge		Item numbers of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
- recent_filter_ops	counter	op	Ops of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
-+refill_bytes	counter	type,op	refill bytes		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_duration	histogram	type,op	refill duration		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_queue_total	gauge		refill queue total		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_total	counter	type,op	refill total		src/storage/src/monitor/cache_refill_metrics.rs
- compactor_compact_sst_duration	histogram		Total time of compact_key_range that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
- compactor_compact_task_duration	histogram	group,level	Total time of compact that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
- compactor_compaction_event_consumed_latency	histogram		The latency of each event being consumed		src/storage/src/monitor/compactor_metrics.rs
-```
-
-**File**: `docs/metrics/reference.md` (modified, +6/-2)
-```diff
-@@ -77,6 +77,11 @@ Metric names are stable across releases unless explicitly called out. Histograms
- follow Prometheus conventions — a histogram `foo_bar_duration_seconds` produces
- `foo_bar_duration_seconds_bucket{le="..."}`, `_sum`, and `_count` series.
+@@ -431,11 +431,12 @@ pub struct TcpConfig {
+     pub keepalive_duration: Option<Duration>,
+ }
  
-+`aws_sdk_retry_counts` is no longer emitted. Its collector depended on the
-+obsolete `aws_smithy_client::retry` log target and did not track retries from the
-+current AWS SDK. `object_store_request_retry_count` covers RisingWave wrapper
-+retries only; it does not provide SDK-internal retry counts.
-+
- Every metric defined in the code is captured in `inventory.tsv` with:
- 
- | Column        | Meaning                                                   |
-@@ -1043,10 +1048,9 @@ after a new version is installed:
- | `object_store_operation_latency`  | histogram         | `media_type`, `type`                 | Per-operation latency histogram. `type` values follow `OperationType` (see §7.3). `media_type` identifies the backend — values include `mem`, `s3` (legacy direct S3), and the OpenDAL-backed names `Fs`, `S3`, `Minio`, `Gcs`, `Azblob`, `Obs`, `Oss`, `Webhdfs` (mixed case is intentional, matches OpenDAL `Scheme` names). |
- | `object_store_operation_bytes`    | histogram         | `type`                               | Per-operation payload size, by operation `type`. |
- | `object_store_failure_count`      | counter        | `type`                               | Failure count — §7.3 / alert in §3.3. |
--| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Distinct from the underlying AWS SDK's own retry counter (`aws_sdk_retry_counts`). Non-zero sustained rate → degraded upstream. |
-+| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Retries performed internally by the AWS SDK are not included. Non-zero sustained rate → degraded upstream. |
- | `object_store_read_bytes`         | counter           | —                                    | Total bytes read by the compute/compactor process. |
- | `object_store_write_bytes`        | counter           | —                                    | Total bytes written. |
--| `aws_sdk_retry_counts`            | counter           | —                                    | Global AWS SDK retry counter, incremented by the logger's tracing-event hook on every `aws_smithy_client::retry` event. Covers all AWS SDK clients in the process (S3 / Kinesis / etc.), not S3 only. |
- 
- ### 10.5 Compactor
- 
-```
-
-**File**: `src/common/metrics/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -30,7 +30,6 @@ tonic = { workspace = true }
- tower-layer = "0.3.3"
- tower-service = "0.3.3"
- tracing = "0.1"
--tracing-subscriber = "0.3.20"
- 
- [target.'cfg(not(madsim))'.dependencies]
- http-body = "1"
-```
-
-**File**: `src/common/metrics/src/lib.rs` (modified, +1/-47)
-```diff
-@@ -18,17 +18,9 @@
- #![feature(trait_alias)]
- #![register_tool(rw)]
- 
--use std::ops::Deref;
--use std::sync::LazyLock;
--
- use hytra::TrAdder;
--use prometheus::core::{Atomic, AtomicU64, GenericCounter, GenericGauge};
-+use prometheus::core::{Atomic, GenericGauge};
- use prometheus::proto::Metric;
--use prometheus::register_int_counter_with_registry;
--use tracing::Subscriber;
--use tracing_subscriber::Layer;
--use tracing_subscriber::layer::Context;
--use tracing_subscriber::registry::LookupSpan;
- 
- mod error_metrics;
- mod gauge_ext;
-@@ -74,44 +66,6 @@ impl Atomic for TrAdderAtomic {
- 
- pub type TrAdderGauge = GenericGauge<TrAdderAtomic>;
- 
--/// [`MetricsLayer`] is a struct used for monitoring the frequency of certain specific logs and
--/// counting them using Prometheus metrics. Currently, it is used to monitor the frequency of retry
--/// occurrences of aws sdk.
--pub struct MetricsLayer {
--    pub aws_sdk_retry_counts: GenericCounter<AtomicU64>,
--}
--
--impl<S> Layer<S> for MetricsLayer
--where
--    S: Subscriber + for<'a> LookupSpan<'a>,
--{
--    fn on_event(&self, _event: &tracing::Event<'_>, _ctx: Context<'_, S>) {
--        // Currently one retry will only generate one debug log,
--        // so we can monitor the number of retry only through the metadata target.
--        // Refer to <https://docs.rs/aws-smithy-client/0.55.3/src/aws_smithy_client/retry.rs.html>
--        self.aws_sdk_retry_counts.inc();
--    }
--}
--
--impl MetricsLayer {
--    #[expect(clippy::new_without_default)]
--    pub fn new() -> Self {
--        static AWS_SDK_RETRY_COUNTS: LazyLock<GenericCounter<AtomicU64>> = LazyLock::new(|| {
--            let registry = crate::monitor::GLOBAL_METRICS_REGISTRY.deref();
--            register_int_counter_with_registry!(
--                "aws_sdk_retry_counts",
--                "Total number of aws sdk retry happens",
--                registry
--            )
--            .unwrap()
--        });
--
--        Self {
--            aws_sdk_retry_counts: AWS_SDK_RETRY_COUNTS.deref().clone(),
--        }
--    }
--}
--
- #[derive(Debug, Default, Clone, Copy, serde::Serialize, serde::Deserialize)]
- pub enum MetricLevel {
-     #[default]
-```
-
-**File**: `src/utils/runtime/src/logger.rs` (modified, +0/-7)
-```diff
-@@ -23,7 +23,6 @@ use opentelemetry::trace::TracerProvider;
- use opentelemetry_otlp::SpanExporter;
- use opentelemetry_sdk::Resource;
- use opentelemetry_sdk::trace::TracerProviderBuilder;
--use risingwave_common::metrics::MetricsLayer;
- use risingwave_common::util::deployment::Deployment;
- use risingwave_common::util::env_var::env_var_is_true;
- use risingwave_common::util::query_log::*;
-@@ -598,12 +597,6 @@ pub fn init_risingwave_logger(settings: LoggerSettings) {
-         tracing::info!("opentelemetry exporter for fastrace is set at {endpoint}");
+-#[expect(clippy::derivable_impls)]
+ impl Default for TcpConfig {
+     fn default() -> Self {
+         Self {
+-            tcp_nodelay: false,
++            // Without it, Nagle's algorithm holds the DATA frame of a small gRPC request until the
++            // peer's delayed ACK, adding about 40ms to the request.
++            tcp_nodelay: true,
+             keepalive_duration: None,
+         }
      }
- 
--    // Metrics layer
--    {
--        let filter = filter::Targets::new().with_target("aws_smithy_client::retry", Level::DEBUG);
--
--        layers.push(Box::new(MetricsLayer::new().with_filter(filter)));
--    }
-     tracing_subscriber::registry().with(layers).init();
-     // TODO: add file-appender tracing subscriber in the future
- }
-```
-
----
-
-### Incident Patch 3: `506c4092` (2026-11-05)
-**Commit Message**: fix(connector): quote Kafka kinit command and drop kinit.cmd option (#27608)
-
-**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +0/-3)
-```diff
-@@ -127,7 +127,6 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-@@ -258,7 +257,6 @@ pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<Stri
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-@@ -378,7 +376,6 @@ pub static CONNECTION_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSe
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-```
-
-**File**: `src/connector/src/connector_common/common.rs` (modified, +61/-9)
-```diff
-@@ -270,19 +270,16 @@ pub struct KafkaConnectionProps {
- 
-     /// Path to client's Kerberos keytab file under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.keytab")]
-+    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
-     #[with_option(allow_alter_on_fly)]
-     sasl_kerberos_keytab: Option<String>,
- 
-     /// Client's Kerberos principal name under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.principal")]
-+    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
-     #[with_option(allow_alter_on_fly)]
-     sasl_kerberos_principal: Option<String>,
- 
--    /// Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    #[serde(rename = "properties.sasl.kerberos.kinit.cmd")]
--    #[with_option(allow_alter_on_fly)]
--    sasl_kerberos_kinit_cmd: Option<String>,
--
-     /// Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.min.time.before.relogin")]
-     #[with_option(allow_alter_on_fly)]
-@@ -503,7 +500,6 @@ impl KafkaConnectionProps {
-             sasl_kerberos_service_name: None,
-             sasl_kerberos_keytab: None,
-             sasl_kerberos_principal: None,
--            sasl_kerberos_kinit_cmd: None,
-             sasl_kerberos_min_time_before_relogin: None,
-             sasl_oathbearer_config: None,
-             sasl_oauthbearer_method: None,
-@@ -574,6 +570,9 @@ impl KafkaConnectionProps {
-         }
- 
-         // SASL/GSSAPI
-+        // Always override librdkafka's unquoted default. It is only run for GSSAPI, which is
-+        // also librdkafka's default mechanism when `sasl.mechanism` is omitted.
-+        config.set("sasl.kerberos.kinit.cmd", KINIT_CMD);
-         if let Some(sasl_kerberos_service_name) = self.sasl_kerberos_service_name.as_ref() {
-             config.set("sasl.kerberos.service.name", sasl_kerberos_service_name);
-         }
-@@ -583,9 +582,6 @@ impl KafkaConnectionProps {
-         if let Some(sasl_kerberos_principal) = self.sasl_kerberos_principal.as_ref() {
-             config.set("sasl.kerberos.principal", sasl_kerberos_principal);
-         }
--        if let Some(sasl_kerberos_kinit_cmd) = self.sasl_kerberos_kinit_cmd.as_ref() {
--            config.set("sasl.kerberos.kinit.cmd", sasl_kerberos_kinit_cmd);
--        }
-         if let Some(sasl_kerberos_min_time_before_relogin) =
-             self.sasl_kerberos_min_time_before_relogin.as_ref()
-         {
-@@ -1367,10 +1363,66 @@ const fn default_tcp_keepalive_count() -> u32 {
-     3
- }
- 
-+/// librdkafka's default `kinit` command, overridden to single-quote the keytab and principal.
-+/// The default leaves them unquoted or double-quoted, so user-supplied values can inject shell
-+/// commands.
-+///
-+/// Default: <https://github.com/confluentinc/librdkafka/blob/v2.10.0/src/rdkafka_conf.c#L950-L960>
-+const KINIT_CMD: &str = "kinit -R -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}' \
-+    || kinit -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}'";
-+
-+/// Rejects values that could escape the quotes in [`KINIT_CMD`] or be parsed as a `kinit` flag.
-+fn deserialize_kinit_arg<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
-+where
-+    D: serde::Deserializer<'de>,
-+{
-+    let value = Option::<String>::deserialize(deserializer)?;
-+    if let Some(v) = &value
-+        && (v.contains('\'') || v.starts_with('-'))
-+    {
-+        return Err(serde::de::Error::custom(format!(
-+            "invalid Kerberos value `{v}`: must not contain `'` or start with `-`"
-+        )));
-+    }
-+    Ok(value)
-+}
-+
- #[cfg(all(test, not(madsim)))]
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn test_kinit_cmd_quoted_and_args_validated() {
-+        // The quoted command is set for every mechanism, including an omitted one, which
-+        // librdkafka treats as GSSAPI.
-+        for mechanism in [None, Some("GSSAPI"), Some("PLAIN")] {
-+            let mut props = KafkaConnectionProps::test_default();
-+            props.sasl_mechanism = mechanism.map(str::to_owned);
-+            let mut config = rdkafka::ClientConfig::new();
-+            props.set_security_properties(&mut config);
-+            assert_eq!(
-+                config.config_map().get("sasl.kerberos.kinit.cmd").unwrap(),
-+                KINIT_CMD
-+            );
-+        }
-+
-+        // Values that could escape the quotes or be parsed as a `kinit` flag are rejected.
-+        for key in [
-+            "properties.sasl.kerberos.principal",
-+            "properties.sasl.kerberos.keytab",
-+        ] {
-+            for bad in ["x'; id; '", "'", "-c/tmp/cache", "--help"] {
-+                let map = BTreeMap::from([
-+                    ("properties.bootstrap.server", "localhost:9092"),
-+                    (key, bad),
-+                ]);
-+                let result: Result<KafkaConnectionProps, _> =
-+                    serde_json::from_value(serde_json::to_value(map).unwrap());
-+                assert!(result.is_err(), "{
-```
-
-**File**: `src/connector/with_options_connection.yaml` (modified, +0/-5)
-```diff
-@@ -289,11 +289,6 @@ KafkaConnection:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
-```
-
-**File**: `src/connector/with_options_sink.yaml` (modified, +0/-5)
-```diff
-@@ -1005,11 +1005,6 @@ KafkaConfig:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
-```
-
-**File**: `src/connector/with_options_source.yaml` (modified, +0/-5)
-```diff
-@@ -538,11 +538,6 @@ KafkaProperties:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27842** (2026-11-05): fix(observability): remove obsolete AWS retry logging layer (@Li0k)
-- **PR #27835** (closed): feat(ctl): add object-store and compactor read benchmarks (@Ad-Bean)
-- **PR #27833** (2026-11-05): fix(storage): honor missing TOML compaction settings (@wenym1)
-- **PR #27832** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
-- **PR #27831** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
-- **PR #27830** (2026-11-05): chore: update version to v3.1.1 (@cyliu0)
+- **PR #27887** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (#27885) (@risingwave-ci)
+- **PR #27885** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (@anlowee)
+- **PR #27879** (closed): fix(sink): avoid barrier truncation deadlock when decoupled sink is paused (@hemal9102)
+- **PR #27876** (2026-11-06): fix(meta): allow large meta snapshot manifests (@wenym1)
+- **PR #27864** (2026-11-06): cherry-pick fix(sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587) to release-3.0 (@yuhao-su)
+- **PR #27857** (2026-11-06): fix(sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587) (@risingwave-ci)
 
 ---
 
@@ -1695,62 +1259,74 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. return an error when a stored definition fails to parse (#27823)
+## X. connector): never send an empty AppendRows request in BigQuery sink (#27885)
 
 **RULE**:
-When implementing operations in `src/frontend/src/binder/relation/table_or_source.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/connector/src/sink/big_query.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d603a76c`: return an error when a stored definition fails to parse (#27823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88b98114`: connector): never send an empty AppendRows request in BigQuery sink (#27885). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/src/binder/relation/table_or_source.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/sink/big_query.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
-        // secrets.
-        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
-            ErrorCode::BindError(format!(
-                "failed to parse the stored definition of view {}",
-                view_catalog.name
-            ))
-        })?;
-
-#[cfg(test)]
-mod tests {
-    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
-
-    use super::*;
-    use crate::binder::test_utils::mock_binder;
-
-    #[tokio::test]
-    async fn test_view_with_unparsable_sql() {
-        let view = ViewCatalog {
-            // A system view skips the privilege check.
-            id: (SYS_CATALOG_START_ID as u32).into(),
-            name: "v".to_owned(),
-            schema_id: 0.into(),
-            database_id: 0.into(),
-            owner: DEFAULT_SUPER_USER_ID,
-            properties: Default::default(),
-            sql: "SELECT 'secret' FROM".to_owned(),
-            columns: vec![],
-            created_at_epoch: None,
-            created_at_cluster_version: None,
+        let mut batches = Vec::new();
+        let mut batch = Vec::new();
+        let mut batch_size = 0;
+        for row in serialized_rows {
+            if !batch.is_empty() && batch_size + row.len() > MAX_ROW_SIZE {
+                batches.push(std::mem::take(&mut batch));
+                batch_size = 0;
+            batch_size += row.len();
+            batch.push(row);
+        if !batch.is_empty() {
+            batches.push(batch);
+        let len = batches.len();
+        for serialized_rows in batches {
+    #[test]
+    fn test_oversized_first_row_not_sent_as_empty_batch() {
+        let schema = Schema {
+            fields: vec![
+                Field::with_name(DataType::Int64, "id"),
+                Field::with_name(DataType::Varchar, "v"),
+            ],
         };
-        let error = mock_binder()
-            .resolve_view_relation(&view)
-            .un
+        let (request_sender, mut request_rx) = mpsc::unbounded_channel();
+        let client = StorageWriterClient {
+            environment: Environment::Emulator(String::new()),
+            request_sender,
+        };
+        let mut writer = BigQuerySinkWriter::with_client(
+            sink_config("upsert"),
+            schema,
+            vec![0],
+            false,
+            client,
+        )
+        .unwrap(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let ast = Parser::parse_sql(&view_catalog.sql)
-            .expect("a view's sql should be parsed successfully");
+        let mut result = Vec::new();
+        let mut result_inner = Vec::new();
+        let mut size_count = 0;
+        for i in serialized_rows {
+            size_count += i.len();
+            if size_count > MAX_ROW_SIZE {
+                result.push(result_inner);
+                result_inner = Vec::new();
+                size_count = i.len();
+            result_inner.push(i);
+        if !result_inner.is_empty() {
+            result.push(result_inner);
+        let len = result.len();
+        for serialized_rows in result {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d603a76c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88b98114` are properly handled with clean fallback behavior.

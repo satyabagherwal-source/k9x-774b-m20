@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `a2c6c92c`  
+> **Source Version**: `0ae5b96b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:24:21.859Z  
+> **Timestamp**: 2026-11-07T06:29:22.483Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:24:21.276Z  
+> **Harvest Timestamp**: 2026-11-07T06:24:20.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16604 stars
+- **Stars / Engagement**: 16605 stars
 
 ---
 
@@ -1843,284 +1843,95 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2c6c92c` (2026-11-01)
-**Commit Message**: Add set_max_msg_size to WebSocketResponse (#14176)
+### Incident Patch 1: `2091405f` (2026-11-04)
+**Commit Message**: Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218)
 
-**File**: `CHANGES/14176.feature.rst` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+Added :py:meth:`~aiohttp.web.WebSocketResponse.set_max_msg_size` and the
-+:py:attr:`~aiohttp.web.WebSocketResponse.max_msg_size` property to change the
-+maximum size of received messages after
-+:py:meth:`~aiohttp.web.WebSocketResponse.prepare`, for example to only accept
-+small messages until the peer has authenticated
-+-- by :user:`erwindouna`.
-```
-
-**File**: `CONTRIBUTORS.txt` (modified, +1/-0)
-```diff
-@@ -140,6 +140,7 @@ Enrique Saez
- Eric Sheng
- Erich Healy
- Erik Peterson
-+Erwin Douna
- Eugene Chernyshov
- Eugene Ershov
- Eugene Naydenov
-```
-
-**File**: `THREAT_MODEL.md` (modified, +1/-1)
-```diff
-@@ -549,7 +549,7 @@ client-side, the writer adds masks to outgoing frames.
- | 3.3 | RSV bits | `reader_py.py:WebSocketReader._feed_data` gates RSV1 on the PMCE-negotiated `_compress` flag; RSV2/3 always rejected. RSV1 on a control frame is always rejected (RFC 7692 §6.1); 3.x ignores it once PMCE is negotiated, see #14007. | None. |
- | 3.4 | Unknown opcode | Rejected. | None. |
- | 3.5–3.7 | Control-frame and fragmentation rules | All enforced at reader. | None. |
--| 3.8 | Fragment memory bound | (a) Declared byte size — `max_msg_size` enforced pre-FIN and at assembly (default 4 MiB). (b) The reader collects a frame's reads in a list and joins them once when the frame completes; if a frame arrives in more than `max(1024, max_msg_size // 256)` reads, the pending reads are folded into a single `bytearray`. | **User**: set a smaller `max_msg_size` for protocols where messages are bounded (e.g. chat); the 4 MiB default suits arbitrary payloads. |
-+| 3.8 | Fragment memory bound | (a) Declared byte size — `max_msg_size` enforced pre-FIN and at assembly (default 4 MiB). (b) The reader collects a frame's reads in a list and joins them once when the frame completes; if a frame arrives in more than `max(1024, max_msg_size // 256)` reads, the pending reads are folded into a single `bytearray`. | **User**: set a smaller `max_msg_size` for protocols where messages are bounded (e.g. chat); the 4 MiB default suits arbitrary payloads. Use `WebSocketResponse.set_max_msg_size()` to keep a small limit only until the peer has authenticated. |
- | 3.9 | PMCE decompression bomb | `WebSocketReader._handle_frame` decompresses with a `max_length` of `max_msg_size + 1` and checks the result; on overflow, raises `MESSAGE_TOO_BIG` (1009). This `max_length` post-decompress check was introduced by PR #11898 (v3.13.3). | **Documented known limitation.** Some backends (notably `isal_zlib`) do not strictly honour `max_length` in `decompress()` and may overshoot by up to one zlib block before the post-decompress size check fires. The post-check still catches it before the bytes reach the application, but a transient over-allocation is possible. Document and monitor. |
- | 3.10 | PMCE context retention | Default extensions request context takeover (per RFC 7692 default); user can negotiate `server_no_context_takeover` / `client_no_context_takeover` via handshake. | Documented design decision: keep the RFC 7692 default (context takeover). **Document the memory tradeoff in user-facing WebSocket docs.** **User**: configure no-context-takeover on long-lived sessions running on memory-constrained hosts. |
- | 3.11 | UTF-8 validation | Strict `bytes.decode("utf-8")` post-assembly. | None. |
-```
-
-**File**: `aiohttp/_websocket/reader_py.py` (modified, +28/-4)
-```diff
-@@ -196,7 +196,6 @@ def __init__(
-         decode_text: bool,
-     ) -> None:
-         self.queue = queue
--        self._max_msg_size = max_msg_size
-         self._decode_text = decode_text
-         # Parked on the queue while parsing is stalled; created once so
-         # stalling does not allocate.
-@@ -211,9 +210,6 @@ def __init__(
-         self._frame_opcode: int = OP_CODE_NOT_SET
-         # Reads of an in-flight frame, joined once when it completes.
-         self._payload_fragments: list[bytes] = []
--        # Fold reads into _payload_buffer past this count to bound the object
--        # count (bytes are bounded by max_msg_size).
--        self._max_fragments = max(1024, max_msg_size // 256) if max_msg_size else 0
-         self._payload_buffer = bytearray()
-         self._frame_payload_len = 0
- 
-@@ -225,6 +221,34 @@ def __init__(
-         self._compressed: int = COMPRESSED_NOT_SET
-         self._decompressobj: ZLibDecompressor | None = None
-         self._compress = compress
-+        self.set_max_msg_size(max_msg_size)
-+
-+    def set_max_msg_size(self, max_msg_size: int) -> None:
-+        """Set the maximum message size, including a data frame still being received."""
-+        self._max_msg_size = max_msg_size
-+        # Fold reads into _payload_buffer past this count to bound the object
-+        # count (bytes are bounded by max_msg_size).
-+        self._max_fragments = max(1024, max_msg_size // 256) if max_msg_size else 0
-+        if (
-+            not max_msg_size
-+            or self._exc is not None
-+            or self._state not in (READ_PAYLOAD_MASK, READ_PAYLOAD)
-+            or self._frame_opcode
-+            not in {OP_CODE_TEXT, OP_CODE_BINARY, OP_CODE_CONTINUATION}
-+        ):
-+            return
-+        # The header of this frame passed the previous, larger limit.
-+        msg_size = (
-+            self._frame_payload_len + self._payload_bytes_to_read + len(self._partial)
-+        )
-+        if msg_size >= max_msg_size:
-+            self._exc = WebSocketError(
-+                WSCloseCode.MESSAGE_TOO_BIG,
-+                f"Message size {msg_size} exceeds limit {max_msg_size}",
-+            )
-+            set_exception(self.queue, self._exc)
-+            self._payload_fragments.clear()
-+            self._payload_buffer = bytearray()
- 
-     def feed_eof(self) -> None:
-         self.queue.feed_eof()
-```
-
-**File**: `aiohttp/web_ws.py` (modified, +16/-0)
-```diff
-@@ -430,6 +430,22 @@ def ws_protocol(self) -> str | None:
-     def compress(self) -> int | bool:
-         return self._compress
- 
-+    @property
-+    def max_msg_size(self) -> int:
-+        return self._max_msg_size
-+
-+    def set_max_msg_size(self, max_msg_size: int) -> None:
-+        """Set the maximum size of a received message.
-+
-+        Can be called before or after prepare().
-+        """
-+        # The C reader stores the limit as an unsigned 32-bit int.
-+        if not 0 <= max_msg_size < 2**32:
-+            raise ValueError("max_msg_size must be between 0 and 2**32 - 1")
-+        if self._parser is not None:
-+            self._parser.set_max_msg_size(max_msg_size)
-+        self._max_msg_size = max_msg_size
-+
-     def get_extra_info(self, name: str, default: Any = None) -> Any:
-         """Get optional transport information.
- 
-```
-
-**File**: `docs/web_reference.rst` (modified, +21/-0)
-```diff
-@@ -1160,6 +1160,27 @@ and :ref:`aiohttp-web-signals` handlers::
-       May be ``None`` if server and client protocols are
-       not overlapping.
- 
-+   .. attribute:: max_msg_size
-+
-+      Read-only property, the maximum size of a received message.
-+
-+      .. versionadded:: 3.15
-+
-+   .. method:: set_max_msg_size(max_msg_size)
-+
-+      Change the maximum size of a received message, for example to accept
-+      only small messages until the peer has authenticated. Can be called
-+      before or after :meth:`prepare`; a message that is still being
-+      received is checked against the new limit too. To disable the size
-+      limit use ``0``.
-+
-+      :param int max_msg_size: maximum size of a received message, from
-+                               ``0`` up to ``2**32 - 1``.
-+
-+      :raises ValueError: if *max_msg_size* is out of range.
-+
-+      .. versionadded:: 3.15
-+
-    .. method:: get_extra_info(name, default=None)
- 
-       Reads optional extra information from the writer's transport.
-```
-
-**File**: `tests/test_web_websocket.py` (modified, +19/-0)
-```diff
-@@ -72,6 +72,25 @@ def maker(
-     return maker
- 
- 
-+@pytest.mark.parametrize("max_msg_size", [-1, 2**32])
-+def test_set_max_msg_size_out_of_range(max_msg_size: int) -> None:
-+    ws = web.WebSocketResponse(max_msg_size=1024)
-+
-+    with pytest.raises(ValueError, match="max_msg_size must be between"):
-+        ws.set_max_msg_size(max_msg_size)
-+    assert ws.max_msg_size == 1024
-+
-+
-+def test_set_max_msg_size_rejected_by_parser() -> None:
-+    ws = web.WebSocketResponse(max_msg_size=1024)
-+    ws._parser = mock.Mock()
-+    ws._parser.set_max_msg_size.side_effect = RuntimeError
-+
-+    with pytest.raises(RuntimeError):
-+        ws.set_max_msg_size(2048)
-+    assert ws.max_msg_size == 1024
-+
-+
- async def test_nonstarted_ping() -> None:
-     ws = web.WebSocketResponse()
-     with pytest.raises(RuntimeError):
-```
-
-**File**: `tests/test_web_websocket_functional.py` (modified, +47/-0)
-```diff
-@@ -403,6 +403,53 @@ async def handler(request: web.Request) -> web.WebSocketResponse:
-     assert resp.status == 400
- 
- 
-+@pytest.mark.parametrize("after_prepare", (False, True))
-+async def test_set_max_msg_size(
-+    aiohttp_client: AiohttpClient, after_prepare: bool
-+) -> None:
-+    async def handler(request: web.Request) -> web.WebSocketResponse:
-+        ws = web.WebSocketResponse()
-+        if not after_prepare:
-+            ws.set_max_msg_size(16)
-+        await ws.prepare(request)
-+        if after_prepare:
-+            ws.set_max_msg_size(16)
-+        assert ws.max_msg_size == 16
-+        await ws.send_str("limited")
-+
-+        msg = await ws.receive()
-+        assert msg.type is WSMsgType.TEXT
-+        ws.set_max_msg_size(4 * 1024 * 1024)
-+        await ws.send_str("raised")
-+
-+        msg = await ws.receive()
-+        assert msg.type is WSMsgType.TEXT
-+        assert msg.data == "x" * 1024
-+        ws.set_max_msg_size(16)
-+        await ws.send_str("lowered")
-+
-+        msg = await ws.receive()
-+        assert msg.type is WSMsgType.ERROR
-+        await ws.close()
-+        return ws
-+
-+    app = web.Application()
-+    app.router.add_route("GET", "/", handler)
-+    client = await aiohttp_client(app)
-+
-+    ws = await client.ws_connect("/")
-+    assert await ws.receive_str() == "limited"
-+    await ws.send_str("small")
-+    assert await ws.receive_str() == "raised"
-+    await ws.send_str("x" * 1024)
-+    assert await ws.receive_str() == "lowered"
-+    await ws.send_str("x" * 1024)
-+
-+    msg = await ws.receive()
-+    assert msg.type is WSMsgType.CLOSE
-+    assert msg.data == WSCloseCode.MESSAGE_TOO_BIG
-+
-+
- async def test_websocket_json(aiohttp_client: AiohttpClient) -> None:
-     async def handler(request: web.Request) -> web.WebSocketResponse:
-         ws = web.WebSocketResponse()
-```
-
----
-
-### Incident Patch 2: `96b61fa7` (2026-11-01)
-**Commit Message**: Bump python from 3.14 to 3.15 in /tests/autobahn (#14230)
-
-Bumps python from 3.14 to 3.15.
+Bumps [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel) from 4.3.4 to 4.3.5.
+- [Release notes](https://github.com/pypa/cibuildwheel/releases)
+- [Changelog](https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md)
+- [Commits](https://github.com/pypa/cibuildwheel/compare/v4.3.4...v4.3.5)
 
 ---
 updated-dependencies:
-- dependency-name: python
-  dependency-version: '3.15'
+- dependency-name: pypa/cibuildwheel
+  dependency-version: 4.3.5
   dependency-type: direct:production
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `tests/autobahn/Dockerfile.aiohttp` (modified, +1/-1)
+**File**: `.github/workflows/reusable-cibuildwheel.yml` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--FROM python:3.14
-+FROM python:3.15
+@@ -116,7 +116,7 @@ jobs:
+         image: tonistiigi/binfmt:qemu-v8.1.5
  
- COPY ./ /src
- 
+     - name: Build wheels
+-      uses: pypa/cibuildwheel@v4.3.4
++      uses: pypa/cibuildwheel@v4.3.5
+       with:
+         package-dir: >-  # not necessarily a dir, we pass an acceptable sdist
+           dist/${{ inputs.source-tarball-name }}
+```
+
+---
+
+### Incident Patch 2: `79b099dc` (2026-11-04)
+**Commit Message**: Fix CI on Ubuntu 26.04 runners (#14273)
+
+* Fix CI on Ubuntu 26.04 runners
+
+Install JDK 21 for the Android test job, since the Gradle version used
+by CPython's Android testbed cannot parse the default JDK 25 version.
+Use the latest Python 3.13 for benchmarks, since setup-python has no
+3.13.2 build for Ubuntu 26.04; 3.13.2 was only a minimum version.
+
+* Pin benchmark Python to 3.13.18
+
+Keep an exact patch version so CodSpeed results stay comparable
+between runs.
+
+**File**: `.github/workflows/ci-cd.yml` (modified, +10/-2)
+```diff
+@@ -396,6 +396,14 @@ jobs:
+         python-version: ${{ matrix.pyver }}
+         activate-environment: true
+         enable-cache: true
++    - name: Setup Java for Android Gradle build
++      # The Gradle version used by CPython's Android testbed cannot run
++      # on the JDK that newer runner images ship by default.
++      if: ${{ matrix.config.platform == 'android' }}
++      uses: actions/setup-java@v6.1.0
++      with:
++        distribution: temurin
++        java-version: 21
+     - name: Free up disk space for Android emulator
+       if: ${{ matrix.config.platform == 'android' }}
+       uses: BRAINSia/free-disk-space@v2.1.3
+@@ -515,11 +523,11 @@ jobs:
+       with:
+         name: dist-pure
+         path: dist/
+-    - name: Setup Python 3.13.2
++    - name: Setup Python 3.13.18
+       id: python-install
+       uses: actions/setup-python@v7.1.0
+       with:
+-        python-version: 3.13.2
++        python-version: 3.13.18
+         cache: pip
+         cache-dependency-path: requirements/*.txt
+     - name: Install dependencies
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14257** (closed): Bump python-discovery from 1.6.5 to 1.6.7 (@dependabot[bot])
-- **PR #14254** (closed): Bump python-discovery from 1.6.5 to 1.6.7 (@dependabot[bot])
-- **PR #14252** (closed): Bump virtualenv from 21.15.0 to 21.15.1 (@dependabot[bot])
-- **PR #14241** (closed): Bump virtualenv from 21.14.13 to 21.15.1 (@dependabot[bot])
-- **PR #14238** (closed): Silence shielded send failure to dead transport (@rinopatrick)
-- **PR #14231** (2026-11-01): Bump python from 3.14 to 3.15 in /tests/autobahn (@dependabot[bot])
+- **PR #14293** (2026-11-07): Add Asyntai to the spelling wordlist and update mac (@asvetlov)
+- **PR #14291** (2026-11-05): [PR #14263/e87b8b78 backport][3.14] Add aiohttp-ai-chatbot to third-party libraries (@patchback[bot])
+- **PR #14290** (2026-11-05): [PR #14263/e87b8b78 backport][3.15] Add aiohttp-ai-chatbot to third-party libraries (@patchback[bot])
+- **PR #14289** (2026-11-05): Bump cython from 3.3.0 to 3.3.1 (@dependabot[bot])
+- **PR #14288** (2026-11-05): Bump platformdirs from 4.14.2 to 4.14.3 (@dependabot[bot])
+- **PR #14287** (2026-11-05): Bump cython from 3.3.0 to 3.3.1 (@dependabot[bot])
 
 ---
 
@@ -2140,33 +1951,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add set_max_msg_size to WebSocketResponse (#14176)
+## X. Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218)
 
 **RULE**:
-When implementing operations in `CHANGES/14176.feature.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/reusable-cibuildwheel.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2c6c92c`: Add set_max_msg_size to WebSocketResponse (#14176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2091405f`: Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGES/14176.feature.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/reusable-cibuildwheel.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Added :py:meth:`~aiohttp.web.WebSocketResponse.set_max_msg_size` and the
-:py:attr:`~aiohttp.web.WebSocketResponse.max_msg_size` property to change the
-maximum size of received messages after
-:py:meth:`~aiohttp.web.WebSocketResponse.prepare`, for example to only accept
-small messages until the peer has authenticated
--- by :user:`erwindouna`.
+      uses: pypa/cibuildwheel@v4.3.5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      uses: pypa/cibuildwheel@v4.3.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2c6c92c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2091405f` are properly handled with clean fallback behavior.

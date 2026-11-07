@@ -8024,3 +8024,5 @@
 | `CYCLE-20261107-HLX1` | `2026-11-07T06:17:43.477Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a31a02f...`) |
 | `CYCLE-20261107-HQVF` | `2026-11-07T06:17:49.899Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5a9616a...`) |
 | `CYCLE-20261107-HV3H` | `2026-11-07T06:17:55.373Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`80091f0b...`) |
+| `CYCLE-20261107-QE3C` | `2026-11-07T06:24:33.240Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95eb4ff6...`) |
+| `CYCLE-20261107-WM8A` | `2026-11-07T06:29:23.722Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47d0aa19...`) |

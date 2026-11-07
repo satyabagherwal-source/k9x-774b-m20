@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T06:17:55.276Z",
+  "last_updated": "2026-11-07T06:29:23.635Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -52452,14 +52452,19 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "0c03d749",
-      "content_hash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
+      "source_version": "88b98114",
+      "content_hash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "return an error when a stored definition fails to parse (#27823)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "connector): never send an empty AppendRows request in BigQuery sink (#27885)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52543,7 +52548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:15:31.471Z",
+      "verified_at": "2026-11-07T06:24:33.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78568,11 +78573,16 @@
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "a2c6c92c",
-      "content_hash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
+      "source_version": "0ae5b96b",
+      "content_hash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2922,
           "title": "Bump pypa/cibuildwheel from 4.3.0 to 4.3.1 (#14024)",
@@ -78604,7 +78614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:24:22.520Z",
+      "verified_at": "2026-11-07T06:29:23.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

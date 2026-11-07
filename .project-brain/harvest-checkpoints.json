@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T06:17:55.388Z",
+  "last_updated": "2026-11-07T06:29:23.737Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
-      "verified_at": "2026-11-05T18:15:31.631Z",
+      "content_hash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
+      "verified_at": "2026-11-07T06:24:33.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:15:31.631Z"
+      "last_updated": "2026-11-07T06:24:33.258Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
-      "verified_at": "2026-11-04T00:24:22.646Z",
+      "content_hash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
+      "verified_at": "2026-11-07T06:29:23.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:24:22.646Z"
+      "last_updated": "2026-11-07T06:29:23.737Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",

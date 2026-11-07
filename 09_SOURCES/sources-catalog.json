@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "0c03d749",
+    "sourceVersion": "88b98114",
     "license": "Apache-2.0",
-    "contentHash": "16ef2f9d33db7c7aca61a706e5a050a21ccdb2af8c854d2e9c197daae6edca2a",
-    "lastHarvestedAt": "2026-11-05T18:15:31.621Z",
+    "contentHash": "95eb4ff69947e5a8565d7ad85896b40f3862f5892950d451dd08d62bff7172d9",
+    "lastHarvestedAt": "2026-11-07T06:24:33.243Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "a2c6c92c",
+    "sourceVersion": "0ae5b96b",
     "license": "Apache-2.0",
-    "contentHash": "d7ff3f6c4702d4047615c4e81466fd50fc28c25840da90096da88cde415872d7",
-    "lastHarvestedAt": "2026-11-04T00:24:22.636Z",
+    "contentHash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
+    "lastHarvestedAt": "2026-11-07T06:29:23.724Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T06:17:55.383Z",
-  "total_cycles_completed": 7989,
-  "total_learnings_persisted": 7989,
-  "total_rules_promoted": 7637,
+  "last_updated": "2026-11-07T06:29:23.734Z",
+  "total_cycles_completed": 7991,
+  "total_learnings_persisted": 7991,
+  "total_rules_promoted": 7639,
   "history": [
-    {
-      "timestamp": "2026-11-05T22:55:01.963Z",
-      "repository": "pyannote/speaker-diarization-3.1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T22:55:05.904Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T23:02:12.955Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T06:17:55.383Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:24:33.256Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T06:29:23.734Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
