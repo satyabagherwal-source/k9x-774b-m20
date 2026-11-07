@@ -8093,3 +8093,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-07T20:49:07.536Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c9f3057f` | Multi-dimensional audit evidence | 2026-11-07T20:49:10.180Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `6fea18ef` | Multi-dimensional audit evidence | 2026-11-07T20:49:12.741Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `b5cd310b` | Multi-dimensional audit evidence | 2026-11-07T20:56:00.128Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `ce71455b` | Multi-dimensional audit evidence | 2026-11-07T20:56:04.881Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `e19c0e02` | Multi-dimensional audit evidence | 2026-11-07T20:56:06.468Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `62d625f3` | Multi-dimensional audit evidence | 2026-11-07T20:56:10.818Z |

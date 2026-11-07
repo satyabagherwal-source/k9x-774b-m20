@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `654efae4`  
+> **Source Version**: `b5cd310b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:59:48.979Z  
+> **Timestamp**: 2026-11-07T20:55:58.981Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:59:48.720Z  
+> **Harvest Timestamp**: 2026-11-07T20:55:57.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92827 stars
+- **Stars / Engagement**: 94216 stars
 
 ---
 
@@ -2334,457 +2334,721 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `635026fa` (2026-11-05)
-**Commit Message**: gpui: Support animated WebP in `Image::to_image_data` (#66459)
+### Incident Patch 1: `1253dde6` (2026-11-06)
+**Commit Message**: git_ui: Scroll commit view to the blamed file (#65237)
 
 ## Summary
 
-When opening an animated `.webp` file in Zed's image viewer, only the
-first frame was rendered statically.
+Picks up #62039 by @gaojunran, which was closed as inactive, reworked
+per the review feedback from @cole-miller and @dinocosta. Opening a
+commit from git blame now scrolls the commit view to the blamed file
+instead of the top of the diff (see #30696).
 
-`ImageAssetLoader` in `crates/gpui/src/elements/img.rs` already
-supported animated WebP via `WebPDecoder`, but `Image::to_image_data` in
-`crates/gpui/src/platform.rs` (which is used when opening image files in
-a project tab or loading clipboard images) still called
-`decode_static_image` for `ImageFormat::Webp`.
-
-This PR updates `Image::to_image_data` to decode animated WebP frames
-and moves the GIF and WebP decoding logic into shared `decode_gif_image`
-and `decode_webp_image` helpers in `platform.rs` so both paths stay in
-sync.
+- `CommitView::open`'s optional arguments are grouped into
+`CommitViewOptions` (`stash`, `file_filter`, `reveal_file`), each
+defaulting to `None`.
+- Every blame entry point passes the blamed file: the gutter click, the
+SHA button in the blame popover and tooltip, and `editor: open git blame
+commit`.
+- Updated the commit's multibuffer building task in order to prioritize
+the path in `CommitViewOptions::reveal_file` in case it is set, ensuring
+that as soon as it's added to the `MultiBuffer` we set the scroll anchor
+to its `BufferHeader` block.
 
 ## Testing
 
-- Added a unit test
-(`test_animated_webp_image_to_image_data_decodes_frames`) in
-`crates/gpui/src/platform.rs`.
-- Tested manually on Linux by opening both static and animated `.webp`
-files in Zed.
+- Added
+`git_ui::commit_view::tests::test_reveal_file_preserves_header_position`
+which leverages the new `CommitViewOptions::reveal_file` field and
+ensures that the scroll position of the editor matches its buffer
+header, as well as the cursor being on that file's first excerpt.
+- Manually tested on macOS, as shown i
 
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Fixed animated WebP 
-
-**File**: `crates/gpui/src/elements/img.rs` (modified, +7/-72)
+**File**: `crates/git_ui/src/blame_ui.rs` (modified, +18/-7)
 ```diff
-@@ -2,22 +2,18 @@ use crate::{
-     AnyElement, AnyImageCache, App, Asset, AssetLogger, Bounds, DefiniteLength, Element, ElementId,
-     Entity, GlobalElementId, Hitbox, Image, ImageCache, InspectorElementId, InteractiveElement,
-     Interactivity, IntoElement, LayoutId, Length, ObjectFit, Pixels, RenderImage, Resource,
--    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
--    decode_static_image_from_decoder, px,
-+    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
-+    decode_static_image, decode_webp_image, px,
+@@ -3,7 +3,9 @@ use crate::{
+         CommitAvatar, CommitTooltip, blame_entry_timestamp, commit_tag_chips,
+         shallow_boundary_notice,
+     },
+-    commit_view::{CommitView, GitBlob, build_buffer, worktree_id_for_repo_path},
++    commit_view::{
++        CommitView, CommitViewOptions, GitBlob, build_buffer, worktree_id_for_repo_path,
++    },
  };
- use anyhow::Result;
- 
- use futures::Future;
- use gpui_util::ResultExt;
--use image::{
--    AnimationDecoder, ImageError, ImageFormat, Rgba,
--    codecs::{gif::GifDecoder, webp::WebPDecoder},
--};
-+use image::{ImageError, ImageFormat};
- use scheduler::Instant;
--use smallvec::SmallVec;
- use std::{
-     fs,
--    io::{self, Cursor},
-+    io::{self},
-     ops::{Deref, DerefMut},
-     path::{Path, PathBuf},
-     str::FromStr,
-@@ -668,70 +664,8 @@ impl Asset for ImageAssetLoader {
- 
-             if let Ok(format) = image::guess_format(&bytes) {
-                 let data = match format {
--                    ImageFormat::Gif => {
--                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
--                        let mut frames = SmallVec::new();
--
--                        for frame in decoder.into_frames() {
--                            match frame {
--                                Ok(mut frame) => {
--                                    // Convert from RGBA to BGRA.
--                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                        pixel.swap(0, 2);
--                                    }
--                                    frames.push(frame);
--                                }
--                                Err(err) => {
--                                    log::debug!(
--                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
--                                    );
--                                }
--                            }
--                        }
--
--                        if frames.is_empty() {
--                            return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
--                                "GIF could not be decoded: all frames failed ({source:?})"
--                            ))));
--                        }
--
--                        frames
--                    }
--                    ImageFormat::WebP => {
--                        let mut decoder = WebPDecoder::new(Cursor::new(&bytes))?;
--
--                        if decoder.has_animation() {
--                            let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
--                            let mut frames = SmallVec::new();
--
--                            for frame in decoder.into_frames() {
--                                match frame {
--                                    Ok(mut frame) => {
--                                        // Convert from RGBA to BGRA.
--                                        for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                            pixel.swap(0, 2);
--                                        }
--                                        frames.push(frame);
--                                    }
--                                    Err(err) => {
--                                        log::debug!(
--                                            "Skipping WebP frame in {source:?} due to decode error: {err}"
--                                        );
--                                    }
--                                }
--                            }
--
--                            if frames.is_empty() {
--                                return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
--                                    "WebP could not be decoded: all frames failed ({source:?})"
--                                ))));
--                            }
--
--                            frames
--                        } else {
--                            decode_static_image_from_decoder(decoder)?
--                        }
--                    }
-+                    ImageFormat::Gif => decode_gif_image(&bytes)?,
-+                    ImageFormat::WebP => decode_webp_image(&bytes)?,
-                     _ => decode_static_image(&bytes, format)?,
-                 };
- 
-@@ -804,6 +738,7 @@ mod tests {
-     use super::*;
-     use crate::{ParentElement as _, TestAppContext, canvas, div, point, px, size};
-     use image::{Frame, ImageBuffer, Rgba};
-+    use smallvec::SmallVec;
- 
-     const TEST_IMG_ID: &str = "test-img";
- 
+ use anyhow::Context as _;
+ use editor::{BlameRenderer, Editor, GitBlame, MultiBuffer, hover_markdown_style};
+@@ -275,8 +277,10 @@ impl BlameRenderer for GitBlameRenderer {
+                                     blame_entry.sha.to_string(),
+                                     repository.downgrade(),
+                                     workspace.clone(),
+-                                    None,
+-                                    None,
++                                    CommitViewOptions {
++                                        reveal_file: RepoPath::new(&blame_entry.filename).ok(),
++                                        ..Default::default()
++                                    },
+                                     window,
+                                     cx,
+                                 )
+@@ -518,8 +522,13 @@ impl BlameRenderer for GitBlameRenderer {
+                                                         commit_summary.sha.clone().into(),
+                                                         repository.downgrade(),
+                                                         workspace.clone(),
+-                                                        None,
+-                                                        None,
++                                                        CommitViewOptions {
++                                                            reveal_file: RepoPath::new(
++                                                                &blame.filename,
++                                                            )
++                                                            .ok(),
++                                                            ..Default::default()
++                                                        },
+                                                         window,
+                                                         cx,
+                                                     );
+@@ -551,8 +560,10 @@ impl BlameRenderer for GitBlameRenderer {
+             blame_entry.sha.to_string(),
+             repository.downgrade(),
+             workspace,
+-            None,
+-            None,
++            CommitViewOptions {
++                reveal_file: RepoPath::new(&blame_entry.filename).ok(),
++                ..Default::default()
++            },
+             window,
+             cx,
+         )
 ```
 
-**File**: `crates/gpui/src/platform.rs` (modified, +78/-28)
+**File**: `crates/git_ui/src/commit_context_menu.rs` (modified, +1/-2)
 ```diff
-@@ -53,8 +53,8 @@ use collections::FxHashMap;
- use futures::channel::oneshot;
- #[cfg(any(test, feature = "test-support", feature = "bench-support"))]
- use image::RgbaImage;
--use image::codecs::gif::GifDecoder;
--use image::{AnimationDecoder as _, DynamicImage, Frame};
-+use image::codecs::{gif::GifDecoder, webp::WebPDecoder};
-+use image::{DynamicImage, Frame, Rgba};
- use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
- use scheduler::Instant;
- pub use scheduler::RunnableMeta;
-@@ -3387,6 +3387,50 @@ pub(crate) fn decode_static_image_from_decoder(
-     Ok(SmallVec::from_elem(Frame::new(data), 1))
+@@ -71,8 +71,7 @@ pub(crate) fn commit_context_menu(
+                         sha.to_string(),
+                         repository,
+                         workspace.clone(),
+-                        None,
+-                        None,
++                        Default::default(),
+                         window,
+                         cx,
+                     );
+```
+
+**File**: `crates/git_ui/src/commit_tooltip.rs` (modified, +13/-6)
+```diff
+@@ -1,10 +1,10 @@
+-use crate::commit_view::CommitView;
++use crate::commit_view::{CommitView, CommitViewOptions};
+ use anyhow::Result;
+ use askpass::AskPassDelegate;
+ use editor::hover_markdown_style;
+ use futures::Future;
+ use git::blame::BlameEntry;
+-use git::repository::CommitSummary;
++use git::repository::{CommitSummary, RepoPath};
+ use git::{GitRemote, commit::ParsedCommitMessage};
+ use git_ui_core::askpass_modal::AskPassModal;
+ use git_ui_core::notifications::show_error_toast;
+@@ -220,6 +220,7 @@ pub struct CommitTooltip {
+     markdown: Entity<Markdown>,
+     repository: Entity<Repository>,
+     workspace: WeakEntity<Workspace>,
++    reveal_file: Option<RepoPath>,
  }
  
-+fn decode_animated_frames<'a>(
-+    decoder: impl image::AnimationDecoder<'a>,
-+    format_name: &str,
-+) -> Result<SmallVec<[Frame; 1]>> {
-+    let mut frames = SmallVec::new();
-+
-+    for frame in decoder.into_frames() {
-+        match frame {
-+            Ok(mut frame) => {
-+                // Convert from RGBA to BGRA.
-+                for pixel in frame.buffer_mut().chunks_exact_mut(4) {
-+                    pixel.swap(0, 2);
-+                }
-+                frames.push(frame);
-+            }
-+            Err(err) => {
-+                log::debug!("Skipping {format_name} frame due to decode error: {err}");
-+            }
-+        }
-+    }
-+
-+    if frames.is_empty() {
-+        anyhow::bail!("{format_name} could not be decoded: all frames failed");
-+    }
-+
-+    Ok(frames)
-+}
-+
-+pub(crate) fn decode_gif_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
-+    let decoder = GifDecoder::new(Cursor::new(bytes))?;
-+    decode_animated_frames(decoder, "GIF")
-+}
-+
-+pub(crate) fn decode_webp_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
-+    let mut decoder = WebPDecoder::new(Cursor::new(bytes))?;
-+
-+    if decoder.has_animation() {
-+        let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
-+        decode_animated_frames(decoder, "WebP")
-+    } else {
-+        decode_static_image_from_decoder(decoder)
-+    }
-+}
-+
- impl Hash for Image {
-     fn hash<H: Hasher>(&self, state: &mut H) {
-         state.write_u64(self.id);
-@@ -3450,34 +3494,10 @@ impl Image {
-     /// Convert the clipboard image to an `ImageData` object.
-     pub fn to_image_data(&self, svg_renderer: SvgRenderer) -> Result<Arc<RenderImage>> {
-         let frames = match self.format {
--            ImageFormat::Gif => {
--                let decoder = GifDecoder::new(Cursor::new(&self.bytes))?;
--                let mut frames = SmallVec::new();
--
--                for frame in decoder.into_frames() {
--                    match frame {
--                        Ok(mut frame) => {
--                            // Convert from RGBA to BGRA.
--                            for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                pixel.swap(0, 2);
--                            }
--                            frames.push(frame);
--                        }
--                        Err(err) => {
--                            log::debug!("Skipping GIF frame due to decode error: {err}");
--                        }
--                    }
--                }
--
--                if frames.is_empty() {
--                    anyhow::bail!("GIF could not be decoded: all frames failed");
--                }
--
--                frames
--            }
-+            ImageFormat::Gif => decode_gif_image(&self.bytes)?,
-             ImageFormat::Png => decode_static_image(&self.bytes, image::ImageFormat::Png)?,
-             ImageFormat::Jpeg => decode_static_image(&self.bytes, image::ImageFormat::Jpeg)?,
--            ImageFormat::Webp => decode_static_image(&self.bytes, image::ImageFormat::WebP)?,
-+            ImageFormat::Webp => decode_webp_image(&self.bytes)?,
-             ImageFormat::Bmp => decode_static_image(&self.bytes, image::ImageFormat::Bmp)?,
-             ImageFormat::Tiff => decode_static_image(&self.bytes, image::ImageFormat::Tiff)?,
-             ImageFormat::Ico => decode_static_image(&self.bytes, image::ImageFormat::Ico)?,
-@@ -3604,6 +3624,36 @@ mod image_tests {
-             assert_eq!(pixel, &[0xF8, 0xBD, 0x38, 0xFF]);
+ impl CommitTooltip {
+@@ -236,7 +237,7 @@ impl CommitTooltip {
+             .and_then(|t| OffsetDateTime::from_unix_timestamp(t).ok())
+             .unwrap_or(OffsetDateTime::now_utc());
+ 
+-        Self::new(
++        let mut tooltip = Self::new(
+             CommitDetails {
+                 sha: blame.sha.to_string().into(),
+                 commit_time,
+@@ -253,7 +254,9 @@ impl CommitTooltip {
+             repository,
+             workspace,
+             cx,
+-        )
++        );
++        tooltip.reveal_file = RepoPath::new(&blame.filename).ok();
++        tooltip
+     }
+ 
+     pub fn new(
+@@ -280,6 +283,7 @@ impl CommitTooltip {
+             workspace,
+             scroll_handle: ScrollHandle::new(),
+             markdown,
++            reveal_file: None,
          }
      }
+ }
+@@ -331,6 +335,7 @@ impl Render for CommitTooltip {
+         let message_max_height = window.line_height() * 12 + (ui_font_size / 0.4);
+         let repo = self.repository.clone();
+         let workspace = self.workspace.clone();
++        let reveal_file = self.reveal_file.clone();
+         let commit_summary = CommitSummary {
+             sha: self.commit.sha.clone(),
+             subject: self
+@@ -446,8 +451,10 @@ impl Render for CommitTooltip {
+                                                         commit_summary.sha.to_string(),
+                                                         repo.downgrade(),
+                                                         workspace.clone(),
+-                                                        None,
+-                                                        None,
++                                                        CommitViewOptions {
++                                                            reveal_file: reveal_file.clone(),
++                                                            ..Default::default()
++                                                        },
+                                                         window,
+                                                         cx,
+                                                     );
+```
+
+**File**: `crates/git_ui/src/commit_view.rs` (modified, +453/-161)
+```diff
+@@ -2,8 +2,11 @@ use anyhow::{Context as _, Result};
+ use buffer_diff::BufferDiff;
+ use collections::HashMap;
+ use editor::{
+-    Addon, Editor, EditorEvent, EditorSettings, HiddenDiffHunkRenderer, MultiBuffer,
+-    SplittableEditor, hover_markdown_style, multibuffer_context_lines,
++    Addon, Editor, EditorEvent, EditorSettings, HiddenDiffHunkRenderer, MultiBuffer, RowExt,
++    SelectionEffects, SplittableEditor,
++    display_map::{Block, DisplayRow, ToDisplayPoint},
++    hover_markdown_style, multibuffer_context_lines,
++    scroll::ScrollAnchor,
+ };
+ use futures_lite::future::yield_now;
+ use git::repository::{CommitDetails, RepoPath};
+@@ -19,14 +22,14 @@ use gpui::{
+     Window, actions,
+ };
+ use language::{
+-    Buffer, Capability, DiskState, File, LanguageRegistry, LineEnding, OffsetRangeExt as _,
+-    ReplicaId, Rope, TextBuffer,
++    Buffer, BufferId, Capability, DiskState, File, LanguageRegistry, LineEnding,
++    OffsetRangeExt as _, ReplicaId, Rope, TextBuffer,
+ };
+ use markdown::{Markdown, MarkdownElement, MarkdownStyle};
+ use multi_buffer::PathKey;
+ use project::{
+     Project, ProjectPath, WorktreeId,
+-    git_store::{CommitDiff, Repository, UnshallowState},
++    git_store::{CommitDiff, CommitFile, Repository, UnshallowState},
+ };
+ use settings::{DiffViewStyle, Settings};
+ use std::{
+@@ -87,6 +90,7 @@ pub struct CommitView {
+     remote: Option<GitRemote>,
+     is_shallow_boundary: bool,
+     file_filter: Option<RepoPath>,
++    reveal_file: Option<RepoPath>,
+     _load_diff_task: Task<Result<()>>,
+ }
+ 
+@@ -179,26 +183,33 @@ impl Addon for CommitDiffAddon {
+ 
+ const FILE_NAMESPACE_SORT_PREFIX: u64 = 1;
+ 
++#[derive(Clone, Default)]
++pub struct CommitViewOptions {
++    /// The zero-based stash index when displaying a stash instead of a regular
++    /// commit.
++    pub stash: Option<usize>,
++    /// Restricts the displayed diff to this repository-relative file path.
++    /// When absent, all files in the commit are displayed.
++    pub file_filter: Option<RepoPath>,
++    /// Loads this repository-relative file first, places the cursor at its
++    /// first excerpt, and reveals its header at the top of the viewport.
++    /// Other files remain visible in their normal order, subject to
++    /// `file_filter`.
++    /// If the file is absent from the displayed diff, normal loading is
++    /// unchanged.
++    pub reveal_file: Option<RepoPath>,
++}
 +
-+    #[test]
-+    fn test_animated_webp_image_to_image_data_decodes_frames() {
-+        // 1x1 2-frame animated WebP (frame 0: red, frame 1: blue, 100ms delay each).
-+        const ANIMATED_WEBP: &[u8] = &[
-+            82, 73, 70, 70, 192, 0, 0, 0, 87, 69, 66, 80, 86, 80, 56, 88, 10, 0, 0, 0, 2, 0, 0, 0,
-+            0, 0, 0, 0, 0, 0, 65, 78, 73, 77, 6, 0, 0, 0, 255, 255, 255, 255, 0, 0, 65, 78, 77, 70,
-+            72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 2, 86, 80, 56, 32, 48, 0,
-+            0, 0, 208, 1, 0, 157, 1, 42, 1, 0, 1, 0, 2, 0, 52, 37, 160, 2, 116, 186, 1, 248, 0, 3,
-+            176, 0, 254, 240, 196, 11, 255, 32, 185, 97, 117, 200, 215, 255, 32, 63, 228, 7, 252,
-+            128, 255, 248, 242, 0, 0, 0, 65, 78, 77, 70, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+            0, 0, 100, 0, 0, 0, 86, 80, 56, 32, 44, 0, 0, 0, 148, 1, 0, 157, 1, 42, 1, 0, 
+ impl CommitView {
+     pub fn open(
+         commit_sha: String,
+         repo: WeakEntity<Repository>,
+         workspace: WeakEntity<Workspace>,
+-        stash: Option<usize>,
+-        file_filter: Option<RepoPath>,
++        options: CommitViewOptions,
+         window: &mut Window,
+         cx: &mut App,
+     ) {
+-        Self::open_with_options(
+-            commit_sha,
+-            repo,
+-            workspace,
+-            stash,
+-            file_filter,
+-            false,
+-            window,
+-            cx,
+-        )
++        Self::open_with_options(commit_sha, repo, workspace, options, false, window, cx)
+     }
+ 
+     pub(crate) fn commit_sha(&self) -> &SharedString {
+@@ -213,8 +224,7 @@ impl CommitView {
+         commit_sha: String,
+         repo: WeakEntity<Repository>,
+         workspace: WeakEntity<Workspace>,
+-        stash: Option<usize>,
+-        file_filter: Option<RepoPath>,
++        options: CommitViewOptions,
+         ignore_shallow_boundary: bool,
+         window: &mut Window,
+         cx: &mut App,
+@@ -237,7 +247,7 @@ impl CommitView {
+                 let commit_details = commit_details.log_err()?;
+ 
+                 // Filter to specific file if requested
+-                if let Some(ref filter_path) = file_filter {
++                if let Some(ref filter_path) = options.file_filter {
+                     commit_diff.files.retain(|f| &f.path == filter_path);
+                 }
+ 
+@@ -247,17 +257,14 @@ impl CommitView {
+                     .update_in(cx, |workspace, window, cx| {
+                         let project = workspace.project();
+                         let workspace_entity = cx.entity();
+-                        let workspace_handle = cx.weak_entity();
+                         let commit_view = cx.new(|cx| {
+                             CommitView::new(
+                                 commit_details,
+                                 commit_diff,
+                                 repo,
+                                 project.clone(),
+                                 workspace_entity,
+-                                workspace_handle,
+-                                stash,
+-                                file_filter,
++                                options,
+                                 window,
+                                 cx,
+                             )
+@@ -301,13 +308,16 @@ impl CommitView {
+         commit_diff: CommitDiff,
+         repository: Entity<Repository>,
+         project: Entity<Project>,
+-        workspace_entity: Entity<Workspace>,
+-        workspace: WeakEntity<Workspace>,
+-        stash: Option<
+```
+
+**File**: `crates/git_ui/src/git_graph.rs` (modified, +6/-5)
+```diff
+@@ -5,7 +5,7 @@ use crate::{
+         commit_context_menu, git_context_menu_tasks, git_task_context,
+     },
+     commit_tooltip::CommitAvatar,
+-    commit_view::CommitView,
++    commit_view::{CommitView, CommitViewOptions},
+     git_status_icon,
+     git_timestamp::format_git_timestamp,
+ };
+@@ -268,8 +268,10 @@ impl ChangedFileEntry {
+             commit_sha.to_string(),
+             repository.clone(),
+             workspace.clone(),
+-            None,
+-            Some(self.repo_path.clone()),
++            CommitViewOptions {
++                file_filter: Some(self.repo_path.clone()),
++                ..Default::default()
++            },
+             window,
+             cx,
+         );
+@@ -2592,8 +2594,7 @@ impl GitGraph {
+             commit_entry.data.sha.to_string(),
+             repository.downgrade(),
+             self.workspace.clone(),
+-            None,
+-            None,
++            Default::default(),
+             window,
+             cx,
+         );
+```
+
+**File**: `crates/git_ui/src/git_panel.rs` (modified, +4/-8)
+```diff
+@@ -7646,8 +7646,7 @@ impl GitPanel {
+                                     commit.sha.to_string(),
+                                     repo.clone(),
+                                     workspace.clone(),
+-                                    None,
+-                                    None,
++                                    Default::default(),
+                                     window,
+                                     cx,
+                                 );
+@@ -7906,8 +7905,7 @@ impl GitPanel {
+             entry.sha.to_string(),
+             active_repository.downgrade(),
+             self.workspace.clone(),
+-            None,
+-            None,
++            Default::default(),
+             window,
+             cx,
+         );
+@@ -8407,8 +8405,7 @@ impl GitPanel {
+                                                 sha_for_click.clone(),
+                                                 repo.clone(),
+                                                 workspace.clone(),
+-                                                None,
+-                                                None,
++                                                Default::default(),
+                                                 window,
+                                                 cx,
+                                             );
+@@ -11642,8 +11639,7 @@ mod tests {
+                     sha.to_string(),
+                     repository.downgrade(),
+                     workspace,
+-                    None,
+-                    None,
++                    Default::default(),
+                     window,
+                     cx,
+                 );
+```
+
+**File**: `crates/git_ui/src/git_ui.rs` (modified, +1/-2)
+```diff
+@@ -827,8 +827,7 @@ impl RefPickerModal {
+                                 details.sha.to_string(),
+                                 repo.downgrade(),
+                                 workspace.weak_handle(),
+-                                None,
+-                                None,
++                                Default::default(),
+                                 window,
+                                 cx,
+                             );
+```
+
+**File**: `crates/git_ui/src/stash_picker.rs` (modified, +5/-3)
+```diff
+@@ -18,7 +18,7 @@ use util::ResultExt;
+ use workspace::notifications::DetachAndPromptErr;
+ use workspace::{ModalView, Workspace};
+ 
+-use crate::commit_view::CommitView;
++use crate::commit_view::{CommitView, CommitViewOptions};
+ use crate::stash_picker;
+ 
+ actions!(
+@@ -301,8 +301,10 @@ impl StashListDelegate {
+             stash_sha,
+             repo.downgrade(),
+             self.workspace.clone(),
+-            Some(stash_index),
+-            None,
++            CommitViewOptions {
++                stash: Some(stash_index),
++                ..Default::default()
++            },
+             window,
+             cx,
+         );
 ```
 
 ---
 
-### Incident Patch 2: `4ba7d82f` (2026-11-05)
-**Commit Message**: keymap: Fix cmd-o in macOS JetBrains keymap opening file dialog instead of project symbols (#66137)
+### Incident Patch 2: `78fde14d` (2026-11-06)
+**Commit Message**: gpui: Fix ignored horizontal padding on the `list()` element (#64056)
 
-## Summary
+# Objective
 
-Closes #66136
+This PR fixes a small bug in the `list()` element which reads padding on
+both axes (X & Y) but only applies the values set for the Y axis while
+the X axis values end up being ignored.
 
-With the JetBrains keymap on macOS, cmd-o opens the file dialog instead
-of expected symbol search.
+Right now Zed works around this bug by manually setting the horizontal
+padding to `8` on a `div` inside of the `list` (here's an example:
+https://github.com/zed-industries/zed/blob/main/crates/settings_ui/src/settings_ui.rs#L3616).
 
-The fix: unbind the inherited Open with zed::Unbind, like
-linux/emacs.json does for ctrl-n/ctrl-p. so after fix File > Open no
-longer shows cmd-o
+P.S.: ths PR is a new PR for the same change/fix as [this closed
+PR](https://github.com/zed-industries/zed/pull/63784). I cleaned up my
+branch and this time I'm the one writing the description not Claude 😓
+
+## Solution
+
+I simply subtract the left & right padding from the width the `list()`
+element gives its items, and offset the items by the left padding.
 
 ## Testing
 
-- added test_jetbrains_project_symbol_shortcuts_override_open. Also
-added shared helped in tests for similar case with emacs.
-- manually tested on macOS. ran cargo run, choose jetbrains keymap on
-startup, and voila cmd-o opens symbols.
+- Did you test these changes? If so, how?
+- I ran `cargo test -p gpui` to make sure my changes didn't break any
+existing test.
+- Are there any parts that need more testing?
+  - I don't think so.
+- How can other people (reviewers) test your changes? Is there anything
+specific they need to know?
+- You can set the horizontal pa
+
+**File**: `crates/gpui/src/elements/list.rs` (modified, +279/-25)
+```diff
+@@ -8,10 +8,10 @@
+ //! If all of your elements are the same height, see [`crate::UniformList`] for a simpler API
+ 
+ use crate::{
+-    AnyElement, App, AvailableSpace, Bounds, ContentMask, DispatchPhase, Edges, Element, EntityId,
+-    FocusHandle, GlobalElementId, Hitbox, HitboxBehavior, InspectorElementId, IntoElement,
+-    Overflow, Pixels, Point, ScrollDelta, ScrollEvent, Size, Style, StyleRefinement, Styled,
+-    Window, point, px, size,
++    Along as _, AnyElement, App, AvailableSpace, Axis, Bounds, ContentMask, DispatchPhase, Edges,
++    Element, EntityId, FocusHandle, GlobalElementId, Hitbox, HitboxBehavior, InspectorElementId,
++    IntoElement, Overflow, Pixels, Point, ScrollDelta, ScrollEvent, Size, Style, StyleRefinement,
++    Styled, Window, point, px, size,
+ };
+ use collections::VecDeque;
+ use refineable::Refineable as _;
+@@ -714,6 +714,7 @@ impl ListState {
+         let state = &*self.0.borrow();
+ 
+         let bounds = state.last_layout_bounds.unwrap_or_default();
++        let padding = state.last_padding.unwrap_or_default();
+         let scroll_top = state.logical_scroll_top();
+         if ix < scroll_top.item_ix {
+             return None;
+@@ -730,8 +731,8 @@ impl ListState {
+             if count == ix {
+                 let top = bounds.top() + top - scroll_top;
+                 return Some(Bounds::from_corners(
+-                    point(bounds.left(), top),
+-                    point(bounds.right(), top + size.height),
++                    point(bounds.left() + padding.left, top),
++                    point(bounds.right() - padding.right, top + size.height),
+                 ));
+             }
+         }
+@@ -1276,16 +1277,17 @@ impl StateInner {
+         window: &mut Window,
+         cx: &mut App,
+     ) -> Result<LayoutItemsResponse, ListOffset> {
++        let item_width = bounds.size.width - padding.along(Axis::Horizontal);
+         window.transact(|window| {
+             match self.measuring_behavior {
+                 ListMeasuringBehavior::Measure(has_measured) if !has_measured => {
+-                    self.layout_all_items(bounds.size.width, render_item, window, cx);
++                    self.layout_all_items(item_width, render_item, window, cx);
+                 }
+                 _ => {}
+             }
+ 
+             let mut layout_response = self.layout_items(
+-                Some(bounds.size.width),
++                Some(item_width),
+                 bounds.size.height,
+                 &padding,
+                 render_item,
+@@ -1298,7 +1300,7 @@ impl StateInner {
+ 
+             // Only paint the visible items, if there is actually any space for them (taking padding into account)
+             if bounds.size.height > padding.top + padding.bottom {
+-                let mut item_origin = bounds.origin + Point::new(px(0.), padding.top);
++                let mut item_origin = bounds.origin + Point::new(padding.left, padding.top);
+                 item_origin.y -= layout_response.scroll_top.offset_in_item;
+                 for item in &mut layout_response.item_layouts {
+                     window.with_content_mask(Some(ContentMask { bounds }), |window| {
+@@ -1327,10 +1329,8 @@ impl StateInner {
+                                     };
+                                     let size = prev_item.size().unwrap_or_else(|| {
+                                         let mut element = render_item(cursor.start().0, window, cx);
+-                                        let item_available_size = size(
+-                                            bounds.size.width.into(),
+-                                            AvailableSpace::MinContent,
+-                                        );
++                                        let item_available_size =
++                                            size(item_width.into(), AvailableSpace::MinContent);
+                                         element.layout_as_root(item_available_size, window, cx)
+                                     });
+                                     item_ix = cursor.start().0;
+@@ -1358,7 +1358,7 @@ impl StateInner {
+                                 let size = item.size().unwrap_or_else(|| {
+                                     let mut item = render_item(cursor.start().0, window, cx);
+                                     let item_available_size =
+-                                        size(bounds.size.width.into(), AvailableSpace::MinContent);
++                                        size(item_width.into(), AvailableSpace::MinContent);
+                                     item.layout_as_root(item_available_size, window, cx)
+                                 });
+                                 height -= size.height;
+@@ -1487,8 +1487,9 @@ impl Element for List {
+                         // we might just use the overdraw value as the available height to layout enough items.
+                         state.overdraw
+                     };
+-                    let padding = style.padding.to_pixels(
+-                        state
+```
+
+**File**: `crates/gpui/src/geometry.rs` (modified, +19/-3)
+```diff
+@@ -1761,6 +1761,22 @@ pub struct Edges<T: Clone + Debug + Default + PartialEq> {
+     pub left: T,
+ }
+ 
++impl<T> Add for Edges<T>
++where
++    T: Add<Output = T> + Clone + Debug + Default + PartialEq,
++{
++    type Output = Self;
++
++    fn add(self, rhs: Self) -> Self::Output {
++        Self {
++            top: self.top + rhs.top,
++            right: self.right + rhs.right,
++            bottom: self.bottom + rhs.bottom,
++            left: self.left + rhs.left,
++        }
++    }
++}
++
+ impl<T> Mul for Edges<T>
+ where
+     T: Mul<Output = T> + Clone + Debug + Default + PartialEq,
+@@ -1769,9 +1785,9 @@ where
+ 
+     fn mul(self, rhs: Self) -> Self::Output {
+         Self {
+-            top: self.top.clone() * rhs.top,
+-            right: self.right.clone() * rhs.right,
+-            bottom: self.bottom.clone() * rhs.bottom,
++            top: self.top * rhs.top,
++            right: self.right * rhs.right,
++            bottom: self.bottom * rhs.bottom,
+             left: self.left * rhs.left,
+         }
+     }
+```
+
+---
+
+### Incident Patch 3: `145bcfc1` (2026-11-06)
+**Commit Message**: workspace: Fix terminal links outside worktrees when the remote OS differs (#66594)
+
+## Summary
+
+- Problem: with Zed on Windows and a WSL project, ctrl-clicking an
+absolute Linux path outside the project's folders does nothing.
+- Cause: `project_paths_to_check `and `normalize_absolute_candidate `in
+`crates/workspace/src/path_link.rs` use `Path::is_absolute` and
+`is_relative`, which follow the OS Zed was compiled for. On Windows,
+`/home/x` has no drive prefix, so it isn't absolute. On Linux or macOS,
+`C:\x` isn't absolute either.
+- Fix: both functions now use the project's PathStyle
+(`project.read(cx).path_style(cx)` and `path_style.is_absolute`).
+
+This replaces #66340, which was closed because it's description was
+empty.
+
+## Testing
+
+- Manual test: Windows host, WSL project, paste a file path in the
+terminal and now its possible to ctrl+click it and open it on current
+window
+- Unit test: cargo test -p workspace project_paths_to_check passes on
+the PR branch in WSL. With line 536 temporarily changed back to
+maybe_path.is_absolute(), it fails, so it does catch the bug.
 
 ## Self-review
 
 - [x] I've reviewed my diff for quality, security, reliability, and
 performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
+- [x] UI changes f
 
-Release Notes:
-
-- Fixed `cmd-o` opening the file dialog instead of project symbol search
-when using the JetBrains keymap on macOS.
-
----------
-
-Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
-
-**File**: `assets/keymaps/default-macos.json` (modified, +1/-1)
+**File**: `crates/workspace/src/path_link.rs` (modified, +31/-6)
 ```diff
-@@ -28,7 +28,6 @@
-       "alt-shift-enter": "menu::Restart",
-       "cmd-shift-w": "workspace::CloseWindow",
-       "shift-escape": "workspace::ToggleZoom",
--      "cmd-o": "workspace::Open",
-       "cmd-=": ["zed::IncreaseBufferFontSize", { "persist": false }],
-       "cmd-+": ["zed::IncreaseBufferFontSize", { "persist": false }],
-       "cmd--": ["zed::DecreaseBufferFontSize", { "persist": false }],
-@@ -696,6 +695,7 @@
-     "context": "Workspace",
-     "use_key_equivalents": true,
-     "bindings": {
-+      "cmd-o": "workspace::Open",
-       "alt-/": "which_key::ShowPendingBindings",
-       // Move focus between the major regions of the window (editor, open
-       // panels, status bar). Accessibility navigation; mirrors VS Code's
-```
-
-**File**: `assets/keymaps/macos/jetbrains.json` (modified, +7/-0)
-```diff
-@@ -1,4 +1,11 @@
- [
-+  {
-+    "context": "Workspace",
-+    "use_key_equivalents": true,
-+    "bindings": {
-+      "cmd-o": null,
-+    },
-+  },
-   {
-     "bindings": {
-       "cmd-{": "pane::ActivatePreviousItem",
-```
-
----
-
-### Incident Patch 3: `d01f1258` (2026-11-05)
-**Commit Message**: gpui: Fix key equivalents for 'backspace' and 'delete' on macOS (#65744)
-
-## Summary
-
-In GPUI, 'delete' refers to the 'delete forward' key.
-
-It looks like the mapped key equivalents for 'backspace' and 'delete'
-(that is, 'delete forward') are not right on macOS. When native menus
-are rendered using the 'backspace' key, the glyph is mirrored because
-the 'delete forward' glyph is incorrectly used instead.
-
-Due to what I can only guess to be historical accident, the key
-equivalents for AppKit menus [are not the
-same](https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion)
-as the characters yielded by NSEvent key-down events.
-
-## Testing
-
-I manually tested these changes in Zed.
-
-## Self-review
-
-- [X] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [X] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [ ] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- [GPUI] Fixed menus on macOS using an incorrect glyph for the
-'backspace' character.
-
----------
-
-Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
-
-**File**: `crates/gpui_macos/src/events.rs` (modified, +10/-3)
-```diff
-@@ -36,10 +36,17 @@ const NUMPAD_ENTER_KEY: u32 = 0x03;
- const TAB_KEY: u32 = 0x09;
- const SHIFT_TAB_KEY: u32 = 0x19;
+@@ -360,7 +360,8 @@ fn resolve_open_target_internal(
+             })
+         }
+         BackgroundPathChecks::ProjectPathResolution => {
+-            let paths_to_check = project_paths_to_check(&potential_paths, cwd);
++            let path_style = project.read(cx).path_style(cx);
++            let paths_to_check = project_paths_to_check(&potential_paths, cwd, path_style);
+             cx.spawn(async move |cx| {
+                 for mut path_to_check in paths_to_check {
+                     let path = path_to_check.path.to_string_lossy();
+@@ -522,25 +523,28 @@ fn local_paths_to_check(
+ fn project_paths_to_check(
+     potential_paths: &[PathWithPosition],
+     cwd: Option<&Path>,
++    path_style: PathStyle,
+ ) -> Vec<PathWithPosition> {
+     cwd.iter()
+         .flat_map(|cwd| {
+-            potential_paths
+-                .iter()
+-                .filter_map(|path_to_check| normalize_absolute_candidate(cwd, path_to_check))
++            potential_paths.iter().filter_map(|path_to_check| {
++                normalize_absolute_candidate(cwd, path_to_check, path_style)
++            })
+         })
+         .chain(potential_paths.iter().filter_map(|path_to_check| {
+             let maybe_path = &path_to_check.path;
+-            (maybe_path.starts_with("~") || maybe_path.is_absolute()).then(|| path_to_check.clone())
++            (maybe_path.starts_with("~") || path_style.is_absolute(maybe_path))
++                .then(|| path_to_check.clone())
+         }))
+         .collect()
+ }
  
--pub fn key_to_native(key: &str) -> Cow<'_, str> {
-+// Menu key equivalents use different character values than the ones NSEvent
-+// reports for the same physical keys.
-+//
-+// See https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion
-+const BACKSPACE_KEY_EQUIVALENT: u32 = 0x08;
-+const DELETE_KEY_EQUIVALENT: u32 = 0x7f;
+ fn normalize_absolute_candidate(
+     cwd: &Path,
+     path_to_check: &PathWithPosition,
++    path_style: PathStyle,
+ ) -> Option<PathWithPosition> {
+-    path_to_check.path.is_relative().then(|| {
++    (!path_style.is_absolute(&path_to_check.path)).then(|| {
+         normalize_lexically(&cwd.join(&path_to_check.path))
+             .ok()
+             .map(|path| PathWithPosition {
+@@ -550,3 +554,24 @@ fn normalize_absolute_candidate(
+             })
+     })?
+ }
 +
-+pub(crate) fn key_to_menu_equivalent(key: &str) -> Cow<'_, str> {
-     let code = match key {
-         "space" => SPACE_KEY,
--        "backspace" => BACKSPACE_KEY,
-+        "backspace" => BACKSPACE_KEY_EQUIVALENT,
-         "escape" => u32::from(ESCAPE_KEY),
-         "up" => NSUpArrowFunctionKey,
-         "down" => NSDownArrowFunctionKey,
-@@ -49,7 +56,7 @@ pub fn key_to_native(key: &str) -> Cow<'_, str> {
-         "pagedown" => NSPageDownFunctionKey,
-         "home" => NSHomeFunctionKey,
-         "end" => NSEndFunctionKey,
--        "delete" => NSDeleteFunctionKey,
-+        "delete" => DELETE_KEY_EQUIVALENT,
-         "insert" => NSHelpFunctionKey,
-         "f1" => NSF1FunctionKey,
-         "f2" => NSF2FunctionKey,
-```
-
-**File**: `crates/gpui_macos/src/platform.rs` (modified, +5/-3)
-```diff
-@@ -1,7 +1,7 @@
- use crate::{
-     AppleActivity, AppleDispatcher, BoolExt, MacDisplay, MacKeyboardLayout, MacKeyboardMapper,
--    MacWindow, events::key_to_native, main_thread_marker, ns_string, pasteboard::Pasteboard,
--    renderer, set_active_window_cursor_style,
-+    MacWindow, events::key_to_menu_equivalent, main_thread_marker, ns_string,
-+    pasteboard::Pasteboard, renderer, set_active_window_cursor_style,
- };
- use anyhow::{Context as _, anyhow};
- use block2::RcBlock;
-@@ -401,7 +401,9 @@ impl MacPlatform {
-                                 NSMenuItem::alloc(self.1),
-                                 &NSString::from_str(name),
-                                 Some(selector),
--                                &NSString::from_str(key_to_native(keystroke.key()).as_ref()),
-+                                &NSString::from_str(
-+                                    key_to_menu_equivalent(keystroke.key()).as_ref(),
-+                                ),
-                             );
-                             if Self::os_version() >= Version::new(12, 0, 0) {
-                                 item.setAllowsAutomaticKeyEquivalentLocalization(false);
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn test_project_paths_to_check_uses_the_project_path_style() {
++        let unix = PathWithPosition::parse_str("/home/user/notes/spec.md:12");
++        let windows = PathWithPosition::parse_str("C:\\Users\\user\\spec.md");
++        let relative = PathWithPosition::parse_str("src/main.rs");
++        let candidates = [unix.clone(), windows.clone(), relative];
++        assert_eq!(
++            project_paths_to_check(&candidates, None, PathStyle::Unix),
++            vec![unix]
++        );
++        assert_eq!(
++            project_paths_to_check(&candidates, None, PathStyle::Windows),
++            vec![windows]
++        );
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66569** (2026-11-05): extension: Simplify on_main_thread to not box the returned future (@osiewicz)
-- **PR #66547** (closed): Fix project panel startup for new SSH projects (@0bkevin)
-- **PR #66540** (2026-11-04): gpui: Fix cursor reverting when a drag starts (@probably-neb)
-- **PR #66534** (2026-11-05): Document how preferred_line_length affects Rewrap (@chrisknsmn)
-- **PR #66532** (2026-11-04): Bump Zed to v1.29.0 (@zed-zippy[bot])
-- **PR #66531** (2026-11-04): ui: Allow for custom submenu triggers (@danilo-leal)
+- **PR #66662** (closed): git: critical robustness and parsing fixes (@Naseq)
+- **PR #66660** (closed): Update slack_notify_community_automation_failure.yml (@Aissamohammedi88)
+- **PR #66657** (closed): git: add parsing support for 'index on' stash message prefix (@Naseq)
+- **PR #66656** (closed): git: add FileStatus parsing for AD and DA unmerged status conflicts (@Naseq)
+- **PR #66650** (2026-11-07): Hide read-only toggle on tabs that cannot be toggled (@SomeoneToIgnore)
+- **PR #66617** (2026-11-06): Add more fields to the community PR board (@zelenenka)
 
 ---
 
@@ -2804,58 +3068,51 @@ Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpui: Support animated WebP in `Image::to_image_data` (#66459)
+## X. git_ui: Scroll commit view to the blamed file (#65237)
 
 **RULE**:
-When implementing operations in `crates/gpui/src/elements/img.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/git_ui/src/blame_ui.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `635026fa`: gpui: Support animated WebP in `Image::to_image_data` (#66459). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1253dde6`: git_ui: Scroll commit view to the blamed file (#65237). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/img.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/git_ui/src/blame_ui.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
-    decode_static_image, decode_webp_image, px,
-use image::{ImageError, ImageFormat};
-    io::{self},
-                    ImageFormat::Gif => decode_gif_image(&bytes)?,
-                    ImageFormat::WebP => decode_webp_image(&bytes)?,
-    use smallvec::SmallVec;
+    commit_view::{
+        CommitView, CommitViewOptions, GitBlob, build_buffer, worktree_id_for_repo_path,
+    },
+                                    CommitViewOptions {
+                                        reveal_file: RepoPath::new(&blame_entry.filename).ok(),
+                                        ..Default::default()
+                                    },
+                                                        CommitViewOptions {
+                                                            reveal_file: RepoPath::new(
+                                                                &blame.filename,
+                                                            )
+                                                            .ok(),
+                                                            ..Default::default()
+                                                        },
+            CommitViewOptions {
+                reveal_file: RepoPath::new(&blame_entry.filename).ok(),
+                ..Default::default()
+            },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
-    decode_static_image_from_decoder, px,
-use image::{
-    AnimationDecoder, ImageError, ImageFormat, Rgba,
-    codecs::{gif::GifDecoder, webp::WebPDecoder},
-};
-use smallvec::SmallVec;
-    io::{self, Cursor},
-                    ImageFormat::Gif => {
-                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
-                        let mut frames = SmallVec::new();
-
-                        for frame in decoder.into_frames() {
-                            match frame {
-                                Ok(mut frame) => {
-                                    // Convert from RGBA to BGRA.
-                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
-                                        pixel.swap(0, 2);
-                                    }
-                                    frames.push(frame);
-                                }
-                                Err(err) => {
-                                    log::debug!(
-                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
-                               
+    commit_view::{CommitView, GitBlob, build_buffer, worktree_id_for_repo_path},
+                                    None,
+                                    None,
+                                                        None,
+                                                        None,
+            None,
+            None,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `635026fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1253dde6` are properly handled with clean fallback behavior.

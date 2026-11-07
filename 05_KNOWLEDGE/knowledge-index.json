@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:49:12.676Z",
+  "last_updated": "2026-11-07T20:56:10.724Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6978,14 +6978,19 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "9234319d",
-      "content_hash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
+      "source_version": "e19c0e02",
+      "content_hash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "docs(changelog): record physical machine fixes (#5209)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci): align license checker path filters (#5213)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7054,7 +7059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:09:35.494Z",
+      "verified_at": "2026-11-07T20:56:06.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47048,11 +47053,16 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "09334632",
-      "content_hash": "6340fe34013159ed7c25a43b62addf84ff5557ae2339a9f00c80d422f40ae1aa",
+      "source_version": "ce71455b",
+      "content_hash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "tests): preserve Android dump command errors",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2274,
           "title": "React Hydration Non-Executable Data Block Rule",
@@ -47104,7 +47114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:11:23.854Z",
+      "verified_at": "2026-11-07T20:56:04.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52934,11 +52944,16 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "8d71a376",
-      "content_hash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
+      "source_version": "62d625f3",
+      "content_hash": "132845ab64b5ac7c9c1de3f6b90c40d410b75cc9a7e5f505752b3b02a7ac210c",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #3010 from rqlite/claude-db-reader-busy-timeout",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2023,
           "title": "Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression",
@@ -52975,7 +52990,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T12:13:39.246Z",
+      "verified_at": "2026-11-07T20:56:10.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64886,14 +64901,19 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "654efae4",
-      "content_hash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
+      "source_version": "b5cd310b",
+      "content_hash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "gpui: Support animated WebP in `Image::to_image_data` (#66459)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "git_ui: Scroll commit view to the blamed file (#65237)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64972,7 +64992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T16:59:50.072Z",
+      "verified_at": "2026-11-07T20:56:00.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

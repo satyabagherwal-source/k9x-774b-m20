@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:49:12.748Z",
+  "last_updated": "2026-11-07T20:56:10.827Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
-      "verified_at": "2026-11-05T23:09:35.630Z",
+      "content_hash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
+      "verified_at": "2026-11-07T20:56:06.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:09:35.630Z"
+      "last_updated": "2026-11-07T20:56:06.483Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
-      "verified_at": "2026-11-03T12:13:39.367Z",
+      "content_hash": "132845ab64b5ac7c9c1de3f6b90c40d410b75cc9a7e5f505752b3b02a7ac210c",
+      "verified_at": "2026-11-07T20:56:10.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T12:13:39.367Z"
+      "last_updated": "2026-11-07T20:56:10.826Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "6340fe34013159ed7c25a43b62addf84ff5557ae2339a9f00c80d422f40ae1aa",
-      "verified_at": "2026-11-04T21:11:23.984Z",
+      "content_hash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
+      "verified_at": "2026-11-07T20:56:04.896Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:11:23.984Z"
+      "last_updated": "2026-11-07T20:56:04.896Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
-      "verified_at": "2026-11-05T16:59:50.178Z",
+      "content_hash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
+      "verified_at": "2026-11-07T20:56:00.146Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T16:59:50.178Z"
+      "last_updated": "2026-11-07T20:56:00.146Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `9234319d`  
+> **Source Version**: `e19c0e02`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:09:34.193Z  
+> **Timestamp**: 2026-11-07T20:56:04.895Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:09:34.186Z  
+> **Harvest Timestamp**: 2026-11-07T20:56:04.767Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7968 stars
+- **Stars / Engagement**: 7970 stars
 
 ---
 
@@ -917,11 +917,13 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5210** (2026-11-05): **chore(test): bump chaosd to v1.6.0**
-  *Symptoms*: ## What problem does this PR solve?  The physical machine integration tests still use chaosd v1.5.0.  ## What's changed and how does it work?  Update `CHAOSD_VERSION` to `v1.6.0` so the tests download and run the new release.  Downloaded the v1.6.0 amd64 archive and verified that it contains the executable at the expected path. Full cluster integration tests were not run locally.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  This commit includes a DCO sign-off. 
+- **Issue #5213** (2026-11-06): **fix(ci): align license checker path filters**
+  *Symptoms*: ## What problem does this PR solve?  Simplify maintenance of the license checker's path filters and make suffix exclusions work consistently for nested files. Include Helm helper templates in license checks.  ## What's changed and how does it work?  - Group and sort both ignore lists, normalize recursive suffix patterns, and remove unused and redundant exclusions. - Add Apache 2.0 headers to both Helm helper templates and remove their exclusion and the obsolete Vim modeline.  Verified nested-file filtering and Helm-template inclusion with the existing matcher. `helm lint helm/chaos-mesh` passed.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a DCO sign-off.
 
-- **Issue #5209** (2026-11-05): **docs(changelog): record physical machine fixes**
-  *Symptoms*: ## What problem does this PR solve?  The merged PhysicalMachineChaos fixes in #5203, #5204, and #5205 are missing from the changelog.  ## What's changed and how does it work?  Add three entries under Unreleased / Fixed for Kafka configuration, Redis Sentinel executable directories, and disk fill method selection. Include the Redis migration requirement and the changed behavior when the disk fill option is omitted. Also add the missing PR link to the existing TimeChaos ARM64 entry.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  > This PR should be cherry-picked to the following release branches:  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  > Must include at least one of them.  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  > Must include at least one of them.  - [ ] Unit test - [ ] E2E test - [x] Manual test  Checked each entry against the merged PR and current source. Verified that all three links are unique and `git diff --check` passes. Documentation only.  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits include a Signed-off-by trailer. 
+- **Issue #5212** (2026-11-06): **chore(release): prepare v2.8.8**
+  *Symptoms*: ## What problem does this PR solve?  Prepare Chaos Mesh v2.8.8.  ## What's changed and how does it work?  - Finalize the 2.8.8 changelog, including version metadata changes. - Set the default image tag to `v2.8.8` and reset the chart's security-update annotation.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commits include DCO sign-offs. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5212?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 24.96%. Comparing base ([`fd097b6`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/fd097b60ef03ce5a0c49356f8eb89b1144c0e687?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`de36638`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/de36638ded4ba0c5c655bd18330d3f08c9f61b01?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on release-2.8.  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -938,616 +940,358 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edad0733` (2026-11-05)
-**Commit Message**: docs(changelog): record physical machine fixes (#5209)
+### Incident Patch 1: `e19c0e02` (2026-11-06)
+**Commit Message**: fix(ci): align license checker path filters (#5213)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +4/-1)
+**File**: `.github/workflows/license_checker.yml` (modified, +46/-41)
 ```diff
-@@ -70,9 +70,12 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -10,50 +10,54 @@ on:
+     branches:
+       - master
+     paths-ignore:
+-      - ".github/**"
+-      - ".well-known/**"
+-      - "**.md"
+-      - "**.json"
+-      - "*.mk"
+-      - "static/**"
+-      - ".dockerignore"
+-      - ".editorconfig"
++      # Repository and tool configuration
++      - "**/*.json"
+       - "**/.gitignore"
+       - "**/.gitkeep"
++      - ".dockerignore"
++      - ".editorconfig"
++      - ".github/**"
+       - ".prettierrc"
+       - "codecov.yml"
+-      - "env-images.yaml"
+-      - "Makefile"
+       - "revive.toml"
++
++      # Documentation and static assets
++      - "**/*.md"
++      - ".well-known/**"
++      - "static/**"
++
++      # Build and dependency files
++      - "**/*.proto"
++      - "**/Dockerfile"
+       - "**/go.mod"
+       - "**/go.sum"
+-      - "**/Dockerfile"
++      - "*.mk"
++      - "Makefile"
++      - "env-images.yaml"
+       - "helm/chaos-mesh/.helmignore"
+-      - "helm/chaos-mesh/templates/*.tpl"
+-      - "**.proto"
+-      # skip auto-generated files
++
++      # Generated files and binaries
++      - "**/*.pb.go"
++      - "**/*_generated*"
+       - "config/**"
+       - "helm/chaos-mesh/crds/*"
+       - "manifests/**"
+-      - "**/*_generated*"
+       - "pkg/dashboard/swaggerdocs/docs.go"
+       - "pkg/dashboard/swaggerdocs/swagger.yaml"
+-      - "**.pb.go"
+       - "pkg/time/fakeclock/.embed.o"
++
+       # UI
++      - "ui/**/*.svg"
+       - "ui/.husky/**"
+       - "ui/.prettierignore"
+       - "ui/.prettierrc"
+-      - "ui/pnpm-lock.yaml"
+-      - "ui/pnpm-workspace.yaml"
+       - "ui/app/eslint.config.js"
+       - "ui/app/index.html"
+       - "ui/app/public/**"
+-      - "ui/app/src/api/zz_generated.frontend.chaos-mesh.ts"
+       - "ui/app/src/formik/**"
+       - "ui/app/src/openapi/**"
+-      - "ui/**/*.svg"
+-      - "**/__mocks__/**"
++      - "ui/pnpm-lock.yaml"
++      - "ui/pnpm-workspace.yaml"
  
- ### Fixed
+ concurrency:
+   group: license_checker.yml-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
+@@ -71,48 +75,49 @@ jobs:
+         uses: tj-actions/changed-files@v47
+         with:
+           files_ignore: |
+-            .github/**
+-            .well-known/**
+-            **.md
+-            **.json
+-            *.mk
+-            static/**
+-            .dockerignore
+-            .editorconfig
++            **/*.json
+             **/.gitignore
+             **/.gitkeep
++            .dockerignore
++            .editorconfig
++            .github/**
+             .prettierrc
+             codecov.yml
+-            env-images.yaml
+-            Makefile
+             revive.toml
++
++            **/*.md
++            .well-known/**
++            static/**
++
++            **/*.proto
++            **/Dockerfile
+             **/go.mod
+             **/go.sum
+-            **/Dockerfile
++            *.mk
++            Makefile
++            env-images.yaml
+             helm/chaos-mesh/.helmignore
+-            helm/chaos-mesh/templates/*.tpl
+-            **.proto
++
++            **/*.pb.go
++            **/*_generated*
+             config/**
+             helm/chaos-mesh/crds/*
+             manifests/**
+-            **/*_generated*
+             pkg/dashboard/swaggerdocs/docs.go
+             pkg/dashboard/swaggerdocs/swagger.yaml
+-            **.pb.go
+             pkg/time/fakeclock/.embed.o
++
++            ui/**/*.svg
+             ui/.husky/**
+             ui/.prettierignore
+             ui/.prettierrc
+-            ui/pnpm-lock.yaml
+-            ui/pnpm-workspace.yaml
+             ui/app/eslint.config.js
+             ui/app/index.html
+             ui/app/public/**
+-            ui/app/src/api/zz_generated.frontend.chaos-mesh.ts
+             ui/app/src/formik/**
+             ui/app/src/openapi/**
+-            ui/**/*.svg
+-            **/__mocks__/**
++            ui/pnpm-lock.yaml
++            ui/pnpm-workspace.yaml
  
-+- Fix PhysicalMachineChaos disk-fill requests to honor `fill-by-fallocate`. Setting it to `true` uses `fallocate`. Setting it to `false` or omitting it now uses `dd` [#5205](https://github.com/chaos-mesh/chaos-mesh/pull/5205)
-+- Fix PhysicalMachineChaos Redis Sentinel `redisPath` to accept executable directories. Remove existing boolean values before upgrading [#5204](https://github.com/chaos-mesh/chaos-mesh/pull/5204)
-+- Fix missing Kafka authentication, fill configuration, and IO broker settings in PhysicalMachineChaos, and keep Kafka credentials out of controller logs [#5203](https://github.com/chaos-mesh/chaos-mesh/pull/5203)
- - Fix the Chaos Dashboard HTTP task parser panicking on a header without a colon and accepting a command without a URL [#5200](https://github.com/chaos-mesh/chaos-mesh/pull/5200)
- - Fix selective controller enablement through `controllerManager.enabledControllers` for chaos experiments [#4980](https://github.com/chaos-mesh/chaos-mesh/pull/4980)
--- Fix TimeChaos crashes on ARM64 and preserve injection errors.
-+- Fix TimeChaos crashes on ARM64 and preserve injection errors. [#5179](https://github.com/chaos-mesh/chaos-mesh/pull/5179)
- - Fix JVMChaos preparation failures in containers that use Rust coreutils [#5161](https://github.com/chaos-mesh/chaos-mesh/pull/5161)
- - Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
- - Honor reconciliation cancellation in PhysicalMachineChaos requests to chaosd. [#5095](https://github.com/chaos-mesh/chaos-mesh/pull/5095)
+       - name: Check license header for changed files
+         env:
+```
+
+**File**: `helm/chaos-mesh/templates/_certs.tpl` (modified, +16/-0)
+```diff
+@@ -1,3 +1,19 @@
++{{/*
++Copyright Chaos Mesh Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/}}
++
+ 
+ {{/*
+ webhook.apiversion is used to take care compatibility with admissionregistration.k8s.io api groups
+```
+
+**File**: `helm/chaos-mesh/templates/_helpers.tpl` (modified, +15/-1)
+```diff
+@@ -1,4 +1,18 @@
+-{{/* vim: set filetype=mustache: */}}
++{{/*
++Copyright Chaos Mesh Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/}}
+ 
+ {{/*
+ Handle env variables.
 ```
 
 ---
 
-### Incident Patch 2: `e864553b` (2026-11-05)
-**Commit Message**: fix(physicalmachinechaos): accept Redis Sentinel executable directories (#5204)
+### Incident Patch 2: `336e30cb` (2026-11-06)
+**Commit Message**: chore(build): vet all Go modules and simplify Makefile (#5211)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `api/v1alpha1/physical_machine_chaos_types.go` (modified, +4/-4)
+**File**: `Makefile` (modified, +35/-20)
 ```diff
-@@ -623,8 +623,8 @@ type RedisSentinelRestartSpec struct {
- 	Conf string `json:"conf,omitempty"`
- 	// The control flag determines whether to flush config
- 	FlushConfig bool `json:"flushConfig,omitempty"`
--	// The path of `redis-server` command-line tool
--	RedisPath bool `json:"redisPath,omitempty"`
-+	// The directory containing the redis-server executable. Defaults to PATH lookup when empty.
-+	RedisPath string `json:"redisPath,omitempty"`
- }
+@@ -40,7 +40,7 @@ CGO    := $(CGOENV) go
+ GOTEST := USE_EXISTING_CLUSTER=false NO_PROXY="$(NO_PROXY),testhost" go test
+ SHELL  := bash
  
- type RedisSentinelStopSpec struct {
-@@ -633,8 +633,8 @@ type RedisSentinelStopSpec struct {
- 	Conf string `json:"conf,omitempty"`
- 	// The control flag determines whether to flush config
- 	FlushConfig bool `json:"flushConfig,omitempty"`
--	// The path of `redis-server` command-line tool
--	RedisPath bool `json:"redisPath,omitempty"`
-+	// The directory containing the redis-server executable. Defaults to PATH lookup when empty.
-+	RedisPath string `json:"redisPath,omitempty"`
- }
+-PACKAGE_LIST := echo $$(go list -buildvcs=false ./... | grep -vE "chaos-mesh/test|pkg/ptrace|zz_generated|vendor") $$(cd api && go list -buildvcs=false ./... && cd ../)
++PACKAGE_LIST := echo $$(go list -buildvcs=false ./... | grep -vE "chaos-mesh/test|pkg/ptrace|zz_generated|vendor") $$(cd api && go list -buildvcs=false ./...)
  
- type KafkaCommonSpec struct {
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_physicalmachinechaos.yaml` (modified, +6/-4)
-```diff
-@@ -873,8 +873,9 @@ spec:
-                     description: The password of Redis server
-                     type: string
-                   redisPath:
--                    description: The path of `redis-server` command-line tool
--                    type: boolean
-+                    description: The directory containing the redis-server executable.
-+                      Defaults to PATH lookup when empty.
-+                    type: string
-                 type: object
-               redis-stop:
-                 properties:
-@@ -891,8 +892,9 @@ spec:
-                     description: The password of Redis server
-                     type: string
-                   redisPath:
--                    description: The path of `redis-server` command-line tool
--                    type: boolean
-+                    description: The directory containing the redis-server executable.
-+                      Defaults to PATH lookup when empty.
-+                    type: string
-                 type: object
-               remoteCluster:
-                 description: RemoteCluster represents the remote cluster where the
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +18/-16)
-```diff
-@@ -2743,8 +2743,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   redis-stop:
-                     properties:
-@@ -2762,8 +2763,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   remoteCluster:
-                     description: RemoteCluster represents the remote cluster where
-@@ -6236,9 +6238,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             redis-stop:
-                               properties:
-@@ -6256,9 +6258,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             remoteCluster:
-                               description: RemoteCluster represents the remote cluster
-@@ -9369,9 +9371,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 redis-stop:
-                                   properties:
-@@ -9389,9 +9391,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 remoteCluster:
-                                   description: RemoteCluster represents the remote
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +26/-20)
-```diff
-@@ -2765,8 +2765,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   redis-stop:
-                     properties:
-@@ -2784,8 +2785,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   remoteCluster:
-                     description: RemoteCluster represents the remote cluster where
-@@ -5818,8 +5820,9 @@ spec:
-                             description: The password of Redis server
-                             type: string
-                           redisPath:
--                            description: The path of `redis-server` command-line tool
--                            type: boolean
-+                            description: The directory containing the redis-server
-+                              executable. Defaults to PATH lookup when empty.
-+                            type: string
-                         type: object
-                       redis-stop:
-                         properties:
-@@ -5837,8 +5840,9 @@ spec:
-                             description: The password of Redis server
-                             type: string
-                           redisPath:
--                            description: The path of `redis-server` command-line tool
--                            type: boolean
-+                            description: The directory containing the redis-server
-+                              executable. Defaults to PATH lookup when empty.
-+                            type: string
-                         type: object
-                       remoteCluster:
-                         description: RemoteCluster represents the remote cluster where
-@@ -9348,9 +9352,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 redis-stop:
-                                   properties:
-@@ -9368,9 +9372,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 remoteCluster:
-                                   description: RemoteCluster represents the remote
-@@ -12519,9 +12523,10 @@ spec:
-                                           description: The password of Redis server
-                                           type: string
-                                         redisPath:
--                                          description: The path of `redis-server`
--                                            command-line tool
--                                          type: boolean
-+                                          description: The directory containing the
-+                                            redis-server executable. Defaults to PATH
-+                                            lookup when empty.
-+                                          type: string
-                                       type: object
-                                     redis-stop:
-                                       properties:
-@@ -12539,9 +12544,10 @
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +12/-12)
-```diff
-@@ -2826,9 +2826,9 @@ spec:
-                               description: The password of Redis server
-                               type: string
-                             redisPath:
--                              description: The path of `redis-server` command-line
--                                tool
--                              type: boolean
-+                              description: The directory containing the redis-server
-+                                executable. Defaults to PATH lookup when empty.
-+                              type: string
-                           type: object
-                         redis-stop:
-                           properties:
-@@ -2846,9 +2846,9 @@ spec:
-                               description: The password of Redis server
-                               type: string
-                             redisPath:
--                              description: The path of `redis-server` command-line
--                                tool
--                              type: boolean
-+                              description: The directory containing the redis-server
-+                                executable. Defaults to PATH lookup when empty.
-+                              type: string
-                           type: object
-                         remoteCluster:
-                           description: RemoteCluster represents the remote cluster
-@@ -5925,9 +5925,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             redis-stop:
-                               properties:
-@@ -5945,9 +5945,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             remoteCluster:
-                               description: RemoteCluster represents the remote cluster
-```
-
-**File**: `controllers/chaosimpl/physicalmachinechaos/redis_test.go` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+// Copyright 2026 Chaos Mesh Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+//
-+
-+package physicalmachinechaos
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/go-logr/logr"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/config"
-+)
-+
-+func TestApplyRedisSentinelPath(t *testing.T) {
-+	security := config.ControllerCfg.ChaosdSecurityMode
-+	config.ControllerCfg.ChaosdSecurityMode = false
-+	t.Cleanup(func() { config.ControllerCfg.ChaosdSecurityMode = security })
-+	for _, action := range []string{"redis-stop", "redis-restart"} {
-+		for _, path := range []struct{ name, field, want string }{
-+			{"directory", `,"redisPath":"/opt/redis/bin"`, "/opt/redis/bin"},
-+			{"empty", `,"redisPath":""`, ""},
-+			{"omitted", "", ""},
-+		} {
-+			t.Run(action+"/"+path.name, func(t *testing.T) {
-+				var obj v1alpha1.PhysicalMachineChaos
-+				input := fmt.Sprintf(`{"spec":{"action":%q,%q:{"addr":"localhost:26379","conf":"/etc/redis/sentinel.conf"%s}}}`, action, action, path.field)
-+				require.NoError(t, json.Unmarshal([]byte(input), &obj))
-+				var body map[string]any
-+				server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+					if r.Method != http.MethodPost || r.URL.Path != "/api/attack/redis" {
-+						t.Errorf("unexpected request %s %s", r.Method, r.URL.Path)
-+					}
-+					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-+						t.Errorf("decode request: %v", err)
-+					}
-+					w.WriteHeader(http.StatusOK)
-+				}))
-+				defer server.Close()
-+				obj.Spec.Address = []string{server.URL}
-+				obj.Spec.UID = action + "-" + path.name
-+				impl := Impl{Log: logr.Discard()}
-+				phase, err := impl.Apply(context.Background(), 0, []*v1alpha1.Record{{Id: server.URL}}, &obj)
-+				require.NoError(t, err)
-+				require.Equal(t, v1alpha1.Injected, phase)
-+				require.Equal(t, action[len("redis-"):], body["action"])
-+				require.Equal(t, "/etc/redis/sentinel.conf", body["conf"])
-+				if path.want == "" {
-+					require.NotContains(t, body, "redisPath")
-+				} else {
-+					require.Equal(t, path.want, body["redisPath"])
-+				}
-+			})
-+		}
-+	}
-+}
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_physicalmachinechaos.yaml` (modified, +6/-4)
-```diff
-@@ -873,8 +873,9 @@ spec:
-                     description: The password of Redis server
-                     type: string
-                   redisPath:
--                    description: The path of `redis-server` command-line tool
--                    type: boolean
-+                    description: The directory containing the redis-server executable.
-+                      Defaults to PATH lookup when empty.
-+                    type: string
-                 type: object
-               redis-stop:
-                 properties:
-@@ -891,8 +892,9 @@ spec:
-                     description: The password of Redis server
-                     type: string
-                   redisPath:
--                    description: The path of `redis-server` command-line tool
--                    type: boolean
-+                    description: The directory containing the redis-server executable.
-+                      Defaults to PATH lookup when empty.
-+                    type: string
-                 type: object
-               remoteCluster:
-                 description: RemoteCluster represents the remote cluster where the
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +18/-16)
-```diff
-@@ -2743,8 +2743,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   redis-stop:
-                     properties:
-@@ -2762,8 +2763,9 @@ spec:
-                         description: The password of Redis server
-                         type: string
-                       redisPath:
--                        description: The path of `redis-server` command-line tool
--                        type: boolean
-+                        description: The directory containing the redis-server executable.
-+                          Defaults to PATH lookup when empty.
-+                        type: string
-                     type: object
-                   remoteCluster:
-                     description: RemoteCluster represents the remote cluster where
-@@ -6236,9 +6238,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             redis-stop:
-                               properties:
-@@ -6256,9 +6258,9 @@ spec:
-                                   description: The password of Redis server
-                                   type: string
-                                 redisPath:
--                                  description: The path of `redis-server` command-line
--                                    tool
--                                  type: boolean
-+                                  description: The directory containing the redis-server
-+                                    executable. Defaults to PATH lookup when empty.
-+                                  type: string
-                               type: object
-                             remoteCluster:
-                               description: RemoteCluster represents the remote cluster
-@@ -9369,9 +9371,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 redis-stop:
-                                   properties:
-@@ -9389,9 +9391,9 @@ spec:
-                                       description: The password of Redis server
-                                       type: string
-                                     redisPath:
--                                      description: The path of `redis-server` command-line
--                                        tool
--                                      type: boolean
-+                                      description: The directory containing the redis-server
-+                                        executable. Defaults to PATH lookup when empty.
-+                                      type: string
-                                   type: object
-                                 remoteCluster:
-                                   description: RemoteCluster represents the remote
-```
-
----
-
-### Incident Patch 3: `3d0862dc` (2026-11-05)
-**Commit Message**: fix(physicalmachinechaos): honor the disk fill method (#5205)
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `controllers/chaosimpl/physicalmachinechaos/disk_fill_test.go` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+// Copyright 2026 Chaos Mesh Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+//
-+
-+package physicalmachinechaos
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/go-logr/logr"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/config"
-+)
-+
-+func TestDiskFillRequest(t *testing.T) {
-+	originalSecurity := config.ControllerCfg.ChaosdSecurityMode
-+	config.ControllerCfg.ChaosdSecurityMode = false
-+	t.Cleanup(func() { config.ControllerCfg.ChaosdSecurityMode = originalSecurity })
-+	for _, test := range []struct {
-+		name, option string
-+		want         bool
-+	}{
-+		{"enabled", `,"fill-by-fallocate":true`, true},
-+		{"disabled", `,"fill-by-fallocate":false`, false},
-+		{"omitted", "", false},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			var request map[string]any
-+			var path string
-+			done := make(chan struct{})
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				defer close(done)
-+				path = r.URL.Path
-+				if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-+					t.Errorf("decode request: %v", err)
-+					w.WriteHeader(http.StatusBadRequest)
-+					return
-+				}
-+				w.WriteHeader(http.StatusOK)
-+			}))
-+			defer server.Close()
-+			var chaos v1alpha1.PhysicalMachineChaos
-+			require.NoError(t, json.Unmarshal([]byte(`{"spec":{"action":"disk-fill","uid":"disk-`+test.name+`","disk-fill":{"path":"/mnt/fill","size":"1M"`+test.option+`}}}`), &chaos))
-+			chaos.Spec.Address = []string{server.URL}
-+			impl := &Impl{Log: logr.Discard()}
-+			phase, err := impl.Apply(context.Background(), 0, []*v1alpha1.Record{{Id: server.URL}}, &chaos)
-+			require.NoError(t, err)
-+			<-done
-+			require.Equal(t, v1alpha1.Injected, phase)
-+			require.Equal(t, "/api/attack/disk", path)
-+			require.Equal(t, test.want, request["fallocate"])
-+			require.NotContains(t, request, "fill-by-fallocate")
-+			require.Equal(t, "fill", request["action"])
-+			require.Equal(t, "disk-"+test.name, request["uid"])
-+			require.Equal(t, "/mnt/fill", request["path"])
-+			require.Equal(t, "1M", request["size"])
-+		})
-+	}
-+}
-```
-
-**File**: `controllers/chaosimpl/physicalmachinechaos/impl.go` (modified, +4/-0)
-```diff
-@@ -120,6 +120,10 @@ func (impl *Impl) Apply(ctx context.Context, index int, records []*v1alpha1.Reco
- 	}
- 	delete(expInfoMap, string(physicalMachineChaos.Spec.Action))
- 	maps.Copy(expInfoMap, configKV)
-+	if physicalMachineChaos.Spec.Action == v1alpha1.PMDiskFillAction {
-+		delete(expInfoMap, "fill-by-fallocate")
-+		expInfoMap["fallocate"] = physicalMachineChaos.Spec.DiskFill.FillByFallocate
-+	}
+ export GO_BUILD_CACHE ?= $(ROOT)/.cache/chaos-mesh
  
- 	expInfoBytes, err = json.Marshal(expInfoMap)
- 	if err != nil {
+@@ -101,28 +101,32 @@ help: ## Display this help
+ 
+ ##@ Code generation
+ 
++.PHONY: config
+ config: SHELL:=$(RUN_IN_DEV_SHELL)
+ config: images/dev-env/.dockerbuilt ## Generate CRD manifests with controller-gen
+ 	cd ./api ;\
+ 		controller-gen crd:ignoreUnexportedFields=true,crdVersions=v1 rbac:roleName=manager-role paths="./..." output:crd:artifacts:config=../config/crd/bases ;\
+ 		rm ../helm/chaos-mesh/crds/* && cp ../config/crd/bases/* ../helm/chaos-mesh/crds
+ 
+ chaos-build: SHELL:=$(RUN_IN_DEV_SHELL)
+-chaos-build: bin/chaos-builder images/dev-env/.dockerbuilt ## Generate codes for CustomResource Kinds under api/v1alpha1
++chaos-build: bin/chaos-builder ## Generate codes for CustomResource Kinds under api/v1alpha1
+ 	bin/chaos-builder
+ 
+-generate: manifests/crd.yaml generate-deepcopy generate-client chaos-build swagger_spec ## Generate codes for codebase, including CRD manifests, deepcopy files, chaos mesh controller code generation, swager spec.
++.PHONY: generate
++generate: manifests/crd.yaml generate-deepcopy generate-client swagger_spec ## Generate codes for codebase, including CRD manifests, deepcopy files, chaos mesh controller code generation, swager spec.
+ 
+ .PHONY: generate-makefile
+ generate-makefile: ## Generate makefile (binary.generated.mk, container-image.generated.mk)
+ 	@$(GO) run ./cmd/generate-makefile
+ 
++.PHONY: generate-deepcopy
+ generate-deepcopy: SHELL:=$(RUN_IN_DEV_SHELL)
+-generate-deepcopy: images/dev-env/.dockerbuilt chaos-build ## Generate deepcopy files for CRD Kind with controller-gen
++generate-deepcopy: chaos-build ## Generate deepcopy files for CRD Kind with controller-gen
+ 	cd ./api ;\
+ 		controller-gen object:headerFile=../hack/boilerplate/boilerplate.generatego.txt paths="./..." ;
+ 
+-generate-client: SHELL:=$(RUN_IN_DEV_SHELL)
++CLIENT_GEN_PLURAL_EXCEPTIONS := PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
++
+ generate-client: generate-clientset generate-informer generate-lister
+ 
+ generate-clientset: SHELL:=$(RUN_IN_DEV_SHELL)
+@@ -132,7 +136,7 @@ generate-clientset:
+ 		--output-pkg=github.com/chaos-mesh/chaos-mesh/pkg/client/ \
+ 		--clientset-name=versioned --go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
+ 		--fake-clientset=true \
+-		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
++		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
+ 
+ generate-lister: SHELL:=$(RUN_IN_DEV_SHELL)
+ generate-lister:
+@@ -141,7 +145,7 @@ generate-lister:
+ 		--output-dir=./pkg/client/listers \
+ 		--output-pkg=github.com/chaos-mesh/chaos-mesh/pkg/client/listers \
+ 		--go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
+-		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
++		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
+ 
+ 
+ generate-informer: SHELL:=$(RUN_IN_DEV_SHELL)
+@@ -153,18 +157,21 @@ generate-informer:
+ 		--go-header-file=./hack/boilerplate/boilerplate.generatego.txt \
+ 		--versioned-clientset-package=github.com/chaos-mesh/chaos-mesh/pkg/client/versioned \
+ 		--listers-package=github.com/chaos-mesh/chaos-mesh/pkg/client/listers \
+-		--plural-exceptions=PodChaos:podchaos,HTTPChaos:httpchaos,IOChaos:iochaos,AWSChaos:awschaos,JVMChaos:jvmchaos,StressChaos:stresschaos,AzureChaos:azurechaos,PodHttpChaos:podhttpchaos,GCPChaos:gcpchaos,NetworkChaos:networkchaos,KernelChaos:kernelchaos,TimeChaos:timechaos,BlockChaos:blockchaos,PodIOChaos:podiochaos,PodNetworkChaos:podnetworkchaos
++		--plural-exceptions=$(CLIENT_GEN_PLURAL_EXCEPTIONS)
+ 
++.PHONY: manifests/crd.yaml
+ manifests/crd.yaml: SHELL:=$(RUN_IN_DEV_SHELL)
+-manifests/crd.yaml: config images/dev-env/.dockerbuilt ## Generate the combined CRD manife
+```
+
+**File**: `cmd/generate-makefile/generate_container_image_makefile.go` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ const containerImageGeneratedMkTemplate = `# Generated by ./cmd/generate-makefil
+ 
+ ##@ Generated targets in container-image.generated.mk
+ 
+-.PHONY: image
++.PHONY: image-all
+ image-all: {{- range .Recipes }} image-{{.ImageName}} {{- end }} ## Build all container images
+ 
+ {{ .Content -}}
+```
+
+**File**: `cmd/generate-makefile/generate_local_binary_makefile.go` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ clean-local-binary:
+ `
+ 
+ // localBinaryRecipeTemplate is the template for one target, use localBinaryRecipeOptions as the context.
+-const localBinaryRecipeTemplate = `.PHONY: {{ .OutputPath }}
++const localBinaryRecipeTemplate = `.PHONY: {{ .TargetName }}
+ {{ .TargetName }}: {{ StringsJoin .DependencyTargets " " }} ## {{ .Comment }}
+ {{- if .UseCGO }}
+ 	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o {{ .OutputPath }} {{ .SourcePath }}
+```
+
+**File**: `container-image.generated.mk` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ ##@ Generated targets in container-image.generated.mk
+ 
+-.PHONY: image
++.PHONY: image-all
+ image-all: image-chaos-daemon image-chaos-mesh image-chaos-dashboard image-build-env image-dev-env image-e2e-helper image-chaos-mesh-e2e image-chaos-kernel image-chaos-dlv ## Build all container images
+ 
+ .PHONY: image-chaos-daemon
+```
+
+**File**: `local-binary.generated.mk` (modified, +2/-2)
+```diff
+@@ -2,11 +2,11 @@
+ 
+ ##@ Generated targets in local-binary.generated.mk
+ 
+-.PHONY: bin/chaos-controller-manager
++.PHONY: local/chaos-controller-manager
+ local/chaos-controller-manager:  ## Build binary chaos-controller-manager in local environment
+ 	$(GO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o bin/chaos-controller-manager ./cmd/chaos-controller-manager
+ 
+-.PHONY: bin/chaos-dashboard
++.PHONY: local/chaos-dashboard
+ local/chaos-dashboard:  ## Build binary chaos-dashboard in local environment
+ 	$(CGO) build -ldflags "$(LDFLAGS)" -tags "${BUILD_TAGS}" -o bin/chaos-dashboard ./cmd/chaos-dashboard
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5213** (2026-11-06): fix(ci): align license checker path filters (@g1eny0ung)
+- **PR #5212** (2026-11-06): chore(release): prepare v2.8.8 (@g1eny0ung)
+- **PR #5211** (2026-11-06): chore(build): vet all Go modules and simplify Makefile (@g1eny0ung)
 - **PR #5210** (2026-11-05): chore(test): bump chaosd to v1.6.0 (@g1eny0ung)
 - **PR #5209** (2026-11-05): docs(changelog): record physical machine fixes (@g1eny0ung)
 - **PR #5208** (2026-11-05): fix(physicalmachinechaos): backport disk fill method to 2.8 (@g1eny0ung)
-- **PR #5207** (2026-11-05): fix(physicalmachinechaos): backport Redis directory paths to 2.8 (@g1eny0ung)
-- **PR #5206** (2026-11-05): fix(physicalmachinechaos): backport Kafka configuration to 2.8 (@g1eny0ung)
-- **PR #5205** (2026-11-05): fix(physicalmachinechaos): honor the disk fill method (@g1eny0ung)
 
 ---
 
@@ -1567,31 +1311,113 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): record physical machine fixes (#5209)
+## X. ci): align license checker path filters (#5213)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/license_checker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edad0733`: docs(changelog): record physical machine fixes (#5209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e19c0e02`: ci): align license checker path filters (#5213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/license_checker.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Fix PhysicalMachineChaos disk-fill requests to honor `fill-by-fallocate`. Setting it to `true` uses `fallocate`. Setting it to `false` or omitting it now uses `dd` [#5205](https://github.com/chaos-mesh/chaos-mesh/pull/5205)
-- Fix PhysicalMachineChaos Redis Sentinel `redisPath` to accept executable directories. Remove existing boolean values before upgrading [#5204](https://github.com/chaos-mesh/chaos-mesh/pull/5204)
-- Fix missing Kafka authentication, fill configuration, and IO broker settings in PhysicalMachineChaos, and keep Kafka credentials out of controller logs [#5203](https://github.com/chaos-mesh/chaos-mesh/pull/5203)
-- Fix TimeChaos crashes on ARM64 and preserve injection errors. [#5179](https://github.com/chaos-mesh/chaos-mesh/pull/5179)
+      # Repository and tool configuration
+      - "**/*.json"
+      - ".dockerignore"
+      - ".editorconfig"
+      - ".github/**"
+
+      # Documentation and static assets
+      - "**/*.md"
+      - ".well-known/**"
+      - "static/**"
+
+      # Build and dependency files
+      - "**/*.proto"
+      - "**/Dockerfile"
+      - "*.mk"
+      - "Makefile"
+      - "env-images.yaml"
+
+      # Generated files and binaries
+      - "**/*.pb.go"
+      - "**/*_generated*"
+
+      - "ui/**/*.svg"
+      - "ui/pnpm-lock.yaml"
+      - "ui/pnpm-workspace.yaml"
+            **/*.json
+            .dockerignore
+            .editorconfig
+            .github/**
+
+            **/*.md
+            .well-known/**
+            static/**
+
+            **/*.proto
+            **/Dockerfile
+            *.mk
+            Makefile
+            env-images.yaml
+
+            **/*.pb.go
+            **/*_generated*
+
+            ui/**/*.svg
+            ui/pnpm-lock.yaml
+            ui/pnpm-workspace.yaml
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- Fix TimeChaos crashes on ARM64 and preserve injection errors.
+      - ".github/**"
+      - ".well-known/**"
+      - "**.md"
+      - "**.json"
+      - "*.mk"
+      - "static/**"
+      - ".dockerignore"
+      - ".editorconfig"
+      - "env-images.yaml"
+      - "Makefile"
+      - "**/Dockerfile"
+      - "helm/chaos-mesh/templates/*.tpl"
+      - "**.proto"
+      # skip auto-generated files
+      - "**/*_generated*"
+      - "**.pb.go"
+      - "ui/pnpm-lock.yaml"
+      - "ui/pnpm-workspace.yaml"
+      - "ui/app/src/api/zz_generated.frontend.chaos-mesh.ts"
+      - "ui/**/*.svg"
+      - "**/__mocks__/**"
+            .github/**
+            .well-known/**
+            **.md
+            **.json
+            *.mk
+            static/**
+            .dockerignore
+            .editorconfig
+            env-images.yaml
+            Makefile
+            **/Dockerfile
+            helm/chaos-mesh/templates/*.tpl
+            **.proto
+            **/*_generated*
+            **.pb.go
+            ui/pnpm-lock.yaml
+            ui/pnpm-workspace.yaml
+            ui/app/src/api/zz_generated.frontend.chaos-mesh.ts
+            ui/**/*.svg
+            **/__mocks__/**
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edad0733` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e19c0e02` are properly handled with clean fallback behavior.

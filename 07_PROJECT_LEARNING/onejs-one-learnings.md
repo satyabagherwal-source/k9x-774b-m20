@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `09334632`  
+> **Source Version**: `ce71455b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:11:23.211Z  
+> **Timestamp**: 2026-11-07T20:56:03.333Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:11:23.204Z  
+> **Harvest Timestamp**: 2026-11-07T20:56:02.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4641 stars
+- **Stars / Engagement**: 4640 stars
 
 ---
 
@@ -1883,654 +1883,531 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6ae224f` (2026-11-04)
-**Commit Message**: chore(deps): upgrade Tamagui to 3.2.1
+### Incident Patch 1: `e9c80de5` (2026-11-06)
+**Commit Message**: fix(tests): preserve Android dump command errors
 
-Validation: bun install; bun run check:deps; site workspace build closure with skip-types; bun run site:build; local prepared Cloudflare worker home HTTP200. Only Tamagui lock package entries changed; generated build output excluded.
-Team-Machine-Session: r222367
+A uiautomator process can write its hierarchy and then fail during accessibility cleanup. Preserve the exec error message ahead of success stdout so the existing condition wait can classify the dump failure. No timeout or condition changes.
 
-**File**: `apps/onestack.dev/package.json` (modified, +10/-10)
+Validation: existing snapshot suite reproduces the misleading success-output failure before this change (6 pass,1 fail) and passes afterward (7 pass). Root lint passes.
+Team-Machine-Session: m103855
+
+**File**: `tests/native-features/scripts/one-native-android-snapshot.test.ts` (modified, +8/-2)
 ```diff
-@@ -24,27 +24,27 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@supabase/supabase-js": "^2.44.4",
--    "@tamagui/react-native-web": "3.2.0",
--    "@tamagui/sheet": "3.2.0",
--    "@tamagui/themes": "3.2.0",
--    "@tamagui/use-store": "3.2.0",
-+    "@tamagui/react-native-web": "3.2.1",
-+    "@tamagui/sheet": "3.2.1",
-+    "@tamagui/themes": "3.2.1",
-+    "@tamagui/use-store": "3.2.1",
-     "@vxrn/color-scheme": "workspace:*",
-     "@vxrn/mdx-rust": "workspace:*",
-     "body-scroll-lock": "^4.0.0-beta.0",
-     "one": "workspace:*",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "react-native-screens": "~4.30.0",
--    "tamagui": "3.2.0",
--    "@tamagui/helpers-icon": "3.2.0",
-+    "tamagui": "3.2.1",
-+    "@tamagui/helpers-icon": "3.2.1",
-     "react-native-svg": "15.15.4",
--    "@tamagui/config": "3.2.0",
--    "@tamagui/react-native-svg": "3.2.0",
--    "@tamagui/react-native-web-lite": "3.2.0"
-+    "@tamagui/config": "3.2.1",
-+    "@tamagui/react-native-svg": "3.2.1",
-+    "@tamagui/react-native-web-lite": "3.2.1"
-   },
-   "devDependencies": {
-     "@algolia/client-search": "^5.8.1",
--    "@tamagui/vite-plugin": "3.2.0",
-+    "@tamagui/vite-plugin": "3.2.1",
-     "@vxrn/test": "workspace:*",
-     "gray-matter": "^4.0.3",
-     "marked": "^14.1.2",
+@@ -4,7 +4,7 @@ import { expect } from 'bun:test'
+ // adb is scripted per test: uiautomator dump steps run down dumpScript
+ // ('fail' throws the busy-system signature, 'ok' dumps dumpedXml), taps and
+ // swipes are recorded. anything else fails loudly as unstubbed.
+-type DumpStep = 'fail' | 'ok'
++type DumpStep = 'fail' | 'fail-after-dump' | 'ok'
+ let dumpScript: DumpStep[] = []
+ let dumpedXml = ''
+ let dumpCalls = 0
+@@ -23,6 +23,12 @@ function dispatchExec(args: unknown[]) {
+     const step = dumpScript.length ? dumpScript.shift()! : 'ok'
+     if (step === 'fail')
+       throw new Error('Command failed: Error: Unable to dump window hierarchy')
++    if (step === 'fail-after-dump')
++      throw Object.assign(new Error('Command failed: adb shell uiautomator dump'), {
++        stdout: 'UI hierchary dumped to: /sdcard/one.xml',
++        stderr: '',
++        status: 1,
++      })
+     return 'UI hierchary dumped to: /sdcard/one.xml'
+   }
+   if (head === 'shell input tap') {
+@@ -100,7 +106,7 @@ test('snapshot keeps the redbox and empty-tree verdicts', () => {
+ })
+ 
+ test('waitFor tolerates transient dumps while awaiting its condition', async () => {
+-  reset(['fail', 'fail', 'ok'], readyXml)
++  reset(['fail', 'fail-after-dump', 'ok'], readyXml)
+   const result = await waitFor(
+     config,
+     'ready marker',
 ```
 
-**File**: `examples/testflight/package.json` (modified, +4/-4)
+**File**: `tests/native-features/scripts/one-native-conformance.android.ts` (modified, +1/-1)
 ```diff
-@@ -25,7 +25,7 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@react-navigation/native-stack": "8.0.0-alpha.59",
--    "@tamagui/config": "3.2.0",
-+    "@tamagui/config": "3.2.1",
-     "@vxrn/color-scheme": "workspace:*",
-     "better-sqlite3": "^11.2.1",
+@@ -189,9 +189,9 @@ function commandError(command: string, args: string[], error: unknown) {
+     message?: string
+   }
+   const detail =
++    result.message ||
+     result.stderr?.toString() ||
+     result.stdout?.toString() ||
+-    result.message ||
+     'unknown error'
+   return new Error(`${command} ${args.join(' ')} failed: ${detail}`)
+ }
+```
+
+---
+
+### Incident Patch 2: `6dc71f51` (2026-11-06)
+**Commit Message**: fix(tests): compile complete native Swift source proof
+
+Validation: existing proof fails before on missing view dispatch protocol, then macOS-only API availability; final strict Swift 6 iOS typecheck, macOS compilation and date/data/struct/enum/subscription runtime proof pass. Assertions and iOS behavior unchanged.
+Team-Machine-Session: m103855
+
+**File**: `tests/native-features/native-source/NativeScreens.swift` (modified, +10/-0)
+```diff
+@@ -42,8 +42,11 @@ public struct EntryList: View {
+       }
+     }
+     .navigationTitle("Entries")
++    #if os(iOS)
+     .navigationBarTitleDisplayMode(.large)
++    #endif
+     .searchable(text: $query)
++    #if os(iOS)
+     .toolbar {
+       ToolbarItem(placement: .topBarLeading) {
+         Button("Sort", action: onSort)
+@@ -52,6 +55,7 @@ public struct EntryList: View {
+         Button("Add", systemImage: "plus", action: onAdd)
+       }
+     }
++    #endif
+   }
+ }
+ 
+@@ -91,7 +95,9 @@ public struct EntryDetail: View {
+       }
+     }
+     .navigationTitle(entry.title)
++    #if os(iOS)
+     .navigationBarTitleDisplayMode(.inline)
++    #endif
+   }
+ }
+ 
+@@ -117,7 +123,9 @@ public struct SortSheet: View {
+       }
+     }
+     .navigationTitle("Sort")
++    #if os(iOS)
+     .navigationBarTitleDisplayMode(.inline)
++    #endif
+     .toolbar {
+       ToolbarItem(placement: .confirmationAction) {
+         Button("Done", action: onClose)
+@@ -143,7 +151,9 @@ public struct EntryForm: View {
+       }
+     }
+     .navigationTitle("New entry")
++    #if os(iOS)
+     .navigationBarTitleDisplayMode(.inline)
++    #endif
+     .toolbar {
+       ToolbarItem(placement: .cancellationAction) {
+         Button("Cancel", action: onCancel)
+```
+
+**File**: `tests/native-features/scripts/native-source-swift-proof.ts` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ const contracts = [
+ ]
+ const glue = renderSwiftSourceGlue('native_source', contracts).source
+ const api = readFileSync(resolve(import.meta.dir, '../../../packages/one/ios/OneSwiftPackage.swift'), 'utf8')
+-const protocols = api.slice(api.indexOf('@MainActor public protocol PeachModule'), api.indexOf('// a package\'s typed views'))
++const protocols = api.slice(api.indexOf('@MainActor public protocol PeachModule'), api.indexOf('extension PeachPackage'))
+ const source = `import Foundation
+ import SwiftUI
+ ${protocols}
+```
+
+---
+
+### Incident Patch 3: `f9404197` (2026-11-05)
+**Commit Message**: chore(vxrn): replace five runtime deps with Node builtins (#1112)
+
+* chore(vxrn): replace five runtime deps with Node builtins
+
+Drop fs-extra, pkg-types, get-port-please, env-editor and find-node-modules from vxrn. A shared utils/fs module covers the JSON/path helpers, and the four single-use imports move to small call-site replacements: a node:net port probe, an upward package.json lookup, a node_modules walk-up, and $EDITOR parsing. Regenerated types keep the public PackageJSON shape. The lockfile loses 9 package entries and keeps @hono/node-server 2.1.6 with hono 4.13.11, past the serveStatic double-decode fixes.
+
+Validation: vxrn typecheck passed. 96 tests passed across getServerOptionsFilled (3, incl. 2 new port tests), patches (11), scanDepsToOptimize (11), prebuildWithoutExpo (71). depcheck clean, matching baseline. vxrn build passed with no removed-dep references in dist. A fillOptions live probe resolved port 8081 and the nearest package.json. bun.lock diff is pure deletion; fs-extra and get-port-please remain locked only for other workspaces.
+
+* fix(vxrn): preserve editor aliases and cross-volume asset moves
+
+Vendor env-editor 1.3.0 with its MIT license instead of droppin
+
+**File**: `bun.lock` (modified, +0/-24)
+```diff
+@@ -712,12 +712,8 @@
+         "citty": "^0.1.6",
+         "dotenv": "^17.2.1",
+         "dotenv-expand": "^12.0.2",
+-        "env-editor": "^1.1.0",
+         "es-module-lexer": "^1.3.0",
+         "fast-glob": "^3.3.3",
+-        "find-node-modules": "^2.1.3",
+-        "fs-extra": "^11.2.0",
+-        "get-port-please": "^3.1.2",
+         "hono": "^4.13.11",
+         "image-size": "2.0.3",
+         "magic-string": "^0.30.21",
+@@ -727,7 +723,6 @@
+         "oxc-transform-react": "^0.145.0",
+         "perfect-debounce": "^1.0.0",
+         "picocolors": "^1.0.0",
+-        "pkg-types": "^1.0.3",
+         "rolldown": "^1.2.8",
+         "semver": "^7.6.3",
+         "sharp": "^0.35.5",
+@@ -739,7 +734,6 @@
+         "@biomejs/biome": "2.5.15",
+         "@jridgewell/gen-mapping": "^0.3.5",
+         "@tamagui/build": "3.2.3",
+-        "@types/find-node-modules": "^2.1.2",
+         "@types/node": "^24.10.0",
+         "@types/ws": "^8.18.1",
+         "@vxrn/vite-plugin-metro": "workspace:*",
+@@ -2941,8 +2935,6 @@
+ 
+     "@types/estree-jsx": ["@types/estree-jsx@1.0.5", "", { "dependencies": { "@types/estree": "*" } }, "sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg=="],
+ 
+-    "@types/find-node-modules": ["@types/find-node-modules@2.1.2", "", {}, "sha512-5hRcqDclY6MTkHXJBc5q79z5luG+IJRlGR01wluMVMM9lYogYc2sfclXTVU5Edp0Ja4viIOCDI1lXhFRlsNTKA=="],
+-
+     "@types/fs-extra": ["@types/fs-extra@9.0.13", "", { "dependencies": { "@types/node": "*" } }, "sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA=="],
+ 
+     "@types/graceful-fs": ["@types/graceful-fs@4.1.9", "", { "dependencies": { "@types/node": "*" } }, "sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ=="],
+@@ -3451,8 +3443,6 @@
+ 
+     "compression": ["compression@1.8.2", "", { "dependencies": { "bytes": "3.1.2", "compressible": "~2.0.18", "debug": "2.6.9", "destroy": "1.2.0", "negotiator": "~0.6.4", "on-headers": "~1.1.0", "safe-buffer": "5.2.1", "vary": "~1.1.2" } }, "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ=="],
+ 
+-    "confbox": ["confbox@0.1.8", "", {}, "sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w=="],
+-
+     "config-chain": ["config-chain@1.1.13", "", { "dependencies": { "ini": "^1.3.4", "proto-list": "~1.2.1" } }, "sha512-qj+f8APARXHrM0hraqXYb2/bOVSV4PvJQlNZ/DVj0QrmNM2q2euizkeuVckQ57J+W0mRH6Hvi+k50M4Jul2VRQ=="],
+ 
+     "connect": ["connect@3.7.0", "", { "dependencies": { "debug": "2.6.9", "finalhandler": "1.1.2", "parseurl": "~1.3.3", "utils-merge": "1.0.1" } }, "sha512-ZqRXc+tZukToSNmh5C2iWMSoV3X1YUcPbqEM4DkEG5tNQXrQUZCNVGGv3IuicnkMtPfGf3Xtp8WCXs295iQ1pQ=="],
+@@ -3639,8 +3629,6 @@
+ 
+     "entities": ["entities@7.0.0", "", {}, "sha512-FDWG5cmEYf2Z00IkYRhbFrwIwvdFKH07uV8dvNy0omp/Qb1xcyCWp2UDtcwJF4QZZvk0sLudP6/hAu42TaqVhQ=="],
+ 
+-    "env-editor": ["env-editor@1.3.0", "", {}, "sha512-EqiD/j01PooUbeWk+etUo2TWoocjoxMfGNYpS9e47glIJ5r8WepycIki+LCbonFbPdwlqY5ETeSTAJVMih4z4w=="],
+-
+     "env-paths": ["env-paths@2.2.1", "", {}, "sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A=="],
+ 
+     "envinfo": ["envinfo@7.21.0", "", { "bin": { "envinfo": "dist/cli.js" } }, "sha512-Lw7I8Zp5YKHFCXL7+Dz95g4CcbMEpgvqZNNq3AmlT5XAV6CgAAk6gyAMqn2zjw08K9BHfcNuKrMiCPLByGafow=="],
+@@ -3813,8 +3801,6 @@
+ 
+     "find-babel-config": ["find-babel-config@2.1.2", "", { "dependencies": { "json5": "^2.2.3" } }, "sha512-ZfZp1rQyp4gyuxqt1ZqjFGVeVBvmpURMqdIWXbPRfB97Bf6BzdK/xSIbylEINzQ0kB5tlDQfn9HkNXXWsqTqLg=="],
+ 
+-    "find-node-modules": ["find-node-modules@2.1.3", "", { "dependencies": { "findup-sync": "^4.0.0", "merge": "^2.1.1" } }, "sha512-UC2I2+nx1ZuOBclWVNdcnbDR5dlrOdVb7xNjmT/lHE+LsgztWks3dG7boJ37yTS/venXw84B/mAW9uHVoC5QRg=="],
+-
+     "find-root": ["find-root@1.1.0", "", {}, "sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng=="],
+ 
+     "find-up": ["find-up@5.0.0", "", { "dependencies": { "locate-path": "^6.0.0", "path-exists": "^4.0.0" } }, "sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng=="],
+@@ -4333,8 +4319,6 @@
+ 
+     "memorystream": ["memorystream@0.3.1", "", {}, "sha512-S3UwM3yj5mtUSEfP41UZmt/0SCoVYUcU1rkXv+BQ5Ig8ndL4sPoJNBUJERafdPb5jjHJGuMgytgKvKIf58XNBw=="],
+ 
+-    "merge": ["merge@2.1.1", "", {}, "sha512-jz+Cfrg9GWOZbQAnDQ4hlVnQky+341Yk5ru8bZSe6sIDTCIg8n9i/u7hSQGSVOF3C7lH6mGtqjkiT9G4wFLL0w=="],
+-
+     "merge-descriptors": ["merge-descriptors@1.0.3", "", {}, "sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ=="],
+ 
+     "merge-stream": ["merge-stream@2.0.0", "", {}, "sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w=="],
+@@ -4471,8 +4455,6 @@
+ 
+     "mkdirp-classic": ["mkdirp-classic@0.5.3", "", {}, "sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVB
+```
+
+**File**: `packages/vxrn/package.json` (modified, +0/-6)
+```diff
+@@ -91,7 +91,6 @@
+     "citty": "^0.1.6",
      "dotenv": "^17.2.1",
-@@ -41,15 +41,15 @@
-     "react-native-svg": "15.15.4",
-     "react-native-web": "^0.21.2",
-     "react-native-worklets": "~0.13.0",
--    "tamagui": "3.2.0",
--    "@tamagui/helpers-icon": "3.2.0"
-+    "tamagui": "3.2.1",
-+    "@tamagui/helpers-icon": "3.2.1"
-   },
-   "devDependencies": {
-     "@biomejs/biome": "2.5.15",
-     "@faker-js/faker": "next",
-     "@react-native-community/cli": "^20.2.0",
-     "@react-native-community/template": "^0.88.0",
--    "@tamagui/vite-plugin": "3.2.0",
-+    "@tamagui/vite-plugin": "3.2.1",
-     "tsx": "^4.20.6",
-     "vite": "^8.2.2",
-     "typescript": "7.0.2"
-```
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -163,7 +163,7 @@
-     "@hono/node-server": "^1.19.14",
-     "@manypkg/cli": "^0.25.1",
-     "@react-native-swc/worklets-plugin": "0.1.5",
--    "@tamagui/web": "3.2.0",
-+    "@tamagui/web": "3.2.1",
-     "@take-out/cli": "0.4.17",
-     "@types/react": "^19.3.0",
-     "axios": "1.20.0",
-@@ -178,15 +178,15 @@
-     "playwright": "^1.58.2",
-     "prettier": "^3.5.3",
-     "shell-quote": "1.11.0",
--    "tamagui": "3.2.0",
-+    "tamagui": "3.2.1",
-     "ts-pattern": "^5.6.2",
-     "turbo": "^2.9.18",
-     "typescript": "7.0.2",
-     "ultra-runner": "^3.10.5",
-     "update-ts-references": "^3.4.0",
-     "vxrn": "workspace:*",
-     "zod": "4.6.6",
--    "@tamagui/cli": "3.2.0"
-+    "@tamagui/cli": "3.2.1"
-   },
-   "upgradeSets": {
-     "takeout": [
-```
-
-**File**: `packages/color-scheme/package.json` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@
-     "@vxrn/use-isomorphic-layout-effect": "workspace:*"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.2.0",
-+    "@tamagui/build": "3.2.1",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "vitest": "^4.1.0"
-```
-
-**File**: `packages/compiler/package.json` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@
-   },
-   "devDependencies": {
-     "@jridgewell/trace-mapping": "^0.3.25",
--    "@tamagui/build": "3.2.0",
-+    "@tamagui/build": "3.2.1",
-     "depcheck": "^1.4.7",
-     "react-native-worklets": "~0.13.0",
+     "dotenv-expand": "^12.0.2",
+-    "env-editor": "^1.1.0",
+     "es-module-lexer": "^1.3.0",
+     "oxc-parser": "^0.112.0",
+     "oxc-transform": "^0.148.0",
+@@ -100,13 +99,9 @@
+     "image-size": "2.0.3",
+     "magic-string": "^0.30.21",
+     "micromatch": "^4.0.8",
+-    "find-node-modules": "^2.1.3",
+-    "fs-extra": "^11.2.0",
+-    "get-port-please": "^3.1.2",
+     "hono": "^4.13.11",
+     "perfect-debounce": "^1.0.0",
+     "picocolors": "^1.0.0",
+-    "pkg-types": "^1.0.3",
      "rolldown": "^1.2.8",
+     "semver": "^7.6.3",
+     "sharp": "^0.35.5",
+@@ -118,7 +113,6 @@
+     "@biomejs/biome": "2.5.15",
+     "@jridgewell/gen-mapping": "^0.3.5",
+     "@tamagui/build": "3.2.3",
+-    "@types/find-node-modules": "^2.1.2",
+     "@types/node": "^24.10.0",
+     "@types/ws": "^8.18.1",
+     "depcheck": "^1.4.7",
 ```
 
-**File**: `packages/create-vxrn/package.json` (modified, +1/-1)
+**File**: `packages/vxrn/src/config/getBaseViteConfigOnly.ts` (modified, +3/-3)
 ```diff
-@@ -44,7 +44,7 @@
-     "yocto-spinner": "^0.1.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.2.0",
-+    "@tamagui/build": "3.2.1",
-     "@types/prompts": "^2.4.9",
-     "typescript": "7.0.2"
-   },
+@@ -1,7 +1,7 @@
+ import type { InlineConfig } from 'vite'
+ import { resolvePath } from '@vxrn/resolve'
+-import FSExtra from 'fs-extra'
+ import { join } from 'node:path'
++import { pathExists, readJSON } from '../utils/fs'
+ import type { VXRNOptionsFilled } from './getOptionsFilled'
+ 
+ // essentially base web config not base everything
+@@ -52,15 +52,15 @@ export async function getBaseViteConfig(
+   const postCSSConfigPath = (
+     await Promise.all(
+       postCSSPaths.map(async (x) => {
+-        if (await FSExtra.pathExists(x)) {
++        if (await pathExists(x)) {
+           return x
+         }
+       })
+     )
+   ).find((x) => typeof x === 'string')
+ 
+   const reactNativePackageJsonPath = resolvePath('react-native/package.json', root)
+-  const { version } = await FSExtra.readJSON(reactNativePackageJsonPath)
++  const { version } = await readJSON(reactNativePackageJsonPath)
+ 
+   return {
+     mode,
 ```
 
-**File**: `packages/debug/package.json` (modified, +1/-1)
+**File**: `packages/vxrn/src/config/getOptionsFilled.ts` (modified, +35/-2)
 ```diff
-@@ -33,7 +33,7 @@
-     "debug": "^4.3.7"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.2.0",
-+    "@tamagui/build": "3.2.1",
-     "@types/debug": "^4"
-   },
-   "publishConfig": {
-```
-
-**File**: `packages/emitter/package.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "react": "^19.3.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.2.0",
-+    "@tamagui/build": "3.2.1",
-     "react": "19.3.0"
-   },
-   "publishConfig": {
-```
-
----
-
-### Incident Patch 2: `3951c067` (2026-11-01)
-**Commit Message**: Fix native audio option layout (#1084)
-
-Independent large-model review by s129558 of 1306e9255d4dc32f37762143c4acb26556e09815: approved.
-
-Read the complete diff and all generated sender/receiver changes. The optional boolean and double are reordered consistently in the source, C++ JSI conversion, Swift initializer/accessors, Kotlin constructor, JNI signatures and declaration. Public JavaScript property names and behavior remain unchanged.
-
-TESTED: independent Swift/C++ compiler reproduction with the reordered native layout returns paused=2 positioned=6, expected=2,6. The original layout reproduced lost option bits before this repair. Adopted the exact native Release action receipt: paused load stays paused at zero; paused position250 stays at250; resume advances; explicit false/default advance. The fixture remains recorded as FAIL because it demands immediate playing on resume. Read HybridOneAudio.resume/playbackStatus: loading while AVPlayer is waiting is an existing valid status, followed by playing447ms in the receipt. No overall fixture green or Android runtime claim.
-
-No public API choice, publication or feature approval requested. No remaining defect found in this bounded rep
-
-**File**: `packages/one/nitrogen/generated/android/c++/JAudioPlayOptions.hpp` (modified, +7/-7)
-```diff
-@@ -31,13 +31,13 @@ namespace margelo::nitro::one {
-     [[nodiscard]]
-     AudioPlayOptions toCpp() const {
-       static const auto clazz = javaClassStatic();
--      static const auto fieldPositionMs = clazz->getField<jni::JDouble>("positionMs");
--      jni::local_ref<jni::JDouble> positionMs = this->getFieldValue(fieldPositionMs);
-       static const auto fieldPaused = clazz->getField<jni::JBoolean>("paused");
-       jni::local_ref<jni::JBoolean> paused = this->getFieldValue(fieldPaused);
-+      static const auto fieldPositionMs = clazz->getField<jni::JDouble>("positionMs");
-+      jni::local_ref<jni::JDouble> positionMs = this->getFieldValue(fieldPositionMs);
-       return AudioPlayOptions(
--        positionMs != nullptr ? std::make_optional(positionMs->value()) : std::nullopt,
--        paused != nullptr ? std::make_optional(static_cast<bool>(paused->value())) : std::nullopt
-+        paused != nullptr ? std::make_optional(static_cast<bool>(paused->value())) : std::nullopt,
-+        positionMs != nullptr ? std::make_optional(positionMs->value()) : std::nullopt
-       );
-     }
- 
-@@ -47,13 +47,13 @@ namespace margelo::nitro::one {
-      */
-     [[maybe_unused]]
-     static jni::local_ref<JAudioPlayOptions::javaobject> fromCpp(const AudioPlayOptions& value) {
--      using JSignature = JAudioPlayOptions(jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>);
-+      using JSignature = JAudioPlayOptions(jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>);
-       static const auto clazz = javaClassStatic();
-       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
-       return create(
-         clazz,
--        value.positionMs.has_value() ? jni::JDouble::valueOf(value.positionMs.value()) : nullptr,
--        value.paused.has_value() ? jni::JBoolean::valueOf(value.paused.value()) : nullptr
-+        value.paused.has_value() ? jni::JBoolean::valueOf(value.paused.value()) : nullptr,
-+        value.positionMs.has_value() ? jni::JDouble::valueOf(value.positionMs.value()) : nullptr
-       );
-     }
-   };
-```
-
-**File**: `packages/one/nitrogen/generated/android/kotlin/com/margelo/nitro/one/AudioPlayOptions.kt` (modified, +8/-8)
-```diff
-@@ -20,24 +20,24 @@ import java.util.Objects
- data class AudioPlayOptions(
-   @DoNotStrip
-   @Keep
--  val positionMs: Double?,
-+  val paused: Boolean?,
-   @DoNotStrip
-   @Keep
--  val paused: Boolean?
-+  val positionMs: Double?
- ) {
-   /* primary constructor */
- 
-   override fun equals(other: Any?): Boolean {
-     if (this === other) return true
-     if (other !is AudioPlayOptions) return false
--    return Objects.deepEquals(this.positionMs, other.positionMs)
--      && Objects.deepEquals(this.paused, other.paused)
-+    return Objects.deepEquals(this.paused, other.paused)
-+      && Objects.deepEquals(this.positionMs, other.positionMs)
-   }
- 
-   override fun hashCode(): Int {
-     return arrayOf<Any?>(
--      positionMs,
--      paused
-+      paused,
-+      positionMs
-     ).contentDeepHashCode()
-   }
- 
-@@ -49,8 +49,8 @@ data class AudioPlayOptions(
-     @Keep
-     @Suppress("unused")
-     @JvmStatic
--    private fun fromCpp(positionMs: Double?, paused: Boolean?): AudioPlayOptions {
--      return AudioPlayOptions(positionMs, paused)
-+    private fun fromCpp(paused: Boolean?, positionMs: Double?): AudioPlayOptions {
-+      return AudioPlayOptions(paused, positionMs)
-     }
-   }
- }
-```
-
-**File**: `packages/one/nitrogen/generated/ios/swift/AudioPlayOptions.swift` (modified, +15/-15)
-```diff
-@@ -18,27 +18,27 @@ public extension AudioPlayOptions {
-   /**
-    * Create a new instance of `AudioPlayOptions`.
-    */
--  init(positionMs: Double?, paused: Bool?) {
--    self.init({ () -> bridge.std__optional_double_ in
--      if let __unwrappedValue = positionMs {
--        return bridge.create_std__optional_double_(__unwrappedValue)
-+  init(paused: Bool?, positionMs: Double?) {
-+    self.init({ () -> bridge.std__optional_bool_ in
-+      if let __unwrappedValue = paused {
-+        return bridge.create_std__optional_bool_(__unwrappedValue)
-       } else {
-         return .init()
-       }
--    }(), { () -> bridge.std__optional_bool_ in
--      if let __unwrappedValue = paused {
--        return bridge.create_std__optional_bool_(__unwrappedValue)
-+    }(), { () -> bridge.std__optional_double_ in
-+      if let __unwrappedValue = positionMs {
-+        return bridge.create_std__optional_double_(__unwrappedValue)
-       } else {
-         return .init()
-       }
-     }())
-   }
- 
-   @inline(__always)
--  var positionMs: Double? {
--    return { () -> Double? in
--      if bridge.has_value_std__optional_double_(self.__positionMs) {
--        let __unwrapped = bridge.get_std__optional_double_(self.__positionMs)
-+  var paused: Bool? {
-+    return { () -> Bool? in
-+      if bridge.has_value_std__optional_bool_(self.__paused) {
-+        let __unwrapped = bridge.get_std__optional_bool_(self.__paused)
-         return __unwrapped
-       } else {
-         return nil
-@@ -47,10 +47,10 @@ public extension AudioPlayOptions {
-   }
- 
-   @inline(__always)
--  var paused: Bool? {
--    return { () -> Bool? in
--      if bridge.has_value_std__optional_bool_(self.__paused) {
--        let __unwrapped = bridge.get_std__optional_bool_(self.__paused)
-+  var positionMs: Double? {
-+    return { () -> Double? in
-+      if bridge.has_value_std__optional_double_(self.__positionMs) {
-+        let __unwrapped = bridge.get_std__optional_double_(self.__positionMs)
-         return __unwrapped
-       } else {
-         return nil
-```
-
-**File**: `packages/one/nitrogen/generated/shared/c++/AudioPlayOptions.hpp` (modified, +6/-6)
-```diff
-@@ -39,12 +39,12 @@ namespace margelo::nitro::one {
-    */
-   struct AudioPlayOptions final {
-   public:
--    std::optional<double> positionMs     SWIFT_PRIVATE;
-     std::optional<bool> paused     SWIFT_PRIVATE;
-+    std::optional<double> positionMs     SWIFT_PRIVATE;
- 
-   public:
-     AudioPlayOptions() = default;
--    explicit AudioPlayOptions(std::optional<double> positionMs, std::optional<bool> paused): positionMs(positionMs), paused(paused) {}
-+    explicit AudioPlayOptions(std::optional<bool> paused, std::optional<double> positionMs): paused(paused), positionMs(positionMs) {}
- 
-   public:
-     friend bool operator==(const AudioPlayOptions& lhs, const AudioPlayOptions& rhs) = default;
-@@ -60,14 +60,14 @@ namespace margelo::nitro {
-     static inline margelo::nitro::one::AudioPlayOptions fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
-       jsi::Object obj = arg.asObject(runtime);
-       return margelo::nitro::one::AudioPlayOptions(
--        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs"))),
--        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused")))
-+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused"))),
-+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))
-       );
-     }
-     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::one::AudioPlayOptions& arg) {
-       jsi::Object obj(runtime);
--      obj.setProperty(runtime, PropNameIDCache::get(runtime, "positionMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.positionMs));
-       obj.setProperty(runtime, PropNameIDCache::get(runtime, "paused"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.paused));
-+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "positionMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.positionMs));
-       return obj;
-     }
-     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
-@@ -78,8 +78,8 @@ namespace margelo::nitro {
-       if (!nitro::isPlainObject(runtime, obj)) {
-         return false;
-       }
--      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))) return false;
-       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "paused")))) return false;
-+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "positionMs")))) return false;
-       return true;
-     }
-   };
-```
-
-**File**: `packages/one/src/platform/specs/OneAudio.nitro.ts` (modified, +2/-1)
-```diff
-@@ -15,8 +15,9 @@ export interface AudioPlaybackStatus {
- // with either field set, play prepares the item and seeks before any sound,
- // resolving once it is ready at the position.
- export interface AudioPlayOptions {
--  positionMs?: number
-+  // keep paused first to avoid a Swift C++ interop padding mismatch on iOS.
-   paused?: boolean
-+  positionMs?: number
- }
- 
- export interface AudioRecordingStatus {
-```
-
-**File**: `packages/one/types/platform/specs/OneAudio.nitro.d.ts` (modified, +1/-1)
-```diff
-@@ -10,8 +10,8 @@ export interface AudioPlaybackStatus {
-     error?: string;
- }
- export interface AudioPlayOptions {
--    positionMs?: number;
-     paused?: boolean;
-+    positionMs?: number;
- }
- export interface AudioRecordingStatus {
-     state: AudioRecordingState;
-```
-
----
-
-### Incident Patch 3: `76b5fb29` (2026-11-01)
-**Commit Message**: Fix Android live config permissions (#1083)
-
-Android previews receive the app-authored permissions One prebuild declares. One prebuild and the live config mapper share permission derivation, retain blocked names and preserve explicit overrides.
-
-Bounded legacy storage permissions remain bounded in AndroidManifest.xml and absent from the live string list. This does not claim merged library declarations or complete older Android photo coverage.
-
-Validation: prebuild/converter source probe, CommonJS notification-host import, independent non-author large review of blocked/override/cap/identity behavior, and local bun release --into integration through the normal Contrast static config boundary. Unmodified published One Location JS plus the queued native seam and real privacy store returned allow=whenInUse and deny=denied. No browser, phone, APK or publication performed.
-
-Reviewed-by: s129558 (gpt-6.1-sol high)
-
-**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +59/-1)
-```diff
-@@ -818,6 +818,55 @@ export function iosUsageDescriptions(app: NativeAppManifest): Map<string, string
-   return usage
- }
- 
-+// android declarations authored by native.app, before library manifest merging.
-+// prebuild uses the same entries so capped permissions retain their SDK bounds.
-+export const androidNotificationPermissions = [
-+  'android.permission.POST_NOTIFICATIONS',
-+  'android.permission.RECEIVE_BOOT_COMPLETED',
-+]
-+
-+export function androidAppPermissions(app: NativeAppManifest): Map<string, number | undefined> {
-+  const permissions = new Map<string, number | undefined>()
-+  const add = (name: string, maxSdkVersion?: number) => {
-+    const fullName = name.includes('.') ? name : `android.permission.${name}`
-+    if (!permissions.has(fullName) || maxSdkVersion === undefined) {
-+      permissions.set(fullName, maxSdkVersion)
-+    }
-+  }
-+  if (app.imagePicker?.camera !== undefined) add('CAMERA')
-+  if (app.speech !== undefined || app.audio?.microphone !== undefined) add('RECORD_AUDIO')
-+  if (app.location !== undefined) {
-+    add('ACCESS_COARSE_LOCATION')
-+    add('ACCESS_FINE_LOCATION')
-+    if (app.location.background) add('ACCESS_BACKGROUND_LOCATION')
-+  }
-+  if (app.pedometer !== undefined) add('ACTIVITY_RECOGNITION')
-+  if (app.brightness === true) add('WRITE_SETTINGS')
-+  if (app.notifications !== undefined || app.calendar?.remindersUsage !== undefined) {
-+    for (const name of androidNotificationPermissions) add(name)
-+  }
-+  if (app.photoLibrary?.readWrite !== undefined) {
-+    add('READ_MEDIA_IMAGES')
-+    add('READ_MEDIA_VIDEO')
-+    add('READ_EXTERNAL_STORAGE', 32)
-+  }
-+  if (app.photoLibrary?.addOnly !== undefined) add('WRITE_EXTERNAL_STORAGE', 28)
-+  if (app.contacts !== undefined) {
-+    add('READ_CONTACTS')
-+    add('WRITE_CONTACTS')
-+  }
-+  if (app.calendar?.usage !== undefined) {
-+    add('READ_CALENDAR')
-+    add('WRITE_CALENDAR')
-+  }
-+  if (app.audio?.background === true) {
-+    add('FOREGROUND_SERVICE')
-+    add('FOREGROUND_SERVICE_MEDIA_PLAYBACK')
-+  }
-+  for (const name of app.android?.permissions ?? []) add(name)
-+  return permissions
+@@ -1,8 +1,9 @@
+ import { createHash } from 'node:crypto'
++import { existsSync } from 'node:fs'
++import { readFile } from 'node:fs/promises'
+ import { createRequire } from 'node:module'
+ import { tmpdir } from 'node:os'
+-import { join } from 'node:path'
+-import { readPackageJSON } from 'pkg-types'
++import { basename, dirname, join, resolve } from 'node:path'
+ import type { Mode, VXRNOptions } from '../types'
+ import { getServerOptionsFilled } from './getServerOptionsFilled'
+ import { readState } from '../utils/state'
+@@ -38,6 +39,14 @@ const require = createRequire(import.meta.url)
+  *   * Over time, we can progressively eliminate dependencies on
+  *     `VXRNOptionsFilled` across the codebase.
+  */
++export type PackageJSON = {
++  name?: string
++  version?: string
++  dependencies?: Record<string, string>
++  devDependencies?: Record<string, string>
++  [key: string]: any
 +}
 +
- // the expo config shape the dev server's manifest carries (`extra.expoClient`)
- // for an app that declares native.app and no expo: clients that read an app's
- // name, scheme or splash from the manifest read a one app the same way.
-@@ -861,7 +910,16 @@ export function expoClientFromNativeApp(app: NativeAppManifest) {
-     android: app.android && {
-       package: app.android.applicationId,
-       versionCode: app.android.versionCode,
--      permissions: app.android.permissions,
-+      // expo's string list cannot express maxSdkVersion, so only declarations
-+      // valid on every SDK can be represented without overstating access.
-+      permissions: [...androidAppPermissions(app)]
-+        .filter(([name, maxSdk]) =>
-+          maxSdk === undefined &&
-+          !(app.android?.blockedPermissions ?? []).some((blocked) =>
-+            (blocked.includes('.') ? blocked : `android.permission.${blocked}`) === name
-+          )
-+        )
-+        .map(([name]) => name),
-       blockedPermissions: app.android.blockedPermissions,
-       googleServicesFile: app.android.googleServicesFile,
-       adaptiveIcon: app.android.adaptiveIcon && {
-```
-
-**File**: `packages/utils/types/nativeAppManifest.d.ts` (modified, +3/-1)
-```diff
-@@ -149,6 +149,8 @@ export interface NativeAppManifest {
+ export type VXRNOptionsFilled = Awaited<ReturnType<typeof fillOptions>>
+ 
+ let optionsFilled: VXRNOptionsFilled | null = null
+@@ -115,6 +124,30 @@ export function getOptionsFilled() {
+   return optionsFilled
  }
- export declare function validateNativeApp(manifest: NativeAppManifest, platform?: 'ios' | 'android' | string): NativeAppManifest;
- export declare function iosUsageDescriptions(app: NativeAppManifest): Map<string, string>;
-+export declare const androidNotificationPermissions: string[];
-+export declare function androidAppPermissions(app: NativeAppManifest): Map<string, number | undefined>;
- export declare function expoClientFromNativeApp(app: NativeAppManifest): {
-     name: string;
-     slug: string;
-@@ -187,7 +189,7 @@ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
-     android: {
-         package: string;
-         versionCode: number | undefined;
--        permissions: string[] | undefined;
-+        permissions: string[];
-         blockedPermissions: string[] | undefined;
-         googleServicesFile: string | undefined;
-         adaptiveIcon: {
+ 
++async function readPackageJSON(cwd = process.cwd()): Promise<PackageJSON> {
++  // nearest package.json walking up, stopping above the shallowest
++  // node_modules segment, matching the pkg-types lookup this replaces
++  let stopDir: string | null = null
++  for (let dir = resolve(cwd); ; ) {
++    if (basename(dir) === 'node_modules') stopDir = dir
++    const parent = dirname(dir)
++    if (parent === dir) break
++    dir = parent
++  }
++  let dir = resolve(cwd)
++  for (;;) {
++    const candidate = join(dir, 'package.json')
++    if (existsSync(candidate)) {
++      return JSON.parse(await readFile(candidate, 'utf8'))
++    }
++    if (stopDir && resolve(dir) === stopDir) break
++    const parent = dirname(dir)
++    if (parent === dir) break
++    dir = parent
++  }
++  throw new Error(`Cannot find matching package.json in ${cwd} or parent directories`)
++}
++
+ function hashString(str: string): string {
+   const hash = createHash('sha256') // Create a hash object with the desired algorithm (e.g., 'sha256')
+   hash.update(str) // Update the hash content with the input string
 ```
 
-**File**: `packages/vxrn/native-project-patches.cjs` (modified, +3/-4)
+**File**: `packages/vxrn/src/config/getServerOptionsFilled.test.ts` (modified, +37/-0)
 ```diff
-@@ -734,10 +734,9 @@ const ONE_NOTIFICATIONS = {
-   enabledInfoPlistKey: 'OneNativeNotificationsEnabled',
-   pushInfoPlistKey: 'OneNativeNotificationsPush',
-   apsEnvironment: 'development',
--  androidPermissions: [
--    'android.permission.POST_NOTIFICATIONS',
--    'android.permission.RECEIVE_BOOT_COMPLETED',
--  ],
-+  get androidPermissions() {
-+    return require('@vxrn/utils/nativeAppManifest').androidNotificationPermissions
-+  },
-   receiver: 'dev.onejs.onenative.OneNativeNotificationsReceiver',
-   receiverAction: 'android.intent.action.BOOT_COMPLETED',
-   pushService: 'dev.onejs.onenative.OneNativePushService',
+@@ -1,6 +1,22 @@
++import { createServer } from 'node:net'
+ import { describe, expect, test } from 'vitest'
+ import { getServerOptionsFilled } from './getServerOptionsFilled'
+ 
++async function occupyPort(): Promise<{ port: number; close: () => Promise<void> }> {
++  const server = createServer()
++  await new Promise<void>((resolve) => {
++    server.listen({ port: 0, host: '0.0.0.0' }, () => resolve())
++  })
++  const port = (server.address() as { port: number }).port
++  return {
++    port,
++    close: () =>
++      new Promise<void>((resolve, reject) => {
++        server.close((err) => (err ? reject(err) : resolve()))
++      }),
++  }
++}
++
+ describe('getServerOptionsFilled', () => {
+   test('uses the configured TLS protocol in the public server URL', async () => {
+     const server = await getServerOptionsFilled(
+@@ -21,4 +37,25 @@ describe('getServerOptionsFilled', () => {
+       key: 'private-key',
+     })
+   })
++
++  test('resolves an explicitly requested free port', async () => {
++    const occupied = await occupyPort()
++    const port = occupied.port
++    await occupied.close()
++
++    const server = await getServerOptionsFilled({ port }, 'dev')
++
++    expect(server.port).toBe(port)
++  })
++
++  test('rejects an explicitly requested port that is already in use', async () => {
++    const occupied = await occupyPort()
++    try {
++      await expect(getServerOptionsFilled({ port: occupied.port }, 'dev')).rejects.toThrow(
++        `Port ${occupied.port} is already in use`
++      )
++    } finally {
++      await occupied.close()
++    }
++  })
+ })
 ```
 
-**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +34/-172)
+**File**: `packages/vxrn/src/config/getServerOptionsFilled.ts` (modified, +57/-1)
 ```diff
-@@ -4,6 +4,7 @@ import module from 'node:module'
- import path from 'node:path'
- import { pathToFileURL } from 'node:url'
+@@ -1,6 +1,62 @@
+-import { getPort } from 'get-port-please'
++import { createServer } from 'node:net'
+ import type { Mode, VXRNOptions, VXRNServeOptionsFilled } from '../types'
+ 
++// ports browsers refuse to connect to, so binding one would serve nothing.
++// same list get-port-please filters; vxrn's default ranges never hit it.
++const UNSAFE_PORTS = new Set([
++  1, 7, 9, 11, 13, 15, 17, 19, 20, 21, 22, 23, 25, 37, 42, 43, 53, 69, 77, 79, 87,
++  95, 101, 102, 103, 104, 109, 110, 111, 113, 115, 117, 119, 123, 135, 137, 139,
++  143, 161, 179, 389, 427, 465, 512, 513, 514, 515, 526, 530, 531, 532, 540, 548,
++  554, 556, 563, 587, 601, 636, 989, 990, 993, 995, 1719, 1720, 1723, 2049, 3659,
++  4045, 5060, 5061, 6000, 6566, 6665, 6666, 6667, 6668, 6669, 6697, 10080,
++])
++
++const HOSTNAME_RE = /^(?!-)[\d.:A-Za-z-]{1,63}(?<!-)$/
++
++function tryPort(port: number, host: string | undefined): Promise<number | false> {
++  return new Promise((resolve) => {
++    const server = createServer()
++    server.unref()
++    server.on('error', () => {
++      resolve(false)
++    })
++    server.listen({ port, host }, () => {
++      const bound = (server.address() as { port: number }).port
++      server.close(() => {
++        resolve(!UNSAFE_PORTS.has(bound) && bound)
++      })
++    })
++  })
++}
++
++async function getPort({
++  port,
++  portRange,
++  host,
++}: {
++  port: number
++  portRange: [number, number]
++  host: string | undefined
++}): Promise<number> {
++  if (host && !HOSTNAME_RE.test(host)) {
++    host = '127.0.0.1'
++  }
++  const ports = [port]
++  for (let p = portRange[0]; p <= portRange[1]; p++) {
++    ports.push(p)
++  }
++  for (const p of ports) {
++    if (!p || UNSAFE_PORTS.has(p)) continue
++    const found = await tryPort(p, host)
++    if (found) return found
++  }
++  const random = await tryPort(0, host)
++  if (random) return random
++  throw new Error(
++    `Unable to find an available port ${host ? `on host ${JSON.stringify(host)}` : 'on any host'} (tried ${portRange.join('-')})`
++  )
++}
++
+ export async function getServerOptionsFilled(
+   serverOptions: VXRNOptions['server'],
+   mode: Mode
+```
+
+**File**: `packages/vxrn/src/exports/build.ts` (modified, +5/-5)
+```diff
+@@ -1,6 +1,6 @@
+-import FSExtra from 'fs-extra'
+-import { rm } from 'node:fs/promises'
++import { readFile, rm, writeFile } from 'node:fs/promises'
+ import { sep } from 'node:path'
++import { readJSON } from '../utils/fs'
+ import type { OutputAsset, OutputChunk, RolldownOutput } from 'rolldown'
  import {
-+  androidAppPermissions,
-   androidIconSuffix,
-   appIconPreviewResources,
-   iosUsageDescriptions,
-@@ -2256,86 +2257,42 @@ ${schemes.map((scheme) => `\t\t\t\t<string>${scheme}</string>`).join('\n')}
-         rendered = rendered.replace(anchor, `${stamps.join('\n')}\n${anchor}`)
-       }
-     }
--    if (
--      platform === 'android' &&
--      relativePath === 'app/src/main/AndroidManifest.xml' &&
--      (app.imagePicker?.camera !== undefined || app.speech !== undefined)
--    ) {
--      const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
--      if (!rendered.includes(anchor)) {
--        throw new Error(
--          '[vxrn] cannot stamp the camera or microphone permission: expected the INTERNET permission in app/src/main/AndroidManifest.xml'
--        )
--      }
--      const stamps: string[] = []
--      if (app.imagePicker?.camera !== undefined) {
--        stamps.push('    <uses-permission android:name="android.permission.CAMERA" />')
-+    if (platform === 'android' && relativePath === 'app/src/main/AndroidManifest.xml') {
-+      const permissions = androidAppPermissions(app)
-+      if (permissions.size || app.android?.blockedPermissions?.length) {
-+        const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
-+        if (!rendered.includes(anchor)) {
-+          const feature = app.imagePicker?.camera !== undefined || app.speech !== undefined
-+            ? 'the camera or microphone permission'
-+            : app.notifications !== undefined ? 'notification permissions' : 'permissions'
-+          throw new Error(
-+            `[vxrn] cannot stamp ${feature}: expected the INTERNET permission in app/src/main/AndroidManifest.xml`
-+          )
-+        }
-+        const blocked = new Set((app.android?.blockedPermissions ?? []).map((name) =>
-+          name.includes('.') ? name : `android.permission.${name}`
-+        ))
-+        const lines = [
-+          ...[...permissions].filter(([name]) => !blocked.has(name)).map(([name, maxSdk]) =>
-+            `    <uses-permission android:name="${name}"${maxSdk === undefined ? '' : ` android:maxSdkVersion="${maxSdk}"`} />`
-+          ),
-+          ...(app.android?.blockedPermissions ?? []).map((name) =>
-+            `    <uses-permission android:name="${name.includes('.') ? name : `android.permission.${name}`}" tools:node="remove" />`
-+          ),
-+        ]
-+        rendered = rendered.replace(anchor, `${anchor}\n${lines.join('\n')}`)
-+        if (app.android?.blockedPermissions?.length && !rendered.includes('xmlns:tools=')) {
-+          rendered = rendered.replace(
-+            'xmlns:android="http://schemas.android.com/apk/res/android"',
-+            'xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:tools="http://schemas.android.com/tools"'
-+          )
-+        }
-       }
-       if (app.speech !== undefined) {
--        // package visibility (android 11+) hides the recognition service
--        // from SpeechRecognizer.isRecognitionAvailable without the query
--        stamps.push(
--          '    <uses-permission android:name="android.permission.RECORD_AUDIO" />',
--          '    <queries>\n      <intent>\n        <action android:name="android.speech.RecognitionService" />\n      </intent>\n    </queries>'
--        )
-+        // android 11+ hides recognition services without this query.
-+        const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
-+        rendered = rendered.replace(anchor, `${anchor}\n    <queries>\n      <intent>\n        <action android:name="android.speech.RecognitionService" />\n      </intent>\n    </queries>`)
-       }
--      rendered = rendered.replace(anchor, `${anchor}\n${stamps.join('\n')}`)
--    }
--    if (
--      platform === 'android' &&
--      relativePath === 'app/src/main/AndroidManifest.xml' &&
--      app.location !== undefined
--    ) {
--      const anchor = '<uses-permission android:name="android.permission.INTERNET" />'
--      if (!rendered.includes(anchor)) {
--        throw new Error(
--          '[vxrn] cannot stamp location permissions: expected the INTERNET permission in app/src/main/AndroidManifest.xml'
--        )
--      }
--      const stamps = [
--        '    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />',
--        '    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
--      ]
--      if (app.location.background) {
--        stamps.push(
--          '    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />'
--        )
--      }
--      rendered = rendered.replace(anchor, `${anchor}\n${stamps.join('\n')}`)
--    }
--    if (
--      platform === 'android' &&
--      relativePath === 'app/src/main/AndroidManifest.xml' &&
--      app.pedometer !== undefined
--    ) {
--      const anchor = '<uses-permission android:name="android.p
+   loadConfigFromFile,
+@@ -355,11 +355,11 @@ export const build = async (optionsIn: VXRNOptions, buildArgs: BuildArgs = {}) =
+   }
+ 
+   if (serverOptions !== false) {
+-    clientManifest = await FSExtra.readJSON(`${outDir}/client/.vite/manifest.json`)
++    clientManifest = await readJSON(`${outDir}/client/.vite/manifest.json`)
+ 
+     // temp fix - react native web is importing non-existent react 19 apis
+-    const old = await FSExtra.readFile(serverEntry, 'utf-8')
+-    await FSExtra.writeFile(
++    const old = await readFile(serverEntry, 'utf-8')
++    await writeFile(
+       serverEntry,
+       old
+         .replace(
+```
+
+**File**: `packages/vxrn/src/exports/clean.test.ts` (modified, +1/-1)
+```diff
+@@ -107,7 +107,7 @@ async function tryConnect(port: number): Promise<Socket | undefined> {
+ }
+ 
+ // outermost node_modules above the test, so a bundled worker's bare
+-// imports (vite, fs-extra, ...) resolve the way the workspace lays out
++// imports (vite, picocolors, ...) resolve the way the workspace lays out
+ function outermostNodeModules(from: string): string {
+   let dir = from
+   let found: string | undefined
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1093** (2026-11-04): ci: capture native fixture diagnostics on cancellation (@natew)
-- **PR #1092** (2026-11-04): fix(sdk): align shipped facades with generator diagnostics (@natew)
-- **PR #1091** (2026-11-04): fix(sdk): name the extractor error when a framework has no symbol graph (@natew)
-- **PR #1090** (2026-11-04): chore(deps): upgrade Tamagui to 3.2.1 (@natew)
-- **PR #1089** (2026-11-03): chore(deps): upgrade Tamagui to 3.2.0 (@natew)
-- **PR #1088** (2026-11-02): fix(one): preserve stack replacing nested dynamic routes (@natew)
+- **PR #1136** (2026-11-07): chore(deps): upgrade Tamagui to 3.2.4 (@natew)
+- **PR #1135** (2026-11-07): fix: android prebuild activity dep, xcrun SDK check, vite-mode native console (@natew)
+- **PR #1131** (2026-11-06): fix(metro): reuse dev transforms across restarts (@natew)
+- **PR #1129** (2026-11-06): fix(tests): compile complete native Swift source proof (@natew)
+- **PR #1128** (closed): fix(release): prepare fixed-version One 2.13.10 recovery (@natew)
+- **PR #1127** (2026-11-06): fix(release): stream canary package build progress (@natew)
 
 ---
 
@@ -2550,46 +2427,36 @@ Reviewed-by: s129558 (gpt-6.1-sol high)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): upgrade Tamagui to 3.2.1
+## X. tests): preserve Android dump command errors
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/native-features/scripts/one-native-android-snapshot.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6ae224f`: deps): upgrade Tamagui to 3.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9c80de5`: tests): preserve Android dump command errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/native-features/scripts/one-native-android-snapshot.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@tamagui/react-native-web": "3.2.1",
-    "@tamagui/sheet": "3.2.1",
-    "@tamagui/themes": "3.2.1",
-    "@tamagui/use-store": "3.2.1",
-    "tamagui": "3.2.1",
-    "@tamagui/helpers-icon": "3.2.1",
-    "@tamagui/config": "3.2.1",
-    "@tamagui/react-native-svg": "3.2.1",
-    "@tamagui/react-native-web-lite": "3.2.1"
-    "@tamagui/vite-plugin": "3.2.1",
+type DumpStep = 'fail' | 'fail-after-dump' | 'ok'
+    if (step === 'fail-after-dump')
+      throw Object.assign(new Error('Command failed: adb shell uiautomator dump'), {
+        stdout: 'UI hierchary dumped to: /sdcard/one.xml',
+        stderr: '',
+        status: 1,
+      })
+  reset(['fail', 'fail-after-dump', 'ok'], readyXml)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@tamagui/react-native-web": "3.2.0",
-    "@tamagui/sheet": "3.2.0",
-    "@tamagui/themes": "3.2.0",
-    "@tamagui/use-store": "3.2.0",
-    "tamagui": "3.2.0",
-    "@tamagui/helpers-icon": "3.2.0",
-    "@tamagui/config": "3.2.0",
-    "@tamagui/react-native-svg": "3.2.0",
-    "@tamagui/react-native-web-lite": "3.2.0"
-    "@tamagui/vite-plugin": "3.2.0",
+type DumpStep = 'fail' | 'ok'
+  reset(['fail', 'fail', 'ok'], readyXml)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6ae224f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9c80de5` are properly handled with clean fallback behavior.

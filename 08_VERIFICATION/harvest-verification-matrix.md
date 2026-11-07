@@ -8084,3 +8084,7 @@
 | `CYCLE-20261107-M8JX` | `2026-11-07T20:49:07.533Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`9c558215...`) |
 | `CYCLE-20261107-MALD` | `2026-11-07T20:49:10.177Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8900871c...`) |
 | `CYCLE-20261107-MCKI` | `2026-11-07T20:49:12.738Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a1e3e78...`) |
+| `CYCLE-20261107-V2WT` | `2026-11-07T20:56:00.125Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`36da3ffc...`) |
+| `CYCLE-20261107-V6KT` | `2026-11-07T20:56:04.877Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5fd47904...`) |
+| `CYCLE-20261107-V7SX` | `2026-11-07T20:56:06.465Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ead5c939...`) |
+| `CYCLE-20261107-VB5K` | `2026-11-07T20:56:10.808Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`132845ab...`) |

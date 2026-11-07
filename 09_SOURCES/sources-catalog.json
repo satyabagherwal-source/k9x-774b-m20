@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "9234319d",
+    "sourceVersion": "e19c0e02",
     "license": "Apache-2.0",
-    "contentHash": "926ffb942965319c1f0a6a509b99fb03c636b243d46cd2ec90c8c889d2c88903",
-    "lastHarvestedAt": "2026-11-05T23:09:35.620Z",
+    "contentHash": "ead5c9392066794260e0709d7817bc23af83eb93b142f6e4377eed2ad02f48f1",
+    "lastHarvestedAt": "2026-11-07T20:56:06.468Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "8d71a376",
+    "sourceVersion": "62d625f3",
     "license": "MIT",
-    "contentHash": "96105eaf17d19cb6c76358c39ccf751c3a927449002279a9df7909b2cffcd0bd",
-    "lastHarvestedAt": "2026-11-03T12:13:39.357Z",
+    "contentHash": "132845ab64b5ac7c9c1de3f6b90c40d410b75cc9a7e5f505752b3b02a7ac210c",
+    "lastHarvestedAt": "2026-11-07T20:56:10.818Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "09334632",
+    "sourceVersion": "ce71455b",
     "license": "NOASSERTION",
-    "contentHash": "6340fe34013159ed7c25a43b62addf84ff5557ae2339a9f00c80d422f40ae1aa",
-    "lastHarvestedAt": "2026-11-04T21:11:23.967Z",
+    "contentHash": "5fd47904f980eabbce54e786738b9c55199b20e43219188b37dd9e941d61e89a",
+    "lastHarvestedAt": "2026-11-07T20:56:04.881Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "654efae4",
+    "sourceVersion": "b5cd310b",
     "license": "NOASSERTION",
-    "contentHash": "f867b11dd60fbe9ca6474365769cf9b050ea222d5d31daa4b189b516f4f9c293",
-    "lastHarvestedAt": "2026-11-05T16:59:50.170Z",
+    "contentHash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
+    "lastHarvestedAt": "2026-11-07T20:56:00.128Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

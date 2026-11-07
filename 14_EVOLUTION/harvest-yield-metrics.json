@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T20:49:12.745Z",
-  "total_cycles_completed": 8049,
-  "total_learnings_persisted": 8049,
-  "total_rules_promoted": 7708,
+  "last_updated": "2026-11-07T20:56:10.823Z",
+  "total_cycles_completed": 8053,
+  "total_learnings_persisted": 8053,
+  "total_rules_promoted": 7712,
   "history": [
-    {
-      "timestamp": "2026-11-06T14:58:31.926Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:05:49.491Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:05:51.006Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:13:11.985Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T15:13:16.791Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-07T20:49:12.745Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:56:00.134Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:56:04.892Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:56:06.480Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T20:56:10.823Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
