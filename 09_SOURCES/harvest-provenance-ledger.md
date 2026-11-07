@@ -8114,3 +8114,7 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `f21f224b` | Multi-dimensional audit evidence | 2026-11-07T21:36:29.767Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `bbb1e5bd` | Multi-dimensional audit evidence | 2026-11-07T21:36:33.142Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `ff5d19c2` | Multi-dimensional audit evidence | 2026-11-07T21:36:37.897Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `4f1753e7` | Multi-dimensional audit evidence | 2026-11-07T21:43:54.544Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `4ccb5f41` | Multi-dimensional audit evidence | 2026-11-07T21:43:54.894Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `ed544602` | Multi-dimensional audit evidence | 2026-11-07T21:44:03.790Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7dd66e74` | Multi-dimensional audit evidence | 2026-11-07T21:44:05.593Z |

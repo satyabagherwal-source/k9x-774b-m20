@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `5366ee35`  
+> **Source Version**: `ed544602`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:02:11.713Z  
+> **Timestamp**: 2026-11-07T21:44:01.940Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:02:10.684Z  
+> **Harvest Timestamp**: 2026-11-07T21:44:01.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12241 stars
+- **Stars / Engagement**: 12243 stars
 
 ---
 
@@ -1818,567 +1818,330 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8ae8cbe` (2026-11-05)
-**Commit Message**: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508)
+### Incident Patch 1: `ed544602` (2026-11-07)
+**Commit Message**: [Doc] fix misleading comments after refactoring (#82580)
 
-**File**: `be/src/connector/hive/scanner/hdfs_scanner.cpp` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ Status HdfsScanner::_build_scanner_context() {
-     ctx.format_scan_context.is_first_split = false;
-     ctx.format_scan_context.first_row_id.reset();
-     ctx.format_scan_context.min_max_values.clear();
-+    ctx.format_scan_context.min_max_value_cursors.clear();
-     ctx.format_scan_context.extended_column_exprs.clear();
-     ctx.format_scan_context.predicate_tree = nullptr;
-     ctx.format_scan_context.runtime_filter_scan_range_pruner = nullptr;
-```
+Signed-off-by: Aliaksei Dziomin <[REDACTED_EMAIL]>
 
-**File**: `be/src/formats/parquet/group_reader.cpp` (modified, +6/-2)
+**File**: `be/src/exprs/like_predicate.cpp` (modified, +3/-2)
 ```diff
-@@ -313,9 +313,13 @@ StatusOr<bool> GroupReader::_evaluate_compound_predicates(const Range<uint64_t>&
- 
-     // Append side columns to active_chunk so compound conjuncts referencing
-     // partition / not-existed / extended slots can be evaluated correctly.
-+    // get_next() appends them again for the output, so this evaluation-only
-+    // copy must not consume the file min/max values the output still has to emit.
-     if (state.active_chunk->num_rows() > 0) {
--        RETURN_IF_ERROR(
--                _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows()));
-+        auto saved_min_max_value_cursors = _param.scan_ctx->min_max_value_cursors;
-+        Status st = _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows());
-+        _param.scan_ctx->min_max_value_cursors = std::move(saved_min_max_value_cursors);
-+        RETURN_IF_ERROR(st);
+@@ -64,8 +64,9 @@ bool LikePredicate::hs_compile_database(const std::string& pattern, LikePredicat
      }
  
-     // Finalize all active columns to logical form before compound conjunct eval.
+     // Validate that a scratch space can be allocated for this database; if not, fall back to
+-    // RE2 (matching the previous behavior). The real per-thread scratch is allocated later, in
+-    // the THREAD_LOCAL prepare. The probe scratch is freed immediately.
++    // RE2 (matching the previous behavior). The real per-thread scratch is allocated lazily on
++    // first eval, via the FunctionContext thread-state registry (see _predicate_const_regex).
++    // The probe scratch is freed immediately.
+     hs_scratch_t* probe_scratch = nullptr;
+     if (hs_alloc_scratch(database, &probe_scratch) != HS_SUCCESS) {
+         std::stringstream error;
 ```
 
-**File**: `be/src/formats/scan_context.cpp` (modified, +19/-5)
+**File**: `be/src/exprs/like_predicate.h` (modified, +2/-3)
 ```diff
-@@ -312,12 +312,22 @@ MutableColumnPtr FormatScanContext::create_min_max_value_column(SlotDescriptor*
-     if (!is_first_split) {
-         std::reverse(data.begin(), data.end());
-     }
--    for (int i = 0; i < data.size() && row_count > 0; i++) {
-+    // A batch too small to hold every value (chunk_size <= 2, or a tiny row group) continues where the previous
-+    // small batch stopped, so consecutive small batches still emit null/min/max all: always starting over from the
-+    // first value would never emit the last one, e.g. the max.
-+    size_t start = 0;
-+    if (!data.empty() && row_count < data.size()) {
-+        size_t& cursor = min_max_value_cursors[slot_desc->id()];
-+        start = cursor % data.size();
-+        cursor += row_count;
-+    }
-+    for (size_t i = 0; i < data.size() && row_count > 0; i++) {
-         row_count -= 1;
--        if (data[i].is_null()) {
-+        const Datum& datum = data[(start + i) % data.size()];
-+        if (datum.is_null()) {
-             col->append_nulls(1);
-         } else {
--            col->append_datum(data[i]);
-+            col->append_datum(datum);
-         }
-     }
-     if (row_count > 0) {
-@@ -381,9 +391,13 @@ Status FormatScanContext::evaluate_all_predicates(ChunkPtr* chunk) {
- StatusOr<bool> FormatScanContext::should_skip_by_evaluating_not_existed_slots() {
-     if (not_existed_slots.size() == 0) return false;
- 
--    // build chunk for evaluation.
-+    // build chunk for evaluation. It is thrown away, so it must not consume min/max values the output batches still
-+    // have to emit.
-+    auto saved_min_max_value_cursors = min_max_value_cursors;
-     ChunkPtr chunk = std::make_shared<Chunk>();
--    RETURN_IF_ERROR(append_or_update_not_existed_columns_to_chunk(&chunk, 1));
-+    Status st = append_or_update_not_existed_columns_to_chunk(&chunk, 1);
-+    min_max_value_cursors = std::move(saved_min_max_value_cursors);
-+    RETURN_IF_ERROR(st);
-     // do evaluation.
-     {
-         SCOPED_RAW_TIMER(&stats->expr_filter_ns);
-```
-
-**File**: `be/src/formats/scan_context.h` (modified, +2/-0)
-```diff
-@@ -286,6 +286,8 @@ struct FormatScanContext {
-     int64_t scan_range_length = std::numeric_limits<int64_t>::max();
-     int32_t scan_range_id = -1;
-     std::map<int32_t, TExprMinMaxValue> min_max_values;
-+    // Per slot, how many values of its [null?, min, max] the batches too small to hold them all have emitted.
-+    std::unordered_map<int32_t, size_t> min_max_value_cursors;
-     std::map<int32_t, TExpr> extended_column_exprs;
-     std::optional<int64_t> first_row_id;
-     int64_t file_record_count = 0;
-```
-
-**File**: `be/test/connector/hive/scanner/hdfs_scanner_test.cpp` (modified, +37/-0)
-```diff
-@@ -661,6 +661,43 @@ TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnForDatetimeSupportsNegativeMi
-     ASSERT_EQ("[1969-12-31 23:59:59.999999, 1970-01-01 00:00:00]", col->debug_string());
- }
- 
-+// Batches smaller than [null, min, max] (chunk_size <= 2) still emit every value across consecutive batches,
-+// so MIN/MAX over a file whose other columns are read see the max too.
-+TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnSpreadsValuesOverSmallBatches) {
-+    SlotDesc descs[] = {{"c1", TYPE_INT_DESC}, {""}};
-+    auto* tuple_desc = _create_tuple_desc(descs);
-+    SlotDescriptor* slot = tuple_desc->slots()[0];
-+
-+    TExprMinMaxValue min_max_value;
-+    min_max_value.__set_type(TExprNodeType::INT_LITERAL);
-+    min_max_value.__set_has_null(true);
-+    min_max_value.__set_all_null(false);
-+    min_max_value.__set_min_int_value(1);
-+    min_max_value.__set_max_int_value(9);
-+
-+    HdfsScannerContext ctx;
-+    ctx.format_scan_context.is_first_split = true;
-+    auto& fsc = ctx.format_scan_context;
-+    // The file-open probe on the not-existed slots builds a 1-row chunk it throws away: it consumes no value.
-+    FormatScannerStats stats;
-+    fsc.stats = &stats;
-+    fsc.options.use_min_max_opt = true;
-+    fsc.not_existed_slots.push_back(slot);
-+    fsc.min_max_values[slot->id()] = min_max_value;
-+    ASSERT_FALSE(fsc.should_skip_by_evaluating_not_existed_slots().value());
-+    ASSERT_EQ("[NULL]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+    ASSERT_EQ("[1]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+    ASSERT_EQ("[9]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+
-+    HdfsScannerContext ctx2;
-+    ctx2.format_scan_context.is_first_split = true;
-+    auto& fsc2 = ctx2.format_scan_context;
-+    ASSERT_EQ("[NULL, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
-+    ASSERT_EQ("[9, NULL]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
-+    // A batch that holds every value is unchanged: null/min/max first, then the min.
-+    ASSERT_EQ("[NULL, 1, 9, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 4)->debug_string());
-+}
-+
- // ========================= ORC SCANNER ============================
- 
- static TTypeDesc create_primitive_type_desc(TPrimitiveType::type type) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergMetadata.java` (modified, +5/-5)
-```diff
-@@ -3366,11 +3366,6 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
-             batchWrite.toBranch(branch);
-         }
- 
--        PartitionSpec partitionSpec = nativeTbl.spec();
--        for (TIcebergDataFile dataFile : dataFiles) {
--            batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
--        }
--
-         if (isRewrite && extra != null) {
-             ((IcebergSinkExtra) extra).getScannedDataFiles().forEach(batchWrite::deleteFile);
-             ((IcebergSinkExtra) extra).getAppliedDeleteFiles().forEach(batchWrite::deleteFile);
-@@ -3400,7 +3395,12 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
-         }
- 
-         try {
-+            // Build the files inside commitWithCleanup so a rejected entry deletes the BE-written files.
-             commitWithCleanup(() -> {
-+                PartitionSpec partitionSpec = nativeTbl.spec();
-+                for (TIcebergDataFile dataFile : dataFiles) {
-+                    batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
-+                }
-                 batchWrite.commit();
-                 transaction.commitTransaction();
-             }, () -> invalidateCacheAfterCommit(dbName, tableName), dataFiles, dbName, tableName);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergFileStats.java` (modified, +22/-10)
-```diff
-@@ -46,7 +46,10 @@ public class IcebergFileStats {
-     private Map<Integer, Object> maxValues;
-     private Map<Integer, Long> nullCounts;
-     private Map<Integer, Long> columnSizes;
--    private Set<Integer> corruptedStats;
-+    // Columns whose lower (upper) bound is unknown: a counted file has rows for them but no lower (upper) bound.
-+    // Tracked per side, so a file missing only one bound keeps the other side usable.
-+    private Set<Integer> corruptedMinStats;
-+    private Set<Integer> corruptedMaxStats;
-     private boolean hasValidColumnMetrics;
-     private Map<Integer, Long> columnSizeRecordCounts;
- 
-@@ -70,16 +73,13 @@ public IcebergFileStats(
-             this.maxValues = null;
-             this.nullCounts = null;
-             this.columnSizes = null;
--            corruptedStats = null;
-+            corruptedMinStats = null;
-+            corruptedMaxStats = null;
-         } else {
-             this.minValues = new HashMap<>(minValues);
-             this.maxValues = new HashMap<>(maxValues);
--            // we are assuming if minValues is not present, max will be not be present either.
--            this.corruptedStats = nonPartitionPrimitiveColumns.stream()
--                    .map(Types.NestedField::fieldId)
--                    .filter(id -> !minValues.containsKey(id) &&
--                            (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
--                    .collect(toSet());
-+            this.corruptedMinStats = missingBounds(nonPartitionPrimitiveColumns, minValues, nullCounts, recordCount);
-+            this.corruptedMaxStats = missingBounds(nonPartitionPrimitiveColumns, maxValues, nullCounts, recordCount);
-             this.nullCounts = new HashMap<>(nullCounts);
-             this.columnSizes = columnSizes != null ? new HashMap<>(columnSizes) : new HashMap<>();
-             this.columnSizeRecordCounts = new HashMap<>();
-@@ -92,6 +92,16 @@ public IcebergFileStats(
-         }
-     }
- 
-+    // A bound may be absent only when every value of the column in the file is null.
-+    private static Set<Integer> missingBounds(List<Types.NestedField> columns, Map<Integer, Object> bounds,
-+                                              Map<Integer, Long> nullCounts, long recordCount) {
-+        return columns.stream()
-+                .map(Types.NestedField::fieldId)
-+                .filter(id -> !bounds.containsKey(id) &&
-+                        (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
-+                .collect(toSet());
-+    }
-+
-     public IcebergFileStats(long recordCount) {
-         this.recordCount = recordCount;
-     }
-@@ -157,8 +167,9 @@ public Map<Integer, Long> getColumnSizes() {
-         return columnSizes;
-     }
- 
--    public Set<Integer> getCorruptedStats() {
--        return corruptedStats;
-+    // The corrupted set of the side `bounds` belongs to (getMinValues() or getMaxValues()).
-+    public Set<Integer> getCorruptedStats(Map<Integer, Object> bounds) {
-+        return bounds == maxValues ? corruptedMaxStats : corruptedMinStats;
-     }
- 
-     public boolean hasValidColumnMetrics() {
-@@ -205,6 +216,7 @@ public void updateStats(Map<Integer, Object> current,
-             hasValidColumnMetrics = false;
-             return;
-         }
-+        Set<Integer> corruptedStats = getCorruptedStats(current);
-         for (Types.NestedField column : nonPartitionPrimitiveColumns) {
-             int id = column.fieldId();
- 
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergStatisticProvider.java` (modified, +3/-2)
-```diff
-@@ -462,16 +462,17 @@ private void updatePartitionedStats(
-             return;
-         }
- 
-+        Set<Integer> corruptedStats = icebergFileStats.getCorruptedStats(current);
-         for (PartitionField field : partitionFields) {
-             int id = field.sourceId();
--            if (icebergFileStats.getCorruptedStats().contains(id)) {
-+            if (corruptedStats.contains(id)) {
-                 continue;
-             }
- 
-             Object newValue = newStats.get(id);
-             if (newValue == null) {
-                 current.remove(id);
--                icebergFileStats.getCorruptedStats().add(id);
-+                corruptedStats.add(id);
-                 continue;
-             }
- 
+@@ -175,9 +175,8 @@ class LikePredicate {
+     // FRAGMENT_LOCAL prepare path.
+     static Status setup_like_state(FunctionContext* context, LikePredicateState* state);
+     static Status setup_regex_state(FunctionContext* context, LikePredicateState* state);
+-    // The compile-once LIKE/regex state read by eval: the shared FRAGMENT_LOCAL state, with a
+-    // fallback to the THREAD_LOCAL state for unit tests that prepare only a single scope (the
+-    // normal open flow always prepares FRAGMENT_LOCAL).
++    // The compile-once LIKE/regex state read by eval: the shared FRAGMENT_LOCAL state, built
++    // once in prepare and inherited by every cloned FunctionContext.
+     static LikePredicateState* shared_state(FunctionContext* context);
+     template <bool full_match>
+     static Status compile_with_hyperscan_or_re2(const std::string& pattern, LikePredicateState* state,
 ```
 
 ---
 
-### Incident Patch 2: `5b00c887` (2026-11-05)
-**Commit Message**: [UT] Let BE UT suites that rely on another suite's global setup run alone (#82525)
+### Incident Patch 2: `6bfe78eb` (2026-11-07)
+**Commit Message**: [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (#82531)
 
-Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `be/test/column/CMakeLists.txt` (modified, +2/-2)
-```diff
-@@ -96,8 +96,8 @@ set(COLUMN_TEST_LINK_LIBS
- add_library(starrocks_column_test_objs OBJECT ${COLUMN_TEST_FILES})
- target_link_libraries(starrocks_column_test_objs PRIVATE StarRocksPCH)
- set_target_properties(starrocks_column_test_objs PROPERTIES COMPILE_FLAGS "-fno-access-control")
--add_executable(column_test $<TARGET_OBJECTS:starrocks_column_test_objs>)
--target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS} gtest_main)
-+add_executable(column_test column_test_main.cpp $<TARGET_OBJECTS:starrocks_column_test_objs>)
-+target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS})
- 
- set(CHUNK_TEST_FILES
-     ../base/cxa_throw_wrap.cpp
-```
-
-**File**: `be/test/column/column_test_main.cpp` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+#include <gtest/gtest.h>
-+
-+#include "types/time_types.h"
-+
-+int main(int argc, char** argv) {
-+    // PARALLEL_TEST cases have no fixture, so initialize the process-wide date cache here instead of relying on
-+    // another suite having done it earlier in the same process.
-+    starrocks::date::init_date_cache();
-+
-+    ::testing::InitGoogleTest(&argc, argv);
-+    return RUN_ALL_TESTS();
-+}
-```
-
-**File**: `be/test/orchestration/fragment_mgr_test.cpp` (modified, +2/-0)
-```diff
-@@ -42,6 +42,7 @@
- 
- #include "base/time/monotime.h"
- #include "common/config_runtime_fwd.h"
-+#include "common/system/cpu_info.h"
- #include "exec/exec_env.h"
- #include "exec_primitive/data_sink.h"
- #include "gen_cpp/Types_types.h"
-@@ -83,6 +84,7 @@ class FragmentMgrTest : public testing::Test {
-     FragmentMgrTest() = default;
- 
-     static void SetUpTestSuite() {
-+        CpuInfo::init();
-         auto* runtime_env = RuntimeEnv::GetInstance();
-         _previous_process_mem_tracker = runtime_env->_process_mem_tracker;
-         _previous_query_pool_mem_tracker = runtime_env->_query_pool_mem_tracker;
-```
-
-**File**: `be/test/runtime/serde_core_test.cpp` (modified, +9/-0)
-```diff
-@@ -41,6 +41,7 @@
- #include "common/config_local_io_fwd.h"
- #include "common/statusor.h"
- #include "gutil/strings/substitute.h"
-+#include "runtime/memory/mem_chunk_allocator.h"
- #include "runtime/serde/chunk_encode_context.h"
- #include "runtime/serde/protobuf_chunk_serde.h"
- #include "types/hll.h"
-@@ -526,6 +527,14 @@ PARALLEL_TEST(ColumnArraySerdeTest, variant_column_shredded_multiple_paths) {
- 
- // NOLINTNEXTLINE
- PARALLEL_TEST(ColumnArraySerdeTest, hll_column_failed_deserialize) {
-+    // The HLL registers allocator is process-global and normally installed by RuntimeEnv::init(). Install the same
-+    // MemChunkAllocator-backed one so the failpoint below is reachable when this case runs alone.
-+    HyperLogLog::RegistersAllocator allocator;
-+    allocator.allocate = [](size_t size, void*, MemChunk* chunk) { return MemChunkAllocator::allocate(size, chunk); };
-+    allocator.free = [](const MemChunk& chunk, void*) { MemChunkAllocator::free(chunk); };
-+    Status st = HyperLogLog::set_registers_allocator(allocator);
-+    ASSERT_TRUE(st.ok() || st.is_already_exist()) << st;
-+
-     auto c1 = HyperLogLogColumn::create();
-     // prepare a sparse-encoded HLL (few non-zero registers)
-     HyperLogLog sparse_hll;
-```
-
----
-
-### Incident Patch 3: `9eea2ac7` (2026-11-05)
-**Commit Message**: [BugFix][RB-377] Fix lost wakeup in spill BufferedInputStream::prefetch (#82515)
-
+Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
 Co-authored-by: stdpain <[REDACTED_EMAIL]>
 Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `be/src/compute_env/spill/input_stream.cpp` (modified, +35/-12)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/ast/expression/ExprUtils.java` (modified, +16/-0)
 ```diff
-@@ -24,7 +24,6 @@
- #include <vector>
+@@ -461,6 +461,22 @@ public static Function getBuiltinFunction(String name, Type[] argTypes, boolean
+         return GlobalStateMgr.getCurrentState().getFunction(searchDesc, mode);
+     }
  
- #include "base/concurrency/blocking_queue.hpp"
--#include "base/utility/defer_op.h"
- #include "common/status.h"
- #include "compute_env/sorting/sorted_chunks_merger.h"
- #include "compute_env/spill/block_manager.h"
-@@ -165,6 +164,8 @@ class BufferedInputStream : public SpillInputStream {
-     StatusOr<ChunkUniquePtr> read_from_buffer();
- 
- private:
-+    Status _prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx);
-+
-     bool _acquire() {
-         bool expected = false;
-         return _is_prefetching.compare_exchange_strong(expected, true);
-@@ -181,6 +182,9 @@ class BufferedInputStream : public SpillInputStream {
-     InputStreamPtr _input_stream;
-     UnboundedBlockingQueue<ChunkUniquePtr> _chunk_buffer;
-     std::atomic_bool _is_prefetching = false;
-+    // Set by every prefetch caller before it tries to take _is_prefetching; the holder re-checks it after
-+    // releasing the flag so that a request which lost the race is never dropped. See prefetch().
-+    std::atomic_bool _prefetch_requested = false;
-     Spiller* _spiller = nullptr;
- };
- 
-@@ -210,17 +214,7 @@ StatusOr<ChunkUniquePtr> BufferedInputStream::get_next(workgroup::YieldContext&
-     return Status::InternalError("spill BufferedInputStream: no buffered chunk and stream is not at EOF");
- }
- 
--Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
--    if (is_buffer_full() || eof()) {
--        return Status::OK();
--    }
--    // concurrent prefetch is not allowed, should call _acquire and _release before and after prefetch
--    // to ensure that it doesn't happen.
--    if (!_acquire()) {
--        return Status::OK();
--    }
--    DeferOp defer([this]() { _release(); });
--
-+Status BufferedInputStream::_prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
-     auto res = _input_stream->get_next(yield_ctx, ctx);
-     if (res.ok()) {
-         COUNTER_ADD(_spiller->metrics().input_stream_peak_memory_usage, res.value()->memory_usage());
-@@ -233,6 +227,35 @@ Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeCo
-     return res.status();
- }
- 
-+Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
-+    while (true) {
-+        if (is_buffer_full() || eof()) {
-+            return Status::OK();
++    // Looks up the array_agg_distinct overload for rewriting array_agg(distinct x). Returns null when no overload
++    // takes x's type: the non-strict lookup would otherwise return any overload x is castable to (e.g. DECIMALV2
++    // for VARIANT), and since no cast is planned in between, the BE would read x's column as that type and crash.
++    public static Function getArrayAggDistinctFunction(Type[] argTypes) {
++        Function fn = getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT, argTypes,
++                Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
++        if (fn == null || argTypes.length != 1) {
++            return null;
 +        }
-+        // Concurrent prefetch is not allowed (it would reorder chunks of an ordered stream), so only the
-+        // task holding _is_prefetching reads. A task that fails to take the flag must not simply drop its
-+        // request: the holder may already have published its chunk and be on its way out, while the reader
-+        // consumes that chunk and triggers new restore tasks that all land in this window. Each of them
-+        // would see the flag held and return, the holder would exit after its single chunk, and the stream
-+        // would be left with an empty buffer, not at EOF, and no restore task in flight -- the source
-+        // operator then waits forever for data nothing will produce.
-+        // So announce the request before trying to take the flag; the holder re-checks it after releasing
-+        // the flag and serves it. The store precedes the CAS and the holder's load follows its release (all
-+        // seq_cst), so either the holder observes the request or the requester's CAS succeeds.
-+        _prefetch_requested.store(true);
-+        if (!_acquire()) {
-+            return Status::OK();
++        Type argType = argTypes[0];
++        if (!argType.isNull() && !argType.matchesType(fn.getArgs()[0])) {
++            return null;
 +        }
-+        _prefetch_requested.store(false);
-+        Status st = _prefetch_one(yield_ctx, ctx);
-+        _release();
-+        RETURN_IF_ERROR(st);
-+        if (!_prefetch_requested.load()) {
-+            return Status::OK();
-+        }
++        return fn;
 +    }
-+}
 +
- InputStreamPtr detail::make_buffered_input_stream(int capacity, InputStreamPtr stream, Spiller* spiller) {
-     return std::make_shared<BufferedInputStream>(capacity, std::move(stream), spiller);
- }
+     public static boolean isAggregateFunction(String name) {
+         return GlobalStateMgr.getCurrentState().isAggregateFunction(name);
+     }
 ```
 
-**File**: `be/test/compute_env/spill/spill_test.cpp` (modified, +71/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/MultiDistinctByMultiFuncRewriter.java` (modified, +11/-4)
 ```diff
-@@ -49,6 +49,7 @@
- #include "common/statusor.h"
- #include "common/storage_define.h"
- #include "compute_env/sorting/merge.h"
-+#include "compute_env/spill/input_stream_internal.h"
- #include "compute_env/spill/log_block_manager.h"
- #include "compute_env/spill/mem_table.h"
- #include "compute_env/spill/mem_tracker_guard.h"
-@@ -1569,6 +1570,76 @@ TEST_F(SpillTest, direct_io_open_failure_falls_back_to_buffered) {
-     dummy_rt_st._query_options.spill_enable_direct_io = false;
- }
+@@ -20,6 +20,7 @@
+ import com.starrocks.catalog.FunctionSet;
+ import com.starrocks.server.GlobalStateMgr;
+ import com.starrocks.sql.analyzer.DecimalV3FunctionAnalyzer;
++import com.starrocks.sql.ast.expression.ExprUtils;
+ import com.starrocks.sql.optimizer.OptExpression;
+ import com.starrocks.sql.optimizer.OptimizerContext;
+ import com.starrocks.sql.optimizer.operator.AggType;
+@@ -68,11 +69,16 @@ public List<OptExpression> transformImpl(OptExpression input, OptimizerContext c
+                     newAggOperator = buildMultiSumDistinct(oldFunctionCall);
+                     changed = true;
+                 } else if (oldFunctionCall.getFnName().equals(FunctionSet.ARRAY_AGG)) {
++                    CallOperator arrayAggDistinct = null;
+                     if (oldFunctionCall.getColumnRefs().size() == 1 &&
+                             !oldFunctionCall.getColumnRefs().get(0).getType().isDecimalOfAnyVersion()) {
+-                        newAggOperator = buildArrayAggDistinct(oldFunctionCall);
++                        arrayAggDistinct = buildArrayAggDistinct(oldFunctionCall);
++                    }
++                    if (arrayAggDistinct != null) {
++                        newAggOperator = arrayAggDistinct;
+                         changed = true;
+                     } else {
++                        // no array_agg_distinct overload for this type, keep array_agg(distinct)
+                         newAggOperator = oldFunctionCall;
+                     }
+                 } else {
+@@ -190,9 +196,10 @@ private CallOperator buildMultiCountDistinct(CallOperator oldFunctionCall) {
+     }
  
-+// Child of a BufferedInputStream whose first get_next blocks until the test opens the gate, so the test
-+// can hold the buffered stream's prefetch flag while another restore task asks for a prefetch.
-+class GatedInputStream final : public spill::SpillInputStream {
-+public:
-+    explicit GatedInputStream(int num_chunks) : _remaining(num_chunks) {}
+     private CallOperator buildArrayAggDistinct(CallOperator oldFunctionCall) {
+-        Function searchDesc = new Function(new FunctionName(FunctionSet.ARRAY_AGG_DISTINCT),
+-                oldFunctionCall.getFunction().getArgs(), InvalidType.INVALID, false);
+-        Function fn = GlobalStateMgr.getCurrentState().getFunction(searchDesc, IS_NONSTRICT_SUPERTYPE_OF);
++        Function fn = ExprUtils.getArrayAggDistinctFunction(oldFunctionCall.getFunction().getArgs());
++        if (fn == null) {
++            return null;
++        }
+ 
+         return (CallOperator) scalarRewriter.rewrite(
+                 new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fn.getReturnType(), oldFunctionCall.getChildren(),
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/SplitTwoPhaseAggRule.java` (modified, +18/-4)
+```diff
+@@ -88,6 +88,9 @@ public List<OptExpression> transform(OptExpression input, OptimizerContext conte
+             CallOperator aggregation = entry.getValue();
+             if (aggregation.isDistinct()) {
+                 CallOperator call = rewriteDistinctAggFn(aggregation);
++                if (call == null) {
++                    return List.of();
++                }
+                 newAggMap.put(entry.getKey(), call);
+             }
+         }
+@@ -133,11 +136,22 @@ private CallOperator rewriteDistinctAggFn(CallOperator fnCall) {
+         } else if (functionName.equalsIgnoreCase(FunctionSet.ARRAY_AGG)) {
+             if (fnCall.getUsedColumns().isEmpty() && fnCall.getChild(0).getType().isDecimalOfAnyVersion()) {
+                 return fnCall;
+-            } else {
+-                return new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fnCall.getType(), fnCall.getChildren(),
+-                        ExprUtils.getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT, new Type[] {fnCall.getChild(0).getType()},
+-                                IS_NONSTRICT_SUPERTYPE_OF), false);
+             }
++            Type argType = fnCall.getChild(0).getType();
++            Function arrayAggDistinctFn = ExprUtils.getArrayAggDistinctFunction(new Type[] {argType});
++            if (arrayAggDistinctFn == null) {
++                if (argType.isScalarType() || fnCall.getUsedColumns().isEmpty()) {
++                    // e.g. VARIANT, VARBINARY, or a constant like map(2, 3): the one-phase path rejects them too and
++                    // a constant has no column to split by, so fail with a clear message instead of leaving the
++                    // optimizer without a plan
++                    throw new StarRocksPlannerException(ErrorType.UNSUPPORTED,
++                            "array_agg(distinct) does not support type %s", argType);
++                }
++                // no array_agg_distinct overload for this complex type column, so it can't be split this way
++                return null;
++            }
++            return new CallOperator(FunctionSet.ARRAY_AGG_DISTINCT, fnCall.getType(), fnCall.getChildren(),
++                    arrayAggDistinctFn, false);
+ 
+         } else if (functionName.equals(FunctionSet.GROUP_CONCAT)) {
+             // all children of group_concat are constant
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/plan/PlanFragmentBuilder.java` (modified, +7/-4)
+```diff
+@@ -269,6 +269,7 @@
+ 
+ import static com.starrocks.catalog.Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF;
+ import static com.starrocks.sql.common.ErrorType.INTERNAL_ERROR;
++import static com.starrocks.sql.common.ErrorType.UNSUPPORTED;
+ import static com.starrocks.sql.common.UnsupportedException.unsupportedException;
+ import static com.starrocks.sql.optimizer.operator.scalar.ScalarOperator.isColumnEqualConstant;
+ import static com.starrocks.thrift.PlanNodesConstants.ROW_ID_COLUMN_NAME;
+@@ -3189,10 +3190,12 @@ public void rewriteAggDistinctFirstStageFunction(List<FunctionCallExpr> aggregat
+                     replaceExpr.setType(functionCallExpr.getType());
+                 } else if (functionName.equals(FunctionSet.ARRAY_AGG)) {
+                     replaceExpr = new FunctionCallExpr(FunctionSet.ARRAY_AGG_DISTINCT, functionCallExpr.getParams());
+-                    AggregateFunction fn =
+-                            (AggregateFunction) ExprUtils.getBuiltinFunction(FunctionSet.ARRAY_AGG_DISTINCT,
+-                                    functionCallExpr.getFn().getArgs(),
+-                                    IS_NONSTRICT_SUPERTYPE_OF);
++                    AggregateFunction fn = (AggregateFunction) ExprUtils.getArrayAggDistinctFunction(
++                            functionCallExpr.getFn().getArgs());
++                    if (fn == null) {
++                        throw new StarRocksPlannerException(UNSUPPORTED,
++                                "array_agg(distinct) does not support type %s", functionCallExpr.getChild(0).getType());
++                    }
+                     fn = DecimalV3FunctionAnalyzer.rectifyAggregationFunction(
+                             fn, functionCallExpr.getFn().getArgs()[0], functionCallExpr.getFn().getReturnType());
+ 
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/DistinctAggTest.java` (modified, +54/-0)
+```diff
+@@ -16,6 +16,7 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.starrocks.common.FeConstants;
++import com.starrocks.sql.common.StarRocksPlannerException;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.params.ParameterizedTest;
+@@ -25,6 +26,8 @@
+ import java.util.List;
+ import java.util.stream.Stream;
+ 
++import static org.junit.jupiter.api.Assertions.assertThrows;
 +
-+    StatusOr<ChunkUniquePtr> get_next(workgroup::YieldContext& yield_ctx, spill::SerdeContext& ctx) override {
-+        if (_calls.fetch_add(1) == 0) {
-+            _entered.set_value();
-+            _gate.wait();
+ public class DistinctAggTest extends PlanTestBase {
+ 
+     @BeforeAll
+@@ -126,6 +129,57 @@ void testDistinctArrayAggOnConstantSubqueryColumns() throws Exception {
+         assertNotContains(plan, "array_agg_distinct");
+     }
+ 
++    @Test
++    void testArrayAggDistinctOnTypeWithoutArrayAggDistinctOverload() throws Exception {
++        // array_agg_distinct has no VARIANT or VARBINARY overload. The non-strict lookup used to return the DECIMALV2
++        // overload without casting the argument, and the BE then read the column as DECIMALV2 and crashed.
++        String[] sqls = {
++                "select array_agg(distinct cast(t1a as variant)) from test_all_type",
++                "select array_agg(distinct cast(t1a as variant)) from test_all_type group by t1b",
++                "select count(distinct t1b), array_agg(distinct cast(t1a as variant)) from test_all_type",
++                "select array_agg(distinct cast(t1a as variant)), array_agg(distinct t1b) from test_all_type group by t1c",
++                "select array_agg(distinct to_binary(t1a)) from test_all_type",
++                "select count(distinct t1b), array_agg(distinct to_binary(t1a)) from test_all_type",
++        };
++        try {
++            // 0: auto, 1: one phase (PlanFragmentBuilder), 2: two phase (SplitTwoPhaseAggRule)
++            for (int stage : new int[] {0, 1, 2}) {
++                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
++                for (String sql : sqls) {
++                    try {
++                        String plan = getVerboseExplain(sql);
++                        assertNotContains(plan, "args: DECIMALV2");
++                    } catch (StarRocksPlannerException e) {
++                        assertContains(e.getMessage(), "array_agg(distinct) does not support type");
++                    }
++                }
++            }
++
++            for (int stage : new int[] {1, 2}) {
++                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
++                StarRocksPlannerException e = assertThrows(StarRocksPlannerException.class,
++                        () -> getVerboseExplain("select array_agg(distinct cast(t1a as variant)) from test_all_type"));
++                assertContains(e.getMessage(), "array_agg(distinct) does not support type VARIANT");
++                e = assertThrows(StarRocksPlannerException.class,
++                        () -> getVerboseExplain("select array_agg(distinct to_binary(t1a)) from test_all_type"));
++                assertContains(e.getMessage(), "array_agg(distinct) does not support type VARBINARY");
++            }
++
++            // a constant complex argument has no column to split by, so it gets the same error in every stage
++            // instead of "no executable plan"; a complex type column still plans through the multi-stage split
++            for (int stage : new int[] {0, 1, 2, 3, 4}) {
++                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
++                StarRocksPlannerException e = assertThrows(StarRocksPlannerException.class,
++                        () -> getVerboseExplain("select array_agg(distinct map(2, 3)) from t0"));
++                assertContains(e.getMessage(), "array_agg(distinct) does not support type MAP");
++            }
++            connectContext.getSessionVariable().setNewPlanerAggStage(0);
++            getVerboseExplain("select array_agg(distinct v3) from tarray");
++        } finally {
++            connectContext.getSessionVariable().setNewPlanerAggStage(0);
 +        }
-+        if (_remaining-- <= 0) {
-+            return Status::EndOfFile("end of gated stream");
-+        }
-+        return std::make_unique<Chunk>();
 +    }
-+    bool is_ready() override { return true; }
-+    void close() override {}
 +
-+    void wait_entered() { _entered_future.wait(); }
-+    void open_gate() { _gate_promise.set_value(); }
-+    int calls() const { return _calls.load(); }
-+
-+private:
-+    int _remaining;
-+    std::atomic_int _calls{0};
-+    std::promise<void> _entered;
-+    std::future<void> _entered_future = _entered.get_future();
-+    std::promise<void> _gate_promise;
-+    std::shared_future<void> _gate = _gate_promise.get_future().share();
-+};
-+
-+// Regression test for a lost wakeup in BufferedInputStream::prefetch. Restore tasks that found the
-+// prefetch flag held used to return without doing anything; when they all landed while the holder was
-+// on its way out after reading its single chunk, nothing read the next chunk and the spilled sort source
-+// waited forever (row_number() over a force-spilled sort hung until query timeout). A prefetch request
-+// that loses the race must be served by the task holding the flag.
-+TEST_F(SpillTest, buffered_input_stream_serves_prefetch_request_that_lost_the_race) {
-+    ObjectPool pool;
-+    RawSpillerFixture fx(this, &pool, &dummy_rt_st, /*pool_size=*/1);
-+    auto child = std::make_shared<GatedInputStream>(/*num_chunks=*/4);
-+    auto stream = spill::detail::make_buffered_input_stream(/*capacity=*/4, child, fx.spiller.get());
-+
-+    auto holder = std::async(std::launch::async, [&stream]() {
-+        workgroup::YieldContext yield_ctx;
-+        spill::SerdeContext ctx;
-+        return stream->prefetch(yield_ctx, ctx);
-+    });
-+    // The holder owns the prefetch flag and is blocked reading its chunk.
-+    child->wait_entered();
-+
-+    workgroup::YieldContext yield_ctx;
-+    spill::SerdeContext ctx;
-+    // This request loses the race for the flag and returns immediately without reading.
-+    ASSERT_OK(stream->prefetch(yield_ctx, ctx));
-+    ASSERT_EQ(child->calls(), 1);
-+
-+    child->open_gate();
-+    ASSERT_OK(holder.get());
-+
-+    // The holder served the request that lost the race: two chunks were read, not one.
-+    EXPECT_EQ(child->calls(), 2);
-+    ASSERT_TRUE(stream->is_ready());
-+    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
-+    ASSERT_TRUE(stream->is_ready());
-+    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
-+    ASSERT_FALSE(stream->is_ready());
-+    ASSERT_FALSE(stream->eof());
-+}
-+
- /*
- TEST_F(SpillTest, file_group_test) {
-     auto chunk = std::make_unique<Chunk>();
+     @Test
+     void testMultiColumnCountDistinctKeepsDecimalPrecision() throws Exception {
+         // The if() wrapping the distinct columns must carry the precision/scale of its branches,
+```
+
+**File**: `test/sql/test_agg_function/R/test_array_agg` (modified, +1/-1)
+```diff
+@@ -1818,7 +1818,7 @@ select array_agg(map(2,3)) from ss;
+ -- !result
+ select array_agg(distinct map(2,3)) from ss;
+ -- result:
+-E: (1064, 'Unknown error')
++E: (1064, 'array_agg(distinct) does not support type MAP<TINYINT,TINYINT>')
+ -- !result
+ select array_agg(null);
+ -- result:
+```
+
+---
+
+### Incident Patch 3: `fd2324ef` (2026-11-07)
+**Commit Message**: [Tool][RB-1330] Fix backend compilation with Clang 20 (#82609)
+
+Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
+Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
+
+**File**: `be/src/exec/pipeline/pipeline_driver_queue.cpp` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ namespace starrocks::pipeline {
+ 
+ namespace {
+ // Leave headroom for runtime charged by concurrent executors before the next scheduling operation.
+-constexpr int64_t kAccuTimeRebaseThreshold = std::numeric_limits<int64_t>::max() / 4;
++constexpr double kAccuTimeRebaseThreshold = static_cast<double>(std::numeric_limits<int64_t>::max() / 4);
+ } // namespace
+ 
+ /// QuerySharedDriverQueue.
+```
+
+**File**: `be/src/formats/parquet/statistics_helper.cpp` (modified, +3/-1)
+```diff
+@@ -60,7 +60,9 @@ Status StatisticsHelper::decode_min_max_into_columns(const MutableColumnPtr& min
+                 src_column->append_nulls(1);
+             } else {
+                 RETURN_IF_ERROR(PlainDecoder<int64_t>::decode(values[i], &decode_value));
+-                src_column->append_numbers(&decode_value, sizeof(int64_t));
++                if (src_column->append_numbers(&decode_value, sizeof(int64_t)) == 0) {
++                    return Status::InternalError("Decode min-max column failed");
++                }
+             }
+         }
+         return Status::OK();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82527** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (backport #82518) (@mergify[bot])
-- **PR #82525** (2026-11-05): [UT] Let BE UT suites that rely on another suite's global setup run alone (@Hyper-FF)
-- **PR #82524** (2026-11-05): [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (backport #82508) (@mergify[bot])
-- **PR #82523** (2026-11-05): [Enhancement] Extrapolate sampled external NDV from its growth over nested partition subsets (backport #82516) (@mergify[bot])
-- **PR #82518** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (@starrocks-bot[bot])
-- **PR #82517** (2026-11-05): [BugFix][RB-904] Show a multi-statement transaction's statements in full only with SELECT on all its tables (backport #82514) (@mergify[bot])
+- **PR #82617** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
+- **PR #82616** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
+- **PR #82615** (2026-11-07): [BugFix][RB-967] Keep array_agg(distinct) when array_agg_distinct has no overload for the argument type (backport #82531) (@mergify[bot])
+- **PR #82614** (2026-11-07): [Tool][RB-1330] Fix backend compilation with Clang 20 (backport #82609) (@mergify[bot])
+- **PR #82612** (2026-11-07): [BugFix][RB-1259] Close idle JDBC connection pools on BE/CN (backport #82532) (@mergify[bot])
+- **PR #82611** (2026-11-07): [BugFix][RB-1259] Close idle JDBC connection pools on BE/CN (backport #82532) (@mergify[bot])
 
 ---
 
@@ -2398,28 +2161,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed bu
+## X. [Doc] fix misleading comments after refactoring (#82580)
 
 **RULE**:
-When implementing operations in `be/src/connector/hive/scanner/hdfs_scanner.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/exprs/like_predicate.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8ae8cbe`: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed544602`: [Doc] fix misleading comments after refactoring (#82580). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/connector/hive/scanner/hdfs_scanner.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/like_predicate.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    ctx.format_scan_context.min_max_value_cursors.clear();
+    // RE2 (matching the previous behavior). The real per-thread scratch is allocated lazily on
+    // first eval, via the FunctionContext thread-state registry (see _predicate_const_regex).
+    // The probe scratch is freed immediately.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    // RE2 (matching the previous behavior). The real per-thread scratch is allocated later, in
+    // the THREAD_LOCAL prepare. The probe scratch is freed immediately.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8ae8cbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed544602` are properly handled with clean fallback behavior.

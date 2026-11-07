@@ -20623,5 +20623,20 @@
     "qualityScore": 20639,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-07T19:19:39.346Z"
+  },
+  {
+    "name": "SDAI-KMP",
+    "fullName": "ShiftHackZ/SDAI-KMP",
+    "url": "https://github.com/ShiftHackZ/SDAI-KMP",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Stable Diffusion AI client app for Android and iOS",
+    "stars": 1284,
+    "forks": 150,
+    "openIssues": 126,
+    "language": "Kotlin",
+    "qualityScore": 1137,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-07T21:41:34.279Z"
   }
 ]

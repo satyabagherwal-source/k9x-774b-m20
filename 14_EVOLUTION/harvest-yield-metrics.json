@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:36:37.909Z",
-  "total_cycles_completed": 8070,
-  "total_learnings_persisted": 8070,
-  "total_rules_promoted": 7729,
+  "last_updated": "2026-11-07T21:44:05.599Z",
+  "total_cycles_completed": 8074,
+  "total_learnings_persisted": 8074,
+  "total_rules_promoted": 7733,
   "history": [
-    {
-      "timestamp": "2026-11-06T19:23:54.877Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:30:52.837Z",
-      "repository": "baidu/ERNIE-5.5-Flash-Base",
-      "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:38:17.014Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:38:18.900Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T20:38:20.718Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-07T21:36:37.909Z",
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:43:54.551Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:43:54.900Z",
+      "repository": "necolas/react-native-web",
+      "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:44:03.807Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:44:05.599Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

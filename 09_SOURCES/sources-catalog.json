@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "d790431a",
+    "sourceVersion": "4f1753e7",
     "license": "MIT",
-    "contentHash": "41e90f5d550f263e54aaf3bee049fdd4836f5ba496c2a89a0b42f8b4c1e2cc90",
-    "lastHarvestedAt": "2026-11-04T03:37:45.430Z",
+    "contentHash": "50a09375bb7b0b85a7422efca6a71f6bc35c0a581ab2ddb738e086843a359bc8",
+    "lastHarvestedAt": "2026-11-07T21:43:54.544Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "5366ee35",
+    "sourceVersion": "ed544602",
     "license": "Apache-2.0",
-    "contentHash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
-    "lastHarvestedAt": "2026-11-05T23:02:12.950Z",
+    "contentHash": "cdce467c6c9d99135589110e0eee00561faf8b2bbc652439d3c3ecff2c32befd",
+    "lastHarvestedAt": "2026-11-07T21:44:03.790Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "c43635ed",
+    "sourceVersion": "4ccb5f41",
     "license": "MIT",
-    "contentHash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
-    "lastHarvestedAt": "2026-11-04T21:57:20.150Z",
+    "contentHash": "19c97b00f8ddd7eec54113d9a96869cdc2f21fce3e2e182a061f0d67d64f2355",
+    "lastHarvestedAt": "2026-11-07T21:43:54.894Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
@@ -12158,5 +12158,15 @@
     "contentHash": "cecff6b07c042b17515a54ab62bc8a685419ba59f3424551b50966a2c1b031a8",
     "lastHarvestedAt": "2026-11-07T19:23:31.737Z",
     "learningId": "learn-github-alchaincyf-nuwa-skill"
+  },
+  "shifthackz-sdai-kmp": {
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
+    "sourceVersion": "7dd66e74",
+    "license": "AGPL-3.0",
+    "contentHash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
+    "lastHarvestedAt": "2026-11-07T21:44:05.593Z",
+    "learningId": "learn-github-shifthackz-sdai-kmp"
   }
 }

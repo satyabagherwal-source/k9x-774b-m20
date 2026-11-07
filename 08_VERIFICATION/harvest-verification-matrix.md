@@ -8105,3 +8105,7 @@
 | `CYCLE-20261107-B5ML` | `2026-11-07T21:36:29.757Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b265e79...`) |
 | `CYCLE-20261107-B88J` | `2026-11-07T21:36:33.139Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e44b9b06...`) |
 | `CYCLE-20261107-BBWL` | `2026-11-07T21:36:37.893Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ca24a6b6...`) |
+| `CYCLE-20261107-KOTO` | `2026-11-07T21:43:54.540Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`50a09375...`) |
+| `CYCLE-20261107-KP3E` | `2026-11-07T21:43:54.890Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`19c97b00...`) |
+| `CYCLE-20261107-KVYH` | `2026-11-07T21:44:03.785Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cdce467c...`) |
+| `CYCLE-20261107-KXCL` | `2026-11-07T21:44:05.589Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8a1574a7...`) |

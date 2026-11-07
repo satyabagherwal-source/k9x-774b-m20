@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:36:37.818Z",
-  "total_verified_learnings": 1234,
+  "last_updated": "2026-11-07T21:44:05.494Z",
+  "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -44795,11 +44795,16 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "c43635ed",
-      "content_hash": "7a96298d11fec4927dc1b54ec2eda27b87ace8cc020af176ac71ac804c54db15",
+      "source_version": "4ccb5f41",
+      "content_hash": "19c97b00f8ddd7eec54113d9a96869cdc2f21fce3e2e182a061f0d67d64f2355",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[fix] ScrollView: don't set touch-action when scroll is disabled",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2344,
           "title": "Cross-Format Shared State Symbol Scoping",
@@ -44836,7 +44841,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:57:20.023Z",
+      "verified_at": "2026-11-07T21:43:54.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56844,14 +56849,19 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "5366ee35",
-      "content_hash": "433c190f2c7ba39a067f12e93aa8f3cdd4b6da9f124ba34a9ca13b3b372234c1",
+      "source_version": "ed544602",
+      "content_hash": "cdce467c6c9d99135589110e0eee00561faf8b2bbc652439d3c3ecff2c32befd",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed bu",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[Doc] fix misleading comments after refactoring (#82580)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56935,7 +56945,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:02:12.784Z",
+      "verified_at": "2026-11-07T21:44:03.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80146,11 +80156,16 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "d790431a",
-      "content_hash": "41e90f5d550f263e54aaf3bee049fdd4836f5ba496c2a89a0b42f8b4c1e2cc90",
+      "source_version": "4f1753e7",
+      "content_hash": "50a09375bb7b0b85a7422efca6a71f6bc35c0a581ab2ddb738e086843a359bc8",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "avoid browser blocked ports for the runner server (#35262)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1647,
           "title": "Invariant Error Property Assignment and Object Decoration",
@@ -80192,7 +80207,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:37:45.317Z",
+      "verified_at": "2026-11-07T21:43:54.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185739,6 +185754,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-07T19:23:31.639Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-shifthackz-sdai-kmp": {
+      "learning_id": "learn-github-shifthackz-sdai-kmp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ShiftHackZ/SDAI-KMP",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "slug": "shifthackz-sdai-kmp",
+      "platform": "github",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
+      "source_version": "7dd66e74",
+      "content_hash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "release signing metadata and align the F-Droid SDK path (#728)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T21:44:05.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
