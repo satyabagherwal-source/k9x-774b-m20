@@ -8142,3 +8142,4 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `7da7e6c8` | Multi-dimensional audit evidence | 2026-11-07T23:18:19.567Z |
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `9a5f8e25` | Multi-dimensional audit evidence | 2026-11-07T23:34:14.097Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `fa310ff1` | Multi-dimensional audit evidence | 2026-11-07T23:34:20.437Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `5415aecc` | Multi-dimensional audit evidence | 2026-11-07T23:47:04.892Z |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-MBQK",
-    "timestamp": "2026-11-05T10:57:59.276Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "713ab4badd503600d63dda62fbb4b7daeda132dd6d5da168621b1dce3df5db70",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-MIXD",
     "timestamp": "2026-11-05T10:58:08.593Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "5eee18c8bf6442f5b14aec48b56adb0d141f57d0cea133177a56a1406299c40c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-Z394",
+    "timestamp": "2026-11-07T23:47:04.888Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "0660ef8f4f6b1d8f488e31cf1c2427b69dc479429d3b8ee86118c07e342b0f6e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

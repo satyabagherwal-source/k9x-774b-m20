@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T23:34:20.451Z",
-  "total_cycles_completed": 8098,
-  "total_learnings_persisted": 8098,
-  "total_rules_promoted": 7768,
+  "last_updated": "2026-11-07T23:47:04.898Z",
+  "total_cycles_completed": 8099,
+  "total_learnings_persisted": 8099,
+  "total_rules_promoted": 7769,
   "history": [
-    {
-      "timestamp": "2026-11-06T22:21:16.984Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:28:43.455Z",
       "repository": "RunanywhereAI/runanywhere-sdks",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T23:34:20.451Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:47:04.898Z",
+      "repository": "faker-js/faker",
+      "learningId": "learn-github-faker-js-faker",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

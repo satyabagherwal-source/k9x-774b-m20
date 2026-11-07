@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T23:34:20.334Z",
+  "last_updated": "2026-11-07T23:47:04.798Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -80763,11 +80763,16 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "10eeb7cc",
-      "content_hash": "f52cf0c195001ff4a8934b83b95e522ddb7e0913e7499de1f13a7a8b9e75db62",
+      "source_version": "5415aecc",
+      "content_hash": "0660ef8f4f6b1d8f488e31cf1c2427b69dc479429d3b8ee86118c07e342b0f6e",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "locale): only generate valid postcode formats for sk (#4257)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3039,
           "title": "Inverted Set Derivation via Explicit Re-inclusion",
@@ -80809,7 +80814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:55:46.128Z",
+      "verified_at": "2026-11-07T23:47:04.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
