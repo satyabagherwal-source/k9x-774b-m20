@@ -8139,3 +8139,4 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `bd7f87eb` | Multi-dimensional audit evidence | 2026-11-07T22:52:58.645Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `acd3b387` | Multi-dimensional audit evidence | 2026-11-07T22:53:03.000Z |
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `a4fb2094` | Multi-dimensional audit evidence | 2026-11-07T23:06:23.411Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `7da7e6c8` | Multi-dimensional audit evidence | 2026-11-07T23:18:19.567Z |

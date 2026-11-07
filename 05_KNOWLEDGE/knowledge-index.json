@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T23:06:23.316Z",
+  "last_updated": "2026-11-07T23:18:19.474Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64478,14 +64478,19 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "b95e2408",
-      "content_hash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
+      "source_version": "7da7e6c8",
+      "content_hash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Cypress proxy crash on explicit lock with prerequisites",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "YT-30346: Isolate job-proxy build probes and reduce their frequency",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64569,7 +64574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:20:30.483Z",
+      "verified_at": "2026-11-07T23:18:19.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

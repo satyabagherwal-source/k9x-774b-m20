@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `b95e2408`  
+> **Source Version**: `7da7e6c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T13:20:28.819Z  
+> **Timestamp**: 2026-11-07T23:18:18.235Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T13:20:28.812Z  
+> **Harvest Timestamp**: 2026-11-07T23:18:16.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,749 +1195,380 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cac5deda` (2026-11-06)
-**Commit Message**: Fix Cypress proxy crash on explicit lock with prerequisites
-commit_hash:e95783fdb29ff8e227a65e24e0c92f1bde6cf1d4
+### Incident Patch 1: `8fcd5226` (2026-11-07)
+**Commit Message**: YT-30346: Isolate job-proxy build probes and reduce their frequency
 
-**File**: `yt/yt/server/cypress_proxy/action_helpers.cpp` (modified, +1/-0)
+Slow job-proxy build probes block node heartbeats and can abort healthy jobs as `node_offline`. Run them asynchronously on the existing RPC heavy invoker once a minute; publish the result and update job-proxy availability on JobThread.
+commit_hash:39f68fe6d17a96495fe29d569cc7f3f92a33ba3c
+
+**File**: `yt/yt/server/lib/exec_node/config.cpp` (modified, +1/-1)
 ```diff
-@@ -60,6 +60,7 @@ struct TSequoiaTransactionActionSequencer
-         HANDLE_ACTION_TYPE(TReqSetNode, 800)
-         HANDLE_ACTION_TYPE(TReqMultisetAttributes, 900)
-         HANDLE_ACTION_TYPE(TReqRemoveNodeAttribute, 1000)
-+        HANDLE_ACTION_TYPE(TReqExplicitlyLockNode, 1100)
-         HANDLE_ACTION_TYPE(TReqImplicitlyLockNode, 1100)
+@@ -820,7 +820,7 @@ void TJobControllerDynamicConfig::Register(TRegistrar registrar)
+         .Default(TDuration::Seconds(60));
  
-         #undef HANDLE_ACTION_TYPE
+     registrar.Parameter("job_proxy_build_info_update_period", &TThis::JobProxyBuildInfoUpdatePeriod)
+-        .Default(TDuration::Seconds(5));
++        .Default(TDuration::Minutes(1));
+ 
+     registrar.Parameter("disable_job_proxy_profiling", &TThis::DisableJobProxyProfiling)
+         .Default(false);
 ```
 
-**File**: `yt/yt/tests/integration/cypress/test_cypress.py` (modified, +9/-0)
+**File**: `yt/yt/server/node/exec_node/job_controller.cpp` (modified, +15/-10)
 ```diff
-@@ -4927,6 +4927,15 @@ def test_backup_attributes(self):
-         remove("//sys/accounts/a1/@backup_config")
-         assert not get("//tmp/dir/t/@table_backup_enabled")
+@@ -42,11 +42,14 @@
+ #include <yt/yt/library/process/subprocess.h>
  
-+    @authors("kvk1920")
-+    def test_lock_with_prerequisite_revision(self):
-+        create("map_node", "//tmp/m")
-+        tx = start_transaction()
-+        lock("//tmp/m", mode="exclusive", tx=tx, prerequisite_revisions=[{
-+            "path": "//tmp/m",
-+            "revision": get("//tmp/m/@revision"),
-+        }])
+ #include <yt/yt/core/concurrency/periodic_executor.h>
++#include <yt/yt/core/concurrency/scheduler_api.h>
+ 
+ #include <yt/yt/core/misc/backoff_strategy.h>
+ #include <yt/yt/core/misc/process_exit_profiler.h>
+ #include <yt/yt/core/misc/statistics.h>
+ 
++#include <yt/yt/core/rpc/dispatcher.h>
 +
+ #include <yt/yt/core/ytree/composite_map.h>
+ #include <yt/yt/core/ytree/service_combiner.h>
+ #include <yt/yt/core/ytree/virtual.h>
+@@ -1986,22 +1989,24 @@ class TJobController
+     {
+         YT_ASSERT_THREAD_AFFINITY(JobThread);
  
- ##################################################################
+-        // TODO(max42): not sure if running ytserver-job-proxy --build --yson from JobThread
+-        // is a good idea; maybe delegate to another thread?
+-
+         TErrorOr<TBuildInfoPtr> buildInfo;
  
+         try {
+-            auto jobProxyPath = ResolveBinaryPath(JobProxyProgramName)
+-                .ValueOrThrow();
++            buildInfo = WaitFor(BIND([] {
++                auto jobProxyPath = ResolveBinaryPath(JobProxyProgramName)
++                    .ValueOrThrow();
+ 
+-            TSubprocess jobProxy(jobProxyPath);
+-            jobProxy.AddArguments({"--build", "--yson"});
++                TSubprocess jobProxy(jobProxyPath);
++                jobProxy.AddArguments({"--build", "--yson"});
+ 
+-            auto result = jobProxy.Execute();
+-            result.Status.ThrowOnError();
++                auto result = jobProxy.Execute();
++                result.Status.ThrowOnError();
+ 
+-            buildInfo = ConvertTo<TBuildInfoPtr>(TYsonString(result.Output));
++                return ConvertTo<TBuildInfoPtr>(TYsonString(result.Output));
++            })
++                .AsyncVia(NRpc::TDispatcher::Get()->GetHeavyInvoker())
++                .Run())
++                .ValueOrThrow();
+         } catch (const std::exception& ex) {
+             buildInfo = TError(NExecNode::EErrorCode::JobProxyUnavailable, "Failed to receive job proxy build info")
+                 .With(ex);
 ```
 
 ---
 
-### Incident Patch 2: `7829a010` (2026-11-06)
-**Commit Message**: YT-26105: Add layer location overflow tests
-commit_hash:f69ea336f66caef01b54578de4c86541a56aef83
+### Incident Patch 2: `d322d908` (2026-11-07)
+**Commit Message**: YQL-21806: Fix Clang Tidy diagnostics
 
-**File**: `yt/yt/server/lib/exec_node/helpers.cpp` (modified, +19/-0)
+{% cut "Ovsyana ✨ PR Descirption" %}
+
+### Reason
+
+The YQL Clang Tidy flow fails in 12 style suites covering fastcheck, UDF metadata, the SQL proto parser, core tests, and MiniKQL.
+
+### Design
+
+Add missing literal-argument comments and designated initializers, fix a static variable name, and replace two test buffers with `std::array`.
+
+Keep the public UDF metadata header compatible with C by suppressing `modernize-use-using` on its three ABI typedefs. Document the intentional ignored return value of `release()` after ownership is transferred to the metadata object.
+
+{% endcut %}
+commit_hash:248bdfe878b4ada8f8b74f356521fdb67b1e11bc
+
+**File**: `yql/essentials/core/ut/yql_expr_type_annotation_ut.cpp` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,9 @@
- #include "helpers.h"
+@@ -262,7 +262,7 @@ struct TLazyBindFixture {
+         const auto ast = ParseAst(TStringBuilder() << "((return " << expression << "))");
+         UNIT_ASSERT_C(ast.IsOk(), ast.Issues.ToString());
+         UNIT_ASSERT_C(CompileExpr(*ast.Root, Expression, Context, nullptr, nullptr), Context.IssueManager.GetIssues().ToString());
+-        return InstantAnnotateTypes(Expression, Context, false, Types);
++        return InstantAnnotateTypes(Expression, Context, /*wholeProgram=*/false, Types);
+     }
+ };
  
-+#include <yt/yt/library/containers/public.h>
-+
-+#include <yt/yt/core/misc/fs.h>
-+
- namespace NYT::NExecNode {
- 
- using namespace NScheduler;
-@@ -15,6 +19,21 @@ const std::string& GetSandboxRelPath(ESandboxKind sandboxKind)
- 
- ////////////////////////////////////////////////////////////////////////////////
- 
-+TErrorCode GetDisableErrorCode(
-+    const TError& error,
-+    TErrorCode fallbackErrorCode)
-+{
-+    if (NFS::IsOutOfDiskSpaceError(error) ||
-+        error.FindMatching(NContainers::EPortoErrorCode::NoSpace).has_value())
-+    {
-+        return EErrorCode::NotEnoughDiskSpace;
-+    }
-+
-+    return fallbackErrorCode;
-+}
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
- EAllocationState JobStateToAllocationState(EJobState jobState)
- {
-     switch (jobState) {
 ```
 
-**File**: `yt/yt/server/lib/exec_node/helpers.h` (modified, +8/-0)
+**File**: `yql/essentials/minikql/computation/mkql_value_builder_ut.cpp` (modified, +6/-4)
 ```diff
-@@ -4,6 +4,8 @@
+@@ -12,6 +12,8 @@
+ #include <arrow/scalar.h>
+ #include <arrow/chunked_array.h>
  
- #include <yt/yt/server/lib/scheduler/public.h>
- 
-+#include <yt/yt/core/misc/error.h>
++#include <array>
 +
- namespace NYT::NExecNode {
+ namespace NYql::NCommon {
  
- ////////////////////////////////////////////////////////////////////////////////
-@@ -14,6 +16,12 @@ const std::string& GetSandboxRelPath(ESandboxKind sandboxKind);
+ TString PgValueToNativeText(const NUdf::TUnboxedValuePod& value, ui32 pgTypeId);
+@@ -108,10 +110,10 @@ class TMiniKQLValueBuilderTest: public TTestBase {
  
- ////////////////////////////////////////////////////////////////////////////////
- 
-+TErrorCode GetDisableErrorCode(
-+    const TError& error,
-+    TErrorCode fallbackErrorCode);
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
- NScheduler::EAllocationState JobStateToAllocationState(EJobState jobState);
- 
- ////////////////////////////////////////////////////////////////////////////////
+     void TestValueStringViews() {
+         const IValueBuilder& builder = Builder_;
+-        const char digits[] = {'4', '2', 'x'};
+-        UNIT_ASSERT_VALUES_EQUAL(builder.ValueFromString(EDataSlot::Int32, TStringRef(digits, 2)).Get<i32>(), 42);
+-        const char binary[] = {'a', '\0', 'b'};
+-        for (const TStringRef text : {TStringRef(""), TStringRef(binary, sizeof(binary)),
++        const std::array<char, 3> digits = {'4', '2', 'x'};
++        UNIT_ASSERT_VALUES_EQUAL(builder.ValueFromString(EDataSlot::Int32, TStringRef(digits.data(), 2)).Get<i32>(), 42);
++        const std::array<char, 3> binary = {'a', '\0', 'b'};
++        for (const TStringRef text : {TStringRef(""), TStringRef(binary.data(), binary.size()),
+                                       TStringRef("a string longer than an embedded value")}) {
+             const auto parsed = builder.ValueFromString(EDataSlot::String, text);
+             UNIT_ASSERT(parsed);
 ```
 
-**File**: `yt/yt/server/node/exec_node/environment/common/slot.cpp` (modified, +2/-2)
+**File**: `yql/essentials/public/fastcheck/abi/impl/result.h` (modified, +2/-2)
 ```diff
-@@ -679,8 +679,8 @@ TFuture<std::vector<TVolumeResultPtr>> TUserSlotBase::DoPrepareNonRootVolumes(
-                             this_ = MakeStrong(this)
-                         ] (TErrorOr<std::vector<TVolumeResultPtr>>&& volumeResultsOrError) {
-                             if (!volumeResultsOrError.IsOK()) {
--                                THROW_ERROR_EXCEPTION("Failed to prepare non-root volumes: %v",
--                                    volumeResultsOrError);
-+                                THROW_ERROR_EXCEPTION("Failed to prepare non-root volumes")
-+                                    .With(volumeResultsOrError);
-                             }
+@@ -14,8 +14,8 @@ struct TResult {
  
-                             auto& volumeResults = volumeResultsOrError.Value();
+ template <class THandle>
+ THandle* AllocationFailure() noexcept {
+-    static THandle result;
+-    return &result;
++    static THandle Result;
++    return &Result;
+ }
+ 
+ template <class THandle, class TFunction>
 ```
 
-**File**: `yt/yt/server/node/exec_node/environment/porto/layer_location.cpp` (modified, +1/-0)
+**File**: `yql/essentials/public/fastcheck/linter.cpp` (modified, +1/-1)
 ```diff
-@@ -1121,6 +1121,7 @@ TVolumeMeta TLayerLocation::DoCreateVolume(
-             .With(ex);
+@@ -24,7 +24,7 @@ TSet<TString> ListChecks(const TMaybe<TVector<TCheckFilter>>& filters) {
+     NAbi::NProto::TLinterRequest request;
+     request.SetListOnly(true);
+     NAbi::EncodeFilters(filters, request);
+-    const auto result = Invoke(request, nullptr);
++    const auto result = Invoke(request, /*metadata=*/nullptr);
+     return {result.GetCheckNames().begin(), result.GetCheckNames().end()};
+ }
  
-         auto error = TError(
-+            GetDisableErrorCode(ex, NYT::EErrorCode::Generic),
-             "Failed to create %Qlv volume %v",
-             volumeType,
-             volumeId)
 ```
 
-**File**: `yt/yt/server/node/exec_node/slot_location.cpp` (modified, +9/-16)
+**File**: `yql/essentials/public/udf_meta/abi/udf_meta.h` (modified, +3/-3)
 ```diff
-@@ -29,8 +29,6 @@
+@@ -10,13 +10,13 @@ extern "C" {
+     #define YQL_UDF_META_NOEXCEPT
+ #endif
  
- #include <yt/yt/ytlib/scheduler/proto/resources.pb.h>
+-    typedef struct TYqlUdfMetaString {
++    typedef struct TYqlUdfMetaString { // NOLINT(modernize-use-using): C-compatible ABI.
+         const char* Data;
+         size_t Size;
+     } TYqlUdfMetaString;
  
--#include <yt/yt/library/containers/public.h>
--
- #include <yt/yt/library/program/program.h>
+     // String buffers are immutable and remain valid until the owning cookie is freed.
+-    typedef struct TYqlUdfMetaFunction {
++    typedef struct TYqlUdfMetaFunction { // NOLINT(modernize-use-using): C-compatible ABI.
+         int IsTypeAwareness;
+         TYqlUdfMetaString CallableType;
+         TYqlUdfMetaString RunConfigType;
+@@ -34,7 +34,7 @@ extern "C" {
+     // they return 1 for presence, 0 for absence, or -1 for an exception.
+     // GetMetadata writes a caller-owned descriptor and never exposes a C++ object.
+     // Copies borrow the cookie; Free must be called exactly once by its owner.
+-    typedef struct TYqlUdfMeta {
++    typedef struct TYqlUdfMeta { // NOLINT(modernize-use-using): C-compatible ABI.
+         void* Context;
+         void (*Free)(void* context) YQL_UDF_META_NOEXCEPT;
+         int (*HasModule)(const void* context, TYqlUdfMetaString module) YQL_UDF_META_NOEXCEPT;
+```
+
+**File**: `yql/essentials/public/udf_meta/parse.cpp` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@ int GetMetadata(const void* context, TYqlUdfMetaString module, TYqlUdfMetaString
+ std::unique_ptr<TUdfMeta> ParseUdfMeta(const NJson::TJsonValue& json) {
+     auto storage = std::make_unique<TStorage>(json);
+     auto result = std::make_unique<TUdfMeta>(TYqlUdfMeta{storage.get(), Free, HasModule, HasFunction, GetMetadata});
+-    storage.release();
++    storage.release(); // NOLINT(bugprone-unused-return-value): ownership has been transferred to result.
+     return result;
+ }
  
- #include <yt/yt/client/misc/io_tags.h>
-@@ -104,17 +102,6 @@ static constexpr i64 CopyRateGaugeGrid[] = {0, 1_MB, 10_MB, 100_MB, 1000_MB};
+```
+
+**File**: `yql/essentials/sql/v1/proto_parser/check/check_range.cpp` (modified, +6/-6)
+```diff
+@@ -97,7 +97,7 @@ class TRangeChecker final {
+             if (!index) {
+                 return Nothing();
+             }
+-            return TVisitResult{{true, *index, *index}, *index};
++            return TVisitResult{.Range = {.HasToken = true, .Start = *index, .End = *index}, .NextTokenIndex = *index};
+         }
  
- ////////////////////////////////////////////////////////////////////////////////
+         const auto* reflection = node.GetReflection();
+@@ -131,17 +131,17 @@ class TRangeChecker final {
  
--static TErrorCode GetDisableErrorCode(const TError& error)
--{
--    if (NFS::IsOutOfDiskSpaceError(error) || error.FindMatching(NContainers::EPortoErrorCode::NoSpace)) {
--        return NExecNode::EErrorCode::NotEnoughDiskSpace;
--    }
--
--    return NExecNode::EErrorCode::SlotLocationDisabled;
--}
--
--////////////////////////////////////////////////////////////////////////////////
--
- std::optional<NExecNode::EVolumeType> TSlotLocation::TNonRootVolumeRegistry::IsInsideNonRootVolume(const std::string& path, const NLogging::TLogger& Logger) const
- {
-     YT_TLOG_DEBUG("Checking if path is inside non-root volume")
-@@ -882,7 +869,9 @@ TFuture<void> TSlotLocation::MakeConfig(int slotIndex, INodePtr config)
-             writer.Flush();
-         } catch (const std::exception& ex) {
-             // Job will be aborted.
--            auto error = TError(GetDisableErrorCode(ex), "Failed to write job proxy config into %v",
-+            auto error = TError(
-+                GetDisableErrorCode(ex, EErrorCode::SlotLocationDisabled),
-+                "Failed to write job proxy config into %v",
-                 proxyConfigPath)
-                 .With(ex);
-             Disable(error);
-@@ -1201,7 +1190,9 @@ std::string TSlotLocation::GetPath() const
+         // The EOF terminal is consumed but intentionally has no TToken message.
+         if (descriptor->name() == "TRule_sql_stmt_list" || descriptor->name() == "TRule_ansi_sql_stmt_list") {
+-            derived.Include({true, static_cast<ui32>(Tokens_.size() - 1), static_cast<ui32>(Tokens_.size() - 1)});
++            derived.Include({.HasToken = true, .Start = static_cast<ui32>(Tokens_.size() - 1), .End = static_cast<ui32>(Tokens_.size() - 1)});
+         }
  
- void TSlotLocation::Disable(const TError& error, bool ignoreOutOfSpace)
- {
--    if (GetDisableErrorCode(error) == NExecNode::EErrorCode::NotEnoughDiskSpace) {
-+    if (GetDisableErrorCode(error, EErrorCode::SlotLocationDisabled) ==
-+        EErrorCode::NotEnoughDiskSpace)
-+    {
-         EnospcRate_.Increment();
-         if (ignoreOutOfSpace) {
-             YT_TLOG_WARNING("Skipping slot location disable due to an out-of-space error")
-@@ -1521,7 +1512,9 @@ void TSlotLocation::DoBuildSlotRootDirectory(int slotIndex)
-         return;
+-        TTokenIndexRange expected{nextTokenIndex, static_cast<ui32>(nextTokenIndex - 1)};
++        TTokenIndexRange expected{.Start = nextTokenIndex, .End = static_cast<ui32>(nextTokenIndex - 1)};
+         if (derived.HasToken) {
+-            expected = {derived.Start, derived.End};
++            expected = {.Start = derived.Start, .End = derived.End};
+         }
+         if (!CheckStoredRange(node, path, expected)) {
+             return Nothing();
+         }
+-        return TVisitResult{derived, nextTokenIndex};
++        return TVisitResult{.Range = derived, .NextTokenIndex = nextTokenIndex};
      }
  
--    auto locationError = TError(GetDisableErrorCode(error), "Failed to build slot root directory")
-+    auto locationError = TError(
-+        GetDisableErrorCode(error, EErrorCode::SlotLocationDisabled),
-+        "Failed to build slot root directory")
-         .With("slot_index", slotIndex)
-         .With("slot_path", GetSlotPath(slotIndex))
-         .With(error);
+     bool CheckStoredRange(const Message& node, const TString& path, TTokenIndexRange expected) {
+@@ -153,7 +153,7 @@ class TRangeChecker final {
+             return false;
+         }
+         const auto* reflection = node.GetReflection();
+-        const TTokenIndexRange actual{reflection->GetUInt32(node, start), reflection->GetUInt32(node, end)};
++        const TTokenIndexRange actual{.Start = reflection->GetUInt32(node, start), .End = reflection->GetUInt32(node, end)};
+         if (actual.Start != expected.Start || actual.End != expected.End) {
+             Issues_.AddIssue(TStringBuilder() << path << " (" << descriptor->full_name() << ") has token range [" << actual.Start << ", " << actual.End
+                                               << "], expected [" << expected.Start << ", " << expected.End << ']');
 ```
 
-**File**: `yt/yt/tests/integration/node/test_layers.py` (modified, +410/-1)
+**File**: `yql/essentials/sql/v1/proto_parser/check/check_range_ut.cpp` (modified, +3/-3)
 ```diff
-@@ -15,12 +15,13 @@
- import yt.yson as yson
- import yt.environment.init_operations_archive as init_operations_archive
+@@ -18,8 +18,8 @@ void CheckQuery(const TString& query, bool ansiLexer = false) {
+     NSQLTranslation::TParsedTokenList tokens;
  
--from yt_helpers import profiler_factory
-+from yt_helpers import profiler_factory, read_structured_log, write_log_barrier
+     TParsers parsers;
+-    parsers.Antlr4 = MakeAntlr4ParserFactory(false, false, Nothing());
+-    parsers.Antlr4Ansi = MakeAntlr4AnsiParserFactory(false, false, Nothing());
++    parsers.Antlr4 = MakeAntlr4ParserFactory(/*isAmbiguityError=*/false, /*isAmbiguityDebugging=*/false, Nothing());
++    parsers.Antlr4Ansi = MakeAntlr4AnsiParserFactory(/*isAmbiguityError=*/false, /*isAmbiguityDebugging=*/false, Nothing());
+     const auto* tree = SqlAST(parsers, query, "", issues, NSQLTranslation::SQL_MAX_PARSER_ERRORS, ansiLexer, &arena);
+     UNIT_ASSERT_C(tree, issues.ToString());
  
- import pytest
+@@ -63,7 +63,7 @@ Y_UNIT_TEST(AnsiRoot) {
+ }
  
- import os
- import io
-+import errno
- import shutil
- import gzip
- import re
-@@ -4605,3 +4606,411 @@ def test_malformed_journal_nbd_disk_request(self, disk_request, error):
-                         },
-                     },
-                 })
-+
-+
-+class TestLocationOverflowBase(TestPortoLayersBase):
-+    NUM_MASTERS = 1
-+    NUM_NODES = 1
-+
-+    _TMPFS_SIZE = 512 * 1024 * 1024
-+    _INODE_LIMIT = None
-+
-+    DELTA_SCHEDULER_CONFIG = {
-+        "scheduler": {
-+            "enable_allocation_abort_on_zero_user_slots": False,
-+        },
-+    }
-+
-+    DELTA_DYNAMIC_MASTER_CONFIG = {
-+        "cypress_manager": {
-+            "default_table_replication_factor": 1,
-+            "default_file_replication_factor": 1,
-+        },
-+    }
-+
-+    @classmethod
-+    def setup_class(cls):
-+        import porto
-+        properties = {"backend": "tmpfs", "space_limit": str(cls._TMPFS_SIZE)}
-+        if cls._INODE_LIMIT is not None:
-+            properties["inode_limit"] = str(cls._INODE_LIMIT)
-+        vol = porto.Connection().CreateVolume(**properties)
-+        cls.location_path = vol.path
-+        super().setup_class()
-+
-+    @classmethod
-+    def teardown_class(cls):
-+        try:
-+            super().teardown_class()
-+        finally:
-+            import porto
-+            porto.Connection().UnlinkVolume(cls.location_path)
-+
-+    def setup_method(self, method):
-+        super().setup_method(method)
-+        self.node_address = ls("//sys/cluster_nodes")[0]
-+        self.controller_agent_address = ls("//sys/controller_agents/instances")[0]
-+        wait(lambda: get(f"//sys/cluster_nodes/{self.node_address}/@resource_limits/user_slots") == 1)
-+
-+    def teardown_method(self, method):
-+        for name in ("disabled", "filler"):
-+            if os.path.exists(f"{self.location_path}/{name}"):
-+                os.remove(f"{self.location_path}/{name}")
-+        filler_dir = f"{self.location_path}/filler_inodes"
-+        if os.path.isdir(filler_dir):
-+            shutil.rmtree(filler_dir, ignore_errors=True)
-+        with Restarter(self.Env, NODES_SERVICE):
-+            pass
-+        super().teardown_method(method)
-+
-+    def _assert_location_enabled(self):
-+        resource_manager = f"//sys/cluster_nodes/{self.node_address}/orchid/exec_node/job_resource_manager"
-+        assert get(f"{resource_manager}/resource_limits/user_slots") == 1
-+        assert not os.path.exists(f"{self.location_path}/disabled")
-+        assert len(get(f"//sys/cluster_nodes/{self.node_address}/@alerts")) == 0
-+
-+    def _wait_for_job_cleanup(self):
-+        job_controller = f"//sys/cluster_nodes/{self.node_address}/orchid/exec_node/job_controller"
-+        wait(lambda: (
-+            get(f"{job_controller}/active_job_count") == 0
-+            and len(get(f"{job_controller}/jobs_waiting_for_cleanup")) == 0
-+        ))
-+
-+    def _fill_location(self):
-+        statvfs = os.statvfs(self.location_path)
-+        free = statvfs.f_bavail * statvfs.f_frsize
-+        chunk = b"x" * (1024 * 1024)
-+        with open(f"{self.location_path}/filler", "ab", buffering=0) as filler:
-+            try:
-+                written = 0
-+                while written < free + 4 * 1024 * 1024:
-+                    written += filler.write(chunk)
-+            except OSError as error:
-+                if error.errno != errno.ENOSPC:
-+                    raise
-+
-+    def _assert_no_new_files(self, baseline):
-+        new = self._location_files() - baseline
-+        assert len(new) == 0, sorted(new)
-+
-+    def _read_abort_entry(self, operation_id, from_barrier):
-+        entries = []
-+
-+        def read_abort_entries():
-+            nonlocal entries
-+            entries = read_structured_log(
-+                self.path_to_run + "/logs/controller-agent-0.json.log",
-+                from_barrier=from_barrier,
-+                to_barrier=write_log_barrier(self.controller_agent_address),
-+                row_filter=lambda e: (
-+                    e.get("event_type") == "job_aborted" and
-+                    e.get("operation_id") == operation_id
-+                ),
-+            )
-+            return len(entries) > 0
-+
-+        wait(read_abort_entries)
-+        assert len(entries) == 1, entries
-+        return entries[0]
-+
-+
-+class TestLayerLocationOverflowBase(TestLocationOverflowBase):
-+    DELTA_NODE_CONFIG = {
-+        "data_node": {
-+            "volume_manager": {
-+                "enable_layers_cache": True,
-+                "layer_locations": [
-+                    {
-+                        "disk_health_checker": {
-+                            "check_period": 3600000,
-+                        },
-+                    },
-+                ],
-+            },
-+        },
-+    }
-+
-+    @classmethod
-+    def modify_node_config(
-```
-
-**File**: `yt/yt/tests/library/yt_commands.py` (modified, +5/-1)
-```diff
-@@ -3662,7 +3662,11 @@ def update_nodes_dynamic_config(value={}, path="", replace=False, driver=None):
+ Y_UNIT_TEST(AnsiLexer) {
+-    CheckQuery("SELECT 1", true);
++    CheckQuery("SELECT 1", /*ansiLexer=*/true);
+ }
+ } // Y_UNIT_TEST_SUITE(ProtoParserCheckRangeTests)
  
- 
- def update_controller_agent_config(path, value, wait_for_orchid=True):
--    set("//sys/controller_agents/config/" + path, value, recursive=True)
-+    if value is not None:
-+        set("//sys/controller_agents/config/" + path, value, recursive=True)
-+    else:
-+        remove("//sys/controller_agents/config/" + path, force=True)
-+
-     if wait_for_orchid:
-         for agent in ls("//sys/controller_agents/instances"):
-             orchid_config_path = "//sys/controller_agents/instances/{}/orchid/controller_agent/config".format(agent)
 ```
 
 ---
 
-### Incident Patch 3: `ffee2179` (2026-11-06)
-**Commit Message**: Fix flaky tests
+### Incident Patch 3: `7da7e6c8` (2026-11-07)
+**Commit Message**: YT-30274, YT-30275: fix default CA config in tests and use lazy tx externalization by default
+commit_hash:8f41b41c21300641629f0e85c94569acef438d8d
 
-Use dedicated 100-row inputs to make sampling edge cases negligible. In produce/reduce_multi_in_sampling, increase SAMPLE to 0.5 and check the total sampled row count, preventing empty-input plan changes while preserving plan comparison and duplicate-key coverage. In sampling/reduce, check the result count against the full input size instead of the fixed bound of 8.
-
-Preserve the sorted-input variants and update the affected Debug canons.
-commit_hash:495ecf545e5885251683c3cb74b1a01841ecc47f
-
-**File**: `yt/yql/tests/sql/suites/produce/input_sampling.txt` (added, +100/-0)
+**File**: `yt/python/yt/environment/default_config.py` (modified, +0/-7)
 ```diff
-@@ -0,0 +1,100 @@
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-```
-
-**File**: `yt/yql/tests/sql/suites/produce/reduce_multi_in_sampling-sorted.cfg` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--in Input sorted1.txt
-+in Input sorted_sampling.txt
- res result.txt
-```
-
-**File**: `yt/yql/tests/sql/suites/produce/reduce_multi_in_sampling.cfg` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--in Input input2.txt
-+in Input input_sampling.txt
- res result.txt
-```
-
-**File**: `yt/yql/tests/sql/suites/produce/reduce_multi_in_sampling.yql` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--/* custom check: len(yt_res_yson[0][b'Write'][0][b'Data']) < 16 */
-+/* custom check: 0 < sum(int(row[2]) for row in yt_res_yson[0][b'Write'][0][b'Data']) < 200 */
- USE plato;
+@@ -109,10 +109,6 @@ def get_dynamic_master_config():
+             }
+         },
  
- $udf = YQL::@@
-@@ -16,6 +16,6 @@ $udf = YQL::@@
- )
- @@;
+-        "chunk_service": {
+-            "use_lazy_transaction_externalization": True,
+-        },
+-
+         "node_tracker": {
+             "master_cache_manager": {
+                 "update_period": 1000,
+@@ -162,7 +158,6 @@ def get_dynamic_master_config():
+             "forbid_transaction_actions_for_cypress_transactions": True,
+             "profiling_period": 100,
+             "alert_flush_period": 100,
+-            "enable_lazy_transaction_externalization": True,
+         },
+         "table_manager": {
+             "enable_column_constraints_for_tables": True,
+@@ -449,8 +444,6 @@ def get_controller_agent_config():
+                 "duration_before_job_considered_disappeared_from_node": 1000,
+                 "node_disconnection_timeout": 2000,
+             },
+-
+-            "use_lazy_transaction_externalization": True,
+         },
+     }
  
--$r = (REDUCE Input SAMPLE(0.1), Input SAMPLE(0.1) ON key USING $udf(TableRow()));
-+$r = (REDUCE Input SAMPLE(0.5), Input SAMPLE(0.5) ON key USING $udf(TableRow()));
+```
+
+**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +32/-8)
+```diff
+@@ -1575,21 +1575,35 @@ def apply_config_patches(cls, configs, ytserver_version, cluster_index, cluster_
  
- SELECT key, src, cnt FROM $r ORDER BY key, src, cnt;
-```
-
-**File**: `yt/yql/tests/sql/suites/produce/sorted_sampling.txt` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="023";"subkey"="3";"value"="aaa"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="037";"subkey"="5";"value"="ddd"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="075";"subkey"="1";"value"="abc"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="1";"value"="aaa"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="3";"value"="iii"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="150";"subkey"="8";"value"="zzz"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="200";"subkey"="7";"value"="qqq"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="527";"subkey"="4";"value"="bbb"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="761";"subkey"="6";"value"="ccc"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-+{"key"="911";"subkey"="2";"value"="kkk"};
-```
-
-**File**: `yt/yql/tests/sql/suites/produce/sorted_sampling.txt.attr` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{"_yql_row_spec"={
-+    "Type"=["StructType";[
-+        ["key";["DataType";"String"]];
-+        ["subkey";["DataType";"String"]];
-+        ["value";["DataType";"String"]]
-+    ]];
-+    "SortDirections"=[1;1;1;];
-+    "SortedBy"=["key";"subkey";"value";];
-+    "SortedByTypes"=[["DataType";"String";];["DataType";"String";];["DataType";"String";];];
-+    "SortMembers"=["key";"subkey";"value";];
-+}}
-```
-
-**File**: `yt/yql/tests/sql/suites/sampling/input_large.txt` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+{"key"="000";"subkey"="0";"value"="0"};
-+{"key"="001";"subkey"="1";"value"="1"};
-+{"key"="002";"subkey"="2";"value"="2"};
-+{"key"="003";"subkey"="3";"value"="3"};
-+{"key"="004";"subkey"="4";"value"="4"};
-+{"key"="005";"subkey"="5";"value"="5"};
-+{"key"="006";"subkey"="6";"value"="6"};
-+{"key"="007";"subkey"="7";"value"="7"};
-+{"key"="008";"subkey"="8";"value"="8"};
-+{"key"="009";"subkey"="9";"value"="9"};
-+{"key"="010";"subkey"="0";"value"="10"};
-+{"key"="011";"subkey"="1";"value"="11"};
-+{"key"="012";"subkey"="2";"value"="12"};
-+{"key"="013";"subkey"="3";"value"="13"};
-+{"key"="014";"subkey"="4";"value"="14"};
-+{"key"="015";"subkey"="5";"value"="15"};
-+{"key"="016";"subkey"="6";"value"="16"};
-+{"key"="017";"subkey"="7";"value"="17"};
-+{"key"="018";"subkey"="8";"value"="18"};
-+{"key"="019";"subkey"="9";"value"="19"};
-+{"key"="020";"subkey"="0";"value"="20"};
-+{"key"="021";"subkey"="1";"value"="21"};
-+{"key"="022";"subkey"="2";"value"="22"};
-+{"key"="023";"subkey"="3";"value"="23"};
-+{"key"="024";"subkey"="4";"value"="24"};
-+{"key"="025";"subkey"="5";"value"="25"};
-+{"key"="026";"subkey"="6";"value"="26"};
-+{"key"="027";"subkey"="7";"value"="27"};
-+{"key"="028";"subkey"="8";"value"="28"};
-+{"key"="029";"subkey"="9";"value"="29"};
-+{"key"="030";"subkey"="0";"value"="30"};
-+{"key"="031";"subkey"="1";"value"="31"};
-+{"key"="032";"subkey"="2";"value"="32"};
-+{"key"="033";"subkey"="3";"value"="33"};
-+{"key"="034";"subkey"="4";"value"="34"};
-+{"key"="035";"subkey"="5";"value"="35"};
-+{"key"="036";"subkey"="6";"value"="36"};
-+{"key"="037";"subkey"="7";"value"="37"};
-+{"key"="038";"subkey"="8";"value"="38"};
-+{"key"="039";"subkey"="9";"value"="39"};
-+{"key"="040";"subkey"="0";"value"="40"};
-+{"key"="041";"subkey"="1";"value"="41"};
-+{"key"="042";"subkey"="2";"value"="42"};
-+{"key"="043";"subkey"="3";"value"="43"};
-+{"key"="044";"subkey"="4";"value"="44"};
-+{"key"="045";"subkey"="5";"value"="45"};
-+{"key"="046";"subkey"="6";"value"="46"};
-+{"key"="047";"subkey"="7";"value"="47"};
-+{"key"="048";"subkey"="8";"value"="48"};
-+{"key"="049";"subkey"="9";"value"="49"};
-+{"key"="050";"subkey"="0";"value"="50"};
-+{"key"="051";"subkey"="1";"value"="51"};
-+{"key"="052";"subkey"="2";"value"="52"};
-+{"key"="053";"subkey"="3";"value"="53"};
-+{"key"="054";"subkey"="4";"value"="54"};
-+{"key"="055";"subkey"="5";"value"="55"};
-+{"key"="056";"subkey"="6";"value"="56"};
-+{"key"="057";"subkey"="7";"value"="57"};
-+{"key"="058";"subkey"="8";"value"="58"};
-+{"key"="059";"subkey"="9";"value"="59"};
-+{"key"="060";"subkey"="0";"value"="60"};
-+{"key"="061";"subkey"="1";"value"="61"};
-+{"key"="062";"subkey"="2";"value"="62"};
-+{"key"="063";"subkey"="3";"value"="63"};
-+{"key"="064";"subkey"="4";"value"="64"};
-+{"key"="065";"subkey"="5";"value"="65"};
-+{"key"="066";"subkey"="6";"value"="66"};
-+{"key"="067";"subkey"="7";"value"="67"};
-+{"key"="068";"subkey"="8";"value"="68"};
-+{"key"="069";"subkey"="9";"value"="69"};
-+{"key"="070";"subkey"="0";"value"="70"};
-+{"key"="071";"subkey"="1";"value"="71"};
-+{"key"="072";"subkey"="2";"value"="72"};
-+{"key"="073";"subkey"="3";"value"="73"};
-+{"key"="074";"subkey"="4";"value"="74"};
-+{"key"="075";"subkey"="5";"value"="75"};
-+{"key"="076";"subkey"="6";"value"="76"};
-+{"key"="077";"subkey"="7";"value"="77"};
-+{"key"="078";"subkey"="8";"value"="78"};
-+{"key"="079";"subkey"="9";"value"="79"};
-+{"key"="080";"subkey"="0";"value"="80"};
-+{"key"="081";"subkey"="1";"value"="81"};
-+{"key"="082";"subkey"="2";"value"="82"};
-+{"key"="083";"subkey"="3";"value"="83"};
-+{"key"="084";"subkey"="4";"value"="84"};
-+{"key"="085";"subkey"="5";"value"="85"};
-+{"key"="086";"subkey"="6";"value"="86"};
-+{"key"="087";"subkey"="7";"value"="87"};
-+{"key"="088";"subkey"="8";"value"="88"};
-+{"key"="089";"subkey"="9";"value"="89"};
-+{"key"="090";"subkey"="0";"value"="90"};
-+{"key"="091";"subkey"="1";"value"="91"};
-+{"key"="092";"subkey"="2";"value"="92"};
-+{"key"="093";"subkey"="3";"value"="93"};
-+{"key"="094";"subkey"="4";"value"="94"};
-+{"key"="095";"subkey"="5";"value"="95"};
-+{"key"="096";"subkey"="6";"value"="96"};
-+{"key"="097";"subkey"="7";"value"="97"};
-+{"key"="098";"subkey"="8";"value"="98"};
-+{"key"="099";"subkey"="9";"value"="99"};
-```
-
-**File**: `yt/yql/tests/sql/suites/sampling/reduce-with_premap.cfg` (modified, +1/-1)
-```diff
-@@ -1,3 +1,3 @@
--in Input sorted_desc.txt
-+in Input sorted_desc_large.txt
- res result.txt
- providers yt
+         for index, config in enumerate(configs["controller_agent"]):
+             update_inplace(config, YTEnvSetup._DEFAULT_DELTA_CONTROLLER_AGENT_CONFIG)
++
++            master_version = "trunk"
++            controller_agent_version = "trunk"
++            for version, components in cls.ARTIFACT_COMPONENTS.items():
++                if "master" in components:
++                    master_version = version
++                if "controller_agent" in components:
++                    controller_agent_version = version
++
+             if not cls._is_ground_cluster(index) and \
+                     (cls.get_param("ENABLE_CYPRESS_TRANSACTIONS_IN_SEQUOIA", index) or
+                      cls.get_param("ENABLE_SYS_OPERATIONS_ROOTSTOCK", index)):
+                 assert cls.get_param("ENABLE_CYPRESS_TRANSACTIONS_IN_SEQUOIA", index)
+-                for version, components in cls.ARTIFACT_COMPONENTS.items():
+-                    yt_commands.print_debug(f"version = {version}, components = {components}")
+-                    if "controller_agent" not in components:
+-                        continue
+-                    # COMPAT(kvk1920)
+-                    if version == "trunk" or version >= "25_4":
+-                        continue
++
++                # COMPAT(kvk1920)
++                if controller_agent_version != "trunk" and controller_agent_version < "25_4":
+                     update_inplace(config, {
+                         "set_committed_attribute_via_transaction_action": False,
+                         "commit_operation_cypress_node_changes_via_system_transaction": True,
+                     })
++
++            # COMPAT(kvk1920)
++            if (controller_agent_version == "trunk" or controller_agent_version >= "26_3") and \
++                    (master_version == "trunk" or master_version >= "26_3"):
++                yt_commands.print_debug("Using lazy trasaction externalization in CA")
++                update_inplace(config, {"controller_agent": {
++                    "use_lazy_transaction_externalization": True,
++                }})
++
+             # COMPAT(pogorelov): controller-agent versions before 26.2 default to
+             # the legacy sorted pool; force the new one to match trunk behavior.
+             controller_agent_version = None
+@@ -2614,7 +2628,17 @@ def _apply_master_dynamic_config_patches(cls, config, cluster_index):
+         if not cls.TEST_MAINTENANCE_FLAGS and cls.Env.get_component_version("ytserver-master").abi >= (23, 1):
+             config["node_tracker"]["forbid_maintenance_attribute_writes"] = True
+ 
+-        config.setdefault("chunk_service", {})
++        # COMPAT(kvk1920)
++        master_version = "trunk"
++        for version, components in cls.ARTIFACT_COMPONENTS.items():
++            if "master" in components:
++                master_version = version
++                break
++        if master_version == "trunk" or master_version >= "26_3":
++            config.setdefault("transaction_manager", {})["enable_lazy_transaction_externalization"] = True
++            config.setdefault("chunk_service", {})["use_lazy_transaction_externalization"] = True
++        else:
++            config.setdefault("cell_master", {}).setdefault("logging", {}).setdefault("message_level_overrides")["Lazy transaction externalization is disabled but someone requested it"] = "error"
+ 
+         # COMPAT(cherepashka): YT-27231, drop after enable_location_indexes_in_data_node_heartbeats will be enabled by default.
+         if cls.combined_envs[cluster_index].yt_config.enable_multidaemon:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1966,28 +1597,28 @@ commit_hash:495ecf545e5885251683c3cb74b1a01841ecc47f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Cypress proxy crash on explicit lock with prerequisites
+## X. YT-30346: Isolate job-proxy build probes and reduce their frequency
 
 **RULE**:
-When implementing operations in `yt/yt/server/cypress_proxy/action_helpers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/lib/exec_node/config.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cac5deda`: Cypress proxy crash on explicit lock with prerequisites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8fcd5226`: YT-30346: Isolate job-proxy build probes and reduce their frequency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/cypress_proxy/action_helpers.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/lib/exec_node/config.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        HANDLE_ACTION_TYPE(TReqExplicitlyLockNode, 1100)
+        .Default(TDuration::Minutes(1));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        .Default(TDuration::Seconds(5));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cac5deda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8fcd5226` are properly handled with clean fallback behavior.

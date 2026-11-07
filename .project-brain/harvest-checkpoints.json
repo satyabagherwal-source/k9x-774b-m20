@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T23:06:23.431Z",
+  "last_updated": "2026-11-07T23:18:19.578Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
-      "verified_at": "2026-11-06T13:20:30.621Z",
+      "content_hash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
+      "verified_at": "2026-11-07T23:18:19.577Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:20:30.621Z"
+      "last_updated": "2026-11-07T23:18:19.577Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",

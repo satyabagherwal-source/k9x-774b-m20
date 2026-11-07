@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T23:06:29.463Z",
-    "lastVerified": "2026-11-07T23:06:29.463Z",
+    "lastChecked": "2026-11-07T23:18:22.160Z",
+    "lastVerified": "2026-11-07T23:18:22.160Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,9 +230,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-07T19:16:46.541Z",
+    "lastChecked": "2026-11-07T23:18:08.054Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-07T19:16:46.541Z"
+    "lastVerified": "2026-11-07T23:18:08.054Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T22:30:22.476Z",
-    "lastVerified": "2026-11-07T22:30:22.476Z",
+    "lastChecked": "2026-11-07T23:18:13.122Z",
+    "lastVerified": "2026-11-07T23:18:13.122Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -275,8 +275,8 @@
     "officialUrl": "https://github.com/herdrdev/herdr",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T19:00:06.697Z",
-    "lastVerified": "2026-11-05T19:00:06.697Z",
+    "lastChecked": "2026-11-07T23:17:58.097Z",
+    "lastVerified": "2026-11-07T23:17:58.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-herdrdev-herdr",
@@ -3400,9 +3400,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-06T14:25:27.113Z",
+    "lastChecked": "2026-11-07T23:18:05.581Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-06T14:25:27.113Z"
+    "lastVerified": "2026-11-07T23:18:05.581Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -6867,12 +6867,12 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-06T13:20:28.812Z",
-    "lastVerified": "2026-11-06T13:20:28.812Z",
+    "lastChecked": "2026-11-07T23:18:16.609Z",
+    "lastVerified": "2026-11-07T23:18:16.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
+    "contentHash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
@@ -8222,12 +8222,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nativescript-nativescript": {
-    "name": "NativeScript/NativeScript",
+    "name": "NativeScript",
     "officialUrl": "https://github.com/NativeScript/NativeScript",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T23:06:18.800Z",
-    "lastVerified": "2026-11-04T23:06:18.800Z",
+    "lastChecked": "2026-11-07T23:18:03.156Z",
+    "lastVerified": "2026-11-07T23:18:03.156Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nativescript-nativescript",
@@ -8236,7 +8236,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07e84ec5"
   },
   "atanunq-viu": {
     "name": "viu",
@@ -12301,8 +12302,8 @@
     "officialUrl": "https://github.com/mochajs/mocha",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T07:41:05.841Z",
-    "lastVerified": "2026-11-04T07:41:05.841Z",
+    "lastChecked": "2026-11-07T23:18:00.641Z",
+    "lastVerified": "2026-11-07T23:18:00.641Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mochajs-mocha",

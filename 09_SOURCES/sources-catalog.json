@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "b95e2408",
+    "sourceVersion": "7da7e6c8",
     "license": "Apache-2.0",
-    "contentHash": "70e82a0df56f1c15b937148af7dbfc142004250248d31213375d1d2fbc41d05c",
-    "lastHarvestedAt": "2026-11-06T13:20:30.602Z",
+    "contentHash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
+    "lastHarvestedAt": "2026-11-07T23:18:19.567Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T23:06:23.418Z",
-  "total_cycles_completed": 8095,
-  "total_learnings_persisted": 8095,
-  "total_rules_promoted": 7765,
+  "last_updated": "2026-11-07T23:18:19.574Z",
+  "total_cycles_completed": 8096,
+  "total_learnings_persisted": 8096,
+  "total_rules_promoted": 7766,
   "history": [
-    {
-      "timestamp": "2026-11-06T22:13:44.244Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:13:51.844Z",
       "repository": "hashicorp/terraform",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T23:06:23.418Z",
       "repository": "avajs/ava",
       "learningId": "learn-github-avajs-ava",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T23:18:19.574Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

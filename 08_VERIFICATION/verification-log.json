@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-42BT",
-    "timestamp": "2026-11-05T10:43:47.273Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "a03871e6e93010468ff72d45f4d53c2da2cfa9c1fc2308faadd9f29218b7d577",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-CVYP",
     "timestamp": "2026-11-05T10:50:38.929Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "avajs/ava",
     "learningId": "learn-github-avajs-ava",
     "contentHash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-Y3ZG",
+    "timestamp": "2026-11-07T23:18:19.564Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "be6ed8a8d1d6fdb9f2b17fc3e0f111f39d21ae69f81c900e44a2e96be1429585",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
