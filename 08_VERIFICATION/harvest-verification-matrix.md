@@ -8127,3 +8127,5 @@
 | `CYCLE-20261107-T9L3` | `2026-11-07T22:46:33.927Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31e401f7...`) |
 | `CYCLE-20261107-TBN0` | `2026-11-07T22:46:36.588Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c9723899...`) |
 | `CYCLE-20261107-TD05` | `2026-11-07T22:46:38.357Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 901, Rule null, Rule null` | Yes (`d9cbb24f...`) |
+| `CYCLE-20261107-1IFN` | `2026-11-07T22:52:58.643Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6ab6b136...`) |
+| `CYCLE-20261107-1LSG` | `2026-11-07T22:53:02.992Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da4557b3...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T22:46:38.365Z",
-  "total_cycles_completed": 8092,
-  "total_learnings_persisted": 8092,
-  "total_rules_promoted": 7762,
+  "last_updated": "2026-11-07T22:53:03.004Z",
+  "total_cycles_completed": 8094,
+  "total_learnings_persisted": 8094,
+  "total_rules_promoted": 7764,
   "history": [
-    {
-      "timestamp": "2026-11-06T21:59:28.888Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T21:59:36.004Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T22:06:25.252Z",
       "repository": "grpc/grpc-rust",
@@ -1403,6 +1389,20 @@
       "repository": "Qwen/Qwen3-Embedding-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:52:58.649Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:53:03.004Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

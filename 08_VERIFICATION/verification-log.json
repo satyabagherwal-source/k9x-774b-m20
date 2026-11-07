@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-HPMI",
-    "timestamp": "2026-11-05T10:26:24.379Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "8fd07dfa6a6b6e6b1fc774fe08e7b41b32345655ced0d29ab8c33ad83e367388",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UUOG",
-    "timestamp": "2026-11-05T10:36:37.456Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "f1c8b8f483f55f49ca180a24ffc1c1d8d1c837544561d7911d5bac02810fe8c6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-3V6F",
     "timestamp": "2026-11-05T10:43:38.007Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7462,36 @@
     "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1IFN",
+    "timestamp": "2026-11-07T22:52:58.643Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-1LSG",
+    "timestamp": "2026-11-07T22:53:02.992Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "da4557b3551600f7db25b64a64cf2d30951a9bfb5b88171e5c09a03af6d5d125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

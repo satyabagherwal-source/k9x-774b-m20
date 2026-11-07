@@ -8136,3 +8136,5 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `4d83d35e` | Multi-dimensional audit evidence | 2026-11-07T22:46:33.930Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1d40319b` | Multi-dimensional audit evidence | 2026-11-07T22:46:36.592Z |
 | `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-07T22:46:38.360Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `bd7f87eb` | Multi-dimensional audit evidence | 2026-11-07T22:52:58.645Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `acd3b387` | Multi-dimensional audit evidence | 2026-11-07T22:53:03.000Z |

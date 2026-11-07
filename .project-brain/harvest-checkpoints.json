@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T22:46:38.377Z",
+  "last_updated": "2026-11-07T22:53:03.006Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
-      "verified_at": "2026-11-04T22:52:29.046Z",
+      "content_hash": "da4557b3551600f7db25b64a64cf2d30951a9bfb5b88171e5c09a03af6d5d125",
+      "verified_at": "2026-11-07T22:53:03.006Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T22:52:29.046Z"
+      "last_updated": "2026-11-07T22:53:03.006Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "af9b51740c1de52e541d224874d0f12c280975b74778ee0aef05cb9ccecc49b5",
-      "verified_at": "2026-11-05T18:45:36.253Z",
+      "content_hash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
+      "verified_at": "2026-11-07T22:52:58.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:45:36.253Z"
+      "last_updated": "2026-11-07T22:52:58.655Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

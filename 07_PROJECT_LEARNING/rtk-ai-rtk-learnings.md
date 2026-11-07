@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `8268663f`  
+> **Source Version**: `bd7f87eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:45:35.114Z  
+> **Timestamp**: 2026-11-07T22:52:57.760Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:45:34.959Z  
+> **Harvest Timestamp**: 2026-11-07T22:52:56.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 85642 stars
+- **Stars / Engagement**: 85834 stars
 
 ---
 
@@ -1722,14 +1722,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5019** (2026-11-06): **fix(hooks): honour exclude_commands for a swapped program called by path**
+  *Symptoms*: ## Cause  The swap gate (#4685) checks `exclude_commands` only at the start of each word, so a program called by path is not matched: with `git` excluded, `/usr/bin/git log` is still swapped and the agent gets the worker's digest instead of git's output. Master runs it as typed.  ## Fix  Also match the word after a `/`. Patterns are anchored as `^name($|\s)`, so only a whole final path component matches (`/usr/bin/curlie` and `tools/curl/run.py` still swap). 
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019) before we can accept your contribution.<br/><hr/>**Adrien EPPLING** seems not to be a GitHub user. You need a GitHub account to be able to sign the CLA. If you have already a GitHub account, please [add the email address used for this commit to your account](https://help.github.com/articles/why-are-my-commits-linked-to-the-wrong-user/#commits-are-not-linked-to-any-user).<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/rtk-ai/rtk?pullRequest=5019) it.</sub>
+  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the swap-gate's exclude_commands matching so that a program invoked by its full or relative path (e.g. /usr/bin/git) is correctly matched against the exclusion list, not just bare command names at the start of a word. Adds a test covering excluded commands called via path, env-prefixed, and piped invocations, plus negative cases for similarly-named commands.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
+
 - **Issue #5017** (2026-11-05): **fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl**
   *Symptoms*: ## Cause  The deb, the rpm and the aarch64 tarballs (`rtk`, `rtk-oss`, `rtk-proxy`) are linked against the glibc of the build runner. `ubuntu-latest` moved to Ubuntu 26.04 on 2026-10-28, so since dev-1.1.1-rc.582 the deb and aarch64 builds need glibc 2.43 (v1.1.0 needed 2.39) and do not start on Ubuntu 24.04, Debian 12/13, RHEL or Raspberry Pi OS. The full rpm, built in `fedora:latest`, has needed 2.43 since v1.0.0.  ## Fix  - Every Linux binary is static musl. aarch64 is built natively on `ubuntu-24.04-arm`, as x86_64 already was. - The deb and rpm, now for amd64 and arm64, are packaged from those static binaries, so they have no glibc requirement. The rpm payload is gzip so CentOS 7 and Amazon Linux 2 can read it. - The `aarch64-unknown-linux-gnu` tarballs are still published for scripts that download them by name, built on 24.04 (glibc 2.39, as in v1.1.0). - The release fails if a Linux musl binary is not static. - `install.sh` installs the static aarch64 build, falls back to gnu for releases that lack it, and fails if the installed binary cannot run. - rtk-proxy uses mimalloc on musl, as rtk does since #4461; musl's own allocator halves its throughput. 
-
-- **Issue #4870** (2026-10-31): **fix(git): point the show truncation hint at the unfiltered commit**
-  *Symptoms*: Fixes #4817.  The compacted `git show` output now replaces the generic `[full diff: rtk git diff --no-compact]` hint with `[full commit: rtk proxy git show ...]`, carrying the command's global args and dropping RTK's own `--no-compact`. Following the hint now prints the full commit.  Tests: `cargo test --lib show_recovery_hint`.
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/rtk-ai/rtk?pullRequest=4870) <br/>All committers have signed the CLA.
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 📊 Automated PR Analysis  | | | |---|---| | 🐛 **Type** | `bug-fix` | | 🟢 **Risk** | `low` |  ### Summary  Fixes the recovery hint shown in compacted `git show` output so it points to `rtk proxy git show ...` with the original global args and object, rather than the generic `rtk git diff --no-compact` hint. This ensures following the hint actually prints the full commit instead of an unrelated diff command.  ### Review Checklist - [x] Tests present - [ ] Breaking change - [ ] Docs updated  **Linked issues:** #4817  --- *Analyzed automatically by [wshm](https://github.com/wshm-dev/wshm)* · This is an automated analysis, not a human review. <!-- wshm -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1746,350 +1746,60 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06466361` (2026-11-05)
-**Commit Message**: perf(proxy): use mimalloc as the global allocator on musl builds
+### Incident Patch 1: `1cf7bc70` (2026-11-06)
+**Commit Message**: Merge pull request #5019 from rtk-ai/fix/swap-exclude-by-path
 
-The x86_64 rtk-proxy release asset is a static musl binary, and musl's
-allocator cuts its throughput to 9-11k requests/s against 22-23k for a
-glibc build on the same machine. With mimalloc it serves 27-28k, with
-identical responses. Same change and versions as #4461 did for rtk;
-glibc, macOS and Windows builds do not link mimalloc.
+fix(hooks): honour exclude_commands for a swapped program called by path
 
-**File**: `proxy/Cargo.lock` (modified, +19/-0)
+**File**: `src/discover/registry.rs` (modified, +2/-1)
 ```diff
-@@ -1132,6 +1132,15 @@ version = "0.2.189"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
- 
-+[[package]]
-+name = "libmimalloc-sys"
-+version = "0.1.49"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "6a45a52f43e1c16f667ccfe4dd8c85b7f7c204fd5e3bf46c5b0db9a5c3c0b8e9"
-+dependencies = [
-+ "cc",
-+]
-+
- [[package]]
- name = "libredox"
- version = "0.1.24"
-@@ -1238,6 +1247,15 @@ version = "2.8.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
- 
-+[[package]]
-+name = "mimalloc"
-+version = "0.1.52"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2d4139bb28d14ad1facf21d5eb8825051b326e172d216b39f6d31df53cc97862"
-+dependencies = [
-+ "libmimalloc-sys",
-+]
-+
- [[package]]
- name = "mime"
- version = "0.3.17"
-@@ -1751,6 +1769,7 @@ dependencies = [
-  "icm-core",
-  "icm-store",
-  "image",
-+ "mimalloc",
-  "once_cell",
-  "regex",
-  "reqwest",
+@@ -1756,7 +1756,8 @@ pub(crate) fn chain_mentions_excluded(cmd: &str, excluded: &[String]) -> bool {
+             || words
+                 .char_indices()
+                 .filter(|&(i, c)| {
+-                    !c.is_whitespace() && (i == 0 || words[..i].ends_with(char::is_whitespace))
++                    !c.is_whitespace()
++                        && (i == 0 || words[..i].ends_with(|p: char| p.is_whitespace() || p == '/'))
+                 })
+                 .any(|(i, _)| is_excluded(&words[i..], &compiled))
+     })
 ```
 
-**File**: `proxy/Cargo.toml` (modified, +3/-0)
+**File**: `src/hooks/hook_cmd/claude_pipeline.rs` (modified, +17/-0)
 ```diff
-@@ -74,6 +74,9 @@ dirs = "5"
- icm-core = { git = "https://github.com/rtk-ai/icm", rev = "831e915b", default-features = false }
- icm-store = { git = "https://github.com/rtk-ai/icm", rev = "831e915b", default-features = false, features = ["backend-sqlite"] }
+@@ -584,6 +584,23 @@ mod tests {
+         assert!(decide("xargs git status", PermissionVerdict::Default, &[]));
+     }
  
-+[target.'cfg(target_env = "musl")'.dependencies]
-+mimalloc = { version = "0.1", features = ["no_thp"] }
++    #[test]
++    fn an_excluded_command_called_by_path_is_not_swapped() {
++        let excluded = vec!["curl".to_string(), "terraform".to_string()];
++        for cmd in [
++            "/usr/bin/curl -s a",
++            "./node_modules/.bin/terraform plan",
++            "python3 -c 1 | /usr/bin/curl -s a",
++            "env X=1 /usr/bin/curl -s a",
++        ] {
++            assert!(!decide(cmd, PermissionVerdict::Default, &excluded), "{cmd}");
++            assert!(decide(cmd, PermissionVerdict::Default, &[]), "{cmd}");
++        }
++        for cmd in ["python3 tools/curl/run.py", "/usr/bin/curlie -s a"] {
++            assert!(decide(cmd, PermissionVerdict::Default, &excluded), "{cmd}");
++        }
++    }
 +
- [dev-dependencies]
- wiremock = "0.6"
- tower = { version = "0.5", features = ["util"] }
-```
-
-**File**: `proxy/src/main.rs` (modified, +4/-0)
-```diff
-@@ -12,6 +12,10 @@
- //! they work no matter how `start` was launched (a terminal, `&`, a login
- //! service, or spawned by `rtk llm-proxy start`).
- 
-+#[cfg(target_env = "musl")]
-+#[global_allocator]
-+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
-+
- use clap::{Args, Parser, Subcommand};
- use rtk_proxy::config::{Config, StartArgs};
- use rtk_proxy::settings::keys as setting_keys;
-```
-
----
-
-### Incident Patch 2: `2b8574bc` (2026-11-05)
-**Commit Message**: fix(install): install the static aarch64 build, fall back to gnu for older releases
-
-install.sh now downloads aarch64-unknown-linux-musl on aarch64 Linux. A
-release that has no musl asset for aarch64 (v1.1.0 and older) falls
-back to the gnu tarball, and the checksum is checked for the file that
-was actually downloaded. The install now fails when the installed
-binary cannot run, instead of reporting success.
-
-**File**: `install.sh` (modified, +15/-8)
-```diff
-@@ -79,11 +79,12 @@ get_latest_version() {
- 
- # Build target triple
- get_target() {
-+    FALLBACK_TARGET=""
-     case "$OS" in
-         linux)
-             case "$ARCH" in
-                 x86_64)  TARGET="x86_64-unknown-linux-musl";;
--                aarch64) TARGET="aarch64-unknown-linux-gnu";;
-+                aarch64) TARGET="aarch64-unknown-linux-musl"; FALLBACK_TARGET="aarch64-unknown-linux-gnu";;
-             esac
-             ;;
-         darwin)
-@@ -95,26 +96,31 @@ get_target() {
- # Download and install
- install() {
-     info "Detected: $OS $ARCH"
--    info "Target: $TARGET"
-     info "Version: $VERSION"
- 
--    DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ASSET_PREFIX}-${TARGET}.tar.gz"
-     CHECKSUMS_URL="https://github.com/${REPO}/releases/download/${VERSION}/checksums.txt"
-     TEMP_DIR=$(mktemp -d)
-     ARCHIVE="${TEMP_DIR}/${BINARY_NAME}.tar.gz"
-     CHECKSUMS="${TEMP_DIR}/checksums.txt"
-+
-+    info "Downloading checksums..."
-+    if ! curl -fsSL "$CHECKSUMS_URL" -o "$CHECKSUMS"; then
-+        error "Failed to download checksums.txt — refusing to install unverified binary (set RTK_SKIP_CHECKSUM=1 to bypass at your own risk)"
-+    fi
-+
-+    if [ -n "$FALLBACK_TARGET" ] && ! grep -q "[[:space:]]${ASSET_PREFIX}-${TARGET}.tar.gz\$" "$CHECKSUMS"; then
-+        warn "${VERSION} has no ${ASSET_PREFIX}-${TARGET}.tar.gz, falling back to ${FALLBACK_TARGET}"
-+        TARGET="$FALLBACK_TARGET"
-+    fi
-+    info "Target: $TARGET"
-     ASSET_NAME="${ASSET_PREFIX}-${TARGET}.tar.gz"
-+    DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ASSET_NAME}"
- 
-     info "Downloading from: $DOWNLOAD_URL"
-     if ! curl -fsSL "$DOWNLOAD_URL" -o "$ARCHIVE"; then
-         error "Failed to download binary"
-     fi
- 
--    info "Downloading checksums..."
--    if ! curl -fsSL "$CHECKSUMS_URL" -o "$CHECKSUMS"; then
--        error "Failed to download checksums.txt — refusing to install unverified binary (set RTK_SKIP_CHECKSUM=1 to bypass at your own risk)"
--    fi
--
-     if [ "${RTK_SKIP_CHECKSUM:-0}" = "1" ]; then
-         warn "RTK_SKIP_CHECKSUM=1 set — SKIPPING checksum verification (NOT RECOMMENDED)"
-     else
-@@ -162,6 +168,7 @@ install() {
- verify() {
-     INSTALLED_BIN="${INSTALL_DIR}/${BINARY_NAME}"
-     if [ -x "$INSTALLED_BIN" ]; then
-+        "$INSTALLED_BIN" --version >/dev/null || error "${INSTALLED_BIN} was installed but does not run on this system (see the error above)"
-         info "Verification: $("$INSTALLED_BIN" --version)"
-     else
-         error "Binary not found at expected location: $INSTALLED_BIN"
-```
-
----
-
-### Incident Patch 3: `5fa24dde` (2026-11-05)
-**Commit Message**: fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl
-
-The amd64 deb and the aarch64 rtk, rtk-oss and rtk-proxy tarballs were
-linked against the glibc of the build runner. ubuntu-latest moved to
-26.04 on 2026-10-28, so they now need glibc 2.43 and do not start on
-Ubuntu 24.04, Debian 12 or 13, RHEL 9 or Raspberry Pi OS. The full rpm,
-built in fedora:latest, has needed 2.43 since v1.0.0.
-
-- aarch64 is built natively on ubuntu-24.04-arm for
-  aarch64-unknown-linux-musl, like x86_64 already is.
-- The deb and rpm are packaged from those static binaries for both
-  architectures, so they have no glibc requirement and match the
-  tarballs byte for byte. The rpm payload is gzip so the rpm of
-  CentOS 7 and Amazon Linux 2 can read it.
-- The aarch64-unknown-linux-gnu tarballs are still published for scripts
-  that download them by name, built on ubuntu-24.04-arm (glibc 2.39, as
-  in v1.1.0).
-- A build step fails the release if a Linux musl binary is not static.
-- Stable package names are per architecture (rtk_arm64.deb,
-  rtk.aarch64.rpm); a single glob would have published the arm64 deb as
-  rtk_amd64.deb.
-- The Homebrew formulas point Linux arm at the static tarball.
-
-**File**: `.github/workflows/release.yml` (modified, +64/-128)
-```diff
-@@ -48,10 +48,13 @@ jobs:
-             os: ubuntu-latest
-             archive: tar.gz
-             musl: true
-+          - target: aarch64-unknown-linux-musl
-+            os: ubuntu-24.04-arm
-+            archive: tar.gz
-+            musl: true
-           - target: aarch64-unknown-linux-gnu
--            os: ubuntu-latest
-+            os: ubuntu-24.04-arm
-             archive: tar.gz
--            cross: true
-           # Windows
-           - target: x86_64-pc-windows-msvc
-             os: windows-latest
-@@ -66,25 +69,30 @@ jobs:
-         with:
-           targets: ${{ matrix.target }}
- 
--      - name: Install cross-compilation tools
--        if: matrix.cross
--        run: |
--          sudo apt-get update
--          sudo apt-get install -y gcc-aarch64-linux-gnu
--          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
--
-       - name: Install musl tools
-         if: matrix.musl
-         run: |
-           sudo apt-get update
-           sudo apt-get install -y musl-tools
- 
-+      - name: Install packaging tools
-+        if: matrix.musl
-+        run: |
-+          cargo install cargo-deb --version 3.8.0 --locked
-+          cargo install cargo-generate-rpm --version 0.21.1 --locked
-+
-       - name: Build rtk
-         run: cargo build --release --target ${{ matrix.target }}
-         env:
-           RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
-           RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
- 
-+      - name: Package deb and rpm
-+        if: matrix.musl
-+        run: |
-+          cargo deb --no-build --target ${{ matrix.target }}
-+          cargo generate-rpm --target ${{ matrix.target }} --payload-compress gzip
-+
-       - name: Package (Unix)
-         if: matrix.os != 'windows-latest'
-         run: |
-@@ -121,6 +129,21 @@ jobs:
-           RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
-           RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
- 
-+      - name: Package deb and rpm (Apache-2.0 edition)
-+        if: matrix.musl
-+        run: |
-+          cargo deb --no-build --target ${{ matrix.target }} --variant oss
-+          cargo generate-rpm --target ${{ matrix.target }} --variant oss --payload-compress gzip
-+
-+      - name: Upload deb and rpm
-+        if: matrix.musl
-+        uses: actions/upload-artifact@v7
-+        with:
-+          name: packages-${{ matrix.target }}
-+          path: |
-+            target/${{ matrix.target }}/debian/*.deb
-+            target/${{ matrix.target }}/generate-rpm/*.rpm
-+
-       - name: Package rtk-oss (Unix)
-         if: matrix.os != 'windows-latest'
-         run: |
-@@ -162,6 +185,7 @@ jobs:
-           --target ${{ matrix.target }}
-         env:
-           CFLAGS_x86_64_unknown_linux_musl: "-Du_int8_t=uint8_t -Du_int16_t=uint16_t -Du_int64_t=uint64_t"
-+          CFLAGS_aarch64_unknown_linux_musl: "-Du_int8_t=uint8_t -Du_int16_t=uint16_t -Du_int64_t=uint64_t"
- 
-       - name: Package rtk-proxy (Unix)
-         if: matrix.os != 'windows-latest'
-@@ -172,6 +196,24 @@ jobs:
-           tar -czvf ../../../rtk-proxy-${{ matrix.target }}.${{ matrix.archive }} rtk-proxy LICENSE LICENSE-ENGINE
-           cd ../../..
- 
-+      - name: Check Linux binaries are static
-+        if: matrix.musl
-+        run: |
-+          for a in rtk rtk-oss rtk-proxy; do
-+            d=$(mktemp -d)
-+            tar -xzf "$a-${{ matrix.target }}.tar.gz" -C "$d"
-+            case "$a" in
-+              rtk-proxy) b="$d/rtk-proxy" ;;
-+              *) b="$d/rtk" ;;
-+            esac
-+            readelf -h "$b" > /dev/null
-+            if readelf -lW "$b" | grep INTERP || readelf -dW "$b" | grep NEEDED; then
-+              echo "::error::$a-${{ matrix.target }}.tar.gz is not statically linked"
-+              exit 1
-+            fi
-+            "$b" --version
-+          done
-+
-       - name: Package rtk-proxy (Windows)
-         if: matrix.os == 'windows-latest'
-         run: |
-@@ -187,119 +229,9 @@ jobs:
-           name: rtk-proxy-${{ matrix.target }}
-           path: rtk-proxy-${{ matrix.target }}.${{ matrix.archive }}
- 
--  build-deb:
--    name: Build DEB package
--    runs-on: ubuntu-latest
--    steps:
--      - name: Checkout
--        uses: actions/checkout@v7
--
--      - name: Install Rust
--        uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable branch, untagged
--
--      - name: Install cargo-deb
--        run: cargo install cargo-deb
--
--      - name: Build DEB
--        run: cargo deb
--        env:
--          RTK_TELEMETRY_URL: ${{ vars.RTK_TELEMETRY_URL }}
--          RTK_TELEMETRY_TOKEN: ${{ secrets.RTK_TELEMETRY_TOKEN }}
--
--      - name: Upload DEB
--        uses: actions/upload-artifact@v7
--        with:
--          name: rtk-deb
--          path: target/debian/*.deb
--
--  build-deb-oss:
--    name: Build DEB package (Apache-2.0 edition)
--    runs-on: ubuntu-latest
--    steps:
--      - name: Checkout
--        uses: actions/checkout@v7
--
--      - name: Install Rust
--        uses: dtolnay/rust-toolchain@stable
--
--      - 
+     #[test]
+     fn an_rtk_command_anywhere_in_the_line_is_not_swapped() {
+         for cmd in [
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5019** (2026-11-06): fix(hooks): honour exclude_commands for a swapped program called by path (@aeppling)
 - **PR #5018** (2026-11-05): ci: Pin `rust-toolchain` action SHA (@TaKO8Ki)
 - **PR #5017** (2026-11-05): fix(cicd): build the deb, rpm and aarch64 Linux binaries as static musl (@aeppling)
+- **PR #5013** (2026-11-07): docs(contributing): add out of scope feature - conflicts with pro (@aeppling)
 - **PR #4988** (2026-11-04): ci(benchmark): cut the job to about 3 minutes and compare like with like (@KuSh)
 - **PR #4965** (2026-11-04): test: cut process spawns in the slowest Windows test suites (@KuSh)
-- **PR #4876** (closed): docs: make the rewrite coverage page verifiable (@alexrain)
-- **PR #4870** (closed): fix(git): point the show truncation hint at the unfiltered commit (@alexrain)
 
 ---
 
@@ -2109,46 +1819,29 @@ built in fedora:latest, has needed 2.43 since v1.0.0.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): use mimalloc as the global allocator on musl builds
+## X. Merge pull request #5019 from rtk-ai/fix/swap-exclude-by-path
 
 **RULE**:
-When implementing operations in `proxy/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/discover/registry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06466361`: proxy): use mimalloc as the global allocator on musl builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cf7bc70`: Merge pull request #5019 from rtk-ai/fix/swap-exclude-by-path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `proxy/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/discover/registry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "libmimalloc-sys"
-version = "0.1.49"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a45a52f43e1c16f667ccfe4dd8c85b7f7c204fd5e3bf46c5b0db9a5c3c0b8e9"
-dependencies = [
- "cc",
-]
-
-[[package]]
-name = "mimalloc"
-version = "0.1.52"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d4139bb28d14ad1facf21d5eb8825051b326e172d216b39f6d31df53cc97862"
-dependencies = [
- "libmimalloc-sys",
-]
-
- "mimalloc",
+                    !c.is_whitespace()
+                        && (i == 0 || words[..i].ends_with(|p: char| p.is_whitespace() || p == '/'))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                    !c.is_whitespace() && (i == 0 || words[..i].ends_with(char::is_whitespace))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06466361` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cf7bc70` are properly handled with clean fallback behavior.

@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "10f77d75",
+    "sourceVersion": "acd3b387",
     "license": "GPL-3.0",
-    "contentHash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
-    "lastHarvestedAt": "2026-11-04T22:52:29.031Z",
+    "contentHash": "da4557b3551600f7db25b64a64cf2d30951a9bfb5b88171e5c09a03af6d5d125",
+    "lastHarvestedAt": "2026-11-07T22:53:03.000Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "8268663f",
+    "sourceVersion": "bd7f87eb",
     "license": "Apache-2.0",
-    "contentHash": "af9b51740c1de52e541d224874d0f12c280975b74778ee0aef05cb9ccecc49b5",
-    "lastHarvestedAt": "2026-11-05T18:45:36.245Z",
+    "contentHash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
+    "lastHarvestedAt": "2026-11-07T22:52:58.645Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

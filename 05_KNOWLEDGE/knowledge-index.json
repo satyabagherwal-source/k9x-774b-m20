@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:46:38.282Z",
+  "last_updated": "2026-11-07T22:53:02.938Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53170,14 +53170,19 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "8268663f",
-      "content_hash": "af9b51740c1de52e541d224874d0f12c280975b74778ee0aef05cb9ccecc49b5",
+      "source_version": "bd7f87eb",
+      "content_hash": "6ab6b1368a6c1166a0a0138310e761e014287441ae8bce3f83a0bddc09531d0c",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "proxy): use mimalloc as the global allocator on musl builds",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #5019 from rtk-ai/fix/swap-exclude-by-path",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53251,7 +53256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:45:36.121Z",
+      "verified_at": "2026-11-07T22:52:58.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61185,11 +61190,16 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "10f77d75",
-      "content_hash": "4c525dc3c3cebd8376806415d280ff21f3cdb531d1cea20a07f552443393b5aa",
+      "source_version": "acd3b387",
+      "content_hash": "da4557b3551600f7db25b64a64cf2d30951a9bfb5b88171e5c09a03af6d5d125",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "core): probe timeout backends with kill-after arguments (#1934)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2439,
           "title": "block macOS e2e actions after prerequisite failure",
@@ -61231,7 +61241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T22:52:28.931Z",
+      "verified_at": "2026-11-07T22:53:02.922Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
