@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T04:10:36.907Z",
+  "last_updated": "2026-11-07T04:22:26.312Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -77848,11 +77848,16 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "1261fc46",
-      "content_hash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
+      "source_version": "9c682911",
+      "content_hash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2880,
           "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1750)",
@@ -77884,7 +77889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:31:58.796Z",
+      "verified_at": "2026-11-07T04:22:26.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

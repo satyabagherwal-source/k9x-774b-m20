@@ -7991,3 +7991,4 @@
 | `CYCLE-20261107-XXGU` | `2026-11-07T04:10:26.862Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dbaced49...`) |
 | `CYCLE-20261107-XZ7Z` | `2026-11-07T04:10:29.135Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`db9c051f...`) |
 | `CYCLE-20261107-Y5AB` | `2026-11-07T04:10:36.995Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4ea818f0...`) |
+| `CYCLE-20261107-DCNK` | `2026-11-07T04:22:26.384Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06b53265...`) |

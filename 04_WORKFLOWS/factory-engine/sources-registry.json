@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T04:10:39.613Z",
-    "lastVerified": "2026-11-07T04:10:39.613Z",
+    "lastChecked": "2026-11-07T04:22:31.928Z",
+    "lastVerified": "2026-11-07T04:22:31.928Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T03:49:09.223Z",
-    "lastVerified": "2026-11-07T03:49:09.223Z",
+    "lastChecked": "2026-11-07T04:22:31.918Z",
+    "lastVerified": "2026-11-07T04:22:31.918Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -415,8 +415,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T21:59:27.516Z",
-    "lastVerified": "2026-11-06T21:59:27.516Z",
+    "lastChecked": "2026-11-07T04:22:26.971Z",
+    "lastVerified": "2026-11-07T04:22:26.971Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3457,9 +3457,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-05T15:44:52.722Z",
+    "lastChecked": "2026-11-07T04:22:29.366Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-05T15:44:52.722Z"
+    "lastVerified": "2026-11-07T04:22:29.366Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -4879,9 +4879,9 @@
   "react-native-device-info-react-native-device-info": {
     "name": "react-native-device-info",
     "officialUrl": "https://github.com/react-native-device-info/react-native-device-info",
-    "lastChecked": "2026-11-04T10:57:27.349Z",
+    "lastChecked": "2026-11-07T04:22:21.897Z",
     "revisionIdentifier": "06a9ed6d",
-    "lastVerified": "2026-11-04T10:57:27.349Z"
+    "lastVerified": "2026-11-07T04:22:21.897Z"
   },
   "nitrictech-nitric": {
     "name": "nitric",
@@ -6624,9 +6624,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-05T11:45:11.170Z",
+    "lastChecked": "2026-11-07T04:22:16.869Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-05T11:45:11.170Z"
+    "lastVerified": "2026-11-07T04:22:16.869Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -6766,9 +6766,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-05T17:14:54.665Z",
+    "lastChecked": "2026-11-07T04:22:24.354Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-05T17:14:54.665Z"
+    "lastVerified": "2026-11-07T04:22:24.354Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -11109,12 +11109,12 @@
     "officialUrl": "https://github.com/cheeriojs/dom-serializer",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T22:31:56.964Z",
-    "lastVerified": "2026-11-03T22:31:56.964Z",
+    "lastChecked": "2026-11-07T04:22:23.257Z",
+    "lastVerified": "2026-11-07T04:22:23.257Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
+    "contentHash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,

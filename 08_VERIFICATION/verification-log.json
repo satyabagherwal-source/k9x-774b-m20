@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-J7ET",
-    "timestamp": "2026-11-05T03:27:39.845Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "4004b77cc40f0e3020dc4770e764b5579415f2a61b9dabf85cd8263dd7c1d747",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-JAY8",
     "timestamp": "2026-11-05T03:27:44.432Z",
     "repository": "TableProApp/TablePro",
@@ -7490,6 +7475,21 @@
     "repository": "lioensky/VCPToolBox",
     "learningId": "learn-github-lioensky-vcptoolbox",
     "contentHash": "4ea818f0d266e14d6634334413798b24968fef16d50c492db61d03cff78c69bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DCNK",
+    "timestamp": "2026-11-07T04:22:26.384Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

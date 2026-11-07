@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "1261fc46",
+    "sourceVersion": "9c682911",
     "license": "MIT",
-    "contentHash": "69dd8832ee53353f766a24dc626b3480ef713f8a54725cfbcae6f18905005140",
-    "lastHarvestedAt": "2026-11-03T22:31:58.913Z",
+    "contentHash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
+    "lastHarvestedAt": "2026-11-07T04:22:26.387Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
