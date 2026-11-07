@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-28QW",
-    "timestamp": "2026-11-05T06:58:25.352Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "b2266d564c77c1851e3a7721adcbada6b6efc8e798dbe05c831badf2fda9495d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-2DQG",
     "timestamp": "2026-11-05T06:58:31.816Z",
     "repository": "ydb-platform/ydb",
@@ -7490,6 +7475,21 @@
     "repository": "lysine-dev/okio",
     "learningId": "learn-github-lysine-dev-okio",
     "contentHash": "ff47fce6181ac4aee833384e24e3b6a792ff8d307876fc046baff21a76a9c779",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-7D9S",
+    "timestamp": "2026-11-07T20:09:34.192Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

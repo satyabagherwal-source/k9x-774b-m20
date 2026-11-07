@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:02:06.927Z",
+  "last_updated": "2026-11-07T20:09:34.132Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9877,8 +9877,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "ccd0412c",
-      "content_hash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
+      "source_version": "3c5c334e",
+      "content_hash": "fcd8924d041803d1512947a1ff52dbdae4454b724f0bbb9d8faaddaac85fcb24",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9905,6 +9905,11 @@
         {
           "number": null,
           "title": "cat): rowskey writes nothing for empty input (#5008)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "geocode): --batch 0 no longer drops rows from piped stdin (#5009)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10258,7 +10263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:40:54.307Z",
+      "verified_at": "2026-11-07T20:09:34.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `ccd0412c`  
+> **Source Version**: `3c5c334e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:40:52.614Z  
+> **Timestamp**: 2026-11-07T20:09:33.201Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:40:52.325Z  
+> **Harvest Timestamp**: 2026-11-07T20:09:31.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3819 stars
+- **Stars / Engagement**: 3820 stars
 
 ---
 
@@ -2203,19 +2203,27 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccd0412c` (2026-11-07)
-**Commit Message**: fix(cat): rowskey writes nothing for empty input (#5008)
+### Incident Patch 1: `3c5c334e` (2026-11-07)
+**Commit Message**: fix(geocode): --batch 0 no longer drops rows from piped stdin (#5009)
 
-* fix(cat): rowskey writes nothing for empty input
+* fix(geocode): --batch 0 no longer drops rows from piped stdin
 
-With no columns in any input (an empty file, or empty stdin via `-`),
-rowskey wrote a zero-field header record, which the csv writer emits as
-`""`. rows and columns write nothing in that case. Skip the header when
-there are no columns; with --group the grouping column still counts.
+With --batch 0, geocode counted rows to size the batch. For stdin that
+count opened a second reader after the main reader had already buffered
+the first 128 KiB, so it consumed the rest of the stream and the main
+reader saw EOF early. Rows past the first buffer were silently dropped
+(9,361 of 25,000 in the new test), with exit 0.
+
+For stdin, --batch 0 now reads until EOF in one batch without counting,
+as census/geoclient and applydp (#5005) already do. The batch
+preallocation is capped so usize::MAX can't be preallocated.
+
+The regression test pipes 25,000 rows (more than the read buffer) and is
+mutation-checked: without the fix it gets 9,361 rows.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5008
+* docs(changelog): geocode --batch 0 stdin fix (#5009)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2225,71 +2233,100 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Fixed
- - **`sample`: `--cluster`, `--weighted`, `--systematic` and fractional sample sizes work from stdin** ([#5003](https://github.com/dathere/qsv/pull/5003), fixes [#4999](https://github.com/dathere/qsv/issues/4999)). They returned only the header row, because they read the input twice (a row count or a second pass) and stdin can only be read once. For those methods, stdin is now copied to a temporary file first, which needs temp-directory space for the whole input. `--bernoulli`, `--stratified`, `--timeseries`, and integer sizes for the default method, `--varopt` and `--mergeable-reservoir` still stream stdin.
+@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`cat rows`/`rowskey`/`columns` read piped stdin when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). Before, `... | qsv cat rows` failed with "No data on stdin" unless you passed `-`. As with `headers`, `cat` with no input in an interactive terminal now waits for input. With an empty or closed stdin (cron, CI, `xargs`), it still fails with "No data on stdin", as in 28.0.0 ([#5007](https://github.com/dathere/qsv/pull/5007)), so a script whose file list comes up empty still gets an error.
-+- **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
+ - **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
  - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
++- **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
  - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
  - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
-```
-
-**File**: `src/cmd/cat.rs` (modified, +2/-1)
-```diff
-@@ -401,7 +401,8 @@ impl Args {
-             .writer()?;
-         let mut new_row = csv::ByteRecord::with_capacity(4096, num_columns_global);
  
--        if !self.flag_no_headers {
-+        // with no columns at all (empty inputs), a header-only record would be written as `""`
-+        if !self.flag_no_headers && num_columns_global > 0 {
-             for c in &columns_global {
-                 new_row.push_field(c);
-             }
 ```
 
-**File**: `tests/test_cat.rs` (modified, +26/-0)
+**File**: `src/cmd/geocode.rs` (modified, +10/-3)
 ```diff
-@@ -1615,3 +1615,29 @@ fn cat_empty_stdin_without_dash_errors() {
-         assert!(output.status.success(), "cat {subcmd} -: {output:?}");
-     }
+@@ -2185,12 +2185,19 @@ async fn geocode_main(args: Args) -> CliResult<()> {
+ 
+     // reuse batch buffers
+     let batchsize: usize = if args.flag_batch == 0 {
+-        std::cmp::max(1000, util::count_rows_regular(&rconfig)? as usize)
++        if rconfig.is_stdin() {
++            // counting stdin's rows would consume the stream that `rdr` reads, so read
++            // until EOF to honor "0 = all rows in one batch" (as census/geoclient do)
++            usize::MAX
++        } else {
++            std::cmp::max(1000, util::count_rows_regular(&rconfig)? as usize)
++        }
+     } else {
+         args.flag_batch
+     };
+-    let mut batch = Vec::with_capacity(batchsize);
+-    let mut batch_results = Vec::with_capacity(batchsize);
++    // capped: usize::MAX (stdin with --batch 0) can't be preallocated
++    let mut batch = Vec::with_capacity(batchsize.min(50_000));
++    let mut batch_results = Vec::with_capacity(batchsize.min(50_000));
+     // values that found no match inside --admin1, reported once at the end (issue #4687): the
+     // filter is strict, so without a count the misses would vanish into unchanged cells
+     let admin1_misses = std::sync::atomic::AtomicU64::new(0);
+```
+
+**File**: `tests/test_geocode.rs` (modified, +39/-0)
+```diff
+@@ -40,6 +40,45 @@ fn geocode_suggest() {
+     assert_eq!(got, expected);
  }
-+
+ 
 +#[test]
-+fn cat_rowskey_empty_input_writes_nothing() {
-+    // empty inputs have no columns; rowskey used to write a lone `""` header, unlike rows/columns
-+    let wrk = Workdir::new("cat_rowskey_empty_input_writes_nothing");
-+    wrk.create_from_string("empty.csv", "");
++fn geocode_suggest_batch_zero_stdin() {
++    // --batch 0 pre-counted rows with a second reader, which consumed the piped stdin past
++    // what the main reader had already buffered, so rows were silently dropped. The input
++    // has to exceed the 128 KiB read buffer to show it.
++    use std::io::Write;
 +
-+    let mut cmd = wrk.command("cat");
-+    cmd.args(["rowskey", "empty.csv"]);
-+    let output = cmd.output().unwrap();
++    const ROWS: usize = 25_000;
++    let mut input = String::from("Location\n");
++    for _ in 0..ROWS {
++        input.push_str("Boston\n");
++    }
++    assert!(input.len() > 128 * 1024);
++
++    let wrk = Workdir::new("geocode_suggest_batch_zero_stdin");
++    let mut cmd = wrk.command("geocode");
++    cmd.args(["suggest", "Location", "--batch", "0"])
++        .stdin(std::process::Stdio::piped())
++        .stdout(std::process::Stdio::piped())
++        .stderr(std::process::Stdio::piped());
++    let mut child = cmd.spawn().unwrap();
++    let mut stdin = child.stdin.take().unwrap();
++    let writer = std::thread::spawn(move || stdin.write_all(input.as_bytes()));
++    let output = child.wait_with_output().unwrap();
++    writer.join().unwrap().unwrap();
 +    assert!(output.status.success(), "{output:?}");
-+    assert!(output.stdout.is_empty(), "{output:?}");
 +
-+    let mut cmd = wrk.command("cat");
-+    cmd.args(["rowskey", "-"])
-+        .stdin(std::process::Stdio::null());
-+    let output = cmd.output().unwrap();
-+    assert!(output.status.success(), "{output:?}");
-+    assert!(output.stdout.is_empty(), "{output:?}");
-+
-+    // the grouping column is real, so its header is still written
-+    let mut cmd = wrk.command("cat");
-+    cmd.args(["rowskey", "--group", "fname", "empty.csv"]);
-+    let got: String = wrk.stdout(&mut cmd);
-+    assert_eq!(got, "file");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let mut lines = stdout.lines();
++    assert_eq!(lines.next(), Some("Location"));
++    let rows: Vec<&str> = lines.collect();
++    assert_eq!(rows.len(), ROWS);
++    assert!(
++        rows.iter().all(|r| *r == "\"(42.35843, -71.05977)\""),
++        "{:?}",
++        &rows[..3]
++    );
 +}
++
+ #[test]
+ fn geocode_suggest_select() {
+     let wrk = Workdir::new("geocode_suggest_select");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
 - **PR #5008** (2026-11-07): fix(cat): rowskey writes nothing for empty input (@jqnatividad)
 - **PR #5007** (2026-11-06): fix(cat): error on empty stdin when no input is given (@jqnatividad)
 - **PR #5006** (2026-11-06): docs(changelog): cat with empty stdin succeeds with empty output (@jqnatividad)
 - **PR #5005** (2026-11-06): fix(cat, applydp, to): read stdin consistently (@jqnatividad)
 - **PR #5004** (2026-11-06): docs(sample): stdin works for all methods that read CSV, not --sketch-in (@jqnatividad)
-- **PR #5003** (2026-11-06): fix(sample): spool stdin so --cluster, --weighted, --systematic and fractional sizes work from stdin (@jqnatividad)
 
 ---
 
@@ -2309,13 +2346,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cat): rowskey writes nothing for empty input (#5008)
+## X. geocode): --batch 0 no longer drops rows from piped stdin (#5009)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccd0412c`: cat): rowskey writes nothing for empty input (#5008). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c5c334e`: geocode): --batch 0 no longer drops rows from piped stdin (#5009). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2323,7 +2360,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
+- **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2333,4 +2370,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccd0412c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c5c334e` are properly handled with clean fallback behavior.

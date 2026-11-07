@@ -8077,3 +8077,4 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `59bf235a` | Multi-dimensional audit evidence | 2026-11-07T19:55:24.210Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `7775f73b` | Multi-dimensional audit evidence | 2026-11-07T20:02:04.867Z |
 | `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `f0e3f479` | Multi-dimensional audit evidence | 2026-11-07T20:02:07.009Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3c5c334e` | Multi-dimensional audit evidence | 2026-11-07T20:09:34.199Z |
