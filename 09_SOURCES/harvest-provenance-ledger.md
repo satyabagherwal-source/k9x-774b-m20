@@ -7995,3 +7995,4 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `56968892` | Multi-dimensional audit evidence | 2026-11-07T03:56:15.819Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `e2e0abd3` | Multi-dimensional audit evidence | 2026-11-07T03:56:18.599Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d4a23e33` | Multi-dimensional audit evidence | 2026-11-07T03:56:24.939Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `7bf0fc95` | Multi-dimensional audit evidence | 2026-11-07T04:03:15.060Z |

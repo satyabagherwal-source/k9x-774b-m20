@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:56:27.552Z",
-    "lastVerified": "2026-11-07T03:56:27.552Z",
+    "lastChecked": "2026-11-07T04:03:20.518Z",
+    "lastVerified": "2026-11-07T04:03:20.518Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-06T21:45:02.992Z",
+    "lastChecked": "2026-11-07T04:03:15.554Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-06T21:45:02.992Z"
+    "lastVerified": "2026-11-07T04:03:15.554Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -451,8 +451,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T03:29:41.982Z",
-    "lastVerified": "2026-11-07T03:29:41.982Z",
+    "lastChecked": "2026-11-07T04:03:20.508Z",
+    "lastVerified": "2026-11-07T04:03:20.508Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3326,9 +3326,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-05T15:30:13.458Z",
+    "lastChecked": "2026-11-07T04:03:18.041Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-05T15:30:13.458Z"
+    "lastVerified": "2026-11-07T04:03:18.041Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -4748,9 +4748,9 @@
   "fangwei716-30-days-of-react-native": {
     "name": "30-days-of-react-native",
     "officialUrl": "https://github.com/fangwei716/30-days-of-react-native",
-    "lastChecked": "2026-11-04T10:37:32.832Z",
+    "lastChecked": "2026-11-07T04:03:10.490Z",
     "revisionIdentifier": "66af6134",
-    "lastVerified": "2026-11-04T10:37:32.832Z"
+    "lastVerified": "2026-11-07T04:03:10.490Z"
   },
   "gocrane-crane": {
     "name": "crane",
@@ -6494,9 +6494,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-05T11:30:40.995Z",
+    "lastChecked": "2026-11-07T04:03:05.507Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-05T11:30:40.996Z"
+    "lastVerified": "2026-11-07T04:03:05.507Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -6656,9 +6656,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-05T16:59:47.156Z",
+    "lastChecked": "2026-11-07T04:03:13.010Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-05T16:59:47.156Z"
+    "lastVerified": "2026-11-07T04:03:13.010Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -11042,14 +11042,14 @@
     "officialUrl": "https://github.com/inikulin/parse5",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-03T22:15:16.172Z",
-    "lastVerified": "2026-11-03T22:15:16.172Z",
+    "lastChecked": "2026-11-07T04:03:12.745Z",
+    "lastVerified": "2026-11-07T04:03:12.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-inikulin-parse5",
-    "contentHash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
+    "contentHash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

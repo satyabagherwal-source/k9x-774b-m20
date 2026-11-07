@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T03:56:24.952Z",
-  "total_cycles_completed": 7951,
-  "total_learnings_persisted": 7951,
-  "total_rules_promoted": 7603,
+  "last_updated": "2026-11-07T04:03:15.065Z",
+  "total_cycles_completed": 7952,
+  "total_learnings_persisted": 7952,
+  "total_rules_promoted": 7604,
   "history": [
-    {
-      "timestamp": "2026-11-05T19:52:52.896Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T20:00:12.121Z",
       "repository": "TypeWhisper/typewhisper-mac",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T03:56:24.952Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T04:03:15.065Z",
+      "repository": "inikulin/parse5",
+      "learningId": "learn-github-inikulin-parse5",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

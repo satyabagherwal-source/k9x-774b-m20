@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T03:56:24.846Z",
+  "last_updated": "2026-11-07T04:03:14.958Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -77712,11 +77712,16 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "30da29ba",
-      "content_hash": "e11dcbcb0b1e90620303102cc0ac74cfdf327e5b16de255900653952bfdf19b3",
+      "source_version": "7bf0fc95",
+      "content_hash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "tokenizer): bound the duplicate-attribute check for wide tags (#1922)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2872,
           "title": "parser): match only HTML elements in the \"any other end tag\" step",
@@ -77758,7 +77763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:15:17.858Z",
+      "verified_at": "2026-11-07T04:03:14.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
