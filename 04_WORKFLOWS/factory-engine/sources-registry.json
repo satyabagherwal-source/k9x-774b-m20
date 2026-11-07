@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T02:24:43.665Z",
-    "lastVerified": "2026-11-07T02:24:43.665Z",
+    "lastChecked": "2026-11-07T02:32:04.423Z",
+    "lastVerified": "2026-11-07T02:32:04.423Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T23:40:15.138Z",
-    "lastVerified": "2026-11-06T23:40:15.138Z",
+    "lastChecked": "2026-11-07T02:32:04.410Z",
+    "lastVerified": "2026-11-07T02:32:04.410Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1767,12 +1767,12 @@
     "lastVerified": "2026-11-05T22:25:05.921Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T19:23:53.412Z",
-    "lastVerified": "2026-11-06T19:23:53.412Z",
+    "lastChecked": "2026-11-07T02:31:59.470Z",
+    "lastVerified": "2026-11-07T02:31:59.470Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1781,7 +1781,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8f9133b3"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2643,12 +2644,12 @@
     "revisionIdentifier": "d1774d10"
   },
   "infiniflow-infinity": {
-    "name": "infiniflow/infinity",
+    "name": "infinity",
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-05T14:02:41.794Z",
-    "lastVerified": "2026-11-05T14:02:41.794Z",
+    "lastChecked": "2026-11-07T02:32:01.975Z",
+    "lastVerified": "2026-11-07T02:32:01.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
@@ -2657,7 +2658,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2fffa346"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -4086,9 +4088,9 @@
   "founded-labs-react-native-reusables": {
     "name": "react-native-reusables",
     "officialUrl": "https://github.com/founded-labs/react-native-reusables",
-    "lastChecked": "2026-11-04T09:04:18.869Z",
+    "lastChecked": "2026-11-07T02:31:54.429Z",
     "revisionIdentifier": "385834c2",
-    "lastVerified": "2026-11-04T09:04:18.869Z"
+    "lastVerified": "2026-11-07T02:31:54.429Z"
   },
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
@@ -5847,14 +5849,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T10:08:54.834Z",
-    "lastVerified": "2026-11-05T10:08:54.834Z",
+    "lastChecked": "2026-11-07T02:31:54.024Z",
+    "lastVerified": "2026-11-07T02:31:54.024Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "593a6042e65599a6735f3f730a02926ee0410c5b484c5c950a5b15ff75ca0ad7",
+    "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 4,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5954,8 +5956,8 @@
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T15:06:03.083Z",
-    "lastVerified": "2026-11-05T15:06:03.083Z",
+    "lastChecked": "2026-11-07T02:31:56.899Z",
+    "lastVerified": "2026-11-07T02:31:56.899Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -10825,9 +10827,9 @@
   "jina-ai-reader": {
     "name": "reader",
     "officialUrl": "https://github.com/jina-ai/reader",
-    "lastChecked": "2026-11-03T20:49:26.651Z",
+    "lastChecked": "2026-11-07T02:31:51.887Z",
     "revisionIdentifier": "1574bfd3",
-    "lastVerified": "2026-11-03T20:49:26.651Z"
+    "lastVerified": "2026-11-07T02:31:51.887Z"
   },
   "rechsteiner-parchment": {
     "name": "Parchment",

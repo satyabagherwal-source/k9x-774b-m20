@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:24:40.967Z",
+  "last_updated": "2026-11-07T02:31:59.133Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45610,11 +45610,16 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "0b7efd36",
-      "content_hash": "593a6042e65599a6735f3f730a02926ee0410c5b484c5c950a5b15ff75ca0ad7",
+      "source_version": "8bf09329",
+      "content_hash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add mqtt client and service framework guide",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2133,
           "title": "Finish runtime shutdown even if task cleanup panics, closing remote admission an",
@@ -45691,7 +45696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:09:00.978Z",
+      "verified_at": "2026-11-07T02:31:59.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

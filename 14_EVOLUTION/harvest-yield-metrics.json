@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T02:24:41.077Z",
-  "total_cycles_completed": 7929,
-  "total_learnings_persisted": 7929,
-  "total_rules_promoted": 7579,
+  "last_updated": "2026-11-07T02:31:59.235Z",
+  "total_cycles_completed": 7930,
+  "total_learnings_persisted": 7930,
+  "total_rules_promoted": 7580,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:38:42.275Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T18:45:36.250Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-07T02:24:41.077Z",
       "repository": "scrapy-plugins/scrapy-zyte-api",
       "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:31:59.235Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

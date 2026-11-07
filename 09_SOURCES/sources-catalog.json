@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "0b7efd36",
+    "sourceVersion": "8bf09329",
     "license": "Apache-2.0",
-    "contentHash": "593a6042e65599a6735f3f730a02926ee0410c5b484c5c950a5b15ff75ca0ad7",
-    "lastHarvestedAt": "2026-11-05T10:09:01.088Z",
+    "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
+    "lastHarvestedAt": "2026-11-07T02:31:59.228Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

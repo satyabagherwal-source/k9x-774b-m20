@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-TDY2",
-    "timestamp": "2026-11-05T02:11:36.026Z",
-    "repository": "MochiDiffusion/MochiDiffusion",
-    "learningId": "learn-github-mochidiffusion-mochidiffusion",
-    "contentHash": "047da123ba539fd93421afad0fb422f6ffa770f25d7ddc56fdb901eb4a781e23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-TFQV",
     "timestamp": "2026-11-05T02:11:38.359Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "scrapy-plugins/scrapy-zyte-api",
     "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
     "contentHash": "a4e4dd2eb5e1e85f6bd7597c6495be6e16e0f270d9b4cd2aa9a35e288fd1dc85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-FB3S",
+    "timestamp": "2026-11-07T02:31:59.224Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
