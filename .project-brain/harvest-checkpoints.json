@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:23:08.291Z",
+  "last_updated": "2026-11-07T20:42:33.547Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
-      "verified_at": "2026-11-07T18:42:36.200Z",
+      "content_hash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
+      "verified_at": "2026-11-07T20:42:33.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:42:36.200Z"
+      "last_updated": "2026-11-07T20:42:33.546Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -2991,14 +2991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rollup-rollup",
-      "content_hash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
-      "verified_at": "2026-11-04T02:39:43.641Z",
+      "content_hash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
+      "verified_at": "2026-11-07T20:42:14.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:39:43.641Z"
+      "last_updated": "2026-11-07T20:42:14.733Z"
     },
     "rmax/scrapy-redis": {
       "repository": "rmax/scrapy-redis",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
-      "verified_at": "2026-11-05T22:54:58.886Z",
+      "content_hash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
+      "verified_at": "2026-11-07T20:42:11.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:54:58.886Z"
+      "last_updated": "2026-11-07T20:42:11.538Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
-      "verified_at": "2026-11-05T16:06:05.799Z",
+      "content_hash": "4c179bcd562aba48e322b4675252673d73746bf89f43bef633c519fdb1a30565",
+      "verified_at": "2026-11-07T20:42:08.040Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T16:06:05.799Z"
+      "last_updated": "2026-11-07T20:42:08.040Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

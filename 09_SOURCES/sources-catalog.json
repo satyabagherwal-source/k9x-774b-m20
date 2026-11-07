@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "27fbdd44",
+    "sourceVersion": "73fae6e8",
     "license": "NOASSERTION",
-    "contentHash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
-    "lastHarvestedAt": "2026-11-04T02:39:43.635Z",
+    "contentHash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
+    "lastHarvestedAt": "2026-11-07T20:42:14.712Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "bfcd87d1",
+    "sourceVersion": "6f6a1545",
     "license": "Apache-2.0",
-    "contentHash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
-    "lastHarvestedAt": "2026-11-05T22:54:58.872Z",
+    "contentHash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
+    "lastHarvestedAt": "2026-11-07T20:42:11.517Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "800f4c49",
+    "sourceVersion": "3f12f64e",
     "license": "Apache-2.0",
-    "contentHash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
-    "lastHarvestedAt": "2026-11-07T05:37:07.777Z",
+    "contentHash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
+    "lastHarvestedAt": "2026-11-07T20:42:33.528Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "7d1939dc",
+    "sourceVersion": "d1896a07",
     "license": "Apache-2.0",
-    "contentHash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
-    "lastHarvestedAt": "2026-11-05T16:06:05.787Z",
+    "contentHash": "4c179bcd562aba48e322b4675252673d73746bf89f43bef633c519fdb1a30565",
+    "lastHarvestedAt": "2026-11-07T20:42:08.020Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

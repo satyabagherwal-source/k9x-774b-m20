@@ -8076,3 +8076,7 @@
 | `CYCLE-20261107-OMWQ` | `2026-11-07T20:22:59.835Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7804969a...`) |
 | `CYCLE-20261107-OP9Q` | `2026-11-07T20:23:02.894Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e606a51d...`) |
 | `CYCLE-20261107-OTF8` | `2026-11-07T20:23:08.276Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`14329acf...`) |
+| `CYCLE-20261107-D8UO` | `2026-11-07T20:42:08.016Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4c179bcd...`) |
+| `CYCLE-20261107-DBJT` | `2026-11-07T20:42:11.513Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`0f8e3631...`) |
+| `CYCLE-20261107-DE0K` | `2026-11-07T20:42:14.708Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`342e8014...`) |
+| `CYCLE-20261107-DSJ8` | `2026-11-07T20:42:33.524Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`75c430c1...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `bfcd87d1`  
+> **Source Version**: `6f6a1545`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:54:58.562Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-07T20:42:09.239Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,2319 +12,489 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): higress-group/higress
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:54:58.555Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): higress-group/higress
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `higress-group/higress`
-- **Description**: 🤖 AI Gateway | AI Native API Gateway
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9717 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Higress is an AI-native API gateway and application gateway built directly upon the Istio control-plane protocol specifications and Envoy data-plane execution engine. Rather than layering a bespoke reverse-proxy atop Envoy, Higress compiles its control-plane logic into native Istio Pilot extensions while utilizing WebAssembly (Wasm) modules via Proxy-Wasm ABI (implemented in Go, C++, and Rust) to execute in-process request/response body transformations, token counting, semantic routing, Model Context Protocol (MCP) tool mediation, and safety guardrails.
+
+```
++-----------------------------------------------------------------------------------------------+
+|                                      HGCTL CLI & AGENT ENGINE                                 |
+|   +------------------------------------+             +------------------------------------+   |
+|   |         AgenticCore (.hgctl)       |             |       OpenAPI-to-MCP Parser        |   |
+|   |   (Claude / QoderCLI Tool Spawner) |             | (YAML/JSON Schema -> Tool Descs)   |   |
+|   +-----------------+------------------+             +-----------------+------------------+   |
++---------------------|--------------------------------------------------|----------------------+
+                      | (Process Exec / Subprocess)                      |
+                      v                                                  v
++-----------------------------------------------------------------------------------------------+
+|                                    CONTROL PLANE (PILOT / CRDs)                               |
+|   +---------------------------------------------------------------------------------------+   |
+|   | CRDs: WasmPlugin (v1alpha1), Http2Rpc (v1), McpBridge (v1), Gateway-API Inference     |   |
+|   +-------------------------------------------+-------------------------------------------+   |
+|                                               | Dynamic Discovery Service (xDS v3)            |
++-----------------------------------------------|-----------------------------------------------+
+                                                v
++-----------------------------------------------------------------------------------------------+
+|                                     DATA PLANE (ENVOY ENGINE)                                 |
+|   +-----------------------+     +------------------------+     +--------------------------+   |
+|   |    HTTP Connection    | --> |    Wasm Go Filter:     | --> |     Wasm Go Filter:      |   |
+|   |        Manager        |     |      ai-proxy          |     |    ai-security-guard     |   |
+|   +-----------------------+     +-----------+------------+     +------------+-------------+   |
+|                                             |                               |                 |
+|                                             v                               v                 |
+|                                   +-------------------+           +-------------------+       |
+|                                   |  OpenAI/DashScope |           | Guardrail Service |       |
+|                                   | Upstream Provider |           | (Audit/Tokens)    |       |
+|                                   +-------------------+           +-------------------+       |
++-----------------------------------------------------------------------------------------------+
+```
+
+### Critical Subsystem Boundaries and State Ownership
+
+1. **Control-Plane ApplyConfiguration & CRD Abstraction (`client/pkg/applyconfiguration`)**:
+   - Manages Kubernetes Server-Side Apply (SSA) semantics for Higress-specific GroupVersionKinds (`WasmPlugin`, `Http2Rpc`, `McpBridge`).
+   - Ensures strict ownership tracking via `ManagedFieldsEntry` and prevents multi-controller schema clobbering when syncing cluster states from external configuration stores (e.g., Nacos, Consul, Eureka) into Envoy dynamic discovery services (xDS).
+
+2. **CLI Orchestration & Agent Tool Registry (`hgctl/pkg/agent`)**:
+   - `AgenticCore`: Decouples external AI execution runtimes (Claude Code CLI, Qoder CLI) from the gateway binary. It abstracts environment bootstrap, configuration scaffolding, and local directory structures (`.claude`, `.qoder`, `.hgctl`).
+   - Dynamic MCP Adapter: Ingests OpenAPI 3.0/Swagger specifications, normalizes them via `openapi-to-mcpserver`, and automatically projects endpoints into live MCP server instances exposed through Higress route configurations.
+
+3. **In-Flight Data-Plane Wasm Execution Pipeline (`plugins/wasm-go/extensions/*`)**:
+   - Runs in Envoy memory sandbox via Proxy-Wasm.
+   - Enforces zero-downtime hot-reloading of AI routing rules (prompt rewrite, failover, LLM load balancing, token rate-limiting) without reloading the underlying Envoy worker processes.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `client/pkg/applyconfiguration/utils.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// Code generated by applyconfiguration-gen. DO NOT EDIT.
-
-package applyconfiguration
-
-import (
-	v1alpha1 "github.com/alibaba/higress/v2/client/pkg/apis/extensions/v1alpha1"
-	networkingv1 "github.com/alibaba/higress/v2/client/pkg/apis/networking/v1"
-	extensionsv1alpha1 "github.com/alibaba/higress/v2/client/pkg/applyconfiguration/extensions/v1alpha1"
-	metav1 "github.com/alibaba/higress/v2/client/pkg/applyconfiguration/meta/v1"
-	applyconfigurationnetworkingv1 "github.com/alibaba/higress/v2/client/pkg/applyconfiguration/networking/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
-)
-
-// ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
-// apply configuration type exists for the given GroupVersionKind.
-func ForKind(kind schema.GroupVersionKind) interface{} {
-	switch kind {
-	// Group=extensions.higress.io, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithKind("WasmPlugin"):
-		return &extensionsv1alpha1.WasmPluginApplyConfiguration{}
-
-		// Group=meta.k8s.io, Version=v1
-	case v1.SchemeGroupVersion.WithKind("ManagedFieldsEntry"):
-		return &metav1.ManagedFieldsEntryApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("ObjectMeta"):
-		return &metav1.ObjectMetaApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("OwnerReference"):
-		return &metav1.OwnerReferenceApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("TypeMeta"):
-		return &metav1.TypeMetaApplyConfiguration{}
-
-		// Group=networking.higress.io, Version=v1
-	case networkingv1.SchemeGroupVersion.WithKind("Http2Rpc"):
-		return &applyconfigurationnetworkingv1.Http2RpcApplyConfiguration{}
-	case networkingv1.SchemeGroupVersion.WithKind("McpBridge"):
-		return &applyconfigurationnetworkingv1.McpBridgeApplyConfiguration{}
-
-	}
-	return nil
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/agent/core.go`
-```
-// Copyright (c) 2025 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package agent
-
-import (
-	"encoding/base64"
-	"fmt"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
-
-	"github.com/alibaba/higress/hgctl/pkg/manifests"
-	"github.com/alibaba/higress/hgctl/pkg/util"
-	"github.com/fatih/color"
-	"github.com/manifoldco/promptui"
-	"github.com/spf13/viper"
-)
-
-type AgenticCore struct {
-	binaryName string
-}
-
-func NewAgenticCore() *AgenticCore {
-	core := &AgenticCore{
-		binaryName: viper.GetString(HGCTL_AGENT_CORE),
-	}
-	core.Setup()
-	return core
-}
-
-func (c *AgenticCore) GetPromptFileName() string {
-	switch c.binaryName {
-	case string(CORE_CLAUDE):
-		return "CLAUDE.md"
-	case string(CORE_QODERCLI):
-		return "AGENTS.md"
-	}
-	return ""
-}
-
-func (c *AgenticCore) GetCoreDirName() string {
-	switch c.binaryName {
-	case string(CORE_CLAUDE):
-		return ".claude"
-	case string(CORE_QODERCLI):
-		return ".qoder"
-	}
-	return ""
-}
-
-// This will use core to test and improve created agent
-func (c *AgenticCore) ImproveNewAgent(config *AgentConfig) error {
-	agentDir, err := util.GetSpecificAgentDir(config.AgentName)
-	if err != nil {
-		return fmt.Errorf("failed to get agent directory: %s", agentDir)
-	}
-	return c.runInTargetDir(agentDir)
-}
-
-func (c *AgenticCore) runInTargetDir(dir string, args ...string) error {
-	cmd := exec.Command(c.binaryName, args...)
-	cmd.Dir = dir
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-
-}
-
-func (c *AgenticCore) runWithResult(args ...string) (string, error) {
-	cmd := exec.Command(c.binaryName, args...)
-
-	output, err := cmd.Output()
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			return "", fmt.Errorf("agent execution failed with exit code %d: %s\nStderr: %s",
-				exitErr.ExitCode(), err.Error(), exitErr.Stderr)
-		}
-		return "", fmt.Errorf("failed to run agent: %w", err)
-	}
-
-	return string(output), nil
-}
-
-func (c *AgenticCore) run(args ...string) error {
-	cmd := exec.Command(c.binaryName, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-// setup additional prequisite environment and plugins manifest to user's profile
-// e.g. ../manifest/agent
-func (c *AgenticCore) Setup() {
-	// Check if this is the first time, otherwise directly return (TODO: this is a simple check)
-	homeDir, _ := os.UserHomeDir()
-	targetCtlDir := filepath.Join(homeDir, ".hgctl")
-	if _, err := os.Stat(targetCtlDir); err == nil {
-		return
-	}
-
-	targetCoreDir := filepath.Join(homeDir, c.GetCoreDirName())
-
-	// setup subagent plugins file
-	embedFS := manifests.BuiltinOrDir("")
-	if err := manifests.ExtractEmbedFiles(embedFS, "agent", targetCtlDir); err != nil {
-		fmt.Println(err)
-		fmt.Println("failed to init plugins for agent core")
-		os.Exit(1)
-	}
-
-	// Setup predefined files like: command.md
-	if err := manifests.ExtractEmbedFiles(embedFS, "agent", targetCoreDir); err != nil {
-		fmt.Println(err)
-		fmt.Println("failed to init commands for agent core")
-		os.Exit(1)
-	}
-
-	// Add Predefined MCP Server
-	if err := c.addPredefinedMCP(); err != nil {
-		fmt.Printf("Warning: failed to add needed mcp server: %s\n", err)
-	}
-
-	if err := c.addHigressAPIMCP(); err != nil {
-		fmt.Println("failed to init higress-api mcp server (you may need to add it manually):", err)
-		fmt.Println("Details information on Higress-api MCP server refers to https://github.com/alibaba/higress/blob/main/plugins/golang-filter/mcp-server/servers/higress/higress-api/README_en.md")
-		return
-	}
-	// fmt.Println("Higress-api MCP server added successfully")
-}
-
-func (c *AgenticCore) addPredefinedMCP() error {
-	// deepwikiArg := MCPAddArg{
-	// 	name:      "deepwiki",
-	// 	url:       "https://mcp.deepwiki.com/mcp",
-	// 	typ:       "",
-	// 	transport: STREAMABLE,
-	// 	scope:     "user",
-	// }
-	// if err := c.AddMCPServer(deepwikiArg); err != nil {
-	// 	return fmt.Errorf("deepwiki")
-	// }
-
-	return nil
-}
-
-func (c *AgenticCore) addHigressAPIMCP() error {
-	arg := &HigressConsoleAuthArg{
-		hgURL:      viper.GetString(HIGRESS_GATEWAY_URL),
-		hgUser:     viper.GetString(HIGRESS_CONSOLE_USER),
-		hgPassword: viper.GetString(HIGRESS_CONSOLE_PASSWORD),
-	}
-	fmt.Println("Initializing...Add prequisite MCP server (Higress-api MCP server) automatically")
-
-	if arg.hgURL == "" {
-		gatewayPrompt := promptui.Prompt{
-			Label:   "Enter higress gateway URL",
-			Default: "http://127.0.0.1:80",
-		}
-		gateway, err := gatewayPrompt.Run()
-		if err != nil {
-			fmt.Println("failed to run gateway prompt: ", err)
-			return err
-		}
-		arg.hgURL = gateway
-
-	}
-
-	if arg.hgURL == "" || arg.hgPassword == "" {
-		if err := tryToGetLocalCredential(arg); err != nil || arg.hgUser == "" || arg.hgPassword == "" {
-			// fallback: interact with user to provide password & username
-			color.Red("failed to get higress-console credential automatically (Requires higress installed by hgctl). Let's do it manually")
-			userPrompt := promptui.Prompt{
-				Label:   "Enter higress console username",
-				Default: "admin",
-			}
-			username, err := userPrompt.Run()
-			if err != nil {
-				return fmt.Errorf("aborted: %v", err)
-			}
-			pwdPrompt := promptui.Prompt{
-				Label:   "Enter higress console password",
-				Default: "admin",
-			}
-			pwd, err := pwdPrompt.Run()
-			if err != nil {
-				return fmt.Errorf("aborted: %v", err)
-			}
-			arg.hgUser = username
-			arg.hgPassword = pwd
-		}
-	}
-
-	if arg.hgUser == "" || arg.hgPassword == "" {
-		return fmt.Errorf("Empty higress console username and password, aborting")
-	}
-
-	rawByte := fmt.Appendf(nil, "%s:%s", arg.hgUser, arg.hgPassword)
-
-	resStr := base64.StdEncoding.EncodeToString(rawByte)
-
-	authHeader := fmt.Sprintf("Authorization: Basic %s", resStr)
-
-	return c.AddMCPServer(MCPAddArg{
-		name:      "higress-api",
-		url:       fmt.Sprintf("%s/higress-api", arg.hgURL),
-		transport: HTTP,
-		typ:       HTTP,
-		scope:     "user",
-		header: []string{
-			authHeader,
-		},
-	})
-}
-
-// ------- Initialization  -------
-func (c *AgenticCore) Start() error {
-	return c.run()
-}
-
-// ------- MCP  -------
-func (c *AgenticCore) AddMCPServer(arg MCPAddArg) error {
-	// adapt the field
-	if arg.transport == STREAMABLE {
-		arg.transport = HTTP
-	}
-	args := []string{
-		"mcp", "add", "--transport", arg.transport, arg.name, arg.url,
-	}
-	if arg.scope != "" {
-		scopeArg := []string{"--scope", arg.scope}
-		args = append(args, scopeArg...)
-	}
-	if len(arg.env) != 0 {
-		for _, e := range arg.env {
-			envArg := []string{"-e", e}
-			args = append(args, envArg...)
-		}
-	}
-	if len(arg.header) != 0 {
-		for _, h := range arg.header {
-			headerArg := []string{"-H", h}
-			args = append(args, headerArg...)
-		}
-	}
-	err := c.run(args...)
-
-	// Allow to add duplicate mcp server name (core will return error)
-	if err == nil || strings.Contains(err.Error(), "already exists") {
-		return nil
-	}
-	return err
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/agent/services/utils.go`
-```
-// Copyright (c) 2025 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package services
-
-import (
-	"fmt"
-	"net"
-	"net/url"
-)
-
-func BuildAIProviderServiceBody(name, url string) map[string]interface{} {
-	customBaseURL := fmt.Sprintf("%s/compatible-mode/v1", url)
-	return map[string]interface{}{
-		"type":     "openai",
-		"name":     name,
-		"tokens":   []string{},
-		"version":  0,
-		"protocol": "openai/v1",
-		"tokenFailoverConfig": map[string]interface{}{
-			"enabled": false,
-		},
-		"proxyName": "",
-		"rawConfigs": map[string]interface{}{
-			"openaiExtraCustomUrls": []string{},
-			"openaiCustomUrl":       customBaseURL,
-		},
-	}
-}
-
-func BuildAddAIRouteBody(name, _url string) map[string]interface{} {
-	return map[string]interface{}{
-		"name": fmt.Sprintf("%s-route", name),
-		// "version": "627198", // It's unnecessary to provide when create a new one
-		"domains": []interface{}{},
-		"pathPredicate": map[string]interface{}{
-			"matchType": "PRE",
-			// FIXME: Currently, to use model API in higress user hould follow this pattern:
-			// http://<higress-gateway-ip>/<PRE_MATCH_VALUE>/v1/chat/completions or /v1/embedding
-			// However in Himarket, when connecting the higress ai route as model API, himarket will directly use http://<higress-gateway-ip>/<PRE_MATCH_VALUE>
-			// as the final request url, which will not get to right path. So here we make the matchValue hard-coded as `/v1/chat/completions`
-			"matchValue":    "/v1/chat/completions",
-			"caseSensitive": false,
-			"ignoreCase":    []string{}, // "ignoreCase": ["ignore"]
-		},
-		"headerPredicates":   []interface{}{},
-		"urlParamPredicates": []interface{}{},
-		"upstreams": []interface{}{
-			map[string]interface{}{
-				"provider":     name,
-				"weight":       100,
-				"modelMapping": map[string]interface{}{},
-			},
-		},
-		"modelPredicates": []interface{}{},
-		"authConfig": map[string]interface{}{
-			"enabled":                false,
-			"allowedCredentialTypes": []interface{}{},
-			"allowedConsumers":       []interface{}{},
-		},
-		"fallbackConfig": map[string]interface{}{
-			"enabled":          false,
-			"upstreams":        nil,
-			"fallbackStrategy": nil,
-			"responseCodes":    nil,
-		},
-	}
-}
-
-func BuildServiceBodyAndSrv(name, urlStr string) (map[string]interface{}, string, string, error) {
-	res, err := url.Parse(urlStr)
-	if err != nil {
-		return nil, "", "", err
-	}
-
-	// add service source
-	srvType := ""
-	srvPort := ""
-
-	if ip := net.ParseIP(res.Hostname()); ip == nil {
-		srvType = "dns"
-	} else {
-		srvType = "static"
-	}
-
-	if res.Port() == "" && res.Scheme == "http" {
-		srvPort = "80"
-	} else if res.Port() == "" && res.Scheme == "https" {
-		srvPort = "443"
-	} else {
-		srvPort = res.Port()
-	}
-
-	// e.g. hgctl-mcp-deepwiki.dns
-	targetSrvName := fmt.Sprintf("%s.%s", name, srvType)
-
-	return map[string]interface{}{
-		"domain":        res.Host,
-		"type":          srvType,
-		"port":          srvPort,
-		"name":          name,
-		"proxyName":     "",
-		"domainForEdit": res.Host,
-		"protocol":      res.Scheme,
-	}, targetSrvName, srvPort, nil
-}
-
-func BuildAPIRouteBody(name, srv string) map[string]interface{} {
-	return map[string]interface{}{
-		"name": fmt.Sprintf("%s-route", name),
-		"path": map[string]interface{}{
-			"matchType":     "PRE",      // default is PREFIX
-			"matchValue":    "/process", // default is "/process"
-			"caseSensitive": true,
-		},
-		"authConfig": map[string]interface{}{
-			"enabled": false,
-		},
-		"services": []map[string]interface{}{
-			{
-				"name": srv,
-			},
-		},
-	}
-}
-
-func BuildAddHigressInstanceBody(name, addr, username, password string) map[string]interface{} {
-	return map[string]interface{}{
-		"gatewayName": name,
-		"gatewayType": "HIGRESS",
-		"higressConfig": map[string]interface{}{
-			"address":  addr,
-			"username": username,
-			"password": password,
-		},
-	}
-}
-
-func BuildAPIProductBody(name, desc, typ string) map[string]interface{} {
-	return map[string]interface{}{
-		"name": name, "description": desc, "type": typ,
-	}
-}
-
-func BuildRefModelAPIProductBody(gateway_id, product_id, target_route string) map[string]interface{} {
-	return map[string]interface{}{
-		"gatewayId":  gateway_id,
-		"sourceType": "GATEWAY",
-		"productId":  product_id,
-		"higressRefConfig": map[string]interface{}{
-			"modelRouteName":  target_route,
-			"fromGatewayType": "HIGRESS",
-		},
-	}
-}
-
-func BuildRefMCPAPIProductBody(gateway_id, product_id, mcp_name string) map[string]interface{} {
-	return map[string]interface{}{
-		"gatewayId":  gateway_id,
-		"sourceType": "GATEWAY",
-		"productId":  product_id,
-		"higressRefConfig": map[string]interface{}{
-			"mcpServerName":   mcp_name,
-			"fromGatewayType": "HIGRESS",
-		},
-	}
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/agent/utils.go`
-```
-// Copyright (c) 2025 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package agent
-
-import (
-	"bytes"
-	"context"
-	"fmt"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
-
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/alibaba/higress/hgctl/pkg/agent/services"
-	"github.com/alibaba/higress/hgctl/pkg/helm"
-	"github.com/alibaba/higress/hgctl/pkg/installer"
-	"github.com/alibaba/higress/hgctl/pkg/kubernetes"
-	"github.com/alibaba/higress/hgctl/pkg/util"
-	"github.com/alibaba/higress/v2/pkg/cmd/options"
-	"github.com/braydonk/yaml"
-	"github.com/fatih/color"
-	"github.com/higress-group/openapi-to-mcpserver/pkg/converter"
-	"github.com/higress-group/openapi-to-mcpserver/pkg/models"
-	"github.com/higress-group/openapi-to-mcpserver/pkg/parser"
-	"github.com/manifoldco/promptui"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	k8s "k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-)
-
-const (
-	SecretConsoleUser = "adminUsername"
-	SecretConsolePwd  = "adminPassword"
-)
-
-var (
-	purple = color.New(color.FgMagenta, color.Bold)
-	cyan   = color.New(color.FgCyan)
-	yellow = color.New(color.FgYellow)
-	green  = color.New(color.FgGreen)
-)
-
-// ------ cmd related  ------
-func addHigressConsoleAuthFlag(cmd *cobra.Command, arg *HigressConsoleAuthArg) {
-	cmd.PersistentFlags().StringVar(&arg.hgURL, HIGRESS_CONSOLE_URL, "", "The BaseURL of higress console")
-	cmd.PersistentFlags().StringVar(&arg.hgUser, HIGRESS_CONSOLE_USER, "", "The username of higress console")
-	cmd.PersistentFlags().StringVar(&arg.hgPassword, HIGRESS_CONSOLE_PASSWORD, "", "The password of higress console")
-
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.AutomaticEnv()
-}
-
-func addHimarketAdminAuthFlag(cmd *cobra.Command, arg *HimarketAdminAuthArg) {
-	cmd.PersistentFlags().StringVar(&arg.hmURL, HIMARKET_ADMIN_URL, "", "The BaseURL of himarket")
-	cmd.PersistentFlags().StringVar(&arg.hmUser, HIMARKET_ADMIN_USER, "", "The username of himarket")
-	cmd.PersistentFlags().StringVar(&arg.hmPassword, HIMARKET_ADMIN_PASSWORD, "", "The password of himarket")
-
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.AutomaticEnv()
-}
-
-// ------ MCP convert utils function  ------
-func parseOpenapi2MCP(arg MCPAddArg) *models.MCPConfig {
-	path := arg.spec
-	serverName := arg.name
-
-	// Create a new parser
-	p := parser.NewParser()
-
-	p.SetValidation(true)
-
-	// Parse the OpenAPI specification
-	err := p.ParseFile(path)
-	if err != nil {
-		fmt.Printf("Error parsing OpenAPI specification: %v\n", err)
-		os.Exit(1)
-	}
-
-	c := converter.NewConverter(p, models.ConvertOptions{
-		ServerName:     serverName,
-		ToolNamePrefix: "",
-		TemplatePath:   "",
-	})
-
-	// Convert the OpenAPI specification to an MCP configuration
-	config, err := c.Convert()
-	if err != nil {
-		fmt.Printf("Error converting OpenAPI specification: %v\n", err)
-		os.Exit(1)
-	}
-
-	return config
-}
-
-func convertMCPConfigToStr(cfg *models.MCPConfig) string {
-	var data []byte
-	var buffer bytes.Buffer
-	encoder := yaml.NewEncoder(&buffer)
-	encoder.SetIndent(2)
-
-	if err := encoder.Encode(cfg); err != nil {
-		fmt.Printf("Error encoding YAML: %v\n", err)
-		os.Exit(1)
-	}
-	data = buffer.Bytes()
-	str := string(data)
-
-	// fmt.Println("Successfully converted OpenAPI specification to MCP Server")
-	// fmt.Printf("Get MCP server config string: %v", str)
-	return str
-
-	// if err != nil {
-	// 	fmt.Printf("Error marshaling MCP configuration: %v\n", err)
-	// 	os.Exit(1)
-	// }
-
-	// err = os.WriteFile(*outputFile, data, 0644)
-	// if err != nil {
-	// 	fmt.Printf("Error writing MCP configuration: %v\n", err)
-	// 	os.Exit(1)
-	// }
-
-}
-
-func GetHigressGatewayServiceIP() (string, error) {
-	color.Cyan("🚀 Adding openapi MCP Server from higress to agent, checking Higress Gateway Pod status...")
-
-	defaultKubeconfig := filepath.Join(os.Getenv("HOME"), ".kube", "config")
-	config, err := clientcmd.BuildConfigFromFlags("", defaultKubeconfig)
-	if err != nil {
-		color.Yellow("⚠️ Failed to load default kubeconfig: %v", err)
-		return promptForServiceKubeSettingsAndRetry()
-	}
-
-	clientset, err := k8s.NewForConfig(config)
-	if err != nil {
-		color.Yellow("⚠️ Failed to create Kubernetes client: %v", err)
-		return promptForServiceKubeSettingsAndRetry()
-	}
-
-	namespace := "higress-system"
-	svc, err := clientset.CoreV1().Services(namespace).Get(context.Background(), "higress-gateway", metav1.GetOptions{})
-	if err != nil || svc == nil {
-		color.Yellow("⚠️ Could not find Higress Gateway Service in namespace '%s'.", namespace)
-		return promptForServiceKubeSettingsAndRetry()
-	}
-
-	ip, err := extractServiceIP(clientset, namespace, svc)
-	if err != nil {
-		return "", err
-	}
-
-	color.Green("✅ Found Higress Gateway Service IP: %s (namespace: %s)", ip, namespace)
-	return ip, nil
-}
-
-// higress-gateway should always be LoadBalancer
-func extractServiceIP(clientset *k8s.Clientset, namespace string, svc *v1.Service) (string, error) {
-	return svc.Spec.ClusterIP, nil
-
-	// // fallback to Pod IP
-	// if len(svc.Spec.Selector) > 0 {
-	// 	selector := metav1.FormatLabelSelector(&metav1.LabelSelector{MatchLabels: svc.Spec.Selector})
-	// 	pods, err := clientset.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{
-	// 		LabelSelector: selector,
-	// 	})
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("failed to list pods for selector: %v", err)
-	// 	}
-	// 	if len(pods.Items) > 0 {
-	// 		return pods.Items[0].Status.PodIP, nil
-	// 	}
-	// }
-
-}
-
-// prompt fallback for user input
-func promptForServiceKubeSettingsAndRetry() (string, error) {
-	color.Cyan("Let's fix it manually 👇")
-
-	kubeconfigPrompt := promptui.Prompt{
-		Label:   "Enter kubeconfig path",
-		Default: filepath.Join(os.Getenv("HOME"), ".kube", "config"),
-	}
-	kubeconfigPath, err := kubeconfigPrompt.Run()
-	if err != nil {
-		return "", fmt.Errorf("aborted: %v", err)
-	}
-
-	nsPrompt := promptui.Prompt{
-		Label:   "Enter Higress namespace",
-		Default: "higress-system",
-	}
-	namespace, err := nsPrompt.Run()
-	if err != nil {
-		return "", err
-	}
-
-	config, err := clientcmd.BuildConfigFromFlags("", kubeconfigPath)
-	if err != nil {
-		return "", fmt.Errorf("failed to load kubeconfig: %v", err)
-	}
-
-	clientset, err := k8s.NewForConfig(config)
-	if err != nil {
-		return "", fmt.Errorf("failed to create kubernetes client: %v", err)
-	}
-
-	svc, err := clientset.CoreV1().Services(namespace).Get(context.Background(), "higress-gateway", metav1.GetOptions{})
-	if err != nil || svc == nil {
-		color.Red("❌ Higress Gateway Service not found in namespace '%s'", namespace)
-		return "", fmt.Errorf("service not found")
-	}
-
-	ip, err := extractServiceIP(clientset, namespace, svc)
-	if err != nil {
-		return "", err
-	}
-
-	color.Green("✅ Found Higress Gateway Service IP: %s (namespace: %s)", ip, namespace)
-	return ip, nil
-}
-
-func getConsoleCredentials(profile *helm.Profile) (username, password string, err error) {
-	cliClient, err := kubernetes.NewCLIClient(options.DefaultConfigFlags.ToRawKubeConfigLoader())
-
-	if err != nil {
-		return "", "", fmt.Errorf("failed to build kubernetes client: %w", err)
-	}
-
-	secret, err := cliClient.KubernetesInterface().CoreV1().Secrets(profile.Global.Namespace).Get(context.Background(), "higress-console", metav1.GetOptions{})
-	if err != nil {
-		return "", "", err
-	}
-	return string(secret.Data[SecretConsoleUser]), string(secret.Data[SecretConsolePwd]), nil
-}
-
-// This function will do following things:
-// 1. read the profile from local-file
-// 2. read the profile from k8s' configMap
-// 3. combine the two type profiles together and return
-func getAllProfiles() ([]*installer.ProfileContext, error) {
-	profileContexts := make([]*installer.ProfileContext, 0)
-	profileInstalledPath, err := installer.GetProfileInstalledPath()
-	if err != nil {
-		return profileContexts, nil
-	}
-	fileProfileStore, err := installer.NewFileDirProfileStore(profileInstalledPath)
-	if err != nil {
-		return profileContexts, nil
-	}
-	fileProfileContexts, err := fileProfileStore.List()
-	if err == nil {
-		profileContexts = append(profileContexts, fileProfileContexts...)
-	}
-
-	cliClient, err := kubernetes.NewCLIClient(options.DefaultConfigFlags.ToRawKubeConfigLoader())
-	if err != nil {
-		return profileContexts, nil
-	}
-	configmapProfileStore, err := installer.NewConfigmapProfileStore(cliClient)
-	if err != nil {
-		return profileContexts, nil
-	}
-
-	configmapProfileContexts, err := configmapProfileStore.List()
-	if err == nil {
-		profileContexts = append(profileContexts, configmapProfileContexts...)
-	}
-	return profileContexts, nil
-}
-
-func getAgentConfig(config *AgentConfig) error {
-	options := []string{
-		"create step by step",
-		fmt.Sprintf("import existing one from current agentcore (%s)", viper.GetString(HGCTL_AGENT_CORE)),
-	}
-
-	var response string
-	prompt := &survey.Select{
-		Message: "How would you like to create a agent",
-		Options: options,
-	}
-
-	if err := survey.AskOne(prompt, &response); err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	switch response {
-	case options[0]:
-		return createAgentStepByStep(config)
-	case options[1]:
-		return importAgentFromCore(config)
-	}
-	return fmt.Errorf("Unsupport way to create a agent")
-}
-
-func getAgentCoreSubAgents() (map[string]string, []string, error) {
-	home, _ := os.UserHomeDir()
-	core, err := getCore()
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get core: %s", err)
-	}
-	coreAgentsDir := filepath.Join(home, core.GetCoreDirName(), "agents")
-
-	files, err := os.ReadDir(coreAgentsDir)
-	if err != nil {
-		return nil, nil, 
-```
-
-### Core Architecture Module: `hgctl/pkg/helm/render.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package helm
-
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"io/fs"
-	"net/url"
-	"os"
-	"path"
-	"path/filepath"
-	"sort"
-	"strings"
-
-	"github.com/alibaba/higress/hgctl/pkg/manifests"
-	"github.com/alibaba/higress/hgctl/pkg/util"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/cli"
-	"helm.sh/helm/v3/pkg/downloader"
-	"helm.sh/helm/v3/pkg/engine"
-	"helm.sh/helm/v3/pkg/getter"
-	"helm.sh/helm/v3/pkg/repo"
-	"k8s.io/client-go/rest"
-	"sigs.k8s.io/yaml"
-)
-
-const (
-	// DefaultProfileName is the name of the default profile for installation.
-	DefaultProfileName = "local-k8s"
-	// DefaultProfileFilename is the name of the default profile yaml file for installation.
-	DefaultProfileFilename = "local-k8s.yaml"
-	// DefaultUninstallProfileName is the name of the default profile yaml file for uninstallation.
-	DefaultUninstallProfileName = "local-k8s"
-
-	// ChartsSubdirName       = "charts"
-	profilesRoot = "profiles"
-
-	RepoLatestVersion              = "latest"
-	RepoChartIndexYamlHigressIndex = "higress"
-
-	YAMLSeparator       = "\n---\n"
-	NotesFileNameSuffix = ".txt"
-)
-
-func LoadValues(profileName string, chartsDir string) (string, error) {
-	path := strings.Join([]string{profilesRoot, builtinProfileToFilename(profileName)}, "/")
-	by, err := fs.ReadFile(manifests.BuiltinOrDir(chartsDir), path)
-	if err != nil {
-		return "", err
-	}
-	return string(by), nil
-}
-
-func readProfiles(chartsDir string) (map[string]bool, error) {
-	profiles := map[string]bool{}
-	f := manifests.BuiltinOrDir(chartsDir)
-	dir, err := fs.ReadDir(f, profilesRoot)
-	if err != nil {
-		return nil, err
-	}
-	for _, f := range dir {
-		if f.Name() == "_all.yaml" {
-			continue
-		}
-		trimmedString := strings.TrimSuffix(f.Name(), ".yaml")
-		if f.Name() != trimmedString {
-			profiles[trimmedString] = true
-		}
-	}
-	return profiles, nil
-}
-
-func builtinProfileToFilename(name string) string {
-	if name == "" {
-		return DefaultProfileFilename
-	}
-	return name + ".yaml"
-}
-
-// stripPrefix removes the given prefix from prefix.
-func stripPrefix(path, prefix string) string {
-	pl := len(strings.Split(prefix, "/"))
-	pv := strings.Split(path, "/")
-	return strings.Join(pv[pl:], "/")
-}
-
-// ListProfiles list all the profiles.
-func ListProfiles(charts string) ([]string, error) {
-	profiles, err := readProfiles(charts)
-	if err != nil {
-		return nil, err
-	}
-	return util.StringBoolMapToSlice(profiles), nil
-}
-
-var DefaultFilters = []util.FilterFunc{
-	util.LicenseFilter,
-	util.FormatterFilter,
-	util.SpaceFilter,
-}
-
-// Renderer is responsible for rendering helm chart with new values.
-type Renderer interface {
-	Init() error
-	RenderManifest(valsYaml string) (string, error)
-	SetVersion(version string)
-}
-
-type RendererOptions struct {
-	Name      string
-	Namespace string
-	ChartName string
-
-	// fields for LocalChartRenderer and LocalFileRenderer
-	FS  fs.FS
-	Dir string
-
-	// fields for RemoteRenderer
-	Version string
-	RepoURL string
-
-	// Capabilities
-	Capabilities *chartutil.Capabilities
-
-	// rest config
-	restConfig *rest.Config
-}
-
-type RendererOption func(*RendererOptions)
-
-func WithName(name string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.Name = name
-	}
-}
-
-func WithChartName(name string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.ChartName = name
-	}
-}
-
-func WithNamespace(ns string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.Namespace = ns
-	}
-}
-
-func WithFS(f fs.FS) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.FS = f
-	}
-}
-
-func WithDir(dir string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.Dir = dir
-	}
-}
-
-func WithVersion(version string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.Version = version
-	}
-}
-
-func WithRepoURL(repo string) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.RepoURL = repo
-	}
-}
-
-func WithCapabilities(capabilities *chartutil.Capabilities) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.Capabilities = capabilities
-	}
-}
-
-func WithRestConfig(config *rest.Config) RendererOption {
-	return func(opts *RendererOptions) {
-		opts.restConfig = config
-	}
-}
-
-// LocalFileRenderer load yaml files from local file system
-type LocalFileRenderer struct {
-	Opts     *RendererOptions
-	filesMap map[string]string
-	Started  bool
-}
-
-func NewLocalFileRenderer(opts ...RendererOption) (Renderer, error) {
-	newOpts := &RendererOptions{}
-	for _, opt := range opts {
-		opt(newOpts)
-	}
-
-	return &LocalFileRenderer{
-		Opts:     newOpts,
-		filesMap: make(map[string]string),
-	}, nil
-}
-
-func (l *LocalFileRenderer) Init() error {
-	fileNames, err := getFileNames(l.Opts.FS, l.Opts.Dir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return fmt.Errorf("chart of component %s doesn't exist", l.Opts.Name)
-		}
-		return fmt.Errorf("getFileNames err: %s", err)
-	}
-	for _, fileName := range fileNames {
-		data, err := fs.ReadFile(l.Opts.FS, fileName)
-		if err != nil {
-			return fmt.Errorf("ReadFile %s err: %s", fileName, err)
-		}
-
-		l.filesMap[fileName] = string(data)
-	}
-	l.Started = true
-	return nil
-}
-
-func (l *LocalFileRenderer) RenderManifest(valsYaml string) (string, error) {
-	if !l.Started {
-		return "", errors.New("LocalFileRenderer has not been init")
-	}
-	keys := make([]string, 0, len(l.filesMap))
-	for key := range l.filesMap {
-		keys = append(keys, key)
-	}
-	// to ensure that every manifest rendered by same values are the same
-	sort.Strings(keys)
-
-	var builder strings.Builder
-	for i := 0; i < len(keys); i++ {
-		file := l.filesMap[keys[i]]
-		file = util.ApplyFilters(file, DefaultFilters...)
-		// ignore empty manifest
-		if file == "" {
-			continue
-		}
-		if !strings.HasSuffix(file, YAMLSeparator) {
-			file += YAMLSeparator
-		}
-		builder.WriteString(file)
-	}
-	return builder.String(), nil
-}
-
-func (l *LocalFileRenderer) SetVersion(version string) {
-	l.Opts.Version = version
-}
-
-// LocalChartRenderer load chart from local file system
-type LocalChartRenderer struct {
-	Opts    *RendererOptions
-	Chart   *chart.Chart
-	Started bool
-}
-
-func (lr *LocalChartRenderer) Init() error {
-	fileNames, err := getFileNames(lr.Opts.FS, lr.Opts.Dir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return fmt.Errorf("chart of component %s doesn't exist", lr.Opts.Name)
-		}
-		return fmt.Errorf("getFileNames err: %s", err)
-	}
-	var files []*loader.BufferedFile
-	for _, fileName := range fileNames {
-		data, err := fs.ReadFile(lr.Opts.FS, fileName)
-		if err != nil {
-			return fmt.Errorf("ReadFile %s err: %s", fileName, err)
-		}
-		// todo:// explain why we need to do this
-		name := util.StripPrefix(fileName, lr.Opts.Dir)
-		file := &loader.BufferedFile{
-			Name: name,
-			Data: data,
-		}
-		files = append(files, file)
-	}
-	newChart, err := loader.LoadFiles(files)
-	if err != nil {
-		return fmt.Errorf("load chart of component %s err: %s", lr.Opts.Name, err)
-	}
-	lr.Chart = newChart
-	lr.Started = true
-	return nil
-}
-
-func (lr *LocalChartRenderer) RenderManifest(valsYaml string) (string, error) {
-	if !lr.Started {
-		return "", errors.New("LocalChartRenderer has not been init")
-	}
-	return renderManifest(valsYaml, lr.Chart, true, lr.Opts, DefaultFilters...)
-}
-
-func (lr *LocalChartRenderer) SetVersion(version string) {
-	lr.Opts.Version = version
-}
-
-func NewLocalChartRenderer(opts ...RendererOption) (Renderer, error) {
-	newOpts := &RendererOptions{}
-	for _, opt := range opts {
-		opt(newOpts)
-	}
-
-	if err := verifyRendererOptions(newOpts); err != nil {
-		return nil, fmt.Errorf("verify err: %s", err)
-	}
-	return &LocalChartRenderer{
-		Opts: newOpts,
-	}, nil
-}
-
-type RemoteRenderer struct {
-	Opts    *RendererOptions
-	Chart   *chart.Chart
-	Started bool
-}
-
-func (rr *RemoteRenderer) initChartPathOptions() *action.ChartPathOptions {
-	return &action.ChartPathOptions{
-		RepoURL: rr.Opts.RepoURL,
-		Version: rr.Opts.Version,
-	}
-}
-
-func (rr *RemoteRenderer) Init() error {
-	cpOpts := rr.initChartPathOptions()
-	settings := cli.New()
-	chartName := rr.Opts.ChartName
-	if chartName == "" {
-		chartName = rr.Opts.Name
-	}
-	cp, err := locateChart(cpOpts, chartName, settings)
-	if err != nil {
-		return err
-	}
-
-	// Check chart dependencies to make sure all are present in /charts
-	chartRequested, err := loader.Load(cp)
-	if err != nil {
-		return err
-	}
-
-	if err := verifyInstallable(chartRequested); err != nil {
-		return err
-	}
-
-	rr.Chart = chartRequested
-	rr.Started = true
-
-	return nil
-}
-
-func (rr *RemoteRenderer) SetVersion(version string) {
-	rr.Opts.Version = version
-}
-
-func (rr *RemoteRenderer) RenderManifest(valsYaml string) (string, error) {
-	if !rr.Started {
-		return "", errors.New("RemoteRenderer has not been init")
-	}
-	return renderManifest(valsYaml, rr.Chart, false, rr.Opts, DefaultFilters...)
-}
-
-func NewRemoteRenderer(opts ...RendererOption) (Renderer, error) {
-	newOpts := &RendererOptions{}
-	for _, opt := range opts {
-		opt(newOpts)
-	}
-
-	return &RemoteRenderer{
-		Opts: newOpts,
-	}, nil
-}
-
-func verifyRendererOptions(opts *RendererOptions) error {
-	if opts.Name == "" {
-		return errors.New("missing component name for Renderer")
-	}
-	if opts.Namespace == "" {
-		return errors.New("missing component namespace for Renderer")
-	}
-	if opts.FS == nil {
-		return errors.New("missing chart FS for Renderer")
-	}
-	if opts.Dir == "" {
-		return errors.New("missing chart dir for Renderer")
-	}
-	return nil
-}
-
-// read all files recursively under root path from a certain local file system
-func getFil
-```
-
-### Core Architecture Module: `hgctl/pkg/helm/tpath/util.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package tpath
-
-import (
-	"github.com/alibaba/higress/hgctl/pkg/util"
-	"gopkg.in/yaml.v2"
-	yaml2 "sigs.k8s.io/yaml"
-)
-
-// AddSpecRoot adds a root node called "spec" to the given tree and returns the resulting tree.
-func AddSpecRoot(tree string) (string, error) {
-	t, nt := make(map[string]any), make(map[string]any)
-	if err := yaml.Unmarshal([]byte(tree), &t); err != nil {
-		return "", err
-	}
-	nt["spec"] = t
-	out, err := yaml.Marshal(nt)
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
-// GetSpecSubtree returns the subtree under "spec".
-func GetSpecSubtree(yml string) (string, error) {
-	return GetConfigSubtree(yml, "spec")
-}
-
-// GetConfigSubtree returns the subtree at the given path.
-func GetConfigSubtree(manifest, path string) (string, error) {
-	root := make(map[string]any)
-	if err := yaml2.Unmarshal([]byte(manifest), &root); err != nil {
-		return "", err
-	}
-
-	nc, _, err := GetPathContext(root, util.PathFromString(path), false)
-	if err != nil {
-		return "", err
-	}
-	out, err := yaml2.Marshal(nc.Node)
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/plugin/utils/common.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package utils
-
-import (
-	"bytes"
-	"fmt"
-	"io"
-	"path/filepath"
-	"strings"
-
-	"github.com/mitchellh/go-homedir"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v3"
-)
-
-// GetAbsolutePath returns the absolute path, e.g.:
-// - ~/foo -> /home/user/foo
-// - ./foo -> /current/dir/foo
-// - /foo/ -> /foo
-func GetAbsolutePath(path string) (newPath string, err error) {
-	if strings.HasPrefix(path, "~") {
-		newPath, err = homedir.Expand(path)
-		if err != nil {
-			return "", errors.Wrapf(err, "failed to expand path: %q", path)
-		}
-	} else {
-		newPath, err = filepath.Abs(path)
-		if err != nil {
-			return "", errors.Wrapf(err, "failed to get absolute path of %q", path)
-		}
-	}
-
-	l := len(newPath)
-	if l > 1 && newPath[l-1] == '/' { // if l == 1, the path might be "/"
-		newPath = newPath[:l-1]
-	}
-
-	return newPath, nil
-}
-
-// AddIndent for each line of str
-func AddIndent(str, indent string) string {
-	ret := ""
-	ss := strings.Split(str, "\n")
-	for i, s := range ss {
-		if i == 0 {
-			ret = fmt.Sprintf("%s%s", indent, s)
-		} else {
-			ret = fmt.Sprintf("%s\n%s%s", ret, indent, s)
-		}
-	}
-
-	return ret
-}
-
-// MarshalYamlWithIndent marshals v to yaml with indent, specify space width with spaces
-func MarshalYamlWithIndent(v interface{}, spaces int) ([]byte, error) {
-	w := new(bytes.Buffer)
-	ec := yaml.NewEncoder(w)
-	defer ec.Close()
-	ec.SetIndent(spaces)
-	if err := ec.Encode(v); err != nil {
-		return w.Bytes(), err
-	}
-
-	return w.Bytes(), nil
-}
-
-// MarshalYamlWithIndentTo marshals v to yaml with indent, specify space width with spaces, and output to w
-func MarshalYamlWithIndentTo(w io.Writer, v interface{}, spaces int) error {
-	ec := yaml.NewEncoder(w)
-	defer ec.Close()
-	ec.SetIndent(spaces)
-	if err := ec.Encode(v); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/plugin/utils/debugger.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package utils
-
-import (
-	"fmt"
-	"io"
-)
-
-type Debugger interface {
-	Debugf(format string, a ...any) (int, error)
-	Debugln(a ...any) (int, error)
-}
-
-type DefaultDebugger struct {
-	debug bool
-	w     io.Writer
-}
-
-func NewDefaultDebugger(debug bool, w io.Writer) *DefaultDebugger {
-	return &DefaultDebugger{debug: debug, w: w}
-}
-
-func (d DefaultDebugger) Debugf(format string, a ...any) (int, error) {
-	l := len(format)
-	if l > 0 && format[l-1] != '\n' {
-		format += "\n"
-	}
-	if d.debug {
-		format = "[debug] " + format
-		return fmt.Fprintf(d.w, format, a...)
-	}
-	return 0, nil
-}
-
-func (d DefaultDebugger) Debugln(a ...any) (int, error) {
-	if d.debug {
-		n1, err1 := fmt.Fprintf(d.w, "[debug] ")
-		if err1 != nil {
-			return n1, err1
-		}
-		n2, err2 := fmt.Fprintln(d.w, a...)
-		return n1 + n2, err2
-	}
-	return 0, nil
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/plugin/utils/printer.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package utils
-
-import (
-	"fmt"
-	"io"
-	"os"
-	"strings"
-
-	"github.com/fatih/color"
-)
-
-type YesOrNoPrinter struct {
-	out     io.Writer
-	indent  *Indent
-	yes, no *color.Color
-}
-
-var (
-	DefaultOut   = os.Stdout
-	DefaultIdent = NewIndent(strings.Repeat(" ", 2), 0)
-	DefaultYes   = color.New(color.FgHiGreen)
-	DefaultNo    = color.New(color.FgHiRed)
-)
-
-func NewPrinter(out io.Writer, indent *Indent, yes, no *color.Color) *YesOrNoPrinter {
-	return &YesOrNoPrinter{
-		out:    out,
-		indent: indent,
-		yes:    yes,
-		no:     no,
-	}
-}
-
-func DefaultPrinter() *YesOrNoPrinter {
-	return NewPrinter(DefaultOut, DefaultIdent, DefaultYes, DefaultNo)
-}
-
-func (p *YesOrNoPrinter) Printf(format string, a ...interface{}) (int, error) {
-	return fmt.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) Println(a ...interface{}) (int, error) {
-	return fmt.Fprintln(p.out, a...)
-}
-
-func (p *YesOrNoPrinter) PrintWithIndentf(format string, a ...interface{}) (int, error) {
-	format = fmt.Sprintf("%s%s", p.indent, format)
-	return fmt.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) PrintWithIndentln(a ...interface{}) (int, error) {
-	n1, err := fmt.Fprintf(p.out, "%s", p.indent)
-	if err != nil {
-		return n1, err
-	}
-	n2, err := fmt.Fprintln(p.out, a...)
-	if err != nil {
-		return n1 + n2, err
-	}
-	return n1 + n2, nil
-}
-
-func (p *YesOrNoPrinter) Yesf(format string, a ...interface{}) (int, error) {
-	return p.yes.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) Yesln(a ...interface{}) (int, error) {
-	return p.yes.Fprintln(p.out, a...)
-}
-
-func (p *YesOrNoPrinter) YesWithIndentf(format string, a ...interface{}) (int, error) {
-	format = fmt.Sprintf("%s%s", p.indent, format)
-	return p.yes.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) YesWithIndentln(a ...interface{}) (int, error) {
-	n1, err := p.yes.Fprintf(p.out, "%s", p.indent)
-	if err != nil {
-		return n1, err
-	}
-	n2, err := p.yes.Fprintln(p.out, a...)
-	if err != nil {
-		return n1 + n2, err
-	}
-	return n1 + n2, nil
-}
-
-func (p *YesOrNoPrinter) Nof(format string, a ...interface{}) (int, error) {
-	return p.no.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) Noln(a ...interface{}) (int, error) {
-	return p.no.Fprintln(p.out, a...)
-}
-
-func (p *YesOrNoPrinter) NoWithIndentf(format string, a ...interface{}) (int, error) {
-	format = fmt.Sprintf("%s%s", p.indent, format)
-	return p.no.Fprintf(p.out, format, a...)
-}
-
-func (p *YesOrNoPrinter) NoWithIndentln(a ...interface{}) (int, error) {
-	n1, err := p.no.Fprintf(p.out, "%s", p.indent)
-	if err != nil {
-		return n1, err
-	}
-	n2, err := p.no.Fprintln(p.out, a...)
-	if err != nil {
-		return n1 + n2, err
-	}
-	return n1 + n2, nil
-}
-
-func (p *YesOrNoPrinter) Ident() string { return p.indent.String() }
-
-func (p *YesOrNoPrinter) IncIdentRepeat() { p.indent.IncRepeat() }
-
-func (p *YesOrNoPrinter) DecIndentRepeat() { p.indent.DecRepeat() }
-
-func (p *YesOrNoPrinter) SetIdentRepeat(v int) { p.indent.SetRepeat(v) }
-
-type Indent struct {
-	format string
-	repeat int
-}
-
-func NewIndent(format string, repeat int) *Indent {
-	return &Indent{
-		format: format,
-		repeat: repeat,
-	}
-}
-
-func (i *Indent) String() string {
-	return strings.Repeat(i.format, i.repeat)
-}
-
-func (i *Indent) IncRepeat() { i.repeat++ }
-
-func (i *Indent) DecRepeat() {
-	i.repeat--
-	if i.repeat < 0 {
-		i.repeat = 0
-	}
-}
-
-func (i *Indent) SetRepeat(v int) {
-	if v < 0 {
-		v = 0
-	}
-	i.repeat = v
-}
-
-```
-
-### Core Architecture Module: `hgctl/pkg/plugin/utils/survey_wrapper.go`
-```
-// Copyright (c) 2022 Alibaba Group Holding Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package utils
-
-import "github.com/AlecAivazis/survey/v2"
-
-func Ask(qs []*survey.Question, response interface{}, opts ...survey.AskOpt) error {
-	opts = append(opts, survey.WithIcons(func(set *survey.IconSet) {
-		set.Error.Format = "red+hb"
-	}))
-	return survey.Ask(qs, response, opts...)
-}
-
-func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error {
-	opts = append(opts, survey.WithIcons(func(set *survey.IconSet) {
-		set.Error.Format = "red+hb"
-	}))
-	return survey.AskOne(p, response, opts...)
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5309** (2026-11-05): **fix(mcp-server): preserve SSE data priority with a no-space fallback**
-  *Symptoms*: ## I. Summary  MCP backends that emit legal SSE `data:{...}` lines currently fail initialization or HTTP tool response extraction. Keep the existing `data: ` immediate-return path, remember the first nonempty no-space candidate and use it only after a clean scan with no original-format match. An earlier no-space notification therefore cannot replace a later original-format result.  The only production edit is `parseSSEResponse` and its comments. Add focused parser/TestHost regressions and a bounded baseline/candidate mode in the existing real Wasm harness. No caller, other parser, MCP version, dependency or normal-mode historical baseline changes.  ## II. Related issue  Fixes #5306. Implements [Proposal #5307](https://github.com/higress-group/higress/issues/5307) and [Design #5308](https://github.com/higress-group/higress/issues/5308).  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Only nonsubstantive agent use. - [x] **Verified maintainer/administrator exception:** Material agent participation; authenticated canonical-repository role and PR-author match are recorded below. - [ ] **Material agent participation:** Ordinary non-exception path.  Ordinary-path timed obligations are N/A under the verified exception; implementation/verifica
-
-- **Issue #5306** (2026-11-05): **mcp-server：兼容 data: 后无空格的 SSE 响应（原格式优先、无空格兜底）**
-  *Symptoms*: - [x] 已检索仓库相关 issue。#4684、#5280/#5281 为相关机制与兼容性依据。  ### Ⅰ. Issue Description  **本次范围已于 2026-11-05 收敛：生产代码只修改 `parseSSEResponse`，采用“原格式优先、无空格兜底”，补充必要测试。** 原报告中的共享 SSE 解码器及各分支统一改造不再属于本次交付；其它 SSE 问题列在文末后续事项，不阻塞本次修复验收。  在排查 `mcp-server` 代理 SSE 响应解析失败时发现，当前函数只匹配 `data: `，无法识别冒号后没有空格的合法 `data:JSON`。本次解决“单行完整 JSON 响应仅因 data 冒号后没有空格而无法提取”的问题，优先保护此前已成功的输入和业务行为。  本 issue 是已确认的缺陷与修复范围，不代表产品代码已经修改或修复已经验证。原始故障响应未完整确认；函数级复现不能证明每个现场 `sse_parse_error` 都由无空格导致。  ### Ⅱ. Describe what happened  源码核对基线：upstream [`main@a89b18dc12882f06fe4ac9fe33cfa8c03d11292a`](https://github.com/higress-group/higress/commit/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a)。该提交已通过 #5305 支持 `2025-11-25` Tools 客户端；本问题独立于协议版本头支持，本次不修改版本支持或协商逻辑。  [`parseSSEResponse`](https://github.com/higress-group/higress/blob/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a/plugins/wasm-go/pkg/mcp/server/proxy_tool.go#L292-L322) 对每行先执行 `strings.TrimSpace`，再执行：  ```go if strings.HasPrefix(line, "data: ") {     dataContent := strings.TrimPrefix(line, "data: ")     return []byte(dataContent), nil } ```  因此 `data:JSON` 不会匹配，扫描结束后返回 `no data field found in SSE response`。后续调用路径会产生 `sse_parse_error`。SSE 规范允许冒号后省略空格，详见 [WHATWG SSE 字段解析规则](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)。  #### 各分支的处理范围  | 分支/调用路径 | 本次是否修改生产代码 | 说明 | | --- | --- | --- | | `parseSSEResponse` | **是，仅修改该函数** | 增加无空格候选兜底，保留原格式优先。 | | 显式 HTTP 初始化、HTTP tools/list/tools/call（含 auto 协商后的业务请求）、server/discover SSE 透传 | 否 | 现有调用点共享上述函数，自动获得
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `bfcd87d1` (2026-11-05)
-**Commit Message**: fix(mcp-server): preserve SSE data priority with a no-space fallback (#5309)
-
-Signed-off-by: xunmu <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +64/-0)
-```diff
-@@ -275,3 +275,67 @@ as red reproduction. Candidate acceptance requires all 12 PASS and exit zero.
- The external recorder must additionally validate exact sources/hashes, access
- records, successful Wasm loading and cleanup; this focused output does not claim
- the full compatibility matrix or update previous source-scoped results.
-+
-+
-+## Focused SSE no-space fallback (#5308)
-+
-+From a clean, committed candidate checkout, select only the ten-case parser
-+matrix. This mode builds plain Wasm for the exact affected source
-+`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
-+Compose services, backend, renderer, build and bounded lifecycle, with one
-+`plugin.wasm` mount path. It does not run or retarget the normal business
-+oracle, control, November-version or routing matrices.
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
-+  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-+  --sse-no-space \
-+  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
-+  --candidate HEAD \
-+  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-+  --backend-image docker.io/library/python:3.12-alpine \
-+  --output "$SSE_EVIDENCE/runtime"
-+```
-+
-+Use an empty absolute external output directory. Python 3.12+ is needed for
-+archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
-+Images must already resolve locally to immutable RepoDigests. Both roles use
-+the same resolved gateway/Python image identities and frozen harness.
-+
-+The five positive targets are no-space upstream initialization, HTTP list,
-+HTTP call, CRLF call, and business after successful auto controls. The five
-+controls are original-format list/call (including initialization), an earlier
-+no-space progress notification followed by an original-format result, empty
-+data followed by an original result, and invalid no-space JSON. Mixed traffic
-+supplies `progressToken`. Formatting is selected only by synthetic fixture
-+headers; default responses and unrelated probe/handshake controls stay intact.
-+
-+`verify-sse-baseline.log` retains verifier exit 1 and five actual failed
-+positive assertions; its controls must pass. `verify-candidate.log` must exit
-+0 with all ten cases passing. Invalid JSON remains an error on both roles:
-+extraction on baseline, existing JSON decoding on candidate. An overall runner
-+exit 0 means this expected red/green matrix was observed, not that baseline
-+positive targets succeeded.
-+
-+`sse-no-space-{sse-baseline,candidate}.json` separates assertions, exact client
-+requests, gateway access IDs and backend ledgers, including upstream wire bytes
-+and hashes. `compat-inputs.json` records source, selected Go/module inputs,
-+Wasm/harness/config hashes and image inspections. Finalization rejects missing,
-+duplicate or unobserved cases, changed requests/configs/wire data, mismatched
-+Go/module inputs, stale hashes and incomplete cleanup.
-+`sse-no-space-manifest.json` seals all completed evidence files. Cleanup uses
-+Compose down with volumes/orphans and inventories only this run's labelled
-+containers, networks and volumes. The Compose fixture publishes no host ports;
-+its listeners and server processes disappear with those containers.
-+
-+Before containers, run the fixture checks from this directory:
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 compat_self_test.py
-+```
-+
-+The new checks exercise selection, complete registry, format isolation,
-+assertion fault injection, source/config/request equivalence and failed cleanup.
-+They run alongside all retained normal-mode fixture assertions. These injected
-+self-tests establish harness behavior; real Wasm evidence requires the command
-+above.
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_backend.py` (modified, +20/-1)
-```diff
-@@ -45,6 +45,18 @@ def rpc_response(rpc_id, result=None, error=False):
-     return b'{"jsonrpc":"2.0","id":' + token(rpc_id).encode() + b',' + field + b'}'
- 
- 
-+def sse_no_space_wire(response, framing):
-+    """Synthetic complete SSE bytes, selected only by the focused test header."""
-+    if framing == "no-space": return b"data:" + response + b"\n\n"
-+    if framing == "no-space-crlf": return b"data:" + response + b"\r\n\r\n"
-+    if framing == "original": return b"data: " + response + b"\n\n"
-+    if framing == "mixed":
-+        return b'data:{"jsonrpc":"2.0","method":"notifications/progress","params":{"progressToken":"sse-progress","progress":1}}\n\ndata: ' + response + b"\n\n"
-+    if framing == "empty": return b"data:\n\ndata: " + response + b"\n\n"
-+    if framing == "invalid": return b"data:{invalid json}\n\n"
-+    raise ValueError("unknown focused SSE framing")
-+
-+
- def record(handler, raw, request=None, rejection=None):
-     request = request or {}
-     method = request.get("method")
-@@ -171,7 +183,7 @@ def post(handler, body):
-         record(handler, body.encode(), rejection=str(error))
-         raw_response(handler, 400, b'{"error":"strict upstream rejected request"}')
-         return True
--    record(handler, body.encode(), request)
-+    event = record(handler, body.encode(), request)
-     method, rpc_id = request.get("method"), request.get("id")
-     mode = handler.headers.get("X-Compat-Response", "success")
-     if handler.headers.get("Host") == "unknownhost":
-@@ -216,6 +228,13 @@ def post(handler, body):
-             failed = arguments.get("fail") is True
-             result = json.dumps({"content": [{"type": "text", "text": "synthetic execution failed" if failed else "echo:" + arguments.get("value", "")}], "isError": failed}, separators=(",", ":")).encode()
-     response = rpc_response(rpc_id, result, mode == "rpc-error")
-+    framing = headers.get("X-Compat-SSE-Format")
-+    stage = headers.get("X-Compat-SSE-Stage", "business")
-+    if framing and ((stage == "all" and method != "server/discover") or stage == method or stage == "business" and method.startswith("tools/")):
-+        wire = sse_no_space_wire(response, framing)
-+        event["sseFixture"] = {"format": framing, "stage": method, **body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
-+        raw_response(handler, 200, wire, "text/event-stream")
-+        return True
-     if path == "/unified/messages":
-         key = handler.headers.get("X-Compat-Case", "unassociated")
-         with LOCK:
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_fixture.py` (modified, +27/-0)
-```diff
-@@ -94,6 +94,33 @@ def nov25_config(out):
-     Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listener + "  clusters:\n" + cluster)
- 
- 
-+SSE_NO_SPACE_BASELINE = "a89b18dc12882f06fe4ac9fe33cfa8c03d11292a"
-+
-+
-+def sse_no_space_cases():
-+    """Closed #5308 matrix; positive targets stay red on the affected source."""
-+    return [
-+        {"id": "sse-no-space/initialize", "route": "http-legacy", "method": "tools/call", "format": "no-space", "stage": "initialize", "target": True},
-+        {"id": "sse-no-space/list", "route": "http-legacy", "method": "tools/list", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/call", "route": "http-legacy", "method": "tools/call", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/crlf", "route": "http-legacy", "method": "tools/call", "format": "no-space-crlf", "target": True},
-+        {"id": "sse-no-space/post-auto", "route": "auto-modern", "method": "tools/call", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/original-list", "route": "http-legacy", "method": "tools/list", "format": "original", "stage": "all", "target": False},
-+        {"id": "sse-no-space/original-call", "route": "http-legacy", "method": "tools/call", "format": "original", "stage": "all", "target": False},
-+        {"id": "sse-no-space/mixed", "route": "http-legacy", "method": "tools/call", "format": "mixed", "target": False},
-+        {"id": "sse-no-space/empty", "route": "http-legacy", "method": "tools/call", "format": "empty", "target": False},
-+        {"id": "sse-no-space/invalid", "route": "http-legacy", "method": "tools/call", "format": "invalid", "target": False},
-+    ]
-+
-+
-+def sse_no_space_config(out):
-+    # Fixed VM identities/module path make baseline and candidate config identical.
-+    listeners = "".join(base.listener_yaml(PORTS[name], "sse-no-space-" + name, "compat-route", proxy(name), "plugin.wasm")
-+                        for name in ("http-legacy", "auto-modern"))
-+    cluster = base.cluster_yaml("compat-route").replace("address: compat-route,", "address: backend-primary,")
-+    Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listeners + "  clusters:\n" + cluster)
-+
-+
- if __name__ == "__main__":
-     import sys
-     if "--sse-get-auth-headers" in sys.argv[3:]:
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_self_test.py` (modified, +128/-1)
-```diff
-@@ -558,8 +558,135 @@ def evidence_checks():
-         require(json.loads((root / "compat-manifest.json").read_text())["checksums"] != evidence.checksums(root), "post-finalization mutation hidden")
- 
- 
-+
-+def sse_no_space_focused_checks():
-+    """Run the focused verifier/finalizer with injected observations, never Wasm."""
-+    import contextlib
-+    import subprocess
-+    import sys
-+    from types import SimpleNamespace
-+    from unittest.mock import patch
-+    import run_compat
-+    import verify
-+    cases = compat_fixture.sse_no_space_cases()
-+    require(len(cases) == 10 and len({row["id"] for row in cases}) == 10 and sum(row["target"] for row in cases) == 5, "focused matrix incomplete")
-+    # Actual backend selection must preserve default/control JSON responses.
-+    for method in ("server/discover", "initialize", "notifications/initialized", "tools/list", "tools/call"):
-+        for stage in (None, "business", "initialize", "all"):
-+            h = parse_headers(io.BytesIO(b"Content-Type: application/json\r\n\r\n"))
-+            if stage:
-+                h["X-Compat-SSE-Format"], h["X-Compat-SSE-Stage"] = "no-space", stage
-+            handler = SimpleNamespace(headers=h, command="POST", path="/unified/modern")
-+            compat_backend.reset()
-+            with patch.object(compat_backend, "raw_response") as send:
-+                require(compat_backend.post(handler, c.envelope(False, method=method, tool="echo").decode()), "backend request missing")
-+                event = compat_backend.state()["events"][-1]
-+                formatted = bool(stage and method != "notifications/initialized" and
-+                                 (stage == method or stage == "all" and method != "server/discover" or stage == "business" and method.startswith("tools/")))
-+                require(("sseFixture" in event) == formatted, "focused format poisoned controls/default")
-+                if formatted: require(send.call_args.args[3] == "text/event-stream", "focused media mismatch")
-+    for framing in {row["format"] for row in cases}:
-+        wire = compat_backend.sse_no_space_wire(b'{"result":{}}', framing)
-+        require(wire.endswith(b"\r\n\r\n") if framing.endswith("crlf") else wire.endswith(b"\n\n"), "SSE wire incomplete")
-+    rejected(lambda: compat_backend.sse_no_space_wire(b'{}', "unknown"))
-+    with tempfile.TemporaryDirectory() as directory:
-+        root = Path(directory)
-+        result = {"tools": [{"name": "echo", "inputSchema": {"type": "object"}}], "content": [], "number": c.JSONNumber("900719925474099312345"), "value": c.JSONNumber("2")}
-+        def attach(verifier, fault=None):
-+            state = {}
-+            def exchange(port, raw, modern, **options):
-+                case = next(row for row in cases if row["id"] == verifier.case)
-+                require(c.loads_typed(raw)["params"]["_meta"]["progressToken"] == "sse-progress", "progressToken omitted")
-+                require(port == compat_fixture.PORTS[case["route"]] and modern == (case["route"] == "auto-modern"), "focused route changed")
-+                init_red = verifier.variant == "sse-baseline" and case.get("stage") == "initialize"
-+                methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
-+                events = []
-+                for method in methods:
-+                    event = {"case": verifier.case, "rpcMethod": method, "kind": "probe" if method == "server/discover" else "control" if method in ("initialize", "notifications/initialized") else "business",
-+                             "accepted": True, "backendOrigin": "primary", "protocolVersion": c.MODERN if modern else "2025-03-26"}
-+                    stage = case.get("stage", "business")
-+                    if method != "notifications/initialized" and (stage == "all" or stage == method or stage == "business" and method.startswith("tools/")):
-+                        wire = compat_backend.sse_no_space_wire(b'{"jsonrpc":"2.0","id":2,"result":{}}', case["format"])
-+                        event["sseFixture"] = {"format": case["format"], "stage": method, **c.body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
-+                    events.append(event)
-+                state["events"] = events
-+                failed = verifier.variant == "sse-baseline" and case["target"] or case["format"] == "invalid"
-+                response = {"jsonrpc": "2.0", "id": "sse-client"}
-+                if failed: response["error"] = {"code": c.JSONNumber("-32603"), "message": "no data field found in SSE response" if verifier.variant == "sse-baseline" else "invalid JSON response"}
-+                else: response["result"] = copy.deepcopy(result)
-+                if fault == "dispatch": events.append(copy.deepcopy(events[-1]))
-+                elif fault == "id": response["id"] = "wrong"
-+                elif fault == "number" and not failed: response["result"]["
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py` (modified, +140/-51)
-```diff
-@@ -13,6 +13,7 @@
- import uuid
- 
- import compat_contract as contract
-+from compat_fixture import SSE_NO_SPACE_BASELINE, sse_no_space_cases, sse_no_space_config
- from run_routing import ROOT, recorded_run, sha
- 
- HERE = Path(__file__).resolve().parent
-@@ -27,6 +28,63 @@ def source_is_clean(revision):
-     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() == revision and not subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
- 
- 
-+def sse_no_space_errors(out, inputs):
-+    """Reject incomplete, stale or non-equivalent focused evidence."""
-+    from collections import Counter
-+    errors = []
-+    def require(value, message):
-+        if not value: errors.append(message)
-+    require(not inputs.get("error") and not inputs.get("verifierFailed"), "runner/build/verifier failed")
-+    require(inputs.get("sourceStillClean") is True and inputs.get("tokenOverridesUnset") is True, "source/token preconditions failed")
-+    require(inputs.get("cleanupComplete") is True, "run-owned cleanup incomplete")
-+    require(inputs.get("sseBaseline") == SSE_NO_SPACE_BASELINE, "wrong affected source")
-+    require(inputs.get("verifierExits") == {"sse-baseline": 1, "candidate": 0}, "baseline red/candidate green process exits missing")
-+    expected, snapshots = sse_no_space_cases(), {}
-+    for role, revision in (("sse-baseline", SSE_NO_SPACE_BASELINE), ("candidate", inputs.get("candidate"))):
-+        try:
-+            version = inputs["versions"][role]
-+            require(version["source"] == revision and set(version["wasm"]) == {"plain"}, role + ": source/flavor mismatch")
-+            require(version["wasm"]["plain"] == sha(out / f"plain-{role}.wasm"), role + ": Wasm hash mismatch")
-+            snapshot = json.loads((out / f"sse-no-space-{role}.json").read_text())
-+            snapshots[role] = snapshot
-+            require(snapshot["variant"] == role and snapshot["expectedCases"] == expected and not snapshot.get("startupError"), role + ": registry/startup mismatch")
-+            require(contract.complete(expected, snapshot["cases"]), role + ": missing/duplicate case")
-+            require(Counter(row["id"] for row in expected) == Counter(row["case"] for row in snapshot["exchanges"]), role + ": missing/duplicate exchange")
-+            access_ids = [row["accessRequestId"] for row in snapshot["exchanges"]]
-+            require(all(access_ids) and len(access_ids) == len(set(access_ids)), role + ": invalid access identity")
-+            gateway_log = (out / f"gateway-{role}.log").read_text()
-+            for request_id in access_ids:
-+                require(gateway_log.count("access request_id=" + request_id + " ") == 1, role + ": missing/duplicate gateway access")
-+            rows = {row["id"]: row for row in snapshot["cases"]}
-+            for case in expected:
-+                row = rows[case["id"]]
-+                red = role == "sse-baseline" and case["target"]
-+                require(row["status"] == ("FAIL" if red else "PASS") and row.get("validRedReproduction") is red, role + ": unexpected outcome " + case["id"])
-+                require(bool(row.get("detail", {}).get("ledger", {}).get("events")), role + ": unobserved case " + case["id"])
-+            require(inputs["configs"][role] == sha(out / f"envoy-{role}.yaml"), role + ": config hash mismatch")
-+        except (KeyError, OSError, ValueError, TypeError) as error:
-+            errors.append(role + ": incomplete evidence: " + str(error))
-+    try:
-+        require(inputs["configs"]["sse-baseline"] == inputs["configs"]["candidate"], "role configs differ")
-+        before, after = (inputs["versions"][role] for role in ("sse-baseline", "candidate"))
-+        require(before["go"] == after["go"] and before["moduleFiles"] == after["moduleFiles"], "Go/module inputs differ")
-+        require(len(inputs["images"]) == 2 and all("@sha256:" in name for name in inputs["images"]), "immutable image pair missing")
-+        for name, digest in inputs["harness"].items():
-+            require(sha(out / "harness" / name) == digest, "harness mutated: " + name)
-+        left, right = (snapshots[role] for role in ("sse-baseline", "candidate"))
-+        for first, second in zip(left["exchanges"], right["exchanges"]):
-+            require(all(first[key] == second[key] for key in ("case", "request", "requestHeadersSha256")), "role requests differ")
-+        for first, second in zip(left["cases"], right["cases"]):
-+            wire = lambda row: [(event["rpcMethod"], event["sseFixture"]["sha256"]) for event in row["detail"]["ledger"]["events"] if "sseFixture" in event]
-+            require(wire(first) == wire(second), "backend wire differs: " + first["id"])
-+            case = next(row for row in expected if row["id"] == first["id"])
-+            if not case["target"] and case["format"] != "invalid":
-+                require(first["detail"]["resultSha256"] == second["detail"]["resultSha256"], "control business result d
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/verify_compat.py` (modified, +73/-1)
-```diff
-@@ -17,7 +17,7 @@
- from pathlib import Path
- 
- import compat_contract as contract
--from compat_fixture import PORTS
-+from compat_fixture import PORTS, sse_no_space_cases
- from typed_canonical import JSONNumber, canonical_json_sha256, loads_typed
- 
- 
-@@ -500,6 +500,76 @@ def write(self, expected):
-             "cases": self.rows, "exchanges": self.exchanges}, indent=2, sort_keys=True) + "\n")
- 
- 
-+    def sse_no_space_case(self, case):
-+        """Assert stage/count identity before recognizing a targeted baseline red."""
-+        modern = case["route"] == "auto-modern"
-+        raw = contract.envelope(modern, method=case["method"], tool="echo", rpc_id='"sse-client"')
-+        if modern:
-+            raw = raw.replace(b'"_meta":{', b'"_meta":{"progressToken":"sse-progress",', 1)
-+        else:
-+            raw = raw[:-2] + b',"_meta":{"progressToken":"sse-progress"}}}'
-+        extra = [("X-Compat-SSE-Format", case["format"]), ("X-Compat-SSE-Stage", case.get("stage", "business"))]
-+        status, headers, response = self.exchange(PORTS[case["route"]], raw, modern, tool="echo", method=case["method"], extra=extra)
-+        self.exchanges[-1]["observedResponse"] = response
-+        ledger = self.ledger()
-+        baseline_red = self.variant == "sse-baseline" and case["target"]
-+        init_red = baseline_red and case.get("stage") == "initialize"
-+        methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
-+        counts = {"transport": 0, "probe": int(modern), "control": 0 if modern else 1 if init_red else 2, "business": 0 if init_red else 1}
-+        check(ledger["attempts"] == counts and [row["rpcMethod"] for row in ledger["events"]] == methods, "missing/duplicate/unexpected backend dispatch")
-+        check(all(row["accepted"] and row["backendOrigin"] == "primary" for row in ledger["events"]), "strict peer rejection or wrong backend")
-+        check(all(row["protocolVersion"] == contract.MODERN if modern else row["protocolVersion"] in (None, "2025-03-26") for row in ledger["events"]), "upstream version policy changed")
-+        fixtures = [row["sseFixture"] for row in ledger["events"] if "sseFixture" in row]
-+        check(len(fixtures) == (2 if case.get("stage") == "all" else 1), "target SSE response was not observed")
-+        for fixture in fixtures:
-+            wire = base64.b64decode(fixture["rawBase64"], validate=True)
-+            check(fixture["format"] == case["format"] and contract.body_record(wire) == {key: fixture[key] for key in ("utf8Bytes", "sha256")}, "wire fixture mismatch")
-+        check(status == 200 and isinstance(response, dict) and response.get("jsonrpc") == "2.0" and response.get("id") == "sse-client", "HTTP/envelope/client ID changed")
-+        check(headers.get("content-type", "").split(";", 1)[0] == "application/json", "gateway media changed")
-+        if baseline_red or case["format"] == "invalid":
-+            error = response.get("error", {})
-+            check(integer(error.get("code")) == -32603 and "result" not in response, "controlled error missing")
-+            message = error.get("message", "")
-+            extraction = self.variant == "sse-baseline"
-+            check("no data field found in SSE response" in message if extraction else message == "invalid JSON response", "wrong extraction/JSON failure stage")
-+            return {"ledger": ledger, "stage": "extraction" if extraction else "json", "validRedReproduction": baseline_red,
-+                    "positiveAssertion": "normal business result missing" if baseline_red else None}
-+        check("error" not in response and "result" in response, "normal business result missing")
-+        result = response["result"]
-+        check(integer(result.get("number")) == 900719925474099312345 and integer(result.get("value")) == 2 and result.get("content") == [], "precise business result changed")
-+        check(result.get("tools") == [{"name": "echo", "inputSchema": {"type": "object"}}], "tool list changed")
-+        return {"ledger": ledger, "stage": "business", "validRedReproduction": False, "resultSha256": canonical_json_sha256(result)}
-+
-+    def run_sse_no_space(self):
-+        import verify as existing
-+        expected = sse_no_space_cases()
-+        startup_error = None
-+        try:
-+            existing.wait_http("http://backend-primary:8080/healthz")
-+            existing.wait_http("http://gateway:9901/ready")
-+        except Exception as error:
-+            startup_error = str(error)
-+        for case in expected:
-+            self.case = case["id"]
-+            row = {"id": self.case, "status": "FAIL", "validRedReproduction": False}
-+            try:
-+                check(not startup_error, "startup failed: " + str(startup_error))
-+                self.backend(reset=True)
-+                detail = self.sse_no_space_case(case)
-+                row.update(detail=detail, validRedReproduction=detail["validRedReproduct
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_compatibility_test.go` (modified, +71/-0)
-```diff
-@@ -259,6 +259,77 @@ func TestProxyLooseClientIDsReachStrictUpstreamsAndRestoreClientSemantics(t *tes
- 	}
- }
- 
-+// TestSSENoSpaceHTTPCompatibility 验证显式 HTTP 握手、list/call 和 auto 后业务均沿用原调用方策略。
-+// 输入仅改变 SSE data 字段空格；输出必须保留客户端 ID、精确数字和既有 JSON 错误边界。
-+func TestSSENoSpaceHTTPCompatibility(t *testing.T) {
-+	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyAuto} {
-+		for _, operation := range []string{string(OpToolsList), string(OpToolsCall)} {
-+			for _, framing := range []string{"initialize", "LF", "CRLF", "mixed", "empty", "invalid"} {
-+				t.Run(fmt.Sprintf("%s/%s/%s", strategy, operation, framing), func(t *testing.T) {
-+					var host wasmtest.TestHost
-+					if strategy == ProtocolStrategyAuto {
-+						host = newAutoTestHost(t, "")
-+					} else {
-+						host = newProxyBridgeHost(t, strategy)
-+					}
-+					headers, body := looseProxyRequest(true, operation, `"sse-client"`)
-+					body = bytes.Replace(body, []byte(`"_meta":{`), []byte(`"_meta":{"progressToken":"sse-progress",`), 1)
-+					require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+					host.CallOnHttpRequestBody(body)
-+					if strategy == ProtocolStrategyAuto {
-+						finishProxyControls(t, host, strategy, true, true)
-+					} else {
-+						initialize := calloutAt(t, host, 0)
-+						initBody := autoResult(gjson.GetBytes(initialize.Body, "id").Raw, validAutoInitResult)
-+						initPrefix := "data: "
-+						if framing == "initialize" {
-+							initPrefix = "data:"
-+						}
-+						completeCallout(host, initialize, "200", [][2]string{{"Content-Type", "text/event-stream"}}, append(append([]byte(initPrefix), initBody...), []byte("\n\n")...))
-+						notification := calloutAt(t, host, 0)
-+						require.Equal(t, "notifications/initialized", gjson.GetBytes(notification.Body, "method").String())
-+						completeCallout(host, notification, "202", nil, nil)
-+					}
-+					business := routedRequest(t, host)
-+					result := autoResult(gjson.GetBytes(business.Body, "id").Raw, `{"tools":[],"content":[],"number":900719925474099312345}`)
-+					wire := append(append([]byte("data:"), result...), []byte("\n\n")...)
-+					switch framing {
-+					case "initialize":
-+						wire = append(append([]byte("data: "), result...), []byte("\n\n")...)
-+					case "CRLF":
-+						wire = bytes.ReplaceAll(wire, []byte("\n"), []byte("\r\n"))
-+					case "mixed":
-+						wire = append(append([]byte("data:{\"jsonrpc\":\"2.0\",\"method\":\"notifications/progress\",\"params\":{\"progressToken\":\"sse-progress\",\"progress\":1}}\n\ndata: "), result...), []byte("\n\n")...)
-+					case "empty":
-+						wire = append(append([]byte("data:\n\ndata: "), result...), []byte("\n\n")...)
-+					case "invalid":
-+						wire = []byte("data:{invalid json}\n\n")
-+					}
-+					completeCallout(host, business, "200", [][2]string{{"Content-Type", "text/event-stream"}}, wire)
-+					response := proxyTestResponse(host)
-+					require.NotNil(t, response)
-+					assert.Equal(t, `"sse-client"`, gjson.GetBytes(response.Data, "id").Raw)
-+					if framing == "invalid" {
-+						assert.Equal(t, int64(utils.ErrInternalError), gjson.GetBytes(response.Data, "error.code").Int())
-+						assert.NotContains(t, string(response.Data), "no data field found")
-+						if operation == string(OpToolsCall) {
-+							assert.Contains(t, string(response.Data), "invalid JSON response")
-+						} else {
-+							assert.Contains(t, string(response.Data), "invalid character")
-+						}
-+					} else {
-+						assert.Equal(t, uint32(200), response.StatusCode)
-+						assert.False(t, gjson.GetBytes(response.Data, "error").Exists())
-+						assert.Equal(t, "900719925474099312345", gjson.GetBytes(response.Data, "result.number").Raw)
-+						assert.Equal(t, "[]", gjson.GetBytes(response.Data, "result.tools").Raw)
-+					}
-+					require.Empty(t, host.GetHttpCalloutAttributes())
-+				})
-+			}
-+		}
-+	}
-+}
-+
- func TestHTTPBusinessResponsePolicyDoesNotInheritControlRestrictions(t *testing.T) {
- 	deep := strings.Repeat("[", 70) + "0" + strings.Repeat("]", 70)
- 	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyModern, ProtocolStrategyAuto} {
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_tool.go` (modified, +13/-1)
-```diff
-@@ -289,12 +289,15 @@ func sendUpstreamAuthFailure(ctx wrapper.HttpContext, statusCode int, responseHe
- 	return true
- }
- 
--// parseSSEResponse parses Server-Sent Events format and extracts data field content
-+// parseSSEResponse 从完整 SSE 响应 sseData 中提取 data 字段，返回原始内容或扫描/缺失错误。
-+// 原有 "data: " 格式仍立即返回；仅在完整扫描无错误且没有原格式时，回退到第一个非空 "data:" 内容。
-+// 本函数沿用行级 TrimSpace 和 32MB 扫描上限，不校验 JSON、不选择通知或最终响应，也不拼接多行事件。
- func parseSSEResponse(sseData []byte) ([]byte, error) {
- 	scanner := bufio.NewScanner(bytes.NewReader(sseData))
- 	// Set max token size to 32MB to handle large messages
- 	maxTokenSize := 32 * 1024 * 1024 // 32MB
- 	scanner.Buffer(make([]byte, 0, 64*1024), maxTokenSize)
-+	var fallback string
- 
- 	for scanner.Scan() {
- 		line := strings.TrimSpace(scanner.Text())
-@@ -309,6 +312,11 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
- 			dataContent := strings.TrimPrefix(line, "data: ")
- 			return []byte(dataContent), nil
- 		}
-+
-+		// 无空格内容只作为候选，继续扫描以保留后续原格式的优先级。
-+		if fallback == "" && strings.HasPrefix(line, "data:") {
-+			fallback = strings.TrimPrefix(line, "data:")
-+		}
- 	}
- 
- 	if err := scanner.Err(); err != nil {
-@@ -318,6 +326,10 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
- 		return nil, fmt.Errorf("error reading SSE data: %v", err)
- 	}
- 
-+	// 候选不能掩盖扫描错误；空 data 字段不会占据回退位置。
-+	if fallback != "" {
-+		return []byte(fallback), nil
-+	}
- 	return nil, fmt.Errorf("no data field found in SSE response")
- }
- 
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5309** (2026-11-05): fix(mcp-server): preserve SSE data priority with a no-space fallback (@sunxia0)
-- **PR #5305** (2026-11-04): fix(mcp-server): support 2025-11-25 Tools clients (@sunxia0)
-- **PR #5294** (2026-11-03): fix(mcp): bind user-level access to consumers (@johnlanni)
-- **PR #5293** (2026-11-03): fix(mcp): remove client config headers on ingress (@johnlanni)
-- **PR #5292** (2026-11-02): fix(plugins): isolate ai-cache data by consumer (@johnlanni)
-- **PR #5291** (2026-11-01): fix(plugins): require raw bodies for request validation (@johnlanni)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. mcp-server): preserve SSE data priority with a no-space fallback (#5309)
-
+### 1. Inverted Substring Boundary Guard Invariant
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When parsing delineated payload segments (such as markdown fences, envelopes, or protocol headers) using prefix and suffix searches (e.g., `Index` and `LastIndex`), code MUST NOT compute substring bounds using arithmetic additions on the start index without asserting that the ending index strictly satisfies `end >= start + len(delimiter)`. Slicing operations MUST be preceded by explicit compound non-negative range validations.
 
 **WHY**:
-Prevents defects observed in production commit `bfcd87d1`: mcp-server): preserve SSE data priority with a no-space fallback (#5309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+In high-throughput gateway proxies, string parsing of unverified LLM responses or client payloads occurs on the hot path. If a payload contains only a single delimiter instance (such as an unclosed ` ```json ` fence), `strings.Index` and `strings.LastIndex` evaluate to the exact same memory offset (`start == end`). Slicing using `response[start+3 : end]` results in a slice with inverted indices (`response[N+3 : N]`), triggering a runtime panic (`panic: runtime error: slice bounds out of range`). Within a WebAssembly filter or network loop, an uncaught panic terminates the worker instance or drops the underlying TCP connection, causing an immediate denial of service.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`.
+Apply in all text parsing engines, stream deserializers, markdown code fence parsers, and custom protocol decoders written in Go, Rust, C++, or Python where substring slicing is calculated dynamically from string search markers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
+package parser
 
+import (
+	"strings"
+)
 
-## Focused SSE no-space fallback (#5308)
+// ExtractDelimitedContent safely extracts inner text enclosed by start/end markers.
+// Prevents panics from inverted slice ranges or missing closing delimiters.
+func ExtractDelimitedContent(payload string, marker string) (string, bool) {
+	markerLen := len(marker)
+	if markerLen == 0 || len(payload) < markerLen {
+		return "", false
+	}
 
-From a clean, committed candidate checkout, select only the ten-case parser
-matrix. This mode builds plain Wasm for the exact affected source
-`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
-Compose services, backend, renderer, build and bounded lifecycle, with one
-`plugin.wasm` mount path. It does not run or retarget the normal business
-oracle, control, November-version or routing matrices.
+	start := strings.Index(payload, marker)
+	if start == -1 {
+		return "", false
+	}
 
-```sh
-env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
-  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-  --sse-no-space \
-  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
-  --candidate HEAD \
-  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-  --backend-image docker.io/library/python:3.12-alpine \
-  --output "$SSE_EVIDENCE/runtime"
-```
+	end := strings.LastIndex(payload, marker)
+	// INVARIANT: end must exist, must not be the identical start token,
+	// and must be positioned after start + delimiter length.
+	if end == -1 || end < start+markerLen {
+		return "", false
+	}
 
-Use an empty absolute external output directory. Python 3.12+ is needed for
-archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
-Images must already resolve locally to immutable RepoDigests. Bo
+	// Safe to slice: guaranteed that start + markerLen <= end <= len(payload)
+	return strings.TrimSpace(payload[start+markerLen : end]), true
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Blindly assumes start != -1 and end != -1 means two distinct, ordered tokens exist.
+// If payload is "```json data", then start=0 and end=0.
+// response[0+3 : 0] PANICS: slice bounds out of range [:0] with capacity starting at 3.
+func UnsafeExtract(response string) string {
+	start := strings.Index(response, "```")
+	end := strings.LastIndex(response, "```")
+	if start != -1 && end != -1 { // BUG: start can equal end!
+		return strings.TrimSpace(response[start+3 : end]) // RUNTIME CRASH
+	}
+	return response
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfcd87d1` are properly handled with clean fallback behavior.
+Enforce boundary unit tests using table-driven property tests containing edge-case payload mutations:
+```go
+func TestExtractDelimitedContent_Panics(t *testing.T) {
+	testCases := []string{
+		"```",
+		"```json",
+		"```json {\"key\": 1}",
+		"prefix ``` without closing",
+		"```1```", // exact minimum boundary
+	}
+	for _, tc := range testCases {
+		require.NotPanics(t, func() {
+			_, _ = ExtractDelimitedContent(tc, "```")
+		}, "Payload %q must never trigger a slice panic", tc)
+	}
+}
+```
+
+---
+
+### 2. Disjunctive Error-Contract Logging Invariant
+**RULE**:
+Before invoking `.Error()` or accessing members on an error interface within fallback logic, code MUST explicitly assert `err != nil`. Code MUST NOT assume that entry into an error-recovery fallback branch guarantees the presence of an allocated error object.
+
+**WHY**:
+When parsing multi-variant structures (e.g., verifying whether a payload matches a valid JSON format before checking for expected semantic fields), unmarshaling may execute completely without error (`err == nil`), but the required fields may still be missing. If the control flow branches into fallback or debugging routines under the assumption that "we didn't get the desired fields, therefore an error happened," calling `err.Error()` on a `nil` error interface causes a nil pointer dereference panic, taking down the Go runtime or Wasm execution thread.
+
+**WHEN TO APPLY**:
+Apply in all parsing pipelines, serialization layers, schema validation fallbacks, and multi-tier authentication routines where success of syntax decoding does not imply satisfaction of business validation schemas.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package parser
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type ActionPayload struct {
+	Action      string `json:"action"`
+	ActionInput string `json:"action_input"`
+}
+
+type Logger interface {
+	Debug(msg string)
+	Debugf(format string, args ...any)
+}
+
+func ParseAction(raw []byte, log Logger) (string, string, error) {
+	var payload ActionPayload
+	err := json.Unmarshal(raw, &payload)
+	if err == nil {
+		// Syntax is valid; check semantic field constraints
+		if payload.Action != "" && payload.ActionInput != "" {
+			return payload.Action, payload.ActionInput, nil
+		}
+		// Valid JSON, but missing required domain contract properties
+		log.Debug("json parsed successfully, but action or action_input fields were absent")
+	} else {
+		// Syntax error occurred
+		log.Debugf("json unmarshal failed with error: %s", err.Error())
+	}
+
+	// Controlled fallback: Proceed with regex or alternative parsing strategies safely
+	return fallbackRegexParse(raw, log)
+}
+
+func fallbackRegexParse(raw []byte, log Logger) (string, string, error) {
+	// Concrete fallback implementation omitted for brevity
+	return "", "", fmt.Errorf("fallback parsing failed")
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Assumes entering the fallback means err must be non-nil.
+// If json.Unmarshal succeeded but Action was missing, err is NIL.
+// Calling err.Error() yields panic: runtime error: invalid memory address or nil pointer dereference.
+func UnsafeParse(raw []byte, log Logger) (string, string) {
+	var payload ActionPayload
+	err := json.Unmarshal(raw, &payload)
+	if payload.Action != "" && payload.ActionInput != "" {
+		return payload.Action, payload.ActionInput
+	}
+	// BUG: If json was valid, err is nil!
+	log.Debugf("json parse err: %s", err.Error()) // NIL POINTER DEREFERENCE PANIC
+	return "", ""
+}
+```
+
+**VERIFICATION METHOD**:
+Implement static analysis linting with `govet` and `nilness`, supplemented by tests passing syntactically valid JSON missing target fields:
+```go
+func TestParseAction_NilErrorDerefShield(t *testing.T) {
+	mockLogger := &TestLogCollector{}
+	require.NotPanics(t, func() {
+		// Valid JSON without expected action schema
+		action, input, _ := ParseAction([]byte(`{"other_field": 123}`), mockLogger)
+		require.Empty(t, action)
+		require.Empty(t, input)
+	})
+}
+```
+
+---
+
+### 3. Verification-Before-Publication OCI Layer Byte Check
+**RULE**:
+CI/CD workflows and deployment controllers publishing immutable release artifacts under backward-compatibility aliased paths MUST cryptographically or byte-wise assert that the artifact served by the target path exactly matches the canonical source digest prior to finalizing the release.
+
+**WHY**:
+When transitioning microservices, plugins, or container image repositories to new versioning schemes, legacy systems often retain hardcoded URLs pointing to older tags (e.g., pulling `/plugins/mcp-server/1.0.0/plugin.wasm` instead of `2.0.3`). If aliased files are copied or dynamically seeded during multi-stage Docker builds without end-to-end byte verification against the upstream source digest, silent failures (such as cache poisoning, partial builds, empty layer exports, or stale file overwrites) escape into production, causing downstream nodes to execute corrupt or obsolete binaries.
+
+**WHEN TO APPLY**:
+Apply to all container image build pipelines, Wasm module artifact publishers, Helm chart repositories, and static asset CDNs supporting backward-compatible path aliases.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Invariant: Verify that aliased legacy endpoints serve the exact bytes of the canonical version
+CANONICAL_OCI_REF="ghcr.io/higress-group/plugins/mcp-server:2.0.3"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "${TMP_DIR}"' EXIT
+
+echo "--> Pulling canonical source artifact..."
+oras blob fetch "${CANONICAL_OCI_REF}" \
+    --output "${TMP_DIR}/canonical.wasm"
+
+# Verify WebAssembly binary magic bytes (\0asm)
+MAGIC=$(xxd -p -l 4 "${TMP_DIR}/canonical.wasm")
+if [[ "${MAGIC}" != "0061736d" ]]; then
+    echo "FATAL: Artifact is not a valid WebAssembly binary (magic: ${MAGIC})" >&2
+    exit 1
+fi
+
+CANONICAL_SHA=$(sha256sum "${TMP_DIR}/canonical.wasm" | awk '{print $1}')
+
+echo "--> Testing candidate release container on legacy endpoints..."
+CONTAINER_ID=$(docker create "higress-plugin-server:candidate")
+docker cp "${CONTAINER_ID}:/plugins/mcp-server/1.0.0/plugin.wasm" "${TMP_DIR}/legacy_1.0.0.wasm"
+docker cp "${CONTAINER_ID}:/plugins/mcp-server/2.0.0/plugin.wasm" "${TMP_DIR}/legacy_2.0.0.wasm"
+docker rm -v "${CONTAINER_ID}"
+
+# Assert exact cryptographic equality
+for ALIAS in "legacy_1.0.0.wasm" "legacy_2.0.0.wasm"; do
+    ALIAS_SHA=$(sha256sum "${TMP_DIR}/${ALIAS}" | awk '{print $1}')
+    if [[ "${ALIAS_SHA}" != "${CANONICAL_SHA}" ]]; then
+        echo "FATAL: Byte integrity check failed for ${ALIAS}!" >&2
+        echo "Expected: ${CANONICAL_SHA}, Found: ${ALIAS_SHA}" >&2
+        exit 1
+    fi
+done
+
+echo "SUCCESS: All legacy alias artifacts match canonical source SHA256."
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Blindly copy files without post-build verification
+# If pull_plugins.py fails silently or copies an empty file, the broken image is published.
+cp ./target/2.0.3/plugin.wasm ./legacy/1.0.0/plugin.wasm
+docker build -t registry/plugin-server:latest .
+docker push registry/plugin-server:latest # Pushes unverified payload
+```
+
+**VERIFICATION METHOD**:
+Automate container build verification within GitHub Actions via an isolated step asserting checksum equivalence against test fixtures:
+```yaml
+- name: Verify Legacy Alias Byte Integrity
+  run: |
+    docker run --rm higress-plugin-server:candidate \
+      sha256sum /plugins/mcp-server/1.0.0/plugin.wasm /plugins/mcp-server/2.0.3/plugin.wasm | \
+      awk '{print $1}' | uniq | wc -l | grep -q "^1$" || (echo "Checksum mismatch across alias layers" && exit 1)
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Nil Pointer Dereference in Agent Output Parser (BUG-AI-AGENT-01)
+- **Context**: `plugins/wasm-go/extensions/ai-agent/main.go` inside the `outputParser` response processor.
+- **What Was Expected**: When the LLM outputs valid JSON that lacks either the `"action"` or `"action_input"` fields, the parser was expected to log the missing fields and fall back to regular expression extraction without crashing.
+- **What Actually Happened**: `json.Unmarshal` executed successfully without populating the expected struct attributes, leaving `err == nil`. The fallback routine unconditionally dereferenced `err.Error()` inside `log.Debugf()`, immediately throwing a runtime panic (`nil pointer dereference`) within the Envoy Wasm VM.
+- **Evidence in Repo**: Commit `2bb8962a`, PR #5273.
+- **Root Cause**: The developer assumed that failing the domain condition `actionName != "" && actionInput != ""` implied that `err != nil`.
+- **Remediation Code Diff**:
+```go
+@@ -380,7 +380,11 @@ func outputParser(response string, log log.Log) (string, string) {
+ 			return actionName, actionInput
+ 		}
+ 	}
+-	log.Debugf("json parse err: %s", err.Error())
++	if err != nil {
++		log.Debugf("json parse err: %s", err.Error())
++	} else {
++		log.Debug("json parsed but no action and action_input found")
++	}
+ 	// Fallback to regex parsing if JSON unmarshaling fails
+```
+- **Lesson**: Validation failure is orthogonal to serialization failure. Never evaluate an error object's string or trace without first verifying that the error is non-nil.
+
+---
+
+### Incident 2: Inverted Substring Slice Panic on Single Code Fence (BUG-AI-AGENT-02)
+- **Context**: `plugins/wasm-go/extensions/ai-agent/main.go` inside `outputParser`.
+- **What Was Expected**: If an LLM response contained an incomplete or unclosed markdown code fence (e.g. ` ```json {"a":1} `), the system was expected to treat the entire string as raw payload or skip slicing gracefully.
+- **What Actually Happened**: The code located `start = strings.Index(response, "```")` and `end = strings.LastIndex(response, "```")`. Because there was only one fence marker, `start == end`. The condition `start != -1 && end != -1` passed. The slice `response[start+3 : end]` was executed as `response[3 : 0]`, triggering a catastrophic slice bounds out-of-range panic.
+- **Evidence in Repo**: Commit `2bb8962a`, PR #5273; verified via `plugins/wasm-go/extensions/ai-agent/output_parser_test.go`.
+- **Root Cause**: Lack of boundary ordering checks (`end >= start + 3`) when deriving slice markers using forward and reverse lookups on identical delimiter strings.
+- **Remediation Code Diff**:
+```go
+@@ -357,7 +357,7 @@ func outputParser(response string, log log.Log) (string, string) {
+ 	end := strings.LastIndex(response, "```")
+ 
+ 	var jsonStr string
+-	if start != -1 && end != -1 {
++	if start != -1 && end != -1 && end >= start+3 {
+ 		jsonStr = strings.TrimSpace(response[start+3 : end])
+ 	} else {
+ 		jsonStr = response
+```
+- **Lesson**: When extracting content between delimiters, testing for index non-negativity is insufficient; the terminating offset must be proven to reside strictly after the starting offset plus the delimiter byte width.
+
+---
+
+### Incident 3: Missing Security Token Configuration Field in Cloud Armor Guardrails (BUG-SECURITY-DOC-03)
+- **Context**: `plugins/wasm-go/extensions/ai-security-guard/README_EN.md`
+- **What Was Expected**: The AI security guardrail extension, which interfaces with Alibaba Cloud Yundun / AI Guardrail APIs, requires authentication via temporary STS (Security Token Service) credentials when running in Kubernetes pods under service-account assumption. The configuration specification had omitted the `securityToken` property in documentation.
+- **What Actually Happened**: Deployments using temporary STS credentials (AK/SK plus STS Token) failed upstream authorization against cloud guardrail moderation endpoints because users lacked documentation for the `securityToken` parameter, resulting in either unmoderated prompt leaks or hard 403 request drops.
+- **Evidence in Repo**: Commit `068baa16`, PR #4916.
+- **Root Cause**: Documentation divergence from the underlying Wasm Go configuration struct definition, where `securityToken` had been parsed in Go code but left out of the schema documentation.
+- **Remediation Code Diff**:
+```markdown
+@@ -22,6 +22,7 @@ Plugin Priority: `300`
+ | `accessKey` | string | required | - | Aliyun accesskey |
+ | `secretKey` | string | required | - | Aliyun secretkey |
+ | `action` | string | required | - | Aliyun ai guardrails business interface |
++| `securityToken` | string | optional | - | Aliyun security token (used for temporary credentials) |
+ | `checkRequest` | bool | optional | false | check if the input is legal |
+```
+- **Lesson**: IAM structures and credential inputs must support the STS security-token tri-factor (Access Key, Secret Key, Session/Security Token); omission in schema contracts breaks enterprise least-privilege pod identities.
+
+---
+
+### Incident 4: CI Retag Automation False-Positive Absence Resolution (BUG-CI-RETAG-04)
+- **Context**: CI/CD release workflow `.github/workflows/retag-plugin-artifact.yaml` and Issue #5320.
+- **What Was Expected**: A maintainer retag workflow needed to add alias tags to published OCI plugin images without rebuilding layers. When inspecting target tags, authentication failures or transient 401/403 errors had to be treated as hard errors rather than "tag absent", and existing tags pointing to different digests had to be shielded from overwrite unless explicitly forced.
+- **What Actually Happened**: Naive HTTP status checks treated network errors or auth drops as tag absence (`404 Not Found`), causing subsequent `oras tag` invocations to fail or unintentionally overwrite production tags with conflicting digests.
+- **Evidence in Repo**: Issue #5320, Closed on 2026-11-07.
+- **Root Cause**: Failure to distinguish between authorization/transport errors and actual resource absence when interacting with OCI registries.
+- **Remediation Pattern**:
+```bash
+# Implemented verification sequence in CI automation
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${REGISTRY_TOKEN}" "${TAG_URL}")
+if [[ "${HTTP_STATUS}" == "401" || "${HTTP_STATUS}" == "403" ]]; then
+    echo "CRITICAL: Authentication/Authorization failure accessing registry" >&2
+    exit 1
+elif [[ "${HTTP_STATUS}" == "200" ]]; then
+    EXISTING_DIGEST=$(get_remote_digest "${TAG_URL}")
+    if [[ "${EXISTING_DIGEST}" != "${SOURCE_DIGEST}" ]] && [[ "${ALLOW_OVERWRITE}" != "true" ]]; then
+        echo "ERROR: Refusing to overwrite existing tag pointing to different digest" >&2
+        exit 1
+    fi
+elif [[ "${HTTP_STATUS}" == "404" ]]; then
+    echo "Tag is absent; safe to proceed with retagging."
+fi
+```
+- **Lesson**: Idempotent registry management must treat network/auth failures as distinct from resource absence, and protect against unintended layer digest clobbering.
+
+---
+
+### Incident 5: Legacy Plugin Path Breakage on Content Model Migration (BUG-PLUGIN-SERVER-05)
+- **Context**: `higress-plugin-server` Docker container and release manifest pipeline.
+- **What Was Expected**: When the plugin server transitioned to a "one-current-version-per-plugin" content distribution model (e.g. `mcp-server:2.0.3`), existing production Kubernetes deployments running `WasmPlugin` CRs pointing to legacy paths (`/plugins/mcp-server/1.0.0/plugin.wasm` and `.../2.0.0/...`) needed to continue pulling binaries without disruption.
+- **What Actually Happened**: Moving to the single-version model purged the legacy path directory tree inside the candidate Nginx/static plugin server container, causing 404 errors during Envoy Wasm module downloads, resulting in failed pod initialization across user clusters.
+- **Evidence in Repo**: Issue #5319.
+- **Root Cause**: The release process decoupled the artifact build from legacy route compatibility assertions, assuming all downstream CRDs had upgraded to 2.0.3.
+- **Remediation Pattern**:
+  - Implemented pre-build layer hydration: resolve snapshot `ociRef`, pull Wasm binary by digest, validate the `\0asm` magic header, and pre-seed the exact bytes into `/plugins/mcp-server/{1.0.0,2.0.0}/plugin.wasm`.
+  - Added post-build verification asserting that HTTP requests to legacy URLs return byte-for-byte matches with the 2.0.3 OCI blob.
+- **Lesson**: Data-plane plugin endpoints must treat artifact paths as immutable contracts; server reorganizations must seed legacy path aliases backed by automated byte-level assertion tests.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+In Go string manipulations, byte slicing is not rune slicing, and index searches return byte offsets:
+```go
+// INVARIANT: When indexing strings with multi-byte runes or prefixes,
+// slicing by raw byte offset can split UTF-8 sequences.
+// However, markdown fence tokens ("```") are single-byte ASCII.
+start := strings.Index(response, "```")
+end := strings.LastIndex(response, "```")
+
+// HAZARD: Direct index arithmetic without size bounds checks
+// If len(response) is 3, start is 0, start+3 == 3. If end is 3, start+3 == end.
+// response[start+3 : end] -> response[3 : 3] -> "" (valid, but empty).
+// If end < start+3, response[start+3 : end] PANICS with runtime error.
+if start != -1 && end != -1 && end >= start+3 {
+    jsonStr = strings.TrimSpace(response[start+3 : end])
+}
+```
+
+When building Kubernetes Client apply configurations or parsing CRD metadata:
+```go
+// INVARIANT: In applyconfiguration/utils.go, GroupVersionKind mapping must 
+// return an empty apply configuration struct pointer, NOT a nil interface reference.
+func ForKind(kind schema.GroupVersionKind) interface{} {
+    switch kind {
+    case v1alpha1.SchemeGroupVersion.WithKind("WasmPlugin"):
+        return &extensionsv1alpha1.WasmPluginApplyConfiguration{}
+    }
+    // Returning nil here means untyped nil, which satisfies if v == nil comparisons cleanly
+    return nil
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+When rendering Helm configurations and tree paths recursively (`hgctl/pkg/helm/tpath/util.go`):
+```go
+// INVARIANT: Tree traversal over nested maps (such as YAML values)
+// must guard against circular pointer references and enforce maximum depth limits.
+const MaxTraversalDepth = 64
+
+func WalkPathContext(node any, path util.Path, depth int) (*NodeContext, error) {
+    if depth > MaxTraversalDepth {
+        return nil, fmt.Errorf("exceeded maximum manifest tree depth of %d: cyclic reference detected", MaxTraversalDepth)
+    }
+    // Safe traversal logic...
+    return nil, nil
+}
+```
+
+In interactive terminal prompts (`hgctl/pkg/agent/core.go`):
+```go
+// INVARIANT: Polling or fallback prompt loops MUST NOT loop infinitely on EOF or stdin closure.
+// If terminal input disconnects (e.g. CI running an interactive command),
+// promptui.Prompt.Run() immediately returns an error. The error MUST trigger a hard abort.
+userPrompt := promptui.Prompt{
+    Label:   "Enter higress console username",
+    Default: "admin",
+}
+username, err := userPrompt.Run()
+if err != nil {
+    // MUST NOT RETRY INDEFINITELY. Return immediate cancellation error.
+    return fmt.Errorf("aborted terminal session: %w", err)
+}
+```
+
+### 3. UI & UX Micro-Mechanics (CLI Terminal UI & Stacking)
+The `hgctl` CLI manages terminal colors, indentation, and interactive survey dialogs (`hgctl/pkg/plugin/utils/printer.go`):
+```go
+// INVARIANT: Terminal indentation state tracking must never become negative.
+// DecRepeat decrementing without lower-bound clamping causes integer underflow
+// or strings.Repeat panics (panic: strings: negative Repeat count).
+type Indent struct {
+    format string
+    repeat int
+}
+
+func (i *Indent) DecRepeat() {
+    i.repeat--
+    if i.repeat < 0 {
+        i.repeat

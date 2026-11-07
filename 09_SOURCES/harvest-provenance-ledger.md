@@ -8085,3 +8085,7 @@ Every entry in this ledger must capture:
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `976421fc` | Multi-dimensional audit evidence | 2026-11-07T20:22:59.843Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `cedaeca8` | Multi-dimensional audit evidence | 2026-11-07T20:23:02.896Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `d622ec57` | Multi-dimensional audit evidence | 2026-11-07T20:23:08.284Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `d1896a07` | Multi-dimensional audit evidence | 2026-11-07T20:42:08.020Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `6f6a1545` | Multi-dimensional audit evidence | 2026-11-07T20:42:11.517Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `73fae6e8` | Multi-dimensional audit evidence | 2026-11-07T20:42:14.712Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3f12f64e` | Multi-dimensional audit evidence | 2026-11-07T20:42:33.528Z |

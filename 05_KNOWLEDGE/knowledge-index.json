@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:23:08.197Z",
+  "last_updated": "2026-11-07T20:42:33.443Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5209,11 +5209,26 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "7d1939dc",
-      "content_hash": "b892ad48e8468eb1ca918b0593626675c32babcc2392deae691bb4b6ff3e4958",
+      "source_version": "d1896a07",
+      "content_hash": "4c179bcd562aba48e322b4675252673d73746bf89f43bef633c519fdb1a30565",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Zero-Progress Loop Guard Invariant in Recursive Descent Parsing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Trivia-Safe AST Sequence Reordering Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Bit-Width and Size-Class Invariance in Generated Meta-Programming",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2484,
           "title": "daemon): various fixes (#12441)",
@@ -5295,7 +5310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T16:06:05.721Z",
+      "verified_at": "2026-11-07T20:42:07.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33634,11 +33649,26 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "bfcd87d1",
-      "content_hash": "2ad2c3e03af3b399b7ce5cce8e567f71e2290a7838708ca6a8315358230e308c",
+      "source_version": "6f6a1545",
+      "content_hash": "0f8e3631028174fa4e43191a14f5b44834556dd548534e2b18b84d9792defabf",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Inverted Substring Boundary Guard Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Disjunctive Error-Contract Logging Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Verification-Before-Publication OCI Layer Byte Check",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1705,
           "title": "geo-ip): do not panic on a malformed real-IP header value (#4948)",
@@ -33675,7 +33705,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:54:58.726Z",
+      "verified_at": "2026-11-07T20:42:11.393Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74192,13 +74222,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "43508de1",
-      "content_hash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "3f12f64e",
+      "content_hash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74229,6 +74259,21 @@
           "number": null,
           "title": "Merge pull request #4643 from aleo-labs-protocol/gauntlet-workflow-names",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Zero-Fee FIFO Quarantining in Priority Memory Pools",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Context Handshake Protocol Genesis-Pinning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Out-of-Order Watermark Sync Pool Request Invalidation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1114,
@@ -74356,7 +74401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:42:36.075Z",
+      "verified_at": "2026-11-07T20:42:33.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79557,11 +79602,26 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "27fbdd44",
-      "content_hash": "d38c1b3cb7e62be812251e5097687e1cecaa3827d40b9a9df2ee88710cc0561c",
+      "source_version": "73fae6e8",
+      "content_hash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Invariant Content-Hashing Symmetry Between Emitted Artifacts and Hash Seeds",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Idempotent Wrapper Identity in Hierarchical Resource Caching",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Build-Time Isolation and Dynamic Purging of Host-Compiling Native Dependencies",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1641,
           "title": "Symmetrical Path Normalization Invariant",
@@ -79608,7 +79668,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:39:43.572Z",
+      "verified_at": "2026-11-07T20:42:14.586Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
