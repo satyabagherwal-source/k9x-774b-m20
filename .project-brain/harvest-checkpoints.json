@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T22:09:36.933Z",
+  "last_updated": "2026-11-07T22:16:16.241Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
-      "verified_at": "2026-11-05T23:32:37.100Z",
+      "content_hash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
+      "verified_at": "2026-11-07T22:16:16.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:32:37.100Z"
+      "last_updated": "2026-11-07T22:16:16.240Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -10836,14 +10836,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-peopleinspace",
-      "content_hash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
-      "verified_at": "2026-10-25T12:23:07.239Z",
+      "content_hash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
+      "verified_at": "2026-11-07T22:16:07.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:23:07.239Z"
+      "last_updated": "2026-11-07T22:16:07.819Z"
     },
     "valeriansaliou/sonic": {
       "repository": "valeriansaliou/sonic",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
-      "verified_at": "2026-11-05T18:15:18.236Z",
+      "content_hash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
+      "verified_at": "2026-11-07T22:16:03.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:15:18.236Z"
+      "last_updated": "2026-11-07T22:16:03.687Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -15276,14 +15276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mswjs-msw",
-      "content_hash": "f0139935b7acf8cb525a80f6f50fedf2a96bbbf2a3789feddf417eea7291aea5",
-      "verified_at": "2026-10-20T03:19:32.588Z",
+      "content_hash": "f939d3f7d3a6f314fe2d34183163ef1221e8b50d707706bc187af0d1671d3198",
+      "verified_at": "2026-11-07T22:16:04.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:19:32.588Z"
+      "last_updated": "2026-11-07T22:16:04.476Z"
     },
     "signerlabs/Klee": {
       "repository": "signerlabs/Klee",

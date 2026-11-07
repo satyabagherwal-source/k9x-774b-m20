@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:09:36.813Z",
+  "last_updated": "2026-11-07T22:16:16.151Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16914,11 +16914,16 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "20d58d49",
-      "content_hash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
+      "source_version": "31549f83",
+      "content_hash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "In `Span::BuildFreelist`, populate `batch` directly with sequential object",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2921,
           "title": "Add legacy_locking2 build and test variant.",
@@ -16990,7 +16995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:15:18.071Z",
+      "verified_at": "2026-11-07T22:16:03.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36002,11 +36007,16 @@
       "slug": "joreilly-peopleinspace",
       "platform": "github",
       "source_url": "https://github.com/joreilly/PeopleInSpace",
-      "source_version": "8b77f91d",
-      "content_hash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
+      "source_version": "9f9e8336",
+      "content_hash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "crash on configuration change with a person selected (#566)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2369,
           "title": "Offline-First Non-Destructive Stateflow Reconciliation Invariant",
@@ -36033,7 +36043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:23:07.192Z",
+      "verified_at": "2026-11-07T22:16:07.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64546,14 +64556,19 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "98b2e086",
-      "content_hash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
+      "source_version": "6bea62d6",
+      "content_hash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[#36606] YSQL: Make ConnMgr connection sticky when a SECURITY DEFINER function s",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[#37140] DocDB: Fix PgWaitQueuesMaxBatchSize1Test.ParallelUpdatesDetectDeadlock",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64637,7 +64652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:32:36.991Z",
+      "verified_at": "2026-11-07T22:16:16.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80375,19 +80390,24 @@
       "slug": "mswjs-msw",
       "platform": "github",
       "source_url": "https://github.com/mswjs/msw",
-      "source_version": "28c74aad",
-      "content_hash": "f0139935b7acf8cb525a80f6f50fedf2a96bbbf2a3789feddf417eea7291aea5",
+      "source_version": "9bbfe99c",
+      "content_hash": "f939d3f7d3a6f314fe2d34183163ef1221e8b50d707706bc187af0d1671d3198",
       "dossier_path": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "promoted_rules": [
-        "Rule 1633"
+        "Rule 1633",
+        {
+          "number": null,
+          "title": "worker): prevent the worker from going idle (#2830)",
+          "status": "WITHHELD_REJECT"
+        }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:19:32.479Z",
+      "verified_at": "2026-11-07T22:16:04.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

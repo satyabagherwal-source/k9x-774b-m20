@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "98b2e086",
+    "sourceVersion": "6bea62d6",
     "license": "NOASSERTION",
-    "contentHash": "b40896f2c6d69a9a74bdf04b77be31d9aa6a8d8f06af86e645e0df7f847e767d",
-    "lastHarvestedAt": "2026-11-05T23:32:37.092Z",
+    "contentHash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
+    "lastHarvestedAt": "2026-11-07T22:16:16.234Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -7193,10 +7193,10 @@
     "repository": "joreilly/PeopleInSpace",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/PeopleInSpace",
-    "sourceVersion": "8b77f91d",
+    "sourceVersion": "9f9e8336",
     "license": "Apache-2.0",
-    "contentHash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
-    "lastHarvestedAt": "2026-10-25T12:23:07.234Z",
+    "contentHash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
+    "lastHarvestedAt": "2026-11-07T22:16:07.813Z",
     "learningId": "learn-github-joreilly-peopleinspace"
   },
   "valeriansaliou-sonic": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "20d58d49",
+    "sourceVersion": "31549f83",
     "license": "Apache-2.0",
-    "contentHash": "797fd838c1b8fd400b2e8b7ca07370d1859e26614505d14612127690ea8550a0",
-    "lastHarvestedAt": "2026-11-05T18:15:18.224Z",
+    "contentHash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
+    "lastHarvestedAt": "2026-11-07T22:16:03.672Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -10153,10 +10153,10 @@
     "repository": "mswjs/msw",
     "platform": "github",
     "sourceUrl": "https://github.com/mswjs/msw",
-    "sourceVersion": "28c74aad",
+    "sourceVersion": "9bbfe99c",
     "license": "MIT",
-    "contentHash": "f0139935b7acf8cb525a80f6f50fedf2a96bbbf2a3789feddf417eea7291aea5",
-    "lastHarvestedAt": "2026-10-20T03:19:32.581Z",
+    "contentHash": "f939d3f7d3a6f314fe2d34183163ef1221e8b50d707706bc187af0d1671d3198",
+    "lastHarvestedAt": "2026-11-07T22:16:04.470Z",
     "learningId": "learn-github-mswjs-msw"
   },
   "signerlabs-klee": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-GWUP",
-    "timestamp": "2026-11-05T09:57:47.473Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "9da218ace5f23b7725267bbe809bf02850602a4ec4f22cb2a5251dbaeaf35997",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-VCM4",
-    "timestamp": "2026-11-05T10:09:01.084Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "593a6042e65599a6735f3f730a02926ee0410c5b484c5c950a5b15ff75ca0ad7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-VCRD",
-    "timestamp": "2026-11-05T10:09:01.273Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "bdbf6ac3b6c00da66aa0d77633e78e01670533d277a8d58a6b228809778e9283",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-VJES",
-    "timestamp": "2026-11-05T10:09:09.892Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "89bbd2a255e187cd0e8cad00c97e076e0e1ba513483cb99b41c8eb3fe7bafcc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-4BTL",
     "timestamp": "2026-11-05T10:15:59.961Z",
     "repository": "Xudong-Huang/may",
@@ -7492,6 +7432,66 @@
     "contentHash": "790e24963d7f4f8c28545eb4d0e4b7a6289ce536c9bcb2378ce716ffcc2091d1",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-Q1CL",
+    "timestamp": "2026-11-07T22:16:03.669Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-Q1YR",
+    "timestamp": "2026-11-07T22:16:04.467Z",
+    "repository": "mswjs/msw",
+    "learningId": "learn-github-mswjs-msw",
+    "contentHash": "f939d3f7d3a6f314fe2d34183163ef1221e8b50d707706bc187af0d1671d3198",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-Q4JH",
+    "timestamp": "2026-11-07T22:16:07.805Z",
+    "repository": "joreilly/PeopleInSpace",
+    "learningId": "learn-github-joreilly-peopleinspace",
+    "contentHash": "31c72508a01cac2fb22dcae5fe2c16381aea755e3a967531da5434bf1401ba7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-QB1E",
+    "timestamp": "2026-11-07T22:16:16.226Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "67f654e7d2dd427eb73dfa69f2713d410f443a13d50d510380603843ee9b0640",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

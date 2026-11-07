@@ -8124,3 +8124,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `f60f17fd` | Multi-dimensional audit evidence | 2026-11-07T22:08:03.840Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `985ebd5d` | Multi-dimensional audit evidence | 2026-11-07T22:09:05.285Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `eddfda29` | Multi-dimensional audit evidence | 2026-11-07T22:09:36.916Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `31549f83` | Multi-dimensional audit evidence | 2026-11-07T22:16:03.672Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `9bbfe99c` | Multi-dimensional audit evidence | 2026-11-07T22:16:04.470Z |
+| `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `9f9e8336` | Multi-dimensional audit evidence | 2026-11-07T22:16:07.813Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `6bea62d6` | Multi-dimensional audit evidence | 2026-11-07T22:16:16.234Z |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T22:09:36.929Z",
-  "total_cycles_completed": 8080,
-  "total_learnings_persisted": 8080,
-  "total_rules_promoted": 7746,
+  "last_updated": "2026-11-07T22:16:16.238Z",
+  "total_cycles_completed": 8084,
+  "total_learnings_persisted": 8084,
+  "total_rules_promoted": 7750,
   "history": [
-    {
-      "timestamp": "2026-11-06T20:52:21.434Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T20:59:28.291Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T21:06:39.899Z",
-      "repository": "aome510/spotify-player",
-      "learningId": "learn-github-aome510-spotify-player",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T21:06:52.969Z",
-      "repository": "topoteretes/cognee",
-      "learningId": "learn-github-topoteretes-cognee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T21:13:53.924Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1375,34 @@
       "repository": "Tencent-TDS/KuiklyUI",
       "learningId": "learn-github-tencent-tds-kuiklyui",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:16:03.676Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:16:04.474Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:16:07.817Z",
+      "repository": "joreilly/PeopleInSpace",
+      "learningId": "learn-github-joreilly-peopleinspace",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T22:16:16.238Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
