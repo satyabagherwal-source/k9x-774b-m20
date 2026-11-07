@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `fff807d1`  
+> **Source Version**: `cdc74879`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:58:21.832Z  
+> **Timestamp**: 2026-11-07T05:44:16.481Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:58:21.826Z  
+> **Harvest Timestamp**: 2026-11-07T05:44:14.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5210 stars
+- **Stars / Engagement**: 5215 stars
 
 ---
 
@@ -586,10 +586,11 @@ impl DnsResolver {
 ```
 //! Bounded passive DNS transaction analytics.
 
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::net::SocketAddr;
 use std::time::{Duration, SystemTime};
 
+use super::pending::{PendingStamp, PendingTable};
 use super::types::{ConnectionKey, DnsInfo, DnsQueryType};
 
 mod aggregate;
@@ -747,13 +748,31 @@ struct CompletedTransaction {
     timed_out: bool,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub(crate) struct DnsAnalyticsTracker {
-    pending: HashMap<TransactionKey, PendingTransaction>,
+    pending: PendingTable<TransactionKey, PendingTransaction>,
     completed: VecDeque<CompletedTransaction>,
     truncated_at: Option<SystemTime>,
     recent_issues: VecDeque<DnsIssue>,
     session: DnsAggregate,
+}
+
+impl PendingStamp for PendingTransaction {
+    fn stamp(&self) -> SystemTime {
+        self.last_sent_at
+    }
+}
+
+impl Default for DnsAnalyticsTracker {
+    fn default() -> Self {
+        Self {
+            pending: PendingTable::new(MAX_PENDING_DNS_TRANSACTIONS, DNS_TRANSACTION_TIMEOUT),
+            completed: VecDeque::new(),
+            truncated_at: None,
+            recent_issues: VecDeque::new(),
+            session: DnsAggregate::default(),
+        }
+    }
 }
 
 impl DnsAnalyticsTracker {
@@ -772,7 +791,7 @@ impl DnsAnalyticsTracker {
 
         if is_outgoing && !info.is_response {
             let query_name = normalize_query_name(info.query_name.as_deref());
-            if let Some(pending) = self.pending.get_mut(&key)
+            if let Some(pending) = self.pending.map.get_mut(&key)
                 && pending.query_name == query_name
                 && pending.query_type == info.query_type
             {
@@ -780,7 +799,7 @@ impl DnsAnalyticsTracker {
                 pending.retries = pending.retries.saturating_add(1);
                 return;
             }
-            if self.pending.contains_key(&key) {
+            if self.pending.map.contains_key(&key) {
                 self.session.truncated = true;
                 self.mark_truncated(at);
             }
@@ -791,10 +810,7 @@ impl DnsAnalyticsTracker {
                 query_name: normalize_query_name(info.query_name.as_deref()),
                 query_type: info.query_type,
             };
-            if self.pending.len() < MAX_PENDING_DNS_TRANSACTIONS || self.pending.contains_key(&key)
-            {
-                self.pending.insert(key, pending);
-            } else {
+            if self.pending.start(key, pending).is_none() {
                 self.session.truncated = true;
                 self.mark_truncated(at);
             }
@@ -806,7 +822,7 @@ impl DnsAnalyticsTracker {
         }
 
         // Do not let an old reply with a reused ID finish a different question.
-        if let Some(pending) = self.pending.get(&key)
+        if let Some(pending) = self.pending.map.get(&key)
             && ((pending.query_name.is_some()
                 && info.query_name.is_some()
                 && pending.query_name != normalize_query_name(info.query_name.as_deref()))
@@ -816,7 +832,7 @@ impl DnsAnalyticsTracker {
         {
             return;
         }
-        let Some(mut pending) = self.pending.remove(&key) else {
+        let Some(mut pending) = self.pending.complete(&key) else {
             return;
         };
         if pending.query_name.is_none() {
@@ -854,7 +870,7 @@ impl DnsAnalyticsTracker {
             .and_then(|duration| now.checked_sub(duration));
         let mut snapshot =
             if window == TimeWindow::SinceStartup {
-                self.session.snapshot(now, &self.pending)
+                self.session.snapshot(now, &self.pending.map)
             } else {
                 let mut aggregate = DnsAggregate::new(window);
                 for transaction in self.completed.iter().filter(|transaction| {
@@ -865,7 +881,7 @@ impl DnsAnalyticsTracker {
                 aggregate.truncated = self
                     .truncated_at
                     .is_some_and(|at| cutoff.is_none_or(|cutoff| at > cutoff));
-                aggregate.snapshot(now, &self.pending)
+                aggregate.snapshot(now, &self.pending.map)
             };
         snapshot.recent_issues = self.recent_issues.iter().rev().cloned().collect();
         snapshot
@@ -880,20 +896,12 @@ impl DnsAnalyticsTracker {
     }
 
     fn expire_pending(&mut self, now: SystemTime) {
-        let pending_cutoff = now.checked_sub(DNS_TRANSACTION_TIMEOUT);
-        let expired: Vec<TransactionKey> = pending_cutoff.map_or_else(Vec::new, |cutoff| {
-            self.pending
-                .iter()
-                .filter_map(|(key, pending)| (pending.last_sent_at <= cutoff).then_some(*key))
-                .collect()
-        });
-        for key in expired {
-            if let Some(pending) = self.pending.remove(&key) {
-                let completed_at = pending
-                    .last_sent_at
-                    .checked_add(DNS_TRANSACTION_TIMEOUT)
-                    .unwrap_or(now);
-                self.push_completed(C
+        for (key, pending) in self.pending.prune(now) {
+            let completed_at = pending
+                .last_sent_at
+                .checked_add(DNS_TRANSACTION_TIMEOUT)
+                .unwrap_or(now);
+            self.push_completed(
 ```
 
 ### Core Architecture Module: `crates/rustnet-core/src/network/dns_analytics/aggregate.rs`
@@ -2495,87 +2503,284 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fff807d1` (2026-11-05)
-**Commit Message**: fix: discard pending RTT probes on TCP keepalives (#716)
+### Incident Patch 1: `cdc74879` (2026-11-06)
+**Commit Message**: perf(ui/format): return Cow<'static, str> from rate formatters (#429)
+
+format_rate and format_rate_compact always allocated a String, even for
+the idle branch that only returns the NONE_PLACEHOLDER constant ("-"). On
+an idle connection list most rows have zero Rx/Tx, so every visible row
+allocated two throwaway Strings per frame just to hold "-".
+
+Return Cow<'static, str> instead: Cow::Borrowed(NONE_PLACEHOLDER) for the
+zero case, Cow::Owned for live rates. bandwidth_cell and the graph tab
+feed the result straight into Span::styled / Line::from / format!, all of
+which accept Cow, so no downstream allocation is added. The Details tab
+keeps its owned String via into_owned() (cold path, one connection).
+
+Zero behavior change; drops 2 allocations per idle row per frame in the
+Overview bandwidth column.
+
+Closes #428
+
+Co-authored-by: Marco Cadetg <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
+@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
  
- ### Fixed
-+- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
- - Match local IPv4/IPv6 DNS stub replies correctly and prevent healthy resolvers from hiding a failing secondary resolver
- - Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
- - Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
+ ### Changed
++- Avoid allocating idle rate strings in the UI while preserving rate labels and placeholders (#429)
+ - Reuse unchanged historic headless connection JSON with a bounded cache while preserving full snapshots and late metadata updates (#707)
+ - Share DNS/RTT pending-request bookkeeping, procfs socket parsing, and JSON log construction while preserving protocol and output behavior (#699)
+ - Remove redundant `IngestOutcome` timing fields and the `network::platform` shim; library callers read retained timings from `Connection` and import host lookup from `rustnet_host` (#699)
 ```
 
-**File**: `crates/rustnet-core/src/network/merge.rs` (modified, +41/-0)
+**File**: `src/ui/format.rs` (modified, +45/-10)
 ```diff
-@@ -181,6 +181,10 @@ fn analyze_tcp_segment(
-                 analytics.highest_seq_outbound = seq_end;
-                 arm_rtt_probe(analytics, seq_end, at);
-             } else if one_byte_data && seq_end == analytics.highest_seq_outbound {
-+                // Its reply cannot reliably time earlier data if capture
-+                // missed the original ACK. A genuine last-byte resend also
-+                // matches this heuristic, so Karn's ambiguity rule still applies.
-+                analytics.rtt_probe = None;
-                 debug!("TCP keepalive probe ignored: seq={}", seq);
-             } else if !seq_lt(analytics.highest_seq_outbound, seq_end) {
-                 // Segment ends at or before the highest byte already sent, so
-@@ -1966,6 +1970,43 @@ mod tests {
-         assert_eq!(events.rtt_sample, None);
+@@ -3,30 +3,32 @@
+ //! panel, interface table, activity tab, and graph tab. Binary units use
+ //! IEC labels. Observed idle rates render as zero; callers handle missing data.
+ 
+-pub(super) fn format_rate(bytes_per_second: f64) -> String {
++use std::borrow::Cow;
++
++pub(super) fn format_rate(bytes_per_second: f64) -> Cow<'static, str> {
+     const KIB_PER_SEC: f64 = 1024.0;
+     const MIB_PER_SEC: f64 = KIB_PER_SEC * 1024.0;
+     const GIB_PER_SEC: f64 = MIB_PER_SEC * 1024.0;
+ 
+     if bytes_per_second >= GIB_PER_SEC {
+-        format!("{:.2} GiB/s", bytes_per_second / GIB_PER_SEC)
++        Cow::Owned(format!("{:.2} GiB/s", bytes_per_second / GIB_PER_SEC))
+     } else if bytes_per_second >= MIB_PER_SEC {
+-        format!("{:.2} MiB/s", bytes_per_second / MIB_PER_SEC)
++        Cow::Owned(format!("{:.2} MiB/s", bytes_per_second / MIB_PER_SEC))
+     } else if bytes_per_second >= KIB_PER_SEC {
+-        format!("{:.2} KiB/s", bytes_per_second / KIB_PER_SEC)
++        Cow::Owned(format!("{:.2} KiB/s", bytes_per_second / KIB_PER_SEC))
+     } else if bytes_per_second > 0.0 {
+-        format!("{:.0} B/s", bytes_per_second)
++        Cow::Owned(format!("{:.0} B/s", bytes_per_second))
+     } else {
+-        "0 B/s".to_string()
++        Cow::Borrowed("0 B/s")
      }
+ }
+ 
+ /// Format rate to compact form for tight spaces. `zero` is what a
+ /// zero/absent rate renders as: the "-" placeholder in tables, "0B"
+ /// in the activity bars.
+-pub(super) fn format_rate_compact(bytes_per_second: f64, zero: &str) -> String {
++pub(super) fn format_rate_compact(bytes_per_second: f64, zero: &str) -> Cow<'_, str> {
+     if bytes_per_second <= 0.0 || !bytes_per_second.is_finite() {
+-        return zero.to_string();
++        return Cow::Borrowed(zero);
+     }
+     // Each half of the 11-cell RX/TX column has five cells. Promote before
+     // rounding would produce a four-digit value with a two-cell unit.
+@@ -36,9 +38,9 @@ pub(super) fn format_rate_compact(bytes_per_second: f64, zero: &str) -> String {
+         let limit = if index == 0 { 1023.5 } else { 999.5 };
+         if value < limit || index == units.len() - 1 {
+             return if index >= 2 && value < 9.95 {
+-                format!("{value:.1}{unit}")
++                Cow::Owned(format!("{value:.1}{unit}"))
+             } else {
+-                format!("{value:.0}{unit}")
++                Cow::Owned(format!("{value:.0}{unit}"))
+             };
+         }
+         value /= 1024.0;
+@@ -151,8 +153,41 @@ pub(super) fn ellipsize_left(s: &str, width: usize) -> String {
+ #[cfg(test)]
+ mod tests {
+     use super::{ellipsize_left, format_countdown};
++    use std::borrow::Cow;
+     use std::time::Duration;
  
 +    #[test]
-+    fn one_byte_keepalive_discards_pending_rtt_after_a_missed_ack() {
-+        let mut a = TcpAnalytics::new();
-+        send_at(&mut a, 1000, 100, t0());
-+
-+        // The peer ACKed the data, but capture missed that ACK. Its reply to
-+        // a later keepalive must not time the original data from a minute ago.
-+        send_at(&mut a, 1099, 1, t0() + Duration::from_secs(60));
-+        assert_eq!(a.retransmit_count, 0);
-+        let events = recv_at(&mut a, 5000, 1100, 0, t0() + Duration::from_millis(60_020));
-+        assert_eq!(events.rtt_sample, None);
-+        assert_eq!(a.smoothed_rtt, None);
-+        assert_eq!(a.rtt_probe, None);
-+
-+        // Fresh data still arms a probe and produces a valid measurement.
-+        let sent = t0() + Duration::from_secs(61);
-+        send_at(&mut a, 1100, 100, sent);
-+        let events = recv_at(&mut a, 5000, 1200, 0, sent + Duration::from_millis(20));
-+        assert_eq!(events.rtt_sample, Some(Duration::from_millis(20)));
-+        assert_eq!(a.smoothed_rtt, Some(Duration::from_millis(20)));
++    fn idle_rates_borrow_display_text() {
++        for value in [0.0, -1.0, f64::NEG_INFINITY, f64::NAN] {
++            assert!(matches!(super::format_rate(value), Cow::Borrowed("0 B/s")));
++        }
++        let custom_zero = String::from("idle");
++        for zero in ["-", "0B", custom_zero.as_str()] {
++            for value in [0.0, -1.0, f64::NEG_INFINITY, f64::INFINITY, f64::NAN] {
++                let formatted = super::format_rate_compact(value, zero);
++                assert!(matches!(formatted, Cow::Borrowed(_)));
++                assert_eq!(formatted, zero);
++            }
++        }
 +    }
 +
 +    #[test]
-+    fn one_byte_keepalive_shape_discards_ambiguous_retransmission_rtt() {
-+        let mut a = TcpAnalytics::new();
-+        send_at(&mut a, 1000, 1, t0());
-+
-+        // A genuine resend of the last byte also matches the keepalive
-+        // heuristic. Excluding it from loss must not allow an ambiguous RTT.
-+        send_at(&mut a, 1000, 1, t0() + Duration::from_millis(200));
-+        assert_eq!(a.retransmit_count, 0);
-+        let events = recv_at(&mut a, 5000, 1001, 0, t0() + Duration::from_millis(220));
-+        assert_eq!(events.rtt_sample, None);
-+        assert_eq!(a.smoothed_rtt, None);
-+        assert_eq!(a.rtt_probe, None);
++    fn compact_live_rates_preserve_units_and_rounding() {
++        for (value, expected) in [
++            (1.0, "1B"),
++            (1023.0, "1023B"),
++            (1023.5, "1Ki"),
++            (999.0 * 1024.0, "999Ki"),
++            (999.5 * 1024.0, "1.0Mi"),
++            (1048576.0, "1.0Mi"),
++            (1073741824.0, "1.0Gi"),
++        ] {
++            let formatted = super::format_rate_compact(value, "-");
++            assert!(matches!(formatted, Cow::Owned(_)));
++            assert_eq!(formatted, expected);
++        }
 +    }
 +
      #[test]
-     fn smoothed_rtt_is_an_ewma_of_samples() {
-         let mut a = TcpAnalytics::new();
+     fn observed_rates_use_binary_units_and_explicit_zero() {
+         for (value, expected) in [
+```
+
+**File**: `src/ui/tabs/activity.rs` (modified, +1/-1)
+```diff
+@@ -1075,7 +1075,7 @@ fn draw_process_table(
+     draw_scrollbar(f, rows_area, processes.len(), offset, browser.viewport);
+ }
+ 
+-fn right_cell(value: impl Into<String>) -> Cell<'static> {
++fn right_cell(value: impl Into<std::borrow::Cow<'static, str>>) -> Cell<'static> {
+     Cell::from(Line::from(value.into()).right_aligned())
+ }
+ 
+```
+
+**File**: `src/ui/tabs/details.rs` (modified, +4/-4)
+```diff
+@@ -1000,7 +1000,7 @@ fn traffic_details(conn: &Connection) -> DetailsBuilder<'static> {
+             if conn.is_historic {
+                 "n/a".to_string()
+             } else {
+-                format_rate(conn.current_incoming_rate_bps)
++                format_rate(conn.current_incoming_rate_bps).into_owned()
+             },
+             rx,
+         ),
+@@ -1009,7 +1009,7 @@ fn traffic_details(conn: &Connection) -> DetailsBuilder<'static> {
+             if conn.is_historic {
+                 "n/a".to_string()
+             } else {
+-                format_rate(conn.current_outgoing_rate_bps)
++                format_rate(conn.current_outgoing_rate_bps).into_owned()
+             },
+             tx,
+         ),
+@@ -2224,12 +2224,12 @@ fn draw_traffic(
+     let current_in_rate = if conn.is_historic {
+         "n/a".to_string()
+     } else {
+-        format_rate(conn.current_incoming_rate_bps)
++        format_rate(conn.current_incoming_rate_bps).into_owned()
+     };
+     let current_out_rate = if conn.is_historic {
+         "n/a".to_string()
+     } else {
+-        format_rate(conn.current_outgoing_rate_bps)
++        format_rate(conn.current_outgoing_rate_bps).into_owned()
+     };
+     let traffic_area = section_header(
+         f,
+```
+
+---
+
+### Incident Patch 2: `84cb4b93` (2026-11-06)
+**Commit Message**: perf(ui/overview): use static strings in title and connector spans (#412)
+
+connections_title built a mutable String from one of two static bases,
+conditionally extended it with push_str, then wrapped it in format!(" {base}")
+for the Span — two or three allocations per frame for content that is fully
+determined by two boolean flags.
+
+Replace with a match on (show_historic, grouped) that returns a &'static str
+with the space already embedded; Span::styled accepts &'static str directly
+via Into<Cow<'static, str>>, so the format!() call is also eliminated.
+
+In the expanded-group render loop, connector is already a &'static str
+("  └─ " / "  ├─ "). The to_string() call that converted it to an owned
+String before passing to Span::styled was unnecessary — removed.
+
+Closes #411
+
+Co-authored-by: Marco Cadetg <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Share DNS/RTT pending-request bookkeeping, procfs socket parsing, and JSON log construction while preserving protocol and output behavior (#699)
+ - Remove redundant `IngestOutcome` timing fields and the `network::platform` shim; library callers read retained timings from `Connection` and import host lookup from `rustnet_host` (#699)
+ - Run Windows CI tests independently and start DEB installation checks after GNU/Linux builds, preserving all existing checks (#686)
++- Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
+ 
+ ### Added
+ - Add shared Host timeframes for network events and interface errors, keeping cumulative totals visible
+```
+
+**File**: `src/ui/tabs/overview.rs` (modified, +6/-6)
+```diff
+@@ -614,13 +614,13 @@ fn connections_title<'a>(
+     filtered_count: Option<usize>,
+ ) -> Line<'a> {
+     let base = match (grouped, ui_state.show_historic) {
+-        (true, true) => "Process Aggregate · active + historic",
+-        (true, false) => "Process Aggregate",
+-        (false, true) => "Live + Historic Connections",
+-        (false, false) => "Live Connections",
++        (true, true) => " Process Aggregate · active + historic",
++        (true, false) => " Process Aggregate",
++        (false, true) => " Live + Historic Connections",
++        (false, false) => " Live Connections",
+     };
+     let mut spans = vec![Span::styled(
+-        format!(" {base}"),
++        base,
+         Style::default().add_modifier(Modifier::BOLD),
+     )];
+     if let Some(shown) = filtered_count {
+@@ -712,7 +712,7 @@ fn draw_grouped_connections_list(
+                     .map(|p| p.to_string())
+                     .unwrap_or_else(|| NONE_PLACEHOLDER.to_string());
+                 let process_cell = Line::from(vec![
+-                    Span::styled(connector.to_string(), theme::fg(theme::muted())),
++                    Span::styled(connector, theme::fg(theme::muted())),
+                     Span::raw(pid),
+                 ]);
+                 connection_row(
+```
+
+---
+
+### Incident Patch 3: `799e92c0` (2026-11-06)
+**Commit Message**: fix(ci): replace retired macOS 14 runners with macOS 15 (#717)
+
+**File**: `.github/workflows/build-platforms.yml` (modified, +2/-2)
+```diff
+@@ -161,11 +161,11 @@ jobs:
+         include:
+           - cargo: cargo
+           - build: macos-aarch64
+-            os: macos-14
++            os: macos-15
+             target: aarch64-apple-darwin
+             run-tests: true
+           - build: macos-x64
+-            os: macos-14
++            os: macos-15
+             target: x86_64-apple-darwin
+           - build: windows-x64-msvc
+             os: windows-latest
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #718** (2026-11-06): Limit Npcap ZIP features (@domcyrus)
+- **PR #717** (2026-11-06): fix(ci): replace retired macOS 14 runners with macOS 15 (@domcyrus)
 - **PR #716** (2026-11-05): fix: discard pending RTT probes on TCP keepalives (@domcyrus)
+- **PR #715** (closed): chore(deps): bump zip from 9.2.0 to 9.2.3 in the rust-dependencies group across 1 directory (@dependabot[bot])
 - **PR #714** (2026-11-05): Do not count one-byte TCP keepalive probes as loss (@FreXxXmeister)
 - **PR #712** (2026-11-04): chore(deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (@dependabot[bot])
-- **PR #711** (2026-11-03): chore(deps): bump log from 0.4.34 to 0.4.35 in the rust-dependencies group (@dependabot[bot])
-- **PR #710** (2026-11-02): chore(deps): bump zip from 9.1.2 to 9.1.3 in the rust-dependencies group (@dependabot[bot])
-- **PR #709** (2026-11-01): Cache unchanged historic headless records (@domcyrus)
 
 ---
 
@@ -2595,13 +2800,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. discard pending RTT probes on TCP keepalives (#716)
+## X. ui/format): return Cow<'static, str> from rate formatters (#429)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fff807d1`: discard pending RTT probes on TCP keepalives (#716). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdc74879`: ui/format): return Cow<'static, str> from rate formatters (#429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2609,7 +2814,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
+- Avoid allocating idle rate strings in the UI while preserving rate labels and placeholders (#429)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2619,4 +2824,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fff807d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdc74879` are properly handled with clean fallback behavior.

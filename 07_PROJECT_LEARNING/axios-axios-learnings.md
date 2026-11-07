@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source**: github ([https://github.com/axios/axios](https://github.com/axios/axios))  
-> **Source Version**: `fb88a1b1`  
+> **Source Version**: `a81d62a2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:46:08.412Z  
+> **Timestamp**: 2026-11-07T05:44:17.913Z  
 > **Learning ID**: `learn-github-axios-axios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/axios-axios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/axios/axios](https://github.com/axios/axios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:46:07.428Z  
+> **Harvest Timestamp**: 2026-11-07T05:44:16.757Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Promise based HTTP client for the browser and node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 109314 stars
+- **Stars / Engagement**: 109310 stars
 
 ---
 
@@ -1797,11 +1797,11 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11422** (2026-11-03): **chore(deps-dev): bump the development_dependencies group with 4 updates**
-  *Symptoms*: Bumps the development_dependencies group with 4 updates: [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/HEAD/packages/alias), [@rollup/plugin-terser](https://github.com/rollup/plugins/tree/HEAD/packages/terser), [body-parser](https://github.com/expressjs/body-parser) and [rollup](https://github.com/rollup/rollup).  Updates `@rollup/plugin-alias` from 6.0.0 to 6.0.1 <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/rollup/plugins/blob/master/packages/alias/CHANGELOG.md">@​rollup/plugin-alias's changelog</a>.</em></p> <blockquote> <h2>v6.0.1</h2> <p><em>2026-10-21</em></p> <h3>Updates</h3> <ul> <li>alias: bump release (<a href="https://github.com/rollup/plugins/commit/3417670">3417670</a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/rollup/plugins/commit/cdf9113a14c116520ef9f937a1151797666bbfa2"><code>cdf9113</code></a> chore(repo): manually update changelog and package versions after bad release...</li> <li><a href="https://github.com/rollup/plugins/commit/841a0391c1dd11fed16771a202e6eff97cf4139b"><code>841a039</code></a> fix(alias,auto-install,babel,beep,buble,commonjs,data-uri,dsv,dynamic-import-...</li> <li><a href="https://github.com/rollup/plugins/commit/abda5cfd3148beba158292eabb784ddb7833c075"><code>abda5cf</code></a> chore(release): alias v5.0.0</li> <li><a href="https://github.com/rollup/plugins/commit/a0242b24d3fb03912a0ceb31a5fbbe41b7f419c5"><code>a0
+- **Issue #11429** (2026-11-06): **docs: add missing error codes to the error tables**
+  *Symptoms*: ## Summary  The error code tables are missing two codes that axios can produce:  - `ECONNREFUSED` has been a public constant on `AxiosError` (`lib/core/AxiosError.js`, `index.d.ts`, `index.d.cts`), and `tests/unit/adapters/errorDetails.test.js` asserts it on a refused connection, but it isn't in the README table or in any of the error-handling guides. - `ERR_FORM_DATA_DEPTH_EXCEEDED` is in all four guides but not in the README table.  ## Linked issue  None. Docs-only gap found by comparing the codes in `lib/core/AxiosError.js` with the tables.  ## Changes  - Added an `ECONNREFUSED` row to the README and the English, Spanish, French and Chinese error-handling guides. - Added an `ERR_FORM_DATA_DEPTH_EXCEEDED` row to the README, using the wording from the English guide. - Added a `PRE_RELEASE_CHANGELOG.md` entry under Documentation.  The new row says the code is adapter-specific, based on the source and tests: the Node `http` adapter passes the system code through `AxiosError.from` (`lib/adapters/http.js`) and keeps the original error on `error.cause`, while `xhr` and `fetch` use `ERR_NETWORK` (`lib/adapters/xhr.js`, `lib/adapters/fetch.js`, and the `fetch.test.js` case where an underlying `ECONNREFUSED` surfaces as `ERR_NETWORK`).  ## Validation  No commands were run. This is a docs-only change, so per `AGENTS.md` I did not run runtime checks. The claims were checked by reading the source and tests listed above. The docs site build was not run either, so CI is the first render 
 
-- **Issue #11421** (2026-11-03): **chore(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 in the github-actions group**
-  *Symptoms*: Bumps the github-actions group with 1 update: [zizmorcore/zizmor-action](https://github.com/zizmorcore/zizmor-action).  Updates `zizmorcore/zizmor-action` from 0.7.1 to 0.8.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zizmorcore/zizmor-action/releases">zizmorcore/zizmor-action's releases</a>.</em></p> <blockquote> <h2>v0.8.0</h2> <p>The action now supports prereleases.</p> <p>The default has not changed, but you can pass a prerelease version of zizmor or <code>version: prerelease</code> to get whatever latest prerelease the action knows about.</p> <h2>What's Changed</h2> <ul> <li>Support prereleases by <a href="https://github.com/woodruffw"><code>@​woodruffw</code></a> in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/182">zizmorcore/zizmor-action#182</a></li> <li>Sync zizmor versions by <a href="https://github.com/github-actions"><code>@​github-actions</code></a>[bot] in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/184">zizmorcore/zizmor-action#184</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0">https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/zizmorcore/zizmor-action/commit/53290badfa369cb0bf7ad16342cb62c2fa47ac7b"><code>53290ba</code></a> Sync zizmor versions (<a href="https://redi
+- **Issue #11427** (2026-11-05): **fix(deps): bump follow-redirects and form-data, refresh dev dependencies (v0.x)**
+  *Symptoms*: ### Summary  Manual pass over every `v0.x` dependency to bring it up to date where that is safe. Every new version was published at least seven days ago (`npm install --before=2026-10-29`).  The main fix is in the runtime dependencies. `v0.x` still allowed `follow-redirects ^1.15.4` and locked 1.15.6, which is affected by CVE-2026-116689 ([GHSA-mrwp-f3q8-3g9p](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p)). That was fixed on `v1.x` in #11410. The locked `form-data` 4.0.4 is also flagged by `npm audit`. After this PR, `npm audit --omit=dev` goes from 2 vulnerabilities to 0.  **Runtime dependencies:** - `follow-redirects` `^1.15.4` → `^1.16.2` - `form-data` `^4.0.4` → `^4.0.6` - `proxy-from-env` stays on `^1.1.0`. Version 2.x drops support for the `npm_config_*_proxy` and `npm_config_no_proxy` variables, which is a behaviour change, so it is not adopted on the maintenance line.  **Dev dependencies, latest same-major release that still runs on Node 12:** - `abortcontroller-polyfill` ^1.7.8 - `body-parser` ^1.20.9 - `express` ^4.22.3 - `grunt-cli` ^1.5.0 - `grunt-eslint` ^24.3.0 - `karma` ^6.4.4 - `karma-chrome-launcher` ^3.2.0 - `karma-sourcemap-loader` ^0.4.0 - `minimist` ^1.2.8 - `rollup` ^2.80.0 - `typescript` ^4.9.5 - `webpack` ^4.47.0  **Capped because newer releases break the Node 12 CI leg:** - `grunt` `~1.5.3`: 1.6.x needs Node ≥16. - `formidable` pinned to `2.1.2`: 2.1.3+ depends on `@paralleldrive/cuid2` → `@noble/hashes`, which uses `require('node:crypto')`. Node
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1818,405 +1818,252 @@ export default function setFormDataHeaders(headers, formHeaders, policy) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00b4d1ed` (2026-11-02)
-**Commit Message**: fix(deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)
-
-**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -20,4 +20,5 @@
- 
- <!-- Record test-only changes, internal refactors, tooling, dependency updates, and CI changes without a user-visible behavior change here. -->
- 
-+- **follow-redirects security update:** Raised the `follow-redirects` dependency range from `^1.16.0` to `^1.16.2` and updated the lockfile to 1.16.2, which fixes [CVE-2026-116689](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p) (cross-realm `sensitiveHeaders` arrays are discarded and custom credentials can follow redirects). Raising the range floor stops installs from resolving the vulnerable 1.16.0 and 1.16.1 releases. No axios runtime, public API, or type compatibility changes. ([#11409](https://github.com/axios/axios/issues/11409), [#11410](https://github.com/axios/axios/pull/11410))
- - **CI runners:** Switched GitHub Actions jobs from GitHub-hosted `ubuntu-latest` runners to the `namespace-profile-axios` Namespace runner profile. The npm publish job stays on `ubuntu-latest` because npm provenance and trusted publishing require GitHub-hosted runners. CI only; no runtime, public API, or type compatibility changes.
-```
-
-**File**: `package-lock.json` (modified, +4/-4)
-```diff
-@@ -9,7 +9,7 @@
-       "version": "1.21.0",
-       "license": "MIT",
-       "dependencies": {
--        "follow-redirects": "^1.16.0",
-+        "follow-redirects": "^1.16.2",
-         "form-data": "^4.0.6",
-         "https-proxy-agent": "^5.0.1",
-         "proxy-from-env": "^2.1.0"
-@@ -5324,9 +5324,9 @@
-       "license": "ISC"
-     },
-     "node_modules/follow-redirects": {
--      "version": "1.16.1",
--      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
--      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
-+      "version": "1.16.2",
-+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.2.tgz",
-+      "integrity": "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==",
-       "funding": [
-         {
-           "type": "individual",
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -139,7 +139,7 @@
-     "prepare": "husky"
-   },
-   "dependencies": {
--    "follow-redirects": "^1.16.0",
-+    "follow-redirects": "^1.16.2",
-     "form-data": "^4.0.6",
-     "https-proxy-agent": "^5.0.1",
-     "proxy-from-env": "^2.1.0"
-```
-
----
-
-### Incident Patch 2: `6f5950a9` (2026-11-02)
-**Commit Message**: fix(types): accept config in getAdapter (#11404)
-
-Co-authored-by: jasonsaayman <[REDACTED_EMAIL]>
-Co-authored-by: cubic-dev-ai[bot] <191113872+cubic-dev-ai[bot]@users.noreply.github.com>
-
-**File**: `PRE_RELEASE_CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -7,6 +7,7 @@
- ## Bug Fixes
- 
- - **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
-+- **`getAdapter` typings:** `getAdapter(adapters, config?)` in `index.d.ts` and `index.d.cts` now accepts the optional request config that the runtime already forwards to adapter getters, so `getAdapter('fetch', { env: { fetch } })` type-checks without a cast. A JSDoc comment on the parameter notes that the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and that other fields are not applied. Type-only; additive and backwards compatible, no runtime change. ([#11403](https://github.com/axios/axios/issues/11403), [#11404](https://github.com/axios/axios/pull/11404))
- 
- ## Documentation
- 
-```
-
-**File**: `PRE_RELEASE_DOCS.md` (modified, +10/-0)
-```diff
-@@ -29,6 +29,16 @@ Do not store raw diffs or line-number-only instructions here; prefer stable sect
- - **Required content:** Replace the bullet saying the value is approximate wall-clock time measured with `Date.now()`. The value is now measured with the monotonic `performance.now()` and rounded to whole milliseconds, so system clock adjustments no longer affect it. Runtimes without `performance.now()` fall back to `Date.now()`, where backward clock adjustments are clamped to `0` and forward adjustments can inflate the value. Optionally note that this keeps axios compatible with Next.js Cache Components prerendering, which rejects `Date.now()`.
- - **Notes:** The README entry below says "approximate wall-clock time"; use the new wording when applying it.
- 
-+### `getAdapter` request config argument
-+
-+- **Change:** The `getAdapter` typings accept an optional second `config` argument, which the runtime already forwards to adapter getters.
-+- **Source:** [Issue #11403](https://github.com/axios/axios/issues/11403), [PR #11404](https://github.com/axios/axios/pull/11404).
-+- **Status:** Pending.
-+- **Docs targets:** The `getAdapter` section of `docs/pages/advanced/api-reference.md` and its Spanish, French, and Chinese translations. Optionally cross-link from the custom `fetch` section of `docs/pages/advanced/fetch-adapter.md`.
-+- **Required content:** Update the signature to `getAdapter(adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined, config?: AxiosRequestConfig): AxiosAdapter`. The current docs signature (`string | string[]`) also omits `undefined` and adapter functions, which the typings have always accepted. Explain that `config` is passed to adapter getters: the built-in `fetch` adapter reads `env.fetch`, `env.Request`, and `env.Response` from it, and without `config` it uses the global implementations. For the built-in `fetch` adapter, other request fields are not used while resolving the adapter; they take effect when the returned adapter is called with a request config. Custom adapter getters may inspect any forwarded config field.
-+- **Examples:** `const fetchAdapter = getAdapter('fetch', { env: { fetch: customFetch } });`
-+- **Notes:** Passing a new `fetch` function on every call creates and caches a new adapter each time, so reuse the same `fetch` reference.
-+
- ### Response duration (README)
- 
- - **Change:** Bring `README.md` in line with the released docs site.
-```
-
-**File**: `index.d.cts` (modified, +10/-1)
-```diff
-@@ -772,7 +772,16 @@ declare namespace axios {
-       options?: FormSerializerOptions
-     ): GenericFormData;
-     formToJSON(form: GenericFormData | GenericHTMLFormElement): object;
--    getAdapter(adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined): AxiosAdapter;
-+    /**
-+     * Resolves an adapter by name, adapter function, or priority list.
-+     * @param config Request config forwarded to adapter getters. The built-in `fetch`
-+     * adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and falls
-+     * back to the globals when it is omitted. Other fields are not applied here.
-+     */
-+    getAdapter(
-+      adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined,
-+      config?: AxiosRequestConfig
-+    ): AxiosAdapter;
-     AxiosHeaders: typeof AxiosHeaders;
-     mergeConfig<D = any, P = any>(
-       config1: AxiosRequestConfig<D, P>,
-```
-
-**File**: `index.d.ts` (modified, +8/-1)
-```diff
-@@ -752,8 +752,15 @@ export interface GenericHTMLFormElement {
-   submit(): void;
- }
- 
-+/**
-+ * Resolves an adapter by name, adapter function, or priority list.
-+ * @param config Request config forwarded to adapter getters. The built-in `fetch`
-+ * adapter reads `env.fetch`, `env.Request`, and `env.Response` from it and falls
-+ * back to the globals when it is omitted. Other fields are not applied here.
-+ */
- export function getAdapter(
--  adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined
-+  adapters: AxiosAdapterConfig | AxiosAdapterConfig[] | undefined,
-+  config?: AxiosRequestConfig
- ): AxiosAdapter;
- 
- export function toFormData(
-```
-
-**File**: `tests/module/cjs/tests/helpers/cjs-fetch-types.ts` (modified, +9/-0)
-```diff
-@@ -63,3 +63,12 @@ axios.create({
-     Response: StringOnlyResponse,
-   },
- });
-+
-+// getAdapter accepts the request config that adapter getters read, e.g. fetch's env.
-+const customFetch: typeof fetch = (input, init) => fetch(input, init);
-+axios.getAdapter('fetch', { env: { fetch: customFetch } });
-+axios.getAdapter(['fetch', 'xhr'], { env: { fetch: customFetch } });
-+axios.getAdapter(undefined, { env: { fetch: customFetch } });
-+axios.getAdapter((config) => axios.getAdapter('fetch', config)(config), { timeout: 1000 });
-+// @ts-expect-error env.fetch must be a fetch function
-+axios.getAdapter('fetch', { env: { fetch: 1 } });
-```
-
-**File**: `tests/module/esm/tests/helpers/esm-fetch-types.ts` (modified, +9/-0)
-```diff
-@@ -63,3 +63,12 @@ axios.create({
-     Response: StringOnlyResponse,
-   },
- });
-+
-+// getAdapter accepts the request config that adapter getters read, e.g. fetch's env.
-+const customFetch: typeof fetch = (input, init) => fetch(input, init);
-+axios.getAdapter('fetch', { env: { fetch: customFetch } });
-+axios.getAdapter(['fetch', 'xhr'], { env: { fetch: customFetch } });
-+axios.getAdapter(undefined, { env: { fetch: customFetch } });
-+axios.getAdapter((config) => axios.getAdapter('fetch', config)(config), { timeout: 1000 });
-+// @ts-expect-error env.fetch must be a fetch function
-+axios.getAdapter('fetch', { env: { fetch: 1 } });
-```
-
-**File**: `tests/unit/adapters/adapters.test.js` (modified, +16/-0)
-```diff
-@@ -43,6 +43,22 @@ describe('adapters', () => {
-     );
-   });
- 
-+  it('should pass the config to adapter getters', () => {
-+    const adapter = () => {};
-+    const config = { env: {} };
-+    let received;
-+
-+    adapters.adapters.testadapter = {
-+      get: (c) => {
-+        received = c;
-+        return adapter;
-+      },
-+    };
-+
-+    assert.strictEqual(adapters.getAdapter('testAdapter', config), adapter);
-+    assert.strictEqual(received, config);
-+  });
-+
-   it('should pick suitable adapter from the list', () => {
-     const adapter = () => {};
- 
-```
-
----
-
-### Incident Patch 3: `4417c7e2` (2026-11-02)
-**Commit Message**: fix(core): measure response duration with performance.now() (#11411)
+### Incident Patch 1: `a81d62a2` (2026-11-06)
+**Commit Message**: test: cover cancellation lifecycle and timeout precedence (#11376)
 
 **File**: `PRE_RELEASE_CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -6,6 +6,8 @@
+@@ -23,6 +23,8 @@
  
- ## Bug Fixes
+ ## Maintenance
  
-+- **Response duration clock:** `response.duration` is now measured with the monotonic `performance.now()` instead of `Date.now()`, falling back to `Date.now()` only in runtimes without `performance.now()`. Since v1.21.0, axios read `Date.now()` on every request, which broke Next.js production builds that use Cache Components (`cacheComponents: true`) because Next.js rejects reading the current time while prerendering; `performance.now()` is the timing API Next.js allows for this. The monotonic clock also stops system clock adjustments from skewing the value. `duration` is rounded to whole milliseconds, so it stays an integer as in v1.21.0, and it is still clamped at `0`. No public API or type changes; the `duration` declaration comments in `index.d.ts` and `index.d.cts` now name the clock. ([#11407](https://github.com/axios/axios/issues/11407))
++- **Cancellation lifecycle regression coverage:** Added Node HTTP/Fetch and browser XHR tests for cancellation inside asynchronous request interceptors and successful reuse of an Axios instance after an in-flight cancellation, using AbortSignal, CancelToken, and both together. Added deterministic signal-composition tests for timeout/cancellation precedence and subscription cleanup. Runtime behavior, public APIs, and types are unchanged.
 +
- ## Documentation
+ <!-- Record test-only changes, internal refactors, tooling, dependency updates, and CI changes without a user-visible behavior change here. -->
  
- - **README sponsor name:** Corrected sponsor name typo `BSAP SE` → `SAP SE` in the README sponsor listing. This updates sponsor recognition only, with no runtime, public API, or type compatibility changes. ([#11373](https://github.com/axios/axios/pull/11373))
+ - **Development dependency refresh:** Raised the `package.json` ranges for the development dependencies to the versions in the lockfile, and refreshed the lockfile using only releases at least seven days old, matching the Dependabot cooldown. Vitest and its browser packages move from 4.1 to 5.0, and TypeScript from 5.9 to 7.0. TypeScript 7 at the root is only used by editors; the module type tests keep their pinned TypeScript 4.9 and 5.9. Babel 8 is not adopted because `@rollup/plugin-babel` still requires `@babel/core` 7. `https-proxy-agent` stays on 5.x because later majors need Node.js 20 or newer and the CJS smoke tests still run on Node.js 12. The runtime dependency ranges are unchanged: `follow-redirects`, `form-data`, and `proxy-from-env` are already on their latest versions. The browser UMD bundle (`dist/axios.js` and `dist/axios.min.js`) changes only in Babel's `_toPrimitive` helper, which now checks that `Symbol` exists before using it; the ESM, CJS, and Node.js bundles are byte-identical. No runtime, public API, or type compatibility changes. ([#11426](https://github.com/axios/axios/pull/11426))
 ```
 
-**File**: `PRE_RELEASE_DOCS.md` (modified, +9/-0)
+**File**: `tests/browser/cancel.browser.test.js` (modified, +55/-0)
 ```diff
-@@ -20,6 +20,15 @@ Do not store raw diffs or line-number-only instructions here; prefer stable sect
- 
- ## Unreleased
- 
-+### Response duration clock
-+
-+- **Change:** `response.duration` uses `performance.now()` instead of `Date.now()`.
-+- **Source:** [Issue #11407](https://github.com/axios/axios/issues/11407).
-+- **Status:** Pending.
-+- **Docs targets:** `docs/pages/advanced/response-schema.md` (Response duration) and the Spanish, French, and Chinese translations of that section; the README duration note tracked in the entry below.
-+- **Required content:** Replace the bullet saying the value is approximate wall-clock time measured with `Date.now()`. The value is now measured with the monotonic `performance.now()` and rounded to whole milliseconds, so system clock adjustments no longer affect it. Runtimes without `performance.now()` fall back to `Date.now()`, where backward clock adjustments are clamped to `0` and forward adjustments can inflate the value. Optionally note that this keeps axios compatible with Next.js Cache Components prerendering, which rejects `Date.now()`.
-+- **Notes:** The README entry below says "approximate wall-clock time"; use the new wording when applying it.
-+
- ### Response duration (README)
- 
- - **Change:** Bring `README.md` in line with the released docs site.
-```
-
-**File**: `index.d.cts` (modified, +2/-1)
-```diff
-@@ -651,7 +651,8 @@ declare namespace axios {
-     status: number;
-     statusText: string;
-     /**
--     * Wall-clock milliseconds from adapter invocation to settlement, clamped at zero.
-+     * Whole milliseconds from adapter invocation to settlement, clamped at zero. Measured with
-+     * `performance.now()` when available, otherwise `Date.now()`.
-      * Excludes interceptors and request/response transforms. Stream consumption is not included.
-      */
-     duration?: number;
-```
-
-**File**: `index.d.ts` (modified, +2/-1)
-```diff
-@@ -527,7 +527,8 @@ export interface AxiosResponse<T = any, D = any, H = {}, P = any> {
-   status: number;
-   statusText: string;
-   /**
--   * Wall-clock milliseconds from adapter invocation to settlement, clamped at zero.
-+   * Whole milliseconds from adapter invocation to settlement, clamped at zero. Measured with
-+   * `performance.now()` when available, otherwise `Date.now()`.
-    * Excludes interceptors and request/response transforms. Stream consumption is not included.
-    */
-   duration?: number;
-```
-
-**File**: `lib/core/dispatchRequest.js` (modified, +27/-10)
-```diff
-@@ -26,18 +26,34 @@ function throwIfCancellationRequested(config) {
- }
- 
- /**
-- * Milliseconds elapsed since `start`, floored at zero.
-+ * Resolve the clock used to time adapter execution.
-  *
-- * Wall-clock, to match the rest of the codebase (speedometer, throttle,
-- * AxiosTransformStream). A backwards clock adjustment mid-request would
-- * otherwise produce a negative duration, so the result is clamped.
-+ * Prefers the monotonic `performance.now()` so wall-clock adjustments do not
-+ * skew the measurement, and so frameworks that forbid reading the current
-+ * time during prerendering (e.g. Next.js Cache Components) accept it. Falls
-+ * back to `Date.now()` in runtimes without the High Resolution Time API.
-  *
-- * @param {number} start Timestamp from `Date.now()`
-+ * @returns {() => number} Millisecond clock
-+ */
-+function resolveClock() {
-+  return typeof performance !== 'undefined' && utils.isFunction(performance.now)
-+    ? () => performance.now()
-+    : Date.now;
-+}
-+
-+/**
-+ * Whole milliseconds elapsed since `start`, floored at zero.
-+ *
-+ * Rounded so the value stays an integer as with `Date.now()`. The fallback
-+ * wall clock can move backwards mid-request, so the result is clamped.
-+ *
-+ * @param {() => number} now Clock returned by `resolveClock()`
-+ * @param {number} start Timestamp read from `now`
-  *
-  * @returns {number} Non-negative elapsed milliseconds
-  */
--function elapsedSince(start) {
--  return Math.max(0, Date.now() - start);
-+function elapsedSince(now, start) {
-+  return Math.max(0, Math.round(now() - start));
- }
- 
- /**
-@@ -66,13 +82,14 @@ export default function dispatchRequest(_config) {
- 
-   const adapter = adapters.getAdapter(config.adapter || defaults.adapter, config);
- 
--  const start = Date.now();
-+  const now = resolveClock();
-+  const start = now();
- 
-   return adapter(config).then(
-     function onAdapterResolution(response) {
-       throwIfCancellationRequested(config);
- 
--      response.duration = elapsedSince(start);
-+      response.duration = elapsedSince(now, start);
- 
-       // Expose the current response on config so that transformResponse can
-       // attach it to any AxiosError it throws (e.g. on JSON parse failure).
-@@ -94,7 +111,7 @@ export default function dispatchRequest(_config) {
- 
-         // Transform response data
-         if (reason && reason.response) {
--          reason.response.duration = elapsedSince(start);
-+          reason.response.duration = elapsedSince(now, start);
-           config.response = reason.response;
-           try {
-             reason.response.data = transformData.call(
-```
-
-**File**: `tests/browser/requests.browser.test.js` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ describe('requests (vitest browser)', () => {
+@@ -216,4 +216,59 @@ describe('cancel (vitest browser)', () => {
+       expect(listenerCount).toBe(0);
+     });
    });
- 
-   it.each([200, 500])('reports elapsed adapter time for XHR status %s', async (status) => {
--    const clock = vi.spyOn(Date, 'now').mockReturnValue(1000);
-+    const clock = vi.spyOn(performance, 'now').mockReturnValue(1000);
-     const { request, promise } = startRequest('/timing', { adapter: 'xhr' });
-     clock.mockReturnValue(1025);
-     request.respondWith({ status, responseText: '{"ok":true}' });
++
++  describe.each(['signal', 'cancelToken', 'both'])('request isolation with %s', (kind) => {
++    const cancellation = () => {
++      const controller = new AbortController();
++      const source = axios.CancelToken.source();
++
++      return {
++        config: {
++          ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
++          ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
++        },
++        cancel() {
++          if (kind !== 'cancelToken') controller.abort();
++          if (kind !== 'signal') source.cancel('canceled');
++        },
++      };
++    };
++
++    it('does not dispatch after cancellation inside an async interceptor', async () => {
++      const instance = axios.create({ adapter: 'xhr' });
++      const { config, cancel } = cancellation();
++      const interceptor = instance.interceptors.request.use(async (requestConfig) => {
++        await Promise.resolve();
++        cancel();
++        return requestConfig;
++      });
++
++      try {
++        const error = await instance.get('/canceled', config).catch((reason) => reason);
++        expect(error.code).toBe('ERR_CANCELED');
++        expect(axios.isCancel(error)).toBe(true);
++        expect(requests).toHaveLength(0);
++      } finally {
++        instance.interceptors.request.eject(interceptor);
++      }
++    });
++
++    it('allows a new request on the same instance without reusing canceled controls', async () => {
++      const instance = axios.create({ adapter: 'xhr' });
++      const { config, cancel } = cancellation();
++      const first = instance.get('/canceled', config).catch((reason) => reason);
++      await waitForRequest();
++      cancel();
++      expect((await first).code).toBe('ERR_CANCELED');
++
++      // Discard the first mock so waitForRequest observes only the next dispatch.
++      requests = [];
++      const second = instance.get('/next', { signal: new AbortController().signal });
++      const request = await waitForRequest();
++      request.respondWith({ responseText: 'OK' });
++
++      expect((await second).data).toBe('OK');
++      expect(requests).toHaveLength(1);
++    });
++  });
+ });
 ```
 
-**File**: `tests/browser/responseDuration.browser.test.js` (modified, +2/-2)
+**File**: `tests/unit/adapters/cancellationLifecycle.test.js` (added, +89/-0)
 ```diff
-@@ -8,7 +8,7 @@ describe('fetch response duration', () => {
- 
-   it.each([200, 500])('includes body buffering for status %s', async (status) => {
-     let now = 1000;
--    vi.spyOn(Date, 'now').mockImplementation(() => now);
-+    vi.spyOn(performance, 'now').mockImplementation(() => now);
-     const result = await axios
-       .get(new URL('/timing', location.href).href, {
-         adapter: 'fetch',
-@@ -39,7 +39,7 @@ describe('fetch response duration', () => {
-   it('excludes later stream consumption', async () => {
-     let now = 1000;
-     let controller;
--    vi.spyOn(Date, 'now').mockImplementation(() => now);
-+    vi.spyOn(performance, 'now').mockImplementation(() => now);
-     const response = await axios.get(new URL('/timing', location.href).href, {
-       adapter: 'fetch',
-       responseType: 'stream',
+@@ -0,0 +1,89 @@
++import { describe, it } from 'vitest';
++import assert from 'assert';
++import axios from '../../../index.js';
++import { startHTTPServer, stopHTTPServer } from '../../setup/server.js';
++
++for (const adapter of ['http', 'fetch']) {
++  describe.skipIf(adapter === 'fetch' && typeof fetch !== 'function')(
++    `${adapter} cancellation request isolation`,
++    () => {
++      for (const kind of ['signal', 'cancelToken', 'both']) {
++        it(`does not send a request canceled in an async interceptor (${kind})`, async () => {
++          let hits = 0;
++          const server = await startHTTPServer((req, res) => {
++            hits++;
++            res.end('OK');
++          });
++          const instance = axios.create({ adapter, proxy: false });
++          const controller = new AbortController();
++          const source = axios.CancelToken.source();
++          instance.interceptors.request.use(async (config) => {
++            await Promise.resolve();
++            if (kind !== 'cancelToken') controller.abort();
++            if (kind !== 'signal') source.cancel('canceled');
++            return config;
++          });
++
++          try {
++            await assert.rejects(
++              instance.get(`http://127.0.0.1:${server.address().port}/`, {
++                ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
++                ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
++              }),
++              (error) => error.code === 'ERR_CANCELED' && axios.isCancel(error)
++            );
++            assert.strictEqual(hits, 0);
++          } finally {
++            await stopHTTPServer(server);
++          }
++        });
++
++        it(`allows another request after an in-flight cancellation (${kind})`, async () => {
++          let received;
++          const firstReceived = new Promise((resolve) => {
++            received = resolve;
++          });
++          const server = await startHTTPServer((req, res) => {
++            if (req.url === '/cancel') {
++              received();
++              return;
++            }
++            res.end('OK');
++          });
++          const instance = axios.create({ adapter, proxy: false, timeout: 2000 });
++          const controller = new AbortController();
++          const source = axios.CancelToken.source();
++          const baseURL = `http://127.0.0.1:${server.address().port}`;
++
++          try {
++            const pending = instance
++              .get(`${baseURL}/cancel`, {
++                ...(kind !== 'cancelToken' ? { signal: controller.signal } : {}),
++                ...(kind !== 'signal' ? { cancelToken: source.token } : {}),
++              })
++              .catch((error) => error);
++
++            await Promise.race([
++              firstReceived,
++              pending.then((error) => {
++                throw error;
++              }),
++            ]);
++            if (kind !== 'cancelToken') controller.abort();
++            if (kind !== 'signal') source.cancel('canceled');
++            const error = await pending;
++            assert.strictEqual(error.code, 'ERR_CANCELED');
++            assert.ok(axios.isCancel(error));
++
++            const response = await instance.get(`${baseURL}/next`, {
++              signal: new AbortController().signal,
++            });
++            assert.strictEqual(response.data, 'OK');
++          } finally {
++            await stopHTTPServer(server);
++          }
++        });
++      }
++    }
++  );
++}
 ```
 
-**File**: `tests/unit/adapters/responseDuration.test.js` (modified, +2/-2)
+**File**: `tests/unit/composeSignals.test.js` (modified, +51/-1)
 ```diff
-@@ -17,7 +17,7 @@ describe.each(['http', 'fetch'])('%s response duration', (adapter) => {
-     });
+@@ -1,4 +1,4 @@
+-import { describe, it } from 'vitest';
++import { describe, it, vi } from 'vitest';
+ import assert from 'assert';
+ import composeSignals from '../../lib/helpers/composeSignals.js';
  
-     try {
--      vi.spyOn(Date, 'now').mockImplementation(() => now);
-+      vi.spyOn(performance, 'now').mockImplementation(() => now);
-       const result = await axios
-         .get(`http://localhost:${server.address().port}`, {
-           adapter,
-@@ -45,7 +45,7 @@ describe.each(['http', 'fetch'])('%s response duration', (adapter) => {
-     });
+@@ -53,4 +53,54 @@ describe('helpers::composeSignals', () => {
  
-     try {
--      vi.spyOn(Date, 'now').mockImplementation(() => now);
-+      vi.spyOn(performance, 'now').mockImplementation(() => now);
-       const response = await axios.get(`http://localhost:${server.address().port}`, {
-         adapter,
-         proxy: false,
+     assert.strictEqual(signal, undefined);
+   });
++
++  describe('timeout and manual cancellation precedence', () => {
++    it('keeps the first cancellation reason and clears the pending timeout', async () => {
++      vi.useFakeTimers();
++      const first = new AbortController();
++      const second = new AbortController();
++      const removeFirst = vi.spyOn(first.signal, 'removeEventListener');
++      const removeSecond = vi.spyOn(second.signal, 'removeEventListener');
++
++      try {
++        const signal = composeSignals([first.signal, second.signal], 100);
++        first.abort(new Error('manual cancellation'));
++        const reason = signal.reason;
++
++        assert.strictEqual(reason.code, 'ERR_CANCELED');
++        assert.strictEqual(reason.message, 'manual cancellation');
++        assert.strictEqual(vi.getTimerCount(), 0);
++        assert.strictEqual(removeFirst.mock.calls.length, 1);
++        assert.strictEqual(removeSecond.mock.calls.length, 1);
++
++        second.abort(new Error('later cancellation'));
++        await vi.advanceTimersByTimeAsync(200);
++        assert.strictEqual(signal.reason, reason);
++      } finally {
++        vi.useRealTimers();
++        vi.restoreAllMocks();
++      }
++    });
++
++    it('keeps the timeout reason when manual cancellation follows', async () => {
++      vi.useFakeTimers();
++      const controller = new AbortController();
++      const remove = vi.spyOn(controller.signal, 'removeEventListener');
++
++      try {
++        const signal = composeSignals([controller.signal], 100);
++        await vi.advanceTimersByTimeAsync(100);
++        const reason = signal.reason;
++
++        assert.strictEqual(reason.code, 'ETIMEDOUT');
++        assert.strictEqual(remove.mock.calls.length, 1);
++        controller.abort(new Error('late cancellation'));
++        assert.strictEqual(signal.reason, reason);
++        assert.strictEqual(vi.getTimerCount(), 0);
++      } finally {
++        vi.useRealTimers();
++        vi.restoreAllMocks();
++      }
++    });
++  });
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11429** (2026-11-06): docs: add missing error codes to the error tables (@Aryapatel-007)
+- **PR #11427** (2026-11-05): fix(deps): bump follow-redirects and form-data, refresh dev dependencies (v0.x) (@jasonsaayman)
+- **PR #11426** (2026-11-05): chore(deps-dev): refresh development dependencies (@jasonsaayman)
 - **PR #11422** (2026-11-03): chore(deps-dev): bump the development_dependencies group with 4 updates (@dependabot[bot])
 - **PR #11421** (2026-11-03): chore(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 in the github-actions group (@dependabot[bot])
 - **PR #11420** (closed): chore(release): prepare release 1.21.1 (@github-actions[bot])
-- **PR #11419** (2026-11-03): docs: clarify redact, browser size limits and formToJSON collisions (@jasonsaayman)
-- **PR #11417** (2026-11-02): chore: release v0.35.0 (@github-actions[bot])
-- **PR #11416** (2026-11-02): ci: install Firefox in v0.x release branch workflow (@jasonsaayman)
 
 ---
 
@@ -2236,13 +2083,13 @@ Co-authored-by: cubic-dev-ai[bot] <191113872+cubic-dev-ai[bot]@users.noreply.git
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410)
+## X. test: cover cancellation lifecycle and timeout precedence (#11376)
 
 **RULE**:
 When implementing operations in `PRE_RELEASE_CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in axios/axios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00b4d1ed`: deps): bump follow-redirects to 1.16.2 for CVE-2026-116689 (#11410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a81d62a2`: test: cover cancellation lifecycle and timeout precedence (#11376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `PRE_RELEASE_CHANGELOG.md`.
@@ -2250,7 +2097,8 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- **follow-redirects security update:** Raised the `follow-redirects` dependency range from `^1.16.0` to `^1.16.2` and updated the lockfile to 1.16.2, which fixes [CVE-2026-116689](https://github.com/advisories/GHSA-mrwp-f3q8-3g9p) (cross-realm `sensitiveHeaders` arrays are discarded and custom credentials can follow redirects). Raising the range floor stops installs from resolving the vulnerable 1.16.0 and 1.16.1 releases. No axios runtime, public API, or type compatibility changes. ([#11409](https://github.com/axios/axios/issues/11409), [#11410](https://github.com/axios/axios/pull/11410))
+- **Cancellation lifecycle regression coverage:** Added Node HTTP/Fetch and browser XHR tests for cancellation inside asynchronous request interceptors and successful reuse of an Axios instance after an in-flight cancellation, using AbortSignal, CancelToken, and both together. Added deterministic signal-composition tests for timeout/cancellation precedence and subscription cleanup. Runtime behavior, public APIs, and types are unchanged.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2260,4 +2108,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00b4d1ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a81d62a2` are properly handled with clean fallback behavior.

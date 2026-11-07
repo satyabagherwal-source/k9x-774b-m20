@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T05:37:07.663Z",
+  "last_updated": "2026-11-07T05:44:26.737Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11267,11 +11267,16 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "fff807d1",
-      "content_hash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
+      "source_version": "cdc74879",
+      "content_hash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ui/format): return Cow<'static, str> from rate formatters (#429)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2257,
           "title": "ci: cache builds and cancel superseded PR runs (#685)",
@@ -11328,7 +11333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:58:22.393Z",
+      "verified_at": "2026-11-07T05:44:17.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14903,8 +14908,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "49808ff5",
-      "content_hash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
+      "source_version": "f4ff4fb7",
+      "content_hash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -14926,6 +14931,11 @@
         {
           "number": null,
           "title": "transport): export quinn's per-path QUIC loss (#6124)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "update): wait for a streamed broadcast as long as the receiver keeps the stream",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15144,7 +15154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:20:00.107Z",
+      "verified_at": "2026-11-07T05:44:26.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58688,14 +58698,19 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "fd11e5d5",
-      "content_hash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
+      "source_version": "47409d6e",
+      "content_hash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add poller targets to worker metrics events (#12939)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deleted deployment version accumulation on passive clusters (#12966)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58779,7 +58794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T18:31:36.624Z",
+      "verified_at": "2026-11-07T05:44:26.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78311,11 +78326,16 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "fb88a1b1",
-      "content_hash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
+      "source_version": "a81d62a2",
+      "content_hash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "test: cover cancellation lifecycle and timeout precedence (#11376)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2908,
           "title": "hr): avoid main-thread jank from cookie reads (#11166)",
@@ -78357,7 +78377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:46:08.934Z",
+      "verified_at": "2026-11-07T05:44:19.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T05:37:10.322Z",
-    "lastVerified": "2026-11-07T05:37:10.322Z",
+    "lastChecked": "2026-11-07T05:44:29.465Z",
+    "lastVerified": "2026-11-07T05:44:29.465Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T05:09:11.686Z",
+    "lastChecked": "2026-11-07T05:44:26.405Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T05:09:11.686Z"
+    "lastVerified": "2026-11-07T05:44:26.405Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1254,14 +1254,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T23:19:57.465Z",
-    "lastVerified": "2026-11-06T23:19:57.465Z",
+    "lastChecked": "2026-11-07T05:44:24.560Z",
+    "lastVerified": "2026-11-07T05:44:24.560Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
+    "contentHash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4045,9 +4045,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-05T17:29:03.411Z",
+    "lastChecked": "2026-11-07T05:44:23.800Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-05T17:29:03.411Z"
+    "lastVerified": "2026-11-07T05:44:23.800Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -5459,9 +5459,9 @@
   "flipkart-recyclerlistview": {
     "name": "recyclerlistview",
     "officialUrl": "https://github.com/Flipkart/recyclerlistview",
-    "lastChecked": "2026-11-04T17:37:18.058Z",
+    "lastChecked": "2026-11-07T05:44:16.289Z",
     "revisionIdentifier": "3485036e",
-    "lastVerified": "2026-11-04T17:37:18.058Z"
+    "lastVerified": "2026-11-07T05:44:16.289Z"
   },
   "encoredev-encore": {
     "name": "encoredev/encore",
@@ -7183,14 +7183,14 @@
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T12:58:21.826Z",
-    "lastVerified": "2026-11-05T12:58:21.826Z",
+    "lastChecked": "2026-11-07T05:44:14.712Z",
+    "lastVerified": "2026-11-07T05:44:14.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
+    "contentHash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7385,14 +7385,14 @@
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T18:31:35.230Z",
-    "lastVerified": "2026-11-05T18:31:35.230Z",
+    "lastChecked": "2026-11-07T05:44:22.955Z",
+    "lastVerified": "2026-11-07T05:44:22.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
+    "contentHash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11317,14 +11317,14 @@
     "officialUrl": "https://github.com/axios/axios",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-03T23:46:07.428Z",
-    "lastVerified": "2026-11-03T23:46:07.428Z",
+    "lastChecked": "2026-11-07T05:44:16.757Z",
+    "lastVerified": "2026-11-07T05:44:16.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-axios-axios",
-    "contentHash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
+    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

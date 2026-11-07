@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "49808ff5",
+    "sourceVersion": "f4ff4fb7",
     "license": "NOASSERTION",
-    "contentHash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
-    "lastHarvestedAt": "2026-11-06T23:20:00.235Z",
+    "contentHash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
+    "lastHarvestedAt": "2026-11-07T05:44:26.839Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "fd11e5d5",
+    "sourceVersion": "47409d6e",
     "license": "MIT",
-    "contentHash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
-    "lastHarvestedAt": "2026-11-05T18:31:36.763Z",
+    "contentHash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
+    "lastHarvestedAt": "2026-11-07T05:44:26.545Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "fff807d1",
+    "sourceVersion": "cdc74879",
     "license": "Apache-2.0",
-    "contentHash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
-    "lastHarvestedAt": "2026-11-05T12:58:22.486Z",
+    "contentHash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
+    "lastHarvestedAt": "2026-11-07T05:44:17.894Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "fb88a1b1",
+    "sourceVersion": "a81d62a2",
     "license": "MIT",
-    "contentHash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
-    "lastHarvestedAt": "2026-11-03T23:46:09.023Z",
+    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+    "lastHarvestedAt": "2026-11-07T05:44:19.470Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

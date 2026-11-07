@@ -8018,3 +8018,7 @@ Every entry in this ledger must capture:
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `55bf2946` | Multi-dimensional audit evidence | 2026-11-07T05:37:01.537Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `90d45251` | Multi-dimensional audit evidence | 2026-11-07T05:37:05.678Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `800f4c49` | Multi-dimensional audit evidence | 2026-11-07T05:37:07.777Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `cdc74879` | Multi-dimensional audit evidence | 2026-11-07T05:44:17.894Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `a81d62a2` | Multi-dimensional audit evidence | 2026-11-07T05:44:19.470Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `47409d6e` | Multi-dimensional audit evidence | 2026-11-07T05:44:26.545Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f4ff4fb7` | Multi-dimensional audit evidence | 2026-11-07T05:44:26.839Z |

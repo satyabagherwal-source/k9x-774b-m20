@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-Y7NL",
-    "timestamp": "2026-11-05T04:07:19.617Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "843695b4097e4f52cdef8c7e71cd5cc2977e28ff3c7b766dd4b5ff5b94ab07ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-7EAH",
-    "timestamp": "2026-11-05T04:14:28.121Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "c5d20032aa8eff8bd7737826f91e033ae2501383c6bcea1c28be5bf0f534abba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-7LXM",
-    "timestamp": "2026-11-05T04:14:38.026Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "460e853077b6ec17492757ff913bf404dd6d3467c8c3536b1be1d0ef59f7a820",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-GRVX",
-    "timestamp": "2026-11-05T04:21:45.645Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "18057e3c3bc0bbe6ffd77c7ef8bcdd22769d909aeba632d9e9fda37038a68a63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-GSMF",
     "timestamp": "2026-11-05T04:21:46.599Z",
     "repository": "ClementTsang/bottom",
@@ -7492,6 +7432,66 @@
     "contentHash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-AMEA",
+    "timestamp": "2026-11-07T05:44:17.890Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-ANM2",
+    "timestamp": "2026-11-07T05:44:19.466Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-AT2L",
+    "timestamp": "2026-11-07T05:44:26.541Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-ATAR",
+    "timestamp": "2026-11-07T05:44:26.835Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

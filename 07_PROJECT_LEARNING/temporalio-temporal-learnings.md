@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `fd11e5d5`  
+> **Source Version**: `47409d6e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:31:35.236Z  
+> **Timestamp**: 2026-11-07T05:44:24.442Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:31:35.230Z  
+> **Harvest Timestamp**: 2026-11-07T05:44:22.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24202 stars
+- **Stars / Engagement**: 24240 stars
 
 ---
 
@@ -2121,424 +2121,682 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd11e5d5` (2026-11-05)
-**Commit Message**: Add poller targets to worker metrics events (#12939)
+### Incident Patch 1: `e4160f8e` (2026-11-06)
+**Commit Message**: Fix deleted deployment version accumulation on passive clusters (#12966)
 
-## What changed?
+Problem: Deleted deployment versions accumulate on passive clusters.
+They can block new builds after failover and eventually make replication
+updates too large to store or transmit.
 
-Export poller targets alongside current poller counts in worker metrics
-events.
+1. **Normal deletion — the case this PR addresses**
 
-Note: For now, the target value is set to the current pollers. Once SDK
-starts sending it we will switch to it.
+**Setup:** Active and passive start with `{A, B}`, clock 10. Active
+deletes A and sends `{B}`, clock 20.
 
-## Why?
+   **Before:** The passive unions both snapshots and retains `{A, B}`.
 
-Avoid another schema change when SDK heartbeats report poller targets.
+**After:** The passive replaces its deployment data with `{B}`. An equal
+incoming clock also replaces, allowing force replication to clear
+existing accumulation.
 
-## How did you test it?
+2. **Delayed replication — fixed by
+[#12351](https://github.com/temporalio/temporal/pull/12351), which
+introduced the normal-deletion issue this PR addresses**
 
-- Unit tests
+**Setup:** After failover, the target has `{B}`, clock 20. A delayed
+snapshot from the old active contains `{A}`, clock 10.
 
-**File**: `common/wideevents/worker_events.go` (modified, +13/-5)
+**Before:** The union fix merged to `{A, B}`, preserving valid A despite
+its older parent clock.
+
+**After:** Still merges to `{A, B}`. This change retains the original
+fix's protection for delayed replication.
+
+3. **Accepted edge case**
+
+**Setup:** The target has
+
+**File**: `common/dynamicconfig/constants.go` (modified, +6/-0)
 ```diff
-@@ -73,12 +73,18 @@ func (p WorkerConfigPayload) Attributes() []log.KeyValue {
- // omitted when the source message is absent, distinguishing "not reported"
- // from an actual zero value.
- type WorkerTaskTypeStats struct {
--	TotalSlots           *int32
--	UsedSlots            *int32
--	CurrentPollers       *int32
-+	TotalSlots *int32
-+	UsedSlots  *int32
-+	// Current number of in-flight pollers.
-+	CurrentPollers *int32
-+	// Desired number of pollers.
-+	TargetPollers *int32
-+	// Current number of in-flight sticky pollers.
- 	CurrentStickyPollers *int32
--	TotalProcessedTasks  *int32
--	TotalFailedTasks     *int32
-+	// Desired number of sticky pollers.
-+	TargetStickyPollers *int32
-+	TotalProcessedTasks *int32
-+	TotalFailedTasks    *int32
+@@ -1618,6 +1618,12 @@ these log lines can be noisy, we want to be able to turn on and sample selective
+ 		100,
+ 		`MatchingMaxVersionsInDeployment represents the maximum number of versions that can be registered in a single worker deployment`,
+ 	)
++	MatchingEnableTaskQueueUserDataRevisionMerge = NewNamespaceBoolSetting(
++		"matching.enableTaskQueueUserDataRevisionMerge",
++		true,
++		`When enabled, merges incoming and current worker deployment data by revision when needed to preserve delayed updates.
++When disabled, always uses the deployment snapshot selected by the parent clock without merging.`,
++	)
+ 	MatchingMaxVersionsInTaskQueue = NewNamespaceIntSetting(
+ 		"matching.maxVersionsInTaskQueue",
+ 		200,
+```
+
+**File**: `service/matching/config.go` (modified, +2/-0)
+```diff
+@@ -34,6 +34,7 @@ type (
+ 		EnableDeployments                    dynamicconfig.BoolPropertyFnWithNamespaceFilter // [cleanup-wv-pre-release]
+ 		EnableDeploymentVersions             dynamicconfig.BoolPropertyFnWithNamespaceFilter
+ 		UseRevisionNumberForWorkerVersioning dynamicconfig.BoolPropertyFnWithNamespaceFilter
++		EnableTaskQueueUserDataRevisionMerge dynamicconfig.BoolPropertyFnWithNamespaceFilter
+ 		MaxTaskQueuesInDeployment            dynamicconfig.IntPropertyFnWithNamespaceFilter
+ 		MaxVersionsInTaskQueue               dynamicconfig.IntPropertyFnWithNamespaceFilter
+ 		MaxIDLengthLimit                     dynamicconfig.IntPropertyFn
+@@ -287,6 +288,7 @@ func NewConfig(
+ 		EnableDeployments:                        dynamicconfig.EnableDeployments.Get(dc), // [cleanup-wv-pre-release]
+ 		EnableDeploymentVersions:                 dynamicconfig.EnableDeploymentVersions.Get(dc),
+ 		UseRevisionNumberForWorkerVersioning:     dynamicconfig.UseRevisionNumberForWorkerVersioning.Get(dc),
++		EnableTaskQueueUserDataRevisionMerge:     dynamicconfig.MatchingEnableTaskQueueUserDataRevisionMerge.Get(dc),
+ 		MaxTaskQueuesInDeployment:                dynamicconfig.MatchingMaxTaskQueuesInDeployment.Get(dc),
+ 		MaxVersionsInTaskQueue:                   dynamicconfig.MatchingMaxVersionsInTaskQueue.Get(dc),
+ 		RPS:                                      dynamicconfig.MatchingRPS.Get(dc),
+```
+
+**File**: `service/matching/matching_engine.go` (modified, +21/-1)
+```diff
+@@ -2573,9 +2573,29 @@ func (e *matchingEngineImpl) ApplyTaskQueueUserDataReplicationEvent(
+ 
+ 		// Merge logic: Task queue user data has an overall clock. Deployment routing configs and
+ 		// individual versions within it have their own revision numbers. To merge the two user data values:
++		//
+ 		// 1. Select the base user data using the overall clock.
+-		// 2. Merge the routing configs and versions from the other user data into the base.
++		//
++		// 2. When revision-based merging is disabled, use the selected base without merging.
++		//
++		// 3. When revision-based merging is enabled, there are three cases:
++		//
++		//    3a. Both clocks are present and incoming is equal or newer: use incoming without merging.
++		//        This lets missing versions propagate as deletions, including during same-clock force replication.
++		//
++		//    3b. Both clocks are present and incoming is older: merge its routing configs and versions into the base.
++		//        This preserves valid versions or higher revisions arriving in delayed replication after failover.
++		//
++		//    3c. Either clock is missing: retain compatibility merging because snapshot ordering is unknown.
+ 		baseUserData, otherUserData, selectionReason := selectTaskQueueUserData(current, incoming)
++		revisionMergeEnabled := e.config.EnableTaskQueueUserDataRevisionMerge(ns.Name().String())
++		currentClock, incomingClock := current.GetClock(), incoming.GetClock()
++		hasMissingClock := currentClock == nil || incomingClock == nil
++		incomingClockIsOlder := !hasMissingClock && hlc.Greater(currentClock, incomingClock)
++		shouldMergeDeploymentData := revisionMergeEnabled && (incomingClockIsOlder || hasMissingClock)
++		if !shouldMergeDeploymentData {
++			otherUserData = nil
++		}
+ 		mergedUserData, mergeConflicts := mergeTaskQueueUserDataDeployments(baseUserData, otherUserData)
+ 
+ 		// Merge V1 sets.
+```
+
+**File**: `service/matching/task_queue_user_data_merge.go` (modified, +1/-0)
+```diff
+@@ -70,6 +70,7 @@ func (reason taskQueueUserDataSelectionReason) selectedUserDataSource() string {
+ // worker versions found only in otherUserData are added. When both contain the
+ // same routing configuration or worker version, the value with the higher revision is retained.
+ // Equal revisions retain the value from baseUserData.
++// A nil otherUserData skips merging; a nil baseUserData starts with empty user data.
+ func mergeTaskQueueUserDataDeployments(
+ 	baseUserData *persistencespb.TaskQueueUserData,
+ 	otherUserData *persistencespb.TaskQueueUserData,
+```
+
+**File**: `service/matching/user_data_replication_merge_test.go` (modified, +423/-78)
+```diff
+@@ -1,7 +1,11 @@
+ package matching
+ 
+ import (
++	"fmt"
++	"testing"
++
+ 	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
+ 	deploymentpb "go.temporal.io/api/deployment/v1"
+ 	enumspb "go.temporal.io/api/enums/v1"
+ 	taskqueuepb "go.temporal.io/api/taskqueue/v1"
+@@ -10,9 +14,14 @@ import (
+ 	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/common"
++	"go.temporal.io/server/common/dynamicconfig"
++	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/persistence/visibility/manager"
+ 	"go.temporal.io/server/common/testing/protorequire"
+ 	"go.temporal.io/server/common/testing/testlogger"
++	"go.temporal.io/server/common/testing/testvars"
++	"go.uber.org/mock/gomock"
+ )
+ 
+ func taskQueueUserDataWithDeployment(
+@@ -36,7 +45,7 @@ func taskQueueUserDataWithDeployment(
  }
  
- // appendAttributes adds one attribute per reported stat, prefixed with the
-@@ -92,7 +98,9 @@ func (s WorkerTaskTypeStats) appendAttributes(attrs []log.KeyValue, taskType str
- 	appendStat("total_slots", s.TotalSlots)
- 	appendStat("used_slots", s.UsedSlots)
- 	appendStat("current_pollers", s.CurrentPollers)
-+	appendStat("target_pollers", s.TargetPollers)
- 	appendStat("current_sticky_pollers", s.CurrentStickyPollers)
-+	appendStat("target_sticky_pollers", s.TargetStickyPollers)
- 	appendStat("total_processed_tasks", s.TotalProcessedTasks)
- 	appendStat("total_failed_tasks", s.TotalFailedTasks)
- 	return attrs
-```
-
-**File**: `service/matching/workers/worker_metrics_emitter.go` (modified, +4/-0)
-```diff
-@@ -168,9 +168,13 @@ func (e *workerMetricsEmitter) emitWorkerMetricsEvent(nsName namespace.Name, hb
- 		s := wideevents.WorkerTaskTypeStats{}
- 		if pollerInfo != nil {
- 			s.CurrentPollers = new(pollerInfo.GetCurrentPollers())
-+			// TODO: Use the SDK-reported poller target when available.
-+			s.TargetPollers = s.CurrentPollers
- 		}
- 		if stickyInfo != nil {
- 			s.CurrentStickyPollers = new(stickyInfo.GetCurrentPollers())
-+			// TODO: Use the SDK-reported sticky poller target when available.
-+			s.TargetStickyPollers = s.CurrentStickyPollers
- 		}
- 		if slots != nil {
- 			totalSlots := slots.GetCurrentAvailableSlots() + slots.GetCurrentUsedSlots()
-```
-
-**File**: `service/matching/workers/worker_metrics_emitter_test.go` (modified, +14/-0)
-```diff
-@@ -545,6 +545,12 @@ func TestEmitWorkerMetricsEvent(t *testing.T) {
- 		WorkflowStickyPollerInfo: &workerpb.WorkerPollerInfo{
- 			CurrentPollers: 2,
- 		},
-+		ActivityPollerInfo: &workerpb.WorkerPollerInfo{
-+			CurrentPollers: 0,
-+		},
-+		NexusPollerInfo: &workerpb.WorkerPollerInfo{
-+			CurrentPollers: 4,
-+		},
- 		CurrentStickyCacheSize: 100,
- 		TotalStickyCacheHit:    500,
- 		TotalStickyCacheMiss:   20,
-@@ -553,14 +559,21 @@ func TestEmitWorkerMetricsEvent(t *testing.T) {
+ // Replicating identical user data leaves persisted data unchanged and emits no conflict diagnostics.
+-func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventIdenticalUserData() {
++func (s *matchingEngineSuite) TestReplicateIdenticalData() {
+ 	captureHandler := s.captureDroppedOnEngine()
+ 	current := taskQueueUserDataWithDeployment(
+ 		&clockspb.HybridLogicalClock{WallClock: 20, Version: 1, ClusterId: 1},
+@@ -82,7 +91,9 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventIdentica
+ 	}
+ }
  
- 	require.Equal(t, "worker_metrics", eventLogger.records[0].EventName())
- 	// The last-interval task counts are not exported.
-+	// Targets mirror current pollers, including a reported zero.
- 	require.Equal(t, map[string]any{
- 		"namespace":                       "ns",
- 		"task_queue":                      "my-queue",
- 		"worker_instance_key":             "w1",
- 		"workflow_total_slots":            int64(10),
- 		"workflow_used_slots":             int64(2),
- 		"workflow_current_pollers":        int64(3),
-+		"workflow_target_pollers":         int64(3),
- 		"workflow_current_sticky_pollers": int64(2),
-+		"workflow_target_sticky_pollers":  int64(2),
-+		"activity_current_pollers":        int64(0),
-+		"activity_target_pollers":         int64(0),
-+		"nexus_current_pollers":           int64(4),
-+		"nexus_target_pollers":            int64(4),
- 		"workflow_total_processed_tasks":  int64(1000),
- 		"workflow_total_failed_tasks":     int64(10),
- 		"sticky_cache_size":               int64(100),
-@@ -636,6 +649,7 @@ func TestEmitWorkerMetricsEventPollersWithoutSlots(t *testing.T) {
- 		"task_queue":               "",
- 		"worker_instance_key":      "w1",
- 		"activity_current_pollers": int64(5),
-+		"activity_target_pollers":  int64(5),
- 		"sticky_cache_size":        int64(0),
- 		"sticky_cache_hit":         int64(0),
- 		"sticky_cache_miss":        int64(0),
+-func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDeploymentDataByRevision() {
++// After failover, delayed replication can contribute valid versions and higher revisions despite its older parent clock.
++func (s *matchingEngineSuite) TestMergeDelayedSnapshot() {
++	// The target has accepted newer writes after failover; the source event was delayed.
+ 	currentClock := &clockspb.HybridLogicalClock{WallClock: 200, ClusterId: 1}
+ 	incomingClock := &clockspb.HybridLogicalClock{WallClock: 100, ClusterId: 1}
+ 	currentRouting := &deploymentpb.RoutingConfig{
+@@ -125,6 +136,7 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
+ 		CurrentDeploymentVersion: &deploymentpb.WorkerDeploymentVersion{DeploymentName: "zero-routing", BuildId: "zero"},
+ 		RevisionNumber:           0,
+ 	}
++	// The delayed snapshot has newer routing but older data for A, plus versions missing from the target.
+ 	incoming := taskQueueUserDataWithDeployment(
+ 		incomingClock,
+ 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
+@@ -147,6 +159,7 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
+ 
+ 	taskQueue := uuid.NewString()
+ 	s.seedTaskQueueUserData(taskQueue, current)
++	// Receive the delayed event and resolve routing and version revisions independently.
+ 	got := s.applyTaskQueueUserDataReplicationEvent(taskQueue, incoming)
+ 
+ 	protorequire.ProtoEqual(s.T(), currentClock, got.GetClock())
+@@ -163,23 +176,23 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventUnionsDe
+ 	protorequire.ProtoEqual(s.T(), incomingZeroRouting, gotDeployments["zero-routing"].GetRoutingConfig())
+ }
+ 
+-// Reordered and repeated user data updates retain the highest revisions, all build IDs, and the newest parent clock and config.
+-func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventReorderedAndRepeatedUserData() {
+-	older := taskQueueUserDataWithDeployment(
+-		&clockspb.HybridLogicalClock{WallClock: 10, ClusterId: 1},
++// Redelivering an older snapshot must preserve higher version and routing revisions already merged locally.
++// The target's newer parent clock and task queue config must also survive each delivery.
++func (s *matchingEngineSuite) TestRedeliveryPreservesHigherRevisions() {
++	target := taskQueueUserDataWithDeployment(
++		&clockspb.HybridLogicalClock{WallClock: 30, ClusterId: 1},
+ 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
+ 		"deployment",
+ 		&persistencespb.WorkerDeploymentData{
+-			RoutingConfig: newTestRoutingConfig(1, "A"),
+ 			Versions: map[string]*deploymentspb.WorkerDeploymentVersionData{
+-				"A": newTestWorkerDeploymentVersionData(1, enumspb.WORKER_DEPLOYMENT_VERSION_STATUS_RAMPING),
++				"B": newTestWorkerDeploymentVersionData(1, enumspb.WORKER_DEPLOYMENT_VERSION_STATUS_INACTIVE),
+ 			},
+ 		},
+ 	)
+-	older.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuepb.TaskQueueConfig{
+-		FairnessWeightOverrides: map[string]float32{"older": 1},
++	target.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuepb.TaskQueueConfig{
++		FairnessWeightOverrides: map[string]float32{"target": 1},
+ 	}
+-	newer := taskQueueUserDataWithDeployment(
++	higherRevision := taskQueueUserDataWithDeployment(
+ 		&clockspb.HybridLogicalClock{WallClock: 20, ClusterId: 1},
+ 		enumspb.TASK_QUEUE_TYPE_WORKFLOW,
+ 		"deployment",
+@@ -190,72 +203,153 @@ func (s *matchingEngineSuite) TestApplyTaskQueueUserDataReplicationEventReordere
+ 			},
+ 		},
+ 	)
+-	newer.PerType[int32(enumspb.TASK_QUEUE_TYPE_WORKFLOW)].Config = &taskqueuep
 ```
 
 ---
 
-### Incident Patch 2: `898bdce4` (2026-11-05)
-**Commit Message**: Include task events in eventless state replication payloads (#12897)
+### Incident Patch 2: `b3533bf4` (2026-11-06)
+**Commit Message**: fix clock mismatch in chasm-pure-task deletion (#12959)
 
 ## What changed?
-
-When a non-first `SyncVersionedTransitionTask` converts to a state-sync
-artifact without event batches, attach the events from the task's
-persisted `[FirstEventID, NextEventID)` range. Read the range from the
-XDC event-blob cache when available, otherwise use the existing
-paginated raw-history reader after releasing the workflow lock.
-
-Preserve event batches already selected by the sync-state retriever,
-first-sync handling, eventless transitions, and verify/backfill
-conversion paths. No protobuf changes are needed.
-
-Cached batches are attached only when their version history agrees with
-the snapshot through the last event in the returned cache range, which
-can extend beyond the task range. On a branch mismatch or a cached
-history with no common ancestor, omit the cached batches and preserve
-the receiver's existing history-fetch recovery. Compatible shared
-prefixes are accepted even when the histories diverge later.
+Add an explicit `isPhysicalTime` parameter to `DeleteCHASMPureTasks`.
+Convert virtual-time thresholds to real time before comparing them with
+physical task timestamps. Physical-time thresholds, including the
+delete-all sentinel, remain unchanged.
 
 ## Why?
+After time skipping, comparing a physical task’s real-time timestamp
+against a virtual-time threshold can incorrectly mark a valid timer task
+for deletion.
 
-The sender's replication-progress cache is an in-memory hint that can be
-lost through eviction, TTL expiry, or a history-process restart. On a
-cache miss, conversion current
+When best-effort deletion is enabled and supported by the persistence
+backend, this can remove a required wakeup and stall the execution. For
+example, an ALLOW_ALL Schedule’s workflow completion callback can arrive
+before the next GeneratorTask is processed. The callback transaction can
+delete its physical timer without creating a replacement, particularly
+when a due timer blocks further time skipping or time skipping has
+stopped while the accumulated offset remains.
 
-**File**: `service/history/replication/raw_task_converter.go` (modified, +49/-7)
+**File**: `chasm/detached_tree.go` (modified, +2/-2)
 ```diff
-@@ -475,13 +475,14 @@ func getVersionHistoryAndEvents(
- 	logger log.Logger,
- ) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, error) {
- 	if eventBlobCache != nil {
--		if versionHistory, eventBatches, baseWorkflowInfo, ok := getEventsFromCache(
-+		versionHistory, eventBatches, baseWorkflowInfo, _, ok := getEventsFromCache(
- 			eventBlobCache,
- 			workflowKey,
- 			eventVersion,
- 			firstEventID,
- 			nextEventID,
--		); ok {
-+		)
-+		if ok {
- 			return versionHistory, eventBatches, baseWorkflowInfo, nil
- 		}
- 	}
-@@ -509,25 +510,26 @@ func getVersionHistoryAndEvents(
- // getEventsFromCache returns the event batches in the range [firstEventID, nextEventID) from eventBlobCache. A
- // transaction can be split across several batches (history.maximumEventBatchSizeInBytes), while a cache
- // entry holds a single batch, so it follows each entry's NextEventID to the next batch. It returns false
--// unless every batch in the range is cached.
-+// unless every batch in the range is cached. The returned exclusive end covers all cached batches,
-+// which may extend beyond nextEventID.
- func getEventsFromCache(
- 	eventBlobCache persistence.XDCCache,
- 	workflowKey definition.WorkflowKey,
- 	eventVersion int64,
- 	firstEventID int64,
- 	nextEventID int64,
--) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, bool) {
-+) ([]*historyspb.VersionHistoryItem, []*commonpb.DataBlob, *workflowspb.BaseExecutionInfo, int64, bool) {
- 	var eventBatches []*commonpb.DataBlob
- 	startEventID := firstEventID
- 	startEventVersion := eventVersion
- 	for {
- 		xdcCacheValue, ok := eventBlobCache.Get(persistence.NewXDCCacheKey(workflowKey, startEventID, startEventVersion))
- 		if !ok {
--			return nil, nil, nil, false
-+			return nil, nil, nil, 0, false
- 		}
- 		eventBatches = append(eventBatches, xdcCacheValue.EventBlobs...)
- 		if xdcCacheValue.NextEventID >= nextEventID {
--			return xdcCacheValue.VersionHistoryItems, eventBatches, xdcCacheValue.BaseWorkflowInfo, true
-+			return xdcCacheValue.VersionHistoryItems, eventBatches, xdcCacheValue.BaseWorkflowInfo, xdcCacheValue.NextEventID, true
- 		}
- 		startEventID = xdcCacheValue.NextEventID
- 		var err error
-@@ -536,7 +538,7 @@ func getEventsFromCache(
- 			startEventID,
- 		)
- 		if err != nil {
--			return nil, nil, nil, false
-+			return nil, nil, nil, 0, false
- 		}
+@@ -279,8 +279,8 @@ func (b *readOnlyNodeBackend) AddTasks(...tasks.Task) {
+ 	b.unsupported("AddTasks")
+ }
+ 
+-func (b *readOnlyNodeBackend) DeleteCHASMPureTasks(time.Time) {
+-	b.unsupported("DeleteCHASMPureTasks")
++func (b *readOnlyNodeBackend) DeletePhysicalCHASMPureTasks(time.Time) {
++	b.unsupported("DeletePhysicalCHASMPureTasks")
+ }
+ 
+ func (b *readOnlyNodeBackend) UpdateWorkflowStateStatus(
+```
+
+**File**: `chasm/detached_tree_test.go` (modified, +5/-5)
+```diff
+@@ -17,11 +17,11 @@ func TestReadOnlyNodeBackend_UnsupportedPanics(t *testing.T) {
+ 	})
+ 
+ 	for name, call := range map[string]func(){
+-		"NextTransitionCount":  func() { backend.NextTransitionCount() },
+-		"AddTasks":             func() { backend.AddTasks() },
+-		"DeleteCHASMPureTasks": func() { backend.DeleteCHASMPureTasks(time.Time{}) },
+-		"GetNamespaceEntry":    func() { backend.GetNamespaceEntry() },
+-		"GetCurrentVersion":    func() { backend.GetCurrentVersion() },
++		"NextTransitionCount":          func() { backend.NextTransitionCount() },
++		"AddTasks":                     func() { backend.AddTasks() },
++		"DeletePhysicalCHASMPureTasks": func() { backend.DeletePhysicalCHASMPureTasks(time.Time{}) },
++		"GetNamespaceEntry":            func() { backend.GetNamespaceEntry() },
++		"GetCurrentVersion":            func() { backend.GetCurrentVersion() },
+ 		"ChasmSkipPersistenceEnabled": func() {
+ 			backend.ChasmSkipPersistenceEnabled()
+ 		},
+```
+
+**File**: `chasm/node_backend_mock.go` (modified, +2/-2)
+```diff
+@@ -156,11 +156,11 @@ func (m *MockNodeBackend) AddTasks(ts ...tasks.Task) {
  	}
  }
-@@ -828,6 +830,46 @@ func (c *syncVersionedTransitionTaskConverter) convert(
- 	// you use mutable state after the releaseFunc has been called, you will be accessing mutable state without holding the lock.
- 	// Deep copy what you need.
  
-+	// A cold progress cache must not suppress the events produced by this task.
-+	// The receiver can fetch any gaps if the serialized state has advanced further.
-+	if !taskInfo.IsFirstTask && len(syncStateResult.VersionedTransitionArtifact.EventBatches) == 0 &&
-+		taskInfo.FirstEventID >= common.FirstEventID && taskInfo.NextEventID > taskInfo.FirstEventID {
-+		var eventBatches []*commonpb.DataBlob
-+		var cached bool
-+		if c.eventBlobCache != nil {
-+			var cachedVersionHistory []*historyspb.VersionHistoryItem
-+			var cachedNextEventID int64
-+			cachedVersionHistory, eventBatches, _, cachedNextEventID, cached = getEventsFromCache(
-+				c.eventBlobCache,
-+				taskInfo.WorkflowKey,
-+				taskInfo.FirstEventVersion,
-+				taskInfo.FirstEventID,
-+				taskInfo.NextEventID,
-+			)
-+			if cached {
-+				// Cache entries may outlive an event-based rebuild or extend beyond the task's range.
-+				lca, err := versionhistory.FindLCAVersionHistoryItemFromItemSlice(currentHistoryCopy.Items, cachedVersionHistory)
-+				if err != nil || lca.EventId < cachedNextEventID-1 {
-+					eventBatches = nil
-+				}
-+			}
-+		}
-+		if !cached {
-+			eventBatches, err = getEventsBlob(
-+				ctx,
-+				c.shardID,
-+				currentHistoryCopy.BranchToken,
-+				taskInfo.FirstEventID,
-+				taskInfo.NextEventID,
-+				c.executionManager,
-+			)
-+			if err != nil {
-+				return nil, err
-+			}
-+		}
-+		syncStateResult.VersionedTransitionArtifact.EventBatches = eventBatches
+-func (m *MockNodeBackend) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
++func (m *MockNodeBackend) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
+ 	m.mu.Lock()
+ 	defer m.mu.Unlock()
+ 
+-	m.DeletePureTaskCalls = append(m.DeletePureTaskCalls, maxScheduledTime)
++	m.DeletePureTaskCalls = append(m.DeletePureTaskCalls, maxLogicalScheduledTime)
+ }
+ 
+ func (m *MockNodeBackend) LastDeletePureTaskCall() time.Time {
+```
+
+**File**: `chasm/tree.go` (modified, +3/-3)
+```diff
+@@ -225,7 +225,7 @@ type (
+ 		GenerateEventLoadToken(event *historypb.HistoryEvent) ([]byte, error)
+ 		LoadHistoryEvent(ctx context.Context, token []byte) (*historypb.HistoryEvent, error)
+ 		HasAnyBufferedEvent(filter func(*historypb.HistoryEvent) bool) bool
+-		DeleteCHASMPureTasks(maxScheduledTime time.Time)
++		DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time)
+ 		UpdateWorkflowStateStatus(
+ 			state enumsspb.WorkflowExecutionState,
+ 			status enumspb.WorkflowExecutionStatus,
+@@ -2573,12 +2573,12 @@ func (n *Node) closeTransactionGeneratePhysicalPureTask(
+ 	archetypeID ArchetypeID,
+ ) error {
+ 	if firstPureTask == nil {
+-		n.backend.DeleteCHASMPureTasks(tasks.MaximumKey.FireTime)
++		n.backend.DeletePhysicalCHASMPureTasks(tasks.MaximumKey.FireTime)
+ 		return nil
+ 	}
+ 
+ 	firstPureTaskScheduledTime := firstPureTask.ScheduledTime.AsTime()
+-	n.backend.DeleteCHASMPureTasks(firstPureTaskScheduledTime)
++	n.backend.DeletePhysicalCHASMPureTasks(firstPureTaskScheduledTime)
+ 
+ 	if firstPureTask.PhysicalTaskStatus == physicalTaskStatusCreated {
+ 		return nil
+```
+
+**File**: `service/history/interfaces/mutable_state.go` (modified, +1/-1)
+```diff
+@@ -335,7 +335,7 @@ type (
+ 		// against wall-clock time.
+ 		AddTasks(tasks ...tasks.Task)
+ 		PopTasks() map[tasks.Category][]tasks.Task
+-		DeleteCHASMPureTasks(maxScheduledTime time.Time)
++		DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time)
+ 
+ 		SetUpdateCondition(int64, int64)
+ 		GetUpdateCondition() (int64, int64)
+```
+
+**File**: `service/history/interfaces/mutable_state_mock.go` (modified, +6/-6)
+```diff
+@@ -1937,16 +1937,16 @@ func (mr *MockMutableStateMockRecorder) CurrentVersionedTransition() *gomock.Cal
+ 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentVersionedTransition", reflect.TypeOf((*MockMutableState)(nil).CurrentVersionedTransition))
+ }
+ 
+-// DeleteCHASMPureTasks mocks base method.
+-func (m *MockMutableState) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
++// DeletePhysicalCHASMPureTasks mocks base method.
++func (m *MockMutableState) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
+ 	m.ctrl.T.Helper()
+-	m.ctrl.Call(m, "DeleteCHASMPureTasks", maxScheduledTime)
++	m.ctrl.Call(m, "DeletePhysicalCHASMPureTasks", maxLogicalScheduledTime)
+ }
+ 
+-// DeleteCHASMPureTasks indicates an expected call of DeleteCHASMPureTasks.
+-func (mr *MockMutableStateMockRecorder) DeleteCHASMPureTasks(maxScheduledTime any) *gomock.Call {
++// DeletePhysicalCHASMPureTasks indicates an expected call of DeletePhysicalCHASMPureTasks.
++func (mr *MockMutableStateMockRecorder) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime any) *gomock.Call {
+ 	mr.mock.ctrl.T.Helper()
+-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCHASMPureTasks", reflect.TypeOf((*MockMutableState)(nil).DeleteCHASMPureTasks), maxScheduledTime)
++	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePhysicalCHASMPureTasks", reflect.TypeOf((*MockMutableState)(nil).DeletePhysicalCHASMPureTasks), maxLogicalScheduledTime)
+ }
+ 
+ // DeleteSignalRequested mocks base method.
+```
+
+**File**: `service/history/workflow/mutable_state_impl.go` (modified, +12/-5)
+```diff
+@@ -7576,10 +7576,18 @@ func (ms *MutableStateImpl) PopTasks() map[tasks.Category][]tasks.Task {
+ 	return insertTasks
+ }
+ 
+-func (ms *MutableStateImpl) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
+-	for lastTaskIdx, task := range slices.Backward(ms.chasmPureTasks) {
++// DeletePhysicalCHASMPureTasks records cached physical CHASM pure tasks strictly before
++// maxLogicalScheduledTime for best-effort deletion. The threshold uses logical time and is
++// converted to the physical time used by the History task queue before comparing task timestamps.
++// The delete-all sentinel, tasks.MaximumKey.FireTime, is not converted.
++func (ms *MutableStateImpl) DeletePhysicalCHASMPureTasks(maxLogicalScheduledTime time.Time) {
++	maxPhysicalScheduledTime := maxLogicalScheduledTime
++	if !maxLogicalScheduledTime.Equal(tasks.MaximumKey.FireTime) {
++		maxPhysicalScheduledTime = ms.ToRealTimeWithCurrentOffset(maxLogicalScheduledTime)
 +	}
-+
- 	syncStateResult.VersionedTransitionArtifact.IsCloseTransferTaskAcked = c.isCloseTransferTaskAcked(closeTransferTask)
- 	syncStateResult.VersionedTransitionArtifact.IsForceReplication = taskInfo.IsForceReplication
+ 
+-		if !task.GetVisibilityTime().Before(maxScheduledTime) {
++	for lastTaskIdx, task := range slices.Backward(ms.chasmPureTasks) {
++		if !task.GetVisibilityTime().Before(maxPhysicalScheduledTime) {
+ 			ms.chasmPureTasks = ms.chasmPureTasks[:lastTaskIdx+1]
+ 			return
+ 		}
+@@ -7590,8 +7598,7 @@ func (ms *MutableStateImpl) DeleteCHASMPureTasks(maxScheduledTime time.Time) {
+ 		)
+ 	}
+ 
+-	// If we reach here, all tasks have visibility time before maxScheduledTime
+-	// and need to be deleted.
++	// All cached tasks have visibility times before maxPhysicalScheduledTime and are marked for deletion.
+ 	ms.chasmPureTasks = ms.chasmPureTasks[:0]
+ }
  
 ```
 
-**File**: `service/history/replication/raw_task_converter_events_test.go` (added, +225/-0)
+**File**: `service/history/workflow/mutable_state_impl_test.go` (modified, +77/-2)
 ```diff
-@@ -0,0 +1,225 @@
-+package replication
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	commonpb "go.temporal.io/api/common/v1"
-+	"go.temporal.io/api/serviceerror"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
-+	historyspb "go.temporal.io/server/api/history/v1"
-+	persistencespb "go.temporal.io/server/api/persistence/v1"
-+	replicationspb "go.temporal.io/server/api/replication/v1"
-+	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/common/definition"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/persistence"
-+	"go.temporal.io/server/common/testing/protorequire"
-+	historyi "go.temporal.io/server/service/history/interfaces"
-+	"go.temporal.io/server/service/history/tasks"
-+	"go.uber.org/mock/gomock"
-+	"google.golang.org/protobuf/types/known/timestamppb"
-+)
-+
-+func TestSyncTaskIncludesPersistedEvents(t *testing.T) {
+@@ -7702,7 +7702,7 @@ func (s *mutableStateSuite) TestAddTasks_CHASMPureTask() {
+ 	s.Len(s.mutableState.chasmPureTasks, 2)
+ }
+ 
+-func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
++func (s *mutableStateSuite) TestDeletePhysicalCHASMPureTasks() {
+ 	now := s.mockShard.GetTimeSource().Now()
+ 
+ 	testCases := []struct {
+@@ -7742,7 +7742,7 @@ func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
+ 			}
+ 			s.mutableState.BestEffortDeleteTasks = make(map[tasks.Category][]tasks.Key)
+ 
+-			s.mutableState.DeleteCHASMPureTasks(tc.maxScheduledTime)
++			s.mutableState.DeletePhysicalCHASMPureTasks(tc.maxScheduledTime)
+ 
+ 			s.Len(s.mutableState.chasmPureTasks, tc.expectedRemaining)
+ 			for _, task := range s.mutableState.chasmPureTasks {
+@@ -7754,6 +7754,81 @@ func (s *mutableStateSuite) TestDeleteCHASMPureTasks() {
+ 	}
+ }
+ 
++func TestDeletePhysicalCHASMPureTasksTimeSkipping(t *testing.T) {
 +	t.Parallel()
 +
-+	for _, tc := range []struct {
-+		name              string
-+		cached            bool
-+		stateOnly         bool
-+		existingEvents    bool
-+		forceReplication  bool
-+		readError         error
-+		snapshotHistory   []*historyspb.VersionHistoryItem
-+		cachedHistory     []*historyspb.VersionHistoryItem
-+		cachedNextEventID int64
-+		omitEvents        bool
++	now := time.Date(2026, 11, 5, 12, 0, 0, 0, time.UTC)
++	for _, clockConfig := range []struct {
++		name    string
++		skipped time.Duration
++		enabled bool
 +	}{
-+		{name: "cold progress with cached batches", cached: true},
-+		{name: "cold progress with paginated persistence read"},
-+		{name: "history read failure", readError: serviceerror.NewUnavailable("history unavailable")},
-+		{name: "state only transition", stateOnly: true},
-+		{name: "preserve events selected by target progress", existingEvents: true},
-+		{name: "force replication retains task range", cached: true, forceReplication: true},
-+		{
-+			name: "rebuilt snapshot rejects discarded cached branch", cached: true, omitEvents: true,
-+			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 6, Version: 100}, {EventId: 18, Version: 200}},
-+			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
-+		},
-+		{
-+			name: "shared prefix remains valid before divergence", cached: true,
-+			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}, {EventId: 18, Version: 200}},
-+			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
-+		},
-+		{
-+			name: "validate cached batch beyond requested end", cached: true, omitEvents: true, cachedNextEventID: 11,
-+			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}, {EventId: 18, Version: 200}},
-+			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
-+		},
-+		{
-+			name: "cached batch extends beyond snapshot tip", cached: true, omitEvents: true, cachedNextEventID: 11,
-+			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 8, Version: 100}},
-+			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
-+		},
-+		{
-+			name: "unrelated cached history is omitted without failing task", cached: true, omitEvents: true,
-+			snapshotHistory: []*historyspb.VersionHistoryItem{{EventId: 18, Version: 200}},
-+			cachedHistory:   []*historyspb.VersionHistoryItem{{EventId: 18, Version: 100}},
-+		},
++		{name: "NoOffset"},
++		{name: "TimeSkippingEnabled", skipped: time.Hour, enabled: true},
++		{name: "TimeSkippingDisabledWithOffset", skipped: time.Hour},
 +	} {
-+		t.Run(tc.name, func(t *testing.T) {
++		t.Run(clockConfig.name, func(t *testing.T) {
 +			t.Parallel()
-+			ctrl := gomock.NewController(t)
-+			ctx := t.Context()
-+			key := definition.NewWorkflowKey("namespace", "workflow", "run")
-+			versionHistory := &historyspb.VersionHistory{
-+				BranchToken: []byte("branch"),
-+				Items: []*historyspb.VersionHistoryItem{
-+					{EventId: 18, Version: 100},
-+				},
++
++			for _, tc := range []struct {
++				name              string
++				maxScheduledTime  time.Time
++				expectedRemaining int
++			}{
++				{name: "BeforeAll", maxScheduledTime: now.Add(clockConfig.skipped), expectedRemaining: 3},
++				{name: "AtEarliest", maxScheduledTime: now.Add(clockConfig.skipped + time.Minute), expectedRemaining: 3},
++				{name: "Partial", maxScheduledTime: now.Add(clockConfig.skipped + 2*time.Minute), expectedRemaining: 2},
++				{name: "AfterAll", maxScheduledTime: now.Add(clockConfig.skipped + 4*time.Minute)},
++				{name: "DeleteAll", maxScheduledTime: tasks.MaximumKey.FireTime},
++			} {
++				t.Run(tc.name, func(t *testing.T) {
++					t.Parallel()
++
++					taskBaseTime := now
++					if tc.maxScheduledTime.Equal(tasks.MaximumKey.FireTime) {
++						// Keep tasks close to the sentinel to catch an incorrectly shifted delete-all threshold.
++						taskBaseTime = tasks.MaximumKey.FireTime.Add(-10 * time.Minute)
++					}
++					timeSource := clock.NewEventTimeSource()
++					timeSource.Update(taskBaseTime.Add(clockConfig.skipped))
++					ms := &MutableStateImpl{
++						timeSource: timeSource,
++						executionInfo: &persistencespb.WorkflowExecutionInfo{
++							TimeSkippingInfo: &persistencespb.TimeSkippingInfo{
++								Config:                     &commonpb.TimeSkippingConfig{Enabled: clockConfig.enabled},
++								AccumulatedSkippedDuration: durationpb.New(clockConfig.skipped),
++							},
++						},
++						config: &configs.Config{
++							ChasmMaxInMemoryPureTasks: dynamicconfig.GetIntPropertyFn(3),
++						},
++						InsertTasks:           make(map[tasks.Category][]tasks.Task),
++						BestEffortDeleteTasks: make(map[tasks.Category][]tasks.Key),
++					}
++					var pureTasks []*tasks.ChasmTaskPure
++					for i := 3; i > 0; i-- {
++						task := &tasks.ChasmTaskPure{
++							TaskID:              int64(i),
++							VisibilityTimestamp: taskBaseTime.Add(clockConfig.skipped + time.Duration(i)*time.Minute),
++						}
++						ms.AddTasks(task)
++						pureTasks = append(pureTasks, task)
++					}
++
++					ms.DeletePhysicalCHASMPureTasks(tc.maxScheduledTime)
++
++					require.Equal(t, pureTasks[:tc.expectedRemaining], ms.chasmPureTasks)
++					expectedDeletions := make(map[tasks.Category][]tasks.Key)
++					for i := len(pureTasks) - 1; i >= tc.expectedRemaining; i-- {
++						expectedDeletions[tasks.CategoryTimer] = append(expectedDeletions[tasks.CategoryTimer], pureTasks[i].GetKey())
++					}
++					require.Equal(t, expectedDeletions, ms.BestEffortDeleteTasks)
++				})
 +			}
-+			if tc.snapshotHistory != nil {
-+				versionHistory.Items = tc.snapshotHistory
-+			}
-+			transitionHistory := []*persistencespb.VersionedTransition{
-+				{NamespaceFailoverVersion: 100, TransitionCount: 10},
-+			}
-+			executionInfo := &persistencespb.WorkflowExecutionInfo{
-+				TransitionHistory: transitionHistory,
-+				VersionHistories: &historyspb.VersionHistories{
-+					Histories: []*historyspb.VersionHistory{versionHistory},
-+				},
-+			}
-+			task := &tasks.SyncVersionedTransitionTask{
-+				WorkflowKey:         key,
-+				ArchetypeID:         chasm.WorkflowArchetypeID,
-+				TaskID:              42,
-+				VisibilityTimestamp: time.Unix(100, 0).UTC(),
-+				VersionedTransition: &persistencespb.VersionedTransition{
-+					NamespaceFailoverVersion: 100, TransitionCount: 4,
-+				},
-+				FirstEventVersion:  100,
-+				FirstEventID:       7,
-+				NextEventID:        9,
-+				IsForceReplication: tc.forceReplication,
-+			}
-+			if tc.stateOnly {
-+				task.FirstEventID = 0
-+				task.NextEventID = 0
-+			}
-+			batches := []*commonpb.DataBlob{{Data: []byte("batch 7")}, {Data: []byte("batch 8")}}
-+			artifact := &replicationspb.VersionedTransitionArtifact{
-+				StateAttributes: &replicationspb.VersionedTransitionArtifact_SyncWorkflowStateSnapshotAttributes{
-+					SyncWorkflowStateSnapshotAttributes: &replicationspb.SyncWorkflowStateSnapshotAttributes{
-+						State: &persistencespb.WorkflowMutableState{ExecutionInfo: executionInfo},
-+					},
-+		
++		})
++	}
++}
++
+ func (s *mutableStateSuite) TestCHASMNodeSize() {
+ 	dbState := s.buildWorkflowMutableState()
+ 	dbState = &persistencespb.WorkflowMutableState{
 ```
 
-**File**: `service/history/replication/raw_task_converter_test.go` (modified, +9/-0)
+---
+
+### Incident Patch 3: `525cbc3c` (2026-11-05)
+**Commit Message**: Fix several flaky tests (#12934)
+
+A recent [Flaky Tests
+Report](https://github.com/temporalio/temporal/actions/runs/41873646355)
+identified some Nexus failures. I asked my pal Claude to fix the
+low-hanging fruit.
+
+---
+
+## What changed?
+Fixes five flaky tests involving Nexus, one commit per test:
+
+-
+`TestNexusStandaloneTestSuite/TestAsyncCompletionIgnoresExecutionTransitionInCallbackToken`:
+wait for the operation to reach `STARTED` before sending the completion.
+-
+`TestNexusWorkflowTestSuiteHSM/TestNexusOperationSurvivesResetCrossTree`:
+use Update-with-Start, and wait for the reset run to finish the Update
+before sending the signal.
+-
+`TestCallbacksSuiteCHASM/TestWorkflowNexusCallbacks_CarriedOver/WorkflowRunTimeout`:
+raise the first run's timeout from 500ms to 3s.
+-
+`TestNexusWorkflowTestSuiteCHASM/TestNexusAsyncOperationWithMultipleCallers/conflict-policy-fail`:
+use `s.Context()` instead of a 20s context that was created before env
+setup.
+-
+`TestTaskQueuePartitionManager_Pri_Suite/TestTaskAddHooks_NexusDispatch_FiresWhenNoPollers`:
+raise the `WaitUntilInitialized` timeout from 10ms to 1s.
+
+## Why?
+Each test had a timing race that only showed up on loaded CI runners:
+- A completion
+
+**File**: `service/matching/task_queue_partition_manager_test.go` (modified, +2/-2)
 ```diff
-@@ -1881,6 +1881,14 @@ func (s *rawTaskConverterSuite) TestConvertSyncVersionedTransitionTask_Mutation(
- 		nil,
- 		gomock.Any(),
- 	).Return(syncResult, nil)
-+	eventBatches := []*commonpb.DataBlob{{Data: []byte("task events")}}
-+	s.executionManager.EXPECT().ReadRawHistoryBranch(ctx, &persistence.ReadHistoryBranchRequest{
-+		BranchToken: versionHistory.BranchToken,
-+		MinEventID:  firstEventID,
-+		MaxEventID:  nextEventID,
-+		PageSize:    1,
-+		ShardID:     s.shardContext.GetShardID(),
-+	}).Return(&persistence.ReadRawHistoryBranchResponse{HistoryEventBlobs: eventBatches}, nil)
- 	converter := newSyncVersionedTransitionTaskConverter(s.shardContext, s.workflowCache, nil, s.progressCache, s.executionManager, s.syncStateRetriever, s.logger)
- 	result, err := convertSyncVersionedTransitionTask(ctx, task, targetClusterID, converter)
+@@ -126,7 +126,7 @@ func (s *PartitionManagerTestSuite) SetupTest() {
+ 	s.partitionMgr = pm
+ 	engine.Start()
+ 	pm.Start()
+-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
++	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+ 	defer cancel()
+ 	err = pm.WaitUntilInitialized(ctx)
  	s.NoError(err)
-@@ -1890,6 +1898,7 @@ func (s *rawTaskConverterSuite) TestConvertSyncVersionedTransitionTask_Mutation(
- 		Attributes: &replicationspb.ReplicationTask_SyncVersionedTransitionTaskAttributes{
- 			SyncVersionedTransitionTaskAttributes: &replicationspb.SyncVersionedTransitionTaskAttributes{
- 				VersionedTransitionArtifact: &replicationspb.VersionedTransitionArtifact{
-+					EventBatches: eventBatches,
- 					StateAttributes: &replicationspb.VersionedTransitionArtifact_SyncWorkflowStateSnapshotAttributes{
- 						SyncWorkflowStateSnapshotAttributes: &replicationspb.SyncWorkflowStateSnapshotAttributes{
- 							State: syncResult.VersionedTransitionArtifact.GetSyncWorkflowStateSnapshotAttributes().State,
+@@ -2006,7 +2006,7 @@ func (s *PartitionManagerTestSuite) setupPartitionManagerWithTaskHookFactories(t
+ 	s.Require().NoError(err)
+ 	pm.Start()
+ 
+-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
++	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+ 	err = pm.WaitUntilInitialized(ctx)
+ 	cancel()
+ 	s.Require().NoError(err)
+```
+
+**File**: `tests/callbacks_test.go` (modified, +2/-1)
+```diff
+@@ -378,7 +378,8 @@ func (s *CallbacksSuite) TestWorkflowNexusCallbacks_CarriedOver(opts []testcore.
+ 				}
+ 				return 666, nil
+ 			},
+-			runTimeout: 500 * time.Millisecond,
++			// Must outlast the attach and signal requests against the first run, which can be slow on loaded CI.
++			runTimeout: 3 * time.Second,
+ 		},
+ 		{
+ 			name: "WorkflowFailureRetry",
+```
+
+**File**: `tests/nexus_standalone_test.go` (modified, +10/-0)
+```diff
+@@ -2500,6 +2500,16 @@ func (s *NexusStandaloneTestSuite) TestAsyncCompletionIgnoresExecutionTransition
+ 	callbackToken := callback.token
+ 	callbackURL := callback.url
+ 
++	// The handler hands out the callback token before its start response is recorded. Completing before
++	// then takes the completion-before-start path, which drops the start response and its handler links.
++	_, err = env.FrontendClient().PollNexusOperationExecution(s.Context(), &workflowservice.PollNexusOperationExecutionRequest{
++		Namespace:   env.Namespace().String(),
++		OperationId: "test-op",
++		RunId:       startResp.RunId,
++		WaitStage:   enumspb.NEXUS_OPERATION_WAIT_STAGE_STARTED,
++	})
++	s.NoError(err)
++
+ 	gen := &commonnexus.CallbackTokenGenerator{}
+ 	decodedToken, err := commonnexus.DecodeCallbackToken(callbackToken)
+ 	s.NoError(err)
+```
+
+**File**: `tests/nexus_workflow_test.go` (modified, +26/-11)
+```diff
+@@ -3273,8 +3273,7 @@ func (s *NexusWorkflowTestSuite) TestNexusAsyncOperationWithMultipleCallers(chas
+ 
+ 	for _, tc := range testCases {
+ 		s.Run(tc.input, func(s *NexusWorkflowTestSuite) {
+-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+-			defer cancel()
++			ctx := s.Context()
+ 			env, callerWf := buildNexusEnvFn(ctx, s)
+ 			run, err := env.SdkClient().ExecuteWorkflow(
+ 				ctx,
+@@ -4217,18 +4216,25 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationSurvivesResetCrossTree(chasmE
+ 			s.NoError(w.Start())
+ 			defer w.Stop()
+ 
+-			run, err := env.SdkClient().ExecuteWorkflow(ctx, client.StartWorkflowOptions{TaskQueue: taskQueue}, callerWF)
+-			s.NoError(err)
+-
+-			// Block until the Nexus operation has started.
+-			startedHandle, err := env.SdkClient().UpdateWorkflow(ctx, client.UpdateWorkflowOptions{
+-				WorkflowID:   run.GetID(),
+-				RunID:        run.GetRunID(),
+-				UpdateName:   awaitStartedUpdate,
+-				WaitForStage: client.WorkflowUpdateStageCompleted,
++			// Block until the Nexus operation has started. Update-with-Start guarantees the update is accepted in
++			// the first workflow task; a separate UpdateWorkflow call can land in a later task, which changes the
++			// shape of the reset run's history asserted below.
++			startOp := env.SdkClient().NewWithStartWorkflowOperation(client.StartWorkflowOptions{
++				ID:                       testcore.RandomizeStr(s.T().Name()),
++				TaskQueue:                taskQueue,
++				WorkflowIDConflictPolicy: enumspb.WORKFLOW_ID_CONFLICT_POLICY_FAIL,
++			}, callerWF)
++			startedHandle, err := env.SdkClient().UpdateWithStartWorkflow(ctx, client.UpdateWithStartWorkflowOptions{
++				StartWorkflowOperation: startOp,
++				UpdateOptions: client.UpdateWorkflowOptions{
++					UpdateName:   awaitStartedUpdate,
++					WaitForStage: client.WorkflowUpdateStageCompleted,
++				},
+ 			})
+ 			s.NoError(err)
+ 			s.NoError(startedHandle.Get(ctx, nil))
++			run, err := startOp.Get(ctx)
++			s.NoError(err)
+ 
+ 			// The operation is created in the tree implied by the schedule-time flag, in the original run.
+ 			s.assertNexusOperationTree(ctx, env, &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: run.GetRunID()}, !tc.enableChasmAtSchedule)
+@@ -4262,6 +4268,15 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationSurvivesResetCrossTree(chasmE
+ 			// specific post-reset run.
+ 			s.assertNexusOperationTree(ctx, env, &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: newRunID}, expectHSMAfterReset)
+ 
++			// Signal only once the reset run has re-completed the update, otherwise the signal can be folded into
++			// that workflow task and change the shape of the history asserted below.
++			s.WaitForHistoryEventsSuffix(`
++  WorkflowTaskCompleted
++  WorkflowExecutionUpdateCompleted`,
++				env.GetHistoryFunc(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: run.GetID(), RunId: newRunID}),
++				10*time.Second,
++				10*time.Millisecond)
++
+ 			// Drive the reset run to completion, then assert on its final history.
+ 			s.NoError(env.SdkClient().SignalWorkflow(ctx, run.GetID(), newRunID, "done", nil))
+ 			s.NoError(env.SdkClient().GetWorkflow(ctx, run.GetID(), newRunID).Get(ctx, nil))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12942** (2026-11-05): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12939** (2026-11-05): Add poller targets to worker metrics events (@rkannan82)
-- **PR #12925** (2026-11-04): add functional testing for chasm time skipping in passive clusters (@feiyang3cat)
-- **PR #12922** (closed): Add MySQL and PostgreSQL build tags for minimal server builds (@stephanos)
-- **PR #12921** (2026-11-04): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12919** (2026-11-04): Fix stale Cassandra-only wording on HistoryTaskDLQEnabled (@prathyushpv)
+- **PR #12976** (2026-11-06): [Cloud 166] fix clock mismatch in chasm-pure-task deletion (#12959) (@feiyang3cat)
+- **PR #12975** (2026-11-06): [Cloud 165] fix clock mismatch in chasm-pure-task deletion (#12959) (@feiyang3cat)
+- **PR #12974** (closed): [cloud 165] fix clock mismatch in chasm-pure-task deletion- #12959 (@feiyang3cat)
+- **PR #12972** (2026-11-06): [cloud 166] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
+- **PR #12969** (2026-11-06): [cloud 165] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
+- **PR #12968** (2026-11-06): [cloud 164] Fix deleted deployment version accumulation on passive clusters (@rkannan82)
 
 ---
 
@@ -2558,44 +2816,33 @@ cache miss, conversion current
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add poller targets to worker metrics events (#12939)
+## X. deleted deployment version accumulation on passive clusters (#12966)
 
 **RULE**:
-When implementing operations in `common/wideevents/worker_events.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/dynamicconfig/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd11e5d5`: Add poller targets to worker metrics events (#12939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4160f8e`: deleted deployment version accumulation on passive clusters (#12966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/wideevents/worker_events.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/dynamicconfig/constants.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	TotalSlots *int32
-	UsedSlots  *int32
-	// Current number of in-flight pollers.
-	CurrentPollers *int32
-	// Desired number of pollers.
-	TargetPollers *int32
-	// Current number of in-flight sticky pollers.
-	// Desired number of sticky pollers.
-	TargetStickyPollers *int32
-	TotalProcessedTasks *int32
-	TotalFailedTasks    *int32
-	appendStat("target_pollers", s.TargetPollers)
-	appendStat("target_sticky_pollers", s.TargetStickyPollers)
+	MatchingEnableTaskQueueUserDataRevisionMerge = NewNamespaceBoolSetting(
+		"matching.enableTaskQueueUserDataRevisionMerge",
+		true,
+		`When enabled, merges incoming and current worker deployment data by revision when needed to preserve delayed updates.
+When disabled, always uses the deployment snapshot selected by the parent clock without merging.`,
+	)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	TotalSlots           *int32
-	UsedSlots            *int32
-	CurrentPollers       *int32
-	TotalProcessedTasks  *int32
-	TotalFailedTasks     *int32
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd11e5d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4160f8e` are properly handled with clean fallback behavior.

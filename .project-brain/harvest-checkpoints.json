@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T05:37:07.787Z",
+  "last_updated": "2026-11-07T05:44:26.866Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "9d4e421004d63821dfd9da56a70b2597977ccbdc865072af5f2f918bcd3607fc",
-      "verified_at": "2026-11-06T23:20:00.253Z",
+      "content_hash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
+      "verified_at": "2026-11-07T05:44:26.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:20:00.253Z"
+      "last_updated": "2026-11-07T05:44:26.865Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "eaf16f481cc88cbe8dc9ed1c65a42a2e4950fcfc5bf50c0077f195c9399faaa6",
-      "verified_at": "2026-11-05T18:31:36.770Z",
+      "content_hash": "563ff4e981048715921b4f015ec68fd77999d53f043ef14ec72e6ecfd1202957",
+      "verified_at": "2026-11-07T05:44:26.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T18:31:36.770Z"
+      "last_updated": "2026-11-07T05:44:26.566Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "f2883801afed4fb0dce8e294353cd81cc4659d3981fc18e10a71b12d1ad8a0ff",
-      "verified_at": "2026-11-05T12:58:22.499Z",
+      "content_hash": "e11e4980bf69978b2c8830d6309ecf02e569ac4c0042ebd228c6da99acda6c7e",
+      "verified_at": "2026-11-07T05:44:17.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:58:22.499Z"
+      "last_updated": "2026-11-07T05:44:17.904Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "38960a578cef6c0d24ec2bb08e1fa02d6ebbc28e8ebcf22e39cacc21773bea02",
-      "verified_at": "2026-11-03T23:46:09.030Z",
+      "content_hash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+      "verified_at": "2026-11-07T05:44:19.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:46:09.030Z"
+      "last_updated": "2026-11-07T05:44:19.479Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",
