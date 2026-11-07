@@ -7968,3 +7968,5 @@ Every entry in this ledger must capture:
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `08454975` | Multi-dimensional audit evidence | 2026-11-06T23:44:54.609Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `8c573832` | Multi-dimensional audit evidence | 2026-11-07T02:01:58.165Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `87851900` | Multi-dimensional audit evidence | 2026-11-07T02:06:47.821Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1b6a9297` | Multi-dimensional audit evidence | 2026-11-07T02:15:09.732Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `c52feb8b` | Multi-dimensional audit evidence | 2026-11-07T02:15:09.771Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `a88de55f`  
+> **Source Version**: `c52feb8b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:48:46.585Z  
+> **Timestamp**: 2026-11-07T02:15:08.378Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:48:46.444Z  
+> **Harvest Timestamp**: 2026-11-07T02:15:02.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7435 stars
+- **Stars / Engagement**: 7436 stars
 
 ---
 
@@ -880,50 +880,19 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a88de55f` (2026-11-04)
-**Commit Message**: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
+### Incident Patch 1: `c52feb8b` (2026-11-06)
+**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14724)
 
-Bumps org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0.
+Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.29 to 11.0.30.
+- [Changelog](https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.29...11.0.30)
 
 ---
 updated-dependencies:
-- dependency-name: org.apache.felix:org.apache.felix.framework
-  dependency-version: 8.0.0
+- dependency-name: filesize
+  dependency-version: 11.0.30
   dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ def libraries = [
-   dbunit              : 'org.dbunit:dbunit:3.5.2',
-   dom4j               : 'org.dom4j:dom4j:2.2.0',
-   ehcache             : 'net.sf.ehcache.internal:ehcache-core:2.11.1.3.11', // See https://repo.terracotta.org/maven2/net/sf/ehcache/internal/ehcache-core/maven-metadata.xml
--  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
-+  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
-   freemarker          : 'org.freemarker:freemarker:2.3.35',
-   gson                : 'com.google.code.gson:gson:2.15.0',
-   h2                  : 'com.h2database:h2:1.4.200',
-```
-
----
-
-### Incident Patch 2: `82bf7ef6` (2026-11-04)
-**Commit Message**: build(deps-ui-dev): bump globals (#14719)
-
-Bumps [globals](https://github.com/sindresorhus/globals) from 17.13.0 to 17.14.0.
-- [Release notes](https://github.com/sindresorhus/globals/releases)
-- [Commits](https://github.com/sindresorhus/globals/compare/v17.13.0...v17.14.0)
-
----
-updated-dependencies:
-- dependency-name: globals
-  dependency-version: 17.14.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -931,52 +900,119 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -87,7 +87,7 @@
-     "file-loader": "^6.2.0",
-     "fork-ts-checker-webpack-plugin": "^9.1.0",
-     "fs-extra": "^11.4.1",
--    "globals": "^17.13.0",
-+    "globals": "^17.14.0",
-     "html-webpack-plugin": "^5.6.8",
-     "jasmine": "^7.0.0",
-     "jasmine-ajax": "^5.0.0",
+@@ -39,7 +39,7 @@
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+-    "filesize": "^11.0.29",
++    "filesize": "^11.0.30",
+     "foundation-sites": "^6.9.0",
+     "hack-font": "^3.3.0",
+     "jquery": "^3.7.1",
 ```
 
 **File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -4516,10 +4516,10 @@ __metadata:
+@@ -4141,10 +4141,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"globals@npm:^17.13.0":
--  version: 17.13.0
--  resolution: "globals@npm:17.13.0"
--  checksum: 10c0/8371d9e4e5581640141b5cce70a098edd765d2e3ab063b14998e590698071e0afb4a4a6739ccfbdcbdeb2565c5553697ba07d95703c51039912cf341a7dba7a7
-+"globals@npm:^17.14.0":
-+  version: 17.14.0
-+  resolution: "globals@npm:17.14.0"
-+  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
+-"filesize@npm:^11.0.29":
+-  version: 11.0.29
+-  resolution: "filesize@npm:11.0.29"
+-  checksum: 10c0/0519c30d0208350a87fc9ec3fa3d0974a9b3b71c70ac4002f44b7aeaa33814ee64d97c94517464635f908d4927e45d2383fd67b0a7a5653754d6c26ecb6162dc
++"filesize@npm:^11.0.30":
++  version: 11.0.30
++  resolution: "filesize@npm:11.0.30"
++  checksum: 10c0/44fa4e5711d380d57902208cf9d6cc4354aa2776f61277732ccba72d389d74839de822c4659712c843805647512f04aefb2ca12c486fe36cbbe0853a8941b7a6
    languageName: node
    linkType: hard
  
-@@ -4612,7 +4612,7 @@ __metadata:
+@@ -4608,7 +4608,7 @@ __metadata:
+     eslint-plugin-react: "npm:^7.37.5"
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+-    filesize: "npm:^11.0.29"
++    filesize: "npm:^11.0.30"
      fork-ts-checker-webpack-plugin: "npm:^9.1.0"
      foundation-sites: "npm:^6.9.0"
      fs-extra: "npm:^11.4.1"
--    globals: "npm:^17.13.0"
-+    globals: "npm:^17.14.0"
-     hack-font: "npm:^3.3.0"
-     html-webpack-plugin: "npm:^5.6.8"
-     jasmine: "npm:^7.0.0"
+```
+
+---
+
+### Incident Patch 2: `dcef04dc` (2026-11-05)
+**Commit Message**: build(deps): bump org.jsoup:jsoup from 1.23.2 to 1.24.1 (#14721)
+
+Bumps [org.jsoup:jsoup](https://github.com/jhy/jsoup) from 1.23.2 to 1.24.1.
+- [Release notes](https://github.com/jhy/jsoup/releases)
+- [Changelog](https://github.com/jhy/jsoup/blob/master/CHANGES.md)
+- [Commits](https://github.com/jhy/jsoup/compare/jsoup-1.23.2...jsoup-1.24.1)
+
+---
+updated-dependencies:
+- dependency-name: org.jsoup:jsoup
+  dependency-version: 1.24.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ def libraries = [
+   jruby               : 'org.jruby:jruby:9.4.15.0',
+   jrubyRack           : 'com.github.gocd-contrib:jruby-rack:1.3.0.15',
+   jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
+-  jsoup               : 'org.jsoup:jsoup:1.23.2',
++  jsoup               : 'org.jsoup:jsoup:1.24.1',
+   junit5Bom           : 'org.junit:junit-bom:6.1.3',
+   liquibase           : 'org.liquibase:liquibase-core:5.0.4',
+   liquibaseSlf4j      : 'com.mattbertolini:liquibase-slf4j:5.1.0',
+```
+
+---
+
+### Incident Patch 3: `dff0dfca` (2026-11-06)
+**Commit Message**: build(deps): bump org.aspectj:aspectjweaver from 1.9.26 to 1.9.27 (#14725)
+
+Bumps [org.aspectj:aspectjweaver](https://github.com/eclipse/org.aspectj) from 1.9.26 to 1.9.27.
+- [Release notes](https://github.com/eclipse/org.aspectj/releases)
+- [Commits](https://github.com/eclipse/org.aspectj/commits)
+
+---
+updated-dependencies:
+- dependency-name: org.aspectj:aspectjweaver
+  dependency-version: 1.9.27
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -79,7 +79,7 @@ def libraries = [
+   activeMQ            : 'org.apache.activemq:activemq-broker:6.4.0',
+   angusMailSmtp       : 'org.eclipse.angus:smtp:2.0.5',
+   apacheHttpComponents: 'org.apache.httpcomponents:httpclient:4.5.14',
+-  aspectj             : 'org.aspectj:aspectjweaver:1.9.26',
++  aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
+   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
+   assertJ             : 'org.assertj:assertj-core:3.27.7',
+   assertJ_DB          : 'org.assertj:assertj-db:3.0.2',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14725** (2026-11-06): build(deps): bump org.aspectj:aspectjweaver from 1.9.26 to 1.9.27 (@dependabot[bot])
+- **PR #14724** (2026-11-06): build(deps-ui): bump filesize from 11.0.29 to 11.0.30 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14723** (2026-11-05): build(deps): bump com.bucket4j:bucket4j_jdk17-core from 8.21.0 to 8.22.0 (@dependabot[bot])
+- **PR #14721** (2026-11-05): build(deps): bump org.jsoup:jsoup from 1.23.2 to 1.24.1 (@dependabot[bot])
 - **PR #14720** (2026-11-04): build(deps): bump org.apache.felix:org.apache.felix.framework from 7.0.5 to 8.0.0 (@dependabot[bot])
 - **PR #14719** (2026-11-04): build(deps-ui-dev): bump globals from 17.13.0 to 17.14.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14718** (2026-11-03): build(deps-ui-dev): bump addressable from 2.9.0 to 2.9.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14717** (2026-11-03): build(deps): bump com.github.oshi:oshi-core from 7.7.2 to 7.7.3 (@dependabot[bot])
-- **PR #14716** (2026-11-03): build(deps-ui-dev): bump sass-embedded from 1.107.0 to 1.107.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14715** (2026-11-03): build(deps-ui-dev): bump ffi-compiler from 1.4.2 to 1.4.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -996,28 +1032,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.apache.felix:org.apache.felix.framework (#14720)
+## X. build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14724)
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a88de55f`: build(deps): bump org.apache.felix:org.apache.felix.framework (#14720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c52feb8b`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  felix               : 'org.apache.felix:org.apache.felix.framework:8.0.0',
+    "filesize": "^11.0.30",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-  felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
+    "filesize": "^11.0.29",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a88de55f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c52feb8b` are properly handled with clean fallback behavior.

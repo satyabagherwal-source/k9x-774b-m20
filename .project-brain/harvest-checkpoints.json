@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T02:06:47.837Z",
+  "last_updated": "2026-11-07T02:15:09.791Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
-      "verified_at": "2026-11-05T00:48:47.295Z",
+      "content_hash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
+      "verified_at": "2026-11-07T02:15:09.790Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:48:47.295Z"
+      "last_updated": "2026-11-07T02:15:09.790Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "0e740c497fc4534a4739c6df98c8067336e262601d4c1c2f38a39de5a46758e8",
-      "verified_at": "2026-11-05T13:47:56.949Z",
+      "content_hash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
+      "verified_at": "2026-11-07T02:15:09.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T13:47:56.949Z"
+      "last_updated": "2026-11-07T02:15:09.741Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

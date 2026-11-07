@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T02:06:50.419Z",
-    "lastVerified": "2026-11-07T02:06:50.419Z",
+    "lastChecked": "2026-11-07T02:15:12.357Z",
+    "lastVerified": "2026-11-07T02:15:12.357Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -451,8 +451,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T23:19:57.666Z",
-    "lastVerified": "2026-11-06T23:19:57.666Z",
+    "lastChecked": "2026-11-07T02:15:05.933Z",
+    "lastVerified": "2026-11-07T02:15:05.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1592,9 +1592,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-06T19:09:40.737Z",
+    "lastChecked": "2026-11-07T02:15:00.946Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-06T19:09:40.737Z"
+    "lastVerified": "2026-11-07T02:15:00.946Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2496,14 +2496,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T13:47:56.022Z",
-    "lastVerified": "2026-11-05T13:47:56.022Z",
+    "lastChecked": "2026-11-07T02:15:06.729Z",
+    "lastVerified": "2026-11-07T02:15:06.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "0e740c497fc4534a4739c6df98c8067336e262601d4c1c2f38a39de5a46758e8",
+    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3976,9 +3976,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-11-04T08:45:56.725Z",
+    "lastChecked": "2026-11-07T02:14:55.910Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-11-04T08:45:56.725Z"
+    "lastVerified": "2026-11-07T02:14:55.910Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -5640,8 +5640,8 @@
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T09:51:08.580Z",
-    "lastVerified": "2026-11-05T09:51:08.580Z",
+    "lastChecked": "2026-11-07T02:14:50.932Z",
+    "lastVerified": "2026-11-07T02:14:50.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -5792,22 +5792,21 @@
     "lastVerified": "2026-11-04T18:13:41.011Z"
   },
   "gocd-gocd": {
-    "name": "gocd",
+    "name": "gocd/gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-05T14:50:49.976Z",
-    "lastVerified": "2026-11-05T14:50:49.976Z",
+    "lastChecked": "2026-11-07T02:15:02.087Z",
+    "lastVerified": "2026-11-07T02:15:02.087Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
+    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a88de55f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -10788,9 +10787,9 @@
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
-    "lastChecked": "2026-11-03T20:11:01.451Z",
+    "lastChecked": "2026-11-07T02:14:53.425Z",
     "revisionIdentifier": "a8caf39d",
-    "lastVerified": "2026-11-03T20:11:01.451Z"
+    "lastVerified": "2026-11-07T02:14:53.425Z"
   },
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",

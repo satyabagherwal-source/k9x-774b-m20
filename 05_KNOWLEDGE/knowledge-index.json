@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:06:47.708Z",
+  "last_updated": "2026-11-07T02:15:09.657Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16242,11 +16242,16 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "a88de55f",
-      "content_hash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
+      "source_version": "c52feb8b",
+      "content_hash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14724)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2056,
           "title": "build(deps): bump ldap plugin to version with CVE-patched LDAP API",
@@ -16313,7 +16318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T00:48:47.182Z",
+      "verified_at": "2026-11-07T02:15:09.636Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

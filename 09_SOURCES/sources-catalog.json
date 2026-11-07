@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "a88de55f",
+    "sourceVersion": "c52feb8b",
     "license": "Apache-2.0",
-    "contentHash": "97b06e7886b7f5c9078406a5dcda22e81953c0e082f0307e4482301a58b18708",
-    "lastHarvestedAt": "2026-11-05T00:48:47.280Z",
+    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
+    "lastHarvestedAt": "2026-11-07T02:15:09.771Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "f0f9ff86",
+    "sourceVersion": "1b6a9297",
     "license": "AGPL-3.0",
-    "contentHash": "0e740c497fc4534a4739c6df98c8067336e262601d4c1c2f38a39de5a46758e8",
-    "lastHarvestedAt": "2026-11-05T13:47:56.928Z",
+    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
+    "lastHarvestedAt": "2026-11-07T02:15:09.732Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

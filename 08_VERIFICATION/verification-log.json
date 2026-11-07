@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-YO9G",
-    "timestamp": "2026-11-05T01:47:43.060Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "1bd7d2f25619c064de0cf2e7a463d12fa22b19473b660863552e53ceed329782",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-YROW",
-    "timestamp": "2026-11-05T01:47:47.504Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "7230afd9e8ba8e939a27be96f7f13bc21a9ae2a28daa77f62a26c8d0b7f58dbc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-7MCX",
     "timestamp": "2026-11-05T01:54:40.497Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7490,6 +7460,36 @@
     "repository": "NVIDIA/cuda-rust",
     "learningId": "learn-github-nvidia-cuda-rust",
     "contentHash": "9ea0bc8a383777064667e28d6133cfbb097cd766692dfd5dd4f0a565f5708ff3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-TO65",
+    "timestamp": "2026-11-07T02:15:09.725Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "0cdfaeeee7554133d5d362c2fc2cdb6fd3da0eb7738aeb4e9b8917edf7a7c549",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-TO7C",
+    "timestamp": "2026-11-07T02:15:09.768Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

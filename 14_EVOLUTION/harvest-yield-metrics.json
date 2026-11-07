@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T02:06:47.834Z",
-  "total_cycles_completed": 7924,
-  "total_learnings_persisted": 7924,
-  "total_rules_promoted": 7574,
+  "last_updated": "2026-11-07T02:15:09.787Z",
+  "total_cycles_completed": 7926,
+  "total_learnings_persisted": 7926,
+  "total_rules_promoted": 7576,
   "history": [
-    {
-      "timestamp": "2026-11-05T18:31:28.740Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T18:31:36.767Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T18:31:38.907Z",
       "repository": "LiquidAI/d1-2B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-07T02:06:47.834Z",
       "repository": "NVIDIA/cuda-rust",
       "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:15:09.738Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T02:15:09.787Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

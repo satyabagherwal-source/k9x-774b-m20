@@ -7959,3 +7959,5 @@
 | `CYCLE-20261106-GG25` | `2026-11-06T23:44:54.605Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`da970569...`) |
 | `CYCLE-20261107-CPE9` | `2026-11-07T02:01:58.161Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c2632cda...`) |
 | `CYCLE-20261107-IWWA` | `2026-11-07T02:06:47.818Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ea0bc8a...`) |
+| `CYCLE-20261107-TO65` | `2026-11-07T02:15:09.725Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0cdfaeee...`) |
+| `CYCLE-20261107-TO7C` | `2026-11-07T02:15:09.768Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`857fcc76...`) |
