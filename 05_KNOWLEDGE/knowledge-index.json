@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T18:24:58.601Z",
+  "last_updated": "2026-11-07T18:50:15.652Z",
   "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -74097,13 +74097,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "800f4c49",
-      "content_hash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "43508de1",
+      "content_hash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74128,6 +74128,11 @@
         {
           "number": null,
           "title": "Merge pull request #4640 from aleo-labs-protocol/mirror-staging-to-internal",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4643 from aleo-labs-protocol/gauntlet-workflow-names",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -74256,7 +74261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:37:07.632Z",
+      "verified_at": "2026-11-07T18:42:36.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162811,10 +162816,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
+      "content_hash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
       "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Randomized Low-Rank SVD Delta Extraction Before Manifold Interpolation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Log-Domain Row-Wise Magnitude Re-Anchoring with Polar SLERP",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Coordinate-Level Sign-Conflict Salience Mediation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5808,
           "title": "Spectral Separation of Signal and Noise in Weight Merging",
@@ -162831,7 +162851,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T01:13:59.766Z",
+      "verified_at": "2026-11-07T18:50:15.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

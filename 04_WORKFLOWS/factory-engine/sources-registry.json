@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T18:25:01.283Z",
-    "lastVerified": "2026-11-07T18:25:01.283Z",
+    "lastChecked": "2026-11-07T18:50:18.367Z",
+    "lastVerified": "2026-11-07T18:50:18.367Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -456,12 +456,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T17:57:50.495Z",
-    "lastVerified": "2026-11-07T17:57:50.495Z",
+    "lastChecked": "2026-11-07T18:42:33.351Z",
+    "lastVerified": "2026-11-07T18:42:33.351Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -470,7 +470,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5f2b3ade"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -993,9 +994,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-05T20:06:40.935Z",
+    "lastChecked": "2026-11-07T18:42:25.942Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-05T20:06:40.935Z"
+    "lastVerified": "2026-11-07T18:42:25.942Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -2415,14 +2416,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T03:41:52.621Z",
-    "lastVerified": "2026-11-07T03:41:52.621Z",
+    "lastChecked": "2026-11-07T18:42:32.255Z",
+    "lastVerified": "2026-11-07T18:42:32.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4901,9 +4902,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-05T19:15:00.243Z",
+    "lastChecked": "2026-11-07T18:42:30.805Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-05T19:15:00.243Z"
+    "lastVerified": "2026-11-07T18:42:30.805Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -6328,9 +6329,9 @@
   "gitpoint-git-point": {
     "name": "git-point",
     "officialUrl": "https://github.com/gitpoint/git-point",
-    "lastChecked": "2026-11-04T19:15:23.873Z",
+    "lastChecked": "2026-11-07T18:42:23.330Z",
     "revisionIdentifier": "3f015344",
-    "lastVerified": "2026-11-04T19:15:23.873Z"
+    "lastVerified": "2026-11-07T18:42:23.330Z"
   },
   "checkmarx-kics": {
     "name": "Checkmarx/kics",
@@ -7895,9 +7896,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-05T14:43:20.027Z",
+    "lastChecked": "2026-11-07T18:42:18.352Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-05T14:43:20.027Z"
+    "lastVerified": "2026-11-07T18:42:18.352Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -11627,13 +11628,13 @@
     "officialUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T01:13:58.697Z",
-    "lastVerified": "2026-11-04T01:13:58.697Z",
+    "lastChecked": "2026-11-07T18:42:21.044Z",
+    "lastVerified": "2026-11-07T18:42:21.044Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
-    "promotedRulesCount": 0,
+    "contentHash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

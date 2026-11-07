@@ -8054,3 +8054,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6183501e` | Multi-dimensional audit evidence | 2026-11-07T18:17:11.664Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `4f3cb196` | Multi-dimensional audit evidence | 2026-11-07T18:24:51.540Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `145de9c4` | Multi-dimensional audit evidence | 2026-11-07T18:24:58.700Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `43508de1` | Multi-dimensional audit evidence | 2026-11-07T18:42:36.191Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-07T18:50:15.738Z |

@@ -8045,3 +8045,5 @@
 | `CYCLE-20261107-6UP8` | `2026-11-07T18:17:11.660Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1b6281a5...`) |
 | `CYCLE-20261107-GPJK` | `2026-11-07T18:24:51.536Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`56f1399d...`) |
 | `CYCLE-20261107-GV2G` | `2026-11-07T18:24:58.696Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a9cb7f7...`) |
+| `CYCLE-20261107-3J17` | `2026-11-07T18:42:36.187Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e083b1f4...`) |
+| `CYCLE-20261107-DDME` | `2026-11-07T18:50:15.734Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6e619367...`) |

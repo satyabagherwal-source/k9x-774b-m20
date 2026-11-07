@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-ZW6Z",
-    "timestamp": "2026-11-05T06:00:36.539Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d55b8ab3ae96bf8058d35fb3b85605d4c1b0dc35d7c58938ca9c5fe39b132aa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-8XWD",
-    "timestamp": "2026-11-05T06:07:38.653Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "c3884ebd0767ee027d5fed89e7d7ded5ef4120b32577780fef3964eae230860f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-97UE",
     "timestamp": "2026-11-05T06:07:51.542Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-3J17",
+    "timestamp": "2026-11-07T18:42:36.187Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-DDME",
+    "timestamp": "2026-11-07T18:50:15.734Z",
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

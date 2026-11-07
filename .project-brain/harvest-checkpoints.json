@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T18:24:58.719Z",
+  "last_updated": "2026-11-07T18:50:15.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "be773f9b267c58b3be59482bb9ecd3956ba5694d6ba703a262daddefe071216c",
-      "verified_at": "2026-11-07T05:37:07.786Z",
+      "content_hash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
+      "verified_at": "2026-11-07T18:42:36.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:37:07.786Z"
+      "last_updated": "2026-11-07T18:42:36.200Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -17421,14 +17421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "db0ea91ced497018ec473d03e362a09337816b6dcc4d3d5d28166f7ff32d9dcc",
-      "verified_at": "2026-11-04T01:13:59.853Z",
+      "content_hash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
+      "verified_at": "2026-11-07T18:50:15.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:13:59.853Z"
+      "last_updated": "2026-11-07T18:50:15.759Z"
     },
     "LiquidAI/LFM3-1.7B-GGUF": {
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
