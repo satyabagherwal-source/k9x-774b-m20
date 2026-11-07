@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `1dd3e9ec`  
+> **Source Version**: `1091a8b5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:07:18.014Z  
+> **Timestamp**: 2026-11-07T21:03:18.104Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:07:18.005Z  
+> **Harvest Timestamp**: 2026-11-07T21:03:16.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50453 stars
+- **Stars / Engagement**: 50939 stars
 
 ---
 
@@ -2103,11 +2103,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30074** (2026-11-05): **[ty] Invalidate aliased conditions across loop iterations**
+  *Symptoms*: A condition saved before a loop can keep narrowing a value after the loop body has reassigned it. For example, after `is_none = x is None`, ty can treat `x + 1` as safe even though a previous iteration set `x` to `None`.  Invalidate the saved condition when a reachable loop backedge can carry a write to a place it narrows. This uses the same whole-condition invalidation as a reassignment in straight-line code.  Fixes astral-sh/ty#4934  ## Test plan  Compared a guarded `x += 1` in a loop with a type-preserving `x += 1` between saving and testing the condition in straight-line code. Ty invalidates the saved narrowing in both cases.  ## Ecosystem report  The public ecosystem run for `aa1cb33eeb` found one expected change. StaticFrame no longer receives a false `redundant-condition-strict` warning when a previous loop iteration can initialize `dtype`. The result matched the reproduction with the workflow binaries.  [Full ecosystem analysis](https://github.com/astral-sh/ruff/pull/30074#issuecomment-6666621923) 
+
 - **Issue #30066** (2026-11-05): **[ty] Skip active Conda and Pixi environments during discovery if the environment doesn't contain Python**
   *Symptoms*: A workspace can use Pixi for tools such as CMake and keep its Python dependencies in `.venv`. Since #29974, ty can select the active Pixi environment ahead of `.venv` even when Pixi hasn’t installed Python. Imports from `.venv` can then fail to resolve.  During automatic discovery, ty now checks for a Python interpreter before selecting a Conda or Pixi environment. If the active prefix has none, ty continues to the workspace’s `.venv` or to Python on `PATH`. A versioned interpreter such as `bin/python3.13` also qualifies.  For files that use the workspace environment, ty also reruns discovery when an existing watch reports deletion of the selected prefix directory. This lets an open file pick up packages from `.venv` without restarting ty. 
-
-- **Issue #30060** (2026-11-05): **Fix transparent context menus in the Ruff and ty playgrounds**
-  *Symptoms*: ## Summary  Right-clicking Python code in either playground opens a transparent menu after the Monaco 0.57 upgrade. Give the editor container Monaco’s theme class so the menu inherits the active theme’s colors even when Monaco mounts it beside the editor.  Fixes https://github.com/astral-sh/ty/issues/4928. Upstream issue: https://github.com/microsoft/monaco-editor/issues/5511.  ## Test Plan  **Before**   <img width="740" height="570" alt="ruff-before-dark" src="https://github.com/user-attachments/assets/dbae7d22-7e2a-4872-813d-87d55bca5726" /> <img width="740" height="570" alt="ruff-before-light" src="https://github.com/user-attachments/assets/abb82d4f-7c22-4a90-b24d-2588a66501ae" /> <img width="740" height="570" alt="ty-before-dark" src="https://github.com/user-attachments/assets/4c04a808-330b-4ce2-9c77-9f8e4cc3e9e3" /> <img width="740" height="570" alt="ty-before-light" src="https://github.com/user-attachments/assets/45fda7ef-59b9-482b-908b-0c27fa7c444b" />  **After**  <img width="740" height="570" alt="ruff-after-dark" src="https://github.com/user-attachments/assets/003d6092-0069-45f3-a4d2-733aa6095203" /> <img width="740" height="570" alt="ruff-after-light" src="https://github.com/user-attachments/assets/08b961c6-d9c5-41d5-aed8-85877b715aa5" /> <img width="740" height="570" alt="ty-after-dark" src="https://github.com/user-attachments/assets/fcd93321-6a8f-458a-92b9-32a532e49da9" /> <img width="740" height="570" alt="ty-after-light" src="https://github.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2124,834 +2124,415 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `818a6083` (2026-11-05)
-**Commit Message**: Fix panic on BOM-prefixed files in diagnostic renderer (#30017)
+### Incident Patch 1: `fca4b6eb` (2026-11-06)
+**Commit Message**: [ty] Pick up the schema_salad ecosystem setup fix (#30136)
 
-Co-authored-by: Micha Reiser <[REDACTED_EMAIL]>
+Update Ruff's locked `ecosystem-analyzer` revision to pick up the
+`schema_salad` setup fix. Align the setup script's `mypy-primer` lock
+with the analyzer. [ecosystem-analyzer
+#246](https://github.com/astral-sh/ecosystem-analyzer/pull/246) ·
+[mypy_primer #275](https://github.com/hauntsaninja/mypy_primer/pull/275)
 
-**File**: `crates/ruff/tests/cli/format.rs` (modified, +21/-0)
+The lock checks passed, and the setup script installed `schema_salad` at
+`0fd6c25fb0` with the dependency cutoff from the failing ecosystem run.
+`uv pip check` passed.
+
+**File**: `scripts/setup_primer_project.py.lock` (modified, +1/-1)
 ```diff
-@@ -873,6 +873,27 @@ fn check_default_mode_shows_diagnostics_and_summary() -> Result<()> {
-     Ok(())
- }
- 
-+#[test]
-+fn check_bom_only_file() -> Result<()> {
-+    let test = CliTest::with_file("example.py", "\u{feff}")?;
-+    // The deletion line contains the literal BOM.
-+    assert_cmd_snapshot!(test.format_command().args(["--check", "example.py"]), @"
-+    success: false
-+    exit_code: 1
-+    ----- stdout -----
-+    unformatted: File would be reformatted
-+     --> example.py:1:1
-+      |
-+      - ﻿
-+      |
-+
-+    1 file would be reformatted
-+
-+    ----- stderr -----
-+    ");
-+    Ok(())
-+}
-+
- #[test]
- fn force_exclude() -> Result<()> {
-     let test = CliTest::with_files([
+@@ -13,7 +13,7 @@ build-constraints = [{ name = "setuptools", specifier = "==84.0.0", hashes = ["s
+ [[package]]
+ name = "mypy-primer"
+ version = "0.1.0"
+-source = { git = "https://github.com/hauntsaninja/mypy_primer#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
++source = { git = "https://github.com/hauntsaninja/mypy_primer#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
+ dependencies = [
+     { name = "tomlkit" },
+ ]
 ```
 
-**File**: `crates/ruff_db/src/diagnostic/render.rs` (modified, +6/-5)
+**File**: `uv.lock` (modified, +2/-2)
 ```diff
-@@ -676,11 +676,12 @@ impl<'r> RenderableAnnotation<'r> {
-     /// lifetime parameter here refers to the lifetime of the resolver that
-     /// created the given `ResolvedAnnotation`.
-     fn new(snippet_start: TextSize, ann: &'_ ResolvedAnnotation<'r>) -> RenderableAnnotation<'r> {
--        // This should only ever saturate if a BOM is present _and_ the annotation range points
--        // before the BOM (i.e. at offset 0). In Ruff this typically results from the use of
--        // `TextRange::default()` for a diagnostic range instead of a range relative to file
--        // contents.
--        let range = ann.range.checked_sub(snippet_start).unwrap_or(ann.range);
-+        // An annotation can start at byte zero even when a leading BOM was stripped from the
-+        // snippet. Clamp each endpoint separately so the annotation still covers any visible text.
-+        let range = TextRange::new(
-+            ann.range.start().saturating_sub(snippet_start),
-+            ann.range.end().saturating_sub(snippet_start),
-+        );
-         RenderableAnnotation {
-             range,
-             message: ann.message,
-```
-
-**File**: `crates/ruff_db/src/diagnostic/render/full.rs` (modified, +22/-0)
-```diff
-@@ -951,6 +951,28 @@ print()
-         ");
-     }
- 
-+    #[test]
-+    fn bom_with_full_file_range() {
-+        let mut env = TestEnvironment::new();
-+        let contents = "\u{feff}import foo";
-+        env.add("example.py", contents);
-+        env.format(DiagnosticFormat::Full);
-+
-+        let mut diagnostic = env.err().build();
-+        let span = env
-+            .path("example.py")
-+            .with_range(TextRange::up_to(contents.text_len()));
-+        diagnostic.annotate(Annotation::primary(span));
-+
-+        insta::assert_snapshot!(env.render(&diagnostic), @r"
-+        error[test-diagnostic]: main diagnostic message
-+         --> example.py:1:1
-+          |
-+        1 | import foo
-+          | ^^^^^^^^^^
-+        ");
-+    }
-+
-     /// We previously rendered this correctly, but the header was falling back to 1:1 for ranges
-     /// pointing to the final newline in a file. Like Ruff, we now use the offset of the first
-     /// character in the nonexistent final line in the header.
-```
-
-**File**: `crates/ruff_text_size/src/range.rs` (modified, +1/-1)
-```diff
-@@ -294,7 +294,7 @@ impl TextRange {
-     /// The unchecked version (`Sub::sub`) will _always_ panic on overflow,
-     /// in contrast to primitive integers, which check in debug mode only.
-     #[inline]
--    pub fn checked_sub(self, offset: TextSize) -> Option<TextRange> {
-+    fn checked_sub(self, offset: TextSize) -> Option<TextRange> {
-         Some(TextRange {
-             start: self.start.checked_sub(offset)?,
-             end: self.end.checked_sub(offset)?,
-```
-
-**File**: `hawk.toml` (modified, +0/-8)
-```diff
-@@ -574,14 +574,6 @@ kind = "inherent_method"
- level = "expect"
- reason = "TextSize intentionally provides both checked and saturating arithmetic"
- 
--[[override]]
--lint = "hawk::dead_public"
--crate = "ruff_text_size"
--item = "size::TextSize::saturating_sub"
--kind = "inherent_method"
--level = "expect"
--reason = "TextSize intentionally provides both checked and saturating arithmetic"
--
- [[override]]
- lint = "hawk::dead_public"
- crate = "ruff_python_ast"
+@@ -519,7 +519,7 @@ dependencies = [
+ [[package]]
+ name = "ecosystem-analyzer"
+ version = "0.1.0"
+-source = { git = "https://github.com/astral-sh/ecosystem-analyzer#ebec9bd301f36aa1308fc2e0c743129ff23581fc" }
++source = { git = "https://github.com/astral-sh/ecosystem-analyzer#966714453cc6fd34bedae5090a4e2db984fca1fc" }
+ dependencies = [
+     { name = "click", version = "8.5.0", source = { registry = "https://pypi.org/simple" } },
+     { name = "jinja2" },
+@@ -1029,7 +1029,7 @@ wheels = [
+ [[package]]
+ name = "mypy-primer"
+ version = "0.1.0"
+-source = { git = "https://github.com/hauntsaninja/mypy_primer?rev=e1f6fe93da5de0cbaf0ab00341d05968a0331fae#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
++source = { git = "https://github.com/hauntsaninja/mypy_primer?rev=4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
+ dependencies = [
+     { name = "tomlkit" },
+ ]
 ```
 
 ---
 
-### Incident Patch 2: `1dd3e9ec` (2026-11-05)
-**Commit Message**: Show more nonprinting characters in diagnostic fix diffs (#30062)
+### Incident Patch 2: `9e96942d` (2026-11-06)
+**Commit Message**: [`flake8-logging-format`] Mark `G004` fix as unsafe (#30087)
 
-**File**: `crates/ruff/tests/cli/format.rs` (modified, +1/-2)
-```diff
-@@ -876,15 +876,14 @@ fn check_default_mode_shows_diagnostics_and_summary() -> Result<()> {
- #[test]
- fn check_bom_only_file() -> Result<()> {
-     let test = CliTest::with_file("example.py", "\u{feff}")?;
--    // The deletion line contains the literal BOM.
-     assert_cmd_snapshot!(test.format_command().args(["--check", "example.py"]), @"
-     success: false
-     exit_code: 1
-     ----- stdout -----
-     unformatted: File would be reformatted
-      --> example.py:1:1
-       |
--      - ﻿
-+      - �
-       |
- 
-     1 file would be reformatted
-```
+## Summary
 
-**File**: `crates/ruff_db/src/diagnostic/render/full.rs` (modified, +64/-9)
-```diff
-@@ -349,16 +349,63 @@ impl std::fmt::Display for Line {
- }
- 
- fn show_nonprinting(s: &str) -> Cow<'_, str> {
--    if s.find(['\x07', '\x08', '\x1b', '\x7f']).is_some() {
--        Cow::Owned(
--            s.replace('\x07', "␇")
--                .replace('\x08', "␈")
--                .replace('\x1b', "␛")
--                .replace('\x7f', "␡"),
--        )
--    } else {
--        Cow::Borrowed(s)
-+    // The diff includes its line ending in the text to display.
-+    let content = s.trim_end_matches(['\r', '\n']);
-+
-+    // Accumulate the comparisons without an early exit so LLVM can vectorize the scan.
-+    // The Unicode characters below start with 0xE2 or 0xEF in UTF-8. Other lead bytes
-+    // in that range are harmless false positives.
-+    let mut may_need_replacement = false;
-+    for byte in content.bytes() {
-+        let control = byte.is_ascii_control() && byte != b'\t';
-+        may_need_replacement |= control | (0xe2..=0xef).contains(&byte);
-+    }
-+    if !may_need_replacement {
-+        return Cow::Borrowed(s);
-+    }
-+
-+    let mut output = String::with_capacity(s.len());
-+    for ch in content.chars() {
-+        let visible = match ch {
-+            '\0' => '␀',
-+            '\x01' => '␁',
-+            '\x02' => '␂',
-+            '\x03' => '␃',
-+            '\x04' => '␄',
-+            '\x05' => '␅',
-+            '\x06' => '␆',
-+            '\x07' => '␇',
-+            '\x08' => '␈',
-+            '\x0b' => '␋',
-+            '\x0c' => '␌',
-+            '\r' => '␍',
-+            '\x0e' => '␎',
-+            '\x0f' => '␏',
-+            '\x10' => '␐',
-+            '\x11' => '␑',
-+            '\x12' => '␒',
-+            '\x13' => '␓',
-+            '\x14' => '␔',
-+            '\x15' => '␕',
-+            '\x16' => '␖',
-+            '\x17' => '␗',
-+            '\x18' => '␘',
-+            '\x19' => '␙',
-+            '\x1a' => '␚',
-+            '\x1b' => '␛',
-+            '\x1c' => '␜',
-+            '\x1d' => '␝',
-+            '\x1e' => '␞',
-+            '\x1f' => '␟',
-+            '\x7f' => '␡',
-+            '\u{200d}' => continue,
-+            '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}' | '\u{feff}' => '�',
-+            _ => ch,
-+        };
-+        output.push(visible);
-     }
-+    output.push_str(&s[content.len()..]);
-+    Cow::Owned(output)
- }
- 
- fn to_applicability_annotate(fix: &Fix) -> Option<AnnotateGroup<'static>> {
-@@ -390,6 +437,14 @@ mod tests {
-         },
-     };
- 
-+    #[test]
-+    fn nonprinting_diff_characters() {
-+        assert_eq!(
-+            super::show_nonprinting("→\u{200d}\u{202e}a\r\u{2069}\t\u{feff}！\r\n"),
-+            "→�a␍�\t�！\r\n"
-+        );
-+    }
-+
-     #[test]
-     fn output() {
-         let (env, diagnostics) = create_diagnostics(DiagnosticFormat::Full);
-```
+Rule `G004` (`logging-f-string`) converts f-string logging statements
+(`logging.warning(f"{c}")`) into lazy logging (`logging.warning("%s",
+c)`).
 
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__mutable-argument-default_B006_4.py.snap` (modified, +2/-2)
-```diff
-@@ -12,8 +12,8 @@ B006 [*] Do not use mutable data structures for argument defaults
- help: Replace with `None`; initialize within function
-    |
- 6  | class FormFeedIndent:
--   -    def __init__(self, a=[]):
--7  +    def __init__(self, a=None):
-+   -   ␌ def __init__(self, a=[]):
-+7  +   ␌ def __init__(self, a=None):
- 8  +         if a is None:
- 9  +          a = []
- 10 |         print(a)
-```
+In Python, formatting an object in an f-string evaluates its
+`__format__` method, whereas `%s` formatting evaluates its `__str__`
+method. If an object implements both methods with different behaviors,
+converting from an f-string to `%s` can change the logged output.
 
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__preview__mutable-argument-default_B006_4.py.snap` (modified, +2/-2)
-```diff
-@@ -12,8 +12,8 @@ B006 [*] Do not use mutable data structures for argument defaults
- help: Replace with `None`; initialize within function
-    |
- 6  | class FormFeedIndent:
--   -    def __init__(self, a=[]):
--7  +    def __init__(self, a=None):
-+   -   ␌ def __init__(self, a=[]):
-+7  +   ␌ def __init__(self, a=None):
- 8  +         if a is None:
- 9  +          a = []
- 10 |         print(a)
-```
+This change marks the `G004` fix as unconditionally unsafe (using
+`Fix::unsafe_edit`), updates the rule documentation in `violations.rs`,
+and updates the corresponding snapshot tests.
 
-**File**: `crates/ruff_linter/src/rules/flake8_simplify/snapshots/ruff_linter__rules__flake8_simplify__tests__suppressible-exception_SIM105_4.py.snap` (modified, +1/-1)
+Closes #30076.
+
+## Test Plan
+
+- Updated snapshot test fixtures via `INSTA_UPDATE=always cargo test -p
+ruff_linter rules::flake8_logging_format`
+- Verified all snapshot tests pass with `cargo test -p ruff_linter
+rules::flake8_logging_format`
+- Verified full linter test suite passes: `cargo test -p ruff_linter`
+- Verified clippy checks pass: `cargo clippy -p ruff_linter`
+- Verified code formatting passes: `cargo fmt --check`
+
+---------
+
+Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
+
+**File**: `crates/ruff_linter/resources/mdtest/flake8-logging-format/logging-f-string.md` (modified, +11/-2)
 ```diff
-@@ -11,7 +11,7 @@ SIM105 [*] Use `contextlib.suppress(ImportError)` instead of `try`-`except`-`pas
-   | |___________________________^
- help: Replace `try`-`except`-`pass` with `with contextlib.suppress(ImportError): ...`
+@@ -29,6 +29,7 @@ help: Convert to lazy `%` formatting
+   - logging.info(f"plain {value}")  # snapshot: logging-f-string
+ 5 + logging.info("plain %s", value)  # snapshot: logging-f-string
    |
--1 | ﻿#!/usr/bin/env python
-+1 | �#!/usr/bin/env python
-   - try:
- 2 + import contextlib
- 3 + with contextlib.suppress(ImportError):
-```
-
-**File**: `crates/ruff_linter/src/rules/flake8_type_checking/snapshots/ruff_linter__rules__flake8_type_checking__tests__runtime-import-in-type-checking-block_whitespace.py.snap` (modified, +2/-2)
-```diff
-@@ -13,8 +13,8 @@ TC004 [*] Move import `builtins` out of type-checking block. Import is used for
- help: Move out of type-checking block
-   |
- 2 | # there is a (potentially invisible) unicode formfeed character (000C) between `TYPE_CHECKING` and the backslash
--  - from typing import TYPE_CHECKING\
--3 + from typing import TYPE_CHECKING; import builtins\
-+  - from typing import TYPE_CHECKING␌\
-+3 + from typing import TYPE_CHECKING; import builtins␌\
- 4 |
-   - if TYPE_CHECKING: import builtins
- 5 + if TYPE_CHECKING: pass
-```
-
-**File**: `crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__bom_unsorted.py.snap` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ I001 [*] Import block is un-sorted or un-formatted
-   | |__________^
- help: Organize imports
-   |
--  - ﻿import foo
-+  - �import foo
-   - import bar
--1 + ﻿import bar
-+1 + �import bar
- 2 + import foo
-   |
-```
-
-**File**: `crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_whitespace.py.snap` (modified, +2/-2)
-```diff
-@@ -6,7 +6,7 @@ I002 [*] Missing required import: `from __future__ import annotations`
- help: Insert required import: `from __future__ import annotations`
-   |
- 2 | # there is a (potentially invisible) unicode formfeed character (000C) between "docstring" and the semicolon
--  - "docstring"; print(
--3 + "docstring"; from __future__ import annotations; print(
-+  - "docstring"␌; print(
-+3 + "docstring"␌; from __future__ import annotations; print(
- 4 |     f"{__doc__=}",
-   |
-```
-
----
-
-### Incident Patch 3: `32be8e72` (2026-11-05)
-**Commit Message**: [ty] Skip fixpoint iteration for simple generic calls (#30054)
-
-A generic call of the form `def f[T, U, ...](x: T, y: U, ...)` does not
-require fixpoint iteration, as each argument can be inferred
-independently without ever receiving type context from a sibling
-argument. We should skip fixpoint iteration in this case.
-
-Note that importantly, this means we no longer perform fixpoint
-iteration on calls to `reveal_type`, which avoids exposing
-inconsistencies in generic inference that can lead to a different type
-being inferred with or without the `reveal_type`.
-https://github.com/astral-sh/ruff/pull/29666 and
-https://github.com/astral-sh/ruff/pull/29927 attempt to fix these
-inconsistencies, but some remain, and this should mean we run into them
-less often (as well as being a useful optimization in general).
-
-Removing the fixpoint iteration introduced by `reveal_type` also catches
-a couple small preexisting generic inference limitations in our mdtests,
-which are also fixed by this PR.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/bidirectional.md` (modified, +5/-4)
-```diff
-@@ -2303,7 +2303,7 @@ def from_or(values: list[str] | None) -> None:
++note: This is an unsafe fix and may change runtime behavior
+ ```
  
- def constructor_fallback(values: list[int] | None) -> None:
-     # TODO: This should reveal `list[int]` based on the peer type context.
--    reveal_type(values or list())  # revealed: list[int] | list[Unknown]
-+    reveal_type(values or list())  # revealed: (list[int] & ~AlwaysFalsy) | list[Unknown]
+ ## Escape sequences
+@@ -58,6 +59,7 @@ help: Convert to lazy `%` formatting
+ 5 + logging.warning("\n%s", value)  # snapshot: logging-f-string
+ 6 | logging.warning(f"C:\\{value}")  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
  
- def from_and(values: list[str]) -> None:
-     reveal_type(values and [])  # revealed: list[str]
-@@ -2669,11 +2669,12 @@ def f[T](x: T, y: T) -> T:
-     return x
  
- def _(td: TD):
--    # revealed: TD
--    x = reveal_type(f(td, reveal_type({"x": 1})))  # revealed: TD
--
-     # TODO: The initial type of the dictionary literal pollutes later
-     # iterations, meaning we fail to narrow to `TD` here.
-+    # revealed: TD | dict[str, int]
-+    x = reveal_type(f(td, reveal_type({"x": 1})))  # revealed: TD | dict[str, int]
-+
-+    # TODO: This should also be `TD`.
-     x = f(td, reveal_type({"x": 1}))  # revealed: TD | dict[str, int]
-     reveal_type(x)  # revealed: TD | dict[str, int]
+ error[G004]: Logging statement uses f-string
+@@ -71,6 +73,7 @@ help: Convert to lazy `%` formatting
+   - logging.warning(f"C:\\{value}")  # snapshot: logging-f-string
+ 6 + logging.warning("C:\\%s", value)  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ ```
+ 
+ ## Raw f-strings
+@@ -100,6 +103,7 @@ help: Convert to lazy `%` formatting
+ 5 + logging.warning("\\'%s", value)  # snapshot: logging-f-string
+ 6 | logging.warning(Rf"\d+ {value}")  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ 
+ error[G004]: Logging statement uses f-string
+@@ -113,6 +117,7 @@ help: Convert to lazy `%` formatting
+   - logging.warning(Rf"\d+ {value}")  # snapshot: logging-f-string
+ 6 + logging.warning("\\d+ %s", value)  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ ```
+ 
+ ## Quote style
+@@ -142,6 +147,7 @@ help: Convert to lazy `%` formatting
+ 5 + logging.warning('"%s"', value)  # snapshot: logging-f-string
+ 6 | logging.warning(f"'{value}'")  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ 
+ error[G004]: Logging statement uses f-string
+@@ -155,6 +161,7 @@ help: Convert to lazy `%` formatting
+   - logging.warning(f"'{value}'")  # snapshot: logging-f-string
+ 6 + logging.warning("'%s'", value)  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ ```
+ 
+ ## Parenthesized messages
+@@ -185,6 +192,7 @@ help: Convert to lazy `%` formatting
+ 5 + logging.warning("%s", value)  # snapshot: logging-f-string
+ 6 | logging.warning(((f"{value}")))  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ 
+ error[G004]: Logging statement uses f-string
+@@ -198,6 +206,7 @@ help: Convert to lazy `%` formatting
+   - logging.warning(((f"{value}")))  # snapshot: logging-f-string
+ 6 + logging.warning("%s", value)  # snapshot: logging-f-string
+   |
++note: This is an unsafe fix and may change runtime behavior
+ ```
+ 
+ ## Self-documenting interpolations
+@@ -311,8 +320,7 @@ note: This is an unsafe fix and may change runtime behavior
+ 
+ ## Comments outside the replaced range
+ 
+-Only the message and the parentheses around it are replaced, so a comment elsewhere in the call
+-leaves the fix safe.
++The fix preserves comments outside the message and its surrounding parentheses.
+ 
+ ```py
+ import logging
+@@ -337,4 +345,5 @@ help: Convert to lazy `%` formatting
+ 6 +     "%s", value  # snapshot: logging-f-string
+ 7 | )
+   |
++note: This is an unsafe fix and may change runtime behavior
  ```
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/implicit_type_aliases.md` (modified, +2/-2)
+**File**: `crates/ruff_linter/src/rules/flake8_logging_format/rules/logging_call.rs` (modified, +5/-11)
 ```diff
-@@ -3517,8 +3517,8 @@ for tree in (legacy(1), modern(1)):
-     if isinstance(tree, tuple):
-         reveal_type(tree[0])  # revealed: Tree[Literal[1]]
+@@ -13,7 +13,7 @@ use crate::rules::flake8_logging_format::violations::{
+     LoggingExcInfo, LoggingExtraAttrClash, LoggingFString, LoggingPercentFormat,
+     LoggingRedundantExcInfo, LoggingStringConcat, LoggingStringFormat, LoggingWarn,
+ };
+-use crate::{Applicability, Edit, Fix};
++use crate::{Edit, Fix};
  
--reveal_type([legacy(1)])  # revealed: list[int | tuple[int | tuple[Tree[int]]]]
--reveal_type([modern(1)])  # revealed: list[int | tuple[int | tuple[Tree[int]]]]
-+reveal_type([legacy(1)])  # revealed: list[int | tuple[int | tuple[Tree[Literal[1]]]]]
-+reveal_type([modern(1)])  # revealed: list[int | tuple[int | tuple[Tree[Literal[1]]]]]
- take([legacy(1)])
- take([modern(1)])
- annotated: list[Tree[int]] = [legacy(1), modern(1)]
-```
-
-**File**: `crates/ty_python_semantic/src/types/call/arguments.rs` (modified, +4/-2)
-```diff
-@@ -490,7 +490,7 @@ impl<'db> CallArgumentTypes<'db> {
+ fn logging_f_string(
+     checker: &Checker,
+@@ -112,16 +112,10 @@ fn logging_f_string(
  
-     /// Insert the type of this argument when inferred with the provided type context.
-     fn insert(&mut self, tcx: impl Into<TypeContext<'db>>, ty: Type<'db>) {
--        match tcx.into().annotation {
-+        match tcx.into().declared_type() {
-             None => self.fallback_type = Some(ty),
-             Some(tcx) => {
-                 self.types.insert(tcx, ty);
-@@ -866,7 +866,9 @@ impl<'a, 'db> CallArguments<'a, 'db> {
-                 f.debug_map()
-                     .entries(self.types.iter().map(|(tcx, ty)| {
-                         (
--                            tcx.annotation.as_ref().map(|ty| ty.display(db, self.env)),
-+                            tcx.declared_type()
-+                                .as_ref()
-+                                .map(|ty| ty.display(db, self.env)),
-                             ty.display(db, self.env),
-                         )
-                     }))
-```
-
-**File**: `crates/ty_python_semantic/src/types/call/bind.rs` (modified, +25/-41)
-```diff
-@@ -59,7 +59,7 @@ use crate::types::function::{
- };
- use crate::types::generics::{
-     GenericContext, Specialization, SpecializationBuilder, SpecializationError, TypeVarInference,
--    TypeVarInferenceSolutions,
-+    TypeVarInferenceSolutions, walk_specialization_types,
- };
- use crate::types::infer::original_class_type;
- use crate::types::known_instance::{
-@@ -70,6 +70,7 @@ use crate::types::signatures::{
-     PartialApplication, PartialSignatureApplication,
- };
- use crate::types::tuple::{TupleLength, TupleSpec, TupleSpecBuilder, TupleType, VariableSegment};
-+use crate::types::type_alias::walk_type_alias_arguments;
- use crate::types::typed_dict::TypedDictOpenness;
- use crate::types::typevar::{BoundTypeVarIdentity, TypeVarKind, TypeVarNonceGenerator, TypeVarSet};
- use crate::types::variance::VarianceInferable;
-@@ -81,9 +82,10 @@ use crate::types::{
-     BoundTypeVarInstance, CallableType, CallableTypes, ClassLiteral, CycleDetector,
-     DATACLASS_FLAGS, DataclassFlags, DataclassParams, DynamicType, GenericAlias,
-     InternedConstraintSet, IntersectionType, KnownBoundMethodType, KnownClass, KnownInstanceType,
--    LiteralValueTypeKind, NominalInstanceType, ParamSpecValue, PropertyInstanceType, TypeContext,
--    TypeIdentity, TypeMapping, TypeVarBoundOrConstraints, TypeVarVariance, UnionAccumulator,
--    UnionBuilder, UnionType, WrapperDescriptorKind, enums, is_property_method, list_members,
-+    LiteralValueTypeKind, NominalInstanceType, ParamSpecValue, PropertyInstanceType, RecursiveType,
-+    TypeAliasType, TypeContext, TypeIdentity, TypeMapping, TypeVarBoundOrConstraints,
-+    TypeVarVariance, UnionAccumulator, UnionBuilder, UnionType, WrapperDescriptorKind, enums,
-+    is_property_method, list_members,
- };
- use crate::{DisplaySettings, FxOrderSet};
- use ruff_db::diagnostic::{Annotation, Diagnostic, Span, SubDiagnostic, SubDiagnosticSeverity};
-@@ -6657,7 +6659,7 @@ impl<'db> CallInference<'_, 'db> {
-                 .variables(db)
-                 .any(|typevar| typevar.is_paramspec(db) || typevar.is_typevartuple(db));
+     let replacement = format!("{format_string}, {}", args.join(", "));
  
--        let declared_return_context = match self.call_expression_tcx.annotation {
-+        let declared_return_context = match self.call_expression_tcx.declared_type() {
-             Some(tcx) if !use_legacy_solver => {
-                 let validity = self
-                     .return_ty
-@@ -8069,7 +8071,7 @@ impl<'db> ArgumentTypeContext<'db> {
-             Self::Standard {
-                 raw_parameter_type,
-                 context,
--            } => context.with_annotation(Some(raw_parameter_type)),
-+            } => context.with_declared_type(Some(raw_parameter_type)),
-             Self::ParamSpec { declared_type, .. } => TypeContext::declared(Some(declared_type)),
-         }
-     }
-@@ -8125,7 +8127,7 @@ struct ParamSpecArgumentContext<'a, 'call, 'db> {
+-    let applicability = if checker.comment_ranges().intersects(target) {
+-        Applicability::Unsafe
+-    } else {
+-        Applicability::Safe
+-    };
+-
+-    diagnostic.set_fix(Fix::applicable_edit(
+-        Edit::range_replacement(replacement, target),
+-        applicability,
+-    ));
++    diagnostic.set_fix(Fix::unsafe_edit(Edit::range_replacement(
++        replacement,
++        target,
++    )));
  }
  
- /// Returns the number of occurrences of inferable type variables in the provided type.
--fn inferable_typevar_occurrences<'db>(
-+pub(crate) fn inferable_typevar_occurrences<'db>(
-     db: &'db dyn Db,
-     env: &ProgramEnvironment<'db>,
-     ty: Type<'db>,
-@@ -8147,6 +8149,20 @@ fn inferable_typevar_occurrences<'db>(
-             false
-         }
- 
-+        fn visit_type_alias_type(&self, db: &'db dyn Db, alias: TypeAliasType<'db>) {
-+            walk_type_alias_arguments(db, alias, self);
-+        }
-+
-+        fn visit_type_alias_object(&self, db: &'db dyn Db, alias: TypeAliasType<'db>) {
-+            walk_type_alias_arguments(db, alias, self);
-+        }
-+
-+        fn visit_recursive_type(&self, db: &'db dyn Db, recursive: RecursiveType<'db>) {
-+            if let Some(arguments) = recursive.arguments(db) {
-+                walk_specialization_types(db, arguments, self);
-+            }
-+        }
-+
-         fn visit_type(&self, db: &'db dyn Db, ty: Type<'db>) {
-             if let Type::TypeVar(typevar) = ty {
-                 let identity = if typevar.is_paramspec(db) {
-@@ -8329,38 +8345,6 @@ impl<'db> Binding<'db> {
-             .get(argument_index + usize::from(binding.bound_type.is_some()))
-     }
- 
--    /// Returns the number of occurrences of inferable type variables in the parameter(s) matching the
--    /// provided argument index.
--    pub(crate) fn typevar_occurrences_for_parameter(
--        &self,
--        db: &'db dyn Db,
--        env: &ProgramEnvironment<'db>,
--        binding: &CallableBinding<'db>,
--        argument_index: usize,
--    ) -> usize {
--        let Some(generic_context) = self.signature.generic_context else {
--            return 0;
--        };
--        let Some(argument) = self.matched_argument_for_call_argument(binding, argument_index)
--        else {
--            return 0;
--        };
--
--        let inferable_typevars = generic_context.inferable_typevars(db);
--        argument
--            .parameters
--            .iter()
--            .map(|parameter| {
--                inferable_typevar_occurrences(
--                    db,
--                    env,
--                    self.signature.parameter
+ /// Returns `true` if the attribute is a reserved attribute on the `logging` module's `LogRecord`
 ```
 
-**File**: `crates/ty_python_semantic/src/types/class.rs` (modified, +1/-1)
+**File**: `crates/ruff_linter/src/rules/flake8_logging_format/snapshots/ruff_linter__rules__flake8_logging_format__tests__preview__logging-f-string_G004.py.snap` (modified, +7/-0)
 ```diff
-@@ -470,7 +470,7 @@ impl<'db> GenericAlias<'db> {
-         let tcx = if type_mapping.is_structural() {
-             &[]
-         } else {
--            tcx.annotation
-+            tcx.declared_type()
-                 .and_then(|ty| ty.specialization_of(db, visitor.env, self.origin(db)))
-                 .map(|specialization| specialization.types(db))
-                 .unwrap_or(&[])
+@@ -16,6 +16,7 @@ help: Convert to lazy `%` formatting
+ 4 + logging.info("Hello %s", name)
+ 5 | logging.log(logging.INFO, f"Hello {name}")
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+  --> G004.py:5:27
+@@ -34,6 +35,7 @@ help: Convert to lazy `%` formatting
+ 5 + logging.log(logging.INFO, "Hello %s", name)
+ 6 |
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+   --> G004.py:8:14
+@@ -51,6 +53,7 @@ help: Convert to lazy `%` formatting
+ 8 + _LOGGER.info("%s", __name__)
+ 9 |
+   |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+   --> G004.py:10:26
+@@ -69,6 +72,7 @@ help: Convert to lazy `%` formatting
+ 10 + logging.getLogger().info("%s", name)
+ 11 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+   --> G004.py:14:6
+@@ -86,6 +90,7 @@ help: Convert to lazy `%` formatting
+ 14 + info("%s", name)
+ 15 | info(f"{__name__}")
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+   --> G004.py:15:6
+@@ -103,6 +108,7 @@ help: Convert to lazy `%` formatting
+ 15 + info("%s", __name__)
+ 16 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 [*] Logging statement uses f-string
+   --> G004.py:24:14
+@@ -118,6 +124,7 @@ help: Convert to lazy `%` formatting
+ 24 + logging.info("%s out of %s files in %s checked", count, total, directory_path)
+ 25 |
+    |
++note: This is an unsafe fix and may change runtime behavior
+ 
+ G004 Logging statement uses f-string
+   --> G004.py:30:13
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +4/-109)
+**File**: `crates/ruff_linter/src/rules/flake8_logging_format/snapshots/ruff_linter__rules__flake8_logging_format__tests__preview__logging-f-string_G004_implicit_concat.py.snap` (modified, +3/-0)
 ```diff
-@@ -51,13 +51,11 @@ use ruff_text_size::{Ranged, TextRange};
- use rustc_hash::FxHashMap;
- use salsa;
- use salsa::plumbing::AsId;
--use std::borrow::Cow;
- pub(super) use ty_python_core::frozen::{FrozenMap, FrozenSet, FrozenValueMap};
+@@ -17,6 +17,7 @@ help: Convert to lazy `%` formatting
+ 6 + log.info("ab %s", variablename)
+ 7 | log.info("a " f"b {variablename}")
+   |
++note: This is an unsafe fix and may change runtime behavior
  
- use crate::types::context::InferContextResult;
- use crate::types::diagnostic::TypeCheckDiagnostics;
- use crate::types::function::{FunctionDecorators, FunctionType};
--use crate::types::generics::Specialization;
- use crate::types::unpacker::{UnpackResult, Unpacker};
- use crate::types::{
-     ClassLiteral, KnownClass, RecursiveType, StaticClassLiteral, Type, TypeAndQualifiers,
-@@ -83,6 +81,8 @@ mod expression_truthiness;
- pub(crate) use expression_truthiness::TruthinessAnalyzer;
- #[cfg(test)]
- mod tests;
-+mod type_context;
-+pub(crate) use type_context::TypeContext;
+ G004 [*] Logging statement uses f-string
+  --> G004_implicit_concat.py:7:10
+@@ -34,6 +35,7 @@ help: Convert to lazy `%` formatting
+ 7 + log.info("a b %s", variablename)
+ 8 | log.info("prefix " f"middle {variablename}" f" suffix")
+   |
++note: This is an unsafe fix and may change runtime behavior
  
- /// The inferred alias type, or a cycle error retaining a type for recovery.
- pub(super) type LegacyTypeAliasResult<'db> = Result<Type<'db>, CyclicTypeAliasError<'db>>;
-@@ -819,7 +819,7 @@ impl<'db> InferExpression<'db> {
-         expression: Expression<'db>,
-         tcx: TypeContext<'db>,
-     ) -> InferExpression<'db> {
--        if tcx.annotation.is_some() {
-+        if tcx.declared_type().is_some() {
-             InferExpression::WithContext(ExpressionWithContext::new(db, expression, tcx))
-         } else {
-             InferExpression::Bare(expression)
-@@ -854,7 +854,7 @@ pub(super) struct ScopeWithContext<'db> {
- 
- impl<'db> InferScope<'db> {
-     fn new(db: &'db dyn Db, scope: ScopeId<'db>, tcx: TypeContext<'db>) -> InferScope<'db> {
--        if tcx.annotation.is_some() {
-+        if tcx.declared_type().is_some() {
-             InferScope::WithContext(ScopeWithContext::new(db, scope, tcx))
-         } else {
-             InferScope::Bare(scope)
-@@ -871,111 +871,6 @@ impl<'db> InferScope<'db> {
-     }
- }
- 
--/// The kind of type context constraint being provided.
--#[derive(
--    Default, Copy, Clone, Debug, PartialEq, Eq, Hash, get_size2::GetSize, salsa::SalsaValue,
--)]
--enum TypeContextKind {
--    /// A direct declared type annotation.
--    #[default]
--    Declared,
--
--    /// The declared upper bound of a type variable.
--    ///
--    /// Note that unlike a declared type, the upper bound of a type variable acts only as a validity
--    /// constraint, and does not provide a preferred specialization during generic call inference.
--    Validity,
--}
--
--/// The type context for a given expression, e.g., the type annotation
--/// in an annotated assignment.
--///
--/// Knowing the outer type context when inferring an expression can enable
--/// more precise inference results, aka "bidirectional type inference".
--#[derive(
--    Default, Copy, Clone, Debug, PartialEq, Eq, Hash, get_size2::GetSize, salsa::SalsaValue,
--)]
--pub(crate) struct TypeContext<'db> {
--    pub(crate) annotation: Option<Type<'db>>,
--    kind: TypeContextKind,
--}
--
--impl<'db> TypeContext<'db> {
--    pub(crate) fn declared(annotation: Option<Type<'db>>) -> Self {
--        Self {
--            annotation,
--            kind: TypeContextKind::Declared,
--        }
--    }
--
--    pub(crate) fn validity(annotation: Type<'db>) -> Self {
--        Self {
--            annotation: Some(annotation),
--            kind: TypeContextKind::Validity,
--        }
--    }
--
--    pub(crate) fn is_declared(self) -> bool {
--        matches!(self.kind, TypeContextKind::Declared)
--    }
--
--    /// If the type annotation is a specialized instance of the given `KnownClass`, returns the
--    /// specialization.
--    fn known_specialization(
--        &self,
--        db: &'db dyn Db,
--        env: &ProgramEnvironment<'db>,
--        known_class: KnownClass,
--    ) -> Option<Specialization<'db>> {
--        self.annotation
--            .and_then(|ty| ty.known_specialization(db, env, known_class))
--    }
--
--    fn map(self, f: impl FnOnce(Type<'db>) -> Type<'db>) -> Self {
--        self.with_annotation(self.annotation.map(f))
--    }
--
--    pub(crate) fn with_annotation(self, annotation: Option<Type<'db>>) -> Self {
--        Self { annotation, ..self }
--    }
--
--    fn is_typealias(&self) -> bool {
--        self.annotation
--            .is_some_and(|ty| ty.is_typealias_special_form())
--    }
--
--    /// If the type annotation is a union, returns the target elements that it can be narrowed to.
--    fn narrow_targets(
--        &self,
--        db: &'db dyn Db,
--        env: &ProgramEnvironment<'db>,
--    ) -> Option<Cow<'db, [Type<'db>]>> {
--        let union = self.annotation?.as_union_like(db)?;
--
--        let targets = if union.has_aliases(db) {
--            let expanded = union.expand_aliases(db, env);
--            if let Some(union) = expanded.as_union_like(db) {
--                Cow::Borrowed(union.elements(db))
--            } else {
--                Cow::Owned(vec![expanded])
--            }
--        } else {
--            Cow::Borrowed(union.elements(db))
--        };
--
--        // TODO: We could theoretically attempt to narrow to every element of
--        // the power set of this union. Ho
+ G004 [*] Logging statement uses f-string
+  --> G004_implicit_concat.py:8:10
+@@ -48,3 +50,4 @@ help: Convert to lazy `%` formatting
+   - log.info("prefix " f"middle {variablename}" f" suffix")
+ 8 + log.info("prefix middle %s suffix", variablename)
+   |
++note: This is an unsafe fix and may change runtime behavior
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +99/-86)
+**File**: `crates/ruff_linter/src/rules/flake8_logging_format/violations.rs` (modified, +7/-3)
 ```diff
-@@ -1,6 +1,6 @@
- use std::borrow::Cow;
- use std::cell::{OnceCell, RefCell};
--use std::collections::hash_map;
-+use std::collections::{HashSet, hash_map};
- use std::convert::Infallible;
- use std::rc::Rc;
- 
-@@ -55,7 +55,7 @@ use crate::types::add_inferred_python_version_hint_to_diagnostic;
- use crate::types::attribute_write::{AssignmentAttributeMembers, assignment_attribute_members};
- use crate::types::call::bind::{
-     ArgumentTypeContext, CallableDescription, CheckTypesMode, OverloadSet,
--    requires_overload_evaluation,
-+    inferable_typevar_occurrences, requires_overload_evaluation,
- };
- use crate::types::call::{Binding, Bindings, CallArguments, CallError, CallErrorKind};
- use crate::types::callable::CallableTypeKind;
-@@ -5880,6 +5880,58 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-         }
+@@ -322,9 +322,13 @@ impl Violation for LoggingStringConcat {
+ /// ```
+ ///
+ /// ## Fix safety
+-/// This rule's fix is marked as unsafe if the message,
+-/// or the parentheses around it, contain comments,
+-/// since the rewrite replaces that whole range and would delete them.
++/// This rule's fix is always marked as unsafe because formatting an object in an f-string
++/// evaluates its `__format__` method, whereas `%s` formatting evaluates its
++/// `__str__` method. If an object implements both methods with different behaviors,
++/// converting from an f-string to `%s` formatting can alter the logged message.
++///
++/// Additionally, if the message or the parentheses around it contain comments,
++/// the comments will be deleted.
+ ///
+ /// ## Options
+ /// - `lint.logger-objects`
+```
+
+---
+
+### Incident Patch 3: `cdc5f2c4` (2026-11-06)
+**Commit Message**: [ty] Check constraint equivalence by searching for counterexamples (#30093)
+
+## Summary
+
+When matching a union of `TypedDict` types against a protocol, ty can
+end up checking whether two sets of type-variable constraints accept
+exactly the same assignments. We used to build a decision diagram for
+the entire equivalence before asking the solver to prove it.
+
+We now look for an assignment that satisfies `A` but not `B`, then one
+that satisfies `B` but not `A`. If neither exists, the constraints are
+equivalent. This lets the solver rule out each direction independently.
+
+<!-- ty-pinned-project-instructions:start -->
+The table shows median instructions per cold `ty check`. Change and
+range compare paired PR and parent runs. Negative values mean fewer
+instructions. [Pinned
+projects](https://github.com/astral-sh/ty/blob/1b1d9c40e9d9ca08e0028d672c6b0c1eff34796a/BENCHMARKS.md)
+
+| Project | Parent instructions | PR instructions | Change | Paired
+range |
+|---|---:|---:|---:|---:|
+|
+[Black](https://github.com/psf/black/tree/55996d1fb8342725c8a19b6023cd9439c3c1d6f7)
+| 3,373,003,124 | 3,374,298,156 | +0.02% | -0.19% to +0.22% |
+|
+[discord.py](https://github.com/Rapptz/discord.py/tree/65232c3870
+
+**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +22/-0)
+```diff
+@@ -791,6 +791,24 @@ impl<'db, 'c> ConstraintSet<'db, 'c> {
+         Self::from_node(builder, node, source_order)
      }
  
-+    /// Returns the maximum number of fixpoint iterations to perform when inferring this generic call.
-+    fn fixpoint_iteration_limit(
-+        &self,
-+        binding: &CallableBinding<'db>,
-+        overload: &Binding<'db>,
-+        arguments: &CallArguments<'_, 'db>,
-+        generic_arguments: &mut [bool],
-+    ) -> Option<usize> {
-+        let db = self.db();
-+        let env = self.program_environment();
-+        let generic_context = overload.signature.generic_context?;
-+        let inferable = generic_context.inferable_typevars(db);
-+        let receiver_offset = usize::from(binding.bound_type.is_some());
-+        let mut occurrences = 0;
-+        let mut can_skip_fixpoint = true;
-+        let mut seen = HashSet::new();
-+
-+        for (index, matched) in overload.argument_matches().iter().enumerate() {
-+            let argument_index = index.checked_sub(receiver_offset);
-+            if argument_index.is_some_and(|index| arguments.is_variadic(index)) {
-+                can_skip_fixpoint = false;
-+                continue;
-+            }
-+
-+            for parameter in &matched.parameters {
-+                let ty = overload.signature.parameters()[parameter.index].annotated_type();
-+                let count = inferable_typevar_occurrences(db, env, ty, inferable);
-+                if count == 0 {
-+                    continue;
-+                }
-+
-+                if let Some(index) = argument_index {
-+                    generic_arguments[index] = true;
-+                    occurrences += count;
-+                }
-+
-+                // If every type variable is unconstrained and occurs only once, each argument can
-+                // be inferred independently, and so we can skip fixpoint iteration.
-+                //
-+                // Note that even a call with a single `x: list[T]` parameter may require fixpoint
-+                // iteration, as a given list element may be influenced by its siblings, hence we
-+                // limit this optimization to bare type variable occurrences.
-+                can_skip_fixpoint = can_skip_fixpoint
-+                    && ty.as_typevar().is_some_and(|var| {
-+                        var.typevar(db).is_simple(db) && seen.insert(var.identity(db))
-+                    });
-+            }
-+        }
-+
-+        Some(if can_skip_fixpoint { 0 } else { occurrences })
++    /// Returns whether the two constraint sets hold for exactly the same assignments.
++    pub(super) fn is_equivalent_to(
++        self,
++        db: &'db dyn Db,
++        env: &ProgramEnvironment<'db>,
++        other: Self,
++        inferable: TypeVarSet<'db>,
++    ) -> bool {
++        other.verify_builder(self.builder);
++        // Look for a counterexample in each direction. Building the full equivalence diagram
++        // combines both sets of paths before the solver can rule either direction out.
++        let is_subset = |left: Self, right: Self| {
++            left.and(db, self.builder, || right.negate(db, self.builder))
++                .is_never_satisfied(db, env, inferable)
++        };
++        self.node == other.node || (is_subset(self, other) && is_subset(other, self))
 +    }
 +
-     fn infer_and_check_argument_types<'args, 'call>(
-         &mut self,
-         ast_arguments: ArgumentsIter<'_>,
-@@ -5899,7 +5951,7 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-         let mut generic_arguments = SmallVec::<[bool; 8]>::with_capacity(argument_types.len());
-         generic_arguments.resize(argument_types.len(), false);
- 
--        let mut max_typevar_occurrences = 0;
-+        let mut fixpoint_iteration_limit = 0;
-         let mut has_generic_context = false;
-         let mut overload_candidates = OverloadSet::new();
- 
-@@ -5910,36 +5962,17 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-             let candidate_overload_indices =
-                 binding.candidate_overload_indices(db, env, argument_types);
- 
--            has_generic_context |= candidate_overload_indices.iter().any(|&overload_index| {
--                binding.overloads()[overload_index]
--                    .signature
--                    .generic_context
--                    .is_some()
--            });
--
-             for overload_index in &candidate_overload_indices {
-                 let overload = &binding.overloads()[*overload_index];
--                if overload.signature.generic_context.is_none() {
--                    continue;
--                }
--
--                let mut overload_typevar_occurrences = 0;
--                for (argument_index, is_generic) in generic_arguments.iter_mut().enumerate() {
--                    if argument_types.is_variadic(argument_index) {
--                        continue;
--                    }
--
--                    let typevar_occurrences = overload.typevar_occurrences_for_parameter(
--                        db,
--                        env,
--                        binding,
--                        argument_index,
--                    );
-- 
+     /// Reduces the set of inferable typevars for this constraint set. You provide the typevars that
+     /// were inferable when this constraint set was created, and which should be abstracted away.
+     /// Those typevars will be removed from the constraint set, and the constraint set will return
+@@ -6894,6 +6912,10 @@ class E: ...
+         let tdd = t_int.or(db, &builder, || u_str);
+         let negated = tdd.negate(db, &builder);
+         let double_negated = negated.negate(db, &builder);
++        assert!(tdd.is_equivalent_to(db, &env, double_negated, TypeVarSet::None));
++        assert!(!tdd.is_equivalent_to(db, &env, t_int, TypeVarSet::None));
++        assert!(!t_int.is_equivalent_to(db, &env, tdd, TypeVarSet::None));
++
+         let equivalent = tdd.iff(db, &builder, double_negated);
+         assert!(equivalent.is_always_satisfied(db, &env, TypeVarSet::None));
+     }
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer/builder/dict.rs` (modified, +1/-1)
+**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +1/-3)
 ```diff
-@@ -25,7 +25,7 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
-         // Fast-path dict(...) in TypedDict context: infer keyword values against fields,
-         // then validate and return the TypedDict type. This also covers `dict(**src)` when `src`
-         // is `TypedDict`-shaped.
--        if let Some(tcx) = call_expression_tcx.annotation
-+        if let Some(tcx) = call_expression_tcx.declared_type()
-             && let Some(typed_dict) = tcx
-                 .filter_union(db, self.program_environment(), Type::is_typed_dict)
-                 .as_typed_dict()
+@@ -3911,9 +3911,7 @@ impl<'db, 'c> SpecializationBuilder<'db, 'c> {
+                 env,
+                 &element.when_constraint_set_assignable_to_owned(db, env, formal),
+             );
+-            element_when
+-                .iff(db, self.constraints, mapping_when)
+-                .is_always_satisfied(db, env, self.inferable)
++            element_when.is_equivalent_to(db, env, mapping_when, self.inferable)
+                 && element_when
+                     .solutions(db, env, self.inferable)
+                     .is_ok_and(|solutions| solutions == mapping_solutions)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30066** (2026-11-05): [ty] Skip active Conda and Pixi environments during discovery if the environment doesn't contain Python (@AlexWaygood)
-- **PR #30065** (closed): Compare field bundles with individual flat AST getters (@MichaReiser)
-- **PR #30063** (2026-11-05): Add an update-only mode to the PR report publisher (@AlexWaygood)
-- **PR #30062** (2026-11-05): Show more nonprinting characters in diagnostic fix diffs (@MichaReiser)
-- **PR #30061** (2026-11-05): Add project walltime benchmarks for Ruff (@MichaReiser)
-- **PR #30060** (2026-11-05): Fix transparent context menus in the Ruff and ty playgrounds (@MichaReiser)
+- **PR #30169** (2026-11-07): [ty] Defer formatting details for suppressed diagnostics (@charliermarsh)
+- **PR #30165** (2026-11-07): [ty] Collect namespace members once per metaclass (@charliermarsh)
+- **PR #30147** (2026-11-07): [ty] Stop after the first incompatible target overload (@charliermarsh)
+- **PR #30136** (2026-11-06): [ty] Pick up the schema_salad ecosystem setup fix (@sharkdp)
+- **PR #30135** (2026-11-06): Share resolved call names with pytest lint rules (@MichaReiser)
+- **PR #30133** (2026-11-06): Recognize typing calls by their resolved member name (@MichaReiser)
 
 ---
 
@@ -2971,48 +2552,28 @@ which are also fixed by this PR.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. panic on BOM-prefixed files in diagnostic renderer (#30017)
+## X. [ty] Pick up the schema_salad ecosystem setup fix (#30136)
 
 **RULE**:
-When implementing operations in `crates/ruff/tests/cli/format.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/setup_primer_project.py.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `818a6083`: panic on BOM-prefixed files in diagnostic renderer (#30017). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fca4b6eb`: [ty] Pick up the schema_salad ecosystem setup fix (#30136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff/tests/cli/format.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/setup_primer_project.py.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn check_bom_only_file() -> Result<()> {
-    let test = CliTest::with_file("example.py", "\u{feff}")?;
-    // The deletion line contains the literal BOM.
-    assert_cmd_snapshot!(test.format_command().args(["--check", "example.py"]), @"
-    success: false
-    exit_code: 1
-    ----- stdout -----
-    unformatted: File would be reformatted
-     --> example.py:1:1
-      |
-      - ﻿
-      |
-
-    1 file would be reformatted
-
-    ----- stderr -----
-    ");
-    Ok(())
-}
-
+source = { git = "https://github.com/hauntsaninja/mypy_primer#4bec1e883f8f9900d8ccfd682a0b2ed7f34b7acd" }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+source = { git = "https://github.com/hauntsaninja/mypy_primer#e1f6fe93da5de0cbaf0ab00341d05968a0331fae" }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `818a6083` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fca4b6eb` are properly handled with clean fallback behavior.

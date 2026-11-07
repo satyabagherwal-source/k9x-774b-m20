@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `34019fa3`  
+> **Source Version**: `7e7611f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:53:18.900Z  
+> **Timestamp**: 2026-11-07T21:03:28.258Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:53:18.896Z  
+> **Harvest Timestamp**: 2026-11-07T21:03:27.844Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16842 stars
+- **Stars / Engagement**: 16845 stars
 
 ---
 
@@ -1956,52 +1956,289 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34019fa3` (2026-11-04)
-**Commit Message**: Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
+### Incident Patch 1: `7e7611f8` (2026-11-06)
+**Commit Message**: Reject --system-metadata and drop the system backup range machinery it fed (#14392)
 
-**File**: `fdbserver/worker/worker.cpp` (modified, +1/-6)
+getSystemBackupRanges() returns an empty list. It was populated once, for
+tenants and for blob granules, and both features have since been deleted
+(#12583, #12435), so every range it ever carried is gone. --system-metadata
+appends that list to backupKeys and nothing else, so the flag can only produce
+an empty range list and trip ASSERT(!ranges.empty()) in runRestore. Reject it
+with the reason, pointing at --user-data or explicit -k ranges. Populating the
+list instead would mean newly deciding which system ranges belong in a backup,
+which no requirement asks for.
+
+An empty range list also made several things no-ops:
+
+- systemBackupMutationMask() built a map from those ranges, so it was a single
+  all-false range. Both of its callers, shouldBackup() on the commit proxy and
+  isCandidateBackupMessage() in the backup worker, therefore already reduced to
+  the normalKeys-or-metadataVersionKey test. Delete the mask and write that
+  test directly. This also removes a KeyRangeMap lookup from a per-mutation
+  path.
+- addDefaultBackupRanges() iterated the empty list after adding normalKeys.
+- isDefaultBackup
+
+**File**: `fdbbackup/backup.cpp` (modified, +6/-3)
 ```diff
-@@ -1090,12 +1090,7 @@ UpdateWorkerHealthRequest doPeerHealthCheck(const WorkerInterface& interf,
- 		// If peer->lastLoggedTime == 0, we just started monitor this peer and haven't logged it once yet.
- 		double lastLoggedTime = peer->lastLoggedTime <= 0.0 ? peer->lastConnectTime : peer->lastLoggedTime;
+@@ -4197,9 +4197,12 @@ int main(int argc, char* argv[]) {
+ 		if (restoreUserKeys) {
+ 			backupKeys.push_back_deep(backupKeys.arena(), normalKeys);
+ 		} else if (restoreSystemKeys) {
+-			for (const auto& r : getSystemBackupRanges()) {
+-				backupKeys.push_back_deep(backupKeys.arena(), r);
+-			}
++			// The ranges this selected belonged to tenants and blob granules, both since removed (#12583,
++			// #12435), so it can only produce an empty range list and trip the assert in runRestore.
++			fprintf(stderr,
++			        "ERROR: --system-metadata selects no key ranges in this version: the tenant and blob granule "
++			        "system ranges it covered have been removed. Use --user-data, or name ranges with -k.\n");
++			return FDB_EXIT_ERROR;
+ 		}
  
--		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
--		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
--		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
--		// does not help: suppression is applied when the event is logged, not when it is built.
--		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
--		if (peerHealthEvent.isEnabled()) {
-+		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
- 			peerHealthEvent.suppressFor(5.0)
- 			    .detail("Peer", address)
- 			    .detail("PeerAddress", address)
+ 		switch (programExe) {
+```
+
+**File**: `fdbclient/BackupAgentBase.cpp` (modified, +0/-15)
+```diff
+@@ -1309,28 +1309,13 @@ std::string const BackupAgentBase::defaultTagName = "default";
+ 
+ void addDefaultBackupRanges(Standalone<VectorRef<KeyRangeRef>>& backupKeys) {
+ 	backupKeys.push_back_deep(backupKeys.arena(), normalKeys);
+-
+-	for (auto& r : getSystemBackupRanges()) {
+-		backupKeys.push_back_deep(backupKeys.arena(), r);
+-	}
+ }
+ 
+ VectorRef<KeyRangeRef> const& getSystemBackupRanges() {
+ 	static Standalone<VectorRef<KeyRangeRef>> systemBackupRanges;
+ 	return systemBackupRanges;
+ }
+ 
+-KeyRangeMap<bool> const& systemBackupMutationMask() {
+-	static KeyRangeMap<bool> mask;
+-	if (mask.size() == 1) {
+-		for (auto r : getSystemBackupRanges()) {
+-			mask.insert(r, true);
+-		}
+-	}
+-
+-	return mask;
+-}
+-
+ KeyRangeRef const& getDefaultBackupSharedRange() {
+ 	static KeyRangeRef defaultSharedRange(""_sr, ""_sr);
+ 	return defaultSharedRange;
+```
+
+**File**: `fdbclient/include/fdbclient/BackupAgent.h` (modified, +1/-20)
+```diff
+@@ -1067,30 +1067,11 @@ void addDefaultBackupRanges(Standalone<VectorRef<KeyRangeRef>>& backupKeys);
+ // Return a vector containing the key ranges in system key-space that should be backed up in a default backup.
+ VectorRef<KeyRangeRef> const& getSystemBackupRanges();
+ 
+-// Return a key-range map that can be used to check whether a system key is a candidate backup key (i.e. whether it is
+-// part of any system backup ranges).
+-KeyRangeMap<bool> const& systemBackupMutationMask();
+-
+ // Returns true if the given set of ranges exactly matches the set of ranges included in a default backup.
+ template <class Container>
+ bool isDefaultBackup(Container ranges) {
+ 	std::unordered_set<KeyRangeRef> uniqueRanges(ranges.begin(), ranges.end());
+-	auto& systemBackupRanges = getSystemBackupRanges();
+-
+-	if (uniqueRanges.size() != systemBackupRanges.size() + 1) {
+-		return false;
+-	}
+-
+-	if (!uniqueRanges.contains(normalKeys)) {
+-		return false;
+-	}
+-	for (auto range : getSystemBackupRanges()) {
+-		if (!uniqueRanges.contains(range)) {
+-			return false;
+-		}
+-	}
+-
+-	return true;
++	return uniqueRanges.size() == 1 && uniqueRanges.contains(normalKeys);
+ }
+ 
+ // Returns a key-range used to denote that a shared mutation stream belongs to the default backup set.
+```
+
+**File**: `fdbserver/backupworker/BackupWorker.cpp` (modified, +2/-14)
+```diff
+@@ -88,20 +88,8 @@ struct VersionedMessage {
+ 		if (!isThisMessageMutation(m))
+ 			return false;
+ 
+-		// Return true if the mutation intersects any legal backup ranges
+-		if (normalKeys.contains(m->param1) || m->param1 == metadataVersionKey) {
+-			return true;
+-		} else if (m->type != MutationRef::Type::ClearRange) {
+-			return systemBackupMutationMask().rangeContaining(m->param1).value();
+-		} else {
+-			for (auto& r : systemBackupMutationMask().intersectingRanges(KeyRangeRef(m->param1, m->param2))) {
+-				if (r->value()) {
+-					return true;
+-				}
+-			}
+-
+-			return false;
+-		}
++		// Only normalKeys and the metadata version key are legal backup ranges.
++		return normalKeys.contains(m->param1) || m->param1 == metadataVersionKey;
+ 	}
+ };
+ 
+```
+
+**File**: `fdbserver/commitproxy/CommitProxyServer.cpp` (modified, +1/-12)
+```diff
+@@ -664,18 +664,7 @@ void CommitBatchContext::checkHotShards() {
+ // Check whether the mutation intersects any legal backup ranges
+ // If so, it will be clamped to the intersecting range(s) later
+ inline bool shouldBackup(MutationRef const& m) {
+-	if (normalKeys.contains(m.param1) || m.param1 == metadataVersionKey) {
+-		return true;
+-	} else if (m.type != MutationRef::Type::ClearRange) {
+-		return systemBackupMutationMask().rangeContaining(m.param1).value();
+-	} else {
+-		for (auto& r : systemBackupMutationMask().intersectingRanges(KeyRangeRef(m.param1, m.param2))) {
+-			if (r->value()) {
+-				return true;
+-			}
+-		}
+-	}
+-	return false;
++	return normalKeys.contains(m.param1) || m.param1 == metadataVersionKey;
+ }
+ 
+ // Find the set of logs the batch is sent to. An empty set indicates it cannot be
+```
+
+**File**: `fdbserver/logsystem/ApplyMetadataMutation.cpp` (modified, +0/-9)
+```diff
+@@ -994,15 +994,6 @@ class ApplyMetadataMutationsImpl {
+ 						break;
+ 					}
+ 				}
+-				auto& systemBackupRanges = getSystemBackupRanges();
+-				for (auto r = systemBackupRanges.begin(); !foundKey && r != systemBackupRanges.end(); ++r) {
+-					for (auto& it : vecBackupKeys->intersectingRanges(*r)) {
+-						if (it.value().contains(logDestination)) {
+-							foundKey = true;
+-							break;
+-						}
+-					}
+-				}
+ 				if (!foundKey) {
+ 					auto logRanges = vecBackupKeys->modify(singleKeyRange(metadataVersionKey));
+ 					for (auto logRange : logRanges) {
 ```
 
 ---
 
-### Incident Patch 2: `76ca8878` (2026-11-04)
-**Commit Message**: AGENTS.md: document apple/ branch naming rule (#14443)
+### Incident Patch 2: `751bb5c7` (2026-11-06)
+**Commit Message**: Emit a JSON error document when a --json command fails (#14168)
 
-**File**: `AGENTS.md` (modified, +2/-0)
+* Emit a JSON error document when a --json command fails
+
+The --json commands wrote nothing to stdout on failure, reporting only plain text
+on stderr, so a consumer could not distinguish a failure from an empty result.
+
+fdbbackup status, fdbbackup describe and fdbrestore status now print
+{"SchemaVersion": ..., "error": ...} to stdout before rethrowing. The "error" key
+is the one fdbbackup query already emits rather than a second spelling for the
+same concept. stderr keeps its human-readable message.
+
+fdbrestore status moves into a statusRestore() wrapper so it handles errors the
+way statusBackup() and describeBackup() already do, instead of mapping over the
+future inline.
+
+Failures that happen before a command runs -- an unreadable cluster file, an
+unknown option -- are still plain text, since --json cannot be known to have been
+requested when argument parsing itself failed.
+
+* Drop explanatory comment above printJsonError
+
+**File**: `fdbbackup/backup.cpp` (modified, +30/-6)
 ```diff
-@@ -151,6 +151,8 @@ When reviewing, state explicitly: what the change is for, whether it is correct,
+@@ -2031,6 +2031,13 @@ Future<Void> statusDBBackup(Database src, Database dest, std::string tagName, in
+ 	}
+ }
  
- PRs target `main`. Release branches receive cherry-picks rather than direct PRs — don't open backport PRs without confirming first.
- 
-+Branches created on apple/foundationdb must start with `apple/` (convention: `apple/<github-username>/<topic>`); a repository ruleset blocks creating any other branch. Branches on personal forks can still be named anything. Stacked PRs (`gh stack`) require their branches to be on apple/foundationdb rather than a fork.
++static void printJsonError(std::string errorMessage) {
++	JsonBuilderObject doc;
++	doc.setKey("SchemaVersion", "1.0.0");
++	doc.setKey("error", errorMessage);
++	printf("%s\n", doc.getJson().c_str());
++}
 +
- ## Design Docs
- 
- Before a design doc is considered finished (not at the start), reconcile it against `design/design-doc-template.md`.
+ Future<Void> statusBackup(Database db, std::string tagName, ShowErrors showErrors, bool json) {
+ 	try {
+ 		FileBackupAgent backupAgent;
+@@ -2041,6 +2048,26 @@ Future<Void> statusBackup(Database db, std::string tagName, ShowErrors showError
+ 	} catch (Error& e) {
+ 		if (e.code() == error_code_actor_cancelled)
+ 			throw;
++		if (json)
++			printJsonError(e.what());
++		fprintf(stderr, "ERROR: %s\n", e.what());
++		throw;
++	}
++}
++
++// Prints `fdbrestore status` for one tag, or for every tag when tag is empty.
++Future<Void> statusRestore(Database db, Key tag, bool json) {
++	try {
++		FileBackupAgent backupAgent;
++
++		std::string statusText =
++		    co_await (json ? backupAgent.restoreStatusJSON(db, tag) : backupAgent.restoreStatus(db, tag));
++		printf("%s\n", statusText.c_str());
++	} catch (Error& e) {
++		if (e.code() == error_code_actor_cancelled)
++			throw;
++		if (json)
++			printJsonError(e.what());
+ 		fprintf(stderr, "ERROR: %s\n", e.what());
+ 		throw;
+ 	}
+@@ -2524,6 +2551,8 @@ Future<Void> describeBackup(const char* name,
+ 	} catch (Error& e) {
+ 		if (e.code() == error_code_actor_cancelled)
+ 			throw;
++		if (json)
++			printJsonError(e.what());
+ 		fprintf(stderr, "ERROR: %s\n", e.what());
+ 		throw;
+ 	}
+@@ -4404,12 +4433,7 @@ int main(int argc, char* argv[]) {
+ 				// If no tag is specifically provided then print all tag status, don't just use "default"
+ 				if (tagProvided)
+ 					tag = tagName;
+-				f = stopAfter(
+-				    map(jsonOutput ? ba.restoreStatusJSON(db, KeyRef(tag)) : ba.restoreStatus(db, KeyRef(tag)),
+-				        [](std::string s) -> Void {
+-					        printf("%s\n", s.c_str());
+-					        return Void();
+-				        }));
++				f = stopAfter(statusRestore(db, tag, jsonOutput));
+ 				break;
+ 			default:
+ 				throw restore_error();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14450** (closed): Reject starting a backup at a location used by another running backup (@shreechaturvedi)
-- **PR #14447** (2026-11-04): Scope PeerHealthMonitor trace event to its guard (@saintstack)
-- **PR #14443** (2026-11-04): AGENTS.md: document apple/ branch naming rule (@shreechaturvedi)
-- **PR #14421** (2026-11-03): [release-8.0] Reject path traversal in backup, S3, bulk load, profiler, and checkpoint paths (#14341, #14347) (@shreechaturvedi)
-- **PR #14418** (2026-11-05): Allow fdbcli to have dedicated audit trace files and directory (@spraza)
-- **PR #14417** (2026-11-04): [release-8.0] Extend MVC test-suite to catch client version mismatched loading (#14383) (@akshay-v-kaushik)
+- **PR #14471** (2026-11-06): Backup per-URL aws_v4_header (v4) blobstore parameter (@neethuhaneesha)
+- **PR #14470** (2026-11-06): Stop reporting a byte total for bulkdump progress (@saintstack)
+- **PR #14466** (2026-11-06): Remove unused getDatabaseConfiguration() reads from backup and restore (@shreechaturvedi)
+- **PR #14459** (2026-11-06): fdb-kubernetes-monitor: check binary present (@johscheuer)
+- **PR #14458** (2026-11-06): Update go version for fdb-kubernetes-monitor to go 1.27.3 and update go.mod to 1.26.0 (@johscheuer)
+- **PR #14457** (2026-11-05): Allow transaction_profiling_analyzer to have a dedicated audit log directory (@spraza)
 
 ---
 
@@ -2021,33 +2258,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
+## X. Reject --system-metadata and drop the system backup range machinery it fed (#143
 
 **RULE**:
-When implementing operations in `fdbserver/worker/worker.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbbackup/backup.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34019fa3`: Scope PeerHealthMonitor event to the if statement and drop comment (#14447). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e7611f8`: Reject --system-metadata and drop the system backup range machinery it fed (#14392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/worker/worker.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbbackup/backup.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
+			// The ranges this selected belonged to tenants and blob granules, both since removed (#12583,
+			// #12435), so it can only produce an empty range list and trip the assert in runRestore.
+			fprintf(stderr,
+			        "ERROR: --system-metadata selects no key ranges in this version: the tenant and blob granule "
+			        "system ranges it covered have been removed. Use --user-data, or name ranges with -k.\n");
+			return FDB_EXIT_ERROR;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
-		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
-		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
-		// does not help: suppression is applied when the event is logged, not when it is built.
-		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
-		if (peerHealthEvent.isEnabled()) {
+			for (const auto& r : getSystemBackupRanges()) {
+				backupKeys.push_back_deep(backupKeys.arena(), r);
+			}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34019fa3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e7611f8` are properly handled with clean fallback behavior.

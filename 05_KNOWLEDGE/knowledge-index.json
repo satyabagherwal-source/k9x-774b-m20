@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:56:10.724Z",
+  "last_updated": "2026-11-07T21:03:29.958Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2757,11 +2757,16 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "34019fa3",
-      "content_hash": "aeca0a90f448b60bc0ba4fd97c866acc171ce3faab122d42082bdd38322b915b",
+      "source_version": "7e7611f8",
+      "content_hash": "3f545a33095de7d8792140cc60da784fcb53589087a73a1f04ca19bb0122e8a0",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Reject --system-metadata and drop the system backup range machinery it fed (#143",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2031,
           "title": "Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor",
@@ -2828,7 +2833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T05:53:19.344Z",
+      "verified_at": "2026-11-07T21:03:29.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3909,14 +3914,19 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "1dd3e9ec",
-      "content_hash": "2e68b4feb6cf2d74bef683db89092b8b9fddb4c9bd194d173a8390cc2f717a67",
+      "source_version": "1091a8b5",
+      "content_hash": "cb879ef6bb7c5f7dbcc4e39088398c9106ccc71f4e6356f6668153000ae46092",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "panic on BOM-prefixed files in diagnostic renderer (#30017)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[ty] Pick up the schema_salad ecosystem setup fix (#30136)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3970,7 +3980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:07:19.285Z",
+      "verified_at": "2026-11-07T21:03:19.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79753,11 +79763,16 @@
       "slug": "parcel-bundler-parcel",
       "platform": "github",
       "source_url": "https://github.com/parcel-bundler/parcel",
-      "source_version": "59484858",
-      "content_hash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
+      "source_version": "20c0f2ed",
+      "content_hash": "e27ea886595f1ab6f4fbbf6ac4ba46af9baade865d182f0a78bf16d6fb7f3225",
       "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Always output MDX render blocks as components",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3001,
           "title": "Two-Tier WeakMap Hierarchy for Composite Context Query Caching",
@@ -79779,7 +79794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:37:02.711Z",
+      "verified_at": "2026-11-07T21:03:20.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8097,3 +8097,6 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `ce71455b` | Multi-dimensional audit evidence | 2026-11-07T20:56:04.881Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `e19c0e02` | Multi-dimensional audit evidence | 2026-11-07T20:56:06.468Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `62d625f3` | Multi-dimensional audit evidence | 2026-11-07T20:56:10.818Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `1091a8b5` | Multi-dimensional audit evidence | 2026-11-07T21:03:19.480Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `20c0f2ed` | Multi-dimensional audit evidence | 2026-11-07T21:03:20.788Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `7e7611f8` | Multi-dimensional audit evidence | 2026-11-07T21:03:30.060Z |

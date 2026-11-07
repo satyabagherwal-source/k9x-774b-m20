@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:56:10.827Z",
+  "last_updated": "2026-11-07T21:03:30.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "aeca0a90f448b60bc0ba4fd97c866acc171ce3faab122d42082bdd38322b915b",
-      "verified_at": "2026-11-05T05:53:19.429Z",
+      "content_hash": "3f545a33095de7d8792140cc60da784fcb53589087a73a1f04ca19bb0122e8a0",
+      "verified_at": "2026-11-07T21:03:30.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:53:19.429Z"
+      "last_updated": "2026-11-07T21:03:30.070Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "2e68b4feb6cf2d74bef683db89092b8b9fddb4c9bd194d173a8390cc2f717a67",
-      "verified_at": "2026-11-05T17:07:19.424Z",
+      "content_hash": "cb879ef6bb7c5f7dbcc4e39088398c9106ccc71f4e6356f6668153000ae46092",
+      "verified_at": "2026-11-07T21:03:19.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:07:19.424Z"
+      "last_updated": "2026-11-07T21:03:19.489Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -15111,14 +15111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-parcel-bundler-parcel",
-      "content_hash": "a5c95162b132f6f4730a3fe0267fcfc31eb51af3b01fe863a8a9bd15d9d187f0",
-      "verified_at": "2026-10-20T02:37:02.833Z",
+      "content_hash": "e27ea886595f1ab6f4fbbf6ac4ba46af9baade865d182f0a78bf16d6fb7f3225",
+      "verified_at": "2026-11-07T21:03:20.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:37:02.833Z"
+      "last_updated": "2026-11-07T21:03:20.798Z"
     },
     "TanStack/query": {
       "repository": "TanStack/query",

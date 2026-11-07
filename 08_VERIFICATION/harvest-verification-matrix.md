@@ -8088,3 +8088,6 @@
 | `CYCLE-20261107-V6KT` | `2026-11-07T20:56:04.877Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5fd47904...`) |
 | `CYCLE-20261107-V7SX` | `2026-11-07T20:56:06.465Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ead5c939...`) |
 | `CYCLE-20261107-VB5K` | `2026-11-07T20:56:10.808Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`132845ab...`) |
+| `CYCLE-20261107-4HX0` | `2026-11-07T21:03:19.476Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb879ef6...`) |
+| `CYCLE-20261107-4IXD` | `2026-11-07T21:03:20.785Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e27ea886...`) |
+| `CYCLE-20261107-4Q2P` | `2026-11-07T21:03:30.049Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3f545a33...`) |
