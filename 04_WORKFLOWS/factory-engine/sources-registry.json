@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T02:32:04.423Z",
-    "lastVerified": "2026-11-07T02:32:04.423Z",
+    "lastChecked": "2026-11-07T02:41:17.860Z",
+    "lastVerified": "2026-11-07T02:41:17.860Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -356,9 +356,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T02:01:30.162Z",
+    "lastChecked": "2026-11-07T02:41:17.850Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T02:01:30.162Z"
+    "lastVerified": "2026-11-07T02:41:17.850Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1854,8 +1854,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:30:42.996Z",
-    "lastVerified": "2026-11-06T20:30:42.996Z",
+    "lastChecked": "2026-11-07T02:41:12.936Z",
+    "lastVerified": "2026-11-07T02:41:12.936Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2713,9 +2713,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-05T14:13:40.679Z",
+    "lastChecked": "2026-11-07T02:41:15.332Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-11-05T14:13:40.679Z"
+    "lastVerified": "2026-11-07T02:41:15.332Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -4144,9 +4144,9 @@
   "react-native-image-picker-react-native-image-picker": {
     "name": "react-native-image-picker",
     "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
-    "lastChecked": "2026-11-04T09:17:54.118Z",
+    "lastChecked": "2026-11-07T02:41:07.859Z",
     "revisionIdentifier": "61c0cd41",
-    "lastVerified": "2026-11-04T09:17:54.118Z"
+    "lastVerified": "2026-11-07T02:41:07.859Z"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -5915,14 +5915,14 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T10:15:58.764Z",
-    "lastVerified": "2026-11-05T10:15:58.764Z",
+    "lastChecked": "2026-11-07T02:41:07.011Z",
+    "lastVerified": "2026-11-07T02:41:07.011Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
+    "contentHash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 13,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6021,9 +6021,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-05T15:13:05.725Z",
+    "lastChecked": "2026-11-07T02:41:10.488Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-05T15:13:05.725Z"
+    "lastVerified": "2026-11-07T02:41:10.488Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -10843,14 +10843,14 @@
     "officialUrl": "https://github.com/webrecorder/pywb",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T21:00:06.676Z",
-    "lastVerified": "2026-11-03T21:00:06.676Z",
+    "lastChecked": "2026-11-07T02:41:09.075Z",
+    "lastVerified": "2026-11-07T02:41:09.075Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webrecorder-pywb",
-    "contentHash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
+    "contentHash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

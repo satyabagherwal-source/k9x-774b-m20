@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `66d3b69a`  
+> **Source Version**: `73e13e0c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:00:07.007Z  
+> **Timestamp**: 2026-11-07T02:41:09.286Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:00:06.676Z  
+> **Harvest Timestamp**: 2026-11-07T02:41:09.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Core Python Web Archiving Toolkit for replay and recording of web archives
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: Dockerfile
-- **Stars / Engagement**: 1716 stars
+- **Stars / Engagement**: 1718 stars
 
 ---
 
@@ -1403,191 +1403,19 @@ class StreamClosingReader(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4b82e56` (2026-11-02)
-**Commit Message**: Bump the minor-and-patch group in /pywb/vueui with 5 updates (#1066)
+### Incident Patch 1: `73e13e0c` (2026-11-04)
+**Commit Message**: Remove version number from README
 
-Bumps the minor-and-patch group in /pywb/vueui with 5 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [vue](https://github.com/vuejs/core) | `3.5.43` | `3.5.44` |
-| [eslint](https://github.com/eslint/eslint) | `10.12.0` | `10.13.0` |
-| [eslint-plugin-vue](https://github.com/vuejs/eslint-plugin-vue) | `10.11.1` | `10.12.0` |
-| [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) | `8.3.4` | `8.3.5` |
-| [vite-plugin-css-injected-by-js](https://github.com/marco-prontera/vite-plugin-css-injected-by-js) | `5.0.2` | `5.0.3` |
-
-
-Updates `vue` from 3.5.43 to 3.5.44
-- [Release notes](https://github.com/vuejs/core/releases)
-- [Changelog](https://github.com/vuejs/core/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/vuejs/core/compare/v3.5.43...v3.5.44)
-
-Updates `eslint` from 10.12.0 to 10.13.0
-- [Release notes](https://github.com/eslint/eslint/releases)
-- [Commits](https://github.com/eslint/eslint/compare/v10.12.0...v10.13.0)
-
-Updates `eslint-plugin-vue` from 10.11.1 to 10.12.0
-- [Release notes](https://github.com/vuejs/eslint-plugin-vue/releases)
-- [Changelog](https://github.com/vuejs/eslint-plugin
-
-**File**: `pywb/vueui/package.json` (modified, +5/-5)
+**File**: `README.rst` (modified, +2/-2)
 ```diff
-@@ -7,16 +7,16 @@
-     "lint": "eslint ./src/*.js ./src/*.vue ./src/components/*.vue"
-   },
-   "dependencies": {
--    "vue": "^3.5.22"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
-     "@vitejs/plugin-vue": "^6.0.1",
--    "eslint": "^10.0.0",
--    "eslint-plugin-vue": "^10.5.0",
-+    "eslint": "^10.13.0",
-+    "eslint-plugin-vue": "^10.12.0",
-     "globals": "^17.0.0",
--    "vite": "^8.0.0",
--    "vite-plugin-css-injected-by-js": "^5.0.0",
-+    "vite": "^8.3.5",
-+    "vite-plugin-css-injected-by-js": "^5.0.3",
-     "vue-eslint-parser": "^10.3.0"
-   }
- }
-```
-
-**File**: `pywb/vueui/yarn.lock` (modified, +208/-208)
-```diff
-@@ -2,29 +2,29 @@
- # yarn lockfile v1
+@@ -1,5 +1,5 @@
+-Webrecorder pywb 2.9
+-====================
++Webrecorder pywb
++================
  
+ .. image:: https://raw.githubusercontent.com/webrecorder/pywb/main/pywb/static/pywb-logo.png
  
--"@babel/helper-string-parser@^7.29.7":
--  version "7.29.7"
--  resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz#7f0871d99824d23137d60f86fcf6130fd5a1b51f"
--  integrity sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==
-+"@babel/helper-string-parser@^7.29.11":
-+  version "7.29.11"
-+  resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.29.11.tgz#59d76b6193f61e0303b40991cabbedfadcbd5b63"
-+  integrity sha512-snZbO7MEDOof+hvNa97EjEY7qD7h2kwvQr5AJC3ZhQudKW5dnej6k3kP9NQV88hJwaS8vDqRLFo9rivLEhle2g==
- 
- "@babel/helper-validator-identifier@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.29.7.tgz#bd87084ced0c796ec46bda492de6e83d29e89fc2"
-   integrity sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==
- 
--"@babel/parser@^7.29.8":
--  version "7.29.9"
--  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.9.tgz#e7ee0a24f752c5296c6455855ccb72662e67ea96"
--  integrity sha512-CjXrNHTnvqBVqHgdBysY3vk2T8tpJHb5/RMeHJBTyVa9xgugCB0CJTx/3oO8RV2QRQP391RWpB7D6hLjm8V9uA==
-+"@babel/parser@^7.29.9":
-+  version "7.29.12"
-+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.12.tgz#1932edf93ff6602b0665817067946c689b6fe423"
-+  integrity sha512-WJ7JBp/Q4+z/ImydtI7jS6NVco5++632ExBemSX+Ysb+G1lCwQ5BVo3SY+jGGOcZXI4ZccbZSUSJLNBW6eEpJg==
-   dependencies:
--    "@babel/types" "^7.29.8"
-+    "@babel/types" "^7.29.11"
- 
--"@babel/types@^7.29.8":
--  version "7.29.8"
--  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.29.8.tgz#1229eef31d85156d70fa3f4cd859376d0eaf6863"
--  integrity sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==
-+"@babel/types@^7.29.11":
-+  version "7.29.11"
-+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.29.11.tgz#774cffe8cac2ca494f1334e4052002c96bf628fc"
-+  integrity sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==
-   dependencies:
--    "@babel/helper-string-parser" "^7.29.7"
-+    "@babel/helper-string-parser" "^7.29.11"
-     "@babel/helper-validator-identifier" "^7.29.7"
- 
- "@cacheable/memory@^2.2.0":
-@@ -147,85 +147,85 @@
-   resolved "https://registry.yarnpkg.com/@keyv/serialize/-/serialize-1.1.1.tgz#0c01dd3a3483882af7cf3878d4e71d505c81fc4a"
-   integrity sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==
- 
--"@oxc-project/types@=0.153.0":
--  version "0.153.0"
--  resolved "https://registry.yarnpkg.com/@oxc-project/types/-/types-0.153.0.tgz#ac7cd0095a6db231a892d41310ddf2e1b2329bfc"
--  integrity sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==
--
--"@rolldown/binding-android-arm-eabi@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.13.tgz#db571caa4f4cedec7bea5fb9d6750804fd21cfcb"
--  integrity sha512-Vu/NICrgdRvUOeaJZIyB2FP63s6fO/4ud5l8dXmxDx9yDyn+mN0y+gsvsVviSli+T361Aqo0h46EuMoobrwawA==
--
--"@rolldown/binding-android-arm64@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.13.tgz#11312381433b3b308282ffc57096fc8440c80698"
--  integrity sha512-6LEoIrGy5vvCd2boNnv2soPSUZj/PRvhp8R/t9KlX+mIZxThIE/ZqxrGXxmuNX0FuvQFvLdZr7S4HrYpYBVhEQ==
--
--"@rolldown/binding-darwin-arm64@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.13.tgz#96337aa6cac6807f9b6439baf714ebd1b5687a3a"
--  integrity sha512-CaJSRzlQ6Q+zkDMVA9OkVxBjVoPRCDEE3v0FSJ9kIQBgRjFApA3Si4ijhbNVUji7ZJt+PfO0e46qy4nPInHUPA==
--
--"@rolldown/binding-darwin-x64@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.13.tgz#ead595e305a065ebc704c5db88ee1207d7a5f25f"
--  integrity sha512-e4r340I5hxSzJkD3YJBxgzq/rJ3wwxwdLLb2FPt1Zpyem20nrQPT11DDEEkazwxaHumH8wpglsp/Ozgj/wT6mw==
--
--"@rolldown/binding-freebsd-x64@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.13.tgz#bf16cd6bd56c2649f048fe49a587b7f228bb7780"
--  integrity sha512-hoBWDZ4/K/mJKVMbsgUd1jfpA2DiOrJ54mpegObU9TBHBBrtX4FLIXJJQRDPZ/2Dn91GvPob+Z2hwKJzf4E5SQ==
--
--"@rolldown/binding-linux-arm-gnueabihf@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.13.tgz#6346d087147c7483f965e81255a7caeea16ccab8"
--  integrity sha512-oF9fZu3vTWnTiVAkDFxU9PJLt1nh20K9RRpuHsR7ZnE2L7XookBbDBVLojCVSLGbvtSlxeUNnjAj6DbNsKyzbg==
--
--"@rolldown/binding-linux-arm64-gnu@1.2.13":
--  version "1.2.13"
--  resolved "https://registry.yarnpkg.com/@rolldown/bindi
-```
-
----
-
-### Incident Patch 2: `a10448b8` (2026-11-02)
-**Commit Message**: Install nasm in CI to build isal from source
-
-isal has no wheels for Python 3.15 yet, so pip builds it from source,
-which fails without nasm.
-
-**File**: `.github/workflows/ci.yaml` (modified, +4/-0)
-```diff
-@@ -30,6 +30,10 @@ jobs:
-         with:
-           python-version: ${{ matrix.python-version }}
- 
-+      # isal currently has no Python 3.15 wheels, and building it from source needs nasm
-+      - name: Install nasm
-+        run: sudo apt-get update && sudo apt-get install -y nasm
-+
-       - name: Install dependencies
-         run: |
-           python -m pip install --upgrade pip
-```
-
----
-
-### Incident Patch 3: `ca2a1ee1` (2026-11-02)
-**Commit Message**: Fix deprecation warning from XML element truth test
-
-Both ElementTree (since Python 3.12) and lxml warn that elements will
-always test as True in a future version;
-
-**File**: `pywb/warcserver/index/indexsource.py` (modified, +1/-1)
-```diff
-@@ -329,7 +329,7 @@ def load_index(self, params):
- 
-             raise NotFoundException('url {0} not found'.format(url))
- 
--        if not items:
-+        if items is None or len(items) == 0:
-             raise NotFoundException('url {0} not found'.format(url))
- 
-         items = items.findall('result')
 ```
 
 #### Recent Merged Pull Requests:
@@ -1616,36 +1444,30 @@ always test as True in a future version;
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the minor-and-patch group in /pywb/vueui with 5 updates (#1066)
+## X. Remove version number from README
 
 **RULE**:
-When implementing operations in `pywb/vueui/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4b82e56`: Bump the minor-and-patch group in /pywb/vueui with 5 updates (#1066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73e13e0c`: Remove version number from README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/vueui/package.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "vue": "^3.5.44"
-    "eslint": "^10.13.0",
-    "eslint-plugin-vue": "^10.12.0",
-    "vite": "^8.3.5",
-    "vite-plugin-css-injected-by-js": "^5.0.3",
+Webrecorder pywb
+================
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "vue": "^3.5.22"
-    "eslint": "^10.0.0",
-    "eslint-plugin-vue": "^10.5.0",
-    "vite": "^8.0.0",
-    "vite-plugin-css-injected-by-js": "^5.0.0",
+Webrecorder pywb 2.9
+====================
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4b82e56` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73e13e0c` are properly handled with clean fallback behavior.

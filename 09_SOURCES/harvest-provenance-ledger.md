@@ -7974,3 +7974,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fe15ee33` | Multi-dimensional audit evidence | 2026-11-07T02:24:36.962Z |
 | `learn-github-scrapy-plugins-scrapy-zyte-api` | `https://github.com/scrapy-plugins/scrapy-zyte-api` | `8fcb6177` | Multi-dimensional audit evidence | 2026-11-07T02:24:41.065Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `8bf09329` | Multi-dimensional audit evidence | 2026-11-07T02:31:59.228Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `8e447440` | Multi-dimensional audit evidence | 2026-11-07T02:41:09.918Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `73e13e0c` | Multi-dimensional audit evidence | 2026-11-07T02:41:10.643Z |

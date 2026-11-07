@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T02:31:59.133Z",
+  "last_updated": "2026-11-07T02:41:10.551Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63445,11 +63445,16 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "9cc902be",
-      "content_hash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
+      "source_version": "8e447440",
+      "content_hash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "cancelled coroutines completing normally during suspended unwinds",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 4799,
           "title": "may_queue: keep block allocation and queue teardown off the calling stack",
@@ -63471,7 +63476,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T10:15:59.867Z",
+      "verified_at": "2026-11-07T02:41:09.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77228,11 +77233,16 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "66d3b69a",
-      "content_hash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
+      "source_version": "73e13e0c",
+      "content_hash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Remove version number from README",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2845,
           "title": "test_timeouts failing after slow tests (#1051)",
@@ -77269,7 +77279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:00:07.668Z",
+      "verified_at": "2026-11-07T02:41:10.525Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

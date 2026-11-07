@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "9cc902be",
+    "sourceVersion": "8e447440",
     "license": "Apache-2.0",
-    "contentHash": "d531bc4b2da3104fdc93887c07bc08ca3a93078c62d393a9517979a215d2f007",
-    "lastHarvestedAt": "2026-11-05T10:15:59.965Z",
+    "contentHash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
+    "lastHarvestedAt": "2026-11-07T02:41:09.918Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "66d3b69a",
+    "sourceVersion": "73e13e0c",
     "license": "GPL-3.0",
-    "contentHash": "967ae70b32e26c22d7d1ab4537bd374e299ae7114a4589616d2a18ac1bd85943",
-    "lastHarvestedAt": "2026-11-03T21:00:07.776Z",
+    "contentHash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
+    "lastHarvestedAt": "2026-11-07T02:41:10.643Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {

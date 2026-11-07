@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-TFQV",
-    "timestamp": "2026-11-05T02:11:38.359Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "a0463eb6ae2be5f7994f6b5743146c18653dc69b1cdbb71b95d5381fb15f1ab0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-1P86",
-    "timestamp": "2026-11-05T02:18:03.894Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "bff7e519ea31431ee5c64137cfc4f6cde739029213a649e4fa77af03ccc5410b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-1R1Z",
     "timestamp": "2026-11-05T02:18:06.263Z",
     "repository": "fallow-rs/fallow",
@@ -7490,6 +7460,36 @@
     "repository": "ntex-rs/ntex",
     "learningId": "learn-github-ntex-rs-ntex",
     "contentHash": "8f07f9c0e4d4804922fadf2b444709acf2525152f37f1fc39fa60ac276d21472",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-R40Q",
+    "timestamp": "2026-11-07T02:41:09.914Z",
+    "repository": "Xudong-Huang/may",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "3ef2bcde83ce3b9d38c673b7d2f3382c272df2cdef53a0d58df5f2db76bcbb79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-R4KV",
+    "timestamp": "2026-11-07T02:41:10.639Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "cbf73159fdac90cd90bbe4bcc12f1d6f0b4110fd261c9c5e73c5d8192c5880dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

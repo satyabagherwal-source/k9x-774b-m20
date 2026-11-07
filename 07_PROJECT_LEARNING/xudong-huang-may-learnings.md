@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `9cc902be`  
+> **Source Version**: `8e447440`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:15:59.292Z  
+> **Timestamp**: 2026-11-07T02:41:08.637Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:15:58.764Z  
+> **Harvest Timestamp**: 2026-11-07T02:41:07.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1911,7 +1911,7 @@ impl Selector {
     /// terminate the select coroutine
     /// this would remove the selector from the associated cqueue
     pub fn remove(self) {
-        unsafe { self.co.cancel() };
+        self.co.cancel();
     }
 }
 
@@ -2119,7 +2119,7 @@ impl Drop for Cqueue {
             .iter()
             .map(|j| j.as_ref())
             .fold((), |_, join| match join {
-                Some(j) if !j.is_done() => unsafe { j.coroutine().cancel() },
+                Some(j) if !j.is_done() => j.coroutine().cancel(),
                 _ => {}
             });
 
@@ -2184,286 +2184,410 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d5efcb1` (2026-11-05)
-**Commit Message**: :bug: fix CoIo - deregister fd from selector before closing it
+### Incident Patch 1: `64877358` (2026-11-06)
+**Commit Message**: Fix cancelled coroutines completing normally during suspended unwinds
 
-CoIo dropped its inner socket before IoData, so the fd was closed before
-IoData::drop ran epoll_ctl(EPOLL_CTL_DEL); the DEL failed with EBADF. If
-another thread reused the fd number in that window, the stale DEL
-removed the new socket's epoll registration instead. A coroutine blocked
-on that socket then never received an io event again, hanging forever --
-seen intermittently as os::unix::net tests stuck in JoinHandle::join
-while every worker idled in epoll_wait.
+A coroutine's Cancel-panic unwind can be suspended when a Drop parks
+mid-unwind (e.g. RwLockReadGuard::drop acquiring the reader-count
+mutex). While suspended, thread::panicking() stays true for the whole
+worker thread while other coroutines keep running on it, which caused:
 
-Reorder CoIo's fields so IoData is dropped first, while the fd is still
-open, and add a regression test that reuses a registered fd via dup2 and
-verifies its new epoll registration survives the old CoIo's drop.
+- check_cancel to silently swallow other coroutines' cancels, letting
+  them run their post-cancel code and complete with join() == Ok
+- poison::done to spuriously poison locks whose guards were dropped by
+  other coroutines during the window
+
+Fixes:
+
+- track Cancel-panic unwinds in flight with a thread-local flag set by
+  trigger_cancel_panic and cleared when the unwind completes at the
+  generator boundary (only when thread::panicking() has reset, so a
+  normal completion during someone else's suspended unwind keeps it)
+- poison::done skips poisoning while the flag is set: a suspended
+  cancel unwind is not a real panic
+- RwLockReadGuard::drop avoids parking during unwinds entirely: acquire
+  the reader-count mutex with a bounded try_lock spin when
+  thread::panicking(), so may's own drops never suspend an unwind and
+  the window cannot o
+
+**File**: `src/cancel.rs` (modified, +37/-0)
+```diff
+@@ -1,3 +1,4 @@
++use std::cell::Cell;
+ use std::io;
+ use std::sync::atomic::{AtomicUsize, Ordering};
+ use std::sync::Arc;
+@@ -12,6 +13,39 @@ use crate::sync::AtomicOption;
+ use crate::yield_now::{get_co_para, set_co_para};
+ use generator::Error;
+ 
++// a cancel panic is in flight on this thread: a coroutine's unwind from a
++// Cancel panic can be suspended (a Drop that parks), during which
++// `thread::panicking()` stays true for the whole thread while other
++// coroutines keep running on it. The flag distinguishes that window from a
++// real (non-cancel) panic so that:
++// - `poison::done` does not spuriously poison locks whose guards are
++//   dropped by other coroutines during the window
++// - the unwinding coroutine's own drops never re-trigger the cancel panic
++thread_local! {
++    static CANCEL_PANICKING: Cell<bool> = const { Cell::new(false) };
++}
++
++/// true if a Cancel-panic unwind is currently in flight on this thread
++#[inline]
++pub(crate) fn cancel_panic_in_flight() -> bool {
++    CANCEL_PANICKING.with(|f| f.get())
++}
++
++/// mark that a Cancel-panic unwind started on this thread
++/// called by `trigger_cancel_panic`, cleared when the coroutine completes
++/// in `run_coroutine`
++#[inline]
++fn set_cancel_panic_flag() {
++    CANCEL_PANICKING.with(|f| f.set(true));
++}
++
++/// clear the Cancel-panic flag once the unwind has completed
++/// idempotent, called from `run_coroutine` on every coroutine completion
++#[inline]
++pub(crate) fn clear_cancel_panic_flag() {
++    CANCEL_PANICKING.with(|f| f.set(false));
++}
++
+ // the cancel is implemented by triggering a Cancel panic
+ // if drop is called due to a Cancel panic, it's not safe
+ // to call Any coroutine API in the drop any more because
+@@ -23,6 +57,9 @@ pub fn trigger_cancel_panic() -> ! {
+     // if thread::panicking() {
+     //     eprintln!("trigger another panic while panicking");
+     // }
++    if crate::coroutine_impl::is_coroutine() {
++        set_cancel_panic_flag();
++    }
+ 
+     // should we clear the cancel flag to let other API continue?
+     // so that we can avoid the re-panic problem?
+```
+
+**File**: `src/coroutine_impl.rs` (modified, +22/-1)
+```diff
+@@ -279,8 +279,21 @@ impl Builder {
+             // to unwind these local data. for the panic err we would set it in the
+             // coroutine local data so that can return from the packet variable
+ 
++            let result = f();
++
++            // if the coroutine was canceled but the cancel panic never fired
++            // (the cancel was delivered while another unwind was suspended on
++            // this thread, or landed just before completion), report the
++            // cancellation from `join` instead of silently returning `Ok`
++            if crate::coroutine_impl::is_coroutine()
++                && crate::coroutine_impl::current_cancel_data().is_canceled()
++            {
++                their_join.trigger();
++                return subscriber;
++            }
++
+             // set the return packet
+-            their_packet.store(f());
++            their_packet.store(result);
+ 
+             their_join.trigger();
+             subscriber
+@@ -530,6 +543,14 @@ pub(crate) fn run_coroutine(mut co: CoroutineImpl) {
+             }
+             // trigger the join here
+             join.trigger();
++            // if this coroutine was unwinding from a Cancel panic, the
++            // unwind has now completed at the generator boundary and the
++            // thread's panic count has been reset; only then may the flag
++            // be cleared. A normal completion while another coroutine's
++            // unwind is still suspended must keep the flag set.
++            if !std::thread::panicking() {
++                crate::cancel::clear_cancel_panic_flag();
++            }
+             Done::drop_coroutine(co);
+         }
+     }
+```
+
+**File**: `src/sync/poison.rs` (modified, +9/-1)
+```diff
+@@ -30,7 +30,15 @@ impl Flag {
+ 
+     #[inline]
+     pub fn done(&self, guard: &Guard) {
+-        if !guard.panicking && thread::panicking() {
++        // `thread::panicking()` is true while any unwind is in flight on this
++        // thread — including a *suspended* coroutine Cancel-panic unwind,
++        // during which other coroutines keep running on the thread. In that
++        // window their guards must not poison: the "panic" is not theirs and
++        // not a real panic at all.
++        if !guard.panicking
++            && thread::panicking()
++            && !crate::cancel::cancel_panic_in_flight()
++        {
+             let is_canceled = if crate::coroutine_impl::is_coroutine() {
+                 let cancel = crate::coroutine_impl::current_cancel_data();
+                 cancel.is_canceled()
+```
+
+**File**: `src/sync/rwlock.rs` (modified, +48/-8)
+```diff
+@@ -6,6 +6,7 @@ use std::ops::{Deref, DerefMut};
+ use std::panic::{RefUnwindSafe, UnwindSafe};
+ use std::sync::atomic::{AtomicUsize, Ordering};
+ use std::sync::Arc;
++use std::thread;
+ use std::sync::{LockResult, OnceLock, PoisonError, TryLockError, TryLockResult};
+ 
+ use crate::cancel::trigger_cancel_panic;
+@@ -14,7 +15,7 @@ use crate::park::ParkError;
+ use crossbeam::queue::SegQueue;
+ 
+ use super::blocking::SyncBlocker;
+-use super::mutex::{self, Mutex};
++use super::mutex::{self, Mutex, MutexGuard};
+ use super::poison;
+ 
+ /// A reader-writer lock.
+@@ -238,12 +239,18 @@ impl<T: ?Sized> RwLock<T> {
+ 
+     fn read_unlock(&self) {
+         // this runs from `RwLockReadGuard::drop`, which may execute while a
+-        // cancel panic is unwinding the coroutine. If the rlock acquisition
+-        // has to park while the cancel bit is set, the park's subscribe
+-        // re-delivers the cancel, the mutex would trigger a second cancel
+-        // panic and abort the process with a panic-while-panicking. Disable
+-        // the cancel around the acquisition so the drop always completes;
+-        // the pending cancel resumes once the unwind finishes.
++        // cancel panic is unwinding the coroutine. Two hazards to avoid:
++        // - parking here would suspend the unwind mid-flight, leaving
++        //   `thread::panicking()` set for the whole worker thread while
++        //   other coroutines run on it; their cancels would then be
++        //   silently swallowed by `check_cancel`'s panicking guard and
++        //   their guards spuriously poisoned
++        // - if a park had to happen while the cancel bit is set, the
++        //   park's subscribe would re-deliver the cancel and abort the
++        //   process with a panic-while-panicking
++        // so acquire the reader-count mutex without parking (see
++        // `try_lock_rlock`), and keep the cancel disabled as a
++        // belt-and-braces for the fallback path
+         let cancel = if is_coroutine() {
+             Some(current_cancel_data())
+         } else {
+@@ -252,7 +259,15 @@ impl<T: ?Sized> RwLock<T> {
+         if let Some(c) = cancel.as_ref() {
+             c.disable_cancel();
+         }
+-        let mut r = self.rlock.lock().expect("rwlock read_unlock");
++        let mut r = if thread::panicking() {
++            // we are inside an unwind (our own cancel panic, or another
++            // coroutine's suspended one): avoid parking so the unwind is
++            // not suspended mid-flight (see the comment above)
++            self.try_lock_rlock()
++        } else {
++            // normal drop: the blocking lock is cheap and safe here
++            self.rlock.lock().expect("rwlock read_unlock")
++        };
+         if let Some(c) = cancel.as_ref() {
+             c.enable_cancel();
+         }
+@@ -262,6 +277,31 @@ impl<T: ?Sized> RwLock<T> {
+         }
+     }
+ 
++    /// Acquire the internal reader-count mutex without parking if possible.
++    ///
++    /// The mutex is only ever held for a few instructions: the read()/read_
++    /// unlock() critical sections never park while holding it (a reader can
++    /// only wait for the global lock after seeing *r == 0, i.e. while no
++    /// read guard exists), so a bounded spin virtually always acquires.
++    fn try_lock_rlock(&self) -> MutexGuard<'_, usize> {
++        for _ in 0..1_000_000 {
++            match self.rlock.try_lock() {
++                Ok(r) => return r,
++                Err(TryLockError::Poisoned(_)) => {
++                    // the internal mutex's critical sections never panic,
++                    // so this is a spurious poison; clear and retry
++                    self.rlock.clear_poison();
++                    continue;
++                }
++                Err(TryLockError::WouldBlock) => std::hint::spin_loop(),
++            }
++        }
++        // pathological case: the holder is descheduled mid-section; fall
++        // back to the blocking lock. the cancel is disabled around this
++        // call so a re-delivered cancel cannot double-panic
++        self.rlock.lock().expect("rwlock read_unlock")
++    }
++
+     /// Locks this `RwLock` with exclusive write access, blocking the current
+     /// thread or coroutine until it can be acquired.
+     ///
+```
+
+**File**: `tests/cancel_stress.rs` (modified, +22/-0)
+```diff
+@@ -207,6 +207,28 @@ fn cancel_after_finish() {
+     }
+ }
+ 
++/// Cancel a coroutine that has no cancellation-aware point left (busy
++/// running): the cancellation must still be reported from `join` instead of
++/// silently returning the coroutine's result.
++#[test]
++fn cancel_reported_at_completion() {
++    for _ in 0..100 {
++        let (tx, rx) = channel();
++        let j = go!(move || {
++            tx.send(()).unwrap();
++            // busy work with no suspension points
++            let mut x = 0usize;
++            for i in 0..10_000_000 {
++                x = x.wrapping_add(i);
++            }
++            x
++        });
++        rx.recv().unwrap();
++        j.coroutine().cancel();
++        assert!(j.join().is_err_and(|e| is_cancel(&*e)));
++    }
++}
++
+ /// Cancel a coroutine while it is parked on a `Mutex` with cancellation
+ /// *disabled* — the state `Condvar::wait_impl` enters for its internal
+ /// re-lock — must not corrupt the mutex's waiter count.
+```
+
+---
+
+### Incident Patch 2: `9eb5af14` (2026-11-06)
+**Commit Message**: spsc: clear wait_co after recv_timeout thread wakeup
+
+After park_timeout returns, the blocker may still be registered: a
+sender can push data and find it only after the consumer already
+returned, unparking a thread that is no longer waiting and keeping the
+Thread handle alive until the queue drops. Clear it on every wakeup
+path; the take is a no-op if send() already consumed the blocker.
+
+Add regression test recv_timeout_thread_no_stale_blocker.
 
 Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-**File**: `src/io/sys/unix/co_io.rs` (modified, +122/-1)
+**File**: `src/sync/spsc.rs` (modified, +25/-0)
 ```diff
-@@ -43,8 +43,14 @@ fn set_nonblocking<T: AsRawFd>(fd: &T, nb: bool) -> io::Result<()> {
- /// this type can be used in coroutine context without blocking the thread
- #[derive(Debug)]
- pub struct CoIo<T: AsRawFd> {
--    inner: T,
-+    // NOTE: field order matters. `io` must be dropped before `inner`, so the
-+    // fd is removed from the selector while it is still open. If `inner` were
-+    // dropped first, the fd number could be reused by another thread before
-+    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
-+    // number, so it would remove the registration of the new socket instead,
-+    // and that socket would never receive an io event again.
-     io: io_impl::IoData,
-+    inner: T,
-     #[cfg(feature = "io_timeout")]
-     read_timeout: AtomicDuration,
-     #[cfg(feature = "io_timeout")]
-@@ -301,4 +307,119 @@ mod tests {
-         io.read_exact(&mut buf).unwrap();
-         assert_eq!(buf, [0x55u8; 100]);
-     }
+@@ -447,6 +447,14 @@ impl<T> Receiver<T> {
+             }
+         }
+ 
++        // After waking, our blocker may still be registered: a sender can
++        // push data and find the blocker only after we already returned
++        // from park_timeout, which would unpark a thread that is no longer
++        // waiting and keep the Thread handle alive until the queue drops.
++        // Clear it on every wakeup path; the take is a no-op if send()
++        // already consumed the blocker.
++        self.inner.wait_co.clear();
 +
-+    /// Check whether `target` is registered in any epoll instance of this
-+    /// process by inspecting `/proc/self/fdinfo`.
-+    #[cfg(target_os = "linux")]
-+    fn fd_is_watched(target: RawFd) -> bool {
-+        let dir = match std::fs::read_dir("/proc/self/fd") {
-+            Ok(dir) => dir,
-+            Err(_) => return false,
-+        };
-+        for entry in dir.flatten() {
-+            let name = entry.file_name();
-+            let info = match std::fs::read_to_string(format!(
-+                "/proc/self/fdinfo/{}",
-+                name.to_string_lossy()
-+            )) {
-+                Ok(info) => info,
-+                Err(_) => continue,
-+            };
-+            let tokens: Vec<&str> = info.split_whitespace().collect();
-+            for pair in tokens.windows(2) {
-+                if pair[0] == "tfd:" && pair[1].parse::<RawFd>() == Ok(target) {
-+                    return true;
-+                }
+         // After waking (from data or timeout), try to receive again.
+         // Data might have arrived while we were parked.
+         match self.inner.try_recv() {
+@@ -923,6 +931,23 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn recv_timeout_thread_no_stale_blocker() {
++        let (tx, rx) = channel::<i32>();
++        assert_eq!(
++            rx.recv_timeout(Duration::from_millis(10)),
++            Err(RecvTimeoutError::Timeout)
++        );
++        // send() must not find a registered waiter: if the timeout left a
++        // stale blocker behind, send() would unpark us here and the next
++        // park would return immediately instead of sleeping.
++        tx.send(1).unwrap();
++        let start = Instant::now();
++        thread::park_timeout(Duration::from_millis(30));
++        assert!(start.elapsed() >= Duration::from_millis(20));
++        assert_eq!(rx.try_recv(), Ok(1));
++    }
++
+     // -----------------------------------------------------------------------
+     // Existing tests (unchanged)
+     // -----------------------------------------------------------------------
+```
+
+---
+
+### Incident Patch 3: `5deadd58` (2026-11-05)
+**Commit Message**: Add WaitIo cancel regression test and simplify check_cancel
+
+check_cancel duplicated is_canceled's state == 1 test; delegate to it
+instead of re-reading the atomic. Add cancel_wait_io_coroutine to lock
+in the RawIoBlock cancellation fix so a coroutine blocked in
+WaitIo::wait_io unwinds on cancel rather than hanging join().
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+**File**: `src/cancel.rs` (modified, +1/-1)
+```diff
+@@ -109,7 +109,7 @@ impl<T: CancelIo> CancelImpl<T> {
+ 
+     // panic if cancel was set
+     pub fn check_cancel(&self) {
+-        if unlikely(self.state.load(Ordering::Acquire) == 1) {
++        if unlikely(self.is_canceled()) {
+             // before panic clear the last coroutine error
+             // this would affect future new coroutine that reuse the instance
+             get_co_para();
+```
+
+**File**: `tests/lib.rs` (modified, +36/-0)
+```diff
+@@ -82,6 +82,42 @@ fn cancel_io_coroutine() {
+     }
+ }
+ 
++// A coroutine blocked in `WaitIo::wait_io` must unwind on cancel. This is the
++// regression test for the `RawIoBlock::yield_back` override that used to clear
++// the cancel bit instead of re-checking it, leaving `join()` hanging forever.
++#[test]
++#[cfg(all(unix, feature = "io_cancel"))]
++fn cancel_wait_io_coroutine() {
++    use may::io::WaitIo;
++    use std::sync::mpsc::channel;
++
++    let (tx, rx) = channel();
++
++    let j = go!(move || {
++        // a listening socket has no io event until a connection arrives, so
++        // `wait_io()` suspends the coroutine until a cancel resumes it
++        let listener = may::net::TcpListener::bind(("127.0.0.1", 0)).unwrap();
++        tx.send(()).unwrap();
++        listener.wait_io()
++    });
++
++    // wait until the coroutine is blocked in wait_io
++    rx.recv().unwrap();
++
++    j.coroutine().cancel();
++
++    match j.join() {
++        Ok(_) => panic!("test should return panic"),
++        Err(panic) => {
++            use generator::Error;
++            match panic.downcast_ref::<Error>() {
++                Some(&Error::Cancel) => println!("coroutine cancelled"),
++                _ => panic!("panic type wrong"),
 +            }
 +        }
-+        false
 +    }
-+
-+    /// A raw fd owner whose drop replaces the file description at its fd
-+    /// number and then blocks, keeping the close/deregister window open.
-+    #[cfg(target_os = "linux")]
-+    struct ReplacingFd {
-+        stream: Option<std::os::unix::net::UnixStream>,
-+        replacement: Option<std::os::unix::net::UnixStream>,
-+        replaced_tx: std::sync::mpsc::Sender<()>,
-+        go_rx: std::sync::mpsc::Receiver<()>,
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    impl AsRawFd for ReplacingFd {
-+        fn as_raw_fd(&self) -> RawFd {
-+            self.stream.as_ref().unwrap().as_raw_fd()
-+        }
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    impl Drop for ReplacingFd {
-+        fn drop(&mut self) {
-+            let target = self.as_raw_fd();
-+            // give up ownership without closing the fd; dup2 replaces the
-+            // file description at this fd number, closing the old one
-+            let _ = self.stream.take().unwrap().into_raw_fd();
-+            let replacement = self.replacement.as_ref().unwrap().as_raw_fd();
-+            assert_eq!(unsafe { libc::dup2(replacement, target) }, target);
-+            self.replaced_tx.send(()).unwrap();
-+            // hold the window between closing the old description and the
-+            // IoData drop so that a new registration can be installed
-+            let _ = self.go_rx.recv_timeout(std::time::Duration::from_secs(10));
-+        }
-+    }
-+
-+    /// Closing the socket before deregistering it from the selector lets a
-+    /// concurrent fd reuse install a new registration under the same fd
-+    /// number, which the stale `epoll_ctl(DEL)` then removes. The reused
-+    /// socket would then never receive an io event again.
-+    #[test]
-+    #[cfg(target_os = "linux")]
-+    fn drop_does_not_remove_reused_fd_registration() {
-+        use std::os::unix::io::FromRawFd;
-+        use std::sync::mpsc::channel;
-+
-+        let (old_a, _old_b) = std::os::unix::net::UnixStream::pair().unwrap();
-+        let target = old_a.as_raw_fd();
-+        let (replacement, _replacement_peer) = std::os::unix::net::UnixStream::pair().unwrap();
-+
-+        let (replaced_tx, replaced_rx) = channel();
-+        let (go_tx, go_rx) = channel();
-+        let (done_tx, done_rx) = channel();
-+
-+        let old_co = CoIo::new(ReplacingFd {
-+            stream: Some(old_a),
-+            replacement: Some(replacement),
-+            replaced_tx,
-+            go_rx,
-+        })
-+        .unwrap();
-+
-+        let drop_thread = std::thread::spawn(move || {
-+            drop(old_co);
-+            let _ = done_tx.send(());
-+        });
-+
-+        // wait until the old description is gone and the fd number now
-+        // refers to the replacement socket
-+        replaced_rx.recv().unwrap();
-+
-+        // register the replacement socket under the same fd number
-+        let replacement = unsafe { std::os::unix::net::UnixStream::from_raw_fd(target) };
-+        let replacement_co = CoIo::new(replacement).unwrap();
-+        assert!(
-+            fd_is_watched(target),
-+            "replacement
-```
-
----
-
-### Incident Patch 2: `9cc902be` (2026-11-05)
-**Commit Message**: Fix coroutine-local type safety
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `src/local.rs` (modified, +11/-8)
-```diff
-@@ -1,4 +1,4 @@
--use std::any::TypeId;
-+use std::any::{Any, TypeId};
- use std::cell::RefCell;
- use std::collections::HashMap;
- use std::hash::{BuildHasherDefault, Hasher};
-@@ -57,10 +57,7 @@ fn with<F: FnOnce(&LocalMap) -> R, R>(f: F) -> R {
-     }
- }
- 
--pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Opaque>, BuildHasherDefault<IdHasher>>>;
--
--pub trait Opaque {}
--impl<T> Opaque for T {}
-+pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Any>, BuildHasherDefault<IdHasher>>>;
- 
- /// A key for local data stored in a coroutine.
- ///
-@@ -124,19 +121,25 @@ impl<T: 'static> LocalKey<T> {
-     ///
-     /// * If the initialization expression is run and it panics
-     /// * If the closure provided panics
-+    /// * If multiple keys use the same key identifier with different value types
-     #[inline]
-     pub fn with<F, R>(&'static self, f: F) -> R
-     where
-         F: FnOnce(&T) -> R,
-     {
-         let key = (self.__key)();
-         with(|data| {
--            let raw_pointer = {
-+            let value = {
-                 let mut data = data.borrow_mut();
-                 let entry = data.entry(key).or_insert_with(|| Box::new((self.__init)()));
--                &**entry as *const dyn Opaque as *const T
-+                entry
-+                    .downcast_ref::<T>()
-+                    .expect("coroutine-local key used with mismatched value type")
-+                    as *const T
-             };
--            unsafe { f(&*raw_pointer) }
-+            // Values are boxed, so map reallocation cannot move them. Access is
-+            // shared-only, and the downcast above verifies the pointer's type.
-+            unsafe { f(&*value) }
-         })
-     }
- }
-```
-
-**File**: `tests/local.rs` (modified, +27/-0)
-```diff
-@@ -3,6 +3,27 @@ extern crate may;
- 
- use may::coroutine;
- 
-+fn colliding_key() -> std::any::TypeId {
-+    std::any::TypeId::of::<()>()
-+}
-+
-+fn init_i32() -> i32 {
-+    1
-+}
-+
-+fn init_u32() -> u32 {
-+    2
-+}
-+
-+static COLLIDING_I32: may::LocalKey<i32> = may::LocalKey {
-+    __key: colliding_key,
-+    __init: init_i32,
-+};
-+static COLLIDING_U32: may::LocalKey<u32> = may::LocalKey {
-+    __key: colliding_key,
-+    __init: init_u32,
-+};
-+
- #[test]
- fn local_in_thread() {
-     coroutine_local!(static FOO: i32 = 3);
-@@ -13,6 +34,12 @@ fn local_in_thread() {
-     });
- }
- 
-+#[test]
-+fn mismatched_local_key_types_panic() {
-+    COLLIDING_I32.with(|value| assert_eq!(*value, 1));
-+    assert!(std::panic::catch_unwind(|| COLLIDING_U32.with(|_| ())).is_err());
 +}
 +
  #[test]
- fn coroutine_local() {
-     fn square(i: i32) -> i32 {
-```
-
----
-
-### Incident Patch 3: `3903ade9` (2026-11-05)
-**Commit Message**: :pencil: fix the break link
-
-**File**: `docs/may_caveat.md` (modified, +3/-3)
-```diff
-@@ -5,7 +5,7 @@ If you are not aware of them, your application will easily lost performance or e
- I will list 4 rules bellow
- 
- ## Don't call thread blocking APIs
--This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance. 
-+This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance.
- 
- Those block version APIs includes:
- * io block operation such as socket `read()`/`write()`
-@@ -19,7 +19,7 @@ The solution is calling [MAY][may] API instead. And port necessary dependency li
- ## Don't use Thread Local Storage
- Access TLS in coroutine would trigger undefined behavior and it will be hard to debug the issue.
- 
--There is a [post](cls) already cover this topic. And the solution is using Coroutine Local Storage instead.
-+There is a [post](CLS_instead_of_TLS.md) already cover this topic. And the solution is using Coroutine Local Storage instead.
- 
- But if you are depending on a third party function that uses TLS you likely get hurt sooner or later. There is an [issue][issue] that discuss this a bit.
- 
-@@ -31,7 +31,7 @@ Currently calling `libstd` APIs is safe in  [MAY][may] coroutines.
- [MAY][may] APIs will automatically yield out if necessary, so this is not a problem. But if you are running a long time CPU bound task in coroutine, you'd better call `coroutine::yield_now()` manually at appropriate point.
- 
- 
--## Don't exceed the stack 
-+## Don't exceed the stack
- [MAY][may] doesn't support automatic stack increasing. Each coroutine alloc a limited stack size for its own. If the coroutine exceeds it's stack size, it will trigger undefined behavior.
- 
- So that you should avoid calling recursive functions in coroutine. Recursive function calls would easily exhaust your stack.
+ fn one_coroutine() {
+     let j = go!(move || {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2492,54 +2616,58 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: fix CoIo - deregister fd from selector before closing it
+## X. cancelled coroutines completing normally during suspended unwinds
 
 **RULE**:
-When implementing operations in `src/io/sys/unix/co_io.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cancel.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d5efcb1`: :bug: fix CoIo - deregister fd from selector before closing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64877358`: cancelled coroutines completing normally during suspended unwinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/co_io.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cancel.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // NOTE: field order matters. `io` must be dropped before `inner`, so the
-    // fd is removed from the selector while it is still open. If `inner` were
-    // dropped first, the fd number could be reused by another thread before
-    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
-    // number, so it would remove the registration of the new socket instead,
-    // and that socket would never receive an io event again.
-    inner: T,
+use std::cell::Cell;
+// a cancel panic is in flight on this thread: a coroutine's unwind from a
+// Cancel panic can be suspended (a Drop that parks), during which
+// `thread::panicking()` stays true for the whole thread while other
+// coroutines keep running on it. The flag distinguishes that window from a
+// real (non-cancel) panic so that:
+// - `poison::done` does not spuriously poison locks whose guards are
+//   dropped by other coroutines during the window
+// - the unwinding coroutine's own drops never re-trigger the cancel panic
+thread_local! {
+    static CANCEL_PANICKING: Cell<bool> = const { Cell::new(false) };
+}
 
-    /// Check whether `target` is registered in any epoll instance of this
-    /// process by inspecting `/proc/self/fdinfo`.
-    #[cfg(target_os = "linux")]
-    fn fd_is_watched(target: RawFd) -> bool {
-        let dir = match std::fs::read_dir("/proc/self/fd") {
-            Ok(dir) => dir,
-            Err(_) => return false,
-        };
-        for entry in dir.flatten() {
-            let name = entry.file_name();
-            let info = match std::fs::read_to_string(format!(
-                "/proc/self/fdinfo/{}",
-                name.to_string_lossy()
-            )) {
-                Ok(info) => info,
-                Err(_) => continue,
-            };
-            let tokens: Vec<&str> = info.split_whitespace().collect();
-   
+/// true if a Cancel-panic unwind is currently in flight on this thread
+#[inline]
+pub(crate) fn cancel_panic_in_flight() -> bool {
+    CANCEL_PANICKING.with(|f| f.get())
+}
+
+/// mark that a Cancel-panic unwind started on this thread
+/// called by `trigger_cancel_panic`, cleared when the coroutine completes
+/// in `run_coroutine`
+#[inline]
+fn set_cancel_panic_flag() {
+    CANCEL_PANICKING.with(|f| f.set(true));
+}
+
+/// clear the Cancel-panic flag once the unwind has completed
+/// idempotent, called from `run_coroutine` on every coroutine completion
+#[inline]
+pub(crate
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    inner: T,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d5efcb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64877358` are properly handled with clean fallback behavior.
