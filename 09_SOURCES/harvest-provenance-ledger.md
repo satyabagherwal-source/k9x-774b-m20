@@ -8118,3 +8118,5 @@ Every entry in this ledger must capture:
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `4ccb5f41` | Multi-dimensional audit evidence | 2026-11-07T21:43:54.894Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `ed544602` | Multi-dimensional audit evidence | 2026-11-07T21:44:03.790Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7dd66e74` | Multi-dimensional audit evidence | 2026-11-07T21:44:05.593Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `1ebb9379` | Multi-dimensional audit evidence | 2026-11-07T21:55:46.377Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `33a17ec7` | Multi-dimensional audit evidence | 2026-11-07T21:55:47.336Z |

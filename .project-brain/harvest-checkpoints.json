@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T21:44:05.603Z",
+  "last_updated": "2026-11-07T21:55:47.346Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,14 +3066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webdriverio-webdriverio",
-      "content_hash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
-      "verified_at": "2026-11-04T03:44:10.223Z",
+      "content_hash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
+      "verified_at": "2026-11-07T21:55:47.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:44:10.223Z"
+      "last_updated": "2026-11-07T21:55:47.345Z"
     },
     "RubenVerborgh/SPARQL.js": {
       "repository": "RubenVerborgh/SPARQL.js",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
-      "verified_at": "2026-11-05T17:57:23.650Z",
+      "content_hash": "a1caf76d46126efeaa6e7a9230c8ab9e19b496b462445f655b2f1611233e56e7",
+      "verified_at": "2026-11-07T21:55:46.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:57:23.650Z"
+      "last_updated": "2026-11-07T21:55:46.388Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

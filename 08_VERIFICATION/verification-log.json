@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-ZWW6",
-    "timestamp": "2026-11-05T09:44:34.374Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "14b47f9d5787682e0185599b32d534a9b75b5ade127aed392ee652e8e8044ad1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-ZX98",
-    "timestamp": "2026-11-05T09:44:34.844Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "09c5d8e733e2199c921c51c7c365405db4bd9abe03ac958acaabda3bb4283eaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-08W4",
     "timestamp": "2026-11-05T09:44:49.924Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7460,36 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "learningId": "learn-github-shifthackz-sdai-kmp",
     "contentHash": "8a1574a7511d269e2f01443a7eae23aa363b9dec51f588fd4f02efc37243a694",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-ZY2T",
+    "timestamp": "2026-11-07T21:55:46.373Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "a1caf76d46126efeaa6e7a9230c8ab9e19b496b462445f655b2f1611233e56e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-ZYTG",
+    "timestamp": "2026-11-07T21:55:47.332Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

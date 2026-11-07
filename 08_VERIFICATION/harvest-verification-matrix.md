@@ -8109,3 +8109,5 @@
 | `CYCLE-20261107-KP3E` | `2026-11-07T21:43:54.890Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`19c97b00...`) |
 | `CYCLE-20261107-KVYH` | `2026-11-07T21:44:03.785Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cdce467c...`) |
 | `CYCLE-20261107-KXCL` | `2026-11-07T21:44:05.589Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8a1574a7...`) |
+| `CYCLE-20261107-ZY2T` | `2026-11-07T21:55:46.373Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a1caf76d...`) |
+| `CYCLE-20261107-ZYTG` | `2026-11-07T21:55:47.332Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fcb5c240...`) |

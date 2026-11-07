@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `802102ad`  
+> **Source Version**: `1ebb9379`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:57:22.269Z  
+> **Timestamp**: 2026-11-07T21:55:44.912Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:57:21.313Z  
+> **Harvest Timestamp**: 2026-11-07T21:55:43.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17274 stars
+- **Stars / Engagement**: 17278 stars
 
 ---
 
@@ -1377,17 +1377,13 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55414** (2026-11-05): **EXP: Emscripten toolchain upgrade**
-  *Symptoms*: ### Rationale for this change Experiment for PR #55381 - update emscripten_version="3.1.45" to "4.0.14"  ### What changes are included in this PR?  ### Are these changes tested?  ### Are there any user-facing changes?   ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [ ] Human - [ ] AI  **Reviewed before submission by:**  - [ ] Human - [ ] AI - [ ] Not reviewed 
+- **Issue #55438** (2026-11-07): **GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds**
+  *Symptoms*: Closes #55429.  Closes #55430.  ### Rationale for this change  The CRAN macOS build uses the macOS 11.3 SDK, whose libc++ lacks std::invocable and std::in_range.  The std::invocable failure occurs first and masks the std::in_range failure, so both need to be addressed for this build configuration.  ### What changes are included in this PR?  Replace std::invocable with std::is_invocable_v in the two transform constraints in codegen_internal.h, and remove the unused `<concepts>` include.  Replace the endpoint-based std::in_range checks in Parquet’s can_hold_v with a comparison of numeric_limits::digits and signedness. The predicate continues to determine whether the destination integer type can represent the source type’s complete range.  ### Are these changes tested?  A Linux GCC 13 source build succeeds with the patch.  The targeted suites pass:  - Kernel utility tests: 6 passed. - Parquet reader tests: 180 passed, 10 skipped.  The integer-range predicate was also checked against the previous expression for 64 signed and unsigned integer-type pairs. Formatting passes with the repository’s pinned clang-format 18.1.8.  The macOS 11.3 SDK was unavailable in the validation environment, so the exact test-r-macos-as-cran build still needs CI verification.  ### Are there any user-facing changes?  This addresses compilation failures with the older libc++ used by the CRAN build. No public API or intended runtime behavior changes.  ### Was AI used for this PR?  AI tools assisted with i
   **Post-Mortem & Fix Analysis**:
-  > @github-actions crossbow submit *-emscripten
-  > Revision: 22ed7f10cb20676f1400be2de025b4d115de0131  Submitted crossbow builds: [ursacomputing/crossbow @ actions-a280fa770b](https://github.com/ursacomputing/crossbow/branches/all?query=actions-a280fa770b)  |Task|Status| |----|------| |test-conda-python-emscripten|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-a280fa770b-github-test-conda-python-emscripten)](https://github.com/ursacomputing/crossbow/actions/runs/42012743959/job/127195591727)| |test-ubuntu-22.04-cpp-emscripten|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-a280fa770b-github-test-ubuntu-22.04-cpp-emscripten)](https://github.com/ursacomputing/crossbow/actions/runs/42012743689/job/127195591057)|
+  > :warning: GitHub issue #55429 **has been automatically assigned in GitHub** to PR creator.
 
-- **Issue #55403** (2026-11-05): **GH-55402: [CI][Packaging] Use lowecase for repository name for Docker image name**
-  *Symptoms*: ### Rationale for this change GH-55402  ### What changes are included in this PR? send repo names in lower case format in `docker_image` function. This change affects `linux-packages` CI.  ### Are these changes tested? Yes, in fork  ### Are there any user-facing changes? N/A  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55402
-  **Post-Mortem & Fix Analysis**:
-  > @raulcd @kou  PR is ready for review, the CI failures look unrelated to the PR.
-  > @alinaliBQ this makes sense to me. Do you have an example of a workflow failing prior to this change? I suspect this failed on your fork initially?
+- **Issue #55437** (2026-11-07): **GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow**
+  *Symptoms*: Closes #55428.  ### Rationale for this change  A ranged GetObject response currently writes into a buffer sized to the requested read. An S3 error document can be larger than that buffer, even when the requested object is small.  When this happens, the response stream fails before the AWS SDK can classify the error. A SlowDown response becomes INTERNAL_FAILURE with “Failed to flush response stream”, preventing the expected retry behavior.  ### What changes are included in this PR?  Introduce a GET-specific response stream that writes successful reads directly into the caller’s buffer.  If a response exceeds that buffer, the stream retains a prefix of up to 64 KiB for SDK error parsing and consumes subsequent bytes without growing the retained buffer. This lets the SDK classify and retry throttling responses.  After a successful SDK result, check whether the response overflowed. Oversized successful responses return an IOError instead of being accepted as a valid ranged read.  The upload stream is unchanged.  ### Are these changes tested?  Six new C++ tests cover normal and short writes, bulk and split overflow, character writes, direct put-area writes, rewinding, spill-cap boundaries, and overflow detection.  Eleven Python integration cases use a local HTTP server to cover:  - HTTP 429 and 503 SlowDown responses larger than the requested range. - A control case where the error body fits. - Recovery after throttling, verifying the returned bytes. - Oversized HTTP 200 and 206 r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1404,154 +1400,241 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `802102ad` (2026-11-05)
-**Commit Message**: GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#55381)
+### Incident Patch 1: `1ebb9379` (2026-11-06)
+**Commit Message**: GH-55269: [Archery] Pass the sender and recipient to the token expiration report (#55270)
+
+archery crossbow notify-token-expiration currently fails because TokenExpirationEmailReport is called with a positional argument, while its constructor expects keyword arguments.
+
+The command also needs to pass sender_name, sender_email, and recipient_email to the report so that the generated email has the correct headers. The sibling nightly-report command already does this correctly.
+
+## Changes
+
+Pass report, sender_name, sender_email, and recipient_email as keyword arguments.
+
+Add a regression test for notify-token-expiration that checks the generated email headers.
+
+## Testing
+
+Confirmed the new test fails before the fix and passes afterward.
+
+Verified that the generated email contains the expected sender and recipient.
+
+Ran the Archery test suite. The new test passes; 26 existing failures remain due to missing Docker on my local machine.
+
+flake8 passes for both modified files.
+
+No real email was sent during testing.
+
+Closes #55269.
+
+## AI disclosure
+
+AI assisted with the code and  test. I reviewed the changes and verified the reported behavior and test results before submitting the PR.
+*
+
+**File**: `dev/archery/archery/crossbow/cli.py` (modified, +6/-1)
+```diff
+@@ -680,7 +680,12 @@ def __init__(self, token_expiration_date, days_left):
+     if not token_expiration_date:
+         token_expiration_date = 'ALREADY_EXPIRED'
+     report = TokenExpirationReport(token_expiration_date, days_left)
+-    email_report = TokenExpirationEmailReport(report)
++    email_report = TokenExpirationEmailReport(
++        report=report,
++        sender_name=sender_name,
++        sender_email=sender_email,
++        recipient_email=recipient_email
++    )
+ 
+     if send:
+         ReportUtils.send_email(
+```
+
+**File**: `dev/archery/archery/crossbow/tests/test_crossbow_cli.py` (modified, +26/-0)
+```diff
+@@ -15,6 +15,9 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ 
++from datetime import date, timedelta
++from unittest import mock
++
+ from click.testing import CliRunner
+ import pytest
+ 
+@@ -41,3 +44,26 @@ def invoke(*args):
+ 
+     result = invoke('submit', '--no-fetch', '--no-push', '-g', 'wheel')
+     assert result.exit_code == 0
++
++
++def test_crossbow_notify_token_expiration(monkeypatch):
++    # The report carries the From/To headers, so the sender and recipient
++    # options have to reach it: send_email() only passes the rendered message
++    # on to smtplib. Dropping them left this command raising before it ever
++    # built a message.
++    queue = mock.MagicMock()
++    queue.token_expiration_date.return_value = date.today() + timedelta(days=7)
++    monkeypatch.setattr('archery.crossbow.cli.Queue',
++                        mock.MagicMock(return_value=queue))
++    monkeypatch.setattr('archery.crossbow.cli.Repo', mock.MagicMock())
++
++    result = CliRunner().invoke(crossbow, [
++        'notify-token-expiration',
++        '--sender-name', 'Crossbow Reporter',
++        '--sender-email', 'sender@arrow.apache.org',
++        '--recipient-email', 'recipient@arrow.apache.org',
++    ])
++
++    assert result.exit_code == 0, result.exception
++    assert 'From: Crossbow Reporter <sender@arrow.apache.org>' in result.output
++    assert 'To: recipient@arrow.apache.org' in result.output
+```
+
+---
+
+### Incident Patch 2: `8eca5234` (2026-11-06)
+**Commit Message**: GH-32723: [C++][Parquet] Concatenate chunked children of nested columns (#55351)
 
 ### Rationale for this change
-Fix #55380 - recently #54927 bumped Protobuf from 31.1 to 36.2 which fails applying of `protobuf-emscripten.patch`.
-Then the job `test-ubuntu-22.04-cpp-emscripten` has two more failures:
-- `arrow-utility-test` (`TimestampParser.StrptimeParser`) failing since #54657,
-- and `arrow-substrait-substrait-test` after Abseil bump in #54927
+Adresses part of issue #32723. 
+Using the parquet ReadTable functions fails on list of dicts, if they contain more than one row group.
+In such case, the data is in a chunked array. A NotImplemented guards stops this from being read.
 
 ### What changes are included in this PR?
-- Remove protobuf Emscripten patch, Protobuf 36.2 no longer needs it
-- Skip the impossible date and leap second cases on Emscripten for `TimestampParser.StrptimeParser` in `arrow-utility-test`
-- Link Emscipten test executables with `-sUSE_OFFSET_CONVERTER=1` when < 4.0.14 (setting removed with Emscripten 4.0.14) for `arrow-substrait-substrait-test` to pass
+This PR is a minimal fix that addresses this in the case when the chunks can be combined into a single array.
+It does not address the overflow issues, and the preexisting arrow::Concatenate will throw on that. The error is propagated.
 
 ### Are these changes tested?
-Yes, both emscripten jobs pass.
+One test case is added for this specific situation. It fails without the fix in reader.cc.
+No regressions on `parquet-arrow-reader-writer-test` found, which I also tested. 
+On macOS.
 
 ### Are there any user-facing changes?
-No.
+The users will be able to read a few more parquet files that were previously rejected.
 
 ### Was AI used for this PR?
 
-**PR code and description written by:**
+Yes. 
 
-- [X] Human
-- [X] AI
+Claude (Opus and Sonnet 5.5) was used for compiling information from existing issues and propose a solution. I decided to do a minimal fix, not addressing the overflow problems, to make sure I under
 
-**Reviewed before submission by:**
-
-- [X] Human
-- [x] AI
-- [ ] Not reviewed
-* GitHub Issue: #55380
-
-Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL
-
-**File**: `cpp/cmake_modules/SetupCxxFlags.cmake` (modified, +5/-0)
+**File**: `cpp/src/parquet/arrow/arrow_reader_writer_test.cc` (modified, +43/-0)
 ```diff
-@@ -747,6 +747,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
-           "${ARROW_EMSCRIPTEN_LINKER_FLAGS} -sERROR_ON_WASM_CHANGES_AFTER_LINK=1 -sSTACK_SIZE=${ARROW_EMSCRIPTEN_TEST_STACK_SIZE} -sALLOW_MEMORY_GROWTH -lnodefs.js -lnoderawfs.js --pre-js ${BUILD_SUPPORT_DIR}/emscripten-test-init.js"
-       )
-     endif()
-+    # Abseil stack trace via emscripten_stack_snapshot() abort on Emscripten<4.0.14
-+    # if offset converter isn't enabled. Emscripten 4.0.14 removed the offset converter
-+    if(EMSCRIPTEN_VERSION VERSION_LESS "4.0.14")
-+      string(APPEND CMAKE_EXE_LINKER_FLAGS " -sUSE_OFFSET_CONVERTER=1")
-+    endif()
-   else()
-     set(CMAKE_EXE_LINKER_FLAGS "${ARROW_EMSCRIPTEN_LINKER_FLAGS} -sALLOW_MEMORY_GROWTH")
-   endif()
-```
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +0/-17)
-```diff
-@@ -2060,25 +2060,8 @@ function(build_protobuf)
-       "${PROTOBUF_INCLUDE_DIR}"
-       PARENT_SCOPE)
+@@ -3453,6 +3453,49 @@ TEST(ArrowReadWrite, ListWithNoValues) {
+   CheckSimpleRoundtrip(table, 2, props_store_schema);
+ }
  
--  set(PROTOBUF_PATCH_COMMAND)
--  if(EMSCRIPTEN)
--    find_program(PATCH patch)
--    if(PATCH)
--      set(PROTOBUF_PATCH_COMMAND ${PATCH} -p1 -i)
--    else()
--      find_program(GIT git)
--      if(GIT)
--        set(PROTOBUF_PATCH_COMMAND ${GIT} apply)
--      endif()
--    endif()
--    if(PROTOBUF_PATCH_COMMAND)
--      list(APPEND PROTOBUF_PATCH_COMMAND
--           ${CMAKE_CURRENT_LIST_DIR}/protobuf-emscripten.patch)
--    endif()
--  endif()
-   fetchcontent_declare(protobuf
-                        ${FC_DECLARE_COMMON_OPTIONS} OVERRIDE_FIND_PACKAGE
--                       PATCH_COMMAND ${PROTOBUF_PATCH_COMMAND}
-                        URL ${PROTOBUF_SOURCE_URL}
-                        URL_HASH "SHA256=${ARROW_PROTOBUF_BUILD_SHA256_CHECKSUM}")
++TEST(ArrowReadWrite, NestedDictionaryMultipleRowGroups) {
++  // GH-45087: reading several row groups at once yields one chunk per row group
++  // for a nested dictionary leaf, and the chunks have different dictionaries.
++  using ::arrow::field;
++
++  auto dict_type = ::arrow::dictionary(::arrow::int32(), ::arrow::utf8());
++  for (const auto& type : {list(dict_type), ::arrow::large_list(dict_type)}) {
++    ARROW_SCOPED_TRACE("type = ", type->ToString());
++    auto array =
++        ::arrow::ArrayFromJSON(type, R"([["a"], ["b", "a"], ["c", "a"], ["b"]])");
++    auto table = ::arrow::Table::Make(::arrow::schema({field("root", type)}), {array});
++    auto props_store_schema = ArrowWriterProperties::Builder().store_schema()->build();
++    CheckSimpleRoundtrip(table, /*row_group_size=*/2, props_store_schema);
++  }
++}
++
++TEST(ArrowReadWrite, NestedDictionaryDifferentDictionariesPerRowGroup) {
++  using ::arrow::field;
++
++  auto type = list(::arrow::dictionary(::arrow::int32(), ::arrow::utf8()));
++  // One input chunk per row group, each with its own dictionary.
++  auto chunk1 = ::arrow::ArrayFromJSON(type, R"([["a"], ["b", "a"]])");
++  auto chunk2 = ::arrow::ArrayFromJSON(type, R"([["c", "a"], ["b"]])");
++  auto schema = ::arrow::schema({field("root", type)});
++  auto input = Table::Make(
++      schema, {std::make_shared<::arrow::ChunkedArray>(ArrayVector{chunk1, chunk2})});
++
++  auto props_store_schema = ArrowWriterProperties::Builder().store_schema()->build();
++  std::shared_ptr<Table> result;
++  ASSERT_NO_FATAL_FAILURE(DoSimpleRoundtrip(input, /*use_threads=*/false,
++                                            /*row_group_size=*/2, {}, &result,
++                                            props_store_schema));
++  ASSERT_OK(result->ValidateFull());
++  ::arrow::AssertSchemaEqual(*schema, *result->schema(), /*check_metadata=*/false);
++
++  // Compare the decoded strings, so the order of the merged dictionary does not matter.
++  auto expected = ::arrow::ChunkedArrayFromJSON(
++      list(::arrow::utf8()), {R"([["a"], ["b", "a"], ["c", "a"], ["b"]])"});
++  ASSERT_OK_AND_ASSIGN(auto decoded,
++                       ::arrow::compute::Cast(result->column(0), list(::arrow::utf8())));
++  ::arrow::AssertChunkedEqual(*expected, *decoded.chunked_array());
++}
++
+ TEST(ArrowReadWrite, Map) {
+   using ::arrow::field;
+   using ::arrow::map;
+```
+
+**File**: `cpp/src/parquet/arrow/reader.cc` (modified, +14/-9)
+```diff
+@@ -87,20 +87,23 @@ namespace bit_util = arrow::bit_util;
+ namespace parquet::arrow {
+ namespace {
  
-```
-
-**File**: `cpp/cmake_modules/protobuf-emscripten.patch` (removed, +0/-39)
-```diff
-@@ -1,39 +0,0 @@
--# Licensed to the Apache Software Foundation (ASF) under one
--# or more contributor license agreements.  See the NOTICE file
--# distributed with this work for additional information
--# regarding copyright ownership.  The ASF licenses this file
--# to you under the Apache License, Version 2.0 (the
--# "License"); you may not use this file except in compliance
--# with the License.  You may obtain a copy of the License at
--#
--#   http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing,
--# software distributed under the License is distributed on an
--# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
--# KIND, either express or implied.  See the License for the
--# specific language governing permissions and limitations
--# under the License.
--
--
----- a/src/google/protobuf/port_def.inc
--+++ b/src/google/protobuf/port_def.inc
--@@ -435,13 +435,15 @@
-- # endif
-- #else
---# if defined(__cpp_constinit) && !defined(__CYGWIN__)
--+// Emscripten's libc++ std::string is not constexpr-constructible (heap alloc).
--+# if defined(__cpp_constinit) && !defined(__CYGWIN__) && !defined(__EMSCRIPTEN__)
-- #  define PROTOBUF_CONSTINIT constinit
-- #  define PROTOBUF_CONSTEXPR constexpr
-- #  define PROTOBUF_CONSTINIT_DEFAULT_INSTANCES
-- // Some older Clang versions incorrectly raise an error about
-- // constant-initializing weak default instance pointers. Versions 12.0 and
-- // higher seem to work, except that XCode 12.5.1 shows the error even though it
-- // uses Clang 12.0.5.
---#elif !defined(__CYGWIN__) && !defined(__MINGW32__) &&                 \
--+#elif !defined(__CYGWIN__) && !defined(__MINGW32__) &&                  \
--+    !defined(__EMSCRIPTEN__) &&                                         \
--     ABSL_HAVE_CPP_ATTRIBUTE(clang::require_constant_initialization) && \
--     ((defined(__APPLE__) && PROTOBUF_CLANG_MIN(13, 0)) ||              \
--      (!defined(__APPLE__) && PROTOBUF_CLANG_MIN(12, 0)))
-```
-
-**File**: `cpp/src/arrow/util/value_parsing_test.cc` (modified, +4/-0)
-```diff
-@@ -884,6 +884,10 @@ TEST(TimestampParser, StrptimeParser) {
-       // Leap seconds are rejected, as by the
-       // ISO-8601 parser
-       "5/31/2000 12:30:60", "5/31/2000 23:59:60", "5/31/2000 23:59:61"};
-+#ifdef __EMSCRIPTEN__
-+  // Emscripten's strptime() normalizes invalid dates/times. See GH-55397
-+  unparseables = {"foo", "5/1/2000", "5/1/2000 12:34:56:6"};
-+#endif
-   for (auto& value : unparseables) {
-     int64_t dummy;
-     ASSERT_FALSE((*parser)(value.c_str(), value.size(), TimeUnit::SECOND, &dummy));
+-::arrow::Result<std::shared_ptr<ArrayData>> ChunksToSingle(const ChunkedArray& chunked) {
++::arrow::Result<std::shared_ptr<ArrayData>> ChunksToSingle(const ChunkedArray& chunked,
++                                                           MemoryPool* pool) {
+   switch (chunked.num_chunks()) {
+     case 0: {
+       ARROW_ASSIGN_OR_RAISE(std::shared_ptr<Array> array,
+-                            ::arrow::MakeArrayOfNull(chunked.type(), 0));
++                            ::arrow::MakeArrayOfNull(chunked.type(), 0, pool));
+       return array->data();
+     }
+     case 1:
+       return chunked.chunk(0)->data();
+-    default:
+-      // ARROW-3762(wesm): If item reader yields a chunked array, we reject as
+-      // this is not yet implemented
+-      return Status::NotImplemented(
+-          "Nested data conversions not implemented for chunked array outputs");
++    default: {
++      // GH-32723: A leaf reader can yield several chunks, e.g. one per row group for
++      // dictionaries. Concatenate fails if the merged data overflows the type.
++      ARROW_ASSIGN_OR_RAISE(std::shared_ptr<Array> array,
++                            ::arrow::Concatenate(chunked.chunks(), pool));
++      return array->data();
++    }
+   }
+ }
+ 
+@@ -670,7 +673,8 @@ class ListReader : public ColumnReaderImpl {
+           validity_buffer->Resize(bit_util::BytesForBits(validity_io.values_read)));
+       validity_buffer->ZeroPadding();
+     }
+-    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> item_chunk, ChunksToSingle(**out));
++    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> item_chunk,
++                          ChunksToSingle(**out, ctx_->pool));
+ 
+     std::vector<std::shared_ptr<Buffer>> buffers{
+         validity_io.null_count > 0 ? validity_buffer : nullptr, offsets_buffer};
+@@ -922,7 +926,8 @@ Status StructReader::BuildArray(int64_t length_upper_bound,
+   for (auto& child : children_) {
+     std::shared_ptr<ChunkedArray> field;
+     RETURN_NOT_OK(child->BuildArray(validity_io.values_read, &field));
+-    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> array_data, ChunksToSingle(*field));
++    ARROW_ASSIGN_OR_RAISE(std::shared_ptr<ArrayData> array_data,
++                          ChunksToSingle(*field, ctx_->pool));
+     children_array_data.push_back(std::move(array_data));
+   }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55438** (closed): GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds (@JonSnow1807)
+- **PR #55437** (closed): GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow (@JonSnow1807)
+- **PR #55436** (closed): Gh 48269 enable flight sql test msvc (@alinaliBQ)
+- **PR #55422** (closed): GH-55418: [Python] Accept tuple of arrays in RecordBatch.from_arrays (@ump45nose)
 - **PR #55414** (closed): EXP: Emscripten toolchain upgrade (@tadeja)
-- **PR #55403** (2026-11-05): GH-55402: [CI][Packaging] Use lowecase for repository name for Docker image name (@alinaliBQ)
-- **PR #55401** (closed): GH-55400: [C++][IPC] Validate body_length in ReadMessage and ReadMessageAsync (@ShivanshhhG)
-- **PR #55395** (closed): GH-55394: [C++][Compute] Check overflow when negating duration (@DiadkoShmek)
-- **PR #55386** (2026-11-04): GH-55385: [C++][Parquet] Remove unused `last_value_in_previous_page_` from `DeltaByteArrayDecoderImpl` (@omkar-334)
-- **PR #55384** (closed): MINOR: [C++][Parquet] Reset page state in RecordReader::SetPageReader (@professor-moody)
+- **PR #55407** (2026-11-05): GH-55406: [C++][Parquet] Test AES-CTR plaintext footer example file (@adamreeve)
 
 ---
 
@@ -1571,32 +1654,33 @@ Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#553
+## X. GH-55269: [Archery] Pass the sender and recipient to the token expiration report
 
 **RULE**:
-When implementing operations in `cpp/cmake_modules/SetupCxxFlags.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/archery/archery/crossbow/cli.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `802102ad`: GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#55381). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ebb9379`: GH-55269: [Archery] Pass the sender and recipient to the token expiration report (#55270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/cmake_modules/SetupCxxFlags.cmake`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/archery/archery/crossbow/cli.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    # Abseil stack trace via emscripten_stack_snapshot() abort on Emscripten<4.0.14
-    # if offset converter isn't enabled. Emscripten 4.0.14 removed the offset converter
-    if(EMSCRIPTEN_VERSION VERSION_LESS "4.0.14")
-      string(APPEND CMAKE_EXE_LINKER_FLAGS " -sUSE_OFFSET_CONVERTER=1")
-    endif()
+    email_report = TokenExpirationEmailReport(
+        report=report,
+        sender_name=sender_name,
+        sender_email=sender_email,
+        recipient_email=recipient_email
+    )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    email_report = TokenExpirationEmailReport(report)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `802102ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ebb9379` are properly handled with clean fallback behavior.

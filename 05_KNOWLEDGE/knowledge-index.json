@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:44:05.494Z",
+  "last_updated": "2026-11-07T21:55:47.244Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2372,14 +2372,19 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "802102ad",
-      "content_hash": "14843aea6536729b66ea9ed0ee567e73b8a19fe2bff98aab948902bbf39837c8",
+      "source_version": "1ebb9379",
+      "content_hash": "a1caf76d46126efeaa6e7a9230c8ab9e19b496b462445f655b2f1611233e56e7",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#553",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GH-55269: [Archery] Pass the sender and recipient to the token expiration report",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2438,7 +2443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:57:23.522Z",
+      "verified_at": "2026-11-07T21:55:46.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80224,11 +80229,16 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "a02a5ad8",
-      "content_hash": "44105ecbb734edddfc832e76b021b64ec13aea7de665f04db097bf6ad9cb188f",
+      "source_version": "33a17ec7",
+      "content_hash": "fcb5c24056187d3e02fd7b458b9155338a50b556b2921547db4f346ba91afc10",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "webdriverio): keep the BiDi context when switchToWindow fails (#16385)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1655,
           "title": "WeakMap Error Tagging and Semantic Classification Rule",
@@ -80275,7 +80285,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:44:10.150Z",
+      "verified_at": "2026-11-07T21:55:47.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
