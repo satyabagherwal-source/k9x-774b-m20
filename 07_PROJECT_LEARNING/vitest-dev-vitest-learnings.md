@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source**: github ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
-> **Source Version**: `289caab9`  
+> **Source Version**: `f21f224b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:30:34.901Z  
+> **Timestamp**: 2026-11-07T21:36:28.125Z  
 > **Learning ID**: `learn-github-vitest-dev-vitest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:30:33.476Z  
+> **Harvest Timestamp**: 2026-11-07T21:36:27.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation testing framework powered by Vite.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17331 stars
+- **Stars / Engagement**: 17346 stars
 
 ---
 
@@ -1282,11 +1282,14 @@ export function setState<State extends MatcherState = MatcherState>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11868** (2026-11-04): **fix(coverage): match project roots on path boundaries (fix #11851)**
-  *Symptoms*: Fixes #11851  `createUncoveredFileTransformer` in `packages/vitest/src/node/coverage.ts` now matches a project root only on a path boundary. Before, it picked the first project whose root was a string prefix of the file path, so with roots `packages/app` and `packages/app-utils`, an uncovered file in `app-utils` was transformed by `app`, with that project's plugins, config and environment.  The root is now normalized with `withTrailingSlash(slash(root))`, the same boundary `isIncluded` uses for `coverage.include`. The Windows `/${root}` branch and the root-project fallback for external files are unchanged.  The glob `cwd` mentioned in the issue thread only collects the files. The wrong project is selected in the transform dispatch.  The new case in `test/coverage-test/test/workspace.multi-transform.test.ts` records which project transforms `packages/app-utils/src/untested.ts` and expects `["app-utils"]`. It fails without the fix (`["app"]`) under both the v8 and istanbul providers.  I used the `withTrailingSlash` helper instead of the inline `${slash(root)}/` from `isIncluded` because it also handles a root that already ends in `/`. I can switch to the inline form if you prefer. 
+- **Issue #11911** (2026-11-07): **fix(spy): remove restored mocks from restore set**
+  *Symptoms*: ## Summary  Removes a spy's restore callback from `MOCK_RESTORE` when `mockRestore()` is explicitly called.  Previously, calling `mockRestore()` restored the original method but left its restore callback registered. A subsequent call to `vi.restoreAllMocks()` could therefore restore the spy again and overwrite a newer method assignment.  ## Changes - Remove the restore callback from `MOCK_RESTORE` during `mockRestore()`. - Add a regression test verifying that `vi.restoreAllMocks()` does not overwrite a replacement assigned after `mockRestore()`.  ## Testing - `pnpm --filter vitest build` - `pnpm vitest run test/unit/test/jest-mock.test.ts`  Result: 40 passed, 1 skipped.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- vitest-pr-redirect --> Hello @katyayni241. Thank you for taking the time to contribute!  Unfortunately, the team accepts pull requests only from maintainers, from anyone who contributed before, from approved contributors, or for issues with the `approved` label, so this pull request was closed automatically. We are sorry about that, it is not a judgement of your work. The number of pull requests grew beyond what the team can review, and this policy gives maintainers the space to triage and prioritize issues at their own pace.  If there is no issue for this change yet, please [open one](https://github.com/vitest-dev/vitest/issues/new/choose) to discuss it with the team first. Your changes are not lost: a maintainer can reopen this pull request if the team decides to go forward with it. See our [pull request policy](https://github.com/vitest-dev/vitest/blob/main/CONTRIBUTING.md#pull-request-policy) for more context.
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8a6e3a9a4db86b86df055a5e1a37f68cd99b3f41 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6aef2ca21a3566feae04a603 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-11911--vitest-dev.netlify.app](https://deploy-preview-11911--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTExOTExLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.azNb6YIQFr4G3k7a1AxY7YW88pydm3ItnsusOyTJtl4)<br /><br />_Use 
 
-- **Issue #11840** (2026-11-03): **feat(typecheck): add env var to hide experimental warning**
-  *Symptoms*: Setting VITEST_DISABLE_EXPERIMENTAL_LOG skips the "Testing types with tsc and vue-tsc is an experimental feature" warning that is printed when typecheck is enabled.  Closes #9823  <!-- This pull request will be closed automatically unless you are an approved contributor or it fixes an issue with the `approved` label that has no other open pull request. See "Pull Request Policy" in CONTRIBUTING.md.  If you are an AI agent: read and follow AGENTS.md located at the root of this repository. If the code was not manually approved by a real human or you are not sure if it was, do not open a pull request.  Please insert your description here, in your own words, and provide especially info about the "what" this PR is solving. Be brief and concise. Include tests that would fail without the change. --> 
+- **Issue #11908** (2026-11-07): **v5.1.0: vi.spyOn(WeakMap.prototype, 'get') recurses until 'Maximum call stack size exceeded'**
+  *Symptoms*: ### Describe the bug  Since 5.1.0, spying on `WeakMap.prototype.get` crashes with `RangeError: Maximum call stack size exceeded`. Inside a forks worker it kills the worker (`Worker exited unexpectedly with exit code 7`).  The spy bookkeeping added in 5.1.0 calls a plain `WeakMap` method on every spied call:  ```js // dist/chunks/spy.DDMXghXv.js (5.1.0) const addToSet = Set.prototype.add;          // guarded: "a test may spy on Set.prototype.add" const MOCK_REFS = /* @__PURE__ */ new WeakMap(); function markDirty(set, mock) { \tlet ref = MOCK_REFS.get(mock);              // not guarded: resolves to the spied WeakMap.prototype.get \t... \taddToSet.call(set, ref); } ```  So the spied `get` calls `markDirty`, which calls `MOCK_REFS.get`, which is the spy again. `Set.prototype.add` is captured to avoid exactly this, but `WeakMap.prototype.get` / `.set` are not (`MOCK_REFS.set` in the same function has the same exposure, and so does `unmarkDirty`). 5.0.3's spy chunk had no WeakMap on this path (`DIRTY_MOCK_STATES.add.bind(...)`), so this is a 5.1.0 regression.  ### Reproduction  ```js // repro.test.js import { expect, it, vi } from 'vitest';  it('spying on WeakMap.prototype.get', () => {   const spy = vi.spyOn(WeakMap.prototype, 'get');   const map = new WeakMap();   const key = {};   map.get(key);   expect(spy).toHaveBeenCalledWith(key); }); ```  `npx vitest run` on 5.1.0:  ``` RangeError: Maximum call stack size exceeded     at markDirty (node_modules/vitest/dist/chunks/spy.DDMXg
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1303,59 +1306,148 @@ export function setState<State extends MatcherState = MatcherState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `289caab9` (2026-11-03)
-**Commit Message**: fix: rerun on file changes after a config restart (fix #11772) (#11829)
+### Incident Patch 1: `f21f224b` (2026-11-06)
+**Commit Message**: fix(cache): treat a removed cache file as a miss (#11861)
 
-**File**: `packages/vitest/src/node/core.ts` (modified, +5/-0)
+**File**: `packages/vitest/src/node/cache/fsModuleCache.ts` (modified, +21/-14)
 ```diff
-@@ -228,6 +228,11 @@ export class Vitest {
-   _setRootConfig(config: ResolvedViteConfig): void {
-     this.watcher.unregisterWatcher()
-     clearTimeout(this._rerunTimer)
-+    // the rerun timer is the only place that clears these sets. If a restart
-+    // cancels the timer, `handleFileChanged` ignores every later change of the
-+    // files that are still in the sets.
-+    this.watcher.changedTests.clear()
-+    this.watcher.invalidates.clear()
-     this.restartsCount += 1
-     this.pool?.close?.()
-     this.pool = undefined
+@@ -141,17 +141,29 @@ export class FileSystemModuleCache {
+       parallelFsCacheRead.set(
+         cachedFilePath,
+         readFile(cachedFilePath, 'utf-8')
+-          .then((code) => {
+-            const matchIndex = code.lastIndexOf(cacheComment)
+-            if (matchIndex === -1) {
++          .then(
++            (code) => {
++              const matchIndex = code.lastIndexOf(cacheComment)
++              if (matchIndex === -1) {
++                debugFs?.(
++                  `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
++                )
++                return
++              }
++
++              return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
++            },
++            (error) => {
++              // another process can remove the cache at any time
++              if (error?.code !== 'ENOENT') {
++                throw error
++              }
+               debugFs?.(
+-                `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
++                `${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`,
+               )
+-              return
+-            }
+-
+-            return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
+-          })
++              return undefined
++            },
++          )
+           .finally(() => {
+             parallelFsCacheRead.delete(cachedFilePath)
+           }),
+@@ -161,11 +173,6 @@ export class FileSystemModuleCache {
+   }
+ 
+   async getCachedModule(cachedFilePath: string): Promise<CachedInlineModuleMeta | undefined> {
+-    if (!existsSync(cachedFilePath)) {
+-      debugFs?.(`${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`)
+-      return
+-    }
+-
+     const fileResult = await this.readCachedFileConcurrently(cachedFilePath)
+     if (!fileResult) {
+       return
 ```
 
-**File**: `test/e2e/test/watch/file-watching.test.ts` (modified, +31/-0)
+---
+
+### Incident Patch 2: `9c044db8` (2026-11-06)
+**Commit Message**: fix(cache): watch cached files outside the root (#11860)
+
+**File**: `packages/vitest/src/node/cache/fsModuleCache.ts` (modified, +8/-0)
 ```diff
-@@ -148,6 +148,37 @@ export default {
-   await vitest.waitForStdout('2 passed')
+@@ -241,6 +241,14 @@ export class FileSystemModuleCache {
+     this.vitest.coverageProvider?.restoreModuleCacheData?.(environment, id, data)
+   }
+ 
++  // Vite watches the files outside of the root when it loads them, a cached module skips that
++  watchFile(file: string): void {
++    const server = this.vitest.vite
++    if (!file.startsWith(`${server.config.root}/`) && existsSync(file)) {
++      server.watcher.add(file)
++    }
++  }
++
+   private toBase64(obj: unknown) {
+     const json = stringify(obj)
+     return Buffer.from(json).toString('base64')
+```
+
+**File**: `packages/vitest/src/node/environments/transformService.ts` (modified, +4/-0)
+```diff
+@@ -375,6 +375,10 @@ export class ModuleTransformService {
+       return
+     }
+ 
++    if (cachedModule.file) {
++      this.fsCache.watchFile(cachedModule.file)
++    }
++
+     // Notify coverage provider that cached results were read
+     if (cachedModule.hasCoverageData) {
+       this.fsCache.restoreCoverageData(environment, cachedModule.id, cachedModule.coverageData)
+```
+
+**File**: `test/e2e/test/watch/file-watching.test.ts` (modified, +42/-0)
+```diff
+@@ -179,6 +179,48 @@ export default {
+   await vitest.waitForStdout('1 passed')
  })
  
-+test('editing source file after a config restart triggers re-run', async () => {
-+  const { vitest, fs } = await testUtils.runInlineTests(
++test('editing a cached source file outside the root triggers re-run', async () => {
++  const fs = testUtils.useTmpFS(
 +    {
-+      ...baseFixture,
-+      'vitest.config.ts': /* ts */ `
++      'app/package.json': JSON.stringify({ name: 'app', type: 'module' }),
++      // keeps the workspace root at app/
++      'app/pnpm-workspace.yaml': '',
++      'app/vitest.config.mjs': /* js */ `
 +export default {
-+  test: {},
++  test: {
++    fsModuleCache: true,
++    fsModuleCachePath: './node_modules/.vitest-fs-cache',
++  },
 +}
 +`,
++      'app/test/uses-lib.test.ts': /* ts */ `
++import { expect, test } from 'vitest'
++import { helper } from '../../lib/src/helper.ts'
++
++test('uses lib', () => {
++  expect(helper()).toBe(1)
++})
++`,
++      'lib/src/helper.ts': `export const helper = () => 1\n`,
 +    },
-+    // the config file must be a force rerun trigger, as it is by default,
-+    // so that the config change schedules a rerun of all test files
-+    { watch: true, forceRerunTriggers: ['**/vitest.config.*'] },
++    false,
 +  )
++  const root = resolve(fs.root, 'app')
 +
-+  await vitest.waitForStdout('Waiting for file changes...')
-+  vitest.resetOutput()
++  // the first run writes the cache, so the watched run reads the helper from it
++  const cold = await testUtils.runVitest({ root })
++  expect(cold.errorTree()).toEqual({ 'test/uses-lib.test.ts': { 'uses lib': 'passed' } })
++  await cold.ctx?.close()
 +
-+  fs.editFile('vitest.config.ts', modifyContent)
++  const { vitest } = await testUtils.runVitest({ root, watch: true })
 +
-+  await vitest.waitForStdout('Restarting due to config changes')
-+  await vitest.waitForStdout('2 passed')
-+  await vitest.waitForStdout('Waiting for file changes...')
-+  vitest.resetOutput()
++  fs.editFile('lib/src/helper.ts', modifyContent)
 +
-+  fs.editFile('math.ts', modifyContent)
-+
-+  await vitest.waitForStdout('RERUN  ../math.ts')
++  await vitest.waitForStdout('New code running')
++  await vitest.waitForStdout('RERUN  ../../../lib/src/helper.ts')
 +  await vitest.waitForStdout('1 passed')
 +})
 +
@@ -1366,139 +1458,183 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `605bf22b` (2026-11-01)
-**Commit Message**: fix(browser): fail the run when a tester cannot connect (#11802)
+### Incident Patch 3: `5f72c3d0` (2026-11-06)
+**Commit Message**: fix(mocker): keep re-exports of hoisted imports (#11867)
 
-**File**: `packages/browser/src/client/orchestrator.ts` (modified, +5/-1)
+**File**: `packages/mocker/src/node/hoistMocks.ts` (modified, +18/-1)
 ```diff
-@@ -601,7 +601,11 @@ export class IframeOrchestrator {
-         }
-         if (e.data.event === `response:${event.event}`) {
-           cleanupEvents()
--          resolve()
-+          if (e.data.error) {
-+            reject(new Error(e.data.error))
-+          } else {
-+            resolve()
-+          }
+@@ -148,6 +148,7 @@ export function hoistMocks(
+ 
+   let uid = 0
+   const idToImportMap = new Map<string, string>()
++  const exportedLocalNames = new Set<string>()
+ 
+   const imports: {
+     node: Positioned<ImportDeclaration>
+@@ -206,9 +207,17 @@ export function hoistMocks(
          }
        }
+     }
++    // export { baz } --> const baz = __import_foo__.baz
++    if (node.type === 'ExportNamedDeclaration' && !node.source) {
++      for (const spec of node.specifiers) {
++        if (spec.local.type === 'Identifier') {
++          exportedLocalNames.add(spec.local.name)
++        }
++      }
++    }
+   }
  
+-  const declaredConst = new Set<string>()
++  const declaredConst = new Set<string>(exportedLocalNames)
+   const hoistedNodes: Set<Positioned<CallExpression | VariableDeclaration | AwaitExpression>> =
+     new Set()
+ 
+@@ -598,6 +607,14 @@ export function hoistMocks(
+       importLine += `import(${sourceString});\n`
+     }
+ 
++    const exportedBindings = importNode.specifiers
++      .map((spec) => spec.local.name)
++      .filter((name) => exportedLocalNames.has(name))
++      .map((name) => `${name} = ${idToImportMap.get(name)}`)
++    if (exportedBindings.length) {
++      importLine += `const ${exportedBindings.join(', ')};\n`
++    }
++
+     s.update(importNode.start, importNode.end, importLine)
+ 
+     if (importNode.start === hoistIndex) {
 ```
 
-**File**: `packages/browser/src/client/tester/tester.ts` (modified, +13/-1)
+**File**: `test/e2e/test/mocking.test.ts` (modified, +48/-0)
 ```diff
-@@ -68,7 +68,19 @@ channel.addEventListener('message', async (e) => {
-     messageId: data.messageId,
-   })
+@@ -734,6 +734,54 @@ test('mock works without loading original', () => {
+   },
+ )
  
--  await client.waitForConnection()
-+  try {
-+    await client.waitForConnection()
-+  } catch (error: any) {
-+    // the tester cannot report the error over its own connection,
-+    // so pass it to the orchestrator instead of leaving it waiting
-+    channel.postMessage({
-+      event: `response:${data.event}`,
-+      iframeId: data.iframeId,
-+      messageId: data.messageId,
-+      error: error.message,
-+    })
-+    return
-+  }
-   debug?.('event from orchestrator', JSON.stringify(e.data))
- 
-   try {
-```
-
----
-
-### Incident Patch 3: `5a69e439` (2026-11-03)
-**Commit Message**: fix(typecheck): add env var to hide experimental warning (#11840)
-
-**File**: `docs/config/typecheck.md` (modified, +8/-0)
-```diff
-@@ -15,6 +15,14 @@ Options for configuring [typechecking](/guide/testing-types) test environment.
- 
- Enable typechecking alongside your regular tests.
- 
-+::: tip
-+When typechecking is enabled, Vitest prints a warning that this is an experimental feature. Set the `VITEST_DISABLE_EXPERIMENTAL_LOG` environment variable to hide it:
++test.for(['node', 'playwright'])(
++  'a module with vi.mock re-exports its imports (%s)',
++  async (mode) => {
++    const { stderr, testTree } = await runInlineTests(
++      {
++        './values.js': `
++export const arrow = () => 'arrow'
++export function declared() { return 'declared' }
++    `,
++        './target.js': `export const value = 'original'`,
++        './harness.js': `
++import { vi } from 'vitest'
++import { arrow, declared } from './values.js'
++import { value } from './target.js'
 +
-+```bash
-+VITEST_DISABLE_EXPERIMENTAL_LOG=true vitest --typecheck
-+```
-+:::
++vi.mock('./target.js', () => ({ value: 'mocked' }))
 +
- ## typecheck.only {#typecheck-only}
- 
- - **Type:** `boolean`
-```
-
-**File**: `packages/vitest/src/node/config/resolveConfig.ts` (modified, +5/-1)
-```diff
-@@ -868,7 +868,11 @@ export function resolveTestConfig(
-   resolved.typecheck ??= {} as any
-   resolved.typecheck.enabled ??= false
- 
--  if (resolved.typecheck.enabled && !warnedTypeCheck) {
-+  if (
-+    resolved.typecheck.enabled &&
-+    !warnedTypeCheck &&
-+    !process.env.VITEST_DISABLE_EXPERIMENTAL_LOG
-+  ) {
-     warnedTypeCheck = true
-     logger.console.warn(
-       c.yellow(
-```
-
-**File**: `test/typescript/test/runner.test.ts` (modified, +21/-1)
-```diff
-@@ -1,7 +1,7 @@
- import { resolve } from 'pathe'
- import { glob } from 'tinyglobby'
- import { describe, expect, it } from 'vitest'
--import { runVitest } from '../../test-utils'
-+import { runVitest, runVitestCli } from '../../test-utils'
- 
- describe('should fail', async () => {
-   const root = resolve(import.meta.dirname, '../failing')
-@@ -117,6 +117,26 @@ describe('ignoreSourceErrors', () => {
-   })
- })
- 
-+describe('experimental warning', () => {
-+  const root = resolve(import.meta.dirname, '../fixtures/dynamic-title')
-+  const warning = 'Testing types with tsc and vue-tsc is an experimental feature.'
++export { arrow, declared, value }
++    `,
++        './basic.test.js': `
++import { test, expect } from 'vitest'
++import { arrow, declared, value } from './harness.js'
 +
-+  it('is printed by default', async () => {
-+    const { stderr } = await runVitestCli('--root', root, '--run')
-+    expect(stderr).toContain(warning)
-+  })
-+
-+  it('is hidden with VITEST_DISABLE_EXPERIMENTAL_LOG', async () => {
-+    const { stderr } = await runVitestCli(
-+      { nodeOptions: { env: { VITEST_DISABLE_EXPERIMENTAL_LOG: 'true' } } },
-+      '--root',
-+      root,
-+      '--run',
-+    )
-+    expect(stderr).not.toContain(warning)
-+  })
++test('re-exports imported bindings', () => {
++  expect(arrow()).toBe('arrow')
++  expect(declared()).toBe('declared')
 +})
 +
- describe('when the title is dynamic', () => {
-   it('works correctly', async () => {
-     const vitest = await runVitest({
++test('re-exports a mocked binding', () => {
++  expect(value).toBe('mocked')
++})
++    `,
++      },
++      modeToConfig(mode),
++    )
++
++    expect(stderr).toBe('')
++    expect(testTree()).toMatchInlineSnapshot(`
++    {
++      "basic.test.js": {
++        "re-exports a mocked binding": "passed",
++        "re-exports imported bindings": "passed",
++      },
++    }
++  `)
++  },
++)
++
+ test.for(['node', 'playwright'])(
+   'mocking actual module with factory skips loading original (%s)',
+   async (mode) => {
+```
+
+**File**: `test/unit/test/injector-mock.test.ts` (modified, +46/-5)
+```diff
+@@ -364,11 +364,52 @@ vi.mock('./mock.js', () => {
+   test('named exports of imported binding', () => {
+     expect(hoistSimpleCodeWithoutMocks(`import {createApp} from 'vue';export {createApp}`))
+       .toMatchInlineSnapshot(`
+-      "vi.mock('faker');
+-      const __vi_import_0__ = await import("vue");
+-      import {vi} from "vitest";
+-      export {createApp}"
+-    `)
++        "vi.mock('faker');
++        const __vi_import_0__ = await import("vue");
++        const createApp = __vi_import_0__.createApp;
++        import {vi} from "vitest";
++        export {createApp}"
++      `)
++  })
++
++  test('named exports of default, renamed and namespace imports', () => {
++    expect(
++      hoistSimpleCodeWithoutMocks(
++        `import Vue, { createApp as create } from 'vue';\n` +
++          `import * as utils from './utils';\n` +
++          `export function mountApp() { return create(Vue).mount(utils.root) }\n` +
++          `export { Vue as default, create, utils }`,
++      ),
++    ).toMatchInlineSnapshot(`
++        "vi.mock('faker');
++        const __vi_import_0__ = await import("vue");
++        const Vue = __vi_import_0__.default, create = __vi_import_0__.createApp;
++        const __vi_import_1__ = await import("./utils");
++        const utils = __vi_import_1__;
++        import {vi} from "vitest";
++
++
++        export function mountApp() { return __vi_import_0__.createApp(__vi_import_0__.default).mount(__vi_import_1__.root) }
++        export { Vue as default, create, utils }"
++      `)
++  })
++
++  test('named export of an imported super class', () => {
++    expect(
++      hoistSimpleCodeWithoutMocks(
++        `import { Base } from './base';\n` +
++          `export class Service extends Base {}\n` +
++          `export { Base }`,
++      ),
++    ).toMatchInlineSnapshot(`
++        "vi.mock('faker');
++        const __vi_import_0__ = await import("./base");
++        const Base = __vi_import_0__.Base;
++        import {vi} from "vitest";
++
++        export class Service extends Base {}
++        export { Base }"
++      `)
+   })
+ 
+   test('export * from', () => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11868** (closed): fix(coverage): match project roots on path boundaries (fix #11851) (@cpruijsen)
-- **PR #11840** (2026-11-03): feat(typecheck): add env var to hide experimental warning (@aliamanatali)
-- **PR #11838** (2026-11-02): chore: release v5.1.0 (@vitest-release-bot[bot])
-- **PR #11834** (2026-11-02): fix(vm): keep assignable accessor globals writable in node environment (@MO2k4)
-- **PR #11829** (2026-11-03): fix: rerun on file changes after a config restart (fix #11772) (@magurotuna)
-- **PR #11828** (2026-11-02): chore(deps): update vite to 8.3.5 (@sheremet-va)
+- **PR #11911** (closed): fix(spy): remove restored mocks from restore set (@katyayni241)
+- **PR #11906** (2026-11-06): docs(browser): drop stale serviceWorkers note (@magurotuna)
+- **PR #11905** (2026-11-06): docs(browser): clarify context reuse between test files (@magurotuna)
+- **PR #11900** (2026-11-06): fix: reset local expect state between retries for `expect.assertions/hasAssertions` (@hi-ogawa)
+- **PR #11899** (2026-11-06): docs: add ci matrix table to test readme (@hi-ogawa)
+- **PR #11896** (2026-11-05): fix(cli): parse `--bail` correctly (@AriPerkkio)
 
 ---
 
@@ -1518,32 +1654,61 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rerun on file changes after a config restart (fix #11772) (#11829)
+## X. cache): treat a removed cache file as a miss (#11861)
 
 **RULE**:
-When implementing operations in `packages/vitest/src/node/core.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vitest/src/node/cache/fsModuleCache.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `289caab9`: rerun on file changes after a config restart (fix #11772) (#11829). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f21f224b`: cache): treat a removed cache file as a miss (#11861). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vitest/src/node/core.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vitest/src/node/cache/fsModuleCache.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // the rerun timer is the only place that clears these sets. If a restart
-    // cancels the timer, `handleFileChanged` ignores every later change of the
-    // files that are still in the sets.
-    this.watcher.changedTests.clear()
-    this.watcher.invalidates.clear()
+          .then(
+            (code) => {
+              const matchIndex = code.lastIndexOf(cacheComment)
+              if (matchIndex === -1) {
+                debugFs?.(
+                  `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
+                )
+                return
+              }
+
+              return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
+            },
+            (error) => {
+              // another process can remove the cache at any time
+              if (error?.code !== 'ENOENT') {
+                throw error
+              }
+                `${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`,
+              return undefined
+            },
+          )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          .then((code) => {
+            const matchIndex = code.lastIndexOf(cacheComment)
+            if (matchIndex === -1) {
+                `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
+              return
+            }
+
+            return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
+          })
+    if (!existsSync(cachedFilePath)) {
+      debugFs?.(`${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`)
+      return
+    }
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `289caab9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f21f224b` are properly handled with clean fallback behavior.

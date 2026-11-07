@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `095d0b94`  
+> **Source Version**: `8dcc6b28`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:36:33.446Z  
+> **Timestamp**: 2026-11-07T21:36:26.274Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:36:32.152Z  
+> **Harvest Timestamp**: 2026-11-07T21:36:24.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40263 stars
+- **Stars / Engagement**: 40279 stars
 
 ---
 
@@ -1668,13 +1668,14 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30623** (2026-11-05): **Non-deterministic incorrect results using filter in an aggregate expression**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [0, 0, 1], "a": [10, 11, 20], "b": [1, 0, 2]}) expr = pl.col("a").filter(pl.lit(True)).sort_by("b").first()  seen = {tuple(df.group_by("g").agg(expr).sort("g")["a"]) for _ in range(100)} print(len(seen), sorted(seen)[:3]) ```  This should output `1 [(11, 20)]`, and does on Polars 2.0.0, but with 2.1.0 the output is something like: ``` 50 [(11, 0), (11, 20), (11, 8589934592)] ``` About 50% of the time the result is correct on my machine.   ### Log output  ```shell total memory: 62.693 GiB (67316342784 bytes) async thread count: 24 blocking thread count: 512 keys/aggregates are not partitionable: running default HASH AGGREGATION (last line repeated 100 times) ```  ### Issue description  The example query sometimes gives correct result, but randomly gives different incorrect results on some executions. This worked with 2.0.0 but not with 2.1.0.  ### Expected behavior  Correct results every time.  ### Installed versions  <details>  ``` --------Version info--------- Polars:              2.1.0 Build:               7f902bd3ffd27ff82d14278a09a295ff2f7aed92 Index type:          UInt32 Platform:            Linux-7.2.15-200.fc44.x86_64-x86_64-with-glibc2.43 Python:              3.12.12 (main, Nov 19 2025, 22:46:53) [Clang
+  **Post-Mortem & Fix Analysis**:
+  > Unable to reproduce on latest main. Looks like a duplicate of https://github.com/pola-rs/polars/issues/30551 and fixed by https://github.com/pola-rs/polars/pull/30563.  Before/after (latter is latest main in debug build): ``` $ python tt.py && ~/tmp/polars/.venv/bin/python tt.py 41 [(11, 0), (11, 20), (11, 8589934592)] 1 [(11, 20)] ```
+  > Ah thanks, I missed that when searching
+
 - **Issue #30599** (2026-11-05): **`null` struct incorrectly equals `{'x': null}` struct in uniqueness test**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  s = pl.Series("s", [{"a": None}, None, {"a": 1}])  # A null struct and {a: null} are treated as one value. print(s.is_unique().to_list())  # [False, False, True] print(s.is_duplicated().to_list())  # [True, True, False]  # Every other uniqueness operation keeps them apart. print(s.n_unique())  # 3 print(s.unique(maintain_order=True).to_list())  # [{'a': None}, None, {'a': 1}] print(s.is_first_distinct().to_list())  # [True, True, True] print(s.to_frame().is_unique().to_list())  # [True, True, True] print(s.to_frame().group_by("s").len().height)  # 3  assert s.is_unique().to_list() == [True, True, True]  # fails ```   ### Log output  ```shell [:~/git/polars-2]└2 <.venv> f0fa14b+ ± pt running script: python3 "/home/amber/git/scratch/test.py"  [False, False, True] [True, True, False] 3 [{'a': None}, None, {'a': 1}] [True, True, True] [True, True, True] 3 Traceback (most recent call last):   File "/home/amber/git/scratch/test.py", line 33, in <module>     assert s.is_unique().to_list() == [True, True, True]  # fails            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ AssertionError ```  ### Issue description  `null` structs incorrectly equal structs that have `null` as their only value when I use `Expr.is_unique()` and other of those
-
-- **Issue #30582** (2026-11-04): **`arg_max`/`arg_min` returns the last tied position**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"g": [1, 1, 1], "x": [1, 2, 2]}) sorted_df = df.with_columns(pl.col("x").set_sorted())  expected = df.select(pl.col("x").arg_max()).item() print(f"{expected=}")  # expected=1 print(sorted_df.select(pl.col("x").arg_max()).item())  # 2  expected = df.group_by("g").agg(pl.col("x").arg_max())["x"].item() print(f"{expected=}")  # expected=1 print(sorted_df.group_by("g").agg(pl.col("x").arg_max())["x"].item())  # 2 ```   ### Log output  ```shell total memory: 93.731 GiB (100642918400 bytes) async thread count: 22 blocking thread count: 512 run sink_mem run StackExec run sink_mem run ProjectionExec expected=1 run sink_mem run ProjectionExec 2 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION expected=1 run sink_mem run GroupbyExec keys/aggregates are not partitionable: running default HASH AGGREGATION 2 ```  ### Issue description  `arg_max`/`arg_min` on a sorted column returns the last tied position    ### Expected behavior  Expected the first occurrence of the maximum. `1` in all cases above. The sorted fast path takes the last non-null value, which is the last of the tied maxima. `arg_min` on a column sorted descending has the same problem.  ### Installed versions  <deta
-  **Post-Mortem & Fix Analysis**:
-  > Not a bug, `arg_min` (intentionally) does not specify which is returned on ties https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr.arg_min.html#polars.Expr.arg_min.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1691,729 +1692,403 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be404e63` (2026-11-05)
-**Commit Message**: fix: Don't treat `is_in` with a multi-row literal as elementwise (#30617)
+### Incident Patch 1: `8dcc6b28` (2026-11-07)
+**Commit Message**: fix: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#30631)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/polars-plan/src/plans/aexpr/properties/general.rs` (modified, +3/-3)
+**File**: `crates/polars-expr/src/dispatch/array.rs` (modified, +2/-1)
 ```diff
-@@ -138,8 +138,8 @@ pub fn is_prop<P: Fn(&AExpr) -> bool>(
-     }
- 
-     match ae {
--        // Literals that aren't being projected are allowed to be non-scalar, so we don't add them
--        // for inspection. (e.g. `is_in(<literal>)`).
-+        // A single-value right-hand side of `is_in` is broadcast, so it needn't be inspected. A
-+        // multi-row literal is zipped row by row.
-         #[cfg(feature = "is_in")]
-         Function {
-             function: IRFunctionExpr::Boolean(IRBooleanFunction::IsIn { .. }),
-@@ -150,7 +150,7 @@ pub fn is_prop<P: Fn(&AExpr) -> bool>(
-                 assert_eq!(input.len(), 2); // A.is_in(B)
-                 let rhs = rhs.node();
- 
--                if matches!(expr_arena.get(rhs), AExpr::Literal { .. }) {
-+                if is_single_literal_ae(rhs, expr_arena) {
-                     stack.extend([input[0].node()]);
-                     return;
-                 }
+@@ -159,7 +159,8 @@ pub(super) fn contains(s: &[Column], nulls_equal: bool) -> PolarsResult<Column>
+ #[cfg(feature = "array_count")]
+ pub(super) fn count_matches(args: &[Column]) -> PolarsResult<Column> {
+     let s = &args[0];
+-    let element = &args[1];
++    // A broadcast scalar is one element, not one per row.
++    let element = args[1].as_materialized_series_maintain_scalar();
+     polars_ensure!(
+         element.len() == 1,
+         ComputeError: "argument expression in `arr.count_matches` must produce exactly one element, got {}",
 ```
 
-**File**: `py-polars/tests/unit/operations/test_is_in.py` (modified, +14/-0)
+**File**: `crates/polars-expr/src/dispatch/list.rs` (modified, +2/-1)
 ```diff
-@@ -2162,3 +2162,17 @@ def test_single_value_list_agg_state_edge_cases_23995() -> None:
-     out = df.group_by("g").agg(pl.col("xs").list.set_union(pl.Series([[1]])))
-     assert out.schema == {"g": pl.Int64, "xs": pl.List(pl.List(pl.Int64))}
-     assert out.height == 0
-+
-+
-+def test_is_in_row_wise_series_is_not_elementwise() -> None:
-+    df = pl.DataFrame({"a": [0, 1, 2, 3], "b": [1, 2, 3, 4]})
-+    haystack = pl.Series([[1], [9], [3]])
-+
-+    # The filters must not be fused, as `haystack` lines up with the filtered rows.
-+    lf = df.lazy().filter(pl.col("b") > 1).filter(pl.col("a").is_in(haystack))
-+    assert lf.collect()["a"].to_list() == [1, 3]
-+
-+    # The chunks must not be evaluated in parallel.
-+    chunked = pl.concat([df[:2], df[2:]], rechunk=False)
-+    out = chunked.with_columns(r=pl.col("a").is_in(pl.Series([[0], [9], [2], [9]])))
-+    assert out["r"].to_list() == [True, False, True, False]
+@@ -298,7 +298,8 @@ pub(super) fn gather_every(args: &[Column]) -> PolarsResult<Column> {
+ #[cfg(feature = "list_count")]
+ pub(super) fn count_matches(args: &[Column]) -> PolarsResult<Column> {
+     let s = &args[0];
+-    let element = &args[1];
++    // A broadcast scalar is one element, not one per row.
++    let element = args[1].as_materialized_series_maintain_scalar();
+     polars_ensure!(
+         element.len() == 1,
+         ComputeError: "argument expression in `list.count_matches` must produce exactly one element, got {}",
 ```
 
----
-
-### Incident Patch 2: `120ebdbb` (2026-11-05)
-**Commit Message**: fix: Correct the hint in the strict struct cast error (#30470)
-
-**File**: `crates/polars-core/src/utils/series.rs` (modified, +2/-2)
+**File**: `crates/polars-plan/src/plans/conversion/dsl_to_ir/functions.rs` (modified, +8/-2)
 ```diff
-@@ -18,8 +18,8 @@ pub fn check_is_valid_struct_cast(
-         polars_err!(
-             InvalidOperation:
-             "cast from `{}` to `{}` failed in column '{}': {}\n\n\
--            Ensure that any output struct has the same number of fields as the input, and that all struct field names in the output are present in the input.\n\
--            Use `strict=False` to force the cast, and Polars will select the first n fields from the struct.",
-+            A strict cast requires the output struct to have the same field names as the input, in the same order.\n\
-+            Use `strict=False` to match fields by name: output fields missing from the input become null, and extra input fields are dropped.",
-             input_dtype,
-             output_dtype,
-             output_name,
-```
-
-**File**: `docs/source/releases/upgrade/2.md` (modified, +5/-6)
-```diff
-@@ -1487,10 +1487,9 @@ representation first if you need the statistic, e.g. `.dt.total_microseconds().s
- 
- ### Disable invalid struct casts when `strict=True`
- 
--Casting between two `Struct` dtypes with a different number of fields, or with mismatched field
--names, used to silently succeed by taking the first _n_ matching fields. The same kind of silent
--truncation `struct.rename_fields()` used to do (see below). Under the default `strict=True` it now
--raises; pass `strict=False` to keep the old truncating behavior.
-+Casting between two `Struct` dtypes with a different number of fields, or with different field names
-+or field order, used to silently succeed. Under the default `strict=True` it now raises; pass
-+`strict=False` to match fields by name, filling missing fields with null and dropping extra ones.
- 
- !!! danger
- 
-@@ -1519,8 +1518,8 @@ Traceback (most recent call last):
- ...
- polars.exceptions.InvalidOperationError: cast from `struct[2]` to `struct[1]` failed in column 'x': structs do not have the same number of fields: 2 vs 1
- 
--Ensure that any output struct has the same number of fields as the input, and that all struct field names in the output are present in the input.
--Use `strict=False` to force the cast, and Polars will select the first n fields from the struct.
-+A strict cast requires the output struct to have the same field names as the input, in the same order.
-+Use `strict=False` to match fields by name: output fields missing from the input become null, and extra input fields are dropped.
- ```
- 
- Use instead, to keep the previous behavior:
-```
-
----
-
-### Incident Patch 3: `219e117d` (2026-11-05)
-**Commit Message**: fix: Read inner struct fields and report unknown qualifiers in SQL subqueries (#30348)
-
-**File**: `crates/polars-sql/src/context.rs` (modified, +37/-5)
-```diff
-@@ -280,6 +280,9 @@ pub struct SQLContext {
-     /// Whether a qualifier may only name a relation that a `FROM` declares, also before any
-     /// `FROM` is processed. Kept by the contexts of subqueries.
-     pub(crate) strict_relations: bool,
-+    /// How many subqueries enclose this scope. CTEs, derived tables and set operands don't
-+    /// count: they read no enclosing scope.
-+    pub(crate) nesting: usize,
- }
- 
- /// The first relation of the current `FROM` and the (joined table, column) pairs
-@@ -346,6 +349,7 @@ impl Default for SQLContext {
-             catalog_spellings: Default::default(),
-             statement_time: Default::default(),
-             strict_relations: false,
-+            nesting: 0,
-         }
-     }
- }
-@@ -934,6 +938,7 @@ impl SQLContext {
-             catalog_spellings: self.catalog_spellings.clone(),
-             statement_time: self.statement_time.clone(),
-             strict_relations: self.strict_relations,
-+            nesting: self.nesting + 1,
- 
-             ..Default::default()
-         }
-@@ -1126,6 +1131,8 @@ impl SQLContext {
-         F: FnOnce(&mut Self) -> PolarsResult<LazyFrame>,
-     {
-         let mut ctx = self.isolated();
-+        // Not a subquery scope; a subquery caller counts one itself.
-+        ctx.nesting = self.nesting;
- 
-         // Execute query with clean state (eg: nested/subquery)
-         let lf = query(&mut ctx)?;
-@@ -1312,28 +1319,46 @@ impl SQLContext {
-     }
- 
-     /// Check the SELECT and WHERE expressions of a block for ambiguous unqualified
--    /// columns (if there were joins).
--    pub(crate) fn check_select_column_refs(&self, select_stmt: &Select) -> PolarsResult<()> {
-+    /// columns (if there were joins). `schema` is the schema of the joined frame.
-+    pub(crate) fn check_select_column_refs(
-+        &self,
-+        select_stmt: &Select,
-+        schema: &Schema,
-+    ) -> PolarsResult<()> {
-         let Some(base) = &self.join_base else {
-             return Ok(());
-         };
-         if self.joined_aliases.is_empty() {
-             return Ok(());
-         }
--        let check_expr = |e| {
-+        let check_expr = |e: &SQLExpr| {
-             check_for_ambiguous_column_refs(
-                 e,
-                 &self.joined_aliases,
-                 &base.table_name,
-                 &base.using_cols,
-                 &self.active_relations,
-+                schema,
-             )
-         };
-         for item in &select_stmt.projection {
-             match item {
-                 SelectItem::UnnamedExpr(e) | SelectItem::ExprWithAlias { expr: e, .. } => {
-                     check_expr(e)?
+@@ -54,7 +54,10 @@ pub(super) fn convert_functions(
+                     needle_cast: None,
                  },
-+                // `s.*` reads a struct column `s` when no relation is named `s`.
-+                SelectItem::QualifiedWildcard(
-+                    SelectItemQualifiedWildcardKind::ObjectName(name),
-+                    _,
-+                ) => {
-+                    let parts = name
-+                        .0
-+                        .iter()
-+                        .filter_map(|p| p.as_ident().cloned())
-+                        .chain([Ident::new("*")])
-+                        .collect();
-+                    check_expr(&SQLExpr::CompoundIdentifier(parts))?
+                 #[cfg(feature = "array_count")]
+-                A::CountMatches => IA::CountMatches,
++                A::CountMatches => {
++                    polars_ensure!(&e[1].is_scalar(ctx.arena), ShapeMismatch: "'element' must be a scalar value");
++                    IA::CountMatches
 +                },
-                 _ => {},
-             }
-         }
-@@ -2323,6 +2348,10 @@ impl SQLContext {
-                 let (keep_left, keep_right) = join_keeps_inputs(&join.join_operator);
-                 if !keep_left {
-                     kept.clear();
-+                    // The columns of the left relations are gone, so are their aliases.
-+                    for relation in &left_relations {
-+                        self.joined_aliases.remove(relation);
-+                    }
-                 }
-                 if keep_right {
-                     kept.push(&join.relation);
-@@ -2915,15 +2944,15 @@ impl SQLContext {
-         };
- 
-         self.set_join_base(&select_stmt.from);
--        self.check_select_column_refs(select_stmt)?;
-+        let mut schema = self.get_frame_schema(&mut lf)?;
-+        self.check_select_column_refs(select_stmt, &schema)?;
- 
-         // Apply `WHERE` constraint (using residual filter for implicit joins)
-         let where_expr = if implicit_join_filter.is_some() {
-             implicit_join_filter.as_ref()
-         } else {
-             select_stmt.selection.as_ref()
-         };
--        let mut schema = self.get_frame_schema(&mut lf)?;
- 
-         // Shared by every pass over this frame: WHERE, the projection list and HAVING.
-         let mut bindings = SubqueryBindings::new();
-@@ -4308,6 +4337,7 @@ impl SQLContext {
-             &left.name,
-             &self.join_using_cols,
-             &self.active_relations,
-+            &schema,
-         )?;
-         let join_base = self.join_base.replace(JoinBase {
-             table_name: left.name.to_string(),
-@@ -4480,12 +4510,14 @@ impl SQLContext {
-         {
-             return Ok(false);
-         }
-+        // `check` passed qualified columns only, so no struct path needs t
+                 A::Shift => IA::Shift,
+                 A::Explode(options) => IA::Explode(options),
+                 A::Concat => IA::Concat,
+@@ -210,7 +213,10 @@ pub(super) fn convert_functions(
+                 #[cfg(feature = "list_gather")]
+                 L::GatherEvery => IL::GatherEvery,
+                 #[cfg(feature = "list_count")]
+-                L::CountMatches => IL::CountMatches,
++                L::CountMatches => {
++                    polars_ensure!(&e[1].is_scalar(ctx.arena), ShapeMismatch: "'element' must be a scalar value");
++                    IL::CountMatches
++                },
+                 L::Sum => IL::Sum,
+                 L::Length => IL::Length,
+                 L::Max => IL::Max,
 ```
 
-**File**: `crates/polars-sql/src/sql_expr.rs` (modified, +15/-2)
+**File**: `py-polars/tests/unit/operations/namespaces/array/test_array.py` (modified, +27/-1)
 ```diff
-@@ -724,7 +724,16 @@ impl SQLExprVisitor<'_> {
-     fn execute_subquery(&mut self, subquery: &Subquery) -> PolarsResult<LazyFrame> {
-         // note: we have to execute subqueries in an isolated scope to prevent
-         // propagating any context/arena mutation into the rest of the query
--        self.ctx.execute_isolated(|ctx| ctx.execute_query(subquery))
-+        self.ctx
-+            .execute_isolated(|ctx| {
-+                ctx.nesting += 1;
-+                ctx.execute_query(subquery)
-+            })
-+            .map_err(|e| {
-+                self.ctx
-+                    .unknown_qualifier_err(subquery, self.active_schema)
-+                    .unwrap_or(e)
-+            })
+@@ -9,13 +9,14 @@
+ 
+ import polars as pl
+ import polars.selectors as cs
+-from polars.exceptions import ComputeError, InvalidOperationError
++from polars.exceptions import ComputeError, InvalidOperationError, ShapeError
+ from polars.testing import assert_frame_equal, assert_series_equal
+ from tests.unit.conftest import INTEGER_DTYPES
+ 
+ if TYPE_CHECKING:
+     from collections.abc import Callable
+ 
++    from polars._typing import EngineType
+     from tests.conftest import PlMonkeyPatch
+ 
+ 
+@@ -1038,6 +1039,31 @@ def test_array_count_matches_wildcard_expansion() -> None:
      }
  
-     /// Visit a `[NOT] EXISTS (subquery)` expression that no earlier rewrite claimed. An
-@@ -753,7 +762,11 @@ impl SQLExprVisitor<'_> {
-         if is_correlated_subquery(subquery, self.ctx.catalog_spellings())
-             || self.has_unnest(subquery)
-         {
--            return Err(unsupported());
-+            // A name of neither scope is an error of the query, not of this position.
-+            return Err(self
-+                .ctx
-+                .unknown_qualifier_err(subquery, self.active_schema)
-+                .unwrap_or_else(unsupported));
-         }
-         // An unqualified outer column makes the subquery correlated.
-         let outer_err = |e, this: &Self| {
+ 
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_arr_count_matches_scalar_element(engine: EngineType) -> None:
++    # More rows than threads, so that a streaming morsel holds several rows.
++    df = pl.DataFrame(
++        {"a": [[1, 2, 1]] * 300, "x": [1] * 300},
++        schema={"a": pl.Array(pl.Int64, 3), "x": pl.Int64},
++    )
++    out = (
++        df.lazy()
++        .select(pl.col("a").arr.count_matches(pl.col("x").first()))
++        .collect(engine=engine)
++    )
++    assert out.to_series().to_list() == [2] * 300
++
++
++@pytest.mark.parametrize("height", [1, 3])
++def test_arr_count_matches_element_per_row_raises(height: int) -> None:
++    df = pl.DataFrame(
++        {"a": [[1, 2, 1]] * height, "x": [1] * height},
++        schema={"a": pl.Array(pl.Int64, 3), "x": pl.Int64},
++    )
++    with pytest.raises(ShapeError, match="'element' must be a scalar value"):
++        df.select(pl.col("a").arr.count_matches(pl.col("x")))
++
++
+ def test_array_to_struct() -> None:
+     df = pl.DataFrame(
+         {"a": [[1, 2, 3], [4, 5, None]]}, schema={"a": pl.Array(pl.Int8, 3)}
 ```
 
-**File**: `crates/polars-sql/src/sql_visitors.rs` (modified, +43/-1)
+**File**: `py-polars/tests/unit/operations/namespaces/list/test_list.py` (modified, +20/-0)
 ```diff
-@@ -185,9 +185,36 @@ struct AmbiguousColumnVisitor<'a> {
-     base_table_name: &'a str,
-     using_cols: &'a [(String, String)],
-     relations: &'a [RelationName],
-+    schema: &'a Schema,
-     subquery_depth: usize,
+@@ -13,6 +13,7 @@
+     ComputeError,
+     InvalidOperationError,
+     OutOfBoundsError,
++    ShapeError,
+ )
+ from polars.testing import assert_frame_equal, assert_series_equal
+ from tests.unit.conftest import time_func
+@@ -776,6 +777,25 @@ def test_list_count_matches_wildcard_expansion() -> None:
+     }
+ 
+ 
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_list_count_matches_scalar_element(engine: EngineType) -> None:
++    # More rows than threads, so that a streaming morsel holds several rows.
++    df = pl.DataFrame({"l": [[1, 2, 1]] * 300, "x": [1] * 300})
++    out = (
++        df.lazy()
++        .select(pl.col("l").list.count_matches(pl.col("x").first()))
++        .collect(engine=engine)
++    )
++    assert out.to_series().to_list() == [2] * 300
++
++
++@pytest.mark.parametrize("height", [1, 3])
++def test_list_count_matches_element_per_row_raises(height: int) -> None:
++    df = pl.DataFrame({"l": [[1, 2, 1]] * height, "x": [1] * height})
++    with pytest.raises(ShapeError, match="'element' must be a scalar value"):
++        df.select(pl.col("l").list.count_matches(pl.col("x")))
++
++
+ def test_list_gather_oob_10079() -> None:
+     df = pl.DataFrame(
+         {
+```
+
+---
+
+### Incident Patch 2: `3bdd3a29` (2026-11-06)
+**Commit Message**: fix: Keep an oversized fetch alone in the scan prefetch window (#30634)
+
+**File**: `crates/polars-stream/src/nodes/io_sources/shared/pipeline_budget.rs` (modified, +68/-12)
+```diff
+@@ -16,6 +16,7 @@ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
+ //   delivered bandwidth times the slack, and the count limit is 8192 once a file follows a store
+ //   (otherwise the default x2, at most 2048).
+ // - Local fetches and limits set by env vars keep a fixed window.
++// - A fetch larger than the window grows it if it can, else runs alone (`OversizedPermit`).
+ // - Each scan starts at the default limits. Bytes above them come from one process-wide pool (a
+ //   fraction of total memory), first come, first served, and return when the scan ends.
+ // - A scan whose output is blocked (e.g. a join's probe side during the build) keeps fetching and
+@@ -78,6 +79,9 @@ static WINDOW_POOL_KBYTES: LazyLock<AtomicUsize> = LazyLock::new(|| {
+ /// Interval at which a parked acquire retries growing the window.
+ const GROW_RETRY_INTERVAL: Duration = Duration::from_millis(100);
+ 
++/// Largest kbytes limit, so that a whole window fits in one permit (`u32` kilobytes, ~4 TiB).
++const MAX_KBYTES_LIMIT: usize = u32::MAX as usize;
++
+ /// Value of `env_var` if set; panics if it is not a positive integer.
+ pub(crate) fn env_nonzero_usize(env_var: &str) -> Option<usize> {
+     std::env::var(env_var).ok().map(|x| {
+@@ -199,6 +203,8 @@ pub struct PipelineBudget {
+     /// Set by the first file read in order. The window target then adds the reorder headroom.
+     ordered: Arc<AtomicBool>,
+     num_pipelines: usize,
++    /// How many `OversizedPermit`s are in flight: 0 or 1.
++    oversized_in_flight: Arc<AtomicUsize>,
+     registration: Arc<ScanRegistration>,
+     log_stats: Arc<LogStats>,
+     last_reported: Arc<Mutex<Instant>>,
+@@ -222,6 +228,7 @@ impl PipelineBudget {
+         let count_limit = count_limit_env.unwrap_or_else(|| default_prefetch_limit(num_pipelines));
+         let kbytes_limit =
+             kbytes_limit_env.unwrap_or_else(|| default_prefetch_kbytes_limit(num_pipelines));
++        let kbytes_limit = kbytes_limit.min(MAX_KBYTES_LIMIT);
+ 
+         Self {
+             count: Arc::new(Semaphore::new(count_limit)),
+@@ -232,6 +239,7 @@ impl PipelineBudget {
+             can_grow_kbytes: kbytes_limit_env.is_none(),
+             ordered: Arc::new(AtomicBool::new(false)),
+             num_pipelines,
++            oversized_in_flight: Arc::default(),
+             registration: Arc::new(ScanRegistration::new()),
+             log_stats: Arc::default(),
+             last_reported: Arc::new(Mutex::new(Instant::now())),
+@@ -303,8 +311,13 @@ impl PipelineBudget {
+     /// Grows the kbytes limit from the pool toward the target: the in-flight byte budget of the
+     /// fetch's store, plus the reorder headroom of an ordered scan, plus one fetch of `n_bytes` per
+     /// decode slot. The target is at most the count limit times `n_bytes`, and growth at most what
+-    /// the pool has left. Never shrinks.
++    /// the pool has left. Never shrinks; paused while an `OversizedPermit` lives.
+     fn grow_window(&self, n_bytes: usize, inflight: &InFlightBudget) {
++        // TODO: the window can't grow while an oversized fetch is running, even if the pool has
++        // room. Charging each fetch its full size and tracking the overshoot would lift this.
++        if self.oversized_in_flight.load(Ordering::Acquire) > 0 {
++            return;
++        }
+         let headroom = if self.ordered.load(Ordering::Acquire) {
+             (inflight.delivered_bandwidth() as f64 * ORDERED_SLACK.as_secs_f64()) as usize
+         } else {
+@@ -319,7 +332,10 @@ impl PipelineBudget {
+         } else {
+             GrowCap::TargetKbytes
+         };
+-        let target_kbytes = target_bytes.min(cap_bytes).div_ceil(1 << 10);
++        let target_kbytes = target_bytes
++            .min(cap_bytes)
++            .div_ceil(1 << 10)
++            .min(MAX_KBYTES_LIMIT);
+ 
+         // Held while growing, so that a release after the scan ends returns all drawn kilobytes.
+         let mut registration = self
+@@ -367,15 +383,15 @@ impl PipelineBudget {
+ 
+     /// Acquire permit for a fetch of `n_bytes`. `inflight`: the in-flight budget of the fetch's
+     /// store if its window follows it (`DynByteSource::window_inflight_budget`); the window then
+-    /// grows when the fetch finds it short, and again every `GROW_RETRY_INTERVAL` while it waits.
++    /// grows when the fetch finds it short, and again every `GROW_RETRY_INTERVAL` while it waits
++    /// (not for an oversized fetch).
+     ///
+     /// Acquisition order is kbytes-first, then count, so that the count_in_use
+     /// value is meaningful. All pipeline paths (parquet, IPC) must acquire
+     /// through this method so the order can never diverge.
+     ///
+-    /// The requested capacity is capped at the kbytes limit, so a fetch larger than the
+-    /// limit still proceeds, and any positive limit makes progress. Such a fetch keeps the charge
+-    /// of the limit it was sized under, also when the window grows later.
++    /// The requested capacity is capped at the kbytes limit, so at most one fetch large
+```
+
+---
+
+### Incident Patch 3: `6621ee6a` (2026-11-06)
+**Commit Message**: fix: Support reading `Time` hive partition columns (#30100)
+
+**File**: `crates/polars-plan/src/plans/hive.rs` (modified, +37/-3)
+```diff
+@@ -173,10 +173,15 @@ pub fn hive_partitions_from_paths(
+         Arc::new(hive_schema)
+     };
+ 
++    let parse_schema: Schema = hive_schema
++        .iter()
++        .map(|(name, dtype)| Field::new(name.clone(), parse_dtype(dtype)))
++        .collect();
++
+     let mut buffers = polars_io::csv::read::builder::init_builders(
+         &(0..hive_schema.len()).collect::<Vec<_>>(),
+         paths.len(),
+-        hive_schema.as_ref(),
++        &parse_schema,
+         None,
+         polars_io::prelude::CsvEncoding::Utf8,
+         false,
+@@ -197,7 +202,9 @@ pub fn hive_partitions_from_paths(
+             let buf = buffers.get_mut(index).unwrap();
+ 
+             if value != "__HIVE_DEFAULT_PARTITION__" {
+-                buf.add(value.as_bytes(), false, false, false)?;
++                // An empty value is null, except for `String` columns.
++                let missing_is_null = !hive_schema.get_at_index(index).unwrap().1.is_string();
++                buf.add(value.as_bytes(), false, false, missing_is_null)?;
+             } else {
+                 buf.add_null(false);
+             }
+@@ -206,7 +213,8 @@ pub fn hive_partitions_from_paths(
+ 
+     let mut buffers = buffers
+         .into_iter()
+-        .map(|x| Ok(x.into_series()?.into_column()))
++        .zip(hive_schema.iter_values())
++        .map(|(x, dtype)| finish_parsed_column(x.into_series()?, dtype))
+         .collect::<PolarsResult<Vec<_>>>()?;
+     buffers.sort_by_key(|s| reader_schema.index_of(s.name()).unwrap_or(usize::MAX));
+ 
+@@ -216,6 +224,32 @@ pub fn hive_partitions_from_paths(
+     )?)))
  }
  
-+impl AmbiguousColumnVisitor<'_> {
-+    /// Check a struct path whose first part `name` names no relation: it is ambiguous if
-+    /// the joined frame has more than one column `name`, one of them a struct.
-+    fn check_struct_path(&self, name: &str) -> PolarsResult<()> {
-+        let columns: PlHashSet<&str> = self
-+            .joined_aliases
-+            .values()
-+            .filter_map(|cols| cols.get(name).map(String::as_str))
-+            .chain(self.schema.contains(name).then_some(name))
-+            .collect();
-+        let has_struct = columns
-+            .iter()
-+            .any(|c| matches!(self.schema.get(c), Some(DataType::Struct(_))));
-+        if columns.len() > 1 && has_struct {
-+            check_ambiguous_column(
-+                name,
-+                self.joined_aliases,
-+                self.base_table_name,
-+                self.using_cols,
-+                self.relations,
-+            )?;
-+        }
-+        Ok(())
++/// The dtype used to parse Hive values of `dtype`. The CSV builders cannot parse `Time`, so it is
++/// parsed as `String` and converted in [`finish_parsed_column`], as the CSV reader does.
++fn parse_dtype(dtype: &DataType) -> DataType {
++    match dtype {
++        #[cfg(feature = "dtype-time")]
++        DataType::Time => DataType::String,
++        dt => dt.clone(),
 +    }
 +}
 +
- impl SQLVisitor for AmbiguousColumnVisitor<'_> {
-     type Break = PolarsError;
- 
-@@ -205,7 +232,20 @@ impl SQLVisitor for AmbiguousColumnVisitor<'_> {
-         if self.subquery_depth > 0 {
-             return ControlFlow::Continue(());
-         }
--        if let SQLExpr::Identifier(ident) = expr {
-+        let col = match expr {
-+            SQLExpr::Identifier(ident) => Some(ident),
-+            // A struct path (`s.f`) whose first part names no relation reads that column.
-+            SQLExpr::CompoundIdentifier(parts)
-+                if match_qualifier(parts, self.relations.iter()).is_none() =>
-+            {
-+                if let Err(err) = self.check_struct_path(&parts[0].value) {
-+                    return ControlFlow::Break(err);
-+                }
-+                None
-+            },
-+            _ => None,
-+        };
-+        if let Some(ident) = col {
-             if let Err(err) = check_ambiguous_column(
-                 &ident.value,
-                 self.joined_aliases,
-@@ -279,6 +319,7 @@ pub(crate) fn check_for_ambiguous_column_refs(
-     base_table_name: &str,
-     using_cols: &[(String, String)],
-     relations: &[RelationName],
-+    schema: &Schema,
- ) -> PolarsResult<()> {
-     match dyn_visit::visit(
-         expr,
-@@ -287,6 +328,7 @@ pub(crate) fn check_for_ambiguous_column_refs(
-             base_table_name,
-             using_cols,
-             relations,
-+            schema,
-             subquery_depth: 0,
-         },
-     ) {
-```
-
-**File**: `crates/polars-sql/src/subquery.rs` (modified, +135/-29)
-```diff
-@@ -29,7 +29,8 @@ use sqlparser::ast::{
- use crate::catalog::CatalogSpellings;
- use crate::context::{
-     CORRELATED_COL_PREFIX, FilterMode, RelationName, TableInfo, combine_conditions,
--    declared_relations, flatten_and_conditions, get_table_name, match_qualifier, relation_name,
-+    declared_relations, flatten_and_conditions, get_table_name, join_idents, match_qualifier,
-+    relation_name,
- };
- use crate::dyn_visit::{self, visit_expressions, visit_expressions_mut};
- use crate::functions::PolarsSQLFunctions;
-@@ -220,7 +221,10 @@ impl SQLContext {
-             left_keys.push(key);
-         }
- 
--        let mut inner_lf = self.execute_isolated(|ctx| ctx.execute_query(subquery))?;
-+        let mut inner_lf = self.execute_isolated(|ctx| {
-+            ctx.nesting += 1;
-+            ctx.execute_query(subquery)
-+        })?;
-         let inner_schema = self.get_frame_schema(&mut inner_lf)?;
-         if left_keys.len() == 1 {
-             polars_ensure!(inner_schema.len() == 1, SQLSyntax: "SQL subquery returns more than one column");
-@@ -576,11 +580,68 @@ impl SQLContext {
-             )?;
-         }
-         self.set_join_base(&select.from);
--        self.check_select_column_refs(select)?;
-         let inner_schema = self.get_frame_schema(&mut inner_lf)?;
-+        self.check_select_column_refs(select, &inner_schema)?;
-         Ok(Some((inner_names, inner_lf, inner_schema)))
-     }
- 
-+    /// The error for a dotted name of `subquery` whose first part names no relation or
-+    /// column of the subquery, nor of this query (`outer_schema`), as this query reports
-+    /// it. Only for a subquery that no other subquery encloses, whose names can't read a
-+    /// scope further out; names in nested subqueries are not checked.
-+    pub(crate) fn unknown_qualifier_err(
-+        &self,
-+        subquery: &Query,
-+        outer_schema: Option<&Schema>,
-+    ) -> Option<PolarsError> {
-+        let SetExpr::Select(select) = subquery.body.as_ref() else {
-+            return None;
-+        };
-+        if self.nesting > 0 {
-+            return None;
-+        }
-+        let mut inner = self.isolated();
-+        let (inner_names, _, inner_schema) = inner.resolve_subquery_from(select).ok()??;
-+        let known = |parts: &[Ident]| {
-+            match_qualifier(parts, inner_names.iter()).is_some()
-+                || inner_schema.contains(&parts[0].value)
-+                // An ambiguous qualifier is an error of its own, raised elsewhere.
-+                || !matches!(self.resolve_qualifier(parts), Ok(None))
-+                || outer_schema.is_some_and(|schema| schema.contains(&parts[0].value))
-+        };
-+        let projection = select.projection.iter().filter_map(|item| match item {
-+            SelectItem::UnnamedExpr(e) | SelectItem::ExprWithAlias { expr: e, .. } => Some(e),
-+            _ => None,
-+        });
-+        let mut unknown = None;
-+        for expr in projection.chain(&select.selection).chain(&select.having) {
-+            let _ = visit_top_level_compound_idents(expr, |parts| {
-+                if known(parts) {
-+                    return ControlFlow::Continue(());
-+                }
-+                unknown = Some(parts.to_vec());
-+                ControlFlow::Break(())
-+            });
-+            if unknown.is_some() {
-+                break;
++fn finish_parsed_column(s: Series, dtype: &DataType) -> PolarsResult<Column> {
++    match dtype {
++        #[cfg(feature = "dtype-time")]
++        DataType::Time => {
++            use polars_core::chunked_array::temporal::string::StringMethods;
++
++            let out = s.str()?.as_time(None, false)?.into_series();
++            if out.null_count() != s.null_count() {
++                polars_core::utils::handle_casting_failures(&s, &out)?;
 +            }
-+        }
-+        let parts = unknown?;
-+        let hint = (1..parts.len())
-+            .rev()
-+            .find_map(|len| {
-+                let qualifier = join_idents(&parts[..len]);
-+                inner
-+                    .hidden_by_alias_hint(&qualifier)
-+                    .or_else(|| self.hidden_by_alias_hint(&qualifier))
-+            })
-+            .unwrap_or_default();
-+        Some(polars_err!(
-+            SQLInterface: "no table or struct column named '{}' found{}",
-+            parts[0], hint
-+        ))
-+    }
-+
-     // Split a subquery's WHERE conjuncts into a `SubqueryConjuncts`, or `None`
-     // when a conjunct is neither a correlation key pair nor an inner-only
-     // filter (an outer column in a non-equi shape, an unresolvable name).
-@@ -2285,34 +2346,40 @@ impl SQLContext {
- 
-         let flag_name = format_pl_smallstr!("{prefix}exists");
-         let uncorrelated_where = corr_preds.is_empty() && general.is_empty();
-+        let Some(aggregates) =
-+            exists_aggregates(&ctx, subquery, select, &inner_names, &inner_schema)
-+        else {
-+            return Ok(None);
-+        };
-+        if aggregates {
-+            // The rows are not read, but the inner filters must still be valid.
-+            let mut filtered = local_filters
-+                .iter()
-+                .cloned()
-+                .fold(inner_lf.clone(), LazyFrame::filter);
-+            ctx.get_frame_schema(&mut filtered)?;
-+        }
-         // An uncorrelated subquery is one value, which `visit_exists` takes.
-         if uncorrelated_where && !is_correlated_subquery(subquery, self.catalog_spellings()) {
--            let exists =
--           
-```
-
-**File**: `py-polars/tests/unit/sql/test_correlated_subqueries.py` (modified, +220/-0)
-```diff
-@@ -1871,6 +1871,135 @@ def test_subquery_struct_field_is_not_correlated(projection: str, field: str) ->
-     )
- 
- 
-+@pytest.mark.parametrize(
-+    ("exists", "expected"), [("EXISTS", [1, 2]), ("NOT EXISTS", [])]
-+)
-+@pytest.mark.parametrize("field", ["s.id", "c.s.id", "a.id", "c.a.id"])
-+def test_exists_subquery_struct_field_is_not_correlated(
-+    exists: str, expected: list[int], field: str
-+) -> None:
-+    # `s` and `a` are struct columns of `c`; `a` is also the outer relation.
-+    assert_sql_matches(
-+        frames={
-+            "a": pl.DataFrame({"id": [1, 2]}),
-+            "c": pl.DataFrame(
-+                {
-+                    "id": [1, 3],
-+                    "s": [{"id": 1}, {"id": 2}],
-+                    "a": [{"id": 1}, {"id": 2}],
-+                }
-+            ),
++            Ok(out.into_column())
 +        },
-+        query=f"SELECT a.id FROM a WHERE {exists} (SELECT 1 FROM c WHERE {field} = c.id)",
-+        compare_with="duckdb",
-+        check_row_order=False,
-+        expected={"id": expected},
-+        engines=ENGINES,
-+    )
-+
-+
-+def _struct_scope_frames() -> dict[str, pl.DataFrame]:
-+    return {
-+        "o": pl.DataFrame({"id": [1, 2], "f": [10, 2]}),
-+        "o2": pl.DataFrame({"id": [1, 2], "s": [{"f": 10}, {"f": 2}]}),
-+        "i": pl.DataFrame({"k": [1, 2], "s": [{"f": 1}, {"f": 5}]}),
-+        "i_plain": pl.DataFrame({"k": [1, 2], "s": [1, 5]}),
-+        "tf": pl.DataFrame({"f": [2]}),
++        _ => Ok(s.into_column()),
 +    }
++}
 +
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        # a plain column `s` is no struct path, so `s.f` reads the outer relation
-+        (
-+            "SELECT id FROM o AS s WHERE EXISTS (SELECT 1 FROM i_plain WHERE s.f = i_plain.k)",
-+            {"id": [2]},
-+        ),
-+        # the inner struct column hides the outer one
-+        (
-+            "SELECT id FROM o2 WHERE EXISTS (SELECT 1 FROM i WHERE s.f = i.k)",
-+            {"id": [1, 2]},
-+        ),
-+        # in one scope, the relation `s` wins over the struct column `s`
-+        (
-+            "SELECT id, (SELECT MAX(s.f) FROM i JOIN tf AS s ON TRUE) AS m FROM o",
-+            {"id": [1, 2], "m": [2, 2]},
-+        ),
-+    ],
+ /// Parse a Hive partition string (e.g. "column=1.5") into a name and value part.
+ ///
+ /// Returns `None` if the string is not a Hive partition string.
+```
+
+**File**: `py-polars/tests/unit/io/test_hive.py` (modified, +17/-1)
+```diff
+@@ -13,7 +13,11 @@
+ import pytest
+ 
+ import polars as pl
+-from polars.exceptions import ComputeError, SchemaFieldNotFoundError
++from polars.exceptions import (
++    ComputeError,
++    InvalidOperationError,
++    SchemaFieldNotFoundError,
 +)
-+def test_subquery_struct_path_scope(query: str, expected: dict[str, Any]) -> None:
-+    assert_sql_matches(
-+        frames=_struct_scope_frames(),
-+        query=query,
-+        compare_with="duckdb",
-+        check_row_order=False,
-+        expected=expected,
-+        engines=ENGINES,
-+    )
-+
-+
-+@pytest.mark.parametrize(
-+    "query",
-+    [
-+        "SELECT id FROM o AS s WHERE EXISTS (SELECT 1 FROM i WHERE s.g = i.k)",
-+        # an aggregate returns one row whatever WHERE keeps, but WHERE is still checked
-+        "SELECT id FROM o WHERE EXISTS (SELECT COUNT(*) FROM i WHERE s.g = 1)",
-+        "SELECT id FROM o WHERE EXISTS (SELECT COUNT(*) FROM i WHERE i.s.g = 1)",
-+        "SELECT id FROM o WHERE NOT EXISTS "
-+        "(SELECT COUNT(*) FROM i WHERE i.k = o.id AND s.g = 1)",
-+    ],
-+)
-+def test_subquery_missing_struct_field_is_an_error(query: str) -> None:
-+    with pytest.raises(pl.exceptions.StructFieldNotFoundError):
-+        pl.SQLContext(_struct_scope_frames()).execute(query, eager=True)
-+
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        (
-+            "SELECT id FROM a AS k WHERE EXISTS "
-+            "(SELECT 1 FROM c JOIN d ON c.k = d.k WHERE k.id = c.id)",
-+            [(1,)],
-+        ),
-+        (
-+            "SELECT id, (SELECT MAX(c.id) FROM c JOIN d ON c.k = d.k WHERE k.id = c.id) "
-+            "AS m FROM a AS k ORDER BY id",
-+            [(1, 1), (2, None)],
-+        ),
-+    ],
-+)
-+def test_subquery_dotted_name_over_joined_plain_columns(
-+    query: str, expected: list[tuple[Any, ...]]
-+) -> None:
-+    # `k` is a plain column of both joined relations, so `k.id` reads the outer `k`
-+    ctx = pl.SQLContext(
-+        a=pl.DataFrame({"id": [1, 2]}),
-+        c=pl.DataFrame({"id": [1, 3], "k": [7, 8]}),
-+        d=pl.DataFrame({"id": [1, 3], "k": [7, 9]}),
-+    )
-+    assert ctx.execute(query, eager=True).rows() == expected
-+
-+
-+@pytest.mark.parametrize("join", ["d JOIN cs", "cs JOIN d"])
-+def test_subquery_dotted_name_over_joined_struct_and_plain_column(join: str) -> None:
-+    # `k.f` can read the struct `cs.k` or the outer `k`
-+    ctx = pl.SQLContext(
-+        o=pl.DataFrame({"id": [1, 2], "f": [10, 2]}),
-+        cs=pl.DataFrame({"id": [1, 3], "k": [{"f": 1}, {"f": 3}]}),
-+        d=pl.DataFrame({"id": [1, 3], "k": [2, 9]}),
-+    )
-+    query = f"""
-+        SELECT id FROM o AS k
-+        WHERE EXISTS (SELECT 1 FROM {join} ON cs.id = d.id WHERE k.f = d.k)
-+    """
-+    with pytest.raises(
-+        pl.exceptions.SQLInterfaceError, match=r'ambiguous reference to column "k"'
-+    ):
-+        ctx.execute(query, eager=True)
-+
-+
- @pytest.mark.parametrize(
-     ("query", "expected"),
-     [
-@@ -2190,6 +2319,34 @@ def test_correlated_subquery_inner_subquery_filter_join_tree() -> None:
+ from polars.testing import assert_frame_equal, assert_series_equal
+ from tests.unit.io.conftest import format_file_uri
+ 
+@@ -1140,6 +1144,18 @@ def test_hive_write_dates(tmp_path: Path) -> None:
      )
  
  
-+@pytest.mark.parametrize(
-+    "condition",
-+    [
-+        "EXISTS (SEL
++@pytest.mark.write_disk
++def test_hive_time_invalid_value(tmp_path: Path) -> None:
++    for value in ["12%3A00%3A00", "abc"]:
++        (tmp_path / f"t={value}").mkdir()
++        pl.DataFrame({"x": [0]}).write_parquet(tmp_path / f"t={value}/data.parquet")
++
++    with pytest.raises(
++        InvalidOperationError, match=r"conversion from `str` to `time` failed"
++    ):
++        pl.scan_parquet(tmp_path, hive_schema={"t": pl.Time}).collect()
++
++
+ @pytest.mark.write_disk
+ @pytest.mark.may_fail_cloud  # reason: inspects logs
+ def test_hive_predicate_dates_14712(
 ```
 
-**File**: `py-polars/tests/unit/sql/test_joins.py` (modified, +90/-0)
+**File**: `py-polars/tests/unit/io/test_partition.py` (modified, +6/-6)
 ```diff
-@@ -2095,6 +2095,96 @@ def test_ambiguous_column_detection_in_joins() -> None:
-         )
+@@ -470,7 +470,7 @@ def test_partition_empty_string_24545(tmp_path: Path) -> None:
  
  
-+@pytest.mark.parametrize(
-+    "query",
-+    [
-+        "SELECT s.f FROM a JOIN c ON a.k = c.k",
-+        "SELECT a.k FROM a JOIN c ON a.k = c.k WHERE s.f > 15",
-+        "SELECT s.* FROM a JOIN c ON a.k = c.k",
-+    ],
-+)
-+def test_ambiguous_struct_path_in_joins(query: str) -> None:
-+    # `s` is a struct column of both relations, as `k` is a column of both
-+    frames = {
-+        "a": pl.DataFrame({"k": [1, 2], "s": [{"f": 10}, {"f": 20}]}),
-+        "c": pl.DataFrame({"k": [1, 2], "s": [{"f": 77}, {"f": 88}]}),
-+    }
-+    with pytest.raises(
-+        SQLInterfaceError,
-+        match=r'ambiguous reference to column "s" \(use one of: a\.s, c\.s\)',
-+    ):
-+        pl.SQLContext(frames).execute(query, eager=True)
-+
-+    res = pl.SQLContext(frames).execute(
-+        "SELECT a.s.f AS x, c.s.f AS y FROM a JOIN c ON a.k = c.k ORDER BY x",
-+        eager=True,
-+    )
-+    assert res.rows() == [(10, 77), (20, 88)]
-+
-+    # a USING column is one column
-+    frames["c"] = pl.DataFrame({"k": [1, 2], "s": [{"f": 10}, {"f": 99}]})
-+    res = pl.SQLContext(frames).execute(
-+        "SELECT s.f FROM a JOIN c USING (s)", eager=True
-+    )
-+    assert res.rows() == [(10,)]
-+
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        (
-+            "SELECT s.f FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id",
-+            30,
-+        ),
-+        (
-+            "SELECT s.* FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id",
-+            30,
-+        ),
-+        (
-+            "SELECT s.f FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id "
-+            "JOIN c AS d USING (s)",
-+            30,
-+        ),
-+        ("SELECT id FROM a JOIN b ON a.id = b.id RIGHT SEMI JOIN c ON a.id = c.id", 1),
-+    ],
-+)
-+def test_columns_after_right_semi_join(query: str, expected: int) -> None:
-+    # only the columns of `c` survive the right semi join, also one named like the
-+    # joined `b.s`
-+    frames = {
-+        "a": pl.DataFrame({"id": [1], "s": [{"f": 10}]}),
-+        "b": pl.DataFrame({"id": [1], "s": [{"f": 20}]}),
-+        "c": pl.DataFrame({"id": [1], "s": [{"f": 30}], "s:b": [{"f": 40}]}),
-+    }
-+    res = pl.SQLContext(frames).execute(query, eager=True)
-+    assert res.rows() == [(expected,)]
-+
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        (
-+            "SELECT b.x FROM a JOIN b ON a.id = b.id, c RIGHT SEMI JOIN d ON c.id = d.id",
-+            2,
-+        ),
-+        (
-+            "SELECT id FROM o WHERE EXISTS (SELECT 1 FROM a JOIN b ON a.id = b.id, "
-+            "c RIGHT SEMI JOIN d ON c.id = d.id WHERE b.x = 2 AND o.id = a.id)",
-+            1,
-+        ),
-+    ],
-+)
-+def test_right_semi_join_keeps_earlier_from_item(query: str, expected: int) -> None:
-+    # the right semi join drops `c`, not `b` of the earlier FROM item
-+    frames = {
-+        name: pl.DataFrame({"id": [1], "x": [x]})
-+        for name, x in [("a", 1), ("b", 2), ("c", 3), ("d", 4)]
-+    }
-+    frames["o"] = pl.DataFrame({"id": [1]})
-+    res = pl.SQLContext(frames).execute(query, eager=True)
-+    assert res.rows() == [(expected,)]
-+
-+
- def test_join_relations_sharing_last_name_part() -> None:
-     # `tpch.lineitem` and `tpch_sf100.lineitem` are both called `lineitem`; the join
-     # itself is fine, only a qualifier naming both is ambiguous
+ @pytest.mark.write_disk
+-@pytest.mark.parametrize("dtype", [pl.Int64(), pl.Date(), pl.Datetime()])
++@pytest.mark.parametrize("dtype", [pl.Int64(), pl.Date(), pl.Datetime(), pl.Time()])
+ def test_partition_empty_dtype_24545(tmp_path: Path, dtype: pl.DataType) -> None:
+     df = pl.DataFrame({"b": [1, 2, 3, 4]}).with_columns(
+         a=pl.col.b.cast(dtype),
+@@ -585,9 +585,9 @@ def test_partition_time_key_fractional_seconds_30046(
+         "k=__HIVE_DEFAULT_PARTITION__",
+     ]
+ 
+-    out = (
+-        pl.scan_parquet(tmp_path, try_parse_hive_dates=False)
+-        .with_columns(pl.col("k").str.to_time())
+-        .collect()
++    assert_frame_equal(
++        pl.scan_parquet(tmp_path).collect(),
++        df,
++        check_row_order=False,
++        check_column_order=False,
+     )
+-    assert_frame_equal(out, df, check_row_order=False, check_column_order=False)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30617** (2026-11-05): fix: Don't treat `is_in` with a multi-row literal as elementwise (@dancsi)
-- **PR #30614** (2026-11-05): fix: Raise instead of panicking on `struct.field` selectors in `Expr.meta` (@dancsi)
-- **PR #30611** (closed): fix: Don't treat `is_in` with a multi-row literal as elementwise (@dancsi)
-- **PR #30607** (2026-11-05): ci: Install polars-nanook instead of deprecated polars-cloud (@ritchie46)
-- **PR #30606** (2026-11-05): docs: Point Polars Cloud links at Polars Nanook (@EndPositive)
-- **PR #30602** (2026-11-05): chore(rust): Get rid of the pin-utils dependency (@dsprenkels)
+- **PR #30640** (2026-11-06): perf: Let local Parquet scans grow their prefetch window (@kdn36)
+- **PR #30639** (2026-11-07): perf: Parse CSV columns at a time over a mask based field index (@ritchie46)
+- **PR #30634** (2026-11-06): fix: Keep an oversized fetch alone in the scan prefetch window (@kdn36)
+- **PR #30633** (2026-11-07): feat: Support SQL `MERGE INTO` on attached Iceberg catalog tables (@kdn36)
+- **PR #30631** (2026-11-07): fix: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (@dancsi)
+- **PR #30629** (closed): feat: Support a list of patterns per row in `str.contains_any` and `str.replace_many` (@dancsi)
 
 ---
 
@@ -2433,32 +2108,29 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't treat `is_in` with a multi-row literal as elementwise (#30617)
+## X. Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#306
 
 **RULE**:
-When implementing operations in `crates/polars-plan/src/plans/aexpr/properties/general.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-expr/src/dispatch/array.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be404e63`: Don't treat `is_in` with a multi-row literal as elementwise (#30617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8dcc6b28`: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#30631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-plan/src/plans/aexpr/properties/general.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-expr/src/dispatch/array.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A single-value right-hand side of `is_in` is broadcast, so it needn't be inspected. A
-        // multi-row literal is zipped row by row.
-                if is_single_literal_ae(rhs, expr_arena) {
+    // A broadcast scalar is one element, not one per row.
+    let element = args[1].as_materialized_series_maintain_scalar();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // Literals that aren't being projected are allowed to be non-scalar, so we don't add them
-        // for inspection. (e.g. `is_in(<literal>)`).
-                if matches!(expr_arena.get(rhs), AExpr::Literal { .. }) {
+    let element = &args[1];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be404e63` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8dcc6b28` are properly handled with clean fallback behavior.

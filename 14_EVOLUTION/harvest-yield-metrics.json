@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:29:34.335Z",
-  "total_cycles_completed": 8066,
-  "total_learnings_persisted": 8066,
-  "total_rules_promoted": 7725,
+  "last_updated": "2026-11-07T21:36:37.909Z",
+  "total_cycles_completed": 8070,
+  "total_learnings_persisted": 8070,
+  "total_rules_promoted": 7729,
   "history": [
-    {
-      "timestamp": "2026-11-06T19:09:43.215Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T19:09:51.058Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T19:16:48.332Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T19:23:48.741Z",
-      "repository": "FaridSafi/react-native-gifted-chat",
-      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T19:23:54.877Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-07T21:29:34.335Z",
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:36:27.518Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:36:29.773Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:36:33.147Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:36:37.909Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

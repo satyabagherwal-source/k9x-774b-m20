@@ -8110,3 +8110,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `5ce34500` | Multi-dimensional audit evidence | 2026-11-07T21:29:22.255Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `b72200d2` | Multi-dimensional audit evidence | 2026-11-07T21:29:25.244Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `61f8849c` | Multi-dimensional audit evidence | 2026-11-07T21:29:34.324Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `8dcc6b28` | Multi-dimensional audit evidence | 2026-11-07T21:36:27.513Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `f21f224b` | Multi-dimensional audit evidence | 2026-11-07T21:36:29.767Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `bbb1e5bd` | Multi-dimensional audit evidence | 2026-11-07T21:36:33.142Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `ff5d19c2` | Multi-dimensional audit evidence | 2026-11-07T21:36:37.897Z |

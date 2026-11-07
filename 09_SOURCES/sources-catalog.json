@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "ae8540b0",
+    "sourceVersion": "bbb1e5bd",
     "license": "NOASSERTION",
-    "contentHash": "f9ebd312ce9ba6870fb43d6694bf0896360dc7896c679f65cffd1186af14c8db",
-    "lastHarvestedAt": "2026-11-04T18:28:42.794Z",
+    "contentHash": "e44b9b064a87a4d5edff8451ecaf20f65596e318b849003b1087c1b32aaef1a2",
+    "lastHarvestedAt": "2026-11-07T21:36:33.142Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "e0ad46db",
+    "sourceVersion": "ff5d19c2",
     "license": "AGPL-3.0",
-    "contentHash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
-    "lastHarvestedAt": "2026-11-05T22:55:05.899Z",
+    "contentHash": "ca24a6b683d2551a643be0f945f190d8683e4d7f20feb867a2ccf6011c4bd4aa",
+    "lastHarvestedAt": "2026-11-07T21:36:37.897Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "095d0b94",
+    "sourceVersion": "8dcc6b28",
     "license": "MIT",
-    "contentHash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
-    "lastHarvestedAt": "2026-11-05T17:36:34.870Z",
+    "contentHash": "8feea5695581d4ecfc1841445d309c3fbe3d28a256c0335adf02edcb0b8fd482",
+    "lastHarvestedAt": "2026-11-07T21:36:27.513Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "289caab9",
+    "sourceVersion": "f21f224b",
     "license": "MIT",
-    "contentHash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
-    "lastHarvestedAt": "2026-11-04T03:30:35.537Z",
+    "contentHash": "1b265e7902747b0c5714afaa12aadf7613f0b508c9be1b35c4470f82b0e67544",
+    "lastHarvestedAt": "2026-11-07T21:36:29.767Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

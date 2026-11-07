@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `e0ad46db`  
+> **Source Version**: `ff5d19c2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:55:04.321Z  
+> **Timestamp**: 2026-11-07T21:36:36.309Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:55:04.104Z  
+> **Harvest Timestamp**: 2026-11-07T21:36:36.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12845 stars
+- **Stars / Engagement**: 12849 stars
 
 ---
 
@@ -2563,446 +2563,253 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0ad46db` (2026-11-05)
-**Commit Message**: Cache prepared statement plans for fast path queries on worker connections (#8825)
+### Incident Patch 1: `ff5d19c2` (2026-11-06)
+**Commit Message**: Evaluate replayed object definitions in the owner context (#8956)
 
-DESCRIPTION: Adds citus.enable_prepared_statement_caching to cache
-prepared statement plans on worker connections for fast-path queries
+DESCRIPTION: Evaluates replayed object definitions in the owner's
+context
 
-Repeated executions of a prepared statement re-parse and re-plan the
-shard query on the worker every time, because Citus sends the query via
-PQsendQueryParams, which uses libpq's unnamed prepared statement. The
-plan is built and discarded on each execution. The coordinator also
-deparses the query tree to SQL for every execution.
+Layer 3 of 3, based on #8955. Ports the final merged behavior from #8946
+to main, without changing the two prerequisite layers.
 
-This adds citus.enable_prepared_statement_caching (PGC_USERSET, default
-off). When enabled, single-shard fast-path queries are sent using named
-prepared statements: PQprepare on first use, then PQsendQueryPrepared
-for subsequent executions. The worker keeps the
-CachedPlanSource/CachedPlan for the lifetime of the connection, so later
-executions skip parse and plan entirely and go straight to bind/execute.
+Expression-bearing metadata replay runs as the object owner under
+`SECURITY_RESTRICTED_OPERATION`, with identity, security context,
+settings, and single-statement markers restored on success or error.
+This covers dependency replay, node activation, partition attachment,
+worker name collisions, and the current object-repair path. The
+expression-free allowlist and `warn` (default), `require`, and `off`
+controls match the final source; the new GUCs precede `metadata_sync_*`
+alphabetically.
 
-This complements Citus's local plan caching, which already caches
-prepared statement plans for local execution ((see `local_plan_cache.c`,
- `local_executor.c`), by caching plans for remote execution so achieving
-plan caching for all execu
+Main-specific adaptation preserves the existing bundled partition
+metadata API, activation filtering/cache flushing, and repair
+existence/force-recreate checks. The security module and header are
+identical to the final source. Regression coverage includes real
+tenant-owned domain repair, missing-domain activation, guarded
+domain-array partition bounds, cached expressions, privilege denial,
+single-use markers, and settings restoratio
 
-**File**: `src/backend/distributed/connection/connection_management.c` (modified, +6/-0)
+**File**: `src/backend/distributed/commands/dependencies.c` (modified, +39/-1)
 ```diff
-@@ -36,6 +36,7 @@
- #include "distributed/memutils.h"
+@@ -30,6 +30,7 @@
+ #include "distributed/metadata/dependency.h"
+ #include "distributed/metadata/distobject.h"
  #include "distributed/metadata_cache.h"
- #include "distributed/placement_connection.h"
-+#include "distributed/prepared_statement_cache.h"
- #include "distributed/remote_commands.h"
- #include "distributed/run_from_same_connection.h"
- #include "distributed/shared_connection_stats.h"
-@@ -794,6 +795,9 @@ ShutdownConnection(MultiConnection *connection)
++#include "distributed/metadata_replay_security.h"
+ #include "distributed/metadata_sync.h"
+ #include "distributed/metadata_utility.h"
+ #include "distributed/multi_executor.h"
+@@ -199,6 +200,7 @@ EnsureObjectExistsOnAllNodes(const ObjectAddress *target, bool forceRecreate)
+ 	bool bundlePartitionMetadata = false;
+ 	List *ddlCommands = GetDependencyCreateDDLCommands(target,
+ 													   bundlePartitionMetadata);
++	ddlCommands = ProtectMetadataReplayCommandList(ddlCommands, target);
+ 
+ 	if (list_length(ddlCommands) == 0)
  	{
- 		SendCancelationRequest(connection);
+@@ -412,6 +414,7 @@ EnsureRequiredObjectSetExistOnAllNodes(const ObjectAddress *target,
+ 
+ 	List *objectsWithCommands = NIL;
+ 	List *ddlCommands = NULL;
++	List *protectedDDLCommands = NIL;
+ 
+ 	/*
+ 	 * If there is any unsupported dependency or circular dependency exists, Citus can
+@@ -447,6 +450,9 @@ EnsureRequiredObjectSetExistOnAllNodes(const ObjectAddress *target,
+ 																  bundlePartitionMetadata)
+ 		;
+ 		ddlCommands = list_concat(ddlCommands, dependencyCommands);
++		protectedDDLCommands =
++			list_concat(protectedDDLCommands,
++						ProtectMetadataReplayCommandList(dependencyCommands, object));
+ 
+ 		/* create a new list with objects that actually created commands */
+ 		if (list_length(dependencyCommands) > 0)
+@@ -462,6 +468,8 @@ EnsureRequiredObjectSetExistOnAllNodes(const ObjectAddress *target,
+ 
+ 	/* since we are executing ddl commands lets disable propagation, primarily for mx */
+ 	ddlCommands = list_concat(list_make1(DISABLE_DDL_PROPAGATION), ddlCommands);
++	protectedDDLCommands = list_concat(list_make1(DISABLE_DDL_PROPAGATION),
++									   protectedDDLCommands);
+ 
+ 	/*
+ 	 * Make sure that no new nodes are added after this point until the end of the
+@@ -535,9 +543,10 @@ EnsureRequiredObjectSetExistOnAllNodes(const ObjectAddress *target,
+ 			const char *nodeName = workerNode->workerName;
+ 			uint32 nodePort = workerNode->workerPort;
+ 
++			/* this connection is the extension owner, hence the marked commands */
+ 			SendCommandListToWorkerOutsideTransaction(nodeName, nodePort,
+ 													  CitusExtensionOwnerName(),
+-													  ddlCommands);
++													  protectedDDLCommands);
+ 		}
  	}
-+
-+	PreparedStatementCacheDestroy(&connection->preparedStatementCache);
-+
- 	CitusPQFinish(connection);
- }
  
-@@ -1232,6 +1236,8 @@ CloseNotReadyMultiConnectionStates(List *connectionStates)
- static void
- CitusPQFinish(MultiConnection *connection)
- {
-+	PreparedStatementCacheDestroy(&connection->preparedStatementCache);
-+
- 	if (connection->pgConn != NULL)
- 	{
- 		PQfinish(connection->pgConn);
-```
-
-**File**: `src/backend/distributed/connection/remote_commands.c` (modified, +89/-0)
-```diff
-@@ -576,6 +576,95 @@ SendRemoteCommand(MultiConnection *connection, const char *command)
+@@ -1007,6 +1016,35 @@ GetAllDependencyCreateDDLCommands(const List *dependencies, bool bundlePartition
  }
  
  
 +/*
-+ * SendRemotePrepare prepares a statement on a worker connection and waits for
-+ * the worker to confirm it. The wait is interruptible, so a cancel is honoured
-+ * even when the worker is slow to answer. Returns 1 on success, 0 on failure.
++ * GetAllDependencyCreateDDLCommandsForMetadataReplay returns the commands that
++ * recreate the given dependencies, each marked with the owner of the object it
++ * recreates.
++ *
++ * Use this instead of GetAllDependencyCreateDDLCommands whenever the commands are
++ * sent through a superuser connection.
 + */
-+int
-+SendRemotePrepare(MultiConnection *connection, const char *stmtName,
-+				  const char *query, int nParams, const Oid *paramTypes)
++List *
++GetAllDependencyCreateDDLCommandsForMetadataReplay(const List *dependencies,
++												   bool bundlePartitionMetadata)
 +{
-+	PGconn *pgConn = connection->pgConn;
++	List *commands = NIL;
 +
-+	if (LogRemoteCommands)
++	ObjectAddress *dependency = NULL;
++	foreach_declared_ptr(dependency, dependencies)
 +	{
-+		char *command = psprintf("PREPARE %s AS %s", stmtName, query);
-+		LogRemoteCommand(connection, command);
-+		pfree(command);
++		List *dependencyCommands =
++			GetDependencyCreateDDLCommands(dependency, bundlePartitionMetadata);
++
++		commands =
++			list_concat(commands,
++						ProtectMetadataReplayCommandList(dependencyCommands, dependency));
 +	}
 +
-+	if (!pgConn || PQstatus(pgConn) != CONNECTION_OK)
-+	{
-+		return 0;
-+	}
-+
-+	Assert(PQisnonblocking(pgConn));
-+
-+	if (PQsendPrepare(pgConn, stmtName, query, nParams, paramTypes) == 0)
-+	{
-+		return 0;
-+	}
-+
-+	bool raiseInterrupts = true;
-+	PGresult *result = GetRemoteCommandResult(connection, raiseInterrupts);
-+	if (result == NULL)
-+	{
-+		return 0;
-+	}
-+
-+	if (PQresultStatus(result) != PGRES_COMMAND_OK)
-+	{
-+		/*
-+		 * Raise for a lost connection as well, which GetRemoteCommandResult()
-+		 * reports as a synthetic PGRES_FATAL_ERROR. Returning failure instead
-+		 * marks the connection lost while placements are still attached, and
-+		 * RestartConnection() asserts that they are not.
-+		 */
-+		ReportResultError(connection, result, ERROR);
-+	}
-+
-+	PQclear(result);
-+	ForgetResults(connection);
-+
-+	return 1;
-+}
-+
-+
-+/*
-+ * SendRemotePreparedQuery wraps PQsendQueryPrepared() to asynchronously
-+ * execute a previously prepared statement on a worker connection. Follows
-+ * the same pattern as SendRemoteCommandParams(). Returns the result of
-+ * PQsendQueryPrepared (1 on success, 0 on failure).
-+ */
-+int
-+SendRemotePreparedQuery(MultiConnection *connection, const char *stmtName,
-+						int nParams, const char *const *paramValues,
-+						bool binaryResults)
-+{
-+	PGconn *pgConn = connection->pgConn;
-+
-+	if (LogRemoteCommands)
-+	{
-+		char *command = psprintf("EXECUTE %s", stmtName);
-+		LogRemoteCommand(connection, command);
-+		pfree(command);
-+	}
-+
-+	if (!pgConn || PQstatus(pgConn) != CONNECTION_OK)
-+	{
-+		return 0;
-+	}
-+
-+	Assert(PQisnonblocking(pgConn));
-+
-+	int rc = PQsendQueryPrepared(pgConn, stmtName, nParams, paramValues,
-+								 NULL, NULL, binaryResults ? 1 : 0);
-+
-+	return rc;
++	return commands;
 +}
 +
 +
  /*
-  * ExecuteRemoteCommandAndCheckResult executes the given command in the remote node and
-  * checks if the result is equal to the expected result. If the result is equal to the
+  * ShouldPropagate determines if we should be propagating anything
+  */
 ```
 
-**File**: `src/backend/distributed/executor/adaptive_executor.c` (modified, +53/-2)
+**File**: `src/backend/distributed/commands/utility_hook.c` (modified, +81/-0)
 ```diff
-@@ -149,6 +149,7 @@
- #include "distributed/backend_data.h"
- #include "distributed/cancel_utils.h"
- #include "distributed/citus_custom_scan.h"
-+#include "distributed/citus_ruleutils.h"
- #include "distributed/citus_safe_lib.h"
- #include "distributed/commands/multi_copy.h"
- #include "distributed/connection_management.h"
-@@ -166,6 +167,7 @@
- #include "distributed/param_utils.h"
- #include "distributed/placement_access.h"
- #include "distributed/placement_connection.h"
-+#include "distributed/prepared_statement_cache.h"
- #include "distributed/relation_access_tracking.h"
- #include "distributed/remote_commands.h"
- #include "distributed/repartition_join_execution.h"
-@@ -739,6 +741,7 @@ static bool StartPlacementExecutionOnSession(TaskPlacementExecution *placementEx
- 											 WorkerSession *session);
- static bool SendNextQuery(TaskPlacementExecution *placementExecution,
- 						  WorkerSession *session);
-+static bool SetRemoteRowMode(MultiConnection *connection);
- static void ConnectionStateMachine(WorkerSession *session);
- static bool HasUnfinishedTaskForSession(WorkerSession *session);
- static void HandleMultiConnectionSuccess(WorkerSession *session, bool newConnection);
-@@ -927,8 +930,23 @@ AdaptiveExecutorStart(CitusScanState *scanState)
- 	 */
- 	if (paramListInfo && !paramListInfo->paramFetch)
- 	{
-+		/*
-+		 * A cached statement is deparsed from the saved template, which still
-+		 * carries the Params. job->jobQuery has them resolved to constants, so
-+		 * marking against it would strip types the worker still needs.
-+		 */
-+		Node *queryForParams = (Node *) job->jobQuery;
-+		if (taskList != NIL)
+@@ -72,6 +72,7 @@
+ #include "distributed/local_executor.h"
+ #include "distributed/maintenanced.h"
+ #include "distributed/metadata/distobject.h"
++#include "distributed/metadata_replay_security.h"
+ #include "distributed/metadata_sync.h"
+ #include "distributed/multi_executor.h"
+ #include "distributed/multi_explain.h"
+@@ -136,6 +137,68 @@ ProcessUtilityParseTree(Node *node, const char *queryString, ProcessUtilityConte
+ }
+ 
+ 
++/*
++ * RunUtilityAsMetadataReplayOwner runs a single replayed statement as the owner of
++ * the object being replayed, with security restrictions in place. Entering the
++ * context consumes the marker, so the recursive call proceeds normally.
++ */
++static void
++RunUtilityAsMetadataReplayOwner(PlannedStmt *pstmt,
++								const char *queryString,
++								ProcessUtilityContext context,
++								ParamListInfo params,
++								struct QueryEnvironment *queryEnv,
++								DestReceiver *dest,
++								QueryCompletion *completionTag)
++{
++	MetadataReplayOwnerContext ownerContext;
++	MemoryContext callerContext = CurrentMemoryContext;
++
++	EnterMetadataReplayOwnerContext(&ownerContext);
++
++	PG_TRY();
++	{
++		bool readOnlyTree = false;
++
++		citus_ProcessUtility(pstmt, queryString, readOnlyTree, context, params,
++							 queryEnv, dest, completionTag);
++	}
++	PG_CATCH();
++	{
++		MemoryContextSwitchTo(callerContext);
++		ErrorData *errorData = CopyErrorData();
++		int sqlErrorCode = errorData->sqlerrcode;
++		char *errorMessage = pstrdup(errorData->message);
++		FreeErrorData(errorData);
++
++		ExitMetadataReplayOwnerContext(&ownerContext);
++
++		if (sqlErrorCode != ERRCODE_INSUFFICIENT_PRIVILEGE)
 +		{
-+			Task *firstTask = (Task *) linitial(taskList);
-+			if (firstTask->jobQueryForPrepare != NULL)
-+			{
-+				queryForParams = (Node *) firstTask->jobQueryForPrepare;
-+			}
++			PG_RE_THROW();
 +		}
 +
- 		paramListInfo = copyParamList(paramListInfo);
--		MarkUnreferencedExternParams((Node *) job->jobQuery, paramListInfo);
-+		MarkUnreferencedExternParams(queryForParams, paramListInfo);
- 	}
- 
- 	DistributedExecution *execution = CreateDistributedExecution(
-@@ -4256,7 +4274,29 @@ SendNextQuery(TaskPlacementExecution *placementExecution,
- 	uint32 queryIndex = placementExecution->queryIndex;
- 
- 	Assert(queryIndex < task->queryCount);
--	char *queryString = TaskQueryStringAtIndex(task, queryIndex);
-+	char *queryString = NULL;
++		/* say which role the command ran as, since it is not the connected one */
++		FlushErrorState();
 +
-+	/*
-+	 * Must be attempted before the paramListInfo path below: a fast-path task
-+	 * reports its parameters as resolved, so that path would send plain SQL.
-+	 */
-+	PreparedStatementSendStatus cacheStatus =
-+		PreparedStatementCacheSendQuery(connection, task, paramListInfo,
-+										binaryResults, &queryString);
-+	if (cacheStatus == PREPARED_STMT_SENT)
-+	{
-+		return SetRemoteRowMode(connection);
-+	}
-+	else if (cacheStatus == PREPARED_STMT_FAILED)
-+	{
-+		return false;
-+	}
++		char *ownerName = GetUserNameFromId(ownerContext.ownerId, false);
 +
-+	/* resolve queryString if not already set (e.g. from cache-full fallback) */
-+	if (queryString == NULL)
-+	{
-+		queryString = TaskQueryStringAtIndex(task, queryIndex);
++		ereport(ERROR, (errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
++						errmsg("%s", errorMessage),
++						errdetail("Citus replayed this command as \"%s\", the owner of "
++								  "the object, so that expressions it carries are not "
++								  "evaluated with the rights of the replaying superuser.",
++								  ownerName),
++						errhint("Grant \"%s\" the missing privilege, or set "
++								"citus.metadata_replay_protection to off to replay "
++								"without it.", ownerName)));
 +	}
- 
- 	if (paramListInfo != NULL && !task->parametersInQueryStringResolved)
- 	{
-@@ -4304,6 +4344,17 @@ SendNextQuery(TaskPlacementExecution *placementExecution,
- 		return false;
- 	}
- 
-+	return SetRemoteRowMode(connection);
++	PG_END_TRY();
++
++	ExitMetadataReplayOwnerContext(&ownerContext);
 +}
 +
 +
-+/*
-+ * SetRemoteRowMode puts the connection into the incremental result mode the
-+ * executor expects, chunked where libpq supports it.
-+ */
-+static bool
-+SetRemoteRowMode(MultiConnection *connection)
-+{
- #ifdef LIBPQ_HAS_CHUNK_MODE
- 	int rowMode = PQsetChunkedRowsMode(connection->pgConn, ExecutorChunkSize);
- #else
-```
-
-**File**: `src/backend/distributed/executor/citus_custom_scan.c` (modified, +41/-8)
-```diff
-@@ -43,10 +43,13 @@
- #include "distributed/local_plan_cache.h"
- #include "distributed/merge_executor.h"
- #include "distributed/merge_planner.h"
-+#include "distributed/metadata_cache.h"
- #include "distributed/multi_executor.h"
- #include "distributed/multi_router_planner.h"
- #include "distributed/multi_server_executor.h"
-+#include "distributed/prepared_statement_cache.h"
- #include "distributed/shard_utils.h"
-+#include "distributed/shardinterval_utils.h"
- #include "distributed/sorted_merge.h"
- #include "distributed/stats/query_stats.h"
- #include "distributed/stats/stat_counters.h"
-@@ -82,7 +85,7 @@ static void SortedMergeReScan(CustomScanState *node);
- static void CitusEndScanCommon(CitusScanState *scanState);
- static void CitusReScanCommon(CustomScanState *node);
- static void EnsureForceDelegationDistributionKey(Job *job);
--static void EnsureAnchorShardsInJobExist(Job *job);
-+
- static bool AnchorShardsInTaskListExist(List *taskList);
- static void TryToRerouteFastPathModifyQuery(Job *job);
- static void CheckQueryDeparseSafety(Query *query);
-@@ -355,6 +358,15 @@ CitusBeginReadOnlyScan(CustomScanState *node, EState *estate, int eflags)
- 		return;
- 	}
+ /*
+  * citus_ProcessUtility is the main entry hook for implementing Citus-specific
+  * utility behavior. Its primary responsibilities are intercepting COPY and DDL
+@@ -162,6 +225,24 @@ citus_ProcessUtility(PlannedStmt *pstmt,
+ 
+ 	Node *parsetree = pstmt->utilityStmt;
  
 +	/*
-+	 * A cached plan can build its task straight from the bound parameters,
-+	 * skipping the plan copy, coordinator evaluation and task regeneration.
++	 * A replayed command that can carry tenant-authored expressions runs as the
++	 * object owner, so that evaluating them cannot use the rights of the
++	 * superuser connection that replay uses.
++	 *
++	 * The blocks that set and clear the marker are themselves excluded, since
++	 * clearing it requires the rights the marked statement gives up.
 +	 */
-+	if (PreparedStatementCacheTryFastPath(scanState, estate, false))
++	if (MetadataReplayStatementIsMarked() &&
++		!IsA(parsetree, DoStmt) &&
++		!IsA(parsetree, TransactionStmt))
 +	{
++		RunUtilityAsMetadataReplayOwner(pstmt, queryString, context, params,
++										queryEnv, dest, completionTag);
++
 +		return;
 +	}
 +
- 	/*
- 	 * Create a copy of the generic plan for the current execution, but make a shallow
- 	 * copy of the plan cache. That means we'll be able to access the plan cache via
-@@ -365,8 +377,8 @@ CitusBeginReadOnlyScan(CustomScanState *node, EState *estate, int eflags)
- 		CopyDistributedPlanWithoutCache(originalDistributedPlan);
- 	scanState->distributedPlan = currentPlan;
- 
--	Job *workerJob = currentPlan->workerJob;
--	Query *jobQuery = workerJob->jobQuery;
-+	Job *currentJob = currentPlan->workerJob;
-+	Query *jobQuery = currentJob->jobQuery;
- 	PlanState *planState = &(scanState->customScanState.ss.ps);
- 
- 	/*
-@@ -375,6 +387,8 @@ CitusBeginReadOnlyScan(CustomScanState *node, EState *estate, int eflags)
- 	 */
- 	Assert(currentPlan->fastPathRouterPlan || !EnableFastPathRouterPlanner);
- 
-+	Query *savedJobQuery = PreparedStatementCacheSaveTemplate(originalDistributedPlan);
-+
- 	/*
- 	 * Evaluate parameters, because the parameters are only available on the
- 	 * coordinator and are required for pruning.
-@@ -388,13 +402,15 @@ CitusBeginReadOnlyScan(CustomScanState *node, EState *estate, int eflags)
- 	ExecuteCoordinatorEvaluableExpressions(jobQuery, planState);
- 
- 	/* job query no longer has parameters, so we should not send any */
--	workerJob->parametersInJobQueryResolved = true;
-+	currentJob->parametersInJobQueryResolved = true;
- 
- 	/* parameters are filled in, so we can generate a task for this execution */
--	RegenerateTaskForFasthPathQuery(workerJob);
-+	RegenerateTaskForFasthPathQuery(currentJob);
-+
-+	PreparedStatementCacheAttachToTasks(currentPlan, currentJob, savedJobQuery);
- 
- 	bool planAddedToCache = false;
--	CacheLocalPlanForShardQuery(workerJob, originalDistributedPlan,
-+	CacheLocalPlanForShardQuery(currentJob, originalDistributedPlan,
- 								estate->es_param_list_info, &planAddedToCache);
- 
- 	/* Use a newly cached plan for the current execution as well. */
-@@ -422,6 +438,15 @@ CitusBeginModifyScan(CustomScanState *node, EState *estate, int eflags)
- 	PlanState *planState = &(scanState->customScanState.ss.ps);
- 	DistributedPlan *originalDistributedPlan = scanState->distributedPlan;
- 
-+	/*
-+	 * A cached plan can build its task straight from the bound parameters,
-+	 * skipping the plan copy, coordinator evaluation and task regeneration.
-+	 */
-+	if (PreparedStatementCacheTryFastPath(scanState, estate, true))
-+	{
-+		return;
-+	}
-+
- 	MemoryContext localContext = AllocSetContextCreate(CurrentMemoryContext,
- 													   "CitusBeginModifyScan",
- 													   ALLOCSET_DEFAULT_SIZES);
-@@ -435,6 +460,8 @@ CitusBeginModifyScan(CustomScanState *node, EState *estate, int eflags)
- 
- 	Query *jobQuery = workerJob->jobQuery;
- 
-+	Query *savedJobQuery = PreparedStatementCacheSaveTemplate(originalDistributedPlan);
-+
- 	if (ModifyJobNeedsEvaluation(workerJob))
+ 	if (IsA(parsetree, TransactionStmt))
  	{
- 		ExecuteCoordinatorEvaluableExpressions(jobQuery, planState);
-@@ -467,6 +494,8 @@ CitusBeginModifyScan(CustomScanState *node, EState *estate, int eflags)
- 		{
- 			RegenerateTaskForFasthPathQuery(workerJob);
- 		}
-+
-+		PreparedStatementCacheAttachToTasks(currentPlan, workerJob, savedJobQuery);
- 	}
- 	else if (workerJob->requiresCoordinatorEvaluation)
- 	{
-@@ -555,7 +584,7 @@ TryToRerouteFastPathModifyQuery(Job *job)
-  * EnsureAnchorShardsInJobExist ensures all shards are valid in job.
-  * If it finds a non-existent shard in given job, it throws an error.
-  */
--static void
-+void
- EnsureAnchorShardsInJobExist(Job *job)
- {
- 	if (!AnchorShardsInTaskListExist(job->taskList))
-@@ -629,13 +658,17 @@ CopyDistributedPlanWithoutCache(DistributedPlan *originalDistributedPlan)
- {
- 	List *localPlan
+ 		TransactionStmt *transactionStmt = (TransactionStmt *) parsetree;
 ```
 
-**File**: `src/backend/distributed/executor/local_executor.c` (modified, +17/-1)
+**File**: `src/backend/distributed/metadata/metadata_replay_security.c` (added, +433/-0)
 ```diff
-@@ -395,7 +395,23 @@ ExecuteLocalTaskListExtended(List *taskList,
- 				continue;
- 			}
- 
--			if (taskType != TASK_QUERY_LOCAL_PLAN)
-+			if (taskType == TASK_QUERY_NULL && task->jobQueryForPrepare != NULL)
-+			{
-+				/*
-+				 * Fast-path task from prepared statement caching: the task
-+				 * was built without a query string to avoid expensive
-+				 * deparsing.  Deparse from the saved job query template now
-+				 * so we can plan locally.
-+				 */
-+				char *queryString = DeparseTaskQueryTemplate(task);
-+				Query *shardQuery = ParseQueryString(queryString,
-+													 taskParameterTypes,
-+													 taskNumParams);
-+				localPlan = planner(shardQuery, NULL, CURSOR_OPT_PARALLEL_OK,
-+									paramListInfo);
-+				pfree(queryString);
-+			}
-+			else if (taskType != TASK_QUERY_LOCAL_PLAN)
- 			{
- 				Query *shardQuery = ParseQueryString(TaskQueryString(task),
- 													 taskParameterTypes,
-```
-
-**File**: `src/backend/distributed/executor/prepared_statement_cache.c` (added, +627/-0)
-```diff
-@@ -0,0 +1,627 @@
+@@ -0,0 +1,433 @@
 +/*-------------------------------------------------------------------------
 + *
-+ * prepared_statement_cache.c
-+ *   Per-connection cache for prepared statements on worker connections.
++ * metadata_replay_security.c
++ *    Security boundary for evaluating expressions during metadata replay.
 + *
-+ *   When citus.enable_prepared_statement_caching is ON, the coordinator
-+ *   uses PQprepare/PQsendQueryPrepared on worker connections instead
-+ *   of PQsendQuery for fast-path prepared statement executions (generic
-+ *   plan, execution 6+). This module manages the per-connection hash
-+ *   table that tracks which statements have already been prepared on
-+ *   each connection.
++ * Citus recreates distributed objects on worker nodes through a superuser
++ * connection. PostgreSQL evaluates an expression wherever it parses one, so a
++ * definition a tenant authored would otherwise run with superuser rights while
++ * the object is being recreated.
 + *
-+ *   Eviction and worker DEALLOCATE are intentionally omitted to keep statement
-+ *   lifetimes tied to the connection without extra remote commands. Client
-+ *   DEALLOCATE and replanning leave old entries and worker plan-cache memory
-+ *   behind until the connection is closed (including recycling through
-+ *   citus.max_cached_connection_lifetime). At the per-connection cap, existing
-+ *   entries remain reusable; cache misses fall back to parameterized SQL.
-+ *
-+ *   It also owns the two integration points that make the cache usable:
-+ *   the planner-side fast path that builds a Task straight from
-+ *   ParamListInfo (skipping replanning), and the executor-side dispatch
-+ *   that prepares or reuses the named statement on a connection.
++ * Replayed commands are prefixed with the owner of the object, unless the object
++ * is already owned by a superuser or is of a kind that cannot evaluate anything.
++ * The worker runs the marked statement as that owner under
++ * SECURITY_RESTRICTED_OPERATION. Switching identity rather than intercepting
++ * calls is what makes this cover builtin, cached and type-system evaluation,
++ * none of which reach a function-call hook. The marker is consumed by the
++ * statement it applies to.
 + *
 + * Copyright (c) Citus Data, Inc.
 + *
@@ -3011,468 +2818,722 @@ plan caching for all execu
 +
 +#include "postgres.h"
 +
++#include "miscadmin.h"
++
 +#include "access/htup_details.h"
-+#include "nodes/makefuncs.h"
-+#include "utils/hsearch.h"
++#include "catalog/objectaddress.h"
++#include "catalog/pg_authid.h"
++#include "catalog/pg_class.h"
++#include "catalog/pg_collation.h"
++#include "catalog/pg_constraint.h"
++#include "catalog/pg_database.h"
++#include "catalog/pg_extension.h"
++#include "catalog/pg_foreign_server.h"
++#include "catalog/pg_namespace.h"
++#include "catalog/pg_proc.h"
++#include "catalog/pg_publication.h"
++#include "catalog/pg_statistic_ext.h"
++#include "catalog/pg_ts_config.h"
++#include "catalog/pg_ts_dict.h"
++#include "catalog/pg_type.h"
++#include "utils/acl.h"
++#include "utils/builtins.h"
++#include "utils/guc.h"
 +#include "utils/lsyscache.h"
-+#include "utils/memutils.h"
++#include "utils/syscache.h"
 +
-+#include "distributed/citus_custom_scan.h"
-+#include "distributed/citus_safe_lib.h"
-+#include "distributed/deparse_shard_query.h"
-+#include "distributed/distributed_execution_locks.h"
-+#include "distributed/executor_util.h"
 +#include "distributed/listutils.h"
-+#include "distributed/local_plan_cache.h"
-+#include "distributed/metadata_cache.h"
-+#include "distributed/metadata_utility.h"
-+#include "distributed/multi_executor.h"
-+#include "distributed/multi_explain.h"
-+#include "distributed/multi_physical_planner.h"
-+#include "distributed/multi_router_planner.h"
-+#include "distributed/prepared_statement_cache.h"
-+#include "distributed/remote_commands.h"
-+#include "distributed/shard_cleaner.h"
-+#include "distributed/shard_pruning.h"
-+#include "distributed/shardinterval_utils.h"
-+#include "distributed/stats/stat_tenants.h"
++#include "distributed/metadata_replay_security.h"
 +
 +
-+/* GUC: citus.enable_prepared_statement_caching */
-+bool EnablePreparedStatementCaching = false;
++char *MetadataReplayOwner = "";
++int MetadataReplayProtection = METADATA_REPLAY_PROTECTION_WARN;
++
++static char * MetadataReplayObjectOwnerName(const ObjectAddress *address);
++static bool ReplayObjectIsExpressionFree(const ObjectAddress *address);
++static Oid ReplayObjectOwnerId(const ObjectAddress *address);
++static Oid ReplayCatalogOid(int cacheId, Oid objectId, AttrNumber attributeNumber);
++static char * CommandWithoutTrailingSemicolon(const char *command);
 +
 +
 +/*
-+ * PreparedStatementCachingUsable returns whether the cache may be used at all
-+ * for this execution.
++ * ProtectMetadataReplayCommandList marks every command with the owner of the object
++ * that is being replayed. The marker is part of the same command string because
++ * callers may execute each list element in its own transaction.
 + *
-+ * Tenant statistics reach the worker as a comment on the query text. A reused
-+ * prepared statement cannot carry that per execution -- it would freeze the
-+ * tenant of whichever execution prepared it -- so decline while tracking is on
-+ * rather than mis-attribute.
-+ */
-+static bool
-+PreparedStatementCachingUsable(void)
-+{
-+	return EnablePreparedStatementCaching &&
-+		   StatTenantsTrack == STAT_TENANTS_TRACK_NONE;
-+}
-+
-+
-+/*
-+ * PreparedStatementCacheCreate allocates a new hash table for caching
-+ * prepared statement entries on a single worker connection. The hash
-+ * table is allocated in TopMemoryContext so it survives across
-+ * transactions (matching the connection lifetime).
-+ */
-+HTAB *
-+PreparedStatementCacheCreate(void)
-+{
-+	HASHCTL info;
-+
-+	memset(&info, 0, sizeof(info));
-+	info.keysize = sizeof(PreparedStatementCacheKey);
-+	info.entrysize = sizeof(PreparedStatementCacheEntry);
-+	info.hcxt = TopMemoryContext;
-+
-+	HTAB *cache = hash_create("Prepared Statement Cache",
-+							  32, /* initial size */
-+							  &info,
-+							  HASH_ELEM | HASH_BLOBS | HASH_CONTEXT);
-+
-+	return cache;
-+}
-+
-+
-+/*
-+ * PreparedStatementCacheLookup looks up a cache entry by (planId, shardId).
-+ * Returns the entry if found, NULL otherwise.
-+ */
-+PreparedStatementCacheEntry *
-+PreparedStatementCacheLookup(HTAB *cache, uint64 planId, uint64 shardId)
-+{
-+	PreparedStatementCacheKey key;
-+
-+	memset(&key, 0, sizeof(key));
-+	key.planId = planId;
-+	key.shardId = shardId;
-+
-+	PreparedStatementCacheEntry *entry =
-+		(PreparedStatementCacheEntry *) hash_search(cache, &key,
-+													HASH_FIND, NULL);
-+
-+	return entry;
-+}
-+
-+
-+/*
-+ * PreparedStatementCacheInsert records that stmtName has been prepared on this
-+ * connection for (planId, shardId).
++ * A node that predates the marker does not have the parameter at all. Rather than
++ * pass silently, the emitted command tests for it and reports that such a node
++ * evaluates the command with the rights of the replaying superuser, and
++ * citus.metadata_replay_protection decides whether that is fatal.
 + *
-+ * Only call this once the worker has accepted the statement: an entry for a
-+ * statement that does not exist makes every later execution on this connection
-+ * fail with "prepared statement does not exist".
++ * The list is returned unchanged when there is no owner to reduce the rights to.
 + */
-+PreparedStatementCacheEntry *
-+PreparedStatementCacheInsert(HTAB *cache, uint64 planId, uint64 shardId,
-+							 const char *stmtName)
++List *
++ProtectMetadataReplayCommandList(List *commandList, const ObjectAddress *object)
 +{
-+	PreparedStatementCacheKey key;
++	if (MetadataReplayProtection == METADATA_REPLAY_PROTECTION_OFF)
++	{
++		return commandList;
++	}
 +
-+	memset(&key, 0, sizeof(key));
-+	key.planId = planId;
-+	key.shardId = shardId;
++	char *ownerName = MetadataReplayObjectOwnerName(object);
++	if (ownerName == NULL)
++	{
++		return commandList;
++	}
 +
-+	bool found = false;
-+	PreparedStatementCacheEntry *entry =
-+		
++	List *protectedCommandList = NIL;
++
++	/*
++	 * A node that predates this protection does not know the marker, so it
++	 * reports itself instead of silently evaluating with superuser rights.
++	 */
++	const char *unsupportedAction =
++		MetadataReplayProtection == METADATA_REPLAY_PROTECTION_REQUIRE ?
++		"RAISE EXCEPTION" : "RAISE WARNING";
++
++	/*
++	 * Presence is tested rather than an error caught: before PG15 an unknown
++	 * citus.* name is accepted as a placeholder instead of being rejected.
++	 */
++	char *setMarkerBody = psprintf(
++		"BEGIN "
++		"IF current_setting('citus.metadata_replay_owner', true) IS NULL THEN "
++		"%s 'this node evaluates replayed expressions with the rights of the "
++		"replaying superuser' "
++		"USING HINT = 'Upgrade Citus on this node to restore metadata replay "
++		"protection, or set citus.metadata_replay_protection to off to accept it.'; "
++		"ELSE PERFORM set_config('citus.metadata_replay_owner', %s, true); "
++		"END IF; END",
++		unsupportedAction, quote_literal_cstr(ownerName));
++	char *clearMarkerBody =
++		"BEGIN "
++		"IF current_setting('citus.metadata_replay_owner', true) IS NOT NULL THEN "
++		"PERFORM set_config('citus.metadata_replay_owner', '', true); "
++		"END IF; END";
++
++	char *command = NULL;
++	foreach_declared_ptr(command, commandList)
++	{
++		/*
++		 * The statement itself consumes the marker. The trailing reset only
++		 * matters for commands that turn out not to be utility statements.
++		 */
++		protectedCommandList =
++			lappend(protectedCommandList,
++					psprintf("DO %s; %s; DO %s",
++							 quote_literal_cstr(setMarkerBody),
++							 CommandWithoutTrailingSemicolon(command),
 ```
 
-**File**: `src/backend/distributed/planner/deparse_shard_query.c` (modified, +48/-0)
+**File**: `src/backend/distributed/metadata/metadata_replay_security.md` (added, +164/-0)
 ```diff
-@@ -777,6 +777,33 @@ TaskQueryStringAtIndex(Task *task, int index)
+@@ -0,0 +1,164 @@
++# Metadata replay security
++
++## The problem
++
++Citus recreates distributed objects on worker nodes through a superuser
++connection. PostgreSQL evaluates an expression wherever it parses one, so an
++expression that a non-superuser tenant authored could run with the rights of the
++replaying superuser.
++
++The reported case was a column default, but the surface is much wider. An unknown
++literal coerced to an array of a tenant owned domain runs the domain's `CHECK`
++during parse analysis, and that construct is accepted in a column default, a
++generated column, a check constraint, an index expression or predicate, a
++statistics expression, a partition key or bound, a domain default, a function
++parameter default, a function body, a view or materialized view definition, a
++trigger `WHEN` clause, an RLS policy, and a publication row filter. The
++publication case evaluates the expression even though PostgreSQL then rejects
++the statement.
++
++Enumerating those places is a list that fails open when it is incomplete, which
++is why classification is inverted: see below.
++
++## The boundary
++
++Commands that can carry such an expression are prefixed with the owner of the
++object being replayed:
++
++```sql
++DO 'BEGIN IF current_setting(''citus.metadata_replay_owner'', true) IS NULL
++    THEN RAISE WARNING ''this node evaluates replayed expressions with the
++    rights of the replaying superuser'';
++    ELSE PERFORM set_config(''citus.metadata_replay_owner'', ''alice'', true);
++    END IF; END';
++CREATE TABLE ...;
++DO '... clear the marker ...';
++```
++
++While the marker is set, the receiving node runs that one statement as the
++object owner:
++
++```c
++SetUserIdAndSecContext(ownerId,
++                       savedContext | SECURITY_LOCAL_USERID_CHANGE |
++                       SECURITY_RESTRICTED_OPERATION);
++```
++
++Identity, security context and settings are restored afterwards, including on
++error, and the marker is consumed so it applies to a single statement.
++
++This is an identity change rather than an interception of function calls, which
++is what makes it cover builtin functions, cached or inlined expressions, and
++evaluation performed by the type system. A function-call hook sees none of
++those: `fmgr` takes a fast path for builtins, a cached expression need not call
++the guarded function again, and domain input is not a hooked call.
++`SECURITY_RESTRICTED_OPERATION` additionally blocks `SET ROLE`,
++`SET SESSION AUTHORIZATION` and protected settings.
++
++## Which commands are marked
++
++Every replayed command is marked with the owner of the object it recreates,
++unless the object is already owned by a superuser or is of a kind that cannot
++evaluate anything. The exceptions are named in `ReplayObjectIsExpressionFree()`:
++collations, schemas, text search dictionaries and configurations, roles,
++databases, extensions, foreign servers, sequences and composite types. Roles,
++databases and extensions additionally have to stay privileged to replay at all.
++
++An object kind that is not named there is marked. That way a kind nobody
++considered, in this PostgreSQL release or a later one, is protected rather than
++quietly exposed.
++
++What decides marking is the connection a command travels on. Citus marks what it
++sends over a connection it opens as the extension owner: node activation,
++metadata sync, explicit object repair, and the dependencies it creates ahead of
++a new object. Commands
++sent over the user's own connection are not marked, because they already carry
++that user's rights, and marking them would only add a privilege requirement.
++
++The line is therefore not "replay versus DDL a user ran". A tenant distributing
++their own table makes Citus create that table's dependencies on every node, and
++it opens the extension owner's connection to do so whenever none of them was
++created in the same transaction. Those creates are marked.
++
++## Adding an exception
++
++`ReplayObjectIsExpressionFree()` is the only place that decides a kind does not
++need the owner's rights, and adding to it is how a future kind is exempted. The
++bar is a demonstration rather than an argument:
++
++1. Build the object so a tenant owned domain is reachable from its definition,
++   through an unknown array literal such as `'{x}'::tenant.checked_text[]`.
++2. Recreate it the way replay does and confirm the domain's `CHECK` does not
++   run. A scalar cast is not a sufficient test. PostgreSQL defers that one, so
++   it stays quiet for kinds that are not safe and will mislead you.
++3. Add the kind to the switch with its reason, and a case in
++   `metadata_replay_security` that fails if it ever starts being marked.
++
++A kind that cannot evaluate anything but whose owner Citus cannot read should be
++left out of the list. It then reports itself, which is the intended outcome: the
++operator learns that something replays privileged instead of assuming it does
++not.
++
++## Cost
++
++Running a statement as the owner means the owner must hold the privi
+```
+
+**File**: `src/backend/distributed/metadata/metadata_sync.c` (modified, +31/-4)
+```diff
+@@ -75,6 +75,7 @@
+ #include "distributed/metadata/distobject.h"
+ #include "distributed/metadata/pg_dist_object.h"
+ #include "distributed/metadata_cache.h"
++#include "distributed/metadata_replay_security.h"
+ #include "distributed/metadata_sync.h"
+ #include "distributed/metadata_utility.h"
+ #include "distributed/multi_executor.h"
+@@ -3015,6 +3016,31 @@ InterTableRelationshipOfRelationCommandList(Oid relationId)
  }
  
  
 +/*
-+ * DeparseTaskQueryTemplate deparses a working copy of the shared parameterized
-+ * query template for the task's shard, leaving Param nodes intact.
++ * InterTableRelationshipOfRelationCommandListForMetadataReplay protects partition
++ * bounds when replay uses a privileged connection.
 + */
-+char *
-+DeparseTaskQueryTemplate(Task *task)
++static List *
++InterTableRelationshipOfRelationCommandListForMetadataReplay(Oid relationId)
 +{
-+	Query *queryCopy = copyObject(task->jobQueryForPrepare);
-+	StringInfoData buf;
-+	initStringInfo(&buf);
++	List *commandList = GetReferencingForeignConstaintCommands(relationId);
 +
-+	if (queryCopy->commandType == CMD_INSERT)
++	if (PartitionTable(relationId))
 +	{
-+		AddInsertAliasIfNeeded(queryCopy);
-+		deparse_shard_query(queryCopy, task->anchorDistributedTableId,
-+							task->anchorShardId, &buf);
-+	}
-+	else
-+	{
-+		UpdateRelationToShardNames((Node *) queryCopy, task->relationShardList);
-+		pg_get_query_def(queryCopy, &buf);
++		ObjectAddress relationAddress = { 0 };
++		ObjectAddressSet(relationAddress, RelationRelationId, relationId);
++		List *attachCommandList =
++			list_make1(GenerateAlterTableAttachPartitionCommand(relationId));
++		commandList =
++			list_concat(commandList,
++						ProtectMetadataReplayCommandList(attachCommandList,
++														 &relationAddress));
 +	}
 +
-+	return buf.data;
++	return commandList;
 +}
 +
 +
  /*
-  * TaskQueryString generates task query string text if missing.
-  *
-@@ -790,6 +817,27 @@ TaskQueryString(Task *task)
- 	int taskQueryType = GetTaskQueryType(task);
- 	if (taskQueryType == TASK_QUERY_NULL)
- 	{
-+		if (task->jobQueryForPrepare != NULL)
-+		{
-+			/*
-+			 * Fast-path task from prepared statement caching: deparse the
-+			 * query from the saved template and cache the result on the task
-+			 * so subsequent calls don't re-deparse.
-+			 */
-+			/*
-+			 * The task retains the string, so allocate it in the task's own
-+			 * context rather than CurrentMemoryContext, which may be a
-+			 * short-lived per-tuple context.
-+			 */
-+			MemoryContext previousContext =
-+				MemoryContextSwitchTo(GetMemoryChunkContext(task));
-+			char *queryString = DeparseTaskQueryTemplate(task);
-+			MemoryContextSwitchTo(previousContext);
-+
-+			SetTaskQueryString(task, queryString);
-+			return task->taskQuery.data.queryStringLazy;
-+		}
-+
- 		/* if task query type is TASK_QUERY_NULL then the data will be NULL,
- 		 * this is unexpected state */
- 		ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
+  * CreateShellTableOnRemoteNodes creates the shell table on each remote node with metadata
+  * including sequence dependency and truncate triggers.
+@@ -5637,9 +5663,9 @@ SendDependencyCreationCommands(MetadataSyncContext *context)
+ 		{
+ 			/* dependency creation commands */
+ 			bool bundlePartitionMetadata = true;
+-			List *ddlCommands = GetAllDependencyCreateDDLCommands(list_make1(dependency),
+-																  bundlePartitionMetadata)
+-			;
++			List *ddlCommands =
++				GetAllDependencyCreateDDLCommandsForMetadataReplay(list_make1(dependency),
++																   bundlePartitionMetadata);
+ 			SendOrCollectCommandListToActivatedNodes(context, ddlCommands);
+ 		}
+ 
+@@ -6211,7 +6237,8 @@ SendInterTableRelationshipCommands(MetadataSyncContext *context)
+ 		Oid relationId = FetchRelationIdFromPgPartitionHeapTuple(nextTuple, tupleDesc);
+ 		if (ShouldSyncTableMetadata(relationId) && !IsTableOwnedByExtension(relationId))
+ 		{
+-			List *commandList = InterTableRelationshipOfRelationCommandList(relationId);
++			List *commandList =
++				InterTableRelationshipOfRelationCommandListForMetadataReplay(relationId);
+ 			SendOrCollectCommandListToActivatedNodes(context, commandList);
+ 		}
+ 
 ```
 
-**File**: `src/backend/distributed/planner/distributed_planner.c` (modified, +3/-3)
+**File**: `src/backend/distributed/shared_library_init.c` (modified, +74/-0)
 ```diff
-@@ -1461,9 +1461,7 @@ GetDistributedPlan(CustomScan *customScan)
+@@ -79,6 +79,7 @@
+ #include "distributed/log_utils.h"
+ #include "distributed/maintenanced.h"
+ #include "distributed/metadata_cache.h"
++#include "distributed/metadata_replay_security.h"
+ #include "distributed/metadata_sync.h"
+ #include "distributed/metadata_utility.h"
+ #include "distributed/multi_executor.h"
+@@ -207,6 +208,8 @@ static void DecrementExternalClientBackendCounterAtExit(int code, Datum arg);
+ static void CreateRequiredDirectories(void);
+ static void RegisterCitusConfigVariables(void);
+ static void OverridePostgresConfigProperties(void);
++static bool MetadataReplayOwnerCheckHook(char **newval, void **extra,
++										 GucSource source);
+ static bool ErrorIfNotASuitableDeadlockFactor(double *newval, void **extra,
+ 											  GucSource source);
+ static bool WarnIfDeprecatedExecutorUsed(int *newval, void **extra, GucSource source);
+@@ -389,6 +392,13 @@ static const struct config_enum_entry cpu_priority_options[] = {
+ 	{ NULL, 0, false}
+ };
  
- 	CheckNodeCopyAndSerialization(node);
++static const struct config_enum_entry metadata_replay_protection_options[] = {
++	{ "off", METADATA_REPLAY_PROTECTION_OFF, false },
++	{ "warn", METADATA_REPLAY_PROTECTION_WARN, false },
++	{ "require", METADATA_REPLAY_PROTECTION_REQUIRE, false },
++	{ NULL, 0, false }
++};
++
+ static const struct config_enum_entry metadata_sync_mode_options[] = {
+ 	{ "transactional", METADATA_SYNC_TRANSACTIONAL, false },
+ 	{ "nontransactional", METADATA_SYNC_NON_TRANSACTIONAL, false },
+@@ -2307,6 +2317,34 @@ RegisterCitusConfigVariables(void)
+ 		GUC_STANDARD,
+ 		NULL, NULL, NULL);
  
--	DistributedPlan *distributedPlan = (DistributedPlan *) node;
--
--	return distributedPlan;
-+	return (DistributedPlan *) node;
++	DefineCustomStringVariable(
++		"citus.metadata_replay_owner",
++		gettext_noop("Role that expressions run as while metadata is replayed."),
++		gettext_noop("Citus recreates distributed objects through a superuser "
++					 "connection. While this is set, the replayed statement runs as "
++					 "the given role instead."),
++		&MetadataReplayOwner,
++		"",
++		PGC_USERSET,
++		GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE,
++		MetadataReplayOwnerCheckHook, NULL, NULL);
++
++	DefineCustomEnumVariable(
++		"citus.metadata_replay_protection",
++		gettext_noop("Sets how replay reacts to a node that cannot apply the "
++					 "owner marker."),
++		gettext_noop("Replayed commands that carry tenant-authored expressions run "
++					 "as the object owner. A node that predates this protection ignores "
++					 "the marker and evaluates them with the rights of the replaying "
++					 "superuser. Use warn to report such a node, require to refuse it, "
++					 "or off to disable the marker entirely."),
++		&MetadataReplayProtection,
++		METADATA_REPLAY_PROTECTION_WARN,
++		metadata_replay_protection_options,
++		PGC_SUSET,
++		GUC_STANDARD,
++		NULL, NULL, NULL);
++
+ 	DefineCustomIntVariable(
+ 		"citus.metadata_sync_cache_flush_interval",
+ 		gettext_noop("Sets the number of distributed objects processed between "
+@@ -3114,6 +3152,42 @@ ErrorIfNotASuitableDeadlockFactor(double *newval, void **extra, GucSource source
  }
  
  
-@@ -2688,6 +2686,8 @@ CreateAndPushPlannerRestrictionContext(DistributedPlanningContext *planContext,
- 			fastPathRestrictionContext->distributionKeyValue;
- 		plannersFastPathCtx->distributionKeyHasParam =
- 			fastPathRestrictionContext->distributionKeyHasParam;
-+		plannersFastPathCtx->distributionKeyParamId =
-+			fastPathRestrictionContext->distributionKeyParamId;
- 		plannersFastPathCtx->delayFastPathPlanning =
- 			fastPathRestrictionContext->delayFastPathPlanning;
- 	}
++/*
++ * MetadataReplayOwnerCheckHook only lets Citus reduce the rights of a privileged
++ * replay session. A tenant must never be able to lift the marker, and neither may
++ * a function that we already de-escalated.
++ */
++static bool
++MetadataReplayOwnerCheckHook(char **newval, void **extra, GucSource source)
++{
++	if (source == PGC_S_DEFAULT)
++	{
++		return true;
++	}
++
++	/*
++	 * The current user is what decides privileges, and it is not the session user
++	 * inside a SECURITY DEFINER function owned by a tenant. Checking only the
++	 * session user would let such a function raise itself to the caller's rights.
++	 */
++	if (!superuser_arg(GetUserId()) || !superuser_arg(GetSessionUserId()) ||
++		InSecurityRestrictedOperation())
++	{
++		GUC_check_errmsg("permission denied to set metadata replay security context");
++		return false;
++	}
++
++	if ((*newval)[0] != '\0' &&
++		!OidIsValid(get_role_oid(*newval, true)))
++	{
++		GUC_check_errmsg("metadata replay owner does not exist");
++		return false;
++	}
++
++	return true;
++}
++
++
+ /*
+  * WarnIfDeprecatedExecutorUsed prints a warning and sets the config value to
+  * adaptive executor (a.k.a., ignores real-time executor).
+```
+
+**File**: `src/backend/distributed/worker/worker_create_or_replace.c` (modified, +9/-0)
+```diff
+@@ -33,6 +33,7 @@
+ #include "distributed/deparser.h"
+ #include "distributed/listutils.h"
+ #include "distributed/metadata/distobject.h"
++#include "distributed/metadata_replay_security.h"
+ #include "distributed/worker_create_or_replace.h"
+ #include "distributed/worker_protocol.h"
+ 
+@@ -186,6 +187,13 @@ worker_create_or_replace_object_array(PG_FUNCTION_ARGS)
+ static bool
+ WorkerCreateOrReplaceObject(List *sqlStatements)
+ {
++	/*
++	 * The marker belongs to the statements this function was asked to apply, not
++	 * to the collision handling that may precede them, which would consume it and
++	 * leave the create running with the rights of the replaying superuser.
++	 */
++	char *replayOwner = SaveAndClearMetadataReplayMarker();
++
+ 	/*
+ 	 * To check which object we are changing we find the object address from the first
+ 	 * statement passed into the UDF. Later we will check if all object addresses are the
+@@ -254,6 +262,7 @@ WorkerCreateOrReplaceObject(List *sqlStatements)
+ 	foreach_declared_ptr(sqlStatement, sqlStatements)
+ 	{
+ 		parseTree = ParseTreeNode(sqlStatement);
++		RestoreMetadataReplayMarker(replayOwner);
+ 		ProcessUtilityParseTree(parseTree, sqlStatement, PROCESS_UTILITY_QUERY, NULL,
+ 								None_Receiver, NULL);
+ 
+```
+
+**File**: `src/include/distributed/metadata_replay_security.h` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++/*-------------------------------------------------------------------------
++ *
++ * metadata_replay_security.h
++ *    Security boundary for evaluating expressions during metadata replay.
++ *
++ * Copyright (c) Citus Data, Inc.
++ *
++ *-------------------------------------------------------------------------
++ */
++
++#ifndef METADATA_REPLAY_SECURITY_H
++#define METADATA_REPLAY_SECURITY_H
++
++#include "postgres.h"
++
++#include "catalog/objectaddress.h"
++
++typedef struct MetadataReplayOwnerContext
++{
++	Oid ownerId;
++	Oid savedUserId;
++	int savedSecurityContext;
++	int gucNestLevel;
++} MetadataReplayOwnerContext;
++
++/* how replay behaves towards a node that cannot apply the owner marker */
++typedef enum
++{
++	METADATA_REPLAY_PROTECTION_OFF = 0,
++	METADATA_REPLAY_PROTECTION_WARN = 1,
++	METADATA_REPLAY_PROTECTION_REQUIRE = 2
++} MetadataReplayProtectionMode;
++
++extern char *MetadataReplayOwner;
++extern int MetadataReplayProtection;
++
++extern List * ProtectMetadataReplayCommandList(List *commandList,
++											   const ObjectAddress *object);
++extern bool MetadataReplayStatementIsMarked(void);
++extern char * SaveAndClearMetadataReplayMarker(void);
++extern void RestoreMetadataReplayMarker(const char *ownerName);
++extern void EnterMetadataReplayOwnerContext(MetadataReplayOwnerContext *ownerContext);
++extern void ExitMetadataReplayOwnerContext(MetadataReplayOwnerContext *ownerContext);
++
++#endif /* METADATA_REPLAY_SECURITY_H */
 ```
 
 ---
 
-### Incident Patch 2: `457dfaad` (2026-11-05)
-**Commit Message**: Outer join removal in citus_tables view (#8546)
+### Incident Patch 2: `bb03cab5` (2026-11-06)
+**Commit Message**: Use a trusted search path for internal SPI queries (#8955)
 
-DESCRIPTION: Avoids calling `citus_shard_sizes()`, and so connecting to
-the other nodes, when a query on the `citus_tables` view does not use
-the `table_size` column.
-DESCRIPTION: Makes the `citus_tables` view also show distributed tables
-that have no shards and tables whose shard sizes cannot be fetched
-because their worker is unreachable, with a NULL `table_size`.
+DESCRIPTION: Uses a trusted search path for internal SPI queries
 
-Hey! I noticed a small issue with the `citus_tables` view: even when
-selecting just a single column from it (e.g. `table_name`), it still
-triggers network communication between nodes due to `citus_shard_size()`
-call within a subquery. I wanted to get rid of that overhead wherever
-possible.
+Stacked on #8954; this PR contains only the trusted-search-path layer
+for main, ported from #8944.
 
-I replaced the INNER JOIN with a LEFT OUTER JOIN. This lets PostgreSQL's
-outer join removal optimization kick in, so the join (and the extra
-network traffic) gets completely skipped when the right-side columns
-aren't used.
+Use the existing PushEmptySearchPath()/PopEmptySearchPath() helpers
+around internal SPI execution in ExecuteQueryViaSPI, TableEmpty,
+ExecuteCommandAsSuperuser,
+EnsureParentSessionHasExclusiveLockOnPgDistNode, and
+LockAcquireHelperMain. This prevents caller-controlled operator lookup
+while retaining the helpers' existing error/GUC restoration behavior.
 
----------
+Add the adversarial oid-equality regression force_search_path_in_execute
+to multi_1_create_citus_schedule and update affected schema-qualified
+expectations, including citus_local_tables_mx. No SQL migration,
+privilege, version, or packaging changes.
 
-Co-authored-by: Onur Tirtir <[REDACTED_EMAIL]>
+Validation on PostgreSQL 18.6 in isolated WSL source/runtime
+directories, using main plus #8954 and this layer:
 
-**File**: `src/backend/distributed/sql/citus--14.0-1--15.0-1.sql` (modified, +2/-0)
+- `./configure` — passed.
+- `make -s -j8` — passed.
+- `make -s install-all` — passed.
+- `make -s -C src/test/regress check-minimal
+EXTRA_TESTS='multi_behavioral_analytics_create_table
+force_search_path_in_execute alter_distributed_table
+alter_table_set_ac
+
+**File**: `src/backend/distributed/commands/alter_table.c` (modified, +5/-0)
 ```diff
-@@ -37,3 +37,5 @@ DROP FUNCTION IF EXISTS pg_catalog.worker_apply_sequence_command(text, regtype);
- -- add the force_logical_auto_identity shard transfer mode, which enables the extra
- -- logical-replication capabilities for tables that lack a usable replica identity
- ALTER TYPE citus.shard_transfer_mode ADD VALUE IF NOT EXISTS 'force_logical_auto_identity';
+@@ -2280,12 +2280,17 @@ ExecuteQueryViaSPI(char *query, int SPIOK)
+ 		ereport(ERROR, (errmsg("could not connect to SPI manager")));
+ 	}
+ 
++	/* Do not resolve operators through the caller's search path. */
++	int searchPathNestLevel = PushEmptySearchPath();
 +
-+#include "udfs/citus_tables/15.0-1.sql"
+ 	spiResult = SPI_execute(query, false, 0);
+ 	if (spiResult != SPIOK)
+ 	{
+ 		ereport(ERROR, (errmsg("could not run SPI query")));
+ 	}
+ 
++	PopEmptySearchPath(searchPathNestLevel);
++
+ 	spiResult = SPI_finish();
+ 	if (spiResult != SPI_OK_FINISH)
+ 	{
 ```
 
-**File**: `src/backend/distributed/sql/downgrades/citus--15.0-1--14.0-1.sql` (modified, +2/-0)
+**File**: `src/backend/distributed/commands/create_distributed_table.c` (modified, +6/-0)
 ```diff
-@@ -43,3 +43,5 @@ DROP FUNCTION IF EXISTS citus_internal.distribute_object(oid, oid, int, boolean)
- -- existing enum type. Leaving the value in place is harmless: the downgraded Citus
- -- code never produces it, and LookupShardTransferMode rejects it as an invalid label
- -- if a user passes it explicitly. This is a documented no-op.
+@@ -80,6 +80,7 @@
+ #include "distributed/multi_executor.h"
+ #include "distributed/multi_logical_planner.h"
+ #include "distributed/multi_partitioning_utils.h"
++#include "distributed/namespace_utils.h"
+ #include "distributed/pg_dist_colocation.h"
+ #include "distributed/pg_dist_partition.h"
+ #include "distributed/reference_table_utils.h"
+@@ -2578,6 +2579,9 @@ TableEmpty(Oid tableId)
+ 		ereport(ERROR, (errmsg("could not connect to SPI manager")));
+ 	}
+ 
++	/* Do not resolve operators through the caller's search path. */
++	int searchPathNestLevel = PushEmptySearchPath();
 +
-+#include "../udfs/citus_tables/12.0-1.sql"
+ 	appendStringInfo(selectTrueQueryString, SELECT_TRUE_QUERY, tableQualifiedName);
+ 
+ 	int spiQueryResult = SPI_execute(selectTrueQueryString->data, readOnly, 0);
+@@ -2592,6 +2596,8 @@ TableEmpty(Oid tableId)
+ 
+ 	bool localTableEmpty = !SPI_processed;
+ 
++	PopEmptySearchPath(searchPathNestLevel);
++
+ 	SPI_finish();
+ 
+ 	return localTableEmpty;
 ```
 
-**File**: `src/backend/distributed/sql/udfs/citus_tables/15.0-1.sql` (added, +58/-0)
+**File**: `src/backend/distributed/metadata/distobject.c` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,58 @@
-+DO $$
-+declare
-+citus_tables_create_query text;
-+BEGIN
-+citus_tables_create_query=$CTCQ$
-+    CREATE OR REPLACE VIEW %I.citus_tables AS
-+    SELECT
-+        logicalrelid AS table_name,
-+        CASE WHEN colocationid IN (SELECT colocationid FROM pg_dist_schema) THEN 'schema'
-+            WHEN partkey IS NOT NULL THEN 'distributed'
-+            WHEN repmodel = 't' THEN 'reference'
-+            WHEN colocationid = 0 THEN 'local'
-+            ELSE 'distributed'
-+        END AS citus_table_type,
-+        coalesce(column_to_column_name(logicalrelid, partkey), '<none>') AS distribution_column,
-+        colocationid AS colocation_id,
-+        pg_size_pretty(table_sizes.table_size) AS table_size,
-+        (select count(*) from pg_dist_shard where logicalrelid = p.logicalrelid) AS shard_count,
-+        pg_get_userbyid(relowner) AS table_owner,
-+        amname AS access_method
-+    FROM
-+        pg_dist_partition p
-+    JOIN
-+        pg_class c ON (p.logicalrelid = c.oid)
-+    LEFT JOIN
-+        pg_am a ON (a.oid = c.relam)
-+    LEFT OUTER JOIN
-+        (
-+            SELECT ds.logicalrelid AS table_id, SUM(css.size) AS table_size
-+            FROM citus_shard_sizes() css, pg_dist_shard ds
-+            WHERE css.shard_id = ds.shardid
-+            GROUP BY ds.logicalrelid
-+        ) table_sizes ON (table_sizes.table_id = p.logicalrelid)
-+    WHERE
-+        -- filter out tables owned by extensions
-+        logicalrelid NOT IN (
-+            SELECT
-+                objid
-+            FROM
-+                pg_depend
-+            WHERE
-+                classid = 'pg_class'::regclass AND refclassid = 'pg_extension'::regclass AND deptype = 'e'
-+        )
-+    ORDER BY
-+        logicalrelid::text;
-+$CTCQ$;
+@@ -50,6 +50,7 @@
+ #include "distributed/metadata/pg_dist_object.h"
+ #include "distributed/metadata_cache.h"
+ #include "distributed/metadata_sync.h"
++#include "distributed/namespace_utils.h"
+ #include "distributed/remote_commands.h"
+ #include "distributed/version_compat.h"
+ #include "distributed/worker_transaction.h"
+@@ -430,6 +431,9 @@ ExecuteCommandAsSuperuser(char *query, int paramCount, Oid *paramTypes,
+ 		ereport(ERROR, (errmsg("could not connect to SPI manager")));
+ 	}
+ 
++	/* Do not resolve operators through the caller's search path as extension owner. */
++	int searchPathNestLevel = PushEmptySearchPath();
 +
-+IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'public') THEN
-+    EXECUTE format(citus_tables_create_query, 'public');
-+    GRANT SELECT ON public.citus_tables TO public;
-+ELSE
-+    EXECUTE format(citus_tables_create_query, 'citus');
-+    ALTER VIEW citus.citus_tables SET SCHEMA pg_catalog;
-+    GRANT SELECT ON pg_catalog.citus_tables TO public;
-+END IF;
+ 	/* make sure we have write access */
+ 	GetUserIdAndSecContext(&savedUserId, &savedSecurityContext);
+ 	SetUserIdAndSecContext(CitusExtensionOwner(), SECURITY_LOCAL_USERID_CHANGE);
+@@ -439,6 +443,8 @@ ExecuteCommandAsSuperuser(char *query, int paramCount, Oid *paramTypes,
+ 
+ 	SetUserIdAndSecContext(savedUserId, savedSecurityContext);
+ 
++	PopEmptySearchPath(searchPathNestLevel);
 +
-+END;
-+$$;
+ 	int spiFinished = SPI_finish();
+ 	if (spiFinished != SPI_OK_FINISH)
+ 	{
 ```
 
-**File**: `src/backend/distributed/sql/udfs/citus_tables/latest.sql` (modified, +1/-1)
+**File**: `src/backend/distributed/metadata/node_metadata.c` (modified, +6/-0)
 ```diff
-@@ -24,7 +24,7 @@ citus_tables_create_query=$CTCQ$
-         pg_class c ON (p.logicalrelid = c.oid)
-     LEFT JOIN
-         pg_am a ON (a.oid = c.relam)
--    JOIN
-+    LEFT OUTER JOIN
-         (
-             SELECT ds.logicalrelid AS table_id, SUM(css.size) AS table_size
-             FROM citus_shard_sizes() css, pg_dist_shard ds
+@@ -50,6 +50,7 @@
+ #include "distributed/multi_join_order.h"
+ #include "distributed/multi_partitioning_utils.h"
+ #include "distributed/multi_router_planner.h"
++#include "distributed/namespace_utils.h"
+ #include "distributed/pg_dist_node.h"
+ #include "distributed/pg_dist_node_metadata.h"
+ #include "distributed/reference_table_utils.h"
+@@ -2106,6 +2107,9 @@ EnsureParentSessionHasExclusiveLockOnPgDistNode(pid_t parentSessionPid)
+ 		ereport(ERROR, (errmsg("could not connect to SPI manager")));
+ 	}
+ 
++	/* Do not resolve operators through the caller's search path. */
++	int searchPathNestLevel = PushEmptySearchPath();
++
+ 	char *checkIfParentLockCommand = "SELECT pid FROM pg_locks WHERE "
+ 									 "pid = %d AND database = %d AND relation = %d AND "
+ 									 "mode = 'ExclusiveLock' AND granted = TRUE";
+@@ -2122,6 +2126,8 @@ EnsureParentSessionHasExclusiveLockOnPgDistNode(pid_t parentSessionPid)
+ 
+ 	bool parentHasExclusiveLock = SPI_processed > 0;
+ 
++	PopEmptySearchPath(searchPathNestLevel);
++
+ 	SPI_finish();
+ 
+ 	if (!parentHasExclusiveLock)
 ```
 
-**File**: `src/test/regress/expected/multi_extension.out` (modified, +44/-0)
+**File**: `src/backend/distributed/utils/acquire_lock.c` (modified, +7/-0)
 ```diff
-@@ -69,6 +69,20 @@ BEGIN
- 	RETURN QUERY SELECT * FROM extension_diff ORDER BY 1, 2;
- END
- $func$ LANGUAGE plpgsql;
-+-- helper function that returns true if output of given explain calls citus_shard_sizes()
-+CREATE FUNCTION multi_extension.explain_has_citus_shard_sizes(explain_command text)
-+RETURNS BOOLEAN AS $$
-+DECLARE
-+  query_plan text;
-+BEGIN
-+  FOR query_plan IN EXECUTE explain_command LOOP
-+    IF query_plan ILIKE '%citus_shard_sizes%'
-+    THEN
-+        RETURN true;
-+    END IF;
-+  END LOOP;
-+  RETURN false;
-+END; $$ language plpgsql;
- CREATE SCHEMA test;
- :create_function_test_maintenance_worker
- -- check maintenance daemon is started
-@@ -1864,6 +1878,16 @@ SELECT * FROM multi_extension.print_extension_changes();
- ---------------------------------------------------------------------
- (0 rows)
+@@ -37,6 +37,7 @@
+ #include "distributed/citus_acquire_lock.h"
+ #include "distributed/citus_safe_lib.h"
+ #include "distributed/connection_management.h"
++#include "distributed/namespace_utils.h"
+ #include "distributed/version_compat.h"
  
-+-- In 14.2-1, citus_tables view inner joins with table_sizes, so citus_shard_sizes()
-+-- is called even when the query doesn't use table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, citus_table_type FROM citus_tables
-+$$);
-+ explain_has_citus_shard_sizes
-+---------------------------------------------------------------------
-+ t
-+(1 row)
+ /* forward declaration of background worker entrypoint */
+@@ -237,6 +238,10 @@ LockAcquireHelperMain(Datum main_arg)
+ 		SetCurrentStatementStartTimestamp();
+ 		StartTransactionCommand();
+ 		SPI_connect();
 +
- -- Snapshot of state at 15.0-1
- ALTER EXTENSION citus UPDATE TO '15.0-1';
- SELECT * FROM multi_extension.print_extension_changes();
-@@ -1873,6 +1897,26 @@ SELECT * FROM multi_extension.print_extension_changes();
-  function worker_apply_sequence_command(text,regtype) void        |
- (2 rows)
++		/* Do not resolve operators through the caller's search path. */
++		int searchPathNestLevel = PushEmptySearchPath();
++
+ 		PushActiveSnapshot(GetTransactionSnapshot());
+ 		pgstat_report_activity(STATE_RUNNING, sql.data);
  
-+-- In 15.0-1, citus_tables view left joins with table_sizes, so Postgres removes
-+-- the join and doesn't call citus_shard_sizes() when the query doesn't use table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, citus_table_type FROM citus_tables
-+$$);
-+ explain_has_citus_shard_sizes
-+---------------------------------------------------------------------
-+ f
-+(1 row)
+@@ -275,6 +280,8 @@ LockAcquireHelperMain(Datum main_arg)
+ 			elog(FATAL, "cannot cancel competing backends for backend %d", backendPid);
+ 		}
+ 
++		PopEmptySearchPath(searchPathNestLevel);
 +
-+-- But citus_shard_sizes() is still called when the query uses table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, table_size FROM citus_tables
-+$$);
-+ explain_has_citus_shard_sizes
-+---------------------------------------------------------------------
-+ t
-+(1 row)
-+
-+DROP FUNCTION multi_extension.explain_has_citus_shard_sizes(text);
- -- Exercise time_partitions after upgrading to the planner-safe definition.
- -- Keep this here rather than in multi_partitioning, which also runs against N-1 SQL.
- BEGIN;
+ 		/*
+ 		 * And finish our transaction.
+ 		 */
 ```
 
-**File**: `src/test/regress/sql/multi_extension.sql` (modified, +34/-0)
+**File**: `src/test/regress/expected/alter_distributed_table.out` (modified, +2/-2)
 ```diff
-@@ -74,6 +74,21 @@ BEGIN
- END
- $func$ LANGUAGE plpgsql;
- 
-+-- helper function that returns true if output of given explain calls citus_shard_sizes()
-+CREATE FUNCTION multi_extension.explain_has_citus_shard_sizes(explain_command text)
-+RETURNS BOOLEAN AS $$
-+DECLARE
-+  query_plan text;
-+BEGIN
-+  FOR query_plan IN EXECUTE explain_command LOOP
-+    IF query_plan ILIKE '%citus_shard_sizes%'
-+    THEN
-+        RETURN true;
-+    END IF;
-+  END LOOP;
-+  RETURN false;
-+END; $$ language plpgsql;
-+
- CREATE SCHEMA test;
- :create_function_test_maintenance_worker
- 
-@@ -789,10 +804,29 @@ ALTER EXTENSION citus UPDATE TO '14.2-1';
- -- Should be empty result since upgrade+downgrade should be a no-op
- SELECT * FROM multi_extension.print_extension_changes();
- 
-+-- In 14.2-1, citus_tables view inner joins with table_sizes, so citus_shard_sizes()
-+-- is called even when the query doesn't use table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, citus_table_type FROM citus_tables
-+$$);
-+
- -- Snapshot of state at 15.0-1
- ALTER EXTENSION citus UPDATE TO '15.0-1';
- SELECT * FROM multi_extension.print_extension_changes();
- 
-+-- In 15.0-1, citus_tables view left joins with table_sizes, so Postgres removes
-+-- the join and doesn't call citus_shard_sizes() when the query doesn't use table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, citus_table_type FROM citus_tables
-+$$);
-+
-+-- But citus_shard_sizes() is still called when the query uses table_size.
-+SELECT multi_extension.explain_has_citus_shard_sizes($$
-+  EXPLAIN (COSTS OFF) SELECT table_name, table_size FROM citus_tables
-+$$);
-+
-+DROP FUNCTION multi_extension.explain_has_citus_shard_sizes(text);
-+
- -- Exercise time_partitions after upgrading to the planner-safe definition.
- -- Keep this here rather than in multi_partitioning, which also runs against N-1 SQL.
- BEGIN;
+@@ -1060,7 +1060,7 @@ SELECT alter_distributed_table('mat_view_test', shard_count := 5, cascade_to_col
+ NOTICE:  creating a new table for alter_distributed_table.mat_view_test
+ NOTICE:  moving the data of alter_distributed_table.mat_view_test
+ NOTICE:  dropping the old alter_distributed_table.mat_view_test
+-NOTICE:  drop cascades to materialized view mat_view
++NOTICE:  drop cascades to materialized view alter_distributed_table.mat_view
+ CONTEXT:  SQL statement "DROP TABLE alter_distributed_table.mat_view_test CASCADE"
+ NOTICE:  renaming the new table to alter_distributed_table.mat_view_test
+  alter_distributed_table
+@@ -1168,7 +1168,7 @@ SELECT alter_distributed_table('test_am_matview', shard_count:= 52);
+ NOTICE:  creating a new table for alter_distributed_table.test_am_matview
+ NOTICE:  moving the data of alter_distributed_table.test_am_matview
+ NOTICE:  dropping the old alter_distributed_table.test_am_matview
+-NOTICE:  drop cascades to materialized view test_mat_view_am
++NOTICE:  drop cascades to materialized view alter_distributed_table.test_mat_view_am
+ CONTEXT:  SQL statement "DROP TABLE alter_distributed_table.test_am_matview CASCADE"
+ NOTICE:  renaming the new table to alter_distributed_table.test_am_matview
+  alter_distributed_table
+```
+
+**File**: `src/test/regress/expected/alter_table_set_access_method.out` (modified, +1/-1)
+```diff
+@@ -556,7 +556,7 @@ SELECT alter_table_set_access_method('mat_view_test','columnar');
+ NOTICE:  creating a new table for alter_table_set_access_method.mat_view_test
+ NOTICE:  moving the data of alter_table_set_access_method.mat_view_test
+ NOTICE:  dropping the old alter_table_set_access_method.mat_view_test
+-NOTICE:  drop cascades to materialized view mat_view
++NOTICE:  drop cascades to materialized view alter_table_set_access_method.mat_view
+ CONTEXT:  SQL statement "DROP TABLE alter_table_set_access_method.mat_view_test CASCADE"
+ NOTICE:  renaming the new table to alter_table_set_access_method.mat_view_test
+  alter_table_set_access_method
+```
+
+**File**: `src/test/regress/expected/citus_local_tables_mx.out` (modified, +1/-1)
+```diff
+@@ -925,7 +925,7 @@ SET client_min_messages TO DEBUG1;
+ ALTER TABLE loc_tb_2 ADD CONSTRAINT fkey_2 FOREIGN KEY (a) references ref_tb(a);
+ DEBUG:  executing "CREATE OR REPLACE VIEW citus_local_tables_mx.v104 (a) AS  SELECT a
+    FROM citus_local_tables_mx.loc_tb_2 table_name_for_view; ALTER VIEW citus_local_tables_mx.v104 OWNER TO postgres"
+-DEBUG:  "view v104" has dependency to "table loc_tb_2" that is not in Citus' metadata
++DEBUG:  "view citus_local_tables_mx.v104" has dependency to "table citus_local_tables_mx.loc_tb_2" that is not in Citus' metadata
+ DEBUG:  validating foreign key constraint "fkey_2_1330083"
+ SET client_min_messages TO WARNING;
+ -- works fine
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8956** (2026-11-06): Evaluate replayed object definitions in the owner context (@ihalatci)
+- **PR #8955** (2026-11-06): Use a trusted search path for internal SPI queries (@ihalatci)
+- **PR #8954** (2026-11-06): Restrict internal metadata cleanup (@ihalatci)
 - **PR #8951** (2026-10-23): Release 13.5.0 (@ihalatci)
 - **PR #8950** (2026-10-23): Update changelog for Citus 14.3.0 (@ihalatci)
 - **PR #8946** (2026-10-23): Evaluate replayed object definitions in the owner context (release-14.0) (@ihalatci)
-- **PR #8945** (2026-10-23): Evaluate replayed object definitions in the owner's context (release-13.2) (@ihalatci)
-- **PR #8944** (2026-10-23): Use an empty search path for internal SPI queries (release-14.0) (@ihalatci)
-- **PR #8943** (2026-10-23): Use an empty search path for internal SPI queries (release-13.2) (@ihalatci)
 
 ---
 
@@ -3492,33 +3553,60 @@ Co-authored-by: Onur Tirtir <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Cache prepared statement plans for fast path queries on worker connections (#882
+## X. Evaluate replayed object definitions in the owner context (#8956)
 
 **RULE**:
-When implementing operations in `src/backend/distributed/connection/connection_management.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/commands/dependencies.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0ad46db`: Cache prepared statement plans for fast path queries on worker connections (#8825). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff5d19c2`: Evaluate replayed object definitions in the owner context (#8956). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/connection/connection_management.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/commands/dependencies.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#include "distributed/prepared_statement_cache.h"
+#include "distributed/metadata_replay_security.h"
+	ddlCommands = ProtectMetadataReplayCommandList(ddlCommands, target);
+	List *protectedDDLCommands = NIL;
+		protectedDDLCommands =
+			list_concat(protectedDDLCommands,
+						ProtectMetadataReplayCommandList(dependencyCommands, object));
+	protectedDDLCommands = list_concat(list_make1(DISABLE_DDL_PROPAGATION),
+									   protectedDDLCommands);
+			/* this connection is the extension owner, hence the marked commands */
+													  protectedDDLCommands);
+/*
+ * GetAllDependencyCreateDDLCommandsForMetadataReplay returns the commands that
+ * recreate the given dependencies, each marked with the owner of the object it
+ * recreates.
+ *
+ * Use this instead of GetAllDependencyCreateDDLCommands whenever the commands are
+ * sent through a superuser connection.
+ */
+List *
+GetAllDependencyCreateDDLCommandsForMetadataReplay(const List *dependencies,
+												   bool bundlePartitionMetadata)
+{
+	List *commands = NIL;
 
-	PreparedStatementCacheDestroy(&connection->preparedStatementCache);
+	ObjectAddress *dependency = NULL;
+	foreach_declared_ptr(dependency, dependencies)
+	{
+		List *dependencyCommands =
+			GetDependencyCreateDDLCommands(dependency, bundlePartitionMetadata);
 
-	PreparedStatementCacheDestroy(&connection->preparedStatementCache);
-
+		commands =
+			list_concat(commands,
+					
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+													  ddlCommands);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0ad46db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff5d19c2` are properly handled with clean fallback behavior.

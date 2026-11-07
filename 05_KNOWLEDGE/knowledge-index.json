@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:29:34.239Z",
+  "last_updated": "2026-11-07T21:36:37.818Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7777,14 +7777,19 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "e0ad46db",
-      "content_hash": "3d3addf16809328c4c58ad1463ca91f98d5247623ebd9b9c56baaaa3d2a56509",
+      "source_version": "ff5d19c2",
+      "content_hash": "ca24a6b683d2551a643be0f945f190d8683e4d7f20feb867a2ccf6011c4bd4aa",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Cache prepared statement plans for fast path queries on worker connections (#882",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Evaluate replayed object definitions in the owner context (#8956)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7828,7 +7833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:55:05.800Z",
+      "verified_at": "2026-11-07T21:36:37.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16721,11 +16726,16 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "ae8540b0",
-      "content_hash": "f9ebd312ce9ba6870fb43d6694bf0896360dc7896c679f65cffd1186af14c8db",
+      "source_version": "bbb1e5bd",
+      "content_hash": "e44b9b064a87a4d5edff8451ecaf20f65596e318b849003b1087c1b32aaef1a2",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "record v6.10.3-release in upgrade feed",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1749,
           "title": "prevent index file download redirects (#2706)",
@@ -16762,7 +16772,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:28:42.697Z",
+      "verified_at": "2026-11-07T21:36:33.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49940,14 +49950,19 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "095d0b94",
-      "content_hash": "9de6a9f7020de2f0cf22cb56420c540b9c6fbd8849dc01b585f0e80a13f3ca52",
+      "source_version": "8dcc6b28",
+      "content_hash": "8feea5695581d4ecfc1841445d309c3fbe3d28a256c0335adf02edcb0b8fd482",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Don't treat `is_in` with a multi-row literal as elementwise (#30617)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#306",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50026,7 +50041,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:36:34.743Z",
+      "verified_at": "2026-11-07T21:36:27.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -80063,11 +80078,16 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "289caab9",
-      "content_hash": "78fb7b66f34bdb13050ff323cf5fe1f61e1765111201524e687bc4ca7d9e4166",
+      "source_version": "f21f224b",
+      "content_hash": "1b265e7902747b0c5714afaa12aadf7613f0b508c9be1b35c4470f82b0e67544",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "cache): treat a removed cache file as a miss (#11861)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3014,
           "title": "run hook cleanups when a later hook fails (#11605)",
@@ -80109,7 +80129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:30:35.443Z",
+      "verified_at": "2026-11-07T21:36:29.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
