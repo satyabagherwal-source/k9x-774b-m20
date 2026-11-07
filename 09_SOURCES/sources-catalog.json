@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "84ccee7a",
+    "sourceVersion": "800f4c49",
     "license": "Apache-2.0",
-    "contentHash": "076ddf650a549a61696bd92bd5b9b6fb0971a45c70f651a91b9c4f1765dd638b",
-    "lastHarvestedAt": "2026-11-06T21:13:53.918Z",
+    "contentHash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
+    "lastHarvestedAt": "2026-11-07T03:41:53.888Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "a2cbf561",
+    "sourceVersion": "acc63448",
     "license": "NOASSERTION",
-    "contentHash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
-    "lastHarvestedAt": "2026-11-05T11:08:28.808Z",
+    "contentHash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
+    "lastHarvestedAt": "2026-11-07T03:41:46.411Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

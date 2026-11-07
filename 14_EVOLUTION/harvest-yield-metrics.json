@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T03:29:38.518Z",
-  "total_cycles_completed": 7945,
-  "total_learnings_persisted": 7945,
-  "total_rules_promoted": 7597,
+  "last_updated": "2026-11-07T03:41:53.894Z",
+  "total_cycles_completed": 7947,
+  "total_learnings_persisted": 7947,
+  "total_rules_promoted": 7598,
   "history": [
-    {
-      "timestamp": "2026-11-05T19:38:03.738Z",
-      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:38:09.696Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T19:38:11.705Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1389,20 @@
       "repository": "lxml/lxml",
       "learningId": "learn-github-lxml-lxml",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:41:46.417Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:41:53.894Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

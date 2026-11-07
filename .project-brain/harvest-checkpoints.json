@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T03:29:38.521Z",
+  "last_updated": "2026-11-07T03:41:53.898Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "14f5e0765ba18e8b133258df217cdfff27657c317f05c27e6cc5181aacb36c90",
-      "verified_at": "2026-11-06T23:12:07.138Z",
+      "content_hash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
+      "verified_at": "2026-11-07T03:41:53.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:12:07.138Z"
+      "last_updated": "2026-11-07T03:41:53.897Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
-      "verified_at": "2026-11-05T11:08:28.825Z",
+      "content_hash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
+      "verified_at": "2026-11-07T03:41:46.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:08:28.825Z"
+      "last_updated": "2026-11-07T03:41:46.420Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",

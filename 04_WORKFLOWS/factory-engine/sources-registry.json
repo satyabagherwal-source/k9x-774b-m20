@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:29:41.993Z",
-    "lastVerified": "2026-11-07T03:29:41.993Z",
+    "lastChecked": "2026-11-07T03:41:56.431Z",
+    "lastVerified": "2026-11-07T03:41:56.431Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T03:01:27.284Z",
-    "lastVerified": "2026-11-07T03:01:27.284Z",
+    "lastChecked": "2026-11-07T03:41:54.944Z",
+    "lastVerified": "2026-11-07T03:41:54.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2403,13 +2403,13 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:13:50.407Z",
-    "lastVerified": "2026-11-06T21:13:50.407Z",
+    "lastChecked": "2026-11-07T03:41:52.621Z",
+    "lastVerified": "2026-11-07T03:41:52.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "076ddf650a549a61696bd92bd5b9b6fb0971a45c70f651a91b9c4f1765dd638b",
-    "promotedRulesCount": 1,
+    "contentHash": "5792eac220cfc067a7d0179049a79ce2da824e4a838fb38f6206ec0a77e36b56",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -3132,9 +3132,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-05T15:06:08.024Z",
+    "lastChecked": "2026-11-07T03:41:52.395Z",
     "revisionIdentifier": "c4cb19d8",
-    "lastVerified": "2026-11-05T15:06:08.024Z"
+    "lastVerified": "2026-11-07T03:41:52.395Z"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
     "name": "prithivMLmods/Gender-Classifier-Mini",
@@ -4541,9 +4541,9 @@
   "akveo-kittentricks": {
     "name": "kittenTricks",
     "officialUrl": "https://github.com/akveo/kittenTricks",
-    "lastChecked": "2026-11-04T10:12:23.673Z",
+    "lastChecked": "2026-11-07T03:41:44.896Z",
     "revisionIdentifier": "e9d81da3",
-    "lastVerified": "2026-11-04T10:12:23.673Z"
+    "lastVerified": "2026-11-07T03:41:44.896Z"
   },
   "kubeshop-botkube": {
     "name": "botkube",
@@ -6278,14 +6278,14 @@
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T11:08:26.342Z",
-    "lastVerified": "2026-11-05T11:08:26.342Z",
+    "lastChecked": "2026-11-07T03:41:43.181Z",
+    "lastVerified": "2026-11-07T03:41:43.181Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "00058eaa6a6a809d4ee22359defa7d86f02155c178d874a276ed6243286be3cc",
+    "contentHash": "4cd799929091fd9aae8c8ba0e9e0912fc8b18806fbfb0faf1875e6172188eec6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 21,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6468,9 +6468,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-05T15:59:23.245Z",
+    "lastChecked": "2026-11-07T03:41:47.472Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-05T15:59:23.245Z"
+    "lastVerified": "2026-11-07T03:41:47.472Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -11001,9 +11001,9 @@
   "html5lib-html5lib-python": {
     "name": "html5lib-python",
     "officialUrl": "https://github.com/html5lib/html5lib-python",
-    "lastChecked": "2026-11-03T21:57:59.173Z",
+    "lastChecked": "2026-11-07T03:41:42.402Z",
     "revisionIdentifier": "fd4f032b",
-    "lastVerified": "2026-11-03T21:57:59.173Z"
+    "lastVerified": "2026-11-07T03:41:42.402Z"
   },
   "kruszoneq-macusb": {
     "name": "macUSB",

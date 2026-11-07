@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `a2cbf561`  
+> **Source Version**: `acc63448`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:08:28.025Z  
+> **Timestamp**: 2026-11-07T03:41:45.050Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:08:26.342Z  
+> **Harvest Timestamp**: 2026-11-07T03:41:43.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6257 stars
+- **Stars / Engagement**: 6280 stars
 
 ---
 
@@ -1421,8 +1421,8 @@ pub(crate) use shell::{
     PowerShellInvokedCommand, PowerShellTruncationTarget, WindowsShellParseIncomplete,
     classify_credential_file_write, classify_git_redirect_writes,
     classify_powershell_credential_writes, names_protected_file, names_protected_git_internal,
-    names_windows_shell_writer, powershell_literal_invocations, powershell_tee_scan_required,
-    powershell_tee_truncation_targets,
+    names_windows_shell_writer, powershell_file_truncation_targets,
+    powershell_file_writer_scan_required, powershell_literal_invocations,
 };
 
 use crate::normalize::ShellDialect;
@@ -1619,7 +1619,7 @@ mod source_ownership_tests {
                 });
             assert!(
                 hits.iter()
-                    .any(|hit| hit.rule 
+                    .any(|hit| 
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -2474,731 +2474,1111 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0337716e` (2026-11-04)
-**Commit Message**: fix(core): prove dynamic redirect targets independently (#634) [skip ci]
+### Incident Patch 1: `f87ba4d5` (2026-11-05)
+**Commit Message**: fix(diagnostics): attribute incomplete regex evaluation [skip ci]
 
-Require a separate bounded proof for every dynamic truncating target and
-retain exact original-source operands and operator offsets. Preserve literal
-target checks and unrelated destructive-command rules.
+Refs #643
 
-Propagate established bindings through wholly literal unrelated declarations
-and single-command subshells in literal loops. Reject stale scope, named-FD,
-expansion-effect, array, and sibling-copy evidence; keep the conditional
-cd /tmp && S=/tmp/x; redirect case denied.
+An exhausted regex work limit can leave safety evaluation unverified well
+before the hook deadline, but the generic diagnostic does not identify the
+responsible custom rule. Carry bounded, sanitized pack and pattern IDs,
+the evaluation operation, and the typed failure with the compiled engine's
+actual backtracking limit through regex scopes and EvaluationResult.
 
-Add 13 hook regression groups and 3 unit tests, including adversarial pairs
-and proof bounds. All 16 additions pass. Final selected runs: integrations
-44/45 and units 236/239, with all four failures reproduced on unchanged main.
-Strict all-targets Clippy, formatting, and diff checks pass; all-targets
-cargo check passed before equivalent lint-only cleanup. Correctness builds
-use package-only opt-level=0/debug=0 after resource-limited codegen failures.
+Bind rule identity when built-in, external, or directly constructed packs
+are loaded. Preserve first-cause ownership across nested and independent
+evaluations and hook recovery. Keep genuine deadline evidence separate,
+including when both failures are known. Preserve existing fail-closed
+decisions and positive finding IDs; add incomplete-analysis context only
+when formatting the decision. Do not retain command text, regex source,
+raw engine errors, offsets, or execution context in failure provenance.
 
-UBS retains the identical baseline constant-time-compare finding on an
-existing literal test fixture; added lines contain no critical findings.
-The user approved direct-main publication after r
+Report this context in hook, CLI, batch, OMP, and human-readable output.
+Separate the 100000-step regex work limit from the 50 ms heredoc extraction
+timeout in config output and troubleshooting documentation.
 
-**File**: `src/evaluator.rs` (modified, +621/-87)
+Add regressions for the contributor's e
+
+**File**: `docs/custom-packs.md` (modified, +33/-0)
 ```diff
-@@ -28969,8 +28969,9 @@ fn filesystem_pre_rm_pattern_excluding_dynamic(name: Option<&str>) -> bool {
- /// literal for-loop variable and an immediately derived loop-local path.
- /// These additional forms must resolve under a tmp-family root, including a
- /// verified local startup `TMPDIR` (#590). Rebinding,
--/// unknown values, unsupported control flow, traversal, protected files, and
--/// additional non-fd redirects all retain the dynamic-path denial.
-+/// unknown values, unsupported control flow, traversal, and protected files
-+/// retain the dynamic-path denial. Every dynamic truncating target in a
-+/// segment needs its own proof; literal targets still face the other rules.
- fn statically_safe_variable_redirect(
-     source: &str,
-     segment_ranges: &[(usize, usize)],
-@@ -28979,23 +28980,79 @@ fn statically_safe_variable_redirect(
-     dialect: ShellDialect,
-     require_proven_scope: bool,
- ) -> bool {
-+    proven_variable_redirect_offsets(
-+        source,
-+        segment_ranges,
-+        segment_start,
-+        dialect_segment,
-+        dialect,
-+        require_proven_scope,
-+    )
-+    .is_some()
-+}
+@@ -374,6 +374,39 @@ dcg uses a dual regex engine:
+ 
+ Simple patterns are faster. The validator reports which engine each pattern uses.
+ 
++### Diagnosing Incomplete Rule Evaluation
 +
-+/// Keep the proof and its exact operator offsets together. Embedded scripts
-+/// use these offsets to recover their complete source, so proving just the
-+/// first target must never authorize another redirect in the same statement.
-+fn proven_variable_redirect_offsets(
-+    source: &str,
-+    segment_ranges: &[(usize, usize)],
-+    segment_start: usize,
-+    segment: &str,
-+    dialect: ShellDialect,
-+    require_proven_scope: bool,
-+) -> Option<Vec<usize>> {
-     if !matches!(dialect, ShellDialect::Posix | ShellDialect::Unknown) {
--        return false;
-+        return None;
-     }
--    let Some(redirect) = first_unquoted_output_redirect(dialect_segment, ShellDialect::Posix)
--    else {
--        return false;
--    };
--    let Some(mut target) = dialect_segment.get(redirect + 1..).map(str::trim_start) else {
--        return false;
--    };
--    for prefix in ['>', '|'] {
--        if let Some(rest) = target.strip_prefix(prefix) {
--            target = rest.trim_start();
-+    if !segment.contains('>')
-+        || segment.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-+        || segment_ranges.len() > MAX_REDIRECT_PROOF_SEGMENTS
++A regex that cannot finish leaves safety evaluation **unverified**. Its failure
++is not a destructive-pattern match. When available, the diagnostic identifies
++the pack, pattern name, exhausted limit, and operation, for example:
++
++```text
++pattern test.slow_lookahead:slow exceeded its per-pattern regex backtracking limit of 100000 steps (operation: find_from)
++```
++
++The backtracking engine has a **100,000-step limit per regex operation**. This
++is a work limit, not a millisecond timeout. `dcg config` reports it under
++`Regex evaluation`; JSON reports `regex.backtrack_limit_steps`. The default
++50 ms shown under `Heredoc scanning` is the **extraction timeout**, reported as
++`heredoc.timeout_ms` in JSON. Increasing `hook_timeout_ms` does not change the
++regex work limit.
++
++If the hook deadline also expires, the diagnostic reports that deadline while
++retaining the known regex rule and work limit. The two limits are independent.
++
++Inspect the named rule for repeated whole-input lookaheads and broad searches.
++An unanchored expression can retry an expensive lookahead at many start
++positions. If the rule is intended to inspect the whole input from its start,
++an absolute `\A` anchor can avoid those retries. Narrow search ranges or pack
++keywords only when every intended destructive match remains covered. Verify
++both the original destructive cases and benign controls through `dcg test
++--stdin --dialect posix --format json` and the hook after changing a rule.
++
++Rule identifiers in failure diagnostics are bounded and sanitized; submitted
++commands, regex source, and match offsets are not included. See
++[Hook errors or timeouts](troubleshooting.md#hook-errors-or-timeouts) for other
++incomplete-analysis stages.
++
+ ### Pattern Specificity
+ 
+ Write patterns that match **exactly** what you want to block:
+```
+
+**File**: `docs/troubleshooting.md` (modified, +29/-2)
+```diff
+@@ -42,13 +42,40 @@ Also verify environment overrides:
+ 
+ ## Hook errors or timeouts
+ 
++First identify the budget or analysis step named in the diagnostic:
++
++- **Regex backtracking limit:** the reason names the responsible pack and
++  pattern, when known, and the operation such as `find_from`. The default is
++  100,000 backtracking steps per regex operation. Review that rule using
++  [Diagnosing incomplete rule evaluation](custom-packs.md#diagnosing-incomplete-rule-evaluation);
++  a larger hook deadline does not change this work limit.
++- **`interpreter_literal_recovery`:** a separate bounded analysis of literals
++  inside interpreter source did not finish. Possible causes include syntax or
++  structural limits, its own time budget, or an unavailable worker. This stage
++  does not identify a custom regex failure or establish hook-deadline
++  exhaustion. [Issue #643](https://github.com/Dicklesworthstone/destructive_command_guard/issues/643)
++  did not include the exact short Python inputs; the reported shape alone is
++  insufficient to identify or reproduce their specific failure. A minimal
++  sanitized example should preserve the interpreter options, quoting, escapes,
++  and heredoc delimiter.
++- **Hook deadline:** the reason reports that safety evaluation could not
++  complete within the configured hook time. The wall/CPU timing and phase help
++  distinguish expensive evaluation from a host that did not schedule dcg.
++
++`dcg config` separates `Regex evaluation` from `Heredoc scanning`. In
++particular, the default 50 ms extraction timeout belongs to heredoc extraction,
++not to regex matching. JSON exposes `regex.backtrack_limit_steps`,
++`heredoc.timeout_ms`, and `general.hook_timeout_ms` separately. Incomplete
++analysis retains the configured ask/deny behavior; it never proves a command
++safe.
++
+ For heredoc or large script parsing:
+ - Lower `max_body_bytes` or `max_body_lines`.
+ - Increase `[heredoc].timeout_ms` if heredoc extraction itself is timing out.
+ - Ensure `fallback_on_parse_error` is true for hook mode.
+ 
+-For ordinary full evaluation on a slower workstation or modest VPS, tune the
+-separate absolute hook budget. For example:
++When the diagnostic establishes genuine hook-deadline exhaustion on a slower
++workstation or modest VPS, tune the separate absolute hook budget. For example:
+ 
+ ```toml
+ [general]
+```
+
+**File**: `src/cli.rs` (modified, +185/-15)
+```diff
+@@ -1087,6 +1087,21 @@ const CLASSIFY_OUTPUT_SCHEMA_VERSION: u32 = 1;
+ /// pattern has been proven, but execution is still blocked conservatively.
+ const INDETERMINATE_REASON: &str = "Safety evaluation did not complete within the analysis budget";
+ 
++/// Describe the failure attached to this evaluation, never a stale thread-local
++/// observation. A regex work limit is independent of the hook's wall clock;
++/// retain the deadline wording when the evaluator actually exhausted it, with
++/// the known regex failure as additional context.
++fn indeterminate_reason(result: &EvaluationResult) -> std::borrow::Cow<'static, str> {
++    if !result.skipped_due_to_budget
++        && let Some(failure) = &result.regex_failure
 +    {
-+        return None;
++        return std::borrow::Cow::Owned(format!(
++            "Safety evaluation did not complete: {failure}; command was not verified"
++        ));
 +    }
-+    let redirects = posix_output_redirects_for_proof(segment, false)?;
-+    let mut proved_dynamic_target = false;
-+    for redirect in &redirects {
-+        if redirect.append || redirect.fd_duplication {
-+            continue;
-         }
-+        // Only plain literal words can stand aside here. In particular,
-+        // escaped paths, named-user tildes and glob syntax still belong to
-+        // the dynamic rule even when they contain no variable reference.
-+        if literal_redirect_word(redirect.target) {
-+            continue;
-+        }
-+        if !statically_safe_redirect_target(
-+            source,
-+            segment_ranges,
-+            segment_start,
-+            redirect.operator,
-+            redirect.target,
-+            require_proven_scope,
-+        ) {
-+            return None;
-+        }
-+        proved_dynamic_target = true;
-     }
-+    proved_dynamic_target.then(|| redirects.iter().map(|redirect| redirect.operator).collect())
++    result.reason_with_incomplete_analysis(INDETERMINATE_REASON)
 +}
 +
-+fn literal_redirect_word(word: &str) -> bool {
-+    !word.contains(['$', '`', '\\', '*', '?', '[', '{', '~', '%', '!', '^'])
-+        && literal_assignment_value(word).is_some()
-+}
-+
-+fn statically_safe_redirect_target(
-+    source: &str,
-+    segment_ranges: &[(usize, usize)],
-+    segment_start: usize,
-+    redirect: usize,
-+    target: &str,
-+    require_proven_scope: bool,
-+) -> bool {
-     let target_was_quoted = target.starts_with('"');
--    let (token, outer_suffix, trailing) = if let Some(rest) = target.strip_prefix('"') {
-+    let (token, outer_suffix) = if let Some(rest) = target.strip_prefix('"') {
-         let Some(end) = rest.find('"') else {
-             return false;
-         };
-@@ -29005,28 +29062,16 @@ fn statically_safe_variable_redirect(
-         // no quoting, expansion, or glob syntax — as an additional suffix;
-         // the benign-path check below still rejects `..` traversal, so
-         // `> "$log"/../../etc/passwd` keeps its fail-closed denial.
--        let chunk_len = after_quote
-+        if !after_quote
-             .bytes()
--            .take_while(|b| b.is_ascii_alphanumeric() || matches!(b, b'_' | b'-' | b'.' | b'/'))
--            .count();
--        let trailing = &after_quote[chunk_len..];
--        if !trailing.is_empty()
--            && !trailing.as_bytes().first().is_some_and(|byte| {
--                byte.is_ascii_whitespace() || matches!(byte, b';' | b'|' | b'&' | b'<' | b'>')
--            })
-+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'_' | b'-' | b'.' | b'/'))
-         {
-             return false;
-         }
--        (&rest[..end], &after_quote[..chunk_len], trailing)
-+        (&rest[..end], after_quote)
-     } else {
-```
-
-**File**: `tests/repro_536_tmp_redirect_resolution.rs` (modified, +322/-1)
-```diff
-@@ -1,4 +1,4 @@
--//! #536: bounded POSIX redirect resolution admits proven temporary paths.
-+//! #536 / #634: bounded POSIX redirect resolution admits proven temporary paths.
- //!
- //! All command strings are sent as JSON data to the real Claude Code hook;
- //! they are never executed by a shell. Positive cases cover each reported
-@@ -465,3 +465,324 @@ fn shared_mutation_guards_preserve_literal_and_mktemp_proofs() {
-         );
-     }
- }
-+
-+#[test]
-+fn every_dynamic_redirect_is_proven_independently_issue_634() {
-+    for command in [
-+        "S=/tmp/x; foo > $S/o 2> $S/e",
-+        "S=/tmp/x; foo 2>$S/e >$S/o",
-+        r#"S=/tmp/x; foo > "$S"/o 2> "${S}/e""#,
-+        "S=/tmp/x; T=/var/tmp/y; foo > $S/o 2> $T/e",
-+        r#"S=/tmp/x; T="$S/sub"; foo > "$S/o" 2> "$T/e""#,
-+        "S=/tmp/x; foo > /tmp/literal 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> /tmp/literal",
-+        "S=/tmp/x; foo > $S/o 2> $S/e 3>&1",
-+        "S=/tmp/x; foo 3>&2 > $S/o 2> $S/e",
-+        "S=/tmp/x; foo >| $S/o 2>| $S/e",
-+        "S=/tmp/x; foo &>$S/o 3>$S/e",
-+        r#"S=/tmp/x; foo &> "$S/o" 3> "${S}/e""#,
-+        "foo > /tmp/stdout-$$ 2> /tmp/stderr-$$",
-+        r#"for w in a b; do foo > "/tmp/s-$w" 2> "/tmp/e-$w"; done"#,
-+        r#"bash -c 'S=/tmp/x; foo > "$S/o" 2> "$S/e"'"#,
-+    ] {
-+        let (decision, rule) = hook(command);
-+        assert_eq!(
-+            decision, "allow",
-+            "every truncating target has its own temporary-path proof: {command:?}: {rule}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn every_dynamic_redirect_must_pass_the_proof_issue_634() {
-+    for command in [
-+        "S=/tmp/x; foo > $S/o 2> $UNKNOWN",
-+        "S=/tmp/x; foo > $UNKNOWN 2> $S/e",
-+        "S=/tmp/x; T=/etc; foo > $S/o 2> $T/passwd",
-+        "S=/tmp/x; T=/etc; foo > $T/passwd 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> $S/../../etc/passwd",
-+        "S=/tmp/x; foo > $S/../../etc/passwd 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> $S/.git/config",
-+        "S=/tmp/x; foo > $S/o 2> $S/.ssh/id_rsa",
-+        "S=/tmp/x; foo > $S/o 2> $S/$UNKNOWN",
-+        "S=/tmp/x; foo > $S/o 2> $(cat destination)",
-+        r#"S=/tmp/x; foo > "$S/o" 2> "$S"/"$UNKNOWN""#,
-+        r#"S='/tmp/*'; foo > "$S/o" 2> $S/e"#,
-+        "S=/tmp/x; foo > $S/o >&$UNKNOWN",
-+        "S=/tmp/x; foo > $S/o >&1$UNKNOWN",
-+        // A later numeric descriptor must not make a prior target irrelevant.
-+        "S=/tmp/x; foo > $UNKNOWN > $S/o 2>&1",
-+    ] {
-+        assert_denied(command);
-+    }
-+}
-+
-+#[test]
-+fn independently_proven_redirects_preserve_literal_and_command_denials_issue_634() {
-+    for command in [
-+        "S=/tmp/x; foo > $S/o 2> /etc/passwd",
-+        "S=/tmp/x; foo > /etc/passwd 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> .git/config",
-+        "S=/tmp/x; foo > .git/config 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> $S/e 3> /etc/passwd",
-+        "S=/tmp/x; foo > $S/o 2> $S/e 3>> .git/config",
-+        "export FOO=1 > /etc/passwd; S=/tmp/x; foo > $S/o 2> $S/e",
-+    ] {
-+        assert_denied(command);
-+    }
-+    for command in [
-+        "S=/tmp/x; git reset --hard > $S/o 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2> $S/e; git reset --hard",
-+        "export FOO=1; S=/tmp/x; git reset --hard > $S/o 2> $S/e",
-+    ] {
-+        assert_eq!(
-+            hook(command),
-+            ("deny".to_string(), "core.git:reset-hard".to_string()),
-+            "redirect proofs must not exempt the command: {command:?}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn appends_do_not_need_truncation_proofs_issue_634() {
-+    for command in [
-+        "S=/tmp/x; foo > $S/o 2>> $LOG",
-+        "S=/tmp/x; foo >> $LOG 2> $S/e",
-+        "S=/tmp/x; foo >$S/o 2>>$LOG",
-+        "S=/tmp/x; foo >>$LOG 2>$S/e",
-+        r#"S=/tmp/x; foo >>"$LOG" 2>"$S/e""#,
-+        "S=/tmp/x; foo &>>$LOG 3>$S/e",
-+    ] {
-+        let (decision, rule) = hook(command);
-+        assert_eq!(
-+            decision, "allow",
-+            "an append is not a second truncating redirect: {command:?}: {rule}"
-+        );
-+    }
-+    for command in [
-+        "S=/tmp/x; foo >> $S/o 2> $UNKNOWN",
-+        "S=/tmp/x; foo > $UNKNOWN 2>> $S/e",
-+        "S=/tmp/x; foo >> .git/config 2> $S/e",
-+        "S=/tmp/x; foo > $S/o 2>> .git/config",
-+    ] {
-+        assert_denied(command);
-+    }
-+}
-+
-+#[test]
-+fn original_redirect_words_preserve_quoted_data_and_escaped_separators_issue_634() {
-+    for command in [
-+        r"S=/tmp/x; echo 'literal > $UNKNOWN ; export S=/etc' > $S/o 2> $S/e",
-+        r#"S=/tmp/x; printf '%s' 'literal > $UNKNOWN' 2> "$S/e" > "$S/o""#,
-+        r"S=/tmp/x; echo semi\;colon > $S/o 2> $S/e",
-+        r#"S=/tmp/x; echo quote\"test > $S/o 2> $S/e"#,
-+        r"S=/tmp/x; foo \>literal > $S/o 2> $S/e",
-+        "export FOO='x; y'; S=/tmp/x; foo > $S/o 2> $S/e",
-+    ] {
-+        let (decision, rule) = hook(command);
-+        assert_eq!(
-+            decision, "allow",
-+            "only actual redirect words need path proofs: {command:?}: {rule}"
-+        );
-+    }
-+    for comm
-```
-
----
-
-### Incident Patch 2: `0615af0e` (2026-11-04)
-**Commit Message**: fix(windows): correct authenticated bootstrap exit status handling
-
-Use the global native status for Minisign and qualify the authenticated installer in a child PowerShell process. This avoids function-local shadows and the expected nonzero native denial left by a successful v0.16.0 self-test. Preserve the pinned release digest/key, mandatory signatures, checksums, and authentication before execution.
-
-Execute the documented function and fleet blocks in real PowerShell with cryptographic fixtures. Cover stale statuses, shadowing scopes, failed verifier/installer launches, invalid signatures/digests, installer exceptions, and explicit nonzero exits. Add opt-in isolated native Windows public-install qualification.
-
-Validated with PowerShell 7.6.9 and Minisign 0.12: 33 bootstrap tests passed; native Windows install explicitly unavailable. Original and global-only recipes fail the new regression controls. Actual v0.16.0 installer authentication passed without executing it.
-
-Refs #641.
-
-**File**: `docs/windows.md` (modified, +34/-7)
-```diff
-@@ -65,11 +65,13 @@ function Install-DcgRelease {
-     # PowerShell 5.1 can wrap successful native stderr as NativeCommandError.
-     # Decide verification from the actual process exit code, including failure
-     # to start the verifier, rather than from stderr or a stale LASTEXITCODE.
--    $LASTEXITCODE = -1
-+    # Native processes update the global automatic variable. An unqualified
-+    # assignment here would shadow it in this function (PowerShell 5.1 and 7).
-+    $global:LASTEXITCODE = -1
-     $ErrorActionPreference = 'Continue'
-     try {
-         & $verifier -Vm $installer -x $signature -P $key
--        $signatureExit = $LASTEXITCODE
-+        $signatureExit = $global:LASTEXITCODE
-     } finally {
-         $ErrorActionPreference = 'Stop'
-     }
-@@ -81,11 +83,18 @@ function Install-DcgRelease {
- 
-     # Allow this authenticated file under RemoteSigned without changing policy.
-     Unblock-File -LiteralPath $installer -ErrorAction Stop
--    $installArgs = @{ Version = $tag; RequireMinisign = $true; Verify = $true }
--    if ($Mode -eq 'Easy') { $installArgs.EasyMode = $true }
--    $LASTEXITCODE = 0
--    & $installer @installArgs
--    if ($LASTEXITCODE -ne 0) { throw "Installer failed with exit code $LASTEXITCODE." }
-+    # A PS1 invoked in-process can leave an incidental native exit code behind
-+    # (including the self-test's expected denial). A child -File invocation
-+    # reports the script's completion, explicit exit, or terminating exception.
-+    $powerShell = (Get-Process -Id $PID -ErrorAction Stop).Path
-+    $installArgs = @('-NoProfile', '-File', ('"' + $installer + '"'),
-+        '-Version', $tag, '-RequireMinisign', '-Verify')
-+    if ($Mode -eq 'Easy') { $installArgs += '-EasyMode' }
-+    $installProcess = Start-Process -FilePath $powerShell -ArgumentList $installArgs `
-+        -Wait -PassThru -NoNewWindow -ErrorAction Stop
-+    if ($null -eq $installProcess.ExitCode -or $installProcess.ExitCode -ne 0) {
-+        throw "Installer failed with exit code $($installProcess.ExitCode)."
-+    }
- }
- ```
- <!-- verified-release-install-powershell:end -->
-@@ -97,6 +106,9 @@ Install-DcgRelease                 # Easy mode: configure hooks and add User PAT
- # Or: Install-DcgRelease -Mode Normal
- ```
- 
-+The installer runs in a child PowerShell process. After Easy mode completes,
-+open a new terminal to pick up the updated User `PATH`.
-+
- Missing verification tools or assets, invalid signatures, or a different
- installer digest stop installation. There is no unsigned installer or source
- fallback. Verification files remain in the private directory for inspection.
-@@ -376,6 +388,21 @@ PowerShell ports of the shell E2E suites run on `windows-latest` CI (and locally
- - **`tests/installer/*.ps1`** — per-function unit tests for the install/uninstall
-   hook-merge logic (Claude/Codex/Gemini/Copilot/Cursor/Hermes, zip-slip, flags,
-   local-source, checksum, agent detection, arch selection).
-+- **`tests/install/test_verified_bootstrap.py`** — executes the documented
-+  verified-install function and the fleet authentication/install blocks using
-+  real Minisign signatures and child PowerShell processes. It covers native
-+  exit status, function scoping, failed launches, invalid signatures/digests,
-+  and installer failures. With Python 3 and Minisign on `PATH`, run
-+  `python -B -m unittest discover -s tests/install -p test_verified_bootstrap.py -k PowerShell -v`.
-+  It exercises both `powershell` and `pwsh` when available;
-+  `DCG_TEST_POWERSHELL` can select an additional executable. Unix runs explicitly
-+  omit Windows ACL/`Unblock-File` checks. On a native Windows release host, set
-+  `DCG_TEST_NATIVE_WINDOWS_INSTALL=1` to also qualify the real public `v0.16.0`
-+  installer in Normal mode with a scratch destination, `-NoConfigure`, and
-+  self-healing disabled. An explicitly requested native check fails when
-+  Windows or PowerShell is unavailable. Without that opt-in, published release
-+  bytes can be authenticated using `DCG_TEST_RELEASE_ASSETS`, but are never
-+  executed by the tests. Use the configured DSR host for native qualification.
- - **Real-Windows runtime stress (CI-gated):**
-   `scripts/win_history_concurrency.ps1` (concurrent history-DB writers + killed-writer
-   stale-lock recovery), `scripts/win_pending_exception_concurrency.ps1` (concurrent
-```
-
-**File**: `scripts/e2e_fleet_install.sh` (modified, +22/-7)
-```diff
-@@ -579,11 +579,14 @@ try {
-     -UserAgent 'destructive_command_guard-fleet-probe' `
-     -Uri "$RepoRelease/$Version/install.ps1.minisig" -OutFile $installerSignaturePath -ErrorAction Stop
-   # Continue permits normal native stderr under PowerShell 5.1; the explicit
--  # process status remains authoritative, including a failure to launch.
--  $LASTEXITCODE = -1
-+  # process status remains authoritative, including a failure to launch. Native
-+  # commands update the global automatic variable, even inside a function or
-+  # script scope; an unqualified assignment would hide that status (#641).
-+  $global:LASTEXITCODE = -1
-   & $minisign -Vm $installerPath -x $installerSignaturePath -P $minisignPublicKey `
-     *> (Join-Path $work 'installer-signature.log')
--  if ($LASTEXITCODE -ne 0) { throw 'invalid installer signature' }
-+  $signatureExit = $global:LASTEXITCODE
-+  if ($signatureExit -ne 0) { throw 'invalid installer signature' }
-   $signatureLines = @(Get-Content -LiteralPath $installerSignaturePath -ErrorAction Stop)
-   $expectedIdentity = "trusted comment: dsr-built destructive_command_guard $Version additional $actualInstallerSha"
-   $strictIdentity = "trusted comment: dsr strict release destructive_command_guard $Version additional $actualInstallerSha"
-@@ -599,26 +602,38 @@ try {
- }
- 
- $log = Join-Path $work 'install.log'
-+$errorLog = Join-Path $work 'install-stderr.log'
- try {
-   # Unblock only authenticated bytes for RemoteSigned compatibility. This
-   # leaves the host's execution policy unchanged.
-   Unblock-File -LiteralPath $installerPath -ErrorAction Stop
-   $ErrorActionPreference = 'Stop'
--  $LASTEXITCODE = 0
--  & $installerPath -Version $Version -Dest $dest `
--      -RequireMinisign -Verify -NoConfigure *> $log
--  if ($LASTEXITCODE -ne 0) { throw "installer exited with code $LASTEXITCODE" }
-+  # An in-process PS1 can finish without setting LASTEXITCODE, or leave the
-+  # status of an optional native command behind. Qualify the script's own exit
-+  # status in a fresh instance of the same PowerShell engine instead.
-+  $powerShell = (Get-Process -Id $PID -ErrorAction Stop).Path
-+  $installerArguments = @('-NoProfile', '-NonInteractive', '-File',
-+    ('"' + $installerPath + '"'), '-Version', $Version, '-Dest',
-+    ('"' + $dest + '"'), '-RequireMinisign', '-Verify', '-NoConfigure')
-+  $installerProcess = Start-Process -FilePath $powerShell -ArgumentList $installerArguments `
-+    -Wait -PassThru -NoNewWindow -RedirectStandardOutput $log `
-+    -RedirectStandardError $errorLog -ErrorAction Stop
-+  if ($null -eq $installerProcess.ExitCode -or $installerProcess.ExitCode -ne 0) {
-+    throw "installer exited with code $($installerProcess.ExitCode)"
-+  }
-   Emit 'install' 'PASS'
- } catch {
-   $tail = ''
-   if (Test-Path $log) { $tail = (Get-Content $log -Tail 3 -ErrorAction SilentlyContinue) -join ' ' }
-+  if (Test-Path $errorLog) { $tail += ' ' + ((Get-Content $errorLog -Tail 3 -ErrorAction SilentlyContinue) -join ' ') }
-   Emit 'install' 'FAIL' "$($_.Exception.Message) $tail"
- } finally {
-   $ErrorActionPreference = 'Continue'
- }
- 
- $logText = ''
- if (Test-Path $log) { $logText = Get-Content $log -Raw -ErrorAction SilentlyContinue }
-+if (Test-Path $errorLog) { $logText += Get-Content $errorLog -Raw -ErrorAction SilentlyContinue }
- if ($logText -match '(?i)checksum') { Emit 'checksum_verified' 'PASS' } else { Emit 'checksum_verified' 'FAIL' 'no checksum evidence in installer output' }
- if ($logText -match '(?i)Signature verified \(minisign key ') { Emit 'minisign_verified' 'PASS' } else { Emit 'minisign_verified' 'FAIL' 'strict minisign key verification did not complete' }
- 
-```
-
-**File**: `tests/install/test_verified_bootstrap.py` (modified, +452/-17)
-```diff
-@@ -5,10 +5,20 @@
- 
- DCG_TEST_MINISIGN may name a verifier installed outside PATH. Optional
- DCG_TEST_RELEASE_ASSETS points at downloaded v0.16.0 assets for an additional
--real-release verification check; those published scripts are NEVER executed.
--
--Only the download boundary and sudo are replaced. The documentation's actual
--shell code, the cryptographic verifier, and both SHA-256 implementations run.
-+real-release authentication check; the published script's execution boundary is
-+intercepted in that check. DCG_TEST_POWERSHELL adds an engine outside PATH;
-+available pwsh and Windows PowerShell are both exercised. DCG_TEST_WINDOWS_DOC
-+selects another documentation snapshot for regression/mutation checks.
-+
-+Only DCG_TEST_NATIVE_WINDOWS_INSTALL=1 on native Windows enables a real public
-+v0.16.0 install, into a retained scratch destination with -NoConfigure and no
-+self-healing. This opt-in test leaves the documented trust root and download
-+path intact, and adds only isolation arguments at the child-process boundary.
-+
-+The documentation's actual shell code, cryptographic verifier, SHA-256 checks,
-+and child PowerShell processes run. Test fixtures replace fixed trust literals
-+and downloads. Windows tests keep the real ACL/Unblock-File operations; Unix
-+tests explicitly omit that unsupported platform boundary and do not qualify it.
- Fixtures and logs are retained under the printed temporary directory, including
- fresh TEST-ONLY signing keys; no project release private key is used or needed.
- """
-@@ -57,6 +67,20 @@ def documented_shell(path: Path) -> str:
-     return blocks[0]
- 
- 
-+def documented_powershell(path: Path | None = None) -> str:
-+    path = path or Path(os.environ.get("DCG_TEST_WINDOWS_DOC", ROOT / "docs/windows.md"))
-+    text = path.read_text(encoding="utf-8")
-+    begin = "<!-- verified-release-install-powershell:begin -->"
-+    end = "<!-- verified-release-install-powershell:end -->"
-+    if text.count(begin) != 1 or text.count(end) != 1:
-+        raise AssertionError(f"{path.name}: expected one marked installation recipe")
-+    section = text.split(begin, 1)[1].split(end, 1)[0]
-+    blocks = re.findall(r"```powershell\n(.*?)\n```", section, re.DOTALL)
-+    if len(blocks) != 1:
-+        raise AssertionError(f"{path.name}: expected one PowerShell block between markers")
-+    return blocks[0]
-+
-+
- def verifier_path() -> str:
-     requested = os.environ.get("DCG_TEST_MINISIGN", "minisign")
-     binary = shutil.which(requested)
-@@ -115,15 +139,7 @@ def test_prominent_entrypoints_do_not_offer_mutable_script_downloads(self):
-     def test_windows_recipe_has_the_same_pinned_trust_boundary(self):
-         # A source contract check, not a substitute for native PowerShell/ACL
-         # execution. The actual published PS1 signature is verified separately.
--        text = (ROOT / "docs/windows.md").read_text()
--        begin = "<!-- verified-release-install-powershell:begin -->"
--        end = "<!-- verified-release-install-powershell:end -->"
--        self.assertEqual(text.count(begin), 1)
--        self.assertEqual(text.count(end), 1)
--        section = text.split(begin, 1)[1].split(end, 1)[0]
--        blocks = re.findall(r"```powershell\n(.*?)\n```", section, re.DOTALL)
--        self.assertEqual(len(blocks), 1)
--        recipe = blocks[0]
-+        recipe = documented_powershell(ROOT / "docs/windows.md")
-         for pin in (VERSION, PUBLIC_KEY, POWERSHELL_SHA256):
-             self.assertEqual(recipe.count(pin), 1)
-         self.assertNotRegex(recipe, r"(?i)Invoke-Expression|ScriptBlock\s*\]::Create|\biex\b")
-@@ -132,13 +148,17 @@ def test_windows_recipe_has_the_same_pinned_trust_boundary(self):
-         signature_guard = recipe.index("if ($signatureExit -ne 0) { throw")
-         hash_check = recipe.index("Get-FileHash -LiteralPath $installer -Algorithm SHA256")
-         hash_guard = recipe.index("if ($actualHash.ToLowerInvariant() -cne $expectedHash)")
--        execute = recipe.index("& $installer @installArgs")
-+        execute = recipe.index("$installProcess = Start-Process")
-         self.assertLess(signature_call, signature_guard)
-         self.assertLess(signature_guard, hash_check)
-         self.assertLess(hash_check, hash_guard)
-         self.assertLess(hash_guard, recipe.index("throw ", hash_guard))
-         self.assertLess(recipe.index("throw ", hash_guard), execute)
--        self.assertIn("Version = $tag; RequireMinisign = $true", recipe[:execute])
-+        self.assertIn("'-Version', $tag, '-RequireMinisign', '-Verify'", recipe[:execute])
-+        self.assertIn("$global:LASTEXITCODE = -1", recipe[:signature_call])
-+        self.assertIn("$signatureExit = $global:LASTEXITCODE", recipe[signature_call:signature_guard])
-+        self.assertIn("-Wait -PassThru -NoNewWindow -ErrorAction Stop", recipe[execute:])
-+        self.assertIn("$null -eq $installProcess.ExitCode -or $installProcess.ExitCode -ne 0", recipe[execute:])
- 
-     def test_windows_fleet_probe_authenticates_before_execution_and_
-```
-
----
-
-### Incident Patch 3: `8a202469` (2026-11-04)
-**Commit Message**: fix(evaluator): find an outer expansion run as a command behind quoting, wrappers and other shells (#607) [skip ci]
-
-43a60bb2 and 606d36c7 deny a `-c` script or ssh command whose command word is
-an expansion, since the outer shell fills the value in before the inner shell
-parses it. The check read only the first word of each command, and only for a
-short list of shell names, so the same command still passed in these shapes:
-
-- Quoting that hides a command inside one word: `bash -c 'cd /srv; '"$C"`, and
-  `bash -c 'cd /srv; '"$C"' x'`, whose outer marks close and open different
-  quotes.
-- Words ssh joins before the remote shell parses them: `ssh h 'cd /srv;' "$C"`,
-  `ssh h 'sudo' "$C"`, `ssh h cd /srv \; "$C"`.
-- The command a wrapper runs: `bash -c "sudo $C x"`, `exec`, `time`, `command`,
-  `env`, `nohup`, `timeout 5`, `xargs`. A wrapper's option value or limit stays
-  allowed (`sudo -u $USER make`, `timeout $T make`, `command -v $TOOL`).
-- Other shells and programs that hand a string to a shell: `fish`, `ksh93`,
-  `watch`, `parallel`, `env -S`, `su -c`, `runuser -c`, `script -c`, `flock -c`,
-  `nix-shell --run`, `sg -c`, `mise exec -c`, `bun exec`.
-- Source on stdin that the out
-
-**File**: `src/evaluator.rs` (modified, +190/-16)
-```diff
-@@ -36730,20 +36730,93 @@ fn inline_shell_script_is_wholly_dynamic(script: &str) -> bool {
-     }
- }
- 
--/// Whether the program an inline script was extracted for reads it as POSIX
--/// shell source: `sh -c`/`bash -c` and their kin, and ssh's remote command,
--/// which the remote login shell runs (#607). PowerShell and cmd payloads are
-+/// Whether the program an inline script was extracted for reads it as shell
-+/// source a POSIX outer shell fills in first: `sh -c`/`bash -c` and their kin,
-+/// ssh's remote command, which the remote login shell runs (#607), `at` and
-+/// `batch`, and the runners that hand a command string to a shell (`watch`,
-+/// `su -c`, `flock -c`, `mise exec -c`). PowerShell and cmd payloads are
- /// re-read as shell too, but there `$x = 1` is an assignment, not a command.
- fn inline_script_target_parses_posix_shell(target: &str) -> bool {
-     let name = target.rsplit(['/', '\\']).next().unwrap_or(target);
-     let name = name.to_ascii_lowercase();
-     let name = name.strip_suffix(".exe").unwrap_or(&name);
-     matches!(
-         name,
--        "sh" | "bash" | "dash" | "zsh" | "ksh" | "mksh" | "ash" | "ssh"
-+        "sh" | "bash"
-+            | "rbash"
-+            | "dash"
-+            | "zsh"
-+            | "ksh"
-+            | "ksh93"
-+            | "mksh"
-+            | "pdksh"
-+            | "oksh"
-+            | "yash"
-+            | "posh"
-+            | "ash"
-+            | "csh"
-+            | "tcsh"
-+            | "fish"
-+            | "busybox"
-+            | "ssh"
-+            | "at"
-+            | "batch"
-+            | "watch"
-+            | "parallel"
-+            | "env"
-+            | "su"
-+            | "sg"
-+            | "runuser"
-+            | "script"
-+            | "nix-shell"
-+            | "npx"
-+            | "entr"
-+            | "flock"
-+            | "hyperfine"
-+            | "mise"
-+            | "bun"
+ /// Maximum reason carried by dcg's private OMP bridge protocol.
+ ///
+ /// The general robot schema intentionally retains complete diagnostics, but
+@@ -1163,6 +1178,24 @@ fn bounded_omp_bridge_reason(reason: &str) -> std::borrow::Cow<'_, str> {
      )
  }
  
-+/// Whether an unquoted heredoc or a here-string is the source of the shell ssh
-+/// runs remotely: `ssh h <<EOF`, with no remote command that takes stdin instead.
-+fn stdin_source_feeds_remote_shell(
-+    command: &str,
-+    content: &crate::heredoc::ExtractedContent,
-+) -> bool {
-+    use crate::heredoc::HeredocType;
-+    let expanded_first = match content.heredoc_type {
-+        None => false,
-+        Some(HeredocType::HereString) => true,
-+        Some(_) => !content.quoted,
-+    };
-+    expanded_first
-+        && content.target_command.as_deref() == Some("ssh")
-+        && command
-+            .get(..content.byte_range.start)
-+            .and_then(|before| before.rsplit(['\n', ';', '&', '|', '(']).next())
-+            .is_some_and(|receiver| {
-+                matches!(
-+                    pipeline_shell_input_mode(receiver),
-+                    PipelineShellInputMode::ReadsStdin(PipelineSourceKind::PosixShell)
-+                )
-+            })
++/// Preserve the bounded failure note even when an external rule's ordinary
++/// reason fills the bridge field. Successful evaluations keep identical bytes.
++fn bounded_omp_bridge_evaluation_reason<'a>(
++    result: &EvaluationResult,
++    reason: &'a str,
++) -> std::borrow::Cow<'a, str> {
++    if result.regex_failure.is_none() {
++        return bounded_omp_bridge_reason(reason);
++    }
++    let suffix = result.reason_with_incomplete_analysis("");
++    let bounded = bounded_omp_bridge_field(
++        std::borrow::Cow::Borrowed(reason),
++        OMP_BRIDGE_REASON_MAX_BYTES - suffix.len(),
++        OMP_BRIDGE_REASON_TRUNCATION_SUFFIX,
++    );
++    std::borrow::Cow::Owned(format!("{bounded}{suffix}"))
 +}
 +
-+/// Whether the outer shell's quote removal leaves an expansion as a command word
-+/// in an inline script that is not one quoted word. Raw words such as
-+/// `'cd /srv;' "$C"` reach the program joined (ssh, `watch`), and the extractor
-+/// strips the outer marks of `'cd /srv; '"$C"' x'`, which close and open different
-+/// quotes, so that one is read with them back. Marks inside one double-quoted word
-+/// belong to the inner shell: `"cut -d';' -f1 $F"` and `"grep 'a; $X' f"` hold
-+/// no such command.
-+fn outer_quoting_hides_an_expansion_command(command: &str, script: &str) -> bool {
-+    (!command.contains(&format!("\"{script}\""))
-+        && crate::heredoc::joined_words_run_an_expansion_as_a_command(script))
-+        || (command.contains(&format!("'{script}'"))
-+            && crate::heredoc::joined_words_run_an_expansion_as_a_command(&format!("'{script}'")))
-+}
-+
- #[inline]
- fn nested_evaluation_incomplete(result: &EvaluationResult) -> bool {
-     result.is_indeterminate() || result.skipped_due_to_budget
-@@ -37097,9 +37170,12 @@ fn evaluate_heredoc(
- 
-         // A simple SSH body can lack language-detection syntax. Only the
-         // exact quoted POSIX receiver proof may type that unknown body as
--        // Bash; its recursive evaluation keeps the remote filesystem scope.
-+        // Bash; its recursive evaluation keeps the remote filesystem scope. An
-+        // unquoted body is the same source, filled in by the outer shell first,
-+        // and gets no literal proof.
-         if content.language == crate::heredoc::ScriptLanguage::Unknown
--            && literal_bash_source_range(command, &content).is_some()
-+            && (literal_bash_source_range(command, &content).is_some()
-+                || stdin_source_feeds_remote_shell(command, &content))
-         {
-             content.language = crate::heredoc::ScriptLanguage::Bash;
+ fn bounded_omp_bridge_rule_id(rule_id: String) -> std::borrow::Cow<'static, str> {
+     bounded_omp_bridge_field(
+         std::borrow::Cow::Owned(rule_id),
+@@ -1321,7 +1354,8 @@ fn omp_bridge_test_output(
+             let pattern = result.pattern_info.as_ref();
+             OmpBridgeTestOutput {
+                 decision: resolved_mode.unwrap_or(DecisionMode::Deny).label(),
+-                reason: pattern.map(|info| bounded_omp_bridge_reason(&info.reason)),
++                reason: pattern
++                    .map(|info| bounded_omp_bridge_evaluation_reason(result, &info.reason)),
+                 rule_id: pattern.and_then(|info| {
+                     info.pack_id.as_ref().and_then(|pack| {
+                         info.pattern_name
+@@ -1333,7 +1367,7 @@ fn omp_bridge_test_output(
          }
-@@ -37231,16 +37307,25 @@ fn evaluate_heredoc(
-             // shell, which splits the value into words without parsing it,
-             // as a top-level `$C x` does. An expansion in argument position
-             // (`bash -c "echo $C"
+         EvaluationDecision::Indeterminate => OmpBridgeTestOutput {
+             decision: "indeterminate",
+-            reason: Some(std::borrow::Cow::Borrowed(INDETERMINATE_REASON)),
++            reason: Some(indeterminate_reason(result)),
+             rule_id: None,
+         },
+     }
+@@ -3635,7 +3669,7 @@ fn resolve_batch_entry(
+             mode: None,
+             rule_id: None,
+             pack_id: None,
+-            error: Some(INDETERMINATE_REASON.to_string()),
++            error: Some(indeterminate_reason(&eval_result).into_owned()),
+             rank: 4,
+         },
+         EvaluationDecision::Deny => {
+@@ -3667,6 +3701,7 @@ fn resolve_batch_entry(
+                     .pattern_info
+                     .as_ref()
+                     .map_or("", |info| info.reason.as_str());
++                let reason = eval_result.reason_with_incomplete_analysis(reason);
+                 eprintln!(
+                     "[dcg] Warning: {} matched but policy mode is warn; allowing. {reason}",
+                     rule_id.as_deref().unwrap_or("a destructive pattern")
+@@ -3678,7 +3713,9 @@ fn resolve_batch_entry(
+                 mode: Some(mode_label),
+                 rule_id,
+                 pack_id,
+-                error: None,
++                error: eval_result
++                    .regex_failure
++                    .map(|failure| format!("Safety analysis also incomplete: {failure}")),
+                 rank,
+             }
+         }
+@@ -5532,7 +5569,11 @@ fn test_command(
+                         (
+                             info.pack_id.clone(),
+                             info.pattern_name.clone(),
+-                            Some(info.reason.clone()),
++                            Some(
++                                result
++                                    .reason_with_incomplete_analysis(&info.reason)
++                                    .into_owned(),
++                            ),
+                             info.explanation.clone(),
+                             Some(source_str.to_string()),
+                             info.matched_span.as_ref().map(|s| (s.start, s.end)),
+@@ -5579,7 +5620,7 @@ fn test_command(
+                 rule_id: None,
+                 pack_id: None,
+                 pattern_name:
 ```
 
-**File**: `src/heredoc.rs` (modified, +243/-36)
+**File**: `src/evaluator.rs` (modified, +49/-8)
 ```diff
-@@ -141,11 +141,11 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
-     // Lua inline execution
-     r#"\blua[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
-     // Shell inline execution (sh -c, bash -c, zsh -c, fish -c, bash -lc, etc.).
--    // dash/ksh/mksh are ordinary POSIX shells: without them `dash -c "git
--    // reset --hard"` was never unwrapped, and command-position rules such as
--    // core.git never saw the payload. An option or its value may be quoted
-+    // dash/ksh/mksh and the rest are ordinary shells: without them `dash -c
-+    // "git reset --hard"` was never unwrapped, and command-position rules such
-+    // as core.git never saw the payload. An option or its value may be quoted
-     // (`bash -o 'errexit' -c`, `bash '-e' -c`); the argv is the same.
--    r#"\b(?:sh|bash|zsh|fish|dash|ksh[0-9]*|mksh)(?:\.exe)?\b["']?(?:\s+['\x22]?(?:--\S+|[-+][A-Za-z]+(?:[:.=]\S*)?['\x22]?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*|['\x22][A-Za-z_][A-Za-z0-9_]*['\x22]))?)*\s+['\x22]?-[A-Za-z]*c[A-Za-z]*(?:\s|['"]|$)"#,
-+    r#"\b(?:sh|bash|rbash|ash|zsh|fish|dash|ksh[0-9]*|mksh|oksh|pdksh|yash|posh|csh|tcsh)(?:\.exe)?\b["']?(?:\s+['\x22]?(?:--\S+|[-+][A-Za-z]+(?:[:.=]\S*)?['\x22]?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*|['\x22][A-Za-z_][A-Za-z0-9_]*['\x22]))?)*\s+['\x22]?-[A-Za-z]*c[A-Za-z]*(?:\s|['"]|$)"#,
-     // PowerShell inline execution (powershell -Command '...', pwsh -c "...",
-     // and Windows full-path forms like
-     //   "C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe" -Command '...'
-@@ -203,7 +203,7 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
-     //
-     // A quoted or escaped name (`\ssh`, `'ssh'`) is the same program, and a
-     // descriptor duplication (`2>&1`) does not end the segment.
--    r#"(?i)(?:^|[\s;|&(/\\'"])ssh(?:\.exe)?['"]?\s(?:[^\n;|&]|[<>]&)*['"$]"#,
-+    r#"(?i)(?:^|[\s;|&(/\\'"])ssh(?:\.exe)?['"]?\s(?:[^\n;|&]|[<>]&|\\[;|&])*['"$]"#,
-     // `ssh`, `scp` and `sftp` hand an `-o` option's ssh_config text to ssh,
-     // and `ProxyCommand`, `LocalCommand`, `KnownHostsCommand` and
-     // `RemoteCommand` carry a command line, which an escape alone can spell
-@@ -1185,6 +1185,14 @@ impl ScriptLanguage {
-             || matches_interpreter("dash")
-             || matches_interpreter("ksh")
-             || matches_interpreter("mksh")
-+            || matches_interpreter("rbash")
-+            || matches_interpreter("ash")
-+            || matches_interpreter("oksh")
-+            || matches_interpreter("pdksh")
-+            || matches_interpreter("yash")
-+            || matches_interpreter("posh")
-+            || matches_interpreter("csh")
-+            || matches_interpreter("tcsh")
-             // PowerShell (`powershell`, `powershell.exe`, `pwsh`) running an
-             // inner command via `-Command`/`-c`. We re-check the body as a
-             // shell command: destructive command names (git, rm, etc.) are
-@@ -1721,7 +1729,7 @@ static INLINE_SCRIPT_SINGLE_QUOTE: LazyLock<Regex> = LazyLock::new(|| {
-     // `(?i:powershell|pwsh)` matches the Windows PowerShell host case-insensitively;
-     // `["']?` after the interpreter swallows the closing quote of a quoted full
-     // path (e.g. `"...\powershell.exe" -Command '...'`) before flags (#125).
--    Regex::new(r#"\b(python[0-9.]*(?:\.exe)?|ruby[0-9.]*(?:\.exe)?|irb[0-9.]*(?:\.exe)?|perl[0-9.]*(?:\.exe)?|node(js)?[0-9.]*(?:\.exe)?|bun[0-9.]*(?:\.exe)?|deno[0-9.]*(?:\.exe)?|php[0-9.]*(?:\.exe)?|lua[0-9.]*(?:\.exe)?|sh(?:\.exe)?|bash(?:\.exe)?|zsh(?:\.exe)?|fish(?:\.exe)?|dash(?:\.exe)?|ksh[0-9]*(?:\.exe)?|mksh(?:\.exe)?|(?i:powershell|pwsh)(?:\.exe)?)\b["']?(?:\s+['\x22]?(?:--\S+|[-+][A-Za-z]+(?:[:.=]\S*)?['\x22]?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*|['\x22][A-Za-z_][A-Za-z0-9_]*['\x22]))?)*\s+['\x22]?(-[A-Za-z]*[ceECpr][A-Za-z]*)['\x22]?\s*'([^']*)'"#)
-+    Regex::new(r#"\b(python[0-9.]*(?:\.exe)?|ruby[0-9.]*(?:\.exe)?|irb[0-9.]*(?:\.exe)?|perl[0-9.]*(?:\.exe)?|node(js)?[0-9.]*(?:\.exe)?|bun[0-9.]*(?:\.exe)?|deno[0-9.]*(?:\.exe)?|php[0-9.]*(?:\.exe)?|lua[0-9.]*(?:\.exe)?|sh(?:\.exe)?|bash(?:\.exe)?|zsh(?:\.exe)?|fish(?:\.exe)?|dash(?:\.exe)?|ksh[0-9]*(?:\.exe)?|mksh(?:\.exe)?|rbash(?:\.exe)?|ash(?:\.exe)?|oksh(?:\.exe)?|pdksh(?:\.exe)?|yash(?:\.exe)?|posh(?:\.exe)?|csh(?:\.exe)?|tcsh(?:\.exe)?|(?i:powershell|pwsh)(?:\.exe)?)\b["']?(?:\s+['\x22]?(?:--\S+|[-+][A-Za-z]+(?:[:.=]\S*)?['\x22]?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*|['\x22][A-Za-z_][A-Za-z0-9_]*['\x22]))?)*\s+['\x22]?(-[A-Za-z]*[ceECpr][A-Za-z]*)['\x22]?\s*'([^']*)'"#)
-         .expect("inline script single-quote regex compiles")
- });
+@@ -928,6 +928,10 @@ pub struct EvaluationResult {
+     /// still deny, but a policy/confidence downgrade cannot authorize
+     /// incomplete work.
+     pub regex_evaluation_incomplete: bool,
++    /// The first regex failure belonging to this evaluation, including an
++    /// executed child. Contains bounded rule identifiers and engine limits,
++    /// never command text, pattern source, or execution context.
++    pub regex_failure: Option<crate::perf::RegexFailure>,
+     /// Whether the evaluator proved that no enabled-pack keyword was present
+     /// and returned through the bounded quick-reject fast path.
+     pub quick_rejected: bool,
+@@ -943,6 +947,19 @@ pub struct EvaluationResult {
+ }
  
-@@ -1733,7 +1741,7 @@ static INLINE_SCRIPT_DOUBLE_QUOTE: LazyLock<Regex> = LazyLock::new(|| {
-     // Supports Windows .exe extensions: python.exe, python3.11.exe, etc.
-     // PowerShell host + quoted-path closing quote handled as in the single-qu
+ impl EvaluationResult {
++    /// Add bounded failure provenance when a positive finding coexists with
++    /// incomplete analysis. Keep the matched rule and its reason unchanged in
++    /// the evaluator; only presentation should add this diagnostic context.
++    #[must_use]
++    pub fn reason_with_incomplete_analysis<'a>(&self, base: &'a str) -> Cow<'a, str> {
++        match self.regex_failure {
++            Some(failure) => Cow::Owned(format!(
++                "{base}\nSafety analysis also incomplete: {failure}"
++            )),
++            None => Cow::Borrowed(base),
++        }
++    }
++
+     /// Create an "allowed" result.
+     #[inline]
+     #[must_use]
+@@ -955,6 +972,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -985,6 +1003,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: true,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1008,6 +1027,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: true,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1037,6 +1057,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1066,6 +1087,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1106,6 +1128,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1166,6 +1189,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1233,6 +1257,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1263,6 +1288,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1292,6 +1318,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1328,6 +1355,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1364,6 +1392,7 @@ impl EvaluationResult {
+             skipped_due_to_budget: false,
+          
+```
+
+**File**: `src/main.rs` (modified, +174/-25)
+```diff
+@@ -270,9 +270,9 @@ fn format_oversized_command_reason(command_len: usize, max_command_bytes: usize)
+     )
+ }
+ 
+-/// What a deadline miss reports beyond its stage (#571): the phase the budget
+-/// ran out in, the bounded analysis that stopped short (if one did before the
+-/// deadline), the wall time spent, and the CPU time the process actually got.
++/// What incomplete evaluation reports beyond its stage (#571, #643): the
++/// exhausted budget and bounded rule provenance, the wall time spent, and the
++/// CPU time the process actually got.
+ /// Wall time close to the budget with little CPU means the host did not
+ /// schedule dcg; CPU close to the wall time means the input was slow.
+ #[derive(Debug, Clone, Copy)]
+@@ -292,6 +292,24 @@ impl IndeterminateDetail {
+     }
+ }
+ 
++/// Use the selected evaluation's provenance, not a prior diagnostic or policy
++/// probe on this thread. Keep deadline evidence independently of regex failure.
++fn take_evaluation_exhaustion(failure: Option<perf::RegexFailure>) -> perf::BudgetExhaustion {
++    let mut exhaustion = perf::take_budget_exhaustion();
++    if let Some(failure) = failure {
++        let phase = match failure.operation {
++            perf::RegexOperation::Compile => ProfilePhase::RegexCompile,
++            _ => ProfilePhase::RegexMatch,
++        };
++        exhaustion.incomplete = Some((failure.operation.as_str(), Some(phase)));
++    } else if exhaustion.regex_failure.is_some() {
++        // An unrelated regex note cannot identify this result's failed step.
++        exhaustion.incomplete = None;
++    }
++    exhaustion.regex_failure = failure;
++    exhaustion
++}
++
+ fn format_indeterminate_reason(
+     stage: &str,
+     budget: Duration,
+@@ -323,13 +341,30 @@ fn format_indeterminate_reason(
+     // wording-jcpy). Some steps' clocks do grow with the remaining hook
+     // budget (dynamic-source analysis) or follow `[heredoc] timeout_ms`, so
+     // the message names no setting rather than one that may not help.
+-    if incomplete.is_some() {
++    if (detail.elapsed < budget || exhaustion.deadline.is_none())
++        && let Some(failure) = exhaustion.regex_failure
++    {
++        return format!(
++            "DCG could not finish analyzing this command ({context}): {failure}; \
++             the command was not verified. Review the affected rule and review the \
++             command manually."
++        );
++    }
++    if incomplete.is_some() || (detail.elapsed < budget && exhaustion.deadline.is_none()) {
+         return format!(
+             "DCG could not finish analyzing this command ({context}): an analysis step \
+              stopped before reaching a verdict, so the command was not verified. \
+              Review manually."
+         );
+     }
++    if let Some(failure) = exhaustion.regex_failure {
++        return format!(
++            "DCG could not complete safety evaluation within {}ms ({context}); \
++             command was not verified. Regex analysis also stopped: {failure}. \
++             Review the affected rule and command manually.",
++            budget.as_millis()
++        );
++    }
+     format!(
+         "DCG could not complete safety evaluation within {}ms ({context}); \
+          command was not verified. Review manually or increase hook_timeout_ms.",
+@@ -884,7 +919,7 @@ fn try_deny_unparseable_payload(
+                 ResolvedCommandOutcome::DeadlineExhausted {
+                     command: command.clone(),
+                     stage: "oversized_payload_window_scan",
+-                    exhaustion: perf::take_budget_exhaustion(),
++                    exhaustion: Box::new(perf::take_budget_exhaustion()),
+                 },
+                 &mut history_writer,
+             );
+@@ -1224,14 +1259,13 @@ enum ResolvedCommandOutcome {
+     /// Command exceeds `max_command_bytes` and cannot be evaluated. Publishes
+     /// the size-limit indeterminate message (no history row, as before).
+     OversizedCommand { command_len: usize },
+-    /// The shared wall-clock deadline was exhausted before or while
+-    /// evaluating this entry. Publishes the conservative indeterminate
+-    /// response — never a silent allow of unscanned entries.
++    /// Evaluation stopped at the shared wall-clock deadline or an incomplete
++    /// bounded analysis. Publishes the conservative indeterminate response.
+     DeadlineExhausted {
+         command: String,
+         stage: &'static str,
+         /// Where the budget ran out, taken right after the evaluation (#571).
+-        exhaustion: perf::BudgetExhaustion,
++        exhaustion: Box<perf::BudgetExhaustion>,
+     },
+     /// Deny / Ask / Warn candidate awaiting decisive selection.
+     DenyFamily(Box<ResolvedDenyFamily>),
+@@ -1344,8 +1378,8 @@ enum RecoveryAttempt {
+     /// The signal is active, but re-evaluating the rest of the line found
+     /// another verdict that stands on its own. Nothing was consumed.
+     Residual(Box<destructive_command_guard::evaluator::EvaluationResult>),
+-    /// The deadline ran out du
+```
+
+**File**: `src/output/test.rs` (modified, +14/-4)
+```diff
+@@ -89,9 +89,11 @@ impl TestResultBox {
+                     pattern_id: pattern_info.and_then(|p| p.pattern_name.clone()),
+                     pack_id: pattern_info.and_then(|p| p.pack_id.clone()),
+                     severity: pattern_info.and_then(|p| p.severity),
+-                    reason: pattern_info
+-                        .map(|p| p.reason.clone())
+-                        .unwrap_or_else(|| "Pattern matched".to_string()),
++                    reason: eval
++                        .reason_with_incomplete_analysis(
++                            pattern_info.map_or("Pattern matched", |p| p.reason.as_str()),
++                        )
++                        .into_owned(),
+                     explanation: pattern_info.and_then(|p| p.explanation.clone()),
+                     confidence: pattern_info.and_then(confidence_from_severity),
+                 }
+@@ -112,7 +114,14 @@ impl TestResultBox {
+             }
+             EvaluationDecision::Indeterminate => TestOutcome::Indeterminate {
+                 reason: if eval.skipped_due_to_budget {
+-                    "Evaluation budget exhausted before a safety decision".to_string()
++                    eval.reason_with_incomplete_analysis(
++                        "Evaluation budget exhausted before a safety decision",
++                    )
++                    .into_owned()
++                } else if let Some(failure) = eval.regex_failure {
++                    format!(
++                        "Safety evaluation did not complete: {failure}; command was not verified"
++                    )
+                 } else {
+                     "Safety evaluation could not reach a decision".to_string()
+                 },
+@@ -1045,6 +1054,7 @@ mod tests {
+             effective_mode: Some(crate::packs::DecisionMode::Deny),
+             skipped_due_to_budget: false,
+             regex_evaluation_incomplete: false,
++            regex_failure: None,
+             quick_rejected: false,
+             branch_context: None,
+             session_occurrence: None,
+```
+
+**File**: `src/packs/core/filesystem.rs` (modified, +1/-1)
+```diff
+@@ -8240,7 +8240,7 @@ mod tests {
+             "tee sub/.git/config",
+         ] {
+             assert!(
+-                candidate.matches_command(cmd),
++                candidate.matches_command(&pack.id, cmd),
+                 "the candidate regex must still match {cmd}; if it does not, the \
+                  #460 reasoning needs re-measuring rather than trusting"
+             );
+```
+
+**File**: `src/packs/external.rs` (modified, +33/-3)
+```diff
+@@ -803,6 +803,7 @@ impl ExternalPack {
+     #[must_use]
+     pub fn into_pack(self) -> Pack {
+         // Leak the dynamic strings to get 'static lifetimes
++        let pack_id: &'static str = Box::leak(self.id.into_boxed_str());
+         let name: &'static str = Box::leak(self.name.into_boxed_str());
+         let description: &'static str = self
+             .description
+@@ -827,7 +828,8 @@ impl ExternalPack {
+             .map(|p| {
+                 let name: &'static str = Box::leak(p.name.into_boxed_str());
+                 SafePattern {
+-                    regex: LazyCompiledRegex::new(Box::leak(p.pattern.into_boxed_str())),
++                    regex: LazyCompiledRegex::new(Box::leak(p.pattern.into_boxed_str()))
++                        .with_rule_identity(pack_id, Some(name)),
+                     name,
+                 }
+             })
+@@ -877,7 +879,8 @@ impl ExternalPack {
+                 });
+ 
+                 DestructivePattern {
+-                    regex: LazyCompiledRegex::new(Box::leak(p.pattern.into_boxed_str())),
++                    regex: LazyCompiledRegex::new(Box::leak(p.pattern.into_boxed_str()))
++                        .with_rule_identity(pack_id, Some(name)),
+                     reason,
+                     name: Some(name),
+                     severity: p.severity.into(),
+@@ -889,7 +892,7 @@ impl ExternalPack {
+             .collect();
+ 
+         Pack::new(
+-            self.id,
++            pack_id.to_owned(),
+             name,
+             description,
+             keywords,
+@@ -1158,6 +1161,33 @@ mod tests {
+         )
+     }
+ 
++    #[test]
++    fn loaded_rules_retain_failure_identity_before_pack_matching_issue_643() {
++        let command = format!("{}!", "a".repeat(80));
++        for safe in [false, true] {
++            let pack = parse_pack_string(&width_test_pack(r"^(a|aa)+\1$", safe))
++                .unwrap()
++                .into_pack();
++            let scope = crate::packs::regex_engine::RegexEvaluationScope::enter();
++            let rule = if safe {
++                &pack.safe_patterns[0].regex
++            } else {
++                &pack.destructive_patterns[0].regex
++            };
++            assert!(rule.find_from(&command, 0).is_none());
++            let failure = scope.failure().unwrap();
++            assert_eq!(failure.pack_id.unwrap().as_str(), "test.width");
++            assert_eq!(failure.pattern_id.unwrap().as_str(), "width");
++            assert_eq!(failure.operation, crate::perf::RegexOperation::FindFrom);
++            assert_eq!(
++                failure.cause,
++                crate::perf::RegexFailureCause::BacktrackLimit {
++                    steps: crate::packs::regex_engine::BACKTRACK_LIMIT
++                }
++            );
++        }
++    }
++
+     #[test]
+     fn zero_width_analysis_keeps_consuming_punctuation_and_nullable_rules() {
+         for (pattern, witness) in [
+```
+
+---
+
+### Incident Patch 2: `3cdb2240` (2026-11-05)
+**Commit Message**: fix(powershell): close Tee binding bypass and guard Out-File [skip ci]
+
+Reuse the existing dialect lexer and parameter binder for Tee-Object and Out-File truncation policy. Bind named and positional targets, including Out-File's remaining Encoding slot, and preserve Append, NoClobber, WhatIf and credential/Git policy independence.
+
+A pending InputObject consumes the real -- terminator before its value: apparent safety switches after it are data. Preserve quoted and escaped markers using raw token provenance. Keep sanitized original PowerShell source under Unknown so module separators and atomic command names survive normalization.
+
+Add hook, CLI, binding and native disposable-file regressions for the security bypass and safe controls.
+
+**File**: `src/evaluator.rs` (modified, +92/-23)
+```diff
+@@ -28523,6 +28523,7 @@ fn evaluate_packs_with_allowlists_at_depth(
+                 pack_id,
+                 pack,
+                 core_filesystem_command,
++                dialect_semantic_masked.as_ref(),
+                 shell_dialect,
+                 &core_filesystem_segment_ranges,
+                 original_command,
+@@ -34036,20 +34037,20 @@ fn redirect_targets_are_new_home_files(command: &str, dialect: ShellDialect) ->
+         .is_some_and(|home| redirect_targets_are_new_home_files_with_home(command, dialect, &home))
+ }
+ 
+-/// Apply the truncating-redirect policy to Tee-Object's bound file operand.
++/// Apply the truncating-redirect policy to a PowerShell writer's bound file operand.
+ /// No synthetic shell command is constructed: quoting, parameter arity and
+ /// append/variable selection have already been decided by the shared parser.
+-fn powershell_tee_truncation_hits(
++fn powershell_file_truncation_hits(
+     source: &str,
+ ) -> Result<
+     Vec<crate::packs::core::credential_files::CredentialFileWrite>,
+     crate::packs::core::credential_files::WindowsShellParseIncomplete,
+ > {
+     use crate::packs::core::credential_files::{
+-        CredentialFileWrite, PowerShellTruncationTarget, powershell_tee_truncation_targets,
++        CredentialFileWrite, PowerShellTruncationTarget, powershell_file_truncation_targets,
+     };
+ 
+-    Ok(powershell_tee_truncation_targets(source)?
++    Ok(powershell_file_truncation_targets(source)?
+         .into_iter()
+         .filter_map(|target: PowerShellTruncationTarget| {
+             // Credential and .git writes retain their stronger, independent
+@@ -34146,9 +34147,9 @@ fn powershell_tee_truncation_hits(
+             Some(CredentialFileWrite {
+                 span: target.span,
+                 reason: if unresolved {
+-                    "Tee-Object without a proven enabled -Append may truncate a sensitive file at an unresolved destination. Resolve and inspect the path first.".to_string()
++                    "This PowerShell file writer may truncate a sensitive file at an unresolved destination. Resolve and inspect the path first.".to_string()
+                 } else {
+-                    format!("Tee-Object without -Append overwrites `{}`; the existing sensitive file contents would be lost. Use -Append to preserve them or choose a scratch file.", target.path)
++                    format!("This PowerShell file writer overwrites `{}`; the existing sensitive file contents would be lost. Use -Append to preserve them or choose a scratch file.", target.path)
+                 },
+                 rule,
+             })
+@@ -34469,6 +34470,7 @@ fn evaluate_core_filesystem_pack(
+     pack_id: &str,
+     pack: &crate::packs::Pack,
+     command_for_packs: &str,
++    native_semantic_source: &str,
+     shell_dialect: crate::normalize::ShellDialect,
+     segment_ranges: &[(usize, usize)],
+     original_command: &str,
+@@ -34700,18 +34702,20 @@ fn evaluate_core_filesystem_pack(
+             // in one invocation, so an earlier allowlisted Git operand must
+             // not conceal a later credential operand. The sanitized source
+             // preserves the caller's proof that heredoc/program data is inert.
++            // Keep its native quotes and module separator: generic dequoting
++            // can split one computed name or erase a qualified cmdlet name.
+             protected_hits.extend(
+                 crate::packs::core::credential_files::classify_powershell_credential_writes(
+-                    dialect_source,
++                    native_semantic_source,
+                 )
+                 .into_iter()
+                 .chain(
+                     crate::packs::core::credential_files::classify_git_redirect_writes(
+-                        dialect_source,
++                        native_semantic_source,
+                         ShellDialect::PowerShell,
+                     ),
+                 )
+-                .map(|hit| (hit, 0, normalized_offset)),
++                .map(|hit| (hit, 0, Some(0))),
+             );
+         }
+         if !powershell_truncation_scanned
+@@ -34721,15 +34725,17 @@ fn evaluate_core_filesystem_pack(
+             )
+         {
+             powershell_truncation_scanned = true;
+-            let (tee_source, tee_offset) = if shell_dialect == ShellDialect::PowerShell {
++            let (writer_source, writer_offset) = if shell_dialect == ShellDialect::PowerShell {
+                 (original_command, Some(0))
+             } else {
+                 // Unknown is a union of readings, but must not restore text
+                 // already proven to be inert heredoc/program data.
+-                (dialect_source, normalized_offset)
++                (native_semantic_source, Some(0))
+             };
+-            match powershell_tee_truncation_hits(tee_source) {
+-                Ok(hits) => protected_hits.extend(hits.into_iter().map(|hit| (hit, 0, tee_offset))),
++            match powershell_file_truncation_hits(writer_source) {
++             
+```
+
+**File**: `src/packs/core/credential_files.rs` (modified, +2/-2)
+```diff
+@@ -19,8 +19,8 @@ pub(crate) use shell::{
+     PowerShellInvokedCommand, PowerShellTruncationTarget, WindowsShellParseIncomplete,
+     classify_credential_file_write, classify_git_redirect_writes,
+     classify_powershell_credential_writes, names_protected_file, names_protected_git_internal,
+-    names_windows_shell_writer, powershell_literal_invocations, powershell_tee_scan_required,
+-    powershell_tee_truncation_targets,
++    names_windows_shell_writer, powershell_file_truncation_targets,
++    powershell_file_writer_scan_required, powershell_literal_invocations,
+ };
+ 
+ use crate::normalize::ShellDialect;
+```
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +2/-2)
+```diff
+@@ -33,8 +33,8 @@ mod windows_shells;
+ 
+ pub(crate) use windows_shells::{
+     PowerShellInvokedCommand, PowerShellTruncationTarget, WindowsShellParseIncomplete,
+-    powershell_literal_invocations, powershell_tee_scan_required,
+-    powershell_tee_truncation_targets,
++    powershell_file_truncation_targets, powershell_file_writer_scan_required,
++    powershell_literal_invocations,
+ };
+ 
+ /// Rule name under `core.filesystem`. The pattern entry in
+```
+
+**File**: `src/packs/core/credential_files/shell/windows_shells.rs` (modified, +424/-38)
+```diff
+@@ -138,7 +138,7 @@ impl LexBudget {
+     }
+ }
+ 
+-/// A truncating Tee-Object destination, after PowerShell parameter binding.
++/// A truncating file-output destination, after PowerShell parameter binding.
+ /// Keep both the actual decoded path and the volume-independent policy view;
+ /// only the former can support a local filesystem proof.
+ #[derive(Debug)]
+@@ -152,7 +152,7 @@ pub(crate) struct PowerShellTruncationTarget {
+ 
+ /// Collect writes from executable commands, including nested expressions.
+ /// This uses exactly the lexer and binder used by credential protection.
+-pub(crate) fn powershell_tee_truncation_targets(
++pub(crate) fn powershell_file_truncation_targets(
+     source: &str,
+ ) -> Result<Vec<PowerShellTruncationTarget>, WindowsShellParseIncomplete> {
+     Ok(lex(source, ShellDialect::PowerShell)?
+@@ -166,16 +166,16 @@ pub(crate) fn powershell_tee_truncation_targets(
+                 })
+                 .collect();
+             let (name, rest) = args.split_first()?;
+-            if !tee_object_name(&name.word)
+-                || (!name.invoked
+-                    && source[name.word.range.clone()]
+-                        .chars()
+-                        .next()
+-                        .is_some_and(|ch| is_single_quote(ch) || is_double_quote(ch)))
++            let cmdlet_name = truncating_file_cmdlet_name(&name.word)?;
++            if !name.invoked
++                && source[name.word.range.clone()]
++                    .chars()
++                    .next()
++                    .is_some_and(|ch| is_single_quote(ch) || is_double_quote(ch))
+             {
+                 return None;
+             }
+-            let command = cmdlet("tee-object")?;
++            let command = cmdlet(cmdlet_name)?;
+             let mut bound = bind(&command, rest);
+             let mut targets = if name.word.as_string() == "tee" {
+                 native_tee_operands(rest)
+@@ -186,10 +186,17 @@ pub(crate) fn powershell_tee_truncation_targets(
+             };
+             // Splatting may supply a destination the visible argv does not
+             // name. Do not guess its keys or borrow an append exemption.
+-            if bound.targets.is_empty() {
++            if bound.targets.is_empty()
++                || (command.kind == WriterKind::OutFile && !bound.named_file_target)
++            {
+                 bound.targets.append(&mut bound.splats);
+             }
+-            if !bound.binding_error && !bound.variable && !bound.append {
++            if !bound.binding_error
++                && !bound.variable
++                && !bound.append
++                && !bound.what_if
++                && !bound.no_clobber
++            {
+                 for target in bound.targets {
+                     if !targets.iter().any(|existing| {
+                         existing.text == target.text
+@@ -232,17 +239,24 @@ pub(crate) fn powershell_tee_truncation_targets(
+ }
+ 
+ fn tee_object_name(word: &Word) -> bool {
+-    word.is_all_literal()
+-        && matches!(
+-            word.as_string().to_ascii_lowercase().as_str(),
+-            "tee" | "tee-object" | "microsoft.powershell.utility/tee-object"
+-        )
++    truncating_file_cmdlet_name(word) == Some("tee-object")
++}
++
++fn truncating_file_cmdlet_name(word: &Word) -> Option<&'static str> {
++    if !word.is_all_literal() {
++        return None;
++    }
++    match word.as_string().to_ascii_lowercase().as_str() {
++        "tee" | "tee-object" | "microsoft.powershell.utility/tee-object" => Some("tee-object"),
++        "out-file" | "microsoft.powershell.utility/out-file" => Some("out-file"),
++        _ => None,
++    }
+ }
+ 
+-/// Select the filesystem pack for every decoded Tee invocation. Binding is
+-/// deliberately left to the classifiers: -Append still writes credentials
+-/// and Git internals, even when no general truncation target remains.
+-pub(crate) fn powershell_tee_scan_required(source: &str) -> bool {
++/// Select the filesystem pack for every decoded file-output invocation.
++/// Binding is deliberately left to the classifiers: -Append and -NoClobber
++/// can still write credentials and Git internals without truncating a file.
++pub(crate) fn powershell_file_writer_scan_required(source: &str) -> bool {
+     let Ok(commands) = lex(source, ShellDialect::PowerShell) else {
+         // Keep the pack selected so its mandatory fallible whole-command
+         // pass reports incomplete analysis instead of allowing a quick exit.
+@@ -255,7 +269,7 @@ pub(crate) fn powershell_tee_scan_required(source: &str) -> bool {
+         }) else {
+             return false;
+         };
+-        tee_object_name(&name.word)
++        truncating_file_cmdlet_name(&name.word).is_some()
+             && (name.invoked
+                 || !source
+                     .get(name.word.range.clone())
+@@ -355,7 +369,7 @@ pub(super) fn classify(segment: &str, dialect: ShellDialect) -> Option<Credentia
+ }
+ 
+ pub(super) fn classify_all(segment: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
+-    /
+```
+
+**File**: `src/packs/core/filesystem.rs` (modified, +2/-2)
+```diff
+@@ -1925,13 +1925,13 @@ fn segment_names_semantic_writer(segment: &str) -> bool {
+ /// index result before deciding to skip the pack.
+ pub(crate) fn filesystem_semantic_scan_required(command: &str, dialect: ShellDialect) -> bool {
+     rm_semantic_scan_required(command, dialect)
+-        // General Tee truncation has no credential-path anchor. Reuse the
++        // General file-output truncation has no credential-path anchor. Reuse the
+         // dialect lexer here as well, including Unicode whitespace and
+         // escaped command names that the keyword tokenizer cannot see.
+         // Append still needs credential and Git protection, so candidate
+         // selection must not depend on a truncating target being present.
+         || (matches!(dialect, ShellDialect::PowerShell | ShellDialect::Unknown)
+-            && super::credential_files::powershell_tee_scan_required(command))
++            && super::credential_files::powershell_file_writer_scan_required(command))
+         || (dialect == ShellDialect::Cmd
+             && command.contains('>')
+             && command.contains(['%', '!', '^']))
+```
+
+**File**: `tests/repro_492_windows_git_redirects.rs` (modified, +404/-1)
+```diff
+@@ -166,6 +166,28 @@ impl Fixture {
+             "[{dialect}] {command:?}: {full}"
+         );
+     }
++
++    fn cli_denied_by_rule(&self, dialect: &str, command: &str, rule: &str) {
++        let output = self
++            .process()
++            .args([
++                "test",
++                "--with-packs",
++                "core.filesystem",
++                "--dialect",
++                dialect,
++                "--format",
++                "json",
++                command,
++            ])
++            .output()
++            .expect("dcg test JSON");
++        let json: serde_json::Value =
++            serde_json::from_slice(&output.stdout).expect("complete CLI decision JSON");
++        assert_eq!(output.status.code(), Some(1), "{dialect} {command}: {json}");
++        assert_eq!(json["decision"], "deny", "{dialect} {command}: {json}");
++        assert_eq!(json["rule_id"], rule, "{dialect} {command}: {json}");
++    }
+ }
+ 
+ #[test]
+@@ -462,6 +484,51 @@ fn issue_642_tee_option_terminator_preserves_positional_filename_binding() {
+     }
+ }
+ 
++#[test]
++fn issue_642_pending_inputobject_terminator_cannot_borrow_safe_switches() {
++    let fixture = Fixture::new(&[]);
++    let target = fixture.dir.path().join("home/important.txt");
++    std::fs::write(&target, "keep this content").expect("existing protected home file");
++    for cmdlet in ["Tee-Object", "Out-File"] {
++        for input in ["-Append", "-NoClobber", "-WhatIf"] {
++            // Native PowerShell skips the terminator while binding the
++            // pending InputObject. The next word is DATA; the final word
++            // binds the file target, so each command overwrites that file.
++            let command = format!("{cmdlet} -InputObject -- {input} ~/important.txt");
++            for tool in ["PowerShell", "Shell"] {
++                fixture.denied(tool, &command, HOME_TRUNCATE);
++            }
++            for dialect in ["powershell", "unknown"] {
++                fixture.cli_denied(dialect, &command, "redirect-truncate-root-home");
++            }
++        }
++        // A quoted -- stays data in both readings. In a proven PowerShell
++        // reading, escaping either dash also leaves Append as a switch.
++        for tool in ["PowerShell", "Shell"] {
++            fixture.allowed(
++                tool,
++                &format!("{cmdlet} -InputObject '--' -Append ~/important.txt"),
++            );
++        }
++        for input in ["`--", "-`-"] {
++            let command = format!("{cmdlet} -InputObject {input} -Append ~/important.txt");
++            fixture.allowed("PowerShell", &command);
++            // Without a declared dialect, the same backtick is unresolved
++            // POSIX syntax. Keep that independent fail-closed policy.
++            fixture.denied("Shell", &command, "heredoc.posix:substitution-unverified");
++            fixture.cli_denied_by_rule(
++                "unknown",
++                &command,
++                "heredoc.posix:substitution-unverified",
++            );
++        }
++    }
++    assert_eq!(
++        std::fs::read_to_string(target).expect("unexecuted fixture target"),
++        "keep this content"
++    );
++}
++
+ #[test]
+ fn issue_642_one_tee_rule_grant_cannot_hide_another_tee_write() {
+     let home = Fixture::new(&[HOME_TRUNCATE]);
+@@ -799,7 +866,12 @@ fn issue_642_stop_parsing_cannot_borrow_discarded_safe_parameters() {
+         // whitespace before the next parameter.
+         "Tee-Object -InputObject 'NEW'-FilePath /etc/hosts",
+     ] {
+-        fixture.denied("PowerShell", command, HOME_TRUNCATE);
++        for tool in ["PowerShell", "Shell"] {
++            fixture.denied(tool, command, HOME_TRUNCATE);
++        }
++        for dialect in ["powershell", "unknown"] {
++            fixture.cli_denied(dialect, command, "redirect-truncate-root-home");
++        }
+     }
+ }
+ 
+@@ -1121,3 +1193,334 @@ $completed.Add('literalpath_glob')
+     }
+     eprintln!("Native Tee-Object semantics: {report}");
+ }
++
++#[test]
++fn outfile_named_positional_and_encoding_binding_keep_truncation_verdicts() {
++    let fixture = Fixture::new(&[]);
++    for command in [
++        "Out-File -FilePath /etc/hosts",
++        "Out-File -InputObject NEW -FilePath /etc/hosts",
++        "Out-File -InputObject: -WhatIf -FilePath /etc/hosts",
++        // A separate stop-parsing InputObject discards the following
++        // parameter; its apparent safety switch never reaches the binder.
++        "Out-File -InputObject '--%' -Append /etc/hosts",
++        "Out-File -InputObject '--%' -NoClobber /etc/hosts",
++        "Out-File -InputObject '--%' -WhatIf /etc/hosts",
++        "Out-File -InputObject '--%' -FilePath /etc/hosts",
++        "Out-File -InputObject --% /etc/hosts",
++        "'NEW' | Out-File /etc/hosts",
++        "'NEW' | Out-File /etc/hosts utf8",
++        "'NEW' | Out-File -FilePath /etc/hosts utf8",
++        "'NEW' | Out-File utf8 -FilePath /etc/hosts",
++        "'NEW' | Out-File -Encoding utf8 /etc/hosts",
++        "'NEW' | Out-File utf8 -Li
+```
+
+---
+
+### Incident Patch 3: `688a8bbe` (2026-11-05)
+**Commit Message**: fix(evaluator): count a piped text filter whose name may be rebound, read .pdb as a file name (#611) [skip ci]
+
+12e7a9cd spares a stage that is one plain text filter (`... 2>&1 | grep -i
+node`) when an interpreter setting such as NODE_OPTIONS appears elsewhere in
+the command, unless the command defines a `name()` function or contains the
+word alias. Other spellings also make the filter's name run another program.
+They reached the relaxed path and still started the interpreter, so they were
+denied before 12e7a9cd and allowed after it:
+
+- `function grep { env "$@"; }`, which has no parentheses
+- `hash -p /usr/bin/env grep` and `BASH_CMDS[grep]=/usr/bin/env`
+- an alias defined as `a\lias` or through `BASH_ALIASES[grep]=env`
+- `export PATH=/opt/shim:$PATH`, or `PATH=/opt/shim grep node` on the stage
+- `eval '...'`, `. ./helpers.sh` and `enable -f ./x.so grep`
+
+With grep running env, `cat x | grep node` starts node, and
+NODE_OPTIONS=--require=/dev/stdin makes node load the piped text. The filter's
+name now also has to pass heredoc::shell_name_may_be_rebound, the check that
+heredoc bodies already use, and the command must not name BASH_ALIASES or
+BASH_CMDS. Rebinding another name changes
+
+**File**: `src/evaluator.rs` (modified, +80/-4)
+```diff
+@@ -9764,8 +9764,10 @@ fn piped_inline_program_is_inert(language: crate::heredoc::ScriptLanguage, code:
+             // A name looked up at run time (`os.__dict__["sys" + "tem"]`), and
+             // a console or debugger that reads its commands from stdin.
+             r"|__dict__|__getattribute__|__globals__|__subclasses__|attrgetter|methodcaller",
+-            r"|pdb|breakpoint|interact|InteractiveConsole|InteractiveInterpreter|IPython",
++            r"|breakpoint|interact|InteractiveConsole|InteractiveInterpreter|IPython",
+             r"|bpython|ptpython)\b",
++            // `pdb` after a `.` is a file name's suffix (`open("model.pdb")`).
++            r"|(?:^|[^.\w])pdb\b",
+             r"|\b(?:import|from)\s+code\b|(?:^|[^.\w])compile\s*\(|\.\s*system\b|\bsystem\s*\(",
+             // `list.remove` and `str.replace` are everywhere, so these count
+             // only once a module that deletes through them has been named.
+@@ -9921,7 +9923,9 @@ static STAGE_NAMES_AN_INTERPRETER: LazyLock<regex::Regex> = LazyLock::new(|| {
+ /// filter named as the stage's first word counts, with no wrapper, and none of
+ /// whose options runs another program (so not `sort`, `rg` or `less`). An
+ /// unquoted expansion, glob, grouping, redirection or second statement, a
+-/// function the command defines and an `alias` all keep the stage counted.
++/// function the command defines, an `alias`, and anything else that may rebind
++/// the filter's name ([`crate::heredoc::shell_name_may_be_rebound`]) all keep
++/// the stage counted.
+ fn stage_is_a_plain_text_filter(command: &str, consumer: &str) -> bool {
+     const TEXT_FILTERS: &[&str] = &[
+         "grep", "egrep", "fgrep", "head", "tail", "wc", "uniq", "cut", "tr", "tee", "cat", "nl",
+@@ -9944,15 +9948,28 @@ fn stage_is_a_plain_text_filter(command: &str, consumer: &str) -> bool {
+             (None, _) => {}
+         }
+     }
+-    if quote.is_some() || escaped || command_defines_function(command) || command.contains("alias")
++    // `BASH_ALIASES[grep]=…` and `BASH_CMDS[grep]=…` rebind a name as `alias`
++    // and `hash -p` do.
++    if quote.is_some()
++        || escaped
++        || command_defines_function(command)
++        || command.contains("alias")
++        || command.contains("BASH_ALIASES")
++        || command.contains("BASH_CMDS")
+     {
+         return false;
+     }
+     shell_words::split(consumer).is_ok_and(|words| {
+         words
+             .iter()
+             .find(|word| !is_shell_assignment(word))
+-            .is_some_and(|program| TEXT_FILTERS.contains(&program.as_str()))
++            .is_some_and(|program| {
++                // `function grep { env "$@"; }`, `hash -p /usr/bin/env grep`,
++                // a quoted `al''ias`, a `PATH` change, `eval` or `source` can
++                // make the filter's name start an interpreter.
++                TEXT_FILTERS.contains(&program.as_str())
++                    && !crate::heredoc::shell_name_may_be_rebound(command, program)
++            })
+     })
+ }
+ 
+@@ -43649,6 +43666,65 @@ mod tests {
+         }
+     }
+ 
++    /// A filter's name that the command may rebind is no plain text filter:
++    /// with `grep` made to run `env`, `… | grep node` starts node, and the
++    /// interpreter setting reaches it. A rebinding of another name changes
++    /// nothing (#611).
++    #[test]
++    fn interpreter_setting_spares_no_filter_whose_name_may_be_rebound_611() {
++        let config = default_config();
++        let pack_ids: Vec<String> = config.enabled_pack_ids().into_iter().collect();
++        let pack_ids: Vec<&str> = pack_ids.iter().map(String::as_str).collect();
++        let evaluate =
++            |cmd: &str| evaluate_with_pack_ids_in_dialect(cmd, &pack_ids, ShellDialect::Posix);
++        for cmd in [
++            "hash -p /usr/bin/gcc cc; NODE_OPTIONS=--max-old-space-size=8192 npm run build 2>&1 | grep -i node",
++            "function build { npm run build; }; export NODE_OPTIONS=--max-old-space-size=8192; build 2>&1 | grep -i node",
++        ] {
++            let result = evaluate(cmd);
++            assert!(result.is_allowed(), "{cmd:?} must be allowed: {result:?}");
++        }
++        let setting = "export NODE_OPTIONS=--require=/dev/stdin";
++        let allowed: Vec<String> = [
++            format!(r#"function grep {{ env "$@"; }}; {setting}; cat x | grep node"#),
++            format!("function grep {{ env \"$@\"; }}\n{setting}\ncat x | grep node"),
++            format!("hash -p /usr/bin/env grep; {setting}; cat x | grep node"),
++            format!("a\\lias grep=env\n{setting}; cat x | grep node"),
++            format!("al''ias grep=env\n{setting}; cat x | grep node"),
++            format!("BASH_ALIASES[grep]=env\n{setting}; cat x | grep node"),
++            format!("BASH_CMDS[grep]=/usr/bin/env; {setting}; cat x | grep node"),
++            format!("export PATH=/opt/shim:$PATH; {setting}; cat x | grep node"),
++            format!("{setting}; cat x | PATH=/opt/shim grep node"),
++            format!(r#"eval '
 ```
 
 #### Recent Merged Pull Requests:
@@ -3227,83 +3607,51 @@ short list of shell names, so the same command still passed in these shapes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): prove dynamic redirect targets independently (#634) [skip ci]
+## X. diagnostics): attribute incomplete regex evaluation [skip ci]
 
 **RULE**:
-When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/custom-packs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0337716e`: core): prove dynamic redirect targets independently (#634) [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f87ba4d5`: diagnostics): attribute incomplete regex evaluation [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/custom-packs.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// unknown values, unsupported control flow, traversal, and protected files
-/// retain the dynamic-path denial. Every dynamic truncating target in a
-/// segment needs its own proof; literal targets still face the other rules.
-    proven_variable_redirect_offsets(
-        source,
-        segment_ranges,
-        segment_start,
-        dialect_segment,
-        dialect,
-        require_proven_scope,
-    )
-    .is_some()
-}
+### Diagnosing Incomplete Rule Evaluation
 
-/// Keep the proof and its exact operator offsets together. Embedded scripts
-/// use these offsets to recover their complete source, so proving just the
-/// first target must never authorize another redirect in the same statement.
-fn proven_variable_redirect_offsets(
-    source: &str,
-    segment_ranges: &[(usize, usize)],
-    segment_start: usize,
-    segment: &str,
-    dialect: ShellDialect,
-    require_proven_scope: bool,
-) -> Option<Vec<usize>> {
-        return None;
-    if !segment.contains('>')
-        || segment.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-        || segment_ranges.len() > MAX_REDIRECT_PROOF_SEGMENTS
-    {
-        return None;
-    }
-    let redirects = posix_output_redirects_for_proof(segment, false)?;
-    let mut proved_dynamic_targ
+A regex that cannot finish leaves safety evaluation **unverified**. Its failure
+is not a destructive-pattern match. When available, the diagnostic identifies
+the pack, pattern name, exhausted limit, and operation, for example:
+
+```text
+pattern test.slow_lookahead:slow exceeded its per-pattern regex backtracking limit of 100000 steps (operation: find_from)
+```
+
+The backtracking engine has a **100,000-step limit per regex operation**. This
+is a work limit, not a millisecond timeout. `dcg config` reports it under
+`Regex evaluation`; JSON reports `regex.backtrack_limit_steps`. The default
+50 ms shown under `Heredoc scanning` is the **extraction timeout**, reported as
+`heredoc.timeout_ms` in JSON. Increasing `hook_timeout_ms` does not change the
+regex work limit.
+
+If the hook deadline also expires, the diagnostic reports that deadline while
+retaining the known regex rule and work limit. The two limits are independent.
+
+Inspect the named rule for repeated whole-input lookaheads and broad searches.
+An unanchored expression can retry an expensive lookahead at many start
+positions. If the rule is intended to inspect the whole input from its start,
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// unknown values, unsupported control flow, traversal, protected files, and
-/// additional non-fd redirects all retain the dynamic-path denial.
-        return false;
-    let Some(redirect) = first_unquoted_output_redirect(dialect_segment, ShellDialect::Posix)
-    else {
-        return false;
-    };
-    let Some(mut target) = dialect_segment.get(redirect + 1..).map(str::trim_start) else {
-        return false;
-    };
-    for prefix in ['>', '|'] {
-        if let Some(rest) = target.strip_prefix(prefix) {
-            target = rest.trim_start();
-    let (token, outer_suffix, trailing) = if let Some(rest) = target.strip_prefix('"') {
-        let chunk_len = after_quote
-            .take_while(|b| b.is_ascii_alphanumeric() || matches!(b, b'_' | b'-' | b'.' | b'/'))
-            .count();
-        let trailing = &after_quote[chunk_len..];
-        if !trailing.is_empty()
-            && !trailing.as_bytes().first().is_some_and(|byte| {
-                byte.is_ascii_whitespace() || matches!(byte, b';' | b'|' | b'&' | b'<' | b'>')
-            })
-        (&rest[..end], &after_quote[..chunk_len], trailing)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0337716e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f87ba4d5` are properly handled with clean fallback behavior.

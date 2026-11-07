@@ -7989,3 +7989,5 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `434d3e0b` | Multi-dimensional audit evidence | 2026-11-07T03:21:45.547Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `46f93879` | Multi-dimensional audit evidence | 2026-11-07T03:21:47.050Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `e4302f16` | Multi-dimensional audit evidence | 2026-11-07T03:29:38.512Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `acc63448` | Multi-dimensional audit evidence | 2026-11-07T03:41:46.411Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `800f4c49` | Multi-dimensional audit evidence | 2026-11-07T03:41:53.888Z |
