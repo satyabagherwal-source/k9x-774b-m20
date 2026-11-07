@@ -7974,3 +7974,5 @@
 | `CYCLE-20261107-H8HM` | `2026-11-07T03:01:28.762Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac74fa5d...`) |
 | `CYCLE-20261107-HAFN` | `2026-11-07T03:01:31.283Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da2d92fd...`) |
 | `CYCLE-20261107-HYYB` | `2026-11-07T03:02:03.059Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`00e509e1...`) |
+| `CYCLE-20261107-XSYU` | `2026-11-07T03:14:21.798Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7aa5e247...`) |
+| `CYCLE-20261107-XVQ6` | `2026-11-07T03:14:25.374Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`737920fd...`) |

@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "d56502a3",
+    "sourceVersion": "c9a37f4b",
     "license": "AGPL-3.0",
-    "contentHash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
-    "lastHarvestedAt": "2026-11-04T23:48:31.087Z",
+    "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
+    "lastHarvestedAt": "2026-11-07T03:14:25.377Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "d3d4a37a",
+    "sourceVersion": "439ea266",
     "license": "MIT",
-    "contentHash": "af9ea2322064f4dc5663c10828d4bdcece9840d015833a2e761ddcfbb10fb44b",
-    "lastHarvestedAt": "2026-10-27T17:16:54.327Z",
+    "contentHash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
+    "lastHarvestedAt": "2026-11-07T03:14:21.802Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {

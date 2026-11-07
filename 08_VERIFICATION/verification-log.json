@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-UBXQ",
-    "timestamp": "2026-11-05T02:40:19.695Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "d38967e868f32726518ac63e2a269915af755af73dc906270778bb93834c5b6b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-UF8E",
-    "timestamp": "2026-11-05T02:40:23.966Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "06d1128621a03a3a3225aad86ef42826c7f21f7656a6e0c198a54631b3844a78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-3Q2W",
     "timestamp": "2026-11-05T02:47:37.928Z",
     "repository": "Cloudflare/clef",
@@ -7492,6 +7462,36 @@
     "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-XSYU",
+    "timestamp": "2026-11-07T03:14:21.798Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-XVQ6",
+    "timestamp": "2026-11-07T03:14:25.374Z",
+    "repository": "giancarloerra/SocratiCode",
+    "learningId": "learn-github-giancarloerra-socraticode",
+    "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

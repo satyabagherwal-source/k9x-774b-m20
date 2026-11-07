@@ -7983,3 +7983,5 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `8cda9065` | Multi-dimensional audit evidence | 2026-11-07T03:01:28.765Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `50d59c21` | Multi-dimensional audit evidence | 2026-11-07T03:01:31.286Z |
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-07T03:02:03.063Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `439ea266` | Multi-dimensional audit evidence | 2026-11-07T03:14:21.802Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `c9a37f4b` | Multi-dimensional audit evidence | 2026-11-07T03:14:25.377Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T03:02:02.975Z",
+  "last_updated": "2026-11-07T03:14:25.282Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15663,11 +15663,16 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "d56502a3",
-      "content_hash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
+      "source_version": "c9a37f4b",
+      "content_hash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "release v1.16.2",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1725,
           "title": "symbol-graph): retry Qdrant requests once on a closed connection",
@@ -15694,7 +15699,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:48:31.021Z",
+      "verified_at": "2026-11-07T03:14:25.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46496,11 +46501,16 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "d3d4a37a",
-      "content_hash": "af9ea2322064f4dc5663c10828d4bdcece9840d015833a2e761ddcfbb10fb44b",
+      "source_version": "439ea266",
+      "content_hash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1485 from octodns/fix-txt-half-quoted",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2088,
           "title": "Merge pull request #1466 from octodns/clarify-changelog-guidance",
@@ -46527,7 +46537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:16:54.249Z",
+      "verified_at": "2026-11-07T03:14:21.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

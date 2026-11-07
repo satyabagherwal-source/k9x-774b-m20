@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T03:02:03.068Z",
-  "total_cycles_completed": 7939,
-  "total_learnings_persisted": 7939,
-  "total_rules_promoted": 7591,
+  "last_updated": "2026-11-07T03:14:25.382Z",
+  "total_cycles_completed": 7941,
+  "total_learnings_persisted": 7941,
+  "total_rules_promoted": 7593,
   "history": [
-    {
-      "timestamp": "2026-11-05T19:06:59.945Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T19:15:19.445Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T19:22:14.597Z",
       "repository": "iii-hq/iii",
@@ -1403,6 +1389,20 @@
       "repository": "LiquidAI/LFM3-Audio-2B",
       "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:14:21.807Z",
+      "repository": "octodns/octodns",
+      "learningId": "learn-github-octodns-octodns",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T03:14:25.382Z",
+      "repository": "giancarloerra/SocratiCode",
+      "learningId": "learn-github-giancarloerra-socraticode",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

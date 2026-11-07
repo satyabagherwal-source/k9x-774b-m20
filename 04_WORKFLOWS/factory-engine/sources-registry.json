@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:02:05.658Z",
-    "lastVerified": "2026-11-07T03:02:05.658Z",
+    "lastChecked": "2026-11-07T03:14:27.938Z",
+    "lastVerified": "2026-11-07T03:14:27.938Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -246,8 +246,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T02:32:04.410Z",
-    "lastVerified": "2026-11-07T02:32:04.410Z",
+    "lastChecked": "2026-11-07T03:14:19.238Z",
+    "lastVerified": "2026-11-07T03:14:19.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2154,8 +2154,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:52:11.676Z",
-    "lastVerified": "2026-11-06T20:52:11.676Z",
+    "lastChecked": "2026-11-07T03:14:14.213Z",
+    "lastVerified": "2026-11-07T03:14:14.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2941,22 +2941,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "giancarloerra-socraticode": {
-    "name": "SocratiCode",
+    "name": "giancarloerra/SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-05T14:43:32.515Z",
-    "lastVerified": "2026-11-05T14:43:32.515Z",
+    "lastChecked": "2026-11-07T03:14:23.390Z",
+    "lastVerified": "2026-11-07T03:14:23.390Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-giancarloerra-socraticode",
-    "contentHash": "cf27b8c2a4e0ee2e4e4c1af19e5b2df73011659752302b3f6361ca11a12c1424",
+    "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d56502a3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -4331,12 +4330,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dylanvann-react-native-fast-image": {
-    "name": "DylanVann/react-native-fast-image",
+    "name": "react-native-fast-image",
     "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-04T09:40:02.653Z",
-    "lastVerified": "2026-11-04T09:40:02.653Z",
+    "lastChecked": "2026-11-07T03:14:09.112Z",
+    "lastVerified": "2026-11-07T03:14:09.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dylanvann-react-native-fast-image",
@@ -4345,7 +4344,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d86d925a"
   },
   "apptainer-singularity": {
     "name": "singularity",
@@ -6048,8 +6048,8 @@
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:43:34.532Z",
-    "lastVerified": "2026-11-05T10:43:34.532Z",
+    "lastChecked": "2026-11-07T03:14:04.094Z",
+    "lastVerified": "2026-11-07T03:14:04.094Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
@@ -6239,11 +6239,21 @@
     "lastVerified": "2026-11-04T19:08:47.377Z"
   },
   "octodns-octodns": {
-    "name": "octodns",
+    "name": "octodns/octodns",
     "officialUrl": "https://github.com/octodns/octodns",
-    "lastChecked": "2026-11-05T15:37:25.820Z",
-    "revisionIdentifier": "d3d4a37a",
-    "lastVerified": "2026-11-05T15:37:25.820Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-07T03:14:16.982Z",
+    "lastVerified": "2026-11-07T03:14:16.982Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "citusdata-citus": {
     "name": "citusdata/citus",
@@ -10898,12 +10908,12 @@
     "revisionIdentifier": "77d3d3fe"
   },
   "archivebox-archivebox": {
-    "name": "ArchiveBox/ArchiveBox",
+    "name": "ArchiveBox",
     "officialUrl": "https://github.com/ArchiveBox/ArchiveBox",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-03T21:28:31.685Z",
-    "lastVerified": "2026-11-03T21:28:31.685Z",
+    "lastChecked": "2026-11-07T03:14:06.691Z",
+    "lastVerified": "2026-11-07T03:14:06.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-archivebox-archivebox",
@@ -10912,7 +10922,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee80665d"
   },
   "signerlabs-shipswift": {
     "name": "ShipSwift",
