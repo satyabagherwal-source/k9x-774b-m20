@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T21:10:32.667Z",
-  "total_cycles_completed": 8060,
-  "total_learnings_persisted": 8060,
-  "total_rules_promoted": 7719,
+  "last_updated": "2026-11-07T21:18:29.759Z",
+  "total_cycles_completed": 8063,
+  "total_learnings_persisted": 8063,
+  "total_rules_promoted": 7722,
   "history": [
-    {
-      "timestamp": "2026-11-06T15:27:36.297Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:27:36.822Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-06T15:27:39.605Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-06T18:54:46.741Z",
       "repository": "dosco/graphjin",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-07T21:10:32.667Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:18:16.308Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:18:17.077Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T21:18:29.759Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

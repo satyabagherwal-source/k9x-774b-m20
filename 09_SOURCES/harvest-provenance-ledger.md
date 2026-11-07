@@ -8104,3 +8104,6 @@ Every entry in this ledger must capture:
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `8f6da1e2` | Multi-dimensional audit evidence | 2026-11-07T21:10:22.540Z |
 | `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `0eb18c80` | Multi-dimensional audit evidence | 2026-11-07T21:10:24.185Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `034a10b2` | Multi-dimensional audit evidence | 2026-11-07T21:10:32.662Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `7ca0042d` | Multi-dimensional audit evidence | 2026-11-07T21:18:16.304Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `dbeba0d5` | Multi-dimensional audit evidence | 2026-11-07T21:18:17.073Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `29d63fc2` | Multi-dimensional audit evidence | 2026-11-07T21:18:29.756Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `076fe9cc`  
+> **Source Version**: `dbeba0d5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:16:23.095Z  
+> **Timestamp**: 2026-11-07T21:18:16.023Z  
 > **Learning ID**: `learn-github-preactjs-preact`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:16:22.861Z  
+> **Harvest Timestamp**: 2026-11-07T21:18:15.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 38976 stars
+- **Stars / Engagement**: 38987 stars
 
 ---
 
@@ -1284,215 +1284,458 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a76600f` (2026-10-30)
-**Commit Message**: Tune terser inlining for core and debug builds
+### Incident Patch 1: `98ea442b` (2026-11-03)
+**Commit Message**: Pass a thrown null or undefined to error boundaries
 
-Terser's default inline level (3) inlines functions that have their own
-variables, which ends up compressing worse. Lowering it is a pure build
-change:
+When a component threw `null` or `undefined`, the catch block in diff()
+read `e.then` to check for a promise, so a TypeError escaped render()
+and hydrate() past the nearest error boundary. The `_catchError` hooks
+in compat and debug read `error.then` the same way. Guard each read so
+getDerivedStateFromError and componentDidCatch receive the thrown value
+as is, like they do for other values and like React does.
 
-- core: inline 2 -> -14 B gzip / -16 B brotli
-- debug: inline 1 -> -17 B gzip / -25 B brotli
+Fixes #5346
 
-The other packages are unchanged by any inline level, so they keep the
-defaults.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Claude-Session: https://claude.ai/code/session_01Ra8ZEeFfa6i2eykc3rCHSK
-
-**File**: `debug/mangle.json` (modified, +3/-0)
+**File**: `compat/src/suspense.js` (modified, +1/-1)
 ```diff
-@@ -16,6 +16,9 @@
-           "__self"
-         ]
-       }
-+    },
-+    "compress": {
-+      "inline": 1
-     }
-   }
- }
+@@ -12,7 +12,7 @@ import { assign } from './util';
+ function initSuspenseHooks() {
+ 	const oldCatchError = options._catchError;
+ 	options._catchError = (error, newVNode, oldVNode, errorInfo) => {
+-		if (error.then) {
++		if (error && error.then) {
+ 			/** @type {import('./internal').Component} */
+ 			let component;
+ 			let vnode = newVNode;
 ```
 
-**File**: `mangle.json` (modified, +2/-1)
+**File**: `compat/test/browser/suspense.test.jsx` (modified, +33/-0)
 ```diff
-@@ -19,7 +19,8 @@
-     },
-     "compress": {
-       "hoist_vars": true,
--      "reduce_funcs": false
-+      "reduce_funcs": false,
-+      "inline": 2
-     }
-   },
-   "props": {
-```
-
----
-
-### Incident Patch 2: `076fe9cc` (2026-11-03)
-**Commit Message**: Merge pull request #5345 from preactjs/fix/ignore-non-function-event-props
-
-Ignore non-function values for on* props
-
-**File**: `src/diff/props.js` (modified, +3/-0)
-```diff
-@@ -68,6 +68,9 @@ export function setProperty(dom, name, value, oldValue, namespace) {
- 	}
- 	// Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
- 	else if (name[0] == 'o' && name[1] == 'n') {
-+		if (typeof value != 'function') value = NULL;
-+		if (typeof oldValue != 'function') oldValue = NULL;
-+
- 		// Handlers are keyed by prop name and every prop name gets its own proxy,
- 		// so swapping one (e.g. an inline arrow function on every render) is a
- 		// single store. The event name is only derived to attach or remove it.
-```
-
-**File**: `test/browser/events.test.jsx` (modified, +30/-0)
-```diff
-@@ -72,6 +72,36 @@ describe('event handling', () => {
- 		);
+@@ -1312,6 +1312,39 @@ describe('suspense', () => {
+ 		expect(scratch.innerHTML).to.eql(`<div>Catcher did catch: {Promise}</div>`);
  	});
  
-+	it('should ignore non-function values', () => {
-+		render(<div onclick="foo()" onMouseDown={{}} />, scratch);
++	[null, undefined].forEach(value => {
++		it(`should pass a thrown ${value} to the error boundary`, () => {
++			const caught = [];
++			class Boundary extends Component {
++				componentDidCatch(error) {
++					caught.push(error);
++					this.setState({ failed: true });
++				}
 +
-+		expect(scratch.innerHTML).to.equal('<div></div>');
-+		expect(proto.addEventListener).not.toHaveBeenCalled();
-+		expect(() => fireEvent(scratch.firstChild, 'click')).not.toThrow();
++				render(props, state) {
++					return state.failed ? 'caught' : props.children;
++				}
++			}
++
++			function Thrower() {
++				throw value;
++			}
++
++			render(
++				<Boundary>
++					<Suspense fallback={<div>Suspended...</div>}>
++						<Thrower />
++					</Suspense>
++				</Boundary>,
++				scratch
++			);
++			rerender();
++
++			expect(caught).to.deep.equal([value]);
++			expect(scratch.innerHTML).to.equal('caught');
++		});
 +	});
 +
-+	it('should switch between function and non-function values', () => {
-+		let click = vi.fn();
+ 	it("should throw when lazy's loader throws", () => {
+ 		/** @type {() => Promise<any>} */
+ 		let reject;
+```
+
+**File**: `debug/src/debug.js` (modified, +2/-2)
+```diff
+@@ -107,7 +107,7 @@ export function initDebug() {
+ 
+ 		try {
+ 			let component = vnode && vnode._component;
+-			if (component && typeof error.then == 'function') {
++			if (component && error && typeof error.then == 'function') {
+ 				const promise = error;
+ 				error = new Error(
+ 					`Missing Suspense. The throwing component was: ${getDisplayName(vnode)}`
+@@ -156,7 +156,7 @@ export function initDebug() {
+ 		// when an error was handled by an ErrorBoundary we still log it, matching what
+ 		// React does in development. Errors that were not handled are rethrown by the
+ 		// core and thus surface as regular uncaught errors.
+-		if (typeof error.then != 'function') {
++		if (!error || typeof error.then != 'function') {
+ 			console.error(error);
+ 		}
+ 	};
+```
+
+**File**: `debug/test/browser/debug.test.jsx` (modified, +32/-0)
+```diff
+@@ -48,6 +48,38 @@ describe('debug', () => {
+ 		expect(fn).to.throw(/render/);
+ 	});
+ 
++	[null, undefined].forEach(value => {
++		it(`should pass a thrown ${value} to the error boundary and log it`, () => {
++			const caught = [];
++			class Boundary extends Component {
++				componentDidCatch(error) {
++					caught.push(error);
++					this.setState({ failed: true });
++				}
 +
-+		render(<div onClick="foo()" />, scratch);
-+		render(<div onClick={click} />, scratch);
++				render() {
++					return this.state.failed ? 'caught' : this.props.children;
++				}
++			}
 +
-+		fireEvent(scratch.firstChild, 'click');
-+		expect(click).toHaveBeenCalledOnce();
++			function Thrower() {
++				throw value;
++			}
 +
-+		click.mockClear();
-+		render(<div onClick="foo()" />, scratch);
++			render(
++				<Boundary>
++					<Thrower />
++				</Boundary>,
++				scratch
++			);
++			rerender();
 +
-+		expect(proto.removeEventListener).toHaveBeenCalledWith(
-+			'click',
-+			expect.any(Function),
-+			false
-+		);
-+		fireEvent(scratch.firstChild, 'click');
-+		expect(click).not.toHaveBeenCalled();
-+		expect(scratch.innerHTML).to.equal('<div></div>');
++			expect(caught).to.deep.equal([value]);
++			expect(errors).to.deep.equal([value]);
++			expect(scratch.innerHTML).to.equal('caught');
++		});
 +	});
 +
- 	it('should support native event names', () => {
- 		let click = vi.fn(),
- 			mousedown = vi.fn();
+ 	it('should print an error on rendering on invalid parent', () => {
+ 		let fn = () => render(<div />, 6);
+ 		expect(fn).to.throw(/valid HTML node/);
+```
+
+**File**: `src/diff/index.js` (modified, +2/-2)
+```diff
+@@ -360,7 +360,7 @@ export function diff(
+ 			newVNode._original = NULL;
+ 			// if hydrating or creating initial tree, bailout preserves DOM:
+ 			if (isHydrating || excessDomChildren) {
+-				if (e.then) {
++				if (e && e.then) {
+ 					let startMarker, end;
+ 
+ 					// isHydrating is MODE_HYDRATE or falsy
+@@ -420,7 +420,7 @@ export function diff(
+ 				newVNode._children = oldVNode._children || [];
+ 			}
+ 
+-			if (!e.then) markAsForce(newVNode);
++			if (!(e && e.then)) markAsForce(newVNode);
+ 			options._catchError(e, newVNode, oldVNode);
+ 		}
+ 	} else {
+```
+
+**File**: `test/browser/lifecycles/componentDidCatch.test.jsx` (modified, +51/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { setupRerender } from 'preact/test-utils';
+-import { createElement, render, Component, Fragment } from 'preact';
++import { createElement, render, hydrate, Component, Fragment } from 'preact';
+ import { setupScratch, teardown } from '../../_util/helpers';
+ import { vi, expect } from 'vitest';
+ 
+@@ -542,6 +542,56 @@ describe('Lifecycle methods', () => {
+ 			);
+ 		});
+ 
++		[null, undefined].forEach(value => {
++			describe(`when a child throws ${value}`, () => {
++				let caught;
++
++				class Boundary extends Component {
++					componentDidCatch(error) {
++						caught.push(error);
++						this.setState({ failed: true });
++					}
++
++					render() {
++						return this.state.failed ? 'caught' : this.props.children;
++					}
++				}
++
++				function Thrower() {
++					throw value;
++				}
++
++				beforeEach(() => {
++					caught = [];
++				});
++
++				it('should be called on render', () => {
++					render(
++						<Boundary>
++							<Thrower />
++						</Boundary>,
++						scratch
++					);
++					rerender();
++					expect(caught).to.deep.equal([value]);
++					expect(scratch.innerHTML).to.equal('caught');
++				});
++
++				it('should be called on hydrate', () => {
++					scratch.innerHTML = '<div>server</div>';
++					hydrate(
++						<Boundary>
++							<Thrower />
++						</Boundary>,
++						scratch
++					);
++					rerender();
++					expect(caught).to.deep.equal([value]);
++					expect(scratch.innerHTML).to.equal('caught');
++				});
++			});
++		});
++
+ 		it('should be called when child inside a Fragment fails', () => {
+ 			function ThrowErr() {
+ 				throwExpectedError();
 ```
 
 ---
 
-### Incident Patch 3: `fe83cd17` (2026-10-30)
-**Commit Message**: Golf the component render loop and suspended range scan
+### Incident Patch 2: `4bfd0803` (2026-11-04)
+**Commit Message**: Merge pull request #5347 from jonkwheeler/fix/throw-null-then
 
-- Class and function components share one render loop: classes start the
-  counter at its limit so they render exactly once.
-- When a component suspends while hydrating, find the end of its
-  streamed range through rangeEnd() instead of re-implementing the
-  nested marker counting.
+Pass a thrown null or undefined to error boundaries
 
-Claude-Session: https://claude.ai/code/session_01Ra8ZEeFfa6i2eykc3rCHSK
-
-**File**: `src/diff/index.js` (modified, +18/-32)
+**File**: `compat/src/suspense.js` (modified, +1/-1)
 ```diff
-@@ -250,28 +250,19 @@ export function diff(
- 			c._parentDom = parentDom;
- 			c._bits &= ~COMPONENT_FORCE;
+@@ -12,7 +12,7 @@ import { assign } from './util';
+ function initSuspenseHooks() {
+ 	const oldCatchError = options._catchError;
+ 	options._catchError = (error, newVNode, oldVNode, errorInfo) => {
+-		if (error.then) {
++		if (error && error.then) {
+ 			/** @type {import('./internal').Component} */
+ 			let component;
+ 			let vnode = newVNode;
+```
+
+**File**: `compat/test/browser/suspense.test.jsx` (modified, +33/-0)
+```diff
+@@ -1312,6 +1312,39 @@ describe('suspense', () => {
+ 		expect(scratch.innerHTML).to.eql(`<div>Catcher did catch: {Promise}</div>`);
+ 	});
  
-+			// Function components re-render until they stop calling setState
-+			// during render (see #2553), class components render exactly once.
- 			let renderHook = options._render,
--				count = 0;
--			if (isClassComponent) {
--				c.state = c._nextState;
-+				count = isClassComponent ? 25 : 0;
-+			do {
- 				c._bits &= ~COMPONENT_DIRTY;
--
- 				if (renderHook) renderHook(newVNode);
-+				tmp = c.render(c.props, (c.state = c._nextState), c.context);
-+			} while (c._bits & COMPONENT_DIRTY && ++count < 25);
++	[null, undefined].forEach(value => {
++		it(`should pass a thrown ${value} to the error boundary`, () => {
++			const caught = [];
++			class Boundary extends Component {
++				componentDidCatch(error) {
++					caught.push(error);
++					this.setState({ failed: true });
++				}
++
++				render(props, state) {
++					return state.failed ? 'caught' : props.children;
++				}
++			}
++
++			function Thrower() {
++				throw value;
++			}
++
++			render(
++				<Boundary>
++					<Suspense fallback={<div>Suspended...</div>}>
++						<Thrower />
++					</Suspense>
++				</Boundary>,
++				scratch
++			);
++			rerender();
++
++			expect(caught).to.deep.equal([value]);
++			expect(scratch.innerHTML).to.equal('caught');
++		});
++	});
++
+ 	it("should throw when lazy's loader throws", () => {
+ 		/** @type {() => Promise<any>} */
+ 		let reject;
+```
+
+**File**: `debug/src/debug.js` (modified, +2/-2)
+```diff
+@@ -107,7 +107,7 @@ export function initDebug() {
  
--				tmp = c.render(c.props, c.state, c.context);
--
-+			if (isClassComponent) {
- 				EMPTY_ARR.push.apply(c._renderCallbacks, c._stateCallbacks);
- 				c._stateCallbacks = [];
--			} else {
--				do {
--					c._bits &= ~COMPONENT_DIRTY;
--					if (renderHook) renderHook(newVNode);
--
--					tmp = c.render(c.props, c.state, c.context);
--
--					// Handle setState called in render, see #2553
--					c.state = c._nextState;
--				} while (c._bits & COMPONENT_DIRTY && ++count < 25);
- 			}
+ 		try {
+ 			let component = vnode && vnode._component;
+-			if (component && typeof error.then == 'function') {
++			if (component && error && typeof error.then == 'function') {
+ 				const promise = error;
+ 				error = new Error(
+ 					`Missing Suspense. The throwing component was: ${getDisplayName(vnode)}`
+@@ -156,7 +156,7 @@ export function initDebug() {
+ 		// when an error was handled by an ErrorBoundary we still log it, matching what
+ 		// React does in development. Errors that were not handled are rethrown by the
+ 		// core and thus surface as regular uncaught errors.
+-		if (typeof error.then != 'function') {
++		if (!error || typeof error.then != 'function') {
+ 			console.error(error);
+ 		}
+ 	};
+```
+
+**File**: `debug/test/browser/debug.test.jsx` (modified, +32/-0)
+```diff
+@@ -48,6 +48,38 @@ describe('debug', () => {
+ 		expect(fn).to.throw(/render/);
+ 	});
  
- 			// Handle setState called in render, see #2553
-@@ -370,8 +361,7 @@ export function diff(
++	[null, undefined].forEach(value => {
++		it(`should pass a thrown ${value} to the error boundary and log it`, () => {
++			const caught = [];
++			class Boundary extends Component {
++				componentDidCatch(error) {
++					caught.push(error);
++					this.setState({ failed: true });
++				}
++
++				render() {
++					return this.state.failed ? 'caught' : this.props.children;
++				}
++			}
++
++			function Thrower() {
++				throw value;
++			}
++
++			render(
++				<Boundary>
++					<Thrower />
++				</Boundary>,
++				scratch
++			);
++			rerender();
++
++			expect(caught).to.deep.equal([value]);
++			expect(errors).to.deep.equal([value]);
++			expect(scratch.innerHTML).to.equal('caught');
++		});
++	});
++
+ 	it('should print an error on rendering on invalid parent', () => {
+ 		let fn = () => render(<div />, 6);
+ 		expect(fn).to.throw(/valid HTML node/);
+```
+
+**File**: `src/diff/index.js` (modified, +2/-2)
+```diff
+@@ -360,7 +360,7 @@ export function diff(
+ 			newVNode._original = NULL;
  			// if hydrating or creating initial tree, bailout preserves DOM:
  			if (isHydrating || excessDomChildren) {
- 				if (e.then) {
--					let commentMarkersToFind = 0,
--						startMarker;
-+					let startMarker, end;
+-				if (e.then) {
++				if (e && e.then) {
+ 					let startMarker, end;
  
  					// isHydrating is MODE_HYDRATE or falsy
- 					newVNode._flags |= MODE_SUSPENDED | isHydrating;
-@@ -386,23 +376,19 @@ export function diff(
- 							i--;
- 						}
+@@ -420,7 +420,7 @@ export function diff(
+ 				newVNode._children = oldVNode._children || [];
+ 			}
  
-+						// Keep what this component would have claimed: its whole
-+						// streamed range (all of it when unclosed), or else the first
-+						// node that isn't a comment.
- 						for (; i < excessDomChildren.length; i++) {
--							child = excessDomChildren[i];
--							if (!child) continue;
--							excessDomChildren[i] = NULL;
--
--							if (child.nodeType == 8) {
--								if (child.data.startsWith('$s')) {
--									if (!commentMarkersToFind++) startMarker = child;
--								} else if (
--									commentMarkersToFind &&
--									child.data.startsWith('/$s') &&
--									!--commentMarkersToFind
--								) {
-+							if ((child = excessDomChildren[i])) {
-+								excessDomChildren[i] = NULL;
-+								if (startMarker) {
-+									if (child == end) break;
-+								} else if (child.nodeType != 8) {
- 									break;
-+								} else if (child.data.startsWith('$s')) {
-+									end = rangeEnd((startMarker = child));
- 								}
--							} else if (!commentMarkersToFind) {
--								break;
- 							}
- 						}
- 					}
+-			if (!e.then) markAsForce(newVNode);
++			if (!(e && e.then)) markAsForce(newVNode);
+ 			options._catchError(e, newVNode, oldVNode);
+ 		}
+ 	} else {
+```
+
+**File**: `test/browser/lifecycles/componentDidCatch.test.jsx` (modified, +51/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { setupRerender } from 'preact/test-utils';
+-import { createElement, render, Component, Fragment } from 'preact';
++import { createElement, render, hydrate, Component, Fragment } from 'preact';
+ import { setupScratch, teardown } from '../../_util/helpers';
+ import { vi, expect } from 'vitest';
+ 
+@@ -542,6 +542,56 @@ describe('Lifecycle methods', () => {
+ 			);
+ 		});
+ 
++		[null, undefined].forEach(value => {
++			describe(`when a child throws ${value}`, () => {
++				let caught;
++
++				class Boundary extends Component {
++					componentDidCatch(error) {
++						caught.push(error);
++						this.setState({ failed: true });
++					}
++
++					render() {
++						return this.state.failed ? 'caught' : this.props.children;
++					}
++				}
++
++				function Thrower() {
++					throw value;
++				}
++
++				beforeEach(() => {
++					caught = [];
++				});
++
++				it('should be called on render', () => {
++					render(
++						<Boundary>
++							<Thrower />
++						</Boundary>,
++						scratch
++					);
++					rerender();
++					expect(caught).to.deep.equal([value]);
++					expect(scratch.innerHTML).to.equal('caught');
++				});
++
++				it('should be called on hydrate', () => {
++					scratch.innerHTML = '<div>server</div>';
++					hydrate(
++						<Boundary>
++							<Thrower />
++						</Boundary>,
++						scratch
++					);
++					rerender();
++					expect(caught).to.deep.equal([value]);
++					expect(scratch.innerHTML).to.equal('caught');
++				});
++			});
++		});
++
+ 		it('should be called when child inside a Fragment fails', () => {
+ 			function ThrowErr() {
+ 				throwExpectedError();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5345** (2026-11-03): Ignore non-function values for on* props (@JoviDeCroock)
-- **PR #5343** (2026-11-02): Golf Preact (@JoviDeCroock)
-- **PR #5342** (2026-11-02): Support scoped custom element registries (@JoviDeCroock)
-- **PR #5340** (2026-10-31): 11.1.1 (@JoviDeCroock)
-- **PR #5339** (2026-10-30): Fix template in alternative namespaces (@JoviDeCroock)
-- **PR #5338** (2026-10-28): fix(types): add declarative shadow DOM attributes to `<template>` (@b84330808)
+- **PR #5352** (closed): Normalize Document containers before invoking root hooks (@wozhenbang2004)
+- **PR #5351** (2026-11-06): ci: pin Ubuntu runner images to 26.04 (@JoviDeCroock)
+- **PR #5350** (2026-11-06): 11.2.0 (@JoviDeCroock)
+- **PR #5349** (2026-11-04): Preserve event handlers on unmounted nodes (@JoviDeCroock)
+- **PR #5348** (closed): Pass a thrown null or undefined to error boundaries (v10.x) (@jonkwheeler)
+- **PR #5347** (2026-11-04): Pass a thrown null or undefined to error boundaries (@jonkwheeler)
 
 ---
 
@@ -1512,30 +1755,28 @@ Claude-Session: https://claude.ai/code/session_01Ra8ZEeFfa6i2eykc3rCHSK
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Tune terser inlining for core and debug builds
+## X. Pass a thrown null or undefined to error boundaries
 
 **RULE**:
-When implementing operations in `debug/mangle.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `compat/src/suspense.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a76600f`: Tune terser inlining for core and debug builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98ea442b`: Pass a thrown null or undefined to error boundaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `debug/mangle.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `compat/src/suspense.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    },
-    "compress": {
-      "inline": 1
+		if (error && error.then) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		if (error.then) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a76600f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98ea442b` are properly handled with clean fallback behavior.

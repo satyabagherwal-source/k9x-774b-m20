@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T21:10:32.564Z",
+  "last_updated": "2026-11-07T21:18:29.698Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48509,14 +48509,19 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "b1007f11",
-      "content_hash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
+      "source_version": "7ca0042d",
+      "content_hash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, Bori",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: leave the SSH server out of the Linux images (#47981)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48585,7 +48590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T17:21:54.550Z",
+      "verified_at": "2026-11-07T21:18:16.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60539,8 +60544,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "89d09f46",
-      "content_hash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
+      "source_version": "29d63fc2",
+      "content_hash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -60587,7 +60592,7 @@
         {
           "number": 5070,
           "title": "running test from IntelliJ",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 5338,
@@ -60625,7 +60630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:40:17.692Z",
+      "verified_at": "2026-11-07T21:18:29.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79922,11 +79927,16 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "076fe9cc",
-      "content_hash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
+      "source_version": "dbeba0d5",
+      "content_hash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Pass a thrown null or undefined to error boundaries",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3007,
           "title": "Merge pull request #5265 from preactjs/JoviDeCroock/rerender-queue-throw",
@@ -79968,7 +79978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T03:16:23.602Z",
+      "verified_at": "2026-11-07T21:18:16.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151798,13 +151808,13 @@
       "rule_number": 5070,
       "title": "running test from IntelliJ",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "34abc74b",
+      "source_version": "29d63fc2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T00:12:51.147Z"
+      "verified_at": "2026-11-07T21:18:29.684Z"
     },
     "rule-5071": {
       "learning_id": "rule-5071",

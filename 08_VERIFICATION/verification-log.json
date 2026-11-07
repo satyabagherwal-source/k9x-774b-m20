@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-Q6BC",
-    "timestamp": "2026-11-05T08:41:00.792Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "b8d7e48c30f04e29bb9e0e4c4f881e35ac496cb47ef718fc585e47d762306c80",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-SDPD",
-    "timestamp": "2026-11-05T08:42:43.681Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "e71985870f7f65e3606eb6548a1df3fd44d213477cec7403471b66c66b5c61be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-25F1",
-    "timestamp": "2026-11-05T08:50:19.501Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "3d165bc80468addf8de4be0f55d6db5df676b18759f537f418bb3853d05d07b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-2738",
     "timestamp": "2026-11-05T08:50:21.668Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7445,51 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "204c22ebc95c92e0289046143f330c5f8dce47e1ca717ddc87e3d8f49f8440f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-NPWT",
+    "timestamp": "2026-11-07T21:18:16.301Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-NQI6",
+    "timestamp": "2026-11-07T21:18:17.070Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-O0AH",
+    "timestamp": "2026-11-07T21:18:29.753Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

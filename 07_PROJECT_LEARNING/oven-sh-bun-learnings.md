@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `b1007f11`  
+> **Source Version**: `7ca0042d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:21:53.516Z  
+> **Timestamp**: 2026-11-07T21:18:15.344Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:21:53.509Z  
+> **Harvest Timestamp**: 2026-11-07T21:18:13.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96568 stars
+- **Stars / Engagement**: 96693 stars
 
 ---
 
@@ -999,443 +999,172 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1007f11` (2026-11-05)
-**Commit Message**: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944)
+### Incident Patch 1: `b1305ddc` (2026-11-05)
+**Commit Message**: ci: leave the SSH server out of the Linux images (#47981)
 
 ### What does this PR do?
 
-35 separate changes, one commit each: 10 in IPC, N-API, `bun:ffi` and
-their neighbours, 15 in `node:zlib`, the c-ares and BoringSSL bindings
-and `node:quic`, and 10 in the parser, the printer, CSS, `Bun.Image` and
-smaller crates. They follow #47291, #47317, #47338, #47382, #47393,
-#47414, #47871, #47893, #47895, #47901 and #47940 and work the same way:
-signatures name the type and the lifetime that the value already has,
-hand-written pointer code becomes plain ownership and borrows that the
-compiler checks, and what was never needed is deleted.
+The Linux CI images keep the SSH client and no longer have the SSH
+server that the base images come with. The bake removes it, and fails if
+it is still installed. Windows images are unchanged.
 
-Together: **125 fewer `unsafe` blocks, 17 fewer `unsafe fn`s and 4 fewer
-`unsafe impl`s**, +870/−1499 over 58 files. No safe function became
-`unsafe`, and no wrapper type was added. **[Where the compiled code
-changes](#where-the-compiled-code-changes) lists every place where the
-program does different work.**
+### How did you verify your code works?
 
-| # | Change | `unsafe` | Diff |
-|---|---|---|---|
-| 1 | ipc: `CHANNEL` holds `&'static IPCInstance`, boxed once the
-transport is up | −9 blocks, −1 `unsafe fn` | +34/−74, 3 files |
-| 2
+The existing image lint tests pass. The bakes have not been run locally;
+the CI build of this PR runs them.
 
-**File**: `src/aot/compile.rs` (modified, +10/-14)
+**File**: `scripts/build/ci-images/CLAUDE.md` (modified, +2/-1)
 ```diff
-@@ -632,20 +632,16 @@ impl KeepsFreeBlocksBelowThePeak {
+@@ -80,8 +80,9 @@ A pin has to name something its publisher keeps: a bake that asks for a version
+ - **The Windows bake step must be a single command.** With several, Buildkite runs them in a shell, and a cancel ends that shell without `ci-image.ts` or Packer seeing the signal, so Packer's VM is never deleted and keeps holding its cores. As one command, Packer hears the cancel and deletes the VM first; the hosted agent ends the job seconds later, so the VM's network and disk can be left behind.
+ - **The system's trusted roots are the distro's without `droppedRoots`.** The `ca-certificates` tool deselects them, and the bake fails if one is still trusted afterwards. Bun and Node.js use lists of their own unless told to read the system's, and those move with their pins.
+ - **Debian gives a user who is not root no sbin directory on PATH.** The test runner calls `sysctl` as the agent's user; the core-dumps tool puts `/sbin` on the job PATH.
++- **Linux machines have the SSH client and no server.** Every base image comes with the server; the `ssh-client` tool removes it, and the bake ends by failing if it is there.
+ - **Starting a service during a bake can leave machine identity in the image** (sshd writes host keys). Remove it before the image is taken.
+-- **A push cancels the branch's running build**, bakes included. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
++- **A push cancels the branch's running build**, bakes included. Do not hold commits because they would cancel builds/bakes. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
  
-     fn resident_now() -> usize {
-         let mut resident = 0;
--        let unused = core::ptr::null_mut();
--        // SAFETY: it writes a number through each pointer that is not null.
--        unsafe {
--            bun_alloc::mimalloc::mi_process_info(
--                unused,
--                unused,
--                unused,
--                &raw mut resident,
--                unused,
--                unused,
--                unused,
--                unused,
--            );
--        }
-+        bun_alloc::mimalloc::mi_process_info(
-+            None,
-+            None,
-+            None,
-+            Some(&mut resident),
-+            None,
-+            None,
-+            None,
-+            None,
-+        );
-         resident
-     }
- }
+ ## Testing a change before CI does
+ 
 ```
 
-**File**: `src/aot/emit/output.rs` (modified, +1/-3)
+**File**: `scripts/build/ci-images/spec.ts` (modified, +50/-1)
 ```diff
-@@ -19,9 +19,7 @@ impl<'a> OutputSlice<'a> {
- 
-     pub(super) fn put_words(&mut self, words: &[u32]) {
-         if cfg!(target_endian = "little") {
--            let first_byte = words.as_ptr().cast::<u8>();
--            // SAFETY: every byte of a `u32` is initialized, and a byte is aligned anywhere.
--            self.put_bytes(unsafe { std::slice::from_raw_parts(first_byte, size_of_val(words)) });
-+            self.put_bytes(bun_core::slice_as_bytes(words));
-         } else {
-             words
-                 .iter()
-```
-
-**File**: `src/aot/engine.rs` (modified, +2/-3)
-```diff
-@@ -72,8 +72,7 @@ bun_core::impl_zeroable!(CompileOptions);
- 
- fn default_record() -> CompileOptions {
-     let mut record: CompileOptions = zeroed();
--    // SAFETY: the engine writes one `CompileOptions` through the pointer before it returns.
--    unsafe { Bun__AOT__initializeOptions(&raw mut record) };
-+    Bun__AOT__initializeOptions(&mut record);
-     record
+@@ -1567,6 +1567,29 @@ function noTmpfs(): Tool {
+   return { name: "no-tmpfs", identity: configuration, steps: [service("tmp.mount", "masked")] };
  }
  
-@@ -627,7 +626,7 @@ static REGION_THREADS: HostThreadPool = HostThreadPool {
- };
- 
- unsafe extern "C" {
--    fn Bun__AOT__initializeOptions(options: *mut CompileOptions);
-+    safe fn Bun__AOT__initializeOptions(options: &mut CompileOptions);
-     fn Bun__AOT__applyOptionWord(
-         options: *mut CompileOptions,
-         word: BunAOTBytes,
-```
-
-**File**: `src/aot/engine/testing.rs` (modified, +7/-7)
-```diff
-@@ -18,11 +18,6 @@ pub(super) fn to_words(bytes: &[u8]) -> Vec<u64> {
-     bytes.chunks(8).map(to_word).collect()
++/** The SSH client without the server that the base image comes with. */
++function sshClient(image: LinuxImage): Tool {
++  const { distro } = image;
++  return {
++    name: "ssh-client",
++    identity: packageDatabase,
++    steps: [
++      ...(distro === "alpine"
++        ? [apkAdd(["openssh-client-default"]), service("sshd", "disabled"), apkDel(["openssh", "openssh-server-pam"])]
++        : [
++            ...(distro === "ubuntu"
++              ? [comment("Its removal restarts the server, so it goes first."), aptPurge(["ec2-instance-connect"])]
++              : []),
++            aptPurge(["openssh-server", "openssh-sftp-server"]),
++          ]),
++      remove(text`/etc/ssh/${glob("ssh_host_*")}`),
++      comment("cloud-init would make the server's host keys and write its configuration."),
++      directory("/etc/cloud/cloud.cfg.d"),
++      writeFile("/etc/cloud/cloud.cfg.d/99-ssh.cfg", ["ssh_genkeytypes: []", "ssh_pwauth: null"]),
++    ],
++  };
++}
++
+ /**
+  * What a build and a test job would otherwise download each time: dependency
+  * sources for scripts/build/download.ts, the Docker images the tests use, and
+@@ -1702,6 +1725,16 @@ function cleanup(image: LinuxImage): Tool {
+   };
  }
  
--pub(super) fn bytes_of(words: &[u64]) -> &[u8] {
--    // SAFETY: every byte of an initialized `u64` is initialized, and the slice ends with `words`.
--    unsafe { core::slice::from_raw_parts(words.as_ptr().cast::<u8>(), size_of_val(words)) }
--}
--
- fn bytes_of_records<T: ResultRecord>(records: &[T]) -> &[u8] {
-     // SAFETY: an abi record has no padding (its generated assertions fix its size and every offset), so every byte is initialized, and the slice ends with `records`.
-     unsafe { core::slice::from_raw_parts(records.as_ptr().cast::<u8>(), size_of_val(records)) }
-@@ -57,7 +52,9 @@ impl Sections {
-     fn as_bytes(&self) -> [BunAOTBytes; Section::COUNT] {
-         Section::ALL.map(|section| {
-             let index = section as usize;
--            BunAOTBytes::from_slice(&bytes_of(&self.words[index])[..self.lengths[index]])
-+            BunAOTBytes::from_slice(
-+                &bun_core::slice_as_bytes(&self.words[index])[..self.lengths[index]],
-+            )
-         })
-     }
- }
-@@ -98,7 +95,10 @@ impl ResultRecords<'_> {
-         let sections = Sections::new()
-             .with(Section::Image, self.image)
-             .with(Section::Text, self.text)
--            .with(Section::LimitValues, bytes_of(&limit_values))
-+            .with(
-+                Section::LimitValues,
-+                bun_core::slice_as_bytes(&limit_values),
-+            )
-             .with_records(self.unseen_code)
-             .with_records(self.builtins_used)
-             .with_records(self.features_used)
-```
-
-**File**: `src/aot/engine/tests.rs` (modified, +6/-3)
-```diff
-@@ -5,7 +5,7 @@ use bun_options_types::aot_options::BuildReportRequest;
- use bun_removable_features::{Feature, TrimFeature};
++/** Last, so that no tool can bring the server back as a dependency. */
++function noSshServer(image: LinuxImage): Tool {
++  const servers = ["/usr/sbin/sshd", ...(image.distro === "alpine" ? ["/usr/sbin/sshd.pam"] : [])];
++  return {
++    name: "no-ssh-server",
++    identity: configuration,
++    steps: servers.map(server => failIfExists(server, "the SSH server is installed")),
++  };
++}
++
+ // ---- Windows only
  
- use super::ResultSection as Section;
--use super::testing::{Sections, bytes_of, with_result};
-+use super::testing::{Sections, with_result};
- use super::*;
- use crate::ir::generated::{Architecture, CheckSet, StatisticId};
- use crate::statistics::is_lowered_by_all;
-@@ -457,8 +457,11 @@ fn sections_are_read_as_typed_elements() {
-     let module = offset_of!(AccessCountRecord, module);
-     let access_counts = [4, 9].map(|word| patched_record::<AccessCountRecord>(&[(module, word)]));
-     let sections = Sections::new()
--        .with(Section::LimitValues, bytes_of(&limit_values))
--        .with(Section::Statistics, bytes_of(&statistics))
-+        .with(
-+            Section::LimitValues,
-+            bun_core::slice_as_bytes(&limit_values),
-+        )
-+        .with(Section::Statistics, bun_core::slice_as_bytes(&statistics))
-         .with(Section::EntryModuleIds, &entry_module_ids)
-         .with(Section::AccessCounts, &access_counts.concat());
-     with_result(&sections, |result| {
-```
-
-**File**: `src/aot/statistics.rs` (modified, +10/-14)
-```diff
-@@ -299,20 +299,16 @@ fn process_info() -> (Duration, usize, usize) {
-     if !bun_alloc::USE_MIMALLOC {
-         return (Duration::ZERO, 0, 0);
-     }
--    let unused = core::ptr::null_mut();
--    // SAFETY: it writes a number through each pointer that is not null.
--    unsafe {
--        bun_alloc::mimalloc::mi_process_info(
--            unused,
--            &raw mut user,
--            &raw mut system,
--            &raw mut resident,
--            &raw mut peak,
--            unused,
--            unused,
--            unused,
--        );
--    }
-+    bun_alloc::mimalloc::mi_process_info(
-+        None,
-+        Some(&mut user),
-+        Some(&mut system),
-+        Some(&mut resident),
-+        Some(&mut peak),
-+        None,
-+        None,
-+        None,
-+    );
-     (
-         Duration::from_millis((user + system) as u64),
-         resident,
-```
-
-**File**: `src/ast/binding.rs` (modified, +7/-92)
-```diff
-@@ -74,113 +74,29 @@ impl Binding {
-             data: t.alloc_into_b(bump),
-         }
-     }
--}
--
--// ──────────────────────────────────────────────────────────────────────────
--// ToExpr — Rust cannot store `*mut P<'a, const ..>` in a non-generic field
--// nor take a fn item as a const generic, so the wrapper is type-erased:
--// `wrap` is a plain fn pointer that casts the erased `ctx` back to the
--// concrete `P` instantiation. The `*ExprType` context is **not** stored — it
--// is supplied at call time (`Binding::to_expr(.., ctx, ..)`) so the raw
--// pointer's Stacked-Borrows tag is a child of the *live* `&mut P` at the call
--// site rather than a stale tag captured during `prepare_for_visit_pass`
--// (which every later `&mut self` retag would invalidate). The struct is
--// `Copy` so the recursive `to_expr` can pass it by value.
--// ──────────────────────────────────────────────────────────────────────────
--
--#[derive(Copy, Clone)]
--pub struct ToExprWrapper {
--    /// Back-reference to `P.arena`. `BackRef` invariant: the arena is owned by
--    /// `P<'a>` and outlives every `ToExprWrapper` (which is stored on `P` and
--    /// only used during the visit pass). `None` only for the pre-wire
--    /// `dangling()` placeholder; niche-packed so layout matches `*const Arena`.
--    arena: Option<bun_ptr::BackRef<Arena>>,
--    wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr,
--}
--
--impl ToExprWrapper {
--    /// Placeholder used in `P::init` before `prepare_for_visit_pass` wires the
--    /// arena + trampoline.
--    pub const fn dangling() -> Self {
--        Self {
--            arena: None,
--            wrap: |_, _, _| unreachable!("ToExprWrapper used before prepare_for_visit_pass"),
--        }
--    }
--
--    /// `ExprType` is erased to `c_void`; callers (P.rs) supply a trampoline
--    /// closure that casts back to `*mut P<..>` and dispatches to
--    /// `P::wrap_identifier_{namespace,hoisting}`. Non-capturing closures
--    /// coerce to fn pointers, so this stays zero-cost.
--    /// The `*mut P` itself is passed per-call via `Binding::to_expr`.
--    #[inline]
--    pub fn new(arena: &Arena, wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr) -> Self {
--        Self {
--            arena: Some(bun_ptr::BackRef::new(arena)),
--            wrap,
--        }
--    }
--
--    #[inline]
--    pub(crate) fn wrap_identifier(
--        &self,
--        ctx: *mut core::ffi::c_void,
--        loc: crate::Loc,
--        ref_: Ref,
--    ) -> Expr {
--        (self.wrap)(ctx, loc, ref_)
--    }
--
--    #[inline]
--    pub(crate) fn arena(&self) -> &Arena {
--        // `BackRef::get` encapsulates the deref under the owner-outlives-holder
--        // invariant; `expect` mirrors the prior `debug_assert!(!null)`.
--        self.arena
--            .as_ref()
--            .expect("ToExprWrapper not wired (prepare_for_visit_pass)")
--            .get()
--    }
--}
--
--impl Binding {
--    /// `ctx` is the type-erased `*mut P<..>` derived from the *caller's live*
--    /// `&mut P` (e.g. `core::ptr::addr_of_mut!(*p) as *mut c_void`). Threading
--    /// it per-call keeps the raw pointer's provenance under the active Unique
--    /// borrow, avoiding the stale-tag UB of storing it long-term.
--    ///
--    /// Accepts the wrapper by `Borrow` so both the by-value call-site in
--    /// `visitStmt.rs` (`p.to_expr_wrapper_namespace`) and the `&mut` call-site
--    /// in `maybe.rs` (`&mut p.to_expr_wrapper_hoisted`) type-check without
--    /// edits — `T: Borrow<T>` and `&mut T: Borrow<T>` are both blanket impls.
--    pub fn to_expr<W>(binding: &Binding, ctx: *mut core::ffi::c_void, wrapper: W) -> Expr
--    where
--        W: core::borrow::Borrow<ToExprWrapper>,
--    {
--        Self::to_expr_inner(binding, ctx, *wrapper.borrow())
--    }
- 
--    fn to_expr_inner(
-+    pub fn to_expr<C>(
-         binding: &Binding,
--        ctx: *mut core::ffi::c_void,
--        wrapper: ToExprWrapper,
-+        bump: &Arena,
-+        ctx: &mut C,
-+        wrap_identifier: impl Fn(&mut C, crate::Loc, Ref) -> Expr + Copy,
-     ) -> Expr {
-         let loc = binding.loc;
-         match binding.data {
-             B::BMissing(_) => Expr {
-                 data: ExprData::EMissing(E::Missing {}),
-                 loc,
-             },
--            B::BIdentifier(b) => wrapper.wrap_identifier(ctx, loc, b.r#ref),
-+            B::BIdentifier(b) => wrap_identifier(ctx, loc, b.r#ref),
-             B::BArray(b) => {
-                 let b = b.get();
--                let bump = wrapper.arena();
-                 let items = b.items();
-                 let len = items.len();
-                 let mut exprs = bun_alloc::ArenaVec::with_capacity_in(len, bump);
-                 let mut i: usize = 0;
-                 while i < len {
-                     let item = &items[i];
--                    let expr = Self::to_expr_inner(&item.binding, ctx, wrapper);
-+                    let expr = Self::to_expr(&item.binding, bump, ctx, wrap_identifier);
-                     let converted = if b.has_sprea
-```
-
-**File**: `src/ast/e.rs` (modified, +16/-40)
-```diff
-@@ -992,11 +992,6 @@ pub struct JsonTape {
-     pub encoding: StrEncoding,
+ function windowsSystem(): Tool {
+@@ -2068,10 +2101,12 @@ export function tools(image: Image): readonly Tool[] {
+     age(image),
+     coreDumps(image),
+     ...(apt ? [noTmpfs()] : []),
++    sshClient(image),
+     prefetch(image),
+     agentService(),
+     recordImage(image),
+     cleanup(image),
++    noSshServer(image),
+   ];
  }
  
--// SAFETY: only the parsing thread writes it; shared use afterwards is read-only.
--unsafe impl Send for JsonTape {}
--// SAFETY: see the `Send` impl.
--unsafe impl Sync for JsonTape {}
--
- impl JsonTape {
-     const STR_CHUNK: usize = 4096;
+@@ -2431,6 +2466,9 @@ const failUnlessNotEmpty =
+       ? [`if (-not ${renderValue(value, c)}) { throw ${renderValue(text`bootstrap: ${message}`, c, true)} }`]
+       : [`[ -n ${renderValue(value, c)} ] || { echo ${renderValue(text`bootstrap: ${message}`, c)} >&2; exit 1; }`];
  
-@@ -1297,43 +1292,24 @@ impl Default for Object {
++const failIfExists = (path: Value, message: Value): Step =>
++  ifExists(path, [c => [`echo ${renderValue(text`bootstrap: ${message}`, c)} >&2`, "exit 1"]]);
++
+ const ifExists =
+   (path: Value, steps: Step[]): Step =>
+   c =>
+@@ -2777,6 +2815,16 @@ const apkAdd =
+     `apk add --no-cache --no-interactive --no-progress ${names.join(" ")}`,
+   ];
  
- /// Dotted-key path used by the INI parser (`get_or_put_object`).
- ///
--/// Node types are lifetime-free, so `next` is a raw `*mut Rope`
--/// into the bump arena. Segments are bulk-freed at arena reset.
--pub struct Rope {
-+/// Segments live in the bump arena and are bulk-freed at arena reset.
-+pub struct Rope<'a> {
-     pub head: Expr,
--    pub next: *mut Rope,
-+    pub next: Option<&'a mut Rope<'a>>,
- }
--impl Rope {
--    pub fn append(&mut self, expr: Expr, bump: &Bump) -> Result<*mut Rope, AllocError> {
-+impl<'a> Rope<'a> {
-+    pub fn append(&mut self, expr: Expr, bump: &'a Bump) {
-         // Walk to the tail iteratively: recursing once per node overflows the
-         // native stack on adversarially deep ropes (e.g. an `.npmrc` section
-         // header with thousands of dot-separated segments).
--        //
--        // Arena-allocated Rope nodes are uniquely owned by the chain at this
--        // point; route through `StoreRef::DerefMut` (the arena-backed handle
--        // whose deref is centralised in `nodes.rs`).
--        let mut tail = StoreRef::from_bump(self);
--        while let Some(next) = core::ptr::NonNull::new(tail.next).map(StoreRef::from_non_null) {
--            tail = next;
--        }
--        let rope: *mut Rope = bump.alloc(Rope {
-+        let mut tail = &mut self.next;
-+        while let Some(next) = tail {
-+            tail = &mut next.next;
-+        }
-+        *tail = Some(bump.alloc(Rope {
-             head: expr,
--            next: core::ptr::null_mut(),
--        });
--        tail.next = rope;
--        Ok(rope)
--    }
--
--    /// Re-borrow `next` as `Option<&Rope>`. Same `StoreRef` arena contract:
--    /// the pointee is a bump allocation valid until arena reset. Centralises
--    /// the one `unsafe` so the `get_or_put_object`/`get_rope` walkers
--    /// don't repeat `if !next.is_null() { unsafe { &*next } }` at every hop.
--    #[inline]
--    pub(crate) fn next_ref<'a>(&self) -> Option<&'a Rope> {
--        // SAFETY: `next` is either null or a bump-arena allocation valid until
--        // arena reset. Read-only borrow; no `&mut` alias is
--        // outstanding at any caller (the chain is fully built before walking).
--        unsafe { self.next.cast_const().as_ref() }
-+            next: None,
-+        }));
-     }
- }
++/** Removes the packages with their configuration. */
++const aptPurge =
++  (names: readonly string[]): Step =>
++  () => [`apt-get purge --yes ${names.join(" ")}`];
++
++/** Removes the packages, and what was only there for them. */
++const apkDel =
++  (names: readonly string[]): Step =>
++  () => [`apk del --no-interactive --no-progress ${names.join(" ")}`];
++
+ const brewInstall =
+   (names: readonly string[], options: { formula?: boolean } = {}): Step =>
+   () => [`brew install --quiet ${options.formula ? "--formula " : ""}${names.join(" ")}`];
+@@ -2843,7 +2891,7 @@ const addUserToGroup =
+   (user: string, group: string): Step =>
+   c => [isAlpine(c) ? `addgroup ${user} ${group}` : `usermod -aG ${group} ${user}`];
  
-@@ -1422,15 +1398,15 @@ impl Object {
+-/** `enabled`: starts with the machine. `started`: running now. `masked`, `disabled`: systemd only. */
++/** `enabled`, `disabled`: whether it starts with the machine. `started`: running now. `masked`: systemd only. */
+ const service =
+   (name: string, state: "enabled" | "started" | "masked" | "disabled"): Step =>
+   c => {
+@@ -2852,6 +2900,7 @@ const service =
+         `systemctl ${{ enabled: "enable", started: "start", masked: "mask", disabled: "disable" }[state]} ${name}`,
+       ];
+     if (state === "enabled") return [`rc-update add ${name} default`];
++    if (state === "disabled") return [`rc-update del ${name} default`];
+     if (state === "started") return [`rc-service ${name} start`];
+     throw new Error(`OpenRC has no "${state}"`);
+   };
+```
+
+**File**: `test/cli/install/redacted-config-logs.test.ts` (modified, +10/-1)
+```diff
+@@ -1234,7 +1234,16 @@ describe.concurrent("the userinfo of a git URL is masked as a whole", () => {
+       }),
+     });
  
-     /// Walks `rope` segments, creating nested objects as needed, and returns
-     /// the leaf `E.Object` expression.
--    pub fn get_or_put_object(&mut self, rope: &Rope, _bump: &Bump) -> Result<Expr, SetError> {
-+    pub fn get_or_put_object(&mut self, rope: &Rope<'_>, _bump: &Bump) -> Result<Expr, SetError> {
-         let head_key = match rope.head.data.e_string() {
-             Some(s) => s.data,
-             None => return Err(SetError::Clobber),
-         };
-         if let Some(existing) = self.get(&head_key) {
-             match existing.data {
-                 crate::expr::Data::EArray(array) => {
--                    let Some(next) = rope.next_ref() else {
-+                    let Some(next) = rope.next.as_deref() else {
-                         return Err(SetError::Clobber);
-                     };
-                     if let Some(last) = array.items.last() {
-@@ -1442,7 +1418,7 @@ impl Object {
-                     return Err(SetError::Clobber);
-                 }
-                 crate::expr::Data::EObject(mut object) => {
--                    if let Some(next) = rope.next_ref() {
-+                    if let Some(next) = rope.next.as_deref() {
-                         return object.get_or_put_object(next, _bump);
-                     }
-                     return Ok(existing);
-@@ -1451,7 +1427,7 @@ impl Object {
-             }
-         }
- 
--        if let Some(next) = rope.next_ref() {
-+        if let Some(next) = rope.next.as_deref() {
-             let obj = Expr::init(Object::default(), rope.head.loc);
-             let out = match obj.data {
-                 crate::expr::Data::EObject(mut o) => o.get_or_put_object(next, _bump)?,
+-    const env = { ...bunEnv, GIT_CONFIG_NOSYSTEM: "1", GIT_ASKPASS: "false", GIT_TERMINAL_PROMPT: "0" };
++    const env = {
++      ...bunEnv,
++      GIT_CONFIG_NOSYSTEM: "1",
++      GIT_CONFIG_COUNT: "1",
++      // With curl 8.23 git forgets the URL's user after the first answer, so it has to ask before it.
++      GIT_CONFIG_KEY_0: "http.proactiveAuth",
++      GIT_CONFIG_VALUE_0: "basic",
++      GIT_ASKPASS: "false",
++      GIT_TERMINAL_PROMPT: "0",
++    };
+     const { out, err, exitCode } = await run(String(dir), env, ["install"]);
+     expect(err).toContain(`could not read Password for 'http://***@127.0.0.1:${server.port}'`);
+     expect(out + err).not.toContain(word);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #47944** (2026-11-05): Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (@dylan-conway)
-- **PR #47940** (2026-11-04): Make `epoll_ctl`, `kevent`, six uSockets loop imports and `Bun__FFI__closeFunctions` unsafe to call (@dylan-conway)
-- **PR #47901** (2026-11-04): Remove 98 `unsafe` blocks from `bun_threading`, `bun_alloc`, the bundler and the transpiler (@dylan-conway)
-- **PR #47900** (2026-11-04): install: send configured credentials to tarball URLs that the project names (@dylan-conway)
-- **PR #47895** (2026-11-04): Remove 131 `unsafe` blocks from `Blob`, `Bun.write`, `FileSink`, `fetch`, `Response` and the S3 client (@dylan-conway)
-- **PR #47893** (2026-11-04): Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and `fs.watch` (@dylan-conway)
+- **PR #48050** (2026-11-07): Check the xwin archive's sha256; ignore `bin` paths that contain a NUL (@dylan-conway)
+- **PR #48041** (closed): fix(aot): retain runtime for external scripts when run is kept (@vincentkoc)
+- **PR #48012** (closed): test(aot): build the 17 ways of a-spy-that-no-file-names-still-spies in 8 projects and count the exports each build opens (@robobun)
+- **PR #48009** (closed): test(aot): one command per test in a-package-that-stores-a-loader-function-is-asked-by-every-layer.test.ts, and a require that shows a missed store in three layers (@robobun)
+- **PR #47981** (2026-11-05): ci: leave the SSH server out of the Linux images (@dylan-conway)
+- **PR #47969** (closed): fix(aot): keep process main live across compiled tests (@vincentkoc)
 
 ---
 
@@ -1455,50 +1184,29 @@ transport is up | −9 blocks, −1 `unsafe fn` | +34/−74, 3 files |
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, Bori
+## X. ci: leave the SSH server out of the Linux images (#47981)
 
 **RULE**:
-When implementing operations in `src/aot/compile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/build/ci-images/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1007f11`: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1305ddc`: ci: leave the SSH server out of the Linux images (#47981). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aot/compile.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/build/ci-images/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        bun_alloc::mimalloc::mi_process_info(
-            None,
-            None,
-            None,
-            Some(&mut resident),
-            None,
-            None,
-            None,
-            None,
-        );
+- **Linux machines have the SSH client and no server.** Every base image comes with the server; the `ssh-client` tool removes it, and the bake ends by failing if it is there.
+- **A push cancels the branch's running build**, bakes included. Do not hold commits because they would cancel builds/bakes. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let unused = core::ptr::null_mut();
-        // SAFETY: it writes a number through each pointer that is not null.
-        unsafe {
-            bun_alloc::mimalloc::mi_process_info(
-                unused,
-                unused,
-                unused,
-                &raw mut resident,
-                unused,
-                unused,
-                unused,
-                unused,
-            );
-        }
+- **A push cancels the branch's running build**, bakes included. A Linux bake takes 5 to 15 minutes and its snapshot another 20 to 35 to become available; a Windows bake takes about an hour.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1007f11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1305ddc` are properly handled with clean fallback behavior.

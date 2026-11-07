@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "89d09f46",
+    "sourceVersion": "29d63fc2",
     "license": "Apache-2.0",
-    "contentHash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
-    "lastHarvestedAt": "2026-11-05T22:40:17.795Z",
+    "contentHash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
+    "lastHarvestedAt": "2026-11-07T21:18:29.756Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "b1007f11",
+    "sourceVersion": "7ca0042d",
     "license": "NOASSERTION",
-    "contentHash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
-    "lastHarvestedAt": "2026-11-05T17:21:54.646Z",
+    "contentHash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
+    "lastHarvestedAt": "2026-11-07T21:18:16.304Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "076fe9cc",
+    "sourceVersion": "dbeba0d5",
     "license": "MIT",
-    "contentHash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
-    "lastHarvestedAt": "2026-11-04T03:16:23.684Z",
+    "contentHash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
+    "lastHarvestedAt": "2026-11-07T21:18:17.073Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T21:10:32.671Z",
+  "last_updated": "2026-11-07T21:18:29.768Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "3f2cced68baca6fab53150831cf369684fde491264d1542741f0b885887536c7",
-      "verified_at": "2026-11-05T22:40:17.803Z",
+      "content_hash": "b30a80a43f2951ff2b37dd695a3ba68670e69f96915604f186824984b2a38e82",
+      "verified_at": "2026-11-07T21:18:29.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:40:17.803Z"
+      "last_updated": "2026-11-07T21:18:29.768Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "f82bc675a304e4dce171975c51cce94ad2e0ddb5023792c6e3cba26cac5f1513",
-      "verified_at": "2026-11-05T17:21:54.654Z",
+      "content_hash": "ceaa72f14fc3770936a0ef7484b3c8d5e53139b54f7a28a1d0a3701b3d1f9698",
+      "verified_at": "2026-11-07T21:18:16.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T17:21:54.654Z"
+      "last_updated": "2026-11-07T21:18:16.310Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "87ee2cf9f53cca87d78d6b5e48dcb9af842ad239d5ee8fea36a97f45de1c2ed5",
-      "verified_at": "2026-11-04T03:16:23.691Z",
+      "content_hash": "8be8e5531f1c80ddd8be2040d5dd635c20731de0257aea68194ccadb7e6d7879",
+      "verified_at": "2026-11-07T21:18:17.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T03:16:23.691Z"
+      "last_updated": "2026-11-07T21:18:17.079Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",

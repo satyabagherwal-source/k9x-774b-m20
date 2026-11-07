@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `89d09f46`  
+> **Source Version**: `29d63fc2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:40:16.245Z  
+> **Timestamp**: 2026-11-07T21:18:29.452Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:40:16.239Z  
+> **Harvest Timestamp**: 2026-11-07T21:18:26.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13471 stars
+- **Stars / Engagement**: 13481 stars
 
 ---
 
@@ -1862,382 +1862,596 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fde63530` (2026-11-05)
-**Commit Message**: Block spatial join probe until its index is built
+### Incident Patch 1: `926b62ca` (2026-11-06)
+**Commit Message**: Fix running test from IntelliJ
 
-The operator did not expose the index future, so its driver looped
-without progress while the build side ran.
+Before the change it failed with
 
-**File**: `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java` (modified, +13/-0)
+    java.lang.reflect.InaccessibleObjectException:
+        Unable to make io.trino.spi.connector.TestColumnMetadata()
+        accessible: module trino.spi does not "opens
+        io.trino.spi.connector" to module org.junit.platform.commons
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestAllOrNoneValueSet.java` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@
- package io.trino.operator;
+@@ -30,7 +30,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
- import com.google.common.collect.ImmutableList;
-+import com.google.common.util.concurrent.Futures;
- import com.google.common.util.concurrent.ListenableFuture;
- import io.trino.memory.context.LocalMemoryContext;
- import io.trino.spi.Page;
-@@ -143,6 +144,7 @@ public OperatorFactory duplicate()
-     private final Runnable onClose;
- 
-     private ListenableFuture<PagesSpatialIndex> pagesSpatialIndexFuture;
-+    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
-     private final PageBuilder pageBuilder;
-     @Nullable
-     private Page probe;
-@@ -178,6 +180,7 @@ public SpatialJoinOperator(
-         this.pagesSpatialIndexFactory = requireNonNull(pagesSpatialIndexFactory, "pagesSpatialIndexFactory is null");
-         this.onClose = requireNonNull(onClose, "onClose is null");
-         this.pagesSpatialIndexFuture = pagesSpatialIndexFactory.createPagesSpatialIndex();
-+        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
-         this.pageBuilder = new PageBuilder(ImmutableList.<Type>builder()
-                 .addAll(probeOutputChannels.stream()
-                         .map(probeTypes::get)
-@@ -192,6 +195,16 @@ public OperatorContext getOperatorContext()
-         return operatorContext;
-     }
- 
-+    @Override
-+    public ListenableFuture<Void> isBlocked()
-+    {
-+        // A finishing operator with no probe page completes without the spatial index.
-+        if (finishing) {
-+            return NOT_BLOCKED;
-+        }
-+        return pagesSpatialIndexBlocked;
-+    }
-+
-     @Override
-     public boolean needsInput()
-     {
-```
-
-**File**: `plugin/trino-geospatial/src/test/java/io/trino/plugin/geospatial/TestSpatialJoinOperator.java` (modified, +53/-0)
-```diff
-@@ -470,6 +470,59 @@ public void testDuplicateProbeFactory(boolean createSecondaryOperators)
-         assertOperatorEquals(firstFactory, probeDriver, probePages.build(), expected);
-     }
- 
-+    @Test
-+    public void testProbeBlockedUntilIndexIsBuilt()
-+            throws Exception
-+    {
-+        TaskContext taskContext = createTaskContext();
-+        PipelineContext pipelineContext = taskContext.addPipelineContext(0, true, true, false);
-+        DriverContext buildDriverContext = pipelineContext.addDriverContext();
-+
-+        RowPagesBuilder buildPages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR))
-+                .row(POLYGON_A, "A");
-+        ValuesOperator.ValuesOperatorFactory valuesOperatorFactory = new ValuesOperator.ValuesOperatorFactory(0, new PlanNodeId("test"), buildPages.build());
-+        SpatialIndexBuilderOperatorFactory buildOperatorFactory = new SpatialIndexBuilderOperatorFactory(
-+                1,
-+                new PlanNodeId("test"),
-+                buildPages.getTypes(),
-+                Ints.asList(1),
-+                0,
-+                OptionalInt.empty(),
-+                OptionalDouble.empty(),
-+                OptionalInt.empty(),
-+                (build, probe, _) -> build.contains(probe),
-+                Optional.empty(),
-+                Optional.empty(),
-+                10_000,
-+                new TestingFactory(false));
-+        Driver buildDriver = Driver.createDriver(
-+                buildDriverContext,
-+                valuesOperatorFactory.createOperator(buildDriverContext),
-+                buildOperatorFactory.createOperator(buildDriverContext));
-+
-+        RowPagesBuilder probePages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR));
-+        OperatorFactory joinOperatorFactory = new SpatialJoinOperatorFactory(2, new PlanNodeId("test"), INNER, probePages.getTypes(), Ints.asList(1), 0, OptionalInt.empty(), buildOperatorFactory.getPagesSpatialIndexFactory());
-+        try (Operator probeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext());
-+                Operator finishingProbeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext())) {
-+            ListenableFuture<Void> probeBlocked = probeOperator.isBlocked();
-+            assertThat(probeBlocked.isDone()).isFalse();
-+            assertThat(probeOperator.needsInput()).isFalse();
-+
-+            finishingProbeOperator.finish();
-+            assertThat(finishingProbeOperator.isBlocked().isDone()).isTrue();
-+            assertThat(finishingProbeOperator.getOutput()).isNull();
-+            assertThat(finishingProbeOperator.isFinished()).isTrue();
-+
-+            while (!probeOperator.isBlocked().isDone()) {
-+                buildDriver.processUntilBlocked();
-+            }
-+            assertThat(probeBlocked.isDone()).isTrue();
-+            assertThat(probeOperator.needsInput()).isTrue();
-+        }
-+        joinOperatorFactory.noMoreOperators();
-+        runDriverInThread(executor, buildDriver);
-+    }
-+
-     @Test
-     public void testDistanceQuery()
-     {
-```
-
----
-
-### Incident Patch 2: `f0883a69` (2026-11-01)
-**Commit Message**: Fix Iceberg statistics after column type change
-
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplitSource.java` (modified, +11/-8)
-```diff
-@@ -83,6 +83,7 @@
- import org.apache.iceberg.metrics.ScanMetricsResult;
- import org.apache.iceberg.metrics.ScanReport;
- import org.apache.iceberg.types.Type;
-+import org.apache.iceberg.types.Types.NestedField;
- 
- import java.io.IOException;
- import java.io.UncheckedIOException;
-@@ -105,6 +106,7 @@
- import static com.google.common.base.Suppliers.memoize;
- import static com.google.common.base.Verify.verify;
- import static com.google.common.collect.ImmutableList.toImmutableList;
-+import static com.google.common.collect.ImmutableMap.toImmutableMap;
- import static com.google.common.collect.ImmutableSet.toImmutableSet;
- import static com.google.common.collect.Sets.intersection;
- import static com.google.common.math.LongMath.saturatedAdd;
-@@ -127,7 +129,6 @@
- import static io.trino.plugin.iceberg.IcebergUtil.getPartitionKeys;
- import static io.trino.plugin.iceberg.IcebergUtil.getPartitionValues;
- import static io.trino.plugin.iceberg.IcebergUtil.getPathDomain;
--import static io.trino.plugin.iceberg.IcebergUtil.primitiveFieldTypes;
- import static io.trino.plugin.iceberg.StructLikeWrapperWithFieldIdToIndex.createStructLikeWrapper;
- import static io.trino.plugin.iceberg.TypeConverter.toTrinoType;
- import static io.trino.spi.StandardErrorCode.NOT_SUPPORTED;
-@@ -163,7 +164,6 @@ public class IcebergSplitSource
-     private final EncryptionManager encryptionManager;
-     private final Scan<?, FileScanTask, CombinedScanTask> tableScan;
-     private final OptionalLong maxScannedFileSizeInBytes;
--    private final Map<Integer, Type.PrimitiveType> fieldIdToType;
-     private final PartitionConstraintMatcher partitionConstraintMatcher;
-     private final TypeManager typeManager;
-     @GuardedBy("closer")
-@@ -234,7 +234,6 @@ public IcebergSplitSource(
-         this.encryptionManager = requireNonNull(icebergTable.encryption(), "encryptionManager is null");
-         this.tableScan = requireNonNull(tableScan, "tableScan is null");
-         this.maxScannedFileSizeInBytes = maxScannedFileSize.isPresent() ? OptionalLong.of(maxScannedFileSize.orElseThrow().toBytes()) : OptionalLong.empty();
--        this.fieldIdToType = primitiveFieldTypes(tableScan.schema());
-         this.partitionConstraintMatcher = new PartitionConstraintMatcher(constraint, evaluator, session);
-         this.typeManager = requireNonNull(typeManager, "typeManager is null");
-         this.recordScannedFiles = recordScannedFiles;
-@@ -644,9 +643,11 @@ private void closeInternal(boolean interruptIfRunning)
-     private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask wholeFileTask, Set<Integer> predicatedColumnIds)
-     {
-         verify(predicatedColumnIds != null, "predicatedColumnIds is null");
--        List<IcebergColumnHandle> predicatedColumns = wholeFileTask.schema().columns().stream()
--                .filter(column -> predicatedColumnIds.contains(column.fieldId()))
--                .map(column -> getColumnHandle(column, typeManager))
-+        List<NestedField> predicatedFields = wholeFileTask.schema().columns().stream()
-+                .filter(field -> predicatedColumnIds.contains(field.fieldId()))
-+                .collect(toImmutableList());
-+        List<IcebergColumnHandle> predicatedColumns = predicatedFields.stream()
-+                .map(field -> getColumnHandle(field, typeManager))
-                 .collect(toImmutableList());
-         List<DeleteFile> deleteFiles = wholeFileTask.deletes().stream()
-                 .peek(file -> verifyDeletionVectorReferencesDataFile(wholeFileTask, file))
-@@ -661,7 +662,9 @@ private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask whole
-         return new FileScanTaskWithContext(
-                 wholeFileTask,
-                 createFileStatisticsDomain(
--                        fieldIdToType,
-+                        // Read the bounds as the type of these columns rather than of the scan. Changing the type of a column creates no snapshot,
-+                        // so until the next one the scan of the current snapshot keeps the older schema, while its tasks have the new one
-+                        predicatedFields.stream().collect(toImmutableMap(NestedField::fieldId, NestedField::type)),
-                         wholeFileTask.file().lowerBounds(),
-                         wholeFileTask.file().upperBounds(),
-                         wholeFileTask.file().nullValueCounts(),
-@@ -760,7 +763,7 @@ public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
- 
-     @VisibleForTesting
-     static TupleDomain<IcebergColumnHandle> createFileStatisticsDomain(
--            Map<Integer, Type.PrimitiveType> fieldIdToType,
-+            Map<Integer, ? extends Type> fieldIdToType,
-             @Nullable Map<Integer, ByteBuffer> lowerBounds,
-             @Nullable Map<Integer, ByteBuffer> upperBounds,
-             @Nullable Map<Integer, Long> nullValueCounts,
-```
-
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +17/-3)
-```diff
-@@ -9479,11 +9479,25 @@ public void testSetTransformPartitionedColumnType()
-     @Test // regression test for https://github.com/trinodb/trino/issues/29802
-     public void testColumnTypeEvolutionWithStatistics()
-     {
--        try (TestTable table = newTrinoTable("test_stats_type_change", "(x INT)", List.of("1", "2"))) {
--            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE BIGINT");
-+        testColumnTypeEvolutionWithStatistics("INT", "BIGINT");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(10, 3)");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(38, 3)");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(28, 3)", "DECIMAL(38, 3)");
-+        // The Parquet predicate cannot use the float statistics of an older file yet, see https://github.com/trinodb/trino/issues/30544
-+        if (format != PARQUET) {
-+            testColumnTypeEvolutionWithStatistics("REAL", "DOUBLE");
-+        }
-+    }
-+
-+    private void testColumnTypeEvolutionWithStatistics(String initialType, String newType)
-+    {
-+        try (TestTable table = newTrinoTable("test_stats_type_change", "(x %s)".formatted(initialType), List.of("1", "2"))) {
-+            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE " + newType);
- 
-             assertThat(query("SELECT * FROM " + table.getName() + " WHERE x IN (SELECT DISTINCT x FROM " + table.getName() + ")"))
--                    .matches("VALUES BIGINT '1', 2");
-+                    .matches("VALUES CAST(1 AS %1$s), CAST(2 AS %1$s)".formatted(newType));
-+            assertThat(query("SELECT * FROM %s WHERE x = CAST(1 AS %s)".formatted(table.getName(), newType)))
-+                    .matches("VALUES CAST(1 AS %s)".formatted(newType));
-         }
-     }
- 
-```
-
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/TestIcebergSplitSource.java` (modified, +46/-1)
-```diff
-@@ -43,6 +43,7 @@
- import io.trino.spi.predicate.Range;
- import io.trino.spi.predicate.TupleDomain;
- import io.trino.spi.predicate.ValueSet;
-+import io.trino.spi.type.Int128;
- import io.trino.testing.AbstractTestQueryFramework;
- import io.trino.testing.QueryRunner;
- import io.trino.testing.TestingConnectorSession;
-@@ -112,8 +113,10 @@
- import static io.trino.spi.connector.Constraint.alwaysTrue;
- import static io.trino.spi.predicate.FloatingPointValueSet.nanValue;
- import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.DecimalType.createDecimalType;
- import static io.trino.spi.type.DoubleType.DOUBLE;
- import static io.trino.spi.type.RealType.REAL;
-+import static io.trino.testing.TestingNames.randomNameSuffix;
- import static io.trino.tpch.TpchTable.NATION;
- import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
- import static java.lang.Float.floatToRawIntBits;
-@@ -402,6 +405,48 @@ public void testNaNPruningWithFiniteBounds(String format)
-         }
-     }
- 
-+    /**
-+     * Changing the type of a column creates no snapshot, so until the next one the scan of the current snapshot keeps the
-+     * older schema, while its tasks have the new one.
-+     */
-+    @ParameterizedTest
-+    @ValueSource(strings = {"PARQUET", "ORC"})
-+    public void testFileStatisticsDomainAfterColumnTypeChange(String format)
-+            throws Exception
-+    {
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "integer", BIGINT, 0L, 1L, 3L, 4L);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "real", DOUBLE, 0.0, 1.0, 3.0, 4.0);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(10, 2), 0L, 100L, 300L, 400L);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(28,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
-+    }
-+
-+    private void assertFileStatisticsDomainAfterColumnTypeChange(String format, String initialType, io.trino.spi.type.Type newType, Object belowMinimum, Object minimum, Object maximum, Object aboveMaximum)
-+            throws Exception
-+    {
-+        String tableName = "test_statistics_type_change_" + randomNameSuffix();
-+        assertUpdate("CREATE TABLE %s WITH (format = '%s') AS SELECT CAST(x AS %s) x FROM (VALUES 1, 2, 3) t(x)".formatted(tableName, format, initialType), 3);
-+        try {
-+            assertUpdate("ALTER TABLE %s ALTER COLUMN x SET DATA TYPE %s".formatted(tableName, newType));
-+
-+            SchemaTableName schemaTableName = new SchemaTableName("tpch", tableName);
-+            Table table = catalog.loadTable(SESSION, schemaTableName);
-+            IcebergColumnHandle column = IcebergColumnHandle.optional(new ColumnIdentity(table.schema().findField("x").fieldId(), "x", ColumnIdentity.TypeCategory.PRIMITIVE, ImmutableList.of()))
-+                    .columnType(newType)
-+                    .build();
-+            IcebergTableHandle tableHandle = createTableHandle(schemaTableName, table, TupleDomain.withColumnDomains(ImmutableMap.of(column, Domain.notNull(newType))));
-+
-+            Domain domain = generateSplit(table, tableHandle).fileStatisticsDomain().getDomains().orElseThrow().get(column);
-+            assertThat(domain.includesNullableValue(minimum)).isTrue();
-+            assertThat(domain.includesNullableValue(maximum)).isTrue();
-+            assertThat(domain.includesNullableValue(aboveMaximum)).isFalse();
-+            assertThat(domain.includesNullableValue(belowMinimum)).isFalse();
-+        }
-+        finally {
-+            assertUpdate("DROP TABLE " + tableName);
-+        }
-+    }
-+
-     @Test
-     public void testNullStatisticsMaps()
-     {
-@@ -798,7 +843,7 @@ private List<IcebergSplit> generateSplits(ConnectorSession session, Table nation
-                 session,
-                 tableHandle,
-                 nationTable,
--                nationTable.newScan().metricsReporter(metricsReporter),
-+                nationTable.newScan().useSnapshot(nationTable.currentSnapshot().snapshotId()).metricsReporter(metricsReporter),
-                 Optional.empty(),
-                 alwaysTrue(),
-                 TESTING_TYPE_MANAGER,
-```
-
----
-
-### Incident Patch 3: `e335dc13` (2026-11-03)
-**Commit Message**: Fix format_number precision for negative values
-
-format_number picked the number of decimals from the signed value, so
-every negative number was formatted with up to two decimals. For
-example, -12345 was formatted as -12.35K, while 12345 is 12.3K. Choose
-the precision from the absolute value instead.
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/FormatNumberFunction.java` (modified, +2/-1)
-```diff
-@@ -23,6 +23,7 @@
- import java.text.DecimalFormat;
- 
- import static io.airlift.slice.Slices.utf8Slice;
-+import static java.lang.Math.abs;
- 
- public final class FormatNumberFunction
+-class TestAllOrNoneValueSet
++public class TestAllOrNoneValueSet
  {
-@@ -81,7 +82,7 @@ private String format(long count)
-             unit = "Q";
-         }
- 
--        return getFormat(fractional).format(fractional) + unit;
-+        return getFormat(abs(fractional)).format(fractional) + unit;
-     }
- 
-     private DecimalFormat getFormat(double value)
+     @Test
+     public void testAll()
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestFormatNumberFunction.java` (modified, +13/-1)
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestDomain.java` (modified, +1/-1)
 ```diff
-@@ -141,7 +141,19 @@ public void testFormatNumber()
+@@ -39,7 +39,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
-         assertThat(assertions.function("format_number", "-9223372036854775808"))
-                 .hasType(VARCHAR)
--                .isEqualTo("-9223.37Q");
-+                .isEqualTo("-9223Q");
-+
-+        assertThat(assertions.function("format_number", "SMALLINT '-12345'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-12.3K");
-+
-+        assertThat(assertions.function("format_number", "INTEGER '-123456789'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-123M");
-+
-+        assertThat(assertions.function("format_number", "DOUBLE '-1234.5'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-1.23K");
+-class TestDomain
++public class TestDomain
+ {
+     @Test
+     public void testOrderableNone()
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestEquatableValueSet.java` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  
-         assertThat(assertions.function("format_number", "0"))
-                 .hasType(VARCHAR)
+-class TestEquatableValueSet
++public class TestEquatableValueSet
+ {
+     @Test
+     public void testEmptySet()
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestFloatingPointValueSet.java` (modified, +10/-10)
+```diff
+@@ -39,10 +39,10 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+-class TestFloatingPointValueSet
++public class TestFloatingPointValueSet
+ {
+     @Test
+-    void testMixedFactoryOperations()
++    public void testMixedFactoryOperations()
+     {
+         for (Type type : List.of(DOUBLE, REAL, NUMBER)) {
+             IntFunction<Object> value = finiteValue(type);
+@@ -67,7 +67,7 @@ void testMixedFactoryOperations()
+     }
+ 
+     @Test
+-    void testMixedRepresentationMembership()
++    public void testMixedRepresentationMembership()
+     {
+         for (Type type : List.of(DOUBLE, REAL, NUMBER)) {
+             IntFunction<Object> value = finiteValue(type);
+@@ -133,7 +133,7 @@ private static IntFunction<Object> finiteValue(Type type)
+     }
+ 
+     @Test
+-    void testDistributivityAcrossRepresentations()
++    public void testDistributivityAcrossRepresentations()
+     {
+         for (Type type : List.of(DOUBLE, REAL, NUMBER)) {
+             IntFunction<Object> value = finiteValue(type);
+@@ -149,7 +149,7 @@ void testDistributivityAcrossRepresentations()
+     }
+ 
+     @Test
+-    void testSetAlgebra()
++    public void testSetAlgebra()
+     {
+         for (Type type : List.of(DOUBLE, REAL, NUMBER)) {
+             Object zero = type.equals(DOUBLE) ? 0.0 : type.equals(REAL) ? (long) floatToRawIntBits(0.0f) : TrinoNumber.from(BigDecimal.ZERO);
+@@ -184,7 +184,7 @@ void testSetAlgebra()
+     }
+ 
+     @Test
+-    void testNaNSingletonAndRanges()
++    public void testNaNSingletonAndRanges()
+     {
+         ValueSet nan = ValueSet.of(DOUBLE, Double.NaN);
+         assertThat(nan.isSingleValue()).isTrue();
+@@ -203,7 +203,7 @@ void testNaNSingletonAndRanges()
+     }
+ 
+     @Test
+-    void testInfinityRanges()
++    public void testInfinityRanges()
+     {
+         for (Type type : List.of(REAL, DOUBLE, NUMBER)) {
+             Range universe = FloatingPointValueSet.allOrderedValues(type).getSpan();
+@@ -221,7 +221,7 @@ void testInfinityRanges()
+     }
+ 
+     @Test
+-    void testConnectorRangeViews()
++    public void testConnectorRangeViews()
+     {
+         ValueSet bigint = ValueSet.ofRanges(Range.greaterThan(BIGINT, 5L));
+         assertThat(FloatingPointValueSet.orderedRanges(bigint)).containsExactly(Range.greaterThan(BIGINT, 5L));
+@@ -250,7 +250,7 @@ void testConnectorRangeViews()
+     }
+ 
+     @Test
+-    void testSimplificationPreservesNaN()
++    public void testSimplificationPreservesNaN()
+     {
+         Domain withNaN = Domain.multipleValues(DOUBLE, List.of(1.0, 3.0, Double.NaN));
+         Domain withoutNaN = Domain.multipleValues(DOUBLE, List.of(1.0, 3.0));
+@@ -261,7 +261,7 @@ void testSimplificationPreservesNaN()
+     }
+ 
+     @Test
+-    void testSerialization()
++    public void testSerialization()
+             throws Exception
+     {
+         JsonMapper mapper = new JsonMapperProvider()
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestRange.java` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+-class TestRange
++public class TestRange
+ {
+     @Test
+     public void testInvertedBounds()
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestSortedRangeSet.java` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+-class TestSortedRangeSet
++public class TestSortedRangeSet
+ {
+     @Test
+     public void testEmptySet()
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestSortedRangeSetFromUnorderedValues.java` (modified, +5/-5)
+```diff
+@@ -62,7 +62,7 @@
+  * Checks that building a {@link SortedRangeSet} from unordered values gives the same
+  * result as the original list based sorting algorithm, which is kept here as a reference.
+  */
+-class TestSortedRangeSetFromUnorderedValues
++public class TestSortedRangeSetFromUnorderedValues
+ {
+     private static final long SEED = 20260503;
+     private static final List<Integer> SIZES = List.of(1, 2, 3, 10, 17, 33, 100, 1000, 20000);
+@@ -113,7 +113,7 @@ private static List<TypeCase> typeCases()
+     }
+ 
+     @Test
+-    void testCollection()
++    public void testCollection()
+     {
+         Random random = new Random(SEED);
+         for (TypeCase typeCase : typeCases()) {
+@@ -130,7 +130,7 @@ void testCollection()
+     }
+ 
+     @Test
+-    void testVarargs()
++    public void testVarargs()
+     {
+         Random random = new Random(SEED);
+         for (TypeCase typeCase : typeCases()) {
+@@ -148,7 +148,7 @@ void testVarargs()
+     }
+ 
+     @Test
+-    void testNegativeZero()
++    public void testNegativeZero()
+     {
+         // zeros of different sign are distinct values
+         List<Object> values = List.of(0.0, -0.0, 1.0, -0.0, 0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+@@ -158,7 +158,7 @@ void testNegativeZero()
+     }
+ 
+     @Test
+-    void testKeepsFirstOfEqualValues()
++    public void testKeepsFirstOfEqualValues()
+     {
+         long warsaw = packDateTimeWithZone(1000, "Europe/Warsaw");
+         long utc = packDateTimeWithZone(1000, "UTC");
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/predicate/TestTupleDomain.java` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+-class TestTupleDomain
++public class TestTupleDomain
+ {
+     public record TestingColumnHandle(String name)
+             implements ColumnHandle {}
+```
+
+---
+
+### Incident Patch 2: `a41952bb` (2026-11-06)
+**Commit Message**: Coarsen hash aggregation memory usage reporting
+
+The aggregation size estimate includes the current input page, so it
+changes on every page. Each change walks the synchronized memory
+context chain up to the pipeline context that all drivers share. On
+TPC-DS q67, the partial aggregation after GroupId and a local exchange
+receives small pages, and its drivers contend on that lock.
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/HashAggregationOperator.java` (modified, +21/-8)
+```diff
+@@ -17,6 +17,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.util.concurrent.ListenableFuture;
+ import io.airlift.units.DataSize;
++import io.trino.memory.context.CoarseGrainLocalMemoryContext;
+ import io.trino.memory.context.LocalMemoryContext;
+ import io.trino.operator.aggregation.Aggregator;
+ import io.trino.operator.aggregation.AggregatorFactory;
+@@ -40,6 +41,7 @@
+ import static com.google.common.base.Preconditions.checkArgument;
+ import static com.google.common.base.Preconditions.checkState;
+ import static io.airlift.units.DataSize.Unit.MEGABYTE;
++import static io.trino.memory.context.CoarseGrainLocalMemoryContext.DEFAULT_GRANULARITY;
+ import static io.trino.operator.aggregation.builder.InMemoryHashAggregationBuilder.toTypes;
+ import static io.trino.spi.type.BigintType.BIGINT;
+ import static java.util.Objects.requireNonNull;
+@@ -70,6 +72,7 @@ public static class HashAggregationOperatorFactory
+         private final SpillerFactory spillerFactory;
+         private final FlatHashStrategyCompiler hashStrategyCompiler;
+         private final Optional<PartialAggregationController> partialAggregationController;
++        private final long memorySyncThreshold;
+ 
+         private boolean closed;
+ 
+@@ -106,7 +109,8 @@ public HashAggregationOperatorFactory(
+                         throw new UnsupportedOperationException();
+                     },
+                     hashStrategyCompiler,
+-                    partialAggregationController);
++                    partialAggregationController,
++                    DEFAULT_GRANULARITY);
+         }
+ 
+         public HashAggregationOperatorFactory(
+@@ -143,7 +147,8 @@ public HashAggregationOperatorFactory(
+                     DataSize.succinctBytes((long) (unspillMemoryLimit.toBytes() * MERGE_WITH_MEMORY_RATIO)),
+                     spillerFactory,
+                     hashStrategyCompiler,
+-                    partialAggregationController);
++                    partialAggregationController,
++                    DEFAULT_GRANULARITY);
+         }
+ 
+         @VisibleForTesting
+@@ -164,7 +169,8 @@ public HashAggregationOperatorFactory(
+                 DataSize memoryLimitForMergeWithMemory,
+                 SpillerFactory spillerFactory,
+                 FlatHashStrategyCompiler hashStrategyCompiler,
+-                Optional<PartialAggregationController> partialAggregationController)
++                Optional<PartialAggregationController> partialAggregationController,
++                long memorySyncThreshold)
+         {
+             this.operatorId = operatorId;
+             this.planNodeId = requireNonNull(planNodeId, "planNodeId is null");
+@@ -183,6 +189,7 @@ public HashAggregationOperatorFactory(
+             this.spillerFactory = requireNonNull(spillerFactory, "spillerFactory is null");
+             this.hashStrategyCompiler = requireNonNull(hashStrategyCompiler, "hashStrategyCompiler is null");
+             this.partialAggregationController = requireNonNull(partialAggregationController, "partialAggregationController is null");
++            this.memorySyncThreshold = memorySyncThreshold;
+         }
+ 
+         @Override
+@@ -207,7 +214,8 @@ public Operator createOperator(DriverContext driverContext)
+                     memoryLimitForMergeWithMemory,
+                     spillerFactory,
+                     hashStrategyCompiler,
+-                    partialAggregationController);
++                    partialAggregationController,
++                    memorySyncThreshold);
+         }
+ 
+         @Override
+@@ -236,7 +244,8 @@ public OperatorFactory duplicate()
+                     memoryLimitForMergeWithMemory,
+                     spillerFactory,
+                     hashStrategyCompiler,
+-                    partialAggregationController.map(PartialAggregationController::duplicate));
++                    partialAggregationController.map(PartialAggregationController::duplicate),
++                    memorySyncThreshold);
+         }
+     }
+ 
+@@ -256,6 +265,7 @@ public OperatorFactory duplicate()
+     private final DataSize memoryLimitForMergeWithMemory;
+     private final SpillerFactory spillerFactory;
+     private final FlatHashStrategyCompiler flatHashStrategyCompiler;
++    private final long memorySyncThreshold;
+     private final AggregationMetrics aggregationMetrics = new AggregationMetrics();
+ 
+     private HashAggregationBuilder aggregationBuilder;
+@@ -287,7 +297,8 @@ private HashAggregationOperator(
+             DataSize memoryLimitForMergeWithMemory,
+             SpillerFactory spillerFactory,
+             FlatHashStrategyCompiler flatHashStrategyCompiler,
+-            Optional<PartialAggregationController> partialAggregationController)
++            Optional<PartialAggregationController> partialAggregationController,
++            long memorySyncThreshold)
+     {
+         this.operatorContext = requireNonNull(operatorContext, "operatorContext is null");
+         this.partialAggregationController = requireNonNull(partialAggregationC
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/aggregation/builder/SpillableHashAggregationBuilder.java` (modified, +5/-3)
+```diff
+@@ -17,6 +17,7 @@
+ import com.google.common.io.Closer;
+ import com.google.common.util.concurrent.ListenableFuture;
+ import io.airlift.units.DataSize;
++import io.trino.memory.context.CoarseGrainLocalMemoryContext;
+ import io.trino.memory.context.LocalMemoryContext;
+ import io.trino.operator.AggregationMetrics;
+ import io.trino.operator.FlatHashStrategyCompiler;
+@@ -91,16 +92,17 @@ public SpillableHashAggregationBuilder(
+             DataSize memoryLimitForMergeWithMemory,
+             SpillerFactory spillerFactory,
+             FlatHashStrategyCompiler hashStrategyCompiler,
+-            AggregationMetrics aggregationMetrics)
++            AggregationMetrics aggregationMetrics,
++            long memorySyncThreshold)
+     {
+         this.aggregatorFactories = aggregatorFactories;
+         this.step = step;
+         this.expectedGroups = expectedGroups;
+         this.groupByTypes = groupByTypes;
+         this.groupByChannels = groupByChannels;
+         this.operatorContext = operatorContext;
+-        this.localUserMemoryContext = operatorContext.localUserMemoryContext();
+-        this.localRevocableMemoryContext = operatorContext.localRevocableMemoryContext();
++        this.localUserMemoryContext = new CoarseGrainLocalMemoryContext(operatorContext.localUserMemoryContext(), memorySyncThreshold);
++        this.localRevocableMemoryContext = new CoarseGrainLocalMemoryContext(operatorContext.localRevocableMemoryContext(), memorySyncThreshold);
+         this.memoryLimitForMerge = memoryLimitForMerge.toBytes();
+         this.memoryLimitForMergeWithMemory = memoryLimitForMergeWithMemory.toBytes();
+         this.spillerFactory = spillerFactory;
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/BenchmarkHashAndStreamingAggregationOperators.java` (modified, +3/-1)
+```diff
+@@ -55,6 +55,7 @@
+ import static io.airlift.units.DataSize.succinctBytes;
+ import static io.trino.SessionTestUtils.TEST_SESSION;
+ import static io.trino.block.BlockAssertions.createLongSequenceBlock;
++import static io.trino.memory.context.CoarseGrainLocalMemoryContext.DEFAULT_GRANULARITY;
+ import static io.trino.operator.BenchmarkHashAndStreamingAggregationOperators.Context.ROWS_PER_PAGE;
+ import static io.trino.operator.BenchmarkHashAndStreamingAggregationOperators.Context.TOTAL_PAGES;
+ import static io.trino.spi.type.BigintType.BIGINT;
+@@ -237,7 +238,8 @@ private OperatorFactory createHashAggregationOperatorFactory(
+                     succinctBytes(Integer.MAX_VALUE),
+                     spillerFactory,
+                     new FlatHashStrategyCompiler(TYPE_OPERATORS, hashCompiler),
+-                    Optional.empty());
++                    Optional.empty(),
++                    DEFAULT_GRANULARITY);
+         }
+ 
+         private static void repeatToBigintBlock(long value, int count, BlockBuilder blockBuilder)
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/TestHashAggregationOperator.java` (modified, +32/-12)
+```diff
+@@ -78,6 +78,7 @@
+ import static io.trino.block.BlockAssertions.createLongSequenceBlock;
+ import static io.trino.block.BlockAssertions.createLongsBlock;
+ import static io.trino.block.BlockAssertions.createRepeatedValuesBlock;
++import static io.trino.memory.context.CoarseGrainLocalMemoryContext.DEFAULT_GRANULARITY;
+ import static io.trino.operator.AggregationMetrics.INPUT_ROWS_WITH_PARTIAL_AGGREGATION_DISABLED_METRIC_NAME;
+ import static io.trino.operator.GroupByHashYieldAssertion.createPages;
+ import static io.trino.operator.GroupByHashYieldAssertion.finishOperatorWithYieldingGroupByHash;
+@@ -184,7 +185,8 @@ private void testHashAggregation(boolean spillEnabled, boolean revokeMemoryWhenA
+                 succinctBytes(memoryLimitForMergeWithMemory),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         DriverContext driverContext = createDriverContext(memoryLimitForMerge);
+ 
+@@ -251,7 +253,8 @@ private void testHashAggregationWithGlobals(boolean spillEnabled, boolean revoke
+                 succinctBytes(memoryLimitForMergeWithMemory),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         DriverContext driverContext = createDriverContext(memoryLimitForMerge);
+         MaterializedResult expected = resultBuilder(VARCHAR, BIGINT, BIGINT, BIGINT, DOUBLE, VARCHAR, BIGINT, BIGINT)
+@@ -311,7 +314,8 @@ private void testHashAggregationMemoryReservation(boolean spillEnabled, boolean
+                 succinctBytes(memoryLimitForMergeWithMemory),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         try (Operator operator = operatorFactory.createOperator(driverContext)) {
+             toPages(operator, input.iterator(), revokeMemoryWhenAddingPages);
+@@ -377,7 +381,8 @@ public void testDistinctOrderedAggregationMemoryReservation()
+                 succinctBytes(0),
+                 new DummySpillerFactory(),
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         // while the buffered rows are replayed into the distinct hash, the buffered values,
+         // the pages index addresses and the hash entries must all be reserved at the same time
+@@ -449,7 +454,8 @@ public void testOrderedAggregationEvaluatesInBatches()
+                 succinctBytes(0),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         DriverContext driverContext = createDriverContext();
+         List<Page> pages = toPages(operatorFactory, driverContext, input, true);
+@@ -546,7 +552,8 @@ private void testHashBuilderResize(boolean spillEnabled, boolean revokeMemoryWhe
+                 succinctBytes(memoryLimitForMergeWithMemory),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         toPages(operatorFactory, driverContext, input, revokeMemoryWhenAddingPages);
+     }
+@@ -570,12 +577,20 @@ public void testMemoryReservationYield(Type type)
+                 ImmutableList.of(0),
+                 ImmutableList.of(),
+                 SINGLE,
++                false,
+                 ImmutableList.of(COUNT.createAggregatorFactory(SINGLE, ImmutableList.of(0), OptionalInt.empty())),
+                 OptionalInt.of(1),
+                 1,
+                 Optional.of(DataSize.of(16, MEGABYTE)),
++                false,
++                DataSize.of(0, MEGABYTE),
++                DataSize.of(0, MEGABYTE),
++                (_, _, _) -> {
++                    throw new UnsupportedOperationException();
++                },
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                1);
+ 
+         // get result with yield; pick a relatively small buffer for aggregator's memory usage
+         GroupByHashYieldResult result;
+@@ -774,7 +789,8 @@ public void testMergeWithMemorySpill()
+                 succinctBytes(Integer.MAX_VALUE),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-                Optional.empty());
++                Optional.empty(),
++                DEFAULT_GRANULARITY);
+ 
+         DriverContext driverContext = createDriverContext(smallPagesSpillThresholdSize);
+ 
+@@ -820,7 +836,8 @@ public void testSpillMetricsRecorded()
+                 /* memoryLimitForMergeWithMemory */ succinctBytes(Integer.MAX_VALUE),
+                 spillerFactory,
+                 hashStrategyCompiler,
+-         
+```
+
+---
+
+### Incident Patch 3: `29d63fc2` (2026-10-26)
+**Commit Message**: Add reautheticate to web ui
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/api/base.ts` (modified, +38/-0)
+```diff
+@@ -19,9 +19,47 @@ export interface ApiResponse<T> {
+     data?: T
+ }
+ 
++const UNAUTHENTICATED = 401
++const REAUTHENTICATION_TIMESTAMP_KEY = 'trino.ui.reauthentication.timestamp'
++const REAUTHENTICATION_COOLDOWN_MS = 10_000
++
++export const clearReauthenticationCooldown = () => {
++    try {
++        sessionStorage.removeItem(REAUTHENTICATION_TIMESTAMP_KEY)
++    } catch {
++        // Storage is unavailable, so there is no cooldown to clear.
++    }
++}
++
++const reauthenticate = () => {
++    const lastReauthentication = Number(sessionStorage.getItem(REAUTHENTICATION_TIMESTAMP_KEY) ?? 0)
++    const elapsed = Date.now() - lastReauthentication
++    if (elapsed >= 0 && elapsed < REAUTHENTICATION_COOLDOWN_MS) {
++        return
++    }
++    sessionStorage.setItem(REAUTHENTICATION_TIMESTAMP_KEY, Date.now().toString())
++    window.location.reload()
++}
++
+ export class ClientApi {
+     axiosInstance: AxiosInstance = axios.create()
+ 
++    constructor() {
++        this.axiosInstance.interceptors.response.use(
++            (response) => response,
++            (error) => {
++                if (axios.isAxiosError(error) && error.response?.status === UNAUTHENTICATED) {
++                    try {
++                        reauthenticate()
++                    } catch {
++                        // Storage is unavailable. Keep the original 401 error.
++                    }
++                }
++                return Promise.reject(error)
++            }
++        )
++    }
++
+     paramsToQueryString = (params: Record<string, string>): string => {
+         let queryString = ''
+         if (Object.keys(params).length > 0) {
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/AuthProvider.tsx` (modified, +2/-1)
+```diff
+@@ -13,7 +13,7 @@
+  */
+ import React, { useEffect, useState, ReactNode } from 'react'
+ import { AuthContext, LogoutParams } from './AuthContext'
+-import { ApiResponse } from '../api/base.ts'
++import { ApiResponse, clearReauthenticationCooldown } from '../api/base.ts'
+ import { authInfoApi, loginApi, logoutApi, AuthInfo, Empty } from '../api/webapp/auth'
+ import { Texts } from '../constant'
+ 
+@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+             callApi({
+                 apiFn: loginApi,
+                 onSuccess: () => {
++                    clearReauthenticationCooldown()
+                     setAuthInfo({
+                         ...authInfo,
+                         authenticated: true,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31998** (2026-11-05): Block spatial join probe until its index is built (@raunaqmorarka)
-- **PR #31996** (2026-11-05): Bump com.amazon.redshift:redshift-jdbc42 from 2.2.9 to 2.3.0 (@dependabot[bot])
-- **PR #31995** (2026-11-05): Bump com.azure:azure-core-tracing-opentelemetry from 1.0.0-beta.67 to 1.0.0-beta.68 (@dependabot[bot])
-- **PR #31992** (2026-11-05): Speed up building SortedRangeSet from unordered integers (@wendigo)
-- **PR #31988** (2026-11-05): Use synchronized output for CLI status redraw  (@wendigo)
-- **PR #31987** (2026-11-05): Classify MongoDB network errors as external errors (@losipiuk)
+- **PR #32021** (2026-11-06): Skip dictionary indirection for long-based SortedRangeSet (@findepi)
+- **PR #32018** (2026-11-07): Use anyMatch and matches for existence checks (@wendigo)
+- **PR #32017** (2026-11-06): Use anyMatch to detect variable width types (@chenjian2664)
+- **PR #32016** (2026-11-06): Coarsen hash aggregation memory usage reporting (@raunaqmorarka)
+- **PR #32010** (2026-11-06): Remove unused PathEvaluationVisitor.getText (@chenjian2664)
+- **PR #32008** (2026-11-06): Return row count from JDBC `execute` procedure (@ebyhr)
 
 ---
 
@@ -2257,40 +2471,28 @@ the precision from the absolute value instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Block spatial join probe until its index is built
+## X. running test from IntelliJ
 
 **RULE**:
-When implementing operations in `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-spi/src/test/java/io/trino/spi/predicate/TestAllOrNoneValueSet.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fde63530`: Block spatial join probe until its index is built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `926b62ca`: running test from IntelliJ. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/test/java/io/trino/spi/predicate/TestAllOrNoneValueSet.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.google.common.util.concurrent.Futures;
-    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
-        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
-    @Override
-    public ListenableFuture<Void> isBlocked()
-    {
-        // A finishing operator with no probe page completes without the spatial index.
-        if (finishing) {
-            return NOT_BLOCKED;
-        }
-        return pagesSpatialIndexBlocked;
-    }
-
+public class TestAllOrNoneValueSet
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+class TestAllOrNoneValueSet
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fde63530` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `926b62ca` are properly handled with clean fallback behavior.

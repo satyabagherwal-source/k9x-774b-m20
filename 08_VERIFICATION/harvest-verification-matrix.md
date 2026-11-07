@@ -8095,3 +8095,6 @@
 | `CYCLE-20261107-DKCN` | `2026-11-07T21:10:22.535Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`05e52b2b...`) |
 | `CYCLE-20261107-DLME` | `2026-11-07T21:10:24.182Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e694e2bc...`) |
 | `CYCLE-20261107-DS5U` | `2026-11-07T21:10:32.658Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`204c22eb...`) |
+| `CYCLE-20261107-NPWT` | `2026-11-07T21:18:16.301Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ceaa72f1...`) |
+| `CYCLE-20261107-NQI6` | `2026-11-07T21:18:17.070Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8be8e553...`) |
+| `CYCLE-20261107-O0AH` | `2026-11-07T21:18:29.753Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5070` | Yes (`b30a80a4...`) |
