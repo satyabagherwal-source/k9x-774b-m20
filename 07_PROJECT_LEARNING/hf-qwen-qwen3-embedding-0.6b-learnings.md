@@ -3,7 +3,7 @@
 > **Source Version**: `hf-qwen-qwen`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T07:25:55.597Z  
+> **Timestamp**: 2026-11-07T22:46:36.460Z  
 > **Learning ID**: `learn-huggingface-qwen-qwen3-embedding-0-6b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,297 +17,355 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `Qwen3-Embedding-0.6B` repository is not a traditional software application repository but a **Model Artifact Repository** containing the serialized weights, tokenizer configuration, and architectural metadata for a Large Language Model (LLM) fine-tuned specifically for **dense vector embedding generation**. Its primary function is to transform variable-length natural language text (up to 32k tokens) into fixed-dimensional dense vectors (1024 dimensions by default, configurable via Matryoshka Representation Learning) that preserve semantic similarity in Euclidean space.
+The repository `Qwen/Qwen3-Embedding-0.6B` is not a software application but a **pre-trained model artifact** designed to solve the problem of **high-dimensional semantic vectorization** for text. It transforms variable-length natural language inputs (up to 32k tokens) into fixed-size dense vectors (1024 dimensions) that preserve semantic similarity, enabling downstream tasks like retrieval, clustering, and classification.
 
 **Architectural Boundaries:**
-1.  **Input Boundary:** Raw text strings, tokenized via a BPE (Byte-Pair Encoding) tokenizer with a vocabulary size of 151,669. The system accepts user-defined instructions (e.g., "Instruct: Given a web search query, retrieve relevant passages") to condition the embedding space.
-2.  **Processing Core:** A Transformer-based decoder-only architecture (`Qwen3ForCausalLM`) with 28 hidden layers, 16 attention heads, and 8 key-value heads (GQA - Grouped Query Attention). It utilizes RoPE (Rotary Position Embeddings) with a base theta of 1,000,000 to handle long-context positional encoding.
-3.  **Output Boundary:** A dense vector of size $D$ (where $32 \le D \le 1024$). The model supports **Matryoshka Representation Learning (MRL)**, allowing the first $D$ dimensions of the 1024-dim vector to be used as a valid, lower-dimensional embedding without retraining.
-4.  **State Ownership:** The model is stateless during inference. All state is contained within the weight matrices (`.safetensors`) and the KV-cache (if used for autoregressive tasks, though primarily used here for single-pass embedding extraction).
+1.  **Input Boundary:** Raw text strings, tokenized via a BPE (Byte-Pair Encoding) tokenizer with a vocabulary size of 151,669. The model expects specific special tokens (`<|im_start|>`, `<|im_end|>`) for instruction-aware embedding.
+2.  **Core Subsystem (Transformer Backbone):** A 28-layer Transformer decoder-only architecture (`Qwen3ForCausalLM` base) modified for embedding. Key parameters:
+    *   `hidden_size`: 1024
+    *   `num_attention_heads`: 16
+    *   `num_key_value_heads`: 8 (GQA - Grouped Query Attention)
+    *   `intermediate_size`: 3072 (FFN expansion)
+    *   `max_position_embeddings`: 32768
+3.  **Output Boundary:** A 1024-dimensional float vector (bfloat16 precision). Crucially, it supports **Matryoshka Representation Learning (MRL)**, allowing truncation of the vector to any dimension $d \in [32, 1024]$ without retraining, preserving semantic integrity.
 
 **Critical Subsystem Abstractions:**
-*   **Tokenizer:** Maps text to integer IDs. Critical invariant: `add_bos_token: false` and `add_prefix_space: false` to ensure consistent tokenization across different input formats.
-*   **Transformer Backbone:** 28 layers of Multi-Head Attention + Feed-Forward Networks. Uses `silu` activation and `rms_norm` for stability.
-*   **Pooling Strategy:** Typically Mean Pooling or Last Token Pooling (implied by embedding task) to reduce the sequence length dimension to a single vector.
-*   **Matryoshka Head:** The final projection layer is trained such that sub-vectors (prefixes of the full vector) remain semantically coherent.
+*   **RoPE (Rotary Positional Embeddings):** `rope_theta: 1000000` enables long-context positional encoding without absolute position IDs.
+*   **RMSNorm:** `rms_norm_eps: 1e-06` stabilizes layer normalization, replacing standard LayerNorm for better numerical stability in bfloat16.
+*   **Instruction-Aware Prompting:** The model is fine-tuned to expect a specific prompt template (e.g., "Instruct: {task}\nQuery: {text}") to optimize embedding quality for specific downstream tasks.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Matryoshka Dimensional Consistency Invariant
+### 1. Matryoshka Vector Truncation Invariant
 **RULE**:
-When implementing or utilizing Matryoshka Representation Learning (MRL) embeddings, the system MUST ensure that the cosine similarity computed on the first $D$ dimensions of the vector is monotonically non-decreasing with respect to $D$ (i.e., $Sim(v_{1:D}, w_{1:D}) \ge Sim(v_{1:D'}, w_{1:D'})$ for $D > D'$) within a defined tolerance, and MUST NOT assume that truncating the vector without re-normalization preserves the geometric distance properties required for retrieval.
+When implementing Matryoshka Representation Learning (MRL) capable embedding models, the output vector MUST be normalized **after** truncation to the target dimension $d$. The cosine similarity metric MUST be computed on the truncated, re-normalized vectors, not the raw truncated values.
 
 **WHY**:
-MRL trains the model to pack information hierarchically. If the lower dimensions do not carry the primary semantic signal, or if the norm of the sub-vector is not properly normalized, retrieval accuracy degrades non-linearly. A common failure mode is using the raw truncated vector without L2 normalization, leading to distance metrics dominated by magnitude rather than direction.
+MRL trains the model such that the first $d$ dimensions contain the most significant semantic information. However, the magnitude of the vector changes when dimensions are removed. If you truncate without re-normalizing, the Euclidean distance and cosine similarity metrics become biased by the remaining vector's magnitude, leading to incorrect ranking in retrieval systems. The invariant ensures that the direction (semantic meaning) is preserved regardless of the dimensionality reduction.
 
 **WHEN TO APPLY**:
-Any system using dense vector embeddings where storage or latency constraints require reducing vector dimensionality (e.g., from 1024 to 256) without retraining the model.
+Any system using MRL-enabled embedding models (e.g., Qwen3-Embedding, GTE, E5) where users request variable output dimensions (e.g., 32, 64, 128, 256, 512, 1024) for storage efficiency or latency optimization.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import numpy as np
+import torch
+import torch.nn.functional as F
 
-def mrl_embed(text, model, target_dim=256):
-    # 1. Generate full 1024-dim embedding
-    full_emb = model.encode(text, normalize_embeddings=False)
+def get_embedding(model, input_ids, attention_mask, target_dim=1024):
+    # 1. Forward pass through the transformer
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
     
-    # 2. Truncate to target dimension
-    truncated = full_emb[:target_dim]
+    # 2. Extract the last hidden state (or specific pooling token)
+    # For Qwen3-Embedding, typically the last token's hidden state is used
+    last_hidden_state = outputs.last_hidden_state[:, -1, :]  # Shape: [batch, 1024]
     
-    # 3. CRITICAL: Re-normalize the truncated vector
-    # This ensures the vector lies on the unit hypersphere, 
-    # making cosine similarity equivalent to dot product.
-    norm = np.linalg.norm(truncated)
-    if norm > 1e-8:
-        truncated = truncated / norm
-    else:
-        # Handle zero-vector edge case
-        truncated = np.zeros(target_dim)
-        
-    return truncated
-
-# Verification: Check that similarity is preserved
-def verify_mrl_consistency(model, texts, dims=[128, 256, 512, 1024]):
-    sims = {}
-    for d in dims:
-        embs = [mrl_embed(t, model, d) for t in texts]
-        # Compute average pairwise cosine similarity
-        sim_matrix = np.dot(embs, np.array(embs).T)
-        sims[d] = np.mean(sim_matrix)
+    # 3. TRUNCATE to target dimension
+    truncated_vec = last_hidden_state[:, :target_dim]
     
-    # Assert monotonicity (with tolerance for noise)
-    for i in range(len(dims) - 1):
-        assert sims[dims[i+1]] >= sims[dims[i]] - 0.01, f"MRL consistency violated at dim {dims[i+1]}"
+    # 4. CRITICAL: Re-normalize the truncated vector
+    # F.normalize ensures the vector has unit length, making cosine similarity = dot product
+    normalized_vec = F.normalize(truncated_vec, p=2, dim=1)
+    
+    return normalized_vec
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Truncating without normalization
-def bad_mrl_embed(text, model, target_dim=256):
-    full_emb = model.encode(text, normalize_embeddings=False)
-    return full_emb[:target_dim] # ERROR: Norm is not 1, cosine sim is biased by magnitude
+# ANTI-PATTERN: Truncating without re-normalization
+def bad_get_embedding(model, input_ids, attention_mask, target_dim=1024):
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    last_hidden_state = outputs.last_hidden_state[:, -1, :]
+    
+    # BUG: Direct truncation. The magnitude of the vector changes,
+    # breaking cosine similarity assumptions if not re-normalized.
+    return last_hidden_state[:, :target_dim]
 ```
 
 **VERIFICATION METHOD**:
-Automated test that computes the average pairwise cosine similarity for a fixed set of text pairs at multiple dimensions (e.g., 64, 128, 256, 512, 1024) and asserts that the similarity score does not drop significantly as dimensionality increases.
+1.  Generate embeddings for a set of semantically similar pairs (e.g., "cat" and "kitten") at full dimension (1024) and truncated dimension (64).
+2.  Compute cosine similarity for both.
+3.  Assert that the ranking order of similar pairs remains consistent between full and truncated dimensions.
+4.  Assert that the L2 norm of the truncated vector is approximately 1.0 (within floating-point epsilon).
 
-### 2. Instruction-Conditioned Embedding Isolation
+### 2. Instruction-Aware Prompting Consistency
 **RULE**:
-When using instruction-aware embedding models, the system MUST prepend the instruction string to the input text in a specific, consistent format (e.g., `"Instruct: {instruction}\nQuery: {text}"`) and MUST NOT mix instruction and query text without clear delimiters, as the model's attention mechanism relies on these structural cues to condition the embedding space.
+When using instruction-aware embedding models, the prompt template MUST be strictly consistent between the **indexing phase** (building the vector database) and the **query phase** (retrieval). The instruction string MUST be prepended to the text before tokenization, and the tokenizer MUST be configured to handle special tokens correctly.
 
 **WHY**:
-The model is fine-tuned to attend to the instruction part to adjust the embedding direction. If the instruction is missing or malformed, the model falls back to a generic embedding, which may not be optimal for the specific task (e.g., code retrieval vs. general semantic search). This leads to silent performance degradation.
+Instruction-aware models are fine-tuned to condition the embedding on the task description. If the instruction is missing or different during query time compared to index time, the semantic space shifts, causing retrieval failures. For example, an index built with "Instruct: Retrieve relevant documents" and a query without the instruction will result in low similarity scores even for correct matches.
 
 **WHEN TO APPLY**:
-Any application using Qwen3-Embedding or similar instruction-tuned embedding models for task-specific retrieval.
+Any deployment of Qwen3-Embedding, GTE, or similar instruction-tuned embedding models.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def prepare_input(text, instruction=None):
-    if instruction:
-        # Use the exact format expected by the model
-        return f"Instruct: {instruction}\nQuery: {text}"
-    else:
-        return f"Query: {text}"
+from transformers import AutoTokenizer
 
-# Example usage
-query = "How to fix a null pointer exception?"
-instruction = "Given a programming question, retrieve relevant code snippets."
-input_str = prepare_input(query, instruction)
-embedding = model.encode(input_str)
-```
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B")
 
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Concatenating without delimiters
-def bad_prepare_input(text, instruction=None):
-    if instruction:
-        return instruction + text # ERROR: Model cannot distinguish instruction from query
+def format_query(text, instruction="Retrieve relevant documents"):
+    # CRITICAL: Prepend instruction to the text
+    # The model expects this specific format
+    return f"Instruct: {instruction}\nQuery: {text}"
+
+def format_document(text):
+    # Documents typically do not have an instruction, or use a generic one
+    # Consistency is key: if index uses no instruction, query must also use none
+    # OR, if index uses a specific instruction, query must use the same
     return text
+
+# Usage
+query_text = "What is the capital of France?"
+indexed_doc = "Paris is the capital of France."
+
+# Indexing
+doc_embedding = get_embedding(model, tokenizer(format_document(indexed_doc)))
+
+# Querying
+query_embedding = get_embedding(model, tokenizer(format_query(query_text)))
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Inconsistent prompting
+# Indexing with instruction
+doc_embedding = get_embedding(model, tokenizer("Instruct: Retrieve\nQuery: Paris is the capital of France."))
+
+# Querying WITHOUT instruction
+query_embedding = get_embedding(model, tokenizer("What is the capital of France?"))
+
+# RESULT: Low similarity score due to mismatched semantic conditioning
 ```
 
 **VERIFICATION METHOD**:
-Unit test that verifies the embedding of a query with a specific instruction is significantly different from the embedding of the same query without an instruction or with a different instruction, using a cosine similarity threshold.
+1.  Create a small test set of query-document pairs with known high similarity.
+2.  Compute similarity scores with and without the instruction prefix.
+3.  Assert that the similarity score with the instruction is significantly higher (e.g., > 0.1 difference) than without.
+4.  Lint check: Ensure all calls to the embedding function pass through a single `format_prompt` utility that enforces the template.
 
-### 3. BFloat16 Precision Stability in Embedding Computation
+### 3. BFloat16 Numerical Stability in Embedding Computation
 **RULE**:
-When computing embeddings using `bfloat16` precision, the system MUST perform the final normalization and similarity computation in `float32` to avoid precision loss and numerical instability, especially when dealing with very small or very large vector components.
+When computing embeddings in `bfloat16` precision, all normalization and similarity computations MUST be performed in `float32` to prevent numerical underflow and loss of precision in the final cosine similarity scores.
 
 **WHY**:
-`bfloat16` has the same exponent range as `float32` but only 7 bits of mantissa. This can lead to significant rounding errors in the final normalization step, where small differences in vector components can be amplified. Computing in `float32` ensures that the final embedding is as accurate as possible.
+`bfloat16` has the same exponent range as `float32` but only 7 bits of mantissa. While this is sufficient for the forward pass of the transformer, the final normalization step (dividing by the L2 norm) and the dot product for cosine similarity are sensitive to small errors. Performing these operations in `bfloat16` can lead to inaccurate similarity scores, especially for vectors with small magnitudes or high-dimensional spaces where the norm is large.
 
 **WHEN TO APPLY**:
-Any system using `bfloat16` for model inference, especially when the output is used for precise similarity computations.
+Any inference pipeline using `bfloat16` models for embedding generation.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 
-def compute_embedding_stable(model, input_ids):
-    with torch.no_grad():
-        # Model outputs in bfloat16
-        outputs = model(input_ids)
-        hidden_states = outputs.last_hidden_state
-        
-        # Convert to float32 for stable computation
-        hidden_states = hidden_states.float()
-        
-        # Perform pooling (e.g., mean pooling)
-        pooled = torch.mean(hidden_states, dim=1)
-        
-        # Normalize in float32
-        pooled = torch.nn.functional.normalize(pooled, p=2, dim=1)
-        
-        return pooled
+def compute_cosine_similarity(vec1, vec2):
+    # CRITICAL: Cast to float32 before normalization and dot product
+    vec1_f32 = vec1.float()
+    vec2_f32 = vec2.float()
+    
+    # Normalize in float32
+    norm1 = torch.norm(vec1_f32, p=2, dim=-1, keepdim=True)
+    norm2 = torch.norm(vec2_f32, p=2, dim=-1, keepdim=True)
+    
+    # Avoid division by zero
+    norm1 = torch.clamp(norm1, min=1e-8)
+    norm2 = torch.clamp(norm2, min=1e-8)
+    
+    vec1_norm = vec1_f32 / norm1
+    vec2_norm = vec2_f32 / norm2
+    
+    # Dot product in float32
+    similarity = torch.sum(vec1_norm * vec2_norm, dim=-1)
+    
+    return similarity
+
+# Usage
+# embeddings are in bfloat16
+similarity = compute_cosine_similarity(embedding1, embedding2)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Normalizing in bfloat16
-def bad_compute_embedding(model, input_ids):
-    with torch.no_grad():
-        outputs = model(input_ids)
-        hidden_states = outputs.last_hidden_state
-        pooled = torch.mean(hidden_states, dim=1)
-        # ERROR: Normalization in bfloat16 can lead to precision loss
-        pooled = torch.nn.functional.normalize(pooled, p=2, dim=1)
-        return pooled
+# ANTI-PATTERN: Computing similarity in bfloat16
+def bad_compute_cosine_similarity(vec1, vec2):
+    # BUG: bfloat16 has low precision for normalization
+    norm1 = torch.norm(vec1, p=2, dim=-1, keepdim=True)
+    norm2 = torch.norm(vec2, p=2, dim=-1, keepdim=True)
+    
+    vec1_norm = vec1 / norm1
+    vec2_norm = vec2 / norm2
+    
+    # Dot product in bfloat16 leads to inaccurate scores
+    similarity = torch.sum(vec1_norm * vec2_norm, dim=-1)
+    
+    return similarity
 ```
 
 **VERIFICATION METHOD**:
-Compare the embeddings computed in `bfloat16` and `float32` for a set of inputs and assert that the maximum absolute difference is below a threshold (e.g., 1e-3).
+1.  Generate a set of random vectors in `bfloat16`.
+2.  Compute cosine similarity using both `bfloat16` and `float32` methods.
+3.  Assert that the maximum absolute difference between the two results is less than a small epsilon (e.g., 1e-3).
+4.  If the difference exceeds the epsilon, the `bfloat16` method is failing the numerical stability test.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, this section will document **hypothetical but highly probable** incidents based on common failure modes in embedding model deployment, derived from the architectural invariants.*
+*Note: Since no specific commit patches or bug issues were provided in the input, this section will document **hypothetical but highly probable** incidents based on common failure modes in embedding model deployments, derived from the architectural invariants identified in Section 2.*
 
-### Incident 1: MRL Truncation Leading to Degraded Retrieval (BUG-MRL-01)
-- **Context**: Retrieval subsystem, vector database ingestion pipeline.
-- **What Was Expected**: Reducing embedding dimension from 1024 to 256 should maintain >95% of retrieval accuracy.
-- **What Actually Happened**: Retrieval accuracy dropped to 70% after truncation.
-- **Evidence in Repo**: N/A (Hypothetical based on MRL invariants).
-- **Root Cause**: The truncated vectors were not re-normalized. The cosine similarity was computed on vectors with varying norms, leading to distance metrics dominated by magnitude rather than direction.
+### Incident 1: Retrieval Failure Due to Missing Instruction Prefix (BUG-EMBED-01)
+- **Context**: Vector Database Indexing and Query Pipeline
+- **What Was Expected**: High similarity scores for semantically related query-document pairs.
+- **What Actually Happened**: Low similarity scores (< 0.2) for all queries, even for exact matches.
+- **Evidence in Repo**: `README.md` mentions "Instruction Aware" capability. `tokenizer_config.json` shows special tokens for instruction formatting.
+- **Root Cause**: The query pipeline did not prepend the instruction string to the query text before tokenization, while the indexing pipeline did. This caused a mismatch in the semantic conditioning of the embeddings.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-truncated_emb = full_emb[:256]
-similarity = cosine_similarity(truncated_emb, query_emb)
+# - Buggy code: Query without instruction
+# query_embedding = get_embedding(model, tokenizer(query_text))
 
-# + Fixed pattern
-truncated_emb = full_emb[:256]
-truncated_emb = normalize(truncated_emb) # L2 normalization
-similarity = cosine_similarity(truncated_emb, query_emb)
+# + Fixed pattern: Query with instruction
+# query_embedding = get_embedding(model, tokenizer(f"Instruct: {instruction}\nQuery: {query_text}"))
 ```
-- **Lesson**: Always re-normalize vectors after truncation or any linear transformation that changes the norm.
+- **Lesson**: Always enforce consistent prompt templates for instruction-aware models. Use a single utility function for formatting both index and query texts.
 
-### Incident 2: Instruction Format Mismatch (BUG-INST-02)
-- **Context**: Application layer, query preprocessing.
-- **What Was Expected**: Using the instruction "Given a web search query, retrieve relevant passages" should improve retrieval for web search tasks.
-- **What Actually Happened**: No improvement in retrieval accuracy; embeddings were identical to those without instructions.
-- **Evidence in Repo**: N/A (Hypothetical based on instruction-aware invariants).
-- **Root Cause**: The instruction was concatenated without the required delimiters (`"Instruct: ... \nQuery: ..."`). The model did not recognize the instruction and fell back to generic embedding.
+### Incident 2: Inaccurate Similarity Scores Due to BFloat16 Precision Loss (BUG-EMBED-02)
+- **Context**: Cosine Similarity Computation
+- **What Was Expected**: Accurate cosine similarity scores in the range [-1, 1].
+- **What Actually Happened**: Similarity scores were slightly off, leading to incorrect ranking in top-k retrieval.
+- **Evidence in Repo**: `config.json` specifies `torch_dtype: bfloat16`.
+- **Root Cause**: Normalization and dot product were performed in `bfloat16`, leading to numerical underflow and loss of precision.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-input_str = instruction + query
+# - Buggy code: Similarity in bfloat16
+# similarity = torch.sum((vec1 / norm1) * (vec2 / norm2), dim=-1)
 
-# + Fixed pattern
-input_str = f"Instruct: {instruction}\nQuery: {query}"
+# + Fixed pattern: Similarity in float32
+# vec1_f32 = vec1.float()
+# vec2_f32 = vec2.float()
+# similarity = torch.sum((vec1_f32 / norm1) * (vec2_f32 / norm2), dim=-1)
 ```
-- **Lesson**: Always follow the exact input format specified by the model documentation.
+- **Lesson**: Always perform final normalization and similarity computations in `float32` when using `bfloat16` models.
 
-### Incident 3: BFloat16 Precision Loss in Normalization (BUG-PREC-03)
-- **Context**: Inference engine, embedding computation.
-- **What Was Expected**: Embeddings computed in `bfloat16` should be numerically stable.
-- **What Actually Happened**: Some embeddings had NaN or Inf values, leading to crashes in the vector database.
-- **Evidence in Repo**: N/A (Hypothetical based on precision invariants).
-- **Root Cause**: The normalization step was performed in `bfloat16`, leading to overflow or underflow in the division operation.
+### Incident 3: Memory Overflow Due to Unbounded Batch Size (BUG-EMBED-03)
+- **Context**: Batch Inference Pipeline
+- **What Was Expected**: Stable memory usage during batch inference.
+- **What Actually Happened**: Out-of-memory (OOM) errors when processing large batches of long texts.
+- **Evidence in Repo**: `config.json` specifies `max_position_embeddings: 32768`.
+- **Root Cause**: The batch size was not dynamically adjusted based on the sequence length. Long sequences require more memory for the attention matrix, leading to OOM.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-pooled = torch.mean(hidden_states, dim=1)
-pooled = torch.nn.functional.normalize(pooled, p=2, dim=1) # In bfloat16
+# - Buggy code: Fixed batch size
+# batch_size = 32
+# for batch in DataLoader(dataset, batch_size=batch_size):
+#     embeddings = model(batch)
 
-# + Fixed pattern
-pooled = torch.mean(hidden_states, dim=1).float() # Convert to float32
-pooled = torch.nn.functional.normalize(pooled, p=2, dim=1) # Normalize in float32
+# + Fixed pattern: Dynamic batch size based on sequence length
+# def dynamic_batch_size(seq_len, max_tokens=32768):
+#     return max(1, max_tokens // seq_len)
+# 
+# for batch in DataLoader(dataset, batch_size=dynamic_batch_size(seq_len)):
+#     embeddings = model(batch)
 ```
-- **Lesson**: Perform critical numerical operations (normalization, similarity) in higher precision (`float32`) even if the model runs in lower precision (`bfloat16`).
+- **Lesson**: Implement dynamic batch sizing based on sequence length to prevent OOM errors in transformer models.
+
+### Incident 4: Incorrect Embedding Dimension Truncation (BUG-EMBED-04)
+- **Context**: Matryoshka Representation Learning (MRL) Usage
+- **What Was Expected**: Consistent semantic similarity across different embedding dimensions.
+- **What Actually Happened**: Significant drop in similarity scores when truncating from 1024 to 64 dimensions.
+- **Evidence in Repo**: `README.md` mentions "MRL Support" and "user-defined output dimensions ranging from 32 to 1024".
+- **Root Cause**: The truncated vectors were not re-normalized, leading to biased similarity scores.
+- **Remediation Code Diff**:
+```python
+# - Buggy code: Truncation without re-normalization
+# truncated_vec = last_hidden_state[:, :target_dim]
+
+# + Fixed pattern: Truncation with re-normalization
+# truncated_vec = last_hidden_state[:, :target_dim]
+# truncated_vec = F.normalize(truncated_vec, p=2, dim=1)
+```
+- **Lesson**: Always re-normalize vectors after truncation in MRL models to preserve semantic integrity.
+
+### Incident 5: Tokenizer Special Token Misalignment (BUG-EMBED-05)
+- **Context**: Tokenization Pipeline
+- **What Was Expected**: Correct tokenization of text with special tokens.
+- **What Actually Happened**: Incorrect embeddings due to misaligned special tokens.
+- **Evidence in Repo**: `tokenizer_config.json` shows special tokens like `<|im_start|>`, `<|im_end|>`.
+- **Root Cause**: The tokenizer was not configured to handle special tokens correctly, leading to misalignment in the input sequence.
+- **Remediation Code Diff**:
+```python
+# - Buggy code: Tokenizer without special token handling
+# tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B")
+# inputs = tokenizer(text)
+
+# + Fixed pattern: Tokenizer with special token handling
+# tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B", use_fast=True)
+# inputs = tokenizer(text, add_special_tokens=True)
+```
+- **Lesson**: Always configure the tokenizer to handle special tokens correctly to ensure proper alignment of the input sequence.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When handling token IDs, ensure that the tokenizer's `add_bos_token` and `add_prefix_space` settings are consistent with the model's training. In `Qwen3-Embedding-0.6B`, `add_bos_token: false` and `add_prefix_space: false` are set. If the tokenizer adds a BOS token or prefix space during inference, the input distribution will shift, leading to degraded performance.
-    *   **Code Example**:
-        ```python
-        # Correct
-        tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B")
-        inputs = tokenizer(text, add_special_tokens=False) # Ensure no extra tokens
-        
-        # Incorrect
-        inputs = tokenizer(text) # May add BOS or prefix space
-        ```
+    *   **BFloat16 vs Float32**: Never perform division or normalization in `bfloat16`. Always cast to `float32` for these operations.
+    *   **Special Token IDs**: Ensure that special tokens (e.g., `<|im_start|>`) are correctly mapped to their token IDs in the tokenizer. Misalignment leads to incorrect embeddings.
+    *   **Vector Normalization**: Always normalize vectors to unit length before computing cosine similarity. Use `F.normalize` with `p=2`.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When implementing custom pooling or post-processing, ensure that the loop over sequence length terminates. If the input sequence is empty, the pooling operation should return a zero vector, not crash or loop infinitely.
-    *   **Code Example**:
-        ```python
-        def safe_mean_pooling(hidden_states):
-            if hidden_states.shape[1] == 0:
-                return torch.zeros(hidden_states.shape[0], hidden_states.shape[2])
-            return torch.mean(hidden_states, dim=1)
-        ```
+    *   **Batch Processing**: Ensure that batch processing loops terminate correctly. Use `DataLoader` with a fixed number of epochs or a maximum number of batches.
+    *   **Dynamic Batch Sizing**: Implement a guard to prevent infinite loops in dynamic batch sizing. Ensure that the batch size is always at least 1.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (Backend model).
+    *   **N/A**: This repository is a model artifact, not a UI application. However, if building a UI for querying embeddings, ensure that the query input is properly sanitized and formatted before being passed to the embedding model.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When serving the model, ensure that the KV-cache (if used) is properly managed to prevent memory leaks. For embedding tasks, the KV-cache is typically not used, but if the model is used for autoregressive tasks, the cache must be cleared after each inference.
-    *   **Code Example**:
-        ```python
-        with torch.no_grad():
-            outputs = model(input_ids, use_cache=False) # Disable cache for embedding
-        ```
+    *   **Memory Management**: Use `torch.cuda.empty_cache()` after large batch processing to free up GPU memory.
+    *   **Thread Safety**: Ensure that the model is not accessed concurrently from multiple threads without proper locking. Use `torch.no_grad()` during inference to prevent unnecessary memory allocation.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Handle edge cases where the input text is empty or contains only special tokens. The model should return a zero vector or a predefined default embedding, not crash.
-    *   **Code Example**:
-        ```python
-        def safe_embed(text):
-            if not text or not text.strip():
-                return np.zeros(1024)
-            return model.encode(text)
-        ```
+    *   **Null/Undefined Chaining**: Ensure that the input text is not `None` or empty before tokenization. Use `if not text: return None` as a guard.
+    *   **Off-by-One Boundary Checks**: Ensure that the sequence length does not exceed `max_position_embeddings` (32768). Use `if len(tokens) > max_len: raise ValueError` as a guard.
+    *   **Error Boundary Containment**: Wrap the embedding computation in a try-except block to handle any unexpected errors gracefully.
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Decoder-only Transformer with GQA (Grouped Query Attention) for efficiency. 28 layers, 16 heads, 8 KV heads. RoPE for positional encoding.
-2.  **Core Abstractions**: `Qwen3ForCausalLM` model class, `AutoTokenizer` for text processing, `Matryoshka` embedding head for dimensionality reduction.
-3.  **Error Handling**: Graceful degradation for empty inputs, handling of NaN/Inf values in embeddings, fallback to generic embedding if instruction is malformed.
-4.  **Testing**: Unit tests for tokenizer consistency, integration tests for MRL dimensionality reduction, regression tests for retrieval accuracy.
-5.  **Security**: Input sanitization to prevent prompt injection, rate limiting on API endpoints, encryption of embeddings in transit.
-6.  **Performance**: BFloat16 inference for speed, batch processing for throughput, caching of frequent queries, quantization for memory efficiency.
-7.  **Deployment**: Containerized deployment with CUDA support, model loading from Hugging Face Hub, health checks for model availability.
-8.  **Agent Patterns**: Instruction-aware embedding for task-specific retrieval, dynamic dimension selection based on latency constraints, fallback to smaller models if latency is high.
-9.  **Data Flow**: Text -> Tokenization -> Transformer Forward Pass -> Pooling -> Normalization -> Embedding Vector -> Vector Database.
+1.  **Architecture**: The model is a 28-layer Transformer decoder-only architecture with GQA (Grouped Query Attention). It is designed for embedding tasks, not generation. The architecture is optimized for long-context understanding (32k tokens).
+2.  **Core Abstractions**: Key abstractions include `Qwen3ForCausalLM` (base model), `RoPE` (positional encoding), `RMSNorm` (normalization), and `Matryoshka Representation Learning` (MRL) for variable-dimensional embeddings.
+3.  **Error Handling**: The model does not have built-in error handling. Errors must be handled at the application level, such as checking for invalid input lengths, null inputs, and numerical stability issues.
+4.  **Testing**: Testing should focus on semantic similarity, numerical stability, and consistency across different embedding dimensions. Use a test set of known similar and dissimilar pairs to validate the model's performance.
+5.  **Security**: The model is a pre-trained artifact and does not have built-in security features. Ensure that the input text is sanitized to prevent prompt injection attacks. Use a secure tokenizer to handle special tokens correctly.
+6.  **Performance**: The model is optimized for `bfloat16` precision, which reduces memory usage and improves inference speed. Use dynamic batch sizing to optimize throughput. Use `torch.no_grad()` during inference to prevent unnecessary memory allocation.
+7.  **Deployment**: The model can be deployed using Hugging Face Transformers, ONNX, or TensorRT. Ensure that the deployment environment supports `bfloat16` precision. Use a containerized deployment to ensure reproducibility.
+8.  **Agent Patterns**: The model can be used in agent systems for retrieval-augmented generation (RAG). Use the model to retrieve relevant documents from a vector database and pass them to a language model for generation.
+9.  **Data Flow**: The data flow is: Raw Text -> Tokenization -> Transformer Forward Pass -> Last Hidden State -> Truncation (optional) -> Normalization -> Embedding Vector. Ensure that the data flow is consistent between indexing and query phases.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: MRL Truncation with Re-normalization.
-2.  **Rule**: Always re-normalize vectors after truncation.
-3.  **Architecture Principle**: Hierarchical information packing in embedding spaces.
-4.  **Failure Mode**: Degraded retrieval accuracy due to un-normalized truncated vectors.
-5.  **Reusable Skill**: Implementing MRL-compatible embedding pipelines.
-6.  **Decision**: Using BFloat16 for inference but Float32 for normalization.
+1.  **Pattern**: Use a single utility function for formatting prompts for both indexing and query phases to ensure consistency.
+2.  **Rule**: Always re-normalize vectors after truncation in MRL models.
+3.  **Architecture Principle**: Use GQA (Grouped Query Attention) to reduce memory usage and improve inference speed.
+4.  **Failure Mode**: Inconsistent prompt templates lead to low similarity scores.
+5.  **Reusable Skill**: Implement dynamic batch sizing based on sequence length to prevent OOM errors.
+6.  **Decision**: Use `bfloat16` precision for inference to reduce memory usage, but perform final computations in `float32` for numerical stability.
 7.  **Anti-pattern**: Truncating vectors without re-normalization.
-8.  **Verification Method**: Monotonicity check of cosine similarity across dimensions.
+8.  **Verification Method**: Assert that the L2 norm of the truncated vector is approximately 1.0 and that the ranking order of similar pairs remains consistent across different dimensions.
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load Model**: Use `AutoModelForCausalLM` and `AutoTokenizer` from Hugging Face Transformers.
-2.  **Configure Tokenizer**: Ensure `add_bos_token=False` and `add_prefix_space=False`.
-3.  **Prepare Input**: Format input as `"Instruct: {instruction}\nQuery: {text}"` if using instructions.
-4.  **Compute Embedding**: Run model forward pass, pool hidden states (mean or last token), convert to Float32, normalize.
-5.  **Apply MRL**: Truncate to desired dimension, re-normalize.
-6.  **Verify**: Check that embeddings are finite, normalized, and consistent across dimensions.
-7.  **Deploy**: Serve via API, implement caching, rate limiting, and monitoring.
+1.  **Load the Model**: Use `AutoModelForCausalLM` and `AutoTokenizer` from Hugging Face Transformers.
+2.  **Configure the Tokenizer**: Ensure that special tokens are handled correctly. Use `add_special_tokens=True`.
+3.  **Format Prompts**: Use a single utility function to format prompts for both indexing and query phases. Prepend the instruction string to the text.
+4.  **Compute Embeddings**: Use `torch.no_grad()` during inference. Cast the input to `bfloat16` for the forward pass.
+5.  **Truncate and Normalize**: If using MRL, truncate the vector to the target dimension and re-normalize it.
+6.  **Compute Similarity**: Cast the vectors to `float32` before computing cosine similarity.
+7.  **Handle Errors**: Wrap the embedding computation in a try-except block to handle any unexpected errors gracefully.
+8.  **Test**: Use a test set of known similar and dissimilar pairs to validate the model's performance. Assert that the similarity scores are within the expected range.

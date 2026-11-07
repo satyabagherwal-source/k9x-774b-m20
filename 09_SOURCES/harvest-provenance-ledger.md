@@ -8133,3 +8133,6 @@ Every entry in this ledger must capture:
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2fefad6a` | Multi-dimensional audit evidence | 2026-11-07T22:23:48.818Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `cd2be24b` | Multi-dimensional audit evidence | 2026-11-07T22:30:28.528Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `1332aafa` | Multi-dimensional audit evidence | 2026-11-07T22:34:32.359Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `4d83d35e` | Multi-dimensional audit evidence | 2026-11-07T22:46:33.930Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1d40319b` | Multi-dimensional audit evidence | 2026-11-07T22:46:36.592Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-07T22:46:38.360Z |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T22:34:34.955Z",
-    "lastVerified": "2026-11-07T22:34:34.955Z",
+    "lastChecked": "2026-11-07T22:46:40.968Z",
+    "lastVerified": "2026-11-07T22:46:40.968Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,9 +366,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T22:05:20.996Z",
+    "lastChecked": "2026-11-07T22:46:34.976Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T22:05:20.996Z"
+    "lastVerified": "2026-11-07T22:46:34.976Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2414,12 +2414,12 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T18:42:32.255Z",
-    "lastVerified": "2026-11-07T18:42:32.255Z",
+    "lastChecked": "2026-11-07T22:46:34.345Z",
+    "lastVerified": "2026-11-07T22:46:34.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
+    "contentHash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3203,14 +3203,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T13:52:02.562Z",
-    "lastVerified": "2026-11-06T13:52:02.562Z",
+    "lastChecked": "2026-11-07T22:46:32.229Z",
+    "lastVerified": "2026-11-07T22:46:32.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 5,
+    "contentHash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6687,9 +6687,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-05T23:55:33.126Z",
+    "lastChecked": "2026-11-07T22:46:32.468Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-05T23:55:33.126Z"
+    "lastVerified": "2026-11-07T22:46:32.468Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -8087,12 +8087,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "arkivanov-decompose": {
-    "name": "arkivanov/Decompose",
+    "name": "Decompose",
     "officialUrl": "https://github.com/arkivanov/Decompose",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-04T22:45:33.032Z",
-    "lastVerified": "2026-11-04T22:45:33.032Z",
+    "lastChecked": "2026-11-07T22:46:24.977Z",
+    "lastVerified": "2026-11-07T22:46:24.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arkivanov-decompose",
@@ -8101,7 +8101,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c9780062"
   },
   "bahdotsh-wrkflw": {
     "name": "bahdotsh/wrkflw",
@@ -9017,9 +9018,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-05T18:38:22.486Z",
+    "lastChecked": "2026-11-07T22:46:19.898Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-05T18:38:22.486Z"
+    "lastVerified": "2026-11-07T22:46:19.898Z"
   },
   "hf-liquidai-lfm2.5-24b-a2b-gguf": {
     "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -13701,12 +13702,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T07:25:45.681Z",
-    "lastVerified": "2026-11-04T07:25:45.681Z",
+    "lastChecked": "2026-11-07T22:46:22.653Z",
+    "lastVerified": "2026-11-07T22:46:22.653Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
+    "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

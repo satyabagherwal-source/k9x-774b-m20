@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "43508de1",
+    "sourceVersion": "1d40319b",
     "license": "Apache-2.0",
-    "contentHash": "e083b1f4a34ca01ad1608c726c21f1899c1f7f5d622fe35bd1661826ee5bed50",
-    "lastHarvestedAt": "2026-11-07T18:42:36.191Z",
+    "contentHash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
+    "lastHarvestedAt": "2026-11-07T22:46:36.592Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "511dc96e",
+    "sourceVersion": "4d83d35e",
     "license": "AGPL-3.0",
-    "contentHash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
-    "lastHarvestedAt": "2026-11-06T13:52:03.039Z",
+    "contentHash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
+    "lastHarvestedAt": "2026-11-07T22:46:33.930Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -11865,8 +11865,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
     "sourceVersion": "hf-qwen-qwen3-embedding-0.6b",
     "license": "Open-Source",
-    "contentHash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
-    "lastHarvestedAt": "2026-11-04T07:25:57.297Z",
+    "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
+    "lastHarvestedAt": "2026-11-07T22:46:38.360Z",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
   },
   "feder-cr-jobs_applier_ai_agent_aihawk": {

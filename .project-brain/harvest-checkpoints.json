@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T22:34:32.366Z",
+  "last_updated": "2026-11-07T22:46:38.377Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
-      "verified_at": "2026-11-07T20:42:33.546Z",
+      "content_hash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
+      "verified_at": "2026-11-07T22:46:36.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:42:33.546Z"
+      "last_updated": "2026-11-07T22:46:36.600Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
-      "verified_at": "2026-11-06T13:52:03.046Z",
+      "content_hash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
+      "verified_at": "2026-11-07T22:46:33.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:52:03.046Z"
+      "last_updated": "2026-11-07T22:46:33.939Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -17856,14 +17856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "content_hash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
-      "verified_at": "2026-11-04T07:25:57.306Z",
+      "content_hash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
+      "verified_at": "2026-11-07T22:46:38.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T07:25:57.306Z"
+      "last_updated": "2026-11-07T22:46:38.376Z"
     },
     "feder-cr/Jobs_Applier_AI_Agent_AIHawk": {
       "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",

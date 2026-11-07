@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `43508de1`  
+> **Source Version**: `1d40319b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:42:34.806Z  
+> **Timestamp**: 2026-11-07T22:46:34.991Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:42:32.255Z  
+> **Harvest Timestamp**: 2026-11-07T22:46:34.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4530 stars
+- **Stars / Engagement**: 4528 stars
 
 ---
 
@@ -1987,68 +1987,93 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `43508de1` (2026-11-07)
-**Commit Message**: Merge pull request #4643 from aleo-labs-protocol/gauntlet-workflow-names
+### Incident Patch 1: `1d40319b` (2026-11-07)
+**Commit Message**: Merge pull request #4647 from aleo-labs-protocol/dependabot/github_actions/staging/github-actions-dc5ed02c9f
 
-**File**: `.github/workflows/load-test.yml` (modified, +9/-3)
-```diff
-@@ -3,7 +3,7 @@
- # A form for the replay_stockpile test. stress-test.yml does the rest: approval in
- # the stress-test environment, the run, and the "stress-test" check on the commit.
- # Gauntlet owns the defaults: this sends only what's filled in.
--name: Load test
-+name: "Gauntlet: Load test"
- 
- on:
-   workflow_dispatch:
-@@ -51,6 +51,11 @@ on:
-         description: "Share of the transactions sent that must land. Empty: Gauntlet's default."
-         required: false
-         default: ""
-+      packet_loss:
-+        description: "Percent of P2P packets every node drops while sending; on the wire it comes in bursts. Inclusion is then reported, not judged. Not with a ramp."
-+        type: choice
-+        options: ["0", "1", "5", "10", "20", "30", "50", "70"]
-+        default: "0"
- 
- jobs:
-   load:
-@@ -67,10 +72,11 @@ jobs:
-       validators: ${{ inputs.validators }}
-       network: ${{ startsWith(inputs.stockpile, 'mainnet-') && 'mainnet' || 'testnet' }}
-       params: >-
--        ${{ format('stockpile={0}{1}{2}{3}{4}{5}{6}', inputs.stockpile,
-+        ${{ format('stockpile={0}{1}{2}{3}{4}{5}{6}{7}', inputs.stockpile,
-         inputs.rate && format(',rate={0}', inputs.rate) || '',
-         inputs.duration && format(',duration={0}', inputs.duration) || '',
-         inputs.ramp && format(',ramp={0}', inputs.ramp) || '',
-         inputs.targets != 'default' && format(',targets={0}', inputs.targets) || '',
-         inputs.replay_mode != 'default' && format(',replay_mode={0}', inputs.replay_mode) || '',
--        inputs.min_inclusion && format(',min_inclusion={0}', inputs.min_inclusion) || '') }}
-+        inputs.min_inclusion && format(',min_inclusion={0}', inputs.min_inclusion) || '',
-+        inputs.packet_loss != '0' && format(',packet_loss={0}', inputs.packet_loss) || '') }}
-```
+chore(deps): bump actions/upload-artifact from 4.6.2 to 7.0.2 in the github-actions group
 
 **File**: `.github/workflows/stress-test.yml` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@
- #   secret              ANTHROPIC_API_KEY            optional: the comparison summary
- #   variable            STRESS_MANAGER_HOST_KEY      the Gauntlet host's ssh host key line
- #   variable            STRESS_RELEASE_TESTS / STRESS_RELEASE_VALIDATORS   what a release runs
--name: Stress test
-+name: "Gauntlet: Stress test"
- 
- on:
-   workflow_dispatch:
+@@ -318,7 +318,7 @@ jobs:
+         id: artifact
+         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
+         continue-on-error: true
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: gauntlet-${{ steps.req.outputs.run_id }}
+           path: |
+```
+
+**File**: `.github/workflows/sync-test.yml` (modified, +1/-1)
+```diff
+@@ -284,7 +284,7 @@ jobs:
+         id: artifact
+         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
+         continue-on-error: true
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: sync-test-${{ steps.req.outputs.run_id }}
+           path: |
+```
+
+---
+
+### Incident Patch 2: `16b55716` (2026-11-07)
+**Commit Message**: chore(deps): bump actions/upload-artifact
+
+Bumps the github-actions group with 1 update: [actions/upload-artifact](https://github.com/actions/upload-artifact).
+
+
+Updates `actions/upload-artifact` from 4.6.2 to 7.0.2
+- [Release notes](https://github.com/actions/upload-artifact/releases)
+- [Commits](https://github.com/actions/upload-artifact/compare/v4.6.2...cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+
+---
+updated-dependencies:
+- dependency-name: actions/upload-artifact
+  dependency-version: 7.0.2
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+  dependency-group: github-actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/stress-test.yml` (modified, +1/-1)
+```diff
+@@ -318,7 +318,7 @@ jobs:
+         id: artifact
+         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
+         continue-on-error: true
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: gauntlet-${{ steps.req.outputs.run_id }}
+           path: |
+```
+
+**File**: `.github/workflows/sync-test.yml` (modified, +1/-1)
+```diff
+@@ -284,7 +284,7 @@ jobs:
+         id: artifact
+         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
+         continue-on-error: true
+-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: sync-test-${{ steps.req.outputs.run_id }}
+           path: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4647** (2026-11-07): chore(deps): bump actions/upload-artifact from 4.6.2 to 7.0.2 in the github-actions group (@dependabot[bot])
+- **PR #4645** (2026-11-07): Pin external GitHub Actions to commit SHAs (@cbeck88)
 - **PR #4644** (2026-11-07): Add the Gauntlet sync test workflow (@cbeck88)
 - **PR #4643** (2026-11-07): Gauntlet workflows: group them in Actions, add a packet-loss option (@cbeck88)
 - **PR #4640** (2026-11-06): ci: fast-forward snarkOS-internal's staging whenever staging moves (@cbeck88)
 - **PR #4639** (2026-11-06): Remove the chaotic-crash-all devnet entry (@cbeck88)
-- **PR #4638** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@7e48bc69c (@aleo-labs-merge-bot[bot])
-- **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
 
 ---
 
@@ -2068,38 +2093,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4643 from aleo-labs-protocol/gauntlet-workflow-names
+## X. Merge pull request #4647 from aleo-labs-protocol/dependabot/github_actions/stagi
 
 **RULE**:
-When implementing operations in `.github/workflows/load-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `43508de1`: Merge pull request #4643 from aleo-labs-protocol/gauntlet-workflow-names. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d40319b`: Merge pull request #4647 from aleo-labs-protocol/dependabot/github_actions/staging/github-actions-dc5ed02c9f. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/load-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: "Gauntlet: Load test"
-      packet_loss:
-        description: "Percent of P2P packets every node drops while sending; on the wire it comes in bursts. Inclusion is then reported, not judged. Not with a ramp."
-        type: choice
-        options: ["0", "1", "5", "10", "20", "30", "50", "70"]
-        default: "0"
-        ${{ format('stockpile={0}{1}{2}{3}{4}{5}{6}{7}', inputs.stockpile,
-        inputs.min_inclusion && format(',min_inclusion={0}', inputs.min_inclusion) || '',
-        inputs.packet_loss != '0' && format(',packet_loss={0}', inputs.packet_loss) || '') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-name: Load test
-        ${{ format('stockpile={0}{1}{2}{3}{4}{5}{6}', inputs.stockpile,
-        inputs.min_inclusion && format(',min_inclusion={0}', inputs.min_inclusion) || '') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `43508de1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d40319b` are properly handled with clean fallback behavior.

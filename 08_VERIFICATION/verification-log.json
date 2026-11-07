@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-4LHY",
-    "timestamp": "2026-11-05T10:16:12.502Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "fea3cef9ceb10b4a90bc8f6c371606e00f00a621fe1d98101fb34049cff30e94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-DIBA",
-    "timestamp": "2026-11-05T10:23:08.278Z",
-    "repository": "vercel-labs/agent-desktop",
-    "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-DQKW",
-    "timestamp": "2026-11-05T10:23:18.992Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "6af55c3f43b47a9550355f34aa3f58862b6bdb47047de77021665f53023a0ea7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-HPMI",
     "timestamp": "2026-11-05T10:26:24.379Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7490,6 +7445,51 @@
     "repository": "tw93/Pake",
     "learningId": "learn-github-tw93-pake",
     "contentHash": "8b4832b181759439a54f3273e335afc13466a0151006a530e7dc5cf5b597e387",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-T9L3",
+    "timestamp": "2026-11-07T22:46:33.927Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-TBN0",
+    "timestamp": "2026-11-07T22:46:36.588Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-TD05",
+    "timestamp": "2026-11-07T22:46:38.357Z",
+    "repository": "Qwen/Qwen3-Embedding-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+    "contentHash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

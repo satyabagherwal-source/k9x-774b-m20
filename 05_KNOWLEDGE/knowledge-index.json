@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T22:34:32.269Z",
+  "last_updated": "2026-11-07T22:46:38.282Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4829,11 +4829,16 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "511dc96e",
-      "content_hash": "bdd2efaf801f21153f672759817a2bf8a9044fcfd5df45e8cda6d55c9b5331ec",
+      "source_version": "4d83d35e",
+      "content_hash": "31e401f75e83aa60c6ccff824aee64304b7451aac63e5869ebc6cccb12465b30",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "l4-bfl-proxy): create files node services when a user becomes Created (#4414)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1783,
           "title": "download-server):  block downloads without detected media and disable remote tim",
@@ -4935,7 +4940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:52:02.920Z",
+      "verified_at": "2026-11-07T22:46:33.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74392,13 +74397,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "3f12f64e",
-      "content_hash": "75c430c11062987affb624b650a1afa99d2258bd5eeec9bc8ca4f24555e335fc",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "1d40319b",
+      "content_hash": "c9723899223bca77d2608049cbf660f4a4e4fdac520aa1f4ffe52a17d13588c0",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -74444,6 +74449,11 @@
           "number": null,
           "title": "Out-of-Order Watermark Sync Pool Request Invalidation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4647 from aleo-labs-protocol/dependabot/github_actions/stagi",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1114,
@@ -74571,7 +74581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:42:33.406Z",
+      "verified_at": "2026-11-07T22:46:36.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88290,15 +88300,15 @@
       "learning_id": "rule-901",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 901,
-      "title": "Matryoshka Vector Truncation Invariant (Harvested from unsloth/embeddinggemma-2-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Matryoshka Vector Truncation Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "source_version": "hf-qwen-qwen3-embedding-0.6b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-11-07T22:46:38.262Z"
     },
     "rule-902": {
       "learning_id": "rule-902",
@@ -177623,10 +177633,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "1e0bdd125fc474c18ae8e81d0e54eba1badd265d7b7b8fbd385bc4ea30c7168c",
+      "content_hash": "d9cbb24f114741be97cec193e67a5b5af5d8d3195beaf3f2c0c11530aa8ac076",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Instruction-Aware Prompting Consistency",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "BFloat16 Numerical Stability in Embedding Computation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 901,
+          "title": "Matryoshka Vector Truncation Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 6755,
           "title": "Matryoshka Dimensional Consistency Invariant",
@@ -177648,7 +177673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T07:25:57.188Z",
+      "verified_at": "2026-11-07T22:46:38.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

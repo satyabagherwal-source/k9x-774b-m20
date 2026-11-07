@@ -8124,3 +8124,6 @@
 | `CYCLE-20261107-009A` | `2026-11-07T22:23:48.814Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e254a726...`) |
 | `CYCLE-20261107-8KOD` | `2026-11-07T22:30:28.525Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ba8bf79e...`) |
 | `CYCLE-20261107-DSTG` | `2026-11-07T22:34:32.356Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`8b4832b1...`) |
+| `CYCLE-20261107-T9L3` | `2026-11-07T22:46:33.927Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31e401f7...`) |
+| `CYCLE-20261107-TBN0` | `2026-11-07T22:46:36.588Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c9723899...`) |
+| `CYCLE-20261107-TD05` | `2026-11-07T22:46:38.357Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 901, Rule null, Rule null` | Yes (`d9cbb24f...`) |
