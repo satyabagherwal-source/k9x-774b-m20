@@ -7985,3 +7985,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-07T03:02:03.063Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `439ea266` | Multi-dimensional audit evidence | 2026-11-07T03:14:21.802Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `c9a37f4b` | Multi-dimensional audit evidence | 2026-11-07T03:14:25.377Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `0a1f7ca5` | Multi-dimensional audit evidence | 2026-11-07T03:21:41.575Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `434d3e0b` | Multi-dimensional audit evidence | 2026-11-07T03:21:45.547Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `46f93879` | Multi-dimensional audit evidence | 2026-11-07T03:21:47.050Z |

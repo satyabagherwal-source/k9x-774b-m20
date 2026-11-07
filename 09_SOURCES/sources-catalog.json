@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "3dbb215e",
+    "sourceVersion": "46f93879",
     "license": "BSD-3-Clause",
-    "contentHash": "55cf761bf6e106bd5b612b8f50a445ead5d3e591259f7fd59bf48c01d88ba5b7",
-    "lastHarvestedAt": "2026-11-06T20:59:28.286Z",
+    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
+    "lastHarvestedAt": "2026-11-07T03:21:47.050Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "39298343",
+    "sourceVersion": "434d3e0b",
     "license": "Apache-2.0",
-    "contentHash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
-    "lastHarvestedAt": "2026-11-05T15:44:54.381Z",
+    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
+    "lastHarvestedAt": "2026-11-07T03:21:45.547Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "5e3bfe39",
+    "sourceVersion": "0a1f7ca5",
     "license": "BSD-3-Clause",
-    "contentHash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
-    "lastHarvestedAt": "2026-11-04T11:02:29.708Z",
+    "contentHash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
+    "lastHarvestedAt": "2026-11-07T03:21:41.575Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {

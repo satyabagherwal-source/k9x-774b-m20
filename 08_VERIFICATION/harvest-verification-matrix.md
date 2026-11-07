@@ -7976,3 +7976,6 @@
 | `CYCLE-20261107-HYYB` | `2026-11-07T03:02:03.059Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`00e509e1...`) |
 | `CYCLE-20261107-XSYU` | `2026-11-07T03:14:21.798Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7aa5e247...`) |
 | `CYCLE-20261107-XVQ6` | `2026-11-07T03:14:25.374Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`737920fd...`) |
+| `CYCLE-20261107-78AR` | `2026-11-07T03:21:41.571Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e072bf8...`) |
+| `CYCLE-20261107-7BD2` | `2026-11-07T03:21:45.542Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3563c7f3...`) |
+| `CYCLE-20261107-7CIU` | `2026-11-07T03:21:47.046Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`657618cc...`) |

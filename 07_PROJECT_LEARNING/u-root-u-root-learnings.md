@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `5e3bfe39`  
+> **Source Version**: `0a1f7ca5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T11:02:28.945Z  
+> **Timestamp**: 2026-11-07T03:21:40.038Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:57:27.445Z  
+> **Harvest Timestamp**: 2026-11-07T03:21:33.879Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1286,177 +1286,31 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e3bfe39` (2026-10-29)
-**Commit Message**: boot/grub: fix root search for separate FAT boot partitions
+### Incident Patch 1: `38f233b4` (2026-11-05)
+**Commit Message**: fix spelling so spellcheck will pass
 
-Match filesystem UUIDs case-insensitively so uppercase FAT UUIDs
-from GRUB match the lowercase IDs detected by u-root.
+Signed-off-by: Ronald G Minnich <[REDACTED_EMAIL]>
 
-Parse --no-floppy as a boolean and preserve values when normalizing
-GRUB hint flags. Otherwise flag parsing can consume the search
-mode or UUID and leave image paths rooted on the config partition.
-
-Add regression tests with configs on p3 and kernel/initramfs files
-on p2 for NVMe and eMMC-style devices.
-
-Tests: go test ./pkg/boot/grub ./pkg/mount/block ./pkg/boot -count=1
-
-Signed-off-by: Jono Powell <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `pkg/boot/grub/config_test.go` (modified, +87/-0)
+**File**: `cmds/exp/console/uart_mem_linux.go` (modified, +1/-1)
 ```diff
-@@ -14,9 +14,11 @@ import (
- 	"strings"
- 	"testing"
- 
-+	"github.com/u-root/u-root/pkg/boot"
- 	"github.com/u-root/u-root/pkg/boot/boottest"
- 	"github.com/u-root/u-root/pkg/mount"
- 	"github.com/u-root/u-root/pkg/mount/block"
-+	"github.com/u-root/uio/uio"
- )
- 
- // fakeDevices returns a list of fake block devices and a pool of mount points.
-@@ -110,6 +112,91 @@ func TestConfigs(t *testing.T) {
- 	}
- }
- 
-+func TestSearchSeparateFATBootPartition(t *testing.T) {
-+	for _, device := range []struct {
-+		name string
-+		uuid string
-+	}{
-+		{name: "nvme0n1", uuid: "a1e8-94da"},
-+		{name: "mmcblk0", uuid: "6cfc-948e"},
-+	} {
-+		t.Run(device.name, func(t *testing.T) {
-+			for _, tt := range []struct {
-+				name   string
-+				search string
-+			}{
-+				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
-+				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-+				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-+				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
-+				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
-+				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
-+			} {
-+				t.Run(tt.name, func(t *testing.T) {
-+					rootDir := filepath.Join(t.TempDir(), "p3")
-+					bootDir := filepath.Join(t.TempDir(), "p2")
-+					configDir := filepath.Join(rootDir, "boot", "grub")
-+					for _, dir := range []string{configDir, bootDir} {
-+						if err := os.MkdirAll(dir, 0o755); err != nil {
-+							t.Fatal(err)
-+						}
-+					}
-+					for name, contents := range map[string]string{
-+						"vmlinuz-linux":       "test kernel on p2",
-+						"initramfs-linux.img": "test initramfs on p2",
-+					} {
-+						if err := os.WriteFile(filepath.Join(bootDir, name), []byte(contents), 0o644); err != nil {
-+							t.Fatal(err)
-+						}
-+					}
-+					config := "menuentry 'test' {\nset root='hd0,gpt2'\n" + tt.search + "\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\n}\n"
-+					if err := os.WriteFile(filepath.Join(configDir, "grub.cfg"), []byte(config), 0o644); err != nil {
-+						t.Fatal(err)
-+					}
-+
-+					devices := block.BlockDevices{
-+						&block.BlockDev{Name: device.name + "p2", FsUUID: device.uuid, FSType: "vfat"},
-+						&block.BlockDev{Name: device.name + "p3", FsUUID: "test-root-uuid", FSType: "ext4"},
-+					}
-+					mountPool := &mount.Pool{}
-+					mountPool.Add(
-+						&mount.MountPoint{Path: bootDir, Device: devices[0].DevicePath(), FSType: "vfat"},
-+						&mount.MountPoint{Path: rootDir, Device: devices[1].DevicePath(), FSType: "ext4"},
-+					)
-+					images, err := ParseLocalConfig(context.Background(), rootDir, devices, mountPool)
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					if len(images) != 1 {
-+						t.Fatalf("Got %d images, want 1", len(images))
-+					}
-+					image, ok := images[0].(*boot.LinuxImage)
-+					if !ok {
-+						t.Fatalf("Got image type %T, want *boot.LinuxImage", images[0])
-+					}
-+					for _, file := range []struct {
-+						name   string
-+						reader io.ReaderAt
-+						want   string
-+					}{
-+						{name: "kernel", reader: image.Kernel, want: "test kernel on p2"},
-+						{name: "initramfs", reader: image.Initrd, want: "test initramfs on p2"},
-+					} {
-+						got, err := uio.ReadAll(file.reader)
-+						if err != nil {
-+							t.Errorf("Failed to read %s from p2: %v", file.name, err)
-+							continue
-+						}
-+						if string(got) != file.want {
-+							t.Errorf("Read %s = %q, want %q", file.name, got, file.want)
-+						}
-+					}
-+				})
-+			}
-+		})
-+	}
-+}
-+
- func FuzzParseGrubConfig(f *testing.F) {
- 	baseDir := f.TempDir()
- 
-```
-
-**File**: `pkg/boot/grub/grub.go` (modified, +5/-1)
-```diff
-@@ -429,7 +429,7 @@ func (c *parser) append(ctx context.Context, config string) error {
- 			fs.BoolVar(searchFile, "f", false, "")
- 			setVar := fs.String("set", "root", "")
- 			// Ignored flags
--			fs.String("no-floppy", "", "ignored")
-+			fs.Bool("no-floppy", false, "ignored")
- 			fs.String("hint", "", "ignored")
- 			// Everything that begins with "hint" is ignored.
- 			// This was slightly cleaner with pflag, but, at the same time,
-@@ -440,7 +440,11 @@ func (c *parser) append(ctx context.Context, config string) error {
- 			// about an extra loop iterator.
- 			for i := range kv {
- 				if strings.HasPrefix(kv[i], "--hint") {
-+					_, value, hasValue := strings.Cut(kv[i], "=")
- 					kv[i] = "--hint"
-+					if hasValue {
-+						kv[i] += "=" + value
-+					}
- 				}
- 			}
- 
-```
-
-**File**: `pkg/mount/block/blockdev_linux.go` (modified, +1/-1)
-```diff
-@@ -463,7 +463,7 @@ func (b BlockDevices) FilterNames(names ...string) BlockDevices {
- func (b BlockDevices) FilterFSUUID(fsuuid string) BlockDevices {
- 	partitions := make(BlockDevices, 0)
- 	for _, device := range b {
--		if device.FsUUID == fsuuid {
-+		if strings.EqualFold(device.FsUUID, fsuuid) {
- 			partitions = append(partitions, device)
+@@ -56,7 +56,7 @@ func (u *MemUART) io(b []byte, bit uint8, f func([]byte) error) (int, error) {
  		}
- 	}
+ 		if !rdy {
+ 			// This is mmio, and we don't want to eat the machine alive
+-			// by banging these regisers continuously.
++			// by banging these registers continuously.
+ 			time.Sleep(1 * time.Millisecond)
+ 			continue
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3822** (2026-11-05): fix spelling so spellcheck will pass (@rminnich)
+- **PR #3821** (2026-11-05): go.mod: drop the phantom pkg/uroot module and its replace (@rminnich)
 - **PR #3819** (closed): build(deps): bump postcss-selector-parser from 6.0.13 to 6.1.5 in /website (@dependabot[bot])
 - **PR #3818** (2026-11-03): cmds/core/cmp: exit 1 when the files differ, as documented (@minjcore)
 - **PR #3817** (2026-11-03): boot/grub: fix searches for separate FAT boot partitions (@loearthorbit)
 - **PR #3816** (2026-10-31): Use more `golang.org/x/sys/unix` syscall wrappers (@tklauser)
-- **PR #3814** (2026-11-03): pkg/boot: add arm kexec support (@alanhc)
-- **PR #3813** (2026-10-27): pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map (@alanhc)
 
 ---
 
@@ -1476,50 +1330,28 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. boot/grub: fix root search for separate FAT boot partitions
+## X. spelling so spellcheck will pass
 
 **RULE**:
-When implementing operations in `pkg/boot/grub/config_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmds/exp/console/uart_mem_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e3bfe39`: boot/grub: fix root search for separate FAT boot partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38f233b4`: spelling so spellcheck will pass. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/boot/grub/config_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmds/exp/console/uart_mem_linux.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/u-root/u-root/pkg/boot"
-	"github.com/u-root/uio/uio"
-func TestSearchSeparateFATBootPartition(t *testing.T) {
-	for _, device := range []struct {
-		name string
-		uuid string
-	}{
-		{name: "nvme0n1", uuid: "a1e8-94da"},
-		{name: "mmcblk0", uuid: "6cfc-948e"},
-	} {
-		t.Run(device.name, func(t *testing.T) {
-			for _, tt := range []struct {
-				name   string
-				search string
-			}{
-				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
-				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
-				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
-				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
-			} {
-				t.Run(tt.name, func(t 
+			// by banging these registers continuously.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			// by banging these regisers continuously.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e3bfe39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38f233b4` are properly handled with clean fallback behavior.

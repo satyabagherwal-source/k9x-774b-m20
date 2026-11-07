@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-3Q2W",
-    "timestamp": "2026-11-05T02:47:37.928Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "9063e9b6311b66d83a0027567e8c67b858628fd5c4aa4078b38defbc5beb93db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-3TVG",
-    "timestamp": "2026-11-05T02:47:42.844Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "cf605227441dda91c60f361da9d282e51b17879b5fa27817631f6afaac1411aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-3XW8",
-    "timestamp": "2026-11-05T02:47:48.056Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "7f1e8a2c4c1a0e7a75f1b4137192c8b78546c72357618a0386f33425700dd824",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-DFA7",
     "timestamp": "2026-11-05T02:55:10.495Z",
     "repository": "Kuddev/pebrel",
@@ -7490,6 +7445,51 @@
     "repository": "giancarloerra/SocratiCode",
     "learningId": "learn-github-giancarloerra-socraticode",
     "contentHash": "737920fdf3de58d0ef0be304a75dc5d75e32a86e02e111a9b1351b59e8f3c0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-78AR",
+    "timestamp": "2026-11-07T03:21:41.571Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-7BD2",
+    "timestamp": "2026-11-07T03:21:45.542Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-7CIU",
+    "timestamp": "2026-11-07T03:21:47.046Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

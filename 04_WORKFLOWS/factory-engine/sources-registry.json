@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-07T03:14:27.938Z",
-    "lastVerified": "2026-11-07T03:14:27.938Z",
+    "lastChecked": "2026-11-07T03:21:49.658Z",
+    "lastVerified": "2026-11-07T03:21:49.658Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,9 +357,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-07T02:41:17.850Z",
+    "lastChecked": "2026-11-07T03:21:46.029Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-07T02:41:17.850Z"
+    "lastVerified": "2026-11-07T03:21:46.029Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2247,12 +2247,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T20:59:21.562Z",
-    "lastVerified": "2026-11-06T20:59:21.562Z",
+    "lastChecked": "2026-11-07T03:21:44.115Z",
+    "lastVerified": "2026-11-07T03:21:44.115Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "55cf761bf6e106bd5b612b8f50a445ead5d3e591259f7fd59bf48c01d88ba5b7",
+    "contentHash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3018,9 +3018,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-05T14:50:54.908Z",
+    "lastChecked": "2026-11-07T03:21:43.438Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-05T14:50:54.908Z"
+    "lastVerified": "2026-11-07T03:21:43.438Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema/asciinema",
@@ -4407,12 +4407,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nativewind-nativewind": {
-    "name": "nativewind/nativewind",
+    "name": "nativewind",
     "officialUrl": "https://github.com/nativewind/nativewind",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T09:57:46.056Z",
-    "lastVerified": "2026-11-04T09:57:46.056Z",
+    "lastChecked": "2026-11-07T03:21:35.864Z",
+    "lastVerified": "2026-11-07T03:21:35.864Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nativewind-nativewind",
@@ -4421,7 +4421,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ddcfd806"
   },
   "agent-field-agentfield": {
     "name": "Agent-Field/agentfield",
@@ -6110,22 +6111,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "u-root-u-root": {
-    "name": "u-root",
+    "name": "u-root/u-root",
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-05T10:50:32.427Z",
-    "lastVerified": "2026-11-05T10:50:32.427Z",
+    "lastChecked": "2026-11-07T03:21:33.879Z",
+    "lastVerified": "2026-11-07T03:21:33.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
-    "contentHash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
+    "contentHash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5e3bfe39"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "name": "sentence-transformers/all-mpnet-base-v2",
@@ -6318,14 +6318,14 @@
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-05T15:44:53.743Z",
-    "lastVerified": "2026-11-05T15:44:53.743Z",
+    "lastChecked": "2026-11-07T03:21:42.481Z",
+    "lastVerified": "2026-11-07T03:21:42.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
+    "contentHash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10952,9 +10952,9 @@
   "buriy-python-readability": {
     "name": "python-readability",
     "officialUrl": "https://github.com/buriy/python-readability",
-    "lastChecked": "2026-11-03T21:36:36.300Z",
+    "lastChecked": "2026-11-07T03:21:33.388Z",
     "revisionIdentifier": "3e7a8321",
-    "lastVerified": "2026-11-03T21:36:36.300Z"
+    "lastVerified": "2026-11-07T03:21:33.388Z"
   },
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",

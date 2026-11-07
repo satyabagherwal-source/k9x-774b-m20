@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T03:14:25.282Z",
+  "last_updated": "2026-11-07T03:21:46.946Z",
   "total_verified_learnings": 1228,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7074,11 +7074,16 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "39298343",
-      "content_hash": "9154310cdcfff34fc2479540017d8f2285f8b8e76a5cf9bc46728f80b63834d7",
+      "source_version": "434d3e0b",
+      "content_hash": "3563c7f358e9d2f6fa47d8d12bc35f09e3bc2b514acdb3c0d309cf8bad636106",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ci(release): use a GitHub App token for release automation pushes (#8164)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2095,
           "title": "query): changed all dockerfile queries for case insensitive support of dockerfil",
@@ -7120,7 +7125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T15:44:54.288Z",
+      "verified_at": "2026-11-07T03:21:45.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57929,8 +57934,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "3dbb215e",
-      "content_hash": "55cf761bf6e106bd5b612b8f50a445ead5d3e591259f7fd59bf48c01d88ba5b7",
+      "source_version": "46f93879",
+      "content_hash": "657618cc70e9596e6241ddb8fe3ff97440859172aea14f965472b866479e06bf",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -57942,6 +57947,11 @@
         {
           "number": null,
           "title": "feature/conn25: drop address assignments queued before a client.reset (#22210)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "go.mod: bump github.com/klauspost/compress for govulncheck",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58140,7 +58150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:59:28.190Z",
+      "verified_at": "2026-11-07T03:21:46.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60990,11 +61000,16 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "5e3bfe39",
-      "content_hash": "77050582d1d6db9528c23e818de93c066ab1e481e6a42b3393683daaac2dad88",
+      "source_version": "0a1f7ca5",
+      "content_hash": "7e072bf85054a9071a21071e093eccbb923b49ebe336e840766f42a50e39d89c",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "spelling so spellcheck will pass",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2159,
           "title": "ci: add codespell spell-check workflow and fix typos",
@@ -61036,7 +61051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T11:02:29.597Z",
+      "verified_at": "2026-11-07T03:21:41.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
