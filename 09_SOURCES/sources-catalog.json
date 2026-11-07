@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "f4ff4fb7",
+    "sourceVersion": "c9f3057f",
     "license": "NOASSERTION",
-    "contentHash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
-    "lastHarvestedAt": "2026-11-07T05:44:26.839Z",
+    "contentHash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
+    "lastHarvestedAt": "2026-11-07T20:49:10.180Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "a6dfa0c1",
+    "sourceVersion": "6fea18ef",
     "license": "Apache-2.0",
-    "contentHash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
-    "lastHarvestedAt": "2026-11-05T22:08:39.379Z",
+    "contentHash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
+    "lastHarvestedAt": "2026-11-07T20:49:12.741Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "c6ec50b6",
+    "sourceVersion": "43c52739",
     "license": "MIT",
-    "contentHash": "bb22ccc41b45f0b52433c600c2548d987a4bd33e7c53d90a85d090b3ae397099",
-    "lastHarvestedAt": "2026-11-05T16:52:37.517Z",
+    "contentHash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
+    "lastHarvestedAt": "2026-11-07T20:49:00.561Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
-    "lastHarvestedAt": "2026-11-04T02:46:33.364Z",
+    "contentHash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
+    "lastHarvestedAt": "2026-11-07T20:49:07.536Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {

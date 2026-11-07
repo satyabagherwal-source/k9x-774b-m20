@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T20:42:33.443Z",
+  "last_updated": "2026-11-07T20:49:12.676Z",
   "total_verified_learnings": 1234,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2488,14 +2488,19 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "a6dfa0c1",
-      "content_hash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
+      "source_version": "6fea18ef",
+      "content_hash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "SQL error prefix for Firebird SQLDA status vectors (#40443)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "encrypted INSERT column ordering with generated keys (#40483)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2579,7 +2584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:08:39.281Z",
+      "verified_at": "2026-11-07T20:49:12.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14973,8 +14978,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "f4ff4fb7",
-      "content_hash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
+      "source_version": "c9f3057f",
+      "content_hash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15001,6 +15006,11 @@
         {
           "number": null,
           "title": "update): wait for a streamed broadcast as long as the receiver keeps the stream",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): hold the bandwidth limit on short-RTT QUIC paths (#6126)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15219,7 +15229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:44:26.712Z",
+      "verified_at": "2026-11-07T20:49:10.101Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48562,14 +48572,19 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "c6ec50b6",
-      "content_hash": "bb22ccc41b45f0b52433c600c2548d987a4bd33e7c53d90a85d090b3ae397099",
+      "source_version": "43c52739",
+      "content_hash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "lexer): classify Turbopack magic comments (#28427)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cfg): skip labeled contexts for unlabeled jumps (#29001)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48638,7 +48653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T16:52:37.391Z",
+      "verified_at": "2026-11-07T20:49:00.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -163478,10 +163493,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
       "source_version": "hf-liquidai-lfm3-1.7b-gguf",
-      "content_hash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
+      "content_hash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Artifact License Provenance & Compliance Gate",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Quantization Lineage Integrity Check",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5475,
           "title": "Model Artifact Provenance & Lineage Integrity",
@@ -163498,7 +163523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T02:46:33.273Z",
+      "verified_at": "2026-11-07T20:49:07.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

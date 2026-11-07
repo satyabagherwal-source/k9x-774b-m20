@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `f4ff4fb7`  
+> **Source Version**: `c9f3057f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:44:24.734Z  
+> **Timestamp**: 2026-11-07T20:49:08.964Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:44:24.560Z  
+> **Harvest Timestamp**: 2026-11-07T20:49:07.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3114 stars
+- **Stars / Engagement**: 3115 stars
 
 ---
 
@@ -1759,210 +1759,854 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3b4745a` (2026-11-07)
-**Commit Message**: fix(update): wait for a streamed broadcast as long as the receiver keeps the stream (#6127)
+### Incident Patch 1: `c9f3057f` (2026-11-07)
+**Commit Message**: fix(transport): hold the bandwidth limit on short-RTT QUIC paths (#6126)
 
-**File**: `.claude/rules/channel-safety.md` (modified, +3/-1)
+**File**: `.claude/rules/transport.md` (modified, +55/-9)
 ```diff
-@@ -56,7 +56,9 @@ stalling the entire event loop. This has caused 6+ production deadlocks:
-   `tokio::time::timeout(500ms, peer_connection.sender.reserve())` so
-   ownership of `completion_tx` is retained on the timeout path,
-   releasing the broadcast queue's permit immediately instead of
--  waiting `STREAM_COMPLETION_TIMEOUT` (120 s). One emission site
-+  waiting out the stream completion wait (then a flat 120 s; since
-+  #6127 the permit is held for at most `STREAM_PERMIT_HOLD`, 120 s,
-+  of a size-scaled wait). One emission site
-   (`announce_contract_hosted`) intentionally kept the blocking variant
-   because it carries a one-shot transition — see its inline
-   `DELIBERATELY blocking` comment for the rationale.
+@@ -806,7 +806,7 @@ Rate calculation on every rate update (peer_connection::paced_rate; #6047):
+   A configured limit only lowers the rate, never raises it above cc_rate.
+   bandwidth_limit is the config after NetworkApiConfig::transport_bandwidth_limit
+   (effective_bandwidth_limit, called once in p2p_protoc and pinned there by a
+-  config.rs test): 0 = unset, ignored under any total-bandwidth-limit, and
++  config.rs test): 0 = unset, ignored under any non-zero total-bandwidth-limit (a total of 0 is unset), and
+   raised to MIN_BANDWIDTH_LIMIT (2 x MIN_INBOUND_STREAM_RATE_BYTES_PER_SEC,
+   64 KiB/s) if lower: near the receiver's age-limit rate, long streams fail.
+   The bucket's INITIAL rate comes from peer_connection::initial_paced_rate at
+@@ -816,8 +816,10 @@ Rate calculation on every rate update (peer_connection::paced_rate; #6047):
+   (#3702 burst). The global share is still taken as is, as before #6047.
+   Only stream fragments draw on the bucket; short messages, ACKs and
+   retransmits are unpaced.
+-  QUIC has no bucket. The same rate (QuicRateLimit::rate, which calls
+-  paced_rate) caps each QUIC connection's congestion window instead:
++  QUIC has no share of this bucket. With a limit set its data is paced by a
++  bucket of its own at the limit (the path pacer, below), and the same rate
++  (QuicRateLimit::rate, which calls paced_rate) caps each QUIC connection's
++  congestion window:
+   recycle::CappedCubic::window = min(Cubic's window, max(rate x RTT,
+   window_floor)): the cap never goes below window_floor (two full datagrams
+   and one byte, 2401 B: quinn refuses
+@@ -835,11 +837,54 @@ Rate calculation on every rate update (peer_connection::paced_rate; #6047):
+   does not hold where rate x RTT is under the floor: there a path keeps two
+   datagrams in flight, about 2400 B per round trip (at the 64 KiB/s minimum,
+   any round trip under about 37 ms; pinned by
+-  the_floor_keeps_two_datagrams_in_flight_both_ways). A QUIC path is not a
+-  connection to GlobalBandwidthManager: it rides on its UDP connection and
+-  takes that connection's full share, so a peer whose traffic is split across
+-  both transports can get up to twice its share (the egress cap still bounds
+-  the node). e5b-6 decides whether one peer's streams stay on one transport.
++  the_floor_keeps_two_datagrams_in_flight_both_ways). On loopback a path ran
++  at 3.4 to 34 MB/s with 500 kB/s set.
++  Path pacer (quic/path/pacer.rs): with bandwidth-limit or
++  total-bandwidth-limit set (PeerConnection::path_rate_limit), the session
++  builds a LimitPacer on the path's clock (the one the send deadlines run
++  on), and every path of the connection draws its data writes from it: a
++  token bucket of the connection's QUIC side at QuicRateLimit::rate (the
++  limit, or the share, read again at every reservation; capacity rate / 10,
++  at least MIN_BUCKET_CAPACITY_BYTES, recomputed when the rate changes), so
++  the limit holds at any round trip. NOT the UDP stream bucket: that runs at
++  min(UDP controller rate, limit), and FixedRate's 1.25 MB/s would pace QUIC
++  below a higher limit, slower than no limit at all. Charged: each write of
++  a Stream or pipe (header, metadata, payload) and of a Short past one
++  packet. Not charged, as on UDP: one-packet Shorts and control frames,
++  which never wait behind data. With no limit nothing is paced. A write
++  reserves with reserve_within, limited to what the send's current deadline
++  leaves, and waits in the send's own task; a refused reservation takes
++  nothing and ends the send NotOpened(Paced) before the stream opened
++  (header and metadata are taken before open_uni) or Failed(Paced) after
++  (the stream is reset). A message the pacer refused that UDP then sent is
++  charged to the pacer in full as debt (QuicPath::charge_fallback, after the
++  UDP send succeeds), up to FALLBACK_DEBT (half a second at the rate): an
++  unbounded debt refused the next fragment of every stream already open, and
++  a refused open stream is dropped. Each refusal counts
++  quic_data_event_pacer_refused. A total-bandwidth-limit of 0 is unset for
++  both transports (NetworkApiConfig::effective_total_bandwidth_limit: no
++  global pool, so no UDP share, no QUIC pacer, no window cap, and a
++  bandwidth-limit beside it applies to both). Bytes taken for a write not
++  made go back. A refusal is never a timeout for the stall count (route.rs
++  timed_out); a pacer wait is NOT progress, so a dark paced path still goes
++  suspect and closes. Residual, accepted (lead, 2026-11-06; the design-B
++  residual): a peer whose data is on both transports at once can get up to
++  twice its share, for as long as that lasts. That includes a message the
++  pacer refused: the charge is booked when its UDP transfer ends and is
++  capped at half a second, so for the whole transfer QUIC keeps sending at
++  the pacer's rate beside it (a 10 MB fallback at a 100 kB/s bandwidth-limit
++  runs about 100 s on the UDP bucket, then 50 kB is charged). Data that
 ```
 
-**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +626/-38)
+**File**: `crates/core/src/config.rs` (modified, +163/-12)
 ```diff
-@@ -61,12 +61,93 @@ pub(super) fn no_fanout() -> FanoutTargets {
-     Arc::new(Vec::new())
+@@ -2368,7 +2368,7 @@ pub struct NetworkArgs {
+     /// controller's rate: it can lower a connection's rate, never raise it, and
+     /// N connections may send up to N times this. Short messages, ACKs and
+     /// retransmits are not paced. To limit what the node sends as a whole, use
+-    /// --total-bandwidth-limit, which overrides this.
++    /// --total-bandwidth-limit, which overrides this unless it is 0.
+     /// 0 means unset; a value below 64 KiB/s (65,536 bytes/second) is raised to
+     /// it with a warning. Low limits slow large transfers in proportion, and
+     /// very large ones (multi-MB contract states) can miss their deadlines.
+@@ -2382,7 +2382,9 @@ pub struct NetworkArgs {
+     /// across all connections: data, handshakes, ACKs, keepalives and
+     /// retransmissions. Each connection is also paced at
+     /// total / active_connections (at least --min-bandwidth-per-connection).
+-    /// Overrides the per-connection `--bandwidth-limit`.
++    /// Overrides the per-connection `--bandwidth-limit`. 0 means unset: no cap
++    /// and no per-connection share on UDP or QUIC, and `--bandwidth-limit`, if
++    /// set, then applies to both transports.
+     #[arg(long)]
+     #[serde(
+         rename = "total-bandwidth-limit",
+@@ -2720,7 +2722,7 @@ pub struct NetworkApiConfig {
+     /// rate: 1.25 MB/s (`fixed_rate::DEFAULT_RATE_BYTES_PER_SEC`) for the default
+     /// `fixedrate` controller, which does not adapt to queuing delay or other traffic.
+     ///
+-    /// If `total_bandwidth_limit` is set, this field is ignored and per-connection rates
++    /// If `total_bandwidth_limit` is set and not 0, this field is ignored and per-connection rates
+     /// are derived from: `total_bandwidth_limit / active_connections`.
+     #[serde(alias = "bandwidth-limit", skip_serializing_if = "Option::is_none")]
+     pub bandwidth_limit: Option<usize>,
+@@ -2906,17 +2908,59 @@ pub struct NetworkApiConfig {
  }
  
--/// Timeout for awaiting stream completion signal before releasing the permit
--/// anyway. Prevents permanent permit leak if a stream task panics or hangs.
--/// Used by `broadcast_to_single_peer` under both `simulation_tests` and
--/// production, hence kept at module scope rather than inside the cfg-gated
--/// `queue` submodule.
--const STREAM_COMPLETION_TIMEOUT: Duration = Duration::from_secs(120);
-+/// How long a streamed broadcast of `stream_bytes` waits for its completion.
-+///
-+/// `stream_bytes` is the stream's declared length (`total_size`, the serialized
-+/// `BroadcastStreamingPayload`: state plus sender summary plus framing), the
-+/// same number the receiver sizes its age limit from. The wait is that limit
-+/// (`streaming::max_inbound_stream_age`: the stream at 32 KiB/s, and at least
-+/// 5 minutes) minus a margin of a tenth of it, and at least
-+/// [`STREAM_WAIT_MIN_MARGIN`]. A flat 120 s missed large broadcasts on slow or
-+/// lossy uplinks on any transport: a 31 MiB broadcast needs about 271 KB/s to
-+/// finish in 120 s.
-+///
-+/// The margin keeps the sender from recording a delivery the receiver may
-+/// already have dropped. On UDP the completion fires when the last fragment is
-+/// first handed to the socket, and lost fragments are resent after that; and
-+/// the sender's clock starts at dispatch, before any queueing behind other
-+/// streams to the peer, while the receiver's starts at the first fragment. A
-+/// stream reported delivered right at the limit could cross it on the receiver,
-+/// be evicted there, and still be recorded here as delivered, with no repair.
-+/// The margin is a judgment, not a measurement: retransmit tails are seconds,
-+/// and a tenth of the limit (30 s at the 5 minute floor) leaves room for them
-+/// and for queueing behind one other stream.
-+///
-+/// A timed-out wait does not stop the stream. It makes the send count as not
-+/// delivered: the peer's summary is not cached and its interest is not
-+/// refreshed, so the next update or repair sends the whole state again. The
-+/// wait ends early on any completion signal, so its length matters only for a
-+/// stream still in progress or one whose task never reports. The lane permit is
-+/// held for at most [`STREAM_PERMIT_HOLD`] of it (see
-+/// [`await_stream_completion_releasing_permit`]).
-+///
-+/// The interest refresh after a late completion can find the peer's interest
-+/// already expired: `INTEREST_TTL` is 20 minutes, below the longest wait. That
-+/// costs one full-state resend on the next update, which is what a timed-out
-+/// wait would have cost anyway.
-+pub(super) fn stream_completion_timeout(stream_bytes: u64) -> Duration {
-+    let limit = crate::transport::peer_connection::streaming::max_inbound_stream_age(stream_bytes);
-+    limit.saturating_sub((limit / 10).max(STREAM_WAIT_MIN_MARGIN))
-+}
+ impl NetworkApiConfig {
++    /// The `total-bandwidth-limit` the node applies: the configured value, with
++    /// 0 read as unset. A total of 0 is no cap, so it builds no egress cap, no
++    /// global pool and no per-connection share, for UDP and QUIC alike, and a
++    /// `bandwidth-limit` beside it applies.
++    pub(crate) fn effective_total_bandwidth_limit(&self) -> Option<usize> {
++        self.total_bandwidth_limit.filter(|total| *total > 0)
++    }
 +
-+/// The smallest margin [`stream_completion_timeout`] leaves below the
-+/// receiver's age limit.
-+const STREAM_WAIT_MIN_MARGIN: Duration = Duration::from_secs(30);
++    /// Warn that a `total-bandwidth-limit` of 0 is no limit
++    /// ([`Self::effective_total_bandwidth_limit`]), so an operator who set it
++    /// expecting a cap sees why none applies. Call it once per node.
++    pub(crate) fn warn_if_total_bandwidth_limit_is_zero(&self) {
++        if self.total_bandwidth_limit == Some(0) {
++            tracing::warn!(
++                "total-bandwidth-limit is 0, which is no limit: no node-wide egress cap \
++                 and no per-connection share is applied, and bandwidth-limit applies \
++                 if set"
++            );
++        }
++    }
 +
-+/// How long a streamed broadcast holds its lane permit while it waits for the
-+/// stream to complete. After that the permit goes back to the queue and the
-+/// send keeps waiting without it, up to [`stream_completion_timeout`].
-+///
-+/// 120 s is the flat wait this replaced: before, a stream still running at
-+/// 120 s also released its permit (by timing out) and kept sending. So the
-+/// permit bounds how many large streams START at once, not how many are on the
-+/// uplink: on a slow uplink with large states, streams past their hold still
-+/// share it, before this change and after. The large lane has 2 permits per
-+/// node; holding them
-+/// for the full scaled wait (about 15 minutes for 31 MiB, over 24 for the
-+/// largest stream) would stall every other full-state broadcast on the node
-+/// behind two slow subscribers, and the mispredicted small sends that upgrade
-+/// to it.
-+pub(super) const STREAM_PERMIT_HOLD: Duration = Duration::from_secs(120);
++    /// The node's global bandwidth pool, when `total-bandwidth-limit` is set
++    /// ([`Self::effective_total_bandwidth_limit`]). Its per-connection share
++    /// paces UDP (`peer_connection::paced_rate`) and QUIC
++    /// (`quic::config::QuicRateLimit`) alike.
++    ///
++    /// The node's only builder of the pool, and so the only thing keeping a
++    /// total of 0 from pacing: `QuicRateLimit::rate` and UDP's `paced_rate`
++    /// take any pool they are given, so a second builder that skipped this
++    /// would bring back pacing at the 1 MB/s minimum.
++    pub(crate) fn global_bandwidth_manager(
++        &self,
++    ) -> Option<std::sync::Arc<crate::transport::global_bandwidth::GlobalBandwidthManager>> {
++        self.effective_total_bandwidth_limit().map(|total| {
++            std::sync::Arc::new(
++                crate::transport::global_bandwidth::GlobalBandwidthManager::new(
++                    total,
++                    self.min_bandwidth_per_connection,
++                ),
++            )
++        })
++    }
 +
-+/// Wait up to `timeout` for a stream's completion signal.
-+async fn await_stream_completion<T>(
-+    completion_rx: tokio::sync::oneshot::Receiver<T>,
-+    timeout: Duration,
-+) -> Result<Result<T, tokio::sync::oneshot::error::RecvError>, tokio::time::error::Elapsed> {
-+    tokio::time::timeout(timeout, completion_rx).await
-+}
-+
-+/// [`await_stream_completion`] holding `lane_permit` for at most
-+/// [`STREAM_PERMIT_HOLD`] of the wait, then dropping it and waiting out the
-+/// rest without it.
-+///
-+/// The caller keeps running for the whole wait, so whatever it holds besides
-+/// the permit (in the queue, the `ActiveSendGuard` claim on the
-+/// `(contract, peer)` pair, #5842) stays held until the delivery bookkeeping is
-+/// done. Only the lane's concurrency slot comes back early.
-+pub(super) async fn await_stream_completion_releasing_permit<T>(
-+    mut completion_rx: tokio::sync::oneshot::Receiv
+     /// The per-connection `bandwidth-limit` the node hands its transport
+     /// (#6047): the configured value after
+     /// [`effective_bandwidth_limit`](crate::transport::peer_connection::effective_bandwidth_limit),
+-    /// which ignores it whenever `total-bandwidth-limit` is set. That includes
+-    /// a total of 0: a global pool is built for any configured total, and its
+-    /// share overrides the per-connection limit anyway. Logs what it decided,
+-    /// so call it once per node.
++    /// which ignores it whenever `total-bandwidth-limit` is set
++    /// ([`Self::effective_total_bandwidth_limit`]: a total of 0 is unset, so
++    /// the limit then applies). Logs what it decided, so call it once per node.
+     pub(crate) fn transport_bandwidth_limit(&self) -> Option<usize> {
+         crate::transport::peer_connection::effective_bandwidth_limit(
+             self.bandwidth_limit,
+-            self.total_bandwidth_limit.is_some(),
++          
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +11/-9)
+**File**: `crates/core/src/contract/executor.rs` (modified, +44/-5)
 ```diff
-@@ -2226,8 +2226,9 @@ impl P2pConnManager {
-                             // channel cannot drain within that window we drop the
-                             // stream fragment and fire `completion_tx` so the
-                             // broadcast queue releases its semaphore permit
--                            // immediately instead of waiting STREAM_COMPLETION_TIMEOUT
--                            // (120 s). Issue #4145. Using `reserve()` (rather than
-+                            // immediately instead of holding it for up to
-+                            // `STREAM_PERMIT_HOLD` (120 s) of the stream
-+                            // completion wait. Issue #4145. Using `reserve()` (rather than
-                             // `timeout(send())`) lets us keep ownership of
-                             // `completion_tx` when the timeout fires, so we can
-                             // signal it manually on the drop path.
-@@ -5414,15 +5415,16 @@ pub(crate) mod tests {
-     /// Load-bearing invariant for #4145: when the per-peer channel is
-     /// saturated and the dispatch times out, the StreamSend branch MUST
-     /// signal `completion_tx` so the broadcast queue's semaphore permit
--    /// releases immediately instead of waiting `STREAM_COMPLETION_TIMEOUT`
--    /// (120 s). This is the entire reason the dispatch uses `reserve()`
-+    /// releases immediately instead of being held for up to
-+    /// `STREAM_PERMIT_HOLD` (120 s) of the stream completion wait. This is the
-+    /// entire reason the dispatch uses `reserve()`
-     /// (so we retain ownership of `completion_tx`) instead of
-     /// `timeout(send())` (which moves it into the dropped future).
-     ///
-     /// This test pins the *pattern* — production code is exercised by
-     /// the source-scrape pin `stream_send_branch_uses_timed_reserve_pattern`.
-     /// A behavioural mismatch between the two is a CI failure here, not
--    /// a 120 s production stall.
-+    /// a production stall of up to 120 s per send.
-     #[tokio::test]
-     async fn stream_send_pattern_fires_completion_tx_on_timeout() {
-         use crate::transport::StreamSendOutcome;
-@@ -5457,7 +5459,7 @@ pub(crate) mod tests {
-             matches!(signal, Ok(Ok(StreamSendOutcome::Dropped))),
-             "completion_tx must be fired on the dispatch timeout path so the \
-              broadcast queue releases its permit immediately (not after \
--             120s STREAM_COMPLETION_TIMEOUT). Got {signal:?}"
-+             stream completion timeout). Got {signal:?}"
+@@ -2507,6 +2507,45 @@ mod tests {
          );
      }
  
-@@ -5515,8 +5517,8 @@ pub(crate) mod tests {
-         // broadcast queue's semaphore permit releases immediately.
-         // Per-arm count instead of a single match: a refactor that
-         // drops just the timeout arm's fire (the one #4145 added)
--        // would otherwise silently reintroduce the 120 s
--        // STREAM_COMPLETION_TIMEOUT stall.
-+        // would otherwise silently reintroduce a stall of up to
-+        // `STREAM_PERMIT_HOLD` (120 s) per send.
-         //
-         // Post-#4235 the signal carries a `StreamSendOutcome` instead
-         // of `()`, and every drop arm reports `Dropped` so the broadcast queue
-@@ -5532,7 +5534,7 @@ pub(crate) mod tests {
-              StreamSendOutcome::Dropped in all three non-success arms \
-              (closed / timeout / no-connection) — found {fire_count} such \
-              occurrences, expected exactly 3. If you REMOVED one, a refactor \
--             reintroduced the 120 s STREAM_COMPLETION_TIMEOUT stall (#4145). \
-+             reintroduced the stream completion timeout stall (#4145). \
-              If you relabeled a drop arm as Delivered, you reintroduced the \
-              delivery/permit conflation (#4235). If you ADDED a new arm with \
-              its own fire, bump this count to match. Body:\n{body}"
++    /// What follows `const ` in a module-scope constant declaration of any
++    /// visibility (`const`, `pub const`, `pub(crate)`, `pub(super)`,
++    /// `pub(in some::path)`), or `None` for any other line.
++    fn const_declaration(line: &str) -> Option<&str> {
++        let rest = match line.strip_prefix("pub") {
++            None => line,
++            Some(after) => match after.strip_prefix('(') {
++                Some(inner) => inner.split_once(')')?.1.strip_prefix(' ')?,
++                None => after.strip_prefix(' ')?,
++            },
++        };
++        rest.strip_prefix("const ")
++    }
++
++    #[test]
++    fn const_declaration_reads_every_visibility() {
++        for (line, want) in [
++            ("const A_BYTES: usize = 1;", Some("A_BYTES: usize = 1;")),
++            ("pub const A_BYTES: usize = 1;", Some("A_BYTES: usize = 1;")),
++            (
++                "pub(crate) const A_BYTES: usize = 1;",
++                Some("A_BYTES: usize = 1;"),
++            ),
++            (
++                "pub(super) const A_BYTES: usize = 1;",
++                Some("A_BYTES: usize = 1;"),
++            ),
++            (
++                "pub(in crate::transport) const A_BYTES: usize = 1;",
++                Some("A_BYTES: usize = 1;"),
++            ),
++            ("    const A_BYTES: usize = 1;", None),
++            ("pub fn a_bytes() -> usize {", None),
++            ("pub(crate) static A_BYTES: usize = 1;", None),
++        ] {
++            assert_eq!(const_declaration(line), want, "{line:?}");
++        }
++    }
++
+     /// The other half of `declared_cache_ceiling_names_every_budget`, and the
+     /// half that was missing: that one catches a summed budget being REMOVED;
+     /// this one catches a new one being ADDED and not summed.
+@@ -3099,11 +3138,11 @@ mod tests {
+             for (i, line) in lines.iter().copied().enumerate() {
+                 // Module scope only: an indented declaration is inside a
+                 // function or a test module and cannot be a node-wide budget.
+-                if let Some(rest) = line
+-                    .strip_prefix("const ")
+-                    .or_else(|| line.strip_prefix("pub const "))
+-                    .or_else(|| line.strip_prefix("pub(crate) const "))
+-                    .or_else(|| line.strip_prefix("pub(super) const "))
++                // Any visibility, `pub(in path)` included: a fixed list of
++                // prefixes dropped `MIN_BUCKET_CAPACITY_BYTES` from discovery
++                // when it became `pub(in crate::transport)`, leaving its
++                // `NOT_SUMMED` entry naming nothing.
++                if let Some(rest) = const_declaration(line)
+                     && let Some((name, tail)) = rest.split_once(':')
+                     // `ByteCount` as well as `usize`: a budget does not stop
+                     // being a budget because its type became safer. This guard
 ```
 
-**File**: `crates/core/src/transport/peer_connection.rs` (modified, +3/-1)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +18/-21)
 ```diff
-@@ -228,7 +228,9 @@ pub(super) fn initial_paced_rate(
- /// get at most the receiver's rate), and it assumes receivers use the current
- /// `MIN_INBOUND_STREAM_RATE_BYTES_PER_SEC`. Low limits still slow
- /// large transfers past other deadlines (the 10-minute streaming PUT/GET
--/// attempt ceiling, the 120 s broadcast completion wait).
-+/// attempt ceiling). The broadcast completion wait stops a tenth short of the
-+/// receiver's age limit (`broadcast_queue::stream_completion_timeout`), so it
-+/// allows for a stream at about half this rate (about 55%).
- pub(crate) const MIN_BANDWIDTH_LIMIT: usize =
-     2 * streaming::MIN_INBOUND_STREAM_RATE_BYTES_PER_SEC as usize;
+@@ -1316,6 +1316,10 @@ impl P2pConnManager {
+             quic.breaker,
+         );
  
++        config
++            .config
++            .network_api
++            .warn_if_total_bandwidth_limit_is_zero();
+         Ok(P2pConnManager {
+             gateways,
+             bridge,
+@@ -1340,34 +1344,27 @@ impl P2pConnManager {
+             global_bandwidth: config
+                 .config
+                 .network_api
+-                .total_bandwidth_limit
+-                .map(|total| {
+-                    let manager = Arc::new(GlobalBandwidthManager::new(
+-                        total,
+-                        config.config.network_api.min_bandwidth_per_connection,
+-                    ));
++                .global_bandwidth_manager()
++                .inspect(|manager| {
+                     // The transport builds a node-wide egress cap from the
+                     // same total (`transport::egress_cap`); say so at startup,
+                     // and warn when it is low for the allowed connections.
+-                    if total > 0 {
+-                        crate::transport::egress_cap::log_startup_cap(
+-                            total,
+-                            config
+-                                .config
+-                                .network_api
+-                                .min_bandwidth_per_connection
+-                                .unwrap_or(
+-                                    crate::transport::global_bandwidth::DEFAULT_MIN_PER_CONNECTION,
+-                                ),
+-                            config.config.network_api.max_connections,
+-                        );
+-                    }
++                    crate::transport::egress_cap::log_startup_cap(
++                        manager.total_limit(),
++                        config
++                            .config
++                            .network_api
++                            .min_bandwidth_per_connection
++                            .unwrap_or(
++                                crate::transport::global_bandwidth::DEFAULT_MIN_PER_CONNECTION,
++                            ),
++                        config.config.network_api.max_connections,
++                    );
+                     // Phase 1.6 shadow telemetry (#4074): expose the
+                     // effective aggregate rate R to the demand aggregator.
+                     // Observation only — the manager is read, never written,
+                     // by the shadow side. See transport/shadow_demand.rs.
+-                    crate::transport::shadow_demand::register_global_bandwidth(&manager);
+-                    manager
++                    crate::transport::shadow_demand::register_global_bandwidth(manager);
+                 }),
+             ledbat_min_ssthresh: config.config.network_api.ledbat_min_ssthresh,
+             congestion_config: config.config.network_api.build_congestion_config(),
 ```
 
-**File**: `docs/architecture/transport/configuration/bandwidth-configuration.md` (modified, +4/-2)
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +4/-3)
 ```diff
-@@ -551,8 +551,10 @@ megabytes. These are estimates from the slot-lottery model, not guarantees. The
- is a higher limit; there is no per-stream admission control.
+@@ -102,7 +102,7 @@ const TOKEN_BUCKET_WINDOW: Duration = Duration::from_millis(100);
+ /// (~1200 bytes) cannot be admitted, stalling connections at very low rates.
+ /// 8 KiB (~6–7 max-size packets) provides enough headroom for burst handling
+ /// without allowing large uncontrolled bursts.
+-const MIN_BUCKET_CAPACITY_BYTES: usize = 8192;
++pub(in crate::transport) const MIN_BUCKET_CAPACITY_BYTES: usize = 8192;
  
- A slow stream also holds broadcast capacity: the broadcast queue keeps a send's slot
--until its stream completes, up to `STREAM_COMPLETION_TIMEOUT` (120 s), so a cap that
--makes streams slow also slows contract update fan-out.
-+until its stream completes, up to `STREAM_PERMIT_HOLD` (120 s), so a cap that makes
-+streams slow also slows contract update fan-out. The send goes on waiting for the
-+stream after that, without the slot, up to a size-scaled limit just under the
-+receiver's age limit (`stream_completion_timeout`).
+ pub type SerializedMessage = Vec<u8>;
  
- ## Source Code
+@@ -249,8 +249,9 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+         .as_ref()
+         .and_then(|_| get_socket_virtual_time(&bind_addr));
+     // The node-wide egress cap exists only when `total-bandwidth-limit` is
+-    // set and not 0 (`global_bandwidth` is set, and `from_total_limit`
+-    // builds no cap for 0), so a node without it pays nothing. The cap runs
++    // set and not 0 (`global_bandwidth` is set; the node builds no pool for a
++    // total of 0, `NetworkApiConfig::global_bandwidth_manager`), so a node
++    // without it pays nothing. The cap runs
+     // on `RealTime`, as the listener built below does, in production and in
+     // simulation alike; waiters sleep on their own connection's time
+     // source. A cap on the network's `VirtualTime` would compute deficits on
+```
+
+**File**: `crates/core/src/transport/egress_cap.rs` (modified, +7/-9)
+```diff
+@@ -783,9 +783,9 @@ pub struct EgressTake<'a> {
+ impl EgressCap {
+     /// A cap of `rate_bytes_per_sec`, starting with a full bucket.
+     pub(crate) fn new<T: TimeSource>(rate_bytes_per_sec: u64, time_source: T) -> Self {
+-        // A rate of 0 cannot be met by anything; callers do not build a cap
+-        // for it (see `from_total_limit`). Treat it as 1 B/s rather than
+-        // dividing by zero.
++        // A rate of 0 cannot be met by anything, and the node never builds a
++        // cap for it (no pool is built for a total of 0). Treat it as 1 B/s
++        // rather than dividing by zero.
+         let rate = rate_bytes_per_sec.max(1);
+         let burst_bytes = (rate as u128 * BURST_WINDOW.as_nanos() / NANOS_PER_SEC) as u64;
+         let burst_bytes = burst_bytes.max(MIN_BURST_PACKETS * MAX_PACKET_SIZE as u64);
+@@ -818,17 +818,15 @@ impl EgressCap {
+         }
+     }
  
+-    /// The cap for a configured `total-bandwidth-limit`, or `None` when the
+-    /// value cannot be a cap (0).
++    /// The cap for a configured `total-bandwidth-limit`, or `None` for 0,
++    /// which cannot be a cap. The node never passes 0 (it builds no pool for
++    /// it, and warns at startup, `P2pConnManager::build`), so this is only a
++    /// guard.
+     pub(crate) fn from_total_limit<T: TimeSource>(
+         total_bytes_per_sec: usize,
+         time_source: T,
+     ) -> Option<Self> {
+         if total_bytes_per_sec == 0 {
+-            tracing::warn!(
+-                "total-bandwidth-limit is 0; no node-wide egress cap is applied \
+-                 (a cap of 0 bytes per second cannot be met)"
+-            );
+             return None;
+         }
+         Some(Self::new(total_bytes_per_sec as u64, time_source))
+```
+
+**File**: `crates/core/src/transport/peer_connection.rs` (modified, +43/-1)
+```diff
+@@ -189,7 +189,7 @@ pub(crate) struct RemoteConnection<S = super::UdpSocket, T: TimeSource = RealTim
+ /// Before #6047 the rate update ignored `bandwidth-limit`, which then only set
+ /// the initial rate. `bandwidth_limit` is the value after
+ /// [`effective_bandwidth_limit`].
+-pub(super) fn paced_rate(
++pub(crate) fn paced_rate(
+     cc_rate: usize,
+     global_rate: Option<usize>,
+     bandwidth_limit: Option<usize>,
+@@ -1095,6 +1095,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+                 self.inbound_budget.clone(),
+                 self.quic_receipt_nanos.clone(),
+                 self.udp_sender(),
++                self.path_rate_limit(),
+                 self.remote_conn.time_source.clone(),
+             );
+             self.quic_path = Some(quic_path);
+@@ -1244,6 +1245,20 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+         self.pending_decline = None;
+     }
+ 
++    /// The bandwidth limit this connection's QUIC data is paced at
++    /// (`bandwidth-limit`, or `total-bandwidth-limit` and its share), or `None`
++    /// with no limit. The session builds the pacer from it, on the path's
++    /// clock (`quic::path::pacer`): a bucket of the QUIC side's own, not the
++    /// UDP stream bucket, whose rate the UDP congestion controller can hold
++    /// below the limit.
++    fn path_rate_limit(&self) -> Option<crate::transport::quic::config::QuicRateLimit> {
++        let limit = crate::transport::quic::config::QuicRateLimit::new(
++            self.remote_conn.bandwidth_limit,
++            self.remote_conn.global_bandwidth.clone(),
++        );
++        limit.rate().is_some().then_some(limit)
++    }
++
+     /// What sends one tracked packet on the UDP session from outside the
+     /// connection's task.
+     fn udp_sender(&self) -> UdpSender<S, T> {
+@@ -6635,6 +6650,33 @@ mod tests {
+         (conn, inbound_tx)
+     }
+ 
++    /// A connection paces its QUIC data at a limit only when one is set
++    /// (`bandwidth-limit`, or `total-bandwidth-limit`), and at that limit, not
++    /// at the UDP bucket's rate: 5 MB/s is above FixedRate's 1.25 MB/s.
++    #[tokio::test]
++    async fn quic_data_is_paced_only_under_a_limit_and_at_that_limit() {
++        let addr: SocketAddr = "127.0.0.1:41000".parse().unwrap();
++        let (unlimited, _tx) = test_conn_with_bandwidth_limit(addr, None);
++        assert!(unlimited.path_rate_limit().is_none(), "no limit, no pacing");
++        let (zero, _tx) = test_conn_with_bandwidth_limit(addr, Some(0));
++        assert!(zero.path_rate_limit().is_none(), "0 is unset");
++        let (limited, _tx) = test_conn_with_bandwidth_limit(addr, Some(5_000_000));
++        assert_eq!(
++            limited.path_rate_limit().and_then(|limit| limit.rate()),
++            Some(5_000_000)
++        );
++        let (mut shared, _tx) = test_conn_with_bandwidth_limit(addr, None);
++        shared.remote_conn.global_bandwidth =
++            Some(Arc::new(GlobalBandwidthManager::new(500_000, Some(1000))));
++        assert_eq!(
++            shared.path_rate_limit().and_then(|limit| limit.rate()),
++            Some(500_000),
++            "total-bandwidth-limit paces at the connection's share"
++        );
++        // A total of 0 builds no manager, so it reaches no connection
++        // (config::tests::a_total_of_zero_paces_neither_transport).
++    }
++
+     /// Runs `conn`'s real `recv()` loop until its token bucket's rate is
+     /// `expected` or `limit` passes, and returns the rate it ended at.
+     /// `rate_update_check` first fires after `ACK_CHECK_INTERVAL` (100 ms) on
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +61/-0)
+```diff
+@@ -3659,3 +3659,64 @@ async fn set_peer_identity_promotes_the_session_on_set_and_same_only() {
+     assert_eq!(promoted(&e), None, "Refused");
+     assert_eq!(e.conn.peer_identity(), Some(&key));
+ }
++
++/// A connection opens its upgrade session with a pacer when it has a bandwidth
++/// limit, and without one when it has none: `open_session` builds the pacer
++/// from the connection's limit.
++#[tokio::test(start_paused = true)]
++async fn a_session_paces_its_data_only_under_a_limit() {
++    for (case, subnet, limit) in [("none", 30, None), ("limited", 31, Some(100_000))] {
++        let hub = crate::transport::quic::upgrade::driver::tests::Harness::server(
++            &format!("ack-policy-paced-{case}"),
++            subnet,
++        )
++        .await;
++        let mut e = single(CAPABLE);
++        e.conn.remote_conn.bandwidth_limit = limit;
++        e.conn = e.conn.with_upgrade_site(&hub.site());
++        assert_eq!(
++            e.conn.quic_path.as_ref().expect("a session").paces_data(),
++            limit.is_some(),
++            "{case}"
++        );
++    }
++}
++
++/// The pacer a session builds runs on the path's clock, the one its paths'
++/// send deadlines run on, not the connection's: a 200 kB reservation at a
++/// 100 kB/s limit waits about 1.9 s (the burst is 10 kB), and that wait shrinks
++/// as the path's virtual clock advances, while the connection's clock (real
++/// time here) barely moves.
++#[tokio::test(start_paused = true)]
++async fn a_sessions_pacer_runs_on_the_path_clock() {
++    let hub = crate::transport::quic::upgrade::driver::tests::Harness::server(
++        "ack-policy-pacer-clock",
++        32,
++    )
++    .await;
++    let mut e = single(CAPABLE);
++    e.conn.remote_conn.bandwidth_limit = Some(100_000);
++    e.conn = e.conn.with_upgrade_site(&hub.site());
++    let pacer = e
++        .conn
++        .quic_path
++        .as_ref()
++        .expect("a session")
++        .pacer()
++        .expect("a limit paces");
++    let first = pacer
++        .reserve_within(200_000, Duration::MAX)
++        .expect("no limit to refuse at");
++    assert!(
++        first >= Duration::from_millis(1_850) && first <= Duration::from_millis(1_950),
++        "{first:?}"
++    );
++    hub.time().advance(Duration::from_secs(1));
++    let after = pacer
++        .reserve_within(0, Duration::MAX)
++        .expect("no limit to refuse at");
++    assert!(
++        after >= Duration::from_millis(850) && after <= Duration::from_millis(950),
++        "a second of the path's clock paid a second of the debt: {after:?}"
++    );
++}
+```
+
+---
+
+### Incident Patch 2: `a1937892` (2026-11-07)
+**Commit Message**: fix(ring): run the disk-usage walk inline on simulation hosts (#6129)
+
+**File**: `crates/core/src/ring.rs` (modified, +93/-5)
+```diff
+@@ -3614,6 +3614,21 @@ impl Ring {
+     /// When contracts are evicted (past max entries and beyond TTL), this task
+     /// cleans up the local subscription state. The upstream peer will eventually
+     /// prune us when updates fail to deliver.
++    /// The free-space figure the hosting sweep budgets disk against.
++    ///
++    /// `read_real` is the data-dir mount's free space (`statvfs`); a failed
++    /// read falls back to `u64::MAX`, so the disk budget clamps to its cap. In
++    /// a simulation (`SimNetwork` sets the network name on the thread its
++    /// nodes run on) the real read is skipped and the fallback used, so free
++    /// space on the machine running the tests cannot change eviction between
++    /// runs of one seed (#6123).
++    fn sweep_free_space_bytes(read_real: impl FnOnce() -> Option<u64>) -> u64 {
++        if topology_registry::get_current_network_name().is_some() {
++            return u64::MAX;
++        }
++        read_real().unwrap_or(u64::MAX)
++    }
++
+     async fn sweep_get_subscription_cache(ring: Arc<Self>, interval_duration: Duration) {
+         let shutdown = ring.shutdown_token();
+         // Add random initial delay to prevent synchronized sweeps across peers
+@@ -3853,8 +3868,14 @@ impl Ring {
+             // no `.await` point. Push it onto a blocking thread so it can never
+             // stall other tasks on the async reactor — the same discipline
+             // `secrets_store/sweep.rs` uses for its "disk walk + ReDb reads".
++            //
++            // `offload_blocking`, not a bare `spawn_blocking`: on a simulation
++            // host (`current_thread`) it runs the walk inline. A pool thread
++            // finishes in wall-clock time, so the step at which this loop
++            // resumed depended on OS scheduling and one seed gave different
++            // results from run to run (#6123).
+             let ring_for_disk = ring.clone();
+-            if let Err(err) = tokio::task::spawn_blocking(move || {
++            if let Err(err) = crate::util::blocking::offload_blocking(move || {
+                 #[cfg(feature = "redb")]
+                 ring_for_disk.hosting_manager.seed_disk_tracker_if_absent();
+                 ring_for_disk.hosting_manager.refresh_disk_usage();
+@@ -3876,10 +3897,8 @@ impl Ring {
+             // du-walks above already ran OUTSIDE any cache lock (in the blocking
+             // task); only the O(1) `set_budget_bytes` inside
+             // `recompute_effective_budget` takes the cache write lock.
+-            let available = ring
+-                .hosting_manager
+-                .disk_available_bytes()
+-                .unwrap_or(u64::MAX);
++            let available =
++                Self::sweep_free_space_bytes(|| ring.hosting_manager.disk_available_bytes());
+             ring.hosting_manager.recompute_effective_budget(available);
+         }
+     }
+@@ -8203,6 +8222,75 @@ mod k_closest_source_tests {
+         );
+     }
+ 
++    /// #6123: the hosting sweep's disk-usage walk goes through
++    /// `offload_blocking`, so a simulation host runs it inline. Through a bare
++    /// `spawn_blocking` it finished on a real OS thread in wall-clock time, the
++    /// step at which the sweep resumed followed OS scheduling, and one seed gave
++    /// different results from run to run. In a simulation the free-space read
++    /// is replaced by a fixed figure for the same reason. Comment lines are
++    /// dropped, so a commented-out call fails this pin too.
++    #[test]
++    fn sweep_disk_walk_runs_inline_in_simulations() {
++        let src = production_source();
++        let body = extract_fn_body(
++            src,
++            "async fn sweep_get_subscription_cache(ring: Arc<Self>, interval_duration: Duration) {",
++        );
++        let code: String = body
++            .lines()
++            .filter(|line| !line.trim_start().starts_with("//"))
++            .flat_map(|line| line.chars())
++            .filter(|c| !c.is_whitespace())
++            .collect();
++        assert!(
++            !code.contains("spawn_blocking("),
++            "the sweep awaits a bare spawn_blocking; use offload_blocking (#6123)"
++        );
++        let walk = code
++            .split_once("crate::util::blocking::offload_blocking(move||{")
++            .map(|(_, after)| after)
++            .and_then(|after| after.split_once("}).await"))
++            .map(|(walk, _)| walk)
++            .expect("the sweep runs a closure through offload_blocking");
++        assert!(
++            walk.contains("ring_for_disk.hosting_manager.refresh_disk_usage();"),
++            "offload_blocking must wrap the disk-usage walk"
++        );
++        assert!(
++            code.contains(
++                "letavailable=Self::sweep_free_space_bytes(||ring.hosting_manager.disk_available_bytes());"
++            ),
++            "the sweep's free space goes through the simulation gate (#6123)"
++        );
++    }
++
++    /// In a simulation the sweep's free-space figure is the fixed fallback and
++    /// the
+```
+
+**File**: `crates/core/src/util.rs` (modified, +1/-0)
+```diff
+@@ -2,6 +2,7 @@
+ #[cfg(test)]
+ pub(crate) mod alloc_count;
+ pub(crate) mod backoff;
++pub(crate) mod blocking;
+ pub(crate) mod byte_bounded_lru;
+ pub mod deterministic_select;
+ /// Internal to the `freenet` binary: not a stable API (it exposes reqwest types).
+```
+
+**File**: `crates/core/src/util/blocking.rs` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++//! Blocking work that must not stall the async reactor, and must not make a
++//! simulation depend on OS scheduling.
++
++/// Runs blocking `f` on the blocking pool in production, and inline on a
++/// `current_thread` runtime.
++///
++/// On a multi-thread runtime (the node in production) `f` goes to
++/// `spawn_blocking`, so a long disk walk cannot stall other tasks.
++///
++/// On a `current_thread` runtime (every turmoil host in a simulation, and most
++/// tests) `f` runs inline. A blocking-pool thread finishes in wall-clock time,
++/// so the simulation step at which the awaiting task resumes would depend on
++/// how the OS schedules that thread, and the same seed would take different
++/// paths from one run to the next (#6123). The executor's
++/// `run_blocking_offloaded` uses the same gate for the same reason.
++///
++/// A panic in `f` is caught on both paths and returned as [`BlockingPanicked`],
++/// so a caller's loop survives it either way.
++pub(crate) async fn offload_blocking<F, R>(f: F) -> Result<R, BlockingPanicked>
++where
++    F: FnOnce() -> R + Send + 'static,
++    R: Send + 'static,
++{
++    use tokio::runtime::{Handle, RuntimeFlavor};
++    match Handle::try_current() {
++        Ok(handle) if handle.runtime_flavor() == RuntimeFlavor::MultiThread => {
++            tokio::task::spawn_blocking(f)
++                .await
++                .map_err(|err| BlockingPanicked(err.to_string()))
++        }
++        _ => std::panic::catch_unwind(std::panic::AssertUnwindSafe(f)).map_err(|payload| {
++            let message = payload
++                .downcast_ref::<&str>()
++                .map(|s| (*s).to_string())
++                .or_else(|| payload.downcast_ref::<String>().cloned())
++                .unwrap_or_else(|| "non-string panic payload".to_string());
++            BlockingPanicked(message)
++        }),
++    }
++}
++
++/// The blocking closure given to [`offload_blocking`] panicked (or, on the
++/// blocking pool, was cancelled by runtime shutdown).
++#[derive(Debug)]
++pub(crate) struct BlockingPanicked(String);
++
++impl std::fmt::Display for BlockingPanicked {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "blocking task failed: {}", self.0)
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[tokio::test(flavor = "current_thread")]
++    async fn runs_inline_on_a_current_thread_runtime() {
++        let caller = std::thread::current().id();
++        let ran_on = offload_blocking(|| std::thread::current().id())
++            .await
++            .unwrap();
++        assert_eq!(
++            ran_on, caller,
++            "a simulation host must not hand the work to a wall-clock thread"
++        );
++    }
++
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn uses_the_blocking_pool_on_a_multi_thread_runtime() {
++        let caller = std::thread::current().id();
++        let ran_on = offload_blocking(|| std::thread::current().id())
++            .await
++            .unwrap();
++        assert_ne!(
++            ran_on, caller,
++            "production must keep the disk walk off the reactor thread"
++        );
++    }
++
++    #[tokio::test(flavor = "current_thread")]
++    async fn an_inline_panic_comes_back_as_an_error() {
++        let outcome = offload_blocking(|| -> () { panic!("walk failed") }).await;
++        let err = outcome.expect_err("the panic must be caught");
++        assert!(err.to_string().contains("walk failed"), "{err}");
++    }
++
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn a_pool_panic_comes_back_as_an_error() {
++        let outcome = offload_blocking(|| -> () { panic!("walk failed") }).await;
++        let err = outcome.expect_err("the panic must be caught");
++        assert!(err.to_string().contains("walk failed"), "{err}");
++    }
++}
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +192/-0)
+```diff
+@@ -848,6 +848,198 @@ impl TraceFingerprint {
+     }
+ }
+ 
++/// Thread ids of the tokio blocking-pool threads alive now (Linux).
++#[cfg(target_os = "linux")]
++fn blocking_pool_threads() -> std::collections::BTreeSet<u64> {
++    let Ok(tasks) = std::fs::read_dir("/proc/self/task") else {
++        return Default::default();
++    };
++    tasks
++        .flatten()
++        .filter_map(|task| {
++            let tid = task.file_name().to_str()?.parse::<u64>().ok()?;
++            let name = std::fs::read_to_string(task.path().join("comm")).ok()?;
++            (name.trim_end() == "tokio-rt-worker").then_some(tid)
++        })
++        .collect()
++}
++
++#[cfg(target_os = "linux")]
++const NO_BLOCKING_POOL_CHILD_ENV: &str = "FREENET_NO_BLOCKING_POOL_CHILD";
++#[cfg(target_os = "linux")]
++const NO_BLOCKING_POOL_TEST: &str = "test_simulation_uses_no_blocking_pool_thread";
++
++/// No simulated node may hand work to tokio's blocking pool.
++///
++/// A blocking-pool thread finishes in wall-clock time, so the simulation step
++/// at which the awaiting task resumes follows OS scheduling, and one seed gives
++/// different results from run to run. That was #6123: Ring's disk-usage sweep
++/// awaited `spawn_blocking` (now `offload_blocking`, inline on a simulation
++/// host). The sweep first walks 70-90 s of virtual time into a run, so this run
++/// keeps operations going to about 140 s and watches, every 20 ms, for a
++/// `tokio-rt-worker` thread (tokio's name for its blocking-pool threads) that
++/// was not there before the simulation started. It catches any awaited
++/// `spawn_blocking` or `tokio::fs` call on a simulation path, not only the
++/// sweep's. The polling matters: an idle blocking thread exits after 10 s, so
++/// a check at the end alone could miss one used early.
++///
++/// Runs in a child process (a re-exec of this binary filtered to this test), so
++/// no other test in the same `cargo test` process can create a blocking thread
++/// during the watch.
++#[cfg(target_os = "linux")]
++#[test]
++fn test_simulation_uses_no_blocking_pool_thread() {
++    if std::env::var_os(NO_BLOCKING_POOL_CHILD_ENV).is_none() {
++        let output = std::process::Command::new("/proc/self/exe")
++            .args([
++                "--exact",
++                "--test-threads=1",
++                "--nocapture",
++                NO_BLOCKING_POOL_TEST,
++            ])
++            .env(NO_BLOCKING_POOL_CHILD_ENV, "1")
++            .output()
++            .expect("re-exec the test binary");
++        let stdout = String::from_utf8_lossy(&output.stdout);
++        let stderr = String::from_utf8_lossy(&output.stderr);
++        assert!(
++            output.status.success(),
++            "child run of {NO_BLOCKING_POOL_TEST} failed.\nstdout:\n{stdout}\nstderr:\n{stderr}",
++        );
++        // libtest exits 0 when its filter matches nothing; fail closed on a
++        // rename instead of passing vacuously.
++        assert!(
++            stdout.contains("1 passed"),
++            "the child must actually have run {NO_BLOCKING_POOL_TEST}; if it was \
++             renamed, update NO_BLOCKING_POOL_TEST.\nstdout:\n{stdout}\nstderr:\n{stderr}",
++        );
++        return;
++    }
++
++    const SEED: u64 = 0xD15C_6123;
++    const NAME: &str = "no-blocking-pool";
++    const NODES: usize = 9;
++    const CONTRACTS: u8 = 4;
++    const ROUNDS: usize = 30;
++
++    // Positive control: a deliberate `spawn_blocking` on a runtime of its own
++    // must show up, or the detector is blind (tokio renamed its blocking
++    // threads, or something set a thread name) and an empty result below
++    // would mean nothing.
++    {
++        let control_before = blocking_pool_threads();
++        let control = create_runtime();
++        control
++            .block_on(async {
++                tokio::task::spawn_blocking(|| {
++                    std::thread::sleep(Duration::from_millis(50));
++                })
++                .await
++            })
++            .expect("control blocking task");
++        let seen = blocking_pool_threads();
++        assert!(
++            seen.difference(&control_before).next().is_some(),
++            "the detector did not see a deliberate spawn_blocking; tokio's \
++             blocking-pool thread name is no longer \"tokio-rt-worker\", so this \
++             test would pass without detecting anything"
++        );
++        drop(control);
++    }
++
++    // Taken before the network is built, so a blocking thread created while
++    // building it counts too.
++    let before = blocking_pool_threads();
++    setup_deterministic_state(SEED);
++    let rt = create_runtime();
++    let mut sim = rt.block_on(SimNetwork::new(NAME, 1, NODES, 10, 3, 8, 3, SEED));
++
++    let contracts: Vec<_> = (0..CONTRACTS)
++        .map(|i| SimOperation::create_test_contract(0x60 + i))
++        .collect();
++    let mut operations = Vec::new();
++    for (i, contract) in contracts.iter().enumerate() {
++        operations.push(ScheduledOperation::new(
++            NodeLabel::gateway
 ```
 
 #### Recent Merged Pull Requests:
@@ -1970,8 +2614,8 @@ Observed empirical fixes and code patches:
 - **PR #6135** (closed): fix(config): honour data_dir from config.toml on default installs (@sanity)
 - **PR #6131** (2026-11-06): test(util): count the summary thread's allows in the rate-limit stress test (@sanity)
 - **PR #6130** (2026-11-07): feat: user-approved app grants for native clients (#5264) (@sanity)
+- **PR #6129** (2026-11-07): fix(ring): run the disk-usage walk inline on simulation hosts (@sanity)
 - **PR #6127** (2026-11-07): fix(update): wait for a streamed broadcast as long as the receiver keeps the stream (@sanity)
-- **PR #6125** (2026-11-06): feat: skip payloads already merged into the local state (@sanity)
 
 ---
 
@@ -1991,30 +2635,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update): wait for a streamed broadcast as long as the receiver keeps the stream 
+## X. transport): hold the bandwidth limit on short-RTT QUIC paths (#6126)
 
 **RULE**:
-When implementing operations in `.claude/rules/channel-safety.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3b4745a`: update): wait for a streamed broadcast as long as the receiver keeps the stream (#6127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9f3057f`: transport): hold the bandwidth limit on short-RTT QUIC paths (#6126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/channel-safety.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  waiting out the stream completion wait (then a flat 120 s; since
-  #6127 the permit is held for at most `STREAM_PERMIT_HOLD`, 120 s,
-  of a size-scaled wait). One emission site
+  config.rs test): 0 = unset, ignored under any non-zero total-bandwidth-limit (a total of 0 is unset), and
+  QUIC has no share of this bucket. With a limit set its data is paced by a
+  bucket of its own at the limit (the path pacer, below), and the same rate
+  (QuicRateLimit::rate, which calls paced_rate) caps each QUIC connection's
+  congestion window:
+  the_floor_keeps_two_datagrams_in_flight_both_ways). On loopback a path ran
+  at 3.4 to 34 MB/s with 500 kB/s set.
+  Path pacer (quic/path/pacer.rs): with bandwidth-limit or
+  total-bandwidth-limit set (PeerConnection::path_rate_limit), the session
+  builds a LimitPacer on the path's clock (the one the send deadlines run
+  on), and every path of the connection draws its data writes from it: a
+  token bucket of the connection's QUIC side at QuicRateLimit::rate (the
+  limit, or the share, read again at every reservation; capacity rate / 10,
+  at least MIN_BUCKET_CAPACITY_BYTES, recomputed when the rate changes), so
+  the limit holds at any round trip. NOT the UDP stream bucket: that runs at
+  min(UDP controller rate, limit), and FixedRate's 1.25 MB/s would pace QUIC
+  below a higher limit, slower than no limit at all. Charged: each 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  waiting `STREAM_COMPLETION_TIMEOUT` (120 s). One emission site
+  config.rs test): 0 = unset, ignored under any total-bandwidth-limit, and
+  QUIC has no bucket. The same rate (QuicRateLimit::rate, which calls
+  paced_rate) caps each QUIC connection's congestion window instead:
+  the_floor_keeps_two_datagrams_in_flight_both_ways). A QUIC path is not a
+  connection to GlobalBandwidthManager: it rides on its UDP connection and
+  takes that connection's full share, so a peer whose traffic is split across
+  both transports can get up to twice its share (the egress cap still bounds
+  the node). e5b-6 decides whether one peer's streams stay on one transport.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3b4745a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9f3057f` are properly handled with clean fallback behavior.

@@ -8080,3 +8080,7 @@
 | `CYCLE-20261107-DBJT` | `2026-11-07T20:42:11.513Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`0f8e3631...`) |
 | `CYCLE-20261107-DE0K` | `2026-11-07T20:42:14.708Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`342e8014...`) |
 | `CYCLE-20261107-DSJ8` | `2026-11-07T20:42:33.524Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`75c430c1...`) |
+| `CYCLE-20261107-M366` | `2026-11-07T20:49:00.558Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a26c5e6b...`) |
+| `CYCLE-20261107-M8JX` | `2026-11-07T20:49:07.533Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`9c558215...`) |
+| `CYCLE-20261107-MALD` | `2026-11-07T20:49:10.177Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8900871c...`) |
+| `CYCLE-20261107-MCKI` | `2026-11-07T20:49:12.738Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a1e3e78...`) |

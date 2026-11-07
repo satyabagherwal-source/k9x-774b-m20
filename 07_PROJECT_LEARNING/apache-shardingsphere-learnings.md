@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `a6dfa0c1`  
+> **Source Version**: `6fea18ef`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:08:37.860Z  
+> **Timestamp**: 2026-11-07T20:49:11.557Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:08:37.659Z  
+> **Harvest Timestamp**: 2026-11-07T20:49:10.791Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20818 stars
+- **Stars / Engagement**: 20821 stars
 
 ---
 
@@ -1450,15 +1450,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40476** (2026-11-05): **Use current documentation URLs for blog references**
+- **Issue #40488** (2026-11-07): **Resolve JTA dependency convergence while preserving API compatibility**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
+  > ### Summary  This PR switches the legacy XA module to `javax.transaction:javax.transaction-api:1.3`, resolving the coordinate/version conflict with the modern Jakarta API, and updates the corresponding licenses. Changes are limited to POM and license files; no Java code or SPI interfaces are modified.  ### Result  Review Result: Mergeable  No blocking issues were found. The existing javax/jakarta compatibility boundaries are preserved.  ### Evidence  - All 19 API classes have identical public signatures and bytecode disassembly before and after replacement. Modern modules continue using Jakarta 2.0.0. - After confirming unchanged candidate content and build inputs, verification results were reused: dependency convergence reaches **100% (625/625)** across the default 448-module reactor, with all 67 unit tests and 5 integration tests passing. - The new license matches the complete license text in the published JAR byte for byte. The CDDL election and source link satisfy the relevant [ASF
 
-- **Issue #40474** (2026-11-05): **Fix documentation links, images and translation pairing**
+- **Issue #40487** (2026-11-07): **Reorder user manual chapters for Agent and MCP**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
+  > ### Summary Updated weight and pre to place Agent and MCP after Proxy. Synchronized Chinese and English menus, chapter numbers, and BOM subsection numbers.  ### Result Review Result: Mergeable No blocking issues or required changes found.  ### Evidence Hugo build succeeded. Bilingual sidebar order, 608 page URLs, and 344 legacy URL redirects were validated.  ### Coverage Reviewed the complete local diff across 14 files against baseline d9726f9d499. Checkstyle and Spotless are not applicable; CI was not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1475,218 +1475,250 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34de0a1f` (2026-11-05)
-**Commit Message**: Fix SQL error prefix for Firebird SQLDA status vectors (#40443)
+### Incident Patch 1: `f25b9349` (2026-11-07)
+**Commit Message**: Fix encrypted INSERT column ordering with generated keys (#40483)
 
-Preserve the numeric -804 SQL error segment before SQLDA errors, including invalid batch message lengths. Add a regression for the exact ordered wire response and a release note for issue #40408.
+* Fix encrypted INSERT column ordering with generated keys
 
-Assisted-By: OpenAI Codex
+Fixes #36841.
 
-Co-authored-by: rys888 <[REDACTED_EMAIL]>
+* Fix encrypted INSERT column ordering with generated keys
+
+* Refactor generated key token traversal to use while
 
 **File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -94,6 +94,7 @@
- 1. Proxy: Fix silently dropped backslashes and rejected NULL elements in PostgreSQL text array binary parameters - [#39395](https://github.com/apache/shardingsphere/pull/39395)
- 1. Proxy: Fix MySQL COM_QUERY binary string literal corruption - [#39433](https://github.com/apache/shardingsphere/pull/39433)
- 1. Proxy: Add error handling for unknown or closed BLOB handles and ids in Firebird - [#39773](https://github.com/apache/shardingsphere/pull/39773)
-+1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
- 1. Proxy: Fix startup failure when storage units set `dataSourceClassName` to `com.zaxxer.hikari.HikariDataSource` - [#40303](https://github.com/apache/shardingsphere/issues/40303)
- 1. JDBC & Proxy: Remove default MySQL prepared statement query properties when creating data sources - [#38593](https://github.com/apache/shardingsphere/pull/38593)
- 1. JDBC & Proxy: Reject ordinary pushdown SELECT statements routed to different storage database types - [#40385](https://github.com/apache/shardingsphere/pull/40385)
+@@ -128,6 +128,7 @@
+ 1. SQL Federation: Fix SQL Federation pagination binding for long LIMIT parameters - [#39237](https://github.com/apache/shardingsphere/pull/39237)
+ 1. Broadcast: Fix case-sensitive table name lookup in broadcast data node rule attribute - [#39153](https://github.com/apache/shardingsphere/pull/39153)
+ 1. Encrypt: Fix stale encryptors leaking when altering an encrypt rule - [#39209](https://github.com/apache/shardingsphere/pull/39209)
++1. Encrypt: Fix INSERT column and value misalignment when using derived columns with generated primary keys - [#36841](https://github.com/apache/shardingsphere/issues/36841)
+ 1. Shadow: Apply default shadow algorithm to shadow tables when swapping YAML rule configuration - [#39749](https://github.com/apache/shardingsphere/pull/39749)
+ 1. Shadow: Fix INSERT SELECT statement being routed to shadow data source - [#39751](https://github.com/apache/shardingsphere/pull/39751)
+ 1. Sharding: Fix logic table lookup for MySQL SHOW CREATE TABLE and SHOW INDEX - [#39856](https://github.com/apache/shardingsphere/pull/39856)
 ```
 
-**File**: `database/protocol/dialect/firebird/src/main/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVector.java` (modified, +6/-0)
+**File**: `features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/insert/EncryptInsertDerivedColumnsTokenGenerator.java` (modified, +29/-2)
 ```diff
-@@ -54,6 +54,12 @@ private static String stripStateSuffix(final String message) {
-     
-     @Override
-     protected void write(final FirebirdPacketPayload payload) {
-+        if (ISCConstants.isc_dsql_sqlda_err == gdsCode) {
-+            payload.writeInt4(ISCConstants.isc_arg_gds);
-+            payload.writeInt4(ISCConstants.isc_sqlerr);
-+            payload.writeInt4(ISCConstants.isc_arg_number);
-+            payload.writeInt4(-804);
-+        }
-         for (Segment each : segments) {
-             payload.writeInt4(ISCConstants.isc_arg_gds);
-             payload.writeInt4(each.gdsCode);
-```
-
-**File**: `database/protocol/dialect/firebird/src/test/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVectorTest.java` (modified, +16/-0)
-```diff
-@@ -18,6 +18,7 @@
- package org.apache.shardingsphere.database.protocol.firebird.err;
+@@ -25,15 +25,20 @@
+ import org.apache.shardingsphere.encrypt.rule.column.EncryptColumn;
+ import org.apache.shardingsphere.encrypt.rule.table.EncryptTable;
+ import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
++import org.apache.shardingsphere.infra.binder.context.segment.insert.keygen.GeneratedKeyContext;
+ import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
+ import org.apache.shardingsphere.infra.binder.context.statement.type.dml.InsertStatementContext;
+ import org.apache.shardingsphere.infra.rewrite.sql.token.common.generator.CollectionSQLTokenGenerator;
++import org.apache.shardingsphere.infra.rewrite.sql.token.common.generator.aware.PreviousSQLTokensAware;
+ import org.apache.shardingsphere.infra.rewrite.sql.token.common.pojo.SQLToken;
+ import org.apache.shardingsphere.infra.rewrite.sql.token.common.pojo.generic.InsertColumnsToken;
++import org.apache.shardingsphere.infra.rewrite.sql.token.keygen.pojo.GeneratedKeyInsertColumnToken;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.InsertColumnsSegment;
  
- import org.apache.shardingsphere.database.protocol.firebird.payload.FirebirdPacketPayload;
-+import org.apache.shardingsphere.database.protocol.payload.PacketPayload;
- import org.firebirdsql.gds.ISCConstants;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.Iterator;
+ import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Optional;
+@@ -44,10 +49,12 @@
+ @HighFrequencyInvocation
+ @RequiredArgsConstructor
+ @Setter
+-public final class EncryptInsertDerivedColumnsTokenGenerator implements CollectionSQLTokenGenerator<InsertStatementContext> {
++public final class EncryptInsertDerivedColumnsTokenGenerator implements CollectionSQLTokenGenerator<InsertStatementContext>, PreviousSQLTokensAware {
+     
+     private final EncryptRule rule;
+     
++    private List<SQLToken> previousSQLTokens;
++    
+     @Override
+     public boolean isGenerateSQLToken(final SQLStatementContext sqlStatementContext) {
+         return sqlStatementContext instanceof InsertStatementContext && ((InsertStatementContext) sqlStatementContext).containsInsertColumns();
+@@ -61,11 +68,19 @@ public Collection<SQLToken> generateSQLTokens(final InsertStatementContext inser
+             return Collections.emptyList();
+         }
+         QuoteCharacter quoteCharacter = new DatabaseTypeRegistry(insertStatementContext.getSqlStatement().getDatabaseType()).getDialectDatabaseMetaData().getQuoteCharacter();
++        Optional<InsertColumnsSegment> insertColumnsSegment = insertStatementContext.getSqlStatement().getInsertColumns();
++        int insertColumnsStopIndex = insertColumnsSegment.isPresent() ? insertColumnsSegment.get().getStopIndex() : -1;
++        Optional<GeneratedKeyContext> generatedKeyContext = insertStatementContext.getGeneratedKeyContext();
++        boolean appendGeneratedKey = generatedKeyContext.isPresent() && generatedKeyContext.get().isGenerated() && !generatedKeyContext.get().getGeneratedValues().isEmpty();
+         Collection<SQLToken> result = new LinkedList<>();
+         for (ColumnSegment each : insertStatementContext.getSqlStatement().getColumns()) {
+             List<String> derivedColumnNames = getDerivedColumnNames(encryptTable.get(), each);
+             if (!derivedColumnNames.isEmpty()) {
+-                result.add(new InsertColumnsToken(each.getStopIndex() + 1, derivedColumnNames, quoteCharacter));
++                if (appendGeneratedKey && each.getStopIndex() + 1 == insertColumnsStopIndex) {
++                    result.add(mergeGeneratedKeyColumn(each.getStopIndex() + 1, derivedColumnNames, quoteCharacter, generatedKeyContext.get().getColumnName()));
++                } else {
++                    result.add(new InsertColumnsToken(each.getStopIndex() + 1, derivedColumnNames, quoteCharacter));
++                }
+             }
+         }
+         return result;
+@@ -82,4 +97,16 @@ private List<String> getDerivedColumnNames(final EncryptTable encryptTable, fina
+         encryptColumn.getLikeQuery().ifPresent(optional -> result.add(optional.getName()));
+         return result;
+     }
++    
++    private InsertColumnsToken mergeGeneratedKeyColumn(final int startIndex, final List<String> derivedColumnNames, final QuoteCharacter quoteCharacter, final String generatedKeyColumnName) {
++        Iterator<SQLToken> iterator = previousSQLTokens.iterator();
++        SQLToken currentToken = iterator.next();
++        while (!(currentToken instanceof GeneratedKeyInsertColumnToken)) {
++            currentToken = iterator.next();
++        }
++        iterator.remove();
++        derivedColumnNames.replaceAll(quoteCharacter::wrap);
++        derivedColumnNames.add(generatedKeyColumnName);
++        return new InsertColumnsToken(startIndex, derivedColumnNames);
++    }
+ }
+```
+
+**File**: `features/encrypt/core/src/test/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/insert/EncryptInsertDerivedColumnsTokenGeneratorTest.java` (modified, +243/-64)
+```diff
+@@ -18,125 +18,304 @@
+ package org.apache.shardingsphere.encrypt.rewrite.token.generator.insert;
+ 
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.QuoteCharacter;
+-import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.DialectDatabaseMetaData;
++import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
+ import org.apache.shardingsphere.encrypt.rule.EncryptRule;
+ import org.apache.shardingsphere.encrypt.rule.column.item.AssistedQueryColumnItem;
++import org.apache.shardingsphere.encrypt.rule.column.item.LikeQueryColumnItem;
+ import org.apache.shardingsphere.encrypt.rule.table.EncryptTable;
+-import org.apache.shardingsphere.encrypt.spi.EncryptAlgorithm;
+-import org.apache.shardingsphere.encrypt.spi.EncryptAlgorithmMetaData;
+-import org.apache.shardingsphere.infra.algorithm.core.config.AlgorithmConfiguration;
++import org.apache.shardingsphere.infra.binder.context.segment.insert.keygen.GeneratedKeyContext;
+ import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
+ import org.apache.shardingsphere.infra.binder.context.statement.type.dml.InsertStatementContext;
++import org.apache.shardingsphere.infra.rewrite.sql.token.common.pojo.Attachable;
+ import org.apache.shardingsphere.infra.rewrite.sql.token.common.pojo.SQLToken;
++import org.apache.shardingsphere.infra.rewrite.sql.token.keygen.pojo.GeneratedKeyInsertColumnToken;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.InsertColumnsSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
+-import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.TableNameSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
+-import org.junit.jupiter.api.AfterAll;
+-import org.junit.jupiter.api.BeforeAll;
  import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
-@@ -85,6 +86,21 @@ void assertWriteOmitsArgumentWhenMessageIsEmpty() {
-         verifyNoMoreInteractions(payload);
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.Arguments;
++import org.junit.jupiter.params.provider.MethodSource;
+ import org.mockito.MockedConstruction;
+ 
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.Iterator;
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.Optional;
+-import java.util.Properties;
++import java.util.stream.Stream;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
++import static org.hamcrest.Matchers.contains;
+ import static org.hamcrest.Matchers.is;
++import static org.hamcrest.Matchers.isA;
++import static org.hamcrest.Matchers.sameInstance;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.mockConstruction;
+ import static org.mockito.Mockito.when;
++import static org.mockito.Mockito.withSettings;
+ 
+ class EncryptInsertDerivedColumnsTokenGeneratorTest {
+     
+-    private static MockedConstruction<DatabaseTypeRegistry> registryConstruction;
++    private final EncryptRule rule = mock(EncryptRule.class);
+     
+-    @BeforeAll
+-    static void beforeAll() {
+-        registryConstruction = mockConstruction(DatabaseTypeRegistry.class, (mock, mockContext) -> {
+-            DialectDatabaseMetaData dialectDatabaseMetaData = mock(DialectDatabaseMetaData.class);
+-            when(dialectDatabaseMetaData.getQuoteCharacter()).thenReturn(QuoteCharacter.NONE);
+-            when(mock.getDialectDatabaseMetaData()).thenReturn(dialectDatabaseMetaData);
+-        });
+-    }
+-    
+-    @AfterAll
+-    static void afterAll() {
+-        registryConstruction.close();
+-    }
++    private final EncryptInsertDerivedColumnsTokenGenerator generator = new EncryptInsertDerivedColumnsTokenGenerator(rule);
+     
+     @Test
+     void assertIsNotGenerateSQLTokenWithNotInsertStatementContext() {
+-        assertFalse(new EncryptInsertDerivedColumnsTokenGenerator(mock(EncryptRule.class)).isGenerateSQLToken(mock(SQLStatementContext.class)));
++        assertFalse(generator.isGenerateSQLToken(mock(SQLStatementContext.class)));
      }
      
-+    @Test
-+    void assertWriteSqldaError() {
-+        FirebirdStatusVector actual = new FirebirdStatusVector(new SQLException("", "07002", ISCConstants.isc_dsql_sqlda_err));
-+        actual.write((PacketPayload) payload);
-+        InOrder inOrder = inOrder(payload);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_sqlerr);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_number);
-+        inOrder.verify(payload).writeInt4(-804);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_dsql_sqlda_err);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_end);
-+        verifyNoMoreInteractions(payload);
-+    }
-+    
      @Test
-     void assertWriteWithNullMessage() {
-         FirebirdStatusVector vector = new FirebirdStatusVector(new SQLException(null, "28000", ISCConstants.isc_login));
+     void assertIsNotGenerateSQLTokenWithoutInsertColumns() {
+-        assertFalse(new EncryptInsertDerivedColumnsTokenGenerator(mock(EncryptRule.class)).isGenerateSQLToken(mock(InsertStatementContext.class, RETURNS_DEEP_STUBS)));
++        assertFalse(generator.isGenerateSQLToken(mock(InsertStatementContext.class)));
+     }
+     
+     @Test
+     void assertIsGenerateSQLTokenWithInsertColumns() {
+-        InsertStatementContext insertStatementContext = mock(InsertStatementContext.class, RETURNS_DEEP_STUBS);
++        InsertStatementContext insertStatementContext = 
 ```
 
----
-
-### Incident Patch 2: `ef37ccdb` (2026-11-05)
-**Commit Message**: Fix documentation links, images and translation pairing (#40474)
-
-**File**: `docs/blog/content/material/2022_03_09_SQL_Parse_Format_Function_A_Technical_Deep_Dive_by_Apache_ShardingSphere.en.md` (modified, +1/-1)
+**File**: `test/it/rewriter/src/test/resources/scenario/mix/case/query-with-cipher/dml/insert/insert-column.xml` (modified, +30/-0)
 ```diff
-@@ -263,7 +263,7 @@ mysql> parse SELECT id, name FROM t_user WHERE status = 'ACTIVE' AND age > 18;
- +----------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- ```
- 
--For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/current/cn/concepts/distsql/](https://shardingsphere.apache.org/document/current/cn/concepts/distsql/)
-+For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/](https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/)
- 
- ## Conclusion
- 
-```
-
-**File**: `docs/blog/content/material/2022_03_11_Asia’s_E-Commerce_Giant_Dangdang_Increases_Order_Processing_Speed_by_30%_Saves_Over_Ten_Million_in_Technology_Budget_with_Apache_ShardingSphere.en.md` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ Based on the situation described above, Dangdang’s tech team proposed a wareho
- 
- However, at that time, there wasn’t a versatile and mature enough open source database middleware living up to Dangdang’s expectations, so they created one and named it Sharding-JDBC.
- 
--[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/current/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
-+[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/5.1.0/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
- 
- With ShardingSphere providing services in the form of the `.jar` files package, users can connect the client directly to the database without additional deployment and dependencies. It can be seen as an enhanced JDBC driver, fully compatible with JDBC and all ORM frameworks.
- 
-```
-
-**File**: `docs/blog/content/material/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.0.en.md` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ The updates effectively reduce the consumed database connection resources in the
- 
- First, it’s better to review Apache ShardingSphere’s microkernel and the principle that explains how the Executor Engine works in the processes. As shown in the figure below, the Apache ShardingSphere microkernel includes core processes: SQL Parser, SQL Router, SQL Rewriter, SQL Executor, and Result Merger.
- 
--![Processes in Apache ShardingSphere Microkernel](...)
-+![Processes in Apache ShardingSphere Microkernel](https://shardingsphere.apache.org/blog/img/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.01.png)
- 
- SQL Parser Engine can parse the SQL statements entered by the user and generate SQL Statements containing contextual information.
- 
-```
-
-**File**: `docs/blog/content/material/2022_03_23_Apache_ShardingSphere_Proxy_Performance_with_PostgreSQL_is_Improved_26.8%_with_Version_5.1.0.en.md` (modified, +1/-1)
-```diff
-@@ -246,7 +246,7 @@ We use TPC-C to conduct the ShardingSphere-Proxy benchmark test, to verify the p
- 
- To highlight the performance loss of ShardingSphere-Proxy itself, this test will use ShardingSphere-Proxy with sharding data (1 shard) against PostgreSQL 14.2.
- 
--The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/current/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
-+The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/5.1.0/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
- 
- **Testing Environment**
- ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/irmtm4oucizld7hmuf5y.png)
-```
-
-**File**: `docs/blog/content/material/2022_04_29_Apache_ShardingSphere_Enterprise_Applications_Zhuanzhuan’s_Transaction_System_with_100s_of_Millions_of_Records.en.md` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ Advantages of ShardingSphere:
- 
- ShardingSphere initiated the Database Plus concept and adopts a plugin oriented architecture where all modules are independent of each other, allowing each to be used individually or flexibly combined.
- 
--It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
-+It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/5.1.1/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
- 
- Below is a feature comparison of the three products:
- ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7517wpdgk6gmgb0s8202.png)
-```
-
-**File**: `docs/blog/content/material/2022_06_02_Database_Mesh_2.0_Database_Governance_in_a_Cloud_Native_Environment.en.md` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ This means that the implementation of Service Mesh in Kubernetes’ Sidecar mode
- 
- When a new technology concept is launched, it’ll be characterized hahahby different business scenarios and patterns, different architectural design, different infrastructure maturity, and even different engineering cultures. It is a belief that has been fully demonstrated in the implementation of Kubernetes, and has been reinforced by Service Mesh. What about Database Mesh?
- 
--[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
-+[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/5.1.1/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
- 
- For example, analysis and support for SQL protocol are added in Service Mesh by means of secondary development to enhance the database traffic governance ability, which is compatible with the unified service governance configuration. The concept of Database Mesh is integrated into a complete set of middleware service frameworks, and a unified access mode is provided for business applications in the form of SDK or Sidecar to simplify the operation for developers.
- 
-```
-
-**File**: `docs/blog/content/material/2022_07_06_ShardingSphere-JDBC_Driver_Released_A_JDBC_Driver_That_Requires_No_Code_Modifications.en.md` (modified, +1/-1)
-```diff
-@@ -92,7 +92,7 @@ try (
- 
- **Reference**
- 
--- [JDBC driver](https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
-+- [JDBC driver](https://shardingsphere.apache.org/document/5.1.2/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
- 
- ## Conclusion
- 
-```
-
-**File**: `docs/blog/content/material/2022_07_26_DistSQL_Applications_Building_a_Dynamic_Distributed_Database.en.md` (modified, +5/-5)
-```diff
-@@ -126,7 +126,7 @@ Next, we’ll adopt regular sharding and use the `INLINE` expression algorithm t
- 
- **Primary key generator**
- 
--The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/).
-+The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/).
- 
- 1.Create the primary key generator.
- 
-@@ -182,7 +182,7 @@ mysql> SHOW SHARDING ALGORITHMS;
- ```
- **Default sharding strategy**
- 
--Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/) for its concept.
-+Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/) for its concept.
- 
- Sharding strategy consists of `databaseStrategy` and `tableStrategy`.
- 
-@@ -486,11 +486,11 @@ If you have any questions or suggestions about [Apache ShardingSphere](https://s
- 
- ## References
- 
--1. [Concept-DistSQL](https://shardingsphere.apache.org/document/current/en/concepts/distsql/)
-+1. [Concept-DistSQL](https://shardingsphere.apache.org/document/5.1.2/en/concepts/distsql/)
- 
--2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/)
-+2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/)
- 
--3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/)
-+3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/)
- 
- 4. [Concept INLINE Expression
- ](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/inline-expression/)
+@@ -34,6 +34,36 @@
+         <output sql="INSERT INTO t_account_1(`cipher_password`, `assisted_query_password`, `cipher_amount`, status, account_id) VALUES (?, ?, ?, ?, ?), ('encrypt_bbb', 'assisted_query_bbb', 'encrypt_2000', 'OK', 1), (?, ?, ?, ?, ?), ('encrypt_ddd', 'assisted_query_ddd', 'encrypt_4000', 'OK', 1)" parameters="encrypt_aaa, assisted_query_aaa, encrypt_1000, OK, 1, encrypt_ccc, assisted_query_ccc, encrypt_3000, OK, 1" />
+     </rewrite-assertion>
+     
++    <rewrite-assertion id="insert_values_with_last_encrypt_column_without_id_for_parameters" db-types="MySQL">
++        <input sql="INSERT INTO t_account(status, password) VALUES (?, ?)" parameters="1, aaa" />
++        <output sql="INSERT INTO t_account_1(status, `cipher_password`, `assisted_query_password`, account_id) VALUES (?, ?, ?, ?)" parameters="1, encrypt_aaa, assisted_query_aaa, 1" />
++    </rewrite-assertion>
++    
++    <rewrite-assertion id="insert_values_with_multiple_encrypt_columns_without_id_for_parameters" db-types="MySQL">
++        <input sql="INSERT INTO t_account(amount, status, password) VALUES (?, ?, ?)" parameters="1000, 1, aaa" />
++        <output sql="INSERT INTO t_account_1(`cipher_amount`, status, `cipher_password`, `assisted_query_password`, account_id) VALUES (?, ?, ?, ?, ?)" parameters="encrypt_1000, 1, encrypt_aaa, assisted_query_aaa, 1" />
++    </rewrite-assertion>
++    
++    <rewrite-assertion id="insert_values_with_last_encrypt_column_with_trailing_space" db-types="MySQL">
++        <input sql="INSERT INTO t_account(status, password ) VALUES (?, ?)" parameters="1, aaa" />
++        <output sql="INSERT INTO t_account_1(status, `cipher_password`, `assisted_query_password` , account_id) VALUES (?, ?, ?, ?)" parameters="1, encrypt_aaa, assisted_query_aaa, 1" />
++    </rewrite-assertion>
++    
++    <rewrite-assertion id="insert_values_with_last_encrypt_column_with_trailing_comment" db-types="MySQL">
++        <input sql="INSERT INTO t_account(status, password/* column boundary */) VALUES (?, ?)" parameters="1, aaa" />
++        <output sql="INSERT INTO t_account_1(status, `cipher_password`, `assisted_query_password`/* column boundary */, account_id) VALUES (?, ?, ?, ?)" parameters="1, encrypt_aaa, assisted_query_aaa, 1" />
++    </rewrite-assertion>
++    
++    <rewrite-assertion id="insert_values_with_last_encrypt_column_without_id_for_literals" db-types="MySQL">
++        <input sql="INSERT INTO t_account(status, password) VALUES (1, 'aaa')" />
++        <output sql="INSERT INTO t_account_1(status, `cipher_password`, `assisted_query_password`, account_id) VALUES (1, 'encrypt_aaa', 'assisted_query_aaa', 1)" />
++    </rewrite-assertion>
++    
++    <rewrite-assertion id="insert_values_with_last_encrypt_column_without_id_for_multiple_rows" db-types="MySQL">
++        <input sql="INSERT INTO t_account(status, password) VALUES (?, ?), (?, ?)" parameters="1, aaa, 2, bbb" />
++        <output sql="INSERT INTO t_account_1(status, `cipher_password`, `assisted_query_password`, account_id) VALUES (?, ?, ?, ?), (?, ?, ?, ?)" parameters="1, encrypt_aaa, assisted_query_aaa, 1, 2, encrypt_bbb, assisted_query_bbb, 1" />
++    </rewrite-assertion>
++    
+     <rewrite-assertion id="insert_values_with_columns_without_id_for_literals" db-types="MySQL">
+         <input sql="INSERT INTO t_account(password, amount, status) VALUES ('aaa', 1000, 'OK'), ('bbb', 2000, 'OK'), ('ccc', 3000, 'OK'), ('ddd', 4000, 'OK')" />
+         <output sql="INSERT INTO t_account_1(`cipher_password`, `assisted_query_password`, `cipher_amount`, status, account_id) VALUES ('encrypt_aaa', 'assisted_query_aaa', 'encrypt_1000', 'OK', 1), ('encrypt_bbb', 'assisted_query_bbb', 'encrypt_2000', 'OK', 1), ('encrypt_ccc', 'assisted_query_ccc', 'encrypt_3000', 'OK', 1), ('encrypt_ddd', 'assisted_query_ddd', 'encrypt_4000', 'OK', 1)" />
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40476** (2026-11-05): Use current documentation URLs for blog references (@terrymanu)
-- **PR #40474** (2026-11-05): Fix documentation links, images and translation pairing (@terrymanu)
-- **PR #40473** (2026-11-05): Unify HttpCore dependency version to 4.4.15 (@terrymanu)
-- **PR #40471** (2026-11-05): Complete Oracle CREATE TABLE column definitions (@sandynz)
-- **PR #40470** (2026-11-05): Simplify docs README and remove duplicate license (@terrymanu)
-- **PR #40468** (closed): Bump org.apache.thrift:libthrift from 0.16.0 to 0.24.0 (@dependabot[bot])
+- **PR #40488** (2026-11-07): Resolve JTA dependency convergence while preserving API compatibility (@terrymanu)
+- **PR #40487** (2026-11-07): Reorder user manual chapters for Agent and MCP (@terrymanu)
+- **PR #40485** (2026-11-07): Clarify DistSQL support for JDBC and Proxy (@terrymanu)
+- **PR #40484** (2026-11-07): Move DistSQL documentation to the user manual (@terrymanu)
+- **PR #40483** (2026-11-07): Fix encrypted INSERT column ordering with generated keys (@terrymanu)
+- **PR #40482** (2026-11-06): Align dependency versions while preserving JTA compatibility (@terrymanu)
 
 ---
 
@@ -1706,13 +1738,13 @@ Co-authored-by: rys888 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SQL error prefix for Firebird SQLDA status vectors (#40443)
+## X. encrypted INSERT column ordering with generated keys (#40483)
 
 **RULE**:
 When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34de0a1f`: SQL error prefix for Firebird SQLDA status vectors (#40443). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f25b9349`: encrypted INSERT column ordering with generated keys (#40483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
@@ -1720,7 +1752,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
+1. Encrypt: Fix INSERT column and value misalignment when using derived columns with generated primary keys - [#36841](https://github.com/apache/shardingsphere/issues/36841)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1730,4 +1762,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34de0a1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f25b9349` are properly handled with clean fallback behavior.

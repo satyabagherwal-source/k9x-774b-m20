@@ -8089,3 +8089,7 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `6f6a1545` | Multi-dimensional audit evidence | 2026-11-07T20:42:11.517Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `73fae6e8` | Multi-dimensional audit evidence | 2026-11-07T20:42:14.712Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3f12f64e` | Multi-dimensional audit evidence | 2026-11-07T20:42:33.528Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `43c52739` | Multi-dimensional audit evidence | 2026-11-07T20:49:00.561Z |
+| `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-07T20:49:07.536Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c9f3057f` | Multi-dimensional audit evidence | 2026-11-07T20:49:10.180Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `6fea18ef` | Multi-dimensional audit evidence | 2026-11-07T20:49:12.741Z |

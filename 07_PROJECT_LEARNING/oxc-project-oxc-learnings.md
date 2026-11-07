@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `c6ec50b6`  
+> **Source Version**: `43c52739`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:52:36.174Z  
+> **Timestamp**: 2026-11-07T20:48:59.669Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:52:35.708Z  
+> **Harvest Timestamp**: 2026-11-07T20:48:58.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23334 stars
+- **Stars / Engagement**: 23366 stars
 
 ---
 
@@ -36,6 +36,69 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `apps/oxfmt/conformance/live_worker.ts`
+```
+// Runs one `run_live.ts` comparison (a fixture under one option set) in a `tinypool` worker,
+// Prettier is CPU-bound JS, so the main thread alone serializes it.
+
+import { readFileSync } from "node:fs";
+import prettier from "prettier";
+import * as astroPlugin from "prettier-plugin-astro";
+import * as sveltePlugin from "prettier-plugin-svelte";
+import { format } from "../dist/index.js";
+
+export type LiveTask = {
+  name: string;
+  fullPath: string;
+  isProject: boolean;
+  options: Record<string, unknown>;
+};
+
+/** `null` when both agree, otherwise both outputs (`"ERROR"` for a failed one). */
+export default async function run({ name, fullPath, isProject, options }: LiveTask) {
+  let input = readFileSync(fullPath, "utf8");
+  let expected = await formatWithPrettier(name, input, options);
+  // A project hands over Prettier's output, unless Prettier cannot read it back either
+  if (isProject && expected !== null) {
+    const again = await formatWithPrettier(name, expected, options);
+    if (again !== null) [input, expected] = [expected, again];
+  }
+  const prettierResult = expected ?? "ERROR";
+  const oxfmtResult = await formatWithOxfmt(name, input, options);
+
+  // Both failing to parse is not a pass, the fixture exercised nothing
+  if (oxfmtResult === prettierResult && oxfmtResult !== "ERROR") return null;
+  return { name, oxfmt: oxfmtResult, prettier: prettierResult };
+}
+
+/** `null` when Prettier fails. */
+async function formatWithPrettier(
+  fileName: string,
+  content: string,
+  options: Record<string, unknown>,
+): Promise<string | null> {
+  try {
+    return await prettier.format(content, {
+      ...options,
+      filepath: fileName,
+      plugins: [sveltePlugin, astroPlugin],
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function formatWithOxfmt(
+  fileName: string,
+  content: string,
+  options: Record<string, unknown>,
+): Promise<string> {
+  const res = await format(fileName, content, options);
+  return res.errors.length === 0 ? res.code : "ERROR";
+}
+
+```
 
 ### Core Architecture Module: `apps/oxfmt/src-js/cli-worker.ts`
 ```
@@ -979,251 +1042,23 @@ impl ConfigScopes {
 
 ```
 
-### Core Architecture Module: `apps/oxfmt/src/core/embed/dispatcher.rs`
-```
-//! The `FormatDispatcher` assembly shared by every build, routed by [`route_embedded`].
-//!
-//! Each language maps to a Rust formatter where available;
-//! the [`PrettierLanguage`] set goes to the napi-only Prettier Doc→IR channel ([`super::prettier_doc`]) when one is supplied,
-//! and is deliberately preserved as-is otherwise (pure Rust build); everything else stays as-is in every build.
-
-use std::sync::{Arc, OnceLock};
-
-use tracing::{debug, debug_span};
-
-use oxc_formatter::{
-    CssInJsTemplate, HtmlInJsTemplate, JsEmbeddedIn, JsFormatOptions, MarkdownInJsTemplate,
-};
-use oxc_formatter_core::{
-    DispatchRequest, DispatchResponse, EmbeddedIr, FormatDispatcher, FormatSession,
-};
-use oxc_formatter_core::{FormatOptions, PrinterOptions};
-use oxc_formatter_css::{CssEmbeddedIn, CssFormatOptions, CssVariant};
-use oxc_formatter_graphql::GraphqlFormatOptions;
-use oxc_formatter_htmlish::{
-    CssInHtmlStyleAttribute, HtmlishEmbeddedIn, HtmlishFormatOptions, HtmlishVariant,
-    JsInHtmlEventHandler,
-};
-use oxc_formatter_json::{JsonFormatOptions, JsonVariant};
-use oxc_formatter_markdown::{MarkdownFormatOptions, XxxInMarkdownCodeBlock};
-use oxc_formatter_toml::TomlFormatOptions;
-use oxc_formatter_yaml::YamlFormatOptions;
-
-use super::jsdoc_fence::XxxInJsdocFence;
-use crate::core::{
-    language::{Route, route_embedded},
-    options::{
-        ValidatedOptions, to_oxc_formatter, to_oxc_formatter_css, to_oxc_formatter_graphql,
-        to_oxc_formatter_htmlish, to_oxc_formatter_json, to_oxc_formatter_markdown,
-        to_oxc_formatter_toml, to_oxc_formatter_yaml,
-    },
-    oxfmtrc::FormatConfig,
-    support::{NativeLanguage, PrettierLanguage},
-};
-
-/// Per-root context shared by every embedded service (dispatcher, string embedder, Tailwind sorter):
-/// the host file's resolved config plus lazily-mapped per-language options.
-///
-/// Language options are NOT built up front: an embed-free file pays only for empty cells,
-/// and a host where every language is embeddable (Markdown-scale) maps exactly the languages that actually appear,
-/// once each (`OnceLock` memoizes and is safe under the rayon-parallel format runs).
-pub struct ResolvedDispatchConfig {
-    /// Resolved config of the HOST file (its overrides / editorconfig applied).
-    /// Embedded children inherit it, mirroring Prettier's `textToDoc` (parent-options spread);
-    /// never a re-resolution for a virtual path.
-    config: Arc<FormatConfig>,
-    /// The config-resolution gate's artifacts (`options::validate`), shared with the resolver's cache.
-    /// Holding them pre-validated is what lets the per-language mappers be infallible.
-    /// `sort_imports` is for JS children too: a Markdown code block is a whole program,
-    /// sorted like the host's own imports (and a Vue `<script>`'s).
-    validated: Arc<ValidatedOptions>,
-    js: OnceLock<JsFormatOptions>,
-    graphql: OnceLock<GraphqlFormatOptions>,
-    /// One cell per [`CssVariant`]: JSDoc fences dispatch css/scss/less as-is, while css-in-js always uses Scss.
-    css: [OnceLock<CssFormatOptions>; 3],
-    yaml: OnceLock<YamlFormatOptions>,
-    /// One cell per [`JsonVariant`].
-    json: [OnceLock<JsonFormatOptions>; 4],
-    markdown: OnceLock<MarkdownFormatOptions>,
-    toml: OnceLock<TomlFormatOptions>,
-    htmlish: OnceLock<HtmlishFormatOptions>,
-    /// The options handed to Prettier; see [`PrettierOptions`].
-    #[cfg(feature = "napi")]
-    prettier: PrettierOptions,
-}
-
-/// The lazily-built options JSON handed to Prettier (+ plugins),
-/// consumed by the Doc→IR path and the Tailwind sorter.
-/// `path` is an ingredient, not a sibling datum: it becomes the JSON's `filepath` at last
-/// (see [`crate::core::options::build_prettier_options`]).
-///
-/// NOTE: The late merge is load-bearing: the JSON must derive from the RESOLVED per-file config
-/// (a pre-built Value loses overrides, #18246), and `path` is the one per-file ingredient,
-/// keeping it out of the config is what keeps the config shareable across files.
-/// Lazy so an embed-free file never builds the JSON at all.
-#[cfg(feature = "napi")]
-#[derive(Default)]
-struct PrettierOptions {
-    path: std::path::PathBuf,
-    options: OnceLock<serde_json::Value>,
-}
-
-impl ResolvedDispatchConfig {
-    /// Private so [`Self::for_root`] stays the only construction recipe.
-    fn new(config: Arc<FormatConfig>, validated: Arc<ValidatedOptions>) -> Self {
-        Self {
-            config,
-            validated,
-            js: OnceLock::new(),
-            graphql: OnceLock::new(),
-            css: [OnceLock::new(), OnceLock::new(), OnceLock::new()],
-            yaml: OnceLock::new(),
-            json: [OnceLock::new(), OnceLock::new(), OnceLock::new(), OnceLock::new()],
-            markdown: OnceLock::new(),
-            toml: OnceLock::new(),
-            htmlish: OnceLock::new(),
-            #[cfg(feature = "napi")]
-            prettier: PrettierOptions::default(),
-        }
-    }
-
-    /// The one construction recipe for a root formatter run at `path`:
-    /// [`Self::new`] plus the napi-only path recording
-    /// (the pure build has no JS-side consumers, so `path` goes unused there).
-    /// `validated` is the config-resolution gate's artifacts (`options::validate`),
-    /// carried from resolution so they never get re-derived (or re-fail) here.
-    pub fn for_root(
-        config: Arc<FormatConfig>,
-        validated: Arc<ValidatedOptions>,
-        path: &std::path::Path,
-    ) -> Arc<Self> {
-        let dispatch_config = Self::new(config, validated);
-        #[cfg(feature = "napi")]
-        let dispatch_config = dispatch_config.with_path(path.to_path_buf());
-        #[cfg(not(feature = "napi"))]
-        let _ = path;
-        Arc::new(dispatch_config)
-    }
-
-    /// Assembles the root's `FormatDispatcher` behind the off-gate:
-    /// `None` under `embeddedLanguageFormatting: off`,
-    /// so a root cannot install the registry without honoring the off-semantics.
-    /// `fallback` is the one build-dependent datum (the napi Prettier Doc→IR path).
-    pub fn root_dispatcher(
-        self: &Arc<Self>,
-        fallback: Option<PrettierDocFallback>,
-    ) -> Option<FormatDispatcher> {
-        self.is_embedded_formatting_enabled().then(|| build_dispatcher(Arc::clone(self), fallback))
-    }
-
-    /// The single off-predicate: [`Self::root_dispatcher`] and both build's `services::for_root` definitions consult it,
-    /// so the off-semantics can never diverge between channels or builds.
-    pub fn is_embedded_formatting_enabled(&self) -> bool {
-        self.config.is_embedded_formatting_enabled()
-    }
-
-    pub fn js_options(&self) -> JsFormatOptions {
-        self.js
-            .get_or_init(|| {
-                to_oxc_formatter(
-                    &self.config,
-                    self.validated.core,
-                    self.validated.sort_imports.clone(),
-                )
-            })
-            .clone()
-    }
-
-    pub fn graphql_options(&self) -> GraphqlFormatOptions {
-        *self.graphql.get_or_init(|| to_oxc_formatter_graphql(&self.config, self.validated.core))
-    }
-
-    pub fn css_options(&self, variant: CssVariant) -> CssFormatOptions {
-        let cell = match variant {
-            CssVariant::Css => &self.css[0],
-            CssVariant::Scss => &self.css[1],
-            CssVariant::Less => &self.css[2],
-        };
-        *cell.get_or_init(|| to_oxc_formatter_css(&self.config, self.validated.core, variant))
-    }
-
-    pub fn yaml_options(&self) -> YamlFormatOptions {
-        *self.yaml.get_or_init(|| to_oxc_formatter_yaml(&self.config, self.validated.core))
-    }
-
-    pub fn json_options(&self, variant: JsonVariant) -> JsonFormatOptions {
-        let cell = match variant {
-            JsonVariant::Json => &self.json[0],
-            JsonVariant::Jsonc => &self.json[1],
-            JsonVariant::Json5 => &self.json[2],
-            JsonVariant::JsonStringify => &self.json[3],
-        };
-        *cell.get_or_init(|| to_oxc_formatter_json(&self.config, self.validated.core, variant))
-    }
-
-    pub fn markdown_options(&self) -> MarkdownFormatOptions {
-        *self.markdown.get_or_init(|| to_oxc_formatter_markdown(&self.config, self.validated.core))
-    }
-
-    pub fn toml_options(&self) -> TomlFormatOptions {
-        *self.toml.get_or_init(|| to_oxc_formatter_toml(&self.config, self.validated.core))
-    }
-
-    pub fn htmlish_options(&self, variant: HtmlishVariant) -> HtmlishFormatOptions {
-        let options = self
-            .htmlish
-            .get_or_init(|| to_oxc_formatter_htmlish(&self.config, self.validated.core));
-        HtmlishFormatOptions { variant, ..options.clone() }
-    }
-
-    /// Printer options from the shared resolved core bundle;
-    /// the fence adapter ([`super::jsdoc_fence`]) derives its per-fence options from these
-    /// (width overridden to the fence's effective width).
-    pub fn print_options(&self) -> PrinterOptions {
-        self.validated.core.as_print_options()
-    }
-}
-
-/// Napi-only methods: the [`PrettierOptions`] accessors and the Tailwind predicate.
-#[cfg(feature = "napi")]
-impl ResolvedDispatchConfig {
-    /// Sets the host file path for `filepath` injection into [`Self::prettier_options`];
-    /// chained by [`Self::for_root`].
-    fn with_path(mut self, path: std::path::PathBuf) -> Self {
-        self.prettier.path = path;
-        self
-    }
-
-    /// The single Tailwind predicate, same pattern as
-    /// [`Self::is_embedded_formatting_enabled`]: every sorter-assembly site consults it
-    /// (the sorter is napi-only; the pure build has no JS-side class order source).
-    pub fn is_tailwind_enabled(&self) -> bool {
-        self.config.is_tailwind_enabled()
-    }
-
-    /// [`Self::prettier_options`] for one `language`: its parser, plus the payload of the plugin it needs.
-    /// `None` when that plugin is not enabled (svelte / astro without the config key): the part stays as-is.
-    pub fn prettier_options_for(&self, language: PrettierLanguage) -> Option<serde_json::Value> {
-        if language.missing_plugin(&self.config)
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28864** (2026-11-05): **fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix**
-  *Symptoms*: The autofix could delete neighboring code on the redundant assertion's line, generate overlapping edits when both assertions shared a line, and leave an empty line with CRLF endings.  Remove the whole line only when the assertion is surrounded by whitespace; otherwise remove just the statement. Handle complete JavaScript line endings and cover nearby code, comments, both matcher orders, and EOF in regression tests.  Fixes #28851 
+- **Issue #29026** (2026-11-07): **fix(ecmascript): round nondecimal strings to numbers once**
+  *Symptoms*: Nondecimal `StringToNumber` accumulated digits in `f64`, losing low bits before the final rounding. For example, `"0x10000000000000801"` rounded to `2^64` instead of `2^64 + 4096`.  Retain an integer significand and sticky bit, then round once and scale by a power of two. Continue validating trailing digits after overflow. Regression tests cover binary, octal, and hexadecimal rounding boundaries, distant sticky bits, leading zeros, overflow, and invalid suffixes.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"7b2600c38b6377ec3ad2c41fce2ba63265281365","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-05T15:26:58.760716Z">2026-11-05T15:26:58.760716Z</relative-time> | `7b2600c` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > ### Merge activity  * **Nov 5, 3:27 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:30 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:39 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"96843d6f17b92cefc39df1bdff36a8939f14880a","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-07T19:36:29.192026Z">2026-11-07T19:36:29.192026Z</relative-time> | `96843d6` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > ### Merge activity  * **Nov 7, 7:36 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 7, 7:37 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 7, 7:41 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
-- **Issue #28863** (2026-11-05): **style(lexer): reorder imports**
-  *Symptoms*: Pure refactor - style nit.  Reorder module imports so feature-gated `mod` statements are in their own block, after other `mod`s.
+- **Issue #29003** (2026-11-07): **fix(linter/eslint/prefer-destructuring): skip fixes that remove comments**
+  *Symptoms*: Skip object-destructuring fixes when replacing a declarator would discard comments, while retaining the diagnostic. Keep fixes that preserve comments inside the copied receiver or outside the replacement, with regression coverage for static and computed member access and parentheses.  Fixes #28981
   **Post-Mortem & Fix Analysis**:
-  > * **#28863** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-in-stack-comment&prId=28863).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in 
-  > ### Merge activity  * **Nov 5, 3:12 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:19 PM UTC**: `overlookmotel` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:28 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"09d41c5a721130fac51034cc314569b7a1510e02","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-07T18:28:03.628708Z">2026-11-07T18:28:03.628708Z</relative-time> | `09d41c5` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > AI assistance: OpenAI Codex was used to implement, review, and test this change.  Validation: `just fmt`, `just test -p oxc_linter` (1,294 unit tests plus integration tests and doctests), `just lint -p oxc_linter`, and `just test -p oxlint` (385 passed). Two independent read-only reviewers found no issues. The first Oxlint build hit a full disk; removing this worktree’s disposable incremental cache and retrying with incremental compilation disabled succeeded.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1240,467 +1075,287 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `171ad772` (2026-11-05)
-**Commit Message**: fix(lexer): classify Turbopack magic comments (#28427)
+### Incident Patch 1: `b71234fb` (2026-11-07)
+**Commit Message**: fix(cfg): skip labeled contexts for unlabeled jumps (#29001)
 
-Closes #28320
+Unlabeled jumps must skip labeled CFG contexts and target the enclosing loop or switch. Previously, an unlabeled `break` inside a labeled block could make `no-unreachable` miss code after the block and incorrectly flag reachable code after the loop.
 
-`oxc_lexer` gave Turbopack magic comments such as `/*
-turbopackChunkName: "x" */` `CommentContent::None`, while `oxc_parser`
-classifies them as `CommentContent::Turbopack`.
+Keep named-label resolution unchanged and add CFG and linter regressions for loop, switch, labeled-break, and continue behavior.
 
-This adds the missing case to `classify` in
-`pipeline/carve/comments.rs`, following the parser's `parse_annotation`:
-after leading whitespace, the comment starts with `turbopack`, followed
-by an ASCII uppercase letter. Otherwise it falls back to the `@license`
-/ `@preserve` check, like the other cases. The issue's repro is added as
-the `misc/pass/comment-turbopack.js` fixture (block comments with and
-without spaces, plus a line comment), and `classify` gets a unit test.
+Fixes #28947
 
-Validation:
-
-- `cargo test -p oxc_lexer`: all pass (235 unit, 66 integration), on
-both the host (generic) build and the AVX2 build (`--target
-x86_64-unknown-linux-gnu --config .cargo/lexer-avx2.toml`). With the new
-match arm disabled, the new `turbopack` unit test fails (`left: None,
-right: Turbopack`).
-- Lexer conformance on the new fixture: without the fix it reproduces
-the issue's diff for all 3 comments (`None` vs `Turbopack`); with it,
-`lexer_misc` passes 392/392.
-- `CA
-
-**File**: `crates/oxc_lexer/src/pipeline/carve/comments.rs` (modified, +28/-0)
+**File**: `crates/oxc_cfg/src/builder/context.rs` (modified, +1/-1)
 ```diff
-@@ -374,6 +374,15 @@ fn classify(bytes: &[u8], is_block: bool, lic: bool, cpu: impl Cpu) -> CommentCo
+@@ -247,7 +247,7 @@ impl<'a> ControlFlowGraphBuilder<'a> {
+                 .rev()
+                 // anything up the function is unreachable
+                 .take_while(|it| !it.flags.intersects(CtxFlags::FUNCTION))
+-                .find(|it| it.flags.contains(flag))
++                .find(|it| it.label.is_none() && it.flags.contains(flag))
+         };
+ 
+         if let Some(ctx) = ctx {
+```
+
+**File**: `crates/oxc_cfg/tests/builder.rs` (modified, +17/-0)
+```diff
+@@ -36,3 +36,20 @@ fn labeled_statement_with_multiple_loops_continue_and_break() {
+ 
+     cfg.build();
+ }
++
++#[test]
++fn unlabeled_break_skips_labeled_context() {
++    let mut cfg = ControlFlowGraphBuilder::default();
++    cfg.attach_error_harness(oxc_cfg::ErrorEdgeKind::Implicit);
++    cfg.ctx(None).default().allow_break();
++    cfg.ctx(Some("B")).default().allow_break();
++    let before_break = cfg.new_basic_block_normal();
++    cfg.append_break(NodeId::DUMMY, None);
++    let after_label = cfg.new_basic_block_normal();
++    cfg.ctx(Some("B")).mark_break(after_label).resolve();
++    let after_loop = cfg.new_basic_block_normal();
++    cfg.ctx(None).mark_break(after_loop).resolve();
++    let cfg = cfg.build();
++    assert!(cfg.is_reachable(before_break, after_loop));
++    assert!(!cfg.is_reachable(before_break, after_label));
++}
+```
+
+**File**: `crates/oxc_linter/src/rules/eslint/no_unreachable.rs` (modified, +5/-0)
+```diff
+@@ -302,6 +302,9 @@ fn test() {
+             return 'Hello, tsdown!';
+         }
+         ",
++        "function f() { for (;;) { B: { break; } } return 'ok'; }",
++        "function f() { for (;;) { B: { break B; } return 'ok'; } }",
++        "function f() { for (;;) { B: C: { continue; } } }",
+     ];
+ 
+     let fail = vec![
+@@ -375,6 +378,8 @@ fn test() {
+         }
+         ",
+         "function foo() { while (true) { return ''; } return ''; }",
++        "function f() { for (;;) { B: { break; } throw 1; } return \"ok\"; }",
++        "function f(x) { switch (x) { default: B: { break; } throw 1; } return \"ok\"; }",
+     ];
+ 
+     Tester::new(NoUnreachable::NAME, NoUnreachable::PLUGIN, pass, fail).test_and_snapshot();
+```
+
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_unreachable.snap` (modified, +14/-0)
+```diff
+@@ -199,3 +199,17 @@ source: crates/oxc_linter/src/tester.rs
+    ·                                              ──────────
+    ╰────
+   help: Remove the unreachable code or fix the control flow to make it reachable.
++
++  ⚠ eslint(no-unreachable): Unreachable code.
++   ╭─[no_unreachable.tsx:1:41]
++ 1 │ function f() { for (;;) { B: { break; } throw 1; } return "ok"; }
++   ·                                         ────────
++   ╰────
++  help: Remove the unreachable code or fix the control flow to make it reachable.
++
++  ⚠ eslint(no-unreachable): Unreachable code.
++   ╭─[no_unreachable.tsx:1:53]
++ 1 │ function f(x) { switch (x) { default: B: { break; } throw 1; } return "ok"; }
++   ·                                                     ────────
++   ╰────
++  help: Remove the unreachable code or fix the control flow to make it reachable.
+```
+
+---
+
+### Incident Patch 2: `43c52739` (2026-11-07)
+**Commit Message**: fix(ecmascript): round nondecimal strings to numbers once (#29026)
+
+Nondecimal `StringToNumber` accumulated digits in `f64`, losing low bits before the final rounding. For example, `"0x10000000000000801"` rounded to `2^64` instead of `2^64 + 4096`.
+
+Retain an integer significand and sticky bit, then round once and scale by a power of two. Continue validating trailing digits after overflow. Regression tests cover binary, octal, and hexadecimal rounding boundaries, distant sticky bits, leading zeros, overflow, and invalid suffixes.
+
+**File**: `crates/oxc_ecmascript/src/string_to_number.rs` (modified, +84/-6)
+```diff
+@@ -61,16 +61,31 @@ impl StringToNumber for &str {
+                     return f64::from(value);
+                 }
+ 
+-                // Slow path
+-                let mut value: f64 = 0.0;
++                let bits_per_digit = radix.ilog2();
++                let mut significand = 0_u64;
++                let mut exponent = 0_u32;
++                let mut sticky = 0_u32;
+                 for c in bytes {
+-                    if let Some(digit) = char::from(c).to_digit(radix) {
+-                        value = value.mul_add(f64::from(radix), f64::from(digit));
+-                    } else {
++                    let Some(digit) = char::from(c).to_digit(radix) else {
+                         return f64::NAN;
++                    };
++                    if significand < (1 << 54) {
++                        significand = (significand << bits_per_digit) | u64::from(digit);
++                    } else {
++                        exponent = (exponent + bits_per_digit).min(1024);
++                        sticky |= digit;
+                     }
+                 }
+-                return value;
++                if exponent > 1023 {
++                    return f64::INFINITY;
++                }
++
++                // Preserve discarded nonzero digits below the rounding bit so the cast
++                // distinguishes exact ties from values above them.
++                significand |= u64::from(sticky != 0);
++                #[expect(clippy::cast_precision_loss)]
++                let value = significand as f64;
++                return value * f64::from_bits(u64::from(exponent + 1023) << 52);
              }
-             return if lic { CommentContent::Legal } else { CommentContent::None };
          }
-+        b't' => {
-+            if bytes[start..].starts_with(b"turbopack")
-+                && start + 9 < bytes.len()
-+                && bytes[start + 9].is_ascii_uppercase()
-+            {
-+                return CommentContent::Turbopack;
+ 
+@@ -86,8 +101,71 @@ fn is_str_white_space_char(c: char) -> bool {
+ 
+ #[cfg(test)]
+ mod tests {
++    use num_bigint::BigUint;
++
+     use super::StringToNumber;
+ 
++    #[test]
++    #[expect(clippy::cast_precision_loss)]
++    fn rounds_nondecimal_strings_once() {
++        for bits in 53..128 {
++            let base = 1_u128 << bits;
++            let half_ulp = 1_u128 << (bits - 53);
++            for offset in [
++                half_ulp - 1,
++                half_ulp,
++                half_ulp + 1,
++                3 * half_ulp - 1,
++                3 * half_ulp,
++                3 * half_ulp + 1,
++            ] {
++                let value = base + offset;
++                for (prefix, digits) in [
++                    ("0b", format!("{value:b}")),
++                    ("0o", format!("{value:o}")),
++                    ("0x", format!("{value:x}")),
++                    ("0B", format!("{value:b}")),
++                    ("0O", format!("{value:o}")),
++                    ("0X", format!("{value:X}")),
++                ] {
++                    for leading in ["", "00000000000000000000"] {
++                        let input = format!("{prefix}{leading}{digits}");
++                        assert_eq!(input.as_str().string_to_number(), value as f64, "{input}");
++                    }
++                }
 +            }
-+            return if lic { CommentContent::Legal } else { CommentContent::None };
 +        }
-         b'v' | b'c' | b'n' | b'i' => {
-             let rest = &bytes[start..];
-             if rest.starts_with(b"v8 ignore")
-@@ -520,4 +529,23 @@ mod tests {
-             assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-         }
-     }
++    }
 +
 +    #[test]
-+    fn turbopack() {
-+        for (source, is_block) in [
-+            (b" turbopackChunkName: \"x\" ".as_slice(), true),
-+            (b"turbopackOptional: true".as_slice(), true),
-+            (b"\tturbopackIgnore: true\n".as_slice(), true),
-+            (b" turbopackIgnore: true".as_slice(), false),
++    fn rounds_nondecimal_strings_at_float_limits() {
++        for (binary, expected) in [
++            (
++                format!("1{}1{}1", "0".repeat(52), "0".repeat(969)),
++                f64::from_bits(0x7fe0_0000_0000_0001),
++            ),
++            (format!("{}{}", "1".repeat(53), "0".repeat(971)), f64::MAX),
++            (format!("{}0{}", "1".repeat(53), "1".repeat(970)), f64::MAX),
++            (format!("{}{}", "1".repeat(54), "0".repeat(970)), f64::INFINITY),
++            (format!("1{}", "0".repeat(1100)), f64::INFINITY),
++            ("0".repeat(1100), 0.0),
++            (format!("{}1", "0".repeat(1100)), 1.0),
 +        ] {
-+            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
++            let integer = BigUint::parse_bytes(binary.as_bytes(), 2).unwrap();
++            for (radix, prefix) in [(2, "0b"), (8, "0o"), (16, "0x")] {
++                let digits = integer.to_str_radix(radix);
++                for leading in ["", "0".repeat(1100).as_str()] {
++                    let input = format!("{prefix}{leading}{digits}");
++                    assert_eq!(input.as_str().string_to_number(), expected, "{input}");
++                    for suffix in ["g", "_", "\u{00e9}"] {
++                        let invalid = format!("{input}{suffix}");
++                        assert!(invalid.as_str().string_to_number().is_nan(), "{invalid}");
++                    }
++                }
++            }
 +        }
-+
-+        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
-+            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-+        }
-+
-+        // Without a magic comment, @license or @preserve still makes it legal
-+        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
 +    }
- }
-```
-
-**File**: `tasks/coverage/misc/pass/comment-turbopack.js` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+import(/* turbopackChunkName: "x" */ "./a");
-+import(/*turbopackOptional: true*/ "./b");
-+import(
-+  // turbopackIgnore: true
-+  "./c"
-+);
-```
-
-**File**: `tasks/coverage/snapshots/codegen_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- codegen_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/formatter_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- formatter_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/lexer_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- lexer_misc Summary:
--AST Parsed     : 401/401 (100.00%)
--Positive Passed: 401/401 (100.00%)
-+AST Parsed     : 402/402 (100.00%)
-+Positive Passed: 402/402 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/parser_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- parser_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
- Negative Passed: 270/270 (100.00%)
- 
-   × TS(1275): 'accessor' modifier can only appear on a property declaration.
-```
-
-**File**: `tasks/coverage/snapshots/semantic_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- semantic_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 127/133 (95.49%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 128/134 (95.52%)
- semantic Error: tasks/coverage/misc/pass/declare-let-private.ts
- Bindings mismatch:
- after transform: ScopeId(0): ["private"]
-```
-
-**File**: `tasks/coverage/snapshots/transformer_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- transformer_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
++
+     #[test]
+     fn trims_ecmascript_whitespace_from_both_ends() {
+         const WHITESPACE: &str = "\u{0009}\u{000B}\u{000C}\u{0020}\u{00A0}\u{1680}\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2007}\u{2008}\u{2009}\u{200A}\u{202F}\u{205F}\u{3000}\u{FEFF}\u{000A}\u{000D}\u{2028}\u{2029}";
 ```
 
 ---
 
-### Incident Patch 2: `838d3393` (2026-11-05)
-**Commit Message**: fix(linter/vitest/prefer-called-exactly-once-with): avoid panic on non-ASCII text (#28850)
+### Incident Patch 3: `bf11006b` (2026-11-06)
+**Commit Message**: fix(linter/react/exhaustive-deps): suggest dependency removals (#28925)
 
-Fixes #28849
+Removing `ref.current` or outer-scope dependencies can change when an effect runs. Mark these removals as dangerous suggestions so plain `--fix` preserves the dependency array and applying them requires `--fix-dangerously`.
 
-`get_source_code_line_span` sliced the source text at every byte offset
-back to the line start, and at `statement_span.end + 1`. If a multi-byte
-character was in either place, the rule panicked, also without `--fix`.
+Addresses the plain `--fix` behavior in #28884. Regression tests cover both reported cases and verify that only dangerous suggestions apply the removals.
 
-This PR finds the line start with `rfind('\n')`, and extends the end by
-the `len_utf8()` of the next char. For ASCII text, the span does not
-change.
-
-Added two fail cases and two fix cases. Each case panics without this
-change.
-
-I used AI assistance (Claude Code) to write this change. I reviewed the
-code and ran the tests.
-
----------
-
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_linter/src/rules/vitest/prefer_called_exactly_once_with.rs` (modified, +19/-6)
+**File**: `crates/oxc_linter/src/rules/react/exhaustive_deps.rs` (modified, +31/-1)
 ```diff
-@@ -427,14 +427,15 @@ fn is_mock_reset_call_expression(call_expr: &CallExpression<'_>) -> bool {
-  */
- #[expect(clippy::cast_possible_truncation)]
- fn get_source_code_line_span(statement_span: Span, ctx: &LintContext<'_>) -> Span {
--    let line_end = std::cmp::min(statement_span.end + 1, ctx.source_text().len() as u32);
-+    let source_text = ctx.source_text();
-+    let start = statement_span.start as usize;
-+    let end = statement_span.end as usize;
+@@ -592,7 +592,7 @@ impl Rule for ExhaustiveDeps {
+                 }
+             }
  
--    let column_0_span_index = (0..statement_span.start)
--        .rev()
--        .find(|&index| ctx.source_range(Span::new(index, line_end)).starts_with('\n'))
--        .map_or(statement_span.start, |index| index + 1);
-+    let line_end = source_text[end..].chars().next().map_or(end, |c| end + c.len_utf8());
- 
--    Span::new(column_0_span_index, line_end)
-+    let column_0_span_index = source_text[..start].rfind('\n').map_or(start, |index| index + 1);
-+
-+    Span::new(column_0_span_index as u32, line_end as u32)
+-            ctx.diagnostic_with_fix(
++            ctx.diagnostic_with_dangerous_suggestion(
+                 unnecessary_outer_scope_dependency_diagnostic(
+                     hook_name,
+                     &dependency.name,
+@@ -1554,6 +1554,36 @@ fn invalid_configs_error_in_from_configuration() {
+     assert!(ExhaustiveDeps::from_configuration(valid_regex).is_ok());
  }
  
- fn get_callback_body<'a>(callback: &'a Expression<'a>) -> Option<&'a FunctionBody<'a>> {
-@@ -571,6 +572,8 @@ fn test() {
- 			      expect(x).toHaveBeenCalledWith<[string]>('hoge');
- 			      ",
-         "expect(x).toHaveBeenCalledOnce();\nexpect(x).toHaveBeenCalledWith('hoge');",
-+        r#"expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();"#,
-+        "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
-     ];
- 
-     let fix = vec![
-@@ -742,6 +745,16 @@ fn test() {
- 			      ",
-             None,
-         ),
++#[test]
++fn test_unnecessary_dependency_suggestions() {
++    use crate::{fixer::FixKind, tester::Tester};
++
++    let cases = [
 +        (
-+            "expect(x).toHaveBeenCalledWith(1);\n\u{a0}expect(x).toHaveBeenCalledOnce();",
-+            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
-+            None,
++            "function A({ section }) { const ref = useRef(null); useEffect(() => { if (section === 'a') ref.current?.scrollIntoView(); }, [section, ref.current]); }",
++            "function A({ section }) { const ref = useRef(null); useEffect(() => { if (section === 'a') ref.current?.scrollIntoView(); }, [section]); }",
 +        ),
 +        (
-+            "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
-+            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
-+            None,
++            "const OUTER = 1; function B({ section }) { useEffect(() => { console.log(section, OUTER); }, [section, OUTER]); }",
++            "const OUTER = 1; function B({ section }) { useEffect(() => { console.log(section, OUTER); }, [section]); }",
 +        ),
-     ];
-     Tester::new(PreferCalledExactlyOnceWith::NAME, PreferCalledExactlyOnceWith::PLUGIN, pass, fail)
-         .with_vitest_plugin(true)
-```
-
-**File**: `crates/oxc_linter/src/snapshots/vitest_prefer_called_exactly_once_with.snap` (modified, +20/-0)
-```diff
-@@ -231,3 +231,23 @@ source: crates/oxc_linter/src/tester.rs
-    ·                    ╰── Remove this expect
-    ╰────
-   help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
++    ];
 +
-+  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
-+   ╭─[prefer_called_exactly_once_with.tsx:1:1]
-+ 1 │ expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();
-+   · ──────────────────┬─────────────────  ────────────────┬────────────────
-+   ·                   │                                   ╰── Remove this expect
-+   ·                   ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
-+   ╰────
-+  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
++    let fail = cases.iter().map(|(source, _)| *source).collect();
++    let fix = cases
++        .into_iter()
++        .flat_map(|(source, expected)| {
++            [
++                (source, source, None, FixKind::SafeFix),
++                (source, source, None, FixKind::SafeFixOrSuggestion),
++                (source, expected, None, FixKind::DangerousSuggestion),
++            ]
++        })
++        .collect();
 +
-+  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
-+   ╭─[prefer_called_exactly_once_with.tsx:1:1]
-+ 1 │ expect(x).toHaveBeenCalledWith(1);
-+   · ────────────────┬────────────────
-+   ·                 ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
-+ 2 │ expect(x).toHaveBeenCalledOnce(); 
-+   · ─────────────────┬────────────────
-+   ·                  ╰── Remove this expect
-+   ╰────
-+  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
-```
-
----
-
-### Incident Patch 3: `ebfd40ad` (2026-11-05)
-**Commit Message**: fix(formatter): sort Tailwind calls printed as member chains (#28800)
-
-Stacked on #28798.
-
-## What was wrong
-
-With `sortTailwindcss` on, a Tailwind call with a member callee was not
-sorted when printed as a `MemberChain`:
-
-```js
-// experimentalTailwindcss: { functions: ["cn", "tw"] }
-
-// Input
-tw.style("p-4  flex");
-cn.a("p-4  flex").b("m-2  block").c();
-
-// Before
-tw.style("p-4  flex");
-cn.a("p-4  flex").b("m-2  block").c();
-
-// After
-tw.style("flex p-4");
-cn.a("flex p-4").b("m-2 block").c();
-```
-
-Cause: only the non-`MemberChain` branch of `CallExpression::write`
-pushed the Tailwind context.
-Inside JSX `className` they were sorted by the attribute's context, so
-the existing tests didn't catch it.
-
-## What changed
-
-- The push moves to the call arguments printer (`impl Format for
-AstNode<ArenaVec<Argument>>`),
-  which both `CallExpression` and `MemberChain` go through
-- The call's own context covers only its arguments, so `cn.foo["a
-b"](...)` keeps `"a b"`, like the plugin
-    (an outer context still covers the callee, as the plugin does)
-- `CallExpression::write` only hides the context for a nested
-non-Tailwind call
-- `AGENTS.md` notes the known limitation below
-
-## Not covered he
-
-**File**: `apps/oxfmt/test/api/sort_tailwindcss.test.ts` (modified, +26/-0)
-```diff
-@@ -229,6 +229,32 @@ const A = (
-     expect(result.errors).toStrictEqual([]);
-   });
- 
-+  it("should sort classes in calls printed as member chains", async () => {
-+    // Outside JSX, since a `className` context would sort them anyway
-+    const input = `const a = tw.style("p-4  flex");
-+const b = cn.a("p-4  flex").b("m-2  block").c();
-+const c = cn.foo["a  b"]("x  y");
-+const d = cn(x.y("a  b"), cn.x("p-4  flex"));
-+`;
-+    const options = { experimentalTailwindcss: { functions: ["cn", "tw"] } };
-+
-+    const result = await format("test.ts", input, options);
-+
-+    // Like the plugin, only the arguments are sorted, not the computed key `["a  b"]`
-+    expect(result.code).toMatchInlineSnapshot(`
-+      "const a = tw.style("flex p-4");
-+      const b = cn.a("flex p-4").b("m-2 block").c();
-+      const c = cn.foo["a  b"]("x y");
-+      const d = cn(x.y("a  b"), cn.x("flex p-4"));
-+      "
-+    `);
-+    expect(result.errors).toStrictEqual([]);
-+
-+    // Formatting the output again should not change it.
-+    const second = await format("test.ts", result.code, options);
-+    expect(second.code).toBe(result.code);
-+  });
-+
-   it("should preserve whitespace when preserveWhitespace is true", async () => {
-     // Input with leading/trailing whitespace in class string
-     const input = `const A = <div className="  p-4 flex  ">Hello</div>;`;
-```
-
-**File**: `crates/oxc_formatter/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -60,6 +60,9 @@ After changing AST shapes or the generators, regenerate with `just ast`, never h
- - Covered by the Oxfmt API tests (`apps/oxfmt/test/api/sort_tailwindcss.test.ts`), since only the host sorts
- - Deliberately unlike the plugin, nothing in the arguments of a nested non-Tailwind call is sorted
-   (tailwindlabs/prettier-plugin-tailwindcss#426): `cn(x.includes("a  b"))` keeps `"a  b"`, which the plugin rewrites
-+- Known limitation, left since the triggers are rare and a fix would thread Tailwind state through `SimpleArgument`:
-+  a multiline template collapsed by sorting is still judged by its source line breaks in some layouts,
-+  so a Tailwind call with one inside a member chain can take a second pass to settle
- 
- ### Embedded language formatting
- 
-```
-
-**File**: `crates/oxc_formatter/src/print/call_like_expression/arguments.rs` (modified, +21/-1)
-```diff
-@@ -30,13 +30,33 @@ use crate::{
-     utils::{
-         call_expression::is_test_call_expression,
-         expression::as_call_expression_without_chain_wrappers, is_long_curried_call,
--        member_chain::simple_argument::SimpleArgument, typecast::is_cast_target,
-+        member_chain::simple_argument::SimpleArgument, tailwindcss::tailwind_context_for_callee,
-+        typecast::is_cast_target,
-     },
-     write,
- };
- 
- impl<'a> Format<'a, JsFormatContext<'a>> for AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
-     fn fmt(&self, f: &mut JsFormatter<'_, 'a>) {
-+        // Pushed here, so this call's context covers only its arguments, not its callee (e.g. `cn.foo["a  b"](...)`),
-+        // for both a call and the calls a `MemberChain` prints
-+        // (an outer context still covers the callee, as the plugin does)
-+        let tailwind_ctx = match self.parent() {
-+            AstNodes::CallExpression(call) => tailwind_context_for_callee(&call.callee, f),
-+            _ => None,
-+        };
-+        if let Some(ctx) = tailwind_ctx {
-+            f.context_mut().push_tailwind_context(ctx);
-+        }
-+        self.write_arguments(f);
-+        if tailwind_ctx.is_some() {
-+            f.context_mut().pop_tailwind_context();
-+        }
-+    }
++    Tester::new(ExhaustiveDeps::NAME, ExhaustiveDeps::PLUGIN, vec![], fail).expect_fix(fix).test();
 +}
 +
-+impl<'a> AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
-+    fn write_arguments(&self, f: &mut JsFormatter<'_, 'a>) {
-         let l_paren_token = "(";
-         let r_paren_token = ")";
- 
-```
-
-**File**: `crates/oxc_formatter/src/print/call_like_expression/mod.rs` (modified, +6/-18)
-```diff
-@@ -23,20 +23,19 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
-         let type_arguments = self.type_arguments();
-         let arguments = self.arguments();
- 
--        // Check if this is a Tailwind function call (e.g., clsx, cn, tw)
--        let tailwind_ctx_to_push = tailwind_context_for_callee(&self.callee, f);
--
-         // For nested non-Tailwind calls inside a Tailwind context, hide the context
-         // to prevent sorting strings and templates inside the nested call's arguments.
-         // (e.g., `classNames("a", x.includes("\n") ? "b" : "c")` - don't sort "\n")
--        let hides_tailwind_ctx =
--            tailwind_ctx_to_push.is_none() && f.context().tailwind_context().is_some();
-+        // A Tailwind call pushes its own context, around its arguments only
-+        let hides_tailwind_ctx = f.context().tailwind_context().is_some()
-+            && tailwind_context_for_callee(&self.callee, f).is_none();
-         if hides_tailwind_ctx {
-             f.context_mut().hide_tailwind_context();
-         }
- 
--        // NOTE: Decided before this call pushes its Tailwind context, and `MemberChain` pushes none,
--        // so a Tailwind call with a multiline template takes the branch below, which sorts it
-+        // NOTE: Read before the arguments push the Tailwind context,
-+        // so a Tailwind call with a multiline template it collapses stays out of `MemberChain`,
-+        // which would break the chain on the template's line breaks in the source
-         if callee.is_member_expression()
-             && !is_verbatim_multiline_template_sole_arg(arguments.as_slice(), Some(self), f)
-             && !is_simple_module_import(&self.arguments(), f.comments())
-@@ -53,18 +52,7 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
-                         type_arguments
-                     ]
-                 );
--
--                // If this IS a Tailwind function call, push the Tailwind context before formatting arguments
--                if let Some(ctx) = tailwind_ctx_to_push {
--                    f.context_mut().push_tailwind_context(ctx);
--                }
--
-                 write!(f, arguments);
--
--                // Pop Tailwind context after formatting
--                if tailwind_ctx_to_push.is_some() {
--                    f.context_mut().pop_tailwind_context();
--                }
-             });
-             if matches!(callee.as_ref(), Expression::CallExpression(_)) {
-                 write!(f, [group(&format_inner)]);
-```
-
-**File**: `crates/oxc_formatter/src/utils/assignment_like.rs` (modified, +0/-1)
-```diff
-@@ -1249,7 +1249,6 @@ fn is_short_argument(
-     f: &JsFormatter,
- ) -> bool {
-     // Decided by `callee` alone: a Tailwind one pushes its context, a non-Tailwind one hides an outer one
--    // (except for a call printed as a `MemberChain`, which pushes none)
-     let collapses_tailwind_whitespace =
-         || tailwind_context_for_callee(callee, f).is_some_and(|ctx| !ctx.preserve_whitespace);
- 
+ #[test]
+ fn test() {
+     use crate::tester::Tester;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28864** (2026-11-05): fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix (@camc314)
-- **PR #28863** (2026-11-05): style(lexer): reorder imports (@overlookmotel)
-- **PR #28857** (closed): fix(linter): preserve unrelated code in Vitest autofix (@sainimal1ba-hue)
-- **PR #28856** (2026-11-05): style(lexer): apply consistent attribute order (@overlookmotel)
-- **PR #28854** (2026-11-05): refactor(lexer): derive `Eq` on `Diagnostic` and `StringSpan` (@overlookmotel)
-- **PR #28853** (2026-11-05): docs(lexer): add README to `oxc_lexer_macros` crate (@overlookmotel)
+- **PR #29026** (2026-11-07): fix(ecmascript): round nondecimal strings to numbers once (@camc314)
+- **PR #29003** (2026-11-07): fix(linter/eslint/prefer-destructuring): skip fixes that remove comments (@camc314)
+- **PR #29002** (2026-11-07): fix(linter/import/no-anonymous-default-export): report parenthesized exports (@camc314)
+- **PR #29001** (2026-11-07): fix(cfg): skip labeled contexts for unlabeled jumps (@camc314)
+- **PR #28986** (2026-11-07): chore(lexer): set `oxc_lexer` crate version to 0.0.0 (@overlookmotel)
+- **PR #28970** (2026-11-07): feat(lexer): add more methods to `Vec128` (@overlookmotel)
 
 ---
 
@@ -1720,55 +1375,28 @@ non-Tailwind call
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lexer): classify Turbopack magic comments (#28427)
+## X. cfg): skip labeled contexts for unlabeled jumps (#29001)
 
 **RULE**:
-When implementing operations in `crates/oxc_lexer/src/pipeline/carve/comments.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_cfg/src/builder/context.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `171ad772`: lexer): classify Turbopack magic comments (#28427). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b71234fb`: cfg): skip labeled contexts for unlabeled jumps (#29001). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_lexer/src/pipeline/carve/comments.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_cfg/src/builder/context.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        b't' => {
-            if bytes[start..].starts_with(b"turbopack")
-                && start + 9 < bytes.len()
-                && bytes[start + 9].is_ascii_uppercase()
-            {
-                return CommentContent::Turbopack;
-            }
-            return if lic { CommentContent::Legal } else { CommentContent::None };
-        }
-
-    #[test]
-    fn turbopack() {
-        for (source, is_block) in [
-            (b" turbopackChunkName: \"x\" ".as_slice(), true),
-            (b"turbopackOptional: true".as_slice(), true),
-            (b"\tturbopackIgnore: true\n".as_slice(), true),
-            (b" turbopackIgnore: true".as_slice(), false),
-        ] {
-            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
-        }
-
-        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
-            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-        }
-
-        // Without a magic comment, @license or @preserve still makes it legal
-        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
-    }
+                .find(|it| it.label.is_none() && it.flags.contains(flag))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                .find(|it| it.flags.contains(flag))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `171ad772` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b71234fb` are properly handled with clean fallback behavior.

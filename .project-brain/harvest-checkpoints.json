@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T20:42:33.547Z",
+  "last_updated": "2026-11-07T20:49:12.748Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "02889094f963b730754bdeb9d8290818e16152fc9eb26ea8b14ce88e1d1fd7ee",
-      "verified_at": "2026-11-07T05:44:26.865Z",
+      "content_hash": "8900871c0b0703e76dd9571b969b3652067820ae813ac303ae42a54b03c66df0",
+      "verified_at": "2026-11-07T20:49:10.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:44:26.865Z"
+      "last_updated": "2026-11-07T20:49:10.192Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "0575bb13ec01aeec103a7b58020dd88104186059f8e8ae5664bc75b790f77dab",
-      "verified_at": "2026-11-05T22:08:39.395Z",
+      "content_hash": "0a1e3e78ef532e60bffeb1457cbbef1b9e0c3df5bc64001f7a15c2d2abddf96e",
+      "verified_at": "2026-11-07T20:49:12.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:08:39.395Z"
+      "last_updated": "2026-11-07T20:49:12.747Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "bb22ccc41b45f0b52433c600c2548d987a4bd33e7c53d90a85d090b3ae397099",
-      "verified_at": "2026-11-05T16:52:37.526Z",
+      "content_hash": "a26c5e6bd6ce03563fda63670fd04c342d223d8da6b49a68e63fdf70eeeaba42",
+      "verified_at": "2026-11-07T20:49:00.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T16:52:37.526Z"
+      "last_updated": "2026-11-07T20:49:00.567Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -17436,14 +17436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "content_hash": "946ea8b0c2146e8218d6047469e2483c956b0a3a1daac25863b7024127fa2202",
-      "verified_at": "2026-11-04T02:46:33.372Z",
+      "content_hash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
+      "verified_at": "2026-11-07T20:49:07.549Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T02:46:33.372Z"
+      "last_updated": "2026-11-07T20:49:07.549Z"
     },
     "speridlabs/idol": {
       "repository": "speridlabs/idol",
