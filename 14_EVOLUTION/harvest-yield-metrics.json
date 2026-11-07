@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T17:27:27.850Z",
-  "total_cycles_completed": 7992,
-  "total_learnings_persisted": 7992,
-  "total_rules_promoted": 7640,
+  "last_updated": "2026-11-07T17:40:54.439Z",
+  "total_cycles_completed": 7997,
+  "total_learnings_persisted": 7997,
+  "total_rules_promoted": 7644,
   "history": [
-    {
-      "timestamp": "2026-11-05T23:09:26.377Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:09:32.541Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:09:35.626Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:09:39.985Z",
-      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-05T23:17:17.426Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-05T23:32:37.097Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-07T17:27:27.850Z",
       "repository": "aquasecurity/trivy-operator",
       "learningId": "learn-github-aquasecurity-trivy-operator",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:40:38.657Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:40:39.339Z",
+      "repository": "PrunaAI/P-H3-Image",
+      "learningId": "learn-huggingface-prunaai-p-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:40:43.295Z",
+      "repository": "NousResearch/Arete-27B",
+      "learningId": "learn-huggingface-nousresearch-arete-27b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:40:46.344Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-07T17:40:54.439Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

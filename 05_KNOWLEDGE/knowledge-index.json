@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-07T17:27:27.783Z",
-  "total_verified_learnings": 1229,
+  "last_updated": "2026-11-07T17:40:54.331Z",
+  "total_verified_learnings": 1232,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9857,8 +9857,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5b908ef4",
-      "content_hash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
+      "source_version": "ccd0412c",
+      "content_hash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9880,6 +9880,11 @@
         {
           "number": null,
           "title": "cat): error on empty stdin when no input is given (#5007)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cat): rowskey writes nothing for empty input (#5008)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10233,7 +10238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T20:45:40.067Z",
+      "verified_at": "2026-11-07T17:40:54.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45152,8 +45157,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "4d69ce36",
-      "content_hash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
+      "source_version": "b8f388c7",
+      "content_hash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -45233,7 +45238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:43:41.714Z",
+      "verified_at": "2026-11-07T17:40:46.189Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -92776,15 +92781,15 @@
       "learning_id": "rule-1255",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1255,
-      "title": "**Special‑Token Consistency Rule** (Harvested from apple/LensVLM-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "**Special‑Token Consistency Rule**",
+      "source_url": "https://huggingface.co/NousResearch/Arete-27B",
+      "source_version": "hf-nousresearch-arete-27b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.818Z"
+      "verified_at": "2026-11-07T17:40:43.174Z"
     },
     "rule-1256": {
       "learning_id": "rule-1256",
@@ -185176,6 +185181,103 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-07T17:27:27.767Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic": {
+      "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "slug": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "content_hash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T17:40:38.479Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-prunaai-p-h3-image": {
+      "learning_id": "learn-huggingface-prunaai-p-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "PrunaAI/P-H3-Image",
+      "repository": "PrunaAI/P-H3-Image",
+      "slug": "hf-prunaai-p-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PrunaAI/P-H3-Image",
+      "source_version": "hf-prunaai-p-h3-image",
+      "content_hash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+      "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T17:40:39.201Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-nousresearch-arete-27b": {
+      "learning_id": "learn-huggingface-nousresearch-arete-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "NousResearch/Arete-27B",
+      "repository": "NousResearch/Arete-27B",
+      "slug": "hf-nousresearch-arete-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/NousResearch/Arete-27B",
+      "source_version": "hf-nousresearch-arete-27b",
+      "content_hash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "**Deterministic Sampling Configuration Rule**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "**Multimodal Token Alignment Rule**",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 1255,
+          "title": "**Special‑Token Consistency Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-07T17:40:43.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

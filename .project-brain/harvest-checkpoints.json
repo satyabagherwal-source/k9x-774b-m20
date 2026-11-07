@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-07T17:27:27.863Z",
+  "last_updated": "2026-11-07T17:40:54.444Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
-      "verified_at": "2026-11-06T20:45:40.212Z",
+      "content_hash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
+      "verified_at": "2026-11-07T17:40:54.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:45:40.212Z"
+      "last_updated": "2026-11-07T17:40:54.443Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
-      "verified_at": "2026-11-05T04:43:41.856Z",
+      "content_hash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
+      "verified_at": "2026-11-07T17:40:46.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:43:41.856Z"
+      "last_updated": "2026-11-07T17:40:46.348Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -18224,6 +18224,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-07T17:27:27.862Z"
+    },
+    "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic": {
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "content_hash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+      "verified_at": "2026-11-07T17:40:38.661Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-07T17:40:38.661Z"
+    },
+    "PrunaAI/P-H3-Image": {
+      "repository": "PrunaAI/P-H3-Image",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-prunaai-p-h3-image",
+      "content_hash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+      "verified_at": "2026-11-07T17:40:39.343Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-07T17:40:39.343Z"
+    },
+    "NousResearch/Arete-27B": {
+      "repository": "NousResearch/Arete-27B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nousresearch-arete-27b",
+      "content_hash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
+      "verified_at": "2026-11-07T17:40:43.310Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-07T17:40:43.310Z"
     }
   },
   "repos": {

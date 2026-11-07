@@ -20560,5 +20560,41 @@
     "qualityScore": 1542,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-07T17:20:55.832Z"
+  },
+  {
+    "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "fullName": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic (381 likes, 1369 downloads)",
+    "likes": 381,
+    "downloads": 1369,
+    "qualityScore": 5179,
+    "discoveredAt": "2026-11-07T17:38:20.218Z"
+  },
+  {
+    "name": "NousResearch/Arete-27B",
+    "fullName": "NousResearch/Arete-27B",
+    "url": "https://huggingface.co/NousResearch/Arete-27B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: NousResearch/Arete-27B (172 likes, 989 downloads)",
+    "likes": 172,
+    "downloads": 989,
+    "qualityScore": 2709,
+    "discoveredAt": "2026-11-07T17:38:20.218Z"
+  },
+  {
+    "name": "PrunaAI/P-H3-Image",
+    "fullName": "PrunaAI/P-H3-Image",
+    "url": "https://huggingface.co/PrunaAI/P-H3-Image",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: PrunaAI/P-H3-Image (157 likes, 789 downloads)",
+    "likes": 157,
+    "downloads": 789,
+    "qualityScore": 2359,
+    "discoveredAt": "2026-11-07T17:38:20.218Z"
   }
 ]

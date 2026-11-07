@@ -8036,3 +8036,8 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `88b98114` | Multi-dimensional audit evidence | 2026-11-07T06:24:33.243Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `0ae5b96b` | Multi-dimensional audit evidence | 2026-11-07T06:29:23.724Z |
 | `learn-github-aquasecurity-trivy-operator` | `https://github.com/aquasecurity/trivy-operator` | `b40091af` | Multi-dimensional audit evidence | 2026-11-07T17:27:27.845Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-07T17:40:38.651Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-07T17:40:39.333Z |
+| `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-07T17:40:43.287Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `b8f388c7` | Multi-dimensional audit evidence | 2026-11-07T17:40:46.335Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ccd0412c` | Multi-dimensional audit evidence | 2026-11-07T17:40:54.425Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `4d69ce36`  
+> **Source Version**: `b8f388c7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:43:40.990Z  
+> **Timestamp**: 2026-11-07T17:40:46.009Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:43:40.980Z  
+> **Harvest Timestamp**: 2026-11-07T17:40:45.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5095 stars
+- **Stars / Engagement**: 5094 stars
 
 ---
 
@@ -887,6 +887,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &applyconfigurationconfigurationv1.CertManagerApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("Condition"):
 		return &applyconfigurationconfigurationv1.ConditionApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("ConnectionLimit"):
+		return &applyconfigurationconfigurationv1.ConnectionLimitApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("CORS"):
 		return &applyconfigurationconfigurationv1.CORSApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("EgressMTLS"):
@@ -948,9 +950,7 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 	case configurationv1.SchemeGroupVersion.WithKind("Route"):
 		return &applyconfigurationconfigurationv1.RouteApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("SecurityLog"):
-		return &applyconfigurationconfigurationv1.SecurityLogApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SessionCookie"):
-		return &applyconfigurationconfigurationv1.Sessio
+		return &applyconfigurationconfigurationv1.
 ```
 
 ### Core Architecture Module: `cmd/nginx-ingress/aws.go`
@@ -1283,375 +1283,1066 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c0be65e` (2026-11-04)
-**Commit Message**: Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources (#11298)
+### Incident Patch 1: `b8f388c7` (2026-11-06)
+**Commit Message**: add Ingress support for connection Limit policy (#11222)
 
-* Fix malformed event messages for minion Ingresses and VirtualServerRoutes
+* add Ingress support for connection Limit policy
 
-When an update failed to apply, minion Ingress events repeated the "; " separator ("with warning(s): w1; ; but was not applied") or started with " ; " when there were no warnings. VirtualServerRoute events had a double leading space and no space after "applied:".
+* reduce conn hold time in example
 
-Use the master Ingress message format for minions and pick the separator for VirtualServerRoutes based on whether warnings precede the error. Add table tests for the exact event text.
+* adapt replica test to main
 
-* Fix malformed event and status messages for Ingress, VirtualServer and TransportServer
-
-Regular Ingress, VirtualServer and TransportServer events always put
-"; " before generated warnings and "but was not applied", giving
-"was added or updated ; but was not applied: <err>" when nothing came
-before them, and a trailing space when there was nothing to add.
-VirtualServer and TransportServer write the same text to
-.status.message.
-
-Add appendEventDetail to join message parts with "; " only between
-parts, and trim the trailing space. Add table
-
-**File**: `internal/k8s/controller.go` (modified, +20/-9)
+**File**: `examples/ingress-resources/connection-limit-mergeable/README.md` (added, +99/-0)
 ```diff
-@@ -2201,8 +2201,7 @@ func (lbc *LoadBalancerController) updateMergeableIngressStatusAndEvents(ingConf
- 		if operationErr != nil {
- 			minionEventType = api_v1.EventTypeWarning
- 			minionEventTitle = nl.EventReasonAddedOrUpdatedWithError
--			minionEventWarningMessage = fmt.Sprintf("%s%s; but was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
--			minionEventWarningSuffix = "; "
-+			minionEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
- 		}
- 
- 		minionEventWarningPrefixed := ""
-@@ -2249,16 +2248,16 @@ func (lbc *LoadBalancerController) updateRegularIngressStatusAndEvents(ingConfig
- 	if messages, ok := warnings[ingConfig.Ingress]; ok {
- 		eventType = api_v1.EventTypeWarning
- 		eventTitle = nl.EventReasonAddedOrUpdatedWithWarning
--		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
-+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
- 	}
- 
- 	if operationErr != nil {
- 		eventType = api_v1.EventTypeWarning
- 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
--		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
-+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
- 	}
- 
--	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage)
-+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage))
- 	lbc.recorder.Event(ingConfig.Ingress, eventType, eventTitle, msg)
- 
- 	if lbc.reportStatusEnabled() {
-@@ -2304,18 +2303,18 @@ func (lbc *LoadBalancerController) updateVirtualServerOwnStatusAndEvents(vsConfi
- 	if messages, ok := warnings[vsConfig.VirtualServer]; ok {
- 		eventType = api_v1.EventTypeWarning
- 		eventTitle = nl.EventReasonAddedOrUpdatedWithWarning
--		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
-+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
- 		state = conf_v1.StateWarning
- 	}
- 
- 	if operationErr != nil {
- 		eventType = api_v1.EventTypeWarning
- 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
--		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
-+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
- 		state = conf_v1.StateInvalid
- 	}
- 
--	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage)
-+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
- 	if statusOnly {
- 		msg = strings.TrimSpace(fmt.Sprintf("Configuration for %v is unchanged, status updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
- 	}
-@@ -2357,7 +2356,11 @@ func (lbc *LoadBalancerController) updateAttachedVirtualServerRoutesStatusAndEve
- 		if operationErr != nil {
- 			vsrEventType = api_v1.EventTypeWarning
- 			vsrEventTitle = nl.EventReasonAddedOrUpdatedWithError
--			vsrEventWarningMessage = fmt.Sprintf(" %s; but was not applied:%v", vsrEventWarningMessage, operationErr)
-+			sep := " "
-+			if vsrEventWarningMessage != "" {
-+				sep = "; "
-+			}
-+			vsrEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", vsrEventWarningMessage, sep, operationErr)
- 			vsrState = conf_v1.StateInvalid
- 		}
- 
-@@ -5308,6 +5311,14 @@ func formatWarningMessages(w []string) string {
- 	return strings.Join(w, "; ")
+@@ -0,0 +1,99 @@
++# Connection Limit with Mergeable Ingresses
++
++In this example, we deploy the cafe application, configure load balancing for it with
++[Mergeable Ingress](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/cross-namespace-configuration/)
++resources, and apply connection limit policies with the `nginx.org/policies` annotation:
++
++- The master Ingress references `connection-limit-policy`, which applies to every path of the host.
++- The coffee minion references its own policy, `coffee-connection-limit-policy`, which replaces the master policy for
++  `/coffee`.
++- The tea minion references no policy, so `/tea` uses the master policy.
++
++## Prerequisites
++
++1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
++   instructions to deploy the Ingress Controller.
++1. Save the public IP address of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_IP=XXX.YYY.ZZZ.III
++    ```
++
++1. Save the HTTP port of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_HTTP_PORT=<port number>
++    ```
++
++## Step 1 - Deploy the Cafe Application
++
++Create the coffee and tea deployments and services:
++
++```console
++kubectl apply -f cafe.yaml
++```
++
++## Step 2 - Deploy the Connection Limit Policies
++
++Create the policies:
++
++```console
++kubectl apply -f connection-limit-policy.yaml
++kubectl apply -f coffee-connection-limit-policy.yaml
++```
++
++- `connection-limit-policy` allows 1 request in progress at a time from a single IP address, and rejects requests over
++  the limit with 429.
++- `coffee-connection-limit-policy` sets only `connections: 1`. The other fields use their defaults, so it also counts
++  requests per client IP address, but rejects requests over the limit with 503.
++
++## Step 3 - Configure Load Balancing
++
++Create the master Ingress and the minion Ingress resources:
++
++```console
++kubectl apply -f cafe-ingress-master.yaml
++kubectl apply -f tea-minion.yaml
++kubectl apply -f coffee-minion.yaml
++```
++
++## Step 4 - Test the Configuration
++
++1. Keep one request to `/tea` in progress by uploading a body slowly. This command runs for about 10 seconds:
++
++    ```console
++    head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
++    ```
++
++1. While it runs, send a second request to `/tea` from another terminal. The master policy rejects it with 429:
++
++    ```console
++    curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
++    ```
++
++    ```text
++    <html>
++    <head><title>429 Too Many Requests</title></head>
++    <body>
++    <center><h1>429 Too Many Requests</h1></center>
++    </body>
++    </html>
++    ```
++
++1. While the upload still runs, send a request to `/coffee`. It succeeds, because the coffee policy counts requests to
++   `/coffee` separately:
++
++    ```console
++    curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/coffee
++    ```
++
++    ```text
++    Server address: 10.8.1.20:8080
++    Server name: coffee-7586895968-r26zn
++    . . .
++    ```
++
++1. To see the coffee policy reject a request, repeat steps 1 and 2 with `/coffee` in place of `/tea`. The second
++   request gets 503.
++
++> Note: The command results are truncated for the clarity of the example.
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/cafe-ingress-master.yaml` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++apiVersion: networking.k8s.io/v1
++kind: Ingress
++metadata:
++  name: cafe-ingress-master
++  annotations:
++    nginx.org/mergeable-ingress-type: "master"
++    nginx.org/policies: "connection-limit-policy"
++spec:
++  ingressClassName: nginx
++  rules:
++  - host: cafe.example.com
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/cafe.yaml` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: coffee
++spec:
++  replicas: 2
++  selector:
++    matchLabels:
++      app: coffee
++  template:
++    metadata:
++      labels:
++        app: coffee
++    spec:
++      containers:
++      - name: coffee
++        image: nginxdemos/nginx-hello:plain-text
++        ports:
++        - containerPort: 8080
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: coffee-svc
++spec:
++  ports:
++  - port: 80
++    targetPort: 8080
++    protocol: TCP
++    name: http
++  selector:
++    app: coffee
++---
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: tea
++spec:
++  replicas: 1
++  selector:
++    matchLabels:
++      app: tea
++  template:
++    metadata:
++      labels:
++        app: tea
++    spec:
++      containers:
++      - name: tea
++        image: nginxdemos/nginx-hello:plain-text
++        ports:
++        - containerPort: 8080
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: tea-svc
++spec:
++  ports:
++  - port: 80
++    targetPort: 8080
++    protocol: TCP
++    name: http
++  selector:
++    app: tea
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/coffee-connection-limit-policy.yaml` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++apiVersion: k8s.nginx.org/v1
++kind: Policy
++metadata:
++  name: coffee-connection-limit-policy
++spec:
++  connectionLimit:
++    connections: 1
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/coffee-minion.yaml` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++apiVersion: networking.k8s.io/v1
++kind: Ingress
++metadata:
++  name: cafe-ingress-coffee-minion
++  annotations:
++    nginx.org/mergeable-ingress-type: "minion"
++    nginx.org/policies: "coffee-connection-limit-policy"
++spec:
++  ingressClassName: nginx
++  rules:
++  - host: cafe.example.com
++    http:
++      paths:
++      - path: /coffee
++        pathType: Prefix
++        backend:
++          service:
++            name: coffee-svc
++            port:
++              number: 80
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/connection-limit-policy.yaml` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++apiVersion: k8s.nginx.org/v1
++kind: Policy
++metadata:
++  name: connection-limit-policy
++spec:
++  connectionLimit:
++    connections: 1
++    key: ${binary_remote_addr}
++    zoneSize: 10m
++    rejectCode: 429
++    logLevel: warn
++    dryRun: false
++    scale: false
+```
+
+**File**: `examples/ingress-resources/connection-limit-mergeable/tea-minion.yaml` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++apiVersion: networking.k8s.io/v1
++kind: Ingress
++metadata:
++  name: cafe-ingress-tea-minion
++  annotations:
++    nginx.org/mergeable-ingress-type: "minion"
++spec:
++  ingressClassName: nginx
++  rules:
++  - host: cafe.example.com
++    http:
++      paths:
++      - path: /tea
++        pathType: Prefix
++        backend:
++          service:
++            name: tea-svc
++            port:
++              number: 80
+```
+
+**File**: `examples/ingress-resources/connection-limit/README.md` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++# Connection Limit
++
++In this example, we deploy the cafe application, configure load balancing for it via an Ingress resource, and apply a
++connection limit policy with the `nginx.org/policies` annotation.
++
++## Prerequisites
++
++1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
++   instructions to deploy the Ingress Controller.
++1. Save the public IP address of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_IP=XXX.YYY.ZZZ.III
++    ```
++
++1. Save the HTTP port of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_HTTP_PORT=<port number>
++    ```
++
++## Step 1 - Deploy the Cafe Application
++
++Create the coffee and tea deployments and services:
++
++```console
++kubectl apply -f cafe.yaml
++```
++
++## Step 2 - Deploy the Connection Limit Policy
++
++In this step, we create a policy with the name `connection-limit-policy` that allows only 1 request in progress at a
++time from a single IP address. The policy sets every field:
++
++- `connections`: the maximum number of requests in progress at the same time for each value of the key.
++- `key`: `${binary_remote_addr}` gives each client IP address its own counter.
++- `zoneSize`: the size of the shared memory zone that stores the counters.
++- `rejectCode`: the status code returned for rejected requests, 429 instead of the default 503.
++- `logLevel`: the level at which rejected requests are logged.
++- `dryRun`: when `true`, requests over the limit are logged but not rejected.
++- `scale`: when `true`, `connections` is divided by the number of NGINX Ingress Controller replicas.
++
++Create the policy:
++
++```console
++kubectl apply -f connection-limit-policy.yaml
++```
++
++## Step 3 - Configure Load Balancing
++
++Create an Ingress resource for the cafe application:
++
++```console
++kubectl apply -f cafe-ingress.yaml
++```
++
++Note that the Ingress references the policy `connection-limit-policy` created in Step 2 with the `nginx.org/policies`
++annotation. The policy applies to every path of the Ingress, and the paths share the limit.
++
++## Step 4 - Test the Configuration
++
++Let's test the configuration. Keep one request to `/coffee` in progress by uploading a body slowly. This command runs
++for about 10 seconds:
++
++```console
++head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/coffee
++```
++
++While it runs, send a request to `/tea` from another terminal. NGINX rejects it, because the paths share the limit:
++
++```console
++curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
++```
++
++```text
++<html>
++<head><title>429 Too Many Requests</title></head>
++<body>
++<center><h1>429 Too Many Requests</h1></center>
++</body>
++</html>
++```
++
++When the upload finishes, the request succeeds:
++
++```console
++curl --resolve cafe.example.com:$IC_HTTP_PORT:$IC_IP http://cafe.example.com:$IC_HTTP_PORT/tea
++```
++
++```text
++Server address: 10.8.1.19:8080
++Server name: tea-7cd44fcb4d-xfw2x
++. . .
++```
++
++> Note: The command result is truncated for the clarity of the example.
+```
+
+---
+
+### Incident Patch 2: `6c1ee8ed` (2026-11-06)
+**Commit Message**: add connectionLimit policy to VirtualServer and VirtualServerRoute (#11218)
+
+* wire connectionLimit policy to vs/vsr, add examples and tests
+
+* address review comments
+
+* close held sockets when hold_requests_open fails
+
+* reduce conn hold time in example
+
+* adapt replica path and tests to main
+
+**File**: `examples/custom-resources/connection-limit/README.md` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++# Connection Limit
++
++In this example, we deploy a web application, configure load balancing for it via a VirtualServer, and apply a
++connection limit policy.
++
++## Prerequisites
++
++1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
++   instructions to deploy the Ingress Controller.
++1. Save the public IP address of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_IP=XXX.YYY.ZZZ.III
++    ```
++
++1. Save the HTTP port of the Ingress Controller into a shell variable:
++
++    ```console
++    IC_HTTP_PORT=<port number>
++    ```
++
++## Step 1 - Deploy a Web Application
++
++Create the application deployment and service:
++
++```console
++kubectl apply -f webapp.yaml
++```
++
++## Step 2 - Deploy the Connection Limit Policy
++
++In this step, we create a policy with the name `connection-limit-policy` that allows only 1 request in progress at a
++time from a single IP address. The policy sets every field:
++
++- `connections`: the maximum number of requests in progress at the same time for each value of the key.
++- `key`: `${binary_remote_addr}` gives each client IP address its own counter.
++- `zoneSize`: the size of the shared memory zone that stores the counters.
++- `rejectCode`: the status code returned for rejected requests, 429 instead of the default 503.
++- `logLevel`: the level at which rejected requests are logged.
++- `dryRun`: when `true`, requests over the limit are logged but not rejected.
++- `scale`: when `true`, `connections` is divided by the number of NGINX Ingress Controller replicas.
++
++Create the policy:
++
++```console
++kubectl apply -f connection-limit.yaml
++```
++
++## Step 3 - Configure Load Balancing
++
++Create a VirtualServer resource for the web application:
++
++```console
++kubectl apply -f virtual-server.yaml
++```
++
++Note that the VirtualServer references the policy `connection-limit-policy` created in Step 2.
++
++## Step 4 - Test the Configuration
++
++Let's test the configuration. Keep one request in progress by uploading a body slowly. This command runs for about
++10 seconds:
++
++```console
++head -c 100000 /dev/zero | curl --limit-rate 10k --data-binary @- --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
++```
++
++While it runs, send a second request from another terminal. NGINX rejects it:
++
++```console
++curl --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
++```
++
++```text
++<html>
++<head><title>429 Too Many Requests</title></head>
++<body>
++<center><h1>429 Too Many Requests</h1></center>
++</body>
++</html>
++```
++
++When the upload finishes, the second request succeeds:
++
++```console
++curl --resolve webapp.example.com:$IC_HTTP_PORT:$IC_IP http://webapp.example.com:$IC_HTTP_PORT/
++```
++
++```text
++Server address: 10.8.1.19:8080
++Server name: webapp-dc88fc766-zr7f8
++. . .
++```
++
++> Note: The command result is truncated for the clarity of the example.
+```
+
+**File**: `examples/custom-resources/connection-limit/connection-limit.yaml` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++apiVersion: k8s.nginx.org/v1
++kind: Policy
++metadata:
++  name: connection-limit-policy
++spec:
++  connectionLimit:
++    connections: 1
++    key: ${binary_remote_addr}
++    zoneSize: 10m
++    rejectCode: 429
++    logLevel: warn
++    dryRun: false
++    scale: false
+```
+
+**File**: `examples/custom-resources/connection-limit/virtual-server.yaml` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++apiVersion: k8s.nginx.org/v1
++kind: VirtualServer
++metadata:
++  name: webapp
++spec:
++  host: webapp.example.com
++  policies:
++  - name: connection-limit-policy
++  upstreams:
++  - name: webapp
++    service: webapp-svc
++    port: 80
++  routes:
++  - path: /
++    action:
++      pass: webapp
+```
+
+**File**: `examples/custom-resources/connection-limit/webapp.yaml` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++apiVersion: apps/v1
++kind: Deployment
++metadata:
++  name: webapp
++spec:
++  replicas: 1
++  selector:
++    matchLabels:
++      app: webapp
++  template:
++    metadata:
++      labels:
++        app: webapp
++    spec:
++      containers:
++      - name: webapp
++        image: nginxdemos/nginx-hello:plain-text
++        ports:
++        - containerPort: 8080
++---
++apiVersion: v1
++kind: Service
++metadata:
++  name: webapp-svc
++spec:
++  ports:
++  - port: 80
++    targetPort: 8080
++    protocol: TCP
++    name: http
++  selector:
++    app: webapp
+```
+
+**File**: `internal/configs/policy.go` (modified, +69/-0)
+```diff
+@@ -41,6 +41,13 @@ type rateLimit struct {
+ 	AuthJWTClaimSets []version2.AuthJWTClaimSet
  }
  
-+// appendEventDetail adds detail to msg, separated by "; " only when msg already has content.
-+func appendEventDetail(msg, detail string) string {
-+	if msg == "" {
-+		return detail
-+	}
-+	return msg + "; " + detail
++// connectionLimit holds the ConnectionLimit configuration of one context.
++type connectionLimit struct {
++	Zones   []version2.LimitConnZone
++	Conns   []version2.LimitConn
++	Options version2.LimitConnOptions
 +}
 +
- // IsNginxReady returns ready status of NGINX
- func (lbc *LoadBalancerController) IsNginxReady() bool {
- 	return lbc.isNginxReady
+ // jwtAuth hold the configuration for the JWTAuth & JWKSAuth Policies
+ type jwtAuth struct {
+ 	Auth        *version2.JWTAuth
+@@ -66,6 +73,7 @@ type policiesCfg struct {
+ 	Context         context.Context
+ 	Deny            []string
+ 	RateLimit       rateLimit
++	ConnectionLimit connectionLimit
+ 	JWTAuth         jwtAuth
+ 	ExternalAuth    *version2.ExternalAuth
+ 	BasicAuth       *version2.BasicAuth
+@@ -90,6 +98,9 @@ type policyOwnerDetails struct {
+ 	parentNamespace string
+ 	parentName      string
+ 	parentType      string
++	// ownerType is "vsr" for a VirtualServerRoute subroute with its own policies and "ing" for a
++	// mergeable minion. It is empty when the references belong to the parent itself.
++	ownerType string
+ }
+ 
+ type policyOptions struct {
+@@ -245,6 +256,62 @@ func (p *policiesCfg) addRateLimitConfig(
+ 	return res
+ }
+ 
++// connectionLimitZoneName returns a zone name unique to the Policy, the parent whose configuration
++// file defines the zone, the referencing object, and the key.
++func connectionLimitZoneName(policy *conf_v1.Policy, owner policyOwnerDetails, key string) string {
++	name := fmt.Sprintf("pol_cl_%s_%s_%s_%s_%s", policy.Namespace, policy.Name, owner.parentType, owner.parentNamespace, owner.parentName)
++	if owner.ownerType != "" {
++		name = fmt.Sprintf("%s_%s_%s_%s", name, owner.ownerType, owner.ownerNamespace, owner.ownerName)
++	}
++	sum := sha256.Sum256([]byte(key))
++	return name + "_" + hex.EncodeToString(sum[:])
++}
++
++func (p *policiesCfg) addConnectionLimitConfig(policy *conf_v1.Policy, ownerDetails policyOwnerDetails, podReplicas int) *validationResults {
++	res := newValidationResults()
++	// The CRD schema defaults key, zoneSize, rejectCode, and logLevel, so they are never empty here.
++	cl := policy.Spec.ConnectionLimit
++	polKey := fmt.Sprintf("%v/%v", policy.Namespace, policy.Name)
++	zoneName := connectionLimitZoneName(policy, ownerDetails, cl.Key)
++
++	connections := cl.Connections
++	if cl.Scale && podReplicas > 0 {
++		connections = cl.Connections / podReplicas
++		if connections < 1 {
++			connections = 1
++			res.addWarningf("ConnectionLimit policy %s: scaling %d connections across %d replicas gives less than one connection per replica; using 1",
++				polKey, cl.Connections, podReplicas)
++		}
++	}
++
++	p.ConnectionLimit.Zones = append(p.ConnectionLimit.Zones, version2.LimitConnZone{Key: cl.Key, ZoneName: zoneName, ZoneSize: cl.ZoneSize})
++	p.ConnectionLimit.Conns = append(p.ConnectionLimit.Conns, version2.LimitConn{ZoneName: zoneName, Connections: connections})
++
++	options := version2.LimitConnOptions{DryRun: cl.DryRun, LogLevel: cl.LogLevel}
++	if cl.RejectCode != nil {
++		options.RejectCode = *cl.RejectCode
++	}
++
++	if len(p.ConnectionLimit.Conns) == 1 {
++		p.ConnectionLimit.Options = options
++		return res
++	}
++	first := p.ConnectionLimit.Options
++	if options.DryRun != first.DryRun {
++		res.addWarningf("ConnectionLimit policy %s with limit connection option dryRun='%v' is overridden to dryRun='%v' by the first policy reference in this context",
++			polKey, options.DryRun, first.DryRun)
++	}
++	if options.LogLevel != first.LogLevel {
++		res.addWarningf("ConnectionLimit policy %s with limit connection option logLevel='%v' is overridden to logLevel='%v' by the first policy reference in this context",
++			polKey, options.LogLevel, first.LogLevel)
++	}
++	if options.RejectCode != first.RejectCode {
++		res.addWarningf("ConnectionLimit policy %s with limit connection option rejectCode='%v' is overridden to rejectCode='%v' by the first policy reference in this context",
++			polKey, options.RejectCode, first.RejectCode)
++	}
++	return res
++}
++
+ // nolint:gocyclo
+ func (p *policiesCfg) addJWTAuthConfig(
+ 	jwtAuth *conf_v1.JWTAuth,
+@@ -1526,6 +1593,8 @@ func generatePolicies(
+ 					pathContext,
+ 					path,
+ 				)
++			case pol.Spec.ConnectionLimit != nil:
++				res = config.addConnectionLimitConfig(pol, ownerDetails, policyOpts.replicas)
+ 			case pol.Spec.JWTAuth != nil:
+ 				res = config.addJWTAuthConfig(pol.Spec.JWTAuth, key, polNamespace, policyOpts.secretRefs)
+ 			case pol.Spec.ExternalAuth != nil:
 ```
 
-**File**: `internal/k8s/status_events_test.go` (added, +234/-0)
+**File**: `internal/configs/policy_test.go` (modified, +319/-0)
 ```diff
-@@ -0,0 +1,234 @@
-+package k8s
-+
-+import (
-+	"context"
-+	"errors"
-+	"testing"
-+
-+	"github.com/nginx/kubernetes-ingress/internal/configs"
-+	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-+	conf_v1 "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/v1"
-+	networking "k8s.io/api/networking/v1"
-+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/tools/record"
+@@ -231,6 +231,138 @@ func TestGeneratePolicies(t *testing.T) {
+ 			},
+ 			msg: "rate limit reference",
+ 		},
++		{
++			policyRefs: []conf_v1.PolicyReference{
++				{
++					Name:      "connection-limit-policy",
++					Namespace: "default",
++				},
++			},
++			policies: map[string]*conf_v1.Policy{
++				"default/connection-limit-policy": {
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "connection-limit-policy",
++						Namespace: "default",
++					},
++					Spec: conf_v1.PolicySpec{
++						ConnectionLimit: &conf_v1.ConnectionLimit{
++							Connections: 10,
++							Key:         "total",
++							ZoneSize:    "10m",
++							RejectCode:  new(503),
++							LogLevel:    "error",
++						},
++					},
++				},
++			},
++			expected: policiesCfg{
++				Context: ctx,
++				ConnectionLimit: connectionLimit{
++					Zones: []version2.LimitConnZone{
++						{
++							Key:      "total",
++							ZoneName: "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashTotal,
++							ZoneSize: "10m",
++						},
++					},
++					Conns: []version2.LimitConn{
++						{
++							ZoneName:    "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashTotal,
++							Connections: 10,
++						},
++					},
++					Options: version2.LimitConnOptions{
++						LogLevel:   "error",
++						RejectCode: 503,
++					},
++				},
++			},
++			msg: "connection limit reference",
++		},
++		{
++			policyRefs: []conf_v1.PolicyReference{
++				{
++					Name:      "rateLimit-policy",
++					Namespace: "default",
++				},
++				{
++					Name:      "connection-limit-policy",
++					Namespace: "default",
++				},
++			},
++			policies: map[string]*conf_v1.Policy{
++				"default/rateLimit-policy": {
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "rateLimit-policy",
++						Namespace: "default",
++					},
++					Spec: conf_v1.PolicySpec{
++						RateLimit: &conf_v1.RateLimit{
++							Key:      "test",
++							ZoneSize: "10M",
++							Rate:     "10r/s",
++						},
++					},
++				},
++				"default/connection-limit-policy": {
++					ObjectMeta: meta_v1.ObjectMeta{
++						Name:      "connection-limit-policy",
++						Namespace: "default",
++					},
++					Spec: conf_v1.PolicySpec{
++						ConnectionLimit: &conf_v1.ConnectionLimit{
++							Connections: 10,
++							Key:         "${binary_remote_addr}",
++							ZoneSize:    "10m",
++							RejectCode:  new(503),
++							LogLevel:    "error",
++						},
++					},
++				},
++			},
++			expected: policiesCfg{
++				Context: ctx,
++				RateLimit: rateLimit{
++					Reqs: []version2.LimitReq{
++						{
++							ZoneName: "pol_rl_default_rateLimit_policy_default_test_vs",
++						},
++					},
++					Zones: []version2.LimitReqZone{
++						{
++							Key:      "test",
++							ZoneSize: "10M",
++							Rate:     "10r/s",
++							ZoneName: "pol_rl_default_rateLimit_policy_default_test_vs",
++						},
++					},
++					Options: version2.LimitReqOptions{
++						LogLevel:   "error",
++						RejectCode: 503,
++					},
++				},
++				ConnectionLimit: connectionLimit{
++					Zones: []version2.LimitConnZone{
++						{
++							Key:      "${binary_remote_addr}",
++							ZoneName: "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashBinaryRemoteAddr,
++							ZoneSize: "10m",
++						},
++					},
++					Conns: []version2.LimitConn{
++						{
++							ZoneName:    "pol_cl_default_connection-limit-policy_vs_default_test_" + clKeyHashBinaryRemoteAddr,
++							Connections: 10,
++						},
++					},
++					Options: version2.LimitConnOptions{
++						LogLevel:   "error",
++						RejectCode: 503,
++					},
++				},
++			},
++			msg: "rate limit and connection limit references",
++		},
+ 		{
+ 			policyRefs: []conf_v1.PolicyReference{
+ 				{
+@@ -2686,6 +2818,193 @@ func TestAddHSTSConfig_MultiplePolicy(t *testing.T) {
+ 	}
+ }
+ 
++const (
++	clKeyHashBinaryRemoteAddr = "666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a"
++	clKeyHashTotal            = "11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7"
 +)
 +
-+// newEventTestLBC returns a controller that records events but skips status updates.
-+func newEventTestLBC() (*LoadBalancerController, *record.FakeRecorder) {
-+	recorder := record.NewFakeRecorder(10)
-+	return &LoadBalancerController{
-+		recorder: recorder,
-+		Logger:   nl.LoggerFromContext(context.Background()),
-+		// Leader election on with no elector disables status reporting.
-+		isLeaderElectionEnabled: true,
-+	}, recorder
-+}
-+
-+func TestMinionEventMessages(t *testing.T) {
++func TestConnectionLimitZoneName(t *testing.T) {
 +	t.Parallel()
 +
-+	errApply := errors.New("reload failed")
-+
++	vsCafe := policyOwnerDetails{parentType: "vs", parentNamespace: "default", parentName: "cafe", ownerNamespace: "default", ownerName: "cafe"}
 +	tests := []struct {
-+		name          string
-+		childWarnings []string
-+		warnings      []string
-+		err           error
-+		want          string
++		name       string
++		policyName string
++		owner      policyOwnerDetails
++		key        string
++		want       string
 +	}{
 +		{
-+			name: "no warnings no error",
-+			want: "Normal AddedOrUpdated Configuration for default/minion was added or updated",
++			name:       "VirtualServer",
++			policyName: "per-client",
++			owner:      vsCafe,
++			key:        "${binary_remote_addr}",
++			want:       "pol_cl_default_per-client_vs_default_cafe_" + clKeyHashBinaryRemoteAddr,
 +		},
 +		{
-+			name: "error only",
-+			err:  errApply,
-+			want: "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated but was not applied: reload failed",
++			name:       "constant key",
++			policyName: "downloads-total",
++			owner:      vsCafe,
++			key:        "total",
++			want:       "pol_cl_default_downloads-total_vs_default_cafe_" + clKeyHashTotal,
 +		},
 +		{
-+			name:          "child warnings and error",
-+			childWarnings: []string{"w1"},
-+			err:           errApply,
-+			want:          "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated with warning(s): w1; but was not applied: reload failed",
-+		},
-+		{
-+			name:          "child warnings, config warnings and error",
-+			childWarnings: []string{"w1"},
-+			warnings:      []string{"w2"},
-+			err:           errApply,
-+			want:          "Warning AddedOrUpdatedWithError Configuration for default/minion was added or updated with warning(s): w1; with warning(s): w2; but was not applied: reload failed",
-+		},
-+	}
++			name:       "VirtualServerRoute",
++			policyName: "per-client",
++			owner:      policyOwnerDetails{parentType: "vs", parentNamespace: "default", parentName: "cafe", ownerType: "vsr", ownerNamespace: "tea", ownerName: "tea-routes"},
++			key:        "${binary_remote_addr}",
++			
+```
+
+**File**: `internal/configs/version2/__snapshots__/templates_test.snap` (modified, +826/-0)
+```diff
+@@ -2296,6 +2296,338 @@ server {
+ 
+ ---
+ 
++[TestExecuteVirtualServerTemplate_RendersConnectionLimitForNGINX - 1]
 +
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
++limit_conn_zone ${binary_remote_addr} zone=pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a:10m;
++limit_conn_zone total zone=pol_cl_default_downloads-total_vs_default_cafe_11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7:10m;
++limit_conn_zone ${binary_remote_addr} zone=pol_cl_default_per-client_vs_default_cafe_vsr_tea_tea-routes_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a:10m;
++server {
++    listen 80;
++    listen [::]:80;
 +
-+			lbc, recorder := newEventTestLBC()
-+			master := &networking.Ingress{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "master"}}
-+			minion := &networking.Ingress{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "minion"}}
-+			ingConfig := &IngressConfiguration{
-+				Ingress:       master,
-+				IsMaster:      true,
-+				Minions:       []*MinionConfiguration{{Ingress: minion}},
-+				ChildWarnings: map[string][]string{},
-+			}
-+			if tc.childWarnings != nil {
-+				ingConfig.ChildWarnings["default/minion"] = tc.childWarnings
-+			}
-+			warnings := configs.Warnings{}
-+			if tc.warnings != nil {
-+				warnings[minion] = tc.warnings
-+			}
 +
-+			lbc.updateMergeableIngressStatusAndEvents(ingConfig, warnings, tc.err)
++    server_name cafe.example.com;
 +
-+			<-recorder.Events // master event
-+			if got := <-recorder.Events; got != tc.want {
-+				t.Errorf("minion event:\n got: %q\nwant: %q", got, tc.want)
-+			}
-+		})
-+	}
++    set $resource_type "virtualserver";
++    set $resource_name "";
++    set $resource_namespace "";
++    set $service "-";
++
++    server_tokens "";
++    limit_conn_dry_run off;
++    limit_conn_log_level error;
++    limit_conn_status 503;
++    limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
++
++    
++
++    
++    location "/coffee" {
++        set $service "";
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout ;
++        proxy_read_timeout ;
++        proxy_send_timeout ;
++        client_max_body_size ;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_pass http://vs_default_cafe_coffee;
++        proxy_next_upstream ;
++        proxy_next_upstream_timeout ;
++        proxy_next_upstream_tries 0;
++    }
++    location "/downloads" {
++        set $service "";
++        limit_conn_dry_run off;
++        limit_conn_log_level error;
++        limit_conn_status 503;
++        limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
++        limit_conn pol_cl_default_downloads-total_vs_default_cafe_11239872d178729acc9e5aeaf7fc001a0ffd878c922330be43712b9b3be043a7 200;
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout ;
++        proxy_read_timeout ;
++        proxy_send_timeout ;
++        client_max_body_size ;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_pass http://vs_default_cafe_files;
++        proxy_next_upstream ;
++        proxy_next_upstream_timeout ;
++        proxy_next_upstream_tries 0;
++    }
++    location "/tea" {
++        set $service "";
++        limit_conn_dry_run off;
++        limit_conn_log_level error;
++        limit_conn_status 503;
++        limit_conn pol_cl_default_per-client_vs_default_cafe_vsr_tea_tea-routes_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout ;
++        proxy_read_timeout ;
++        proxy_send_timeout ;
++        client_max_body_size ;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_pass http://vs_default_cafe_vsr_tea_tea-routes_tea;
++        proxy_next_upstream ;
++        proxy_next_upstream_timeout ;
++        proxy_next_upstream_tries 0;
++    }
++    location "/dry-run" {
++        set $service "";
++        limit_conn_dry_run on;
++        limit_conn_log_level warn;
++        limit_conn_status 429;
++        limit_conn pol_cl_default_per-client_vs_default_cafe_666c983e93f9457d8016308ec730332d1bb1d990f59522a4e5a63f264620399a 10;
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout ;
++        proxy_read_timeout ;
++        proxy_send_timeout ;
++        client_max_body_size ;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        
+```
+
+**File**: `internal/configs/version2/http.go` (modified, +25/-0)
+```diff
+@@ -20,6 +20,7 @@ type VirtualServerConfig struct {
+ 	KeyValZones             []KeyValZone
+ 	KeyVals                 []KeyVal
+ 	LimitReqZones           []LimitReqZone
++	LimitConnZones          []LimitConnZone
+ 	Maps                    []Map
+ 	AuthJWTClaimSets        []AuthJWTClaimSet
+ 	OIDCProviders           []OIDCProvider
+@@ -98,6 +99,8 @@ type Server struct {
+ 	Deny                      []string
+ 	LimitReqOptions           LimitReqOptions
+ 	LimitReqs                 []LimitReq
++	LimitConnOptions          LimitConnOptions
++	LimitConns                []LimitConn
+ 	JWTAuth                   *JWTAuth
+ 	JWTAuthList               map[string]*JWTAuth
+ 	JWKSAuthEnabled           bool
+@@ -249,6 +252,8 @@ type Location struct {
+ 	Deny                       []string
+ 	LimitReqOptions            LimitReqOptions
+ 	LimitReqs                  []LimitReq
++	LimitConnOptions           LimitConnOptions
++	LimitConns                 []LimitConn
+ 	JWTAuth                    *JWTAuth
+ 	OIDCProviderName           string
+ 	AuthRequestOff             bool
+@@ -518,6 +523,26 @@ func (rl LimitReqOptions) String() string {
+ 	return fmt.Sprintf("{DryRun %v, LogLevel %q, RejectCode %d}", rl.DryRun, rl.LogLevel, rl.RejectCode)
+ }
+ 
++// LimitConnZone defines a connection limit shared memory zone.
++type LimitConnZone struct {
++	Key      string
++	ZoneName string
++	ZoneSize string
 +}
 +
-+func TestVirtualServerRouteEventMessages(t *testing.T) {
-+	t.Parallel()
-+
-+	errApply := errors.New("reload failed")
-+
-+	tests := []struct {
-+		name     string
-+		warnings []string
-+		err      error
-+		want     string
-+	}{
-+		{
-+			name: "no warnings no error",
-+			want: "Normal AddedOrUpdated Configuration for default/vsr was added or updated",
-+		},
-+		{
-+			name:     "warnings only",
-+			warnings: []string{"w1"},
-+			want:     "Warning AddedOrUpdatedWithWarning Configuration for default/vsr was added or updated with warning(s): w1",
-+		},
-+		{
-+			name: "error only",
-+			err:  errApply,
-+			want: "Warning AddedOrUpdatedWithError Configuration for default/vsr was added or updated but was not applied: reload failed",
-+		},
-+		{
-+			name:     "warnings and error",
-+			warnings: []string{"w1"},
-+			err:      errApply,
-+			want:     "Warning AddedOrUpdatedWithError Configuration for default/vsr was added or updated with warning(s): w1; but was not applied: reload failed",
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			lbc, recorder := newEventTestLBC()
-+			vsr := &conf_v1.VirtualServerRoute{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "vsr"}}
-+			vsConfig := &VirtualServerConfiguration{
-+				VirtualServer:       &conf_v1.VirtualServer{ObjectMeta: meta_v1.ObjectMeta{Namespace: "default", Name: "vs"}},
-+				VirtualServerRoutes: []*conf_v1.VirtualServerRoute{vsr},
-+			}
-+			warnings := configs.Warnings{}
-+			if tc.warnings != nil {
-+				warnings[vsr] = tc.warnings
-+			}
-+
-+			lbc.updateAttachedVirtualServerRoutesStatusAndEvents(vsConfig, warnings, tc.err)
-+
-+			if got := <-recorder.Events; got != tc.want {
-+				t.Errorf("VSR event:\n got: %q\nwant: %q", got, tc.want)
-+			}
-+		})
-+	}
++// LimitConn defines a connection limit.
++type LimitConn struct {
++	ZoneName    string
++	Connections int
 +}
 +
-+// TestResourceEventMessages covers regular Ingress, VirtualServer and TransportServer events, which share one format.
-+func TestResourceEventMessag
-```
-
-**File**: `internal/k8s/transport_server.go` (modified, +3/-2)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"fmt"
- 	"reflect"
-+	"strings"
- 
- 	"github.com/nginx/kubernetes-ingress/internal/configs"
- 	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
-@@ -155,11 +156,11 @@ func (lbc *LoadBalancerController) updateTransportServerStatusAndEvents(tsConfig
- 	if operationErr != nil {
- 		eventType = api_v1.EventTypeWarning
- 		eventTitle = nl.EventReasonAddedOrUpdatedWithError
--		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
-+		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
- 		state = conf_v1.StateInvalid
- 	}
- 
--	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&tsConfig.TransportServer.ObjectMeta), eventWarningMessage)
-+	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&tsConfig.TransportServer.ObjectMeta), eventWarningMessage))
- 	lbc.recorder.Event(tsConfig.TransportServer, eventType, eventTitle, msg)
- 	logger := lbc.Logger.With(logNamespaceKey, tsConfig.TransportServer.Namespace, logKindKey, transportServerKind, logNameKey, tsConfig.TransportServer.Name)
- 
-```
-
-**File**: `tests/suite/test_annotations.py` (modified, +1/-1)
-```diff
-@@ -202,7 +202,7 @@ def annotations_grpc_setup(
-     )
-     ic_pod_name = get_first_pod_name(kube_apis.v1, ingress_controller_prerequisites.namespace, IC_SELECTOR)
-     event_text = f"Configuration for {test_namespace}/{ingress_name} was added or updated"
--    error_text = f"{event_text} ; but was not applied: Error reloading NGINX"
-+    error_text = f"{event_text} but was not applied: Error reloading NGINX"
- 
-     def fin():
-         if request.config.getoption("--skip-fixture-teardown") == "no":
-```
-
-**File**: `tests/suite/test_ingress_mtls.py` (modified, +1/-1)
-```diff
-@@ -350,7 +350,7 @@ def test_ingress_mtls_policy_cert(
-                 mtls_secret_crl,
-                 404,
-                 "Not Found",
--                "added or updated ; with warning(s)",
-+                "added or updated with warning(s)",
-                 "Invalid",
-             ),
-         ],
-```
-
-**File**: `tests/suite/test_virtual_server_configmap_keys.py` (modified, +2/-2)
-```diff
-@@ -27,7 +27,7 @@ def assert_update_events_emitted(virtual_server_setup, new_list, previous_list,
- 
- def assert_not_applied_events_emitted(virtual_server_setup, new_list, previous_list, expected_amount):
-     item_name = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
--    text_invalid = f"Configuration for {item_name} was added or updated ; but was not applied"
-+    text_invalid = f"Configuration for {item_name} was added or updated but was not applied"
-     new_event = new_list[len(new_list) - 1]
-     assert len(new_list) - len(previous_list) == expected_amount
-     assert text_invalid in new_event.message
-@@ -247,7 +247,7 @@ def test_keys(
-         vs_key = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
-         assert wait_for_event(
-             kube_apis.v1,
--            f"Configuration for {vs_key} was added or updated ; but was not applied",
-+            f"Configuration for {vs_key} was added or updated but was not applied",
-             virtual_server_setup.namespace,
-         ), "VirtualServer did not report the failed reload"
-         step_2_events = get_events(kube_apis.v1, virtual_server_setup.namespace)
-```
-
-**File**: `tests/suite/test_virtual_server_external_name.py` (modified, +1/-1)
-```diff
-@@ -151,7 +151,7 @@ def test_events_flows(
- 
-         print("Step 2: Remove resolver from ConfigMap to trigger an error")
-         config_map_name = ingress_controller_prerequisites.config_map["metadata"]["name"]
--        vs_event_warning_text = f"Configuration for {text} was added or updated ; with warning(s):"
-+        vs_event_warning_text = f"Configuration for {text} was added or updated with warning(s):"
-         replace_configmap(
-             kube_apis.v1,
-             config_map_name,
-```
-
-**File**: `tests/suite/test_virtual_server_grpc.py` (modified, +1/-1)
-```diff
-@@ -307,7 +307,7 @@ def test_config_error_page_warning(
-         self, kube_apis, ingress_controller_prerequisites, crd_ingress_controller, backend_setup, virtual_server_setup
-     ):
-         text = f"{virtual_server_setup.namespace}/{virtual_server_setup.vs_name}"
--        vs_event_warning_text = f"Configuration for {text} was added or updated ; with warning(s): "
-+        vs_event_warning_text = f"Configuration for {text} was added or updated with warning(s): "
-         patch_virtual_server_from_yaml(
-             kube_apis.custom_objects,
-             virtual_server_setup.vs_name,
++// LimitConnOptions defines the connection limit options that apply to a whole block.
++type LimitConnOptions struct {
++	DryRun     bool
++	LogLevel   string
++	RejectCode int
++}
++
+ // JWTAuth holds JWT authentication configuration.
+ type JWTAuth struct {
+ 	Key      string
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11319** (2026-11-03): Update NGINX to 1.31.8 & WAF to 5.16.1 (@nic-create-pr[bot])
-- **PR #11317** (2026-11-03): Update redhat/ubi10-minimal Docker tag to v10.2-1793642335 (release-5.7) (@renovate[bot])
-- **PR #11316** (2026-11-03): Update Red Hat UBI images (main) (@renovate[bot])
-- **PR #11315** (2026-11-03): Update python dependencies (release-2026-lts) (@renovate[bot])
-- **PR #11314** (2026-11-03): Update debian:13-slim Docker digest to f6b08b0 (release-2026-lts) (@renovate[bot])
-- **PR #11313** (2026-11-03): Update python dependencies (release-5.7) (@renovate[bot])
+- **PR #11342** (2026-11-06): Update quay.io/oauth2-proxy/oauth2-proxy Docker tag to v7.15.6 (main) (@renovate[bot])
+- **PR #11341** (2026-11-06): Update quay.io/keycloak/keycloak Docker tag to v26.8.2 (main) (@renovate[bot])
+- **PR #11340** (2026-11-06): Update module github.com/mikefarah/yq/v4 to v4.54.2 (main) (@renovate[bot])
+- **PR #11339** (2026-11-06): Update Red Hat UBI images (main) (@renovate[bot])
+- **PR #11335** (2026-11-06): Update AWS SDK v2 (release-5.7) (@renovate[bot])
+- **PR #11334** (2026-11-06): Update dependency python-dateutil to v4 (main) (@renovate[bot])
 
 ---
 
@@ -1671,48 +2362,60 @@ parts, and trim the trailing space. Add table
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. malformed event and status messages for Ingress, VirtualServer, VirtualServerRou
+## X. add Ingress support for connection Limit policy (#11222)
 
 **RULE**:
-When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/ingress-resources/connection-limit-mergeable/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c0be65e`: malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources (#11298). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b8f388c7`: add Ingress support for connection Limit policy (#11222). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/ingress-resources/connection-limit-mergeable/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			minionEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
-		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
-		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
-	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage))
-		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("with warning(s): %v", formatWarningMessages(messages)))
-		eventWarningMessage = appendEventDetail(eventWarningMessage, fmt.Sprintf("but was not applied: %v", operationErr))
-	msg := strings.TrimSpace(fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage))
-			sep := " "
-			if vsrEventWarningMessage != "" {
-				sep = "; "
-			}
-			vsrEventWarningMessage = fmt.Sprintf("%s%sbut was not applied: %v", vsrEventWarningMessage, sep, operationErr)
-// appendEventDetail adds detail to msg, separated by "; " on
+# Connection Limit with Mergeable Ingresses
+
+In this example, we deploy the cafe application, configure load balancing for it with
+[Mergeable Ingress](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/cross-namespace-configuration/)
+resources, and apply connection limit policies with the `nginx.org/policies` annotation:
+
+- The master Ingress references `connection-limit-policy`, which applies to every path of the host.
+- The coffee minion references its own policy, `coffee-connection-limit-policy`, which replaces the master policy for
+  `/coffee`.
+- The tea minion references no policy, so `/tea` uses the master policy.
+
+## Prerequisites
+
+1. Follow the [installation](https://docs.nginx.com/nginx-ingress-controller/install/manifests)
+   instructions to deploy the Ingress Controller.
+1. Save the public IP address of the Ingress Controller into a shell variable:
+
+    ```console
+    IC_IP=XXX.YYY.ZZZ.III
+    ```
+
+1. Save the HTTP port of the Ingress Controller into a shell variable:
+
+    ```console
+    IC_HTTP_PORT=<port number>
+    ```
+
+## Step 1 - Deploy the Cafe Application
+
+Create the coffee and tea deployments and services:
+
+```console
+kubectl apply -f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			minionEventWarningMessage = fmt.Sprintf("%s%s; but was not applied: %v", minionEventWarningMessage, minionEventWarningSuffix, operationErr)
-			minionEventWarningSuffix = "; "
-		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
-		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
-	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&ingConfig.Ingress.ObjectMeta), eventWarningMessage)
-		eventWarningMessage = fmt.Sprintf("%s; with warning(s): %v", eventWarningMessage, formatWarningMessages(messages))
-		eventWarningMessage = fmt.Sprintf("%s; but was not applied: %v", eventWarningMessage, operationErr)
-	msg := fmt.Sprintf("Configuration for %v was added or updated %s", getResourceKey(&vsConfig.VirtualServer.ObjectMeta), eventWarningMessage)
-			vsrEventWarningMessage = fmt.Sprintf(" %s; but was not applied:%v", vsrEventWarningMessage, operationErr)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c0be65e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b8f388c7` are properly handled with clean fallback behavior.

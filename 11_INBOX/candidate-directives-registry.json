@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-07T04:44:19.800Z",
+  "last_updated": "2026-11-07T17:40:46.342Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4072,6 +4072,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-syntax-tree-hast-util-from-html"
+    },
+    {
+      "id": "CD-W0HY",
+      "directive_title": "add Ingress support for connection Limit policy (#11222)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "nginx/kubernetes-ingress",
+      "source_commit": "b8f388c7",
+      "date_staged": "2026-11-07",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nginx-kubernetes-ingress"
     }
   ]
 }

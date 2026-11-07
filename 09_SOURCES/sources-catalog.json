@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5b908ef4",
+    "sourceVersion": "ccd0412c",
     "license": "NOASSERTION",
-    "contentHash": "038b235d19f7df2efa62463fcc86bd33dff009739117b380b5b75709f718acba",
-    "lastHarvestedAt": "2026-11-06T20:45:40.194Z",
+    "contentHash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
+    "lastHarvestedAt": "2026-11-07T17:40:54.425Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "4d69ce36",
+    "sourceVersion": "b8f388c7",
     "license": "Apache-2.0",
-    "contentHash": "c503448fe039123314aded30fa6e6e3840feeb4bea6597eda70ffa1eac6eacb0",
-    "lastHarvestedAt": "2026-11-05T04:43:41.840Z",
+    "contentHash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
+    "lastHarvestedAt": "2026-11-07T17:40:46.335Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -12108,5 +12108,35 @@
     "contentHash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
     "lastHarvestedAt": "2026-11-07T17:27:27.845Z",
     "learningId": "learn-github-aquasecurity-trivy-operator"
+  },
+  "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic": {
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+    "license": "Open-Source",
+    "contentHash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+    "lastHarvestedAt": "2026-11-07T17:40:38.651Z",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
+  },
+  "hf-prunaai-p-h3-image": {
+    "repository": "PrunaAI/P-H3-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image",
+    "sourceVersion": "hf-prunaai-p-h3-image",
+    "license": "Open-Source",
+    "contentHash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+    "lastHarvestedAt": "2026-11-07T17:40:39.333Z",
+    "learningId": "learn-huggingface-prunaai-p-h3-image"
+  },
+  "hf-nousresearch-arete-27b": {
+    "repository": "NousResearch/Arete-27B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/NousResearch/Arete-27B",
+    "sourceVersion": "hf-nousresearch-arete-27b",
+    "license": "Open-Source",
+    "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
+    "lastHarvestedAt": "2026-11-07T17:40:43.287Z",
+    "learningId": "learn-huggingface-nousresearch-arete-27b"
   }
 }

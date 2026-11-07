@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-F2GE",
-    "timestamp": "2026-11-05T05:16:25.262Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "9a074774c42f8b8305fa2ec5752d8f3ab66401c25edf454d0fea2fc9167b34d6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-OPSR",
-    "timestamp": "2026-11-05T05:23:55.419Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "82c4d0a2c53af5773b39a0398606e82fa93288eb1ea1fe404cda7be73e986729",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-OQN9",
-    "timestamp": "2026-11-05T05:23:56.517Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "21384324c266bf7d01f87138a867403958e9f28a0cb8fbba09c215899b64a0b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-QMKR",
-    "timestamp": "2026-11-05T05:25:24.555Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "039d58ce76a28b2a6e0944b25d8f9bc77d500a13c4f39a788eafbc40e9707eb4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-ZF60",
-    "timestamp": "2026-11-05T05:32:14.856Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "b549ff888715a52a992c246d1514c87fa6d97d8fec09c12676e8d2988f10e94b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-ZK7Y",
     "timestamp": "2026-11-05T05:32:21.406Z",
     "repository": "modelcontextprotocol/kotlin-sdk",
@@ -7490,6 +7415,81 @@
     "repository": "aquasecurity/trivy-operator",
     "learningId": "learn-github-aquasecurity-trivy-operator",
     "contentHash": "3289560bedf486d5558d0d29ce63b7fc093e8a1ed479707b1a82854825b7c806",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-VUK7",
+    "timestamp": "2026-11-07T17:40:38.647Z",
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+    "contentHash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-VV35",
+    "timestamp": "2026-11-07T17:40:39.329Z",
+    "repository": "PrunaAI/P-H3-Image",
+    "learningId": "learn-huggingface-prunaai-p-h3-image",
+    "contentHash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-VY4Z",
+    "timestamp": "2026-11-07T17:40:43.283Z",
+    "repository": "NousResearch/Arete-27B",
+    "learningId": "learn-huggingface-nousresearch-arete-27b",
+    "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-W0HN",
+    "timestamp": "2026-11-07T17:40:46.331Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "c94506bfc8f6de73d781983a54ede7b4a31d1f805c0c060dbe906e12c501eb6c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261107-W6QD",
+    "timestamp": "2026-11-07T17:40:54.421Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "06f648574cb66ab77842a6bdd02a6240dcf57ef5f044e96756a55f4fa958243e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -8027,3 +8027,8 @@
 | `CYCLE-20261107-QE3C` | `2026-11-07T06:24:33.240Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`95eb4ff6...`) |
 | `CYCLE-20261107-WM8A` | `2026-11-07T06:29:23.722Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`47d0aa19...`) |
 | `CYCLE-20261107-EWDE` | `2026-11-07T17:27:27.842Z` | `aquasecurity/trivy-operator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3289560b...`) |
+| `CYCLE-20261107-VUK7` | `2026-11-07T17:40:38.647Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`41e83055...`) |
+| `CYCLE-20261107-VV35` | `2026-11-07T17:40:39.329Z` | `PrunaAI/P-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`e28d3e57...`) |
+| `CYCLE-20261107-VY4Z` | `2026-11-07T17:40:43.283Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1255, Rule null, Rule null` | Yes (`1af954c8...`) |
+| `CYCLE-20261107-W0HN` | `2026-11-07T17:40:46.331Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | Yes (`c94506bf...`) |
+| `CYCLE-20261107-W6QD` | `2026-11-07T17:40:54.421Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`06f64857...`) |
