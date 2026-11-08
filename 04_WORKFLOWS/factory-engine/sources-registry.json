@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T09:35:15.773Z",
-    "lastVerified": "2026-11-08T09:35:15.773Z",
+    "lastChecked": "2026-11-08T09:56:47.668Z",
+    "lastVerified": "2026-11-08T09:56:47.668Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T08:00:25.184Z",
-    "lastVerified": "2026-11-08T08:00:25.184Z",
+    "lastChecked": "2026-11-08T09:52:01.105Z",
+    "lastVerified": "2026-11-08T09:52:01.105Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -847,13 +847,13 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T21:32:53.834Z",
-    "lastVerified": "2026-11-04T21:32:53.834Z",
+    "lastChecked": "2026-11-08T09:51:48.861Z",
+    "lastVerified": "2026-11-08T09:51:48.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
-    "promotedRulesCount": 0,
+    "contentHash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -1108,9 +1108,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-08T04:33:51.021Z",
+    "lastChecked": "2026-11-08T09:51:56.166Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-08T04:33:51.021Z"
+    "lastVerified": "2026-11-08T09:51:56.166Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3782,14 +3782,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T04:51:50.971Z",
-    "lastVerified": "2026-11-07T04:51:50.971Z",
+    "lastChecked": "2026-11-08T09:52:03.524Z",
+    "lastVerified": "2026-11-08T09:52:03.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "contentHash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7653,12 +7653,12 @@
     "revisionIdentifier": "e1178ba3"
   },
   "k3s-io-k3s": {
-    "name": "k3s-io/k3s",
+    "name": "k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T05:58:15.319Z",
-    "lastVerified": "2026-11-07T05:58:15.319Z",
+    "lastChecked": "2026-11-08T09:51:53.724Z",
+    "lastVerified": "2026-11-08T09:51:53.724Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
@@ -7667,7 +7667,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dca306c8"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -10130,9 +10131,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-11-05T07:05:50.002Z",
+    "lastChecked": "2026-11-08T09:51:51.087Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-11-05T07:05:50.002Z"
+    "lastVerified": "2026-11-08T09:51:51.087Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
@@ -14355,6 +14356,23 @@
     "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
     "promotedRulesCount": 1,
     "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "untitleduico-react": {
+    "name": "untitleduico/react",
+    "officialUrl": "https://github.com/untitleduico/react",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-08T09:51:47.500Z",
+    "lastVerified": "2026-11-08T09:51:47.500Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-untitleduico-react",
+    "contentHash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-BYPZ",
-    "timestamp": "2026-11-05T18:45:49.319Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "28df4fb03c326328dd8743f689cc80f7b07b41d3620987481ac5f4541a7e3633",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-LZ8P",
-    "timestamp": "2026-11-05T18:53:36.553Z",
-    "repository": "sxyazi/yazi",
-    "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "8e09d479f45cd260c3ad906aa56d9c07a5be77c34b85c3463ea9a6633ba7c20e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-M4HQ",
-    "timestamp": "2026-11-05T18:53:43.358Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "9ece711744d167bb8dbcce8e460ede3001e5f0e8effa0038ec1d77b23bcf779b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-UKZR",
     "timestamp": "2026-11-05T19:00:17.991Z",
     "repository": "pointfreeco/sqlite-data",
@@ -7490,6 +7445,51 @@
     "repository": "envoyproxy/envoy",
     "learningId": "learn-github-envoyproxy-envoy",
     "contentHash": "58d129d40903f5cf5ab22c8303b71b10b8df11374a9f253c3129d9fa37e05e30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-NZUX",
+    "timestamp": "2026-11-08T09:54:18.825Z",
+    "repository": "untitleduico/react",
+    "learningId": "learn-github-untitleduico-react",
+    "contentHash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-OVZQ",
+    "timestamp": "2026-11-08T09:55:00.470Z",
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-R4OW",
+    "timestamp": "2026-11-08T09:56:45.056Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

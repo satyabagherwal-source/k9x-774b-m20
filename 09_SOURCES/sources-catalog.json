@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "906848d5",
+    "sourceVersion": "89ca3dbb",
     "license": "Apache-2.0",
-    "contentHash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
-    "lastHarvestedAt": "2026-11-07T04:56:55.304Z",
+    "contentHash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
+    "lastHarvestedAt": "2026-11-08T09:56:45.068Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
-    "lastHarvestedAt": "2026-11-04T21:35:53.426Z",
+    "contentHash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
+    "lastHarvestedAt": "2026-11-08T09:55:00.473Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
@@ -12178,5 +12178,15 @@
     "contentHash": "c808c8b98f41ab026a0b19a9551a3b5cd427b836f704153c4e8f2b6531b8857d",
     "lastHarvestedAt": "2026-11-08T02:40:31.183Z",
     "learningId": "learn-github-qybaihe-bla"
+  },
+  "untitleduico-react": {
+    "repository": "untitleduico/react",
+    "platform": "github",
+    "sourceUrl": "https://github.com/untitleduico/react",
+    "sourceVersion": "1d410cb8",
+    "license": "MIT",
+    "contentHash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
+    "lastHarvestedAt": "2026-11-08T09:54:18.829Z",
+    "learningId": "learn-github-untitleduico-react"
   }
 }

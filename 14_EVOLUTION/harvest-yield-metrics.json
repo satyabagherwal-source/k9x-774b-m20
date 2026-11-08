@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T09:35:13.164Z",
-  "total_cycles_completed": 8233,
-  "total_learnings_persisted": 8233,
-  "total_rules_promoted": 7972,
+  "last_updated": "2026-11-08T09:56:45.073Z",
+  "total_cycles_completed": 8236,
+  "total_learnings_persisted": 8236,
+  "total_rules_promoted": 7980,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:09:34.204Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:16:27.190Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T20:16:32.187Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:22:55.731Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-08T09:35:13.164Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:54:18.834Z",
+      "repository": "untitleduico/react",
+      "learningId": "learn-github-untitleduico-react",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:55:00.479Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T09:56:45.073Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

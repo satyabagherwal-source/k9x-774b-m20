@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T09:35:13.064Z",
-  "total_verified_learnings": 1236,
+  "last_updated": "2026-11-08T09:56:44.958Z",
+  "total_verified_learnings": 1237,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -41080,8 +41080,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "906848d5",
-      "content_hash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
+      "source_version": "89ca3dbb",
+      "content_hash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -41094,6 +41094,21 @@
           "number": null,
           "title": "consolidate stopped-upgrade cleanup and stabilize CI (#32307)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Vectorized Bitmask Offset Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Stage Lowering Intermediate Carrier Preservation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Distinct Semantic Identity Coercion Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2559,
@@ -41156,7 +41171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:56:55.184Z",
+      "verified_at": "2026-11-08T09:56:44.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154152,10 +154167,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
       "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
+      "content_hash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mixed-Precision MoE Routing Isolation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Block-Wise 2D FP8 Scaling with Residual Norm Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual Termination Multi-Token Stream Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5161,
           "title": "FP8 Quantization Sensitivity Isolation Rule",
@@ -154192,7 +154222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T21:35:53.334Z",
+      "verified_at": "2026-11-08T09:55:00.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -186949,6 +186979,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-08T02:40:31.018Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-untitleduico-react": {
+      "learning_id": "learn-github-untitleduico-react",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "untitleduico/react",
+      "repository": "untitleduico/react",
+      "slug": "untitleduico-react",
+      "platform": "github",
+      "source_url": "https://github.com/untitleduico/react",
+      "source_version": "1d410cb8",
+      "content_hash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
+      "dossier_path": "07_PROJECT_LEARNING/untitleduico-react-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/untitleduico-react-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dual-Signature Overload Pattern for Dual-Role Elements (Button vs Link)",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "External Store Media Query Subscription for Zero-Mismatch Hydration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-08T09:54:18.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

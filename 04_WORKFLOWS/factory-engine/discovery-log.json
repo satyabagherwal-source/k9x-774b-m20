@@ -20653,5 +20653,20 @@
     "qualityScore": 1806,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-08T02:36:47.614Z"
+  },
+  {
+    "name": "react",
+    "fullName": "untitleduico/react",
+    "url": "https://github.com/untitleduico/react",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Untitled UI React is the world’s largest collection of open-source React components built with Tailwind CSS and React Aria. Just copy, paste, and build.",
+    "stars": 2001,
+    "forks": 189,
+    "openIssues": 18,
+    "language": "TypeScript",
+    "qualityScore": 1243,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-08T09:48:30.935Z"
   }
 ]

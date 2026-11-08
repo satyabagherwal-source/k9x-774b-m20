@@ -8277,3 +8277,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-08T09:31:59.317Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e059f4bc` | Multi-dimensional audit evidence | 2026-11-08T09:32:12.109Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `450984ae` | Multi-dimensional audit evidence | 2026-11-08T09:35:13.159Z |
+| `learn-github-untitleduico-react` | `https://github.com/untitleduico/react` | `1d410cb8` | Multi-dimensional audit evidence | 2026-11-08T09:54:18.829Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-08T09:55:00.473Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `89ca3dbb` | Multi-dimensional audit evidence | 2026-11-08T09:56:45.068Z |

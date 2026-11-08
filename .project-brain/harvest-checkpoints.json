@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T09:35:13.168Z",
+  "last_updated": "2026-11-08T09:56:45.077Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "c2dc0f57131d413cdd01f807db3270cabbd45c3f395bc0933b90a18d3b6f552d",
-      "verified_at": "2026-11-07T04:56:55.314Z",
+      "content_hash": "591754ec2dcf23b61869eafafd68337771a238b795ce6015d65e55e0d32d2b97",
+      "verified_at": "2026-11-08T09:56:45.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:56:55.314Z"
+      "last_updated": "2026-11-08T09:56:45.076Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -17121,14 +17121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "1a901e8e14d4f24d42291474e255b3534f65cde46fe08197a3add23dd2509d48",
-      "verified_at": "2026-11-04T21:35:53.432Z",
+      "content_hash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
+      "verified_at": "2026-11-08T09:55:00.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:35:53.432Z"
+      "last_updated": "2026-11-08T09:55:00.481Z"
     },
     "prithivMLmods/Gender-Classifier-Mini": {
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -18329,6 +18329,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-08T02:40:31.193Z"
+    },
+    "untitleduico/react": {
+      "repository": "untitleduico/react",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-untitleduico-react",
+      "content_hash": "f52f22c399f7fa480b59b31a9ba7e30ff5d94feb262258c33ff2f8de466762a0",
+      "verified_at": "2026-11-08T09:54:18.837Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-08T09:54:18.837Z"
     }
   },
   "repos": {

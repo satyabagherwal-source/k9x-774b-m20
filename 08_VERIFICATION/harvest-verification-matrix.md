@@ -8268,3 +8268,6 @@
 | `CYCLE-20261108-VAA9` | `2026-11-08T09:31:59.313Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5098, Rule null, Rule null` | Yes (`5b1e9ebf...`) |
 | `CYCLE-20261108-VK5L` | `2026-11-08T09:32:12.105Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`cbf31917...`) |
 | `CYCLE-20261108-ZFUR` | `2026-11-08T09:35:13.155Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`58d129d4...`) |
+| `CYCLE-20261108-NZUX` | `2026-11-08T09:54:18.825Z` | `untitleduico/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`f52f22c3...`) |
+| `CYCLE-20261108-OVZQ` | `2026-11-08T09:55:00.470Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6672d4fb...`) |
+| `CYCLE-20261108-R4OW` | `2026-11-08T09:56:45.056Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`591754ec...`) |
