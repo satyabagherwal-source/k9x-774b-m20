@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T21:33:35.898Z",
+  "last_updated": "2026-11-08T21:47:04.768Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
-      "verified_at": "2026-11-08T00:49:13.449Z",
+      "content_hash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
+      "verified_at": "2026-11-08T21:47:04.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:49:13.449Z"
+      "last_updated": "2026-11-08T21:47:04.767Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
-      "verified_at": "2026-11-07T20:56:00.146Z",
+      "content_hash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
+      "verified_at": "2026-11-08T21:46:52.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:56:00.146Z"
+      "last_updated": "2026-11-08T21:46:52.305Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -17541,14 +17541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "content_hash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
-      "verified_at": "2026-11-05T04:43:32.237Z",
+      "content_hash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
+      "verified_at": "2026-11-08T21:46:50.765Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:43:32.237Z"
+      "last_updated": "2026-11-08T21:46:50.765Z"
     },
     "Edge0/Audio8-TTS-Realistic-0.6b": {
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",

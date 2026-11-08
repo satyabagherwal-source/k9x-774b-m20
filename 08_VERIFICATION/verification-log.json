@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-D406",
-    "timestamp": "2026-11-06T19:02:22.854Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "26a2a33327e7698d06196f893879a0ba2e53d7c0b7574bea5532444f5913f3cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-MJS5",
-    "timestamp": "2026-11-06T19:09:43.205Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "26d4f35a6996d890d29165d00f5cf6177339e570c4f161b5bee4aa60f33ec60b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-MPTR",
-    "timestamp": "2026-11-06T19:09:51.039Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-VNT0",
     "timestamp": "2026-11-06T19:16:48.324Z",
     "repository": "callstack/react-native-paper",
@@ -7490,6 +7445,51 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-4BGE",
+    "timestamp": "2026-11-08T21:46:50.750Z",
+    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+    "contentHash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-4CMY",
+    "timestamp": "2026-11-08T21:46:52.282Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-4M9E",
+    "timestamp": "2026-11-08T21:47:04.754Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

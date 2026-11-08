@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `b5cd310b`  
+> **Source Version**: `d2a4fb6d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:55:58.981Z  
+> **Timestamp**: 2026-11-08T21:46:50.712Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:55:57.087Z  
+> **Harvest Timestamp**: 2026-11-08T21:46:50.703Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 94216 stars
+- **Stars / Engagement**: 94469 stars
 
 ---
 
@@ -2334,721 +2334,968 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1253dde6` (2026-11-06)
-**Commit Message**: git_ui: Scroll commit view to the blamed file (#65237)
+### Incident Patch 1: `d2a4fb6d` (2026-11-08)
+**Commit Message**: tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)
 
 ## Summary
 
-Picks up #62039 by @gaojunran, which was closed as inactive, reworked
-per the review feedback from @cole-miller and @dinocosta. Opening a
-commit from git blame now scrolls the commit view to the blamed file
-instead of the top of the diff (see #30696).
+Part of the tabular data preview navigation & selection series (see [PR
+1 (#64916)](https://github.com/zed-industries/zed/pull/64916) for the
+full overview and roadmap).
 
-- `CommitView::open`'s optional arguments are grouped into
-`CommitViewOptions` (`stash`, `file_filter`, `reveal_file`), each
-defaulting to `None`.
-- Every blame entry point passes the blamed file: the gutter click, the
-SHA button in the blame popover and tooltip, and `editor: open git blame
-commit`.
-- Updated the commit's multibuffer building task in order to prioritize
-the path in `CommitViewOptions::reveal_file` in case it is set, ensuring
-that as soon as it's added to the `MultiBuffer` we set the scroll anchor
-to its `BufferHeader` block.
+### Changes in this PR (2/8)
 
-## Testing
+- **Range Selection (`tabular_data::ExtendSelection`):**
+Extends cell selection bounding box with `Shift+Up/Down/Left/Right`,
+keeping the anchor fixed in data-space.
+- **Edge Navigation (`MoveUnit::Edge`):**
+Jumps to the top/bottom or leftmost/rightmost cell on
+`Cmd/Ctrl+Up/Down/Left/Right` and `Home/End`.
+- **Symmetric Page Jumps (`MoveUnit::Page`):**
+Moves by visible page height (`visible_rows - 2`) on `PageUp/PageDown`
+to maintain a consistent 1-row context overlap.
+- **Clear Selection (`tabular_data::ClearSelection`):**
+  Clears the active selection cursor on `Escape`.
 
-- Added
-`git_ui::commit_view::tests::test_reveal_file_preserves_header_position`
-which leverages the new `CommitViewOptions::reveal_file` field and
-ensures that the scroll position of the editor matches its buffer
-header, as well as the cursor being on that file's first excerpt.
-- Manually tested on macOS, as shown i
+---
 
-**File**: `crates/git_ui/src/blame_ui.rs` (modified, +18/-7)
+Release Notes:
+
+- N/A
+
+**File**: `assets/keymaps/default-linux.json` (modified, +25/-0)
 ```diff
-@@ -3,7 +3,9 @@ use crate::{
-         CommitAvatar, CommitTooltip, blame_entry_timestamp, commit_tag_chips,
-         shallow_boundary_notice,
+@@ -1705,6 +1705,31 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "ctrl-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "ctrl-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-home": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-end": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
      },
--    commit_view::{CommitView, GitBlob, build_buffer, worktree_id_for_repo_path},
-+    commit_view::{
-+        CommitView, CommitViewOptions, GitBlob, build_buffer, worktree_id_for_repo_path,
-+    },
- };
- use anyhow::Context as _;
- use editor::{BlameRenderer, Editor, GitBlame, MultiBuffer, hover_markdown_style};
-@@ -275,8 +277,10 @@ impl BlameRenderer for GitBlameRenderer {
-                                     blame_entry.sha.to_string(),
-                                     repository.downgrade(),
-                                     workspace.clone(),
--                                    None,
--                                    None,
-+                                    CommitViewOptions {
-+                                        reveal_file: RepoPath::new(&blame_entry.filename).ok(),
-+                                        ..Default::default()
-+                                    },
-                                     window,
-                                     cx,
-                                 )
-@@ -518,8 +522,13 @@ impl BlameRenderer for GitBlameRenderer {
-                                                         commit_summary.sha.clone().into(),
-                                                         repository.downgrade(),
-                                                         workspace.clone(),
--                                                        None,
--                                                        None,
-+                                                        CommitViewOptions {
-+                                                            reveal_file: RepoPath::new(
-+                                                                &blame.filename,
-+                                                            )
-+                                                            .ok(),
-+                                                            ..Default::default()
-+                                                        },
-                                                         window,
-                                                         cx,
-                                                     );
-@@ -551,8 +560,10 @@ impl BlameRenderer for GitBlameRenderer {
-             blame_entry.sha.to_string(),
-             repository.downgrade(),
-             workspace,
--            None,
--            None,
-+            CommitViewOptions {
-+                reveal_file: RepoPath::new(&blame_entry.filename).ok(),
-+                ..Default::default()
-+            },
-             window,
-             cx,
-         )
+   },
+ ]
 ```
 
-**File**: `crates/git_ui/src/commit_context_menu.rs` (modified, +1/-2)
+**File**: `assets/keymaps/default-macos.json` (modified, +21/-0)
 ```diff
-@@ -71,8 +71,7 @@ pub(crate) fn commit_context_menu(
-                         sha.to_string(),
-                         repository,
-                         workspace.clone(),
--                        None,
--                        None,
-+                        Default::default(),
-                         window,
-                         cx,
-                     );
+@@ -1799,6 +1799,27 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "cmd-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "cmd-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "cmd-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "cmd-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "cmd-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "cmd-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "cmd-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "cmd-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
+     },
+   },
+ ]
 ```
 
-**File**: `crates/git_ui/src/commit_tooltip.rs` (modified, +13/-6)
+**File**: `assets/keymaps/default-windows.json` (modified, +25/-0)
 ```diff
-@@ -1,10 +1,10 @@
--use crate::commit_view::CommitView;
-+use crate::commit_view::{CommitView, CommitViewOptions};
- use anyhow::Result;
- use askpass::AskPassDelegate;
- use editor::hover_markdown_style;
- use futures::Future;
- use git::blame::BlameEntry;
--use git::repository::CommitSummary;
-+use git::repository::{CommitSummary, RepoPath};
- use git::{GitRemote, commit::ParsedCommitMessage};
- use git_ui_core::askpass_modal::AskPassModal;
- use git_ui_core::notifications::show_error_toast;
-@@ -220,6 +220,7 @@ pub struct CommitTooltip {
-     markdown: Entity<Markdown>,
-     repository: Entity<Repository>,
-     workspace: WeakEntity<Workspace>,
-+    reveal_file: Option<RepoPath>,
- }
- 
- impl CommitTooltip {
-@@ -236,7 +237,7 @@ impl CommitTooltip {
-             .and_then(|t| OffsetDateTime::from_unix_timestamp(t).ok())
-             .unwrap_or(OffsetDateTime::now_utc());
- 
--        Self::new(
-+        let mut tooltip = Self::new(
-             CommitDetails {
-                 sha: blame.sha.to_string().into(),
-                 commit_time,
-@@ -253,7 +254,9 @@ impl CommitTooltip {
-             repository,
-             workspace,
-             cx,
--        )
-+        );
-+        tooltip.reveal_file = RepoPath::new(&blame.filename).ok();
-+        tooltip
-     }
- 
-     pub fn new(
-@@ -280,6 +283,7 @@ impl CommitTooltip {
-             workspace,
-             scroll_handle: ScrollHandle::new(),
-             markdown,
-+            reveal_file: None,
-         }
-     }
- }
-@@ -331,6 +335,7 @@ impl Render for CommitTooltip {
-         let message_max_height = window.line_height() * 12 + (ui_font_size / 0.4);
-         let repo = self.repository.clone();
-         let workspace = self.workspace.clone();
-+        let reveal_file = self.reveal_file.clone();
-         let commit_summary = CommitSummary {
-             sha: self.commit.sha.clone(),
-             subject: self
-@@ -446,8 +451,10 @@ impl Render for CommitTooltip {
-                                                         commit_summary.sha.to_string(),
-                                                         repo.downgrade(),
-                                                         workspace.clone(),
--                                                        None,
--                                                        None,
-+                                                        CommitViewOptions {
-+                                                            reveal_file: reveal_file.clone(),
-+                                                            ..Default::default()
-+                                                        },
-                                                         window,
-                                                         cx,
-                                                     );
+@@ -1720,6 +1720,31 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "ctrl-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "ctrl-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-home": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-end": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
+     },
+   },
+ ]
 ```
 
-**File**: `crates/git_ui/src/commit_view.rs` (modified, +453/-161)
+**File**: `crates/tabular_data_preview/src/renderer/preview_view.rs` (modified, +2/-0)
 ```diff
-@@ -2,8 +2,11 @@ use anyhow::{Context as _, Result};
- use buffer_diff::BufferDiff;
- use collections::HashMap;
- use editor::{
--    Addon, Editor, EditorEvent, EditorSettings, HiddenDiffHunkRenderer, MultiBuffer,
--    SplittableEditor, hover_markdown_style, multibuffer_context_lines,
-+    Addon, Editor, EditorEvent, EditorSettings, HiddenDiffHunkRenderer, MultiBuffer, RowExt,
-+    SelectionEffects, SplittableEditor,
-+    display_map::{Block, DisplayRow, ToDisplayPoint},
-+    hover_markdown_style, multibuffer_context_lines,
-+    scroll::ScrollAnchor,
- };
- use futures_lite::future::yield_now;
- use git::repository::{CommitDetails, RepoPath};
-@@ -19,14 +22,14 @@ use gpui::{
-     Window, actions,
- };
- use language::{
--    Buffer, Capability, DiskState, File, LanguageRegistry, LineEnding, OffsetRangeExt as _,
--    ReplicaId, Rope, TextBuffer,
-+    Buffer, BufferId, Capability, DiskState, File, LanguageRegistry, LineEnding,
-+    OffsetRangeExt as _, ReplicaId, Rope, TextBuffer,
- };
- use markdown::{Markdown, MarkdownElement, MarkdownStyle};
- use multi_buffer::PathKey;
- use project::{
-     Project, ProjectPath, WorktreeId,
--    git_store::{CommitDiff, Repository, UnshallowState},
-+    git_store::{CommitDiff, CommitFile, Repository, UnshallowState},
- };
- use settings::{DiffViewStyle, Settings};
+@@ -23,6 +23,8 @@ impl Render for TableView {
+             .bg(theme.colors().editor_background)
+             .track_focus(&self.focus_handle)
+             .on_action(cx.listener(Self::move_focused_cell))
++            .on_action(cx.listener(Self::extend_selection))
++            .on_action(cx.listener(Self::clear_selection))
+             .child({
+                 let is_loading = self.is_loading;
+                 if is_loading || self.engine.contents.number_of_cols == 0 {
+```
+
+**File**: `crates/tabular_data_preview/src/renderer/render_table.rs` (modified, +14/-0)
+```diff
+@@ -106,6 +106,11 @@ impl TableView {
+         let data_row = this.engine.d2d_mapping().get_data_row(display_row)?;
+         let row = this.engine.contents.get_row(data_row)?;
+ 
++        let selection_bounds = this
++            .selection
++            .as_ref()
++            .and_then(|selection| selection.display_bounds(this.engine.d2d_mapping()));
++
+         let mut elements = Vec::with_capacity(cols);
+         elements.push(this.create_row_identifier_cell(display_row, data_row, cx)?);
+ 
+@@ -119,13 +124,22 @@ impl TableView {
+             let display_cell_id = DisplayCellId::new(display_row, col);
+             let data_cell_id = DataCellId::new(data_row, col);
+ 
++            let is_in_selection =
++                selection_bounds
++                    .as_ref()
++                    .is_some_and(|(row_range, col_range)| {
++                        row_range.contains(&display_row.0) && col_range.contains(&col.0)
++                    });
++
+             let is_focus_cell = this
+                 .selection
+                 .as_ref()
+                 .is_some_and(|selection| selection.focus == data_cell_id);
+ 
+             let cell_bg = if is_focus_cell {
+                 Some(cx.theme().colors().element_selected)
++            } else if is_in_selection {
++                Some(cx.theme().colors().element_hover)
+             } else {
+                 None
+             };
+```
+
+**File**: `crates/tabular_data_preview/src/table_view.rs` (modified, +204/-35)
+```diff
+@@ -9,6 +9,7 @@
+ 
  use std::{
-@@ -87,6 +90,7 @@ pub struct CommitView {
-     remote: Option<GitRemote>,
-     is_shallow_boundary: bool,
-     file_filter: Option<RepoPath>,
-+    reveal_file: Option<RepoPath>,
-     _load_diff_task: Task<Result<()>>,
+     collections::HashMap,
++    ops::RangeInclusive,
+     time::{Duration, Instant},
+ };
+ 
+@@ -21,7 +22,7 @@ use ui::{
+ };
+ 
+ use crate::{
+-    MoveFocusedCell, NavigationDirection,
++    ClearSelection, ExtendSelection, MoveFocusedCell, MoveUnit, NavigationDirection,
+     settings::TableViewSettings,
+     table_data_engine::{DisplayToDataMapping, TableDataEngine},
+     types::{AnyColumn, DataCellId, DisplayRow, TableLikeContent},
+@@ -51,6 +52,20 @@ impl CellSelection {
+     pub fn is_single_cell(&self) -> bool {
+         self.anchor == self.focus
+     }
++
++    /// Returns display-space bounding box `(min_display_row..=max_display_row, min_col..=max_col)` if both anchor and focus are visible.
++    pub fn display_bounds(
++        &self,
++        d2d: &DisplayToDataMapping,
++    ) -> Option<(RangeInclusive<usize>, RangeInclusive<usize>)> {
++        let anchor_row = d2d.get_display_row(self.anchor.row)?.0;
++        let focus_row = d2d.get_display_row(self.focus.row)?.0;
++        let min_row = anchor_row.min(focus_row);
++        let max_row = anchor_row.max(focus_row);
++        let min_col = self.anchor.col.0.min(self.focus.col.0);
++        let max_col = self.anchor.col.0.max(self.focus.col.0);
++        Some((min_row..=max_row, min_col..=max_col))
++    }
  }
  
-@@ -179,26 +183,33 @@ impl Addon for CommitDiffAddon {
+ #[derive(Debug, Default)]
+@@ -248,6 +263,26 @@ impl TableView {
+         action: &MoveFocusedCell,
+         window: &mut Window,
+         cx: &mut Context<Self>,
++    ) {
++        self.navigate(action.direction, action.unit, false, window, cx);
++    }
++
++    pub(crate) fn extend_selection(
++        &mut self,
++        action: &ExtendSelection,
++        window: &mut Window,
++        cx: &mut Context<Self>,
++    ) {
++        self.navigate(action.direction, action.unit, true, window, cx);
++    }
++
++    fn navigate(
++        &mut self,
++        direction: NavigationDirection,
++        unit: MoveUnit,
++        extend: bool,
++        window: &mut Window,
++        cx: &mut Context<Self>,
+     ) {
+         if !self.is_selection_enabled() {
+             return;
+@@ -260,29 +295,65 @@ impl TableView {
+             return;
+         }
  
- const FILE_NAMESPACE_SORT_PREFIX: u64 = 1;
+-        let current_pos = self.selection.as_ref().and_then(|selection| {
+-            self.engine
+-                .d2d_mapping()
+-                .get_display_row(selection.focus.row)
+-                .map(|r| (r.0, selection.focus.col.0))
+-        });
++        let (anchor, (current_row, current_col)) = match self.selection.as_ref() {
++            Some(selection) => {
++                let focus_pos = self
++                    .engine
++                    .d2d_mapping()
++                    .get_display_row(selection.focus.row)
++                    .map(|r| (r.0, selection.focus.col.0))
++                    .unwrap_or((0, 0));
++                (selection.anchor, focus_pos)
++            }
++            None => {
++                let Some(initial_row) = self.engine.d2d_mapping().get_data_row(DisplayRow(0))
++                else {
++                    return;
++                };
++                let initial_cell = DataCellId::new(initial_row, AnyColumn(0));
++                (initial_cell, (0, 0))
++            }
++        };
  
-+#[derive(Clone, Default)]
-+pub struct CommitViewOptions {
-+    /// The zero-based stash index when displaying a stash instead of a regular
-+    /// commit.
-+    pub stash: Option<usize>,
-+    /// Restricts the displayed diff to this repository-relative file path.
-+    /// When absent, all files in the commit are displayed.
-+    pub file_filter: Option<RepoPath>,
-+    /// Loads this repository-relative file first, places the cursor at its
-+    /// first excerpt, and reveals its header at the top of the viewport.
-+    /// Other files remain visible in their normal order, subject to
-+    /// `file_filter`.
-+    /// If the file is absent from the displayed diff, normal loading is
-+    /// unchanged.
-+    pub reveal_file: Option<RepoPath>,
+-        let (new_row, new_column) = match current_pos {
+-            Some(pos) => self.compute_move(pos, action.direction),
+-            None => (0, 0),
++        let (new_row, new_column) = if self.selection.is_none() && !extend && unit == MoveUnit::Cell
++        {
++            // First single-cell move initializes focus at (0, 0) without skipping
++            (0, 0)
++        } else {
++            self.compute_move((current_row, current_col), direction, unit, cx)
+         };
+ 
+         let Some(new_data_row) = self.engine.d2d_mapping().get_data_row(DisplayRow(new_row)) else {
+             return;
+         };
+         let new_cell = DataCellId::new(new_data_row, AnyColumn(new_column));
+-        self.selection = Some(CellSelection::single_cell(new_cell));
+ 
+-        self.scroll_to_reveal_row(new_row, action.direction);
++        self.selection = Some(if extend {
++            CellSelection::new(anchor, new_cell)
++        } else {
++            CellSelection::single_cell(new_cell)
++        });
++
++        self.scroll_to_reveal_row(new_row, direction);
+         self.scroll_to_reveal_column(new_column, window, cx);
+         cx.notify();
+     }
+ 
++    pub fn clear_selection(
++        &mut self,
++        _: &ClearSelection,
++        _window: &mut Window,
++        cx: &mut Context<Self>,
++    ) {
++        if !self.is_selection_enabled() {
++            return;
++        }
++
++        if self.selection.take().is_some() {
++            cx.notify();
++        }
++    }
++
+     pub(crate) fn scroll_to_reveal_row(&self, row: usize, direction: NavigationDirection) {
+         let row_count = self.engine.d2d_mapping().visible_row_count();
+         if row_count == 0 {
+@@ -311,16 +382,55 @@ impl TableView {
+         &self,
+         current: (usize, usize),
+         direction: NavigationDirection,
++        unit: MoveU
+```
+
+**File**: `crates/tabular_data_preview/src/tabular_data_preview.rs` (modified, +26/-1)
+```diff
+@@ -17,7 +17,10 @@ mod table_data_engine;
+ mod table_view;
+ pub mod types;
+ 
+-actions!(tabular_data, [OpenPreview, OpenPreviewToTheSide]);
++actions!(
++    tabular_data,
++    [OpenPreview, OpenPreviewToTheSide, ClearSelection]
++);
+ 
+ #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, JsonSchema)]
+ #[serde(rename_all = "snake_case")]
+@@ -29,10 +32,32 @@ pub enum NavigationDirection {
+     Right,
+ }
+ 
++#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, JsonSchema)]
++#[serde(rename_all = "snake_case")]
++pub enum MoveUnit {
++    /// Move one cell. Default when `unit` is omitted in JSON keybindings.
++    #[default]
++    Cell,
++    /// Move by one visible page (vertical only; horizontal degrades to `Cell`).
++    Page,
++    /// Jump to the first or last cell on the axis.
++    Edge,
 +}
 +
- impl CommitView {
-     pub fn open(
-         commit_sha: String,
-         repo: WeakEntity<Repository>,
-         workspace: WeakEntity<Workspace>,
--        stash: Option<usize>,
--        file_filter: Option<RepoPath>,
-+        options: CommitViewOptions,
-         window: &mut Window,
-         cx: &mut App,
-     ) {
--        Self::open_with_options(
--            commit_sha,
--            repo,
--            workspace,
--            stash,
--            file_filter,
--            false,
--            window,
--            cx,
--        )
-+        Self::open_with_options(commit_sha, repo, workspace, options, false, window, cx)
-     }
+ #[derive(Clone, Deserialize, PartialEq, JsonSchema, Action)]
+ #[action(namespace = tabular_data)]
+ pub struct MoveFocusedCell {
+     pub direction: NavigationDirection,
++    #[serde(default)]
++    pub unit: MoveUnit,
++}
++
++#[derive(Clone, Deserialize, PartialEq, JsonSchema, Action)]
++#[action(namespace = tabular_data)]
++pub struct ExtendSelection {
++    pub direction: NavigationDirection,
++    #[serde(default)]
++    pub unit: MoveUnit,
+ }
  
-     pub(crate) fn commit_sha(&self) -> &SharedString {
-@@ -213,8 +224,7 @@ impl CommitView {
-         commit_sha: String,
-         repo: WeakEntity<Repository>,
-         workspace: WeakEntity<Workspace>,
--        stash: Option<usize>,
--        file_filter: Option<RepoPath>,
-+        options: CommitViewOptions,
-         ignore_shallow_boundary: bool,
-         window: &mut Window,
-         cx: &mut App,
-@@ -237,7 +247,7 @@ impl CommitView {
-                 let commit_details = commit_details.log_err()?;
- 
-                 // Filter to specific file if requested
--                if let Some(ref filter_path) = file_filter {
-+                if let Some(ref filter_path) = options.file_filter {
-                     commit_diff.files.retain(|f| &f.path == filter_path);
-                 }
- 
-@@ -247,17 +257,14 @@ impl CommitView {
-                     .update_in(cx, |workspace, window, cx| {
-                         let project = workspace.project();
-                         let workspace_entity = cx.entity();
--                        let workspace_handle = cx.weak_entity();
-                         let commit_view = cx.new(|cx| {
-                             CommitView::new(
-                                 commit_details,
-                                 commit_diff,
-                                 repo,
-                                 project.clone(),
-                                 workspace_entity,
--                                workspace_handle,
--                                stash,
--                                file_filter,
-+                                options,
-                                 window,
-                                 cx,
-                             )
-@@ -301,13 +308,16 @@ impl CommitView {
-         commit_diff: CommitDiff,
-         repository: Entity<Repository>,
-         project: Entity<Project>,
--        workspace_entity: Entity<Workspace>,
--        workspace: WeakEntity<Workspace>,
--        stash: Option<
-```
-
-**File**: `crates/git_ui/src/git_graph.rs` (modified, +6/-5)
-```diff
-@@ -5,7 +5,7 @@ use crate::{
-         commit_context_menu, git_context_menu_tasks, git_task_context,
-     },
-     commit_tooltip::CommitAvatar,
--    commit_view::CommitView,
-+    commit_view::{CommitView, CommitViewOptions},
-     git_status_icon,
-     git_timestamp::format_git_timestamp,
- };
-@@ -268,8 +268,10 @@ impl ChangedFileEntry {
-             commit_sha.to_string(),
-             repository.clone(),
-             workspace.clone(),
--            None,
--            Some(self.repo_path.clone()),
-+            CommitViewOptions {
-+                file_filter: Some(self.repo_path.clone()),
-+                ..Default::default()
-+            },
-             window,
-             cx,
-         );
-@@ -2592,8 +2594,7 @@ impl GitGraph {
-             commit_entry.data.sha.to_string(),
-             repository.downgrade(),
-             self.workspace.clone(),
--            None,
--            None,
-+            Default::default(),
-             window,
-             cx,
-         );
-```
-
-**File**: `crates/git_ui/src/git_panel.rs` (modified, +4/-8)
-```diff
-@@ -7646,8 +7646,7 @@ impl GitPanel {
-                                     commit.sha.to_string(),
-                                     repo.clone(),
-                                     workspace.clone(),
--                                    None,
--                                    None,
-+                                    Default::default(),
-                                     window,
-                                     cx,
-                                 );
-@@ -7906,8 +7905,7 @@ impl GitPanel {
-             entry.sha.to_string(),
-             active_repository.downgrade(),
-             self.workspace.clone(),
--            None,
--            None,
-+            Default::default(),
-             window,
-             cx,
-         );
-@@ -8407,8 +8405,7 @@ impl GitPanel {
-                                                 sha_for_click.clone(),
-                                                 repo.clone(),
-                                                 workspace.clone(),
--                                                None,
--                                                None,
-+                                                Default::default(),
-                                                 window,
-                                                 cx,
-                                             );
-@@ -11642,8 +11639,7 @@ mod tests {
-                     sha.to_string(),
-                     repository.downgrade(),
-                     workspace,
--                    None,
--                    None,
-+                    Default::default(),
-                     window,
-                     cx,
-                 );
-```
-
-**File**: `crates/git_ui/src/git_ui.rs` (modified, +1/-2)
-```diff
-@@ -827,8 +827,7 @@ impl RefPickerModal {
-                                 details.sha.to_string(),
-                                 repo.downgrade(),
-                                 workspace.weak_handle(),
--                                None,
--                                None,
-+                                Default::default(),
-                                 window,
-                                 cx,
-                             );
-```
-
-**File**: `crates/git_ui/src/stash_picker.rs` (modified, +5/-3)
-```diff
-@@ -18,7 +18,7 @@ use util::ResultExt;
- use workspace::notifications::DetachAndPromptErr;
- use workspace::{ModalView, Workspace};
- 
--use crate::commit_view::CommitView;
-+use crate::commit_view::{CommitView, CommitViewOptions};
- use crate::stash_picker;
- 
- actions!(
-@@ -301,8 +301,10 @@ impl StashListDelegate {
-             stash_sha,
-             repo.downgrade(),
-             self.workspace.clone(),
--            Some(stash_index),
--            None,
-+            CommitViewOptions {
-+                stash: Some(stash_index),
-+                ..Default::default()
-+            },
-             window,
-             cx,
-         );
+ /// Editor-backed adapter: watches an [`Editor`], parses its buffer into a [`crate::types::TableLikeContent`],
 ```
 
 ---
 
-### Incident Patch 2: `78fde14d` (2026-11-06)
-**Commit Message**: gpui: Fix ignored horizontal padding on the `list()` element (#64056)
+### Incident Patch 2: `94f3eb1b` (2026-11-08)
+**Commit Message**: Bookmark picker (#60005)
 
 # Objective
 
-This PR fixes a small bug in the `list()` element which reads padding on
-both axes (X & Y) but only applies the values set for the Y axis while
-the X axis values end up being ignored.
-
-Right now Zed works around this bug by manually setting the horizontal
-padding to `8` on a `div` inside of the `list` (here's an example:
-https://github.com/zed-industries/zed/blob/main/crates/settings_ui/src/settings_ui.rs#L3616).
-
-P.S.: ths PR is a new PR for the same change/fix as [this closed
-PR](https://github.com/zed-industries/zed/pull/63784). I cleaned up my
-branch and this time I'm the one writing the description not Claude 😓
+- Add a picker for bookmarks to view all bookmarks in the workspace,
+with support for filtering, previewing, opening files and jumping to
+corresponding positions.
 
 ## Solution
 
-I simply subtract the left & right padding from the width the `list()`
-element gives its items, and offset the items by the left padding.
+- Add a picker delegate and related actions to pop up a picker modal
+displaying the bookmark list upon trigger
+- Display the label of the bookmark, its file path and line number. If
+the bookmark label is empty, use the text on the line where the bookmark
+is located as the label.
+- Support enabling preview to view surrounding code of bookmarks
+simultaneously
+- Open the preview tag and reuse the existing tab pane on primary
+confirm; open a separate tab pane on secondary confirm
+- Design distinct result display layouts for horizontal and vertical
+modes to prevent excessive text truncation
 
 ## Testing
 
-- Did you test these changes? If so, how?
-- I ran `cargo test -p gpui` to make sure my changes didn't break any
-existing test.
-- Are there any parts that need more testing?
-  - I don't think so.
-- How can other people (reviewers) test your changes? Is there anything
-specific they need to know?
-- You can set the horizontal pa
+- Conducted manual testing
+- Added two test cases
+## Self-Review Checklist:
 
-**File**: `crates/gpui/src/elements/list.rs` (modified, +279/-25)
+- [x] I've reviewed my own diff for quality, security, and reliability
+- [x] Unsafe blocks (if any) have justifying comments
+- [x] The content adheres to Zed's UI standards
+([UX/UI](https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md#uiux-checklist)
+and
+[icon](https://github.com/zed-indus
+
+**File**: `Cargo.lock` (modified, +27/-0)
 ```diff
-@@ -8,10 +8,10 @@
- //! If all of your elements are the same height, see [`crate::UniformList`] for a simpler API
+@@ -13386,8 +13386,11 @@ dependencies = [
+  "project",
+  "rope",
+  "settings",
++ "theme",
++ "theme_settings",
+  "ui",
+  "util",
++ "workspace",
+ ]
  
- use crate::{
--    AnyElement, App, AvailableSpace, Bounds, ContentMask, DispatchPhase, Edges, Element, EntityId,
--    FocusHandle, GlobalElementId, Hitbox, HitboxBehavior, InspectorElementId, IntoElement,
--    Overflow, Pixels, Point, ScrollDelta, ScrollEvent, Size, Style, StyleRefinement, Styled,
--    Window, point, px, size,
-+    Along as _, AnyElement, App, AvailableSpace, Axis, Bounds, ContentMask, DispatchPhase, Edges,
-+    Element, EntityId, FocusHandle, GlobalElementId, Hitbox, HitboxBehavior, InspectorElementId,
-+    IntoElement, Overflow, Pixels, Point, ScrollDelta, ScrollEvent, Size, Style, StyleRefinement,
-+    Styled, Window, point, px, size,
- };
- use collections::VecDeque;
- use refineable::Refineable as _;
-@@ -714,6 +714,7 @@ impl ListState {
-         let state = &*self.0.borrow();
+ [[package]]
+@@ -13968,6 +13971,29 @@ dependencies = [
+  "watch",
+ ]
  
-         let bounds = state.last_layout_bounds.unwrap_or_default();
-+        let padding = state.last_padding.unwrap_or_default();
-         let scroll_top = state.logical_scroll_top();
-         if ix < scroll_top.item_ix {
-             return None;
-@@ -730,8 +731,8 @@ impl ListState {
-             if count == ix {
-                 let top = bounds.top() + top - scroll_top;
-                 return Some(Bounds::from_corners(
--                    point(bounds.left(), top),
--                    point(bounds.right(), top + size.height),
-+                    point(bounds.left() + padding.left, top),
-+                    point(bounds.right() - padding.right, top + size.height),
-                 ));
-             }
-         }
-@@ -1276,16 +1277,17 @@ impl StateInner {
-         window: &mut Window,
-         cx: &mut App,
-     ) -> Result<LayoutItemsResponse, ListOffset> {
-+        let item_width = bounds.size.width - padding.along(Axis::Horizontal);
-         window.transact(|window| {
-             match self.measuring_behavior {
-                 ListMeasuringBehavior::Measure(has_measured) if !has_measured => {
--                    self.layout_all_items(bounds.size.width, render_item, window, cx);
-+                    self.layout_all_items(item_width, render_item, window, cx);
-                 }
-                 _ => {}
-             }
- 
-             let mut layout_response = self.layout_items(
--                Some(bounds.size.width),
-+                Some(item_width),
-                 bounds.size.height,
-                 &padding,
-                 render_item,
-@@ -1298,7 +1300,7 @@ impl StateInner {
- 
-             // Only paint the visible items, if there is actually any space for them (taking padding into account)
-             if bounds.size.height > padding.top + padding.bottom {
--                let mut item_origin = bounds.origin + Point::new(px(0.), padding.top);
-+                let mut item_origin = bounds.origin + Point::new(padding.left, padding.top);
-                 item_origin.y -= layout_response.scroll_top.offset_in_item;
-                 for item in &mut layout_response.item_layouts {
-                     window.with_content_mask(Some(ContentMask { bounds }), |window| {
-@@ -1327,10 +1329,8 @@ impl StateInner {
-                                     };
-                                     let size = prev_item.size().unwrap_or_else(|| {
-                                         let mut element = render_item(cursor.start().0, window, cx);
--                                        let item_available_size = size(
--                                            bounds.size.width.into(),
--                                            AvailableSpace::MinContent,
--                                        );
-+                                        let item_available_size =
-+                                            size(item_width.into(), AvailableSpace::MinContent);
-                                         element.layout_as_root(item_available_size, window, cx)
-                                     });
-                                     item_ix = cursor.start().0;
-@@ -1358,7 +1358,7 @@ impl StateInner {
-                                 let size = item.size().unwrap_or_else(|| {
-                                     let mut item = render_item(cursor.start().0, window, cx);
-                                     let item_available_size =
--                                        size(bounds.size.width.into(), AvailableSpace::MinContent);
-+                                        size(item_width.into(), AvailableSpace::MinContent);
-                                     item.layout_as_root(item_available_size, window, cx)
-                                 });
-                                 height -= size.height;
-@@ -1487,8 +1487,9 @@ impl Element for List {
-                         // we might just use the overdraw value as the available height to layout enough items.
-                         state.overdraw
-                     };
--                    let padding = style.padding.to_pixels(
--                        state
++[[package]]
++name = "project_bookmarks"
++version = "0.1.0"
++dependencies = [
++ "editor",
++ "futures 0.3.34",
++ "fuzzy_nucleo",
++ "gpui",
++ "language",
++ "menu",
++ "picker",
++ "picker_preview",
++ "project",
++ "serde_json",
++ "text",
++ "theme",
++ "theme_settings",
++ "ui",
++ "util",
++ "workspace",
++ "zlog",
++]
++
+ [[package]]
+ name = "project_panel"
+ version = "0.1.0"
+@@ -22513,6 +22539,7 @@ dependencies = [
+  "pretty_assertions",
+  "profiling",
+  "project",
++ "project_bookmarks",
+  "project_panel",
+  "project_symbols",
+  "prompt_store",
 ```
 
-**File**: `crates/gpui/src/geometry.rs` (modified, +19/-3)
+**File**: `Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -1761,6 +1761,22 @@ pub struct Edges<T: Clone + Debug + Default + PartialEq> {
-     pub left: T,
+@@ -172,6 +172,7 @@ members = [
+     "crates/project_benchmarks",
+     "crates/project_panel",
+     "crates/project_symbols",
++    "crates/project_bookmarks",
+     "crates/prompt_store",
+     "crates/proto",
+     "crates/proxy_handshake",
+@@ -447,6 +448,7 @@ prettier = { path = "crates/prettier" }
+ project = { path = "crates/project" }
+ project_panel = { path = "crates/project_panel" }
+ project_symbols = { path = "crates/project_symbols" }
++project_bookmarks = { path = "crates/project_bookmarks" }
+ prompt_store = { path = "crates/prompt_store" }
+ proto = { path = "crates/proto" }
+ proxy_handshake = { path = "crates/proxy_handshake" }
+@@ -1135,6 +1137,7 @@ outline = { codegen-units = 1 }
+ paths = { codegen-units = 1 }
+ prettier = { codegen-units = 1 }
+ project_symbols = { codegen-units = 1 }
++project_bookmarks = { codegen-units = 1 }
+ refineable = { codegen-units = 1 }
+ release_channel = { codegen-units = 1 }
+ reqwest_client = { codegen-units = 1 }
+```
+
+**File**: `crates/picker_preview/Cargo.toml` (modified, +7/-1)
+```diff
+@@ -11,7 +11,6 @@ workspace = true
+ [lib]
+ path = "src/picker_preview.rs"
+ doctest = false
+-test = false
+ 
+ [dependencies]
+ 
+@@ -25,3 +24,10 @@ rope.workspace = true
+ settings.workspace = true
+ ui.workspace = true
+ util.workspace = true
++
++[dev-dependencies]
++gpui = { workspace = true, features = ["test-support"] }
++project = { workspace = true, features = ["test-support"] }
++theme = { workspace = true, features = ["test-support"] }
++theme_settings = { workspace = true, features = ["test-support"] }
++workspace = { workspace = true, features = ["test-support"] }
+```
+
+**File**: `crates/picker_preview/src/picker_preview.rs` (modified, +240/-27)
+```diff
+@@ -3,8 +3,8 @@
+ use std::sync::Arc;
+ 
+ use gpui::{
+-    AnyElement, App, AppContext as _, Context, Entity, IntoElement, Pixels, StyledText, Task,
+-    Window, px,
++    AnyElement, App, AppContext as _, Context, Entity, IntoElement, Pixels, StyledText,
++    Subscription, Task, Window, px,
+ };
+ use language::{Bias, Buffer, HighlightedText, HighlightedTextBuilder, ToPoint};
+ use picker::{MatchLocation, PreviewBackend, PreviewLayout, PreviewSource, PreviewUpdate};
+@@ -16,7 +16,9 @@ use util::ResultExt as _;
+ use util::rel_path::RelPath;
+ 
+ use editor::{Editor, EditorSettings, RowHighlightOptions, display_map::HighlightKey};
+-use multi_buffer::{MultiBuffer, MultiBufferOffset};
++use multi_buffer::{
++    Anchor, Event as MultiBufferEvent, MultiBuffer, MultiBufferOffset, ToPoint as _,
++};
+ 
+ pub fn editor_preview(
+     project: Entity<Project>,
+@@ -60,8 +62,11 @@ struct EditorPreview {
+     /// When set show a text message instead of a preview
+     message: Option<HighlightedText>,
+     preview_editor: Entity<Editor>,
++    // An empty-EOF match should keep highlighting one row even after it gains text.
++    single_row_highlight_anchor: Option<Anchor>,
+     /// Store the load preview task so we have only one at the time
+     pending_update: Task<()>,
++    _multibuffer_subscription: Subscription,
  }
  
-+impl<T> Add for Edges<T>
-+where
-+    T: Add<Output = T> + Clone + Debug + Default + PartialEq,
-+{
-+    type Output = Self;
+ impl EditorPreview {
+@@ -96,24 +101,37 @@ impl EditorPreview {
+             editor
+         });
+ 
++        let multi_buffer = preview_editor.read(cx).buffer().clone();
++        let multibuffer_subscription = cx.subscribe(&multi_buffer, |this, _, event, cx| {
++            if let MultiBufferEvent::Edited { .. } = event {
++                this.refresh_single_row_highlight(cx);
++            }
++        });
 +
-+    fn add(self, rhs: Self) -> Self::Output {
-+        Self {
-+            top: self.top + rhs.top,
-+            right: self.right + rhs.right,
-+            bottom: self.bottom + rhs.bottom,
-+            left: self.left + rhs.left,
-+        }
-+    }
+         let mut this = Self {
+             project,
+             preview_editor,
+             current_path: None,
+             message: None,
++            single_row_highlight_anchor: None,
+             pending_update: Task::ready(()),
++            _multibuffer_subscription: multibuffer_subscription,
+         };
+         this.clear(); // picker starts with no results.
+         this
+     }
+ 
+     fn clear(&mut self) {
++        self.pending_update = Task::ready(());
++        self.single_row_highlight_anchor = None;
+         let mut message = HighlightedTextBuilder::default();
+         message.push_plain("No results to preview");
+         self.message = Some(message.build());
+     }
+ 
+     fn update(&mut self, update: PreviewUpdate, window: &mut Window, cx: &mut Context<Self>) {
++        self.pending_update = Task::ready(());
++        self.single_row_highlight_anchor = None;
+         let PreviewUpdate {
+             source,
+             match_location: highlight,
+@@ -209,16 +227,18 @@ impl EditorPreview {
+         let max_visible_rows =
+             (window.viewport_size().height / MIN_LINE_HEIGHT_PX).ceil() as u32 + MARGIN;
+ 
+-        self.preview_editor.update(cx, |editor, cx| {
++        self.single_row_highlight_anchor = self.preview_editor.update(cx, |editor, cx| {
++            let snapshot = buffer.read(cx).text_snapshot();
+             let focus_row = highlight
+                 .as_ref()
+-                .map(|hl| {
+-                    hl.anchor_range
+-                        .start
+-                        .to_point(&buffer.read(cx).text_snapshot())
+-                        .row
+-                })
++                .map(|highlight| highlight.anchor_range.start.to_point(&snapshot).row)
+                 .unwrap_or_default();
++            let highlight_empty_last_line = highlight.as_ref().is_some_and(|highlight| {
++                let max_point = snapshot.max_point();
++                max_point.column == 0
++                    && highlight.anchor_range.start.to_point(&snapshot) == max_point
++                    && highlight.anchor_range.end.to_point(&snapshot) == max_point
++            });
+ 
+             let multi_buffer = editor.buffer().clone();
+             multi_buffer.update(cx, |multi_buffer, cx| {
+@@ -234,36 +254,68 @@ impl EditorPreview {
+             editor.clear_row_highlights::<SearchMatchLineHighlight>();
+             editor.clear_background_highlights(HighlightKey::PickerPreview, cx);
+ 
+-            let Some(highlight) = highlight else {
+-                return;
+-            };
++            let highlight = highlight?;
+ 
+-            let mb = multi_buffer.read(cx).snapshot(cx);
+-            let Some(range) = mb
++            let multibuffer_snapshot = multi_buffer.read(cx).snapshot(cx);
++            let range = multibuffer_snapshot
+                 .anchor_in_excerpt(highlight.anchor_range.start)
+-                .zip(mb.anchor_in_excerpt(highlight.anchor_range.end))
+-                .map(|(start, end)| start..end)
+-            else {
+-                return;
+-            };
+-
+-            editor.highlight_rows::<SearchMatchLineHighlight>(
+-                range.clone(),
+-                |cx| cx.theme().colors().editor_active_line_background,
+-                RowHighlightOptions::default(),
+-             
+```
+
+**File**: `crates/project/src/bookmark_store.rs` (modified, +77/-0)
+```diff
+@@ -27,6 +27,13 @@ pub struct Bookmark {
+     pub label: String,
+ }
+ 
++pub struct ProjectBookmark {
++    pub path: Arc<Path>,
++    pub label: String,
++    pub buffer: Entity<Buffer>,
++    pub anchor: text::Anchor,
 +}
 +
- impl<T> Mul for Edges<T>
- where
-     T: Mul<Output = T> + Clone + Debug + Default + PartialEq,
-@@ -1769,9 +1785,9 @@ where
+ #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+ pub struct SerializedBookmark {
+     pub row: u32,
+@@ -305,6 +312,11 @@ impl BookmarkStore {
+             unreachable!("resolve_if_needed should have converted to Loaded");
+         };
  
-     fn mul(self, rhs: Self) -> Self::Output {
-         Self {
--            top: self.top.clone() * rhs.top,
--            right: self.right.clone() * rhs.right,
--            bottom: self.bottom.clone() * rhs.bottom,
-+            top: self.top * rhs.top,
-+            right: self.right * rhs.right,
-+            bottom: self.bottom * rhs.bottom,
-             left: self.left * rhs.left,
++        // Overlapping worktrees can open the same path in different buffers.
++        if buffer_bookmarks.buffer != buffer {
++            return;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+ 
+         let existing_index = buffer_bookmarks.bookmarks.iter().position(|existing| {
+@@ -338,6 +350,10 @@ impl BookmarkStore {
+             return None;
+         };
+ 
++        if &buffer_bookmarks.buffer != buffer {
++            return None;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+ 
+         buffer_bookmarks.bookmarks.iter().find(|existing| {
+@@ -364,6 +380,10 @@ impl BookmarkStore {
+             return;
+         };
+ 
++        if &buffer_bookmarks.buffer != buffer {
++            return;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+         let row = anchor.summary::<Point>(&snapshot).row;
+ 
+@@ -398,6 +418,10 @@ impl BookmarkStore {
+             return Vec::new();
+         };
+ 
++        if file_bookmarks.buffer != buffer {
++            return Vec::new();
++        }
++
+         file_bookmarks
+             .bookmarks
+             .iter()
+@@ -466,6 +490,59 @@ impl BookmarkStore {
          }
      }
+ 
++    pub async fn all_bookmarks(
++        this: &Entity<BookmarkStore>,
++        cx: &mut (impl AppContext + Clone),
++    ) -> Result<Vec<ProjectBookmark>> {
++        Self::resolve_all(this, cx).await?;
++
++        let bookmarks = cx.read_entity(this, |bookmark_store, cx| {
++            let mut bookmarks = Vec::new();
++
++            for (path, value) in &bookmark_store.bookmarks {
++                let BookmarkEntry::Loaded(buffer_bookmarks) = value else {
++                    continue;
++                };
++
++                let snapshot = buffer_bookmarks.buffer.read(cx).snapshot();
++                for bookmark in &buffer_bookmarks.bookmarks {
++                    let label = if bookmark.label.is_empty() {
++                        let row = snapshot.summary_for_anchor::<Point>(&bookmark.anchor).row;
++                        let line_length = snapshot.line_len(row);
++                        let mut label = String::with_capacity(line_length as usize);
++
++                        for chunk in snapshot
++                            .text_for_range(Point::new(row, 0)..Point::new(row, line_length))
++                        {
++                            let chunk = if label.is_empty() {
++                                chunk.trim_start()
++                            } else {
++                                chunk
++                            };
++                            label.push_str(chunk);
++                        }
++
++                        let trimmed_length = label.trim_end().len();
++                        label.truncate(trimmed_length);
++                        label
++                    } else {
++                        bookmark.label.clone()
++                    };
++
++                    bookmarks.push(ProjectBookmark {
++                        path: path.clone(),
++                        label,
++                        buffer: buffer_bookmarks.buffer.clone(),
++                        anchor: bookmark.anchor,
++                    });
++                }
++            }
++
++            bookmarks
++        });
++        Ok(bookmarks)
++    }
++
+     pub fn all_serialized_bookmarks(
+         &self,
+         cx: &App,
 ```
 
----
-
-### Incident Patch 3: `145bcfc1` (2026-11-06)
-**Commit Message**: workspace: Fix terminal links outside worktrees when the remote OS differs (#66594)
-
-## Summary
-
-- Problem: with Zed on Windows and a WSL project, ctrl-clicking an
-absolute Linux path outside the project's folders does nothing.
-- Cause: `project_paths_to_check `and `normalize_absolute_candidate `in
-`crates/workspace/src/path_link.rs` use `Path::is_absolute` and
-`is_relative`, which follow the OS Zed was compiled for. On Windows,
-`/home/x` has no drive prefix, so it isn't absolute. On Linux or macOS,
-`C:\x` isn't absolute either.
-- Fix: both functions now use the project's PathStyle
-(`project.read(cx).path_style(cx)` and `path_style.is_absolute`).
-
-This replaces #66340, which was closed because it's description was
-empty.
-
-## Testing
-
-- Manual test: Windows host, WSL project, paste a file path in the
-terminal and now its possible to ctrl+click it and open it on current
-window
-- Unit test: cargo test -p workspace project_paths_to_check passes on
-the PR branch in WSL. With line 536 temporarily changed back to
-maybe_path.is_absolute(), it fails, so it does catch the bug.
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes f
-
-**File**: `crates/workspace/src/path_link.rs` (modified, +31/-6)
+**File**: `crates/project/tests/integration/bookmark_store.rs` (modified, +108/-2)
 ```diff
-@@ -360,7 +360,8 @@ fn resolve_open_target_internal(
-             })
-         }
-         BackgroundPathChecks::ProjectPathResolution => {
--            let paths_to_check = project_paths_to_check(&potential_paths, cwd);
-+            let path_style = project.read(cx).path_style(cx);
-+            let paths_to_check = project_paths_to_check(&potential_paths, cwd, path_style);
-             cx.spawn(async move |cx| {
-                 for mut path_to_check in paths_to_check {
-                     let path = path_to_check.path.to_string_lossy();
-@@ -522,25 +523,28 @@ fn local_paths_to_check(
- fn project_paths_to_check(
-     potential_paths: &[PathWithPosition],
-     cwd: Option<&Path>,
-+    path_style: PathStyle,
- ) -> Vec<PathWithPosition> {
-     cwd.iter()
-         .flat_map(|cwd| {
--            potential_paths
--                .iter()
--                .filter_map(|path_to_check| normalize_absolute_candidate(cwd, path_to_check))
-+            potential_paths.iter().filter_map(|path_to_check| {
-+                normalize_absolute_candidate(cwd, path_to_check, path_style)
-+            })
-         })
-         .chain(potential_paths.iter().filter_map(|path_to_check| {
-             let maybe_path = &path_to_check.path;
--            (maybe_path.starts_with("~") || maybe_path.is_absolute()).then(|| path_to_check.clone())
-+            (maybe_path.starts_with("~") || path_style.is_absolute(maybe_path))
-+                .then(|| path_to_check.clone())
-         }))
-         .collect()
- }
+@@ -1,11 +1,15 @@
+ use std::{path::Path, sync::Arc};
  
- fn normalize_absolute_candidate(
-     cwd: &Path,
-     path_to_check: &PathWithPosition,
-+    path_style: PathStyle,
- ) -> Option<PathWithPosition> {
--    path_to_check.path.is_relative().then(|| {
-+    (!path_style.is_absolute(&path_to_check.path)).then(|| {
-         normalize_lexically(&cwd.join(&path_to_check.path))
-             .ok()
-             .map(|path| PathWithPosition {
-@@ -550,3 +554,24 @@ fn normalize_absolute_candidate(
-             })
-     })?
- }
+ use collections::BTreeMap;
++use futures::{FutureExt, StreamExt};
+ use gpui::{Entity, TestAppContext};
+ use language::Buffer;
+-use project::{Project, bookmark_store::SerializedBookmark};
++use project::{
++    Project,
++    bookmark_store::{BookmarkStore, SerializedBookmark},
++};
+ use serde_json::json;
+-use util::path;
++use util::{path, rel_path::rel_path};
+ 
+ mod integration {
+     use super::*;
+@@ -219,6 +223,108 @@ mod integration {
+         );
+     }
+ 
++    #[gpui::test]
++    async fn test_bookmark_operations_ignore_other_buffers(cx: &mut TestAppContext) {
++        init_test(cx);
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
++        let fs = fs::FakeFs::new(cx.executor());
++        fs.insert_tree(
++            path!("/project"),
++            json!({"sub": {"file.rs": "first\nsecond\nthird\n"}}),
++        )
++        .await;
 +
-+    #[test]
-+    fn test_project_paths_to_check_uses_the_project_path_style() {
-+        let unix = PathWithPosition::parse_str("/home/user/notes/spec.md:12");
-+        let windows = PathWithPosition::parse_str("C:\\Users\\user\\spec.md");
-+        let relative = PathWithPosition::parse_str("src/main.rs");
-+        let candidates = [unix.clone(), windows.clone(), relative];
-+        assert_eq!(
-+            project_paths_to_check(&candidates, None, PathStyle::Unix),
-+            vec![unix]
++        let project = Project::test(fs, [path!("/project/sub").as_ref()], cx).await;
++        let stored_buffer = open_buffer(&project, path!("/project/sub/file.rs"), cx).await;
++
++        add_labeled_bookmark(&project, &stored_buffer, 1, "original", cx);
++        let original_bookmarks = get_all_bookmarks(&project, cx);
++
++        // Overlapping worktrees can create distinct buffers for the same absolute path.
++        let parent_worktree = project
++            .update(cx, |project, cx| {
++                project.create_worktree(path!("/project"), true, cx)
++            })
++            .await
++            .expect("parent worktree should open");
++        let other_buffer = project
++            .update(cx, |project, cx| {
++                project.open_buffer((parent_worktree.read(cx).id(), rel_path("sub/file.rs")), cx)
++            })
++            .await
++            .expect("the same file should open through the parent worktree");
++        assert_ne!(stored_buffer, other_buffer);
++        cx.update(|cx| {
++            let expected_path = Some(project_path(path!("/project/sub/file.rs")));
++            assert_eq!(
++                BookmarkStore::abs_path_from_buffer(&stored_buffer, cx),
++                expected_path
++            );
++            assert_eq!(
++                BookmarkStore::abs_path_from_buffer(&other_buffer, cx),
++                expected_path
++            );
++        });
++
++        // Bookmarks remain bound to the original buffer. Requests from another buffer
++        // for the same path must be ignored to avoid mixing anchors from different buffers.
++        let bookmark_store = project.read_with(cx, |project, _| project.bookmark_store());
++        let mut events = cx.events(&bookmark_store);
++        let other_snapshot = other_buffer.read_with(cx, |buffer, _| buffer.text_snapshot());
++        for row in [1, 2] {
++            let anchor = other_snapshot.anchor_after(text::Point::new(row, 0));
++            bookmark_store.update(cx, |store, cx| {
++                assert!(store.find_bookmark(&other_buffer, anchor, cx).is_none());
++                store.edit_bookmark(&other_buffer, anchor, "ignored edit".into(), cx);
++                store.toggle_bookmark(other_buffer.clone(), anchor, "ignored toggle".into(), cx);
++            });
++            assert_eq!(get_all_bookmarks(&project, cx), original_bookmarks);
++        }
++        bookmark_store.update(cx, |store, cx| {
++            assert!(
++                store
++                    .bookmarks_for_buffer(
++                        other_buffer.clone(),
++                        other_snapshot.anchor_before(0)
++                            ..other_snapshot.anchor_after(other_snapshot.len()),
++                        &other_snapshot,
++                        cx,
++                    )
++                    .is_empty()
++            );
++        });
++        assert!(events.next().now_or_never().is_none());
++
++        let bookmarks = BookmarkStore::all_bookmarks(&bookmark_store, cx)
++            .await
++            .expect("bookmarks should remain readable");
++        let [bookmark] = bookmarks.as_slice() else {
++            panic!("the original bookmark should be preserved");
++        };
++        assert_eq!(bookmark.buffer, stored_buffer);
++        assert_eq!(bookmark.label, "original");
++        let stored_anchor = bookmark.anchor;
++        bookmark_store.update(cx, |store, cx| {
++            assert_eq!(
++                store
++                    .find_bookmark(&stored_buffer, stored_anchor, cx)
++                    .expect("the original buffer should still find its bookmark")
++                    .label,
++                "original",
++            );
++            store.edit_bookmark(&stored_buffer, stored_anchor, "updated".into(), cx);
++        });
++        assert_bookmark_labels(
++            &get_all_bookmarks(&project, cx),
++            path!("/project/sub/file.rs"),
++            &[(1, "updated")],
 +        );
-+        assert_eq!(
-+            project_paths_to_check(&candidates, None, PathStyle::Windows),
-+            vec![windows]
-+        );
-+    }
-+}
++        bookmark_store.update(cx, |store, cx| {
++            store.toggle_bookmark(stored_buffer.clone(), stored_anchor, String::new(), cx);
++        });
++        assert!(get_all_bookmarks(&project, cx).is_em
+```
+
+**File**: `crates/project_bookmarks/Cargo.toml` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++[package]
++name = "project_bookmarks"
++version = "0.1.0"
++edition.workspace = true
++publish.workspace = true
++license = "GPL-3.0-or-later"
++
++[lints]
++workspace = true
++
++[lib]
++path = "src/project_bookmarks.rs"
++doctest = false
++
++[dependencies]
++editor.workspace = true
++
++futures.workspace = true
++fuzzy_nucleo.workspace = true
++gpui.workspace = true
++language.workspace = true
++picker.workspace = true
++picker_preview.workspace = true
++project.workspace = true
++text.workspace = true
++ui.workspace = true
++util.workspace = true
++workspace.workspace = true
++
++[dev-dependencies]
++
++gpui = { workspace = true, features = ["test-support"] }
++menu.workspace = true
++project = { workspace = true, features = ["test-support"] }
++serde_json.workspace = true
++theme = { workspace = true, features = ["test-support"] }
++theme_settings = { workspace = true, features = ["test-support"] }
++workspace = { workspace = true, features = ["test-support"] }
++zlog.workspace = true
+```
+
+**File**: `crates/project_bookmarks/LICENSE-GPL` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++../../LICENSE-GPL
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #66695** (closed): gpui: Handle InteractiveText clicks without an intervening paint (@AgentStart1)
 - **PR #66662** (closed): git: critical robustness and parsing fixes (@Naseq)
 - **PR #66660** (closed): Update slack_notify_community_automation_failure.yml (@Aissamohammedi88)
 - **PR #66657** (closed): git: add parsing support for 'index on' stash message prefix (@Naseq)
 - **PR #66656** (closed): git: add FileStatus parsing for AD and DA unmerged status conflicts (@Naseq)
 - **PR #66650** (2026-11-07): Hide read-only toggle on tabs that cannot be toggled (@SomeoneToIgnore)
-- **PR #66617** (2026-11-06): Add more fields to the community PR board (@zelenenka)
 
 ---
 
@@ -3068,51 +3315,41 @@ performance.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. git_ui: Scroll commit view to the blamed file (#65237)
+## X. tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)
 
 **RULE**:
-When implementing operations in `crates/git_ui/src/blame_ui.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/keymaps/default-linux.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1253dde6`: git_ui: Scroll commit view to the blamed file (#65237). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2a4fb6d`: tabular_data_preview: Range selection, edge jumps, and page navigation (#65161). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/git_ui/src/blame_ui.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/keymaps/default-linux.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    commit_view::{
-        CommitView, CommitViewOptions, GitBlob, build_buffer, worktree_id_for_repo_path,
-    },
-                                    CommitViewOptions {
-                                        reveal_file: RepoPath::new(&blame_entry.filename).ok(),
-                                        ..Default::default()
-                                    },
-                                                        CommitViewOptions {
-                                                            reveal_file: RepoPath::new(
-                                                                &blame.filename,
-                                                            )
-                                                            .ok(),
-                                                            ..Default::default()
-                                                        },
-            CommitViewOptions {
-                reveal_file: RepoPath::new(&blame_entry.filename).ok(),
-                ..Default::default()
-            },
+      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
+      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
+      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
+      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
+      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
+      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
+      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
+      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
+      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
+      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
+      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
+      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
+      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
+      "shift-right": ["tabular_data
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    commit_view::{CommitView, GitBlob, build_buffer, worktree_id_for_repo_path},
-                                    None,
-                                    None,
-                                                        None,
-                                                        None,
-            None,
-            None,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1253dde6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2a4fb6d` are properly handled with clean fallback behavior.

@@ -8409,3 +8409,6 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `a74b7cdb` | Multi-dimensional audit evidence | 2026-11-08T21:33:25.187Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0186d63c` | Multi-dimensional audit evidence | 2026-11-08T21:33:33.595Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `9fff58aa` | Multi-dimensional audit evidence | 2026-11-08T21:33:35.891Z |
+| `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-08T21:46:50.754Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `d2a4fb6d` | Multi-dimensional audit evidence | 2026-11-08T21:46:52.286Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `f317962d` | Multi-dimensional audit evidence | 2026-11-08T21:47:04.758Z |

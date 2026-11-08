@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T21:33:35.775Z",
+  "last_updated": "2026-11-08T21:47:04.649Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11849,8 +11849,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "537a6b7e",
-      "content_hash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
+      "source_version": "f317962d",
+      "content_hash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -11862,6 +11862,11 @@
         {
           "number": null,
           "title": "test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#877",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci): update chart-testing and add Silo download fallback (#8775)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11960,7 +11965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:49:13.310Z",
+      "verified_at": "2026-11-08T21:47:04.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66357,8 +66362,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "b5cd310b",
-      "content_hash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
+      "source_version": "d2a4fb6d",
+      "content_hash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -66370,6 +66375,11 @@
         {
           "number": null,
           "title": "git_ui: Scroll commit view to the blamed file (#65237)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -66448,7 +66458,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:56:00.033Z",
+      "verified_at": "2026-11-08T21:46:52.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -171113,7 +171123,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
+      "content_hash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -171133,7 +171143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:43:32.093Z",
+      "verified_at": "2026-11-08T21:46:50.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

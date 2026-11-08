@@ -8400,3 +8400,6 @@
 | `CYCLE-20261108-N1VC` | `2026-11-08T21:33:25.176Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f61a00f...`) |
 | `CYCLE-20261108-N8D4` | `2026-11-08T21:33:33.592Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dc3fa3c3...`) |
 | `CYCLE-20261108-NA4W` | `2026-11-08T21:33:35.888Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`03a557d8...`) |
+| `CYCLE-20261108-4BGE` | `2026-11-08T21:46:50.750Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`3fc1d568...`) |
+| `CYCLE-20261108-4CMY` | `2026-11-08T21:46:52.282Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`85d6ea3f...`) |
+| `CYCLE-20261108-4M9E` | `2026-11-08T21:47:04.754Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`94bff00a...`) |

@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "537a6b7e",
+    "sourceVersion": "f317962d",
     "license": "NOASSERTION",
-    "contentHash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
-    "lastHarvestedAt": "2026-11-08T00:49:13.440Z",
+    "contentHash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
+    "lastHarvestedAt": "2026-11-08T21:47:04.758Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "b5cd310b",
+    "sourceVersion": "d2a4fb6d",
     "license": "NOASSERTION",
-    "contentHash": "36da3ffcac62ba8ec06d45a3731e19d51a5e63993236c4f990b88c1379b10ac1",
-    "lastHarvestedAt": "2026-11-07T20:56:00.128Z",
+    "contentHash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
+    "lastHarvestedAt": "2026-11-08T21:46:52.286Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "abbacf3469f8c9b30601c2ca8f4946f0f18503c7d223d3e4550a42e293c50626",
-    "lastHarvestedAt": "2026-11-05T04:43:32.228Z",
+    "contentHash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
+    "lastHarvestedAt": "2026-11-08T21:46:50.754Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `537a6b7e`  
+> **Source Version**: `f317962d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:49:11.610Z  
+> **Timestamp**: 2026-11-08T21:47:02.751Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:49:10.189Z  
+> **Harvest Timestamp**: 2026-11-08T21:47:02.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31846 stars
+- **Stars / Engagement**: 31850 stars
 
 ---
 
@@ -2321,769 +2321,303 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `244e6a07` (2026-11-07)
-**Commit Message**: test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#8770)
+### Incident Patch 1: `f317962d` (2026-11-08)
+**Commit Message**: fix(ci): update chart-testing and add Silo download fallback (#8775)
 
-test: make CLIENT KILL stuck-send regression portable
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/server/dragonfly_connection_test.cc` (modified, +68/-15)
-```diff
-@@ -437,15 +437,19 @@ class ClientKillTest : public BaseFamilyTest {
-       return pp_->at(0)->Await(
-           [&] { return new facade::Listener(facade::Protocol::REDIS, service_.get(), role); });
-     };
--    auto* listener = make(facade::Listener::Role::MAIN);
-+    main_listener_ = make(facade::Listener::Role::MAIN);
-     auto* admin = make(facade::Listener::Role::PRIVILEGED);
--    port_ = acceptor_->AddListener(0, listener);
-+    port_ = acceptor_->AddListener(0, main_listener_);
-     admin_port_ = acceptor_->AddListener(0, admin);
--    return {listener, admin};
-+    return {main_listener_, admin};
-   }
- 
-   void SetUp() override {
-+    // Initialize shared buffers for tests that switch to V2 after setup.
-+    const bool v2 = absl::GetFlag(FLAGS_enable_resp_io_loop_v2);
-+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, true);
-     BaseFamilyTest::SetUp();
-+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
-     acceptor_->Run();
-   }
- 
-@@ -456,6 +460,7 @@ class ClientKillTest : public BaseFamilyTest {
-   }
- 
-   std::unique_ptr<util::AcceptServer> acceptor_;
-+  facade::Listener* main_listener_ = nullptr;
-   uint16_t port_ = 0, admin_port_ = 0;
-   absl::FlagSaver flag_saver_;
- };
-@@ -572,18 +577,66 @@ TEST_F(ClientKillTest, Filters) {
-   EXPECT_EQ(caller.ReadLine(), ":0\r\n");
- }
- 
--// A half-closed peer marks the connection closing, yet only a kill ends its blocked send.
--TEST_F(ClientKillTest, KillsHalfClosedStuckSend) {
--  RawRespClient v{port_};
--  const std::string id = ClientId(v);
--  Run({"SET", "big", std::string(64 << 20, 'x')});
--  auto row = [&] { return Run({"CLIENT", "LIST", "ID", id}).GetString(); };
--  ASSERT_TRUE(v.SendAll("GET big\r\n"));
--  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "phase=send"); });
--  ASSERT_TRUE(v.ShutdownWrite());
--  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "flags=t"); });
--  EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1));
--  ExpectConditionWithinTimeout([&] { return row().empty(); });
-+// A closing context must not prevent killing an open socket with a blocked send.
-+TEST_F(ClientKillTest, KillsClosingConnectionWithStuckSend) {
-+  auto wait_until = [](auto&& condition) {
-+    const auto deadline = std::chrono::steady_clock::now() + 2s;
-+    while (!condition()) {
-+      if (std::chrono::steady_clock::now() >= deadline)
-+        return false;
-+      absl::SleepFor(absl::Milliseconds(1));
-+    }
-+    return true;
-+  };
-+
-+  ASSERT_EQ(Run({"SET", "big", std::string(64 << 20, 'x')}), "OK");
-+  for (bool v2 : {false, true}) {
-+    SCOPED_TRACE(v2);
-+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
-+    RawRespClient client{port_};
-+    ASSERT_TRUE(client.valid());
-+    const std::string id = ClientId(client);
-+    ASSERT_FALSE(id.empty());
-+    SCOPED_TRACE(absl::StrCat("client id=", id));
-+    ASSERT_TRUE(client.SendAll("GET big\r\n"));
-+
-+    // Identify the GET reply while leaving its large body unread to keep the send blocked.
-+    ASSERT_EQ(client.ReadLine(), "$67108864\r\n");
-+
-+    std::string state;
-+    auto inspect = [&](bool mark_closing) {
-+      return pp_->at(0)->Await([&] {
-+        bool ready = false;
-+        state = "Connection not found";
-+        main_listener_->TraverseConnections([&](unsigned tid, util::Connection* connection) {
-+          auto* conn = static_cast<facade::Connection*>(connection);
-+          if (absl::StrCat(conn->GetClientId()) != id)
-+            return;
-+
-+          ready = conn->cntx() && conn->socket()->IsOpen() && conn->IsSending();
-+          if (ready && mark_closing)
-+            conn->cntx()->conn_closing = true;
-+          state =
-+              absl::StrCat("socket_open=", conn->socket()->IsOpen(), " ", conn->GetClientInfo(tid));
-+        });
-+        return ready;
-+      });
-+    };
-+    ASSERT_TRUE(wait_until([&] { return inspect(false); }))
-+        << "Expected an open connection with a blocked send: " << state;
-+
-+    // Set the context flag on its owner proactor without shutting down the socket. A real
-+    // half-close can abort the blocked send on kqueue before CLIENT KILL gets to it.
-+    ASSERT_TRUE(inspect(true)) << "Connection stopped sending before marking it closing: " << state;
-+    ASSERT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1)) << state;
-+
-+    std::string last_row;
-+    ASSERT_TRUE(wait_until([&] {
-+      last_row = Run({"CLIENT", "LIST", "ID", id}).GetString();
-+      return last_row.empty();
-+    })) << last_row;
-+    EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(0));
-+  }
- }
- 
- // Connections that move to another thread can not be borrowed.
-```
-
----
-
-### Incident Patch 2: `537a6b7e` (2026-11-07)
-**Commit Message**: fix: remove unused code and obsolete test helpers (#8772)
-
-Remove the unused Huffman codec and FlatJson JSONPath backend.
-Clean up dead C++ and Python helpers, the unused RecordJournal argument,
-and the redundant asyncio dependency while preserving active test coverage.
+fix: regression tests
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `.pre-commit-config.yaml` (modified, +0/-1)
+**File**: `.github/actions/lint-test-chart/action.yml` (modified, +6/-1)
 ```diff
-@@ -2,7 +2,6 @@ default_stages: [pre-commit]
- exclude: |
-     (?x)(
-       src/redis/.* |
--      src/huff/.* |
-       contrib/charts/dragonfly/ci/.* |
-       patches/.* |
-       fuzz/seeds/.*
-```
-
-**File**: `pyproject.toml` (modified, +0/-1)
-```diff
-@@ -7,7 +7,6 @@ requires-python = ">=3.10"
- test = [
-   "aiohttp>=3.14.4",
-   "async-timeout>=4.0.3",
--  "asyncio>=3.4.3",
-   "attrs>=22.1.0",
-   "azure-storage-blob>=12.19.0",
-   "boto3>=1.28.55",
-```
-
-**File**: `src/core/CMakeLists.txt` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ add_subdirectory(json)
- add_subdirectory(page_usage)
+@@ -25,7 +25,12 @@ runs:
+           go test -v ./contrib/charts/dragonfly/...
  
- add_library(dfly_core allocation_tracker.cc bloom.cc topk.cc compact_object.cc cms.cc cuckoo.cc dense_set.cc
--    dragonfly_core.cc extent_tree.cc huff_coder.cc lua_internals.cc
-+    dragonfly_core.cc extent_tree.cc lua_internals.cc
-     interpreter.cc glob_matcher.cc mi_memory_resource.cc qlist.cc dict_builder.cc sds_utils.cc
-     segment_allocator.cc score_map.cc small_string.cc sorted_map.cc stream_node.cc task_queue.cc
-     tx_queue.cc string_set.cc string_map.cc tiering_types.cc top_keys.cc
-```
-
-**File**: `src/core/dash.h` (modified, +0/-7)
-```diff
-@@ -404,13 +404,6 @@ class DashTable : public detail::DashTableBase {
-     return iterator{this, segment_id, uint8_t(bucket_id), uint8_t(slot_id)};
-   }
+       - name: Set up chart-testing
+-        uses: helm/chart-testing-action@v2.6.1
++        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510 # v2.9.0
++        with:
++          version: "3.15.0"
++          verify_blob: "true"
++          yamllint_version: "1.27.1"
++          yamale_version: "3.0.4"
  
--  const_bucket_iterator CursorToBucketIt(Cursor c) const {
--    return const_bucket_iterator{this, c.segment_id(global_depth_), c.bucket_id(), 0};
--  }
--  bucket_iterator CursorToBucketIt(Cursor c) {
--    return bucket_iterator{this, c.segment_id(global_depth_), c.bucket_id(), 0};
--  }
--
-   // Capture Version Change. Determine buckets that can potentially be modified when inserting key.
-   // These are not const functions because they send non-const iterators that allow
-   // updating contents/versions of the passed iterators.
+       - name: Run chart-testing (list-changed)
+         id: list-changed
 ```
 
-**File**: `src/core/detail/bptree_internal.h` (modified, +0/-4)
+**File**: `.github/actions/regression-tests/action.yml` (modified, +10/-1)
 ```diff
-@@ -331,10 +331,6 @@ template <typename T> class BPTreePath {
-     depth_--;
-   }
+@@ -180,6 +180,15 @@ runs:
+           echo "REGRESSION_JUNIT_ARTIFACT=junit-regression-${GITHUB_JOB}-${RUNNER_OS}-${RUNNER_ARCH}-${KIND}-${SAFE_FILTER}-${SAFE_RUNTIME_FLAGS}-${UNIQUE_SUFFIX}"
+         } >> "${GITHUB_ENV}"
  
--  bool HasValidTerminal() const {
--    return depth_ > 0u && Last().second < Last().first->NumItems();
--  }
--
-   T Terminal() const {
-     assert(Last().second < Last().first->NumItems());
-     return Last().first->Key(Last().second);
-```
-
-**File**: `src/core/dfly_core_test.cc` (modified, +0/-144)
-```diff
-@@ -23,7 +23,6 @@
- #include "base/gtest.h"
- #include "base/logging.h"
- #include "core/glob_matcher.h"
--#include "core/huff_coder.h"
- #include "core/intent_lock.h"
- #include "core/tx_queue.h"
- 
-@@ -347,149 +346,6 @@ TEST_F(StringMatchTest, StarBacktracking) {
-   TEST_STRINGMATCH("*[a-", "xa", 1, 1);
- }
- 
--class HuffCoderTest : public ::testing::Test {
-- protected:
--  HuffmanEncoder encoder_;
--  HuffmanDecoder decoder_;
--  string error_msg_;
--  const string_view good_table_{
--      "\x1b\x10\xd8\n\n\x19\xc6\x0c\xc3\x30\x0c\x43\x1e\x93\xe4\x11roB\xf6\xde\xbb\x18V\xc2Zk\x03"sv};
--};
--
--TEST_F(HuffCoderTest, Load) {
--  string data("bad");
--
--  ASSERT_FALSE(encoder_.Load(data, &error_msg_));
--
--  data = good_table_;
--  ASSERT_TRUE(encoder_.Load(data, &error_msg_)) << error_msg_;
--
--  data.append("foo");
--  encoder_.Reset();
--  ASSERT_FALSE(encoder_.Load(data, &error_msg_));
--}
--
--TEST_F(HuffCoderTest, Encode) {
--  ASSERT_TRUE(encoder_.Load(good_table_, &error_msg_)) << error_msg_;
--
--  EXPECT_EQ(1, encoder_.GetNBits('x'));
--  EXPECT_EQ(3, encoder_.GetNBits(':'));
--  EXPECT_EQ(5, encoder_.GetNBits('2'));
--  EXPECT_EQ(5, encoder_.GetNBits('3'));
--
--  string data("x:23xx");
--
--  array<uint8_t, 100> dest;
--  uint32_t dest_size = dest.size();
--  ASSERT_TRUE(encoder_.Encode(data, dest.data(), &dest_size, &error_msg_));
--  ASSERT_EQ(3, dest_size);
--
--  // testing small destination buffer.
--  data = "3333333333333333333";
--  dest_size = 16;
--  EXPECT_TRUE(encoder_.Encode(data, dest.data(), &dest_size, &error_msg_));
--
--  // destination too small
--  ASSERT_EQ(0, dest_size);
--  ASSERT_EQ("", error_msg_);
--}
--
--TEST_F(HuffCoderTest, Decode) {
--  array<unsigned, 256> hist;
--  hist.fill(1);
--  hist['a'] = 100;
--  hist['b'] = 50;
--
--  ASSERT_TRUE(encoder_.Build(hist.data(), hist.size() - 1, &error_msg_));
--  string data("aab");
--
--  array<uint8_t, 100> encoded{0};
--  uint32_t encoded_size = encoded.size();
--  ASSERT_TRUE(encoder_.Encode(data, encoded.data(), &encoded_size, &error_msg_));
--  ASSERT_EQ(1, encoded_size);
--
--  EXPECT_EQ(2, encoder_.GetNBits('a'));
--  EXPECT_EQ(3, encoder_.GetNBits('b'));
--
--  auto bindata = encoder_.Export();
--  ASSERT_TRUE(bindata.has_value());
--  ASSERT_TRUE(decoder_.Load(*bindata, &error_msg_)) << error_msg_;
--
--  const char* src_ptr = reinterpret_cast<const char*>(encoded.data());
--  array<char, 100> decode_dest{0};
--  size_t decoded_size = data.size();
--  ASSERT_TRUE(decoder_.Decode({src_ptr, encoded_size}, decoded_size, decode_dest.data()));
--  ASSERT_EQ("aab", string_view(decode_dest.data(), decoded_size));
--}
--
--TEST_F(HuffCoderTest, HugeHistogram) {
--  array<unsigned, 256> hist{
--      1,         1,         1,         1,         1,         1,         1,         1,
--      5,         26,        543,       1,         1,         1,         1,         1,
--      4,         1,         1,         1,         1,         1,         1,         1,
--      1,         1,         1,         1,         1,         1,         1,         1,
--      114012534, 12081,     13038,     1596,      1334,      83320,     706165,    475568,
--      2779,      2548,      998,       29249967,  53961,     13175485,  99000,     69726435,
--      69422967,  182172009, 123544533, 76493373,  96341977,  64601914,  48105392,  60215630,
--      69253599,  48811529,  818580990, 1226,      69,        922,       140,       720,
--      230,       333714212, 95995178,  65692203,  50995122,  52156728,  44187793,  32988519,
--      46978428,  49648957,  43769567,  68958857,  56765240,  80721594,  51577447,  70298692,
--      56957407,  93372706,  47400672,  70912347,  78241282,  49291723,  69807896,  48372387,
--      39312015,  58020704,  60084247,  1378,      2471,      1584,      14,        37880886,
--      117,       184273430, 80952783,  135676228, 101229664, 230479318, 70652028,  137836653,
--      70943805,  154072333, 29316298,  58302725,  109445030, 117306062, 129270567, 166048852,
--      103000639, 54174517,  174819705, 166323524, 124543976, 80215452,  49650895,  101281709,
--      49817574,  56668585,  50459552,  273352049, 166,       273352009, 16,        1,
--      57668,     1724,      1886,      3668,      3960,      1963,      1124,      945,
--      1836,      1882,      1709,      2389,      921,       2154,      1020,      1792,
--      3747,      6750,      1318,      3100,      4506,      1175,      1514,      1430,
--      3474,      44548,     3179,      1149,      2410,      9689,      727,       2348,
--      2148,      1785,      5025,      1040,      3246,      1699,      505,       1034,
--      9995,      24776,     3345,      1897,      1019,      1614,      35349,     988,
--      2469,      5759,      2043,      7976,      1229,      896,       2692,      962,
--      3341,      2490,      2648,      1162,      4812,      8404,      949,       3132,
--      1,         1,         34754,     58694,     3400,      561,       6,         5,
--      3,         47,        41,        19,        292,       24,        17,        12
-```
-
-**File**: `src/core/flatbuffers.h` (modified, +0/-4)
-```diff
-@@ -11,7 +11,3 @@
- #include <flatbuffers/flatbuffers.h>
- #include <flatbuffers/flexbuffers.h>
- #include <flatbuffers/idl.h>
--
--namespace dfly {
--using FlatJson = flexbuffers::Reference;
--}  // namespace dfly
-```
-
-**File**: `src/core/huff_coder.cc` (removed, +0/-156)
-```diff
-@@ -1,156 +0,0 @@
--// Copyright 2025, DragonflyDB authors.  All rights reserved.
--// See LICENSE for licensing terms.
--//
--
--#include "core/huff_coder.h"
--
--#include "base/logging.h"
--
--extern "C" {
--#include "huff/huf.h"
--}
--
--using namespace std;
--
--namespace dfly {
--
--constexpr size_t kWspSize = HUF_CTABLE_WORKSPACE_SIZE;
--
--bool HuffmanEncoder::Load(std::string_view binary_data, std::string* error_msg) {
--  CHECK(!huf_ctable_);
--
--  huf_ctable_.reset(new HUF_CElt[HUF_CTABLE_SIZE_ST(255)]);
--  table_max_symbol_ = 255;
--
--  unsigned has_zero_weights = 0;
--  size_t read_size = HUF_readCTable(huf_ctable_.get(), &table_max_symbol_, binary_data.data(),
--                                    binary_data.size(), &has_zero_weights);
--
--  if (HUF_isError(read_size)) {
--    huf_ctable_.reset();
--    *error_msg = HUF_getErrorName(read_size);
--    return false;
--  }
--  if (read_size != binary_data.size()) {
--    *error_msg = "Corrupted data";
--    huf_ctable_.reset();
--    return false;
--  }
--  HUF_CTableHeader header = HUF_readCTableHeader(huf_ctable_.get());
--  num_bits_ = header.tableLog;
--  table_max_symbol_ = header.maxSymbolValue;
--
--  return true;
--}
--
--bool HuffmanEncoder::Build(const unsigned hist[], unsigned max_symbol, std::string* error_msg) {
--  CHECK(!huf_ctable_);
--  huf_ctable_.reset(new HUF_CElt[HUF_CTABLE_SIZE_ST(max_symbol)]);
--
--  unique_ptr<uint32_t[]> wrkspace(new uint32_t[HUF_CTABLE_WORKSPACE_SIZE_U32]);
--
--  size_t num_bits =
--      HUF_buildCTable_wksp(huf_ctable_.get(), hist, max_symbol, 0, wrkspace.get(), kWspSize);
--  if (HUF_isError(num_bits)) {
--    *error_msg = HUF_getErrorName(num_bits);
--    huf_ctable_.reset();
--    return false;
--  }
--  num_bits_ = static_cast<uint8_t>(num_bits);
--  table_max_symbol_ = max_symbol;
--  return true;
--}
--
--void HuffmanEncoder::Reset() {
--  huf_ctable_.reset();
--  table_max_symbol_ = 0;
--}
--
--bool HuffmanEncoder::Encode(std::string_view data, uint8_t* dest, uint32_t* dest_size,
--                            std::string* error_msg) const {
--  DCHECK(huf_ctable_);
--
--  size_t res =
--      HUF_compress1X_usingCTable(dest, *dest_size, data.data(), data.size(), huf_ctable_.get(), 0);
--
--  if (HUF_isError(res)) {
--    *error_msg = HUF_getErrorName(res);
--    return false;
--  }
--  *dest_size = static_cast<uint32_t>(res);
--  return true;
--}
--
--unsigned HuffmanEncoder::GetNBits(uint8_t symbol) const {
--  DCHECK(huf_ctable_);
--  return HUF_getNbBitsFromCTable(huf_ctable_.get(), symbol);
--}
--
--size_t HuffmanEncoder::EstimateCompressedSize(const unsigned hist[], unsigned max_symbol) const {
--  DCHECK(huf_ctable_);
--  size_t res = HUF_estimateCompressedSize(huf_ctable_.get(), hist, max_symbol);
--  return res;
--}
--
--optional<string> HuffmanEncoder::Export() const {
--  DCHECK(huf_ctable_);
--
--  // Reverse engineered: (maxSymbolValue + 1) / 2 + 1.
--  constexpr unsigned kMaxTableSize = 130;
--  string res;
--  res.resize(kMaxTableSize);
--
--  unique_ptr<uint32_t[]> wrkspace(new uint32_t[HUF_CTABLE_WORKSPACE_SIZE_U32]);
--
--  // Seems we can reuse the same workspace, its capacity is enough.
--  size_t size = HUF_writeCTable_wksp(res.data(), res.size(), huf_ctable_.get(), table_max_symbol_,
--                                     num_bits_, wrkspace.get(), kWspSize);
--  if (HUF_isError(size)) {
--    LOG(WARNING) << "Failed to export Huffman table: " << HUF_getErrorName(size);
--    return nullopt;
--  }
--  res.resize(size);
--  return res;
--}
--
--// Copied from HUF_tightCompressBound.
--size_t HuffmanEncoder::CompressedBound(size_t src_size) const {
--  return ((src_size * num_bits_) >> 3) + 8;
--}
--
--bool HuffmanDecoder::Load(std::string_view binary_data, std::string* error_msg) {
--  DCHECK(!huf_dtable_);
--  huf_dtable_.reset(new HUF_DTable[HUF_DTABLE_SIZE(HUF_TABLELOG_MAX)]);
--  huf_dtable_[0] = (HUF_TABLELOG_MAX - 1) * 0x01000001;  // some sort of magic number
--
--  constexpr size_t kWspSize = HUF_DECOMPRESS_WORKSPACE_SIZE;
--  unique_ptr<uint8_t[]> wrksp(new uint8_t[kWspSize]);
--
--  size_t res = HUF_readDTableX1_wksp(huf_dtable_.get(), binary_data.data(), binary_data.size(),
--                                     wrksp.get(), kWspSize, 0);
--  if (HUF_isError(res)) {
--    *error_msg = HUF_getErrorName(res);
--    huf_dtable_.reset();
--    return false;
--  }
--  if (res != binary_data.size()) {
--    *error_msg = "Corrupted data";
--    huf_dtable_.reset();
--    return false;
--  }
--  return true;
--}
--
--bool HuffmanDecoder::Decode(std::string_view src, size_t dest_size, char* dest) const {
--  DCHECK(huf_dtable_);
--  size_t res =
--      HUF_decompress1X_usingDTable(dest, dest_size, src.data(), src.size(), huf_dtable_.get(), 1);
--
--  if (HUF_isError(res)) {
--    LOG(DFATAL) << "Failed to decompress: " << HUF_getErrorName(res);
--    return false;
--  }
--  return true;
--}
--
--}  // namespace dfly
-```
-
----
-
-### Incident Patch 3: `7faee833` (2026-11-06)
-**Commit Message**: fix(snapshot): release the serializer buffer while loading a tiered list node (#8757)
-
-**File**: `src/server/rdb_save.cc` (modified, +23/-3)
-```diff
-@@ -417,11 +417,19 @@ error_code RdbSerializer::SaveListObject(const PrimeValue& pv) {
-     DVLOG(3) << "QL node (encoding/container/sz): " << node->encoding << "/" << node->container
-              << "/" << node->sz;
- 
--    // Use listpack encoding
--    RETURN_ON_ERR(SaveLen(node->container));
-     // Materialize the node if it was offloaded to tiered storage, so that we can access its
-     // content. We have to drop const qualifier to update the node.
--    ql->Materialize(const_cast<QList::Node*>(node));
-+    if (node->offloaded && consume_fun_ && mem_buf_controller_.TagEntriesEnabled()) {
-+      // Reading the node from disk suspends. Make it a consume point between two nodes, so that
-+      // other writers don't land inside this entry's bytes. Without tags, stream_mu_ holds them
-+      // off instead.
-+      RETURN_ON_ERR(ConsumeAround([&] { ql->Materialize(const_cast<QList::Node*>(node)); }));
-+    } else {
-+      ql->Materialize(const_cast<QList::Node*>(node));
-+    }
++    - name: Prepare MinIO for S3 snapshot tests
++      if: inputs.s3-bucket != '' && inputs.test-suites == '' && inputs.test-cases == '' && inputs.iterations == '1'
++      shell: bash
++      env:
++        GITHUB_TOKEN: ${{ github.token }}
++      run: |
++        cd "${GITHUB_WORKSPACE}/tests"
++        timeout 5m python3 -m dragonfly.minio
 +
-+    // Use listpack encoding
-+    RETURN_ON_ERR(SaveLen(node->container));
-     if (node->encoding == QLIST_NODE_ENCODING_ZSTD) {
-       // ZSTD-compressed nodes cannot be saved using RDB LZF encoding — the loader would
-       // call lzf_decompress on ZSTD bytes and corrupt the data. Decompress to raw first.
-@@ -1968,6 +1976,18 @@ void RdbSerializer::CompressBlob() {
-   mem_buf->CommitWrite(compressed->size());
- }
+     - name: Run S3 snapshot tests with MinIO
+       if: inputs.s3-bucket != '' && inputs.test-suites == '' && inputs.test-cases == '' && inputs.iterations == '1'
+       shell: bash
+@@ -204,7 +213,7 @@ runs:
+           df_runtime_args+=(--df force_epoll=true)
+         fi
  
-+template <typename F> std::error_code RdbSerializer::ConsumeAround(F&& fn) {
-+  mem_buf_controller_.MarkEntrySplit();
-+  string blob = Flush(FlushState::kFlushMidEntry);
+-        # MinIO binary is downloaded and started by conftest.py when MINIO_S3_ENDPOINT is set
++        # conftest.py starts the prepared MinIO binary when MINIO_S3_ENDPOINT is set.
+         MINIO_S3_ENDPOINT=http://localhost:9000 timeout 10m pytest -k "s3" --timeout=300 --color=yes dragonfly/snapshot_test.py "${df_runtime_args[@]}" --log-cli-level=INFO -v
+ 
+     - name: Verify core dump capture
+```
+
+**File**: `tests/dragonfly/conftest.py` (modified, +2/-67)
+```diff
+@@ -3,15 +3,13 @@
+ """
+ 
+ import asyncio
+-import hashlib
+ import logging
+ import os
+ import random
+ import shutil
+ import signal
+ import subprocess
+ import sys
+-import tarfile
+ import time
+ import typing
+ from contextlib import AsyncExitStack
+@@ -29,11 +27,11 @@
+ 
+ from . import PortPicker
+ from .instance import DflyInstance, DflyInstanceFactory, DflyParams, RedisServer
++from .minio import prepare_minio_binary
+ from .proxy import Proxy
+ from .replication_utils import ReplicationSetup
+ from .utility import (
+     DflySeederFactory,
+-    download_with_retries,
+     gen_ca_cert,
+     gen_certificate,
+     skip_if_not_in_github,
+@@ -49,76 +47,13 @@
+ LAST_LOGS = "/tmp/last_test_log_dir.txt"
+ 
+ 
+-# MinIO archived its OSS server and dl.min.io returns HTTP 410 for every build, so the
+-# binary comes from silo, a maintained fork that is CLI- and API-compatible with it.
+-MINIO_RELEASE = "RELEASE.2026-09-03T13-18-01Z"
+-MINIO_VERSION = "20260903131801.0.0"
+-MINIO_SHA256 = {
+-    "linux-amd64": "cbe5c01eac0a97ccb22fa252eafa432e8608bfde7e3ea27a324cb5ed625a1e96",
+-    "linux-arm64": "311846ca9387de36f8e34daa8bf1a130684cc7b8c61aa39581264249eb8df0cf",
+-    "darwin-amd64": "35b4121f6ca2ba79514c3536e5f7f79ae8f7fe6fb88288efbdfa2ae8d5283131",
+-    "darwin-arm64": "bcfd90d51ab6dffc34193aac260464097bb1d2decdd2598538e618bc02ada668",
+-}
+-
+-
+-def _minio_platform_key() -> str:
+-    import platform
+-
+-    system = platform.system().lower()
+-    arch = platform.machine()
+-    arch_map = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64"}
+-    return f"{system}-{arch_map.get(arch, arch)}"
+-
+-
+-def _download_minio_binary(dest: Path):
+-    """Download the MinIO-compatible server to dest if not already cached.
+-
+-    The checksum is verified against the published one before the binary is
+-    extracted, and the result is renamed atomically so an interrupted download
+-    never leaves a usable but corrupt binary behind.
+-    """
+-    platform_key = _minio_platform_key()
+-    expected_sha256 = MINIO_SHA256.get(platform_key)
+-    if expected_sha256 is None:
+-        raise RuntimeError(f"No pinned MinIO build for {platform_key}")
+-
+-    url = (
+-        f"https://github.com/pgsty/silo/releases/download/{MINIO_RELEASE}"
+-        f"/silo_{MINIO_VERSION}_{platform_key.replace('-', '_')}.tar.gz"
+-    )
+-    logging.info(f"Downloading MinIO binary from {url}")
+-    tmp_archive = dest.with_name(dest.name + ".tar.gz")
+-    tmp_dest = dest.with_name(dest.name + ".tmp")
+-    try:
+-        download_with_retries(url, tmp_archive)
+-        actual_sha256 = hashlib.sha256(tmp_archive.read_bytes()).hexdigest()
+-        if actual_sha256 != expected_sha256:
+-            raise RuntimeError(
+-                f"MinIO checksum mismatch for {url}: got {actual_sha256}, "
+-                f"expected {expected_sha256}"
+-            )
+-        with tarfile.open(tmp_archive) as tar:
+-            with tar.extractfile("silo") as src, open(tmp_dest, "wb") as dst:
+-                shutil.copyfileobj(src, dst)
+-        tmp_dest.chmod(0o755)
+-        tmp_dest.rename(dest)
+-    finally:
+-        tmp_archive.unlink(missing_ok=True)
+-        tmp_dest.unlink(missing_ok=True)
+-
+-
+ def _start_minio_server(endpoint):
+     """Start the MinIO-compatible server and configure env vars for S3 tests."""
+     from urllib.parse import urlparse
+ 
+     import boto3
+ 
+-    cache_dir = Path.home() / ".cache" / "dragonfly-tests"
+-    cache_dir.mkdir(parents=True, exist_ok=True)
+-    minio_bin = cache_dir / f"minio-{MINIO_RELEASE}-{_minio_platform_key()}"
+-
+-    if not minio_bin.exists():
+-        _download_minio_binary(minio_bin)
++    minio_bin = prepare_minio_binary()
+ 
+     # Normalize scheme-less values (e.g. "localhost:9000") so urlparse
+     # correctly populates hostname/port instead of treating it as a path.
+```
+
+**File**: `tests/dragonfly/minio.py` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++"""Prepare the pinned MinIO-compatible server used by S3 snapshot tests."""
 +
-+  const auto id = mem_buf_controller_.SaveStateBeforeConsume();
-+  std::error_code ec = blob.empty() ? std::error_code{} : consume_fun_(std::move(blob));
-+  if (!ec)
-+    fn();
-+  mem_buf_controller_.RestoreStateAfterConsume(id);
-+  return ec;
++import argparse
++import hashlib
++import logging
++import os
++import platform
++import shutil
++import tarfile
++from pathlib import Path
++
++import requests
++from requests.adapters import HTTPAdapter
++from urllib3.util.retry import Retry
++
++
++# MinIO archived its OSS server and dl.min.io returns HTTP 410 for every build, so the
++# binary comes from silo, a maintained fork that is CLI- and API-compatible with it.
++MINIO_RELEASE = "RELEASE.2026-09-03T13-18-01Z"
++MINIO_VERSION = "20260903131801.0.0"
++MINIO_SHA256 = {
++    "linux-amd64": "cbe5c01eac0a97ccb22fa252eafa432e8608bfde7e3ea27a324cb5ed625a1e96",
++    "linux-arm64": "311846ca9387de36f8e34daa8bf1a130684cc7b8c61aa39581264249eb8df0cf",
++    "darwin-amd64": "35b4121f6ca2ba79514c3536e5f7f79ae8f7fe6fb88288efbdfa2ae8d5283131",
++    "darwin-arm64": "bcfd90d51ab6dffc34193aac260464097bb1d2decdd2598538e618bc02ada668",
 +}
++GITHUB_API = "https://api.github.com/repos/pgsty/silo"
++REQUEST_TIMEOUT = (10, 30)
 +
- std::error_code RdbSerializer::PushToConsumerIfNeeded(FlushState flush_state) {
-   if (!consume_fun_ || SerializedLen() <= flush_threshold_)
-     return {};
-```
-
-**File**: `src/server/rdb_save.h` (modified, +3/-0)
-```diff
-@@ -373,6 +373,9 @@ class RdbSerializer {
-   // Might preempt
-   std::error_code PushToConsumerIfNeeded(FlushState flush_state);
- 
-+  // Runs fn, which may preempt mid-entry, at a forced consume point. Requires tagged entries.
-+  template <typename F> std::error_code ConsumeAround(F&& fn);
 +
-   static constexpr size_t kFilterChunkSize = 1ULL << 26;
-   static constexpr size_t kMinStrSizeToCompress = 256;
-   static constexpr size_t kMaxStrSizeToCompress = 1 * 1024 * 1024;
-```
-
-**File**: `src/server/server_family.cc` (modified, +31/-0)
-```diff
-@@ -180,6 +180,10 @@ ABSL_DECLARE_FLAG(string, tls_ca_cert_file);
- ABSL_DECLARE_FLAG(string, tls_ca_cert_dir);
- ABSL_DECLARE_FLAG(int, replica_priority);
- ABSL_DECLARE_FLAG(double, rss_oom_deny_ratio);
-+ABSL_DECLARE_FLAG(std::string, tiered_prefix);
-+#ifdef WITH_TIERING
-+ABSL_DECLARE_FLAG(bool, tiered_experimental_list_support);
-+#endif
- 
- bool AbslParseFlag(std::string_view in, ReplicaOfFlag* flag, std::string* err) {
- #define RETURN_ON_ERROR(cond, m)                                           \
-@@ -1363,12 +1367,35 @@ bool ValidateServerTlsFlags() {
-   return true;
- }
- 
-+namespace {
++def _platform_key() -> str:
++    arch = platform.machine()
++    arch_map = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64"}
++    return f"{platform.system().lower()}-{arch_map.get(arch, arch)}"
 +
-+// Saving a list reads its offloaded nodes from disk in the middle of the entry, which suspends.
-+// Concurrent writes may serialize other keys into the same buffer meanwhile. The DF format keeps
-+// them out of the entry with tagged chunks or the stream mutex; the RDB format has neither.
-+// Disabling the flag at runtime leaves already offloaded nodes on disk, which this does not catch.
-+bool TieredListNodesEnabled() {
-+#ifdef WITH_TIERING
-+  return !GetFlag(FLAGS_tiered_prefix).empty() && GetFlag(FLAGS_tiered_experimental_list_support);
-+#else
-+  return false;
-+#endif
-+}
 +
-+constexpr string_view kRdbWithTieredListsErr =
-+    "RDB format is not supported with --tiered_experimental_list_support, use the DF format";
++def _download(session, url, dest, headers=None):
++    with session.get(url, headers=headers, stream=True, timeout=REQUEST_TIMEOUT) as response:
++        response.raise_for_status()
++        with open(dest, "wb") as output:
++            for chunk in response.iter_content(chunk_size=1024 * 1024):
++                output.write(chunk)
 +
-+}  // namespace
 +
- bool ValidateSnapshotFilenameFlags() {
-   auto ec = detail::ValidateFilename(GetFlag(FLAGS_dbfilename), GetFlag(FLAGS_df_snapshot_format));
-   if (ec) {
-     LOG(ERROR) << ec.Format();
-     return false;
-   }
-+  if (!GetFlag(FLAGS_df_snapshot_format) && TieredListNodesEnabled()) {
-+    LOG(ERROR) << kRdbWithTieredListsErr;
-+    return false;
-+  }
-   return true;
- }
- 
-@@ -2175,6 +2202,10 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
-   // TODO(#8410): with --aof, a save to the base's name overwrites the base.
-   auto [ignore_state, bg_save] = opts;
- 
-+  if (!save_cmd_opts.new_version && TieredListNodesEnabled())
-+    return GenericError{make_error_code(errc::operation_not_supported),
-+                        string{kRdbWithTieredListsErr}};
++def _download_archive(asset_name: str, dest: Path, github_token: str):
++    url = f"https://github.com/pgsty/silo/releases/download/{MINIO_RELEASE}/{asset_name}"
++    with requests.Session() as session:
++        session.mount(
++            "https://",
++            HTTPAdapter(
++                max_retries=Retry(
++                    total=2,
++                    backoff_factor=1,
++                    status_forcelist=[500, 502, 503, 504],
++                )
++            ),
++        )
++        logging.info("Downloading MinIO binary from %s", url)
++        try:
++            _download(session, url, dest)
++            return
++        except requests.RequestException as error:
++            logging.warning(
++                "MinIO release download failed (%s); trying the GitHub API", type(error).__name__
++            )
 +
-   std::shared_ptr<SaveStagesController> controller;
-   {
-     util::fb2::LockGuard lk(save_mu_);
-```
-
-**File**: `src/server/snapshot.cc` (modified, +10/-2)
-```diff
-@@ -6,6 +6,7 @@
- 
- #include <absl/strings/str_cat.h>
- 
-+#include <limits>
- #include <mutex>
- 
- #include "base/cycle_clock.h"
-@@ -100,10 +101,13 @@ void SliceSnapshot::Start(bool stream_journal, SnapshotFlush allow_flush) {
-   size_t flush_threshold = 0;
-   RdbSerializer::ConsumeFun consume_fun;
-   if (allow_flush == SnapshotFlush::kAllow) {
-+    // 0 disables splitting by size. The callback is still needed for forced consume points.
-     flush_threshold = ServerState::tlocal()->serialization_max_chunk_size;
-+    if (flush_threshold == 0)
-+      flush_threshold = std::numeric_limits<size_t>::max();
++        headers = {"Accept": "application/vnd.github+json"}
++        if github_token:
++            headers["Authorization"] = f"Bearer {github_token}"
++        try:
++            with session.get(
++                f"{GITHUB_API}/releases/tags/{MINIO_RELEASE}",
++                headers=headers,
++                timeout=REQUEST_TIMEOUT,
++            ) as response:
++                response.raise_for_status()
++                assets = [
++                    asset for asset in response.json()["assets"] if asset["name"] == asset_name
++                ]
++            if len(assets) != 1:
++                raise RuntimeError(f"Expected one GitHub release asset named {asset_name}")
 +
-     // The callback receives data directly from the serializer, no need to call back into it.
--    if (flush_threshold != 0)
--      consume_fun = std::bind_front(&SliceSnapshot::ConsumeBigValueChunk, this);
-+    consume_fun = std::bind_front(&SliceSnapshot::ConsumeBigValueChunk, this);
-   }
- 
-   bool serialize_index = SaveMode() != dfly::SaveMode::RDB &&
-@@ -310,6 +314,10 @@ void SliceSnapshot::ConsumeJournalChange(const journal::JournalChangeItem& item)
- }
- 
- void SliceSnapshot::ThrottleIfNeeded() {
-+  // Without tagged chunks, an entry holds stream_mu_ while it may suspend mid-entry (e.g. reading a
-+  // tiered list node). Flushing then would cut it, so leave the flush to a later call.
-+  if (stream_mu_.is_locked())
-+    return;
-   PushSerialized(false);
- }
- 
-```
-
-**File**: `src/server/tiered_storage_test.cc` (modified, +71/-0)
-```diff
-@@ -45,6 +45,7 @@ ABSL_DECLARE_FLAG(uint64_t, registered_buffer_size);
- ABSL_DECLARE_FLAG(bool, tiered_experimental_hash_support);
- ABSL_DECLARE_FLAG(bool, tiered_experimental_list_support);
- ABSL_DECLARE_FLAG(unsigned, list_tiering_threshold);
-+ABSL_DECLARE_FLAG(bool, serialization_tagged_chunks);
- ABSL_DECLARE_FLAG(int32_t, list_max_listpack_size);
- 
- namespace dfly {
-@@ -1353,6 +1354,10 @@ class ListNodeTieringTest : public TieredStorageTest {
-     SetFlag(&FLAGS_tiered_experimental_list_support, true);
-     TieredStorageTest::SetUp();
-   }
++            # Keep credentials on the API request only. Requests strips Authorization
++            # when GitHub redirects the download to a different host.
++            asset_id = int(assets[0]["id"])
++            headers["Accept"] = "application/octet-stream"
++            _download(session, f"{GITHUB_API}/releases/assets/{asset_id}", dest, headers)
++        except requests.RequestException as error:
++            status = error.response.status_code if error.response is not None else "unavailable"
 +
-+ protected:
-+  void SaveWithConcurrentWrites();
++            # Do not include exception URLs: an asset redirect can contain signed query parameters.
++            raise RuntimeError(
++                f"MinIO download failed via the release URL and GitHub API "
++                f"({type(error).__name__}, HTTP status {status})"
++            ) from None
 +
-   optional<absl::FlagSaver> fs;
- };
- 
-@@ -1750,6 +1755,72 @@ TEST_F(ListNodeTieringTest, PushAfterOffloadedNodePromotedToTail) {
-   EXPECT_THAT(Run({"LLEN", "mylist"}), IntArg(kTrimmedItems));
- }
- 
-+// Reading an offloaded node from disk suspends the snapshot in the middle of the list entry. Writes
-+// that serialize other buckets meanwhile must not interleave their bytes with the entry. They write
-+// to another db, so their SELECTDB lands between the list's chunks.
-+void ListNodeTieringTest::SaveWithConcurrentWrites() {
-+  const int kLists = 50, kItems = 8, kKeys = 2000;
-+  vector<vector<string>> expected(kLists);
-+  for (int l = 0; l < kLists; l++) {
-+    for (int i = 0; i < kItems; i++) {
-+      expected[l].push_back(BuildString(2048, static_cast<char>('A' + (l + i) % 26)));
-+      Run({"RPUSH", absl::StrCat("list:", l), expected[l].back()});
-+    }
-+  }
-+  ExpectConditionWithinTimeout([&] { return GetMetrics().tiered_stats.total_stashes >= kLists; });
 +
-+  Run({"SELECT", "1"});
-+  for (int k = 0; k < kKeys; k++)
-+    Run({"SET", absl::StrCat("key:", k), "v"});
-+  Run({"SELECT", "0"});
++def _download_minio_binary(dest: Path, platform_key: str, github_token: str):
++    expected_sha256 = MINIO_SHA256.get(platform_key)
++    if expected_sha256 is None:
++        raise RuntimeError(f"No pinned MinIO build for {platform_key}")
 +
-+  // Each write serializes the bucket of its key if the snapshot has not reached it yet.
-+  atomic_bool saved{false};
-+  auto writer = pp_->at(0)->LaunchFiber([&] {
-+    Run("writer", {"SELECT", "1"});
-+    for (int k = 0; !saved.load(memory_order_relaxed); k = (k + 1) % kKeys) {
-+      Run("writer", {"SET", absl::StrCat("key:", k), "w"});
-+      ThisFiber::SleepFor(10us);  // let the proactor poll io completions
-+    }
-+  });
-+  EXPECT_EQ(Run({"SAVE"}), "OK");
-+  saved.store(true, memory_order_relaxed);
-+  writer.Join();
-+
-+  ASSERT_EQ(Run({"DEBUG", "RELOAD", "NOSAVE"}), "OK");
-+  EXPECT_THAT(Run({"DBSIZE"}), IntArg(kLists));
-+  for (int l = 0; l < kLists; l++) {
-+    auto resp = Run({"LRANGE", absl::StrCat("list:", l), "0", "-1"});
-+    ASSERT_THAT(resp, ArrLen(kItems)) << "list " << l;
-+    for (int i = 0; i < kItems; i++)
-+      EXPECT_EQ(resp.GetVec()[i].GetString(), expected[l][i]) << "list " << l << " index " << i;
-+  }
-+  Run({"SELECT", "1"});
-+  EXPECT_THAT(Run({"DBSIZE"}), IntArg(kKeys));
-+  Run({"SELECT", "0"});
-+}
-+
-+// Tagged chunks: the disk read is a consume point.
-+TEST_F(ListNodeTieringTest, SaveWithConcurrentWritesWhileLoadingNodes) {
-+  InitWithDbFilename();
-+  SaveWithConcurrentWrites();
-+  CleanupSnapshots();
-+}
-+
-+// Without tagged chunks, the stream mutex keeps other writers out of the entry.
-+TEST_F(ListNodeTieringTest, SaveWithConcurrentWritesWhileLoadingNodesUntagged) {
-+  SetFlag(&FLAGS_serialization_tagged_chunks, false);
-+  InitWithDbFilename();
-+  SaveWithConcurrentWrites();
-+  CleanupSnapshots();
-+}
-+
-+TEST_F(ListNodeTieringTest, RdbSaveRejected) {
-+  InitWithDbFilename();
-+  EXPECT_THAT(Run({"SAVE", "RDB"}), ErrArg("not supported"));
-+  CleanupSnapshots();
-+}
-+
- // Test MEMORY DECOMMIT COOL command flushes the cool queue
- TEST_P(LatentCoolingTSTest, MemoryDecommitCool) {
-   absl::FlagSaver saver;
++    asset_name = f"silo_{MINIO_VERSION}_{platform_key.replace('-', '_')}.tar.gz"
++    tmp_archive = dest.with_name(dest.name + ".tar.gz")
++    tmp_dest = dest.with_name(dest.name + ".tmp")
++    try:
++        _download_archive(asset_name, tmp_archive, github_token)
++        actual_sha256 = hashlib.sha256(tmp_archive.read_bytes()).hexdigest()
++        if actual_sha256 != expected_sha256:
++            raise RuntimeError(
++                f"MinIO checksum mismatch for {asset_name}: got {actual_sha256}, "
++                f"expected {expected_sha256}"
++            )
++        with tarfile.open(tmp_archive) as tar:
++            with tar.extractfile("silo") as src, open(tmp_dest, "wb") as dst:
++                shutil.copyfileobj(src, dst)
++        tmp_dest.chmod(0o755)
++        tmp_dest.rename(dest)
++    finally:
++        tmp
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8775** (2026-11-08): fix(ci): update chart-testing and add Silo download fallback (@vyavdoshenko)
 - **PR #8772** (2026-11-07): fix: remove unused code and obsolete test helpers (@vyavdoshenko)
 - **PR #8770** (2026-11-07): test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (@vyavdoshenko)
 - **PR #8763** (2026-11-06): fix: resolve sanitizer UB and extend nightly test timeouts (@vyavdoshenko)
 - **PR #8761** (2026-11-06): test: fix queued sink writer tests on libc++ (macOS) (@vyavdoshenko)
 - **PR #8757** (2026-11-06): fix(snapshot): release the serializer buffer while loading a tiered list node (@kostasrim)
-- **PR #8756** (2026-11-06): feat(server): support CLIENT KILL TYPE, USER, MAXAGE and SKIPME filters (@vyavdoshenko)
 
 ---
 
@@ -3103,70 +2637,33 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#877
+## X. ci): update chart-testing and add Silo download fallback (#8775)
 
 **RULE**:
-When implementing operations in `src/server/dragonfly_connection_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/lint-test-chart/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `244e6a07`: test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#8770). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f317962d`: ci): update chart-testing and add Silo download fallback (#8775). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dragonfly_connection_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/lint-test-chart/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    main_listener_ = make(facade::Listener::Role::MAIN);
-    port_ = acceptor_->AddListener(0, main_listener_);
-    return {main_listener_, admin};
-    // Initialize shared buffers for tests that switch to V2 after setup.
-    const bool v2 = absl::GetFlag(FLAGS_enable_resp_io_loop_v2);
-    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, true);
-    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
-  facade::Listener* main_listener_ = nullptr;
-// A closing context must not prevent killing an open socket with a blocked send.
-TEST_F(ClientKillTest, KillsClosingConnectionWithStuckSend) {
-  auto wait_until = [](auto&& condition) {
-    const auto deadline = std::chrono::steady_clock::now() + 2s;
-    while (!condition()) {
-      if (std::chrono::steady_clock::now() >= deadline)
-        return false;
-      absl::SleepFor(absl::Milliseconds(1));
-    }
-    return true;
-  };
-
-  ASSERT_EQ(Run({"SET", "big", std::string(64 << 20, 'x')}), "OK");
-  for (bool v2 : {false, true}) {
-    SCOPED_TRACE(v2);
-    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
-    RawRespClient client{port_};
-    ASSERT_TRUE(client.valid());
-    const std::string id = ClientId(client);
-    ASSERT_FALSE(id.empty());
-    SCO
+        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510 # v2.9.0
+        with:
+          version: "3.15.0"
+          verify_blob: "true"
+          yamllint_version: "1.27.1"
+          yamale_version: "3.0.4"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    auto* listener = make(facade::Listener::Role::MAIN);
-    port_ = acceptor_->AddListener(0, listener);
-    return {listener, admin};
-// A half-closed peer marks the connection closing, yet only a kill ends its blocked send.
-TEST_F(ClientKillTest, KillsHalfClosedStuckSend) {
-  RawRespClient v{port_};
-  const std::string id = ClientId(v);
-  Run({"SET", "big", std::string(64 << 20, 'x')});
-  auto row = [&] { return Run({"CLIENT", "LIST", "ID", id}).GetString(); };
-  ASSERT_TRUE(v.SendAll("GET big\r\n"));
-  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "phase=send"); });
-  ASSERT_TRUE(v.ShutdownWrite());
-  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "flags=t"); });
-  EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1));
-  ExpectConditionWithinTimeout([&] { return row().empty(); });
+        uses: helm/chart-testing-action@v2.6.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `244e6a07` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f317962d` are properly handled with clean fallback behavior.
