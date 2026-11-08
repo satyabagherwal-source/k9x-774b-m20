@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261106-RXUB",
-    "timestamp": "2026-11-06T14:33:58.547Z",
-    "repository": "LiconStudio/Minimax-H3-VBVR",
-    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "f560ac9e13f1ee1f95e17f48eb3af8d08516bcc5e0e228f6a747769bc0a53b22",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261106-S428",
-    "timestamp": "2026-11-06T14:34:06.608Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "6e88714d74bc06ef5cc4feaff25ea3e7bed97493f1002bccc102816f90f9f6b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261106-0G6U",
     "timestamp": "2026-11-06T14:40:35.574Z",
     "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "google-bert/bert-base-uncased",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased",
     "contentHash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-RT25",
+    "timestamp": "2026-11-08T20:13:08.189Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-S2C3",
+    "timestamp": "2026-11-08T20:13:20.211Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

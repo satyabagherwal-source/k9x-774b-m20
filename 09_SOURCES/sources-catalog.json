@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
-    "lastHarvestedAt": "2026-11-05T03:32:38.605Z",
+    "contentHash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
+    "lastHarvestedAt": "2026-11-08T20:13:20.215Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "d02e800f",
+    "sourceVersion": "a8c78463",
     "license": "MIT",
-    "contentHash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
-    "lastHarvestedAt": "2026-11-04T20:31:57.908Z",
+    "contentHash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
+    "lastHarvestedAt": "2026-11-08T20:13:08.193Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

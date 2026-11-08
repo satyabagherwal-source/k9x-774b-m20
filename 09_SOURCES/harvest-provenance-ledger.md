@@ -8382,3 +8382,5 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `b4184642` | Multi-dimensional audit evidence | 2026-11-08T20:02:53.961Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ad3fc53f` | Multi-dimensional audit evidence | 2026-11-08T20:03:01.400Z |
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T20:05:57.443Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `a8c78463` | Multi-dimensional audit evidence | 2026-11-08T20:13:08.193Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-08T20:13:20.215Z |

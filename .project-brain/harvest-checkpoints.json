@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:05:57.453Z",
+  "last_updated": "2026-11-08T20:13:20.225Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -935,14 +935,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
-      "verified_at": "2026-11-05T03:32:38.613Z",
+      "content_hash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
+      "verified_at": "2026-11-08T20:13:20.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:32:38.613Z"
+      "last_updated": "2026-11-08T20:13:20.225Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
-      "verified_at": "2026-11-04T20:31:57.923Z",
+      "content_hash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
+      "verified_at": "2026-11-08T20:13:08.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T20:31:57.923Z"
+      "last_updated": "2026-11-08T20:13:08.202Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",

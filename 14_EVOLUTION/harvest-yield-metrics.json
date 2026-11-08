@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T20:05:57.449Z",
-  "total_cycles_completed": 8338,
-  "total_learnings_persisted": 8338,
-  "total_rules_promoted": 8136,
+  "last_updated": "2026-11-08T20:13:20.221Z",
+  "total_cycles_completed": 8340,
+  "total_learnings_persisted": 8340,
+  "total_rules_promoted": 8140,
   "history": [
-    {
-      "timestamp": "2026-11-08T02:15:41.296Z",
-      "repository": "autogluon/chronos-2",
-      "learningId": "learn-huggingface-autogluon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T02:15:44.279Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T02:25:33.250Z",
       "repository": "Comfy-Org/MOSS-Image",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T20:05:57.449Z",
       "repository": "google-bert/bert-base-uncased",
       "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:13:08.199Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:13:20.221Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

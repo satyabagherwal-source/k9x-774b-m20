@@ -8373,3 +8373,5 @@
 | `CYCLE-20261108-EN45` | `2026-11-08T20:02:53.957Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c22df3e5...`) |
 | `CYCLE-20261108-ESUR` | `2026-11-08T20:03:01.395Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5ebdd9a8...`) |
 | `CYCLE-20261108-IKOV` | `2026-11-08T20:05:57.439Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`1485b169...`) |
+| `CYCLE-20261108-RT25` | `2026-11-08T20:13:08.189Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`664a590b...`) |
+| `CYCLE-20261108-S2C3` | `2026-11-08T20:13:20.211Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`94753537...`) |

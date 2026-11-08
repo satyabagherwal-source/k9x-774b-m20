@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:05:57.348Z",
+  "last_updated": "2026-11-08T20:13:20.117Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20956,10 +20956,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "d597f8418de07bb1007c1a6dd729b9755ba8169614939292e10876856e49df06",
+      "content_hash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Hybrid Retrieval Fusion Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Context Window Boundary Safety",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Sparse Vector Sparsity Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1402,
           "title": "Invariant Offset Handling in Absolute Position Embedding Layers",
@@ -21004,7 +21019,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-11-05T03:32:38.480Z",
+      "verified_at": "2026-11-08T20:13:20.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66382,11 +66397,16 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "d02e800f",
-      "content_hash": "aa1cf4628866c2fc2cb7ff4dcfb4c1ca74004ae5453dac99c8edc07b6484ac6e",
+      "source_version": "a8c78463",
+      "content_hash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "misc pixel fixes (#262)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2410,
           "title": "Atomic Buffer Boundary Truncation for File Stream Pollers",
@@ -66443,7 +66463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:31:57.815Z",
+      "verified_at": "2026-11-08T20:13:08.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `d02e800f`  
+> **Source Version**: `a8c78463`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:31:57.260Z  
+> **Timestamp**: 2026-11-08T20:13:06.762Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:31:56.365Z  
+> **Harvest Timestamp**: 2026-11-08T20:13:06.255Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4440 stars
+- **Stars / Engagement**: 4517 stars
 
 ---
 
@@ -594,900 +594,915 @@ export class EngineLog {
 
 ```
 
-### Core Architecture Module: `pixel/engine/crates/pixel-core/native-scroll-helper.swift`
+### Core Architecture Module: `pixel/engine/crates/pixel-bridge/src/diff.rs`
 ```
+use std::time::Duration;
 
-import AppKit
+use similar::{Algorithm, ChangeTag, DiffTag, InlineChangeOptions, TextDiff};
 
-let app = NSApplication.shared
-app.setActivationPolicy(.prohibited)
-
-let scale = NSScreen.main?.backingScaleFactor ?? 2.0
-print("scale \(scale)")
-fflush(stdout)
-
-private func cursorPoint() -> CGPoint {
-    CGEvent(source: nil)?.location ?? .zero
+#[cfg_attr(feature = "napi", napi_derive::napi(object))]
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DiffEmphasis {
+    pub start: u32,
+    pub end: u32,
 }
 
-private let outputLock = NSLock()
-
-private func emit(_ line: String) {
-    outputLock.lock()
-    print(line)
-    fflush(stdout)
-    outputLock.unlock()
+#[cfg_attr(feature = "napi", napi_derive::napi(object))]
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DiffRow {
+    pub kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub old_line: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub new_line: Option<u32>,
+    pub text: String,
+    pub side_start: u32,
+    pub emphasis: Vec<DiffEmphasis>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub count: Option<u32>,
 }
 
-private func windowUnderCursor(_ point: CGPoint) -> CGRect? {
-    let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
-    guard let list = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
-        return nil
+fn line_starts(source: &str) -> Vec<u32> {
+    let mut starts = Vec::new();
+    let mut offset = 0u32;
+    for segment in source.split_inclusive('\n') {
+        starts.push(offset);
+        offset += segment.len() as u32;
     }
-    for info in list {
-        guard let layer = info[kCGWindowLayer as String] as? Int, layer == 0 else { continue }
-        if let alpha = info[kCGWindowAlpha as String] as? Double, alpha < 0.05 { continue }
-        guard let raw = info[kCGWindowBounds as String],
-              let bounds = CGRect(dictionaryRepresentation: raw as! CFDictionary),
-              bounds.width > 1, bounds.height > 1 else { continue }
-        if bounds.contains(point) { return bounds }
+    if starts.is_empty() {
+        starts.push(0);
     }
-    return nil
+    starts
 }
 
-private final class WindowProbe {
-    private let lock = NSLock()
-    private var lastPoint = CGPoint(x: CGFloat.infinity, y: CGFloat.infinity)
-    private var lastRect: CGRect?
-    private var lastProbe = 0.0
-
-    func refresh(_ point: CGPoint, force: Bool) {
-        lock.lock()
-        let now = ProcessInfo.processInfo.systemUptime
-        let moved = hypot(point.x - lastPoint.x, point.y - lastPoint.y) > 2
-        guard force || (moved && now - lastProbe > 0.08) else {
-            lock.unlock()
-            return
-        }
-        lastPoint = point
-        lastProbe = now
-        let previous = lastRect
-        let rect = windowUnderCursor(point)
-        lastRect = rect
-        let changed = previous.map { p in rect.map { !$0.equalTo(p) } ?? true } ?? (rect != nil)
-        lock.unlock()
-        guard changed else { return }
-        if let rect {
-            emit("w \(rect.origin.x) \(rect.origin.y) \(rect.width) \(rect.height)")
-        } else {
-            emit("w none")
-        }
+fn line_range(source: &str, starts: &[u32], index: usize) -> (u32, u32) {
+    let start = starts[index];
+    let mut end = starts
+        .get(index + 1)
+        .copied()
+        .unwrap_or(source.len() as u32);
+    let bytes = source.as_bytes();
+    if end > start && bytes[end as usize - 1] == b'\n' {
+        end -= 1;
     }
+    if end > start && bytes[end as usize - 1] == b'\r' {
+        end -= 1;
+    }
+    (start, end)
+}
 
-    func invalidate() {
-        lock.lock()
-        lastPoint = CGPoint(x: CGFloat.infinity, y: CGFloat.infinity)
-        lastRect = nil
-        lock.unlock()
+fn gap_row(count: u32) -> DiffRow {
+    DiffRow {
+        kind: "gap".into(),
+        old_line: None,
+        new_line: None,
+        text: String::new(),
+        side_start: 0,
+        emphasis: Vec::new(),
+        count: Some(count),
     }
 }
 
-private let windowProbe = WindowProbe()
+#[cfg_attr(feature = "napi", napi_derive::napi)]
+pub fn diff(old_source: String, new_source: String, context_lines: Option<u32>) -> Vec<DiffRow> {
+    let context = context_lines.unwrap_or(3) as usize;
+    let text_diff = TextDiff::configure()
+    /*
+      todo: we need to see which algorithm we like the best (configurable ideally) 
+      and if there are perf issues we should probably be able to make it just work
+     */
+        .algorithm(Algorithm::Myers)
+        .timeout(Duration::from_millis(500))
+        .diff_lines(old_source.as_str(), new_source.as_str());
+    let old_starts = line_starts(&old_source);
+    let new_starts = line_starts(&new_source);
+    let old_line_count = old_source.split_inclusive('\n').count();
+    let mut inline_options = InlineChangeOptions::new();
+    inline_options.semantic_cleanup(true);
 
-private final class PositionStream {
-    private let lock = NSLock()
-    private var armedUntil = 0.0
-    private var lastEmit = 0.0
-
-    private static let keepalive = 8.0
-
-    func setArmed(_ value: Bool) {
-        lock.lock()
-        armedUntil = value ? ProcessInfo.processInfo.systemUptime + Self.keepalive : 0
-        lock.unlock()
-        if value { windowProbe.invalidate() }
-    }
-
-    func tick() {
-        lock.lock()
-        let now = ProcessInfo.processInfo.systemUptime
-        guard now < armedUntil, now - lastEmit > 1.0 / 90.0 else {
-            lock.unlock()
-            return
-        }
-        lastEmit = now
-        lock.unlock()
-        let point = cursorPoint()
-        emit("m \(point.x) \(point.y)")
-        windowProbe.refresh(point, force: false)
-    }
-}
-
-private let positions = PositionStream()
-
-NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { event in
-    let precise = event.hasPreciseScrollingDeltas ? 1 : 0
-    let point = cursorPoint()
-    windowProbe.refresh(point, force: event.phase.contains(.began))
-    emit("s \(event.scrollingDeltaY) \(event.phase.rawValue) \(event.momentumPhase.rawValue) \(precise) \(event.scrollingDeltaX) \(point.x) \(point.y)")
-}
-
-NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .rightMouseDragged]) { _ in
-    positions.tick()
-}
-
-NotificationCenter.default.addObserver(
-    forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
-) { _ in
-    windowProbe.invalidate()
-    emit("scale \(NSScreen.main?.backingScaleFactor ?? 2.0)")
-}
-private let fingerStride = 96
-
-// https://chromium.googlesource.com/chromiumos/platform/gestures/+/f9021145c74025829b14fb0c76b59d16d06d3752/src/immediate_interpreter.cc#1993
-private let noiseFloorMove: Float = 0.010    // 1mm: below this nothing classifies
-private let classifyMove: Float = 0.015      // 1.5mm: per-finger floor for the angle test
-private let soloMove: Float = 0.040          // 4mm: one finger moving alone means scroll
-private let certainMove: Float = 0.080       // 8mm: both fingers opposing locks pinch at once
-private let scrollSeparationX: Float = 0.40  // 40mm: fingers this close default to...
-private let scrollSeparationY: Float = 0.09  // 7mm:  ...scroll after the timeout
-private let scrollDefaultAfter = 0.150       // seconds before close fingers mean scroll
-private let reclassifyWindow = 0.300         // seconds a scroll may still become a pinch
-private let pinchMaxCosine: Float = -0.4     // displacement vectors 113°+ apart
-private let pinchMovementRatio: Float = 0.4  // slower finger must do 40% of faster one
-private let jitterRatio: Float = 1.005       // min distance² change to emit
-private let restingJitterRatio: Float = 1.05 // after 100ms idle or direction reversal
-private let restingAfter = 0.100
-
-private struct Contact {
-    var id: Int32
-    var x: Float
-    var y: Float
-}
-
-private struct TouchTrack {
-    enum Mode { case undecided, pinch, scroll }
-    var mode: Mode
-    var ids: (Int32, Int32)
-    var startTime: Double
-    var initial: (Contact, Contact)
-    var emittedDistance: Float
-    var lastEmitTime: Double
-    var lastDirection: Float
-}
-
-private final class PinchState {
-    let lock = NSLock()
-    var track: [Int32: TouchTrack] = [:]
-}
-private let pinchState = PinchState()
-
-private typealias MTContactCallback =
-    @convention(c) (Int32, UnsafeMutableRawPointer?, Int32, Double, Int32) -> Int32
-
-private let contactCallback: MTContactCallback = { device, data, fingerCount, timestamp, _ in
-    guard let data else { return 0 }
-    var contacts: [Contact] = []
-    for i in 0..<Int(fingerCount) {
-        let base = data.advanced(by: i * fingerStride)
-        let phase = base.load(fromByteOffset: 20, as: Int32.self)
-        let size = base.load(fromByteOffset: 48, as: Float.self)
-        guard phase == 3 || phase == 4, size > 0.05 else { continue }
-        contacts.append(Contact(
-            id: base.load(fromByteOffset: 16, as: Int32.self),
-            x: base.load(fromByteOffset: 32, as: Float.self),
-            y: base.load(fromByteOffset: 36, as: Float.self)
-        ))
-    }
-    pinchState.lock.lock()
-    defer { pinchState.lock.unlock() }
-    guard contacts.count == 2 else {
-        pinchState.track[device] = nil
-        return 0
-    }
-    contacts.sort { $0.id < $1.id }
-    let (a, b) = (contacts[0], contacts[1])
-    let distance = hypotf(a.x - b.x, a.y - b.y)
-    guard var track = pinchState.track[device],
-          track.ids == (a.id, b.id), distance > 0 else {
-        pinchState.track[device] = TouchTrack(
-            mode: .undecided, ids: (a.id, b.id), startTime: timestamp,
-            initial: (a, b), emittedDistance: distance,
-            lastEmitTime: timestamp, lastDirection: 0)
-        return 0
-    }
-    defer { pinchState.track[device] = track }
-
-    let canUpgrade = track.mode == .scroll
-        && timestamp - track.startTime < reclassifyWindow
-    if track.mode == .undecided || canUpgrade {
-        classify(&track, a: a, b: b, timestamp: timestamp, distance: distance)
-    }
-    if track.mode == .pinch {
-        emitPinch(&track, distance: distance, timestamp: timestamp)
-    }
-    return 0
-}
-
-private func classify(
-    _ track: inout TouchTrack, a: Contact, b: Contact,
-    timestamp: Double, distance: Float
-) {
-    let d0 = (x: a.x - track.initial.0.x, y: a.y - track.initial.0.y)
-    let d1 = (x: b.x - track.initial.1.x, y: b.y - track.initial.1.y)
-    let m0 = hypotf(d0.x, d0.y)
-    let m1 = hypotf(d1.x, d1.y)
-    if m0 < noiseFloorMove && m1 < noiseFloorMove { return }
-    let dot = d0.x * d1.x + d0.y * d1.y
-    var decision: TouchTrack.Mode = track.mode
-    if m0 >= certainMove, m1 >= certainMove, dot < 0 {
-        decision = .pinch
-    } else if m0 >= classifyMove, m1 >= classifyMove {
-        let cosine = dot / max(m0 * m1, 0.0001)
-        if cosine > pinchMaxCosine {
-            decision = .scroll
-        } else if min(m0, m1) / max(m0, m1) >= pinchMovementRatio {
-            decision = .pinch
-        }
-    } else if track.mode == .undecided {
-        if max(m0, m1) >= soloMove, min(m0, m1) < classifyMove {
-            decision = .scroll
-        } else if timestamp - track.startTime > scrollDefaultAfter,
-                  abs(a.x - b.x) < scrollSeparationX,
-                  abs(a.y - b.y) < scrollSeparationY {
-            decision = .scroll
-        }
-    }
-    track.mode = decision
-    if decision == .pinch {
-        track.emittedDistance = distance
-        track.lastEmitTime = timestamp
-        track.lastDirection = 0
-    }
-}
-
-private func emitPinch(_ track: inout TouchTrack, distance: Float, timestamp: Double) {
-    guard track.emittedDistance > 0 else {
-        track.emittedDistance = distance
-        return
-    }
-    let distanceSq = distance * distance
-    let emittedSq = track.emittedDistance * track.emittedDistance
-    let direction: Float = distanceSq > emittedSq ? 1 : -1
-    var threshold = jitterRatio
-    if timestamp - track.lastEmitTime > restingAfter { threshold = restingJitterRatio }
-    if track.lastDirection != 0, direction != track.lastDirection {
-        threshold = max(threshold, restingJitterRatio)
-    }
-    guard distanceSq > emittedSq * threshold || distanceSq * threshold < emittedSq else {
-        return
-    }
-    let point = cursorPoint()
-    emit("z \(distance / track.emittedDistance - 1) \(point.x) \(point.y)")
-    track.emittedDistance = distance
-    track.lastEmitTime = timestamp
-    track.lastDirection = direction
-}
-
-private final class MultitouchPinch {
-    private typealias CreateListFn = @convention(c) () -> Unmanaged<CFArray
-```
-
-### Core Architecture Module: `pixel/engine/crates/pixel-core/src/canvas.rs`
-```
-use crate::surfaces::{OpaqueArea, Rect};
-use crate::system_fonts::{self, Glyph};
-use crate::text_input::{MARK_CHAR, Mark, mark_advance_at};
-
-#[derive(Clone, Copy)]
-pub struct Frame<'a> {
-    pub canvas: &'a Canvas,
-    pub premultiplied: bool,
-    pub changed: &'a [Rect],
-    pub repainted: &'a [Rect],
-    pub opaque: &'a [OpaqueArea],
-    pub ui_over_surfaces: &'a [Rect],
-    pub layer: Option<&'a ScrollLayer>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ScrollLayer {
-    pub area: Rect,
-    pub origin_y: i64,
-    pub under: Vec<Pixels>,
-    pub overlays: Vec<Overlay>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Pixels {
-    pub rect: Rect,
-    pub rgba: Vec<u8>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Overlay {
-    pub pixels: Pixels,
-    pub above: bool,
-}
-
-type GlyphKey = (usize, char, u32);
-
-fn glyph_key(font: &crate::fonts::Font, ch: char, px: f32) -> GlyphKey {
-    (font.id(), ch, px.to_bits())
-}
-
-fn monospace_advance(font: &crate::fonts::Font, px: f32) -> Option<f32> {
-    let narrow = font.metrics('i', px).advance_width;
-    (narrow > 0.0 && narrow == font.metrics('M', px).advance_width).then_some(narrow)
-}
-
-fn draws_itself(font: &crate::fonts::Font, ch: char) -> bool {
-    ch.is_control() || font.lookup_glyph_index(ch) != 0 || (ch.is_whitespace() && font.fallback_for(ch).is_none())
-}
-
-fn cells(ch: char) -> usize {
-    unicode_width::UnicodeWidthChar::width(ch).unwrap_or(1)
-}
-
-fn natural_fallback_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
-    if let Some(face) = font.fallback_for(ch) {
-        return face.metrics(ch, px).advance_width;
-    }
-    // Matches `rasterize_glyph`, which draws nothing for a zero-width character no font has.
-    system_fonts::advance(ch, px).unwrap_or_else(|| if cells(ch) == 0 { 0.0 } else { font.metrics(ch, px).advance_width })
-}
-
-fn glyph_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
-    if draws_itself(font, ch) {
-        return font.metrics(ch, px).advance_width;
-    }
-    match monospace_advance(font, px) {
-        Some(cell) => cell * cells(ch) as f32,
-        None => natural_fallback_advance(font, ch, px),
-    }
-}
-
-fn rasterize_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Glyph {
-    if draws_itself(font, ch) {
-        let (metrics, pixels) = font.rasterize(ch, px);
-        return Glyph { metrics, pixels, color: false };
-    }
-    let cell = monospace_advance(font, px);
-    let span = cell.map(|cell| cell * cells(ch) as f32);
-    let mut glyph = borrowed_glyph(font, ch, px);
-    if let (Some(span), Some(drawn)) = (span, &glyph)
-        && span > 0.0
-        && drawn.metrics.width as f32 > span
-    {
-        glyph = borrowed_glyph(font, ch, px * span / drawn.metrics.width as f32);
-    }
-    let mut glyph = glyph.unwrap_or_else(|| {
-        if cells(ch) == 0 {
-            return Glyph { metrics: fontdue::Metrics::default(), pixels: Vec::new(), color: false };
-        }
-        let (metrics, pixels) = font.rasterize(ch, px);
-        Glyph { metrics, pixels, color: false }
-    });
-    if let (Some(cell), Some(span)) = (cell, span) {
-        fit_to_cells(&mut glyph.metrics, cell, span);
-    }
-    glyph
-}
-
-fn borrowed_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Option<Glyph> {
-    if let Some(face) = font.fallback_for(ch) {
-        let (metrics, pixels) = face.rasterize(ch, px);
-        return Some(Glyph { metrics, pixels, color: false });
-    }
-    system_fonts::rasterize(ch, px)
-}
-
-fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
-    metrics.xmin = if span == 0.0 {
-        (-(cell + metrics.width as f32) / 2.0).round() as i32
-    } else {
-        metrics.xmin + ((span - metrics.advance_width) / 2.0).round() as i32
-    };
-    metrics.advance_width = span;
-}
-
-type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
-std::thread_local! {
-    static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
-    static SIZES_SEEN: std::cell::RefCell<std::collections::HashSet<(usize, u32)>> = std::cell::RefCell::new(std::collections::HashSet::new());
-    static TO_WARM: std::cell::RefCell<Vec<(usize, f32, char)>> = const { std::cell::RefCell::new(Vec::new()) };
-    static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
-        std::cell::RefCell::new(std::collections::HashMap::new());
-    static LAST_RESAMPLE: std::cell::Cell<Option<(u32, u32, u32, u32)>> =
-        const { std::cell::Cell::new(None) };
-}
-
-fn note_size(font: &crate::fonts::Font, px: f32) {
-    if SIZES_SEEN.with_borrow_mut(|seen| seen.insert((font.id(), px.to_bits()))) {
-        TO_WARM.with_borrow_mut(|queue| queue.push((font.id(), px, ' ')));
-    }
-}
-
-pub(crate) fn glyphs_to_warm() -> bool {
-    TO_WARM.with_borrow(|queue| !queue.is_empty())
-}
-
-pub(crate) fn warm_glyphs(fonts: &[crate::fonts::Font], until: std::time::Instant) {
-    while std::time::Instant::now() < until {
-        let Some((id, px, ch)) = TO_WARM.with_borrow(|queue| queue.last().copied()) else { return };
-        let Some(font) = fonts.iter().find(|f| f.id() == id) else {
-            TO_WARM.with_borrow_mut(|queue| queue.pop());
+    let mut rows = Vec::new();
+    let mut previous_old_end = 0usize;
+    for group in text_diff.grouped_ops(context) {
+        let Some(first) = group.first() else {
             continue;
         };
-        GLYPH_CACHE.with_borrow_mut(|cache| {
-            cache.entry(glyph_key(font, ch, px)).or_insert_with(|| rasterize_glyph(font, ch, px));
-        });
-        TO_WARM.with_borrow_mut(|queue| match char::from_u32(ch as u32 + 1).filter(|next| *next <= '~') {
-            Some(next) => {
-                if let Some(last) = queue.last_mut() {
-                    last.2 = next;
+        let group_old_start = first.old_range().start;
+        if group_old_start > previous_old_end {
+            rows.push(gap_row((group_old_start - previous_old_end) as u32));
+        }
+        for op in &group {
+            if op.tag() == DiffTag::Equal {
+                let old_range = op.old_range();
+                let new_range = op.new_range();
+                for at in 0..old_range.len() {
+                    let old_index = old_range.start + at;
+                    let new_index = new_range.start + at;
+                    let (start, end) = line_range(&new_source, &new_starts, new_index);
+                    rows.push(DiffRow {
+                        kind: "context".into(),
+                        old_line: Some(old_index as u32 + 1),
+                        new_line: Some(new_index as u32 + 1),
+                        text: new_source[start as usize..end as usize].to_string(),
+                        side_start: start,
+                        emphasis: Vec::new(),
+                        count: None,
+                    });
                 }
+                continue;
             }
-            None => {
-                queue.pop();
-            }
-        });
-    }
-}
-
-#[derive(Clone, Copy)]
-struct RoundedBlit {
-    radius: [f32; 4],
-    width: i64,
-    height: i64,
-}
-
-impl RoundedBlit {
-    fn new(radius: [f32; 4], width: i64, height: i64) -> Self {
-        let cap = (width as f32 / 2.0).min(height as f32 / 2.0);
-        let radius = radius.map(|r| if r < 0.5 { 0.0 } else { r.min(cap) });
-        Self {
-            radius,
-            width,
-            height,
-        }
-    }
-
-    fn corner_coverage(r: f32, px: f32, py: f32) -> f32 {
-        if r <= 0.0 || px >= r || py >= r {
-            return 1.0;
-        }
-        let d = ((r - px) * (r - px) + (r - py) * (r - py)).sqrt();
-        (r - d + 0.5).clamp(0.0, 1.0)
-    }
-
-    fn coverage(&self, col: i64, row: i64) -> f32 {
-        let left = col as f32 + 0.5;
-        let right = (self.width - 1 - col) as f32 + 0.5;
-        let top = row as f32 + 0.5;
-        let bottom = (self.height - 1 - row) as f32 + 0.5;
-        Self::corner_coverage(self.radius[0], left, top)
-            .min(Self::corner_coverage(self.radius[1], right, top))
-            .min(Self::corner_coverage(self.radius[2], right, bottom))
-            .min(Self::corner_coverage(self.radius[3], left, bottom))
-    }
-
-    fn spans(&self, row: i64, first_col: i64, last_col: i64) -> [(i64, i64); 3] {
-        let top = row as f32 + 0.5;
-        let bottom = (self.height - 1 - row) as f32 + 0.5;
-        let reach = |r: f32, dy: f32| {
-            if r > 0.0 && dy < r {
-                r.ceil() as i64 + 1
-            } else {
-                0
-            }
-        };
-        let left = reach(self.radius[0], top)
-            .max(reach(self.radius[3], bottom))
-            .min(self.width);
-        let right = reach(self.radius[1], top)
-            .max(reach(self.radius[2], bottom))
-            .min(self.width - left);
-        let full_from = left.clamp(first_col, last_col);
-        let full_to = (self.width - right).clamp(full_from, last_col);
-        [
-            (first_col, full_from),
-            (full_from, full_to),
-            (full_to, last_col),
-        ]
-    }
-
-    fn row(
-        &self,
-        row: i64,
-        first_col: i64,
-        dst: &mut [u8],
-        src: &[u8],
-        mut full: impl FnMut(&mut [u8], &[u8]),
-        mut partial: impl FnMut(&mut [u8], &[u8], u32),
-    ) {
-        let last_col = first_col + src.len() as i64 / 4;
-        let [left, middle, right] = self.spans(row, first_col, last_col);
-        for (from, to) in [left, right] {
-            for col in from..to {
-                let coverage = (self.coverage(col, row) * 255.0 + 0.5) as u32;
-                if coverage == 0 {
-                    continue;
+            for change in text_diff.iter_inline_changes_with_options(op, inline_options) {
+                let (kind, source, starts, index) = match change.tag() {
+                    ChangeTag::Delete => {
+                        ("del", &old_source, &old_starts, change.old_index().unwrap())
+                    }
+                    ChangeTag::Insert => {
+                        ("add", &new_source, &new_starts, change.new_index().unwrap())
+                    }
+                    ChangeTag::Equal => {
+                        ("context", &new_source, &new_starts, change.new_index().unwrap())
+                    }
+                };
+                let (start, end) = line_range(source, starts, index);
+                let text_len = end - start;
+                let mut emphasis = Vec::new();
+                let mut cursor = 0u32;
+                for (emphasized, value) in change.values() {
+                    let value_len = value.len() as u32;
+                    if *emphasized {
+                        let run_start = cursor;
+                        let run_end = (cursor + value_len).min(text_len);
+                        if run_start < run_end {
+                            emphasis.push(DiffEmphasis {
+                                start: run_start,
+                                end: run_end,
+                            });
+                        }
+                    }
+                    cursor += value_len;
                 }
-                let at = (col - first_col) as usize * 4;
-                partial(&mut dst[at..at + 4], &src[at..at + 4], coverage);
+                rows.push(DiffRow {
+                    kind: kind.into(),
+                    old_line: change.old_index().map(|i| i as u32 + 1),
+                    new_line: change.new_index().map(|i| i as u32 + 1),
+                    text: source[start as usize..end as usize].to_string(),
+                    side_start: start,
+                    emphasis,
+                    count: None,
+                });
             }
         }
-        let (from, to) = (
-            (middle.0 - first_col) as usize * 4,
-            (middle.1 - first_col) as usize * 4,
-        );
-        if to > from {
-            full(&mut dst[from..to], &src[from..to]);
-        }
+        previous_old_end = group.last().map_or(previous_old_end, |op| op.old_range().end);
     }
-}
-
-fn lerp_pixel(dst: &mut [u8], src: &[u8], coverage: u32) {
-    for (d, &s) in dst.iter_mut().zip(src) {
-        *d = ((u32::from(s) * coverage + u32::from(*d) * (255 - coverage) + 127) / 255) as u8;
+    if old_line_count > previous_old_end {
+        rows.push(gap_row((old_line_count - previous_old_end) as u32));
     }
-}
-
-fn blend_covered_pixel(dst: &mut [u8], src: &[u8], coverage: u32) {
-    let covered =
-        [src[0], src[1], src[2], src[3]].map(|v| ((u32::from(v) * coverage + 127) / 255) as u8);
-    blend_pixel(dst, &covered, covered[3]);
-}
-
-#[derive(Default)]
-pub(crate) struct CanvasStats {
-    pub boxes: std::cell::Cell<u64>,
-    pub boxes_clipped_out: std::cell::Cell<u64>,
-    pub paths: std::cell::Cell<u64>,
-    pub paths_clipped: std::cell::Cell<u64>,
-}
-
-std::thread_local! {
-    static STATS: CanvasStats = CanvasStats::default();
-}
-
-fn tally(pick: impl Fn(&CanvasStats) -> &std::cell::Cell<u64>) {
-    STATS.with(|s| {
-        let cell = pick(s);
-        cell.set(cell.get() + 1);
-    });
-}
-
-pub(crate) fn take_canvas_stats() -> (u64, u64, u64, u64) {
-    STATS.with(|s| {
-        (
-            s.boxes.take(),
-            s.boxes_clipped_out.take(),
-            s.paths.take(),
-            s.paths_clipped.take(),
-        )
-    })
-}
-
-fn subtract_rect(
-    (fx1, fy1, fx2, fy2): (u32, u32, u32, u32),
-    (hx1, hy1, hx2, hy2): (u32, u32, u32, u32),
-    out: &mut Vec<
-```
-
-### Core Architecture Module: `pixel/engine/crates/pixel-core/src/clipboard_image.rs`
-```
-use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, Ordering};
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum PasteSource {
-    Clipboard,
-    Osc,
-    File,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct PastedImage {
-    pub path: String,
-    pub width: u32,
-    pub height: u32,
-    pub source: PasteSource,
-}
-
-static NEXT_ID: AtomicU64 = AtomicU64::new(0);
-
-pub(crate) fn temp_path(ext: &str) -> PathBuf {
-    let dir = std::env::temp_dir().join("pixel-attachments");
-    let _ = std::fs::create_dir_all(&dir);
-    let n = NEXT_ID.fetch_add(1, Ordering::Relaxed);
-    dir.join(format!("paste-{}-{n}.{ext}", std::process::id()))
-}
-
-fn dims(path: &Path) -> Option<(u32, u32)> {
-    image::ImageReader::open(path)
-        .ok()?
-        .with_guessed_format()
-        .ok()?
-        .into_dimensions()
-        .ok()
-}
-
-fn from_file(path: &Path, source: PasteSource) -> Option<PastedImage> {
-    let (width, height) = dims(path)?;
-    Some(PastedImage {
-        path: path.to_string_lossy().into_owned(),
-        width,
-        height,
-        source,
-    })
-}
-
-pub(crate) enum WorkerPaste {
-    File(PastedImage),
-    Bitmap {
-        pasted: PastedImage,
-        rgba: image::RgbaImage,
-    },
-}
-
-pub(crate) fn read_for_worker() -> Option<WorkerPaste> {
-    let mut clipboard = arboard::Clipboard::new().ok()?;
-    if let Ok(files) = clipboard.get().file_list()
-        && let Some(pasted) = files.iter().find_map(|f| from_file(f, PasteSource::Clipboard))
-    {
-        return Some(WorkerPaste::File(pasted));
-    }
-    let img = clipboard.get_image().ok()?;
-    let rgba = image::RgbaImage::from_raw(
-        img.width as u32,
-        img.height as u32,
-        img.bytes.into_owned(),
-    )?;
-    let (width, height) = rgba.dimensions();
-    let pasted = PastedImage {
-        path: temp_path("png").to_string_lossy().into_owned(),
-        width,
-        height,
-        source: PasteSource::Clipboard,
-    };
-    Some(WorkerPaste::Bitmap { pasted, rgba })
-}
-
-pub fn image_path_from_paste(text: &str) -> Option<PastedImage> {
-    let trimmed = text.trim();
-    if trimmed.is_empty() || trimmed.contains('\n') {
-        return None;
-    }
-    let unquoted = trimmed.trim_matches(|c| c == '\'' || c == '"');
-    let path = match unquoted.strip_prefix("file://") {
-        Some(rest) => percent_decode(rest),
-        None => unescape(unquoted),
-    };
-    if !path.starts_with('/') && !path.starts_with('~') {
-        return None;
-    }
-    let path = match path.strip_prefix("~/") {
-        Some(rest) => Path::new(&std::env::var("HOME").ok()?).join(rest),
-        None => PathBuf::from(path),
-    };
-    if !path.is_file() {
-        return None;
-    }
-    from_file(&path, PasteSource::File)
-}
-
-fn unescape(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    let mut chars = s.chars();
-    while let Some(c) = chars.next() {
-        if c == '\\' {
-            if let Some(next) = chars.next() {
-                out.push(next);
-            }
-        } else {
-            out.push(c);
-        }
-    }
-    out
-}
-
-fn percent_decode(s: &str) -> String {
-    let bytes = s.as_bytes();
-    let mut out = Vec::with_capacity(bytes.len());
-    let mut i = 0;
-    while i < bytes.len() {
-        let decoded = (bytes[i] == b'%' && i + 2 < bytes.len())
-            .then(|| u8::from_str_radix(&s[i + 1..i + 3], 16).ok())
-            .flatten();
-        match decoded {
-            Some(byte) => {
-                out.push(byte);
-                i += 3;
-            }
-            None => {
-                out.push(bytes[i]);
-                i += 1;
-            }
-        }
-    }
-    String::from_utf8_lossy(&out).into_owned()
+    rows
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn temp_dir() -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("pixel-clipboard-test-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        dir
-    }
-
-    fn temp_png(name: &str) -> PathBuf {
-        let path = temp_dir().join(name);
-        image::RgbaImage::from_pixel(6, 4, image::Rgba([1, 2, 3, 255]))
-            .save(&path)
-            .unwrap();
-        path
-    }
-
-    #[test]
-    fn plain_path_paste_detects_an_image() {
-        let path = temp_png("plain.png");
-        let pasted = image_path_from_paste(&path.to_string_lossy()).unwrap();
-        assert_eq!((pasted.width, pasted.height), (6, 4));
+    fn kinds(rows: &[DiffRow]) -> String {
+        rows.iter()
+            .map(|r| match r.kind.as_str() {
+                "context" => ' ',
+                "del" => '-',
+                "add" => '+',
+                "gap" => '~',
+                _ => '?',
+            })
+            .collect()
     }
 
     #[test]
-    fn quoted_escaped_and_file_url_paths_normalize() {
-        let path = temp_png("with space.png");
-        let raw = path.to_string_lossy();
-        assert!(image_path_from_paste(&format!("'{raw}'")).is_some());
-        assert!(image_path_from_paste(&raw.replace(' ', "\\ ")).is_some());
-        let url = format!("file://{}", raw.replace(' ', "%20"));
-        assert!(image_path_from_paste(&url).is_some());
+    fn produces_context_del_add_and_gap_rows() {
+        let old = "a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\n";
+        let new = "a\nb\nc\nd\nE\nf\ng\nh\ni\nj\nk\n";
+        let rows = diff(old.into(), new.into(), Some(2));
+        assert_eq!(kinds(&rows), "~  -+  ~");
+        let del = rows.iter().find(|r| r.kind == "del").unwrap();
+        assert_eq!(del.text, "e");
+        assert_eq!(del.old_line, Some(5));
+        assert_eq!(&old[del.side_start as usize..][..1], "e");
+        let add = rows.iter().find(|r| r.kind == "add").unwrap();
+        assert_eq!(add.text, "E");
+        assert_eq!(add.new_line, Some(5));
+        assert_eq!(&new[add.side_start as usize..][..1], "E");
+        assert_eq!(rows[0].count, Some(2));
+        assert_eq!(rows.last().unwrap().count, Some(4));
+
+        let rows = diff("a\nx\nb\n".into(), "a\nb\nc\n".into(), None);
+        let del = rows.iter().find(|r| r.kind == "del").unwrap();
+        assert_eq!((del.old_line, del.new_line), (Some(2), None));
+        let add = rows.iter().find(|r| r.kind == "add").unwrap();
+        assert_eq!((add.old_line, add.new_line), (None, Some(3)));
     }
 
     #[test]
-    fn ordinary_text_and_non_image_files_are_rejected() {
-        assert!(image_path_from_paste("hello world").is_none());
-        assert!(image_path_from_paste("/does/not/exist.png").is_none());
-        assert!(image_path_from_paste("one\n/two.png").is_none());
-        let path = temp_dir().join("notes.txt");
-        std::fs::write(&path, "just text").unwrap();
-        assert!(image_path_from_paste(&path.to_string_lossy()).is_none());
+    fn emphasis_marks_the_changed_word_only() {
+        let old = "let count = old_value + 1;\n";
+        let new = "let count = new_value + 1;\n";
+        let rows = diff(old.into(), new.into(), None);
+        let del = rows.iter().find(|r| r.kind == "del").unwrap();
+        assert_eq!(del.emphasis.len(), 1);
+        let e = &del.emphasis[0];
+        assert_eq!(&del.text[e.start as usize..e.end as usize], "old_value");
+        let add = rows.iter().find(|r| r.kind == "add").unwrap();
+        let e = &add.emphasis[0];
+        assert_eq!(&add.text[e.start as usize..e.end as usize], "new_value");
+
+        let old = "completely different content here\n";
+        let new = "nothing shared with that line\n";
+        let rows = diff(old.into(), new.into(), None);
+        for row in rows {
+            assert!(row.emphasis.is_empty(), "no emphasis on unrelated lines");
+        }
+    }
+
+    #[test]
+    fn new_file_is_all_additions() {
+        let rows = diff(String::new(), "one\ntwo\n".into(), None);
+        assert_eq!(kinds(&rows), "++");
+        assert_eq!(rows[0].text, "one");
+        assert_eq!(rows[1].new_line, Some(2));
     }
 }
 
 ```
 
-### Core Architecture Module: `pixel/engine/crates/pixel-core/src/desc.rs`
+### Core Architecture Module: `pixel/engine/crates/pixel-bridge/src/events.rs`
 ```
-use crate::style::Style;
-use crate::tree::{ImageProps, InputProps, NodeId, Props, SlotKind, Tree};
+use pixel_core::{
+    Engine, EngineEvent, Key, KeyEvent, KeyKind, MarkRef, Mods, MouseButton, MouseKind, NodeId,
+    ProfileData, PxRect,
+};
+use serde_json::json;
 
-#[derive(Default)]
-pub struct Desc {
-    pub style: Style,
-    pub text: Option<String>,
-    pub key: Option<String>,
-    pub clickable: bool,
-    pub input: Option<InputProps>,
-    pub image: Option<ImageProps>,
-    pub surface: Option<u32>,
-    pub slot: Option<SlotKind>,
-    pub content_height: Option<f32>,
-    pub scroll_events: bool,
-    pub stick_events: bool,
-    pub wheel_events: bool,
-    pub children: Vec<Desc>,
+fn mods_json(mods: &Mods) -> serde_json::Value {
+    json!({
+        "shift": mods.shift,
+        "alt": mods.alt,
+        "ctrl": mods.ctrl,
+        "super": mods.sup,
+    })
 }
 
-impl Desc {
-    pub(crate) fn props(&self) -> Props {
-        Props {
-            style: self.style.clone(),
-            text: self.text.clone(),
-            key: self.key.clone(),
-            clickable: self.clickable,
-            hidden: false,
-            input: self.input.clone(),
-            image: self.image.clone(),
-            surface: self.surface,
-            slot: self.slot,
-            mark: None,
-            marks: Vec::new(),
-            content_height: self.content_height,
-            shape: None,
-            scroll_events: self.scroll_events,
-            stick_events: self.stick_events,
-            wheel_events: self.wheel_events,
-            pointer_events: false,
-            hover_events: false,
-            outside_click_events: false,
-            drag_events: false,
-            selection_events: false,
-            move_events: false,
-            spans: Vec::new(),
-        }
-    }
-
-    fn reusable(&self, tree: &Tree, id: NodeId) -> bool {
-        tree.get(id)
-            .is_some_and(|node| node.input.is_some() == self.input.is_some())
-    }
+fn caret_json(caret: &PxRect) -> serde_json::Value {
+    json!({ "x": caret.x, "y": caret.y, "w": caret.w, "h": caret.h })
 }
 
-impl Tree {
-    pub fn mount(&mut self, parent: NodeId, desc: Desc) -> NodeId {
-        let id = self.create(desc.props());
-        self.append(parent, id);
-        for child in desc.children {
-            self.mount(id, child);
+fn marks_json(marks: &[MarkRef]) -> serde_json::Value {
+    json!(
+        marks
+            .iter()
+            .map(|m| json!({ "id": m.id, "offset": m.offset, "data": m.data }))
+            .collect::<Vec<_>>()
+    )
+}
+
+use crate::ops::IdMap;
+
+fn nearest_ext(engine: &Engine, ids: &IdMap, view: usize, node: NodeId) -> Option<u32> {
+    let tree = &engine.comp.views.get(view)?.tree;
+    let mut current = Some(node);
+    while let Some(id) = current {
+        if let Some(ext) = ids.ext(id) {
+            return Some(ext);
         }
-        id
+        current = tree.parent(id);
     }
+    None
+}
 
-    pub fn reconcile(&mut self, desc: Desc) {
-        crate::profiler::span("tree.reconcile", || {
-            let root = self.root();
-            let mut props = desc.props();
-            if let Some(node) = self.get(root) {
-                props.style.width = node.style.width;
-                props.style.height = node.style.height;
-            }
-            self.update(root, props);
-            self.reconcile_children(root, desc.children);
-        });
-    }
+pub fn event_json(event: &EngineEvent, engine: &Engine, ids: &[IdMap]) -> Option<String> {
+    let value = match event {
+        EngineEvent::Click {
+            view,
+            node,
+            key,
+            x,
+            y,
+            offset,
+        } => json!({
+            "type": "click",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "x": x,
+            "y": y,
+            "offset": offset,
+        }),
+        EngineEvent::ClickOutside {
+            view,
+            node,
+            key,
+            x,
+            y,
+        } => json!({
+            "type": "clickOutside",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "x": x,
+            "y": y,
+        }),
+        EngineEvent::RightClick { view, x, y } => json!({
+            "type": "rightClick",
+            "view": view,
+            "x": x,
+            "y": y,
+        }),
+        EngineEvent::Change {
+            view,
+            node,
+            key,
+            text,
+            marks,
+            cursor,
+            caret,
+            source,
+        } => json!({
+            "type": "change",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "text": text,
+            "marks": marks_json(marks),
+            "cursor": cursor,
+            "caret": caret_json(caret),
+            "source": source.as_str(),
+        }),
+        EngineEvent::Caret {
+            view,
+            node,
+            key,
+            cursor,
+            caret,
+        } => json!({
+            "type": "caret",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "cursor": cursor,
+            "caret": caret_json(caret),
+        }),
+        EngineEvent::Submit {
+            view,
+            node,
+            key,
+            text,
+            marks,
+        } => json!({
+            "type": "submit",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "text": text,
+            "marks": marks_json(marks),
+        }),
+        EngineEvent::Scroll {
+            view,
+            node,
+            key,
+            offset,
+            max,
+        } => json!({
+            "type": "scroll",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "offset": offset,
+            "max": max,
+        }),
+        EngineEvent::Stick {
+            view,
+            node,
+            key,
+            stuck,
+        } => json!({
+            "type": "stick",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "stuck": stuck,
+        }),
+        EngineEvent::Resize {
+            view,
+            width,
+            height,
+            cell,
+            base_px,
+        } => json!({
+            "type": "resize",
+            "view": view,
+            "width": width,
+            "height": height,
+            "cellWidth": cell.0,
+            "cellHeight": cell.1,
+            "basePx": base_px,
+        }),
+        EngineEvent::Colors { colors } => json!({
+            "type": "colors",
+            "colors": crate::colors_json(colors),
+        }),
+        EngineEvent::HostClosed => json!({ "type": "hostClosed" }),
+        EngineEvent::Visible { visible } => json!({ "type": "visible", "visible": *visible }),
+        EngineEvent::Message(message) => message.clone(),
+        EngineEvent::Inspect {
+            view,
+            node,
+            key,
+            x,
+            y,
+        } => json!({
+            "type": "inspect",
+            "view": view,
+            "node": nearest_ext(engine, ids.get(*view)?, *view, *node)?,
+            "key": key,
+            "x": x,
+            "y": y,
+        }),
+        EngineEvent::Wheel {
+            view,
+            node,
+            key,
+            x,
+            y,
+            delta_x,
+            delta_y,
+            precise,
+            mods,
+        } => json!({
+            "type": "wheel",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "x": x,
+            "y": y,
+            "deltaX": delta_x,
+            "deltaY": delta_y,
+            "precise": precise,
+            "mods": mods_json(mods),
+        }),
+        EngineEvent::MouseMove {
+            view,
+            node,
+            key,
+            x,
+            y,
+        } => json!({
+            "type": "mouseMove",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "x": x,
+            "y": y,
+        }),
+        EngineEvent::Pointer {
+            view,
+            node,
+            key,
+            kind,
+            button,
+            mods,
+            x,
+            y,
+        } => json!({
+            "type": "pointer",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "kind": match kind {
+                MouseKind::Down => "down",
+                MouseKind::Up => "up",
+                MouseKind::Move => "move",
+                _ => return None,
+            },
+            "button": match button {
+                MouseButton::Left => "left",
+                MouseButton::Middle => "middle",
+                MouseButton::Right => "right",
+                MouseButton::None => "none",
+            },
+            "mods": {
+                "shift": mods.shift,
+                "alt": mods.alt,
+                "ctrl": mods.ctrl,
+                "super": mods.sup,
+            },
+            "x": x,
+            "y": y,
+        }),
+        EngineEvent::Key { view, event } => key_json(*view, event),
+        EngineEvent::Paste { view, text } => json!({
+            "type": "paste",
+            "view": view,
+            "text": text,
+        }),
+        EngineEvent::Focus { focused } => json!({
+            "type": "focus",
+            "focused": focused,
+        }),
+        EngineEvent::PasteImage {
+            view,
+            node,
+            key,
+            path,
+            width,
+            height,
+            source,
+        } => json!({
+            "type": "pasteImage",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "path": path,
+            "width": width,
+            "height": height,
+            "source": match source {
+                pixel_core::clipboard_image::PasteSource::Clipboard => "clipboard",
+                pixel_core::clipboard_image::PasteSource::Osc => "osc",
+                pixel_core::clipboard_image::PasteSource::File => "file",
+            },
+        }),
+        EngineEvent::HoverEnter { view, node, key } => json!({
+            "type": "hoverEnter",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+        }),
+        EngineEvent::HoverLeave { view, node, key } => json!({
+            "type": "hoverLeave",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+        }),
+        EngineEvent::Drag {
+            view,
+            node,
+            key,
+            phase,
+            x,
+            y,
+            mods,
+        } => json!({
+            "type": "drag",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "phase": match phase {
+                pixel_core::DragPhase::Start => "start",
+                pixel_core::DragPhase::Move => "move",
+                pixel_core::DragPhase::End => "end",
+            },
+            "x": x,
+            "y": y,
+            "mods": mods_json(mods),
+        }),
+        EngineEvent::Selection {
+            view,
+            node,
+            key,
+            text,
+            rect,
+            parts,
+        } => json!({
+            "type": "selection",
+            "view": view,
+            "node": ids.get(*view)?.ext(*node)?,
+            "key": key,
+            "text": text,
+            "x": rect.x,
+            "y": rect.y,
+            "w": rect.w,
+            "h": rect.h,
+            "parts": parts
+                .iter()
+                .map(|(key, start, end)| json!({ "key": key, "start": start, "end": end }))
+                .collect::<Vec<_>>(),
+        }),
+        EngineEvent::Log(entry) => json!({
+            "type": "log",
+            "seq": entry.seq,
+            "epochMs": entry.epoch_ms,
+            "level": entry.level.as_str(),
+            "target": entry.target,
+            "message": entry.message,
+        }),
+        EngineEvent::SerializeMarks { view, token, marks } => json!({
+            "type": "serializeMarks",
+            "view": view,
+            "token": token,
+            "marks": marks
+                .iter()
+                .enumerate()
+                .filter_map(|
+```
 
-    fn reconcile_node(&mut self, id: NodeId, desc: Desc) {
-        self.update(id, desc.props());
-        self.reconcile_children(id, desc.children);
-    }
+### Core Architecture Module: `pixel/engine/crates/pixel-bridge/src/highlight.rs`
+```
+use std::collections::HashMap;
+use std::sync::OnceLock;
 
-    fn reconcile_children(&mut self, parent: NodeId, descs: Vec<Desc>) {
-        let old = self.children(parent).to_vec();
-        let mut used = vec![false; old.len()];
-        let mut result: Vec<(NodeId, Desc)> = Vec::with_capacity(descs.len());
+use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
 
-        for desc in descs {
-            let found = match &desc.key {
-                Some(key) => old.iter().enumerate().position(|(i, &c)| {
-                    !used[i] && self.key_of(c) == Some(key.as_str()) && desc.reusable(self, c)
-                }),
-                None => old.iter().enumerate().position(|(i, &c)| {
-                    !used[i] && self.key_of(c).is_none() && desc.reusable(self, c)
-                }),
-            };
-            let id = match found {
-                Some(i) => {
-                    used[i] = true;
-                    old[i]
+pub const CAPTURE_NAMES: &[&str] = &[
+    "attribute",
+    "comment",
+    "constant",
+    "constructor",
+    "embedded",
+    "escape",
+    "function",
+    "keyword",
+    "number",
+    "operator",
+    "property",
+    "punctuation",
+    "string",
+    "tag",
+    "type",
+    "variable",
+];
+/**
+ * we eventually will lazily download this
+ */
+fn canonical(language: &str) -> Option<&'static str> {
+    Some(match language.to_ascii_lowercase().as_str() {
+        "js" | "jsx" | "javascript" | "mjs" | "cjs" => "javascript",
+        "ts" | "typescript" => "typescript",
+        "tsx" => "tsx",
+        "rs" | "rust" => "rust",
+        "py" | "python" => "python",
+        "json" | "jsonc" => "json",
+        "sh" | "bash" | "shell" | "zsh" => "bash",
+        _ => return None,
+    })
+}
+
+pub fn prepare() {
+    std::thread::spawn(configs);
+}
+
+fn configs() -> &'static HashMap<&'static str, HighlightConfiguration> {
+    static CONFIGS: OnceLock<HashMap<&'static str, HighlightConfiguration>> = OnceLock::new();
+    CONFIGS.get_or_init(|| {
+        let mut map = HashMap::new();
+        let mut add = |name: &'static str,
+                       language: tree_sitter::Language,
+                       highlights: &str,
+                       injections: &str,
+                       locals: &str| {
+            match HighlightConfiguration::new(language, name, highlights, injections, locals) {
+                Ok(mut config) => {
+                    config.configure(CAPTURE_NAMES);
+                    map.insert(name, config);
                 }
-                None => self.create(desc.props()),
-            };
-            result.push((id, desc));
-        }
+                Err(e) => pixel_core::logging::error("highlight", format!("{name}: {e}")),
+            }
+        };
+        let js = format!(
+            "{}\n{}",
+            tree_sitter_javascript::HIGHLIGHT_QUERY,
+            tree_sitter_javascript::JSX_HIGHLIGHT_QUERY
+        );
+        let ts = format!(
+            "{}\n{}",
+            tree_sitter_javascript::HIGHLIGHT_QUERY,
+            tree_sitter_typescript::HIGHLIGHTS_QUERY
+        );
+        let tsx = format!("{js}\n{}", tree_sitter_typescript::HIGHLIGHTS_QUERY);
+        add(
+            "javascript",
+            tree_sitter_javascript::LANGUAGE.into(),
+            &js,
+            tree_sitter_javascript::INJECTIONS_QUERY,
+            tree_sitter_javascript::LOCALS_QUERY,
+        );
+        add(
+            "typescript",
+            tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
+            &ts,
+            "",
+            tree_sitter_typescript::LOCALS_QUERY,
+        );
+        add(
+            "tsx",
+            tree_sitter_typescript::LANGUAGE_TSX.into(),
+            &tsx,
+            "",
+            tree_sitter_typescript::LOCALS_QUERY,
+        );
+        add(
+            "rust",
+            tree_sitter_rust::LANGUAGE.into(),
+            tree_sitter_rust::HIGHLIGHTS_QUERY,
+            tree_sitter_rust::INJECTIONS_QUERY,
+            "",
+        );
+        add(
+            "python",
+            tree_sitter_python::LANGUAGE.into(),
+            tree_sitter_python::HIGHLIGHTS_QUERY,
+            "",
+            "",
+        );
+        add(
+            "json",
+            tree_sitter_json::LANGUAGE.into(),
+            tree_sitter_json::HIGHLIGHTS_QUERY,
+            "",
+            "",
+        );
+        add(
+            "bash",
+            tree_sitter_bash::LANGUAGE.into(),
+            tree_sitter_bash::HIGHLIGHT_QUERY,
+            "",
+            "",
+        );
+        map
+    })
+}
 
-        for (i, &id) in old.iter().enumerate() {
-            if !used[i] {
-                self.remove(id);
+#[cfg_attr(feature = "napi", napi_derive::napi(object))]
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HighlightSpan {
+    pub start: u32,
+    pub end: u32,
+    pub capture: u32,
+}
+
+#[cfg_attr(feature = "napi", napi_derive::napi)]
+pub fn highlight(source: String, language: String) -> Vec<HighlightSpan> {
+    let Some(name) = canonical(&language) else {
+        return Vec::new();
+    };
+    let Some(config) = configs().get(name) else {
+        return Vec::new();
+    };
+    let mut highlighter = Highlighter::new();
+    let Ok(events) = highlighter.highlight(config, source.as_bytes(), None, |lang| {
+        canonical(lang).and_then(|n| configs().get(n))
+    }) else {
+        return Vec::new();
+    };
+    let mut spans = Vec::new();
+    let mut active: Vec<u32> = Vec::new();
+    for event in events {
+        match event {
+            Ok(HighlightEvent::HighlightStart(Highlight(i))) => active.push(i as u32),
+            Ok(HighlightEvent::HighlightEnd) => {
+                active.pop();
+            }
+            Ok(HighlightEvent::Source { start, end }) => {
+                if let Some(&capture) = active.last() {
+                    spans.push(HighlightSpan {
+                        start: start as u32,
+                        end: end as u32,
+                        capture,
+                    });
+                }
+            }
+            Err(_) => break,
+        }
+    }
+    spans
+}
+
+#[cfg_attr(test, allow(dead_code))]
+#[cfg_attr(feature = "napi", napi_derive::napi)]
+pub fn highlight_captures() -> Vec<String> {
+    CAPTURE_NAMES.iter().map(|s| s.to_string()).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn capture_of(source: &str, language: &str, token: &str) -> Option<&'static str> {
+        let at = source.find(token).unwrap() as u32;
+        let spans = highlight(source.into(), language.into());
+        assert!(!spans.is_empty(), "no spans for {language}");
+        spans
+            .iter()
+            .find(|s| s.start <= at && at < s.end)
+            .map(|s| CAPTURE_NAMES[s.capture as usize])
+    }
+
+    #[test]
+    fn highlights_common_tokens_per_language() {
+        let rust = "fn main() { let s = \"hi\"; } // done";
+        assert_eq!(capture_of(rust, "rust", "fn"), Some("keyword"));
+        assert_eq!(capture_of(rust, "rust", "\"hi\""), Some("string"));
+        assert_eq!(capture_of(rust, "rust", "// done"), Some("comment"));
+
+        let ts = "const n: number = 42;";
+        assert_eq!(capture_of(ts, "ts", "const"), Some("keyword"));
+        assert_eq!(capture_of(ts, "ts", "number"), Some("type"));
+        assert_eq!(capture_of(ts, "ts", "42"), Some("number"));
+
+        let py = "def greet():\n    return 'hey'\n";
+        assert_eq!(capture_of(py, "python", "def"), Some("keyword"));
+        assert_eq!(capture_of(py, "python", "greet"), Some("function"));
+
+        assert_eq!(capture_of("{\"a\": 1}", "json", "\"a\""), Some("string"));
+        assert_eq!(capture_of("echo $HOME", "bash", "echo"), Some("function"));
+
+        assert!(highlight("fn main() {}".into(), "brainfuck".into()).is_empty());
+    }
+}
+
+```
+
+### Core Architecture Module: `pixel/engine/crates/pixel-bridge/src/lib.rs`
+```
+pub mod diff;
+pub mod events;
+pub mod highlight;
+pub mod markdown;
+mod mend;
+pub mod ops;
+
+use pixel_core::{Engine, EngineEvent, HostColors, fontdue};
+use serde_json::json;
+
+pub use events::event_json;
+pub use ops::{HostOps, IdMap, NoHostOps, OpOutcome, answer_layout_query, apply_ops};
+
+pub const PROTOCOL_VERSION: u32 = 1;
+
+static UI_FONT_BYTES: &[u8] = include_bytes!("../../../assets/fonts/InterVariable.ttf");
+static MONO_FONT_BYTES: &[u8] = include_bytes!("../../../assets/fonts/JetBrainsMono-Regular.ttf");
+
+const SYSTEM_UI_FONTS: &[&str] = &[
+    "/System/Library/Fonts/SFNSRounded.ttf",
+    "/System/Library/Fonts/SFNS.ttf",
+];
+
+fn load_font(candidates: &[&str], fallback: &'static [u8]) -> fontdue::Font {
+    let parse = |bytes: &[u8]| fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default());
+    if cfg!(target_os = "macos") {
+        for path in candidates {
+            if let Ok(bytes) = std::fs::read(path)
+                && let Ok(font) = parse(&bytes)
+            {
+                return font;
             }
         }
+    }
+    parse(fallback).expect("bundled font parses")
+}
 
-        let target: Vec<NodeId> = result.iter().map(|(id, _)| *id).collect();
-        if self.children(parent) != target.as_slice() {
-            for &id in &target {
-                self.append(parent, id);
-            }
-        }
+pub fn default_fonts() -> pixel_core::fonts::FontRegistry {
+    pixel_core::fonts::FontRegistry::new(load_font(&[], MONO_FONT_BYTES), load_font(SYSTEM_UI_FONTS, UI_FONT_BYTES))
+}
 
-        for (id, desc) in result {
-            self.reconcile_node(id, desc);
-        }
+pub fn engine_info(engine: &Engine) -> serde_json::Value {
+    let (width, height) = engine.comp.window;
+    let (cell_w, cell_h) = engine.cell;
+    let mut info = json!({
+        "width": width,
+        "height": height,
+        "cellWidth": cell_w,
+        "cellHeight": cell_h,
+        "basePx": engine.base_px,
+        "colors": colors_json(&engine.colors),
+        "protocol": PROTOCOL_VERSION,
+        "backendApi": pixel_core::backend::API_VERSION,
+    });
+    info.as_object_mut().expect("info is an object").extend(engine.backend.describe());
+    info
+}
+
+pub fn colors_json(colors: &HostColors) -> serde_json::Value {
+    json!({
+        "foreground": colors.foreground,
+        "background": colors.background,
+        "palette": colors.palette,
+    })
+}
+
+pub struct Bridge {
+    pub ids: Vec<IdMap>,
+}
+
+impl Bridge {
+    pub fn new(engine: &Engine) -> Self {
+        let ids = (0..engine.comp.views.len()).map(|view| IdMap::new(engine.comp.views[view].tree.root())).collect();
+        Self { ids }
+    }
+
+    pub fn apply(&mut self, engine: &mut Engine, ops: &str, host: &mut dyn HostOps) -> OpOutcome {
+        apply_ops(engine, &mut self.ids, ops, host)
+    }
+
+    pub fn event(&self, event: &EngineEvent, engine: &Engine) -> Option<String> {
+        event_json(event, engine, &self.ids)
     }
 }
 
@@ -1517,722 +1532,677 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d02e800f` (2026-11-04)
-**Commit Message**: Native UI scroll improvements (#243)
+### Incident Patch 1: `a8c78463` (2026-11-08)
+**Commit Message**: misc pixel fixes (#262)
 
-**File**: `pixel/AGENT-DOCS.md` (modified, +11/-2)
+* pixel: read the machine's clipboard through the backend
+
+pixel-core no longer depends on arboard. An image paste asks the backend
+for a SystemClipboard (files, then a bitmap) and reads it on the image
+worker as before. The terminal backend provides arboard, so terminals
+paste exactly as they did; a backend without one finds nothing to paste,
+and pixel-core builds on platforms arboard doesn't support.
+
+* pixel: fixes from pixelcode, and root.relaunch
+
+- Ops naming a node inside a removed subtree are skipped instead of
+  panicking: removing a node now forgets every descendant id.
+- The launcher resets the terminal (kitty keyboard, mouse reporting, alt
+  screen) when electron dies from a signal and skips the engine's teardown.
+- root.relaunch(request) restarts the app in the same pane with new args and
+  env: the app writes the request and exits, and the launcher starts it again.
+
+* pixel: flexWrap
+
+A row or column with flexWrap: "wrap" moves children that don't fit onto
+the next line; wrapped lines pack to the start.
+
+* pixel: modal boxes
+
+A Box with modal takes every click, hover, wheel, text selection and key
+while it is shown: hit tests and scroll areas 
+
+**File**: `pixel/AGENT-DOCS.md` (modified, +4/-3)
 ```diff
-@@ -160,9 +160,11 @@ Text names fonts by family, as in CSS. `FontFace` is `{ family, src, weight?, st
+@@ -161,6 +161,7 @@ Text names fonts by family, as in CSS. `FontFace` is `{ family, src, weight?, st
+ | property | type |
+ | --- | --- |
+ | `flexDirection` | `"row" \| "column"` |
++| `flexWrap` | `"nowrap" \| "wrap"`; wrapped lines pack to the start |
+ | `flexGrow`, `flexShrink` | `number` |
  | `flexBasis`, `width`, `height`, `minWidth`, `maxWidth`, `maxHeight` | `number \| "${n}%" \| "auto"` |
  | `padding`, `margin` | `number \| { top, right, bottom, left }` |
- | `gap` | `number` |
--| `position` | `"flow" \| "absolute"` |
-+| `position` | `"flow" \| "absolute" \| "sticky"` (sticky: `inset.top` is how close to the top of the scroll area it stops; it stays inside its parent and paints over the parent's other children) |
- | `inset` | `{ top, right, bottom, left }`, numbers or percents |
- | `overflow` | `"visible" \| "hidden" \| "scroll"` |
-+| `layout` | `"flex" \| "list"`, see Long lists |
-+| `scrollAnchor` | `"auto" \| "end"` (`"end"`: a scroll box at its end stays at its end as its content grows) |
- | `justifyContent` | `"start" \| "center" \| "end" \| "space-between"` |
- | `alignItems` | `"start" \| "center" \| "end" \| "stretch"` |
- | `background` | `Color \| { from: [x, y], to: [x, y], stops: [{ at, color }] }` |
-@@ -182,13 +184,20 @@ Text names fonts by family, as in CSS. `FontFace` is `{ family, src, weight?, st
- 
- The engine sets the mouse cursor from whatever is under it. The nearest `pointerShape` on the node or an ancestor wins. Without one, an `Input` or selectable text shows `"text"` (text inside a clickable does not), and everything else shows `"default"`. Anything drawn on top decides, so an overlay above an `Input` needs `pointerShape: "text"`.
- 
-+<!-- fixme: placeholder copy -->
-+### Long lists
-+
-+A scroll box with `layout: "list"` lays its children out one at a time as rows at its own width, stacked with `gap` inside `padding`, instead of as one flexbox; the box gets its size from its parent like any scroll box. Changing, adding or removing a row only lays out that row, and scrolling only places and draws the rows on screen, so a list of thousands of rows scrolls and streams as fast as a short one. Rows far from the viewport are laid out in idle time; until then they keep their last height (or the average row height). When rows above the viewport change height, the first visible row keeps its place, so what you are reading never jumps. Use `scrollAnchor: "end"` to keep following new rows at the end, and `position: "sticky"` with `onStick` for headers that stay at the top while their section scrolls by.
-+
-+Mounting thousands of rows in one commit still costs seconds of React and engine work before anything shows. To open a long list instantly, mount only the rows that fill the screen, then mount older ones a slice at a time with `requestIdle(callback)` (exported from `@zenbu-labs/pixel`, like the browser's `requestIdleCallback`): it calls back once the engine has applied every change made so far and has nothing left to draw, with `applyMs`, how long the engine spent applying changes since the previous idle callback. Size each slice so `applyMs` stays a couple of milliseconds and frames never wait on it. Rows mounted above the viewport don't move what is on screen. It returns a function that cancels the callback.
-+
- ## Components
- 
- Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/pixel/src/react/components.ts`. Every component takes `ref` → `NodeHandle` (`components.ts:23`): `focus()`, `blur()`, `scrollTo(offset, smooth?)`, `scrollIntoView(smooth?)`, `splice(start, end, text)`, `selectAll()`, `addMark(mark, offset?)`, `removeMark(mark)`.
+@@ -202,7 +203,7 @@ Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/p
  
  | component | props (file:line) |
  | --- | --- |
--| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
-+| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+-| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
++| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `modal` (while shown only this subtree takes clicks, hover, wheel, selection and keys; a click outside lands on it), `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
  | `Text` | `TextProps` `:128`. children must be strings or numbers. `spans: { start, end, color, background?, bold?, italic?, underline?, strikethrough? }[]`, `onClick`, `onMouseEnter`, `onMouseLeave` |
- | `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus` (only inputs take focus on click; clicking or selecting other content leaves focus where it is, so call `blur()` from `onClickOutside` to drop it), `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; bloc
+ | `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus` (only inputs take focus on click; clicking or selecting other content leaves focus where it is, so call `blur()` from `onClickOutside` to drop it), `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; block redraws the character under it in black or white for contrast), `selectionColor`, `spans`, `gutter: { color, activeColor }`, `activeLine`, `defaultMarks`, `renderMark(id)`, `serializeMark(id)` |
+ | `Image` | `ImageProps` `:211`. `src` path or url, `placeholder`, `error`, `onClick` |
+@@ -416,8 +417,8 @@ host → { type: "size" | "paste" | "wheel" | "focus" | "colors" | "devtools", .
+ The engine draws through `pixel_core::backend::Backend` (`engine/crates/pixel-core/src/backend.rs`). The terminal is one backend (`pixel-terminal`); others live in their own repos and depend on `pixel-core` and `pixel-bridge`.
+ 
+ - Required: `start` (first size and colors), `waker`, `poll(timeout)` (the only place the engine thread blocks), `present(Frame)`.
+-- `Frame`: the composed canvas, damage (`changed`, `repainted`), opaque areas over surfaces, and what the backend asked for in `wants()`: `scroll_layer` (the biggest list scroller painted on its own so it can be moved), `view_canvas` (present the view's canvas directly).
+-- Optional hooks: `poll_metrics` (hosts that ask for their size), `pending_present`, `animating`, `before_frame`, `idle`, `deadline`, `schedule_present` / `take_presented_at` (pacing), `byte_rate_limit`, `set_title`, `set_pointer_shape`, clipboard reads and writes, `message` (app to backend), `describe` (extra `root.info` fields).
++- `Frame`: the composed canvas, damage (`changed`, `repainted`), opaque areas over surfaces, and what the backend asked for in `wants()`: `scroll_layer` (the biggest list scroller painted on its own so it can be moved), `view_canvas` (present the view's canvas directly), `host_surfaces` (the backend draws surfaces itself: they're left transparent and `Frame.surfaces` lists each surface's placement and the UI covering it; match them to JS surfaces with `surfaceId` from `@zenbu-labs/pixel/core`).
++- Optional hooks: `poll_metrics` (hosts that ask for their size), `pending_present`, `animating`, `before_frame`, `idle`, `deadline`, `schedule_present` / `take_presented_at` (pacing), `byte_rate_limit`, `set_title`, `set_pointer_shape`, clipboard reads and writes, `system_clipboard` (where image pastes are read from; the terminal uses arboard), `message` (app to backend), `describe` (extra `root.info` fields).
+ - Backend events: input (`Key`, `Mouse`, `Wheel` steps, `Pinch`, `Paste`, `Focus`) and host changes (`Resize`, `Colors`, `Visible`, `Redraw`, `Closed`, `ClipboardData`). `Message(json)` reaches the app as an event with its own `type`; unknown types go to `onBackendMessage` on a `@zenbu-labs/pixel/core` root, and its `sendToBackend(message)` goes the other way.
+ - Binding code that knows its backend reaches it 
 ```
 
-**File**: `pixel/engine/crates/pixel-core/src/canvas.rs` (modified, +90/-3)
+**File**: `pixel/engine/Cargo.lock` (modified, +1/-3)
 ```diff
-@@ -10,6 +10,27 @@ pub struct Frame<'a> {
-     pub repainted: &'a [Rect],
-     pub opaque: &'a [OpaqueArea],
-     pub ui_over_surfaces: &'a [Rect],
-+    pub layer: Option<&'a ScrollLayer>,
+@@ -790,7 +790,6 @@ dependencies = [
+ name = "pixel-core"
+ version = "0.1.0"
+ dependencies = [
+- "arboard",
+  "base64",
+  "fontdue",
+  "image",
+@@ -830,6 +829,7 @@ dependencies = [
+ name = "pixel-terminal"
+ version = "0.1.0"
+ dependencies = [
++ "arboard",
+  "base64",
+  "libc",
+  "miniz_oxide",
+@@ -1121,8 +1121,6 @@ dependencies = [
+ [[package]]
+ name = "taffy"
+ version = "0.10.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aea22054047c16c3f34d3ac473a2170be1424b1115b2a3adcf28cfb067c88859"
+ dependencies = [
+  "arrayvec",
+  "grid",
+```
+
+**File**: `pixel/engine/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -1,6 +1,7 @@
+ [workspace]
+ resolver = "3"
+ members = ["crates/pixel-core", "crates/pixel-terminal", "crates/pixel-bridge", "crates/pixel-node"]
++exclude = ["vendor"]
+ 
+ [workspace.package]
+ version = "0.1.0"
+@@ -47,3 +48,6 @@ opt-level = 2
+ [profile.dev]
+ # Full debuginfo is rarely needed and slows linking; backtraces still work.
+ debug = "line-tables-only"
++
++[patch.crates-io]
++taffy = { path = "vendor/taffy" }
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/src/ops.rs` (modified, +181/-41)
+```diff
+@@ -6,7 +6,7 @@ use pixel_core::{
+     HighlightArea, ImageProps, InputProps, Inset, InsetValue, Justify, LineCap, LineJoin,
+     Layout, LinearGradient, NodeId, Paint,
+     Overflow, Position, Props, ScrollAnchor, ScrollbarStyle, SelectionMode, ShapeProps, ShapeStroke,
+-    SlotKind, Style, TextSpan, parse_path_data,
++    SlotKind, Style, TextSpan, Tree, parse_path_data,
+ };
+ use serde::Deserialize;
+ 
+@@ -40,6 +40,24 @@ impl IdMap {
+         self.to_node.get(&ext).copied()
+     }
+ 
++    fn live(&self, tree: &Tree, ext: u32) -> Option<NodeId> {
++        let node = self.node(ext).filter(|&node| tree.contains(node));
++        if node.is_none() {
++            pixel_core::logging::debug("ops", format!("ignored an op on node {ext}, which is not in the tree"));
++        }
++        node
++    }
++
++    fn forget_subtree(&mut self, tree: &Tree, node: NodeId) {
++        let mut stack = vec![node];
++        while let Some(node) = stack.pop() {
++            if let Some(ext) = self.to_ext.remove(&node) {
++                self.to_node.remove(&ext);
++            }
++            stack.extend_from_slice(tree.children(node));
++        }
++    }
++
+     pub fn ext(&self, node: NodeId) -> Option<u32> {
+         self.to_ext.get(&node).copied()
+     }
+@@ -73,6 +91,9 @@ enum Op {
+     Focus {
+         id: Option<u32>,
+     },
++    Blur {
++        id: u32,
++    },
+     ScrollIntoView {
+         id: u32,
+         #[serde(default)]
+@@ -253,6 +274,7 @@ struct PropsDto {
+     text: Option<String>,
+     key: Option<String>,
+     clickable: bool,
++    modal: bool,
+     hidden: bool,
+     input: Option<InputDto>,
+     image: Option<ImageDto>,
+@@ -544,6 +566,7 @@ impl CornerRadiusDto {
+ #[serde(rename_all = "camelCase", default)]
+ struct StyleDto {
+     flex_direction: Option<String>,
++    flex_wrap: Option<String>,
+     flex_grow: Option<f32>,
+     flex_shrink: Option<f32>,
+     flex_basis: Option<DimensionDto>,
+@@ -630,6 +653,7 @@ impl StyleDto {
+                 Some("column") => FlexDirection::Column,
+                 _ => FlexDirection::Row,
+             },
++            flex_wrap: self.flex_wrap.as_deref() == Some("wrap"),
+             flex_grow: self.flex_grow.unwrap_or(0.0),
+             flex_shrink: self.flex_shrink.unwrap_or(1.0),
+             flex_basis: dimension(self.flex_basis),
+@@ -714,6 +738,7 @@ impl PropsDto {
+             text: self.text,
+             key: self.key,
+             clickable: self.clickable,
++            modal: self.modal,
+             hidden: self.hidden,
+             input: self.input.map(|i| {
+                 let defaults = InputProps::default();
+@@ -875,50 +900,28 @@ fn apply_op(
+         return;
+     };
+     match op {
+-        Op::Create { id, props } => {
+-            let node = tree.create(props.into_props(base_px, &mut engine.fonts));
+-            map.insert(id, node);
+-        }
+-        Op::InsertBefore {
+-            parent,
+-            child,
+-            before,
+-        } => {
+-            let (Some(parent), Some(child)) = (map.node(parent), map.node(child)) else {
+-                return;
+-            };
+-            let before = before.and_then(|b| map.node(b));
+-            tree.insert_before(parent, child, before);
+-        }
+-        Op::Remove { id } => {
+-            if let Some(node) = map.node(id) {
+-                tree.remove(node);
+-            }
+-            map.forget(id);
+-        }
+-        Op::Forget { id } => map.forget(id),
+-        Op::Update { id, props } => {
+-            if let Some(node) = map.node(id) {
+-                let props = props.into_props(base_px, &mut engine.fonts);
+-                tree.update(node, props);
+-            }
+-        }
+-        Op::Clear { id } => {
+-            if let Some(node) = map.node(id) {
+-                tree.remove_children(node);
+-            }
+-        }
++        Op::Create { .. }
++        | Op::InsertBefore { .. }
++        | Op::Remove { .. }
++        | Op::Forget { .. }
++        | Op::Update { .. }
++        | Op::Clear { .. } => apply_tree_op(tree, map, op, base_px, &mut engine.fonts),
+         Op::Focus { id } => {
+-            let node = id.and_then(|id| map.node(id));
++            let node = id.and_then(|id| map.live(tree, id));
+             engine.set_focus(view, node);
+         }
++        Op::Blur { id } => {
++            if let Some(node) = map.live(tree, id) {
++                engine.blur(view, node);
++            }
++        }
+         Op::ScrollTo { id, offset, smooth } => {
+-            if let Some(node) = map.node(id) {
++            if let Some(node) = map.live(tree, id) {
+                 engine.scroll_to(view, node, offset, smooth);
+             }
+         }
+         Op::ScrollIntoView { id, smooth } => {
+-            if let Some(node) = map.node(id) {
++            if let Some(node) = map.live(tree, id) {
+                 engine.scroll_into_view(view, node, smooth);
+             }
+         }
+@@ -972,22 +975,22 @@ fn apply_op(
+             end,
+             text,
+         } => {
+-            if let Some(node) = map.node
+```
+
+**File**: `pixel/engine/crates/pixel-core/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -14,7 +14,6 @@ miniz_oxide = { workspace = true }
+ taffy = { workspace = true }
+ tiny-skia = { workspace = true }
+ image = { workspace = true }
+-arboard = { workspace = true }
+ serde_json = { workspace = true }
+ ttf-parser = { version = "0.21", default-features = false, features = ["std", "variable-fonts"] }
+ unicode-width = "0.2"
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/backend.rs` (modified, +18/-1)
+```diff
+@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
+ 
+ pub use crate::canvas::{Canvas, Frame, Overlay, Pixels, ScrollLayer, measure_text};
+ pub use crate::input::{Key, KeyEvent, KeyKind, Mods, Mouse, MouseButton, MouseKind};
+-pub use crate::surfaces::{OpaqueArea, Rect};
++pub use crate::surfaces::{OpaqueArea, Rect, SurfaceCover, SurfaceLayout, SurfacePlacement};
+ 
+ pub const API_VERSION: u32 = 1;
+ 
+@@ -72,6 +72,19 @@ pub enum Event {
+ pub struct Wants {
+     pub scroll_layer: bool,
+     pub view_canvas: bool,
++    pub host_surfaces: bool,
 +}
 +
 +#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct ScrollLayer {
-+    pub area: Rect,
-+    pub origin_y: i64,
-+    pub under: Vec<Pixels>,
-+    pub overlays: Vec<Overlay>,
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct Pixels {
-+    pub rect: Rect,
++pub struct ClipboardImage {
++    pub width: u32,
++    pub height: u32,
 +    pub rgba: Vec<u8>,
 +}
 +
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct Overlay {
-+    pub pixels: Pixels,
-+    pub above: bool,
++pub trait SystemClipboard: Send + Sync {
++    fn files(&self) -> Vec<std::path::PathBuf>;
++    fn image(&self) -> Option<ClipboardImage>;
  }
  
- type GlyphKey = (usize, char, u32);
-@@ -96,12 +117,47 @@ fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
- type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
- std::thread_local! {
-     static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
-+    static SIZES_SEEN: std::cell::RefCell<std::collections::HashSet<(usize, u32)>> = std::cell::RefCell::new(std::collections::HashSet::new());
-+    static TO_WARM: std::cell::RefCell<Vec<(usize, f32, char)>> = const { std::cell::RefCell::new(Vec::new()) };
-     static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
-         std::cell::RefCell::new(std::collections::HashMap::new());
-     static LAST_RESAMPLE: std::cell::Cell<Option<(u32, u32, u32, u32)>> =
-         const { std::cell::Cell::new(None) };
- }
- 
-+fn note_size(font: &crate::fonts::Font, px: f32) {
-+    if SIZES_SEEN.with_borrow_mut(|seen| seen.insert((font.id(), px.to_bits()))) {
-+        TO_WARM.with_borrow_mut(|queue| queue.push((font.id(), px, ' ')));
-+    }
-+}
-+
-+pub(crate) fn glyphs_to_warm() -> bool {
-+    TO_WARM.with_borrow(|queue| !queue.is_empty())
-+}
-+
-+pub(crate) fn warm_glyphs(fonts: &[crate::fonts::Font], until: std::time::Instant) {
-+    while std::time::Instant::now() < until {
-+        let Some((id, px, ch)) = TO_WARM.with_borrow(|queue| queue.last().copied()) else { return };
-+        let Some(font) = fonts.iter().find(|f| f.id() == id) else {
-+            TO_WARM.with_borrow_mut(|queue| queue.pop());
-+            continue;
-+        };
-+        GLYPH_CACHE.with_borrow_mut(|cache| {
-+            cache.entry(glyph_key(font, ch, px)).or_insert_with(|| rasterize_glyph(font, ch, px));
-+        });
-+        TO_WARM.with_borrow_mut(|queue| match char::from_u32(ch as u32 + 1).filter(|next| *next <= '~') {
-+            Some(next) => {
-+                if let Some(last) = queue.last_mut() {
-+                    last.2 = next;
-+                }
-+            }
-+            None => {
-+                queue.pop();
-+            }
-+        });
-+    }
-+}
-+
- #[derive(Clone, Copy)]
- struct RoundedBlit {
-     radius: [f32; 4],
-@@ -373,6 +429,36 @@ impl Canvas {
-     }
- 
-     // weird impl, but its a fast way to fill an array to a given color without allocating memory beforehand
-+    pub(crate) fn raw_copy(&self, rect: Rect) -> Pixels {
-+        let stride = self.width as usize * 4;
-+        let row_len = rect.w as usize * 4;
-+        let mut rgba = Vec::with_capacity(row_len * rect.h as usize);
-+        for row in rect.y..rect.y + rect.h {
-+            let start = row as usize * stride + rect.x as usize * 4;
-+            rgba.extend_from_slice(&self.pixels[start..start + row_len]);
-+        }
-+        Pixels { rect, rgba }
-+    }
-+
-+    pub(crate) fn straight_copy(&self, rect: Rect) -> Pixels {
-+        let stride = self.width as usize * 4;
-+        let row_len = rect.w as usize * 4;
-+        let mut rgba = Vec::with_capacity(row_len * rect.h as usize);
-+        for row in rect.y..rect.y + rect.h {
-+            let start = row as usize * stride + rect.x as usize * 4;
-+            rgba.extend_from_slice(&self.pixels[start..start + row_len]);
-+        }
-+        for px in rgba.chunks_exact_mut(4) {
-+            let a = u32::from(px[3]);
-+            if a != 0 && a != 255 {
-+                for c in &mut px[..3] {
-+                    *c = ((u32::from(*c) * 255 + a / 2) / a).min(255) as u8;
-+                }
-+            }
-+        }
-+        Pixels { rect, rgba }
-+    }
-+
-     pub fn fill(&mut self, color: [u8; 4]) {
-         if self.pixels.is_empty() {
-             return;
-@@ -537,9 +623,10 @@ impl Canvas {
-                     pen_x += mark_advance_at(marks, range.start + i);
-                     continue;
-                 }
--                let glyph = cache
--                    .entry(glyph_key(font, ch, px))
--                    .or_insert_with(|| rasterize_glyph(font, ch, px));
-+                let glyph = cache.entry(glyph_key(font, ch, px)).or_insert_with(|| {
-+                    note_size(font, px);
-+                    rasterize_glyph(font, ch, px)
-+                });
-                 let metrics = glyph.metrics;
-                 let glyph_x = pen_x.round() as i32 + metrics.xmin;
-                 // ymin is the bottom edge's offset from the baseline (positive = up),
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/desc.rs` (modified, +2/-0)
-```diff
-@@ -13,6 +13,7 @@ pub struct Desc {
-     pub slot: Option<SlotKind>,
-     pub content_height: Option<f32>,
-     pub scroll_events: bool,
-+    pub stick_events: bool,
-     pub wheel_events: bool,
-     pub children: Vec<Desc>,
- }
-@@ -34,6 +35,7 @@ impl Desc {
-             content_height: self.content_height,
-             shape: None,
-             scroll_events: self.scroll_events,
-+            stick_events: self.stick_events,
-             wheel_events: self.wheel_events,
-             pointer_events: false,
-             hover_events: false,
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/compositor.rs` (modified, +12/-0)
-```diff
-@@ -20,6 +20,8 @@ pub struct View {
-     pub damage_parts: Vec<Rect>,
-     pub opaque: Vec<crate::surfaces::OpaqueArea>,
-     pub ui_over_surfaces: Vec<Rect>,
-+    pub layer: Option<crate::canvas::ScrollLayer>,
-+    pub layer_canvases: Option<crate::paint::LayerCanvases>,
- }
- 
- impl View {
-@@ -33,6 +35,8 @@ impl View {
-             damage_parts: Vec::new(),
-             opaque: Vec::new(),
-             ui_over_surfaces: Vec::new(),
-+            layer: None,
-+            layer_canvases: None,
-         }
-     }
- 
-@@ -55,6 +59,7 @@ pub struct Compositor {
-     pub relayout: bool,
-     pub opaque: Vec<crate::surfaces::OpaqueArea>,
-     pub ui_over_surfaces: Vec<Rect>,
-+    layer: Option<crate::canvas::ScrollLayer>,
-     changed: Vec<Rect>,
-     repainted: Vec<Rect>,
-     direct: Option<usize>,
-@@ -75,6 +80,7 @@ impl Compositor {
-             relayout: true,
-             opaque: Vec::new(),
-             ui_over_surfaces: Vec::new(),
-+            layer: None,
-             changed: Vec::new(),
-             repainted: Vec::new(),
-             direct: None,
-@@ -257,12 +263,18 @@ impl Compositor {
-             repainted: &self.repainted,
-             opaque: &self.opaque,
-             ui_over_surfaces: &self.ui_over_surfaces,
-+            layer: self.layer.as_ref(),
-         }
-     }
- 
-     fn collect_opaque(&mut self) {
-         self.opaque.clear();
-         self.ui_over_surfaces.clear();
-+        let active = self.active_views();
-+        self.layer = match active[..] {
-+            [only] if self.direct == Some(only) => self.views[only].layer.clone(),
-+            _ => None,
-+        };
-         for view in self.active_views() {
-             let origin = self.views[view].origin_x;
-             for area in &self.views[view].opaque {
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/frame.rs` (modified, +87/-5)
-```diff
-@@ -9,6 +9,13 @@ use crate::paint::paint;
- use crate::surfaces::Rect;
- 
- const INLINE_FRAME_BUDGET_MB_PER_SEC: f32 = 3.0;
-+const PAINT_INTERVAL_WITH_INPUT_PENDING: Duration = Duration::from_millis(16);
-+const UNCAPPED_ANIMATION_STEP: Duration = Duration::from_millis(6);
-+pub(super) const PRESENT_AFTER_MAX: Duration = Duration::from_micros(7300);
-+const PRESENT_AFTER_MIN: Duration = Duration::from_micros(2500);
-+const PRESENT_MARGIN: Duration = Duration::from_millis(1);
-+const PRESENT_RELAX_PER_FRAME: Duration = Duration::from_micros(50);
-+const RECENT_FRAMES: usize = 120;
- pub(super) const DEFAULT_MAX_FPS: f32 = 0.0;
- 
- impl Engine {
-@@ -30,21 +37,54 @@ impl Engine {
-         self.term.note(text);
-     }
- 
--    pub(super) fn frame_debt(&self) -> Duration {
--        let interval = if self.max_fps > 0.0 {
-+    pub(super) fn frame_interval(&self) -> Duration {
-+        if self.max_fps > 0.0 {
-             Duration::from_secs_f32(1.0 / self.max_fps)
-         } else {
-             Duration::ZERO
--        };
-+        }
-+    }
-+
-+    pub(super) fn paint_interval_with_input_pending(&self) -> Duration {
-+        let interval = self.frame_interval();
-+        if interval.is_zero() {
-+            PAINT_INTERVAL_WITH_INPUT_PENDING
-+        } else {
-+            interval.min(PAINT_INTERVAL_WITH_INPUT_PENDING)
-+        }
-+    }
-+
-+    pub(super) fn until_next_animation_frame(&self) -> Duration {
-+        let interval = self.frame_interval();
-+        if interval.is_zero() {
-+            return UNCAPPED_ANIMATION_STEP;
-+        }
-+        (self.frame_slot + interval)
-+            .checked_duration_since(Instant::now())
-+            .filter(|wait| !wait.is_zero())
-+            .unwrap_or(interval)
-+    }
-+
-+    pub(super) fn frame_debt(&self) -> Duration {
-+        let interval = self.frame_interval();
-         if !self.term.frames_are_inline() {
-             return interval;
-         }
-         let budget = INLINE_FRAME_BUDGET_MB_PER_SEC * 1_000_000.0;
-         interval.max(Duration::from_secs_f32((self.last_frame_bytes as f32 / budget).min(0.2)))
-     }
- 
-+    pub fn since_input(&self) -> Duration {
-+        self.last_input.elapsed()
-+    }
-+
-+    pub fn idle(&self) -> bool {
-+        !self.frame_deferred && !self.draws_something()
-+    }
-+
-     pub(super) fn draws_something(&self) -> bool {
-         self.comp.dirty
-+            || self.term.holds_a_frame()
-             || self.comp.active_views().iter().any(|&i| {
-                 let view = &self.comp.views[i];
-                 view.tree.dirty()
-@@ -54,12 +94,14 @@ impl Engine {
-     }
- 
-     pub(super) fn frame(&mut self) -> io::Result<()> {
-+        self.apply_scroll_requests();
-         let debt = self.frame_debt();
-         let now = Instant::now();
--        if !debt.is_zero() && now.duration_since(self.last_frame) < debt {
-+        if !debt.is_zero() && now.duration_since(self.frame_slot) < debt {
-             self.frame_deferred = self.draws_something();
-             if self.frame_deferred {
--                self.frame_due = Some(self.last_frame + debt);
-+                self.frame_due = Some(self.frame_slot + debt);
-+                self.note_frame_wanted();
-                 return Ok(());
-             }
-         } else {
-@@ -85,13 +127,21 @@ impl Engine {
-                 }
-             })
-             .collect();
-+        if self.term.holds_a_frame() {
-+            self.comp.dirty = true;
-+        }
-         if work.is_empty() && !self.comp.dirty {
-             return Ok(());
-         }
-         let cpu = crate::profiler::cpu_us();
-         crate::profiler::span("frame", || -> io::Result<()> {
-             let start = Instant::now();
-+            let interval = self.frame_interval();
-+            let next_slot = self.frame_slot + interval;
-+            let slot = if !interval.is_zero() && start >= next_slot && start < next_slot + interval { next_slot } else { start };
-+            self.term.present_at((!interval.is_zero()).then(|| slot + self.present_after));
-             let mut painted: Vec<Painted> = Vec::new();
-+            let draws_layers = self.term.draws_layers();
-             for (i, whole) in work {
-                 let size = self.comp.views[i].size;
-                 if size.0 == 0 || size.1 == 0 {
-@@ -142,6 +192,15 @@ impl Engine {
-                 let opaque = crate::paint::opaque_areas(&view.tree);
-                 view.opaque = opaque.areas;
-                 view.ui_over_surfaces = opaque.ui_over_surfaces;
-+                view.layer = draws_layers.then(|| crate::paint::scroll_layer(&view.tree)).flatten().map(|plan| {
-+                    crate::profiler::span("paint.layer", || {
-+                        let canvases = view.layer_canvases.get_or_insert_with(|| crate::paint::LayerCanvases::new(size.0, size.1));
-+                        if canvases.size() != size {
-+                            *canvases = crate::paint::LayerCanvases::new(size.0, size.1);
-+                        }
-+                        crate::paint::render_layer(&view.tree, &pl
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/mod.rs` (modified, +60/-15)
-```diff
-@@ -55,7 +55,6 @@ fn window_from(ws: &crate::terminal::WindowSize, cell: (u32, u32), cell_is_exact
-     (width, height)
- }
- 
--const PAINT_INTERVAL_WITH_INPUT_PENDING: Duration = Duration::from_millis(16);
- const CELL_REPLY_WAIT: Duration = Duration::from_millis(150);
- 
- static DEFAULT_PROFILE: Smooth = Smooth {
-@@ -166,6 +165,12 @@ pub enum EngineEvent {
-         offset: f32,
-         max: f32,
-     },
-+    Stick {
-+        view: usize,
-+        node: NodeId,
-+        key: Option<String>,
-+        stuck: bool,
-+    },
-     Resize {
-         view: usize,
-         width: u32,
-@@ -298,14 +303,10 @@ pub struct Engine {
-     term_focused: bool,
-     pub native: Option<NativeScroll>,
-     pub use_native: bool,
--    pixel_mouse: bool,
-     last_native_scroll: Option<Instant>,
-     pairing: NativePairing,
-     hover_oracle: HoverOracle,
-     pub profile: &'static dyn ScrollProfile,
--    pub(super) last_wheel_tick:
--        Option<(Instant, crate::terminal::MouseKind, u32, u32, crate::terminal::Mods)>,
--    pub(super) wheel_echo_consumed: bool,
-     default_menu: bool,
-     menu: MenuController,
-     inspect_mode: bool,
-@@ -347,16 +348,26 @@ pub struct Engine {
-     last_color_request: Option<Instant>,
-     last_step: Instant,
-     last_frame: Instant,
-+    last_input: Instant,
-+    frame_slot: Instant,
-+    present_after: Duration,
-+    ready_times: std::collections::VecDeque<Duration>,
-     last_frame_bytes: usize,
-     frame_deferred: bool,
-     max_fps: f32,
-     frame_due: Option<Instant>,
-+    scroll_requests: Vec<(usize, scroll::ScrollRequest, bool)>,
-     pub stats: FrameStats,
- }
- 
- const COLOR_SETTLE_DELAY: Duration = Duration::from_millis(50);
- const COLOR_REQUEST_INTERVAL: Duration = Duration::from_secs(1);
- const RELAYED_RESIZE_POLL: Duration = Duration::from_millis(500);
-+const PRECISE_WAIT_TAIL: Duration = Duration::from_micros(1500);
-+const PRECISE_WAIT_STEP: Duration = Duration::from_micros(250);
-+const ROW_CATCH_UP_POLL: Duration = Duration::from_millis(8);
-+const ROW_CATCH_UP_BUDGET: Duration = Duration::from_millis(4);
-+const ROW_CATCH_UP_MARGIN: Duration = Duration::from_millis(3);
- 
- impl Engine {
-     pub fn new(config: EngineConfig) -> io::Result<Self> {
-@@ -386,7 +397,6 @@ impl Engine {
-             NativeScroll::spawn(term.waker().ok())
-         };
-         let use_native = native.is_some();
--        let pixel_mouse = term.reports_pixel_mouse();
-         logging::info(
-             "engine",
-             format!(
-@@ -420,13 +430,10 @@ impl Engine {
-             term_focused: true,
-             native,
-             use_native,
--            pixel_mouse,
-             last_native_scroll: None,
-             pairing: NativePairing::new(),
-             hover_oracle: HoverOracle::new(),
-             profile: &DEFAULT_PROFILE,
--            last_wheel_tick: None,
--            wheel_echo_consumed: false,
-             default_menu: false,
-             menu: MenuController::default(),
-             inspect_mode: false,
-@@ -462,10 +469,15 @@ impl Engine {
-             last_color_request: None,
-             last_step: Instant::now(),
-             last_frame: Instant::now(),
-+            last_input: Instant::now(),
-+            frame_slot: Instant::now(),
-+            present_after: frame::PRESENT_AFTER_MAX,
-+            ready_times: std::collections::VecDeque::new(),
-             last_frame_bytes: 0,
-             frame_deferred: false,
-             max_fps,
-             frame_due: None,
-+            scroll_requests: Vec::new(),
-             stats: FrameStats::default(),
-         };
-         Ok(engine)
-@@ -644,7 +656,7 @@ impl Engine {
-         let mut first_wait = if self.frame_deferred && let Some(due) = self.frame_due {
-             Some(due.saturating_duration_since(Instant::now()).max(Duration::from_millis(1)))
-         } else if self.animating() || self.frame_deferred {
--            Some(Duration::from_millis(6))
-+            Some(self.until_next_animation_frame())
-         } else if !out_empty {
-             Some(Duration::ZERO)
-         } else {
-@@ -665,13 +677,38 @@ impl Engine {
-         if self.term.relayed() {
-             first_wait = Some(first_wait.map_or(RELAYED_RESIZE_POLL, |w| w.min(RELAYED_RESIZE_POLL)));
-         }
--        self.term.poll_event(first_wait)
-+        if self.rows_pending() {
-+            first_wait = Some(first_wait.map_or(ROW_CATCH_UP_POLL, |w| w.min(ROW_CATCH_UP_POLL)));
-+        }
-+        match first_wait {
-+            Some(wait) => self.wait_precisely(wait),
-+            None => self.term.poll_event(None),
-+        }
-+    }
-+
-+    fn wait_precisely(&mut self, wait: Duration) -> io::Result<Option<crate::terminal::Event>> {
-+        let deadline = Instant::now() + wait;
-+        let coarse_end = deadline - wait.min(PRECISE_WAIT_TAIL);
-+        if let Some(event) = self.term.poll_event(Some(coarse_end.saturating_duration_since(Instant::now())))? {
-+            return Ok(Some(event));
-+        }
-+        if Instant::now() + PRECISE_WAIT_STEP < coarse_end {
-+            r
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/pointer.rs` (modified, +3/-28)
-```diff
-@@ -6,8 +6,6 @@ use crate::menu::MenuClick;
- use crate::terminal::{Mods, Mouse, MouseButton, MouseKind};
- use crate::tree::{HitTarget, NodeId};
- 
--const WHEEL_ECHO_WINDOW: std::time::Duration = std::time::Duration::from_millis(2);
--
  #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub(super) enum DragTarget {
-     Input(NodeId),
-@@ -36,29 +34,9 @@ impl Engine {
-                 | MouseKind::ScrollLeft
-                 | MouseKind::ScrollRight
-         );
--        // this is a weird case that I observed where inside kitty 2 scroll events
--        // were being emitted per scroll tick. This is very suspicious and makes me
--        // suspicious that something else was the casue of this, but this is a temporary
--        // work around for now
--        if scrolling {
--            let echo = !self.wheel_echo_consumed
--                && self.last_wheel_tick.is_some_and(|(at, kind, x, y, mods)| {
--                    kind == mouse.kind
--                        && x == mouse.x
--                        && y == mouse.y
--                        && mods == mouse.mods
--                        && now.duration_since(at) < WHEEL_ECHO_WINDOW
--                });
--            if echo {
--                self.wheel_echo_consumed = true;
--                return Ok(());
--            }
--            self.wheel_echo_consumed = false;
--            self.last_wheel_tick = Some((now, mouse.kind, mouse.x, mouse.y, mouse.mods));
--        }
-         if self.use_native && self.native.is_some() {
-             self.ingest_native();
--            let located = self.pixel_mouse.then_some(point);
-+            let located = self.term.reports_pixel_mouse().then_some(point);
-             if scrolling && mouse.mods == Mods::default() {
-                 if self
-                     .pairing
-@@ -125,11 +103,8 @@ impl Engine {
-                     .hit_drag(local.0, local.1)
-                     .filter(|&id| {
-                         let tree = &self.comp.views[view].tree;
--                        let drag_order = tree.paint_order_of(id).unwrap_or(0);
-                         let covered = match tree.hit_target(local.0, local.1) {
--                            Some(HitTarget::Input(t)) | Some(HitTarget::Click(t)) => {
--                                tree.paint_order_of(t).unwrap_or(0) > drag_order
--                            }
-+                            Some(HitTarget::Input(t)) | Some(HitTarget::Click(t)) => tree.drawn_after(t, id),
-                             _ => false,
-                         };
-                         !covered
-@@ -438,7 +413,7 @@ impl Engine {
-             precise,
-             mods,
-         });
--        true
-+        tree.scroll_area(node).is_none()
+@@ -145,6 +158,10 @@ pub trait Backend: Any + Send {
+         false
      }
  
-     fn mark_pointer(&mut self, name: &'static str, point: (f32, f32)) {
++    fn system_clipboard(&self) -> Option<Arc<dyn SystemClipboard>> {
++        None
++    }
++
+     fn message(&mut self, _message: serde_json::Value) {}
+ 
+     fn describe(&self) -> serde_json::Map<String, serde_json::Value> {
 ```
 
-**File**: `pixel/engine/crates/pixel-core/src/engine/scroll.rs` (modified, +145/-55)
+**File**: `pixel/engine/crates/pixel-core/src/canvas.rs` (modified, +1/-0)
 ```diff
-@@ -17,7 +17,17 @@ impl Engine {
-                 .iter()
-                 .any(|&id| tree.scroll_state(id).is_some_and(|s| !s.settled()))
-         });
--        scrolling || self.bars_animating() || self.term.highlight_active()
-+        scrolling || self.bars_animating() || self.term.highlight_active() || self.term.holds_a_frame()
-+    }
-+
-+    pub(super) fn moving(&self) -> bool {
-+        self.comp.active_views().into_iter().any(|view| {
-+            let tree = &self.comp.views[view].tree;
-+            tree.scroll_nodes().iter().any(|&id| {
-+                let fading = tree.bar_opacity(id) > 0.0 && tree.bar_opacity(id) < 1.0;
-+                fading || tree.scroll_state(id).is_some_and(|s| !s.settled())
-+            })
-+        }) || self.term.highlight_active()
-     }
+@@ -11,6 +11,7 @@ pub struct Frame<'a> {
+     pub opaque: &'a [OpaqueArea],
+     pub ui_over_surfaces: &'a [Rect],
+     pub layer: Option<&'a ScrollLayer>,
++    pub surfaces: Option<&'a crate::surfaces::SurfaceLayout>,
+ }
  
-     pub(super) fn bar_at(&self, view: usize, point: (f32, f32)) -> Option<NodeId> {
-@@ -92,7 +102,46 @@ impl Engine {
-         })
-     }
+ #[derive(Debug, Clone, PartialEq, Eq)]
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/clipboard_image.rs` (modified, +4/-11)
+```diff
+@@ -52,19 +52,12 @@ pub(crate) enum WorkerPaste {
+     },
+ }
  
-+    pub(super) fn rows_pending(&self) -> bool {
-+        self.comp.active_views().into_iter().any(|view| self.comp.views[view].tree.rows_pending())
-+    }
-+
-+    pub(super) fn catch_up_rows(&mut self, busy: bool) {
-+        let until = if busy {
-+            self.frame_slot + self.frame_interval().saturating_sub(super::ROW_CATCH_UP_MARGIN)
-+        } else {
-+            Instant::now() + super::ROW_CATCH_UP_BUDGET
-+        };
-+        if until <= Instant::now() {
-+            return;
-+        }
-+        for view in self.comp.active_views() {
-+            let tree = &mut self.comp.views[view].tree;
-+            if tree.rows_pending() {
-+                tree.catch_up_rows(&self.fonts, until);
-+            }
-+        }
-+    }
-+
-+    pub(super) fn warm_glyphs(&mut self, busy: bool) {
-+        let until = if busy {
-+            self.frame_slot + self.frame_interval().saturating_sub(super::ROW_CATCH_UP_MARGIN)
-+        } else {
-+            Instant::now() + super::ROW_CATCH_UP_BUDGET
-+        };
-+        if until > Instant::now() {
-+            crate::canvas::warm_glyphs(&self.fonts, until);
-+        }
-+    }
-+
-     pub(super) fn emit_scroll_events(&mut self, out: &mut Vec<EngineEvent>) {
-+        for view in self.comp.active_views() {
-+            let tree = &mut self.comp.views[view].tree;
-+            for (node, stuck) in tree.take_stick_changes() {
-+                let key = tree.key_of(node).map(str::to_string);
-+                out.push(EngineEvent::Stick { view, node, key, stuck });
-+            }
-+        }
-         for view in self.comp.active_views() {
-             for id in self.comp.views[view].tree.scroll_nodes() {
-                 let tree = &mut self.comp.views[view].tree;
-@@ -111,51 +160,30 @@ impl Engine {
+-pub(crate) fn read_for_worker() -> Option<WorkerPaste> {
+-    let mut clipboard = arboard::Clipboard::new().ok()?;
+-    if let Ok(files) = clipboard.get().file_list()
+-        && let Some(pasted) = files.iter().find_map(|f| from_file(f, PasteSource::Clipboard))
+-    {
++pub(crate) fn read_for_worker(clipboard: &dyn crate::backend::SystemClipboard) -> Option<WorkerPaste> {
++    if let Some(pasted) = clipboard.files().iter().find_map(|f| from_file(f, PasteSource::Clipboard)) {
+         return Some(WorkerPaste::File(pasted));
      }
+-    let img = clipboard.get_image().ok()?;
+-    let rgba = image::RgbaImage::from_raw(
+-        img.width as u32,
+-        img.height as u32,
+-        img.bytes.into_owned(),
+-    )?;
++    let img = clipboard.image()?;
++    let rgba = image::RgbaImage::from_raw(img.width, img.height, img.rgba)?;
+     let (width, height) = rgba.dimensions();
+     let pasted = PastedImage {
+         path: temp_path("png").to_string_lossy().into_owned(),
+```
+
+---
+
+### Incident Patch 2: `9e9b4cfc` (2026-11-08)
+**Commit Message**: implement pluggable rendering architecture (#261)
+
+**File**: `browser/src/pages/markdown.ts` (modified, +0/-2)
+```diff
+@@ -20,7 +20,6 @@ export const MARKDOWN_CSP = [
+ const VIDEO = /\.(?:mp4|m4v|webm|mov|ogv)$/i;
+ const AUDIO = /\.(?:mp3|m4a|wav|ogg|oga|flac|aac)$/i;
+ const ALERT = /^\[!(note|tip|important|warning|caution)\]\s*/i;
+-// fixme: placeholder copy
+ const ALERT_TITLES: Record<string, string> = {
+   note: "Note",
+   tip: "Tip",
+@@ -131,7 +130,6 @@ async function buildPipeline() {
+       return element("div", { className: ["diagram"] }, [{ type: "raw", value: svg }]);
+     } catch (error) {
+       return element("div", { className: ["diagram-error"] }, [
+-        // fixme: placeholder copy
+         element("p", {}, [text(`Could not render diagram: ${error instanceof Error ? error.message : String(error)}`)]),
+         element("pre", {}, [element("code", {}, [text(source)])]),
+       ]);
+```
+
+**File**: `pixel/AGENT-DOCS.md` (modified, +20/-2)
+```diff
+@@ -8,7 +8,9 @@ Paths are relative to this directory (`pixel/`). Source: `packages/pixel/src/`.
+ | --- | --- |
+ | `packages/pixel/src/index.ts` | everything exported from `@zenbu-labs/pixel` |
+ | `packages/pixel/src/root.tsx` | `createRoot`, `RootOptions`, `Root` |
+-| `packages/pixel/src/react/index.ts` | engine root, render settings, key events, clipboard functions |
++| `packages/pixel/src/react/core.ts` | engine root (`createEngineRoot`, `RootPlatform`), render settings, key events, clipboard functions; no node |
++| `packages/pixel/src/react/index.ts` | the node `createRoot` over `react/core.ts`, loads `pixel.node` |
++| `packages/pixel/src/core.ts` | `@zenbu-labs/pixel/core`: everything that runs without node, `setBinding`, `createRoot({ engine })` |
+ | `packages/pixel/src/react/reconciler-config.ts` | props and event types for `Box`, `Text`, `Input`, `Image`, `Path`, `MarkedText` |
+ | `packages/pixel/src/react/components.ts` | component definitions, `NodeHandle` |
+ | `packages/pixel/src/react/styles.ts` | `Style`, `Color`, borders, gradients |
+@@ -27,7 +29,10 @@ Paths are relative to this directory (`pixel/`). Source: `packages/pixel/src/`.
+ | `packages/pixel/src/preload/index.ts` | `@zenbu-labs/pixel/preload` types for `window.pixel` |
+ | `packages/pixel/src/electron/index.ts` | `@zenbu-labs/pixel/electron`, re-exports `electron` |
+ | `packages/pixel/src/bin.ts` | the `pixel` CLI |
+-| `engine/crates/pixel-core/` | Rust engine: layout, painting, terminal output |
++| `engine/crates/pixel-core/` | Rust engine: layout, painting, compositing, input model; `src/backend.rs` is the backend trait |
++| `engine/crates/pixel-terminal/` | the terminal backend: tty, kitty/iTerm2/rex/tmux/herdr frames, cell and color probing, macOS native scroll |
++| `engine/crates/pixel-bridge/` | the JSON op/event protocol between JS and the engine, shared by every host |
++| `engine/crates/pixel-node/` | the node addon; `register_backend` adds backends, `PixelEngine.withBackend` makes one |
+ | `engine/crates/pixel-node/` | Node binding for the engine |
  
-     pub fn scroll_into_view(&mut self, view: usize, id: NodeId, smooth: bool) {
--        if view >= self.comp.views.len() {
--            return;
--        }
--        let fonts = &mut self.fonts;
--        let base_px = self.base_px;
--        self.comp.views[view].tree.flush_layout(fonts, base_px);
--        let tree = &self.comp.views[view].tree;
--        let Some(child) = tree.rect(id) else {
--            return;
--        };
--        let mut current = tree.parent(id);
--        while let Some(ancestor) = current {
--            current = tree.parent(ancestor);
--            let (Some(rect), Some(scroll)) = (tree.rect(ancestor), tree.scroll_state(ancestor))
--            else {
--                continue;
--            };
--            if tree.scroll_max(ancestor) <= 0.0 {
--                continue;
--            }
--            let offset = scroll.position + child.y - rect.y - base_px * 0.5;
--            self.scroll_to(view, ancestor, offset, smooth);
--            return;
--        }
-+        self.scroll_requests.push((view, ScrollRequest::IntoView(id), smooth));
-     }
+ ## Examples
+@@ -406,6 +411,19 @@ host → { type: "size" | "paste" | "wheel" | "focus" | "colors" | "devtools", .
  
-     pub fn scroll_to(&mut self, view: usize, id: NodeId, offset: f32, smooth: bool) {
--        if view >= self.comp.views.len() {
--            return;
--        }
--        let fonts = &mut self.fonts;
--        let base_px = self.base_px;
--        let tree = &mut self.comp.views[view].tree;
--        tree.flush_layout(fonts, base_px);
--        let max = tree.scroll_max(id);
--        let offset = offset.clamp(0.0, max);
--        if let Some(state) = tree.scroll_state_mut(id) {
--            if smooth {
--                state.set_target(offset);
--            } else {
--                state.position = offset;
--                state.set_target(offset);
--                tree.mark_place();
-+        self.scroll_requests.push((view, ScrollRequest::To(id, offset), smooth));
-+    }
+ `../claude-code-plugin` uses this path to show pixel frames in a Claude Code pane.
+ 
++## Backends
 +
-+    pub(super) fn apply_scroll_requests(&mut self) {
-+        for (view, request, smooth) in std::mem::take(&mut self.scroll_requests) {
-+            if view >= self.comp.views.len() {
-+                continue;
-+            }
-+            let fonts = &mut self.fonts;
-+            let base_px = self.base_px;
-+            let tree = &mut self.comp.views[view].tree;
-+            tree.flush_layout(fonts, base_px);
-+            match request {
-+             
++The engine draws through `pixel_core::backend::Backend` (`engine/crates/pixel-core/src/backend.rs`). The terminal is one backend (`pixel-terminal`); others live in their own repos and depend on `pixel-core` and `pixel-bridge`.
++
++- Required: `start` (first size and colors), `waker`, `poll(timeout)` (the only place the engine thread blocks), `present(Frame)`.
++- `Frame`: the composed canvas, damage (`changed`, `repainted`), opaque areas over surfaces, and what the backend asked for in `wants()`: `scroll_layer` (the biggest list scroller painted on its own so it can be moved), `view_canvas` (present the view's canvas directly).
++- Optional hooks: `poll_metrics` (hosts that ask for their size), `pending_present`, `animating`, `before_frame`, `idle`, `deadline`, `schedule_present` / `take_presented_at` (pacing), `byte_rate_limit`, `set_title`, `set_pointer_shape`, clipboard reads and writes, `message` (app to backend), `describe` (extra `root.info` fields).
++- Backend events: input (`Key`, `Mouse`, `Wheel` steps, `Pinch`, `Paste`, `Focus`) and host changes (`Resize`, `Colors`, `Visible`, `Redraw`, `Closed`, `ClipboardData`). `Message(json)` reaches the app as an event with its own `type`; unknown types go to `onBackendMessage` on a `@zenbu-labs/pixel/core` root, and its `sendToBackend(message)` goes the other way.
++- Binding code that knows its backend reaches it with `engine.backend.downcast_mut::<B>()` (pixel-node does this for retarget and the presenter overlay).
++- Node: a backend package ships its own `.node` built from `pixel-node` plus its crate, calls `register_backend`, and makes its engine with `PixelEngine.withBackend(name, options)`.
++- Hosts without node: install a binding with `setBinding` and use `createRoot({ engine })` from `@zenbu-labs/pixel/core`.
++- `examples/appkit-backend`: a macOS window as a backend (AppKit events in, frames onto a `CALayer`), driving the engine with the same JSON ops React sends. `cargo run` in that folder.
++
+ ## Rendering
+ 
+ Rust: `engine/crates/pixel-core/src/terminal/present/`. JS side: `packages/pixel/src/web/offscreen.ts`, `packages/pixel/src/web/paint.ts`.
+```
+
+**File**: `pixel/engine/Cargo.lock` (modified, +36/-10)
+```diff
+@@ -765,6 +765,27 @@ dependencies = [
+  "indexmap",
+ ]
+ 
++[[package]]
++name = "pixel-bridge"
++version = "0.1.0"
++dependencies = [
++ "napi",
++ "napi-derive",
++ "pixel-core",
++ "pulldown-cmark",
++ "serde",
++ "serde_json",
++ "similar",
++ "tree-sitter",
++ "tree-sitter-bash",
++ "tree-sitter-highlight",
++ "tree-sitter-javascript",
++ "tree-sitter-json",
++ "tree-sitter-python",
++ "tree-sitter-rust",
++ "tree-sitter-typescript",
++]
++
+ [[package]]
+ name = "pixel-core"
+ version = "0.1.0"
+@@ -795,22 +816,27 @@ dependencies = [
+  "napi-build",
+  "napi-derive",
+  "openh264",
++ "pixel-bridge",
+  "pixel-core",
++ "pixel-terminal",
+  "png",
+- "pulldown-cmark",
+  "rustix",
+  "serde",
+  "serde_json",
+- "similar",
+  "tiny-skia",
+- "tree-sitter",
+- "tree-sitter-bash",
+- "tree-sitter-highlight",
+- "tree-sitter-javascript",
+- "tree-sitter-json",
+- "tree-sitter-python",
+- "tree-sitter-rust",
+- "tree-sitter-typescript",
++]
++
++[[package]]
++name = "pixel-terminal"
++version = "0.1.0"
++dependencies = [
++ "base64",
++ "libc",
++ "miniz_oxide",
++ "pixel-core",
++ "rayon",
++ "rustix",
++ "serde_json",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `pixel/engine/Cargo.toml` (modified, +3/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [workspace]
+ resolver = "3"
+-members = ["crates/pixel-core", "crates/pixel-node"]
++members = ["crates/pixel-core", "crates/pixel-terminal", "crates/pixel-bridge", "crates/pixel-node"]
+ 
+ [workspace.package]
+ version = "0.1.0"
+@@ -9,6 +9,8 @@ publish = false
+ 
+ [workspace.dependencies]
+ pixel-core = { path = "crates/pixel-core" }
++pixel-terminal = { path = "crates/pixel-terminal" }
++pixel-bridge = { path = "crates/pixel-bridge" }
+ rustix = { version = "1", features = ["termios", "stdio", "event", "fs", "shm", "mm", "process", "pipe"] }
+ libc = "0.2"
+ base64 = "0.22"
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/Cargo.toml` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++[package]
++name = "pixel-bridge"
++version.workspace = true
++edition.workspace = true
++publish.workspace = true
++
++[features]
++napi = ["dep:napi", "dep:napi-derive"]
++
++[dependencies]
++pixel-core = { workspace = true }
++napi = { version = "2", default-features = false, features = ["napi8"], optional = true }
++napi-derive = { version = "2", optional = true }
++serde = { version = "1", features = ["derive"] }
++serde_json = { workspace = true, features = ["raw_value"] }
++pulldown-cmark = { version = "0.13", default-features = false }
++tree-sitter = "0.26.10"
++tree-sitter-highlight = "0.26.10"
++tree-sitter-rust = "0.24.2"
++tree-sitter-javascript = "0.25.0"
++tree-sitter-typescript = "0.23.2"
++tree-sitter-python = "0.25.0"
++tree-sitter-json = "0.24.8"
++tree-sitter-bash = "0.25.1"
++similar = { version = "3.1.1", features = ["text", "inline"] }
++
++[lints]
++workspace = true
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/src/diff.rs` (renamed, +10/-4)
+```diff
+@@ -1,22 +1,28 @@
+ use std::time::Duration;
+ 
+-use napi_derive::napi;
+ use similar::{Algorithm, ChangeTag, DiffTag, InlineChangeOptions, TextDiff};
+ 
+-#[napi(object)]
++#[cfg_attr(feature = "napi", napi_derive::napi(object))]
++#[derive(serde::Serialize)]
++#[serde(rename_all = "camelCase")]
+ pub struct DiffEmphasis {
+     pub start: u32,
+     pub end: u32,
+ }
+ 
+-#[napi(object)]
++#[cfg_attr(feature = "napi", napi_derive::napi(object))]
++#[derive(serde::Serialize)]
++#[serde(rename_all = "camelCase")]
+ pub struct DiffRow {
+     pub kind: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
+     pub old_line: Option<u32>,
++    #[serde(skip_serializing_if = "Option::is_none")]
+     pub new_line: Option<u32>,
+     pub text: String,
+     pub side_start: u32,
+     pub emphasis: Vec<DiffEmphasis>,
++    #[serde(skip_serializing_if = "Option::is_none")]
+     pub count: Option<u32>,
+ }
+ 
+@@ -61,7 +67,7 @@ fn gap_row(count: u32) -> DiffRow {
+     }
+ }
+ 
+-#[napi]
++#[cfg_attr(feature = "napi", napi_derive::napi)]
+ pub fn diff(old_source: String, new_source: String, context_lines: Option<u32>) -> Vec<DiffRow> {
+     let context = context_lines.unwrap_or(3) as usize;
+     let text_diff = TextDiff::configure()
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/src/events.rs` (renamed, +1/-6)
+```diff
+@@ -172,13 +172,8 @@ pub fn event_json(event: &EngineEvent, engine: &Engine, ids: &[IdMap]) -> Option
+             "colors": crate::colors_json(colors),
+         }),
+         EngineEvent::HostClosed => json!({ "type": "hostClosed" }),
+-        EngineEvent::Devtools => json!({ "type": "devtools" }),
+         EngineEvent::Visible { visible } => json!({ "type": "visible", "visible": *visible }),
+-        EngineEvent::Handoff { tty, socket } => json!({
+-            "type": "handoff",
+-            "tty": tty,
+-            "socket": socket,
+-        }),
++        EngineEvent::Message(message) => message.clone(),
+         EngineEvent::Inspect {
+             view,
+             node,
+```
+
+**File**: `pixel/engine/crates/pixel-bridge/src/highlight.rs` (renamed, +6/-5)
+```diff
+@@ -1,7 +1,6 @@
+ use std::collections::HashMap;
+ use std::sync::OnceLock;
+ 
+-use napi_derive::napi;
+ use tree_sitter_highlight::{Highlight, HighlightConfiguration, HighlightEvent, Highlighter};
+ 
+ pub const CAPTURE_NAMES: &[&str] = &[
+@@ -38,7 +37,7 @@ fn canonical(language: &str) -> Option<&'static str> {
+     })
+ }
+ 
+-pub(crate) fn prepare() {
++pub fn prepare() {
+     std::thread::spawn(configs);
+ }
+ 
+@@ -123,14 +122,16 @@ fn configs() -> &'static HashMap<&'static str, HighlightConfiguration> {
+     })
+ }
+ 
+-#[napi(object)]
++#[cfg_attr(feature = "napi", napi_derive::napi(object))]
++#[derive(serde::Serialize)]
++#[serde(rename_all = "camelCase")]
+ pub struct HighlightSpan {
+     pub start: u32,
+     pub end: u32,
+     pub capture: u32,
+ }
+ 
+-#[napi]
++#[cfg_attr(feature = "napi", napi_derive::napi)]
+ pub fn highlight(source: String, language: String) -> Vec<HighlightSpan> {
+     let Some(name) = canonical(&language) else {
+         return Vec::new();
+@@ -168,7 +169,7 @@ pub fn highlight(source: String, language: String) -> Vec<HighlightSpan> {
+ }
+ 
+ #[cfg_attr(test, allow(dead_code))]
+-#[napi]
++#[cfg_attr(feature = "napi", napi_derive::napi)]
+ pub fn highlight_captures() -> Vec<String> {
+     CAPTURE_NAMES.iter().map(|s| s.to_string()).collect()
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #262** (2026-11-08): misc pixel fixes (@RobPruzan)
+- **PR #261** (2026-11-08): implement pluggable rendering architecture (@RobPruzan)
 - **PR #243** (2026-11-04): Native UI scroll improvements (@RobPruzan)
 - **PR #241** (2026-11-02): Retry frame transport when a tmux client attaches (@YoanWai)
 - **PR #240** (2026-11-01): Add graphical shell example (@RobPruzan)
 - **PR #239** (2026-11-01): add rex as terminal backend (@RobPruzan)
-- **PR #238** (2026-11-01): detect rex and use patches as default (@RobPruzan)
-- **PR #236** (closed): Install extensions from the Chrome Web Store and the CLI (@RobPruzan)
 
 ---
 
@@ -2252,13 +2222,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Native UI scroll improvements (#243)
+## X. misc pixel fixes (#262)
 
 **RULE**:
 When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d02e800f`: Native UI scroll improvements (#243). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8c78463`: misc pixel fixes (#262). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
@@ -2266,21 +2236,19 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `position` | `"flow" \| "absolute" \| "sticky"` (sticky: `inset.top` is how close to the top of the scroll area it stops; it stays inside its parent and paints over the parent's other children) |
-| `layout` | `"flex" \| "list"`, see Long lists |
-| `scrollAnchor` | `"auto" \| "end"` (`"end"`: a scroll box at its end stays at its end as its content grows) |
-<!-- fixme: placeholder copy -->
-### Long lists
-
-A scroll box with `layout: "list"` lays its children out one at a time as rows at its own width, stacked with `gap` inside `padding`, instead of as one flexbox; the box gets its size from its parent like any scroll box. Changing, adding or removing a row only lays out that row, and scrolling only places and draws the rows on screen, so a list of thousands of rows scrolls and streams as fast as a short one. Rows far from the viewport are laid out in idle time; until then they keep their last height (or the average row height). When rows above the viewport change height, the first visible row keeps its place, so what you are reading never jumps. Use `scrollAnchor: "end"` to keep following new rows at the end, and `position: "sticky"` with `onStick` for headers that stay at the top w
+| `flexWrap` | `"nowrap" \| "wrap"`; wrapped lines pack to the start |
+| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `modal` (while shown only this subtree takes clicks, hover, wheel, selection and keys; a click outside lands on it), `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+- `Frame`: the composed canvas, damage (`changed`, `repainted`), opaque areas over surfaces, and what the backend asked for in `wants()`: `scroll_layer` (the biggest list scroller painted on its own so it can be moved), `view_canvas` (present the view's canvas directly), `host_surfaces` (the backend draws surfaces itself: they're left transparent and `Frame.surfaces` lists each surface's placement and the UI covering it; match them to JS surfaces with `surfaceId` from `@zenbu-labs/pixel/core`).
+- Optional hooks: `poll_metrics` (hosts that ask for their size), `pending_present`, `animating`, `befor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| `position` | `"flow" \| "absolute"` |
-| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+| `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+- `Frame`: the composed canvas, damage (`changed`, `repainted`), opaque areas over surfaces, and what the backend asked for in `wants()`: `scroll_layer` (the biggest list scroller painted on its own so it can be moved), `view_canvas` (present the view's canvas directly).
+- Optional hooks: `poll_metrics` (hosts that ask for their size), `pending_present`, `animating`, `before_frame`, `idle`, `deadline`, `schedule_present` / `take_presented_at` (pacing), `byte_rate_limit`, `set_title`, `set_pointer_shape`, clipboard reads and writes, `message` (app to backend), `describe` (extra `root.info` fields).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d02e800f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8c78463` are properly handled with clean fallback behavior.
