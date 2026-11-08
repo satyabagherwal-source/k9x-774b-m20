@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-5W5I",
-    "timestamp": "2026-11-05T23:49:01.830Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "8112b6f178c57ddfd09f7c42ac66aa973301da4df61e2b52e9dc384290c9a7aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-5WAJ",
     "timestamp": "2026-11-05T23:49:02.011Z",
     "repository": "react/react-native",
@@ -7492,6 +7477,21 @@
     "contentHash": "bf2566942a5d6c0891a9c9f6b8e6172a4a33ea9311790322b42ac359a51ddc8a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-CH6N",
+    "timestamp": "2026-11-08T17:13:15.263Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

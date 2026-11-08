@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T17:06:15.673Z",
-    "lastVerified": "2026-11-08T17:06:15.673Z",
+    "lastChecked": "2026-11-08T17:13:26.231Z",
+    "lastVerified": "2026-11-08T17:13:26.231Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:33:41.351Z",
-    "lastVerified": "2026-11-08T16:33:41.351Z",
+    "lastChecked": "2026-11-08T17:13:26.219Z",
+    "lastVerified": "2026-11-08T17:13:26.219Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1280,8 +1280,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T10:47:14.970Z",
-    "lastVerified": "2026-11-08T10:47:14.970Z",
+    "lastChecked": "2026-11-08T17:13:21.410Z",
+    "lastVerified": "2026-11-08T17:13:21.410Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -2537,9 +2537,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-07T21:10:20.256Z",
+    "lastChecked": "2026-11-08T17:13:18.689Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-07T21:10:20.256Z"
+    "lastVerified": "2026-11-08T17:13:18.689Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3030,12 +3030,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T01:22:14.946Z",
-    "lastVerified": "2026-11-05T01:22:14.946Z",
+    "lastChecked": "2026-11-08T17:13:14.009Z",
+    "lastVerified": "2026-11-08T17:13:14.009Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "3c44c7f4ef93c8a593bbd51abe33294d656746b74dbef267d2830bb6cf093b5c",
+    "contentHash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5731,8 +5731,8 @@
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T20:16:29.605Z",
-    "lastVerified": "2026-11-07T20:16:29.605Z",
+    "lastChecked": "2026-11-08T17:13:23.701Z",
+    "lastVerified": "2026-11-08T17:13:23.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -7048,12 +7048,12 @@
     "lastVerified": "2026-11-07T23:34:17.578Z"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T05:08:59.616Z",
-    "lastVerified": "2026-11-07T05:08:59.616Z",
+    "lastChecked": "2026-11-08T17:13:11.220Z",
+    "lastVerified": "2026-11-08T17:13:11.220Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -7062,7 +7062,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cada1c61"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -10722,12 +10723,12 @@
     "lastVerified": "2026-11-06T21:59:19.945Z"
   },
   "chrisbanes-skills": {
-    "name": "chrisbanes/skills",
+    "name": "skills",
     "officialUrl": "https://github.com/chrisbanes/skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-05T11:30:49.987Z",
-    "lastVerified": "2026-11-05T11:30:49.987Z",
+    "lastChecked": "2026-11-08T17:13:16.272Z",
+    "lastVerified": "2026-11-08T17:13:16.272Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chrisbanes-skills",
@@ -10736,7 +10737,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "72628aea"
   },
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",

@@ -8346,3 +8346,4 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a0c210aa` | Multi-dimensional audit evidence | 2026-11-08T17:06:08.379Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `45f16d5b` | Multi-dimensional audit evidence | 2026-11-08T17:06:10.640Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3fd42218` | Multi-dimensional audit evidence | 2026-11-08T17:06:13.066Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T17:13:15.268Z |

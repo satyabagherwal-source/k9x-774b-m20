@@ -8337,3 +8337,4 @@
 | `CYCLE-20261108-3BSN` | `2026-11-08T17:06:08.375Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d6cc0375...`) |
 | `CYCLE-20261108-3DJG` | `2026-11-08T17:06:10.636Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c179eb54...`) |
 | `CYCLE-20261108-3FEV` | `2026-11-08T17:06:13.063Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bf256694...`) |
+| `CYCLE-20261108-CH6N` | `2026-11-08T17:13:15.263Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`2d996ffe...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T17:06:13.072Z",
-  "total_cycles_completed": 8302,
-  "total_learnings_persisted": 8302,
+  "last_updated": "2026-11-08T17:13:15.274Z",
+  "total_cycles_completed": 8303,
+  "total_learnings_persisted": 8303,
   "total_rules_promoted": 8089,
   "history": [
-    {
-      "timestamp": "2026-11-08T00:02:39.011Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T00:02:44.951Z",
       "repository": "MariaDB/server",
@@ -1403,6 +1396,13 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T17:13:15.274Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
