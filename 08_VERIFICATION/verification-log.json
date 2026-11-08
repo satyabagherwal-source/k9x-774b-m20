@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-NHTB",
-    "timestamp": "2026-11-05T12:22:52.655Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "387de9c9c6fa66e67ab3052056b10705a1b7e57d2ddd15faf23d1ddbdb4c9b51",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-VPQW",
-    "timestamp": "2026-11-05T12:29:16.184Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "0a63b3d9529eee7315d4ab344262c5f488cf97f6a25b7f04e3e15d1619e082c8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-VYAK",
     "timestamp": "2026-11-05T12:29:27.260Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7460,36 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "8289bea8a253091aa6bf4d8f2cd0db563dcbeffe4c8fbaeb284ec0c8c1300484",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XINF",
+    "timestamp": "2026-11-08T01:09:50.379Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-XTI6",
+    "timestamp": "2026-11-08T01:10:04.446Z",
+    "repository": "tursodatabase/libsql",
+    "learningId": "learn-github-tursodatabase-libsql",
+    "contentHash": "41a5b01530847b924912dcea8e5dbe70e32a675300f2b69f0bf4b5feac68ff0e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

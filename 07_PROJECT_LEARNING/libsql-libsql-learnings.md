@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/libsql-libsql-learnings.md`  
 > **Source**: github ([https://github.com/libsql/libsql](https://github.com/libsql/libsql))  
-> **Source Version**: `d8bc862d`  
+> **Source Version**: `a1d031cb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:25:41.425Z  
+> **Timestamp**: 2026-11-08T01:10:03.131Z  
 > **Learning ID**: `learn-github-tursodatabase-libsql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/libsql-libsql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/libsql/libsql](https://github.com/libsql/libsql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:25:41.417Z  
+> **Harvest Timestamp**: 2026-11-08T01:10:02.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: libSQL is a fork of SQLite that is both Open Source, and Open Contributions.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17279 stars
+- **Stars / Engagement**: 17312 stars
 
 ---
 
@@ -1393,255 +1393,574 @@ fn add_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9f2f7d8` (2026-10-13)
-**Commit Message**: fix: null sqlite3 handle after close to prevent double-free (#2251) (#2261)
+### Incident Patch 1: `a1d031cb` (2026-11-07)
+**Commit Message**: libsql: add Connection::limit and Connection::set_limit (#2305)
 
-## Problem
+SQLite lets each connection lower its run-time limits with
+`sqlite3_limit()`, for example `SQLITE_LIMIT_LENGTH` to cap the size of
+any string or BLOB a query can build. There is no PRAGMA for most of
+these, so callers need native access, and `libsql::Connection` doesn't
+expose it today. We'd like to use this from libsql-js to stop a single
+query from allocating a huge value in memory.
 
-Closes #2251
+**API.** This adds `Connection::limit(Limit) -> Result<i32>` and
+`Connection::set_limit(Limit, i32) -> Result<i32>`, plus a `Limit` enum
+whose values match the `SQLITE_LIMIT_*` constants. It follows rusqlite's
+`limit` / `set_limit`: `set_limit` returns the previous value, values
+above the compile-time maximum are capped, and a negative value leaves
+the limit unchanged. Unlike rusqlite it returns `Result`, because remote
+(Hrana) connections can't support it and return the new
+`Error::LimitNotSupported`. Embedded replicas and synced databases
+forward to their local connection.
 
-The local connection's `sqlite3` handle is `sqlite3_close_v2`'d
-**twice** on teardown. `LibsqlConnection`'s `Drop` calls `disconnect()`,
-then the inner `Connection`'s `Drop` calls it again. Both go through
-`Connection::disconnect` (connection.rs:110). `disconnect()` isn't
-idempotent — the `Arc::get_mut(drop_ref)` guard only checks unique
-ownership (true both times) and doesn't record that the handle was
-already closed.
+**Tests.** Integration tests cover lowering `Limit::Length` (`format()`
+returns NULL and `zeroblob()` fails with `SQLITE_TOOBIG` above the
+limit), negative values,
 
-On Windows this is a hard `STATUS_ACCESS_VIOLATION` (0xC0000005); on
-Linux it doesn't fault (glibc keeps the freed page mapped) but the
-double free is real, as valgrind shows — 800 errors from 1 context at
-800 iterations, one per connection.
-
-## Root Cause
-
-```
-LibsqlConnection::drop -> self.conn.disconnect()   <- first close
-Connection::drop       -> self.disconnect()         <- second close
-```
-
-Both calls succeed because `Arc::get_mut(drop_ref)` returns `Some` both
-times (the first close doesn't mark the handle as closed).
-
-## Fix
-
-After calling `sqlite3_close_v2`, set `self.raw` to
-`std::ptr::null_mut()`. This makes `disconnect()` idempotent — the
-second call s
-
-**File**: `libsql/src/local/connection.rs` (modified, +4/-1)
+**File**: `libsql/src/connection.rs` (modified, +36/-1)
 ```diff
-@@ -107,7 +107,10 @@ impl Connection {
-     /// Disconnect from the database.
-     pub fn disconnect(&mut self) {
-         if Arc::get_mut(&mut self.drop_ref).is_some() {
--            unsafe { libsql_sys::ffi::sqlite3_close_v2(self.raw) };
-+            unsafe {
-+                libsql_sys::ffi::sqlite3_close_v2(self.raw);
-+                self.raw = std::ptr::null_mut();
-+            };
-         }
+@@ -9,7 +9,7 @@ use crate::params::{IntoParams, Params};
+ use crate::rows::Rows;
+ use crate::statement::Statement;
+ use crate::transaction::Transaction;
+-use crate::{Result, TransactionBehavior};
++use crate::{Limit, Result, TransactionBehavior};
+ 
+ pub type AuthHook = Arc<dyn Fn(&AuthContext) -> Authorization>;
+ 
+@@ -71,6 +71,14 @@ pub(crate) trait Conn {
+     fn add_update_hook(&self, _cb: Box<dyn Fn(Op, &str, &str, i64) + Send + Sync>) -> Result<()> {
+         Err(crate::Error::UpdateHookNotSupported)
      }
++
++    fn limit(&self, _limit: Limit) -> Result<i32> {
++        Err(crate::Error::LimitNotSupported)
++    }
++
++    fn set_limit(&self, _limit: Limit, _new_val: i32) -> Result<i32> {
++        Err(crate::Error::LimitNotSupported)
++    }
+ }
  
+ /// A set of rows returned from `execute_batch`/`execute_transactional_batch`. It is essentially
+@@ -302,6 +310,33 @@ impl Connection {
+     pub fn add_update_hook(&self, cb: Box<UpdateHook>) -> Result<()> {
+         self.conn.add_update_hook(cb)
+     }
++
++    /// Returns the current value of a run-time limit for this connection.
++    ///
++    /// Only supported for local databases and embedded replicas. Remote
++    /// connections return [`Error::LimitNotSupported`](crate::Error::LimitNotSupported).
++    ///
++    /// See SQLite's documentation on `sqlite3_limit` for more information:
++    /// https://sqlite.org/c3ref/limit.html
++    pub fn limit(&self, limit: Limit) -> Result<i32> {
++        self.conn.limit(limit)
++    }
++
++    /// Changes a run-time limit for this connection and returns its previous
++    /// value.
++    ///
++    /// SQLite silently caps `new_val` at the limit's compile-time maximum, so
++    /// this can lower a limit but never raise it past that maximum. A negative
++    /// `new_val` leaves the limit unchanged.
++    ///
++    /// Only supported for local databases and embedded replicas. Remote
++    /// connections return [`Error::LimitNotSupported`](crate::Error::LimitNotSupported).
++    ///
++    /// See SQLite's documentation on `sqlite3_limit` for more information:
++    /// https://sqlite.org/c3ref/limit.html
++    pub fn set_limit(&self, limit: Limit, new_val: i32) -> Result<i32> {
++        self.conn.set_limit(limit, new_val)
++    }
+ }
+ 
+ impl fmt::Debug for Connection {
+```
+
+**File**: `libsql/src/errors.rs` (modified, +2/-0)
+```diff
+@@ -25,6 +25,8 @@ pub enum Error {
+     AuthorizerNotSupported, // Not in rusqlite
+     #[error("Update hooks are only supported in local databases.")]
+     UpdateHookNotSupported, // Not in rusqlite
++    #[error("Limits are only supported in local databases.")]
++    LimitNotSupported, // Not in rusqlite
+     #[error("Column not found: {0}")]
+     ColumnNotFound(i32), // Not in rusqlite
+     #[error("Hrana: `{0}`")]
+```
+
+**File**: `libsql/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -158,6 +158,7 @@ pub use params::params_from_iter;
+ mod auth;
+ mod connection;
+ mod database;
++mod limits;
+ mod load_extension_guard;
+ 
+ cfg_parser! {
+@@ -182,6 +183,7 @@ pub use self::{
+     auth::{AuthAction, AuthContext, Authorization},
+     connection::{AuthHook, BatchRows, Connection, Op},
+     database::{Builder, Database},
++    limits::Limit,
+     load_extension_guard::LoadExtensionGuard,
+     rows::{Column, Row, Rows},
+     statement::Statement,
+```
+
+**File**: `libsql/src/limits.rs` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++/// Run-time limits that can be read or changed per connection with
++/// [`Connection::limit`](crate::Connection::limit) and
++/// [`Connection::set_limit`](crate::Connection::set_limit).
++///
++/// The values match SQLite's `SQLITE_LIMIT_*` constants. See
++/// <https://sqlite.org/c3ref/c_limit_attached.html> for details.
++#[repr(i32)]
++#[non_exhaustive]
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum Limit {
++    /// The maximum size of any string or BLOB or table row, in bytes.
++    Length = 0,
++    /// The maximum length of an SQL statement, in bytes.
++    SqlLength = 1,
++    /// The maximum number of columns in a table definition or in the result set
++    /// of a SELECT or the maximum number of columns in an index or in an
++    /// ORDER BY or GROUP BY clause.
++    Column = 2,
++    /// The maximum depth of the parse tree on any expression.
++    ExprDepth = 3,
++    /// The maximum number of terms in the compound SELECT statement.
++    CompoundSelect = 4,
++    /// The maximum number of instructions in a virtual machine program used to
++    /// implement an SQL statement.
++    VdbeOp = 5,
++    /// The maximum number of arguments on a function.
++    FunctionArg = 6,
++    /// The maximum number of attached databases.
++    Attached = 7,
++    /// The maximum length of the pattern argument to the LIKE or GLOB
++    /// operators.
++    LikePatternLength = 8,
++    /// The maximum index number of any parameter in an SQL statement.
++    VariableNumber = 9,
++    /// The maximum depth of recursion for triggers.
++    TriggerDepth = 10,
++    /// The maximum number of auxiliary worker threads that a single prepared
++    /// statement may start.
++    WorkerThreads = 11,
++}
++
++#[cfg(all(test, feature = "core"))]
++mod tests {
++    use super::Limit;
++    use libsql_sys::ffi;
++
++    #[test]
++    fn limit_values_match_sqlite() {
++        let pairs = [
++            (Limit::Length, ffi::SQLITE_LIMIT_LENGTH),
++            (Limit::SqlLength, ffi::SQLITE_LIMIT_SQL_LENGTH),
++            (Limit::Column, ffi::SQLITE_LIMIT_COLUMN),
++            (Limit::ExprDepth, ffi::SQLITE_LIMIT_EXPR_DEPTH),
++            (Limit::CompoundSelect, ffi::SQLITE_LIMIT_COMPOUND_SELECT),
++            (Limit::VdbeOp, ffi::SQLITE_LIMIT_VDBE_OP),
++            (Limit::FunctionArg, ffi::SQLITE_LIMIT_FUNCTION_ARG),
++            (Limit::Attached, ffi::SQLITE_LIMIT_ATTACHED),
++            (
++                Limit::LikePatternLength,
++                ffi::SQLITE_LIMIT_LIKE_PATTERN_LENGTH,
++            ),
++            (Limit::VariableNumber, ffi::SQLITE_LIMIT_VARIABLE_NUMBER),
++            (Limit::TriggerDepth, ffi::SQLITE_LIMIT_TRIGGER_DEPTH),
++            (Limit::WorkerThreads, ffi::SQLITE_LIMIT_WORKER_THREADS),
++        ];
++        for (limit, expected) in pairs {
++            assert_eq!(limit as i32, expected as i32, "{limit:?}");
++        }
++    }
++}
+```
+
+**File**: `libsql/src/local/connection.rs` (modified, +9/-1)
+```diff
+@@ -12,7 +12,7 @@ use std::time::Duration;
+ 
+ use super::{Database, Error, Result, Rows, RowsFuture, Statement, Transaction};
+ 
+-use crate::TransactionBehavior;
++use crate::{Limit, TransactionBehavior};
+ 
+ use libsql_sys::ffi;
+ use parking_lot::RwLock;
+@@ -694,6 +694,14 @@ impl Connection {
+     pub fn get_reserved_bytes(&self) -> Result<i32> {
+         self.reserved_bytes(None)
+     }
++
++    pub fn limit(&self, limit: Limit) -> i32 {
++        unsafe { ffi::sqlite3_limit(self.raw, limit as c_int, -1) }
++    }
++
++    pub fn set_limit(&self, limit: Limit, new_val: i32) -> i32 {
++        unsafe { ffi::sqlite3_limit(self.raw, limit as c_int, new_val) }
++    }
+ }
+ 
+ unsafe extern "C" fn authorizer_callback(
+```
+
+**File**: `libsql/src/local/impls.rs` (modified, +9/-1)
+```diff
+@@ -8,7 +8,7 @@ use crate::{
+     rows::{ColumnsInner, RowInner, RowsInner},
+     statement::Stmt,
+     transaction::Tx,
+-    Column, Connection, Result, Row, Rows, Statement, Transaction, TransactionBehavior, Value,
++    Column, Connection, Limit, Result, Row, Rows, Statement, Transaction, TransactionBehavior, Value,
+     ValueType,
+ };
+ 
+@@ -103,6 +103,14 @@ impl Conn for LibsqlConnection {
+     fn add_update_hook(&self, cb: Box<UpdateHook>) -> Result<()> {
+         Ok(self.conn.add_update_hook(cb))
+     }
++
++    fn limit(&self, limit: Limit) -> Result<i32> {
++        Ok(self.conn.limit(limit))
++    }
++
++    fn set_limit(&self, limit: Limit, new_val: i32) -> Result<i32> {
++        Ok(self.conn.set_limit(limit, new_val))
++    }
+ }
+ 
+ impl Drop for LibsqlConnection {
+```
+
+**File**: `libsql/src/replication/connection.rs` (modified, +8/-0)
+```diff
+@@ -550,6 +550,14 @@ impl Conn for RemoteConnection {
+     fn get_reserved_bytes(&self) -> Result<i32> {
+         self.local.get_reserved_bytes()
+     }
++
++    fn limit(&self, limit: crate::Limit) -> Result<i32> {
++        self.local.limit(limit)
++    }
++
++    fn set_limit(&self, limit: crate::Limit, new_val: i32) -> Result<i32> {
++        self.local.set_limit(limit, new_val)
++    }
+ }
+ 
+ pub struct ColumnMeta {
+```
+
+**File**: `libsql/src/sync/connection.rs` (modified, +8/-0)
+```diff
+@@ -197,4 +197,12 @@ impl Conn for SyncedConnection {
+     fn get_reserved_bytes(&self) -> Result<i32> {
+         self.local.get_reserved_bytes()
+     }
++
++    fn limit(&self, limit: crate::Limit) -> Result<i32> {
++        Ok(self.local.limit(limit))
++    }
++
++    fn set_limit(&self, limit: crate::Limit, new_val: i32) -> Result<i32> {
++        Ok(self.local.set_limit(limit, new_val))
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `74ab9010` (2026-08-11)
-**Commit Message**: Update cmake crate to fix Windows CI (#2267)
+### Incident Patch 2: `3c27364e` (2026-10-27)
+**Commit Message**: libsql: add Connection::limit and Connection::set_limit
 
-The windows-latest runner image moved to windows-2025-vs2026, which
-ships Visual Studio 2026. The cmake crate 0.1.54 pinned in Cargo.lock
-does not recognize VS 2026 and panics in the libsql-ffi build script
-with "couldn't determine visual studio generator" while configuring the
-SQLite3MultipleCiphers build.
+Expose sqlite3_limit so callers can read and lower per-connection
+run-time limits, such as SQLITE_LIMIT_LENGTH. The API follows rusqlite's
+limit and set_limit, but returns Result because remote connections
+can't support it; they return Error::LimitNotSupported. Embedded
+replicas and synced databases forward to their local connection.
 
-Support for the VS 2026 generator was added in cmake 0.1.55, so bump the
-lockfile to 0.1.58 (pulling in the newer cc and libc it requires).
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +21/-8)
+**File**: `libsql/src/connection.rs` (modified, +36/-1)
 ```diff
-@@ -855,7 +855,7 @@ dependencies = [
-  "quote",
-  "regex",
-  "rustc-hash",
-- "shlex",
-+ "shlex 1.3.0",
-  "syn 2.0.87",
-  "which",
- ]
-@@ -1125,13 +1125,14 @@ dependencies = [
+@@ -9,7 +9,7 @@ use crate::params::{IntoParams, Params};
+ use crate::rows::Rows;
+ use crate::statement::Statement;
+ use crate::transaction::Transaction;
+-use crate::{Result, TransactionBehavior};
++use crate::{Limit, Result, TransactionBehavior};
  
- [[package]]
- name = "cc"
--version = "1.1.0"
-+version = "1.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "eaff6f8ce506b9773fa786672d63fc7a191ffea1be33f72bbd4aeacefca9ffc8"
-+checksum = "5d262e149917187838d5b42777c8253bcb64500067342904e7d429499a6f277e"
- dependencies = [
-+ "find-msvc-tools",
-  "jobserver",
-  "libc",
-- "once_cell",
-+ "shlex 2.0.1",
- ]
+ pub type AuthHook = Arc<dyn Fn(&AuthContext) -> Authorization>;
  
- [[package]]
-@@ -1277,9 +1278,9 @@ checksum = "4b82cf0babdbd58558212896d1a4272303a57bdb245c2bf1147185fb45640e70"
- 
- [[package]]
- name = "cmake"
--version = "0.1.54"
-+version = "0.1.58"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e7caa3f9de89ddbe2c607f4101924c5abec803763ae9534e4f4d7d8f84aa81f0"
-+checksum = "c0f78a02292a74a88ac736019ab962ece0bc380e3f977bf72e376c5d78ff0678"
- dependencies = [
-  "cc",
- ]
-@@ -2014,6 +2015,12 @@ dependencies = [
-  "windows-sys 0.52.0",
- ]
- 
-+[[package]]
-+name = "find-msvc-tools"
-+version = "0.1.10"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "26b73573e6edcd2af0cdf47bd6cb58f0b3839491263c314eaad1ccf24430e1de"
+@@ -71,6 +71,14 @@ pub(crate) trait Conn {
+     fn add_update_hook(&self, _cb: Box<dyn Fn(Op, &str, &str, i64) + Send + Sync>) -> Result<()> {
+         Err(crate::Error::UpdateHookNotSupported)
+     }
 +
- [[package]]
- name = "findshlibs"
- version = "0.10.2"
-@@ -2857,9 +2864,9 @@ checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
- 
- [[package]]
- name = "libc"
--version = "0.2.155"
-+version = "0.2.189"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
-+checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
- 
- [[package]]
- name = "libloading"
-@@ -4843,6 +4850,12 @@ version = "1.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
- 
-+[[package]]
-+name = "shlex"
-+version = "2.0.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
++    fn limit(&self, _limit: Limit) -> Result<i32> {
++        Err(crate::Error::LimitNotSupported)
++    }
 +
- [[package]]
- name = "signal-hook-registry"
- version = "1.4.2"
++    fn set_limit(&self, _limit: Limit, _new_val: i32) -> Result<i32> {
++        Err(crate::Error::LimitNotSupported)
++    }
+ }
+ 
+ /// A set of rows returned from `execute_batch`/`execute_transactional_batch`. It is essentially
+@@ -302,6 +310,33 @@ impl Connection {
+     pub fn add_update_hook(&self, cb: Box<UpdateHook>) -> Result<()> {
+         self.conn.add_update_hook(cb)
+     }
++
++    /// Returns the current value of a run-time limit for this connection.
++    ///
++    /// Only supported for local databases and embedded replicas. Remote
++    /// connections return [`Error::LimitNotSupported`](crate::Error::LimitNotSupported).
++    ///
++    /// See SQLite's documentation on `sqlite3_limit` for more information:
++    /// https://sqlite.org/c3ref/limit.html
++    pub fn limit(&self, limit: Limit) -> Result<i32> {
++        self.conn.limit(limit)
++    }
++
++    /// Changes a run-time limit for this connection and returns its previous
++    /// value.
++    ///
++    /// SQLite silently caps `new_val` at the limit's compile-time maximum, so
++    /// this can lower a limit but never raise it past that maximum. A negative
++    /// `new_val` leaves the limit unchanged.
++    ///
++    /// Only supported for local databases and embedded replicas. Remote
++    /// connections return [`Error::LimitNotSupported`](crate::Error::LimitNotSupported).
++    ///
++    /// See SQLite's documentation on `sqlite3_limit` for more information:
++    /// https://sqlite.org/c3ref/limit.html
++    pub fn set_limit(&self, limit: Limit, new_val: i32) -> Result<i32> {
++        self.conn.set_limit(limit, new_val)
++    }
+ }
+ 
+ impl fmt::Debug for Connection {
 ```
 
----
-
-### Incident Patch 3: `21b17a76` (2026-08-11)
-**Commit Message**: Update cmake crate to fix Windows CI
-
-The windows-latest runner image moved to windows-2025-vs2026, which
-ships Visual Studio 2026. The cmake crate 0.1.54 pinned in Cargo.lock
-does not recognize VS 2026 and panics in the libsql-ffi build script
-with "couldn't determine visual studio generator" while configuring
-the SQLite3MultipleCiphers build.
-
-Support for the VS 2026 generator was added in cmake 0.1.55, so bump
-the lockfile to 0.1.58 (pulling in the newer cc and libc it requires).
-
-**File**: `Cargo.lock` (modified, +21/-8)
+**File**: `libsql/src/errors.rs` (modified, +2/-0)
 ```diff
-@@ -855,7 +855,7 @@ dependencies = [
-  "quote",
-  "regex",
-  "rustc-hash",
-- "shlex",
-+ "shlex 1.3.0",
-  "syn 2.0.87",
-  "which",
- ]
-@@ -1125,13 +1125,14 @@ dependencies = [
+@@ -25,6 +25,8 @@ pub enum Error {
+     AuthorizerNotSupported, // Not in rusqlite
+     #[error("Update hooks are only supported in local databases.")]
+     UpdateHookNotSupported, // Not in rusqlite
++    #[error("Limits are only supported in local databases.")]
++    LimitNotSupported, // Not in rusqlite
+     #[error("Column not found: {0}")]
+     ColumnNotFound(i32), // Not in rusqlite
+     #[error("Hrana: `{0}`")]
+```
+
+**File**: `libsql/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -158,6 +158,7 @@ pub use params::params_from_iter;
+ mod auth;
+ mod connection;
+ mod database;
++mod limits;
+ mod load_extension_guard;
  
- [[package]]
- name = "cc"
--version = "1.1.0"
-+version = "1.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "eaff6f8ce506b9773fa786672d63fc7a191ffea1be33f72bbd4aeacefca9ffc8"
-+checksum = "5d262e149917187838d5b42777c8253bcb64500067342904e7d429499a6f277e"
- dependencies = [
-+ "find-msvc-tools",
-  "jobserver",
-  "libc",
-- "once_cell",
-+ "shlex 2.0.1",
- ]
- 
- [[package]]
-@@ -1277,9 +1278,9 @@ checksum = "4b82cf0babdbd58558212896d1a4272303a57bdb245c2bf1147185fb45640e70"
- 
- [[package]]
- name = "cmake"
--version = "0.1.54"
-+version = "0.1.58"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e7caa3f9de89ddbe2c607f4101924c5abec803763ae9534e4f4d7d8f84aa81f0"
-+checksum = "c0f78a02292a74a88ac736019ab962ece0bc380e3f977bf72e376c5d78ff0678"
- dependencies = [
-  "cc",
- ]
-@@ -2014,6 +2015,12 @@ dependencies = [
-  "windows-sys 0.52.0",
- ]
- 
-+[[package]]
-+name = "find-msvc-tools"
-+version = "0.1.10"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "26b73573e6edcd2af0cdf47bd6cb58f0b3839491263c314eaad1ccf24430e1de"
+ cfg_parser! {
+@@ -182,6 +183,7 @@ pub use self::{
+     auth::{AuthAction, AuthContext, Authorization},
+     connection::{AuthHook, BatchRows, Connection, Op},
+     database::{Builder, Database},
++    limits::Limit,
+     load_extension_guard::LoadExtensionGuard,
+     rows::{Column, Row, Rows},
+     statement::Statement,
+```
+
+**File**: `libsql/src/limits.rs` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++/// Run-time limits that can be read or changed per connection with
++/// [`Connection::limit`](crate::Connection::limit) and
++/// [`Connection::set_limit`](crate::Connection::set_limit).
++///
++/// The values match SQLite's `SQLITE_LIMIT_*` constants. See
++/// <https://sqlite.org/c3ref/c_limit_attached.html> for details.
++#[repr(i32)]
++#[non_exhaustive]
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum Limit {
++    /// The maximum size of any string or BLOB or table row, in bytes.
++    Length = 0,
++    /// The maximum length of an SQL statement, in bytes.
++    SqlLength = 1,
++    /// The maximum number of columns in a table definition or in the result set
++    /// of a SELECT or the maximum number of columns in an index or in an
++    /// ORDER BY or GROUP BY clause.
++    Column = 2,
++    /// The maximum depth of the parse tree on any expression.
++    ExprDepth = 3,
++    /// The maximum number of terms in the compound SELECT statement.
++    CompoundSelect = 4,
++    /// The maximum number of instructions in a virtual machine program used to
++    /// implement an SQL statement.
++    VdbeOp = 5,
++    /// The maximum number of arguments on a function.
++    FunctionArg = 6,
++    /// The maximum number of attached databases.
++    Attached = 7,
++    /// The maximum length of the pattern argument to the LIKE or GLOB
++    /// operators.
++    LikePatternLength = 8,
++    /// The maximum index number of any parameter in an SQL statement.
++    VariableNumber = 9,
++    /// The maximum depth of recursion for triggers.
++    TriggerDepth = 10,
++    /// The maximum number of auxiliary worker threads that a single prepared
++    /// statement may start.
++    WorkerThreads = 11,
++}
 +
- [[package]]
- name = "findshlibs"
- version = "0.10.2"
-@@ -2857,9 +2864,9 @@ checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
- 
- [[package]]
- name = "libc"
--version = "0.2.155"
-+version = "0.2.189"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
-+checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
- 
- [[package]]
- name = "libloading"
-@@ -4843,6 +4850,12 @@ version = "1.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
- 
-+[[package]]
-+name = "shlex"
-+version = "2.0.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
++#[cfg(all(test, feature = "core"))]
++mod tests {
++    use super::Limit;
++    use libsql_sys::ffi;
 +
- [[package]]
- name = "signal-hook-registry"
- version = "1.4.2"
++    #[test]
++    fn limit_values_match_sqlite() {
++        let pairs = [
++            (Limit::Length, ffi::SQLITE_LIMIT_LENGTH),
++            (Limit::SqlLength, ffi::SQLITE_LIMIT_SQL_LENGTH),
++            (Limit::Column, ffi::SQLITE_LIMIT_COLUMN),
++            (Limit::ExprDepth, ffi::SQLITE_LIMIT_EXPR_DEPTH),
++            (Limit::CompoundSelect, ffi::SQLITE_LIMIT_COMPOUND_SELECT),
++            (Limit::VdbeOp, ffi::SQLITE_LIMIT_VDBE_OP),
++            (Limit::FunctionArg, ffi::SQLITE_LIMIT_FUNCTION_ARG),
++            (Limit::Attached, ffi::SQLITE_LIMIT_ATTACHED),
++            (
++                Limit::LikePatternLength,
++                ffi::SQLITE_LIMIT_LIKE_PATTERN_LENGTH,
++            ),
++            (Limit::VariableNumber, ffi::SQLITE_LIMIT_VARIABLE_NUMBER),
++            (Limit::TriggerDepth, ffi::SQLITE_LIMIT_TRIGGER_DEPTH),
++            (Limit::WorkerThreads, ffi::SQLITE_LIMIT_WORKER_THREADS),
++        ];
++        for (limit, expected) in pairs {
++            assert_eq!(limit as i32, expected as i32, "{limit:?}");
++        }
++    }
++}
+```
+
+**File**: `libsql/src/local/connection.rs` (modified, +9/-1)
+```diff
+@@ -12,7 +12,7 @@ use std::time::Duration;
+ 
+ use super::{Database, Error, Result, Rows, RowsFuture, Statement, Transaction};
+ 
+-use crate::TransactionBehavior;
++use crate::{Limit, TransactionBehavior};
+ 
+ use libsql_sys::ffi;
+ use parking_lot::RwLock;
+@@ -694,6 +694,14 @@ impl Connection {
+     pub fn get_reserved_bytes(&self) -> Result<i32> {
+         self.reserved_bytes(None)
+     }
++
++    pub fn limit(&self, limit: Limit) -> i32 {
++        unsafe { ffi::sqlite3_limit(self.raw, limit as c_int, -1) }
++    }
++
++    pub fn set_limit(&self, limit: Limit, new_val: i32) -> i32 {
++        unsafe { ffi::sqlite3_limit(self.raw, limit as c_int, new_val) }
++    }
+ }
+ 
+ unsafe extern "C" fn authorizer_callback(
+```
+
+**File**: `libsql/src/local/impls.rs` (modified, +9/-1)
+```diff
+@@ -8,7 +8,7 @@ use crate::{
+     rows::{ColumnsInner, RowInner, RowsInner},
+     statement::Stmt,
+     transaction::Tx,
+-    Column, Connection, Result, Row, Rows, Statement, Transaction, TransactionBehavior, Value,
++    Column, Connection, Limit, Result, Row, Rows, Statement, Transaction, TransactionBehavior, Value,
+     ValueType,
+ };
+ 
+@@ -103,6 +103,14 @@ impl Conn for LibsqlConnection {
+     fn add_update_hook(&self, cb: Box<UpdateHook>) -> Result<()> {
+         Ok(self.conn.add_update_hook(cb))
+     }
++
++    fn limit(&self, limit: Limit) -> Result<i32> {
++        Ok(self.conn.limit(limit))
++    }
++
++    fn set_limit(&self, limit: Limit, new_val: i32) -> Result<i32> {
++        Ok(self.conn.set_limit(limit, new_val))
++    }
+ }
+ 
+ impl Drop for LibsqlConnection {
+```
+
+**File**: `libsql/src/replication/connection.rs` (modified, +8/-0)
+```diff
+@@ -550,6 +550,14 @@ impl Conn for RemoteConnection {
+     fn get_reserved_bytes(&self) -> Result<i32> {
+         self.local.get_reserved_bytes()
+     }
++
++    fn limit(&self, limit: crate::Limit) -> Result<i32> {
++        self.local.limit(limit)
++    }
++
++    fn set_limit(&self, limit: crate::Limit, new_val: i32) -> Result<i32> {
++        self.local.set_limit(limit, new_val)
++    }
+ }
+ 
+ pub struct ColumnMeta {
+```
+
+**File**: `libsql/src/sync/connection.rs` (modified, +8/-0)
+```diff
+@@ -197,4 +197,12 @@ impl Conn for SyncedConnection {
+     fn get_reserved_bytes(&self) -> Result<i32> {
+         self.local.get_reserved_bytes()
+     }
++
++    fn limit(&self, limit: crate::Limit) -> Result<i32> {
++        Ok(self.local.limit(limit))
++    }
++
++    fn set_limit(&self, limit: crate::Limit, new_val: i32) -> Result<i32> {
++        Ok(self.local.set_limit(limit, new_val))
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2305** (2026-11-07): libsql: add Connection::limit and Connection::set_limit (@jeffreykwan)
 - **PR #2274** (2026-08-23): parser: Add support for `ANALYZE` (@avinassh)
 - **PR #2268** (2026-08-11): ci: install protoc from apt instead of arduino/setup-protoc (@penberg)
 - **PR #2267** (2026-08-11): Update cmake crate to fix Windows CI (@penberg)
 - **PR #2262** (closed): A gentle deadlock monitor (@aredridel)
 - **PR #2261** (2026-10-13): fix: null sqlite3 handle after close to prevent double-free (#2251) (@wasim-builds)
-- **PR #2259** (closed): TEST (@LeMikaelF)
 
 ---
 
@@ -1661,31 +1980,57 @@ the lockfile to 0.1.58 (pulling in the newer cc and libc it requires).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. null sqlite3 handle after close to prevent double-free (#2251) (#2261)
+## X. libsql: add Connection::limit and Connection::set_limit (#2305)
 
 **RULE**:
-When implementing operations in `libsql/src/local/connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/libsql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `libsql/src/connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/libsql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9f2f7d8`: null sqlite3 handle after close to prevent double-free (#2251) (#2261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1d031cb`: libsql: add Connection::limit and Connection::set_limit (#2305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `libsql/src/local/connection.rs`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `libsql/src/connection.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-            unsafe {
-                libsql_sys::ffi::sqlite3_close_v2(self.raw);
-                self.raw = std::ptr::null_mut();
-            };
+use crate::{Limit, Result, TransactionBehavior};
+
+    fn limit(&self, _limit: Limit) -> Result<i32> {
+        Err(crate::Error::LimitNotSupported)
+    }
+
+    fn set_limit(&self, _limit: Limit, _new_val: i32) -> Result<i32> {
+        Err(crate::Error::LimitNotSupported)
+    }
+
+    /// Returns the current value of a run-time limit for this connection.
+    ///
+    /// Only supported for local databases and embedded replicas. Remote
+    /// connections return [`Error::LimitNotSupported`](crate::Error::LimitNotSupported).
+    ///
+    /// See SQLite's documentation on `sqlite3_limit` for more information:
+    /// https://sqlite.org/c3ref/limit.html
+    pub fn limit(&self, limit: Limit) -> Result<i32> {
+        self.conn.limit(limit)
+    }
+
+    /// Changes a run-time limit for this connection and returns its previous
+    /// value.
+    ///
+    /// SQLite silently caps `new_val` at the limit's compile-time maximum, so
+    /// this can lower a limit but never raise it past that maximum. A negative
+    /// `new_val` leaves the limit unchanged.
+    ///
+    /// Only supported for local databases and embedded replicas. Remote
+    /// connections return [`Error::LimitNotSupported`](crate::Error:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-            unsafe { libsql_sys::ffi::sqlite3_close_v2(self.raw) };
+use crate::{Result, TransactionBehavior};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9f2f7d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1d031cb` are properly handled with clean fallback behavior.

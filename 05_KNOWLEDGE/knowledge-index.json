@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T01:03:21.568Z",
+  "last_updated": "2026-11-08T01:10:04.365Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -101316,11 +101316,16 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "8c0f6991",
-      "content_hash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
+      "source_version": "0b076ca5",
+      "content_hash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs: fix TypeScript configuration initialization command (#7195)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1795,
           "title": "perf!: create default validation errors without a stack trace (#7057)",
@@ -101352,7 +101357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T09:25:08.874Z",
+      "verified_at": "2026-11-08T01:09:50.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106731,11 +106736,16 @@
       "slug": "libsql-libsql",
       "platform": "github",
       "source_url": "https://github.com/libsql/libsql",
-      "source_version": "d8bc862d",
-      "content_hash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
+      "source_version": "a1d031cb",
+      "content_hash": "41a5b01530847b924912dcea8e5dbe70e32a675300f2b69f0bf4b5feac68ff0e",
       "dossier_path": "07_PROJECT_LEARNING/libsql-libsql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/libsql-libsql-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "libsql: add Connection::limit and Connection::set_limit (#2305)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2184,
           "title": "null sqlite3 handle after close to prevent double-free (#2251) (#2261)",
@@ -106747,7 +106757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:25:41.652Z",
+      "verified_at": "2026-11-08T01:10:04.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T01:03:24.257Z",
-    "lastVerified": "2026-11-08T01:03:24.257Z",
+    "lastChecked": "2026-11-08T01:10:07.053Z",
+    "lastVerified": "2026-11-08T01:10:07.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T00:41:50.249Z",
-    "lastVerified": "2026-11-08T00:41:50.249Z",
+    "lastChecked": "2026-11-08T01:09:56.050Z",
+    "lastVerified": "2026-11-08T01:09:56.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1364,8 +1364,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-07T20:56:02.561Z",
-    "lastVerified": "2026-11-07T20:56:02.561Z",
+    "lastChecked": "2026-11-08T01:09:50.944Z",
+    "lastVerified": "2026-11-08T01:09:50.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1564,8 +1564,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T21:54:24.426Z",
-    "lastVerified": "2026-11-05T21:54:24.426Z",
+    "lastChecked": "2026-11-08T01:09:40.952Z",
+    "lastVerified": "2026-11-08T01:09:40.952Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -4121,9 +4121,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-06T19:16:43.421Z",
+    "lastChecked": "2026-11-08T01:09:48.659Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-06T19:16:43.421Z"
+    "lastVerified": "2026-11-08T01:09:48.659Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -7734,11 +7734,21 @@
     "lastVerified": "2026-11-07T21:36:24.297Z"
   },
   "libsql-libsql": {
-    "name": "libsql",
+    "name": "tursodatabase/libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-06T15:05:47.838Z",
-    "revisionIdentifier": "d8bc862d",
-    "lastVerified": "2026-11-06T15:05:47.838Z"
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-11-08T01:10:02.940Z",
+    "lastVerified": "2026-11-08T01:10:02.940Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tursodatabase-libsql",
+    "contentHash": "41a5b01530847b924912dcea8e5dbe70e32a675300f2b69f0bf4b5feac68ff0e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zvec-ai-zvec-grep": {
     "name": "zvec-grep",
@@ -8750,9 +8760,9 @@
   "mrkai77-loop": {
     "name": "Loop",
     "officialUrl": "https://github.com/mrkai77/Loop",
-    "lastChecked": "2026-11-05T00:36:37.671Z",
+    "lastChecked": "2026-11-08T01:09:45.896Z",
     "revisionIdentifier": "573ace30",
-    "lastVerified": "2026-11-05T00:36:37.671Z"
+    "lastVerified": "2026-11-08T01:09:45.896Z"
   },
   "pola-rs-polars": {
     "name": "pola-rs/polars",
@@ -12641,14 +12651,14 @@
     "officialUrl": "https://github.com/fastify/fastify",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-04T09:25:07.197Z",
-    "lastVerified": "2026-11-04T09:25:07.197Z",
+    "lastChecked": "2026-11-08T01:09:48.234Z",
+    "lastVerified": "2026-11-08T01:09:48.234Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fastify-fastify",
-    "contentHash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
+    "contentHash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -8160,3 +8160,5 @@
 | `CYCLE-20261108-OZUU` | `2026-11-08T01:03:12.774Z` | `pointfreeco/swift-composable-architecture` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`67387360...`) |
 | `CYCLE-20261108-OZWT` | `2026-11-08T01:03:12.845Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e1778150...`) |
 | `CYCLE-20261108-P6QH` | `2026-11-08T01:03:21.689Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8289bea8...`) |
+| `CYCLE-20261108-XINF` | `2026-11-08T01:09:50.379Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b70a45c7...`) |
+| `CYCLE-20261108-XTI6` | `2026-11-08T01:10:04.446Z` | `tursodatabase/libsql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`41a5b015...`) |

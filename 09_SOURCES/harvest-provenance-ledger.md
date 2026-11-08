@@ -8169,3 +8169,5 @@ Every entry in this ledger must capture:
 | `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `bf66bd83` | Multi-dimensional audit evidence | 2026-11-08T01:03:12.799Z |
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `c21f5473` | Multi-dimensional audit evidence | 2026-11-08T01:03:12.849Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `46ab3dad` | Multi-dimensional audit evidence | 2026-11-08T01:03:21.692Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `0b076ca5` | Multi-dimensional audit evidence | 2026-11-08T01:09:50.382Z |
+| `learn-github-tursodatabase-libsql` | `https://github.com/libsql/libsql` | `a1d031cb` | Multi-dimensional audit evidence | 2026-11-08T01:10:04.449Z |

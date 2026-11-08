@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "8c0f6991",
+    "sourceVersion": "0b076ca5",
     "license": "MIT",
-    "contentHash": "d9c89422c03dac6a4d1c203f1c4b729d2396fc283d72804732f3b86dbfcec066",
-    "lastHarvestedAt": "2026-11-04T09:25:08.990Z",
+    "contentHash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
+    "lastHarvestedAt": "2026-11-08T01:09:50.382Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -6223,10 +6223,10 @@
     "repository": "tursodatabase/libsql",
     "platform": "github",
     "sourceUrl": "https://github.com/libsql/libsql",
-    "sourceVersion": "d8bc862d",
+    "sourceVersion": "a1d031cb",
     "license": "MIT",
-    "contentHash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
-    "lastHarvestedAt": "2026-10-19T05:25:41.715Z",
+    "contentHash": "41a5b01530847b924912dcea8e5dbe70e32a675300f2b69f0bf4b5feac68ff0e",
+    "lastHarvestedAt": "2026-11-08T01:10:04.449Z",
     "learningId": "learn-github-tursodatabase-libsql"
   },
   "yvgude-lean-ctx": {
