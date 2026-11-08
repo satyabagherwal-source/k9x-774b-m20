@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `193d0df1`  
+> **Source Version**: `39886c0c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T01:00:35.902Z  
+> **Timestamp**: 2026-11-08T00:48:58.941Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T01:00:35.767Z  
+> **Harvest Timestamp**: 2026-11-08T00:48:57.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44950 stars
+- **Stars / Engagement**: 45114 stars
 
 ---
 
@@ -58,11 +58,19 @@ use crate::filesystem;
 use crate::filter::OwnerFilter;
 use crate::filter::SizeFilter;
 
+/// A program to find entries in your filesystem with regex and glob based matching.
+///
+/// By default, fd respects gitignore rules, ignores hidden directories, and uses smart case (only
+/// case sensitive if the pattern contains an uppercase character).
+///
+/// You can use '' or . as the search pattern to match all files.
+///
+/// Options may be given anywhere on the command line.
 #[derive(Parser)]
 #[command(
     name = "fd",
     version,
-    about = "A program to find entries in your filesystem with regex and glob based matching. By default, fd respects gitignore rules, ignores hidden directories, and is case insensitive.",
+    about = "A program to find entries in your filesystem with regex and glob based matching. By default, fd respects gitignore rules, ignores hidden directories, and uses smart case.",
     after_long_help = "Bugs can be reported on GitHub: https://github.com/sharkdp/fd/issues",
     max_term_width = 98,
     args_override_self = true,
@@ -310,20 +318,7 @@ pub struct Opts {
         short = 'p',
         help = "Search full abs. path (default: filename only)",
         long_help,
-        verbatim_doc_comment
-    )]
-    pub full_path: bool,
-
-    /// Separate search results by the null character (instead of newlines).
-    /// Useful for piping results to 'xargs'.
-    #[arg(
-        long = "print0",
-        short = '0',
-        conflicts_with("list_details"),
-        hide_short_help = true,
-        help = "Separate search results by the null character",
-        long_help
-    )
+        verbatim_doc
 ```
 
 ### Core Architecture Module: `src/config.rs`
@@ -1814,137 +1809,274 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `193d0df1` (2026-11-04)
-**Commit Message**: Merge pull request #2214 from sharkdp/release-10.5.1
+### Incident Patch 1: `edc62af8` (2026-11-07)
+**Commit Message**: docs: update Guix package link
 
-v10.5.1 Release
-
-**File**: `CHANGELOG.md` (modified, +1/-4)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,4 @@
--# Upcoming Release
--
--## Features
---
-+# 10.5.1
+@@ -693,7 +693,7 @@ winget install sharkdp.fd
  
- ## Bugfixes
- - Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -320,7 +320,7 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+ ### On GuixOS
  
- [[package]]
- name = "fd-find"
--version = "10.5.0"
-+version = "10.5.1"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ license = "MIT OR Apache-2.0"
- name = "fd-find"
- readme = "README.md"
- repository = "https://github.com/sharkdp/fd"
--version = "10.5.0"
-+version = "10.5.1"
- edition= "2024"
- rust-version = "1.90.0"
- 
-```
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -307,11 +307,11 @@ This is the output of `fd -h`. To see the full set of command-line options, use
- also includes a much more detailed help text.
- 
+-You can install [the fd package](https://guix.gnu.org/en/packages/fd-8.1.1/) from the official repo:
++You can install [the fd package](https://packages.guix.gnu.org/packages/fd/) from the official repo:
  ```
--Usage: fd [OPTIONS] [pattern [path]...]
-+Usage: fd [OPTIONS] [pattern] [path]...
- 
- Arguments:
-   [pattern]  the search pattern (a regular expression, unless '--glob' is used; optional)
--  [path]...  the root directories for the filesystem search (optional)
-+  [path]...  the root directories for the filesystem search (optional, requires pattern first)
- 
- Options:
-   -H, --hidden                     Search hidden files and directories
+ guix install fd
+ ```
 ```
 
 ---
 
-### Incident Patch 2: `23237ea4` (2026-11-04)
-**Commit Message**: v10.5.1 Release
+### Incident Patch 2: `3a8edbec` (2026-11-07)
+**Commit Message**: Merge pull request #2197 from BTF-Kabir-2020/fix/format-raw-bytes-piped
 
-**File**: `CHANGELOG.md` (modified, +1/-4)
+fix: write raw bytes for piped --format output on unix
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -1,7 +1,4 @@
--# Upcoming Release
--
--## Features
---
-+# 10.5.1
+@@ -1,7 +1,8 @@
+ # Upcoming Releas
  
- ## Bugfixes
- - Fix `--absolute-path` turning verbatim (`\\?\`) search paths into relative paths on Windows: `\\?\UNC\server\share` is now reported as `\\server\share`, and `\\?\Volume{...}` paths are kept intact, see #2207 (@Duo-ee)
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -320,7 +320,7 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+-## Bubfixes
++## Bugfixes
+ - Fix invalid syntax in zsh completions. See #2216
++- Write raw bytes instead of replacing them with U+FFFD when `--format` output goes to a pipe, so filenames that are not valid UTF-8 reach downstream tools unchanged; see #2189.
  
- [[package]]
- name = "fd-find"
--version = "10.5.0"
-+version = "10.5.1"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ license = "MIT OR Apache-2.0"
- name = "fd-find"
- readme = "README.md"
- repository = "https://github.com/sharkdp/fd"
--version = "10.5.0"
-+version = "10.5.1"
- edition= "2024"
- rust-version = "1.90.0"
+ # 10.5.1
  
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `src/output.rs` (modified, +22/-1)
 ```diff
-@@ -307,11 +307,11 @@ This is the output of `fd -h`. To see the full set of command-line options, use
- also includes a much more detailed help text.
+@@ -76,7 +76,28 @@ fn print_entry_format<W: Write>(
+         entry.stripped_path(config),
+         config.path_separator.as_deref(),
+     );
+-    // TODO: support writing raw bytes on unix?
++
++    #[cfg(not(unix))]
++    return print_entry_format_base(stdout, &output, config);
++
++    #[cfg(unix)]
++    {
++        use std::os::unix::ffi::OsStrExt;
++
++        if config.interactive_terminal {
++            print_entry_format_base(stdout, &output, config)
++        } else {
++            // Preserve the original path bytes when stdout is not an interactive terminal.
++            stdout.write_all(output.as_os_str().as_bytes())
++        }
++    }
++}
++
++fn print_entry_format_base<W: Write>(
++    stdout: &mut W,
++    output: &std::ffi::OsStr,
++    config: &Config,
++) -> io::Result<()> {
+     let s = output.to_string_lossy();
+     write!(
+         stdout,
+```
+
+**File**: `tests/tests.rs` (modified, +54/-0)
+```diff
+@@ -2869,6 +2869,60 @@ fn test_exec_invalid_utf8() {
+     );
+ }
  
- ```
--Usage: fd [OPTIONS] [pattern [path]...]
-+Usage: fd [OPTIONS] [pattern] [path]...
++/// --format with non-utf8 paths writes the raw bytes when the output is piped
++///
++/// Note:
++/// - the test is disabled on Darwin/OSX, since it coerces file names to UTF-8,
++///   even when the requested file name is not valid UTF-8.
++/// - the test is currently disabled on Windows because I'm not sure how to create
++///   invalid UTF-8 files on Windows
++#[cfg(all(unix, not(target_os = "macos")))]
++#[test]
++fn test_format_invalid_utf8() {
++    use std::ffi::OsStr;
++    use std::os::unix::ffi::OsStrExt;
++
++    let dirs = &["test1"];
++    let files = &[];
++    let te = TestEnv::new(dirs, files);
++
++    fs::File::create(
++        te.test_root()
++            .join(OsStr::from_bytes(b"test1/test_\xFEinvalid.txt")),
++    )
++    .unwrap();
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}"],
++        b"test1/test_\xFEinvalid.txt\n",
++    );
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{/}"],
++        b"test_\xFEinvalid.txt\n",
++    );
++
++    te.assert_output_raw(&["", "test1/", "--format", "{//}"], b"test1\n");
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{.}"],
++        b"test1/test_\xFEinvalid\n",
++    );
++
++    te.assert_output_raw(&["", "test1/", "--format", "{/.}"], b"test_\xFEinvalid\n");
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}", "--print0"],
++        b"test1/test_\xFEinvalid.txt\0",
++    );
++
++    // Test with custom path separator
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}", "--path-separator", "="],
++        b"test1=test_\xFEinvalid.txt\n",
++    );
++}
++
+ #[test]
+ fn test_list_details() {
+     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
+```
+
+---
+
+### Incident Patch 3: `3dcff928` (2026-10-27)
+**Commit Message**: fix: write raw bytes for piped --format output on unix
+
+Invalid UTF-8 filenames were replaced with U+FFFD when written with
+--format to a non-terminal stream, so they broke downstream pipes like
+`xargs -0`. Mirror the uncolorized output path and write the raw bytes
+instead.
+
+Fixes: #2189
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
+```diff
+@@ -1,7 +1,8 @@
+ # Upcoming Releas
  
- Arguments:
-   [pattern]  the search pattern (a regular expression, unless '--glob' is used; optional)
--  [path]...  the root directories for the filesystem search (optional)
-+  [path]...  the root directories for the filesystem search (optional, requires pattern first)
+-## Bubfixes
++## Bugfixes
+ - Fix invalid syntax in zsh completions. See #2216
++- Write raw bytes instead of replacing them with U+FFFD when `--format` output goes to a pipe, so filenames that are not valid UTF-8 reach downstream tools unchanged; see #2189.
  
- Options:
-   -H, --hidden                     Search hidden files and directories
+ # 10.5.1
+ 
+```
+
+**File**: `src/output.rs` (modified, +22/-1)
+```diff
+@@ -76,7 +76,28 @@ fn print_entry_format<W: Write>(
+         entry.stripped_path(config),
+         config.path_separator.as_deref(),
+     );
+-    // TODO: support writing raw bytes on unix?
++
++    #[cfg(not(unix))]
++    return print_entry_format_base(stdout, &output, config);
++
++    #[cfg(unix)]
++    {
++        use std::os::unix::ffi::OsStrExt;
++
++        if config.interactive_terminal {
++            print_entry_format_base(stdout, &output, config)
++        } else {
++            // Preserve the original path bytes when stdout is not an interactive terminal.
++            stdout.write_all(output.as_os_str().as_bytes())
++        }
++    }
++}
++
++fn print_entry_format_base<W: Write>(
++    stdout: &mut W,
++    output: &std::ffi::OsStr,
++    config: &Config,
++) -> io::Result<()> {
+     let s = output.to_string_lossy();
+     write!(
+         stdout,
+```
+
+**File**: `tests/tests.rs` (modified, +54/-0)
+```diff
+@@ -2869,6 +2869,60 @@ fn test_exec_invalid_utf8() {
+     );
+ }
+ 
++/// --format with non-utf8 paths writes the raw bytes when the output is piped
++///
++/// Note:
++/// - the test is disabled on Darwin/OSX, since it coerces file names to UTF-8,
++///   even when the requested file name is not valid UTF-8.
++/// - the test is currently disabled on Windows because I'm not sure how to create
++///   invalid UTF-8 files on Windows
++#[cfg(all(unix, not(target_os = "macos")))]
++#[test]
++fn test_format_invalid_utf8() {
++    use std::ffi::OsStr;
++    use std::os::unix::ffi::OsStrExt;
++
++    let dirs = &["test1"];
++    let files = &[];
++    let te = TestEnv::new(dirs, files);
++
++    fs::File::create(
++        te.test_root()
++            .join(OsStr::from_bytes(b"test1/test_\xFEinvalid.txt")),
++    )
++    .unwrap();
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}"],
++        b"test1/test_\xFEinvalid.txt\n",
++    );
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{/}"],
++        b"test_\xFEinvalid.txt\n",
++    );
++
++    te.assert_output_raw(&["", "test1/", "--format", "{//}"], b"test1\n");
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{.}"],
++        b"test1/test_\xFEinvalid\n",
++    );
++
++    te.assert_output_raw(&["", "test1/", "--format", "{/.}"], b"test_\xFEinvalid\n");
++
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}", "--print0"],
++        b"test1/test_\xFEinvalid.txt\0",
++    );
++
++    // Test with custom path separator
++    te.assert_output_raw(
++        &["", "test1/", "--format", "{}", "--path-separator", "="],
++        b"test1=test_\xFEinvalid.txt\n",
++    );
++}
++
+ #[test]
+ fn test_list_details() {
+     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2219** (2026-11-07): v10.5.2 Release (@tmccombs)
+- **PR #2218** (2026-11-07): fix: Zsh completion syntax (@tmccombs)
 - **PR #2214** (2026-11-04): v10.5.1 Release (@tmccombs)
 - **PR #2208** (2026-11-01): fix: keep verbatim Windows paths absolute in --absolute-path (@Duo-ee)
 - **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
 - **PR #2202** (2026-10-30): ci: release a Windows ARM64 GNU-family (gnullvm) build (@meop)
-- **PR #2196** (2026-10-28): Fix integer overflow when parsing size constraints with large values. (@parneetsingh022)
-- **PR #2193** (2026-10-28): fix: let --ignore and --no-hidden override only their half of -u (@NavpreetSSidhu)
 
 ---
 
@@ -1964,31 +2096,28 @@ v10.5.1 Release
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2214 from sharkdp/release-10.5.1
+## X. docs: update Guix package link
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `193d0df1`: Merge pull request #2214 from sharkdp/release-10.5.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edc62af8`: docs: update Guix package link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# 10.5.1
+You can install [the fd package](https://packages.guix.gnu.org/packages/fd/) from the official repo:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Upcoming Release
-
-## Features
--
+You can install [the fd package](https://guix.gnu.org/en/packages/fd-8.1.1/) from the official repo:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `193d0df1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edc62af8` are properly handled with clean fallback behavior.

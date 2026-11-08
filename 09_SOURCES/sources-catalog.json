@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "193d0df1",
+    "sourceVersion": "39886c0c",
     "license": "Apache-2.0",
-    "contentHash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
-    "lastHarvestedAt": "2026-11-05T01:00:36.125Z",
+    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+    "lastHarvestedAt": "2026-11-08T00:49:00.315Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/graphjin",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "bb1c0fbf",
+    "sourceVersion": "5914e90e",
     "license": "Apache-2.0",
-    "contentHash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
-    "lastHarvestedAt": "2026-11-06T18:54:46.734Z",
+    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
+    "lastHarvestedAt": "2026-11-08T00:49:08.046Z",
     "learningId": "learn-github-dosco-graphjin"
   },
   "gravitl-netmaker": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "2cb963b6",
+    "sourceVersion": "537a6b7e",
     "license": "NOASSERTION",
-    "contentHash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
-    "lastHarvestedAt": "2026-11-06T14:40:46.210Z",
+    "contentHash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
+    "lastHarvestedAt": "2026-11-08T00:49:13.440Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {

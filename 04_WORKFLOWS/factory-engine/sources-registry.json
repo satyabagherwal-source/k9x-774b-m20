@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T00:41:55.342Z",
-    "lastVerified": "2026-11-08T00:41:55.342Z",
+    "lastChecked": "2026-11-08T00:49:16.047Z",
+    "lastVerified": "2026-11-08T00:49:16.047Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T00:15:32.690Z",
+    "lastChecked": "2026-11-08T00:49:09.121Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T00:15:32.690Z"
+    "lastVerified": "2026-11-08T00:49:09.121Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1104,9 +1104,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-07T20:22:58.228Z",
+    "lastChecked": "2026-11-08T00:49:04.067Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-07T20:22:58.228Z"
+    "lastVerified": "2026-11-08T00:49:04.067Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1291,22 +1291,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "fd",
+    "name": "sharkdp/fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-05T21:25:36.880Z",
-    "lastVerified": "2026-11-05T21:25:36.880Z",
+    "lastChecked": "2026-11-08T00:48:57.365Z",
+    "lastVerified": "2026-11-08T00:48:57.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "193d0df1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -3937,14 +3936,14 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T18:54:39.440Z",
-    "lastVerified": "2026-11-06T18:54:39.440Z",
+    "lastChecked": "2026-11-08T00:49:04.518Z",
+    "lastVerified": "2026-11-08T00:49:04.518Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
+    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7518,14 +7517,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-06T14:40:44.888Z",
-    "lastVerified": "2026-11-06T14:40:44.888Z",
+    "lastChecked": "2026-11-08T00:49:10.189Z",
+    "lastVerified": "2026-11-08T00:49:10.189Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
+    "contentHash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8607,9 +8606,9 @@
   "russhwolf-multiplatform-settings": {
     "name": "multiplatform-settings",
     "officialUrl": "https://github.com/russhwolf/multiplatform-settings",
-    "lastChecked": "2026-11-05T00:14:52.335Z",
+    "lastChecked": "2026-11-08T00:48:59.048Z",
     "revisionIdentifier": "f95cdff4",
-    "lastVerified": "2026-11-05T00:14:52.335Z"
+    "lastVerified": "2026-11-08T00:48:59.048Z"
   },
   "tokio-rs-tokio": {
     "name": "tokio-rs/tokio",
@@ -12556,9 +12555,9 @@
   "rubenverborgh-sparql.js": {
     "name": "SPARQL.js",
     "officialUrl": "https://github.com/RubenVerborgh/SPARQL.js",
-    "lastChecked": "2026-11-04T08:57:29.792Z",
+    "lastChecked": "2026-11-08T00:48:56.560Z",
     "revisionIdentifier": "91cbd01b",
-    "lastVerified": "2026-11-04T08:57:29.792Z"
+    "lastVerified": "2026-11-08T00:48:56.560Z"
   },
   "makecindy-cindy": {
     "name": "makecindy/cindy",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T00:41:52.655Z",
+  "last_updated": "2026-11-08T00:49:13.335Z",
   "total_verified_learnings": 1235,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11608,14 +11608,19 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "bb1c0fbf",
-      "content_hash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
+      "source_version": "5914e90e",
+      "content_hash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "intro): omit args input types for functions without inputs",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mysql): accept limit and offset variables, capped at the configured limit",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11639,7 +11644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T18:54:46.615Z",
+      "verified_at": "2026-11-08T00:49:07.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11699,14 +11704,19 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "2cb963b6",
-      "content_hash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
+      "source_version": "537a6b7e",
+      "content_hash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOI",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#877",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11805,7 +11815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T14:40:46.114Z",
+      "verified_at": "2026-11-08T00:49:13.310Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54759,11 +54769,16 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "193d0df1",
-      "content_hash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
+      "source_version": "39886c0c",
+      "content_hash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs: update Guix package link",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1741,
           "title": "build(deps): bump crossbeam-channel from 0.5.16 to 0.5.17",
@@ -54815,7 +54830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T01:00:36.015Z",
+      "verified_at": "2026-11-08T00:49:00.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

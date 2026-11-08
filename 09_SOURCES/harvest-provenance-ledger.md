@@ -8159,3 +8159,6 @@ Every entry in this ledger must capture:
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2cce058e` | Multi-dimensional audit evidence | 2026-11-08T00:34:29.842Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `c231941d` | Multi-dimensional audit evidence | 2026-11-08T00:41:40.877Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `df51ed41` | Multi-dimensional audit evidence | 2026-11-08T00:41:52.804Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `39886c0c` | Multi-dimensional audit evidence | 2026-11-08T00:49:00.315Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `5914e90e` | Multi-dimensional audit evidence | 2026-11-08T00:49:08.046Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `537a6b7e` | Multi-dimensional audit evidence | 2026-11-08T00:49:13.440Z |

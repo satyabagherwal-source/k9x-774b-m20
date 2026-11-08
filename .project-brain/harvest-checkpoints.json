@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T00:41:52.814Z",
+  "last_updated": "2026-11-08T00:49:13.450Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "50b162e8cee2d158ad5c53f4780fda137b60cae8dc64ef3e983f9e9bfd3a8711",
-      "verified_at": "2026-11-05T01:00:36.132Z",
+      "content_hash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+      "verified_at": "2026-11-08T00:49:00.325Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T01:00:36.132Z"
+      "last_updated": "2026-11-08T00:49:00.325Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -5661,14 +5661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-graphjin",
-      "content_hash": "acec04fcc7072cc084ca7819a36799abad2d2bb3360abeb430a02f2a37d0c038",
-      "verified_at": "2026-11-06T18:54:46.755Z",
+      "content_hash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
+      "verified_at": "2026-11-08T00:49:08.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T18:54:46.755Z"
+      "last_updated": "2026-11-08T00:49:08.063Z"
     },
     "gravitl/netmaker": {
       "repository": "gravitl/netmaker",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "0d5945e902dfc7bc8144cfcee73e3f171a1be629f086a4c586f75a03c364da07",
-      "verified_at": "2026-11-06T14:40:46.216Z",
+      "content_hash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
+      "verified_at": "2026-11-08T00:49:13.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T14:40:46.216Z"
+      "last_updated": "2026-11-08T00:49:13.449Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",

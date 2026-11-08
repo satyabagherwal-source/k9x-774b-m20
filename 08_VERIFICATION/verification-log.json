@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-BDXD",
-    "timestamp": "2026-11-05T11:45:28.129Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "7f53e1275670e8740eb373882a912b5c6d632215cce08eb70a6c457ad76da43c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-LAR9",
-    "timestamp": "2026-11-05T11:53:10.581Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "351efccb44144d4c4d51a4f679fca75bf1fe4e216609e7dec960f5fefc12ca38",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-LFJL",
-    "timestamp": "2026-11-05T11:53:16.785Z",
-    "repository": "touchlab/Kermit",
-    "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-U6QH",
     "timestamp": "2026-11-05T12:00:05.273Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7492,6 +7447,51 @@
     "contentHash": "02acac14a4e4b521ed9884fb2237410b8e522451ed2037d7e36ff2f308f7dd08",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6Q3B",
+    "timestamp": "2026-11-08T00:49:00.311Z",
+    "repository": "sharkdp/fd",
+    "learningId": "learn-github-sharkdp-fd",
+    "contentHash": "edc57dd98218e95605740e4dcc51ee061a873682136f5047e2e00e47c2e07571",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-6W21",
+    "timestamp": "2026-11-08T00:49:08.041Z",
+    "repository": "dosco/graphjin",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-707N",
+    "timestamp": "2026-11-08T00:49:13.427Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "eafd4ac53b54fd6e175ed373e64905a8ec604b6599a257edd784b09392ca11ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

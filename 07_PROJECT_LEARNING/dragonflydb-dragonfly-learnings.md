@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `2cb963b6`  
+> **Source Version**: `537a6b7e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T14:40:44.893Z  
+> **Timestamp**: 2026-11-08T00:49:11.610Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T14:40:44.888Z  
+> **Harvest Timestamp**: 2026-11-08T00:49:10.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31845 stars
+- **Stars / Engagement**: 31846 stars
 
 ---
 
@@ -2321,911 +2321,769 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f3c3c12` (2026-11-06)
-**Commit Message**: fix(search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOINDEX (#8749)
+### Incident Patch 1: `244e6a07` (2026-11-07)
+**Commit Message**: test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#8770)
 
-* fix(search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOINDEX
-
-FT.AGGREGATE answered [0] and FT.HYBRID returned the hits of its other leg when a shard reported a
-missing index, an unknown field, a wrong access type or an index that is not built yet. The shard
-results now carry the error to the client in every query command, as FT.SEARCH already did, and a
-clause on a NOINDEX field matches nothing instead of failing, as the reference does; the type check
-still applies to it. Bare HNSW KNN and VECTOR_RANGE, FT.TAGVALS and every FT.AGGREGATE variant
-answer "index is not built" while an index waits for its rebuild after a load. FT.HYBRID reports a
-FILTER syntax error with one text on FLAT and HNSW indexes and the real byte count of a bad blob.
+test: make CLIENT KILL stuck-send regression portable
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-* refactor(search): map index types with a lambda, merge the query error tests
-
-kFieldTypeOf is a lambda over the decayed type with one branch per index class, VECTOR included,
-and a compile error for any other type. The NOINDEX rows join QueryErrorsReachAllCommand
-
-**File**: `src/core/search/search.cc` (modified, +33/-1)
+**File**: `src/server/dragonfly_connection_test.cc` (modified, +68/-15)
 ```diff
-@@ -178,6 +178,24 @@ concept CompositeNode = (requires(const Node& node) { node.node; }) ||
-                         (requires(const Node& node) { node.nodes; }) ||
-                         (requires(const Node& node) { node.filter; });
- 
-+// The schema type an index class serves.
-+template <typename T>
-+constexpr SchemaField::FieldType kFieldTypeOf = [] {
-+  using Index = decay_t<T>;
-+  if constexpr (is_same_v<Index, TextIndex>)
-+    return SchemaField::TEXT;
-+  else if constexpr (is_same_v<Index, NumericIndex>)
-+    return SchemaField::NUMERIC;
-+  else if constexpr (is_same_v<Index, TagIndex>)
-+    return SchemaField::TAG;
-+  else if constexpr (is_same_v<Index, GeoIndex>)
-+    return SchemaField::GEO;
-+  else if constexpr (is_same_v<Index, BaseVectorIndex>)
-+    return SchemaField::VECTOR;
-+  else
-+    static_assert(sizeof(Index) == 0, "no schema type for this index");
-+}();
-+
- struct BasicSearch {
-   using LogicOp = AstLogicalNode::LogicOp;
- 
-@@ -190,9 +208,16 @@ struct BasicSearch {
-     profile_builder_ = ProfileBuilder{};
-   }
- 
-+  // The attribute under `field` if it is NOINDEX: it has no index, so its clauses match nothing
-+  // instead of failing.
-+  const SchemaField* NoIndexField(string_view field) const {
-+    const SchemaField* attribute = indices_->GetSchema().Find(field);
-+    return attribute && (attribute->flags & SchemaField::NOINDEX) ? attribute : nullptr;
-+  }
-+
-   BaseIndex* GetBaseIndex(string_view field) {
-     auto index = indices_->GetIndex(field);
--    if (!index) {
-+    if (!index && !NoIndexField(field)) {
-       error_ = absl::StrCat("Invalid field: ", field);
-       return nullptr;
-     }
-@@ -205,6 +230,13 @@ struct BasicSearch {
- 
-     auto base_index = GetBaseIndex(field);
-     if (!base_index) {
-+      // A NOINDEX attribute keeps its type, and a vector one has nothing to search at all.
-+      if (const auto* noindex = error_.empty() ? NoIndexField(field) : nullptr; noindex) {
-+        if (noindex->type != kFieldTypeOf<T>)
-+          error_ = absl::StrCat("Wrong access type for field: ", field);
-+        else if (noindex->type == SchemaField::VECTOR)
-+          error_ = absl::StrCat("Invalid field: ", field);
-+      }
-       return nullptr;
-     }
- 
-```
-
-**File**: `src/server/rdb_test.cc` (modified, +26/-5)
-```diff
-@@ -1235,7 +1235,7 @@ TEST_F(RdbTest, FailedLoadDropsUnbuiltIndex) {
-   EXPECT_THAT(Run({"ft._list"}).GetVec(), IsEmpty());
-   EXPECT_THAT(Run({"FT.TAGVALS", "idx", "g"}), no_index);
-   EXPECT_THAT(Run({"FT.SEARCH", "idx", "hello"}), no_index);
--  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*"}), RespArray(ElementsAre(IntArg(0))));
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*"}), no_index);
-   EXPECT_THAT(
-       Run({"FT.HYBRID", "idx", "SEARCH", "hello", "VSIM", "@v", "$vec", "PARAMS", "2", "vec", vec}),
-       no_index);
-@@ -1271,12 +1271,33 @@ TEST_F(RdbTest, UnbuiltIndexAnswersWithoutCrash) {
-     service_->SwitchState(GlobalState::LOADING, GlobalState::ACTIVE);
-   });
- 
--  EXPECT_THAT(Run({"FT.SEARCH", "idx", "hello"}), ErrArg("not built"));
-+  const auto not_built = ErrArg("not built");
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "hello"}), not_built);
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "*=>[KNN 2 @v $vec]", "PARAMS", "2", "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "@v:[VECTOR_RANGE 1 $vec]", "PARAMS", "2", "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*"}), not_built);
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*=>[KNN 2 @v $vec]", "PARAMS", "2", "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "@v:[VECTOR_RANGE 1 $vec]", "PARAMS", "2", "vec", vec}),
-+              not_built);
-   EXPECT_THAT(
-       Run({"FT.HYBRID", "idx", "SEARCH", "hello", "VSIM", "@v", "$vec", "PARAMS", "2", "vec", vec}),
--      ArgType(RespExpr::ARRAY));
--  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*"}), RespArray(ElementsAre(IntArg(0))));
--  EXPECT_THAT(Run({"FT.TAGVALS", "idx", "g"}).GetVec(), IsEmpty());
-+      not_built);
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "idx", "*", "LOAD", "1", "idx.t", "LOAD_FROM", "idx", "AS", "j",
-+                   "1", "j.g=idx.g"}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.PROFILE", "idx", "SEARCH", "QUERY", "*=>[KNN 2 @v $vec]", "PARAMS", "2",
-+                   "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.PROFILE", "idx", "SEARCH", "QUERY", "@v:[VECTOR_RANGE 1 $vec]", "PARAMS",
-+                   "2", "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.PROFILE", "idx", "HYBRID", "QUERY", "SEARCH", "hello", "VSIM", "@v", "$vec",
-+                   "PARAMS", "2", "vec", vec}),
-+              not_built);
-+  EXPECT_THAT(Run({"FT.TAGVALS", "idx", "g"}), not_built);
-   auto info = Run({"FT.INFO", "idx"}).GetVec();
-   auto it = rng::find_if(info, [](const auto& e) { return e == "percent_indexed"; });
-   ASSERT_NE(it, info.end());
-```
-
-**File**: `src/server/search/doc_index.cc` (modified, +14/-9)
-```diff
-@@ -153,8 +153,6 @@ std::pair<std::vector<DocField>, std::vector<std::string_view>> GetBasicFields(
-   return {std::move(basic_fields), std::move(sort_alias)};
- }
- 
--constexpr std::string_view kIndexNotBuilt = "index is not built";
--
- auto GetIndexedHnswFields(const search::Schema& schema) {
-   return schema.fields |
-          std::views::filter([](const auto& item) { return item.second.IsIndexableHnswField(); });
-@@ -1384,17 +1382,17 @@ search::ShardScoringStats ShardDocIndex::CollectScoringStats(
-   return search_algo->CollectScoringStats(&*indices_);
- }
- 
--vector<SearchDocData> ShardDocIndex::SearchForAggregator(
-+ShardDocIndex::AggregateShardResult ShardDocIndex::SearchForAggregator(
-     const OpArgs& op_args, const AggregateParams& params,
-     search::SearchAlgorithm* search_algo) const {
-   if (!indices_)
--    return {};
-+    return make_unexpected(ErrorReply{std::string{kIndexNotBuilt}});
- 
-   auto search_results = search_algo->Search(&*indices_, std::numeric_limits<size_t>::max(),
-                                             params.global_scoring_stats);
- 
-   if (!search_results.error.empty())
--    return {};
-+    return make_unexpected(ErrorReply{std::move(search_results.error)});
- 
-   // Distance lookup for FLAT KNN/VECTOR_RANGE so the score alias is available in the
-   // aggregation pipeline. HNSW paths use LoadHnswRangeDocsForAggregator.
-@@ -1476,13 +1474,15 @@ vector<SearchDocData> ShardDocIndex::LoadDocEntriesWithScores(
-   return out;
- }
- 
--join::Vector<join::OwnedEntry> ShardDocIndex::PreagregateDataForJoin(
-+io::Result<join::Vector<join::OwnedEntry>, ErrorReply> ShardDocIndex::PreagregateDataForJoin(
-     const OpArgs& op_args, absl::Span<const std::string_view> join_fields,
-     search::SearchAlgorithm* search_algo) const {
-   if (!indices_)
--    return {};
-+    return make_unexpected(ErrorReply{std::string{kIndexNotBuilt}});
- 
-   auto search_results = search_algo->Search(&*indices_);
-+  if (!search_results.error.empty())
-+    return make_unexpected(ErrorReply{std::move(search_results.error)});
- 
-   const size_t fields_count = join_fields.size();
-   const auto [basic_fields, sort_alias] = GetBasicFields(join_fields, base_->schema);
-@@ -1590,11 +1590,16 @@ DocIndexInfo ShardDocIndex::GetInfo() const {
- 
- io::Result<StringVec, ErrorReply> ShardDocIndex::GetTagVals(string_view field) const {
-   if (!indices_)
--    return StringVec{};
-+    return make_unexpected(ErrorReply{std::string{kIndexNotBuilt}});
- 
-   search::BaseIndex* base_index = indices_->GetIndex(field);
-   if (base_index == nullptr) {
--    return make_unexpected(ErrorReply{"-No such field"});
-+    const auto* attribute = base_->schema.Find(field);
-+    if (!attribute || !(attribute->flags & search::SchemaField::NOINDEX))
-+      return make_unexpected(ErrorReply{"-No such field"});
-+    if (attribute->type != search::SchemaField::TAG)
-+      return make_unexpected(ErrorReply{"-Not a tag field"});
-+    return StringVec{};  // a tag without an index lists no values
-   }
- 
-   search::TagIndex* tag_index = dynamic_cast<search::TagIndex*>(base_index);
-```
-
-**File**: `src/server/search/doc_index.h` (modified, +12/-4)
-```diff
-@@ -33,6 +33,9 @@ namespace dfly {
- 
- using StringVec = std::vector<std::string>;
- 
-+// What a registered index answers until its data structures are rebuilt after a load.
-+inline constexpr std::string_view kIndexNotBuilt = "index is not built";
-+
- namespace search {
- struct IndexBuilder;
- }  // namespace search
-@@ -460,9 +463,9 @@ class ShardDocIndex {
-   search::ShardScoringStats CollectScoringStats(search::SearchAlgorithm* search_algo) const;
- 
-   // Perform search and load requested values - note params might be interpreted differently.
--  std::vector<SearchDocData> SearchForAggregator(const OpArgs& op_args,
--                                                 const AggregateParams& params,
--                                                 search::SearchAlgorithm* search_algo) const;
-+  using AggregateShardResult = io::Result<std::vector<SearchDocData>, facade::ErrorReply>;
-+  AggregateShardResult SearchForAggregator(const OpArgs& op_args, const AggregateParams& params,
-+                                           search::SearchAlgorithm* search_algo) const;
- 
-   // Load and serialize docs for aggregation from pre-computed (DocId, distance) pairs.
-   // Used by the HNSW VECTOR_RANGE path in FT.AGGREGATE, where doc ids and distances come
-@@ -473,7 +476,7 @@ class ShardDocIndex {
-       const absl::flat_hash_map<search::DocId, float>& text_score_map) const;
- 
-   // Methods needed for join operation
--  join::Vector<join::OwnedEntry> PreagregateDataForJoin(
-+  io::Result<join::Vector<join::OwnedEntry>, facade::ErrorReply> PreagregateDataForJoin(
-       const OpArgs& op_args, absl::Span<const std::string_view> join_fields,
-       search::SearchAlgorithm* search_algo) const;
- 
-@@ -501,6 +504,11 @@ class ShardDocIndex {
-     return *base_;
-   }
- 
-+  // False between a definition replayed by a load and the rebuild that follows it.
-+  bool IsBuilt() const {
-+    return indices_.has_value();
-+  }
-+
-   io::Result<StringVec, facade::ErrorReply> GetTagVals(std::string_view field) const;
- 
-   // Get synonym manager for this shard
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +163/-82)
-```diff
-@@ -4,7 +4,6 @@
- 
- #include "server/search/search_family.h"
- 
--#include <absl/cleanup/cleanup.h>
- #include <absl/container/flat_hash_map.h>
- #include <absl/flags/flag.h>
- #include <absl/functional/function_ref.h>
-@@ -17,9 +16,9 @@
- #include <absl/types/span.h>
- 
- #include <algorithm>
-+#include <array>
- #include <atomic>
- #include <cmath>
--#include <exception>
- #include <functional>
- #include <ranges>
- #include <variant>
-@@ -87,7 +86,8 @@ bool CheckQueryLength(string_view query, string_view what, SinkReplyBuilder* rb)
- }
- 
- template <typename T> using ParseResult = io::Result<T, ErrorReply>;
--using HnswSearchResult = io::Result<vector<SearchResult>, OpStatus>;
-+enum class HnswLoadError { kIndexNotFound, kIndexNotBuilt };
-+using HnswSearchResult = io::Result<vector<SearchResult>, HnswLoadError>;
- 
- nonstd::unexpected_type<ErrorReply> CreateSyntaxError(std::string message) {
-   return make_unexpected(ErrorReply{std::move(message), kSyntaxErrType});
-@@ -101,6 +101,11 @@ string IndexNotFoundMsg(string_view index_name) {
-   return absl::StrCat("-ERR ", index_name, ": no such index");
- }
- 
-+ErrorReply HnswLoadErrorReply(HnswLoadError error, string_view index_name) {
-+  return ErrorReply{error == HnswLoadError::kIndexNotFound ? IndexNotFoundMsg(index_name)
-+                                                           : string{kIndexNotBuilt}};
-+}
-+
- std::string ResolveIndexName(string_view requested_name) {
-   std::string canonical_name;
-   auto resolve = [&] {
-@@ -1427,6 +1432,7 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-   // Indicator if we serialized document on shard
-   std::vector<std::vector<bool>> shard_docs_serialized_indicator(shard_size);
-   std::atomic missing_index = false;
-+  std::atomic not_built = false;
- 
-   // Fetch all docs from shards
-   auto cb = [&](Transaction* t, EngineShard* es) {
-@@ -1436,6 +1442,10 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-       missing_index.store(true, std::memory_order_relaxed);
-       return OpStatus::OK;
-     }
-+    if (!index->IsBuilt()) {
-+      not_built.store(true, std::memory_order_relaxed);
-+      return OpStatus::OK;
-+    }
- 
-     if (shard_docs[es->shard_id()].empty()) {
-       return OpStatus::OK;
-@@ -1479,7 +1489,9 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-   cmd_cntx.tx()->Execute(std::move(cb), true);
- 
-   if (missing_index.load(std::memory_order_relaxed))
--    return make_unexpected(OpStatus::KEY_NOTFOUND);
-+    return make_unexpected(HnswLoadError::kIndexNotFound);
-+  if (not_built.load(std::memory_order_relaxed))
-+    return make_unexpected(HnswLoadError::kIndexNotBuilt);
- 
-   // Transform shard results back to a flat list of serialized docs.
-   size_t shard_id = 0;
-@@ -1622,12 +1634,17 @@ HnswSearchResult SearchGlobalHnswIndexRange(const search::AstVectorRangeNode* ra
-   }
- 
-   std::atomic missing_index = false;
-+  std::atomic not_built = false;
-   cmd_cntx.tx()->ScheduleSingleHop([&](Transaction* t, EngineShard* es) {
-     auto* idx = es->search_indices()->GetIndex(options.index_name);
-     if (!idx) {
-       missing_index.store(true, std::memory_order_relaxed);
-       return OpStatus::OK;
-     }
-+    if (!idx->IsBuilt()) {
-+      not_built.store(true, std::memory_order_relaxed);
-+      return OpStatus::OK;
-+    }
-     if (shard_docs[es->shard_id()].empty())
-       return OpStatus::OK;
-     const auto& schema = idx->base().schema;
-@@ -1647,7 +1664,9 @@ HnswSearchResult SearchGlobalHnswIndexRange(const search::AstVectorRangeNode* ra
-   });
- 
-   if (missing_index.load(std::memory_order_relaxed))
--    return make_unexpected(OpStatus::KEY_NOTFOUND);
-+    return make_unexpected(HnswLoadError::kIndexNotFound);
-+  if (not_built.load(std::memory_order_relaxed))
-+    return make_unexpected(HnswLoadError::kIndexNotBuilt);
- 
-   std::vector<SerializedSearchDoc> serialized_docs;
-   serialized_docs.reserve(range_results.size());
-@@ -2125,7 +2144,24 @@ void HybridReply(const HybridSearchParams& params, search::VectorSimilarity vsim
-   rb->SendBulkString(absl::StrFormat("%.6f", absl::ToDoubleMilliseconds(total_took)));
- }
- 
--// Returns false if the index is not found on any shard; caller must Conclude() the tx.
-+// Concludes the hop left open when a query handler returns. Skipped in an atomic MULTI/EXEC or
-+// script: UnlockMulti releases the shards there, and these commands have nothing to journal.
-+class ConcludeGuard {
-+ public:
-+  [[nodiscard]] explicit ConcludeGuard(CommandContext* cmd_cntx) : tx_{cmd_cntx->tx()} {
-+    DCHECK(cmd_cntx->cid()->opt_mask() & CO::NO_AUTOJOURNAL);
-+  }
-+
-+  ~ConcludeGuard() {
-+    if (!tx_->IsAtomicMulti())
-+      tx_->Conclude();
-+  }
-+
-+ private:
-+  Transaction* tx_;
-+};
-+
-+// Returns false if the index is not found on any shard. Its hop leaves the transaction open.
- bool CollectGlobalScoringStats(string_view index_name, search::SearchAlgorithm& text_algo,
-                                Transaction* tx, size_t shard_count,
-                
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +101/-3)
-```diff
-@@ -637,7 +637,7 @@ TEST_F(SearchFamilyTest, HnswAliasConcludesTransactions) {
-   // FT.AGGREGATE
-   EXPECT_THAT(Run({"FT.AGGREGATE", "live", "hello", "LOAD", "1", "@title"}),
-               IsUnordArrayWithSize(IsMap("title", "hello")));
--  EXPECT_THAT(Run({"FT.AGGREGATE", "missing_alias", "*"}), kNoResults);
-+  EXPECT_THAT(Run({"FT.AGGREGATE", "missing_alias", "*"}), ErrArg("missing_alias: no such index"));
-   EXPECT_THAT(Run({"FT.AGGREGATE", "live", "*=>[KNN 1 @vec $v AS dist]", "PARAMS", "2", "v", query,
-                    "DIALECT", "2", "LOAD", "1", "@title"}),
-               IsUnordArrayWithSize(IsMap("title", "hello")));
-@@ -5667,7 +5667,7 @@ TEST_F(SearchFamilyTest, AggregateWithLoadFromSyntaxErrors) {
-   // Test when index does not exist
-   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.str1", "LOAD_FROM",
-                    "idx4", "1", "idx4.num2=idx1.num1"}),
--              RespElementsAre(IntArg(0)));
-+              ErrArg("idx4: no such index"));
- 
-   // Test when index exists but no LOAD_FROM is specified
-   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.str1", "LOAD_FROM",
-@@ -5698,7 +5698,7 @@ TEST_F(SearchFamilyTest, AggregateWithLoadFromSyntaxErrors) {
-   // Test when field in QUERY does not exist in index
-   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.str1", "LOAD_FROM",
-                    "idx2", "1", "idx2.num2=idx1.num1", "QUERY", "@nonexistent_tag:{tag1|tag2}"}),
--              RespElementsAre(IntArg(0)));
-+              ErrArg("Invalid field: nonexistent_tag"));
- 
-   // Test when field in LOAD does not exist in index
-   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.non_existent_field",
-@@ -10376,6 +10376,94 @@ TEST_F(SearchFamilyTest, FtHybridUnknownIndex) {
-   EXPECT_THAT(resp, ErrArg("no such index"));
- }
- 
-+// Query errors reach the client in every command, also from the multi-hop flows (KNN prefilter,
-+// scoring, JOIN), which leave no transaction behind. A clause on a NOINDEX field is no error: it
-+// matches nothing, while its type is still checked.
-+TEST_F(SearchFamilyTest, QueryErrorsReachAllCommands) {
-+  const string vec = FloatVec(1, 0);
-+  ASSERT_EQ(
-+      Run("FT.CREATE i ON HASH PREFIX 1 d: SCHEMA t TEXT ni TEXT NOINDEX ng TAG NOINDEX nn "
-+          "NUMERIC NOINDEX ge GEO NOINDEX nv VECTOR FLAT 6 TYPE FLOAT32 DIM 2 DISTANCE_METRIC "
-+          "L2 NOINDEX v VECTOR FLAT 6 TYPE FLOAT32 DIM 2 DISTANCE_METRIC L2"),
-+      "OK");
-+  ASSERT_EQ(Run("FT.CREATE h ON HASH PREFIX 1 d: SCHEMA t TEXT ni TEXT NOINDEX v VECTOR HNSW 6 "
-+                "TYPE FLOAT32 DIM 2 DISTANCE_METRIC L2"),
-+            "OK");
-+  Run({"HSET", "d:1", "t", "hello web", "ni", "hello", "ng", "red", "nn", "5", "v", vec});
-+  Run({"HSET", "d:2", "t", "world", "v", FloatVec(0, 1)});
-+
-+  // A hop left open after an error stays on every shard as its continuation transaction; the next
-+  // command on the same connection would silently continue it, so the shards are inspected
-+  // right after each multi-hop command.
-+  auto open_txs = [&] {
-+    std::atomic<size_t> open = 0;
-+    pp_->at(0)->Await([&] {
-+      shard_set->RunBriefInParallel([&](EngineShard* es) { open += es->GetContTx() != nullptr; });
-+    });
-+    return open.load();
-+  };
-+
-+  for (string_view idx : {"i", "h"}) {
-+    for (auto [q, err] : {pair{"@zz:x", "Invalid field: zz"},
-+                          pair{"@ni:[1 2]", "Wrong access type for field: ni"}}) {
-+      EXPECT_THAT(Run({"FT.AGGREGATE", idx, q}), ErrArg(err));
-+      const string knn = absl::StrCat(q, "=>[KNN 1 @v $vec]");
-+      EXPECT_THAT(Run({"FT.AGGREGATE", idx, knn, "PARAMS", "2", "vec", vec}), ErrArg(err));
-+      EXPECT_EQ(open_txs(), 0u);
-+      EXPECT_THAT(Run({"FT.SEARCH", idx, knn, "PARAMS", "2", "vec", vec}), ErrArg(err));
-+      EXPECT_EQ(open_txs(), 0u);
-+      EXPECT_THAT(Run({"FT.PROFILE", idx, "SEARCH", "QUERY", knn, "PARAMS", "2", "vec", vec}),
-+                  ErrArg(err));
-+      EXPECT_EQ(open_txs(), 0u);
-+      EXPECT_THAT(Run({"FT.AGGREGATE", idx, absl::StrCat("(", q, " @v:[VECTOR_RANGE 0.5 $vec])"),
-+                       "PARAMS", "2", "vec", vec}),
-+                  ErrArg(err));
-+      EXPECT_EQ(open_txs(), 0u);
-+      EXPECT_THAT(
-+          Run({"FT.HYBRID", idx, "SEARCH", q, "VSIM", "@v", "$vec", "PARAMS", "2", "vec", vec}),
-+          ErrArg(err));
-+      EXPECT_THAT(Run({"FT.HYBRID", idx, "SEARCH", "hello", "VSIM", "@v", "$vec", "FILTER", q,
-+                       "PARAMS", "2", "vec", vec}),
-+                  ErrArg(err));
-+      EXPECT_THAT(Run({"FT.PROFILE", idx, "HYBRID", "QUERY", "SEARCH", q, "VSIM", "@v", "$vec",
-+                       "PARAMS", "2", "vec", vec}),
-+                  ErrArg(err));
-+    }
-+    EXPECT_THAT(Run({"FT.HYBRID", idx, "SEARCH", "@zz:x", "VSIM", "@v", "$vec", "FILTER",
-+                     "@ni:[1 2]", "PARAMS", "2", "vec", vec}),
-+                ErrArg("Invalid field: zz")
-```
-
----
-
-### Incident Patch 2: `2b92dbbf` (2026-11-05)
-**Commit Message**: fix(server): let CLIENT KILL reply before closing the caller and skip migrating connections (#8752)
-
-A CLIENT KILL that matched the calling connection shut its socket down before the reply: the
-client saw EOF without a byte, lost the earlier pipelined replies, and the commands pipelined
-after the kill still ran. The caller is now closed once its reply is flushed
-(Connection::RequestCloseAfterReply()) and no later command runs, on both IO loops; a kill
-inside MULTI/EXEC closes the connection after the EXEC reply.
-
-The kill also borrowed connections that were migrating to another thread, which fails
-"Check failed: self_" in Connection::Borrow() in debug builds. It now skips them, as release
-builds already did.
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/facade/dragonfly_connection.cc` (modified, +15/-2)
-```diff
-@@ -1000,6 +1000,14 @@ void Connection::MarkForClose() {
-   request_shutdown_ = true;
- }
- 
-+void Connection::MaybeCloseAfterReply() {
-+  if (!close_after_reply_ || reply_builder_->GetError())
-+    return;
-+
-+  reply_builder_->Flush();
-+  MarkForClose();
-+}
-+
- // Called from Connection::Shutdown() right after socket_->Shutdown call.
- void Connection::OnShutdown() {
-   VLOG(1) << CONN_ID << "Connection::OnShutdown";
-@@ -1577,8 +1585,8 @@ void Connection::ConnectionFlow() {
-   }
- 
-   // We wait for dispatch_fb to finish writing the previous replies before replying to the last
--  // offending request.
--  if (parse_status == ERROR) {
-+  // offending request. A connection closed after its reply has no protocol error to send.
-+  if (parse_status == ERROR && !close_after_reply_) {
-     VLOG(1) << CONN_ID << "Error parser status " << parser_error_;
- 
-     // V2 sends protocol errors inside IoLoopV2().
-@@ -1662,6 +1670,8 @@ void Connection::DispatchSingle(bool has_more, absl::FunctionRef<void()> invoke_
-     // prefer synchronous dispatching to save memory.
-     optimize_for_async = false;
-     last_interaction_ = time(nullptr);
-+    if (cc_->conn_closing)
-+      return;
-   }
- 
-   // Avoid sync dispatch if we can interleave with an ongoing async dispatch.
-@@ -1678,6 +1688,7 @@ void Connection::DispatchSingle(bool has_more, absl::FunctionRef<void()> invoke_
-       cc_->sync_dispatch = true;
-       invoke_cb();
-       cc_->sync_dispatch = false;
-+      MaybeCloseAfterReply();
-     }
-     last_interaction_ = time(nullptr);
- 
-@@ -2290,6 +2301,7 @@ void Connection::ProcessPipelineCommandV1() {
-   cc_->async_dispatch = false;
- 
-   ReleasePipelinedCommand(cmd);
-+  MaybeCloseAfterReply();
- 
-   // If we drained the pipeline and no admin messages are waiting, flush.
-   if (!HasPendingMessages()) {
-@@ -3409,6 +3421,7 @@ Connection::ExecuteBatchResult Connection::ExecuteBatch() {
-     } else {
-       DCHECK(is_head);  // only head can execute sync
-       retire_head();
-+      MaybeCloseAfterReply();
-     }
-   }
- 
-```
-
-**File**: `src/facade/dragonfly_connection.h` (modified, +14/-0)
-```diff
-@@ -335,6 +335,11 @@ class Connection : public util::Connection {
-     return time(nullptr) - last_interaction_;
-   }
- 
-+  // A connection that is moving to another thread can not be borrowed.
-+  bool IsMigrating() const {
-+    return migration_in_process_;
-+  }
-+
-   unsigned GetSendWaitTimeSec() const;
- 
-   Phase phase() const {
-@@ -354,6 +359,11 @@ class Connection : public util::Connection {
- 
-   void MarkForClose();
- 
-+  // Closes the connection after the current reply is flushed; later commands do not run.
-+  void RequestCloseAfterReply() {
-+    close_after_reply_ = true;
-+  }
-+
-   // Adjusts the pipeline queue byte counter by `delta`.
-   // Used when command dispatch mutates a ParsedCommand's backing storage
-   // (e.g. SwapArgs during MULTI/EXEC collection).
-@@ -508,6 +518,9 @@ class Connection : public util::Connection {
-   // Processes the next Pipeline command from parsed_head_.
-   void ProcessPipelineCommandV1();
- 
-+  // Flushes before MarkForClose(), which drops replies that were not written yet.
-+  void MaybeCloseAfterReply();
-+
-   void SendAsync(MessageHandle msg);
- 
-   // Updates Control Path statistics and backpressure counters for administrative
-@@ -888,6 +901,7 @@ class Connection : public util::Connection {
-       bool shared_read_buf_enabled_ : 1;
- 
-       bool request_shutdown_ : 1;  // set when the connection is requested to shutdown
-+      bool close_after_reply_ : 1;
+@@ -437,15 +437,19 @@ class ClientKillTest : public BaseFamilyTest {
+       return pp_->at(0)->Await(
+           [&] { return new facade::Listener(facade::Protocol::REDIS, service_.get(), role); });
      };
-   };
+-    auto* listener = make(facade::Listener::Role::MAIN);
++    main_listener_ = make(facade::Listener::Role::MAIN);
+     auto* admin = make(facade::Listener::Role::PRIVILEGED);
+-    port_ = acceptor_->AddListener(0, listener);
++    port_ = acceptor_->AddListener(0, main_listener_);
+     admin_port_ = acceptor_->AddListener(0, admin);
+-    return {listener, admin};
++    return {main_listener_, admin};
+   }
  
-```
-
-**File**: `src/server/dragonfly_connection_test.cc` (modified, +122/-0)
-```diff
-@@ -4,6 +4,7 @@
- #include "facade/dragonfly_connection.h"
+   void SetUp() override {
++    // Initialize shared buffers for tests that switch to V2 after setup.
++    const bool v2 = absl::GetFlag(FLAGS_enable_resp_io_loop_v2);
++    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, true);
+     BaseFamilyTest::SetUp();
++    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
+     acceptor_->Run();
+   }
  
- #include <absl/strings/match.h>
-+#include <absl/strings/str_split.h>
- #include <arpa/inet.h>
- #include <gmock/gmock.h>
- #include <netinet/in.h>
-@@ -15,6 +16,7 @@
- #include <optional>
- #include <string>
- #include <string_view>
-+#include <thread>
+@@ -456,6 +460,7 @@ class ClientKillTest : public BaseFamilyTest {
+   }
  
- #include "base/flags.h"
- #include "facade/dragonfly_listener.h"
-@@ -25,6 +27,7 @@
+   std::unique_ptr<util::AcceptServer> acceptor_;
++  facade::Listener* main_listener_ = nullptr;
+   uint16_t port_ = 0, admin_port_ = 0;
+   absl::FlagSaver flag_saver_;
+ };
+@@ -572,18 +577,66 @@ TEST_F(ClientKillTest, Filters) {
+   EXPECT_EQ(caller.ReadLine(), ":0\r\n");
+ }
  
- ABSL_DECLARE_FLAG(bool, enable_resp_io_loop_v2);
- ABSL_DECLARE_FLAG(bool, enable_shared_read_buffer);
-+ABSL_DECLARE_FLAG(bool, multi_exec_squash);
- 
- namespace dfly {
- namespace {
-@@ -424,5 +427,124 @@ TEST_P(DragonflyV2ConnectionTest, RejectsControlMessagesAfterProtocolError) {
- INSTANTIATE_TEST_SUITE_P(PrivateAndSharedReadBuffer, DragonflyV2ConnectionTest,
-                          testing::Values(false, true));
- 
-+// A real listener for CLIENT KILL. No OpenSSL use: a destroyed listener cleans it up.
-+class ClientKillTest : public BaseFamilyTest {
-+ protected:
-+  std::vector<facade::Listener*> CreateListeners() override {
-+    acceptor_ = std::make_unique<util::AcceptServer>(pp_.get(), /*break_on_int=*/false);
-+    auto* listener = pp_->at(0)->Await([&] {
-+      return new facade::Listener(facade::Protocol::REDIS, service_.get(),
-+                                  facade::Listener::Role::MAIN);
-+    });
-+    port_ = acceptor_->AddListener(0, listener);
-+    return {listener};
-+  }
-+
-+  void SetUp() override {
-+    BaseFamilyTest::SetUp();
-+    acceptor_->Run();
-+  }
-+
-+  // The service shuts down before the listener is freed.
-+  void TearDown() override {
-+    acceptor_->Stop(/*wait=*/true);
-+    BaseFamilyTest::TearDown();
-+  }
-+
-+  std::unique_ptr<util::AcceptServer> acceptor_;
-+  uint16_t port_ = 0;
-+  absl::FlagSaver flag_saver_;
-+};
-+
-+// Sends an inline command and returns the first line of the reply.
-+std::optional<std::string> Call(RawRespClient& client, std::string_view cmd) {
-+  return client.SendAll(absl::StrCat(cmd, "\r\n")) ? client.ReadLine() : std::nullopt;
-+}
-+
-+std::string ClientId(RawRespClient& client) {
-+  std::string reply = Call(client, "CLIENT ID").value_or(":\r\n");
-+  return reply.substr(1, reply.size() - 3);
-+}
-+
-+// Killing itself, a connection still gets the reply but runs no later command.
-+TEST_F(ClientKillTest, SelfClosesAfterReply) {
-+  auto send_until_eof = [&](std::string_view before, std::string_view after, bool legacy = false) {
-+    RawRespClient client{port_};
-+    EXPECT_TRUE(client.SendAll("CLIENT INFO\r\n"));
-+    client.ReadLine();
-+    std::vector<std::string> info =
-+        absl::StrSplit(client.ReadLine().value_or(""), absl::ByAnyChar(" ="));
-+    std::string kill = absl::StrCat("CLIENT KILL ID ", info.at(1), "\r\n");
-+    if (legacy)
-+      kill = absl::StrCat("CLIENT KILL ", info.at(3), "\r\n");
-+    EXPECT_TRUE(client.SendAll(absl::StrCat(before, kill, after)));
-+    std::string reply;
-+    while (auto line = client.ReadLine())
-+      reply += *line;
-+    EXPECT_TRUE(client.ReadEof()) << reply;
-+    return reply;
+-// A half-closed peer marks the connection closing, yet only a kill ends its blocked send.
+-TEST_F(ClientKillTest, KillsHalfClosedStuckSend) {
+-  RawRespClient v{port_};
+-  const std::string id = ClientId(v);
+-  Run({"SET", "big", std::string(64 << 20, 'x')});
+-  auto row = [&] { return Run({"CLIENT", "LIST", "ID", id}).GetString(); };
+-  ASSERT_TRUE(v.SendAll("GET big\r\n"));
+-  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "phase=send"); });
+-  ASSERT_TRUE(v.ShutdownWrite());
+-  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "flags=t"); });
+-  EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1));
+-  ExpectConditionWithinTimeout([&] { return row().empty(); });
++// A closing context must not prevent killing an open socket with a blocked send.
++TEST_F(ClientKillTest, KillsClosingConnectionWithStuckSend) {
++  auto wait_until = [](auto&& condition) {
++    const auto deadline = std::chrono::steady_clock::now() + 2s;
++    while (!condition()) {
++      if (std::chrono::steady_clock::now() >= deadline)
++        return false;
++      absl::SleepFor(absl::Milliseconds(1));
++    }
++    return true;
 +  };
 +
-+  // A kill in the first packet must not keep the server side open until the client closes.
-+  RawRespClient first{port_};
-+  EXPECT_TRUE(first.SendAll(absl::StrCat("CLIENT KILL LADDR 127.0.0.1:", port_, "\r\n")));
-+  EXPECT_EQ(first.ReadLine(), ":1\r\n");
-+  ExpectConditionWithinTimeout(
-+      [&] { return GetMetrics().facade_stats.conn_stats.num_conns_main == 0; });
-+
-+  // A connection reads the flag when it starts.
++  ASSERT_EQ(Run({"SET", "big", std::string(64 << 20, 'x')}), "OK");
 +  for (bool v2 : {false, true}) {
 +    SCOPED_TRACE(v2);
 +    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
-+    EXPECT_EQ(send_until_eof("PING\r\n", "SET k1 1\r\nPING\r\n"), "+PONG\r\n:1\r\n");
-+    for (bool squash : {true, false}) {
-+      SCOPED_TRACE(squash);
-+      absl::SetFlag(&FLAGS_multi_exec_squash, squash);
-+      EXPECT_EQ(send_until_eof("MULTI\r\n", "PING\r\nSET k2 1\r\nEXEC\r\nSET k3 1\r\n"),
-+                "+OK\r\n+QUEUED\r\n+QUEUED\r\n+QUEUED\r\n*3\r\n:1\r\n+PONG\r\n+OK\r\n");
-+    }
-+    EXPECT_EQ(send_until_eof("PING\r\n", "SET k4 1\r\n", /*legacy=*/true), "+PONG\r\n:1\r\n");
++    RawRespClient client{port_};
++    ASSERT_TRUE(client.valid());
++    const std::string id = ClientId(client);
++    ASSERT_FALSE(id.empty());
++    SCOPED_TRACE(absl::StrCat("client id=", id));
++    ASSERT_TRUE(client.SendAll("GET big\r\n"));
 +
-+    // A lone command is dispatched synchronously.
-+    EXPECT_EQ(send_until_eof("", ""), ":1\r\n");
++    // Identify the GET reply while leaving its large body unread to keep the send blocked.
++    ASSERT_EQ(client.ReadLine(), "$67108864\r\n");
 +
-+    // Over the pipeline limit, the next command waits for the kill and must not run after it.
-+    EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", "1"}), "OK");
-+    EXPECT_EQ(send_until_eof("", "SET k5 1\r\n"), ":1\r\n");
-+    EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", "128MB"}), "OK");
-+    EXPECT_THAT(Run({"DEL", "k2"}), IntArg(1));
-+    EXPECT_THAT(Run({"DEL", "k1", "k3", "k4", "k5"}), IntArg(0));
++    std::string state;
++    auto inspect = [&](bool mark_closing) {
++      return pp_->at(0)->Await([&] {
++        bool ready = false;
++        state = "Connection not found";
++        main_listener_->TraverseConnections([&](unsigned tid, util::Connection* connection) {
++          auto* conn = static_cast<facade::Connection*>(connection);
++          if (absl::StrCat(conn->GetClientId()) != id)
++            return;
++
++          ready = conn->cntx() && conn->socket()->IsOpen() && conn->IsSending();
++          if (ready && mark_closing)
++            conn->cntx()->conn_closing = true;
++          state =
++              absl::StrCat("socket_open=", conn->socket()->IsOpen(), " ", conn->GetClientInfo(tid));
++        });
++        return ready;
++      });
++    };
++    ASSERT_TRUE(wait_until([&] { return inspect(false); }))
++        << "Expected an open connection with a blocked send: " << state;
++
++    // Set the context flag on its owner proactor without shutting down the socket. A real
++    // half-close can abort the blocked send on kqueue before CLIENT KILL gets to it.
++    ASSERT_TRUE(inspect(true)) << "Connection stopped sending before marking it closing: " << state;
++    ASSERT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1)) << state;
++
++    std::string last_row;
++    ASSERT_TRUE(wait_until([&] {
++      last_row = Run({"CLIENT", "LIST", "ID", id}).GetString();
++      return last_row.empty();
++    })) << last_row;
++    EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(0));
 +  }
-+}
-+
-+// Connections that move to another thread can not be borrowed.
-+TEST_F(ClientKillTest, KillDuringConnectionMigration) {
-+  std::atomic_bool stop = false;
-+  std::vector<std::thread> churn;
-+  for (unsigned i = 0; i < 8; ++i) {
-+    churn.emplace_back([&] {
-+      for (unsigned tid = 0; !stop;) {
-+        RawRespClient client{port_};
-+        const std::string id = ClientId(client);
-+        const std::s
-```
-
-**File**: `src/server/server_family.cc` (modified, +13/-2)
-```diff
-@@ -720,7 +720,10 @@ void ClientKill(facade::ParsedArgs args, absl::Span<facade::Listener*> listeners
-   }
+ }
  
-   const bool is_admin_request = cmd_cntx->conn()->IsPrivileged();
-+  facade::Connection* self = cmd_cntx->conn();
- 
-+  // HTTP API connections have no close-after-reply path.
-+  const bool kill_self = !self->IsHttp() && evaluator(self);
-   atomic<uint32_t> killed_connections = 0;
-   atomic<uint32_t> kill_errors = 0;
- 
-@@ -729,9 +732,12 @@ void ClientKill(facade::ParsedArgs args, absl::Span<facade::Listener*> listeners
-     std::vector<facade::Connection::WeakRef> connections;
-     auto traverse_cb = [&](unsigned idx, util::Connection* conn) {
-       facade::Connection* dconn = static_cast<facade::Connection*>(conn);
--      if (evaluator(dconn)) {
-+
-+      // The caller is closed after the reply.
-+      if (dconn != self && evaluator(dconn)) {
-         if (is_admin_request || !dconn->IsPrivileged()) {
--          connections.push_back(dconn->Borrow());
-+          if (!dconn->IsMigrating())
-+            connections.push_back(dconn->Borrow());
-         } else {
-           kill_errors.fetch_add(1);
-         }
-@@ -753,6 +759,11 @@ void ClientKill(facade::ParsedArgs args, absl::Span<facade::Listener*> listeners
- 
-   shard_set->pool()->AwaitFiberOnAll(cb);
- 
-+  if (kill_self) {
-+    self->RequestCloseAfterReply();
-+    killed_connections.fetch_add(1);
-+  }
-+
-   if (kill_errors.load() == 0) {
-     return cmd_cntx->rb()->SendLong(killed_connections.load());
-   } else {
-```
-
-**File**: `src/server/test_utils.cc` (modified, +1/-1)
-```diff
-@@ -265,7 +265,7 @@ void BaseFamilyTest::ResetService() {
-   // value, and if reset after some invocations of heartbeat have run, the accumulated data is
-   // lost and can cause test failure.
-   used_mem_current = 0;
--  service_->Init(nullptr, {});
-+  service_->Init(nullptr, CreateListeners());
- 
-   TEST_current_time_ms = absl::GetCurrentTimeNanos() / 1000000;
- 
-```
-
-**File**: `src/server/test_utils.h` (modified, +5/-0)
-```diff
-@@ -79,6 +79,11 @@ class BaseFamilyTest : public ::testing::Test {
-   void SetUp() override;
-   void TearDown() override;
- 
-+  // Listeners for Service::Init; a fixture that returns some can not reset the service again.
-+  virtual std::vector<facade::Listener*> CreateListeners() {
-+    return {};
-+  }
-+
-   class TestConnWrapper;
- 
-   RespExpr Run(std::initializer_list<const std::string_view> list) {
+ // Connections that move to another thread can not be borrowed.
 ```
 
 ---
 
-### Incident Patch 3: `2cb963b6` (2026-11-06)
-**Commit Message**: fix: resolve sanitizer UB and extend nightly test timeouts (#8763)
+### Incident Patch 2: `537a6b7e` (2026-11-07)
+**Commit Message**: fix: remove unused code and obsolete test helpers (#8772)
 
-Fix three independently reproduced UBSan diagnostics:
-- Use unsigned subtraction for the BITFIELD underflow threshold.
-- Use a non-null empty string view when logging null RESP input.
-
-Increase the four nightly sanitizer CTest passes from 20 to 30 minutes.
-Add a 600-second per-binary timeout and a 30-second forced-kill grace.
-Allow 10 minutes for the manually invoked search-family test.
-
-The failed CI run spent 33.5% longer in the same completed binaries,
-exhausting the aggregate timeout. Focused HNSW runs continued making
-progress and completed.
+Remove the unused Huffman codec and FlatJson JSONPath backend.
+Clean up dead C++ and Python helpers, the unused RecordJournal argument,
+and the redundant asyncio dependency while preserving active test coverage.
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/daily-builds.yml` (modified, +8/-5)
+**File**: `.pre-commit-config.yaml` (modified, +0/-1)
 ```diff
-@@ -244,7 +244,8 @@ jobs:
- 
-           GTEST_OUTPUT="xml:${GTEST_IOURING_DIR}/" \
-           GLOG_alsologtostderr=1 GLOG_vmodule=rdb_load=1,rdb_save=1,snapshot=1,op_manager=1,op_manager_test=1 \
--          FLAGS_fiber_safety_margin=4096 timeout 20m ctest -V -L DFLY -E allocation_tracker_test \
-+          FLAGS_fiber_safety_margin=4096 timeout --kill-after=30s 30m \
-+            ctest -V -L DFLY -E allocation_tracker_test --timeout 600 \
-             --output-junit "${CTEST_JUNIT_DIR}/iouring.xml"
- 
-           # Run allocation tracker test separately without alsologtostderr because it generates a TON of logs.
-@@ -255,7 +256,8 @@ jobs:
-           run_manual_gtest ./json_family_test --jsonpathv2=false
-           run_manual_gtest ./tiered_storage_test --vmodule=db_slice=2 --logtostderr
-           run_manual_gtest ./search_test --use_numeric_range_tree=false
--          run_manual_gtest ./search_family_test --use_numeric_range_tree=false
-+          GTEST_OUTPUT="xml:${GTEST_MANUAL_DIR}/" \
-+            timeout 10m ./search_family_test --use_numeric_range_tree=false
- 
-       - name: C++ Unit Tests - Epoll
-         run: |
-@@ -278,7 +280,7 @@ jobs:
-             gdb -ix ./init.gdb --batch -ex r --args ./dragonfly_test --force_epoll
-           GTEST_OUTPUT="xml:${GTEST_EPOLL_DIR}/" \
-           GLOG_alsologtostderr=1 FLAGS_fiber_safety_margin=4096 FLAGS_force_epoll=true GLOG_vmodule=rdb_load=1,rdb_save=1,snapshot=1 \
--          timeout 20m ctest -V -L DFLY -E allocation_tracker_test \
-+          timeout --kill-after=30s 30m ctest -V -L DFLY -E allocation_tracker_test --timeout 600 \
-             --output-junit "${CTEST_JUNIT_DIR}/epoll.xml"
- 
-           GTEST_OUTPUT="xml:${GTEST_MANUAL_DIR}/" FLAGS_fiber_safety_margin=4096 \
-@@ -292,7 +294,7 @@ jobs:
-           GTEST_CLUSTER_DIR="${JUNIT_DIR}/gtest/cluster"
-           mkdir -p "${CTEST_JUNIT_DIR}" "${GTEST_CLUSTER_DIR}"
-           GTEST_OUTPUT="xml:${GTEST_CLUSTER_DIR}/" FLAGS_fiber_safety_margin=4096 \
--            FLAGS_cluster_mode=emulated timeout 20m ctest -V -L DFLY \
-+            FLAGS_cluster_mode=emulated timeout --kill-after=30s 30m ctest -V -L DFLY --timeout 600 \
-             --output-junit "${CTEST_JUNIT_DIR}/cluster.xml"
- 
-       - name: C++ Unit Tests - IoUring with cluster mode and FLAGS_lock_on_hashtags
-@@ -303,7 +305,8 @@ jobs:
-           GTEST_CLUSTER_DIR="${JUNIT_DIR}/gtest/cluster-hashtags"
-           mkdir -p "${CTEST_JUNIT_DIR}" "${GTEST_CLUSTER_DIR}"
-           GTEST_OUTPUT="xml:${GTEST_CLUSTER_DIR}/" FLAGS_fiber_safety_margin=4096 \
--            FLAGS_cluster_mode=emulated FLAGS_lock_on_hashtags=true timeout 20m ctest -V -L DFLY \
-+            FLAGS_cluster_mode=emulated FLAGS_lock_on_hashtags=true \
-+            timeout --kill-after=30s 30m ctest -V -L DFLY --timeout 600 \
-             --output-junit "${CTEST_JUNIT_DIR}/cluster-hashtags.xml"
- 
-       - name: Upload unit logs on failure
+@@ -2,7 +2,6 @@ default_stages: [pre-commit]
+ exclude: |
+     (?x)(
+       src/redis/.* |
+-      src/huff/.* |
+       contrib/charts/dragonfly/ci/.* |
+       patches/.* |
+       fuzz/seeds/.*
 ```
 
-**File**: `src/facade/resp_parser.cc` (modified, +1/-1)
+**File**: `pyproject.toml` (modified, +0/-1)
 ```diff
-@@ -113,7 +113,7 @@ std::optional<RESPObj> RESPParser::Feed(const char* data, size_t len, size_t* co
-   // The peer controls this data, so only log a bounded prefix of it.
-   auto log_error = [this, data, len](int status) {
-     constexpr size_t kMaxLoggedData = 256;
--    std::string_view sv = data ? std::string_view{data, len} : std::string_view{};
-+    std::string_view sv = data ? std::string_view{data, len} : std::string_view{""};
-     LOG(ERROR) << "RESP parser error: " << status << " description: " << reader_->errstr
-                << " data: " << sv.substr(0, kMaxLoggedData);
-   };
+@@ -7,7 +7,6 @@ requires-python = ">=3.10"
+ test = [
+   "aiohttp>=3.14.4",
+   "async-timeout>=4.0.3",
+-  "asyncio>=3.4.3",
+   "attrs>=22.1.0",
+   "azure-storage-blob>=12.19.0",
+   "boto3>=1.28.55",
 ```
 
-**File**: `src/server/bitops_family.cc` (modified, +1/-1)
+**File**: `src/core/CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -699,7 +699,7 @@ bool Overflow::IntOverflow(size_t total_bits, int64_t incr, bool add, int64_t* v
-   // happens. 'uint64_t' cast is there just to prevent undefined behavior on
-   // overflow */
-   int64_t maxincr = static_cast<uint64_t>(max) - *value;
--  int64_t minincr = min - *value;
-+  int64_t minincr = static_cast<uint64_t>(min) - *value;
+@@ -24,7 +24,7 @@ add_subdirectory(json)
+ add_subdirectory(page_usage)
  
-   // overflow
-   if (*value > max || (total_bits != 64 && incr > maxincr) ||
+ add_library(dfly_core allocation_tracker.cc bloom.cc topk.cc compact_object.cc cms.cc cuckoo.cc dense_set.cc
+-    dragonfly_core.cc extent_tree.cc huff_coder.cc lua_internals.cc
++    dragonfly_core.cc extent_tree.cc lua_internals.cc
+     interpreter.cc glob_matcher.cc mi_memory_resource.cc qlist.cc dict_builder.cc sds_utils.cc
+     segment_allocator.cc score_map.cc small_string.cc sorted_map.cc stream_node.cc task_queue.cc
+     tx_queue.cc string_set.cc string_map.cc tiering_types.cc top_keys.cc
+```
+
+**File**: `src/core/dash.h` (modified, +0/-7)
+```diff
+@@ -404,13 +404,6 @@ class DashTable : public detail::DashTableBase {
+     return iterator{this, segment_id, uint8_t(bucket_id), uint8_t(slot_id)};
+   }
+ 
+-  const_bucket_iterator CursorToBucketIt(Cursor c) const {
+-    return const_bucket_iterator{this, c.segment_id(global_depth_), c.bucket_id(), 0};
+-  }
+-  bucket_iterator CursorToBucketIt(Cursor c) {
+-    return bucket_iterator{this, c.segment_id(global_depth_), c.bucket_id(), 0};
+-  }
+-
+   // Capture Version Change. Determine buckets that can potentially be modified when inserting key.
+   // These are not const functions because they send non-const iterators that allow
+   // updating contents/versions of the passed iterators.
+```
+
+**File**: `src/core/detail/bptree_internal.h` (modified, +0/-4)
+```diff
+@@ -331,10 +331,6 @@ template <typename T> class BPTreePath {
+     depth_--;
+   }
+ 
+-  bool HasValidTerminal() const {
+-    return depth_ > 0u && Last().second < Last().first->NumItems();
+-  }
+-
+   T Terminal() const {
+     assert(Last().second < Last().first->NumItems());
+     return Last().first->Key(Last().second);
+```
+
+**File**: `src/core/dfly_core_test.cc` (modified, +0/-144)
+```diff
+@@ -23,7 +23,6 @@
+ #include "base/gtest.h"
+ #include "base/logging.h"
+ #include "core/glob_matcher.h"
+-#include "core/huff_coder.h"
+ #include "core/intent_lock.h"
+ #include "core/tx_queue.h"
+ 
+@@ -347,149 +346,6 @@ TEST_F(StringMatchTest, StarBacktracking) {
+   TEST_STRINGMATCH("*[a-", "xa", 1, 1);
+ }
+ 
+-class HuffCoderTest : public ::testing::Test {
+- protected:
+-  HuffmanEncoder encoder_;
+-  HuffmanDecoder decoder_;
+-  string error_msg_;
+-  const string_view good_table_{
+-      "\x1b\x10\xd8\n\n\x19\xc6\x0c\xc3\x30\x0c\x43\x1e\x93\xe4\x11roB\xf6\xde\xbb\x18V\xc2Zk\x03"sv};
+-};
+-
+-TEST_F(HuffCoderTest, Load) {
+-  string data("bad");
+-
+-  ASSERT_FALSE(encoder_.Load(data, &error_msg_));
+-
+-  data = good_table_;
+-  ASSERT_TRUE(encoder_.Load(data, &error_msg_)) << error_msg_;
+-
+-  data.append("foo");
+-  encoder_.Reset();
+-  ASSERT_FALSE(encoder_.Load(data, &error_msg_));
+-}
+-
+-TEST_F(HuffCoderTest, Encode) {
+-  ASSERT_TRUE(encoder_.Load(good_table_, &error_msg_)) << error_msg_;
+-
+-  EXPECT_EQ(1, encoder_.GetNBits('x'));
+-  EXPECT_EQ(3, encoder_.GetNBits(':'));
+-  EXPECT_EQ(5, encoder_.GetNBits('2'));
+-  EXPECT_EQ(5, encoder_.GetNBits('3'));
+-
+-  string data("x:23xx");
+-
+-  array<uint8_t, 100> dest;
+-  uint32_t dest_size = dest.size();
+-  ASSERT_TRUE(encoder_.Encode(data, dest.data(), &dest_size, &error_msg_));
+-  ASSERT_EQ(3, dest_size);
+-
+-  // testing small destination buffer.
+-  data = "3333333333333333333";
+-  dest_size = 16;
+-  EXPECT_TRUE(encoder_.Encode(data, dest.data(), &dest_size, &error_msg_));
+-
+-  // destination too small
+-  ASSERT_EQ(0, dest_size);
+-  ASSERT_EQ("", error_msg_);
+-}
+-
+-TEST_F(HuffCoderTest, Decode) {
+-  array<unsigned, 256> hist;
+-  hist.fill(1);
+-  hist['a'] = 100;
+-  hist['b'] = 50;
+-
+-  ASSERT_TRUE(encoder_.Build(hist.data(), hist.size() - 1, &error_msg_));
+-  string data("aab");
+-
+-  array<uint8_t, 100> encoded{0};
+-  uint32_t encoded_size = encoded.size();
+-  ASSERT_TRUE(encoder_.Encode(data, encoded.data(), &encoded_size, &error_msg_));
+-  ASSERT_EQ(1, encoded_size);
+-
+-  EXPECT_EQ(2, encoder_.GetNBits('a'));
+-  EXPECT_EQ(3, encoder_.GetNBits('b'));
+-
+-  auto bindata = encoder_.Export();
+-  ASSERT_TRUE(bindata.has_value());
+-  ASSERT_TRUE(decoder_.Load(*bindata, &error_msg_)) << error_msg_;
+-
+-  const char* src_ptr = reinterpret_cast<const char*>(encoded.data());
+-  array<char, 100> decode_dest{0};
+-  size_t decoded_size = data.size();
+-  ASSERT_TRUE(decoder_.Decode({src_ptr, encoded_size}, decoded_size, decode_dest.data()));
+-  ASSERT_EQ("aab", string_view(decode_dest.data(), decoded_size));
+-}
+-
+-TEST_F(HuffCoderTest, HugeHistogram) {
+-  array<unsigned, 256> hist{
+-      1,         1,         1,         1,         1,         1,         1,         1,
+-      5,         26,        543,       1,         1,         1,         1,         1,
+-      4,         1,         1,         1,         1,         1,         1,         1,
+-      1,         1,         1,         1,         1,         1,         1,         1,
+-      114012534, 12081,     13038,     1596,      1334,      83320,     706165,    475568,
+-      2779,      2548,      998,       29249967,  53961,     13175485,  99000,     69726435,
+-      69422967,  182172009, 123544533, 76493373,  96341977,  64601914,  48105392,  60215630,
+-      69253599,  48811529,  818580990, 1226,      69,        922,       140,       720,
+-      230,       333714212, 95995178,  65692203,  50995122,  52156728,  44187793,  32988519,
+-      46978428,  49648957,  43769567,  68958857,  56765240,  80721594,  51577447,  70298692,
+-      56957407,  93372706,  47400672,  70912347,  78241282,  49291723,  69807896,  48372387,
+-      39312015,  58020704,  60084247,  1378,      2471,      1584,      14,        37880886,
+-      117,       184273430, 80952783,  135676228, 101229664, 230479318, 70652028,  137836653,
+-      70943805,  154072333, 29316298,  58302725,  109445030, 117306062, 129270567, 166048852,
+-      103000639, 54174517,  174819705, 166323524, 124543976, 80215452,  49650895,  101281709,
+-      49817574,  56668585,  50459552,  273352049, 166,       273352009, 16,        1,
+-      57668,     1724,      1886,      3668,      3960,      1963,      1124,      945,
+-      1836,      1882,      1709,      2389,      921,       2154,      1020,      1792,
+-      3747,      6750,      1318,      3100,      4506,      1175,      1514,      1430,
+-      3474,      44548,     3179,      1149,      2410,      9689,      727,       2348,
+-      2148,      1785,      5025,      1040,      3246,      1699,      505,       1034,
+-      9995,      24776,     3345,      1897,      1019,      1614,      35349,     988,
+-      2469,      5759,      2043,      7976,      1229,      896,       2692,      962,
+-      3341,      2490,      2648,      1162,      4812,      8404,      949,       3132,
+-      1,         1,         34754,     58694,     3400,      561,       6,         5,
+-      3,         47,        41,        19,        292,       24,        17,        12
+```
+
+**File**: `src/core/flatbuffers.h` (modified, +0/-4)
+```diff
+@@ -11,7 +11,3 @@
+ #include <flatbuffers/flatbuffers.h>
+ #include <flatbuffers/flexbuffers.h>
+ #include <flatbuffers/idl.h>
+-
+-namespace dfly {
+-using FlatJson = flexbuffers::Reference;
+-}  // namespace dfly
+```
+
+**File**: `src/core/huff_coder.cc` (removed, +0/-156)
+```diff
+@@ -1,156 +0,0 @@
+-// Copyright 2025, DragonflyDB authors.  All rights reserved.
+-// See LICENSE for licensing terms.
+-//
+-
+-#include "core/huff_coder.h"
+-
+-#include "base/logging.h"
+-
+-extern "C" {
+-#include "huff/huf.h"
+-}
+-
+-using namespace std;
+-
+-namespace dfly {
+-
+-constexpr size_t kWspSize = HUF_CTABLE_WORKSPACE_SIZE;
+-
+-bool HuffmanEncoder::Load(std::string_view binary_data, std::string* error_msg) {
+-  CHECK(!huf_ctable_);
+-
+-  huf_ctable_.reset(new HUF_CElt[HUF_CTABLE_SIZE_ST(255)]);
+-  table_max_symbol_ = 255;
+-
+-  unsigned has_zero_weights = 0;
+-  size_t read_size = HUF_readCTable(huf_ctable_.get(), &table_max_symbol_, binary_data.data(),
+-                                    binary_data.size(), &has_zero_weights);
+-
+-  if (HUF_isError(read_size)) {
+-    huf_ctable_.reset();
+-    *error_msg = HUF_getErrorName(read_size);
+-    return false;
+-  }
+-  if (read_size != binary_data.size()) {
+-    *error_msg = "Corrupted data";
+-    huf_ctable_.reset();
+-    return false;
+-  }
+-  HUF_CTableHeader header = HUF_readCTableHeader(huf_ctable_.get());
+-  num_bits_ = header.tableLog;
+-  table_max_symbol_ = header.maxSymbolValue;
+-
+-  return true;
+-}
+-
+-bool HuffmanEncoder::Build(const unsigned hist[], unsigned max_symbol, std::string* error_msg) {
+-  CHECK(!huf_ctable_);
+-  huf_ctable_.reset(new HUF_CElt[HUF_CTABLE_SIZE_ST(max_symbol)]);
+-
+-  unique_ptr<uint32_t[]> wrkspace(new uint32_t[HUF_CTABLE_WORKSPACE_SIZE_U32]);
+-
+-  size_t num_bits =
+-      HUF_buildCTable_wksp(huf_ctable_.get(), hist, max_symbol, 0, wrkspace.get(), kWspSize);
+-  if (HUF_isError(num_bits)) {
+-    *error_msg = HUF_getErrorName(num_bits);
+-    huf_ctable_.reset();
+-    return false;
+-  }
+-  num_bits_ = static_cast<uint8_t>(num_bits);
+-  table_max_symbol_ = max_symbol;
+-  return true;
+-}
+-
+-void HuffmanEncoder::Reset() {
+-  huf_ctable_.reset();
+-  table_max_symbol_ = 0;
+-}
+-
+-bool HuffmanEncoder::Encode(std::string_view data, uint8_t* dest, uint32_t* dest_size,
+-                            std::string* error_msg) const {
+-  DCHECK(huf_ctable_);
+-
+-  size_t res =
+-      HUF_compress1X_usingCTable(dest, *dest_size, data.data(), data.size(), huf_ctable_.get(), 0);
+-
+-  if (HUF_isError(res)) {
+-    *error_msg = HUF_getErrorName(res);
+-    return false;
+-  }
+-  *dest_size = static_cast<uint32_t>(res);
+-  return true;
+-}
+-
+-unsigned HuffmanEncoder::GetNBits(uint8_t symbol) const {
+-  DCHECK(huf_ctable_);
+-  return HUF_getNbBitsFromCTable(huf_ctable_.get(), symbol);
+-}
+-
+-size_t HuffmanEncoder::EstimateCompressedSize(const unsigned hist[], unsigned max_symbol) const {
+-  DCHECK(huf_ctable_);
+-  size_t res = HUF_estimateCompressedSize(huf_ctable_.get(), hist, max_symbol);
+-  return res;
+-}
+-
+-optional<string> HuffmanEncoder::Export() const {
+-  DCHECK(huf_ctable_);
+-
+-  // Reverse engineered: (maxSymbolValue + 1) / 2 + 1.
+-  constexpr unsigned kMaxTableSize = 130;
+-  string res;
+-  res.resize(kMaxTableSize);
+-
+-  unique_ptr<uint32_t[]> wrkspace(new uint32_t[HUF_CTABLE_WORKSPACE_SIZE_U32]);
+-
+-  // Seems we can reuse the same workspace, its capacity is enough.
+-  size_t size = HUF_writeCTable_wksp(res.data(), res.size(), huf_ctable_.get(), table_max_symbol_,
+-                                     num_bits_, wrkspace.get(), kWspSize);
+-  if (HUF_isError(size)) {
+-    LOG(WARNING) << "Failed to export Huffman table: " << HUF_getErrorName(size);
+-    return nullopt;
+-  }
+-  res.resize(size);
+-  return res;
+-}
+-
+-// Copied from HUF_tightCompressBound.
+-size_t HuffmanEncoder::CompressedBound(size_t src_size) const {
+-  return ((src_size * num_bits_) >> 3) + 8;
+-}
+-
+-bool HuffmanDecoder::Load(std::string_view binary_data, std::string* error_msg) {
+-  DCHECK(!huf_dtable_);
+-  huf_dtable_.reset(new HUF_DTable[HUF_DTABLE_SIZE(HUF_TABLELOG_MAX)]);
+-  huf_dtable_[0] = (HUF_TABLELOG_MAX - 1) * 0x01000001;  // some sort of magic number
+-
+-  constexpr size_t kWspSize = HUF_DECOMPRESS_WORKSPACE_SIZE;
+-  unique_ptr<uint8_t[]> wrksp(new uint8_t[kWspSize]);
+-
+-  size_t res = HUF_readDTableX1_wksp(huf_dtable_.get(), binary_data.data(), binary_data.size(),
+-                                     wrksp.get(), kWspSize, 0);
+-  if (HUF_isError(res)) {
+-    *error_msg = HUF_getErrorName(res);
+-    huf_dtable_.reset();
+-    return false;
+-  }
+-  if (res != binary_data.size()) {
+-    *error_msg = "Corrupted data";
+-    huf_dtable_.reset();
+-    return false;
+-  }
+-  return true;
+-}
+-
+-bool HuffmanDecoder::Decode(std::string_view src, size_t dest_size, char* dest) const {
+-  DCHECK(huf_dtable_);
+-  size_t res =
+-      HUF_decompress1X_usingDTable(dest, dest_size, src.data(), src.size(), huf_dtable_.get(), 1);
+-
+-  if (HUF_isError(res)) {
+-    LOG(DFATAL) << "Failed to decompress: " << HUF_getErrorName(res);
+-    return false;
+-  }
+-  return true;
+-}
+-
+-}  // namespace dfly
+```
+
+---
+
+### Incident Patch 3: `7faee833` (2026-11-06)
+**Commit Message**: fix(snapshot): release the serializer buffer while loading a tiered list node (#8757)
+
+**File**: `src/server/rdb_save.cc` (modified, +23/-3)
+```diff
+@@ -417,11 +417,19 @@ error_code RdbSerializer::SaveListObject(const PrimeValue& pv) {
+     DVLOG(3) << "QL node (encoding/container/sz): " << node->encoding << "/" << node->container
+              << "/" << node->sz;
+ 
+-    // Use listpack encoding
+-    RETURN_ON_ERR(SaveLen(node->container));
+     // Materialize the node if it was offloaded to tiered storage, so that we can access its
+     // content. We have to drop const qualifier to update the node.
+-    ql->Materialize(const_cast<QList::Node*>(node));
++    if (node->offloaded && consume_fun_ && mem_buf_controller_.TagEntriesEnabled()) {
++      // Reading the node from disk suspends. Make it a consume point between two nodes, so that
++      // other writers don't land inside this entry's bytes. Without tags, stream_mu_ holds them
++      // off instead.
++      RETURN_ON_ERR(ConsumeAround([&] { ql->Materialize(const_cast<QList::Node*>(node)); }));
++    } else {
++      ql->Materialize(const_cast<QList::Node*>(node));
++    }
++
++    // Use listpack encoding
++    RETURN_ON_ERR(SaveLen(node->container));
+     if (node->encoding == QLIST_NODE_ENCODING_ZSTD) {
+       // ZSTD-compressed nodes cannot be saved using RDB LZF encoding — the loader would
+       // call lzf_decompress on ZSTD bytes and corrupt the data. Decompress to raw first.
+@@ -1968,6 +1976,18 @@ void RdbSerializer::CompressBlob() {
+   mem_buf->CommitWrite(compressed->size());
+ }
+ 
++template <typename F> std::error_code RdbSerializer::ConsumeAround(F&& fn) {
++  mem_buf_controller_.MarkEntrySplit();
++  string blob = Flush(FlushState::kFlushMidEntry);
++
++  const auto id = mem_buf_controller_.SaveStateBeforeConsume();
++  std::error_code ec = blob.empty() ? std::error_code{} : consume_fun_(std::move(blob));
++  if (!ec)
++    fn();
++  mem_buf_controller_.RestoreStateAfterConsume(id);
++  return ec;
++}
++
+ std::error_code RdbSerializer::PushToConsumerIfNeeded(FlushState flush_state) {
+   if (!consume_fun_ || SerializedLen() <= flush_threshold_)
+     return {};
+```
+
+**File**: `src/server/rdb_save.h` (modified, +3/-0)
+```diff
+@@ -373,6 +373,9 @@ class RdbSerializer {
+   // Might preempt
+   std::error_code PushToConsumerIfNeeded(FlushState flush_state);
+ 
++  // Runs fn, which may preempt mid-entry, at a forced consume point. Requires tagged entries.
++  template <typename F> std::error_code ConsumeAround(F&& fn);
++
+   static constexpr size_t kFilterChunkSize = 1ULL << 26;
+   static constexpr size_t kMinStrSizeToCompress = 256;
+   static constexpr size_t kMaxStrSizeToCompress = 1 * 1024 * 1024;
+```
+
+**File**: `src/server/server_family.cc` (modified, +31/-0)
+```diff
+@@ -180,6 +180,10 @@ ABSL_DECLARE_FLAG(string, tls_ca_cert_file);
+ ABSL_DECLARE_FLAG(string, tls_ca_cert_dir);
+ ABSL_DECLARE_FLAG(int, replica_priority);
+ ABSL_DECLARE_FLAG(double, rss_oom_deny_ratio);
++ABSL_DECLARE_FLAG(std::string, tiered_prefix);
++#ifdef WITH_TIERING
++ABSL_DECLARE_FLAG(bool, tiered_experimental_list_support);
++#endif
+ 
+ bool AbslParseFlag(std::string_view in, ReplicaOfFlag* flag, std::string* err) {
+ #define RETURN_ON_ERROR(cond, m)                                           \
+@@ -1363,12 +1367,35 @@ bool ValidateServerTlsFlags() {
+   return true;
+ }
+ 
++namespace {
++
++// Saving a list reads its offloaded nodes from disk in the middle of the entry, which suspends.
++// Concurrent writes may serialize other keys into the same buffer meanwhile. The DF format keeps
++// them out of the entry with tagged chunks or the stream mutex; the RDB format has neither.
++// Disabling the flag at runtime leaves already offloaded nodes on disk, which this does not catch.
++bool TieredListNodesEnabled() {
++#ifdef WITH_TIERING
++  return !GetFlag(FLAGS_tiered_prefix).empty() && GetFlag(FLAGS_tiered_experimental_list_support);
++#else
++  return false;
++#endif
++}
++
++constexpr string_view kRdbWithTieredListsErr =
++    "RDB format is not supported with --tiered_experimental_list_support, use the DF format";
++
++}  // namespace
++
+ bool ValidateSnapshotFilenameFlags() {
+   auto ec = detail::ValidateFilename(GetFlag(FLAGS_dbfilename), GetFlag(FLAGS_df_snapshot_format));
+   if (ec) {
+     LOG(ERROR) << ec.Format();
+     return false;
+   }
++  if (!GetFlag(FLAGS_df_snapshot_format) && TieredListNodesEnabled()) {
++    LOG(ERROR) << kRdbWithTieredListsErr;
++    return false;
++  }
+   return true;
+ }
+ 
+@@ -2175,6 +2202,10 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
+   // TODO(#8410): with --aof, a save to the base's name overwrites the base.
+   auto [ignore_state, bg_save] = opts;
+ 
++  if (!save_cmd_opts.new_version && TieredListNodesEnabled())
++    return GenericError{make_error_code(errc::operation_not_supported),
++                        string{kRdbWithTieredListsErr}};
++
+   std::shared_ptr<SaveStagesController> controller;
+   {
+     util::fb2::LockGuard lk(save_mu_);
+```
+
+**File**: `src/server/snapshot.cc` (modified, +10/-2)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ #include <absl/strings/str_cat.h>
+ 
++#include <limits>
+ #include <mutex>
+ 
+ #include "base/cycle_clock.h"
+@@ -100,10 +101,13 @@ void SliceSnapshot::Start(bool stream_journal, SnapshotFlush allow_flush) {
+   size_t flush_threshold = 0;
+   RdbSerializer::ConsumeFun consume_fun;
+   if (allow_flush == SnapshotFlush::kAllow) {
++    // 0 disables splitting by size. The callback is still needed for forced consume points.
+     flush_threshold = ServerState::tlocal()->serialization_max_chunk_size;
++    if (flush_threshold == 0)
++      flush_threshold = std::numeric_limits<size_t>::max();
++
+     // The callback receives data directly from the serializer, no need to call back into it.
+-    if (flush_threshold != 0)
+-      consume_fun = std::bind_front(&SliceSnapshot::ConsumeBigValueChunk, this);
++    consume_fun = std::bind_front(&SliceSnapshot::ConsumeBigValueChunk, this);
+   }
+ 
+   bool serialize_index = SaveMode() != dfly::SaveMode::RDB &&
+@@ -310,6 +314,10 @@ void SliceSnapshot::ConsumeJournalChange(const journal::JournalChangeItem& item)
+ }
+ 
+ void SliceSnapshot::ThrottleIfNeeded() {
++  // Without tagged chunks, an entry holds stream_mu_ while it may suspend mid-entry (e.g. reading a
++  // tiered list node). Flushing then would cut it, so leave the flush to a later call.
++  if (stream_mu_.is_locked())
++    return;
+   PushSerialized(false);
+ }
+ 
+```
+
+**File**: `src/server/tiered_storage_test.cc` (modified, +71/-0)
+```diff
+@@ -45,6 +45,7 @@ ABSL_DECLARE_FLAG(uint64_t, registered_buffer_size);
+ ABSL_DECLARE_FLAG(bool, tiered_experimental_hash_support);
+ ABSL_DECLARE_FLAG(bool, tiered_experimental_list_support);
+ ABSL_DECLARE_FLAG(unsigned, list_tiering_threshold);
++ABSL_DECLARE_FLAG(bool, serialization_tagged_chunks);
+ ABSL_DECLARE_FLAG(int32_t, list_max_listpack_size);
+ 
+ namespace dfly {
+@@ -1353,6 +1354,10 @@ class ListNodeTieringTest : public TieredStorageTest {
+     SetFlag(&FLAGS_tiered_experimental_list_support, true);
+     TieredStorageTest::SetUp();
+   }
++
++ protected:
++  void SaveWithConcurrentWrites();
++
+   optional<absl::FlagSaver> fs;
+ };
+ 
+@@ -1750,6 +1755,72 @@ TEST_F(ListNodeTieringTest, PushAfterOffloadedNodePromotedToTail) {
+   EXPECT_THAT(Run({"LLEN", "mylist"}), IntArg(kTrimmedItems));
+ }
+ 
++// Reading an offloaded node from disk suspends the snapshot in the middle of the list entry. Writes
++// that serialize other buckets meanwhile must not interleave their bytes with the entry. They write
++// to another db, so their SELECTDB lands between the list's chunks.
++void ListNodeTieringTest::SaveWithConcurrentWrites() {
++  const int kLists = 50, kItems = 8, kKeys = 2000;
++  vector<vector<string>> expected(kLists);
++  for (int l = 0; l < kLists; l++) {
++    for (int i = 0; i < kItems; i++) {
++      expected[l].push_back(BuildString(2048, static_cast<char>('A' + (l + i) % 26)));
++      Run({"RPUSH", absl::StrCat("list:", l), expected[l].back()});
++    }
++  }
++  ExpectConditionWithinTimeout([&] { return GetMetrics().tiered_stats.total_stashes >= kLists; });
++
++  Run({"SELECT", "1"});
++  for (int k = 0; k < kKeys; k++)
++    Run({"SET", absl::StrCat("key:", k), "v"});
++  Run({"SELECT", "0"});
++
++  // Each write serializes the bucket of its key if the snapshot has not reached it yet.
++  atomic_bool saved{false};
++  auto writer = pp_->at(0)->LaunchFiber([&] {
++    Run("writer", {"SELECT", "1"});
++    for (int k = 0; !saved.load(memory_order_relaxed); k = (k + 1) % kKeys) {
++      Run("writer", {"SET", absl::StrCat("key:", k), "w"});
++      ThisFiber::SleepFor(10us);  // let the proactor poll io completions
++    }
++  });
++  EXPECT_EQ(Run({"SAVE"}), "OK");
++  saved.store(true, memory_order_relaxed);
++  writer.Join();
++
++  ASSERT_EQ(Run({"DEBUG", "RELOAD", "NOSAVE"}), "OK");
++  EXPECT_THAT(Run({"DBSIZE"}), IntArg(kLists));
++  for (int l = 0; l < kLists; l++) {
++    auto resp = Run({"LRANGE", absl::StrCat("list:", l), "0", "-1"});
++    ASSERT_THAT(resp, ArrLen(kItems)) << "list " << l;
++    for (int i = 0; i < kItems; i++)
++      EXPECT_EQ(resp.GetVec()[i].GetString(), expected[l][i]) << "list " << l << " index " << i;
++  }
++  Run({"SELECT", "1"});
++  EXPECT_THAT(Run({"DBSIZE"}), IntArg(kKeys));
++  Run({"SELECT", "0"});
++}
++
++// Tagged chunks: the disk read is a consume point.
++TEST_F(ListNodeTieringTest, SaveWithConcurrentWritesWhileLoadingNodes) {
++  InitWithDbFilename();
++  SaveWithConcurrentWrites();
++  CleanupSnapshots();
++}
++
++// Without tagged chunks, the stream mutex keeps other writers out of the entry.
++TEST_F(ListNodeTieringTest, SaveWithConcurrentWritesWhileLoadingNodesUntagged) {
++  SetFlag(&FLAGS_serialization_tagged_chunks, false);
++  InitWithDbFilename();
++  SaveWithConcurrentWrites();
++  CleanupSnapshots();
++}
++
++TEST_F(ListNodeTieringTest, RdbSaveRejected) {
++  InitWithDbFilename();
++  EXPECT_THAT(Run({"SAVE", "RDB"}), ErrArg("not supported"));
++  CleanupSnapshots();
++}
++
+ // Test MEMORY DECOMMIT COOL command flushes the cool queue
+ TEST_P(LatentCoolingTSTest, MemoryDecommitCool) {
+   absl::FlagSaver saver;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8772** (2026-11-07): fix: remove unused code and obsolete test helpers (@vyavdoshenko)
+- **PR #8770** (2026-11-07): test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (@vyavdoshenko)
 - **PR #8763** (2026-11-06): fix: resolve sanitizer UB and extend nightly test timeouts (@vyavdoshenko)
 - **PR #8761** (2026-11-06): test: fix queued sink writer tests on libc++ (macOS) (@vyavdoshenko)
-- **PR #8752** (2026-11-05): fix(server): let CLIENT KILL reply before closing the caller and skip migrating connections (@vyavdoshenko)
-- **PR #8751** (2026-11-05): feat(facade): add FormattableError and a token-parser Field to the CmdArgParser grammar (@vyavdoshenko)
-- **PR #8749** (2026-11-06): fix(search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOINDEX (@vyavdoshenko)
-- **PR #8748** (2026-11-04): ci(release): reject tags that are not vMAJOR.MINOR.PATCH (@romange)
+- **PR #8757** (2026-11-06): fix(snapshot): release the serializer buffer while loading a tiered list node (@kostasrim)
+- **PR #8756** (2026-11-06): feat(server): support CLIENT KILL TYPE, USER, MAXAGE and SKIPME filters (@vyavdoshenko)
 
 ---
 
@@ -3245,55 +3103,70 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOI
+## X. test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#877
 
 **RULE**:
-When implementing operations in `src/core/search/search.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/dragonfly_connection_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f3c3c12`: search): report query errors in FT.AGGREGATE and FT.HYBRID, match nothing on NOINDEX (#8749). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `244e6a07`: test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (#8770). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/search/search.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dragonfly_connection_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// The schema type an index class serves.
-template <typename T>
-constexpr SchemaField::FieldType kFieldTypeOf = [] {
-  using Index = decay_t<T>;
-  if constexpr (is_same_v<Index, TextIndex>)
-    return SchemaField::TEXT;
-  else if constexpr (is_same_v<Index, NumericIndex>)
-    return SchemaField::NUMERIC;
-  else if constexpr (is_same_v<Index, TagIndex>)
-    return SchemaField::TAG;
-  else if constexpr (is_same_v<Index, GeoIndex>)
-    return SchemaField::GEO;
-  else if constexpr (is_same_v<Index, BaseVectorIndex>)
-    return SchemaField::VECTOR;
-  else
-    static_assert(sizeof(Index) == 0, "no schema type for this index");
-}();
+    main_listener_ = make(facade::Listener::Role::MAIN);
+    port_ = acceptor_->AddListener(0, main_listener_);
+    return {main_listener_, admin};
+    // Initialize shared buffers for tests that switch to V2 after setup.
+    const bool v2 = absl::GetFlag(FLAGS_enable_resp_io_loop_v2);
+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, true);
+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
+  facade::Listener* main_listener_ = nullptr;
+// A closing context must not prevent killing an open socket with a blocked send.
+TEST_F(ClientKillTest, KillsClosingConnectionWithStuckSend) {
+  auto wait_until = [](auto&& condition) {
+    const auto deadline = std::chrono::steady_clock::now() + 2s;
+    while (!condition()) {
+      if (std::chrono::steady_clock::now() >= deadline)
+        return false;
+      absl::SleepFor(absl::Milliseconds(1));
+    }
+    return true;
+  };
 
-  // The attribute under `field` if it is NOINDEX: it has no index, so its clauses match nothing
-  // instead of failing.
-  const SchemaField* NoIndexField(string_view field) const {
-    const SchemaField* attribute = indices_->GetSchema().Find(field);
-    return attribute && (attribute->flags & SchemaField::NOINDEX) ? attribute : nullptr;
-  }
-
-    if (!index && !NoIndexField(field)) {
-      // A NOINDEX attribute keeps its type, and a vector one has nothing to search at all.
-      if (const auto* noindex = error_.empty() ? NoIndexField(field) : nullptr; noin
+  ASSERT_EQ(Run({"SET", "big", std::string(64 << 20, 'x')}), "OK");
+  for (bool v2 : {false, true}) {
+    SCOPED_TRACE(v2);
+    absl::SetFlag(&FLAGS_enable_resp_io_loop_v2, v2);
+    RawRespClient client{port_};
+    ASSERT_TRUE(client.valid());
+    const std::string id = ClientId(client);
+    ASSERT_FALSE(id.empty());
+    SCO
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    if (!index) {
+    auto* listener = make(facade::Listener::Role::MAIN);
+    port_ = acceptor_->AddListener(0, listener);
+    return {listener, admin};
+// A half-closed peer marks the connection closing, yet only a kill ends its blocked send.
+TEST_F(ClientKillTest, KillsHalfClosedStuckSend) {
+  RawRespClient v{port_};
+  const std::string id = ClientId(v);
+  Run({"SET", "big", std::string(64 << 20, 'x')});
+  auto row = [&] { return Run({"CLIENT", "LIST", "ID", id}).GetString(); };
+  ASSERT_TRUE(v.SendAll("GET big\r\n"));
+  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "phase=send"); });
+  ASSERT_TRUE(v.ShutdownWrite());
+  ExpectConditionWithinTimeout([&] { return absl::StrContains(row(), "flags=t"); });
+  EXPECT_THAT(Run({"CLIENT", "KILL", "ID", id}), IntArg(1));
+  ExpectConditionWithinTimeout([&] { return row().empty(); });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f3c3c12` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `244e6a07` are properly handled with clean fallback behavior.

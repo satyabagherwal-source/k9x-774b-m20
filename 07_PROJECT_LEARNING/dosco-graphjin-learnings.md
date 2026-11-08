@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `bb1c0fbf`  
+> **Source Version**: `5914e90e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T18:54:45.268Z  
+> **Timestamp**: 2026-11-08T00:49:06.171Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T18:54:39.440Z  
+> **Harvest Timestamp**: 2026-11-08T00:49:04.518Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One governed graph for AI agents — GraphQL + MCP over your databases, files, APIs, and code
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3234 stars
+- **Stars / Engagement**: 3235 stars
 
 ---
 
@@ -1375,6 +1375,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/dosco/graphjin/core/v3/internal/psql"
@@ -1553,6 +1555,12 @@ func (gj *graphjinEngine) argList(c context.Context,
 				return ar, argErr(p)
 			}
 		}
+
+		if p.Max > 0 {
+			if vl[i], err = capIntParam(p, vl[i]); err != nil {
+				return ar, err
+			}
+		}
 	}
 	ar.values = vl
 
@@ -1658,6 +1666,46 @@ func parseVarVal(v json.RawMessage) interface{} {
 		}
 		return string(v)
 	}
+}
+
+// capIntParam applies a bind-time cap the way LEAST(value, max) does on
+// dialects that can express it in SQL: a null value takes the cap, and a
+// larger value is lowered to it.
+func capIntParam(p psql.Param, v interface{}) (interface{}, error) {
+	max := int64(p.Max)
+	var n int64
+	switch v1 := v.(type) {
+	case nil:
+		return max, nil
+	case int64:
+		n = v1
+	case int:
+		n = int64(v1)
+	case int32:
+		n = int64(v1)
+	case float64:
+		if v1 != math.Trunc(v1) {
+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+		}
+		if v1 > float64(max) {
+			return max, nil
+		}
+		n = int64(v1)
+	case string:
+		var err error
+		if n, err = strconv.ParseInt(strings.TrimSpace(v1), 10, 64); err != nil {
+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+		}
+	default:
+		return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+	}
+	if n < 0 {
+		return nil, fmt.Errorf("variable '%s' must not be negative", p.Name)
+	}
+	if n > max {
+		n = max
+	}
+	return n, nil
 }
 
 func argErr(p psql.Param) error {
@@ -2730,226 +2778,259 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb10a65e` (2026-11-06)
-**Commit Message**: fix(intro): omit args input types for functions without inputs
+### Incident Patch 1: `b31841a9` (2026-11-06)
+**Commit Message**: fix(mysql): accept limit and offset variables, capped at the configured limit
 
-A zero-argument database function (for example a column default such as
-public.id_generator()) produced an INPUT_OBJECT with null inputFields.
-GraphQL requires input objects to have at least one field, so graphql-js
-clients failed introspection. Skip the args type and the args argument
-when the function has no inputs, and always serialise inputFields as a
-list.
+MySQL rejected limit: $var and offset: $var outright, and MariaDB
+compiled limit: $var but silently used the default limit. Render a
+placeholder instead. MySQL's LIMIT takes no expressions, so the cap that
+Postgres applies with LEAST($1, N) is applied when the value is bound:
+params carry a Max, larger values are lowered to it, null takes it, and
+non-integer or negative values are rejected. MySQL binds each placeholder
+separately, so every use keeps its own cap.
 
-Fixes #446
+MySQL-family subscriptions read variables from a JSON_TABLE row, which
+LIMIT cannot reference, so they still refuse limit and offset variables
+with a clear error. SQLite now caps a variable limit with min() as well.
+
+Fixes #445
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `core/intro.go` (modified, +10/-3)
+**File**: `core/args.go` (modified, +48/-0)
 ```diff
-@@ -576,6 +576,11 @@ func (in *Introspection) addTableTypeWithDepth(
- 	sort.Strings(fnNames)
+@@ -5,6 +5,8 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
++	"math"
++	"strconv"
+ 	"strings"
  
- 	for _, name := range fnNames {
-+		// An input object needs at least one field; a function without
-+		// inputs takes no args argument, so it needs no args type.
-+		if len(functions[name].Inputs) == 0 {
-+			continue
+ 	"github.com/dosco/graphjin/core/v3/internal/psql"
+@@ -183,6 +185,12 @@ func (gj *graphjinEngine) argList(c context.Context,
+ 				return ar, argErr(p)
+ 			}
+ 		}
++
++		if p.Max > 0 {
++			if vl[i], err = capIntParam(p, vl[i]); err != nil {
++				return ar, err
++			}
 +		}
- 		ty := in.addArgsType(table, functions[name])
- 		in.addType(ty)
  	}
-@@ -888,7 +893,7 @@ func (in *Introspection) addInputType(table sdata.DBTable, ft FullType) (retFT F
+ 	ar.values = vl
  
- // addTableArgsType adds the table arguments type to the introspection schema
- func (in *Introspection) addTableArgsType(table sdata.DBTable, ft *FullType) {
--	if table.Type != "function" {
-+	if table.Type != "function" || len(table.Func.Inputs) == 0 {
- 		return
+@@ -290,6 +298,46 @@ func parseVarVal(v json.RawMessage) interface{} {
  	}
- 	ty := in.addArgsType(table, table.Func)
-@@ -899,8 +904,10 @@ func (in *Introspection) addTableArgsType(table sdata.DBTable, ft *FullType) {
- // addArgsType adds the arguments type to the introspection schema
- func (in *Introspection) addArgsType(table sdata.DBTable, fn sdata.DBFunction) (ft FullType) {
- 	ft = FullType{
--		Kind: "INPUT_OBJECT",
--		Name: (table.Name + fn.Name + SUFFIX_ARGS),
-+		Kind:        KIND_INPUT_OBJ,
-+		Name:        (table.Name + fn.Name + SUFFIX_ARGS),
-+		InputFields: []InputValue{},
-+		Interfaces:  []TypeRef{},
- 	}
- 	for _, fi := range fn.Inputs {
- 		var tr *TypeRef
+ }
+ 
++// capIntParam applies a bind-time cap the way LEAST(value, max) does on
++// dialects that can express it in SQL: a null value takes the cap, and a
++// larger value is lowered to it.
++func capIntParam(p psql.Param, v interface{}) (interface{}, error) {
++	max := int64(p.Max)
++	var n int64
++	switch v1 := v.(type) {
++	case nil:
++		return max, nil
++	case int64:
++		n = v1
++	case int:
++		n = int64(v1)
++	case int32:
++		n = int64(v1)
++	case float64:
++		if v1 != math.Trunc(v1) {
++			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
++		}
++		if v1 > float64(max) {
++			return max, nil
++		}
++		n = int64(v1)
++	case string:
++		var err error
++		if n, err = strconv.ParseInt(strings.TrimSpace(v1), 10, 64); err != nil {
++			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
++		}
++	default:
++		return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
++	}
++	if n < 0 {
++		return nil, fmt.Errorf("variable '%s' must not be negative", p.Name)
++	}
++	if n > max {
++		n = max
++	}
++	return n, nil
++}
++
+ func argErr(p psql.Param) error {
+ 	return fmt.Errorf("required variable '%s' of type '%s' must be set", p.Name, p.Type)
+ }
 ```
 
-**File**: `core/intro_function_args_test.go` (added, +28/-0)
+**File**: `core/args_cap_test.go` (added, +40/-0)
 ```diff
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,40 @@
 +package core
 +
 +import (
 +	"testing"
 +
-+	"github.com/dosco/graphjin/core/v3/internal/sdata"
++	"github.com/dosco/graphjin/core/v3/internal/psql"
 +)
 +
-+// Issue #446: a zero-argument function produced an INPUT_OBJECT with null
-+// inputFields, which GraphQL clients reject during introspection.
-+func TestIntrospectionOmitsEmptyFunctionArgsTypes(t *testing.T) {
-+	cols := []sdata.DBColumn{{Schema: "public", Table: "products", Name: "id", Type: "bigint", PrimaryKey: true}}
-+	fns := []sdata.DBFunction{
-+		{Schema: "public", Name: "id_generator", Type: "bigint"},
-+		{Schema: "public", Name: "add_one", Type: "bigint", Inputs: []sdata.DBFuncParam{{ID: 1, Name: "n", Type: "bigint"}}},
-+	}
-+	result := introspectDBInfo(t, sdata.NewDBInfo("postgres", 0, "public", "", cols, fns, nil), nil)
-+
-+	for _, ty := range result.Schema.Types {
-+		if ty.Kind == KIND_INPUT_OBJ && len(ty.InputFields) == 0 {
-+			t.Errorf("input object %s has no input fields", ty.Name)
++func TestCapIntParam(t *testing.T) {
++	p := psql.Param{Name: "limit", Type: "integer", Max: 20}
++	for _, tc := range []struct {
++		in      interface{}
++		want    int64
++		wantErr bool
++	}{
++		{int64(3), 3, false},
++		{int64(20), 20, false},
++		{int64(5000), 20, false},
++		{3, 3, false},
++		{float64(7), 7, false},
++		{float64(1e30), 20, false},
++		{"8", 8, false},
++		{nil, 20, false},
++		{int64(-1), 0, true},
++		{float64(2.5), 0, true},
++		{"ten", 0, true},
++		{true, 0, true},
++	} {
++		got, err := capIntParam(p, tc.in)
++		if tc.wantErr {
++			if err == nil {
++				t.Errorf("capIntParam(%v) = %v, want error", tc.in, got)
++			}
++			continue
 +		}
-+		if ty.Name == "productsid_generatorArgsInput" {
-+			t.Errorf("unexpected args type for zero-argument function: %s", ty.Name)
++		if err != nil || got != tc.want {
++			t.Errorf("capIntParam(%v) = %v, %v; want %d", tc.in, got, err, tc.want)
 +		}
 +	}
-+	requireIntroType(t, result, "productsadd_oneArgsInput")
 +}
 ```
 
----
-
-### Incident Patch 2: `bb1c0fbf` (2026-11-06)
-**Commit Message**: fix(qcode): correct argument type wording in validation errors
-
-A single allowed type rendered as "must be  or a object". Only join
-with "or" when there is more than one type, and use "an object".
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/internal/qcode/arg_types_text_test.go` (added, +24/-0)
+**File**: `core/internal/dialect/dialect.go` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+package qcode
+@@ -13,6 +13,9 @@ type Param struct {
+ 	IsArray     bool
+ 	IsNotNull   bool
+ 	WrapInArray bool
++	// Max caps an integer value at bind time (0 means no cap). Used where the
++	// SQL cannot express the cap itself, such as a MySQL LIMIT placeholder.
++	Max int32
+ }
+ 
+ type Context interface {
+```
+
+**File**: `core/internal/dialect/mysql.go` (modified, +5/-0)
+```diff
+@@ -145,6 +145,11 @@ func (d *MySQLDialect) RenderLimit(ctx Context, sel *qcode.Select) {
+ 	case sel.Singular:
+ 		ctx.WriteString(`1`)
+ 
++	case sel.Paging.LimitVar != "":
++		// LIMIT takes only a literal or a placeholder, so the configured
++		// limit that Postgres applies with LEAST() is applied at bind time.
++		ctx.AddParam(Param{Name: sel.Paging.LimitVar, Type: "integer", Max: sel.Paging.Limit})
++
+ 	default:
+ 		ctx.Write(fmt.Sprintf("%d", sel.Paging.Limit))
+ 	}
+```
+
+**File**: `core/internal/dialect/sqlite.go` (modified, +3/-0)
+```diff
+@@ -59,7 +59,10 @@ func (d *SQLiteDialect) RenderLimit(ctx Context, sel *qcode.Select) {
+ 
+ 	ctx.WriteString(` LIMIT `)
+ 	if sel.Paging.LimitVar != "" {
++		// Cap the variable at the configured limit, as Postgres does.
++		ctx.WriteString(`min(`)
+ 		ctx.AddParam(Param{Name: sel.Paging.LimitVar, Type: "integer"})
++		ctx.Write(fmt.Sprintf(", %d)", sel.Paging.Limit))
+ 	} else {
+ 		ctx.Write(fmt.Sprintf("%d", sel.Paging.Limit))
+ 	}
+```
+
+**File**: `core/internal/psql/limit_variable_mysql_test.go` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++package psql_test
 +
 +import (
++	"strings"
 +	"testing"
-+
-+	"github.com/dosco/graphjin/core/v3/internal/graph"
 +)
 +
-+func TestArgTypesText(t *testing.T) {
-+	for _, tc := range []struct {
-+		types []graph.ParserType
-+		want  string
-+	}{
-+		{[]graph.ParserType{graph.NodeObj}, "an object"},
-+		{[]graph.ParserType{graph.NodeVar}, "a variable"},
-+		{[]graph.ParserType{graph.NodeNum, graph.NodeVar}, "a number or a variable"},
-+		{[]graph.ParserType{graph.NodeStr, graph.NodeNum, graph.NodeObj}, "a string, a number or an object"},
-+		{[]graph.ParserType{graph.NodeList, graph.NodeStr}, "a list of strings"},
-+	} {
-+		if got := argTypes(tc.types); got != tc.want {
-+			t.Errorf("argTypes(%v) = %q, want %q", tc.types, got, tc.want)
-+		}
-+	}
-+}
-```
-
-**File**: `core/internal/qcode/qcode.go` (modified, +6/-2)
-```diff
-@@ -2017,7 +2017,7 @@ func argTypes(types []graph.ParserType) string {
- 	lastIndex := len(types) - 1
- 	for i, t := range types {
- 		if !list {
--			if i == lastIndex {
-+			if i == lastIndex && i != 0 {
- 				sb.WriteString(" or ")
- 			} else if i != 0 {
- 				sb.WriteString(", ")
-@@ -2029,7 +2029,11 @@ func argTypes(types []graph.ParserType) string {
- 			continue
- 		}
- 		if !list {
--			sb.WriteString("a ")
-+			if t == graph.NodeObj {
-+				sb.WriteString("an ")
-+			} else {
-+				sb.WriteString("a ")
-+			}
- 		}
- 		switch t {
- 		case graph.NodeBool:
-```
-
----
-
-### Incident Patch 3: `de3d1f93` (2026-11-06)
-**Commit Message**: fix(graph): start saved operation text at the operation
-
-parseOp sliced op.Query from the last byte of the preceding token, so when
-a fragment came before the operation the text saved to the allow list
-began with the fragment's closing brace. Start at the operation's first
-token, and at the start of the document when nothing precedes it so a
-leading comment is still kept.
-
-Refs #422
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/internal/graph/op_query_text_test.go` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+package graph
-+
-+import "testing"
-+
-+// Issue #422: the saved operation text must start at the operation, not at the
-+// last character of whatever definition precedes it.
-+func TestOperationQueryText(t *testing.T) {
-+	for _, tc := range []struct{ name, input, want string }{
-+		{"first", "query getUser { users { id } }", "query getUser { users { id } }"},
-+		{"leading comment", "# saved\nquery q { users { id } }", "# saved\nquery q { users { id } }"},
-+		{"after fragment", "fragment F on users { id }\nquery q { users { ...F } }", "query q { users { ...F } }"},
-+		{"anonymous after fragment", "fragment F on users { id }\n{ users { ...F } }", "{ users { ...F } }"},
-+		{"before fragment", "query q { users { ...F } }\nfragment F on users { id }", "query q { users { ...F } }"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			op, err := Parse([]byte(tc.input))
++// Issue #445: MySQL rejected limit: $limit and MariaDB silently used the
++// default limit. Both now bind a placeholder capped at the configured limit.
++func TestMySQLFamilyLimitAndOffsetVariables(t *testing.T) {
++	for _, db := range []string{"mysql", "mariadb"} {
++		t.Run(db, func(t *testing.T) {
++			qc, pc := newDialectCompilers(t, db)
++			reqQC, err := qc.Compile([]byte(`query { products(limit: $limit, offset: $off) { id } }`), nil, "user", "")
 +			if err != nil {
 +				t.Fatal(err)
 +			}
-+			if got := string(op.Query); got != tc.want {
-+				t.Fatalf("op.Query = %q, want %q", got, tc.want)
++			md, sqlBytes, err := pc.CompileEx(reqQC)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if sql := string(sqlBytes); !strings.Contains(sql, "LIMIT ?, ?") {
++				t.Fatalf("expected LIMIT ?, ? in:\n%s", sql)
++			}
++			var limitMax, offsetMax int32 = -1, -1
++			for _, p := range md.Params() {
++				switch p.Name {
++				case "limit":
++					limitMax = p.Max
++				case "off":
++					offsetMax = p.Max
++				}
++			}
++			if limitMax != reqQC.Selects[0].Paging.Limit || limitMax <= 0 {
++				t.Fatalf("limit param cap = %d, want the configured limit %d", limitMax, reqQC.Selects[0].Paging.Limit)
++			}
++			if offsetMax != 0 {
++				t.Fatalf("offset param must not be capped, got %d", offsetMax)
 +			}
 +		})
 +	}
 +}
 ```
 
-**File**: `core/internal/graph/parse.go` (modified, +7/-2)
+**File**: `core/internal/psql/query.go` (modified, +2/-1)
 ```diff
-@@ -346,7 +346,12 @@ func (p *Parser) parseFragment() (frag Fragment, err error) {
+@@ -20,7 +20,8 @@ type Param struct {
+ 	Type        string
+ 	IsArray     bool
+ 	IsNotNull   bool
+-	WrapInArray bool // For MySQL/MariaDB: wrap single JSON object in array for JSON_TABLE
++	WrapInArray bool  // For MySQL/MariaDB: wrap single JSON object in array for JSON_TABLE
++	Max         int32 // Cap an integer value at bind time; 0 means no cap
  }
  
- func (p *Parser) parseOp() (op Operation, err error) {
--	s := p.curr().pos + 1
-+	// Start at the operation's first token. When nothing precedes the
-+	// operation, start at the beginning so a leading comment is kept.
-+	s := 0
-+	if p.pos >= 0 && p.pos+1 < len(p.items) {
-+		s = int(p.items[p.pos+1].pos)
-+	}
- 
- 	if p.peekVal(queryToken, mutationToken, subscriptionToken) {
- 		err = p.parseOpTypeAndArgs(&op)
-@@ -377,7 +382,7 @@ func (p *Parser) parseOp() (op Operation, err error) {
+ type Metadata struct {
+```
+
+**File**: `core/internal/psql/util.go` (modified, +1/-0)
+```diff
+@@ -149,6 +149,7 @@ func (c *compilerContext) AddParam(p dialect.Param) string {
+ 		IsArray:     p.IsArray,
+ 		IsNotNull:   p.IsNotNull,
+ 		WrapInArray: p.WrapInArray,
++		Max:         p.Max,
  	}
- 
- 	e := p.curr().pos + 1
--	op.Query = p.input[s-1 : e]
-+	op.Query = p.input[s:e]
- 
- 	return op, nil
- }
+ 	c.renderParam(pp)
+ 	return ""
 ```
 
 #### Recent Merged Pull Requests:
@@ -2978,39 +3059,75 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. intro): omit args input types for functions without inputs
+## X. mysql): accept limit and offset variables, capped at the configured limit
 
 **RULE**:
-When implementing operations in `core/intro.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/args.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb10a65e`: intro): omit args input types for functions without inputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b31841a9`: mysql): accept limit and offset variables, capped at the configured limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/intro.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/args.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// An input object needs at least one field; a function without
-		// inputs takes no args argument, so it needs no args type.
-		if len(functions[name].Inputs) == 0 {
-			continue
+	"math"
+	"strconv"
+
+		if p.Max > 0 {
+			if vl[i], err = capIntParam(p, vl[i]); err != nil {
+				return ar, err
+			}
 		}
-	if table.Type != "function" || len(table.Func.Inputs) == 0 {
-		Kind:        KIND_INPUT_OBJ,
-		Name:        (table.Name + fn.Name + SUFFIX_ARGS),
-		InputFields: []InputValue{},
-		Interfaces:  []TypeRef{},
+// capIntParam applies a bind-time cap the way LEAST(value, max) does on
+// dialects that can express it in SQL: a null value takes the cap, and a
+// larger value is lowered to it.
+func capIntParam(p psql.Param, v interface{}) (interface{}, error) {
+	max := int64(p.Max)
+	var n int64
+	switch v1 := v.(type) {
+	case nil:
+		return max, nil
+	case int64:
+		n = v1
+	case int:
+		n = int64(v1)
+	case int32:
+		n = int64(v1)
+	case float64:
+		if v1 != math.Trunc(v1) {
+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+		}
+		if v1 > float64(max) {
+			return max, nil
+		}
+		n = int64(v1)
+	case string:
+		var err error
+		if n, err = strconv.ParseInt(strings.TrimSpace(v1), 10, 64); err != nil {
+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+		}
+	default:
+		return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
+	}
+	if n < 0 {
+		return nil, fmt.Errorf("variable '%s' must not be negative", p.Name)
+	}
+	if n > max {
+		n = max
+	}
+	return n, nil
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if table.Type != "function" {
-		Kind: "INPUT_OBJECT",
-		Name: (table.Name + fn.Name + SUFFIX_ARGS),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb10a65e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b31841a9` are properly handled with clean fallback behavior.
