@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T20:45:46.357Z",
+  "last_updated": "2026-11-08T20:53:01.508Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23055,7 +23055,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "76da92800a845eaaa016af5656d578b0636c00baacad7d78e48f040c2d50c007",
+      "content_hash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -23133,7 +23133,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-11-05T04:00:33.344Z",
+      "verified_at": "2026-11-08T20:52:55.184Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40797,11 +40797,16 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "74363634",
-      "content_hash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
+      "source_version": "b1bc09de",
+      "content_hash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "6: small fixes on merged pull requests",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2856,
           "title": "a crash: the thermal state change arrives off the main thread",
@@ -40828,7 +40833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T14:13:37.817Z",
+      "verified_at": "2026-11-08T20:53:01.484Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

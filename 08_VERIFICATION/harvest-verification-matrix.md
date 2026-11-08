@@ -8384,3 +8384,5 @@
 | `CYCLE-20261108-OO87` | `2026-11-08T20:38:41.575Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`311e6279...`) |
 | `CYCLE-20261108-XMWS` | `2026-11-08T20:45:39.772Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f12dda7e...`) |
 | `CYCLE-20261108-XS2A` | `2026-11-08T20:45:46.450Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule 5284` | Yes (`5d4af493...`) |
+| `CYCLE-20261108-6YZ6` | `2026-11-08T20:52:55.314Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`87e7cbc4...`) |
+| `CYCLE-20261108-73TP` | `2026-11-08T20:53:01.597Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d8d5400a...`) |

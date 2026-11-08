@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T20:45:46.470Z",
+  "last_updated": "2026-11-08T20:53:01.619Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "76da92800a845eaaa016af5656d578b0636c00baacad7d78e48f040c2d50c007",
-      "verified_at": "2026-11-05T04:00:33.477Z",
+      "content_hash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
+      "verified_at": "2026-11-08T20:52:55.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T04:00:33.477Z"
+      "last_updated": "2026-11-08T20:52:55.327Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
-      "verified_at": "2026-11-05T14:13:37.908Z",
+      "content_hash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
+      "verified_at": "2026-11-08T20:53:01.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:13:37.908Z"
+      "last_updated": "2026-11-08T20:53:01.618Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",

@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "76da92800a845eaaa016af5656d578b0636c00baacad7d78e48f040c2d50c007",
-    "lastHarvestedAt": "2026-11-05T04:00:33.468Z",
+    "contentHash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
+    "lastHarvestedAt": "2026-11-08T20:52:55.318Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "74363634",
+    "sourceVersion": "b1bc09de",
     "license": "MIT",
-    "contentHash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
-    "lastHarvestedAt": "2026-11-05T14:13:37.897Z",
+    "contentHash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
+    "lastHarvestedAt": "2026-11-08T20:53:01.601Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

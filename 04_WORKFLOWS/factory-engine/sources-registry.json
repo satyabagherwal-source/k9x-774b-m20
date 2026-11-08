@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T20:45:49.063Z",
-    "lastVerified": "2026-11-08T20:45:49.063Z",
+    "lastChecked": "2026-11-08T20:53:05.602Z",
+    "lastVerified": "2026-11-08T20:53:05.602Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -460,12 +460,12 @@
     "revisionIdentifier": "444fdf06"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T20:21:46.147Z",
-    "lastVerified": "2026-11-08T20:21:46.147Z",
+    "lastChecked": "2026-11-08T20:53:05.590Z",
+    "lastVerified": "2026-11-08T20:53:05.590Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -474,7 +474,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a3b77fdf"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -816,8 +817,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T16:26:25.072Z",
-    "lastVerified": "2026-11-08T16:26:25.072Z",
+    "lastChecked": "2026-11-08T20:53:00.588Z",
+    "lastVerified": "2026-11-08T20:53:00.588Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3986,12 +3987,12 @@
     "lastVerified": "2026-11-07T02:01:20.197Z"
   },
   "dosco-graphjin": {
-    "name": "dosco/graphjin",
+    "name": "graphjin",
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T00:49:04.518Z",
-    "lastVerified": "2026-11-08T00:49:04.518Z",
+    "lastChecked": "2026-11-08T20:52:58.117Z",
+    "lastVerified": "2026-11-08T20:52:58.117Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
@@ -4000,7 +4001,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5914e90e"
   },
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
@@ -4254,12 +4256,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T04:00:32.311Z",
-    "lastVerified": "2026-11-05T04:00:32.311Z",
+    "lastChecked": "2026-11-08T20:52:53.429Z",
+    "lastVerified": "2026-11-08T20:52:53.429Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "76da92800a845eaaa016af5656d578b0636c00baacad7d78e48f040c2d50c007",
+    "contentHash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7175,9 +7177,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-07T23:55:22.926Z",
+    "lastChecked": "2026-11-08T20:53:03.114Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-07T23:55:22.926Z"
+    "lastVerified": "2026-11-08T20:53:03.114Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -8361,9 +8363,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-07T20:01:56.102Z",
+    "lastChecked": "2026-11-08T20:52:50.535Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-07T20:01:56.102Z"
+    "lastVerified": "2026-11-08T20:52:50.535Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11297,14 +11299,14 @@
     "officialUrl": "https://github.com/Louis-CFM/coucou",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-05T14:13:37.228Z",
-    "lastVerified": "2026-11-05T14:13:37.228Z",
+    "lastChecked": "2026-11-08T20:52:59.978Z",
+    "lastVerified": "2026-11-08T20:52:59.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "1f650e4b1e8a7fda1976ce916433d912eb102b7240fe5e63a78e4a3490548b67",
+    "contentHash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 20,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
