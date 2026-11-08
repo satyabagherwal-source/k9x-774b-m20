@@ -8210,3 +8210,6 @@ Every entry in this ledger must capture:
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `944a95d5` | Multi-dimensional audit evidence | 2026-11-08T03:43:22.778Z |
 | `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `1a3ac2c7` | Multi-dimensional audit evidence | 2026-11-08T03:43:27.728Z |
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-08T03:45:05.196Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `39bf8539` | Multi-dimensional audit evidence | 2026-11-08T03:54:26.896Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `80ec9bcd` | Multi-dimensional audit evidence | 2026-11-08T03:54:27.559Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-08T03:55:59.674Z |

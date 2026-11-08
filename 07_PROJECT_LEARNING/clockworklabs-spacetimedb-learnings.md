@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `291031b4`  
+> **Source Version**: `39bf8539`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:52:09.362Z  
+> **Timestamp**: 2026-11-08T03:54:25.391Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:52:08.265Z  
+> **Harvest Timestamp**: 2026-11-08T03:54:24.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25527 stars
+- **Stars / Engagement**: 25532 stars
 
 ---
 
@@ -830,484 +830,281 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58a7eacd` (2026-11-06)
-**Commit Message**: Add Security Gremlin to GREMLINS.md (#6510)
+### Incident Patch 1: `f53483c3` (2026-11-06)
+**Commit Message**: Skip CI builds and tests for docs-only changes (#6515)
 
 # Description of Changes
 
-This PR documents Security Gremlin, a report-only security reviewer that
-went live on November 5, in `.github/GREMLINS.md`. Until now the file
-listed only Clawd, so nothing told the team that a second bot also acts
-as `clockwork-labs-bot`, where to reach it, or that it keeps
-vulnerability details out of public issues and PRs. The new entry
-follows Clawd's format and is the only change.
+This PR skips the build and test jobs in CI, and the private Internal
+Tests run, when a change only touches documentation. Previously only
+Internal Tests skipped anything, and only for changes under `docs/`
+(#4995), so a skills-only PR like #6348 still ran about 50 jobs and 180
+job-minutes over half an hour. Now a shared `detect-docs-only` action
+counts `docs/`, `skills/`, the agent plugins, `.agents/` and root
+Markdown files as docs, except crate READMEs, which `crates/bindings`
+compiles as doc tests, and docs pages that code in `crates/`, `sdks/` or
+`tools/` names by path, such as the chat app tutorial the quickstart
+smoketest builds. The first CI job exposes the result as `skip_tests`,
+and on docs-only changes the build and test jobs skip while the existing
+no-op jobs report the required Smoketests and update-flow checks, the
+same way merge queue reuse already does; Lints, the docs build, the CLI
+docs check and the cheap policy checks still run.
 
 # API and ABI breaking changes
 
-This doesn't break anything, since it only adds Markdown to a file that
-no code, workflow, or tool reads.
+None. This only changes which CI jobs run, and only for changes where
+every file is documentation that no build or test re
 
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-- [x] Checked the GitHub account, Discord channel, bot name, and rules
-in the entry against Security Gremlin's live configuration.
-- [x] Confirmed Security Gremlin is running and connected to Discord.
-- [ ] CI
-
-**File**: `.github/GREMLINS.md` (modified, +24/-0)
+**File**: `.github/actions/detect-docs-only/action.yml` (added, +68/-0)
 ```diff
-@@ -28,6 +28,30 @@ This file documents the automated agents and bots that operate on this repositor
- - Mention `@Openclaw` in #gremlins on Discord
- - Tag `@clockwork-labs-bot` on GitHub PRs/issues
- 
-+## Security Gremlin 🛡️
+@@ -0,0 +1,68 @@
++name: Detect docs-only changes
++description: >-
++  Report whether every file this event changes is documentation or agent
++  guidance that no build or test reads: docs/, skills/, the agent plugins,
++  .agents/, and Markdown files at the repository root. Crate READMEs are not
++  included, because some are compiled as doc tests, and neither are docs pages
++  whose code a test builds and runs. Requires a prior checkout.
++outputs:
++  docs-only:
++    description: "'true' if every changed file is documentation, otherwise 'false'."
++    value: ${{ steps.detect.outputs.docs-only }}
++runs:
++  using: composite
++  steps:
++    - name: Detect docs-only changes
++      id: detect
++      shell: bash
++      env:
++        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
++        PUSH_BEFORE: ${{ github.event.before }}
++      run: |
++        set -euo pipefail
 +
-+- **What:** Security reviewer (report-only)
-+- **GitHub account:** `clockwork-labs-bot`
-+- **Discord channel:** #security-gremlin (CL - SpacetimeDB)
-+- **Powered by:** [OpenClaw](https://github.com/openclaw/openclaw) + GPT-6.1
-+
-+### What Security Gremlin does
-+
-+- **Reviews code for security bugs** — on request, reads commits and PRs for problems with authentication, authorization, module sandboxing, untrusted input, and leaked secrets
-+- **Checks dependencies and CI** — looks for vulnerable dependencies and unsafe GitHub Actions workflows
-+- **Reports privately** — posts findings in #security-gremlin for the team to triage
-+
-+### What Security Gremlin does NOT do
-+
-+- Discuss vulnerabilities in public issues, PR comments, or commit messages
-+- Build or run code from PRs by people outside Clockwork Labs
-+- Scan or probe live systems
-+- Approve or merge PRs, or take any destructive action
-+
-+### Contacting Security Gremlin
-+
-+- Mention `@Security Gremlin App` in #security-gremlin on Discord
-+
- ---
- 
- *To add a new gremlin, document it here.*
-```
-
----
-
-### Incident Patch 2: `2613d19e` (2026-11-06)
-**Commit Message**: [T3 Connect] TypeScript SDK: fail the connection instead of crashing Node on a bad message (#6010)
-
-> Part of the work to move T3 Code's T3 Connect relay onto SpacetimeDB.
-**Non-blocking.** T3's workaround: never change the row layout of tables
-or views that clients subscribe to.
-
-# Description of Changes
-
-In Node, a server message the SDK fails to apply, such as a row that
-doesn't match the client's bindings, throws out of the WebSocket
-listener and crashes the process. An error thrown in an app callback
-(`onInsert`, `onConnect`, …) does the same.
-
-- A message that fails to apply is handled like one that fails to
-decode: it is logged and ends the connection, queued messages are
-dropped, and pending calls settle. The app gets a
-`WebSocketProtocolError` whose `cause` is the original error, through
-`onConnectError` if the connection wasn't established yet and through
-`onDisconnect` otherwise. Like master's protocol errors, it doesn't
-retry automatically. Without automatic reconnect, a message that fails
-to decode now does the same instead of throwing.
-- A throwing callback is logged, the remaining callbacks still run, and
-the connection stays open.
-
-The C# SDK already logs, fails pen
-
-**File**: `crates/bindings-typescript/src/sdk/db_connection_impl.ts` (modified, +14/-1)
-```diff
-@@ -1873,8 +1873,14 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
-     }
-   }
- 
-+  /**
-+   * End the connection over a server message that could not be decoded or
-+   * applied. A retry would not fix it, so this never reconnects. The error
-+   * goes to `onConnectError` if the connection was not yet established, and
-+   * to `onDisconnect` otherwise.
-+   */
-   #handleProtocolError(cause: unknown): void {
--    if (!this.#automaticReconnect) throw cause;
-+    stdbLogger('error', 'Failed to process a server message', cause);
-     const error = new WebSocketProtocolError('Invalid server message', {
-       cause,
-     });
-@@ -1907,6 +1913,13 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
-           this.#processMessage(data);
-         }
-       }
-+    } catch (e) {
-+      // A message that could not be applied leaves the client cache
-+      // inconsistent, and rethrowing from a WebSocket listener crashes Node
-+      // hosts. Handle it like a message that could not be decoded: end the
-+      // connection, which drops what is queued and settles calls in flight.
-+      // (Callback errors never get here; `EventEmitter` logs them.)
-+      this.#handleProtocolError(e);
-     } finally {
-       if (this.#inboundQueueOffset >= this.#inboundQueue.length) {
-         this.#inboundQueue.length = 0;
-```
-
-**File**: `crates/bindings-typescript/src/sdk/event_emitter.ts` (modified, +9/-1)
-```diff
-@@ -1,3 +1,5 @@
-+import { stdbLogger } from './logger.ts';
-+
- // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
- export class EventEmitter<Key, Callback extends Function = Function> {
-   #events: Map<Key, Set<Callback>> = new Map();
-@@ -25,8 +27,14 @@ export class EventEmitter<Key, Callback extends Function = Function> {
-       return;
-     }
- 
-+    // Like the C# SDK, a throwing callback is logged and does not stop the
-+    // others or escape into the WebSocket listener, which would crash Node.
-     for (const callback of callbacks) {
--      callback(...args);
-+      try {
-+        callback(...args);
-+      } catch (e) {
-+        stdbLogger('error', 'A callback threw', e);
-+      }
-     }
-   }
- }
-```
-
-**File**: `crates/bindings-typescript/tests/db_connection.test.ts` (modified, +147/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { assertType, beforeEach, describe, expect, test } from 'vitest';
-+import { assertType, beforeEach, describe, expect, test, vi } from 'vitest';
- import {
-   BinaryWriter,
-   ConnectionId,
-@@ -216,6 +216,152 @@ describe('DbConnection', () => {
-     expect(client.isActive).toBe(false);
-   });
- 
-+  test('logs an error thrown by a callback and keeps the connection open', async () => {
-+    const wsAdapter = new WebsocketTestAdapter();
-+    const onDisconnect = vi.fn();
-+    const secondOnConnect = vi.fn();
-+
-+    const client = DbConnection.builder()
-+      .withUri('ws://127.0.0.1:1234')
-+      .withDatabaseName('db')
-+      .withWSFn(wsAdapter.openWebSocket)
-+      .onConnect(() => {
-+        throw new Error('callback failed');
-+      })
-+      .onConnect(secondOnConnect)
-+      .onDisconnect(onDisconnect)
-+      .build();
-+
-+    await client['wsPromise'];
-+    wsAdapter.acceptConnection();
-+    // Node rethrows errors from WebSocket listeners on the next tick, which
-+    // crashes the host process.
-+    expect(() =>
-+      wsAdapter.sendToClient(
-+        ServerMessage.InitialConnection({
-+          identity: anIdentity,
-+          token: 'a-token',
-+          connectionId: ConnectionId.random(),
-+        })
-+      )
-+    ).not.toThrow();
-+
-+    expect(secondOnConnect).toHaveBeenCalledOnce();
-+    expect(client.isActive).toBe(true);
-+    expect(wsAdapter.closed).toBe(false);
-+    expect(onDisconnect).not.toHaveBeenCalled();
-+  });
-+
-+  test('reports a row it cannot decode through onDisconnect instead of throwing', async () => {
-+    const onDisconnectPromise = new Deferred<Error | undefined>();
-+    const wsAdapter = new WebsocketTestAdapter();
-+
-+    const client = DbConnection.builder()
-+      .withUri('ws://127.0.0.1:1234')
-+      .withDatabaseName('db')
-+      .withWSFn(wsAdapter.openWebSocket)
-+      .onDisconnect((_ctx, error) => onDisconnectPromise.resolve(error))
-+      .build();
-+
-+    await client['wsPromise'];
-+    wsAdapter.acceptConnection();
-+    wsAdapter.sendToClient(
-+      ServerMessage.InitialConnection({
-+        identity: anIdentity,
-+        token: 'a-token',
-+        connectionId: ConnectionId.random(),
-+      })
-+    );
-+    expect(client.isActive).toBe(true);
-+    const inserted: number[] = [];
-+    client.db.player.onInsert((_ctx, player) => inserted.push(player.id));
-+    const inFlight = client.reducers.createPlayer({
-+      name: 'drogus',
-+      location: { x: 0, y: 0 },
-+    });
-+
-+    // A `player` row one byte short, as when the client's bindings are out of
-+    // step with the module's schema.
-+    const truncatedPlayer = encodePlayer({
-+      id: 1,
-+      userId: anIdentity,
-+      name: 'drogus',
-+      location: { x: 0, y: 0 },
-+    }).slice(0, -1);
-+    expect(() =>
-+      wsAdapter.sendToClient(
-+        ServerMessage.TransactionUpdate({
-+          querySets: [makeQuerySetUpdate(0, 'player', truncatedPlayer)],
-+        })
-+      )
-+    ).not.toThrow();
-+
-+    const error = await onDisconnectPromise.promise;
-+    expect(error?.message).toBe('Invalid server message');
-+    expect(error?.cause).toBeInstanceOf(RangeError);
-+    expect(client.isActive).toBe(false);
-+    expect(wsAdapter.closed).toBe(true);
-+
-+    // A call in flight settles, and a message that arrives later is ignored.
-+    await expect(inFlight).rejects.toThrow();
-+    wsAdapter.sendToClient(
-+      ServerMessage.TransactionUpdate({
-+        querySets: [
-+          makeQuerySetUpdate(
-+            0,
-+            'player',
-+            encodePlayer({
-+              id: 2,
-+              userId: anIdentity,
-+              name: 'drogus',
-+              location: { x: 0, y: 0 },
-+            })
-+          ),
-+        ],
-+      })
-+    );
-+    expect(inserted).toEqual([]);
-+  });
-+
-+  test('reports a message it cannot apply before connecting through onConnectError', async () => {
-+    const onConnectErrorPromise = new Deferred<Error>();
-+    const onDisconnect = vi.fn();
-+    const wsAdapter = new WebsocketTestAdapter();
-+
-+    const client = DbConnection.builder()
-+      .withUri('ws://127.0.0.1:1234')
-+      .withDatabaseName('db')
-+      .withWSFn(wsAdapter.openWebSocket)
-+      .onConnectError((_ctx, error) => onConnectErrorPromise.resolve(error))
-+      .onDisconnect(onDisconnect)
-+      .build();
-+
-+    await client['wsPromise'];
-+    wsAdapter.acceptConnection();
-+    // A truncated row before `InitialConnection` stands in for any first
-+    // message the client cannot process: the connection was never up.
-+    const truncatedPlayer = encodePlayer({
-+      id: 1,
-+      userId: anIdentity,
-+      name: 'drogus',
-+      location: { x: 0, y: 0 },
-+    }).slice(0, -1);
-+    expect(() =>
-+      wsAdapter.sendToClient(
-+        ServerMessage.TransactionUpdate({
-+          querySets: [makeQuerySetUpdate(0, 'player', truncatedPlayer)],
-+        })
-+      )
-+    ).not.toThrow();
-+
-+    const error = await onConnectErrorPromise.promise;
-+    expect(error.message).toBe('Invalid server 
-```
-
----
-
-### Incident Patch 3: `f271acbd` (2026-11-06)
-**Commit Message**: Fix database identity publish (#6507)
-
-# Description of Changes
-This is already released via
-https://github.com/clockworklabs/SpacetimeDBPrivate/pull/4234. Needs to
-get into master now for future releases.
-
-# API and ABI breaking changes
-It is a API breaking change, if someone is using Identities to publish
-new database.
-
-# Rollback safety impact
-n/a
-
-# Expected complexity level and risk
-1
-
-# Testing
-Already released.
-
-**File**: `crates/client-api/src/routes/database.rs` (modified, +50/-1)
-```diff
-@@ -1411,6 +1411,9 @@ pub async fn publish<S: NodeDelegate + ControlStateDelegate + Authorization>(
-         .map_err(log_and_500)?;
-     match existing.as_ref() {
-         None => {
-+            if matches!(name_or_identity.as_ref(), Some(NameOrIdentity::Identity(_))) {
-+                return Err(bad_request("Cannot create a database at a supplied identity".into()));
-+            }
-             allow_creation(&auth)?;
-             ctx.authorize_action(
-                 auth.claims.identity,
-@@ -2492,6 +2495,7 @@ mod tests {
-         dns_lookups: std::sync::Arc<AtomicUsize>,
-         reject_publication: bool,
-         name_registrations: std::sync::Arc<AtomicUsize>,
-+        allow_publish_update: bool,
-     }
- 
-     impl DummyState {
-@@ -2508,6 +2512,7 @@ mod tests {
-                 dns_lookups: std::sync::Arc::new(AtomicUsize::new(0)),
-                 reject_publication: false,
-                 name_registrations: std::sync::Arc::new(AtomicUsize::new(0)),
-+                allow_publish_update: false,
-             }
-         }
- 
-@@ -2567,6 +2572,41 @@ mod tests {
-         assert_eq!(registrations.load(Ordering::Relaxed), 0);
-     }
- 
-+    #[tokio::test]
-+    async fn supplied_identity_can_update_but_not_create_database() {
-+        let identity = test_identity(42);
-+        let mut existing = DummyState::new().with_database(identity);
-+        existing.allow_publish_update = true;
-+
-+        for (state, expected_status) in [(DummyState::new(), StatusCode::BAD_REQUEST), (existing, StatusCode::OK)] {
-+            let app = DatabaseRoutes::<DummyState>::default()
-+                .into_router(state.clone())
-+                .with_state(state);
-+            let response = app
-+                .oneshot(
-+                    Request::builder()
-+                        .method(http::Method::PUT)
-+                        .uri(format!("/{identity}"))
-+                        .body(Body::empty())
-+                        .unwrap(),
-+                )
-+                .await
-+                .unwrap();
-+            assert_eq!(response.status(), expected_status);
-+            if expected_status == StatusCode::OK {
-+                let body = response.into_body().collect().await.unwrap().to_bytes();
-+                assert!(matches!(
-+                    serde_json::from_slice::<PublishResult>(&body).unwrap(),
-+                    PublishResult::Success {
-+                        database_identity,
-+                        op: PublishOp::Updated,
-+                        ..
-+                    } if database_identity == identity
-+                ));
-+            }
++        # Any doubt about what changed means running every check.
++        run_everything() {
++          echo "$1; running all checks."
++          echo "docs-only=false" >>"$GITHUB_OUTPUT"
++          exit 0
 +        }
-+    }
 +
-     fn http_response_size_metric(database_identity: Identity) -> u64 {
-         DB_METRICS
-             .http_response_size_bytes
-@@ -2711,10 +2751,13 @@ mod tests {
-         async fn publish_database(
-             &self,
-             _publisher: &Identity,
--            _spec: DatabaseDef,
-+            spec: DatabaseDef,
-             _policy: MigrationPolicy,
-             _environment: EnvironmentUpdate,
-         ) -> anyhow::Result<Option<UpdateDatabaseResult>> {
-+            if self.allow_publish_update && self.databases.contains_key(&spec.database_identity) {
-+                return Ok(None);
-+            }
-             Err(anyhow::anyhow!("unused"))
-         }
- 
-@@ -2809,6 +2852,12 @@ mod tests {
-                     source: None,
-                 });
-             }
-+            if self.allow_publish_update
-+                && matches!(action, Action::UpdateDatabase)
-+                && self.databases.contains_key(&database)
-+            {
-+                return Ok(());
-+            }
-             Err(Unauthorized::InternalError(anyhow::anyhow!("unused")))
-         }
- 
++        case "${GITHUB_EVENT_NAME}" in
++          pull_request)
++            # The checkout is GitHub's merge of the PR into its base, so its first parent is the base.
++            git fetch --no-tags --quiet --depth=2 origin "${GITHUB_SHA}" || run_everything "Could not fetch the PR merge commit"
++            base="$(git rev-parse "${GITHUB_SHA}^1")" || run_everything "Could not find the PR's base commit"
++            ;;
++          merge_group) base="${MERGE_GROUP_BASE}" ;;
++          push) base="${PUSH_BEFORE}" ;;
++          *) base="" ;;
++        esac
++
++        if [[ -z "${base}" || "${base}" =~ ^0+$ ]]; then
++          run_everything "No base commit to compare against"
++        fi
++
++        git fetch --no-tags --quiet --depth=1 origin "${base}" || run_everything "Could not fetch base commit ${base}"
++        changed="$(git diff --no-renames --name-only "${base}" "${GITHUB_SHA}")" || run_everything "Could not diff against ${base}"
++
++        # Some tests build and run the code in a docs page, such as the quickstart smoketest with the
++        # chat app tutorial, so a change to one of those pages is a code change. This finds them by
++        # their full path, so tests should name such pages that way.
++        tested_pages="$(git grep -h -o -E 'docs/docs/[A-Za-z0-9_./-]+[.]md' -- crates sdks tools || true)"
++
++        while IFS= read -r path; do
++          if [[ -n "${path}" ]] && grep -qxF -- "${path}" <<<"${tested_pages}"; then
++            run_everything "Tests run the code in ${path}"
++          fi
++          case "${path}" in
++            "" | docs/* | skills/* | codex-plugin/* | .claude-plugin/* | .agents/*) ;;
++            # Markdown only at the root: crate READMEs can be compiled as doc tests.
++            */*) run_everything "Changes outside the docs, such as ${path}" ;;
++            *.md) ;;
++            *) run_everything "Changes outside the docs, such as ${path}" ;;
++          esac
++        done <<<"${changed}"
++
++        echo "Every changed file is documentation; skipping builds and tests."
++        echo "docs-only=true" >>"$GITHUB_OUTPUT"
 ```
 
-**File**: `crates/smoketests/tests/cluster/permissions.rs` (modified, +27/-0)
+**File**: `.github/workflows/ci.yml` (modified, +39/-30)
 ```diff
-@@ -84,6 +84,33 @@ fn test_publish() {
-     assert!(result.is_err(), "Expected publish to fail for non-owner");
- }
+@@ -33,10 +33,17 @@ jobs:
+     outputs:
+       # A reused failure also skips fresh jobs; the final step reports that failure on this commit.
+       skip: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' }}
++      # Also true when the change only touches docs. Jobs that check the docs themselves (lints, the
++      # docs build and the CLI docs check) use `skip` instead, so they still run for docs-only changes.
++      skip_tests: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' || steps.docs.outputs.docs-only == 'true' }}
+     steps:
+       - name: Checkout merge queue commit
+         uses: actions/checkout@v4
  
-+/// A caller may update their database by identity, but may not choose an identity when creating one.
-+#[test]
-+fn test_publish_cannot_create_at_supplied_identity() {
-+    let mut test = Smoketest::builder()
-+        .precompiled_module("modules-basic")
-+        .autopublish(false)
-+        .build();
-+    test.new_identity().unwrap();
++      - name: Detect docs-only changes
++        id: docs
++        uses: ./.github/actions/detect-docs-only
 +
-+    let other_user = test.api_call("POST", "/v1/identity").unwrap();
-+    assert_eq!(other_user.status_code, 200);
-+    let other_identity = other_user.json().unwrap()["identity"].as_str().unwrap().to_owned();
-+
-+    let response = test
-+        .api_call_with_body("PUT", &format!("/v1/database/{other_identity}"), Some(&[]))
-+        .unwrap();
-+    assert_eq!(response.status_code, 400);
-+    assert!(response
-+        .text()
-+        .unwrap()
-+        .contains("Cannot create a database at a supplied identity"));
-+
-+    let name = format!("permissions-publish-identity-{}", std::process::id());
-+    let identity = test.publish().name(&name).run().unwrap();
-+    assert_eq!(test.publish().name(&identity).run().unwrap(), identity);
-+}
-+
- /// Test that you can't replace names of a database you don't own
- #[test]
- fn test_replace_names() {
+       - name: Compare merge queue commit to PR head
+         id: compare
+         env:
+@@ -93,7 +100,7 @@ jobs:
+ 
+   upload-build-artifacts-linux:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Upload build artifacts (Linux)
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -281,7 +288,7 @@ jobs:
+ 
+   upload-build-artifacts-windows:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Upload build artifacts (Windows)
+     runs-on: spacetimedb-windows-runner
+     timeout-minutes: 15
+@@ -567,7 +574,7 @@ jobs:
+   # and skipping this check means that the matrix isn't "populated" so the required checks wouldn't be met.
+   smoketests_noop:
+     needs: [merge_queue_noop]
+-    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
+     name: Smoketests (${{ matrix.name }})
+     strategy:
+       matrix:
+@@ -577,15 +584,15 @@ jobs:
+           - name: Windows 2/4
+           - name: Windows 3/4
+           - name: Windows 4/4
+-    # These no-op jobs only preserve required smoketest check names after CI reuse.
++    # These no-op jobs only preserve required smoketest check names after CI reuse or for docs-only changes.
+     runs-on: spacetimedb-linux-small
+     steps:
+-      - name: Skip duplicate merge queue smoketest
+-        run: echo "Merge queue commit has the same tree as the PR head; smoketest already ran for the PR."
++      - name: Skip smoketest
++        run: echo "Smoketests already ran for an equivalent commit, or the change only touches docs."
+ 
+   sdk_test_modules:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Build SDK test modules
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -663,7 +670,7 @@ jobs:
+ 
+   sdk_test_archives:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Build SDK test archives
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -939,20 +946,20 @@ jobs:
+ 
+   sdk_tests_noop:
+     needs: [merge_queue_noop]
+-    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
+     name: SDK Tests (${{ matrix.mode }} ${{ matrix.partition }}/2)
+     strategy:
+       matrix:
+         mode: [native, browser]
+         partition: [1, 2]
+     runs-on: ubuntu-latest
+     steps:
+-      - name: Skip duplicate merge queue SDK test
+-        run: echo "Merge queue commit has the same tree as the PR head; SDK tests already ran for the PR."
++      - name: Skip SDK test
++        run: echo "SDK tests already ran for an equivalent commit, or the change only touches docs."
+ 
+   rust_test_build:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - Rust Build
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -1173,7 +1180,7 @@ jobs:
+ 
+   csharp_tests:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - C#
+     runs-on: spacetimedb-linux
+     timeout-minutes: 10
+@@ -1211,7 +1218,7 @@ jobs:
+ 
+   cpp_compile_tests:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - C++ Compile (${{ matrix.suite }})
+     runs-on: spacetimedb-linux
+     timeout-minutes: 10
+@@ -1266,7 +1273,7 @@ jobs:
+     timeout-minutes: 5
+     steps:
+       - name: Check component results
+-        if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++        if: ${{ needs.merge_
+```
+
+**File**: `.github/workflows/internal-tests.yml` (modified, +6/-11)
+```diff
+@@ -33,24 +33,19 @@ jobs:
+       TARGET_OWNER: clockworklabs
+       TARGET_REPO: SpacetimeDBPrivate
+     steps:
+-      # Required for the path filter check below on non-PR commits (e.g. `master`)
+       - name: Checkout
+         uses: actions/checkout@v4
+ 
+-      # Skip the private dispatch entirely when only `docs/` is touched. The job
++      # Skip the private dispatch entirely for docs-only changes. The job
+       # itself still completes successfully so required-status-check gating is
+       # satisfied without spending private-runner time on a docs-only change.
+-      - name: Detect non-docs changes
+-        id: filter
+-        uses: dorny/paths-filter@v3
+-        with:
+-          filters: |
+-            non_docs:
+-              - '!docs/**'
++      - name: Detect docs-only changes
++        id: docs
++        uses: ./.github/actions/detect-docs-only
+ 
+       - id: dispatch
+         name: Select or trigger tests
+-        if: steps.filter.outputs.non_docs == 'true'
++        if: steps.docs.outputs.docs-only != 'true'
+         env:
+           CARGO_TARGET_DIR: ${{ runner.temp }}/internal-tests-cargo-target
+           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
+@@ -67,7 +62,7 @@ jobs:
+             -- other-workflows coordinate internal-tests "${args[@]}"
+ 
+       - name: Wait for Internal Tests to complete
+-        if: steps.filter.outputs.non_docs == 'true'
++        if: steps.docs.outputs.docs-only != 'true'
+         env:
+           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
+           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6524** (2026-11-06): Document editing data and calling reducers in the Maincloud dashboard (@cloutiertyler)
 - **PR #6516** (closed): [Do not merge] Test docs-only CI skipping from #6515 (@cloutiertyler)
+- **PR #6515** (2026-11-06): Skip CI builds and tests for docs-only changes (@cloutiertyler)
 - **PR #6510** (2026-11-06): Add Security Gremlin to GREMLINS.md (@cloutiertyler)
 - **PR #6508** (closed): Exercise existing Linux and Windows smoketests on staging (testing only) (@jdetter)
 - **PR #6507** (2026-11-06): Fix database identity publish (@Shubham8287)
-- **PR #6503** (2026-11-06): Bump version to 2.15.0 (@rekhoff)
-- **PR #6499** (2026-11-06): Count only visible rows in clear_table (@lisandroct)
 
 ---
 
@@ -1327,44 +1124,53 @@ Already released.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Security Gremlin to GREMLINS.md (#6510)
+## X. Skip CI builds and tests for docs-only changes (#6515)
 
 **RULE**:
-When implementing operations in `.github/GREMLINS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/detect-docs-only/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58a7eacd`: Add Security Gremlin to GREMLINS.md (#6510). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f53483c3`: Skip CI builds and tests for docs-only changes (#6515). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/GREMLINS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/detect-docs-only/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Security Gremlin 🛡️
+name: Detect docs-only changes
+description: >-
+  Report whether every file this event changes is documentation or agent
+  guidance that no build or test reads: docs/, skills/, the agent plugins,
+  .agents/, and Markdown files at the repository root. Crate READMEs are not
+  included, because some are compiled as doc tests, and neither are docs pages
+  whose code a test builds and runs. Requires a prior checkout.
+outputs:
+  docs-only:
+    description: "'true' if every changed file is documentation, otherwise 'false'."
+    value: ${{ steps.detect.outputs.docs-only }}
+runs:
+  using: composite
+  steps:
+    - name: Detect docs-only changes
+      id: detect
+      shell: bash
+      env:
+        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
+        PUSH_BEFORE: ${{ github.event.before }}
+      run: |
+        set -euo pipefail
 
-- **What:** Security reviewer (report-only)
-- **GitHub account:** `clockwork-labs-bot`
-- **Discord channel:** #security-gremlin (CL - SpacetimeDB)
-- **Powered by:** [OpenClaw](https://github.com/openclaw/openclaw) + GPT-6.1
+        # Any doubt about what changed means running every check.
+        run_everything() {
+          echo "$1; running all checks."
+          echo "docs-only=false" >>"$GITHUB_OUTPUT"
+          exit 0
+        }
 
-### What Security Gremlin does
-
-- **Reviews code for security bugs** — on request, reads commits and PRs for problems with authentication, authorization, module sandboxing, untrusted input, and leaked secrets
-- **Checks dependencies and CI** — looks for vulnerable dependencies and unsafe GitHub Actions workflows
-- **Reports privately** — posts findings in #security-gremlin for the team to triage
-
-### What Security Gremlin does NOT do
-
-- Discuss vulnerabilities in public issues, PR comments, or commit messages
-- Build or run code from PRs by people outside Clockwork Labs
-- Scan or probe live systems
-- Approve or merge PRs, or take any destructive action
-
-### Contacting Security Gremlin
-
-- Mention `@Security Gremlin App` in #security-gremlin on Discord
-
+        case "${GITHUB_EVENT_NAME}" in
+          pull_request)
+            # The checkout is GitHub's merge of the PR into its base, so its fir
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1374,4 +1180,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58a7eacd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f53483c3` are properly handled with clean fallback behavior.

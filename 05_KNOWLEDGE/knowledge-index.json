@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:45:05.069Z",
+  "last_updated": "2026-11-08T03:55:59.572Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5470,8 +5470,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "95605c7a",
-      "content_hash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
+      "source_version": "80ec9bcd",
+      "content_hash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5706,7 +5706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:49:43.038Z",
+      "verified_at": "2026-11-08T03:54:27.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8229,11 +8229,16 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "291031b4",
-      "content_hash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
+      "source_version": "39bf8539",
+      "content_hash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Skip CI builds and tests for docs-only changes (#6515)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2317,
           "title": "Zero-Cost Weak-Handle Registration for Copy-Constrained Subsystem Contexts",
@@ -8330,7 +8335,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:52:09.507Z",
+      "verified_at": "2026-11-08T03:54:26.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126011,10 +126016,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
-      "content_hash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
+      "content_hash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Per-Loop Decoupled KV-Cache Invariant for Latent-Recurrent Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Scale Rotary Base Interleaving Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Hyper-Spherical Latent Input Reinjection Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5992,
           "title": "Looped Residual Reinjection Invariant",
@@ -126046,7 +126066,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T17:30:47.905Z",
+      "verified_at": "2026-11-08T03:55:59.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

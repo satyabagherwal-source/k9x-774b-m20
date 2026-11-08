@@ -8201,3 +8201,6 @@
 | `CYCLE-20261108-EYZA` | `2026-11-08T03:43:22.774Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f4e6fa92...`) |
 | `CYCLE-20261108-F2SH` | `2026-11-08T03:43:27.713Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a9912ebd...`) |
 | `CYCLE-20261108-H5ZY` | `2026-11-08T03:45:05.182Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`f23353bd...`) |
+| `CYCLE-20261108-T7F0` | `2026-11-08T03:54:26.892Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`906b8732...`) |
+| `CYCLE-20261108-T7XF` | `2026-11-08T03:54:27.555Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`0123a2ae...`) |
+| `CYCLE-20261108-V706` | `2026-11-08T03:55:59.670Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`50a2eea2...`) |

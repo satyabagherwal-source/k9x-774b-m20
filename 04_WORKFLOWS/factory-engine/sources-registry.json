@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T03:45:07.776Z",
-    "lastVerified": "2026-11-08T03:45:07.776Z",
+    "lastChecked": "2026-11-08T03:56:02.295Z",
+    "lastVerified": "2026-11-08T03:56:02.295Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -151,22 +151,21 @@
     "revisionIdentifier": "308b2766"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T03:21:34.649Z",
-    "lastVerified": "2026-11-08T03:21:34.649Z",
+    "lastChecked": "2026-11-08T03:54:26.830Z",
+    "lastVerified": "2026-11-08T03:54:26.830Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
+    "contentHash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "95605c7a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -642,8 +641,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T00:02:35.332Z",
-    "lastVerified": "2026-11-08T00:02:35.332Z",
+    "lastChecked": "2026-11-08T03:54:18.845Z",
+    "lastVerified": "2026-11-08T03:54:18.845Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1294,14 +1293,14 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T21:52:08.265Z",
-    "lastVerified": "2026-11-06T21:52:08.265Z",
+    "lastChecked": "2026-11-08T03:54:24.239Z",
+    "lastVerified": "2026-11-08T03:54:24.239Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 7,
+    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3064,12 +3063,12 @@
     "lastVerified": "2026-11-07T03:21:43.438Z"
   },
   "asciinema-asciinema": {
-    "name": "asciinema/asciinema",
+    "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T13:34:43.386Z",
-    "lastVerified": "2026-11-06T13:34:43.386Z",
+    "lastChecked": "2026-11-08T03:54:08.851Z",
+    "lastVerified": "2026-11-08T03:54:08.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-asciinema-asciinema",
@@ -3078,7 +3077,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f0775199"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -5395,12 +5395,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws/aws-cdk",
+    "name": "aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-06T22:56:02.883Z",
-    "lastVerified": "2026-11-06T22:56:02.883Z",
+    "lastChecked": "2026-11-08T03:54:16.361Z",
+    "lastVerified": "2026-11-08T03:54:16.361Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
@@ -5409,7 +5409,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "28ed047e"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -9413,9 +9414,9 @@
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
     "officialUrl": "https://github.com/siteline/swiftui-introspect",
-    "lastChecked": "2026-11-05T03:12:43.462Z",
+    "lastChecked": "2026-11-08T03:54:13.820Z",
     "revisionIdentifier": "7f32b29d",
-    "lastVerified": "2026-11-05T03:12:43.462Z"
+    "lastVerified": "2026-11-08T03:54:13.820Z"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
@@ -12977,12 +12978,12 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T17:30:32.350Z",
-    "lastVerified": "2026-11-04T17:30:32.350Z",
+    "lastChecked": "2026-11-08T03:54:11.427Z",
+    "lastVerified": "2026-11-08T03:54:11.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
+    "contentHash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

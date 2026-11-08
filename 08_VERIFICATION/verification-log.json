@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-XOAA",
-    "timestamp": "2026-11-05T14:22:46.066Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "742baf9baef34567a5bba86cff65542d610a41d21a4c99c1c2934740504b215b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-XQHP",
-    "timestamp": "2026-11-05T14:22:48.925Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "673ab467735a3f73d0026a07a7dfbd7ccc46c2e50305ecc6be1284e0efb7ca46",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-XTE8",
-    "timestamp": "2026-11-05T14:22:52.688Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "4c1e9612461fe1ec2e7bcba9779518898482fa7af7bf56ac9d7f6504713d5a69",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-74ES",
     "timestamp": "2026-11-05T14:30:06.868Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7490,6 +7445,51 @@
     "repository": "lodestones/Kromoss",
     "learningId": "learn-huggingface-lodestones-kromoss",
     "contentHash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-T7F0",
+    "timestamp": "2026-11-08T03:54:26.892Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-T7XF",
+    "timestamp": "2026-11-08T03:54:27.555Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-V706",
+    "timestamp": "2026-11-08T03:55:59.670Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T03:08:03.718Z",
+  "last_updated": "2026-11-08T03:54:27.566Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4127,6 +4127,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
+    },
+    {
+      "id": "CD-T7XQ",
+      "directive_title": "main): release 1.13.0 (#349)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "80ec9bcd",
+      "date_staged": "2026-11-08",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

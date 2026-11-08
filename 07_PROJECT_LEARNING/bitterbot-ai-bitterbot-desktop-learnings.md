@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `95605c7a`  
+> **Source Version**: `80ec9bcd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T02:49:42.855Z  
+> **Timestamp**: 2026-11-08T03:54:27.221Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T02:49:42.446Z  
+> **Harvest Timestamp**: 2026-11-08T03:54:26.830Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1698,320 +1698,122 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95605c7a` (2026-11-08)
-**Commit Message**: feat(agents): the agent knows which of its parts are on, and what it can see of them now (#370)
+### Incident Patch 1: `80ec9bcd` (2026-11-08)
+**Commit Message**: chore(main): release 1.13.0 (#349)
 
-* feat(agents): the agent knows which of its parts are on, from the live config
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-The agent described itself from a two-month-old skill and had no way to
-tell what was switched on. Now:
-
-- A capability registry (src/agents/self-state/) covers memory, dreams
-  (every dream mode), curiosity, skill learning, network and tools. Each
-  entry reads its state through the same function the part calls to
-  decide whether to run, so the agent's account cannot drift from what
-  runs. Inline on/off rules moved into src/config/feature-switches.ts
-  and their call sites now use them; the dream-mode merge, prior
-  evidence and outcome-writer resolvers are shared the same way.
-- Every turn, the system prompt carries a `## Your Current State` block
-  (names only: on, off, recording only, blocked with what is missing),
-  in the cached half; never for guests, remote tasks or subagents.
-- A `self_state` tool gives the detail: what each part does, its state
-  and mode, whether that is the default or the owner's setting (read from
-  the config file before load-time defaults), and the key that changes it.
-- Th
-
-**File**: `docs/memory/how-the-memory-works.md` (modified, +28/-0)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -445,6 +445,34 @@ When that search runs, the canonical ledger is consulted first: `memory_search`
- 
- ---
- 
-+## Knowing Its Own State
-+
-+The agent is told which of its parts its settings switch on. Every turn, the system prompt carries
-+a short `## Your Current State` block that names what is switched on, what is off, what only
-+records (keeps a record without changing behaviour yet, such as the verified-outcome writer in
-+shadow mode), and what is switched on but blocked by a missing setting (a web search provider,
-+wallet credentials, a local model). The block reads settings only, so it can sit in the cached
-+part of the prompt.
-+
-+The `self_state` tool adds what the gateway can see at that moment: curiosity research paused by
-+the owner, no compute backend (or one that can only read), the P2P network with no peers. It
-+also says why each part is in its state (a parent part that is off, an environment variable),
-+whether the owner or a default set it, the settings that change it, and when the config file has
-+changed since the turn started. It reads the agent taking the turn, with that agent's own
-+overrides. It cannot see every runtime failure, such as a model call that errors. The agent is
-+told to call it before saying a part is running. Guests, remote agents and CLI turns that do not
-+say the owner is speaking never get either.
-+
-+Settings are read through the same function the part itself calls to decide whether to run
-+(`src/config/feature-switches.ts`, or the part's own resolver), so the settings side cannot drift
-+from what runs. The `memory-architecture` skill explains how the parts work and never says what
-+is switched on. Tests check that every setting the registry names exists, that switching a part's
-+key off turns it off, that its defaults agree with the Settings form's registry, that each
-+observation and dependency is reported, and that the skill names only real tools, dream modes
-+and settings.
-+
-+---
-+
- ## What Makes This Different
- 
- Every serious competitor (Mem0, Zep, Letta, Hindsight, Cognee) has some combination of knowledge graphs, vector search, and memory consolidation. Those are table stakes now.
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.12.0"
++  ".": "1.13.0"
+ }
 ```
 
-**File**: `skills/memory-architecture/SKILL.md` (modified, +43/-40)
+**File**: `CHANGELOG.md` (modified, +20/-0)
 ```diff
-@@ -1,64 +1,67 @@
- ---
- name: memory-architecture
--description: Use when the user asks how your memory, dreams, hormones or knowledge crystals work, or when you need to interpret memory_status output. Not for recalling facts (use memory_search) or for saving notes (use working_memory_note).
-+description: Use when the user asks how you work (memory, recall, dreams, curiosity, hormones, how you learn skills, what is switched on), or when you need to interpret memory_status or self_state output. Not for recalling facts (use memory_search) or for saving notes (use working_memory_note).
- metadata: { "bitterbot": { "emoji": "🧠" } }
- ---
+@@ -1,5 +1,25 @@
+ # Changelog
  
--# Memory architecture
-+# How you work
++## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
++
++
++### Features
++
++* **a2a:** accept XNO payments on the A2A payment gate ([#348](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/348)) ([595167c](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/595167cf4db9e4481db94c67cd43f13040114cbb))
++* add learning strategy lab and benchmark evidence ([#363](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/363)) ([3ea3f55](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ea3f55329411f37a0ce36af34fe67ac61410991))
++* **agents:** the agent knows which of its parts are on, and what it can see of them now ([#370](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/370)) ([95605c7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/95605c7a1e61b614eac7ca5a8585a0500ce2c393))
++* **memory:** default procedural learning to shadow capture ([#364](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/364)) ([edd9f02](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/edd9f02f8f67de9876216da6109ebcc76a7dac70))
++* **memory:** run gated failure experiments from idle dreams ([#365](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/365)) ([f10139f](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/f10139f8ee7eb5a747b20192d5f3cb3f0afdf5ff))
++* **skills:** add verified live outcome writer in shadow mode ([#369](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/369)) ([fe15ee3](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/fe15ee33fad8398c66317bd0737ddedec45cd490))
++* **skills:** experience-guided skill prior (on by default) and its controlled test ([#347](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/347)) ([1a23cb7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/1a23cb721ed21aa875010f1cba06302e82193d00))
++
++
++### Bug Fixes
++
++* **gateway:** correct WSL logon task XML schema ([#367](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/367)) ([a41e019](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a41e019a05b0290d62eb17091913a572839b2a63))
++* **skills:** record skill executions when the agent reads a skill's SKILL.md ([#350](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/350)) ([41241db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/41241db24e007827e021382ffd89949b2b652ec0))
++* **skills:** skills index compactor no longer merges a block into the next one ([#351](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/351)) ([eca2269](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/eca2269a291dc58ef3178832affbe17dc865ed7e))
++
+ ## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
  
--You have a self-evolving memory system that runs locally. Use this reference to use it well and to explain it to the user when asked. Never announce that you read this file.
-+This is how your parts work when they run. It never says what is switched on: that changes with the owner's config. The `## Your Current State` block in your system prompt lists what the settings switch on, off and to recording only. It cannot see live conditions (an owner pause, a missing backend or model, no peers); `self_state` checks those and gives the detail (what each part does, why it is in that state, the settings that change it). Call `self_state` before saying a part is running. Never announce that you read this file.
  
--## How your memory works
-+## Memory
- 
--Every piece of knowledge you retain is a **Knowledge Crystal**: a chunk of text with an embedding, a semantic type, an importance score and a lifecycle state.
-+- **Knowledge Crystals**: every retained piece of knowledge is a chunk of text with a semantic type (fact, preference, task_pattern, skill, episode, insight, relationship, goal, general), an importance score and a lifecycle (`generated -> activated -> consolidated -> archived -> expired`), plus an embedding once one is made (until then keyword search still finds it). Skills are frozen and do not decay.
-+- **Sources**: workspace memory files (`MEMORY.md`, `memory/*.md`), conversation transcripts (indexed in the background), facts extracted from conversations, and skills.
-+- **Forgetting**: importance follows an Ebbinghaus curve. What is used often, or carried strong feeling, resists decay.
-+- **Consolidation** runs on a timer (every 30 minutes unless the owner changed it): hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
-+- **Reconsolidation**: a memory you retrieve becomes briefly changeable, so a correction can update it instead of piling a contradiction beside it.
-+- **Settled facts** live in a canonical ledger. A deliberate pin (yours via `memory_pin`, or the owner's) outranks anything learned in the background, and replacing a pinned fact waits for the owner's confirmation.
-+- **Who sees what**: other people talking to you (guests) never get the owner's memories, and deep recall across conversations is the owner's only.
- 
--- **Crystal lifecycle**: `generated -> activated -> consolidated -> archived -> expired`. Skills are `frozen` (immune to decay).
--- **Semantic types**: fact, preference, task_pattern, skill, episode, insight, relationship, goal, general.
--- **Importance**: calculated via an Ebbinghaus forgetting curve. Memories accessed more often and with higher emotional valence resist decay longer.
-+## Recall
- 
--## Ingestion sources
-+- **Before replying to the owner**, a cheap pass puts relevant facts in your context (not on guest, remote-agent or background turns): identity facts, family relationships read from the knowledge graph, facts matching the message, open loops, reminders whose trigger matches, questions you are waiting to ask, and the files or names "that" refers to.
-+- **`memory_search`** returns exact hits from the canonical ledger first, then usually fuses ranked lists (vector similarity, keyword search and, when it has links to offer, the knowledge graph) with Reciprocal Rank Fusion. Recency, emotion and mood only break near-ties.
-+- **`memory_get`** reads exact lines after a search.
-+- **`recall_range`** brings back the exact text of an earlier part of this conversation that was offloaded to disk; **`deep_recall`** runs a sandboxed search program over the whole history for questions that span many conversations.
-+- A recall that comes back empty is not proof something never happened; say what you searched.
- 
--1. **Workspace memory files** (`MEMORY.md` + `memory/*.md`): watched for changes, chunked and embedded automatically.
--2. **Session transcripts**: your conversations are indexed in the background so past exchanges become searchable.
--3. **Skills**: indexed as frozen crystals (never decay).
-+## Feelings
- 
--## Background pipeline (runs automatically)
-+Three hormones shift with the conversation and colour your tone without being announced: dopamine (reward, about a 30-minute half-life, more energy), cortisol (urgency, about 
 ```
 
-**File**: `src/agents/a2a-remote-policy.test.ts` (modified, +10/-0)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -33,6 +33,7 @@ const FLOOR_SAMPLES = [
-   "code_interpreter",
-   "memory_search",
-   "dream_status",
-+  "self_state",
-   "a2a_client",
-   "task_workspace_get",
- ];
-@@ -73,6 +74,15 @@ describe("resolveA2aRemoteToolPolicy", () => {
-     expect(isToolAllowedByPolicyName("read", policy)).toBe(true);
-   });
- 
-+  it("the owner's self state stays denied even through group:memory", () => {
-+    const cfg = {
-+      a2a: { remoteExecution: { tools: { allow: ["group:memory", "self_state"] } } },
-+    } as unknown as BitterbotConfig;
-+    const policy = resolveA2aRemoteToolPolicy(cfg);
-+    expect(isToolAllowedByPolicyName("self_state", policy)).toBe(false);
-+    expect(isToolAllowedByPolicyName("memory_search", policy)).toBe(false);
-+  });
-+
-   it("operator deny narrows further", () => {
-     const cfg = {
-       a2a: { remoteExecution: { tools: { allow: ["read"], deny: ["read"] } } },
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.12.0",
++  "version": "1.13.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
 ```
 
-**File**: `src/agents/a2a-remote-policy.ts` (modified, +1/-0)
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -67,6 +67,7 @@ export const A2A_REMOTE_TOOL_DENY_ALWAYS = [
-   "*artifact*", // writes attacker HTML/JS into the owner's Control UI panel
-   "dream_*",
-   "curiosity_*",
-+  "self_state", // the owner's setup: which parts are on, the settings that change them
-   "forage*",
-   "circle*",
-   "task_*",
+@@ -316,7 +316,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.12.0"
++version = "1.13.0"
+ dependencies = [
+  "env_logger",
+  "libc",
 ```
 
-**File**: `src/agents/bitterbot-tools.ts` (modified, +7/-0)
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -40,6 +40,7 @@ import { createNetworkStatusTool } from "./tools/network-status-tool.js";
- import { createNodesTool } from "./tools/nodes-tool.js";
- import { createPurchaseTool } from "./tools/purchase-tool.js";
- import { createRecallRangeTool } from "./tools/recall-range-tool.js";
-+import { createSelfStateTool } from "./tools/self-state-tool.js";
- import { createSessionStatusTool } from "./tools/session-status-tool.js";
- import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
- import { createSessionsListTool } from "./tools/sessions-list-tool.js";
-@@ -288,6 +289,12 @@ export function createBitterbotTools(options?: {
-     createMemoryExpandTool(memoryOpts),
-     createMemoryPinTool({ ...memoryOpts, workspaceDir: options?.workspaceDir }),
-     createMemoryStatusTool(memoryOpts),
-+    // Not gated on memory search: the agent's on/off state is always readable.
-+    createSelfStateTool({
-+      config: options?.config,
-+      agentSessionKey: options?.agentSessionKey,
-+      guest: options?.memoryGuest === true,
-+    }),
-     createDreamSearchTool(memoryOpts),
-     createDreamStatusTool(memoryOpts),
-     createCuriosityStateTool(memoryOpts),
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.12.0"
++version = "1.13.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
+ 
 ```
 
-**File**: `src/agents/canonical-facts-block.ts` (modified, +2/-1)
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,7 @@
-  */
- 
- import type { BitterbotConfig } from "../config/config.js";
-+import { canonicalLedgerEnabled } from "../config/feature-switches.js";
- import { createSubsystemLogger } from "../logging/subsystem.js";
- import { normalizeScopeName } from "../memory/canonical-facts.js";
- 
-@@ -92,7 +93,7 @@ export async function resolveCanonicalFactsBlock(params: {
-   /** PLAN-55 Phase 1: the run's workspace, for project-scoped facts. */
-   workspaceDir?: string;
- }): Promise<string | undefined> {
--  if (params.config?.memory?.canonicalLedger?.enabled === false) {
-+  if (!canonicalLedgerEnabled(params.config?.memory?.canonicalLedger)) {
-     return undefined;
-   }
-   if (params.promptMode === "none") {
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.12.0",
++  "version": "1.13.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
 ```
 
-**File**: `src/agents/cli-runner.self-state.test.ts` (added, +88/-0)
+**File**: `extensions/discord/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,88 @@
-+/**
-+ * The owner's `## Your Current State` block reaches a CLI-backend turn only
-+ * when the turn says the owner is speaking (a channel turn routed to a CLI
-+ * provider can be a guest's).
-+ */
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+
-+const supervisorSpawnMock = vi.fn();
-+const promptParams: Array<{ selfState?: string }> = [];
-+
-+vi.mock("../process/supervisor/index.js", () => ({
-+  getProcessSupervisor: () => ({
-+    spawn: (...args: unknown[]) => supervisorSpawnMock(...args),
-+    cancel: vi.fn(),
-+    cancelScope: vi.fn(),
-+    reconcileOrphans: vi.fn(),
-+    getRecord: vi.fn(),
-+  }),
-+}));
-+
-+// The memory-backed blocks would open a memory manager; not what is tested here.
-+vi.mock("./endocrine-state.js", () => ({ resolveEndocrineState: async () => undefined }));
-+vi.mock("./canonical-facts-block.js", () => ({
-+  resolveCanonicalFactsBlock: async () => undefined,
-+}));
-+
-+vi.mock("./cli-runner/helpers.js", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("./cli-runner/helpers.js")>();
-+  return {
-+    ...actual,
-+    buildSystemPrompt: (params: Parameters<typeof actual.buildSystemPrompt>[0]) => {
-+      promptParams.push(params as { selfState?: string });
-+      return actual.buildSystemPrompt(params);
-+    },
-+  };
-+});
-+
-+const { runCliAgent } = await import("./cli-runner.js");
-+
-+async function run(senderIsOwner: boolean | undefined) {
-+  supervisorSpawnMock.mockResolvedValueOnce({
-+    runId: "run",
-+    pid: 1,
-+    startedAtMs: Date.now(),
-+    stdin: undefined,
-+    wait: vi.fn().mockResolvedValue({
-+      reason: "exit",
-+      exitCode: 0,
-+      exitSignal: null,
-+      durationMs: 5,
-+      stdout: "ok",
-+      stderr: "",
-+      timedOut: false,
-+      noOutputTimedOut: false,
-+    }),
-+    cancel: vi.fn(),
-+  });
-+  await runCliAgent({
-+    sessionId: "s1",
-+    sessionFile: "/tmp/session.jsonl",
-+    workspaceDir: "/tmp",
-+    config: {},
-+    prompt: "what parts of you are on?",
-+    provider: "codex-cli",
-+    model: "gpt-5.2-codex",
-+    timeoutMs: 1_000,
-+    runId: "run-1",
-+    messageProvider: "telegram",
-+    senderIsOwner,
-+  });
-+  return promptParams.at(-1)?.selfState;
-+}
-+
-+describe("CLI backend turns and the owner's state block", () => {
-+  beforeEach(() => {
-+    supervisorSpawnMock.mockReset();
-+    promptParams.length = 0;
-+  });
-+
-+  it("is left out when the turn is a guest's or does not say", async () => {
-+    expect(await run(false)).toBeUndefined();
-+    expect(await run(undefined)).toBeUndefined();
-+  });
-+
-+  it("is included on the owner's turn", async () => {
-+    expect(await run(true)).toMatch(/^## Your Current State/);
-+  });
-+});
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.12.0",
++  "version": "1.13.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
 ```
 
-**File**: `src/agents/cli-runner.ts` (modified, +8/-0)
+**File**: `extensions/email/package.json` (modified, +1/-1)
 ```diff
-@@ -169,6 +169,13 @@ export async function runCliAgent(params: {
-   // Undefined at steady state or when nothing has published a snapshot.
-   const { resolveComputeStateBlockFromConfig } = await import("../compute/awareness/state.js");
-   const computeState = resolveComputeStateBlockFromConfig(params.config);
-+  // The owner's setup, so only on a turn known to be the owner's: a CLI turn
-+  // that does not say who is speaking gets none (fail closed).
-+  const { resolveSelfStateBlock } = await import("./self-state/render.js");
-+  const selfState =
-+    params.senderIsOwner === true
-+      ? resolveSelfStateBlock(params.config, { agentId: sessionAgentId })
-+      : undefined;
- 
-   const systemPrompt = buildSystemPrompt({
-     workspaceDir,
-@@ -186,6 +193,7 @@ export async function runCliAgent(params: {
-     canonicalFacts,
-     researchFindings,
-     computeState,
-+    selfState,
-   });
- 
-   const { sessionId: cliSessionIdToSend, isNew } = resolveSessionIdToSend({
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.12.0",
++  "version": "1.13.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2040,37 +1842,30 @@ tell what was switched on. Now:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agents): the agent knows which of its parts are on, and what it can see of them 
+## X. main): release 1.13.0 (#349)
 
 **RULE**:
-When implementing operations in `docs/memory/how-the-memory-works.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95605c7a`: agents): the agent knows which of its parts are on, and what it can see of them now (#370). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80ec9bcd`: main): release 1.13.0 (#349). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/how-the-memory-works.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## Knowing Its Own State
+## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
 
-The agent is told which of its parts its settings switch on. Every turn, the system prompt carries
-a short `## Your Current State` block that names what is switched on, what is off, what only
-records (keeps a record without changing behaviour yet, such as the verified-outcome writer in
-shadow mode), and what is switched on but blocked by a missing setting (a web search provider,
-wallet credentials, a local model). The block reads settings only, so it can sit in the cached
-part of the prompt.
 
-The `self_state` tool adds what the gateway can see at that moment: curiosity research paused by
-the owner, no compute backend (or one that can only read), the P2P network with no peers. It
-also says why each part is in its state (a parent part that is off, an environment variable),
-whether the owner or a default set it, the settings that change it, and when the config file has
-changed since the turn started. It reads the agent taking the turn, with that agent's own
-overrides. It cannot see every runtime failure, such as a model call that errors. The agent is
-told to call it before saying a part is running. Guests, remote agents and CLI turns that do not
-say the owner
+### Features
+
+* **a2a:** accept XNO payments on the A2A payment gate ([#348](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/348)) ([595167c](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/595167cf4db9e4481db94c67cd43f13040114cbb))
+* add learning strategy lab and benchmark evidence ([#363](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/363)) ([3ea3f55](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ea3f55329411f37a0ce36af34fe67ac61410991))
+* **agents:** the agent knows which of its parts are on, and what it can see of them now ([#370](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/370)) ([95605c7](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/95605c7a1e61b614eac7ca5a8585a0500ce2c393))
+* **memory:** default procedural learning to shadow capture ([#364](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/364)) ([edd9f02](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/edd9f02f8f67de9876216da6109ebcc76a7dac70))
+* **memory:** run gated failure experiments from idle dreams ([#365](https://github.com/Bitterbot-A
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2080,4 +1875,4 @@ say the owner
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95605c7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80ec9bcd` are properly handled with clean fallback behavior.

@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "95605c7a",
+    "sourceVersion": "80ec9bcd",
     "license": "MIT",
-    "contentHash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
-    "lastHarvestedAt": "2026-11-08T02:49:43.184Z",
+    "contentHash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
+    "lastHarvestedAt": "2026-11-08T03:54:27.559Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "291031b4",
+    "sourceVersion": "39bf8539",
     "license": "NOASSERTION",
-    "contentHash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
-    "lastHarvestedAt": "2026-11-06T21:52:09.629Z",
+    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+    "lastHarvestedAt": "2026-11-08T03:54:26.896Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -10415,8 +10415,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
     "license": "Open-Source",
-    "contentHash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
-    "lastHarvestedAt": "2026-11-04T17:30:48.016Z",
+    "contentHash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
+    "lastHarvestedAt": "2026-11-08T03:55:59.674Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   },
   "mrjackwills-oxker": {

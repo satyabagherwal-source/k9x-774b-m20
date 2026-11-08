@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:45:05.206Z",
+  "last_updated": "2026-11-08T03:55:59.685Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "17757edc699c703998948140c1a8b828d023f25b59da33ab4ab27897a1fc6564",
-      "verified_at": "2026-11-08T02:49:43.196Z",
+      "content_hash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
+      "verified_at": "2026-11-08T03:54:27.572Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:49:43.196Z"
+      "last_updated": "2026-11-08T03:54:27.572Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "fd7e3f174294c95c528128e79caf02247888fb884df10dd46c11a725ae454883",
-      "verified_at": "2026-11-06T21:52:09.639Z",
+      "content_hash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+      "verified_at": "2026-11-08T03:54:26.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:52:09.639Z"
+      "last_updated": "2026-11-08T03:54:26.907Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -15651,14 +15651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "content_hash": "7839155857c6e889d31db1892d3d6b06eec008d787756298401e808423c17cef",
-      "verified_at": "2026-11-04T17:30:48.026Z",
+      "content_hash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
+      "verified_at": "2026-11-08T03:55:59.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T17:30:48.026Z"
+      "last_updated": "2026-11-08T03:55:59.684Z"
     },
     "mrjackwills/oxker": {
       "repository": "mrjackwills/oxker",
