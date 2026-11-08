@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T04:54:58.316Z",
-    "lastVerified": "2026-11-08T04:54:58.316Z",
+    "lastChecked": "2026-11-08T05:04:13.773Z",
+    "lastVerified": "2026-11-08T05:04:13.773Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T04:26:52.324Z",
-    "lastVerified": "2026-11-08T04:26:52.324Z",
+    "lastChecked": "2026-11-08T05:02:11.191Z",
+    "lastVerified": "2026-11-08T05:02:11.191Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1380,8 +1380,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T01:09:50.944Z",
-    "lastVerified": "2026-11-08T01:09:50.944Z",
+    "lastChecked": "2026-11-08T05:02:06.199Z",
+    "lastVerified": "2026-11-08T05:02:06.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2010,12 +2010,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j/langchain4j",
+    "name": "langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-06T23:02:47.365Z",
-    "lastVerified": "2026-11-06T23:02:47.365Z",
+    "lastChecked": "2026-11-08T05:02:08.800Z",
+    "lastVerified": "2026-11-08T05:02:08.800Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
@@ -2024,7 +2024,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee8fd5f1"
   },
   "metalbear-co-mirrord": {
     "name": "mirrord",
@@ -3629,9 +3630,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-06T15:05:35.267Z",
+    "lastChecked": "2026-11-08T05:01:56.222Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-06T15:05:35.267Z"
+    "lastVerified": "2026-11-08T05:01:56.222Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -5949,9 +5950,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-07T02:21:58.237Z",
+    "lastChecked": "2026-11-08T05:02:03.734Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-07T02:21:58.237Z"
+    "lastVerified": "2026-11-08T05:02:03.734Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite/rqlite",
@@ -9555,9 +9556,9 @@
   "apppear-chartview": {
     "name": "ChartView",
     "officialUrl": "https://github.com/AppPear/ChartView",
-    "lastChecked": "2026-11-05T04:07:12.333Z",
+    "lastChecked": "2026-11-08T05:02:01.168Z",
     "revisionIdentifier": "df0b2641",
-    "lastVerified": "2026-11-05T04:07:12.333Z"
+    "lastVerified": "2026-11-08T05:02:01.168Z"
   },
   "hf-liquidai-lfm3-vl-2b": {
     "name": "LiquidAI/LFM3-VL-2B",
@@ -13119,12 +13120,12 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T18:28:31.890Z",
-    "lastVerified": "2026-11-04T18:28:31.890Z",
+    "lastChecked": "2026-11-08T05:01:58.843Z",
+    "lastVerified": "2026-11-08T05:01:58.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-    "contentHash": "543bd3f64917df61cfcc0a35a4c9ab1934869d8a2d6bb60aabb9343bb7503254",
+    "contentHash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

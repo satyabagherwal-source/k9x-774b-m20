@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:54:55.635Z",
+  "last_updated": "2026-11-08T05:04:11.085Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -132109,10 +132109,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "543bd3f64917df61cfcc0a35a4c9ab1934869d8a2d6bb60aabb9343bb7503254",
+      "content_hash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Clamped SwiGLU Activation Dynamic Range Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Partial Rotary Embedding (RoPE) Phase-Frequency Decoupling",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Sigmoid-Bias Isolated MoE Router Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 2093,
           "title": "MoE Routing Stability Invariant",
@@ -132164,7 +132179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:28:45.143Z",
+      "verified_at": "2026-11-08T05:04:11.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "543bd3f64917df61cfcc0a35a4c9ab1934869d8a2d6bb60aabb9343bb7503254",
-    "lastHarvestedAt": "2026-11-04T18:28:45.249Z",
+    "contentHash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
+    "lastHarvestedAt": "2026-11-08T05:04:11.174Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

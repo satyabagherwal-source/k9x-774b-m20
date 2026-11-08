@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T04:54:55.776Z",
-  "total_cycles_completed": 8184,
-  "total_learnings_persisted": 8184,
-  "total_rules_promoted": 7876,
+  "last_updated": "2026-11-08T05:04:11.180Z",
+  "total_cycles_completed": 8185,
+  "total_learnings_persisted": 8185,
+  "total_rules_promoted": 7879,
   "history": [
-    {
-      "timestamp": "2026-11-07T06:05:09.998Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T06:10:05.384Z",
       "repository": "restatedev/restate",
@@ -1403,6 +1396,13 @@
       "repository": "unsloth/flint-GGUF",
       "learningId": "learn-huggingface-unsloth-flint-gguf",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T05:04:11.180Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
