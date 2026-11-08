@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T03:21:34.658Z",
-    "lastVerified": "2026-11-08T03:21:34.658Z",
+    "lastChecked": "2026-11-08T03:28:27.245Z",
+    "lastVerified": "2026-11-08T03:28:27.245Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T02:57:03.575Z",
-    "lastVerified": "2026-11-08T02:57:03.575Z",
+    "lastChecked": "2026-11-08T03:28:25.350Z",
+    "lastVerified": "2026-11-08T03:28:25.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -331,12 +331,12 @@
     "lastVerified": "2026-11-07T17:22:28.291Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T23:34:18.182Z",
-    "lastVerified": "2026-11-07T23:34:18.182Z",
+    "lastChecked": "2026-11-08T03:28:20.320Z",
+    "lastVerified": "2026-11-08T03:28:20.320Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -345,7 +345,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fa310ff1"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -1020,12 +1021,12 @@
     "revisionIdentifier": "c500baff"
   },
   "weaviate-weaviate": {
-    "name": "weaviate/weaviate",
+    "name": "weaviate",
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T21:21:12.425Z",
-    "lastVerified": "2026-11-06T21:21:12.425Z",
+    "lastChecked": "2026-11-08T03:28:22.913Z",
+    "lastVerified": "2026-11-08T03:28:22.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
@@ -1034,7 +1035,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "85bd085e"
   },
   "ducaale-xh": {
     "name": "ducaale/xh",
@@ -2827,14 +2829,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-06T00:02:41.713Z",
-    "lastVerified": "2026-11-06T00:02:41.713Z",
+    "lastChecked": "2026-11-08T03:28:14.527Z",
+    "lastVerified": "2026-11-08T03:28:14.527Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
+    "contentHash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5187,12 +5189,12 @@
     "lastVerified": "2026-11-07T04:51:38.956Z"
   },
   "aquasecurity-trivy": {
-    "name": "aquasecurity/trivy",
+    "name": "trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-06T22:21:14.632Z",
-    "lastVerified": "2026-11-06T22:21:14.632Z",
+    "lastChecked": "2026-11-08T03:28:17.869Z",
+    "lastVerified": "2026-11-08T03:28:17.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
@@ -5201,7 +5203,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c22582a1"
   },
   "amrdeveloper-gql": {
     "name": "GQL",
@@ -9311,9 +9314,9 @@
   "milanvarady-applite": {
     "name": "Applite",
     "officialUrl": "https://github.com/milanvarady/Applite",
-    "lastChecked": "2026-11-05T02:47:33.642Z",
+    "lastChecked": "2026-11-08T03:28:15.241Z",
     "revisionIdentifier": "cf9712ae",
-    "lastVerified": "2026-11-05T02:47:33.642Z"
+    "lastVerified": "2026-11-08T03:28:15.241Z"
   },
   "hf-datalab-to-indra-ocr": {
     "name": "datalab-to/indra-ocr",
@@ -12913,12 +12916,12 @@
     "officialUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T16:59:05.981Z",
-    "lastVerified": "2026-11-04T16:59:05.981Z",
+    "lastChecked": "2026-11-08T03:28:12.908Z",
+    "lastVerified": "2026-11-08T03:28:12.908Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
+    "contentHash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

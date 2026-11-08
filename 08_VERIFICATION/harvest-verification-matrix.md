@@ -8192,3 +8192,5 @@
 | `CYCLE-20261108-EHIL` | `2026-11-08T03:15:00.525Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3579, Rule null, Rule null` | Yes (`062ace71...`) |
 | `CYCLE-20261108-MOSN` | `2026-11-08T03:21:23.207Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`46375b5e...`) |
 | `CYCLE-20261108-MQJJ` | `2026-11-08T03:21:25.471Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`20aea369...`) |
+| `CYCLE-20261108-VJ8D` | `2026-11-08T03:28:15.901Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c537c65d...`) |
+| `CYCLE-20261108-VQ00` | `2026-11-08T03:28:24.672Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6849, Rule null` | Yes (`7a5c7c06...`) |

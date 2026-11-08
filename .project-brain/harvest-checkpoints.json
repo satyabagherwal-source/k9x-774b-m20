@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T03:21:25.489Z",
+  "last_updated": "2026-11-08T03:28:24.684Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
-      "verified_at": "2026-11-06T00:02:44.030Z",
+      "content_hash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
+      "verified_at": "2026-11-08T03:28:15.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T00:02:44.030Z"
+      "last_updated": "2026-11-08T03:28:15.921Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
-      "verified_at": "2026-11-04T16:59:28.544Z",
+      "content_hash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
+      "verified_at": "2026-11-08T03:28:24.683Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T16:59:28.544Z"
+      "last_updated": "2026-11-08T03:28:24.683Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

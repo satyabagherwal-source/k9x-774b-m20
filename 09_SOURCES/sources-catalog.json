@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "f21e0197",
+    "sourceVersion": "a0e31e4d",
     "license": "MIT",
-    "contentHash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
-    "lastHarvestedAt": "2026-11-06T00:02:44.022Z",
+    "contentHash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
+    "lastHarvestedAt": "2026-11-08T03:28:15.905Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
-    "lastHarvestedAt": "2026-11-04T16:59:28.534Z",
+    "contentHash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
+    "lastHarvestedAt": "2026-11-08T03:28:24.676Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

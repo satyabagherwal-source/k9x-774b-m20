@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T03:21:25.415Z",
+  "last_updated": "2026-11-08T03:28:24.554Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -117,14 +117,19 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "f21e0197",
-      "content_hash": "8941a64810c0c0b7e7afa58f80cb2817ad120b6ca8d8a30a156c353fa347634e",
+      "source_version": "a0e31e4d",
+      "content_hash": "c537c65d0489e2414f0be8b5ec11d4cc24a5340af4b8382ad059a7512629851e",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "tui: mutate incremental body base in place instead of deep-cloning on append",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci): remove new usage panic and runtime command lint blockers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -233,7 +238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T00:02:43.898Z",
+      "verified_at": "2026-11-08T03:28:15.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121018,10 +121023,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "50574e612a9ecff7cd1823a7f2d97a0a1e83746e172e560837b2da08b8d9c54e",
+      "content_hash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Fixed-Point Iteration Termination & State Initialization",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 3130,
           "title": "Delta-to-Precision Floor Invariant in Adapter Distillation",
@@ -121065,7 +121075,7 @@
         {
           "number": 6849,
           "title": "Precision-Dependent Distillation Integrity",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6850,
@@ -121078,7 +121088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T16:59:28.424Z",
+      "verified_at": "2026-11-08T03:28:24.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179480,7 +179490,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T16:59:28.424Z"
+      "verified_at": "2026-11-08T03:28:24.531Z"
     },
     "rule-6850": {
       "learning_id": "rule-6850",
