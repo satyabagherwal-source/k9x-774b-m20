@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T22:52:42.617Z",
-  "total_cycles_completed": 8386,
-  "total_learnings_persisted": 8386,
-  "total_rules_promoted": 8183,
+  "last_updated": "2026-11-08T23:03:34.368Z",
+  "total_cycles_completed": 8389,
+  "total_learnings_persisted": 8389,
+  "total_rules_promoted": 8188,
   "history": [
-    {
-      "timestamp": "2026-11-08T05:18:09.363Z",
-      "repository": "Comfy-Org/Fibo-2.0",
-      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:18:14.353Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T05:26:18.677Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T05:26:23.216Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -1403,6 +1382,27 @@
       "repository": "zarf-dev/zarf",
       "learningId": "learn-github-zarf-dev-zarf",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:59:29.913Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T22:59:40.786Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:03:34.368Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

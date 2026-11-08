@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `8dcc6b28`  
+> **Source Version**: `81da1e95`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:36:26.274Z  
+> **Timestamp**: 2026-11-08T22:59:28.760Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:36:24.798Z  
+> **Harvest Timestamp**: 2026-11-08T22:59:28.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40279 stars
+- **Stars / Engagement**: 40285 stars
 
 ---
 
@@ -1692,403 +1692,255 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8dcc6b28` (2026-11-07)
-**Commit Message**: fix: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#30631)
+### Incident Patch 1: `81da1e95` (2026-11-08)
+**Commit Message**: perf: Use a hash join for outer joins on an equality and a condition on one input (#30651)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-expr/src/dispatch/array.rs` (modified, +2/-1)
+**File**: `crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/predicate_pruning.rs` (modified, +73/-15)
 ```diff
-@@ -159,7 +159,8 @@ pub(super) fn contains(s: &[Column], nulls_equal: bool) -> PolarsResult<Column>
- #[cfg(feature = "array_count")]
- pub(super) fn count_matches(args: &[Column]) -> PolarsResult<Column> {
-     let s = &args[0];
--    let element = &args[1];
-+    // A broadcast scalar is one element, not one per row.
-+    let element = args[1].as_materialized_series_maintain_scalar();
-     polars_ensure!(
-         element.len() == 1,
-         ComputeError: "argument expression in `arr.count_matches` must produce exactly one element, got {}",
-```
-
-**File**: `crates/polars-expr/src/dispatch/list.rs` (modified, +2/-1)
-```diff
-@@ -298,7 +298,8 @@ pub(super) fn gather_every(args: &[Column]) -> PolarsResult<Column> {
- #[cfg(feature = "list_count")]
- pub(super) fn count_matches(args: &[Column]) -> PolarsResult<Column> {
-     let s = &args[0];
--    let element = &args[1];
-+    // A broadcast scalar is one element, not one per row.
-+    let element = args[1].as_materialized_series_maintain_scalar();
-     polars_ensure!(
-         element.len() == 1,
-         ComputeError: "argument expression in `list.count_matches` must produce exactly one element, got {}",
-```
-
-**File**: `crates/polars-plan/src/plans/conversion/dsl_to_ir/functions.rs` (modified, +8/-2)
-```diff
-@@ -54,7 +54,10 @@ pub(super) fn convert_functions(
-                     needle_cast: None,
-                 },
-                 #[cfg(feature = "array_count")]
--                A::CountMatches => IA::CountMatches,
-+                A::CountMatches => {
-+                    polars_ensure!(&e[1].is_scalar(ctx.arena), ShapeMismatch: "'element' must be a scalar value");
-+                    IA::CountMatches
-+                },
-                 A::Shift => IA::Shift,
-                 A::Explode(options) => IA::Explode(options),
-                 A::Concat => IA::Concat,
-@@ -210,7 +213,10 @@ pub(super) fn convert_functions(
-                 #[cfg(feature = "list_gather")]
-                 L::GatherEvery => IL::GatherEvery,
-                 #[cfg(feature = "list_count")]
--                L::CountMatches => IL::CountMatches,
-+                L::CountMatches => {
-+                    polars_ensure!(&e[1].is_scalar(ctx.arena), ShapeMismatch: "'element' must be a scalar value");
-+                    IL::CountMatches
-+                },
-                 L::Sum => IL::Sum,
-                 L::Length => IL::Length,
-                 L::Max => IL::Max,
-```
-
-**File**: `py-polars/tests/unit/operations/namespaces/array/test_array.py` (modified, +27/-1)
-```diff
-@@ -9,13 +9,14 @@
+@@ -722,12 +722,14 @@ pub fn try_rewrite_join_type(
+             schema_right,
+             output_schema,
+             &suffix,
++            Operator::Eq,
+         )?;
  
- import polars as pl
- import polars.selectors as cs
--from polars.exceptions import ComputeError, InvalidOperationError
-+from polars.exceptions import ComputeError, InvalidOperationError, ShapeError
- from polars.testing import assert_frame_equal, assert_series_equal
- from tests.unit.conftest import INTEGER_DTYPES
- 
- if TYPE_CHECKING:
-     from collections.abc import Callable
- 
-+    from polars._typing import EngineType
-     from tests.conftest import PlMonkeyPatch
- 
- 
-@@ -1038,6 +1039,31 @@ def test_array_count_matches_wildcard_expansion() -> None:
-     }
- 
- 
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_arr_count_matches_scalar_element(engine: EngineType) -> None:
-+    # More rows than threads, so that a streaming morsel holds several rows.
-+    df = pl.DataFrame(
-+        {"a": [[1, 2, 1]] * 300, "x": [1] * 300},
-+        schema={"a": pl.Array(pl.Int64, 3), "x": pl.Int64},
-+    )
-+    out = (
-+        df.lazy()
-+        .select(pl.col("a").arr.count_matches(pl.col("x").first()))
-+        .collect(engine=engine)
-+    )
-+    assert out.to_series().to_list() == [2] * 300
-+
-+
-+@pytest.mark.parametrize("height", [1, 3])
-+def test_arr_count_matches_element_per_row_raises(height: int) -> None:
-+    df = pl.DataFrame(
-+        {"a": [[1, 2, 1]] * height, "x": [1] * height},
-+        schema={"a": pl.Array(pl.Int64, 3), "x": pl.Int64},
-+    )
-+    with pytest.raises(ShapeError, match="'element' must be a scalar value"):
-+        df.select(pl.col("a").arr.count_matches(pl.col("x")))
-+
-+
- def test_array_to_struct() -> None:
-     df = pl.DataFrame(
-         {"a": [[1, 2, 3], [4, 5, None]]}, schema={"a": pl.Array(pl.Int8, 3)}
-```
-
-**File**: `py-polars/tests/unit/operations/namespaces/list/test_list.py` (modified, +20/-0)
-```diff
-@@ -13,6 +13,7 @@
-     ComputeError,
-     InvalidOperationError,
-     OutOfBoundsError,
-+    ShapeError,
- )
- from polars.testing import assert_frame_equal, assert_series_equal
- from tests.unit.conftest import time_func
-@@ -776,6 +777,25 @@ def test_list_count_matches_wildcard_expansion() -> None:
-     }
- 
- 
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_list_count_matches_scalar_element(engine: EngineType) -> None:
-+    # More rows than threads, so that a streaming morsel holds several rows.
-+    df = pl.DataFrame({"l": [[1, 2, 1]] * 300, "x": [1] * 300})
-+    out = (
-+        df.lazy()
-+        .select(pl.col("l").list.count_matches(pl.col("x").first()))
-+        .collect(engine=engine)
-+    )
-+    assert out.to_series().to_list() == [2] * 300
-+
-+
-+@pytest.mark.parametrize("height", [1, 3])
-+def test_list_count_matches_element_per_row_raises(height: int) -> None:
-+    df = pl.DataFrame({"l": [[1, 2, 1]] * height, "x": [1] * height})
-+    with pytest.raises(ShapeError, match="'element' must be a scalar value"):
-+        df.select(pl.col("l").list.count_matches(pl.col("x")))
-+
-+
- def test_list_gather_oob_10079() -> None:
-     df = pl.DataFrame(
-         {
-```
-
----
-
-### Incident Patch 2: `3bdd3a29` (2026-11-06)
-**Commit Message**: fix: Keep an oversized fetch alone in the scan prefetch window (#30634)
-
-**File**: `crates/polars-stream/src/nodes/io_sources/shared/pipeline_budget.rs` (modified, +68/-12)
-```diff
-@@ -16,6 +16,7 @@ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
- //   delivered bandwidth times the slack, and the count limit is 8192 once a file follows a store
- //   (otherwise the default x2, at most 2048).
- // - Local fetches and limits set by env vars keep a fixed window.
-+// - A fetch larger than the window grows it if it can, else runs alone (`OversizedPermit`).
- // - Each scan starts at the default limits. Bytes above them come from one process-wide pool (a
- //   fraction of total memory), first come, first served, and return when the scan ends.
- // - A scan whose output is blocked (e.g. a join's probe side during the build) keeps fetching and
-@@ -78,6 +79,9 @@ static WINDOW_POOL_KBYTES: LazyLock<AtomicUsize> = LazyLock::new(|| {
- /// Interval at which a parked acquire retries growing the window.
- const GROW_RETRY_INTERVAL: Duration = Duration::from_millis(100);
- 
-+/// Largest kbytes limit, so that a whole window fits in one permit (`u32` kilobytes, ~4 TiB).
-+const MAX_KBYTES_LIMIT: usize = u32::MAX as usize;
-+
- /// Value of `env_var` if set; panics if it is not a positive integer.
- pub(crate) fn env_nonzero_usize(env_var: &str) -> Option<usize> {
-     std::env::var(env_var).ok().map(|x| {
-@@ -199,6 +203,8 @@ pub struct PipelineBudget {
-     /// Set by the first file read in order. The window target then adds the reorder headroom.
-     ordered: Arc<AtomicBool>,
-     num_pipelines: usize,
-+    /// How many `OversizedPermit`s are in flight: 0 or 1.
-+    oversized_in_flight: Arc<AtomicUsize>,
-     registration: Arc<ScanRegistration>,
-     log_stats: Arc<LogStats>,
-     last_reported: Arc<Mutex<Instant>>,
-@@ -222,6 +228,7 @@ impl PipelineBudget {
-         let count_limit = count_limit_env.unwrap_or_else(|| default_prefetch_limit(num_pipelines));
-         let kbytes_limit =
-             kbytes_limit_env.unwrap_or_else(|| default_prefetch_kbytes_limit(num_pipelines));
-+        let kbytes_limit = kbytes_limit.min(MAX_KBYTES_LIMIT);
- 
-         Self {
-             count: Arc::new(Semaphore::new(count_limit)),
-@@ -232,6 +239,7 @@ impl PipelineBudget {
-             can_grow_kbytes: kbytes_limit_env.is_none(),
-             ordered: Arc::new(AtomicBool::new(false)),
-             num_pipelines,
-+            oversized_in_flight: Arc::default(),
-             registration: Arc::new(ScanRegistration::new()),
-             log_stats: Arc::default(),
-             last_reported: Arc::new(Mutex::new(Instant::now())),
-@@ -303,8 +311,13 @@ impl PipelineBudget {
-     /// Grows the kbytes limit from the pool toward the target: the in-flight byte budget of the
-     /// fetch's store, plus the reorder headroom of an ordered scan, plus one fetch of `n_bytes` per
-     /// decode slot. The target is at most the count limit times `n_bytes`, and growth at most what
--    /// the pool has left. Never shrinks.
-+    /// the pool has left. Never shrinks; paused while an `OversizedPermit` lives.
-     fn grow_window(&self, n_bytes: usize, inflight: &InFlightBudget) {
-+        // TODO: the window can't grow while an oversized fetch is running, even if the pool has
-+        // room. Charging each fetch its full size and tracking the overshoot would lift this.
-+        if self.oversized_in_flight.load(Ordering::Acquire) > 0 {
-+            return;
+         if !equality_conditions.is_empty() {
+             let join_options = Arc::make_mut(options);
+             join_options.args.how = JoinType::Inner;
+             join_options.args.coalesce = JoinCoalesce::KeepColumns;
++            join_options.args.nulls_equal = false;
+             push_equi_join_keys(
+                 equality_conditions,
+                 expr_arena,
+@@ -1347,19 +1349,78 @@ fn try_rewrite_outer_equi_join(
+     let mut remaining = init_indexmap(None);
+     let mut dedup = PredicateDedupState::default();
+     insert_predicate_dedup(&mut remaining, predicate, expr_arena, &mut dedup);
+-    let keys = take_equi_join_keys(
+-        &mut remaining,
+-        expr_arena,
+-        schema_left,
+-        schema_right,
+-        output_schema,
+-        &suffix,
+-    )?;
+-    if !remaining.is_empty() || keys.is_empty() {
++    let mut nulls_equal = false;
++    let mut keys = Vec::new();
++    for key_op in [Operator::Eq, Operator::EqValidity] {
++        keys = take_equi_join_keys(
++            &mut remaining,
++            expr_arena,
++            schema_left,
++            schema_right,
++            output_schema,
++            &suffix,
++            key_op,
++        )?;
++        if !keys.is_empty() {
++            nulls_equal = key_op == Operator::EqValidity;
++            break;
 +        }
-         let headroom = if self.ordered.load(Ordering::Acquire) {
-             (inflight.delivered_bandwidth() as f64 * ORDERED_SLACK.as_secs_f64()) as usize
-         } else {
-@@ -319,7 +332,10 @@ impl PipelineBudget {
-         } else {
-             GrowCap::TargetKbytes
-         };
--        let target_kbytes = target_bytes.min(cap_bytes).div_ceil(1 << 10);
-+        let target_kbytes = target_bytes
-+            .min(cap_bytes)
-+            .div_ceil(1 << 10)
-+            .min(MAX_KBYTES_LIMIT);
- 
-         // Held while growing, so that a release after the scan ends returns all drawn kilobytes.
-         let mut registration = self
-@@ -367,15 +383,15 @@ impl PipelineBudget {
- 
-     /// Acquire permit for a fetch of `n_bytes`. `inflight`: the in-flight budget of the fetch's
-     /// store if its window follows it (`DynByteSource::window_inflight_budget`); the window then
--    /// grows when the fetch finds it short, and again every `GROW_RETRY_INTERVAL` while it waits.
-+    /// grows when the fetch finds it short, and again every `GROW_RETRY_INTERVAL` while it waits
-+    /// (not for an oversized fetch).
-     ///
-     /// Acquisition order is kbytes-first, then count, so that the count_in_use
-     /// value is meaningful. All pipeline paths (parquet, IPC) must acquire
-     /// through this method so the order can never diverge.
-     ///
--    /// The requested capacity is capped at the kbytes limit, so a fetch larger than the
--    /// limit still proceeds, and any positive limit makes progress. Such a fetch keeps the charge
--    /// of the limit it was sized under, also when the window grows later.
-+    /// The requested capacity is capped at the kbytes limit, so at most one fetch large
-```
-
----
-
-### Incident Patch 3: `6621ee6a` (2026-11-06)
-**Commit Message**: fix: Support reading `Time` hive partition columns (#30100)
-
-**File**: `crates/polars-plan/src/plans/hive.rs` (modified, +37/-3)
-```diff
-@@ -173,10 +173,15 @@ pub fn hive_partitions_from_paths(
-         Arc::new(hive_schema)
-     };
- 
-+    let parse_schema: Schema = hive_schema
-+        .iter()
-+        .map(|(name, dtype)| Field::new(name.clone(), parse_dtype(dtype)))
-+        .collect();
-+
-     let mut buffers = polars_io::csv::read::builder::init_builders(
-         &(0..hive_schema.len()).collect::<Vec<_>>(),
-         paths.len(),
--        hive_schema.as_ref(),
-+        &parse_schema,
-         None,
-         polars_io::prelude::CsvEncoding::Utf8,
-         false,
-@@ -197,7 +202,9 @@ pub fn hive_partitions_from_paths(
-             let buf = buffers.get_mut(index).unwrap();
- 
-             if value != "__HIVE_DEFAULT_PARTITION__" {
--                buf.add(value.as_bytes(), false, false, false)?;
-+                // An empty value is null, except for `String` columns.
-+                let missing_is_null = !hive_schema.get_at_index(index).unwrap().1.is_string();
-+                buf.add(value.as_bytes(), false, false, missing_is_null)?;
-             } else {
-                 buf.add_null(false);
-             }
-@@ -206,7 +213,8 @@ pub fn hive_partitions_from_paths(
- 
-     let mut buffers = buffers
-         .into_iter()
--        .map(|x| Ok(x.into_series()?.into_column()))
-+        .zip(hive_schema.iter_values())
-+        .map(|(x, dtype)| finish_parsed_column(x.into_series()?, dtype))
-         .collect::<PolarsResult<Vec<_>>>()?;
-     buffers.sort_by_key(|s| reader_schema.index_of(s.name()).unwrap_or(usize::MAX));
- 
-@@ -216,6 +224,32 @@ pub fn hive_partitions_from_paths(
-     )?)))
- }
- 
-+/// The dtype used to parse Hive values of `dtype`. The CSV builders cannot parse `Time`, so it is
-+/// parsed as `String` and converted in [`finish_parsed_column`], as the CSV reader does.
-+fn parse_dtype(dtype: &DataType) -> DataType {
-+    match dtype {
-+        #[cfg(feature = "dtype-time")]
-+        DataType::Time => DataType::String,
-+        dt => dt.clone(),
 +    }
-+}
-+
-+fn finish_parsed_column(s: Series, dtype: &DataType) -> PolarsResult<Column> {
-+    match dtype {
-+        #[cfg(feature = "dtype-time")]
-+        DataType::Time => {
-+            use polars_core::chunked_array::temporal::string::StringMethods;
-+
-+            let out = s.str()?.as_time(None, false)?.into_series();
-+            if out.null_count() != s.null_count() {
-+                polars_core::utils::handle_casting_failures(&s, &out)?;
++    if keys.is_empty() {
+         return Ok(false);
+     }
++    if !remaining.is_empty() {
++        // A condition on one input gives a null key to the rows where it does not hold, and a
++        // null key matches nothing.
++        if nulls_equal {
++            return Ok(false);
++        }
++        let mut left_mask = None;
++        let mut right_mask = None;
++        let conditions: Vec<Node> = remaining
++            .values()
++            .flat_map(|p| MintermIter::new(p.node(), expr_arena))
++            .collect();
++        for node in conditions {
++            if !is_elementwise_rec(node, expr_arena) {
++                return Ok(false);
 +            }
-+            Ok(out.into_column())
-+        },
-+        _ => Ok(s.into_column()),
++            let origin = ExprOrigin::get_expr_origin(
++                node,
++                expr_arena,
++                schema_left,
++                schema_right,
++                &suffix,
++                None,
++            )?;
++            let mask = match origin {
++                ExprOrigin::Left | ExprOrigin::None => &mut left_mask,
++                ExprOrigin::Right => &mut right_mask,
++                _ => return Ok(false),
++            };
++            *mask = Some(match mask.take() {
++                Some(m) => AExprBuilder::new_from_node(m).and(node, expr_arena).node(),
++                None => node,
++            });
++        }
++        let key = &mut keys[0];
++        for (mask, key) in [
++            (left_mask, &mut key.input_lhs),
++            (right_mask, &mut key.input_rhs),
++        ] {
++            if let Some(mask) = mask {
++                let dtype = expr_arena
++                    .get(*key)
++                    .to_dtype(&ToFieldContext::new(expr_arena, output_schema))?;
++                let null = AExprBuilder::lit_scalar(Scalar::null(dtype), expr_arena);
++                *key = AExprBuilder::when_then_otherwise(mask, *key, null, expr_arena).node();
++            }
++        }
 +    }
-+}
-+
- /// Parse a Hive partition string (e.g. "column=1.5") into a name and value part.
- ///
- /// Returns `None` if the string is not a Hive partition string.
+     let on = push_equi_join_keys(keys, expr_arena, schema_right, &suffix, left_on, right_on);
+-    Arc::make_mut(options).options = JoinTypeOptionsIR::Equi {
++    let options = Arc::make_mut(options);
++    options.args.nulls_equal = nulls_equal;
++    options.options = JoinTypeOptionsIR::Equi {
+         on,
+         fused_predicate: None,
+     };
+@@ -1478,14 +1539,11 @@ fn take_equi_join_keys(
+     schema_right: &Schema,
+     output_schema: &Schema,
+     suffix: &str,
++    key_op: Operator,
+ ) -> PolarsResult<Vec<EquiJoinKeys>> {
+     let keys = take_predicates_mut(acc_predicates, expr_arena, |ae, _ae_node, expr_arena| {
+         Ok(match ae {
+-            AExpr::BinaryExpr {
+-                left,
+-                op: Operator::Eq,
+-                right,
+-            } => {
++            AExpr::BinaryExpr { left, op, right } if *op == key_op => {
+                 let left_origin = ExprOrigin::get_expr_origin(
+                     *left,
+                     expr_arena,
 ```
 
-**File**: `py-polars/tests/unit/io/test_hive.py` (modified, +17/-1)
+**File**: `py-polars/tests/unit/operations/test_inequality_join.py` (modified, +73/-0)
 ```diff
-@@ -13,7 +13,11 @@
- import pytest
- 
- import polars as pl
--from polars.exceptions import ComputeError, SchemaFieldNotFoundError
-+from polars.exceptions import (
-+    ComputeError,
-+    InvalidOperationError,
-+    SchemaFieldNotFoundError,
-+)
- from polars.testing import assert_frame_equal, assert_series_equal
- from tests.unit.io.conftest import format_file_uri
- 
-@@ -1140,6 +1144,18 @@ def test_hive_write_dates(tmp_path: Path) -> None:
-     )
+@@ -1426,6 +1426,79 @@ def test_outer_join_where_pushes_non_preserved_input_filter(
+     assert "NESTED LOOP JOIN" in query.explain(optimizations=disabled)
  
  
-+@pytest.mark.write_disk
-+def test_hive_time_invalid_value(tmp_path: Path) -> None:
-+    for value in ["12%3A00%3A00", "abc"]:
-+        (tmp_path / f"t={value}").mkdir()
-+        pl.DataFrame({"x": [0]}).write_parquet(tmp_path / f"t={value}/data.parquet")
-+
-+    with pytest.raises(
-+        InvalidOperationError, match=r"conversion from `str` to `time` failed"
-+    ):
-+        pl.scan_parquet(tmp_path, hive_schema={"t": pl.Time}).collect()
-+
-+
- @pytest.mark.write_disk
- @pytest.mark.may_fail_cloud  # reason: inspects logs
- def test_hive_predicate_dates_14712(
-```
-
-**File**: `py-polars/tests/unit/io/test_partition.py` (modified, +6/-6)
-```diff
-@@ -470,7 +470,7 @@ def test_partition_empty_string_24545(tmp_path: Path) -> None:
- 
- 
- @pytest.mark.write_disk
--@pytest.mark.parametrize("dtype", [pl.Int64(), pl.Date(), pl.Datetime()])
-+@pytest.mark.parametrize("dtype", [pl.Int64(), pl.Date(), pl.Datetime(), pl.Time()])
- def test_partition_empty_dtype_24545(tmp_path: Path, dtype: pl.DataType) -> None:
-     df = pl.DataFrame({"b": [1, 2, 3, 4]}).with_columns(
-         a=pl.col.b.cast(dtype),
-@@ -585,9 +585,9 @@ def test_partition_time_key_fractional_seconds_30046(
-         "k=__HIVE_DEFAULT_PARTITION__",
-     ]
- 
--    out = (
--        pl.scan_parquet(tmp_path, try_parse_hive_dates=False)
--        .with_columns(pl.col("k").str.to_time())
--        .collect()
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++@pytest.mark.parametrize("how", ["left", "right", "full"])
++@pytest.mark.parametrize("sides", ["left", "right", "both"])
++def test_outer_join_where_key_with_one_input_condition(
++    engine: EngineType, how: Literal["left", "right", "full"], sides: str
++) -> None:
++    left = pl.LazyFrame({"k": [1, 2, 2, 3, None], "v": [5, None, 0, 7, 9]})
++    right = pl.LazyFrame({"k": [1, 2, 3, 3, None], "v": [0, 1, None, 4, 2]})
++    predicates = [pl.col("k") == pl.col("k_right")]
++    if sides != "right":
++        predicates.append(pl.col("v") > 1)
++    if sides != "left":
++        predicates.append(pl.col("v_right") < 3)
++    query = left.join_where(right, *predicates, how=how)
++    disabled = pl.QueryOptFlags(predicate_pushdown=False)
 +    assert_frame_equal(
-+        pl.scan_parquet(tmp_path).collect(),
-+        df,
++        query.collect(engine=engine),
++        query.collect(engine=engine, optimizations=disabled),
 +        check_row_order=False,
-+        check_column_order=False,
++    )
++    assert "NESTED LOOP JOIN" not in query.explain()
++
++
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++@pytest.mark.parametrize("how", ["left", "right", "full"])
++@pytest.mark.parametrize(
++    ("predicates", "nested_loop_hows"),
++    [
++        ([pl.col("k").eq_missing(pl.col("k_right"))], set()),
++        ([pl.col("k") == pl.col("k_right"), pl.lit(True)], set()),
++        ([pl.col("k") == pl.col("k_right"), pl.lit(False)], set()),
++        (
++            [pl.col("k").eq_missing(pl.col("k_right")), pl.col("v") > 1],
++            {"left", "full"},
++        ),
++        (
++            [
++                pl.col("k").eq_missing(pl.col("k_right")),
++                pl.col("v") == pl.col("v_right"),
++            ],
++            {"left", "right", "full"},
++        ),
++    ],
++)
++def test_outer_join_where_key_kinds(
++    engine: EngineType,
++    how: Literal["left", "right", "full"],
++    predicates: list[pl.Expr],
++    nested_loop_hows: set[str],
++) -> None:
++    left = pl.LazyFrame({"k": [1, 2, None, None], "v": [5, None, 0, 7]})
++    right = pl.LazyFrame({"k": [1, 3, None], "v": [5, 1, 7]})
++    query = left.join_where(right, *predicates, how=how)
++    disabled = pl.QueryOptFlags(predicate_pushdown=False)
++    assert_frame_equal(
++        query.collect(engine=engine),
++        query.collect(engine=engine, optimizations=disabled),
++        check_row_order=False,
++    )
++    assert ("NESTED LOOP JOIN" in query.explain()) == (how in nested_loop_hows)
++
++
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_cross_join_nulls_equal_filter_on_equality(engine: EngineType) -> None:
++    left = pl.LazyFrame({"k": [None, 1]})
++    right = pl.LazyFrame({"k": [None, 1]})
++    query = left.join(right, how="cross", nulls_equal=True).filter(
++        pl.col("k") == pl.col("k_right")
++    )
++    expected = pl.DataFrame({"k": [1], "k_right": [1]})
++    assert_frame_equal(query.collect(engine=engine), expected)
++
++
+ @pytest.mark.parametrize("engine", ["in-memory", "streaming"])
+ @pytest.mark.parametrize("how", ["left", "right"])
+ def test_outer_join_where_pushed_condition_downgrades_to_cross(
+```
+
+**File**: `py-polars/tests/unit/sql/test_joins.py` (modified, +7/-5)
+```diff
+@@ -3080,18 +3080,20 @@ def test_join_on_input_filter(join_type: str, qualified: bool, with_key: bool) -
+     assert "NESTED LOOP JOIN" not in plan
+ 
+ 
+-def test_join_on_preserved_input_filter() -> None:
++@pytest.mark.parametrize("join_type", ["LEFT", "RIGHT", "FULL"])
++def test_join_on_preserved_input_filter(join_type: str) -> None:
+     frames = {
+-        "a": pl.DataFrame({"k": [1, 2, 3], "v": [1, -1, None]}),
+-        "b": pl.DataFrame({"k": [1, 2, 3], "v": [-1, 1, None]}),
++        "a": pl.DataFrame({"k": [1, 2, 3, 4], "v": [1, -1, None, 2]}),
++        "b": pl.DataFrame({"k": [1, 2, 3, 4], "v": [-1, 1, None, 2]}),
+     }
+-    query = """
++    query = f"""
+         SELECT a.k, b.k AS bk
+-        FROM a LEFT JOIN b ON a.k = b.k AND a.v > 0 AND b.v > 0
++        FROM a {join_type} JOIN b ON a.k = b.k AND a.v > 0 AND b.v > 0
+     """
+     assert_sql_matches(
+         frames, query=query, compare_with="duckdb", check_row_order=False
      )
--    assert_frame_equal(out, df, check_row_order=False, check_column_order=False)
++    assert "NESTED LOOP JOIN" not in pl.SQLContext(frames).execute(query).explain()
+ 
+ 
+ @pytest.mark.parametrize("how", ["inner", "left"])
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #30651** (2026-11-08): perf: Use a hash join for outer joins on an equality and a condition on one input (@ritchie46)
 - **PR #30640** (2026-11-06): perf: Let local Parquet scans grow their prefetch window (@kdn36)
 - **PR #30639** (2026-11-07): perf: Parse CSV columns at a time over a mask based field index (@ritchie46)
 - **PR #30634** (2026-11-06): fix: Keep an oversized fetch alone in the scan prefetch window (@kdn36)
 - **PR #30633** (2026-11-07): feat: Support SQL `MERGE INTO` on attached Iceberg catalog tables (@kdn36)
 - **PR #30631** (2026-11-07): fix: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (@dancsi)
-- **PR #30629** (closed): feat: Support a list of patterns per row in `str.contains_any` and `str.replace_many` (@dancsi)
 
 ---
 
@@ -2108,29 +1960,78 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#306
+## X. Use a hash join for outer joins on an equality and a condition on one input (#30
 
 **RULE**:
-When implementing operations in `crates/polars-expr/src/dispatch/array.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/predicate_pruning.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8dcc6b28`: Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#30631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81da1e95`: Use a hash join for outer joins on an equality and a condition on one input (#30651). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-expr/src/dispatch/array.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/predicate_pruning.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // A broadcast scalar is one element, not one per row.
-    let element = args[1].as_materialized_series_maintain_scalar();
+            Operator::Eq,
+            join_options.args.nulls_equal = false;
+    let mut nulls_equal = false;
+    let mut keys = Vec::new();
+    for key_op in [Operator::Eq, Operator::EqValidity] {
+        keys = take_equi_join_keys(
+            &mut remaining,
+            expr_arena,
+            schema_left,
+            schema_right,
+            output_schema,
+            &suffix,
+            key_op,
+        )?;
+        if !keys.is_empty() {
+            nulls_equal = key_op == Operator::EqValidity;
+            break;
+        }
+    }
+    if keys.is_empty() {
+    if !remaining.is_empty() {
+        // A condition on one input gives a null key to the rows where it does not hold, and a
+        // null key matches nothing.
+        if nulls_equal {
+            return Ok(false);
+        }
+        let mut left_mask = None;
+        let mut right_mask = None;
+        let conditions: Vec<Node> = remaining
+            .values()
+            .flat_map(|p| MintermIter::new(p.node(), expr_arena))
+            .collect();
+        for node in conditions {
+            if !is_elementwise_rec(node, expr_arena) {
+                return Ok(false);
+            }
+            let origin = ExprOrigin::get_exp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let element = &args[1];
+    let keys = take_equi_join_keys(
+        &mut remaining,
+        expr_arena,
+        schema_left,
+        schema_right,
+        output_schema,
+        &suffix,
+    )?;
+    if !remaining.is_empty() || keys.is_empty() {
+    Arc::make_mut(options).options = JoinTypeOptionsIR::Equi {
+            AExpr::BinaryExpr {
+                left,
+                op: Operator::Eq,
+                right,
+            } => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8dcc6b28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81da1e95` are properly handled with clean fallback behavior.

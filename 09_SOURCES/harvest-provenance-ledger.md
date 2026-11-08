@@ -8430,3 +8430,6 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `3e2f08f8` | Multi-dimensional audit evidence | 2026-11-08T22:52:33.113Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-08T22:52:41.779Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `64c34cfc` | Multi-dimensional audit evidence | 2026-11-08T22:52:42.611Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `81da1e95` | Multi-dimensional audit evidence | 2026-11-08T22:59:29.900Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e97cfe9b` | Multi-dimensional audit evidence | 2026-11-08T22:59:40.781Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-08T23:03:34.363Z |

@@ -8421,3 +8421,6 @@
 | `CYCLE-20261108-GTED` | `2026-11-08T22:52:33.109Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f01e79e5...`) |
 | `CYCLE-20261108-H031` | `2026-11-08T22:52:41.773Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 1047` | Yes (`0e9f6360...`) |
 | `CYCLE-20261108-H0Q7` | `2026-11-08T22:52:42.607Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3bb1dfef...`) |
+| `CYCLE-20261108-PQZT` | `2026-11-08T22:59:29.897Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5cbb5fd3...`) |
+| `CYCLE-20261108-PZE2` | `2026-11-08T22:59:40.778Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b53c219c...`) |
+| `CYCLE-20261108-UZMG` | `2026-11-08T23:03:34.360Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4ca7e58b...`) |

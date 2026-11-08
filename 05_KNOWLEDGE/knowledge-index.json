@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:52:42.502Z",
+  "last_updated": "2026-11-08T23:03:34.251Z",
   "total_verified_learnings": 1241,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7579,8 +7579,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "e1cc41b3",
-      "content_hash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
+      "source_version": "e97cfe9b",
+      "content_hash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7607,6 +7607,11 @@
         {
           "number": null,
           "title": "deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "network driver: program RX queue flow steering",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7855,7 +7860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:12:22.760Z",
+      "verified_at": "2026-11-08T22:59:40.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29745,10 +29750,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "b549ff888715a52a992c246d1514c87fa6d97d8fec09c12676e8d2988f10e94b",
+      "content_hash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Asymmetric Precision Boundary for Microscaled MoE Architectures",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dual-Window Dynamic KV-Cache Allocation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Activation Clamping Invariant for Gated Linear Units (SwiGLU Guard)",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 5303,
           "title": "Quantized MoE Precision Isolation Invariant",
@@ -29783,7 +29803,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-11-05T05:32:14.758Z",
+      "verified_at": "2026-11-08T23:03:34.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51121,8 +51141,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "8dcc6b28",
-      "content_hash": "8feea5695581d4ecfc1841445d309c3fbe3d28a256c0335adf02edcb0b8fd482",
+      "source_version": "81da1e95",
+      "content_hash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -51134,6 +51154,11 @@
         {
           "number": null,
           "title": "Require a scalar `element` in `list.count_matches` and `arr.count_matches` (#306",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Use a hash join for outer joins on an equality and a condition on one input (#30",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51212,7 +51237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:36:27.414Z",
+      "verified_at": "2026-11-08T22:59:29.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

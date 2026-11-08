@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T22:52:42.621Z",
+  "last_updated": "2026-11-08T23:03:34.372Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1190,14 +1190,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "b549ff888715a52a992c246d1514c87fa6d97d8fec09c12676e8d2988f10e94b",
-      "verified_at": "2026-11-05T05:32:14.873Z",
+      "content_hash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
+      "verified_at": "2026-11-08T23:03:34.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T05:32:14.873Z"
+      "last_updated": "2026-11-08T23:03:34.371Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "7c9dc880d9623227bfa010cf80d6a50701ebf2de2ae346c4badc64e63c7ef2b7",
-      "verified_at": "2026-11-08T14:12:22.913Z",
+      "content_hash": "b53c219c69895b740f8c0c7dea7d6c4370cf7ad81a42623294715c048aecc3e8",
+      "verified_at": "2026-11-08T22:59:40.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:12:22.913Z"
+      "last_updated": "2026-11-08T22:59:40.789Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "8feea5695581d4ecfc1841445d309c3fbe3d28a256c0335adf02edcb0b8fd482",
-      "verified_at": "2026-11-07T21:36:27.521Z",
+      "content_hash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
+      "verified_at": "2026-11-08T22:59:29.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T21:36:27.521Z"
+      "last_updated": "2026-11-08T22:59:29.916Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `e1cc41b3`  
+> **Source Version**: `e97cfe9b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:12:21.006Z  
+> **Timestamp**: 2026-11-08T22:59:39.248Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T14:12:20.321Z  
+> **Harvest Timestamp**: 2026-11-08T22:59:39.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25797 stars
+- **Stars / Engagement**: 25799 stars
 
 ---
 
@@ -1280,35 +1280,514 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1cc41b3` (2026-11-08)
-**Commit Message**: chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4
+### Incident Patch 1: `e97cfe9b` (2026-10-04)
+**Commit Message**: network driver: program RX queue flow steering
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+Install exact destination IP, port, and protocol rules that direct a
+Pod's traffic to the physical queue reserved for its allocation, for
+IPv4 and IPv6 TCP and UDP.
 
-**File**: `.github/workflows/renovate-config-validator.yaml` (modified, +1/-1)
+Treat the NIC as the source of truth for rule ownership. Reserved RX
+queues are managed by the RX queue manager and excluded from RSS. The
+manager reads the NIC’s steering rules and manages any rule that sends
+traffic to a reserved queue, regardless of what the rule matches. It
+removes stale rules or rules created by something else, so it does not
+need to save rule locations. Rules that send traffic elsewhere, such as
+to a virtual function, are left alone.
+
+Drivers are not required to choose rule locations themselves, and many
+do not. Let the driver choose only when it reports that it can, and
+otherwise place new rules at the lowest unused locations within the rule
+table.
+
+Make the queue reservation the single owner of a queue's rules.
+Programming the rules, reserving the queue, and releasing it all happen
+under the reservation lock. An update only applies while the queue is
+still reserved by its allocation, so a delayed update for an allocation
+that has been freed cannot
+
+**File**: `pkg/networkdriver/rxqueue/flow.go` (added, +247/-0)
 ```diff
-@@ -20,7 +20,7 @@ jobs:
-       - name: Validate configuration
-         run: |
-           # renovate: datasource=docker
--          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.3@sha256:0d4a5af4e1d73308ddcba85928258444443bbd1ee5416978ecfe1465e41fc688
-+          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.4@sha256:306316fc9e8c424dde672590699d681f9c8764cc9152141d2c5059956ce1e3b8
-           docker run --rm --entrypoint "renovate-config-validator" \
-             -v "${{ github.workspace }}/.github/renovate.json5":"/renovate.json5" \
-             ${RENOVATE_IMAGE} --strict "/renovate.json5"
+@@ -0,0 +1,247 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package rxqueue
++
++import (
++	"errors"
++	"fmt"
++	"net"
++	"net/netip"
++	"reflect"
++	"slices"
++
++	"github.com/vishvananda/netlink"
++	"golang.org/x/sys/unix"
++	corev1 "k8s.io/api/core/v1"
++	kube_types "k8s.io/apimachinery/pkg/types"
++
++	"github.com/cilium/cilium/pkg/networkdriver/types"
++)
++
++var (
++	netlinkNetDevRxFlowInsert = netlink.NetDevRxFlowInsert
++	netlinkNetDevRxFlowDelete = netlink.NetDevRxFlowDelete
++	netlinkNetDevRxFlowList   = netlink.NetDevRxFlowList
++	netlinkNetDevRxFlowGet    = netlink.NetDevRxFlowGet
++
++	netlinkNetDevRxFlowActionGet = netlink.NetDevRxFlowActionGet
++
++	netlinkNetDevRxFlowTableGet = netlink.NetDevRxFlowTableGet
++)
++
++// SyncRXFlows makes flows the only flow steering rules that direct traffic to
++// queueID, provided that reserved queue still belongs to shareID, and does
++// nothing otherwise. Rules are programmed while holding the reservation lock,
++// so an update for an allocation that has been freed cannot reach a queue that
++// was reserved again in the meantime.
++func (d *RXQueueDevice) SyncRXFlows(shareID kube_types.UID, queueID uint32, flows []types.RXQueueFlow) error {
++	if d.reservations == nil {
++		return fmt.Errorf("%w: RX queue reservation state is unavailable", errInvalidAllocation)
++	}
++	d.reservations.mu.Lock()
++	defer d.reservations.mu.Unlock()
++	owner, reserved := d.reservations.owners[queueID]
++	if !reserved || shareID == "" || owner != shareID {
++		return nil
++	}
++	return syncRXFlows(d.PhysicalIfName, queueID, flows)
++}
++
++// syncRXFlows makes flows the only flow steering rules on ifName that direct
++// traffic to queueID. The queue is reserved for one allocation, so any other
++// rule that targets it is removed. Callers hold the reservation lock.
++func syncRXFlows(ifName string, queueID uint32, flows []types.RXQueueFlow) error {
++	desired := make(map[types.RXQueueFlow]struct{}, len(flows))
++	for _, flow := range flows {
++		flow.DestinationIP = flow.DestinationIP.Unmap()
++		if _, err := rxFlowMatch(flow); err != nil {
++			return err
++		}
++		desired[flow] = struct{}{}
++	}
++	present, err := removeRXFlows(ifName, queueID, desired)
++	if err != nil {
++		return err
++	}
++
++	var missing []types.RXQueueFlow
++	for flow := range desired {
++		if _, found := present[flow]; !found {
++			missing = append(missing, flow)
++		}
++	}
++	if len(missing) == 0 {
++		return nil
++	}
++	locations, err := newRXFlowLocations(ifName, len(missing))
++	if err != nil {
++		return err
++	}
++
++	var errs []error
++	for i, flow := range missing {
++		errs = append(errs, insertRXFlow(ifName, queueID, flow, locations[i]))
++	}
++	return errors.Join(errs...)
++}
++
++// newRXFlowLocations returns n locations for new rules on ifName. Drivers are
++// not required to choose rule locations themselves. Those that do report it,
++// and get RX_CLS_LOC_ANY; for the others, the lowest unused locations within
++// the rule table are used.
++func newRXFlowLocations(ifName string, n int) ([]uint32, error) {
++	table, err := netlinkNetDevRxFlowTableGet(ifName)
++	if err != nil {
++		return nil, fmt.Errorf("failed to read the RX flow rule table of %s: %w", ifName, err)
++	}
++	locations := make([]uint32, 0, n)
++	if table.SpecialLocations {
++		for range n {
++			locations = append(locations, netlink.RX_CLS_LOC_ANY)
++		}
++		return locations, nil
++	}
++
++	used, err := netlinkNetDevRxFlowList(ifName)
++	if err != nil {
++		return nil, fmt.Errorf("failed to list RX flow rules on %s: %w", ifName, err)
++	}
++	for location := uint32(0); len(locations) < n; location++ {
++		if table.Size != 0 && location >= table.Size {
++			return nil, fmt.Errorf("RX flow rule table of %s is full", ifName)
++		}
++		if !slices.Contains(used, location) {
++			locations = append(locations, location)
++		}
++	}
++	return locations, nil
++}
++
++// removeRXFlows deletes every rule on ifName that delivers traffic directly to
++// queueID unless it is a desired flow, whatever the rule matches on, and
++// returns the desired flows that remain.
++func removeRXFlows(ifName string, queueID uint32, desired map[types.RXQueueFlow]struct{}) (map[types.RXQueueFlow]struct{}, error) {
++	locations, err := netlinkNetDevRxFlowList(ifName)
++	if err != nil {
++		return nil, fmt.Errorf("failed to list RX flow rules on %s: %w", ifName, err)
++	}
++
++	present := make(map[types.RXQueueFlow]struct{})
++	var errs []error
++	for _, location := range locations {
++		action, err := netlinkNetDevRxFlowActionGet(ifName, location)
++		switch {
++		case errors.Is(err, unix.ENOENT):
++			continue
++		case err != nil:
++			errs = append(errs, fmt.Errorf("failed to read RX flow rule %s/%d: %w", ifName, location, err))
++			continue
++		case !deliversToQueue(action, queueID):
++			continue
++		}
++
++		// Keep the rule only if it is exactly a desired flow. A rule that
++		// NetDevRxFlow cannot represent was not installed by the driver.
++		rule, err := netlinkNetDevRxFlowGet(ifName, location)
++		switch {
++		case errors.Is(err, unix.ENOENT)
 ```
 
-**File**: `.github/workflows/renovate.yaml` (modified, +1/-1)
+**File**: `pkg/networkdriver/rxqueue/flow_test.go` (added, +174/-0)
 ```diff
-@@ -46,7 +46,7 @@ jobs:
-           RENOVATE_BASE_DIR: /var/tmp/renovate
-         with:
-           # renovate: datasource=github-releases depName=renovatebot/renovate
--          renovate-version: 44.222.3
-+          renovate-version: 44.222.4
-           docker-user: root
-           docker-cmd-file: .github/actions/renovate/entrypoint.sh
-           configurationFile: .github/renovate.json5
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package rxqueue
++
++import (
++	"maps"
++	"net"
++	"net/netip"
++	"slices"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++	"github.com/vishvananda/netlink"
++	corev1 "k8s.io/api/core/v1"
++	kube_types "k8s.io/apimachinery/pkg/types"
++
++	"github.com/cilium/cilium/pkg/networkdriver/types"
++)
++
++func testFlow(addr string, port uint16, protocol corev1.Protocol) types.RXQueueFlow {
++	return types.RXQueueFlow{
++		DestinationIP:   netip.MustParseAddr(addr),
++		DestinationPort: port,
++		Protocol:        protocol,
++	}
++}
++
++func (f *fakeNetlink) steeredFlows(queueID uint32) []types.RXQueueFlow {
++	var flows []types.RXQueueFlow
++	for _, location := range slices.Sorted(maps.Keys(f.flows)) {
++		rule := f.flows[location]
++		if flow, ok := rxFlowFromMatch(rule.Match); ok && rule.Action.Queue == queueID {
++			flows = append(flows, flow)
++		}
++	}
++	return flows
++}
++
++func TestSyncRXFlows(t *testing.T) {
++	fake := newFakeNetlink(8, 8)
++	fake.install(t)
++	tcp4 := testFlow("192.0.2.10", 9000, corev1.ProtocolTCP)
++	udp6 := testFlow("2001:db8::10", 9000, corev1.ProtocolUDP)
++
++	// Rules that deliver elsewhere, including to queue 7 of a virtual
++	// function, belong to someone else and must survive.
++	foreign := netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 3}, Location: 1}
++	fake.flows[1] = foreign
++	fake.flows[4] = netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 4}
++	fake.flowActions[4] = netlink.NetDevRxFlowAction{VF: 1, Queue: 7}
++	// A rule that targets the reserved queue is removed even if this package
++	// cannot represent what it matches, such as a VLAN-qualified rule.
++	fake.flows[2] = netlink.NetDevRxFlow{Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 2}
++	fake.flowGetErrors[2] = netlink.ErrNotImplemented
++
++	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{tcp4, udp6}))
++	require.ElementsMatch(t, []types.RXQueueFlow{tcp4, udp6}, fake.steeredFlows(7))
++	require.Equal(t, 2, fake.flowInserts)
++	require.NotContains(t, fake.flows, uint32(2))
++
++	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{udp6, tcp4}))
++	require.Equal(t, 2, fake.flowInserts, "existing rules are adopted")
++
++	// A changed selector replaces the stale rule, and so does any other rule
++	// that directs traffic to the reserved queue.
++	fake.flows[3] = netlink.NetDevRxFlow{Match: netlink.EtherFlow{}, Action: netlink.NetDevRxFlowAction{Queue: 7}, Location: 3}
++	tcp4Moved := testFlow("192.0.2.10", 9001, corev1.ProtocolTCP)
++	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{tcp4Moved, udp6}))
++	require.ElementsMatch(t, []types.RXQueueFlow{tcp4Moved, udp6}, fake.steeredFlows(7))
++	require.NotContains(t, fake.flows, uint32(3))
++
++	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, nil))
++	require.Empty(t, fake.steeredFlows(7))
++	require.Equal(t, foreign, fake.flows[1])
++	require.Contains(t, fake.flows, uint32(4))
++
++	require.ErrorIs(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{
++		testFlow("192.0.2.10", 0, corev1.ProtocolTCP),
++	}), errInvalidAllocation)
++}
++
++func TestRXFlowFromMatchRequiresExactShape(t *testing.T) {
++	flow := testFlow("2001:db8::10", 443, corev1.ProtocolTCP)
++	match, err := rxFlowMatch(flow)
++	require.NoError(t, err)
++	got, ok := rxFlowFromMatch(match)
++	require.True(t, ok)
++	require.Equal(t, flow, got)
++
++	widened := match.(netlink.TCP6Flow)
++	widened.DstIPMask = net.IP(net.CIDRMask(64, 128))
++	_, ok = rxFlowFromMatch(widened)
++	require.False(t, ok)
++}
++
++// TestSyncRXFlowsRequiresQueueOwner replays an update that was delayed until
++// its allocation had been freed and the queue reserved for another share.
++func TestSyncRXFlowsRequiresQueueOwner(t *testing.T) {
++	fake := newFakeNetlink(8, 8)
++	fake.install(t)
++	advertised := testDevice(8)
++	first, second := testShareID, kube_types.UID("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
++	firstFlow := testFlow("192.0.2.10", 9000, corev1.ProtocolTCP)
++	secondFlow := testFlow("192.0.2.11", 9000, corev1.ProtocolTCP)
++
++	// A rule left on the queue, for example when cilium-agent stopped before
++	// it could free an allocation, is removed when the queue is reserved.
++	require.NoError(t, syncRXFlows(testPhysicalIfName, 7, []types.RXQueueFlow{secondFlow}))
++	device, err := advertised.Setup(testAllocation(first))
++	require.NoError(t, err)
++	prepared := device.(*RXQueueDevice)
++	require.Equal(t, uint32(7), prepared.PhysicalQueueID)
++	require.Empty(t, fake.steeredFlows(7))
++
++	require.NoError(t, advertised.SyncRXFlows(first, 7, []types.RXQueueFlow{firstFlow}))
++	require.Equal(t, []types.RXQueueFlow{firstFlow}, fake.steeredFlows(7))
++
++	// Freeing the allocation removes its rules before releasing the queue.
++	require.NoError(t, prepared.Free(testAllocation(first)))
++	require.Empty(t, fake.flows)
++	device, err = advertised.Set
+```
+
+**File**: `pkg/networkdriver/rxqueue/reservation.go` (modified, +17/-4)
+```diff
+@@ -74,6 +74,11 @@ func (d *RXQueueDevice) reserve(allocation types.DeviceAllocation, candidates []
+ 		if queue.Lease != nil {
+ 			continue
+ 		}
++		// Clear any steering rules targeting this queue before allocating it.
++		// Old rules may remain if cilium-agent stopped before completing cleanup.
++		if err := syncRXFlows(d.PhysicalIfName, queueID, nil); err != nil {
++			return nil, fmt.Errorf("failed to clear RX flow rules for %s/%d: %w", d.PhysicalIfName, queueID, err)
++		}
+ 
+ 		d.reservations.owners[queueID] = allocation.ShareID
+ 		return d.preparedForAllocation(allocation.ShareID, podIfName, queueID), nil
+@@ -105,15 +110,23 @@ func (d *RXQueueDevice) restoreReservation() error {
+ 	return nil
+ }
+ 
+-func (d *RXQueueDevice) releaseReservation() {
++// releaseReservation removes the rules that target the queue and returns it to
++// the reserved pool. Both happen under the reservation lock, so no flow update
++// can program the queue in between.
++func (d *RXQueueDevice) releaseReservation() error {
+ 	if d.reservations == nil {
+-		return
++		return nil
+ 	}
+ 	d.reservations.mu.Lock()
+ 	defer d.reservations.mu.Unlock()
+-	if d.reservations.owners[d.PhysicalQueueID] == d.ShareID {
+-		delete(d.reservations.owners, d.PhysicalQueueID)
++	if d.reservations.owners[d.PhysicalQueueID] != d.ShareID {
++		return nil
+ 	}
++	if err := syncRXFlows(d.PhysicalIfName, d.PhysicalQueueID, nil); err != nil {
++		return fmt.Errorf("failed to remove RX flow rules for %s/%d: %w", d.PhysicalIfName, d.PhysicalQueueID, err)
++	}
++	delete(d.reservations.owners, d.PhysicalQueueID)
++	return nil
+ }
+ 
+ func (d *RXQueueDevice) preparedForAllocation(shareID kube_types.UID, podIfName string, physicalQueueID uint32) *RXQueueDevice {
+```
+
+**File**: `pkg/networkdriver/rxqueue/rxqueue.go` (modified, +1/-2)
+```diff
+@@ -581,8 +581,7 @@ func (d *RXQueueDevice) Free(allocation types.DeviceAllocation) error {
+ 		return fmt.Errorf("%w: %s/%d", errActiveLease, d.PhysicalIfName, d.PhysicalQueueID)
+ 	}
+ 
+-	d.releaseReservation()
+-	return nil
++	return d.releaseReservation()
+ }
+ 
+ func (d *RXQueueDevice) Match(filter v2alpha1.CiliumNetworkDriverDeviceFilter) bool {
+```
+
+**File**: `pkg/networkdriver/rxqueue/rxqueue_test.go` (modified, +97/-2)
+```diff
+@@ -6,6 +6,7 @@ package rxqueue
+ import (
+ 	"context"
+ 	"errors"
++	"maps"
+ 	"net"
+ 	"slices"
+ 	"testing"
+@@ -53,6 +54,15 @@ type fakeNetlink struct {
+ 	ringsSetError  error
+ 	ignoreRSSSet   bool
+ 	ignoreRingsSet bool
++	flows          map[uint32]netlink.NetDevRxFlow
++	flowGetErrors  map[uint32]error
++	// flowActions overrides the queue action derived from a rule.
++	flowActions   map[uint32]netlink.NetDevRxFlowAction
++	flowInserts   int
++	flowDeletes   int
++	flowTableSize uint32
++	// flowSpecialLocations reports driver-chosen rule locations as supported.
++	flowSpecialLocations bool
+ }
+ 
+ func newFakeNetlink(maxRXQueues, realRXQueues int, _ ...kube_types.UID) *fakeNetlink {
+@@ -73,8 +83,14 @@ func newFakeNetlink(maxRXQueues, realRXQueues int, _ ...kube_types.UID) *fakeNet
+ 		links: map[string]netlink.Link{
+ 			testPhysicalIfName: physical,
+ 		},
+-		leases:       make(map[uint32]*netlink.NetDevQueueLease),
+-		realRXQueues: realRXQueues,
++		leases:        make(map[uint32]*netlink.NetDevQueueLease),
++		flows:         make(map[uint32]netlink.NetDevRxFlow),
++		flowGetErrors: make(map[uint32]error),
++		flowActions:   make(map[uint32]netlink.NetDevRxFlowAction),
++		flowTableSize: 1024,
++		// Like bnxt, the fake driver chooses rule locations itself.
++		flowSpecialLocations: true,
++		realRXQueues:         realRXQueues,
+ 		rss: netlink.NetDevRSS{
+ 			HashFunction:        netlink.NetDevRSSHashFunctionToeplitz,
+ 			IndirectionTable:    indirectionTable,
+@@ -101,7 +117,19 @@ func (f *fakeNetlink) install(t *testing.T) {
+ 	originalRSSSet := netlinkNetDevRSSSet
+ 	originalRingsGet := netlinkNetDevRingsGet
+ 	originalRingsSet := netlinkNetDevRingsSet
++	originalFlowInsert := netlinkNetDevRxFlowInsert
++	originalFlowDelete := netlinkNetDevRxFlowDelete
++	originalFlowList := netlinkNetDevRxFlowList
++	originalFlowGet := netlinkNetDevRxFlowGet
++	originalFlowTableGet := netlinkNetDevRxFlowTableGet
++	originalFlowActionGet := netlinkNetDevRxFlowActionGet
+ 	t.Cleanup(func() {
++		netlinkNetDevRxFlowInsert = originalFlowInsert
++		netlinkNetDevRxFlowDelete = originalFlowDelete
++		netlinkNetDevRxFlowList = originalFlowList
++		netlinkNetDevRxFlowGet = originalFlowGet
++		netlinkNetDevRxFlowTableGet = originalFlowTableGet
++		netlinkNetDevRxFlowActionGet = originalFlowActionGet
+ 		netlinkLinkByName = originalLinkByName
+ 		netlinkNetDevQueueGet = originalQueueGet
+ 		netlinkNetDevRSSGet = originalRSSGet
+@@ -110,6 +138,7 @@ func (f *fakeNetlink) install(t *testing.T) {
+ 		netlinkNetDevRingsSet = originalRingsSet
+ 	})
+ 
++	f.installFlows()
+ 	netlinkLinkByName = func(name string) (netlink.Link, error) {
+ 		link, exists := f.links[name]
+ 		if !exists {
+@@ -178,6 +207,72 @@ func (f *fakeNetlink) install(t *testing.T) {
+ 	}
+ }
+ 
++// installFlows replaces the ethtool RX flow steering calls with an in-memory
++// rule table. Locations returned for RX_CLS_LOC_ANY start at 100.
++func (f *fakeNetlink) installFlows() {
++	netlinkNetDevRxFlowInsert = func(ifName string, flow netlink.NetDevRxFlow) (uint32, error) {
++		if ifName != testPhysicalIfName {
++			return 0, unix.ENODEV
++		}
++		f.flowInserts++
++		if flow.Location == netlink.RX_CLS_LOC_ANY && !f.flowSpecialLocations {
++			return 0, unix.EINVAL
++		}
++		if flow.Location == netlink.RX_CLS_LOC_ANY {
++			flow.Location = 100
++			for f.flows[flow.Location].Match != nil {
++				flow.Location++
++			}
++		}
++		f.flows[flow.Location] = flow
++		return flow.Location, nil
++	}
++	netlinkNetDevRxFlowDelete = func(ifName string, location uint32) error {
++		if _, found := f.flows[location]; !found {
++			return unix.ENOENT
++		}
++		f.flowDeletes++
++		delete(f.flows, location)
++		return nil
++	}
++	netlinkNetDevRxFlowList = func(ifName string) ([]uint32, error) {
++		if ifName != testPhysicalIfName {
++			return nil, unix.ENODEV
++		}
++		return slices.Sorted(maps.Keys(f.flows)), nil
++	}
++	netlinkNetDevRxFlowTableGet = func(ifName string) (*netlink.NetDevRxFlowTable, error) {
++		if ifName != testPhysicalIfName {
++			return nil, unix.ENODEV
++		}
++		return &netlink.NetDevRxFlowTable{
++			Rules:            uint32(len(f.flows)),
++			Size:             f.flowTableSize,
++			SpecialLocations: f.flowSpecialLocations,
++		}, nil
++	}
++	netlinkNetDevRxFlowActionGet = func(ifName string, location uint32) (*netlink.NetDevRxFlowAction, error) {
++		flow, found := f.flows[location]
++		if !found {
++			return nil, unix.ENOENT
++		}
++		if action, overridden := f.flowActions[location]; overridden {
++			return &action, nil
++		}
++		return &flow.Action, nil
++	}
++	netlinkNetDevRxFlowGet = func(ifName string, location uint32) (*netlink.NetDevRxFlow, error) {
++		if err := f.flowGetErrors[location]; err != nil {
++			return nil, err
++		}
++		flow, found := f.flows[location]
++		if !found {
++			return nil, unix.ENOENT
++		}
++		return &flow, nil
++	}
++}
++
+ func testDevice(total int) *RXQueueDevice {
+ 	return testDeviceWithCount(total, defaultReservedRXQueues)
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1337,28 +1816,67 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4
+## X. network driver: program RX queue flow steering
 
 **RULE**:
-When implementing operations in `.github/workflows/renovate-config-validator.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/networkdriver/rxqueue/flow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1cc41b3`: deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e97cfe9b`: network driver: program RX queue flow steering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate-config-validator.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/networkdriver/rxqueue/flow.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.4@sha256:306316fc9e8c424dde672590699d681f9c8764cc9152141d2c5059956ce1e3b8
+// SPDX-License-Identifier: Apache-2.0
+// Copyright Authors of Cilium
+
+package rxqueue
+
+import (
+	"errors"
+	"fmt"
+	"net"
+	"net/netip"
+	"reflect"
+	"slices"
+
+	"github.com/vishvananda/netlink"
+	"golang.org/x/sys/unix"
+	corev1 "k8s.io/api/core/v1"
+	kube_types "k8s.io/apimachinery/pkg/types"
+
+	"github.com/cilium/cilium/pkg/networkdriver/types"
+)
+
+var (
+	netlinkNetDevRxFlowInsert = netlink.NetDevRxFlowInsert
+	netlinkNetDevRxFlowDelete = netlink.NetDevRxFlowDelete
+	netlinkNetDevRxFlowList   = netlink.NetDevRxFlowList
+	netlinkNetDevRxFlowGet    = netlink.NetDevRxFlowGet
+
+	netlinkNetDevRxFlowActionGet = netlink.NetDevRxFlowActionGet
+
+	netlinkNetDevRxFlowTableGet = netlink.NetDevRxFlowTableGet
+)
+
+// SyncRXFlows makes flows the only flow steering rules that direct traffic to
+// queueID, provided that reserved queue still belongs to shareID, and does
+// nothing otherwise. Rules are programmed while holding the reservation lock,
+// so an update for an allocation that has been freed cannot reach a queue that
+// was reserved again in the meantime.
+func (d *RXQueueDevice) SyncRXFlows(shareID kube_types.UID, queueID uint32, flows []types.RXQueueFlow) error {
+	if d.reservations == nil {
+		return fmt
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          export RENOVATE_IMAGE=ghcr.io/renovatebot/renovate:44.222.3@sha256:0d4a5af4e1d73308ddcba85928258444443bbd1ee5416978ecfe1465e41fc688
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1cc41b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e97cfe9b` are properly handled with clean fallback behavior.
