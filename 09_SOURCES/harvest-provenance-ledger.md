@@ -8378,3 +8378,7 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `6220b0f1` | Multi-dimensional audit evidence | 2026-11-08T19:45:31.271Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T19:49:21.733Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `13c02b4c` | Multi-dimensional audit evidence | 2026-11-08T19:50:27.646Z |
+| `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `08f31165` | Multi-dimensional audit evidence | 2026-11-08T20:02:51.196Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `b4184642` | Multi-dimensional audit evidence | 2026-11-08T20:02:53.961Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ad3fc53f` | Multi-dimensional audit evidence | 2026-11-08T20:03:01.400Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-08T20:05:57.443Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `7466899f`  
+> **Source Version**: `b4184642`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T23:55:23.658Z  
+> **Timestamp**: 2026-11-08T20:02:52.130Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T23:55:23.139Z  
+> **Harvest Timestamp**: 2026-11-08T20:02:52.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4068 stars
+- **Stars / Engagement**: 4069 stars
 
 ---
 
@@ -2451,801 +2451,471 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ed334f6` (2026-11-06)
-**Commit Message**: fix(issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)
+### Incident Patch 1: `a2a87572` (2026-11-08)
+**Commit Message**: GitOps: place cluster-scoped Flux inventory and keep sources in neighborhoods (#2088)
 
-## What this fixes
-Radar's Issues list reported a healthy, still-running Job as "Job
-failed" whenever it had been active for more than an hour without
-completing. The rule looked at age alone — not pod health, the retry
-budget (backoffLimit), the configured time limit
-(activeDeadlineSeconds), or whether the Job had stopped making progress.
-Legitimate multi-hour Jobs (model training, data migrations, large batch
-jobs) were filed as failures. The rule also only fired when the Job had
-recorded zero failed attempts — the one case with no failure evidence at
-all.
+> **Narrowed, Nov 8, 2026.** This PR used to attribute Flux resources
+from observed inventory across every read surface. #2505 and main's
+`ownership.manager` work now cover most of that. Against main, two of
+its behaviors were still missing, and this PR is now only those two. The
+previous head is `9112cbe15`.
 
-## The change
-Remove the age-only "stuck active Job" detector. We deliberately do not
-replace it with another heuristic: a Job's failed-attempt counter is
-unreliable in both directions (an OnFailure crash-loop keeps it at zero
-while a container restarts in place; a recovered Job keeps it non-zero),
-so it is not a sound signal either. Removing the bad rule aligns the
-detector with Radar's existing health model, which already treats an
-active Job with no terminal condition as in progress.
+## Why
 
-## What still works
-- A Job with a terminal failure (exh
+**1. Cluster-scoped objects recorded with a namespace.** Many Helm
+charts stamp `namespace: <release namespace>` on every object,
+ClusterRoles included, and helm-controller keeps that namespace in the
+HelmRelease's inventory
+(`prod_reader_rbac.authorization.k8s.io_ClusterRole`). The ClusterRole
+itself has no namespace. The GitOps tree used the recorded namespace as
+is, so it named the ClusterRole `prod/reader`, an identity no object
+has, and every node ID, link and lookup built from it carried that
+namespace. Walking down from it failed too, so the tree warned "Some
+generated resources could not be checked; the resource tree may be
+incomplete." Discovered cluster-scoped custom kinds, such as
+cert-manager's ClusterIssuer, did the same.
 
-**File**: `internal/issues/category.go` (modified, +5/-5)
+Main's ownership index already handles this cas
+
+**File**: `pkg/gitops/tree/builder.go` (modified, +7/-0)
 ```diff
-@@ -339,11 +339,11 @@ func classifyProblem(in classifyInput) issuesapi.Category {
- 		return issuesapi.CategoryUnknown
- 
- 	case "Job":
--		// DetectProblems only emits Job problems for genuine failures: a
--		// JobFailed condition (reason e.g. BackoffLimitExceeded /
--		// DeadlineExceeded, or the "Failed" fallback) or a stuck-active job
--		// ("Running for … with no completions"). All map to the batch
--		// workload-failure category rather than being discarded.
-+		// DetectProblems only emits Job problems for a genuine terminal
-+		// failure: a JobFailed condition (reason e.g. BackoffLimitExceeded /
-+		// DeadlineExceeded, or the "Failed" fallback). It maps to the batch
-+		// workload-failure category. (A deleting Job is classified as
-+		// terminating earlier, before this switch.)
- 		return issuesapi.CategoryJobFailed
- 
- 	case "CronJob":
+@@ -140,6 +140,13 @@ func (b *Builder) Build(ctx context.Context, kind, namespace, name, group string
+ 	// hosts merge the destination cluster's own tree on top (mergeGitOpsTrees).
+ 	remote := (tool == ToolArgoCD && strings.EqualFold(root.GetKind(), "Application") && (!gitops.IsInClusterDestination(root) || gitops.ArgoAppliesElsewhere(root))) ||
+ 		(tool == ToolFluxCD && !gitops.FluxTargetsLocalCluster(root))
++	// The local catalog doesn't describe a remote cluster; built-in scope
++	// holds everywhere.
++	if tool == ToolFluxCD && remote {
++		alignManagedScope(managed, nil)
++	} else if tool == ToolFluxCD {
++		alignManagedScope(managed, b.ownership.Catalog())
++	}
+ 	// Without recorded Helm inventory, recover roots from topology labels.
+ 	// A remote release's objects aren't in local topology, so a local match is
+ 	// someone else's.
 ```
 
-**File**: `internal/issues/category_test.go` (modified, +0/-1)
+**File**: `pkg/gitops/tree/builder_test.go` (modified, +124/-0)
 ```diff
-@@ -116,7 +116,6 @@ func TestClassify(t *testing.T) {
- 		{"job failed condition", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "BackoffLimitExceeded"}, issuesapi.CategoryJobFailed},
- 		{"job failure reason beats embedded forbidden message", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "BackoffLimitExceeded", Message: `workflowtaskresults.argoproj.io is forbidden: User "system:serviceaccount:ci:default" cannot create resource "workflowtaskresults"`}, issuesapi.CategoryJobFailed},
- 		{"job failed fallback", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "Failed"}, issuesapi.CategoryJobFailed},
--		{"job stuck active", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "Running for 3h with no completions"}, issuesapi.CategoryJobFailed},
- 		{"cronjob stale", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "stale"}, issuesapi.CategoryCronJobFailed},
- 		{"cronjob stale reason beats embedded forbidden message", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "stale", Message: `jobs.batch is forbidden: User "system:serviceaccount:ci:default" cannot create resource "jobs"`}, issuesapi.CategoryCronJobFailed},
- 		{"cronjob never scheduled", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "never-scheduled"}, issuesapi.CategoryCronJobFailed},
-```
-
-**File**: `internal/k8s/detect.go` (modified, +3/-20)
-```diff
-@@ -1196,7 +1196,9 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
- 		}
+@@ -8,6 +8,8 @@ import (
+ 	"sync"
+ 	"testing"
+ 
++	"github.com/skyhook-io/radar/pkg/ownership"
++	"github.com/skyhook-io/radar/pkg/ownership/ownershiptest"
+ 	"github.com/skyhook-io/radar/pkg/topology"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ )
+@@ -947,3 +949,125 @@ func TestBuildNotGitOpsErrorNamesTheResource(t *testing.T) {
+ 		t.Fatalf("error = %v, want %q", err, want)
  	}
- 
--	// Job problems: stuck active (running > 1h with no completions)
-+	// Job problems: a terminal failure condition, or a Job being deleted. Age
-+	// alone is not failure — a long-running active Job (training, migration, big
-+	// batch) with no failure evidence is in progress, not failed.
- 	if cache.Jobs() != nil {
- 		for _, job := range jobs {
- 			if det, ok := terminatingProblem("Job", "batch", job, now); ok {
-@@ -1232,25 +1234,6 @@ func DetectProblemsInScope(cache *ResourceCache, namespace string, scope *Detect
- 				problems = append(problems, detection)
- 				continue
- 			}
--			if stuckActiveJob(job, now) {
--				onsetAt := job.CreationTimestamp.Time
--				if job.Status.StartTime != nil && !job.Status.StartTime.IsZero() {
--					onsetAt = job.Status.StartTime.Time
--				}
--				detection := Detection{
--					Kind:              "Job",
--					Namespace:         job.Namespace,
--					Name:              job.Name,
--					Group:             "batch",
--					Severity:          "high",
--					Reason:            fmt.Sprintf("Running for %s with no completions", timeutil.FormatAgeShort(ageDur)),
--					Age:               timeutil.FormatAgeShort(ageDur),
--					AgeSeconds:        int64(ageDur.Seconds()),
--					ResourceCreatedAt: job.CreationTimestamp.Time,
--				}
--				setDetectionOnset(&detection, now, onsetAt)
--				problems = append(problems, detection)
--			}
- 		}
- 	}
- 
-```
-
-**File**: `internal/k8s/detect_cronjob_events_test.go` (modified, +31/-6)
-```diff
-@@ -155,7 +155,11 @@ func observeCronJobEventTestSchedules(cj *batchv1.CronJob, tracker *cronJobSched
  }
- 
- func TestCronJobControllerEventsChildJobs(t *testing.T) {
--	for _, childState := range []string{"none", "failed", "stuck"} {
-+	// A terminally failed child is its own diagnosis and suppresses the parent
-+	// aggregate. A merely active child is work in progress, not a failure: it
-+	// produces no child diagnosis and does not suppress the aggregate, so the
-+	// parent's repeated-without-success still surfaces (same as no child).
-+	for _, childState := range []string{"none", "failed", "active"} {
- 		for _, withEvent := range []bool{false, true} {
- 			t.Run(childState+"/event="+strconv.FormatBool(withEvent), func(t *testing.T) {
- 				now := time.Now()
-@@ -190,22 +194,43 @@ func TestCronJobControllerEventsChildJobs(t *testing.T) {
- 				if len(got) != wantCount {
- 					t.Fatalf("lost/duplicated child or schedule diagnosis: %+v", got)
- 				}
-+				// Only a terminally failed child replaces the parent aggregate
-+				// with its own diagnosis; "none" and "active" keep the aggregate.
-+				// Count each diagnosis so the schedule event and the aggregate /
-+				// child row are required to coexist, not substitute for each other.
-+				aggregateExpected := childState != "failed"
-+				var miss, aggregate, child int
- 				for _, d := range got {
- 					switch d.Reason {
- 					case "MissSchedule":
--						if !withEvent || d.Kind != "CronJob" {
--							t.Errorf("unexpected schedule event: %+v", d)
-+						miss++
-+						if d.Kind != "CronJob" {
-+							t.Errorf("schedule event on wrong kind: %+v", d)
- 						}
- 					case "repeated-without-success":
--						if childState != "none" {
--							t.Errorf("child diagnosis duplicated on parent: %+v", d)
-+						aggregate++
-+						if d.Kind != "CronJob" {
-+							t.Errorf("aggregate on wrong kind: %+v", d)
- 						}
- 					default:
--						if d.Kind != "Job" || d.Name != "current-job" || d.OwnerKind != "" || (childState == "failed" && d.Reason != "BackoffLimitExceeded") || (childState == "stuck" && !strings.HasPrefix(d.Reason, "Running for ")) {
-+						child++
-+						if d.Kind != "Job" || d.Name != "current-job" || d.OwnerKind != "" || d.Reason != "BackoffLimitExceeded" {
- 							t.Errorf("child diagnosis changed: %+v", d)
- 						}
- 					}
- 				}
-+				wantMiss := 0
-+				if withEvent {
-+					wantMiss = 1
-+				}
-+				wantAggregate, wantChild := 1, 0
-+				if !aggregateExpected {
-+					wantAggregate, wantChild = 0, 1
-+				}
-+				if miss != wantMiss || aggregate != wantAggregate || child != wantChild {
-+					t.Errorf("childState=%s withEvent=%v: got miss=%d aggregate=%d child=%d; want miss=%d aggregate=%d child=%d; problems=%+v",
-+						childState, withEvent, miss, aggregate, child, wantMiss, wantAggregate, wantChild, got)
-+				}
- 			})
- 		}
- 	}
-```
-
-**File**: `internal/k8s/detect_test.go` (modified, +89/-5)
-```diff
-@@ -39,7 +39,6 @@ func TestDetectProblems_PopulatesGroup(t *testing.T) {
- 	oneReplica := int32(1)
- 	minReplicas := int32(1)
- 	now := time.Now()
--	// Job needs to be older than 1h to surface a "stuck" problem.
- 	jobStart := metav1.NewTime(now.Add(-2 * time.Hour))
- 
- 	client := fake.NewClientset(
-@@ -86,13 +85,13 @@ func TestDetectProblems_PopulatesGroup(t *testing.T) {
- 				},
- 			},
- 		},
--		// Job stuck Active>0 for >1h with no completions.
-+		// Job with a terminal JobFailed condition.
- 		&batchv1.Job{
- 			ObjectMeta: metav1.ObjectMeta{Name: "migrate", Namespace: "prod", CreationTimestamp: jobStart},
- 			Status: batchv1.JobStatus{
--				Active:    1,
--				Succeeded: 0,
--				Failed:    0,
-+				Conditions: []batchv1.JobCondition{
-+					{Type: batchv1.JobFailed, Status: corev1.ConditionTrue, Reason: "BackoffLimitExceeded"},
-+				},
- 			},
- 		},
- 	)
-@@ -1046,6 +1045,91 @@ func TestDetectProblems_OperationalSignals(t *testing.T) {
- 	assertProblem(t, problems, "Job", "migrate", "BackoffLimitExceeded", "critical")
- }
- 
-+// TestJobDetection_AgeAloneIsNotFailure guards that a long-running active Job
-+// with no failure evidence is not reported as a failure, while a Job that has
-+// truly failed — or whose pods are failing — still surfaces.
-+func TestJobDetection_AgeAloneIsNotFailure(t *testing.T) {
-+	defer ResetTestState()
 +
-+	now := time.Now()
-+	jobCtrl := true
-+	// Healthy, long-running active Job: 12h old, one active pod, nothing failed
-+	// or succeeded, no terminal condition. This is work in progress.
-+	healthy := &batchv1.Job{
-+		ObjectMeta: metav1.ObjectMeta{Name: "training", Namespace: "prod", UID: "training-uid", CreationTimestamp: metav1.NewTime(now.Add(-12 * time.Hour))},
-+		Status:     batchv1.JobStatus{Active: 1},
++func TestFluxTreeDropsNamespaceRecordedForClusterScopedKinds(t *testing.T) {
++	hr := helmRelease("flux", "release")
++	hr.Object["status"] = map[string]any{"inventory": map[string]any{"entries": []any{
++		map[string]any{"id": "prod_reader_rbac.authorization.k8s.io_ClusterRole"},
++		map[string]any{"id": "prod_global_cert-manager.io_ClusterIssuer"},
++		map[string]any{"id": "prod_local_cert-manager.io_Issuer"},
++		map[string]any{"id": "prod_unknown_example.io_Widget"},
++	}}}
++	getter := &fakeDynamic{objects: map[string]*unstructured.Unstructured{
++		refKey(ResourceRef{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease", Namespace: "flux", Name: "release"}): hr,
++	}}
++	session := ownershipSession(t,
++		ownedObject("cert-manager.io", "ClusterIssuer", "", "global", nil, false),
++		ownedObject("cert-manager.io", "Issuer", "prod", "local", nil, false),
++	)
++	tree, _, err := NewBuilder(getter, nil).WithOwnership(session).Build(context.Background(), "HelmRelease", "flux", "release", "helm.toolkit.fluxcd.io")
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	// Truly failed Job: a terminal JobFailed condition.
-+	failed := &batchv1.Job{
-+		ObjectMeta: metav1.ObjectMeta{Name: "migrate", Namespace: "prod", UID: "migrate-uid", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour))},
-+		Status: batchv1.JobStatus{
-+			Conditions: []batchv1.JobCondition{{Type: batchv1.JobFailed, Status: corev1.ConditionTrue, Reason: "BackoffLimitExceeded", Message: "Job has reached the specified backoff limit", LastTransitionTime: metav1.NewTime(now.Add(-time.Minute))}},
-+		},
-+	}
-+	// A still-active Job whose pod is crash-looping: no terminal condition yet,
-+	// but the failing pod is real evidence and must still surface (on the pod).
-+	crashJob := &batchv1.Job{
-+		ObjectMeta: metav1.ObjectMeta{Name: "importer", Namespace: "prod", UID: "importer-uid", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour))},
-+		Status:     batchv1.JobStatus{Active: 1},
-+	}
-+	crashPod := &corev1.Pod{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name: "importer-abc", Namespace: "prod", CreationTimestamp: metav1.NewTime(now.Add(-2 * time.Hour)),
-+			OwnerReferences: []metav1.OwnerReference{{APIVersion: "batch/v1", Kind: "Job", Name: "importer", UID: "importer-uid", Controller: &jobCtrl}},
-+		},
-+		Status: corev1.PodStatus{
-+			Phase: corev1.PodRunning,
-+			ContainerStatuses: []corev1.ContainerStatus{{
-+				Name:         "app",
-+				RestartCount: 5,
-+				State:        corev1.ContainerState{Waiting: &corev1.ContainerStateWaiting{Reason: "CrashLoopBackOff"}},
-+				LastTerminationState: corev1.ContainerState{Terminated: &corev1.ContainerStateTerminated{
-+					Reason: "Error", ExitCode: 1,
-+					StartedAt: metav1.NewTime(now.Add(-3 * time.Second)), FinishedAt: metav1.NewTime(now.Add(-2 * time.Second)),
-+				}},
-+			}},
-+		},
-+	}
-+
-+	client := fake.NewClientset(healthy, failed, crashJob, crashPod)
-+	if err := InitTestResourceCache(client); err != nil {
-+		t.Fatalf("InitTestResourceCache: %v", err)
-+	}
-+	cache := GetResourceCache()
-+	if cache == nil {
-+		t.Fatal("cache nil after init")
-+	}
-+
-+	deadline := time.Now().Add(2 * time.Second)
-+	var problems []Detection
-+	for time.Now().Before(deadline) {
-+		problems = DetectProblems(cache, "prod")
-+		if hasProblem(problems, "Job", "migrate", "BackoffLimitExceeded") &&
-+			hasProblem(problems, "Pod", "importer-abc", "CrashLoopBackOff") {
-+			break
-+		}
-+		time.Sleep(20 * time.Millisecond)
-+	}
-+
-+	// Done-when #1: a healthy long-running Job produces no failure row.
-+	for _, p := range problems {
-+		if p.Kind == "Job" && p.Name == "training" {
-+			t.Fatalf("healthy long-running Job should produce no problem, got %+v", p)
++	want := map[string]string{"ClusterRole": "", "ClusterIssuer": "", "Issuer": "prod", "Widget": "prod"}
++	for _, node := range tree.Nodes {
++		if ns, ok := want[node.Ref.Kind]; ok {
++			if node.Ref.Namespace != ns {
++				t.Errorf("%s namespace = %q, want %q", node.Ref.Kind, node.Ref.Namespace, ns)
++			}
++			delete(want, node.Ref.Kind)
 +		}
 +	}
-+	// Done-when #2: a truly failed Job still surfaces, and a failing pod of an
-+	// otherwise-active Job still surfaces on the pod.
-+	assertProblem(t, problems, "Job", "migrate", "BackoffLimitExceeded", "critical")
-+	assertProblem(t, problems, "Pod", "importer-abc", "CrashLoopBackOff", "critical")
-+	// The active crash-looping Job gets no Job-level row of its own (its evidence
-+	// is the pod); age alone never fabricates one.
-+	for _, p := range problems {
-+		if p.Kind == "Job" && p.Name == "importer" {
-+			t.Fatalf("active Job with a failing pod should carry no Job-level failure row, got %+v", p)
++	if len(want) != 0 {
++		t.Fatalf("missing from tree: %v", want)
++	}
++}
++
++func TestRemoteFluxTreeAlignsOnlyBuiltinScope(t *testing.T) {
++	ks := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization",
++		"metadata": map[string]any{"name": "fleet-prod", "namespace": "flux-system"},
++		"spec":     map[string]any{"kubeConfig": map[string]any{"secretRef": map[string]any{"name": "prod-kubeconfig"}}},
++		"status": map[string]any{"inventory": map[string]any{"entries": []any{
++			map[string]any{"id": "prod_reader_rbac.authorization.k8s.io_ClusterRole"},
++			map[string]any{"id": "prod_global_cert-manager.io_ClusterIssuer"},
++		}}},
++	}}
++	getter := &fakeDynamic{objects: map[string]*unstructured.Unstructured{
++		refKey(ResourceRef{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization", Namespace: "flux-system", Name: "fleet-prod"}): ks,
++	}}
++	// The local catalog's scope for a custom kind says nothing about the remote cluster.
++	session := ownershipSession(t, ownedObject("cert-manager.io", "ClusterIssuer", "", "local-only", nil, false))
++	tree, _, err := NewBuilder(getter, nil).WithOwnership(session).Build(context.Background(), "Kustomization", "flux-system", "fleet-prod", "kustomize.toolkit.fluxcd.io")
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := map[string]string{"ClusterRole": "", "ClusterIssuer": "prod"}
++	for _, node := range tree.Nodes {
++		if ns, ok := want[node.Ref.Kind]; ok {
++			if node.Ref.Namespace != ns {
++				t.Errorf("%s namespace = %q, want %q", node.Ref.Kind, node.Ref.Namespace, ns)
++			}
++			delete(want, node.Ref.Kind)
++		}
++	}
++	if len(want) != 0 {
++		t.Fatalf("missing from tree: %v", want)
++	}
++}
++
++func TestFluxTreeKeepsRecordedNamespaceWhenScopeIsDisputed(t *testing.T) {
++	served := func(version, resource string, namespaced bool) ownership.ServedResource {
++		return ownership.ServedResource{Group: "rbac.authorization.k8s.io", Version: version, Kind: "ClusterRole", Resource: resource, Namespaced: namespaced, Verbs: []string{"get", "list", "watch"}}
++	}
++	for name, resources := range map[string][]ownership.ServedResource{
++		"ambiguous":         {served("v1", "clusterroles", false), served("v2", "tenantroles", true)},
++		"served namespaced": {served("v1", "clusterroles", true)},
++	} {
++		t.Run(name, func(t *testing.T) {
++			hr := helmRelease("flux", "release")
++			hr.Object["status"] = map[string]any{"inventory": map[string]any{"entries": []any{map[string]any{"id": "prod_reader_rbac.authorization.k8s.io_ClusterRole"}}}}
++			getter := &fakeDynamic{objects: map[string]*unstructured.Unstructured{
++				refKey(ResourceRef{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease", Namespace: "flux", Name: "release"}): hr,
++			}}
++			session, err := ownershiptest.Scan(ownershiptest.World{Resources: resources}).Begin()
++			if err != nil {
++				t.Fatal(err)
++			}
++			tree, _, err := NewBuilder(getter, nil).WithOwnership(session).Build(context.Background(), "HelmRelease", "flux", "release", "helm.toolkit.fluxcd.io")
++			if err != nil {
++				t.Fatal(err)
++			}
++			for _, node := range tree.Nodes {
++				if node.Ref.Kind == "ClusterRole" {
++					if node.Ref.Namespace != "prod" {
+```
+
+**File**: `pkg/gitops/tree/inventory.go` (modified, +27/-0)
+```diff
+@@ -6,6 +6,8 @@ import (
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 
+ 	"github.com/skyhook-io/radar/pkg/gitops"
++	"github.com/skyhook-io/radar/pkg/ownership"
++	"github.com/skyhook-io/radar/pkg/resourceid"
+ )
+ 
+ type gitOpsStatus struct {
+@@ -89,6 +91,31 @@ func parseFluxManagedResources(root *unstructured.Unstructured) []managedResourc
+ 	return out
+ }
+ 
++// alignManagedScope drops a namespace recorded for an object whose kind is
++// cluster-scoped. Charts often stamp the release namespace on every object,
++// ClusterRoles included, and helm-controller records it; the object has none,
++// so the recorded ref would match nothing live. Scope comes from the catalog
++// as ownership reads it; with a nil catalog only built-in kinds are aligned.
++// A kind whose scope Radar can't tell keeps what was recorded.
++func alignManagedScope(managed []managedResource, catalog *ownership.Catalog) {
++	for i := range managed {
++		ref := &managed[i].Ref
++		if ref.Namespace == "" {
++			continue
++		}
++		gk := resourceid.GroupKind{Group: ref.Group, Kind: ref.Kind}
++		var namespaced, known bool
++		if catalog != nil {
++			namespaced, known = catalog.Scope(gk)
++		} else if b, builtin := resourceid.BuiltinForKind(gk.Kind); builtin && b.Group == gk.Group {
++			namespaced, known = b.Namespaced, true
++		}
++		if known {
++			ref.Namespace = gitops.MemberNamespace(namespaced, ref.Namespace, "")
 +		}
 +	}
 +}
 +
- func TestPo
+ func parseFluxInventoryID(id string) (ResourceRef, bool) {
+ 	group, kind, namespace, name, ok := gitops.ParseFluxInventoryID(id)
+ 	if !ok {
 ```
 
-**File**: `internal/k8s/detect_workload.go` (modified, +1/-6)
+**File**: `pkg/ownership/cachesource/membership.go` (modified, +2/-16)
 ```diff
-@@ -250,12 +250,7 @@ func jobHasDetectedProblem(job *batchv1.Job, now time.Time) bool {
- 	if _, ok := terminatingProblem("Job", "batch", job, now); ok {
- 		return true
- 	}
--	return failedJobCondition(job) != nil || stuckActiveJob(job, now)
--}
--
--func stuckActiveJob(job *batchv1.Job, now time.Time) bool {
--	return job != nil && job.Status.Active > 0 && job.Status.Succeeded == 0 && job.Status.Failed == 0 &&
--		now.Sub(job.CreationTimestamp.Time) > time.Hour
-+	return failedJobCondition(job) != nil
+@@ -155,25 +155,11 @@ func builtinKind(group, kind string) (resourceid.Builtin, bool) {
+ 	return b, ok && b.Group == group
  }
  
- func repeatedCronJobSchedulesWithoutSuccess(cj *batchv1.CronJob, tracker *cronJobScheduleObservationTracker, now time.Time) (string, time.Time, bool) {
-```
-
-**File**: `internal/k8s/detect_workload_test.go` (modified, +4/-3)
-```diff
-@@ -604,14 +604,15 @@ func TestCronJobScheduleDetectionUsesObservedHistory(t *testing.T) {
- 		}
- 	})
- 
--	t.Run("a directly detected stuck child Job suppresses the aggregate", func(t *testing.T) {
-+	t.Run("a merely active child Job does not suppress the aggregate", func(t *testing.T) {
- 		cj := newSubject()
- 		tracker := newCronJobScheduleObservationTracker()
- 		observeMisses(tracker, cj, cronJobScheduleObservationThreshold)
- 		job := ownedJob(cj)
- 		job.Status.Active = 1
--		if got := DetectCronJobProblems([]*batchv1.CronJob{cj}, []*batchv1.Job{job}, tracker, now); len(got) != 0 {
--			t.Fatalf("stuck child Job left a duplicate aggregate: %+v", got)
-+		got := DetectCronJobProblems([]*batchv1.CronJob{cj}, []*batchv1.Job{job}, tracker, now)
-+		if len(got) != 1 || got[0].Problem != "repeated-without-success" {
-+			t.Fatalf("an active-only child should not suppress the aggregate: %+v", got)
- 		}
- 	})
- 
-```
-
-**File**: `pkg/issuesapi/catalog.go` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ var categoryDescription = map[Category]string{
- 	CategoryWorkloadDegraded:  "A workload has fewer ready replicas than desired — some pods are unavailable.",
- 	CategoryHighRestart:       "A container has restarted many times — unstable even if it's currently running.",
- 	CategoryPodEvicted:        "The kubelet evicted a pod because its node ran low on memory, disk, or PIDs, or because the pod exceeded its own ephemeral-storage limit.",
--	CategoryJobFailed:         "A Job failed — it exhausted its retries (backoffLimit) or hit its deadline — or has been running too long with no completions.",
-+	CategoryJobFailed:         "A Job failed — it exhausted its retries (backoffLimit) or hit its deadline (activeDeadlineSeconds).",
- 	CategoryCronJobFailed:     "A CronJob's recent runs are failing, or its schedule isn't producing successful jobs.",
- 	CategoryBatchRunStopped:   "Kueue stopped trying a batch run: it was requeued too many times, or it exceeded its maximum execution time.",
- 	// Configuration
-```
-
----
-
-### Incident Patch 2: `7466899f` (2026-11-07)
-**Commit Message**: Revert "parent Gateway not found" Issues check (RAD-939, #2555) to research out-of-cluster cases (#2567)
-
-## What
-
-Reverts #2555 (commit `cb034e325`), which added the always-on **"Parent
-Gateway not found"** check to the Issues list, and removes its line from
-the v1.20.0 What's New notes. The revert is a clean, complete inverse of
-that PR — nothing added afterwards depends on its symbols, and no later
-commit touched its files.
-
-## Why
-
-The check is correct on a normal single cluster: an HTTPRoute whose
-`parentRef` names a Gateway that was deleted or mistyped attaches to
-nothing and silently serves no traffic, and before #2555 that was
-invisible in the Issues list. That value is real.
-
-But it has **no awareness of Gateways that live outside the cluster
-Radar watches**. In a vcluster setup, each team's app route points at a
-shared Gateway on the *host* cluster. Radar watches only the vcluster,
-reads the Gateway as an authoritative "does not exist", and flags
-**every team's healthy app route**. Because the Issues list feeds the
-hosted investigation, an all-clear investigation of a healthy app now
-*leads* with a false "the parent Gateway doesn't exist" — which
-undercuts the all-clear i
-
-**File**: `internal/issues/category.go` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ func Classify(in classifyInput) issuesapi.Category {
- 			return issuesapi.CategoryIngressBackendMissing
- 		case "Missing IngressClass":
- 			return issuesapi.CategoryIngressClassMissing
--		case "Missing Gateway backend Service", "Missing Gateway backend Service port", "Missing Gateway ReferenceGrant", k8s.MissingGatewayParentReason:
-+		case "Missing Gateway backend Service", "Missing Gateway backend Service port", "Missing Gateway ReferenceGrant":
- 			return issuesapi.CategoryGatewayRouteInvalid
- 		case k8s.MissingWebhookBackendReason:
- 			return issuesapi.CategoryWebhookBackendDown
-```
-
-**File**: `internal/issues/category_test.go` (modified, +0/-1)
-```diff
-@@ -136,7 +136,6 @@ func TestClassify(t *testing.T) {
- 		{"traefik router service missing", classifyInput{Source: SourceMissingRef, Kind: "IngressRoute", APIGroup: "traefik.io", Reason: k8s.TraefikRouterMissingServiceReason}, issuesapi.CategoryIngressBackendMissing},
- 		{"traefik router middleware missing", classifyInput{Source: SourceMissingRef, Kind: "IngressRoute", APIGroup: "traefik.io", Reason: k8s.TraefikRouterMissingMiddlewareReason}, issuesapi.CategoryIngressBackendMissing},
- 		{"gateway reference grant missing", classifyInput{Source: SourceMissingRef, Kind: "HTTPRoute", APIGroup: "gateway.networking.k8s.io", Reason: "Missing Gateway ReferenceGrant"}, issuesapi.CategoryGatewayRouteInvalid},
--		{"gateway parent missing", classifyInput{Source: SourceMissingRef, Kind: "HTTPRoute", APIGroup: "gateway.networking.k8s.io", Reason: k8s.MissingGatewayParentReason}, issuesapi.CategoryGatewayRouteInvalid},
- 		{"ingress tls secret is config", classifyInput{Source: SourceMissingRef, Kind: "Ingress", APIGroup: "networking.k8s.io", Reason: "Missing TLS Secret"}, issuesapi.CategoryMissingConfigRef},
- 		{"webhook backend down", classifyInput{Source: SourceMissingRef, Kind: "ValidatingWebhookConfiguration", APIGroup: "admissionregistration.k8s.io", Reason: k8s.MissingWebhookBackendReason}, issuesapi.CategoryWebhookBackendDown},
- 		{"missing storageclass is pvc pending", classifyInput{Source: SourceMissingRef, Kind: "PersistentVolumeClaim", Reason: "Missing StorageClass"}, issuesapi.CategoryPVCPending},
-```
-
-**File**: `internal/issues/dedupe.go` (modified, +0/-8)
-```diff
-@@ -3,7 +3,6 @@ package issues
- import (
- 	"strings"
- 
--	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/pkg/issuesapi"
- )
- 
-@@ -263,13 +262,6 @@ func dedupeConditionOverMissingRef(in []Issue) []Issue {
- 		if i.Source != SourceMissingRef {
- 			continue
- 		}
--		// A missing PARENT Gateway is a different failure axis than the
--		// backend-resolution (ResolvedRefs) conditions this dedup suppresses, so
--		// it must not stand in for a structural backend finding and silence an
--		// unrelated backend condition on the same route.
--		if i.Reason == k8s.MissingGatewayParentReason {
--			continue
--		}
- 		structural[issueResourceCategoryKey(i)] = true
- 	}
- 	if len(structural) == 0 {
-```
-
-**File**: `internal/issues/dedupe_test.go` (modified, +0/-51)
-```diff
-@@ -4,7 +4,6 @@ import (
- 	"testing"
- 	"time"
- 
--	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/pkg/issuesapi"
- )
- 
-@@ -367,53 +366,3 @@ func TestDedupeConditionOverMissingRef(t *testing.T) {
- 		t.Fatalf("non-ResolvedRefs route condition was incorrectly dropped: %+v", out)
- 	}
- }
--
--// A missing PARENT Gateway finding shares the route and category with a backend
--// ResolvedRefs condition but describes a different failure; it must not suppress
--// that condition. A backend missing-ref finding on the same route still does.
--func TestDedupeConditionOverMissingRefParentKeepsBackendCondition(t *testing.T) {
--	parentMissing := Issue{
--		Source:    SourceMissingRef,
--		Group:     "gateway.networking.k8s.io",
--		Kind:      "HTTPRoute",
--		Namespace: "prod",
--		Name:      "broken",
--		Reason:    k8s.MissingGatewayParentReason,
--		Category:  issuesapi.CategoryGatewayRouteInvalid,
+-// scopeOf says whether gk is namespaced, and whether Radar can tell: a
+-// built-in kind's scope is its own unless discovery is ambiguous about the
+-// kind or serves it with the other scope; any other kind's is the catalog's.
+-func (s *session) scopeOf(gk resourceid.GroupKind) (namespaced, known bool) {
+-	if s.catalog.Ambiguous(gk) {
+-		return false, false
 -	}
--	backendCondition := Issue{
--		Source:    SourceCondition,
--		Group:     "gateway.networking.k8s.io",
--		Kind:      "HTTPRoute",
--		Namespace: "prod",
--		Name:      "broken",
--		Reason:    "ResolvedRefs: BackendNotFound",
--		Category:  issuesapi.CategoryGatewayRouteInvalid,
+-	k, served := s.catalog.Kind(gk)
+-	if b, builtin := builtinKind(gk.Group, gk.Kind); builtin {
+-		return b.Namespaced, !served || k.Namespaced == b.Namespaced
 -	}
--
--	out := dedupeConditionOverMissingRef([]Issue{parentMissing, backendCondition})
--	if len(out) != 2 {
--		t.Fatalf("a missing-parent finding must not suppress a backend condition: %+v", out)
--	}
--
--	// Add a backend structural finding and the ResolvedRefs echo should drop,
--	// while the independent parent row stays.
--	backendMissing := Issue{
--		Source:    SourceMissingRef,
--		Group:     "gateway.networking.k8s.io",
--		Kind:      "HTTPRoute",
--		Namespace: "prod",
--		Name:      "broken",
--		Reason:    "Missing Gateway backend Service",
--		Category:  issuesapi.CategoryGatewayRouteInvalid,
--	}
--	out = dedupeConditionOverMissingRef([]Issue{parentMissing, backendMissing, backendCondition})
--	for _, i := range out {
--		if i.Source == SourceCondition && i.Reason == "ResolvedRefs: BackendNotFound" {
--			t.Fatalf("backend missing-ref should still suppress its ResolvedRefs echo: %+v", out)
--		}
--	}
--	if len(out) != 2 {
--		t.Fatalf("expected parent + backend structural rows to remain, got %+v", out)
--	}
--}
-```
-
-**File**: `internal/k8s/detect_missing_refs.go` (modified, +5/-74)
-```diff
-@@ -13,7 +13,6 @@ import (
- 	"github.com/skyhook-io/radar/internal/logsafe"
- 	"github.com/skyhook-io/radar/pkg/configrefs"
- 	"github.com/skyhook-io/radar/pkg/envresolve"
--	"github.com/skyhook-io/radar/pkg/issuesapi"
- 	"github.com/skyhook-io/radar/pkg/timeutil"
- 	appsv1 "k8s.io/api/apps/v1"
- 	autoscalingv2 "k8s.io/api/autoscaling/v2"
-@@ -23,7 +22,6 @@ import (
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/labels"
--	"k8s.io/apimachinery/pkg/runtime/schema"
- 	corev1listers "k8s.io/client-go/listers/core/v1"
- )
- 
-@@ -132,16 +130,6 @@ func WebhookBackendFingerprint(namespace, name string) string {
- 	return missingRefFingerprint(MissingWebhookBackendReason, "clientConfig.service:"+namespace+"/"+name)
- }
- 
--const MissingGatewayParentReason = "Parent Gateway not found"
--
--// GatewayParentFingerprint keys a missing parent-Gateway finding on the Gateway
--// itself, so every route pointing at the same absent Gateway shares one stable
--// identity regardless of which parentRef index, sectionName or port named it —
--// a per-Gateway grouping key siblings can later collapse on.
--func GatewayParentFingerprint(namespace, name string) string {
--	return missingRefFingerprint(MissingGatewayParentReason, "parentGateway:"+namespace+"/"+name)
+-	return k.Namespaced, served
 -}
 -
- // refLookupResult classifies a lister Get result into the honest tri-state
- // "exists / known missing / couldn't verify". A lister miss is only
- // authoritative when the informer for the target's kind actually covers the
-@@ -1067,12 +1055,12 @@ func DetectMissingGatewayRefs(cache *ResourceCache, dynamicCache *DynamicResourc
- 	if cache == nil || dynamicCache == nil || discovery == nil {
- 		return nil
+ // align reads an entry as its kind's scope says, or as recorded when Radar
+ // can't tell the scope.
+ func (s *session) align(e gitops.Member, destination string) resourceid.Ref {
+ 	ref := resourceid.Ref{Group: e.Group, Kind: e.Kind, Namespace: e.Namespace, Name: e.Name}
+-	if namespaced, known := s.scopeOf(ref.GroupKind()); known {
++	if namespaced, known := s.catalog.Scope(ref.GroupKind()); known {
+ 		ref.Namespace = gitops.MemberNamespace(namespaced, e.Namespace, destination)
  	}
--	now := time.Now()
--	// The Services lister gates only the backend check; parent-Gateway detection
--	// reads Gateways, so it must still run when the Services informer is absent.
- 	svcLister := cache.Services()
-+	if svcLister == nil {
+ 	return ref
+@@ -186,7 +172,7 @@ func (s *session) placements(ref resourceid.Ref) ([]string, readreason.Code) {
+ 		return nil, readreason.ReadError
+ 	}
+ 	gk := ref.GroupKind()
+-	namespaced, known := s.scopeOf(gk)
++	namespaced, known := s.catalog.Scope(gk)
+ 	_, builtin := builtinKind(ref.Group, ref.Kind)
+ 	switch {
+ 	case !known && (builtin || s.catalog.Ambiguous(gk) || !s.catalog.Complete()):
+```
+
+**File**: `pkg/ownership/catalog.go` (modified, +14/-0)
+```diff
+@@ -140,6 +140,20 @@ func (c *Catalog) Kind(gk resourceid.GroupKind) (CatalogKind, bool) {
+ 	return k, ok
+ }
+ 
++// Scope says whether gk is namespaced, and whether Radar can tell: a built-in
++// kind's scope is its own unless discovery is ambiguous about the kind or
++// serves it with the other scope; any other kind's is the catalog's.
++func (c *Catalog) Scope(gk resourceid.GroupKind) (namespaced, known bool) {
++	if c.Ambiguous(gk) {
++		return false, false
++	}
++	k, served := c.Kind(gk)
++	if b, builtin := resourceid.BuiltinForKind(gk.Kind); builtin && b.Group == gk.Group {
++		return b.Namespaced, !served || k.Namespaced == b.Namespaced
++	}
++	return k.Namespaced, served
++}
++
+ // Ambiguous reports whether two resources of gk's group serve gk, or its
+ // versions serve it at different scopes.
+ func (c *Catalog) Ambiguous(gk resourceid.GroupKind) bool {
+```
+
+**File**: `pkg/topology/neighborhood.go` (modified, +25/-5)
+```diff
+@@ -215,6 +215,7 @@ func BuildNeighborhoodWithIndex(t *Topology, root ResourceRef, opts Neighborhood
+ 	}
+ 
+ 	allowedEdges := edgeTypesForProfile(opts.Profile, rootNode.Kind)
++	rootOnly := rootOnlyEdgeTypes(opts.Profile, rootNode.Kind)
+ 
+ 	// neighbors yields every edge touching id that passes the profile filter,
+ 	// preferring the precomputed index when supplied. The undirected walk
+@@ -225,6 +226,9 @@ func BuildNeighborhoodWithIndex(t *Topology, root ResourceRef, opts Neighborhood
+ 	// instead of O(degree), but the index-free path is reserved for tests
+ 	// and library callers without a Memoizer — hot REST/MCP traffic always
+ 	// supplies idx.
++	follows := func(e Edge, from string) bool {
++		return allowedEdges[e.Type] && (!rootOnly[e.Type] || from == rootID)
++	}
+ 	neighbors := func(id string) []Edge {
+ 		if idx != nil {
+ 			incoming, outgoing := idx.EdgesFor(id)
+@@ -233,20 +237,20 @@ func BuildNeighborhoodWithIndex(t *Topology, root ResourceRef, opts Neighborhood
+ 			// index's internal storage.
+ 			out := make([]Edge, 0, len(incoming)+len(outgoing))
+ 			for _, e := range outgoing {
+-				if allowedEdges[e.Type] {
++				if follows(e, id) {
+ 					out = append(out, e)
+ 				}
+ 			}
+ 			for _, e := range incoming {
+-				if allowedEdges[e.Type] {
++				if follows(e, id) {
+ 					out = append(out, e)
+ 				}
+ 			}
+ 			return out
+ 		}
+ 		var out []Edge
+ 		for _, e := range t.Edges {
+-			if !allowedEdges[e.Type] {
++			if !follows(e, id) {
+ 				continue
+ 			}
+ 			if e.Source == id || e.Target == id {
+@@ -393,6 +397,21 @@ func allEdgeTypes() map[EdgeType]bool {
+ 	}
+ }
+ 
++// rootOnlyEdgeTypes are the profile's edge types followed only from the root.
++// A GitOps object's sources are context: walking on through a shared source
++// would fill the answer with the other objects reading from it, and from a
++// managed workload would pull in its ConfigMaps and Secrets.
++func rootOnlyEdgeTypes(profile Profile, rootKind NodeKind) map[EdgeType]bool {
++	if profile == ProfileAll {
 +		return nil
 +	}
-+	now := time.Now()
- 	getReferenceGrants := gatewayReferenceGrantGetter(dynamicCache, discovery)
--	gatewayGVR, gatewayKnown := discovery.GetGVRWithGroup("Gateway", "gateway.networking.k8s.io")
- 	var out []Detection
- 	for _, kind := range []string{"HTTPRoute", "GRPCRoute", "TCPRoute", "TLSRoute", "UDPRoute"} {
- 		gvr, ok := discovery.GetGVRWithGroup(kind, "gateway.networking.k8s.io")
-@@ -1096,12 +1084,7 @@ func DetectMissingGatewayRefs(cache *ResourceCache, dynamicCache *DynamicResourc
- 			routes = items
++	switch rootKind {
++	case KindApplication, KindKustomization, KindHelmRelease, KindGitRepository:
++		return map[EdgeType]bool{EdgeConfigures: true}
++	}
++	return nil
++}
++
+ // edgeTypesForAuto picks profile edge-types based on the root's kind. The
+ // goal is "the agent asked about a workload — show the management chain
+ // plus the network and policy attachments, not the whole graph."
+@@ -411,9 +430,10 @@ func edgeTypesForAuto(rootKind NodeKind) map[EdgeType]bool {
  		}
- 		for _, route := range routes {
--			if svcLister != nil {
--				out = append(out, detectGatewayRouteMissingBackends(cache, svcLister, getReferenceGrants, kind, route, now)...)
--			}
--			if gatewayKnown {
--				out = append(out, detectGatewayRouteMissingParents(dynamicCache, gatewayGVR, kind, route, now)...)
--			}
-+			out = append(out, detectGatewayRouteMissingBackends(cache, svcLister, getReferenceGrants, kind, route, now)...)
- 		}
- 	}
- 	return out
-@@ -1209,58 +1192,6 @@ func detectGatewayRouteMissingBackends(cache *ResourceCache, svcLister corev1lis
- 	return out
- }
- 
--// detectGatewayRouteMissingParents flags each parentRef that names a Gateway
--// which does not exist. It complements detectGatewayRouteMissingBackends (which
--// reads only backendRefs) and the controller-status detector (silent when no
--// controller claims the route): a route with a valid backend but a nonexistent
--// parent is otherwise invisible. Absence is read through ReadableObject, which is
--// authoritative only when the serving informer had synced before the read — an
--// unsynced or unserved namespace yields no finding (never a false "missing"). The
--// finding carries a RequiredReads for the Gateway's namespace so a caller who
--// cannot read that namespace does not receive the derived absence claim. Severity
--// is a flat warning: the reference is a real config defect, but a dangling parent
--// is not proof the route is wanted, and existence of another parent would prove
--// neither compensation nor acceptance.
--func detectGatewayRouteMissingParents(dynamicCache *DynamicResourceCache, gatewayGVR schema.GroupVersionResource, kind string, route *unstructured.Unstructured, now time.Time) []Detection {
--	parents, found, err := unstructured.NestedSlice(route.Object, "spec", "parentRefs")
--	if err != nil || !found {
--		return nil
--	}
--	seen := map[string]bool{}
--	var out []Detection
--	for pi, p := range parents {
--		pm, ok := p.(map[string]any)
--		if !ok || !configrefs.GatewayParentIsGateway(pm) {
--			continue
--		}
--		name, _ := pm["name"].(string)
--		if name == "" {
--			continue
--		}
--		ns := configrefs.GatewayRefNamespace(pm, route.GetNamespace())
--		key := ns + "/" + name
--		if seen[key] {
--			continue
--		}
--		seen[key] = true
--		_, exists, readable := dynamicCache.ReadableObject(gatewayGVR, ns, name)
--		if !readable || exists {
--			continue
--		}
--		source := fmt.Sprintf("spec.parentRefs[%d]", pi)
--		det := missingRefProblemSev(now, kind, "gateway.networking.k8s.io", rou
+ 	case KindWorkflowTemplate, KindClusterWorkflowTemplate:
+ 		return map[EdgeType]bool{EdgeConfigures: true, EdgeManages: true}
+-	// GitOps controllers: just the management chain (what they own).
++	// GitOps controllers: what they manage, and the sources they read from
++	// (see rootOnlyEdgeTypes).
+ 	case KindApplication, KindKustomization, KindHelmRelease, KindGitRepository:
+-		return managementEdgeTypes()
++		return map[EdgeType]bool{EdgeManages: true, EdgeConfigures: true}
+ 	// Network-shaped resources: routing topology.
+ 	case KindService, KindIngress, KindGateway, KindGatewayClass,
+ 		KindHTTPRoute, KindGRPCRoute, KindTCPRoute, KindTLSRoute, KindUDPRoute,
 ```
 
-**File**: `internal/k8s/detect_missing_refs_test.go` (modified, +0/-298)
+**File**: `pkg/topology/neighborhood_test.go` (modified, +59/-0)
 ```diff
-@@ -1,7 +1,6 @@
- package k8s
+@@ -1,6 +1,7 @@
+ package topology
  
  import (
--	"context"
- 	"errors"
- 	"strings"
++	"fmt"
+ 	"maps"
+ 	"sort"
  	"testing"
-@@ -1727,300 +1726,3 @@ func TestDetectMissingGatewayRefsCrossNamespaceCoverage(t *testing.T) {
- 		}
+@@ -1023,3 +1024,61 @@ func equalStrings(a, b []string) bool {
  	}
+ 	return true
  }
--
--func gatewayRouteWithParents(name, namespace string, ts metav1.Time, parentRefs, backendRefs []any) *unstructured.Unstructured {
--	spec := map[string]any{}
--	if len(parentRefs) > 0 {
--		spec["parentRefs"] = parentRefs
--	}
--	if backendRefs != nil {
--		spec["rules"] = []any{map[string]any{"backendRefs": backendRefs}}
--	}
--	return &unstructured.Unstructured{Object: map[string]any{
--		"apiVersion": "gateway.networking.k8s.io/v1",
--		"kind":       "HTTPRoute",
--		"metadata": map[string]any{
--			"name":              name,
--			"namespace":         namespace,
--			"creationTimestamp": ts.Format(time.RFC3339),
--		},
--		"spec": spec,
--	}}
--}
--
--func gatewayObject(name, namespace string, ts metav1.Time) *unstructured.Unstructured {
--	return &unstructured.Unstructured{Object: map[string]any{
--		"apiVersion": "gateway.networking.k8s.io/v1",
--		"kind":       "Gateway",
--		"metadata": map[string]any{
--			"name":              name,
--			"namespace":         namespace,
--			"creationTimestamp": ts.Format(time.RFC3339),
--		},
--		"spec": map[string]any{},
--	}}
--}
--
--// createGateway stores a Gateway under the real "gateways" resource. The fake
--// dynamic client guesses a resource from the Kind, and its naive plural of
--// "Gateway" is "gatewaies" (every -y becomes -ies), so a Gateway passed in the
--// constructor is filed under a resource the informer never lists. Creating it
--// through the explicit GVR sidesteps that guess.
--func createGateway(t *testing.T, dynClient *dynamicfake.FakeDynamicClient, gvr schema.GroupVersionResource, name, namespace string, ts metav1.Time) {
--	t.Helper()
--	if _, err := dynClient.Resource(gvr).Namespace(namespace).Create(context.Background(), gatewayObject(name, namespace, ts), metav1.CreateOptions{}); err != nil {
--		t.Fatalf("create gateway %s/%s: %v", namespace, name, err)
--	}
--}
--
--func TestDetectMissingGatewayParentRefs(t *testing.T) {
--	defer ResetTestState()
--	defer ResetTestDynamicState()
--
--	now := metav1.NewTime(time.Now().Add(-5 * time.Minute))
--	apiSvc := &corev1.Service{
--		ObjectMeta: metav1.ObjectMeta{Name: "api", Namespace: "prod", CreationTimestamp: now},
--		Spec:       corev1.ServiceSpec{Ports: []corev1.ServicePort{{Name: "http", Port: 80}}},
--	}
--	client := fake.NewClientset(apiSvc)
--	if err := InitTestResourceCache(client); err != nil {
--		t.Fatalf("InitTestResourceCache: %v", err)
--	}
--
--	routeGVR := schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1", Resource: "httproutes"}
--	gatewayGVR := schema.GroupVersionResource{Group: "gateway.networking.k8s.io", Version: "v1", Resource: "gateways"}
--	scheme := runtime.NewScheme()
--	dynClient := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(
--		scheme,
--		map[schema.GroupVersionResource]string{
--			routeGVR:   "HTTPRouteList",
--			gatewayGVR: "GatewayList",
--		},
--		gatewayRouteWithParents("valid-backend-missing-parent", "prod", now,
--			[]any{map[string]any{"name": "ghost-gw"}},
--			[]any{map[string]any{"name": "api", "port": int64(80)}}),
--		gatewayRouteWithParents("both-missing", "prod", now,
--			[]any{map[string]any{"name": "ghost-gw"}},
--			[]any{map[string]any{"name": "nope", "port": int64(80)}}),
--		gatewayRouteWithParents("has-parent", "prod", now,
--			[]any{map[string]any{"name": "real-gw"}},
--			[]any{map[string]any{"name": "api", "port": int64(80)}}),
--		gatewayRouteWithParents("multi-parent", "prod", now,
--			[]any{map[string]any{"name": "real-gw"}, map[string]any{"name": "ghost-gw"}},
--			[]any{map[string]any{"name": "api", "port": int64(80)}}),
--		gatewayRouteWithParents("dup-parent", "prod", now,
--			[]any{map[string]any{"name": "ghost-gw"}, map[string]any{"name": "ghost-gw"}},
--			nil),
--		gatewayRouteWithParents("mesh-parent", "prod", now,
--			[]any{map[string]any{"group": "", "kind": "Service", "name": "mesh"}},
--			nil),
--		gatewayRouteWithParents("cross-ns-parent", "prod", now,
--			[]any{map[string]any{"name": "ghost-infra", "namespace": "infra"}},
--			nil),
--	)
--	createGateway(t, dynClient, gatewayGVR, "real-gw", "prod", now)
--	if err := InitTestDynamicResourceCache(dynClient, []APIResource{
--		{Group: "gateway.networking.k8s.io", Version: "v1", Kind: "HTTPRoute", Name: "httproutes", Verbs: []string{"list", "watch"}},
--		{Group: "gateway.networking.k8s.io", Version: "v1", Kind: "Gateway", Name: "gateways", Verbs: []string{"list", "watch"}},
--	}); err != nil {
--		t.Fatalf("InitTestDynamicResourceCache: %v", err)
--	}
--	dynCache := GetDynamicResourceCache()
--	for _, gvr := range []schema.GroupVersionResource{routeGVR, gatewayGVR} {
--		if err := dynCache.EnsureWatching(gvr); err != nil {
--			t.Fatalf("EnsureWatching %s: %v", gvr.String(), err)
--		}
--		if !dynCache.WaitForSync(gvr, 2*time.Second) {
--			t.Fatalf("%s did not sync", gvr.String())
--		}
--	}
--
--	problems := DetectMissingGatewayRe
++
++func TestGitOpsNeighborhoodRetainsSourceDependency(t *testing.T) {
++	ks := makeNode(KindKustomization, "flux", "apps")
++	repo := makeNode(KindGitRepository, "flux", "source")
++	topo := &Topology{Nodes: []Node{ks, repo}, Edges: []Edge{makeEdge(EdgeConfigures, repo.ID, ks.ID)}}
++	for _, ref := range []ResourceRef{{Kind: "Kustomization", Namespace: "flux", Name: "apps"}, {Kind: "GitRepository", Namespace: "flux", Name: "source"}} {
++		sub := BuildNeighborhood(topo, ref, NeighborhoodOptions{Profile: ProfileAuto, Hops: 1})
++		if len(sub.Nodes) != 2 || len(sub.Edges) != 1 || sub.Edges[0].Type != EdgeConfigures {
++			t.Fatalf("from %s: source neighborhood = %+v", ref.Kind, sub)
++		}
++	}
++}
++
++func TestGitOpsNeighborhoodTreatsSourcesAsContext(t *testing.T) {
++	ks := makeNode(KindKustomization, "flux", "apps")
++	repo := makeNode(KindGitRepository, "flux", "shared")
++	dep := makeNode(KindDeployment, "apps", "web")
++	pod := makeNode(KindPod, "apps", "web-1")
++	cm := makeNode(KindConfigMap, "apps", "web-config")
++	nodes := []Node{ks, repo, dep, pod, cm}
++	edges := []Edge{
++		makeEdge(EdgeConfigures, repo.ID, ks.ID),
++		makeEdge(EdgeManages, ks.ID, dep.ID),
++		makeEdge(EdgeManages, dep.ID, pod.ID),
++		makeEdge(EdgeConfigures, cm.ID, dep.ID),
++	}
++	for i := 0; i < 30; i++ {
++		sibling := makeNode(KindKustomization, "flux", fmt.Sprintf("other-%d", i))
++		nodes = append(nodes, sibling)
++		edges = append(edges, makeEdge(EdgeConfigures, repo.ID, sibling.ID))
++	}
++	topo := &Topology{Nodes: nodes, Edges: edges}
++	ids := func(sub *Subgraph) []string {
++		out := make([]string, 0, len(sub.Nodes))
++		for _, n := range sub.Nodes {
++			out = append(out, n.ID)
++		}
++		sort.Strings(out)
++		return out
++	}
++
++	sub := BuildNeighborhood(topo, ResourceRef{Kind: "Kustomization", Namespace: "flux", Name: "apps"}, NeighborhoodOptions{Profile: ProfileAuto, Hops: 2})
++	want := []string{dep.ID, ks.ID, pod.ID, repo.ID}
++	sort.Strings(want)
++	if got := ids(sub); !equalStrings(got, want) || sub.Truncated {
++		t.Fatalf("Kustomization at 2 hops = %v (truncated=%v), want %v", got, sub.Truncated, want)
++	}
++
++	sub = BuildNeighborhood(topo, ResourceRef{Kind: "GitRepository", Namespace: "flux", Name: "shared"}, NeighborhoodOptions{Profile: ProfileAuto, Hops: 1, MaxNodes: 50})
++	if len(sub.Nodes) != 32 {
++		t.Fatalf("GitRepository at 1 hop has %d nodes, want itself and its 31 consumers", len(sub.Nodes))
++	}
++
++	sub = BuildNeighborhood(topo, ResourceRef{Kind: "Kustomization", Namespace: "flux", Name: "apps"}, NeighborhoodOptions{Profile: ProfileAll, Hops: 2, MaxNodes: 50})
++	if len(sub.Nodes) != len(nodes) {
++		t.Fatalf("profile all at 2 hops has %d nodes, want all %d", len(sub.Nodes), len(nodes))
++	}
++}
 ```
 
-**File**: `web/src/components/whats-new/releaseNotes.ts` (modified, +1/-1)
+**File**: `pkg/topology/testdata/characterization/relationship-options.json` (modified, +22/-0)
 ```diff
-@@ -115,7 +115,7 @@ export const RELEASE_NOTES: ReleaseNotes[] = [
-       'Limit what Radar can reach with rbac.namespaces, disableExec and --disable-auto-port-forward',
-       'GitOps trees show operator-created workloads; drawers link webhooks, issuers and Secrets',
-       'get_changes includes RBAC and Node edits; search finds resources by a pasted IP or ip:port',
--      'Issues link a missing Secret to its SealedSecret and report missing parent Gateways',
-+      'Issues link a missing Secret to its SealedSecret',
-     ],
-   },
-   {
-```
-
----
-
-### Incident Patch 3: `523a047c` (2026-11-06)
-**Commit Message**: fix(packaging): depend on sonames in the RPM package (#2546)
-
-## Description
-
-The RPM package declares Fedora package names (`gtk3`, `webkit2gtk4.1`)
-as dependencies. On openSUSE the same libraries ship as `libgtk-3-0` /
-`libwebkit2gtk-4_1-0`, so `rpm -i` fails with `webkit2gtk4.1 is needed
-by radar-desktop` even though everything the binary links against is
-installed.
-
-This switches the RPM dependencies to sonames (`libgtk-3.so.0()(64bit)`,
-`libwebkit2gtk-4.1.so.0()(64bit)`), which are auto-provided by the
-library packages on Fedora, RHEL and openSUSE. The `.deb` overrides are
-unchanged.
-
-## Type of change
-
-- [x] Bug fix (non-breaking change that fixes an issue)
-
-## How has this been tested?
-
-On openSUSE Tumbleweed (x86_64), using the v1.19.0 binary:
-
-- built the RPM with `nfpm package --config deploy/linux/nfpm.yaml
---packager rpm`
-- `rpm -qpR` lists the soname requirements
-- `rpm -q --whatprovides` resolves both to `libgtk-3-0` and
-`libwebkit2gtk-4_1-0`
-- `rpm -i --test` passes (it failed with the old package)
-
-Not tested on Fedora, but both sonames are provided there by `gtk3` and
-`webkit2gtk4.1`.
-
-## Related issues
-
-Fixes #2545
-
-**File**: `deploy/linux/nfpm.yaml` (modified, +2/-2)
-```diff
-@@ -21,5 +21,5 @@ overrides:
-       - libwebkit2gtk-4.1-0
-   rpm:
-     depends:
--      - gtk3
--      - webkit2gtk4.1
-+      - libgtk-3.so.0()(64bit)
-+      - libwebkit2gtk-4.1.so.0()(64bit)
+@@ -4456,6 +4456,21 @@
+               "totalReplicas": 1
+             }
+           },
++          {
++            "id": "gitrepository/flux-system/repo",
++            "kind": "GitRepository",
++            "name": "repo",
++            "status": "unknown",
++            "data": {
++              "apiVersion": "source.toolkit.fluxcd.io/v1",
++              "auditKey": "source.toolkit.fluxcd.io|GitRepository|flux-system|repo",
++              "branch": "",
++              "labels": null,
++              "namespace": "flux-system",
++              "ready": "Unknown",
++              "url": "https://example.com/repo.git"
++            }
++          },
+           {
+             "id": "kustomization/flux-system/shop",
+             "kind": "Kustomization",
+@@ -4473,6 +4488,13 @@
+           }
+         ],
+         "edges": [
++          {
++            "id": "gitrepository/flux-system/repo-to-kustomization/flux-system/shop-configures",
++            "source": "gitrepository/flux-system/repo",
++            "target": "kustomization/flux-system/shop",
++            "type": "configures",
++            "label": "source"
++          },
+           {
+             "id": "kustomization/flux-system/shop-to-deployment/shop/cart",
+             "source": "kustomization/flux-system/shop",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2567** (2026-11-07): Revert "parent Gateway not found" Issues check (RAD-939, #2555) to research out-of-cluster cases (@arlenvasconcelos)
-- **PR #2562** (2026-11-06): Tell Compare's sides apart when comparing one resource across clusters (@nadaverell)
-- **PR #2561** (2026-11-06): docs(chart): note the Helm write grant when turning exec off (@nadaverell)
-- **PR #2560** (2026-11-06): docs: correct the exec-off image note and the edit role row (@nadaverell)
-- **PR #2559** (2026-11-06): Report revision serving state, deploy time and access on applications (@nadaverell)
-- **PR #2558** (closed): Fix flaky Kueue queue paging test (@nadaverell)
+- **PR #2578** (2026-11-08): Workload logs: name each line's container and say why an app container has no output (@nadaverell)
+- **PR #2577** (2026-11-08): Skip Helm storage reads in namespaces where Radar's probe saw Secrets refused (@nadaverell)
+- **PR #2576** (2026-11-08): Home: show Nodes and Namespaces as restricted, not 0, when Radar can't list them (@nadaverell)
+- **PR #2575** (2026-11-08): Don't call an unanswered Helm check a denial; correct the unread-namespace contracts (@nadaverell)
+- **PR #2574** (2026-11-08): Keep cluster-scoped custom kinds cluster-scoped whichever API version discovery lists first (@nadaverell)
+- **PR #2573** (2026-11-08): Use the shared Tooltip for Home's unread-namespaces line (@nadaverell)
 
 ---
 
@@ -3265,36 +2935,34 @@ Fixes #2545
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)
+## X. GitOps: place cluster-scoped Flux inventory and keep sources in neighborhoods (#
 
 **RULE**:
-When implementing operations in `internal/issues/category.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/gitops/tree/builder.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ed334f6`: issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2a87572`: GitOps: place cluster-scoped Flux inventory and keep sources in neighborhoods (#2088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/issues/category.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gitops/tree/builder.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// DetectProblems only emits Job problems for a genuine terminal
-		// failure: a JobFailed condition (reason e.g. BackoffLimitExceeded /
-		// DeadlineExceeded, or the "Failed" fallback). It maps to the batch
-		// workload-failure category. (A deleting Job is classified as
-		// terminating earlier, before this switch.)
+	// The local catalog doesn't describe a remote cluster; built-in scope
+	// holds everywhere.
+	if tool == ToolFluxCD && remote {
+		alignManagedScope(managed, nil)
+	} else if tool == ToolFluxCD {
+		alignManagedScope(managed, b.ownership.Catalog())
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		// DetectProblems only emits Job problems for genuine failures: a
-		// JobFailed condition (reason e.g. BackoffLimitExceeded /
-		// DeadlineExceeded, or the "Failed" fallback) or a stuck-active job
-		// ("Running for … with no completions"). All map to the batch
-		// workload-failure category rather than being discarded.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ed334f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2a87572` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `94805b90`  
+> **Source Version**: `ad3fc53f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:00:01.977Z  
+> **Timestamp**: 2026-11-08T20:02:59.593Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T14:00:01.972Z  
+> **Harvest Timestamp**: 2026-11-08T20:02:59.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,179 +2203,228 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94805b90` (2026-11-08)
-**Commit Message**: fix(template): legacy time zone aliases fall back to a bundled tzdb (#5010)
+### Incident Patch 1: `ad3fc53f` (2026-11-08)
+**Commit Message**: perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (#5011)
 
-* fix(template): legacy time zone aliases fall back to a bundled tzdb
+* perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking
 
-minijinja-contrib's datetime filters resolve tz= names from the OS time
-zone database, so legacy aliases such as "EST" or "US/Eastern" failed with
-"unknown timezone" where the OS lacks them (e.g. Ubuntu 26.04 without
-tzdata-legacy). minijinja 3.1.0 falls back to jiff's bundled tzdb for
-missing names (minijinja#1008), but only if the bundle is compiled in, so
-enable jiff's tzdb-bundle-always feature. System data still wins.
+qsv-stats 0.57.0 adds ByteKey, which stores byte-string keys of up to 23
+bytes inline instead of on the heap. Switch the unweighted modes tracker
+from Frequencies<Vec<u8>> to Frequencies<ByteKey>; Hash/Eq/Ord/serde match
+Vec<u8>, so counts, modes and antimodes are unchanged.
 
-The new test points TZDIR at a zoneinfo dir with no zones, which jiff
-honors on every platform; with the feature removed it fails with
-"unknown timezone 'EST'".
+On the 1M-row NYC 311 sample (release, jemalloc, M4 Max), output is
+byte-identical to 0.56.1, indexed and unindexed:
+- --cardinality --mode: -16% to -19% wall, -21% RSS unindexed;
+  -24% to -27% wall indexed
+- --everything: -14% to -16% wall unindexed; -27% wall and -34% RSS indexed
+
+ByteKey is backed by compact_bytes 0.2.1, so the existing compact_bytes
+[patch.crates-io] entry (our fork, same version) is now used.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): template legacy time zone alias fallback (#5010)
+* docs(changelog): stats ByteKey mode/cardinality speedup (#5011)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* deps: csvs_convert fork on qsv-stats 0.57 (single qsv-stats in the graph)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Picks up jqnatividad/csvs_convert@64e3064 (replace-streaming-stats-redux),
+which bumps its qsv-stat
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`cat rowskey` writes nothing for empty input** ([#5008](https://github.com/dathere/qsv/pull/5008)). It wrote a lone `""` header line for an empty file or an empty `-` stdin, where `rows` and `columns` write nothing. With `--group`, the grouping column's header is still written.
- - **`applydp --batch 0` works from stdin** ([#5005](https://github.com/dathere/qsv/pull/5005)). It counted rows first, which consumed stdin and left only the header; it now reads stdin in one batch, as `py` does.
- - **`geocode --batch 0` no longer drops rows from piped stdin** ([#5009](https://github.com/dathere/qsv/pull/5009)). Counting rows to size the batch consumed the stream, so rows past the first 128 KiB were silently lost, with exit 0 (also in 28.0.0). It now reads stdin in one batch without counting, as the `census` and `geoclient` back ends already did.
-+- **`template`: legacy time zone aliases such as `"EST"` and `"US/Eastern"` work on every system** ([#5010](https://github.com/dathere/qsv/pull/5010), via [minijinja#1008](https://github.com/mitsuhiko/minijinja/issues/1008)). `datetimeformat(tz=...)` failed with "unknown timezone" where the OS time zone database lacks them, e.g. Ubuntu 26.04 without `tzdata-legacy`. qsv now bundles the time zone database as a fallback (about 200 KiB); OS data still takes precedence.
- - **`to`: clearer error when no input is given** ([#5005](https://github.com/dathere/qsv/pull/5005)). It said "No data on stdin" even when data was piped. It now says no input CSV was given and to use `-` to read stdin.
- - **tests: `template_contrib_functions` no longer depends on the legacy `EST` zone alias** ([#5002](https://github.com/dathere/qsv/pull/5002)). `ubuntu-latest` is now Ubuntu 26.04, which ships aliases such as `EST` and `US/Eastern` only in the optional `tzdata-legacy` package, so the test failed on every Linux run. It now uses `Etc/GMT+5` (the same fixed UTC−5 offset). If you use `datetimeformat(tz=...)` in `template`, prefer canonical IANA names for the same reason.
+@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **docs: "Statistics at a Glance" in [`docs/STATS_DEFINITIONS.md`](docs/STATS_DEFINITIONS.md)**: qsv compiles 159 statistic columns across `stats` (48), `moarstats` (76 + 14 bivariate), `pragmastat` (18) and `frequency` (3). A new test checks the table against real output, so the counts can't go stale silently ([#4996](https://github.com/dathere/qsv/pull/4996)).
  
+ ### Changed
++- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
+ - **`scripts/benchmarks.sh` 10.1.1: the `joinp` benchmarks check their exact row counts** ([#4997](https://github.com/dathere/qsv/pull/4997)). Before, three of them only checked for at least one output row and `joinp_left_anti` had no check, so a partial join could be published as a speedup. Now inner and `--streaming` must return 883,470 rows, `--left` all 1,000,000, and `--left-anti` 116,530 (cross-checked with `qsv join` and DuckDB).
+ - **deps: Polars bumped to upstream rev [`0b47007`](https://github.com/pola-rs/polars/commit/0b47007ab65f0efd39ddc4d5abd5b2e44097a009)** (from `py-2.1.0`, 126 commits, [#4993](https://github.com/dathere/qsv/pull/4993)). Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
+   - **`IS DISTINCT FROM` binds tighter than `AND`/`OR`** ([#30367](https://github.com/pola-rs/polars/pull/30367)). `a IS DISTINCT FROM b AND c OR d` is now `((a IS DISTINCT FROM b) AND c) OR d`; before, the `AND`/`OR` became part of the right operand.
 ```
 
-**File**: `Cargo.lock` (modified, +2/-0)
+**File**: `Cargo.lock` (modified, +21/-12)
 ```diff
-@@ -4138,6 +4138,7 @@ checksum = "14ed8250fe4472173a765b89fea4b46f2c4aa12adc12a3e310f1dc6c108e041b"
+@@ -391,7 +391,7 @@ dependencies = [
+  "objc2-foundation",
+  "parking_lot 0.12.5",
+  "percent-encoding",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+  "wl-clipboard-rs",
+  "x11rb",
+ ]
+@@ -1480,6 +1480,14 @@ dependencies = [
+  "unicode-width",
+ ]
+ 
++[[package]]
++name = "compact_bytes"
++version = "0.2.1"
++source = "git+https://github.com/jqnatividad/compact_bytes?branch=main#651006e934c5d4700c6b0b75aa94fcc26b7f79cc"
++dependencies = [
++ "serde",
++]
++
+ [[package]]
+ name = "compact_str"
+ version = "0.9.1"
+@@ -2002,7 +2010,7 @@ dependencies = [
+ [[package]]
+ name = "csvs_convert"
+ version = "0.13.2"
+-source = "git+https://github.com/jqnatividad/csvs_convert?branch=replace-streaming-stats-redux#8ba42bd56408d8b3512cc9a02ac8fceed70b1bad"
++source = "git+https://github.com/jqnatividad/csvs_convert?branch=replace-streaming-stats-redux#64e3064a692d9f486113e98219d0e3ad5aa67e71"
  dependencies = [
-  "jiff-core",
-  "jiff-static",
-+ "jiff-tzdb",
-  "jiff-tzdb-platform",
-  "log",
-  "portable-atomic",
-@@ -7051,6 +7052,7 @@ dependencies = [
-  "jaq-core",
-  "jaq-json",
-  "jaq-std",
-+ "jiff",
-  "jsonschema",
+  "chrono",
+  "counter",
+@@ -2550,7 +2558,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
   "libc",
-  "log",
-```
-
-**File**: `Cargo.toml` (modified, +3/-0)
-```diff
-@@ -265,6 +265,9 @@ itoa = "1"
- jaq-core = "3"
- jaq-json = { version = "2", features = ["serde"] }
- jaq-std = "3"
-+# not used directly: compiles in jiff's bundled tzdb so minijinja-contrib's datetime filters
-+# can fall back to it for zone names missing from the OS database (minijinja#1008)
-+jiff = { version = "0.2", features = ["tzdb-bundle-always"] }
- jsonschema = { version = "0.60", features = [
-     "idna",
-     "resolve-file",
-```
-
-**File**: `docs/help/template.md` (modified, +4/-4)
-```diff
-@@ -76,10 +76,10 @@ qsv template --template-file template.tpl data.csv
- > Booleans render as `True`/`False` and none (e.g. a JSON null reached via `fromjson`)
- >  renders as `None`, matching Jinja2. Use `{{ v or "" }}` for an empty string instead —
- >  a bare `{{ v|default("") }}` does NOT substitute for none, only for undefined.
--> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database.
-->  Use canonical IANA names such as "America/New_York" or "Etc/GMT+5". Legacy aliases
-->  like "EST" or "US/Eastern" are missing on systems without them (e.g. Ubuntu 26.04
-->  without the tzdata-legacy package) and fail with "unknown timezone".
-+> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database,
-+>  falling back to qsv's bundled copy for names the OS lacks, so legacy aliases like "EST"
-+>  or "US/Eastern" work even on systems without them (e.g. Ubuntu 26.04 without the
-+>  tzdata-legacy package). Canonical IANA names such as "America/New_York" are preferred.
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
- Additional qsv-specific data-wrangling filters/functions (available in all binary variants):  
- ```
+ [[package]]
+@@ -5561,7 +5569,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -7148,10 +7156,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "qsv-stats"
+-version = "0.56.1"
++version = "0.57.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "be6b7857266d4ceae3dd6022eec0fa4a030ab81362db7f83129c8bbda82b0f34"
++checksum = "acb010e011dd606752a228b203748e26fb3b6bf78a7495e8c048606a084c206f"
+ dependencies = [
++ "compact_bytes",
+  "hashbrown 0.17.1",
+  "num-traits",
+  "rayon",
+@@ -7302,7 +7311,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -8100,7 +8109,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -8159,7 +8168,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -8316,7 +8325,7 @@ checksum = "609c5606d9d357b26e4ee1a7a01beac396628d0fa01ebbade2a09cefb88e65af"
+ dependencies = [
+  "fastrand",
+  "tempfile",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -9135,7 +9144,7 @@ dependencies = [
+  "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -10459,7 +10468,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `src/cmd/template.rs` (modified, +4/-4)
+**File**: `Cargo.toml` (modified, +7/-1)
 ```diff
-@@ -59,10 +59,10 @@ Status: {% if active|to_bool %}Active{% else %}Inactive{% endif %}
- > Booleans render as `True`/`False` and none (e.g. a JSON null reached via `fromjson`)
- >  renders as `None`, matching Jinja2. Use `{{ v or "" }}` for an empty string instead —
- >  a bare `{{ v|default("") }}` does NOT substitute for none, only for undefined.
--> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database.
-->  Use canonical IANA names such as "America/New_York" or "Etc/GMT+5". Legacy aliases
-->  like "EST" or "US/Eastern" are missing on systems without them (e.g. Ubuntu 26.04
-->  without the tzdata-legacy package) and fail with "unknown timezone".
-+> Time zones (e.g. `datetimeformat(tz=...)`) are looked up in the OS time zone database,
-+>  falling back to qsv's bundled copy for names the OS lacks, so legacy aliases like "EST"
-+>  or "US/Eastern" work even on systems without them (e.g. Ubuntu 26.04 without the
-+>  tzdata-legacy package). Canonical IANA names such as "America/New_York" are preferred.
+@@ -422,7 +422,7 @@ pyo3 = { version = "0.30", features = ["auto-initialize"], optional = true }
+ yaml_serde = { version = "0.10", optional = true }
+ qsv-dateparser = "0.20"
+ qsv_docopt = "1.10"
+-qsv-stats = "0.56"
++qsv-stats = "0.57"
+ qsv_currency = "0.8"
+ qsv-tabwriter = "2"
+ qsv_vader_sentiment_analysis = { version = "0.2", optional = true }
+@@ -579,6 +579,12 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
+ # patch still reaches. Drop the patch once plotly_static requires a release with zip 9.
+ webdriver-downloader = { git = "https://github.com/jqnatividad/webdriver-downloader", rev = "19795f9006f77ea3592bbc0ea26e00247a3df4c3" }
  
- Additional qsv-specific data-wrangling filters/functions (available in all binary variants):
- ```
++# compact_bytes 0.2.1 + Ord/From<&[u8]>/Borrow<[u8]>, serde, edition 2024, and the
++# CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11).
++# Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
++# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
++compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
++
+ # Polars has a much higher release tempo for its Python bindings compared
+ # to its underlying Rust library. See https://github.com/pola-rs/polars/releases
+ # It's qsv's policy to use the latest upstream of polars/py-polars
 ```
 
-**File**: `tests/test_template.rs` (modified, +36/-2)
+**File**: `src/cmd/stats.rs` (modified, +3/-3)
 ```diff
-@@ -665,8 +665,8 @@ fn template_contrib_functions() {
-         .arg(concat!(
-             "pluralize: You have {{ num_messages }} message{{ num_messages|int|pluralize }}\n",
-             "now: {{now()|datetimeformat|length > 2}}\n", // Just verify we get a non-empty string
--            // Etc/GMT+5 is fixed UTC-5 (POSIX sign inversion). Avoid legacy aliases like "EST":
--            // Ubuntu 26.04 moved them to the optional tzdata-legacy package.
-+            // Etc/GMT+5 is fixed UTC-5 (POSIX sign inversion). Legacy aliases like "EST" are
-+            // covered by template_legacy_tz_aliases_fall_back_to_bundled_tzdb.
-             "dtformat: {{date_col|datetimeformat(format=\"long\", tz=\"Etc/GMT+5\")}}\n",
-             "\n\n"
-         ))
-@@ -685,6 +685,40 @@ fn template_contrib_functions() {
-     assert_eq!(got, expected);
- }
+@@ -4370,7 +4370,7 @@ struct WhichStats {
+     /// function rejects the bad combinations.
+     approx_quantiles:     bool,
+     /// When true, use the Apache `DataSketches` `HyperLogLog` engine for the cardinality
+-    /// column instead of the exact `Frequencies<Vec<u8>>` / `HashMap<Vec<u8>, f64>` tracker.
++    /// column instead of the exact `Frequencies<ByteKey>` / `HashMap<Vec<u8>, f64>` tracker.
+     /// `--infer-boolean` forces this off in `run()` (HLL's ~1.5% RSE breaks
+     /// `cardinality == 2` checks). Independent of `approx_quantiles`.
+     approx_cardinality:   bool,
+@@ -4622,8 +4622,8 @@ struct Stats {
+     // CACHE LINE 4+: Mode and cardinality computation
+     // Counted-runs frequency map: one entry per UNIQUE value (vs the previous
+     // Unsorted<Vec<u8>> which buffered every sample - one alloc+copy per row).
+-    modes:          Option<Frequencies<Vec<u8>>>, // 48 bytes - used for mode/cardinality
+-    weighted_modes: Option<HashMap<Vec<u8>, f64>>, // 48 bytes - Weighted mode/antimode tracking
++    modes:          Option<Frequencies<stats::ByteKey>>, // 48 bytes - used for mode/cardinality
++    weighted_modes: Option<HashMap<Vec<u8>, f64>>,       // 48 bytes - weighted mode/antimode
  
-+#[test]
-+fn template_legacy_tz_aliases_fall_back_to_bundled_tzdb() {
-+    let wrk = Workdir::new("template_legacy_tz_aliases");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["date_col"],
-+            svec!["2023-06-24T16:37:22+00:00"],
-+            svec!["1999-12-24T16:37:22+12:00"],
-+        ],
-+    );
-+    // a zoneinfo dir without the legacy aliases, like Ubuntu 26.04 without tzdata-legacy.
-+    // jiff honors TZDIR on every platform; without jiff's bundled tzdb these fail with
-+    // "unknown timezone" (minijinja#1008)
-+    wrk.create_subdir("zoneinfo").unwrap();
-+    wrk.create_from_string("zoneinfo/README", "no zones here\n");
-+
-+    let mut cmd = wrk.command("template");
-+    cmd.env("TZDIR", wrk.path("zoneinfo"))
-+        .arg("--template")
-+        .arg(concat!(
-+            "{{date_col|datetimeformat(format=\"long\", tz=\"EST\")}} | ",
-+            "{{date_col|datetimeformat(format=\"long\", tz=\"US/Eastern\")}}\n\n"
-+        ))
-+        .arg("data.csv");
-+
-+    let got: String = wrk.stdout(&mut cmd);
-+    let expected = concat!(
-+        "June 24 2023 11:37:22 | June 24 2023 12:37:22\n",
-+        "December 23 1999 23:37:22 | December 23 1999 23:37:22",
-+    );
-+    assert_eq!(got, expected);
-+}
-+
- #[test]
- fn template_pycompat_filters() {
-     let wrk = Workdir::new("template_pycompat_filters");
+     // CACHE LINE 5+: Sorting-based statistics
+     #[allow(clippy::struct_field_names)]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5011** (2026-11-08): perf(stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (@jqnatividad)
 - **PR #5010** (2026-11-08): fix(template): legacy time zone aliases fall back to a bundled tzdb (@jqnatividad)
 - **PR #5009** (2026-11-07): fix(geocode): --batch 0 no longer drops rows from piped stdin (@jqnatividad)
 - **PR #5008** (2026-11-07): fix(cat): rowskey writes nothing for empty input (@jqnatividad)
 - **PR #5007** (2026-11-06): fix(cat): error on empty stdin when no input is given (@jqnatividad)
 - **PR #5006** (2026-11-06): docs(changelog): cat with empty stdin succeeds with empty output (@jqnatividad)
-- **PR #5005** (2026-11-06): fix(cat, applydp, to): read stdin consistently (@jqnatividad)
 
 ---
 
@@ -2395,13 +2444,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. template): legacy time zone aliases fall back to a bundled tzdb (#5010)
+## X. stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (#5011)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94805b90`: template): legacy time zone aliases fall back to a bundled tzdb (#5010). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad3fc53f`: stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (#5011). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2409,7 +2458,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`template`: legacy time zone aliases such as `"EST"` and `"US/Eastern"` work on every system** ([#5010](https://github.com/dathere/qsv/pull/5010), via [minijinja#1008](https://github.com/mitsuhiko/minijinja/issues/1008)). `datetimeformat(tz=...)` failed with "unknown timezone" where the OS time zone database lacks them, e.g. Ubuntu 26.04 without `tzdata-legacy`. qsv now bundles the time zone database as a fallback (about 200 KiB); OS data still takes precedence.
+- **`stats`: `--cardinality`, `--mode` and `--everything` are faster and use less memory** ([#5011](https://github.com/dathere/qsv/pull/5011)). qsv-stats 0.57 stores short values inline when counting them (`ByteKey`). On a 1M-row file, `--cardinality --mode` is 16–27% faster, and `--everything` on an indexed file is 27% faster with 34% less peak memory. Output is unchanged; default `stats` is unaffected.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2419,4 +2468,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94805b90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad3fc53f` are properly handled with clean fallback behavior.

@@ -8369,3 +8369,7 @@
 | `CYCLE-20261108-SAKK` | `2026-11-08T19:45:31.268Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a6c8475...`) |
 | `CYCLE-20261108-X8E2` | `2026-11-08T19:49:21.722Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`2144473e...`) |
 | `CYCLE-20261108-YN98` | `2026-11-08T19:50:27.644Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`32ce289f...`) |
+| `CYCLE-20261108-EKZC` | `2026-11-08T20:02:51.192Z` | `signerlabs/ShipSwift` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8d0e0404...`) |
+| `CYCLE-20261108-EN45` | `2026-11-08T20:02:53.957Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c22df3e5...`) |
+| `CYCLE-20261108-ESUR` | `2026-11-08T20:03:01.395Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5ebdd9a8...`) |
+| `CYCLE-20261108-IKOV` | `2026-11-08T20:05:57.439Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`1485b169...`) |

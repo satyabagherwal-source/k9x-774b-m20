@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "9d1cfbff8eadf8c50f6af171b27eab37dc8e031245d4c3fb346986a4dd3fac6c",
-    "lastHarvestedAt": "2026-11-05T03:20:43.468Z",
+    "contentHash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
+    "lastHarvestedAt": "2026-11-08T20:05:57.443Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "94805b90",
+    "sourceVersion": "ad3fc53f",
     "license": "NOASSERTION",
-    "contentHash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
-    "lastHarvestedAt": "2026-11-08T14:00:03.288Z",
+    "contentHash": "5ebdd9a8a5cc3fcb2c0a715dc17bb31b3e18005baf36d21a4881c1e8619f470d",
+    "lastHarvestedAt": "2026-11-08T20:03:01.400Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "7466899f",
+    "sourceVersion": "b4184642",
     "license": "Apache-2.0",
-    "contentHash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
-    "lastHarvestedAt": "2026-11-07T23:55:25.278Z",
+    "contentHash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
+    "lastHarvestedAt": "2026-11-08T20:02:53.961Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -9173,10 +9173,10 @@
     "repository": "signerlabs/ShipSwift",
     "platform": "github",
     "sourceUrl": "https://github.com/signerlabs/ShipSwift",
-    "sourceVersion": "87286fca",
+    "sourceVersion": "08f31165",
     "license": "MIT",
-    "contentHash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
-    "lastHarvestedAt": "2026-10-26T05:17:56.778Z",
+    "contentHash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
+    "lastHarvestedAt": "2026-11-08T20:02:51.196Z",
     "learningId": "learn-github-signerlabs-shipswift"
   },
   "scrapy-plugins-scrapy-zyte-api": {

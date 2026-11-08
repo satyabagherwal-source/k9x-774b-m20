@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T19:50:30.235Z",
-    "lastVerified": "2026-11-08T19:50:30.235Z",
+    "lastChecked": "2026-11-08T20:06:00.061Z",
+    "lastVerified": "2026-11-08T20:06:00.061Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -232,9 +232,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-08T15:35:14.275Z",
+    "lastChecked": "2026-11-08T20:02:50.538Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-08T15:35:14.275Z"
+    "lastVerified": "2026-11-08T20:02:50.538Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -255,22 +255,21 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T19:07:15.686Z",
-    "lastVerified": "2026-11-08T19:07:15.686Z",
+    "lastChecked": "2026-11-08T20:02:59.585Z",
+    "lastVerified": "2026-11-08T20:02:59.585Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
+    "contentHash": "5ebdd9a8a5cc3fcb2c0a715dc17bb31b3e18005baf36d21a4881c1e8619f470d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "94805b90"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -3630,14 +3629,14 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T23:55:23.139Z",
-    "lastVerified": "2026-11-07T23:55:23.139Z",
+    "lastChecked": "2026-11-08T20:02:52.122Z",
+    "lastVerified": "2026-11-08T20:02:52.122Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
+    "contentHash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3966,12 +3965,12 @@
     "officialUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T03:20:32.461Z",
-    "lastVerified": "2026-11-05T03:20:32.461Z",
+    "lastChecked": "2026-11-08T20:02:43.178Z",
+    "lastVerified": "2026-11-08T20:02:43.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "9d1cfbff8eadf8c50f6af171b27eab37dc8e031245d4c3fb346986a4dd3fac6c",
+    "contentHash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6787,9 +6786,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-07T22:46:32.468Z",
+    "lastChecked": "2026-11-08T20:02:53.173Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-07T22:46:32.468Z"
+    "lastVerified": "2026-11-08T20:02:53.173Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -8084,9 +8083,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-07T18:57:00.542Z",
+    "lastChecked": "2026-11-08T20:02:40.598Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-07T18:57:00.542Z"
+    "lastVerified": "2026-11-08T20:02:40.598Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -11122,11 +11121,21 @@
     "revisionIdentifier": "ee80665d"
   },
   "signerlabs-shipswift": {
-    "name": "ShipSwift",
+    "name": "signerlabs/ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
-    "lastChecked": "2026-11-05T13:27:02.543Z",
-    "revisionIdentifier": "87286fca",
-    "lastVerified": "2026-11-05T13:27:02.544Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-08T20:02:49.439Z",
+    "lastVerified": "2026-11-08T20:02:49.439Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-signerlabs-shipswift",
+    "contentHash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-liquidai-lfm3-audio-2b": {
     "name": "LiquidAI/LFM3-Audio-2B",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T19:50:27.573Z",
+  "last_updated": "2026-11-08T20:05:57.348Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10047,8 +10047,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "94805b90",
-      "content_hash": "b7500d90c1be60f3a3937e1e6d2c27df8e7b00e875961a33cc6ded43f72fbd3e",
+      "source_version": "ad3fc53f",
+      "content_hash": "5ebdd9a8a5cc3fcb2c0a715dc17bb31b3e18005baf36d21a4881c1e8619f470d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10085,6 +10085,11 @@
         {
           "number": null,
           "title": "template): legacy time zone aliases fall back to a bundled tzdb (#5010)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "stats): adopt qsv-stats 0.57 ByteKey for mode/cardinality tracking (#5011)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10438,7 +10443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:00:03.175Z",
+      "verified_at": "2026-11-08T20:03:01.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25920,10 +25925,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "4056da10b72511edfbf914c0682d6ea97cc91418b520526d0634ca797e40e475",
+      "content_hash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Invariant Subword Text Normalization & Accent-Stripping Order",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Head Attention Mask Additive Transformation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "LayerNorm Epsilon Preservation in Low-Precision Workloads",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 716,
           "title": "Configuration-Weight Dimensional Consistency Invariant",
@@ -26023,7 +26043,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-31T12:46:45.483Z",
+      "verified_at": "2026-11-08T20:05:57.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56220,11 +56240,16 @@
       "slug": "signerlabs-shipswift",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/ShipSwift",
-      "source_version": "87286fca",
-      "content_hash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
+      "source_version": "08f31165",
+      "content_hash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "audit the component library against its skills",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2830,
           "title": "Dedicated Window Passthrough for Modal Overlays",
@@ -56251,7 +56276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T05:17:56.706Z",
+      "verified_at": "2026-11-08T20:02:51.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56777,8 +56802,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "7466899f",
-      "content_hash": "c743f8fd52751fbb3c9fde08f49e1acd831705a104ffe8ddf57952cff17d6ea6",
+      "source_version": "b4184642",
+      "content_hash": "c22df3e588693182776d1b8fa085cb9c3527f5d5f86b6fc8d67eeac13cc23d25",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -56790,6 +56815,11 @@
         {
           "number": null,
           "title": "issues): stop flagging a long-running active Job as a failure (RAD-931) (#2551)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GitOps: place cluster-scoped Flux inventory and keep sources in neighborhoods (#",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56883,7 +56913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:55:25.180Z",
+      "verified_at": "2026-11-08T20:02:53.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

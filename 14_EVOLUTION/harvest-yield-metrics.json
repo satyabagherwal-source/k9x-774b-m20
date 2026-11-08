@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T19:50:27.651Z",
-  "total_cycles_completed": 8334,
-  "total_learnings_persisted": 8334,
-  "total_rules_promoted": 8130,
+  "last_updated": "2026-11-08T20:05:57.449Z",
+  "total_cycles_completed": 8338,
+  "total_learnings_persisted": 8338,
+  "total_rules_promoted": 8136,
   "history": [
-    {
-      "timestamp": "2026-11-08T01:55:00.890Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T01:56:32.871Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T02:05:41.242Z",
-      "repository": "meta/docusaurus",
-      "learningId": "learn-github-meta-docusaurus",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T02:15:34.337Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T02:15:41.296Z",
       "repository": "autogluon/chronos-2",
@@ -1403,6 +1375,34 @@
       "repository": "duongductrong/Snapzy",
       "learningId": "learn-github-duongductrong-snapzy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:02:51.203Z",
+      "repository": "signerlabs/ShipSwift",
+      "learningId": "learn-github-signerlabs-shipswift",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:02:53.966Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:03:01.405Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T20:05:57.449Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
