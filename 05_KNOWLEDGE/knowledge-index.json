@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T04:33:56.454Z",
+  "last_updated": "2026-11-08T04:42:29.219Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -130642,10 +130642,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "ceaaad5e1b953b20dc3f03a1fc0a699bcec104db7e724d0e1b55614af9075363",
+      "content_hash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization Precision Isolation Principle",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 1028,
           "title": "Quantization Variant Separation",
@@ -130677,6 +130682,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 6815,
+          "title": "Model Artifact Directory Contract Invariance",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 6887,
           "title": "Precision-Stratified Model Distribution Invariant",
           "status": "PROMOTED_AND_VERIFIED"
@@ -130692,7 +130702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T18:13:49.038Z",
+      "verified_at": "2026-11-08T04:42:29.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179051,14 +179061,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6815,
       "title": "Model Artifact Directory Contract Invariance",
-      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
-      "source_version": "hf-comfy-org-moss-image",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T10:37:43.015Z"
+      "verified_at": "2026-11-08T04:42:29.187Z"
     },
     "rule-6816": {
       "learning_id": "rule-6816",

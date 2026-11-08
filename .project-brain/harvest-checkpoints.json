@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T04:33:56.542Z",
+  "last_updated": "2026-11-08T04:42:29.334Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
-      "content_hash": "d79159801758c0b1dddf5f05891cc2ef3bfd0916a864d7e0ebc6bb871c9b98db",
-      "verified_at": "2026-11-08T02:32:50.164Z",
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
+      "content_hash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
+      "verified_at": "2026-11-08T04:42:29.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:32:50.164Z"
+      "last_updated": "2026-11-08T04:42:29.334Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

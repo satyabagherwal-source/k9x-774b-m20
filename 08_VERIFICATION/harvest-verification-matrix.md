@@ -8217,3 +8217,4 @@
 | `CYCLE-20261108-7TIV` | `2026-11-08T04:33:48.343Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5f23b6a...`) |
 | `CYCLE-20261108-7XDR` | `2026-11-08T04:33:53.343Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`10fd17ab...`) |
 | `CYCLE-20261108-7ZU1` | `2026-11-08T04:33:56.521Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule 277` | Yes (`756c9a6f...`) |
+| `CYCLE-20261108-IZIG` | `2026-11-08T04:42:29.320Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6815, Rule null` | Yes (`0f869480...`) |
