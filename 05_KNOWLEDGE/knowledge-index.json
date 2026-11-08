@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T17:13:15.156Z",
+  "last_updated": "2026-11-08T17:29:06.947Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33725,7 +33725,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "ca795f8d17adf41b09e377904cba46dcf018e360ca8578761355a86806907a33",
+      "content_hash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -33837,7 +33837,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-11-05T01:33:15.959Z",
+      "verified_at": "2026-11-08T17:29:00.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37066,11 +37066,16 @@
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "484264e9",
-      "content_hash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
+      "source_version": "9599db1d",
+      "content_hash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "[SHARED] Libs update",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2780,
           "title": "[SHARED] Update libs, fix #624",
@@ -37092,7 +37097,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T16:40:25.358Z",
+      "verified_at": "2026-11-08T17:29:06.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

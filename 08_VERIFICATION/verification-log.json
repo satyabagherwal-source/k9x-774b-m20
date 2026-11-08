@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-5WAJ",
-    "timestamp": "2026-11-05T23:49:02.011Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "664cc1814002910824d5f39baa6e4028bf3cb87186ef835f59c0716338ec9a03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-5XYN",
-    "timestamp": "2026-11-05T23:49:04.175Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "0c5410e1f9bfc9f9c20ebf2bba8d3db761a57e39ec47131ce90690e2834d8793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-EGKA",
     "timestamp": "2026-11-05T23:55:41.530Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7462,36 @@
     "contentHash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-WQTD",
+    "timestamp": "2026-11-08T17:29:00.865Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-WVKX",
+    "timestamp": "2026-11-08T17:29:07.041Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

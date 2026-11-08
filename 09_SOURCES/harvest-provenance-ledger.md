@@ -8347,3 +8347,5 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `45f16d5b` | Multi-dimensional audit evidence | 2026-11-08T17:06:10.640Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3fd42218` | Multi-dimensional audit evidence | 2026-11-08T17:06:13.066Z |
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-08T17:13:15.268Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-08T17:29:00.869Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `9599db1d` | Multi-dimensional audit evidence | 2026-11-08T17:29:07.045Z |

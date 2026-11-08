@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T17:13:26.231Z",
-    "lastVerified": "2026-11-08T17:13:26.231Z",
+    "lastChecked": "2026-11-08T17:29:11.732Z",
+    "lastVerified": "2026-11-08T17:29:11.732Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,9 +369,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T16:51:11.579Z",
+    "lastChecked": "2026-11-08T17:29:11.721Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T16:51:11.579Z"
+    "lastVerified": "2026-11-08T17:29:11.721Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1383,8 +1383,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T11:04:11.083Z",
-    "lastVerified": "2026-11-08T11:04:11.083Z",
+    "lastChecked": "2026-11-08T17:29:06.758Z",
+    "lastVerified": "2026-11-08T17:29:06.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2614,8 +2614,8 @@
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T21:18:16.442Z",
-    "lastVerified": "2026-11-07T21:18:16.442Z",
+    "lastChecked": "2026-11-08T17:29:04.288Z",
+    "lastVerified": "2026-11-08T17:29:04.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
@@ -3097,12 +3097,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T01:33:14.942Z",
-    "lastVerified": "2026-11-05T01:33:14.942Z",
+    "lastChecked": "2026-11-08T17:28:59.656Z",
+    "lastVerified": "2026-11-08T17:28:59.656Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "ca795f8d17adf41b09e377904cba46dcf018e360ca8578761355a86806907a33",
+    "contentHash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5805,12 +5805,12 @@
     "revisionIdentifier": "47986461"
   },
   "etcd-io-etcd": {
-    "name": "etcd-io/etcd",
+    "name": "etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-07T20:23:06.694Z",
-    "lastVerified": "2026-11-07T20:23:06.694Z",
+    "lastChecked": "2026-11-08T17:29:09.396Z",
+    "lastVerified": "2026-11-08T17:29:09.396Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -5819,7 +5819,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d622ec57"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -7128,9 +7129,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-07T05:16:31.648Z",
+    "lastChecked": "2026-11-08T17:28:56.767Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-07T05:16:31.648Z"
+    "lastVerified": "2026-11-08T17:28:56.767Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -10748,22 +10749,21 @@
     "lastVerified": "2026-11-06T22:06:21.301Z"
   },
   "kamgurgul-cpu-info": {
-    "name": "cpu-info",
+    "name": "kamgurgul/cpu-info",
     "officialUrl": "https://github.com/kamgurgul/cpu-info",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T11:37:59.263Z",
-    "lastVerified": "2026-11-05T11:37:59.263Z",
+    "lastChecked": "2026-11-08T17:29:05.544Z",
+    "lastVerified": "2026-11-08T17:29:05.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
+    "contentHash": "6d29002c43dfd6d2bc967b9465de459dc75ba7fe8af36a4c07932a4d64cf17fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "484264e9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "joshcarty-google-searchconsole": {
     "name": "google-searchconsole",

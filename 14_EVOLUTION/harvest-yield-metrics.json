@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T17:13:15.274Z",
-  "total_cycles_completed": 8303,
-  "total_learnings_persisted": 8303,
-  "total_rules_promoted": 8089,
+  "last_updated": "2026-11-08T17:29:07.051Z",
+  "total_cycles_completed": 8305,
+  "total_learnings_persisted": 8305,
+  "total_rules_promoted": 8090,
   "history": [
-    {
-      "timestamp": "2026-11-08T00:02:44.951Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-08T00:07:03.938Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T00:15:25.364Z",
       "repository": "max-sixty/worktrunk",
@@ -1403,6 +1389,20 @@
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T17:29:00.874Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T17:29:07.051Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
