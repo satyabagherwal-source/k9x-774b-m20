@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T23:12:47.054Z",
-    "lastVerified": "2026-11-08T23:12:47.054Z",
+    "lastChecked": "2026-11-08T23:20:05.374Z",
+    "lastVerified": "2026-11-08T23:20:05.374Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -138,8 +138,8 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-08T02:03:02.158Z",
-    "lastVerified": "2026-11-08T02:03:02.158Z",
+    "lastChecked": "2026-11-08T23:20:02.872Z",
+    "lastVerified": "2026-11-08T23:20:02.872Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -370,9 +370,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-08T22:36:42.686Z",
+    "lastChecked": "2026-11-08T23:20:05.361Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-08T22:36:42.686Z"
+    "lastVerified": "2026-11-08T23:20:05.361Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2201,8 +2201,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T18:45:56.086Z",
-    "lastVerified": "2026-11-08T18:45:56.086Z",
+    "lastChecked": "2026-11-08T23:20:00.330Z",
+    "lastVerified": "2026-11-08T23:20:00.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4981,9 +4981,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-11-08T02:56:56.049Z",
+    "lastChecked": "2026-11-08T23:19:57.854Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-11-08T02:56:56.049Z"
+    "lastVerified": "2026-11-08T23:19:57.854Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -5158,12 +5158,12 @@
     "officialUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T05:46:39.058Z",
-    "lastVerified": "2026-11-05T05:46:39.058Z",
+    "lastChecked": "2026-11-08T23:19:53.065Z",
+    "lastVerified": "2026-11-08T23:19:53.065Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "4f81ebc5f513cee917097ba2e7039dd49e3dcf5352f45b7633a58cde14db3470",
+    "contentHash": "e8910081e4134775b1ff1d1bca8b8063eec11d3064808fea49331ec4f440f9b2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8956,12 +8956,12 @@
     "lastVerified": "2026-11-08T01:25:23.463Z"
   },
   "facebook-folly": {
-    "name": "meta/folly",
+    "name": "folly",
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-07T22:05:10.965Z",
-    "lastVerified": "2026-11-07T22:05:10.965Z",
+    "lastChecked": "2026-11-08T23:19:50.355Z",
+    "lastVerified": "2026-11-08T23:19:50.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
@@ -8970,7 +8970,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "985ebd5d"
   },
   "hf-liquidai-lfm2.5-24b-a2b": {
     "name": "LiquidAI/LFM2.5-24B-A2B",
@@ -11654,9 +11655,9 @@
   "jasonjmcghee-rem": {
     "name": "rem",
     "officialUrl": "https://github.com/jasonjmcghee/rem",
-    "lastChecked": "2026-11-05T16:52:35.003Z",
+    "lastChecked": "2026-11-08T23:19:55.553Z",
     "revisionIdentifier": "f4f68049",
-    "lastVerified": "2026-11-05T16:52:35.003Z"
+    "lastVerified": "2026-11-08T23:19:55.553Z"
   },
   "mobile-next-mobile-mcp": {
     "name": "mobile-next/mobile-mcp",

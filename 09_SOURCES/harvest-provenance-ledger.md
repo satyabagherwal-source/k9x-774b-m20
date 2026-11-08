@@ -8436,3 +8436,4 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `7299fdcc` | Multi-dimensional audit evidence | 2026-11-08T23:12:31.804Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `4bd28b57` | Multi-dimensional audit evidence | 2026-11-08T23:12:42.995Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-08T23:12:44.418Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-08T23:19:54.381Z |

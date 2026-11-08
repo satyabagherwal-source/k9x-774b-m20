@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T23:12:44.431Z",
-  "total_cycles_completed": 8392,
-  "total_learnings_persisted": 8392,
+  "last_updated": "2026-11-08T23:19:54.387Z",
+  "total_cycles_completed": 8393,
+  "total_learnings_persisted": 8393,
   "total_rules_promoted": 8192,
   "history": [
-    {
-      "timestamp": "2026-11-08T05:33:14.139Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-08T05:40:51.442Z",
       "repository": "ornith-ai/Ornith-1.5-122B",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T23:19:54.387Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
