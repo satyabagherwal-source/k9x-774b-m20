@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-758W",
-    "timestamp": "2026-11-05T19:38:03.728Z",
-    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "61eb1300a7b2202ba2be191703e35b421fdb08b1a99267106b2f8bb2a0f38932",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-79UD",
     "timestamp": "2026-11-05T19:38:09.685Z",
     "repository": "open-policy-agent/gatekeeper",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
     "contentHash": "0f4585f32ba2f9c681ee177b41d2d4fc85ebf6913122e6b3e40a5a298d895f64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-5H2U",
+    "timestamp": "2026-11-08T11:59:52.758Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

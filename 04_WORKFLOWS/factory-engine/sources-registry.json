@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T11:42:12.690Z",
-    "lastVerified": "2026-11-08T11:42:12.690Z",
+    "lastChecked": "2026-11-08T11:59:55.368Z",
+    "lastVerified": "2026-11-08T11:59:55.368Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,8 +259,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T10:20:37.225Z",
-    "lastVerified": "2026-11-08T10:20:37.225Z",
+    "lastChecked": "2026-11-08T11:55:42.480Z",
+    "lastVerified": "2026-11-08T11:55:42.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -327,9 +327,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-11-07T17:22:28.291Z",
+    "lastChecked": "2026-11-08T11:55:34.977Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-11-07T17:22:28.291Z"
+    "lastVerified": "2026-11-08T11:55:34.977Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -1132,12 +1132,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T22:12:28.456Z",
-    "lastVerified": "2026-11-04T22:12:28.456Z",
+    "lastChecked": "2026-11-08T11:55:30.086Z",
+    "lastVerified": "2026-11-08T11:55:30.086Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "7d5d6fdb0c5e3c4791c592ad39441789ced35d7652bfb4ea54b378cf75e51d7b",
+    "contentHash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1554,9 +1554,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-08T05:18:05.847Z",
+    "lastChecked": "2026-11-08T11:55:37.500Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-08T05:18:05.847Z"
+    "lastVerified": "2026-11-08T11:55:37.500Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4108,9 +4108,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-07T05:44:23.800Z",
+    "lastChecked": "2026-11-08T11:55:39.906Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-07T05:44:23.800Z"
+    "lastVerified": "2026-11-08T11:55:39.906Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -5464,9 +5464,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-06T23:19:42.517Z",
+    "lastChecked": "2026-11-08T11:55:27.348Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-06T23:19:42.517Z"
+    "lastVerified": "2026-11-08T11:55:27.348Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -10214,9 +10214,9 @@
   "dimillian-redditos": {
     "name": "RedditOS",
     "officialUrl": "https://github.com/Dimillian/RedditOS",
-    "lastChecked": "2026-11-05T07:41:50.149Z",
+    "lastChecked": "2026-11-08T11:55:32.443Z",
     "revisionIdentifier": "525cd241",
-    "lastVerified": "2026-11-05T07:41:50.149Z"
+    "lastVerified": "2026-11-08T11:55:32.443Z"
   },
   "melbahja-seo": {
     "name": "seo",

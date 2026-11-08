@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T11:42:10.001Z",
+  "last_updated": "2026-11-08T11:59:52.667Z",
   "total_verified_learnings": 1238,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27766,10 +27766,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "7d5d6fdb0c5e3c4791c592ad39441789ced35d7652bfb4ea54b378cf75e51d7b",
+      "content_hash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dual-Boundary RoPE Frequency Partitioning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Role Stop-Token Disambiguation Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "GQA Memory Contiguity and Key-Value Repeat Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 328,
           "title": "Binary Artifact Integrity & Deterministic Loading",
@@ -27946,7 +27961,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-11-04T22:12:42.797Z",
+      "verified_at": "2026-11-08T11:59:52.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

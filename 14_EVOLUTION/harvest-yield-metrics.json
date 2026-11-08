@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T11:42:10.120Z",
-  "total_cycles_completed": 8245,
-  "total_learnings_persisted": 8245,
-  "total_rules_promoted": 8006,
+  "last_updated": "2026-11-08T11:59:52.781Z",
+  "total_cycles_completed": 8246,
+  "total_learnings_persisted": 8246,
+  "total_rules_promoted": 8009,
   "history": [
-    {
-      "timestamp": "2026-11-07T20:49:00.565Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T20:49:07.540Z",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-08T11:42:10.120Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T11:59:52.781Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
