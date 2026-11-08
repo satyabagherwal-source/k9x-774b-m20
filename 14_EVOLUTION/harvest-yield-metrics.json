@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-08T06:05:13.985Z",
-  "total_cycles_completed": 8200,
-  "total_learnings_persisted": 8200,
-  "total_rules_promoted": 7906,
+  "last_updated": "2026-11-08T06:12:30.527Z",
+  "total_cycles_completed": 8202,
+  "total_learnings_persisted": 8202,
+  "total_rules_promoted": 7909,
   "history": [
-    {
-      "timestamp": "2026-11-07T17:57:53.317Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-07T18:02:49.303Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-07T18:09:42.541Z",
       "repository": "matthart1983/netwatch",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-08T06:05:13.985Z",
       "repository": "Nanbeige/Nanbeige4.3-33B",
       "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:12:24.441Z",
+      "repository": "vinceglb/FileKit",
+      "learningId": "learn-github-vinceglb-filekit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-08T06:12:30.527Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

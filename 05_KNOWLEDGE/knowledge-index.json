@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T06:05:13.870Z",
+  "last_updated": "2026-11-08T06:12:30.426Z",
   "total_verified_learnings": 1236,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -62777,11 +62777,16 @@
       "slug": "vinceglb-filekit",
       "platform": "github",
       "source_url": "https://github.com/vinceglb/FileKit",
-      "source_version": "ddc09b4a",
-      "content_hash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
+      "source_version": "5f8ac2e9",
+      "content_hash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
       "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "🔀 Merge pull request #708 from vinceglb/docs/grant-mention",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2630,
           "title": "🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker",
@@ -62808,7 +62813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T16:36:45.966Z",
+      "verified_at": "2026-11-08T06:12:24.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143414,10 +143419,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
       "source_version": "hf-briaai-fibo-2.0-dev",
-      "content_hash": "afdc08cbd3a9d07344ddfdc77c841ffc19349810735af8be0e096e8790d986c2",
+      "content_hash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
       "dossier_path": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Model Repository Integrity & Metadata Validation",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Graceful Degradation for Missing Model Artifacts",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 4577,
           "title": "Model Configuration Immutability & Schema Validation",
@@ -143454,7 +143469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:41:24.284Z",
+      "verified_at": "2026-11-08T06:12:30.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

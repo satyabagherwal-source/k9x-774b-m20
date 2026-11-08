@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-08T06:05:16.543Z",
-    "lastVerified": "2026-11-08T06:05:16.543Z",
+    "lastChecked": "2026-11-08T06:12:33.143Z",
+    "lastVerified": "2026-11-08T06:12:33.143Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,8 +258,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T05:40:50.564Z",
-    "lastVerified": "2026-11-08T05:40:50.564Z",
+    "lastChecked": "2026-11-08T06:12:28.963Z",
+    "lastVerified": "2026-11-08T06:12:28.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2195,8 +2195,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T02:32:44.881Z",
-    "lastVerified": "2026-11-08T02:32:44.881Z",
+    "lastChecked": "2026-11-08T06:12:23.960Z",
+    "lastVerified": "2026-11-08T06:12:23.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2756,9 +2756,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-07T02:41:15.332Z",
+    "lastChecked": "2026-11-08T06:12:26.481Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-11-07T02:41:15.332Z"
+    "lastVerified": "2026-11-08T06:12:26.482Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -4211,9 +4211,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-06T20:37:59.465Z",
+    "lastChecked": "2026-11-08T06:12:13.918Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-06T20:37:59.465Z"
+    "lastVerified": "2026-11-08T06:12:13.918Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -6592,9 +6592,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-07T03:49:01.605Z",
+    "lastChecked": "2026-11-08T06:12:21.472Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-07T03:49:01.605Z"
+    "lastVerified": "2026-11-08T06:12:21.472Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -9746,22 +9746,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vinceglb-filekit": {
-    "name": "FileKit",
+    "name": "vinceglb/FileKit",
     "officialUrl": "https://github.com/vinceglb/FileKit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-05T05:13:32.491Z",
-    "lastVerified": "2026-11-05T05:13:32.491Z",
+    "lastChecked": "2026-11-08T06:12:22.802Z",
+    "lastVerified": "2026-11-08T06:12:22.802Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vinceglb-filekit",
-    "contentHash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
+    "contentHash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ddc09b4a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-mistralai-mistral-large-4-1t-a52b": {
     "name": "mistralai/Mistral-Large-4-1T-A52B",
@@ -13267,13 +13266,13 @@
     "officialUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-04T19:41:18.942Z",
-    "lastVerified": "2026-11-04T19:41:18.942Z",
+    "lastChecked": "2026-11-08T06:12:16.854Z",
+    "lastVerified": "2026-11-08T06:12:16.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-    "contentHash": "afdc08cbd3a9d07344ddfdc77c841ffc19349810735af8be0e096e8790d986c2",
-    "promotedRulesCount": 1,
+    "contentHash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

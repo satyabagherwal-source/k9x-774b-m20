@@ -8183,10 +8183,10 @@
     "repository": "vinceglb/FileKit",
     "platform": "github",
     "sourceUrl": "https://github.com/vinceglb/FileKit",
-    "sourceVersion": "ddc09b4a",
+    "sourceVersion": "5f8ac2e9",
     "license": "MIT",
-    "contentHash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
-    "lastHarvestedAt": "2026-10-29T16:36:46.083Z",
+    "contentHash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
+    "lastHarvestedAt": "2026-11-08T06:12:24.435Z",
     "learningId": "learn-github-vinceglb-filekit"
   },
   "nsh07-tomato": {
@@ -10765,8 +10765,8 @@
     "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceVersion": "hf-briaai-fibo-2.0-dev",
     "license": "Open-Source",
-    "contentHash": "afdc08cbd3a9d07344ddfdc77c841ffc19349810735af8be0e096e8790d986c2",
-    "lastHarvestedAt": "2026-11-04T19:41:24.412Z",
+    "contentHash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
+    "lastHarvestedAt": "2026-11-08T06:12:30.521Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   },
   "vincentwei1021-video-shotcraft": {

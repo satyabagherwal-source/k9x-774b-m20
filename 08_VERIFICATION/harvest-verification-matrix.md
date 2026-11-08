@@ -8235,3 +8235,5 @@
 | `CYCLE-20261108-6VB8` | `2026-11-08T05:57:02.852Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`547f7fd8...`) |
 | `CYCLE-20261108-6Z7A` | `2026-11-08T05:57:07.894Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6766` | Yes (`c42effbc...`) |
 | `CYCLE-20261108-HE97` | `2026-11-08T06:05:13.963Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`d838f1bb...`) |
+| `CYCLE-20261108-QMEK` | `2026-11-08T06:12:24.428Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5e86c532...`) |
+| `CYCLE-20261108-QR3P` | `2026-11-08T06:12:30.517Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null` | Yes (`14428100...`) |

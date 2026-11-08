@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source**: github ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
-> **Source Version**: `ddc09b4a`  
+> **Source Version**: `5f8ac2e9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T16:36:45.334Z  
+> **Timestamp**: 2026-11-08T06:12:23.033Z  
 > **Learning ID**: `learn-github-vinceglb-filekit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T16:36:44.855Z  
+> **Harvest Timestamp**: 2026-11-08T06:12:22.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: File operations and native file pickers for Kotlin Multiplatform and Compose Multiplatform: read, write, copy and list files, open and save dialogs, image compression, bookmarks. Android, iOS, macOS, JVM desktop, Linux, Windows, JS, Wasm.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1557 stars
+- **Stars / Engagement**: 1561 stars
 
 ---
 
@@ -46,7 +46,7 @@
 //   npm run render -- sample  # only the sample app icons
 //   npm run preview           # serve the sources to tweak them live in a browser
 //
-// Raster images are screenshots of src/hero.html taken by headless Chromium (Playwright).
+// Raster images are screenshots of src/hero.html and src/banner.html taken by headless Chromium (Playwright).
 // SVG logos are generated from src/mark.js and the outlines of Inter Bold Italic (opentype.js).
 // App icons are screenshots of src/icon.html; .icns and .ico files are assembled from those PNGs.
 
@@ -71,6 +71,12 @@ const HEROES = [
   { file: 'docs/brand/hero.webp', width: 1920, height: 1080, theme: 'dark', rounded: true },
   { file: 'docs/brand/og.jpg', width: 1200, height: 630, theme: 'dark' },
 ];
+
+// Grant banner (src/banner.html), in both themes. The README one is a link, so it carries its call to action.
+const BANNERS = ['dark', 'light'].flatMap((theme) => [
+  { file: `brand/exports/grant-banner-${theme}.webp`, width: 1920, height: 240, theme, rounded: true, cta: true },
+  { file: `docs/brand/grant-banner-${theme}.webp`, width: 1920, height: 240, theme },
+]);
 const QUALITY = 0.92;
 
 // ---------------------------------------------------------------------------------------------
@@ -176,6 +182,7 @@ if (process.argv[2] === '--preview') {
   const { base } = await serve(4173);
   console.log(`Brand board:  ${base}/brand/src/board.html`);
   console.log(`Live hero:    ${base}/brand/src/hero.html  (resize the window to try formats, add ?seed=3.6 to try a composition)`);
+  console.log(`Grant banner: ${base}/brand/src/banner.html?cta=1  (add &theme=light or &seed=3.6)`);
   console.log('Ctrl+C to stop.');
 } else {
   await render(process.argv[2]);
@@ -190,7 +197,7 @@ async function render(filter) {
     console.log('wrote', svg.file);
   }
 
-  const heroes = HEROES.filter((h) => wanted(h.file));
+  const heroes = [...HEROES, ...BANNERS].filter((h) => wanted(h.file));
   const icons = ICONS.filter((i) => wanted(i.file));
   if (heroes.length === 0 && icons.length === 0) return;
   const { server, base } = await serve();
@@ -199,7 +206,8 @@ async function render(filter) {
   for (const hero of heroes) {
     const page = await browser.newPage({ viewport: { width: hero.width, height: hero.height } });
     page.on('pageerror', (e) => console.error(hero.file, e.message));
-    await page.goto(`${base}/brand/src/hero.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}`);
+    const source = BANNERS.includes(hero) ? 'banner' : 'hero';
+    await page.goto(`${base}/brand/src/${source}.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}&cta=${hero.cta ? 1 : 0}`);
     await page.waitForSelector('body[data-ready]');
     await mkdir(dirname(join(REPO, hero.file)), { recursive: true });
     if (hero.file.endsWith('.jpg')) {
@@ -213,15 +221,7 @@ async function render(filter) {
   }
   for (const icon of icons) {
     const pngs = [];
-    for (const size of icon.sizes ?? [icon.size]) {
-      const page = await browser.newPage({ viewport: { width: size, height: size } });
-      page.on('pageerror', (e) => console.error(icon.file, e.message));
-      const query = new URLSearchParams({ layer: icon.layer ?? 'full', shape: icon.shape ?? 'square' });
-      if (icon.scale) query.set('scale', palette.icon.scale * icon.scale);
-      await page.goto(`${base}/brand/src/icon.html?${query}`);
-      await page.waitForSelector('body[data-ready]');
-      const png = await page.screenshot({ omitBackground: true });
-      pngs.push({ size, data: i
+    
 ```
 
 ### Core Architecture Module: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/FileKit.android.kt`
@@ -1039,849 +1039,402 @@ internal expect fun compress(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f2c9211` (2026-10-28)
-**Commit Message**: 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup
+### Incident Patch 1: `5f8ac2e9` (2026-11-06)
+**Commit Message**: 🔀 Merge pull request #708 from vinceglb/docs/grant-mention
 
-🐛 Fix web serializer message, JVM open fallback, drop unused exception
+🎉 Mention the Kotlin Foundation grant in the README and docs
 
-**File**: `docs/dialogs/open-file.mdx` (modified, +2/-2)
+**File**: `README.md` (modified, +7/-0)
 ```diff
-@@ -38,14 +38,14 @@ FileKit.openFileWithDefaultApplication(file)
+@@ -21,6 +21,13 @@
+     &nbsp;·&nbsp;
+     <a href="https://filekit.mintlify.app/roadmap"><b>Roadmap to 1.0</b></a>
+   </p>
++
++  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
++    <picture>
++      <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
++      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
++    </picture>
++  </a>
+ </div>
  
- ## Platform notes
- 
--Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
-+Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
- 
- | Platform | Behavior |
- | --- | --- |
- | Android | Sends an `ACTION_VIEW` intent with the MIME type of the file extension. Throws `ActivityNotFoundException` when no app handles that type, and `IllegalArgumentException` for a file outside the directories its FileProvider covers. |
- | iOS | Calls `openURL`. If that fails, shows the "Open in" menu (`UIDocumentInteractionController`) so the user can pick an app. Reports no error. |
- | macOS | Uses `NSWorkspace`. Reports no error. |
--| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
-+| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to half a second for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
- | Linux native | Starts `xdg-open` without waiting for it. Throws `FileKitException` only if the process cannot start. |
- | Windows native | Calls `ShellExecuteW` with the `open` verb. Reports no error. |
- | Web | Not available. |
+ ## Installation
 ```
 
-**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.kt` (modified, +10/-0)
+**File**: `brand/README.md` (modified, +5/-2)
 ```diff
-@@ -5,6 +5,16 @@ import kotlinx.serialization.descriptors.SerialDescriptor
- import kotlinx.serialization.encoding.Decoder
- import kotlinx.serialization.encoding.Encoder
- 
-+/**
-+ * kotlinx.serialization serializer for [PlatformFile], encoded as its path string.
-+ *
-+ * Serialization keeps the path, not access rights: a file picked outside the app (an Android
-+ * `content://` file, a security-scoped file on Apple platforms) may not be readable once restored.
-+ * Use bookmark data for persistent access.
-+ *
-+ * Not supported on web targets (JS and Wasm): [serialize] and [deserialize] throw an
-+ * [IllegalStateException] there.
-+ */
- public expect object PlatformFileSerializer : KSerializer<PlatformFile> {
-     override val descriptor: SerialDescriptor
- 
-```
-
-**File**: `filekit-core/src/webMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.web.kt` (renamed, +8/-1)
-```diff
-@@ -8,8 +8,15 @@ import kotlinx.serialization.encoding.Decoder
- import kotlinx.serialization.encoding.Encoder
- 
- private const val UNSUPPORTED_MESSAGE =
--    "PlatformFile serialization is not supported on Wasm JS targets"
-+    "PlatformFile serialization is not supported on web targets (JS and Wasm)"
- 
-+/**
-+ * Web (JS and Wasm) implementation of [PlatformFileSerializer].
-+ *
-+ * A web [PlatformFile] wraps a browser `File` object that has no path to persist, so
-+ * [serialize] and [deserialize] always throw an [IllegalStateException]. The serializer
-+ * exists so that `@Serializable` classes holding a [PlatformFile] still compile in shared code.
-+ */
- public actual object PlatformFileSerializer : KSerializer<PlatformFile> {
-     actual override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-         serialName = "io.github.vinceglb.filekit.PlatformFile",
-```
-
-**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKit.jvm.kt` (modified, +8/-2)
-```diff
-@@ -6,7 +6,6 @@ import io.github.vinceglb.filekit.dialogs.platform.PlatformFilePicker
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.flow.Flow
- import kotlinx.coroutines.withContext
--import java.awt.Desktop
- 
- internal actual suspend fun FileKit.platformOpenFilePicker(
-     type: FileKitType,
-@@ -97,12 +96,19 @@ internal actual suspend fun FileKit.platformOpenFileSaver(
- /**
-  * Opens a file with the default application associated with its file type.
-  *
-+ * Uses `java.awt.Desktop` when it supports opening files. Otherwise, on Linux, falls back to
-+ * `xdg-open` and waits half a second at most for it to report an error.
-+ *
-  * @param file The file to open.
-  * @param openFileSettings Platform-specific settings for opening the file.
-+ * @throws FileKitDialogException When `java.awt.Desktop` cannot open files (for example in a headless
-+ * environment) and the `xdg-open` fallback is unavailable, cannot start, or exits with an error.
-+ * Errors raised by `java.awt.Desktop.open` itself, such as an [java.io.IOException] when no application
-+ * is associated with the file, are not wrapped.
-  */
- public actual fun FileKit.openFileWithDefaultApplication(
-     file: PlatformFile,
-     openFileSettings: FileKitOpenFileSettings,
- ) {
--    Desktop.getDesktop()?.open(file.file)
-+    JvmDefaultApplicationOpener.Default.open(file.file)
- }
-```
-
-**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpener.kt` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+package io.github.vinceglb.filekit.dialogs
-+
-+import io.github.vinceglb.filekit.utils.Platform
-+import io.github.vinceglb.filekit.utils.PlatformUtil
-+import java.awt.Desktop
-+import java.io.File
-+import java.io.IOException
-+import java.util.concurrent.TimeUnit
-+
-+// Long enough to catch xdg-open failing fast (missing file or tool), short enough for a click handler.
-+internal const val XDG_OPEN_EXIT_TIMEOUT_MILLIS: Long = 500
-+
-+/**
-+ * Opens files with the default application on the JVM.
-+ *
-+ * Uses `java.awt.Desktop` when it can open files. Otherwise, on Linux, starts `xdg-open` and waits
-+ * at most [XDG_OPEN_EXIT_TIMEOUT_MILLIS] for it to report an error. Throws [FileKitDialogException] when neither works.
-+ */
-+internal class JvmDefaultApplicationOpener(
-+    private val isDesktopOpenSupported: () -> Boolean,
-+    private val desktopOpen: (File) -> Unit,
-+    private val isLinux: Boolean,
-+    private val startProcess: (List<String>) -> Process,
-+    private val exitTimeoutMillis: Long = XDG_OPEN_EXIT_TIMEOUT_MILLIS,
-+) {
-+    fun open(file: File) {
-+        when {
-+            isDesktopOpenSupported() -> desktopOpen(file)
-+
-+            isLinux -> openWithXdgOpen(file)
-+
-+            else -> throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "java.awt.Desktop cannot open files in this environment.",
-+            )
-+        }
-+    }
-+
-+    private fun openWithXdgOpen(file: File) {
-+        val process = try {
-+            // An absolute path keeps xdg-open from reading the argument as an option or a URI scheme.
-+            startProcess(listOf("xdg-open", file.absolutePath))
-+        } catch (e: IOException) {
-+            throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "java.awt.Desktop cannot open files and xdg-open could not be started.",
-+                e,
-+            )
-+        }
-+
-+        val exited = try {
-+            process.waitFor(exitTimeoutMillis, TimeUnit.MILLISECONDS)
-+        } catch (_: InterruptedException) {
-+            Thread.currentThread().interrupt()
-+            return
-+        }
-+
-+        // Some xdg-open fallbacks keep running until the viewer closes: treat that as success.
-+        if (exited && process.exitValue() != 0) {
-+            throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "xdg-open exited with code ${process.exitValue()}.",
-+            )
-+        }
-+    }
-+
-+    companion object {
-+        val Default: JvmDefaultApplicationOpener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = {
-+                Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
-+            },
-+            desktopOpen = { Desktop.getDesktop().open(it) },
-+            isLinux = PlatformUtil.current == Platform.Linux,
-+            startProcess = { command ->
-+                ProcessBuilder(command)
-+                    .redirectInput(ProcessBuilder.Redirect.from(File("/dev/null")))
-+                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-+                    .redirectError(ProcessBuilder.Redirect.DISCARD)
-+                    .start()
-+            },
-+        )
-+    }
-+}
-```
-
-**File**: `filekit-dialogs/src/jvmTest/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpenerTest.kt` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+@file:Suppress("ktlint:standard:function-naming", "FunctionName")
-+
-+package io.github.vinceglb.filekit.dialogs
-+
-+import java.io.File
-+import java.io.IOException
-+import java.io.InputStream
-+import java.io.OutputStream
-+import java.util.concurrent.TimeUnit
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFailsWith
-+import kotlin.test.assertIs
-+import kotlin.test.assertTrue
-+
-+class JvmDefaultApplicationOpenerTest {
-+    private val file = File("report.pdf")
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopSupported_usesDesktopOnly() {
-+        val opened = mutableListOf<File>()
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(
-+            desktopSupported = true,
-+            isLinux = true,
-+            opened = opened,
-+            commands = commands,
-+        )
-+
-+        opener.open(file)
-+
-+        assertEquals(listOf(file), opened)
-+        assertTrue(commands.isEmpty())
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopError_isNotWrapped() {
-+        val opener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = { true },
-+            desktopOpen = { throw IOException("No application") },
-+            isLinux = true,
-+            startProcess = { error("xdg-open must not run") },
-+        )
-+
-+        assertFailsWith<IOException> { opener.open(file) }
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopUnsupportedOnLinux_runsXdgOpenWithAbsolutePath() {
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(
-+            isLinux = true,
-+            commands = commands,
-+            process = FakeProcess(exitCode = 0),
-+        )
-+
-+        opener.open(file)
-+
-+        assertEquals(listOf(listOf("xdg-open", file.absolutePath)), commands)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenStillRunning_returnsWithoutWaitingForever() {
-+        val process = FakeProcess(exitCode = null)
-+        val opener = opener(isLinux = true, process = process)
-+
-+        opener.open(file)
-+
-+        assertEquals(TIMEOUT_MILLIS, process.waitedMillis)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenNonZeroExit_throwsDialogException() {
-+        val opener = opener(isLinux = true, process = FakeProcess(exitCode = 3))
-+
-+        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
-+
-+        assertTrue(exception.message!!.contains("xdg-open exited with code 3"))
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenMissing_throwsDialogExceptionWithCause() {
-+        val opener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = { false },
-+            desktopOpen = { error("Desktop must not be used") },
-+            isLinux = true,
-+            startProcess = { throw IOException("Cannot run program \"xdg-open\"") },
-+        )
-+
-+        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
-+
-+        assertIs<IOException>(exception.cause)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopUnsupportedOutsideLinux_throwsDialogException() {
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(isLinux = false, commands = commands)
-+
-+        assertFailsWith<FileKitDialogException> { opener.open(file) }
-+        assertTrue(commands.isEmpty())
-+    }
-+
-+    private fun opener(
-+        desktopSupported: Boolean = false,
-+        isLinux: Boolean,
-+        opened: MutableList<File> = mutableListOf(),
-+        commands: MutableList<List<String>> = mutableListOf(),
-+        process: Process = FakeProcess(exitCode = 0),
-+    ) = JvmDefaultApplicationOpener(
-+        isDesktopOpenSupported = { desktopSupported },
-+        desktopOpen = { opened += it },
-+        isLinux = isLinux,
-+        startProcess = { command ->
-+            commands += command
-+            process
-+        },
-+        exitTimeoutMillis = TIMEOUT_MILLIS,
-+    )
-+
-+    /** A process that has exited with [exitCode], or is still running when [exitCode] is null. */
-+    private class FakeProcess(
-+        private val exitCode: Int?,
-+    ) : Process() {
-+        var waitedMillis: Long? = null
-+
-+        override fun waitFor(timeout: Long, unit: TimeUnit): Boolean {
-+            waitedMillis = unit.toMillis(timeout)
-+            return exitCode != null
-+        }
-+
-+        override fun waitFor(): Int = exitCode ?: error("Unbounded wait")
-+
-+        override fun exitValue(): Int = exitCode ?: throw IllegalThreadStateException()
-+
-+        override fun getOutputStream(): OutputStream = OutputStream.nullOutputStream()
-+
-+        override fun getInputStream(): InputStream = InputStream.nullInputStream()
-+
-+        override fun getErrorStream(): InputStream = InputStream.nullInputStream()
-+
-+        override fun destroy() = Unit
-+    }
-+
-+    private companion object {
-+        const val TIMEOUT_MILLIS = 50L
-+    }
-+}
-```
-
-**File**: `filekit-dialogs/src/webMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKitFileSaverWithoutBytesException.kt` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--package io.github.vinceglb.filekit.dialogs
--
--public class FileKitFileSaverWithoutBytesException :
--    IllegalArgumentException(
--        "Bytes must not be null on Web platform. Use isSaveFileWithoutBytesSupported() " +
--            "to check if the platform supports saving files without bytes.",
--    )
-```
-
----
-
-### Incident Patch 2: `54e88f0d` (2026-10-28)
-**Commit Message**: 🐛 Fix web serializer message, JVM open fallback, drop unused exception
-
-- Rename the web PlatformFileSerializer actual to PlatformFileSerializer.web.kt and say it is
-  unsupported on web targets (JS and Wasm), with KDoc on the expect and web declarations.
-- Remove FileKitFileSaverWithoutBytesException: it was public but never thrown, and its message
-  pointed to a function that does not exist.
-- JVM openFileWithDefaultApplication now checks Desktop support, falls back to xdg-open on Linux
-  with a bounded wait, and throws FileKitDialogException when neither works.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/dialogs/open-file.mdx` (modified, +2/-2)
-```diff
-@@ -38,14 +38,14 @@ FileKit.openFileWithDefaultApplication(file)
- 
- ## Platform notes
- 
--Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
-+Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
- 
- | Platform | Behavior |
- | --- | --- |
- | Android | Sends an `ACTION_VIEW` intent with the MIME type of the file extension. Throws `ActivityNotFoundException` when no app handles that type, and `IllegalArgumentException` for a file outside the directories its FileProvider covers. |
- | iOS | Calls `openURL`. If that fails, shows the "Open in" menu (`UIDocumentInteractionController`) so the user can pick an app. Reports no error. |
- | macOS | Uses `NSWorkspace`. Reports no error. |
--| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
-+| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to 3 seconds for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
- | Linux native | Starts `xdg-open` without waiting for it. Throws `FileKitException` only if the process cannot start. |
- | Windows native | Calls `ShellExecuteW` with the `open` verb. Reports no error. |
- | Web | Not available. |
-```
-
-**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.kt` (modified, +10/-0)
-```diff
-@@ -5,6 +5,16 @@ import kotlinx.serialization.descriptors.SerialDescriptor
- import kotlinx.serialization.encoding.Decoder
- import kotlinx.serialization.encoding.Encoder
- 
-+/**
-+ * kotlinx.serialization serializer for [PlatformFile], encoded as its path string.
-+ *
-+ * Serialization keeps the path, not access rights: a file picked outside the app (an Android
-+ * `content://` file, a security-scoped file on Apple platforms) may not be readable once restored.
-+ * Use bookmark data for persistent access.
-+ *
-+ * Not supported on web targets (JS and Wasm): [serialize] and [deserialize] throw an
-+ * [IllegalStateException] there.
-+ */
- public expect object PlatformFileSerializer : KSerializer<PlatformFile> {
-     override val descriptor: SerialDescriptor
- 
-```
-
-**File**: `filekit-core/src/webMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.web.kt` (renamed, +8/-1)
-```diff
-@@ -8,8 +8,15 @@ import kotlinx.serialization.encoding.Decoder
- import kotlinx.serialization.encoding.Encoder
- 
- private const val UNSUPPORTED_MESSAGE =
--    "PlatformFile serialization is not supported on Wasm JS targets"
-+    "PlatformFile serialization is not supported on web targets (JS and Wasm)"
- 
-+/**
-+ * Web (JS and Wasm) implementation of [PlatformFileSerializer].
-+ *
-+ * A web [PlatformFile] wraps a browser `File` object that has no path to persist, so
-+ * [serialize] and [deserialize] always throw an [IllegalStateException]. The serializer
-+ * exists so that `@Serializable` classes holding a [PlatformFile] still compile in shared code.
-+ */
- public actual object PlatformFileSerializer : KSerializer<PlatformFile> {
-     actual override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-         serialName = "io.github.vinceglb.filekit.PlatformFile",
-```
-
-**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKit.jvm.kt` (modified, +8/-2)
-```diff
-@@ -6,7 +6,6 @@ import io.github.vinceglb.filekit.dialogs.platform.PlatformFilePicker
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.flow.Flow
- import kotlinx.coroutines.withContext
--import java.awt.Desktop
- 
- internal actual suspend fun FileKit.platformOpenFilePicker(
-     type: FileKitType,
-@@ -97,12 +96,19 @@ internal actual suspend fun FileKit.platformOpenFileSaver(
- /**
-  * Opens a file with the default application associated with its file type.
-  *
-+ * Uses `java.awt.Desktop` when it supports opening files. Otherwise, on Linux, falls back to
-+ * `xdg-open` and waits a few seconds at most for it to report an error.
-+ *
-  * @param file The file to open.
-  * @param openFileSettings Platform-specific settings for opening the file.
-+ * @throws FileKitDialogException When `java.awt.Desktop` cannot open files (for example in a headless
-+ * environment) and the `xdg-open` fallback is unavailable, cannot start, or exits with an error.
-+ * Errors raised by `java.awt.Desktop.open` itself, such as an [java.io.IOException] when no application
-+ * is associated with the file, are not wrapped.
-  */
- public actual fun FileKit.openFileWithDefaultApplication(
-     file: PlatformFile,
-     openFileSettings: FileKitOpenFileSettings,
- ) {
--    Desktop.getDesktop()?.open(file.file)
-+    JvmDefaultApplicationOpener.Default.open(file.file)
- }
-```
-
-**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpener.kt` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+package io.github.vinceglb.filekit.dialogs
-+
-+import io.github.vinceglb.filekit.utils.Platform
-+import io.github.vinceglb.filekit.utils.PlatformUtil
-+import java.awt.Desktop
-+import java.io.File
-+import java.io.IOException
-+import java.util.concurrent.TimeUnit
-+
-+internal const val XDG_OPEN_EXIT_TIMEOUT_MILLIS: Long = 3_000
-+
-+/**
-+ * Opens files with the default application on the JVM.
-+ *
-+ * Uses `java.awt.Desktop` when it can open files. Otherwise, on Linux, starts `xdg-open` and waits
-+ * a bounded time for it to report an error. Throws [FileKitDialogException] when neither works.
-+ */
-+internal class JvmDefaultApplicationOpener(
-+    private val isDesktopOpenSupported: () -> Boolean,
-+    private val desktopOpen: (File) -> Unit,
-+    private val isLinux: Boolean,
-+    private val startProcess: (List<String>) -> Process,
-+    private val exitTimeoutMillis: Long = XDG_OPEN_EXIT_TIMEOUT_MILLIS,
-+) {
-+    fun open(file: File) {
-+        when {
-+            isDesktopOpenSupported() -> desktopOpen(file)
-+
-+            isLinux -> openWithXdgOpen(file)
-+
-+            else -> throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "java.awt.Desktop cannot open files in this environment.",
-+            )
-+        }
-+    }
-+
-+    private fun openWithXdgOpen(file: File) {
-+        val process = try {
-+            // An absolute path keeps xdg-open from reading the argument as an option or a URI scheme.
-+            startProcess(listOf("xdg-open", file.absolutePath))
-+        } catch (e: IOException) {
-+            throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "java.awt.Desktop cannot open files and xdg-open could not be started.",
-+                e,
-+            )
-+        }
-+
-+        val exited = try {
-+            process.waitFor(exitTimeoutMillis, TimeUnit.MILLISECONDS)
-+        } catch (_: InterruptedException) {
-+            Thread.currentThread().interrupt()
-+            return
-+        }
-+
-+        // Some xdg-open fallbacks keep running until the viewer closes: treat that as success.
-+        if (exited && process.exitValue() != 0) {
-+            throw FileKitDialogException(
-+                "Could not open the file with the default application: " +
-+                    "xdg-open exited with code ${process.exitValue()}.",
-+            )
-+        }
-+    }
-+
-+    companion object {
-+        val Default: JvmDefaultApplicationOpener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = {
-+                Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
-+            },
-+            desktopOpen = { Desktop.getDesktop().open(it) },
-+            isLinux = PlatformUtil.current == Platform.Linux,
-+            startProcess = { command ->
-+                ProcessBuilder(command)
-+                    .redirectInput(ProcessBuilder.Redirect.from(File("/dev/null")))
-+                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-+                    .redirectError(ProcessBuilder.Redirect.DISCARD)
-+                    .start()
-+            },
-+        )
-+    }
-+}
-```
-
-**File**: `filekit-dialogs/src/jvmTest/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpenerTest.kt` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+@file:Suppress("ktlint:standard:function-naming", "FunctionName")
-+
-+package io.github.vinceglb.filekit.dialogs
-+
-+import java.io.File
-+import java.io.IOException
-+import java.io.InputStream
-+import java.io.OutputStream
-+import java.util.concurrent.TimeUnit
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFailsWith
-+import kotlin.test.assertIs
-+import kotlin.test.assertTrue
-+
-+class JvmDefaultApplicationOpenerTest {
-+    private val file = File("report.pdf")
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopSupported_usesDesktopOnly() {
-+        val opened = mutableListOf<File>()
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(
-+            desktopSupported = true,
-+            isLinux = true,
-+            opened = opened,
-+            commands = commands,
-+        )
-+
-+        opener.open(file)
-+
-+        assertEquals(listOf(file), opened)
-+        assertTrue(commands.isEmpty())
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopError_isNotWrapped() {
-+        val opener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = { true },
-+            desktopOpen = { throw IOException("No application") },
-+            isLinux = true,
-+            startProcess = { error("xdg-open must not run") },
-+        )
-+
-+        assertFailsWith<IOException> { opener.open(file) }
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopUnsupportedOnLinux_runsXdgOpenWithAbsolutePath() {
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(
-+            isLinux = true,
-+            commands = commands,
-+            process = FakeProcess(exitCode = 0),
-+        )
-+
-+        opener.open(file)
-+
-+        assertEquals(listOf(listOf("xdg-open", file.absolutePath)), commands)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenStillRunning_returnsWithoutWaitingForever() {
-+        val process = FakeProcess(exitCode = null)
-+        val opener = opener(isLinux = true, process = process)
-+
-+        opener.open(file)
-+
-+        assertEquals(TIMEOUT_MILLIS, process.waitedMillis)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenNonZeroExit_throwsDialogException() {
-+        val opener = opener(isLinux = true, process = FakeProcess(exitCode = 3))
-+
-+        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
-+
-+        assertTrue(exception.message!!.contains("xdg-open exited with code 3"))
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_xdgOpenMissing_throwsDialogExceptionWithCause() {
-+        val opener = JvmDefaultApplicationOpener(
-+            isDesktopOpenSupported = { false },
-+            desktopOpen = { error("Desktop must not be used") },
-+            isLinux = true,
-+            startProcess = { throw IOException("Cannot run program \"xdg-open\"") },
-+        )
-+
-+        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
-+
-+        assertIs<IOException>(exception.cause)
-+    }
-+
-+    @Test
-+    fun JvmDefaultApplicationOpener_desktopUnsupportedOutsideLinux_throwsDialogException() {
-+        val commands = mutableListOf<List<String>>()
-+        val opener = opener(isLinux = false, commands = commands)
-+
-+        assertFailsWith<FileKitDialogException> { opener.open(file) }
-+        assertTrue(commands.isEmpty())
-+    }
-+
-+    private fun opener(
-+        desktopSupported: Boolean = false,
-+        isLinux: Boolean,
-+        opened: MutableList<File> = mutableListOf(),
-+        commands: MutableList<List<String>> = mutableListOf(),
-+        process: Process = FakeProcess(exitCode = 0),
-+    ) = JvmDefaultApplicationOpener(
-+        isDesktopOpenSupported = { desktopSupported },
-+        desktopOpen = { opened += it },
-+        isLinux = isLinux,
-+        startProcess = { command ->
-+            commands += command
-+            process
-+        },
-+        exitTimeoutMillis = TIMEOUT_MILLIS,
-+    )
-+
-+    /** A process that has exited with [exitCode], or is still running when [exitCode] is null. */
-+    private class FakeProcess(
-+        private val exitCode: Int?,
-+    ) : Process() {
-+        var waitedMillis: Long? = null
-+
-+        override fun waitFor(timeout: Long, unit: TimeUnit): Boolean {
-+            waitedMillis = unit.toMillis(timeout)
-+            return exitCode != null
-+        }
-+
-+        override fun waitFor(): Int = exitCode ?: error("Unbounded wait")
-+
-+        override fun exitValue(): Int = exitCode ?: throw IllegalThreadStateException()
-+
-+        override fun getOutputStream(): OutputStream = OutputStream.nullOutputStream()
-+
-+        override fun getInputStream(): InputStream = InputStream.nullInputStream()
-+
-+        override fun getErrorStream(): InputStream = InputStream.nullInputStream()
-+
-+        override fun destroy() = Unit
-+    }
-+
-+    private companion object {
-+        const val TIMEOUT_MILLIS = 50L
-+    }
-+}
-```
-
-**File**: `filekit-dialogs/src/webMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKitFileSaverWithoutBytesException.kt` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--package io.github.vinceglb.filekit.dialogs
--
--public class FileKitFileSaverWithoutBytesException :
--    IllegalArgumentException(
--        "Bytes must not be null on Web platform. Use isSaveFileWithoutBytesSupported() " +
--            "to check if the platform supports saving files without bytes.",
--    )
-```
-
----
-
-### Incident Patch 3: `518b3be1` (2026-10-28)
-**Commit Message**: 📝 Apply docs review fixes
-
-Fix the write-file note, bookmark helper and directory picker snippet,
-align link labels and Related sections, explain shared source sets,
-and make platform badges accessible.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/cookbook/test-resources.mdx` (modified, +1/-1)
-```diff
-@@ -52,4 +52,4 @@ class ResourcesTest {
- ## Related
- 
- - [App directories](/core/file-utils) for runtime locations.
--- [Read a file](/core/read-file) for the full read API.
-+- [Reading files](/core/read-file) for the full read API.
-```
-
-**File**: `docs/cookbook/zip-archives.mdx` (modified, +1/-1)
-```diff
-@@ -185,6 +185,6 @@ FileKit.download(zipToBytes(files), "archive.zip")
- 
- The whole archive is kept in memory, so this approach is best suited for small files. See the [kmp-zip documentation](https://github.com/henrik242/kmp-zip#js-and-wasmjs-notes) for more details about web support.
- 
--## Related
-+## Go further
- 
- kmp-zip also supports password-protected archives (AES and legacy ZipCrypto), GZIP, and reading a single entry without extracting the whole archive. See the [kmp-zip documentation](https://github.com/henrik242/kmp-zip).
-```
-
-**File**: `docs/core/bookmark-data.mdx` (modified, +3/-2)
-```diff
-@@ -28,7 +28,8 @@ Both functions are declared in `nonWebMain`. `bookmarkData()` is a suspend funct
- A bookmark breaks when the user deletes the file, revokes your app's access, or (on path-based platforms) moves it. Handle failure and ask the user to pick the file again. This helper stores one bookmark in your app's files directory:
- 
- ```kotlin nonWebMain
--private val bookmarkFile = FileKit.filesDir / "last-file.bookmark"
-+// A getter, so FileKit.filesDir is only read after FileKit.init on desktop
-+private val bookmarkFile get() = FileKit.filesDir / "last-file.bookmark"
- 
- suspend fun saveLastFile(file: PlatformFile) {
-     bookmarkFile.write(file.bookmarkData().bytes)
-@@ -56,7 +57,7 @@ suspend fun loadLastFile(): PlatformFile? {
- 
- Refreshing is best effort: the old bytes may still work, and `bookmarkData()` can fail if the file disappeared or macOS already revoked access. Use `fromBookmarkData` when you only need the file.
- 
--## Platform behavior
-+## Platform notes
- 
- | Platform | Stored as | Security-scoped | Survives a move |
- | --- | --- | --- | --- |
-```
-
-**File**: `docs/core/file-utils.mdx` (modified, +2/-2)
-```diff
-@@ -87,10 +87,10 @@ On JVM, Linux native, and Windows native, a missing folder is created when you r
- 
- ## Download a file on the web
- 
--Browsers have no app directories. To save bytes to the user's Downloads folder, use `FileKit.download`. See [Web](/core/web#download-files).
-+Browsers have no app directories. To save bytes to the user's Downloads folder, use `FileKit.download`. See [Files on the web](/core/web#download-files).
- 
- ## Related
- 
- - [Core setup](/core/setup) to set the application ID or custom directories.
--- [Write a file](/core/write-file) into these directories.
-+- [Writing files](/core/write-file) into these directories.
- - [Bookmark data](/core/bookmark-data) to keep access to files outside them.
-```
-
-**File**: `docs/core/image-and-video-utils.mdx` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ val bitmap: ImageBitmap = file.toImageBitmap()
- val png: ByteArray = bitmap.encodeToByteArray(format = ImageFormat.PNG)
+@@ -15,8 +15,9 @@ npm run render -- sample          # only the sample app icons and logos
+ npm run preview                   # serve the sources to tweak them live in a browser
  ```
  
--Both are suspend functions. `encodeToByteArray` defaults to `ImageFormat.JPEG` with `quality = 100`. To display a file in an `Image`, the [Coil integration](/integrations/coil) loads it for you, with caching.
-+Both are suspend functions. `encodeToByteArray` defaults to `ImageFormat.JPEG` with `quality = 100`. To display a file in an `Image`, the [Coil](/integrations/coil) loads it for you, with caching.
+-`npm run preview` prints two URLs: the brand board (every export and the palette on one page) and the live
+-hero (`src/hero.html`). The hero fills the browser window, so resizing the window previews other formats.
++`npm run preview` prints three URLs: the brand board (every export and the palette on one page), the live
++hero (`src/hero.html`) and the grant banner (`src/banner.html`, configured under `banner` in `palette.json`).
++The hero fills the browser window, so resizing the window previews other formats.
+ Add `?seed=3.6` to the hero URL to try another background composition without editing any file.
  
- ## Related
- 
+ Rendering runs locally only; CI does not build these assets.
+@@ -28,6 +29,8 @@ Rendering runs locally only; CI does not build these assets.
+ | README hero | `brand/exports/readme-hero.webp` | 1920×960, rounded corners |
+ | GitHub social preview | `brand/exports/social-preview.jpg` | 1280×640, upload in the repo settings |
+ | Docs hero | `docs/brand/hero.webp` | 1920×1080, rounded corners |
++| README grant banner | `brand/exports/grant-banner-{dark,light}.webp` | 1920×240, rounded corners, with the call to action |
++| Docs grant banner | `docs/brand/grant-banner-{dark,light}.webp` | 1920×240 |
+ | Open Graph image | `docs/brand/og.jpg` | 1200×630 |
+ | Logo for light backgrounds | `docs/brand/logo-light.svg` | mark + wordmark, outlined |
+ | Logo for dark backgrounds | `docs/brand/logo-dark.svg` | mark + wordmark, outlined |
 ```
 
-**File**: `docs/core/platform-file.mdx` (modified, +1/-1)
+**File**: `brand/palette.json` (modified, +34/-0)
 ```diff
-@@ -124,4 +124,4 @@ Serialization keeps the path, not the access rights. A file picked outside your
- 
- - [Reading files](/core/read-file) and [Writing files](/core/write-file)
- - [File operations](/core/file-operations): list, walk, copy, move, and delete
--- [File utilities](/core/file-utils): app directories and user folders
-+- [App directories](/core/file-utils): app directories and user folders
+@@ -62,5 +62,39 @@
+       "grain": 0,
+       "focus": 0.5
+     }
++  },
++  "banner": {
++    "seed": 9.1,
++    "pieces": 90,
++    "background": {
++      "dark": {
++        "grain": 0.06,
++        "focus": 0.45
++      },
++      "light": {
++        "grain": 0.05,
++        "focus": -0.5
++      }
++    },
++    "text": {
++      "dark": "#FFF1D0",
++      "light": "#0F5A36"
++    },
++    "confetti": {
++      "dark": [
++        "#F2D37A",
++        "#FFF1D0",
++        "#FFFFFF",
++        "#3DBA6E",
++        "#E3C266"
++      ],
++      "light": [
++        "#0F5A36",
++        "#2E9A5C",
++        "#E7C25E",
++        "#FFFFFF",
++        "#D8B24C"
++      ]
++    }
+   }
+ }
 ```
 
-**File**: `docs/core/setup.mdx` (modified, +1/-1)
+**File**: `brand/render.mjs` (modified, +11/-3)
 ```diff
-@@ -154,5 +154,5 @@ If you shrink or obfuscate a JVM desktop app, add these rules to your `proguard-
+@@ -5,7 +5,7 @@
+ //   npm run render -- sample  # only the sample app icons
+ //   npm run preview           # serve the sources to tweak them live in a browser
+ //
+-// Raster images are screenshots of src/hero.html taken by headless Chromium (Playwright).
++// Raster images are screenshots of src/hero.html and src/banner.html taken by headless Chromium (Playwright).
+ // SVG logos are generated from src/mark.js and the outlines of Inter Bold Italic (opentype.js).
+ // App icons are screenshots of src/icon.html; .icns and .ico files are assembled from those PNGs.
  
- ## Related
+@@ -30,6 +30,12 @@ const HEROES = [
+   { file: 'docs/brand/hero.webp', width: 1920, height: 1080, theme: 'dark', rounded: true },
+   { file: 'docs/brand/og.jpg', width: 1200, height: 630, theme: 'dark' },
+ ];
++
++// Grant banner (src/banner.html), in both themes. The README one is a link, so it carries its call to action.
++const BANNERS = ['dark', 'light'].flatMap((theme) => [
++  { file: `brand/exports/grant-banner-${theme}.webp`, width: 1920, height: 240, theme, rounded: true, cta: true },
++  { file: `docs/brand/grant-banner-${theme}.webp`, width: 1920, height: 240, theme },
++]);
+ const QUALITY = 0.92;
  
--- [File utilities](/core/file-utils): app directories and user folders such as Downloads.
-+- [App directories](/core/file-utils): app directories and user folders such as Downloads.
- - [Dialogs setup](/dialogs/setup): Android activity registration and Linux packaging.
+ // ---------------------------------------------------------------------------------------------
+@@ -135,6 +141,7 @@ if (process.argv[2] === '--preview') {
+   const { base } = await serve(4173);
+   console.log(`Brand board:  ${base}/brand/src/board.html`);
+   console.log(`Live hero:    ${base}/brand/src/hero.html  (resize the window to try formats, add ?seed=3.6 to try a composition)`);
++  console.log(`Grant banner: ${base}/brand/src/banner.html?cta=1  (add &theme=light or &seed=3.6)`);
+   console.log('Ctrl+C to stop.');
+ } else {
+   await render(process.argv[2]);
+@@ -149,7 +156,7 @@ async function render(filter) {
+     console.log('wrote', svg.file);
+   }
+ 
+-  const heroes = HEROES.filter((h) => wanted(h.file));
++  const heroes = [...HEROES, ...BANNERS].filter((h) => wanted(h.file));
+   const icons = ICONS.filter((i) => wanted(i.file));
+   if (heroes.length === 0 && icons.length === 0) return;
+   const { server, base } = await serve();
+@@ -158,7 +165,8 @@ async function render(filter) {
+   for (const hero of heroes) {
+     const page = await browser.newPage({ viewport: { width: hero.width, height: hero.height } });
+     page.on('pageerror', (e) => console.error(hero.file, e.message));
+-    await page.goto(`${base}/brand/src/hero.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}`);
++    const source = BANNERS.includes(hero) ? 'banner' : 'hero';
++    await page.goto(`${base}/brand/src/${source}.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}&cta=${hero.cta ? 1 : 0}`);
+     await page.waitForSelector('body[data-ready]');
+     await mkdir(dirname(join(REPO, hero.file)), { recursive: true });
+     if (hero.file.endsWith('.jpg')) {
 ```
 
-**File**: `docs/core/write-file.mdx` (modified, +1/-1)
+**File**: `brand/src/banner.html` (added, +98/-0)
 ```diff
-@@ -22,7 +22,7 @@ file.write("Hello again".encodeToByteArray())
- Both are suspend functions that switch to `Dispatchers.IO`. The parent directory must exist: create it first with [`createDirectories()`](/core/file-operations#create-directories). Failures throw `kotlinx.io.IOException` or `FileKitException`.
+@@ -0,0 +1,98 @@
++<!doctype html>
++<!--
++  FileKit grant banner: a thin strip on the silk background with a sprinkle of confetti.
++  Fills the viewport, so the export script picks the size.
++  URL parameters: theme=dark|light, rounded=1 (transparent rounded corners),
++  cta=1 (adds the "Read the announcement" line, for the README where the whole image is a link),
++  seed=<number> (try another background and confetti layout without editing palette.json).
++  All sizes are in cqw (percent of the image width) so every format keeps the same proportions.
++-->
++<html>
++<head>
++<meta charset="utf-8">
++<style>
++  @font-face { font-family: 'Inter'; font-weight: 400; src: url('../fonts/Inter-Regular.woff2') format('woff2'); }
++  @font-face { font-family: 'Inter'; font-weight: 500; src: url('../fonts/Inter-Medium.woff2') format('woff2'); }
++  @font-face { font-family: 'Inter'; font-weight: 700; font-style: italic; src: url('../fonts/Inter-BoldItalic.ttf') format('truetype'); }
++
++  * { box-sizing: border-box; margin: 0; }
++  html, body { width: 100%; height: 100%; background: transparent; overflow: hidden; }
++  .frame { position: absolute; inset: 0; container-type: size; overflow: hidden; }
++  .rounded .frame { border-radius: 1.6cqw; }
++  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
++  .confetti { position: absolute; inset: 0; }
++  .confetti i { position: absolute; display: block; border-radius: .08cqw; }
++  .text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
++    gap: 2cqw; color: var(--text); text-align: center; white-space: nowrap; }
++  .line { font: 400 2.7cqw/1 'Inter'; text-box: trim-both cap alphabetic; }
++  .line b { font: italic 700 2.7cqw/1 'Inter'; letter-spacing: -0.01em; }
++  .cta { font: 500 1.6cqw/1 'Inter'; opacity: .85; text-decoration: underline; text-underline-offset: .3cqw;
++    text-decoration-thickness: .1cqw; text-box: trim-both cap alphabetic; }
++</style>
++</head>
++<body>
++<div class="frame">
++  <canvas></canvas>
++  <div class="confetti"></div>
++  <div class="text">
++    <div class="line">Supported by the <b>Kotlin Foundation Grants Program</b></div>
++    <div class="cta" hidden>Read the announcement →</div>
++  </div>
++</div>
++<script type="module">
++  import { paintBackground } from './background.js';
++
++  const params = new URLSearchParams(location.search);
++  const theme = params.get('theme') ?? 'dark';
++  if (params.get('rounded') === '1') document.body.classList.add('rounded');
++  if (params.get('cta') === '1') document.querySelector('.cta').hidden = false;
++
++  const palette = await (await fetch('../palette.json')).json();
++  const look = { ...palette.background[theme], ...palette.banner.background[theme] };
++  const seed = params.has('seed') ? Number(params.get('seed')) : palette.banner.seed;
++  const frame = document.querySelector('.frame');
++  frame.style.setProperty('--text', palette.banner.text[theme]);
++  await document.fonts.ready;
++
++  // Small deterministic PRNG so a seed always gives the same confetti.
++  function random(s) {
++    let a = Math.floor(s * 1e6) >>> 0;
++    return () => {
++      a = (a + 0x6D2B79F5) >>> 0;
++      let t = Math.imul(a ^ (a >>> 15), 1 | a);
++      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
++      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
++    };
++  }
++
++  function draw() {
++    paintBackground(document.querySelector('canvas'), { ...look, seed });
++
++    // Confetti thins out towards the center so the text stays clean.
++    const rand = random(seed);
++    const colors = palette.banner.confetti[theme];
++    const W = frame.clientWidth, H = frame.clientHeight, cqw = W / 100;
++    const pieces = [];
++    while (pieces.length < palette.banner.pieces) {
++      const x = rand(), y = rand();
++      const dx = (x - 0.5) / 0.34, dy = (y - 0.5) / 0.62;
++      if (dx * dx + dy * dy < 1 + 0.6 * rand()) continue;
++      const round = rand() < 0.3;
++      const w = round ? 0.45 + 0.25 * rand() : 0.8 + 0.7 * rand();
++      const h = round ? w : 0.26 + 0.14 * rand();
++      pieces.push(`<i style="left:${(x * W).toFixed(1)}px;top:${(y * H).toFixed(1)}px;width:${(w * cqw).toFixed(1)}px;` +
++        `height:${(h * cqw).toFixed(1)}px;background:${colors[Math.floor(rand() * colors.length)]};` +
++        `opacity:${(0.65 + 0.35 * rand()).toFixed(2)};${round ? 'border-radius:50%;' : ''}` +
++        `transform:translate(-50%,-50%) rotate(${Math.floor(rand() * 180)}deg)"></i>`);
++    }
++    document.querySelector('.confetti').innerHTML = pieces.join('');
++  }
++
++  draw();
++  // Keep the live preview (npm run preview) accurate when the window is resized.
++  let pending = 0;
++  addEventListener('resize', () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(draw); });
++  document.body.dataset.ready = '1';
++</script>
++</body>
++</html>
+```
+
+**File**: `brand/src/board.html` (modified, +2/-0)
+```diff
+@@ -25,6 +25,8 @@ <h2>Social preview · brand/exports/social-preview.jpg — OG image · docs/bran
+ <div class="two"><img src="../exports/social-preview.jpg" alt=""><img src="../../docs/brand/og.jpg" alt=""></div>
+ <h2>Docs hero · docs/brand/hero.webp</h2>
+ <img src="../../docs/brand/hero.webp" alt="">
++<h2>Grant banner · brand/exports/grant-banner-{dark,light}.webp</h2>
++<div class="two"><img src="../exports/grant-banner-dark.webp" alt=""><img src="../exports/grant-banner-light.webp" alt=""></div>
+ <h2>Logos · docs/brand/logo-{light,dark}.svg — favicon · docs/brand/favicon.svg</h2>
+ <div class="two">
+   <div class="tile" style="background:#fff"><img src="../../docs/brand/logo-light.svg" style="height:40px" alt=""><img src="../../docs/brand/favicon.svg" style="height:32px" alt=""><img src="../../docs/brand/favicon.svg" style="height:16px" alt=""></div>
+```
+
+**File**: `docs/docs.json` (modified, +4/-0)
+```diff
+@@ -12,6 +12,10 @@
+     "dark": "#1A7F4B"
+   },
+   "favicon": "/brand/favicon.svg",
++  "banner": {
++    "content": "🎉 FileKit is supported by the Kotlin Foundation Grants Program. [Read the announcement](https://kotlinfoundation.org/news/grants-program-winners-26/)",
++    "dismissible": true
++  },
+   "navigation": {
+     "groups": [
+       {
+```
+
+**File**: `docs/introduction.mdx` (modified, +3/-0)
+```diff
+@@ -5,6 +5,7 @@ description: Pick, save, read, and write files with one Kotlin Multiplatform API
+ og:title: FileKit
+ ---
  
- <Note>
--These functions are declared for every platform except the web, so call them from `nonWebMain` or a platform source set. On the web, picked files are read-only: see [Write on the web](#write-on-the-web).
-+These functions are not declared in `commonMain`. Call them from `nonWebMain` or a platform source set. The web has separate, experimental versions for the origin private file system: see [Write on the web](#write-on-the-web).
- </Note>
++import { GrantBanner } from '/snippets/grant-banner.jsx'
+ import { QuoteGrid, QuoteCard } from '/snippets/quote-card.jsx'
+ import { UsedBy } from '/snippets/used-by.jsx'
  
- ## Copy another file's content
+@@ -19,6 +20,8 @@ import { UsedBy } from '/snippets/used-by.jsx'
+ 
+ **FileKit is the file layer for Kotlin Multiplatform.** Open native file, photo, directory, and camera pickers, save and share files, and read or write them through a single `PlatformFile` type. The same code runs on Android, iOS, macOS, desktop JVM (Windows, macOS, Linux), Linux and Windows native, JS, and Wasm, and FileKit Core also runs on watchOS.
+ 
++<GrantBanner />
++
+ ## FileKit in 30 seconds
+ 
+ Let the user pick a photo, then show it or read its bytes.
+```
+
+---
+
+### Incident Patch 2: `07f8a48f` (2026-11-06)
+**Commit Message**: 🔗 Link the grant announcement
+
+Point the README banner, the docs banner and the docs snippet to the Kotlin Foundation post,
+and use the program's official name (Kotlin Foundation Grants Program), banner images included.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -22,10 +22,10 @@
+     <a href="https://filekit.mintlify.app/roadmap"><b>Roadmap to 1.0</b></a>
+   </p>
+ 
+-  <a href="https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL">
++  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
+     <picture>
+       <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
+-      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grant Program. Read the announcement." />
++      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
+     </picture>
+   </a>
+ </div>
+```
+
+**File**: `brand/src/banner.html` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@
+   <canvas></canvas>
+   <div class="confetti"></div>
+   <div class="text">
+-    <div class="line">Supported by the <b>Kotlin Foundation Grant Program</b></div>
++    <div class="line">Supported by the <b>Kotlin Foundation Grants Program</b></div>
+     <div class="cta" hidden>Read the announcement →</div>
+   </div>
+ </div>
+```
+
+**File**: `docs/docs.json` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+   },
+   "favicon": "/brand/favicon.svg",
+   "banner": {
+-    "content": "🎉 FileKit is supported by the Kotlin Foundation Grant Program. [Read the announcement](https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL)",
++    "content": "🎉 FileKit is supported by the Kotlin Foundation Grants Program. [Read the announcement](https://kotlinfoundation.org/news/grants-program-winners-26/)",
+     "dismissible": true
+   },
+   "navigation": {
+```
+
+**File**: `docs/roadmap.mdx` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ import { grantPostUrl } from '/snippets/grant-banner.jsx'
+ 
+ FileKit is already used in production on Android, iOS, desktop and the web. The goal of 1.0 is not a big list of new features. It is a **promise**: a reviewed public API, clear compatibility guarantees, predictable behavior across platforms, and documentation that tells you exactly what to expect.
+ 
+-FileKit is supported by the <a href={grantPostUrl}>Kotlin Foundation Grant Program</a>. The grant supports the work toward 1.0 described on this page.
++FileKit is supported by the <a href={grantPostUrl}>Kotlin Foundation Grants Program</a>. The grant supports the work toward 1.0 described on this page.
+ 
+ <Info>
+   **Target: FileKit 1.0 in Q1 2027.** This is a best-effort target, not a fixed date. The order of the steps below matters more than the calendar, and this page is updated as work lands.
+```
+
+**File**: `docs/snippets/grant-banner.jsx` (modified, +3/-3)
+```diff
+@@ -7,10 +7,10 @@
+  *
+  *   <GrantBanner />
+  */
+-export const grantPostUrl = "https://kotlinfoundation.org/news/#FILEKIT_GRANT_POST_URL"
++export const grantPostUrl = "https://kotlinfoundation.org/news/grants-program-winners-26/"
+ 
+ export const GrantBanner = () => {
+-  const alt = "FileKit is supported by the Kotlin Foundation Grant Program"
++  const alt = "FileKit is supported by the Kotlin Foundation Grants Program"
+   return (
+     <a
+       href={grantPostUrl}
+@@ -20,7 +20,7 @@ export const GrantBanner = () => {
+       <img src="/brand/grant-banner-dark.webp" alt={alt} width="1920" height="240" className="hidden w-full dark:block" />
+       <p className="px-5 py-3 text-sm text-gray-700 dark:text-gray-300">
+         The grant supports the work toward FileKit 1.0.{" "}
+-        <span className="font-semibold text-primary group-hover:underline dark:text-primary-light">
++        <span className="whitespace-nowrap font-semibold text-primary group-hover:underline dark:text-primary-light">
+           Read the announcement →
+         </span>
+       </p>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #708** (2026-11-06): 🎉 Mention the Kotlin Foundation grant in the README and docs (@vinceglb)
 - **PR #702** (2026-10-29): 📝 Add tiered showcase and wall of love community pages (@vinceglb)
 - **PR #701** (2026-10-29): 🔥 Remove unused intro illustration from the docs (@vinceglb)
 - **PR #700** (2026-10-28): 🐛 Fix web serializer message, JVM open fallback, drop unused exception (@vinceglb)
 - **PR #699** (2026-10-28): 🎨 Apply the brand skin to the docs (@vinceglb)
 - **PR #698** (2026-10-28): 🎨 Put the sample apps on the FileKit brand (@vinceglb)
-- **PR #697** (2026-10-28): 📝 Use parentheses in bug form platform labels (@vinceglb)
 
 ---
 
@@ -1901,30 +1454,34 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup
+## X. 🔀 Merge pull request #708 from vinceglb/docs/grant-mention
 
 **RULE**:
-When implementing operations in `docs/dialogs/open-file.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f2c9211`: 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f8ac2e9`: 🔀 Merge pull request #708 from vinceglb/docs/grant-mention. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/dialogs/open-file.mdx`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
-| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to half a second for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
+
+  <a href="https://kotlinfoundation.org/news/grants-program-winners-26/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="brand/exports/grant-banner-dark.webp" />
+      <img src="brand/exports/grant-banner-light.webp" width="960" alt="FileKit is supported by the Kotlin Foundation Grants Program. Read the announcement." />
+    </picture>
+  </a>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
-| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f2c9211` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f8ac2e9` are properly handled with clean fallback behavior.

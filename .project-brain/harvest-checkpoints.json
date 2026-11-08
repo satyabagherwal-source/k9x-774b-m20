@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-08T06:05:13.989Z",
+  "last_updated": "2026-11-08T06:12:30.539Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12306,14 +12306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vinceglb-filekit",
-      "content_hash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
-      "verified_at": "2026-10-29T16:36:46.093Z",
+      "content_hash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
+      "verified_at": "2026-11-08T06:12:24.452Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T16:36:46.093Z"
+      "last_updated": "2026-11-08T06:12:24.452Z"
     },
     "nsh07/Tomato": {
       "repository": "nsh07/Tomato",
@@ -16176,14 +16176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
-      "content_hash": "afdc08cbd3a9d07344ddfdc77c841ffc19349810735af8be0e096e8790d986c2",
-      "verified_at": "2026-11-04T19:41:24.431Z",
+      "content_hash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
+      "verified_at": "2026-11-08T06:12:30.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:41:24.431Z"
+      "last_updated": "2026-11-08T06:12:30.538Z"
     },
     "Vincentwei1021/video-shotcraft": {
       "repository": "Vincentwei1021/video-shotcraft",

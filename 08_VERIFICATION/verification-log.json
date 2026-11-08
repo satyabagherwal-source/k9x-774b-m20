@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261105-2YU9",
-    "timestamp": "2026-11-05T17:14:50.721Z",
-    "repository": "LiquidAI/LFM3-Omni-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "09ba6d961ac2f8ba9be033e57fcd97ea51a142563e26b8d42be08a5e700c8a65",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261105-BZ1F",
-    "timestamp": "2026-11-05T17:21:50.883Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "ba6182b860472c5fcfb1a3506874185ac2c4e7f7536340daef4635b433ea0be6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261105-C1XV",
     "timestamp": "2026-11-05T17:21:54.643Z",
     "repository": "oven-sh/bun",
@@ -7490,6 +7460,36 @@
     "repository": "Nanbeige/Nanbeige4.3-33B",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
     "contentHash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-QMEK",
+    "timestamp": "2026-11-08T06:12:24.428Z",
+    "repository": "vinceglb/FileKit",
+    "learningId": "learn-github-vinceglb-filekit",
+    "contentHash": "5e86c532d6e9bba1058678444053a0693d3bfcad95f1f1a5e2300803a4491fa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261108-QR3P",
+    "timestamp": "2026-11-08T06:12:30.517Z",
+    "repository": "briaai/Fibo-2.0-dev",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
