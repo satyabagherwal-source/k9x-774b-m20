@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-08T22:01:01.747Z",
+  "last_updated": "2026-11-08T22:12:53.152Z",
   "total_verified_learnings": 1239,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -831,8 +831,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "a31ceb62",
-      "content_hash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
+      "source_version": "87ecf9e0",
+      "content_hash": "655b5c202b32b3229b2bea26b118c8dda7924027ca1bf3b9ea9f1a73348c4729",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -855,6 +855,11 @@
           "number": null,
           "title": "Atomic Process Registration Rollback Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "build(docker): overridable base-image build args; UI build on Node 24 LTS (#1159",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1948,
@@ -897,7 +902,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:56:32.733Z",
+      "verified_at": "2026-11-08T22:10:46.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8091,8 +8096,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "46ab3dad",
-      "content_hash": "8289bea8a253091aa6bf4d8f2cd0db563dcbeffe4c8fbaeb284ec0c8c1300484",
+      "source_version": "c847f42e",
+      "content_hash": "0bdebd2459787d3fc6d4272e0252896dd275692372fa8ca49b8b0da997e11a42",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -8104,6 +8109,11 @@
         {
           "number": null,
           "title": "Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-expon",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-ty",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8212,7 +8222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:03:21.529Z",
+      "verified_at": "2026-11-08T22:10:53.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22099,10 +22109,25 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
+      "content_hash": "599e77dbebe3bdf68edd8b915ee57ca5dc5cb51d2377543972a2c862e9bbb7d4",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Zero-Variance Rotary Positional Embedding (RoPE) Coordinate Alignment",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Time-Step Dependent Linear Scaling for Rectified Flow Euler Integrators",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Latent Patch Packing & Spatial Dimension Boundary Guards",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
         {
           "number": 299,
           "title": "Scheduler-Objective Alignment",
@@ -22264,7 +22289,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-11-05T04:50:32.650Z",
+      "verified_at": "2026-11-08T22:12:53.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61124,14 +61149,19 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "c0c77a7a",
-      "content_hash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
+      "source_version": "99dbe548",
+      "content_hash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "rt: handle transient windows thread spawn errors (#8766)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "stream: cancel stale chunks_timeout timer (#8674)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61200,7 +61230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T21:10:19.895Z",
+      "verified_at": "2026-11-08T22:10:40.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

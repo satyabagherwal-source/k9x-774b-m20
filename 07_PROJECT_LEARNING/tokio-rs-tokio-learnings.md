@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `c0c77a7a`  
+> **Source Version**: `99dbe548`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:10:18.777Z  
+> **Timestamp**: 2026-11-08T22:10:39.170Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:10:17.510Z  
+> **Harvest Timestamp**: 2026-11-08T22:10:38.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33717 stars
+- **Stars / Engagement**: 33723 stars
 
 ---
 
@@ -1349,6 +1349,10 @@ impl<T, D> FramedRead<T, D> {
     }
 
     /// Returns a mutable reference to the read buffer.
+    ///
+    /// The decoder may behave incorrectly if the buffer is modified in any way
+    /// other than reserving more space or appending data to the end of the
+    /// buffer.
     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
         &mut self.inner.state.buffer
     }
@@ -1955,51 +1959,244 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0c77a7a` (2026-11-07)
-**Commit Message**: rt: handle transient windows thread spawn errors (#8766)
+### Incident Patch 1: `c6a62327` (2026-11-08)
+**Commit Message**: stream: cancel stale chunks_timeout timer (#8674)
 
-**File**: `tokio/src/runtime/blocking/pool.rs` (modified, +11/-1)
+**File**: `tokio-stream/src/stream_ext/chunks_timeout.rs` (modified, +6/-1)
 ```diff
-@@ -750,7 +750,17 @@ impl LockedImpl {
- // Tells whether the error when spawning a thread is temporary.
- #[inline]
- fn is_temporary_os_thread_error(error: &io::Error) -> bool {
--    matches!(error.kind(), io::ErrorKind::WouldBlock)
-+    if matches!(error.kind(), io::ErrorKind::WouldBlock) {
-+        return true;
-+    }
-+
-+    #[cfg(windows)]
-+    if error.raw_os_error() == Some(1450) {
-+        // Windows reports temporary resource exhaustion as ERROR_NO_SYSTEM_RESOURCES.
-+        return true;
-+    }
-+
-+    false
- }
+@@ -57,10 +57,14 @@ impl<S: Stream> Stream for ChunksTimeout<S> {
+                     }
+                     me.items.push(item);
+                     if me.items.len() >= *me.cap {
++                        // The timer no longer applies to a completed chunk.
++                        me.deadline.set(None);
+                         return Poll::Ready(Some(std::mem::take(me.items)));
+                     }
+                 }
+                 Poll::Ready(None) => {
++                    // No more input can arrive, so the deadline is no longer needed.
++                    me.deadline.set(None);
+                     // Returning Some here is only correct because we fuse the inner stream.
+                     let last = if me.items.is_empty() {
+                         None
+@@ -74,9 +78,10 @@ impl<S: Stream> Stream for ChunksTimeout<S> {
+         }
  
- impl Inner {
+         if !me.items.is_empty() {
+-            if let Some(deadline) = me.deadline.as_pin_mut() {
++            if let Some(deadline) = me.deadline.as_mut().as_pin_mut() {
+                 ready!(deadline.poll(cx));
+             }
++            me.deadline.set(None);
+             return Poll::Ready(Some(std::mem::take(me.items)));
+         }
+ 
+```
+
+**File**: `tokio-stream/tests/chunks_timeout.rs` (modified, +49/-0)
+```diff
+@@ -82,3 +82,52 @@ async fn real_time() {
+     assert_eq!(chunk_stream.next().await, Some(vec![4]));
+     assert_eq!(chunk_stream.next().await, Some(vec![5]));
+ }
++
++#[tokio::test(start_paused = true)]
++async fn completed_chunk_cancels_timeout() {
++    let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
++    let chunks = stream::wrappers::UnboundedReceiverStream::new(rx)
++        .chunks_timeout(2, Duration::from_secs(2));
++    let mut chunks = task::spawn(chunks);
++
++    tx.send(1).unwrap();
++    assert_pending!(chunks.poll_next());
++
++    tx.send(2).unwrap();
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![1, 2]));
++    assert_pending!(chunks.poll_next());
++
++    time::sleep(Duration::from_secs(3)).await;
++    assert!(
++        !chunks.is_woken(),
++        "completed chunk left its timer registered"
++    );
++
++    // The next partial chunk must still start a fresh timeout.
++    tx.send(3).unwrap();
++    assert_pending!(chunks.poll_next());
++    time::sleep(Duration::from_secs(3)).await;
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![3]));
++}
++
++#[tokio::test(start_paused = true)]
++async fn end_of_stream_cancels_timeout() {
++    let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
++    let chunks = stream::wrappers::UnboundedReceiverStream::new(rx)
++        .chunks_timeout(2, Duration::from_secs(2));
++    let mut chunks = task::spawn(chunks);
++
++    tx.send(1).unwrap();
++    assert_pending!(chunks.poll_next());
++
++    // EOF flushes the partial chunk without leaving the registered timer alive.
++    drop(tx);
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![1]));
++
++    time::sleep(Duration::from_secs(3)).await;
++    assert!(
++        !chunks.is_woken(),
++        "end of stream left its timer registered"
++    );
++    tokio_test::assert_ready_eq!(chunks.poll_next(), None);
++}
 ```
 
 ---
 
-### Incident Patch 2: `ac57dc8c` (2026-11-06)
-**Commit Message**: Merge 'tokio-1.54.x' into 'master' (#8765)
+### Incident Patch 2: `99dbe548` (2026-11-08)
+**Commit Message**: util: fix `spawn_pinned` source location for console (#8753)
 
-**File**: `deny.toml` (modified, +5/-0)
+The spawn location of a task is captured through a chain of
+`#[track_caller]` functions. `LocalPoolHandle::spawn_pinned` is missing
+the attribute, so the task behind its `JoinHandle` reports a location
+inside tokio-util instead of the caller, e.g. in tokio-console. Thus,
+add the attribute, as `spawn_pinned_by_idx` already does.
+
+Refs: #5038
+
+**File**: `.github/workflows/ci.yml` (modified, +6/-0)
 ```diff
-@@ -3,6 +3,11 @@
- [graph]
- all-features = true
+@@ -316,6 +316,12 @@ jobs:
+           # in order to run doctests for unstable features, we must also pass
+           # the unstable cfg to RustDoc
+           RUSTDOCFLAGS: --cfg tokio_unstable
++      # Run `tokio-util` with "unstable" cfg flag (needed by its task tracing tests).
++      - name: test tokio-util full --cfg unstable
++        run: cargo nextest run --features full
++        working-directory: tokio-util
++        env:
++          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
  
-+[advisories]
-+ignore = [
-+    "RUSTSEC-2026-0441",
-+]
+   # Run the test suite with the sharded `spawn_blocking` queue.
+   test-sharded-blocking-queue:
+```
+
+**File**: `tokio-util/Cargo.toml` (modified, +6/-0)
+```diff
+@@ -63,6 +63,12 @@ tempfile = "3.1.0"
+ [target.'cfg(loom)'.dev-dependencies]
+ loom = { version = "0.7", features = ["futures", "checkpoint"] }
+ 
++# Used by tests/tracing_task.rs, which needs threads and so skips WASI.
++[target.'cfg(all(tokio_unstable, target_has_atomic = "64", not(target_os = "wasi")))'.dev-dependencies]
++tokio = { version = "1.0.0", features = ["tracing"] }
++tracing = { version = "0.1.29", default-features = false, features = ["std"] }
++tracing-mock = "= 0.1.0-beta.1"
 +
- [licenses]
- allow = [
-     "MIT",
+ [package.metadata.docs.rs]
+ all-features = true
+ # enable unstable features in the documentation
+```
+
+**File**: `tokio-util/src/task/spawn_pinned.rs` (modified, +1/-0)
+```diff
+@@ -122,6 +122,7 @@ impl LocalPoolHandle {
+     /// }
+     /// # }
+     /// ```
++    #[track_caller]
+     pub fn spawn_pinned<F, Fut>(&self, create_task: F) -> JoinHandle<Fut::Output>
+     where
+         F: FnOnce() -> Fut,
+```
+
+**File**: `tokio-util/tests/tracing_task.rs` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++//! Tests for the instrumentation of tasks spawned by tokio-util.
++//!
++//! These tests live in their own binary because `tracing` caches callsite
++//! interest per process, so spans created by concurrently running tests
++//! can disable the callsites a mock subscriber is waiting for.
++#![warn(rust_2018_idioms)]
++#![cfg(all(tokio_unstable, target_has_atomic = "64", feature = "rt"))]
++#![cfg(not(target_os = "wasi"))] // Wasi doesn't support threads
++
++use tokio::task::JoinHandle;
++use tokio_util::task::LocalPoolHandle;
++use tracing_mock::{expect, subscriber};
++
++/// Tasks spawned with `spawn_pinned` and `spawn_pinned_by_idx` record their
++/// caller as the spawn location (shown by tokio-console), not tokio-util.
++#[tokio::test]
++async fn spawn_pinned_loc_recorded() {
++    let pool = LocalPoolHandle::new(1);
++    // The worker thread creates a task span when it starts its runtime. Wait
++    // for that before installing a mock subscriber: a callsite first reached
++    // on a thread without the mock would be disabled for all threads.
++    pool.spawn_pinned(|| async {}).await.unwrap();
++
++    expect_spawned_at(line!(), || pool.spawn_pinned(|| async {}))
++        .await
++        .unwrap();
++    expect_spawned_at(line!(), || pool.spawn_pinned_by_idx(|| async {}, 0))
++        .await
++        .unwrap();
++}
++
++/// Asserts that `spawn` creates a task span located at `line` of this file.
++///
++/// Each call uses its own mock subscriber with a single expectation, as the
++/// worker thread enters the span of a spawned task concurrently.
++fn expect_spawned_at(line: u32, spawn: impl FnOnce() -> JoinHandle<()>) -> JoinHandle<()> {
++    let location = expect::field("loc.file")
++        .with_value(&file!())
++        .and(expect::field("loc.line").with_value(&line));
++    let task_span = expect::span().named("runtime.spawn").with_fields(location);
++    let (subscriber, handle) = subscriber::mock()
++        // Skip the spans of the oneshot channel that is created first.
++        .with_filter(|meta| meta.target() == "tokio::task")
++        .new_span(task_span)
++        .run_with_handle();
++
++    let task = tracing::subscriber::with_default(subscriber, spawn);
++    handle.assert_finished();
++    task
++}
+```
+
+---
+
+### Incident Patch 3: `67c58565` (2026-11-08)
+**Commit Message**: codec: clarify read buffer mutation requirements (#8690)
+
+**File**: `tokio-util/src/codec/framed.rs` (modified, +4/-0)
+```diff
+@@ -248,6 +248,10 @@ impl<T, U> Framed<T, U> {
+     }
+ 
+     /// Returns a mutable reference to the read buffer.
++    ///
++    /// The decoder may behave incorrectly if the buffer is modified in any way
++    /// other than reserving more space or appending data to the end of the
++    /// buffer.
+     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
+         &mut self.inner.state.read.buffer
+     }
+```
+
+**File**: `tokio-util/src/codec/framed_read.rs` (modified, +4/-0)
+```diff
+@@ -146,6 +146,10 @@ impl<T, D> FramedRead<T, D> {
+     }
+ 
+     /// Returns a mutable reference to the read buffer.
++    ///
++    /// The decoder may behave incorrectly if the buffer is modified in any way
++    /// other than reserving more space or appending data to the end of the
++    /// buffer.
+     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
+         &mut self.inner.state.buffer
+     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2028,38 +2225,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rt: handle transient windows thread spawn errors (#8766)
+## X. stream: cancel stale chunks_timeout timer (#8674)
 
 **RULE**:
-When implementing operations in `tokio/src/runtime/blocking/pool.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio-stream/src/stream_ext/chunks_timeout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0c77a7a`: rt: handle transient windows thread spawn errors (#8766). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6a62327`: stream: cancel stale chunks_timeout timer (#8674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/blocking/pool.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-stream/src/stream_ext/chunks_timeout.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if matches!(error.kind(), io::ErrorKind::WouldBlock) {
-        return true;
-    }
-
-    #[cfg(windows)]
-    if error.raw_os_error() == Some(1450) {
-        // Windows reports temporary resource exhaustion as ERROR_NO_SYSTEM_RESOURCES.
-        return true;
-    }
-
-    false
+                        // The timer no longer applies to a completed chunk.
+                        me.deadline.set(None);
+                    // No more input can arrive, so the deadline is no longer needed.
+                    me.deadline.set(None);
+            if let Some(deadline) = me.deadline.as_mut().as_pin_mut() {
+            me.deadline.set(None);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    matches!(error.kind(), io::ErrorKind::WouldBlock)
+            if let Some(deadline) = me.deadline.as_pin_mut() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0c77a7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6a62327` are properly handled with clean fallback behavior.

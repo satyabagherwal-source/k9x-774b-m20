@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `46ab3dad`  
+> **Source Version**: `c847f42e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:03:20.068Z  
+> **Timestamp**: 2026-11-08T22:10:52.143Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:03:20.062Z  
+> **Harvest Timestamp**: 2026-11-08T22:10:52.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50803 stars
+- **Stars / Engagement**: 50825 stars
 
 ---
 
@@ -1338,407 +1338,980 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcdc923b` (2026-11-07)
-**Commit Message**: Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-exponential
+### Incident Patch 1: `1aaec54f` (2026-11-08)
+**Commit Message**: Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-type-range
 
-Fix exponential parsing of nested CASE and INTERVAL used as identifiers or function names
+Reject WITH FILL bounds that do not fit the ORDER BY column type
 
-**File**: `src/Parsers/ExpressionListParsers.cpp` (modified, +21/-5)
+**File**: `src/Core/SortDescription.h` (modified, +7/-0)
 ```diff
-@@ -1008,6 +1008,9 @@ struct ParserExpressionImpl
-     ParserQualifiedColumnsMatcher qualified_columns_matcher_parser;
-     ParserSubquery subquery_parser;
+@@ -37,6 +37,13 @@ struct FillColumnDescription
+     std::optional<IntervalKind> step_kind;
+     Field fill_staleness;   /// Default = Null - should not be considered
+     std::optional<IntervalKind> staleness_kind;
++    DataTypePtr fill_column_type;
++    /// The inclusive range of the values a fill column of `fill_column_type` can hold - the range of the storage
++    /// type intersected with the calendar window for `Date32`/`DateTime64` - precomputed once so that the per-row
++    /// representability check is two comparisons. Null bounds mean the type is not checked (see
++    /// `fillRepresentableRangeOfColumnType`).
++    Field fill_representable_min;
++    Field fill_representable_max;
  
-+    /// Positions of CASE and INTERVAL tokens whose keyword reading failed; only the identifier reading is tried there.
-+    std::unordered_set<const char *> failed_keyword_readings;
+     using StepFunction = std::function<void(Field &, Int64 jumps_count)>;
+     StepFunction step_func;
+```
+
+**File**: `src/Interpreters/FillingRow.cpp` (modified, +274/-2)
+```diff
+@@ -1,16 +1,27 @@
++#include <algorithm>
+ #include <cstddef>
++#include <limits>
++#include <optional>
+ 
+ #include <Columns/IColumn.h>
++#include <DataTypes/DataTypeDateTime64.h>
++#include <DataTypes/DataTypesNumber.h>
+ #include <IO/Operators.h>
+ #include <Interpreters/FillingRow.h>
+ #include <Common/FieldAccurateComparison.h>
++#include <Common/FieldVisitorToString.h>
+ #include <Common/Logger.h>
+ #include <Common/logger_useful.h>
+ 
+ 
+ namespace DB
+ {
+ 
++namespace ErrorCodes
++{
++    extern const int INVALID_WITH_FILL_EXPRESSION;
++}
 +
-     bool parse(std::unique_ptr<Layer> start, IParser::Pos & pos, ASTPtr & node, Expected & expected);
+ constexpr static bool debug_logging_enabled = false;
  
-     using Layers = std::vector<std::unique_ptr<Layer>>;
-@@ -3640,11 +3643,13 @@ bool ParserExpressionImpl::parse(std::unique_ptr<Layer> start, IParser::Pos & po
-         if (layers.size() == 1 && layers.back()->getResult(node))
-             return true;
+ template <class... Args>
+@@ -37,11 +48,102 @@ bool equals(const Field & lhs, const Field & rhs)
+     return accurateEquals(lhs, rhs);
+ }
  
--        layers.pop_back();
--
-         /// We try to check whether there was a checkpoint
--        while (!layers.empty() && !layers.back()->saved_checkpoint)
-+        bool popped_keyword_layer = false;
-+        do
++bool fillValueFitsColumnType(const Field & value, const IDataType & type)
++{
++    const auto [min, max] = fillRepresentableRangeOfColumnType(type);
++
++    /// Null bounds - a type whose every value is representable (or saturates instead of wrapping around,
++    /// like Float and Decimal), nothing to check.
++    if (min.isNull())
++        return true;
++
++    return !accurateLess(value, min) && !accurateLess(max, value);
++}
++
++std::pair<Field, Field> fillRepresentableRangeOfColumnType(const IDataType & type)
++{
++    WhichDataType which(type);
++
++    if (which.isDate())
++        return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt16>::max()))};
++
++    if (which.isDateTime())
++        return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt32>::max()))};
++
++    if (which.isDate32())
++        return {Field(static_cast<Int64>(DATE_LUT_MIN_EXTEND_DAY_NUM)), Field(static_cast<Int64>(DATE_LUT_MAX_EXTEND_DAY_NUM))};
++
++    if (which.isDateTime64())
++    {
++        /// For Date32 and DateTime64 the boundaries of the representable calendar lie strictly inside the range of
++        /// the storage type, and the values between the two are invalid: nothing else produces them (conversions
++        /// clamp at the calendar boundary) and the serializers render them as the clamped boundary date.
++        /// The calendar clamps in the local civil calendar of the column's time zone (the local year is clamped to
++        /// [0000, 9999], see e.g. DateLUTImpl::addYearsOutOfRange), so the boundary expressed in raw ticks is
++        /// shifted by the UTC offset of the time zone, and the last representable time point has all its
++        /// sub-second digits set. For a high enough scale the calendar window in ticks is wider than the Int64
++        /// storage of the column, so the window is clamped to the storage range.
++        const auto & date_time_type = static_cast<const DataTypeDateTime64 &>(type);
++        const auto & time_zone = date_time_type.getTimeZone();
++        const UInt32 scale = date_time_type.getScale();
++        const Int64 max_seconds = time_zone.makeDateTime(DATE_LUT_MAX_REPRESENTABLE_YEAR, 12, 31, 23, 59, 59);
++        const Int64 min_seconds = time_zone.makeDateTime(DATE_LUT_MIN_REPRESENTABLE_YEAR, 1, 1, 0, 0, 0);
++        const Int128 scale_multiplier = DecimalUtils::scaleMultiplier<Int128>(scale);
++        const Int128 max_ticks = std::min(
++            static_cast<Int128>(max_seconds) * scale_multiplier + (scale_multiplier - 1),
++            static_cast<Int128>(std::numeric_limits<Int64>::max()));
++        const Int128 min_ticks = std::max(
++            static_cast<Int128>(min_seconds) * scale_multiplier,
++            static_cast<Int128>(std::numeric_limits<Int64>::min()));
++        return {
++            Field(DecimalField<Decimal64>(static_cast<Int64>(min_ticks), scale)),
++            Field(DecimalField<Decimal64>(static_cast<Int64>(max_ticks), scale))};
++    }
++
++    if (isInteger(type))
++    {
++        switch (which.idx)
 +        {
-+            popped_keyword_layer = dynamic_cast<IntervalLayer *>(layers.back().get()) || dynamic_cast<CaseLayer *>(layers.back().get());
-             layers.pop_back();
-+        } while (!layers.empty() && !layers.back()->saved_checkpoint);
- 
-         if (layers.empty())
-             return false;
-@@ -3655,6 +3660,10 @@ bool ParserExpressionImpl::parse(std::unique_ptr<Layer> start, IParser::Pos & po
-         auto saved_checkpoint = layers.back()->saved_checkpoint.value();
-         layers.back()->saved_checkpoint.reset();
- 
-+        /// A keyword layer reads nothing below itself, so if it failed unfinished it fails wherever this position is reached.
-+        if (popped_keyword_layer)
-+            failed_keyword_readings.insert(saved_checkpoint.first->begin);
-+
-         pos = saved_checkpoint.first;
-         layers.back()->current_checkpoint = saved_checkpoint.second;
-     }
-@@ -3967,13 +3976,20 @@ Action ParserExpressionImpl::tryParseOperand(Layers & layers, IParser::Pos & pos
-     auto current_checkpoint = layers.back()->current_checkpoint;
-     layers.back()->current_checkpoint = Checkpoint::None;
- 
--    if (current_checkpoint != Checkpoint::Interval && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
-+    /// Skipping a failed keyword reading leaves no checkpoint, as trying it again and restoring would.
-+    const bool keyword_reading_failed = failed_keyword_readings.contains(old_pos->begin);
-+    if (keyword_reading_failed)
-+        layers.back()->saved_checkpoint.reset();
-+
-+    if (current_checkpoint != Checkpoint::Interval && !keyword_reading_failed
-+        && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
-     {
-         layers.back()->saved_checkpoint = {old_pos, Checkpoint::Interval};
-         layers.push_back(std::make_unique<IntervalLayer>());
-         return Action::OPERAND;
-     }
--    if (current_checkpoint != Checkpoint::Case && parseOperator(pos, toStringView(Keyword::CASE), expected))
-+    if (current_checkpoint != Checkpoint::Case && !keyword_reading_failed
-+        && parseOperator(pos, toStringView(Keyword::CASE), expected))
-     {
-         layers.back()->saved_checkpoint = {old_pos, Checkpoint::Case};
-         layers.push_back(std::make_unique<CaseLayer>());
++            case TypeIndex::UInt8:
++                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt8>::max()))};
++            case TypeIndex::UInt16:
++                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt16>::max()))};
++            case TypeIndex::UInt32:
++                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt32>::max()))};
++            case TypeIndex::UInt64:
++                return {Field(static_cast<UInt64>(0)), Field(std::numeric_limits<UInt64>::max())};
++            case TypeIndex::UInt128:
++                return {Field(static_cast<UInt128>(0)), Field(std::numeric_limits<UInt128>::max())};
++            case TypeIndex::UInt256:
++                return {Field(static_cast<UInt256>(0)), Field(std::numeric_limits<UInt256>::max())};
++            case TypeIndex::Int8:
++                return {Field(static_cast<Int64>(std::numeric_limits<Int8>::min())), Field(static_cast<Int64>(std::numeric_limits<Int8>::max()))};
++            case TypeIndex::Int16:
++                return {Field(static_cast<Int64>(std::numeric_limits<Int16>::min())), Field(s
 ```
 
-**File**: `tests/queries/0_stateless/05565_case_interval_keyword_reading_exponential.reference` (added, +5/-0)
+**File**: `src/Interpreters/FillingRow.h` (modified, +23/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+31
-+31
-+1
-+1
-+SELECT case(multiIf(1, 2, NULL)), caseWithExpression((case(1)), 1, 2, NULL), `interval`(toIntervalDay(1)), toIntervalDay((`interval`(1))), toIntervalDay(1) + `interval`
+@@ -9,6 +9,16 @@ namespace DB
+ bool less(const Field & lhs, const Field & rhs, int direction);
+ bool equals(const Field & lhs, const Field & rhs);
+ 
++/// Whether `value` is a valid value of a fill column of type `type`: it fits the range of the storage type and,
++/// for the calendar-backed `Date32` and `DateTime64`, the representable calendar window as well. Types that
++/// saturate instead of wrapping around (`Float`, `Decimal`) are not checked and always pass.
++bool fillValueFitsColumnType(const Field & value, const IDataType & type);
++
++/// The inclusive `[min, max]` range that `fillValueFitsColumnType` checks against, as `Field`s comparable with
++/// the values the filling generates, so that the per-generated-value check does not have to redo the type
++/// dispatch. Null bounds mean the type is not checked and every value passes.
++std::pair<Field, Field> fillRepresentableRangeOfColumnType(const IDataType & type);
++
+ /** Helps to implement modifier WITH FILL for ORDER BY clause.
+  *  Stores row as array of fields and provides functions to generate next row for filling gaps and for comparing rows.
+  *  Used in FillingTransform.
+@@ -18,6 +28,9 @@ class FillingRow
+     /// finds last value <= to
+     Field doLongJump(const FillColumnDescription & descr, size_t column_ind, const Field & to);
+ 
++    void checkGeneratedValueFitsColumnType(const Field & value, size_t column_ind) const;
++    void checkFillingTowardsConstraintFitsColumnType(size_t column_ind);
++
+     bool hasSomeConstraints(size_t pos) const;
+     bool isConstraintsSatisfied(size_t pos) const;
+ 
+@@ -38,6 +51,12 @@ class FillingRow
+     void initUsingTo(size_t from_pos = 0);
+     void updateConstraintsWithStalenessRow(const Columns& base_row, size_t row_ind);
+ 
++    /// Throws when filling from the current row towards a constraint past the range of a column type would
++    /// generate a value the column cannot hold. The per-value check in `next` rejects such a value too, but only
++    /// after generating every value up to the boundary of the type - 2^32 rows for `DateTime` - so this is checked
++    /// up front once the anchor of the filling is known.
++    void checkFillingTowardsConstraintsFitsColumnTypes();
++
+     Field & operator[](size_t index) { return row[index]; }
+     const Field & operator[](size_t index) const { return row[index]; }
+     size_t size() const { return row.size(); }
+@@ -55,6 +74,10 @@ class FillingRow
+ private:
+     Row row;
+     Row constraints;
++    /// The value and the constraint of each column whose walk towards its constraint in `next` was last checked
++    /// by `checkFillingTowardsConstraintFitsColumnType`, so that the check runs once per walk, not once per step.
++    Row checked_walk_cursor;
++    Row checked_walk_constraint;
+     SortDescription sort_description;
+ };
+ 
 ```
 
-**File**: `tests/queries/0_stateless/05565_case_interval_keyword_reading_exponential.sql` (added, +12/-0)
+**File**: `src/Processors/Transforms/FillingTransform.cpp` (modified, +480/-12)
 ```diff
-@@ -0,0 +1,12 @@
-+-- CASE and INTERVAL used as identifiers or function names inside deep nesting.
+@@ -13,12 +13,17 @@
+ #include <DataTypes/DataTypeNullable.h>
+ #include <Functions/FunctionDateOrDateTimeAddInterval.h>
+ #include <Functions/IFunction.h>
++#include <Common/FieldAccurateComparison.h>
+ #include <Common/FieldVisitorScale.h>
+ #include <Common/FieldVisitorSum.h>
+ #include <Common/FieldVisitorToString.h>
+ #include <Common/logger_useful.h>
+ #include <IO/Operators.h>
+ #include <base/arithmeticOverflow.h>
++#include <algorithm>
++#include <limits>
++#include <optional>
++#include <tuple>
+ 
+ 
+ namespace DB
+@@ -61,32 +66,184 @@ Block FillingTransform::transformHeader(Block header, const SortDescription & so
+     return header;
+ }
+ 
+-/// Multiply through UInt64 so the result wraps by construction (FillingRow::doLongJump relies on
+-/// well-defined wraparound to detect the overflowed jump). A signed Int64 multiply is UB on overflow.
+-static Int64 mulStepWrapping(Int64 step, Int64 jumps_count)
++/** Returns `value + step * jumps_count * unit_length`, computed exactly in Int128, so that an intermediate product
++  * that does not fit Int64 is not mistaken for a result that does not fit it: an opposite-signed `value` can bring the
++  * sum back into range. Past 2^65 units the number of units is clamped, which keeps the result out of the range of
++  * Int64 in the direction of the step whatever `value` is, and keeps the product with `unit_length` within Int128.
++  * `unit_length` is positive and below 2^42 (an hour in nanoseconds is 3.6 * 10^12).
++  */
++static Int128 addStepExact(Int64 value, Int64 step, Int64 jumps_count, Int64 unit_length)
+ {
+-    return static_cast<Int64>(static_cast<UInt64>(step) * static_cast<UInt64>(jumps_count));
++    static constexpr Int128 max_units = static_cast<Int128>(1) << 65;
++    const Int128 units = std::clamp(static_cast<Int128>(step) * jumps_count, -max_units, max_units);
++    return value + units * unit_length;
++}
 +
-+SELECT (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + (interval + 1)))))))))))))))))))))))))))))) FROM (SELECT 1 AS `interval`);
-+SELECT (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + (case + 1)))))))))))))))))))))))))))))) FROM (SELECT 1 AS `case`);
++/// `addStepExact` saturated to the range of Int64. A saturated result lies past the range of the column in the
++/// direction of the step, which holds for every column type using it (`Date`, `Date32`, `DateTime`): none of them
++/// can hold the boundaries of Int64.
++static Int64 addStepSaturating(Int64 value, Int64 step, Int64 jumps_count, Int64 unit_length)
++{
++    const Int128 res = addStepExact(value, step, jumps_count, unit_length);
++    if (res > std::numeric_limits<Int64>::max())
++        return std::numeric_limits<Int64>::max();
++    if (res < std::numeric_limits<Int64>::min())
++        return std::numeric_limits<Int64>::min();
++    return static_cast<Int64>(res);
++}
 +
-+SELECT length(formatQuery('SELECT ' || repeat('case(', 30) || '1' || repeat(')', 30))) > 0;
-+SELECT length(formatQuery('SELECT ' || repeat('interval(', 30) || '1' || repeat(')', 30))) > 0;
++/** Wraps the ticks a step over DateTime64 lands on into a field. A result past the Int64 storage of the column is
++  * kept exactly in a wider `Decimal128` of the same scale instead of being saturated to the boundary of Int64: at
++  * scale 9 that boundary (`2262-04-11 23:47:16.854775807`) is itself a valid value of the column, so a saturated
++  * exclusive bound (e.g. of `STALENESS`) would exclude it, and a saturated step would land on it. Such a field only
++  * takes part in comparisons: `FillingRow` stops the filling at it or rejects it as a value the column cannot hold.
++  */
++static Field dateTime64StepResult(Int128 ticks, UInt32 scale)
++{
++    if (ticks >= std::numeric_limits<Int64>::min() && ticks <= std::numeric_limits<Int64>::max())
++        return DecimalField<DateTime64>(DateTime64(static_cast<Int64>(ticks)), scale);
++    return DecimalField<Decimal128>(Decimal128(ticks), scale);
++}
 +
-+SELECT formatQuery('SELECT ' || repeat('CASE(', 30)); -- { serverError SYNTAX_ERROR }
-+SELECT defaultValueOfTypeName('SimpleAggregateFunction(any(' || repeat('CASE(', 30)); -- { serverError SYNTAX_ERROR }
++/** The calendar arithmetic of `Date` and `DateTime` returns the column's own storage type (`UInt16` / `UInt32`), so a
++  * step whose result does not fit it wraps around: `toDateTime('2100-01-01', 'UTC') + INTERVAL 10 YEAR` lands in
++  * 1973, and a step longer than the span of the type (`INTERVAL 150 YEAR` over `DateTime`) even wraps forward, to a
++  * value that is still ahead of the current one. Redo such a step in the wider calendar of `Date32` (day numbers)
++  * or `DateTime64(0)` (whole seconds), which agrees with the narrow one wherever the result fits, and return the
++  * result when it does not fit the storage type, so that the sequence stays monotonic: a border within the range of
++  * the type stops the filling there, and `FillingRow` rejects a value the column cannot hold instead of writing a
++  * wrapped-around one. Kinds whose result is not of the storage type (e.g. an hour step over `Date`) are left as is.
++  */
++template <typename Impl, typename T>
++static std::optional<Int64> calendarStepOutOfStorageType(T value, Int64 delta, const DateLUTImpl & date_lut, const DateLUTImpl & utc_time_zone)
++{
++    using NativeResult = decltype(Impl::execute(value, delta, date_lut, utc_time_zone, UInt16{}));
 +
-+SELECT formatQuerySingleLine('SELECT case(CASE WHEN 1 THEN 2 END), CASE (case(1)) WHEN 1 THEN 2 END, interval(INTERVAL 1 DAY), INTERVAL (interval(1)) DAY, INTERVAL 1 DAY + interval');
++    Int64 result = 0;
++    if constexpr (std::is_same_v<T, UInt16> && std::is_same_v<NativeResult, UInt16>)
++        result = Impl::execute(static_cast<Int32>(value), delta, date_lut, utc_time_zone, 0);
++    else if constexpr (std::is_same_v<T, UInt32> && std::is_same_v<NativeResult, UInt32>)
+```
+
+**File**: `tests/queries/0_stateless/04657_with_fill_bounds_out_of_column_type_range.reference` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++out of range bounds are rejected
++the exclusive TO bound may be one step outside of the range
++256	0	255
++129	-128	0
++1	5	5
++a TO bound out of range is fine when STEP stops before it
++87	0	255
++87	-128	127
++[5,250]
++without FROM the query is rejected only when the fill actually wraps
++84	5	254
++25	-125	-5
++[5]
++0
++0
++STALENESS caps the sequence before TO, so the TO bound is not rejected
++20	5	24
++20	-24	-5
++7	5	23
++[250,251,252,253,254]
++[250]
++an INTERVAL step over Date and DateTime is rejected when it leaves the column type before reaching a TO out of range in the fill direction
++['1970-01-01','2070-01-01']
++['1970-01-01 00:00:00','2020-01-01 00:00:00','2070-01-01 00:00:00']
++2	1970-03-05	2070-03-05
++51	1970-01-01	2020-01-01
++1	2020-01-01	2020-01-01
++1	2020-01-01	2020-01-01
++3	2026-03-05	2028-03-05
++an INTERVAL step clamps at the calendar boundary of Date32 and DateTime64, so any TO is accepted
++1	9999-12-31	9999-12-31
++1	9999-06-01	9999-06-01
++2	0000-06-01	0001-06-01
++1	9999-06-01 00:00:00	9999-06-01 00:00:00
++1	9999-06-01 00:00:00.123	9999-06-01 00:00:00.123
++2	0000-06-01 00:00:00	0001-06-01 00:00:00
++9	2000-01-01 00:00:00	9999-01-01 00:00:00
++2	9998-06-01 00:00:00	9999-06-01 00:00:00
++1
++7	2020-01-01	2026-01-01
++4	2020-01-01 00:00:00	2020-01-04 00:00:00
++3	2026-03-05	2028-03-05
++bounds between the calendar boundary and the storage boundary of Date32 and DateTime64 are invalid
++2	0000-01-01 00:00:00	2000-01-01 00:00:00
++100	2000-01-01 00:00:00	9999-12-31 23:59:59
++2
++1
++2
++3
++a numeric step over DateTime64 must not generate ticks beyond the calendar
++1	9999-12-31 23:59:58	9999-12-31 23:59:58
++1	0000-01-01 00:00:01	0000-01-01 00:00:01
++1	9999-12-31 23:59:59.998	9999-12-31 23:59:59.998
++1	9999-12-31 23:59:58	9999-12-31 23:59:58
++1	9999-12-31 23:59:58	9999-12-31 23:59:58
++1	9999-12-31 23:59:59.998	9999-12-31 23:59:59.998
++1	9999-12-31 23:59:58	9999-12-31 23:59:58
++an INTERVAL step that stagnates at the calendar boundary before an in-range TO stops there
++1	9999-06-01 00:00:00	9999-06-01 00:00:00
++3	9995-06-01 00:00:00	9999-06-01 00:00:00
++3	2000-01-01	9999-12-01
++10	9990-01-01 00:00:00	9999-01-01 00:00:00
++1	9998-06-01 00:00:00	9998-06-01 00:00:00
++5
++an INTERVAL step that would leave the column type before an in-range TO stops at TO
++['2106-01-01 00:00:00']
++['2000-01-01 00:00:00','2050-01-01 00:00:00','2100-01-01 00:00:00']
++['2100-01-01 00:00:00']
++['1970-01-01 00:00:00']
++['1970-01-01 00:00:00']
++['2148-01-01']
++4	2106-01-01 00:00:00	2106-01-04 00:00:00
++['1970-01-01 00:00:00']
++['1970-01-01 00:00:00']
++['1970-01-01 02:46:40']
++a numeric step that overflows the Int64 arithmetic carrier stops at TO
++[9223372036854775806]
++[-9223372036854775807]
++[9223372036854775800,9223372036854775805]
++[9223372036854775806,9223372036854775807]
++a generated value out of range of the column type is rejected at runtime
++[11,14,17,20,23,26,29,32,35,38,41,44,47,50,53,56,59,62,65,68,71,74,77,80,83,86,89,92,95,98,101,104,107,110,113,116,119,122,125,128,131,134,137,140,143,146,149,152,155,158,161,164,167,170,173,176,179,182,185,188,191,194,197,200,203,206,209,212,215,218,221,224,227,230,233,236,239,242,245,248,251,254]
++[127]
++a fill towards a STALENESS border out of range of the column type is rejected
++10	9999-12-31 23:59:58
++10	2020-01-01 00:00:09
++in-range filling is unchanged
++[1,2,3,4,5,6,7,8,9]
++[-1,-2,-3,-4,-5,-6,-7]
++4	2025-12-30	2026-01-02
++7	2020-01-01	2026-01-01
++4	2025-12-30	2026-01-02
++20	2020-06-16 00:00:00	2020-06-16 09:30:00
++[5,5.25,5.5,5.75]
++DISTINCT in order over a filled stream
++256
++256
++NaN and infinity in a float fill column stay accepted
++1	nan
++2	0
++3	100
++1	inf
++2	0
++3	100
++0
++1
++5
++nan
++1e300
++the runtime check covers a trailing fill column as well
++162	254
++a fixed-length INTERVAL step over DateTime64 saturates at the boundary of the storage type
++2262-04-11 23:47:14.000000000
++2262-04-11 23:47:15.000000000
++2262-04-11 23:47:16.000000000
++2262-04-11 23:47:14.000000000
++1700-01-01 00:00:00.000000000
++1700-01-01 00:00:01.000000000
++2262-04-11 23:47:14.000000000
++2262-04-11 23:47:15.000000000
++an INTERVAL step finer than the scale of DateTime64 is converted to whole ticks of the column
++2000-01-01 00:00:00.00
++2000-01-01 00:00:00.01
++2000-01-01 00:00:00.02
++2000-01-01 00:00:00.03
++2000-01-01 00:00:00.04
++2000-01-01 00:00:00
++2000-01-01 00:00:01
++2000-01-01 00:00:02
++a step whose ticks overflow Int64 but whose result fits is not saturated
++1700-01-01 00:00:00.000000000
++2080-04-06 21:20:00.000000000
++2200-01-01 00:00:00.000000000
++1819-09-27 02:40:00.000000000
++1700-01-01 00:00:00.000000000
++1800-01-01 00:00:00.000000000
++1890-02-18 10:40:00.000000000
++2080-04-06 21:20:00.000000000
++a calendar step does not wrap around before it is compared
++1700-01-01 00:00:00.000000000
++1
++1
++a numeric step truncated to zero ticks does not advance
++9999-12-31 23:59:58.00
++a quarter step whose number of months overflows Int64 does not wrap around
++['2000-01-01 00:00:00']
++['2001-01-01 00:00:00']
++
+```
+
+**File**: `tests/queries/0_stateless/04657_with_fill_bounds_out_of_column_type_range.sql` (added, +401/-0)
+```diff
+@@ -0,0 +1,401 @@
++-- WITH FILL bound values that do not fit the type of the ORDER BY column used to be silently truncated when the
++-- generated values were written into the column, so the filled stream wrapped around and was not sorted anymore,
++-- while the query plan kept claiming it was. DISTINCT in order then deduplicated within wrong ranges.
++-- A fill with FROM generates the same sequence for any data, so it is checked up front; a fill anchored at a data
++-- value is checked value by value as it is generated.
++
++SELECT 'out of range bounds are rejected';
++
++SELECT * FROM (SELECT 5 AS x ORDER BY x ASC WITH FILL FROM 1 TO 1025) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 1000 TO 1010) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x DESC WITH FILL FROM 300 TO 250) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toInt8(5) AS x ORDER BY x ASC WITH FILL FROM 120 TO 140) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toDate(0) AS d ORDER BY d ASC WITH FILL FROM 0 TO 100000) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toDate32('2020-01-01') AS d ORDER BY d ASC WITH FILL FROM 0 TO 3000000000) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toDateTime(5, 'UTC') AS t ORDER BY t ASC WITH FILL FROM 0 TO 4294967297) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 260 STEP 3) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++
++SELECT 'the exclusive TO bound may be one step outside of the range';
++
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 256);
++SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL FROM 0 TO -129);
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 0);
++
++SELECT 'a TO bound out of range is fine when STEP stops before it';
++
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 257 STEP 3);
++SELECT count(), min(x), max(x) FROM (SELECT toInt8(5) AS x ORDER BY x DESC WITH FILL FROM 127 TO -130 STEP -3);
++SELECT groupArray(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 250 TO 300 STEP 100);
++SELECT * FROM (SELECT toInt8(5) AS x ORDER BY x DESC WITH FILL FROM 127 TO -130 STEP -4) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++
++SELECT 'without FROM the query is rejected only when the fill actually wraps';
++
++-- The sequence is anchored at a data value, so which values are generated is known only at execution time:
++-- from 5 this fill stops at 254, while from 6 it would reach 256.
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 257 STEP 3);
++SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -130 STEP -5);
++-- A step so large that filling generates nothing at all is fine too.
++SELECT groupArray(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1000 STEP 5000);
++-- The last generated value always lands within one step before TO, so these wrap from every possible anchor...
++SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1025) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1000 STEP 3) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++SELECT * FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -300 STEP -5) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
++-- ...but without any anchor nothing is generated at all, so nothing wraps and the bound is harmless.
++SELECT count() FROM (SELECT x FROM (SELECT toUInt8(1) AS x WHERE 0) ORDER BY x WITH FILL TO 1025);
++SELECT count() FROM (SELECT d FROM (SELECT toDate(0) AS d WHERE 0) ORDER BY d WITH FILL TO 70000 STEP INTERVAL 100 YEAR);
++-- With FROM the sequence is generated even without data, so an empty input does not help.
++SELECT count() FROM (SELECT x FROM (SELECT toUInt8(1) AS x WHERE 0) ORDER BY x WITH FILL FROM 0 TO 1025); -- { serverError INVALID_WITH_FILL_EXPRESSION }
++
++SELECT 'STALENESS caps the sequence before TO, so the TO bound is not rejected';
++
++-- STALENESS is allowed only without FROM, and it replaces TO as the effective bound whenever it comes first,
++-- so the sequence stops at the last data value plus the staleness and stays far below an out of range TO.
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1025 STALENESS 20);
++SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -300 STALENESS -20);
++SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC W
+```
+
+**File**: `tests/queries/0_stateless/05045_with_fill_serialized_query_plan.reference` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@
+ 3
+ 2
+ 1
++0
+ -- FROM 0 TO 6 INTERPOLATE, two shards
+ 0	1
+ 1	10
 ```
 
 ---
 
-### Incident Patch 2: `0a8bedc9` (2026-11-07)
-**Commit Message**: Merge pull request #129947 from groeneai/fix-drop-database-dependency-graph-uaf
+### Incident Patch 2: `0034fb32` (2026-11-08)
+**Commit Message**: Merge pull request #129971 from groeneai/groeneai/correlated-subquery-null-outer-value
 
-Fix heap-use-after-free in TablesDependencyGraph::addDependencies during DROP DATABASE
+Fix correlated scalar and EXISTS subqueries ignoring the rows produced for a NULL outer value
 
-**File**: `src/Databases/TablesDependencyGraph.cpp` (modified, +19/-3)
+**File**: `src/Planner/PlannerCorrelatedSubqueries.cpp` (modified, +15/-4)
 ```diff
-@@ -117,9 +117,25 @@ void TablesDependencyGraph::addDependencies(const StorageID & table_id, const st
+@@ -199,6 +199,9 @@ struct DecorrelationContext
+     /// Whether the optimizer will turn the referenced input subplan into an in-memory ChunkBuffer.
+     /// Decided once here (see decorrelateQueryPlan); buildLogicalJoin uses it to pick the join kind.
+     bool uses_in_memory_buffer = false;
++    /// Whether the correlated columns of the decorrelated plan may come from the distinct outer values, where `NULL`
++    /// is a value. Otherwise they are equal inner columns, which the retained `equals` filter never lets be `NULL`.
++    bool uses_correlated_domain = false;
+ };
+ 
+ /// How to convert an equivalent column to exactly the correlated column type.
+@@ -415,6 +418,7 @@ bool referencedInputUsesInMemoryBuffer(const DecorrelationContext & context)
+ QueryPlan buildCorrelatedDomainPlan(DecorrelationContext & context)
  {
-     auto * table_node = addOrUpdateNode(table_id);
+     context.uses_in_memory_buffer = referencedInputUsesInMemoryBuffer(context);
++    context.uses_correlated_domain = true;
+     context.query_plan.addStep(std::make_unique<CommonSubplanStep>(context.query_plan.getCurrentHeader()));
  
--    std::unordered_set<Node *> new_dependency_nodes;
-+    /// Adding a dependency removes a node from the graph if it gives the name of that node to another node.
-+    std::vector<NodeSharedPtr> node_holders;
-+    node_holders.reserve(dependencies.size() + 1);
-+    node_holders.push_back(*nodes.find(table_node));
-     for (const auto & dependency : dependencies)
--        new_dependency_nodes.emplace(addOrUpdateNode(dependency));
-+    {
-+        auto * dependency_node = addOrUpdateNode(dependency);
-+        node_holders.push_back(*nodes.find(dependency_node));
-+        if (!nodes.contains(table_node))
-+            table_node = dependency_node; /// It has the name `table_node` had, so it's the node of `table_id` now.
-+    }
-+
-+    std::unordered_set<Node *> new_dependency_nodes;
-+    for (size_t i = 1; i < node_holders.size(); ++i)
-+    {
-+        /// A removed node gave its name to the node of a later dependency, which is in the set.
-+        if (nodes.contains(node_holders[i].get()))
-+            new_dependency_nodes.emplace(node_holders[i].get());
-+    }
+     auto buffer_header = std::make_shared<Block>();
+@@ -1601,7 +1605,8 @@ QueryPlan buildLogicalJoin(
+     QueryPlan input_stream_plan,
+     QueryPlan decorrelated_plan,
+     const CorrelatedSubquery & correlated_subquery,
+-    bool uses_in_memory_buffer
++    bool uses_in_memory_buffer,
++    bool uses_correlated_domain
+ )
+ {
+     auto lhs_plan_header = decorrelated_plan.getCurrentHeader();
+@@ -1664,7 +1669,11 @@ QueryPlan buildLogicalJoin(
+         std::vector<JoinActionRef> eq_arguments;
+         eq_arguments.push_back(join_expression_actions.findNode(get_lhs_column_name(column_name), /* is_input= */ true));
+         eq_arguments.push_back(join_expression_actions.findNode(get_rhs_column_name(column_name), /* is_input= */ true));
+-        auto eq_node = JoinActionRef::transform(eq_arguments, JoinActionRef::AddFunction(JoinConditionOperator::Equals));
++        /// A `NULL` domain value has its own evaluation of the subquery, which must match the outer rows with `NULL`.
++        auto key_operator = uses_correlated_domain && isNullableOrLowCardinalityNullable(eq_arguments.front().getType())
++            ? JoinConditionOperator::NullSafeEquals
++            : JoinConditionOperator::Equals;
++        auto eq_node = JoinActionRef::transform(eq_arguments, JoinActionRef::AddFunction(key_operator));
+         predicates.push_back(std::move(eq_node));
+     }
  
-     if (table_node->dependencies == new_dependency_nodes)
-         return;
-@@ -398,7 +414,7 @@ void TablesDependencyGraph::removeNode(Node * node)
-     chassert(it != nodes.end());
-     nodes.erase(it);
- 
--    nodes_sorted_by_level_lazy.clear();
-+    setNeedRecalculateLevels();
- }
- 
- 
+@@ -1856,7 +1865,8 @@ void buildQueryPlanForCorrelatedSubquery(
+                 std::move(context.query_plan),
+                 std::move(decorrelated_plan),
+                 correlated_subquery,
+-                context.uses_in_memory_buffer);
++                context.uses_in_memory_buffer,
++                context.uses_correlated_domain);
+             break;
+         }
+         case CorrelatedSubqueryKind::EXISTS:
+@@ -1906,7 +1916,8 @@ void buildQueryPlanForCorrelatedSubquery(
+                 std::move(context.query_plan),
+                 std::move(decorrelated_plan),
+                 correlated_subquery,
+-                context.uses_in_memory_buffer);
++                context.uses_in_memory_buffer,
++                context.uses_correlated_domain);
+             break;
+         }
+         case CorrelatedSubqueryKind::LATERAL_JOIN:
 ```
 
-**File**: `src/Databases/tests/gtest_tables_dependency_graph.cpp` (modified, +61/-0)
+**File**: `tests/queries/0_stateless/04053_correlated_subquery_group_by_use_nulls.reference` (modified, +3/-3)
 ```diff
-@@ -98,3 +98,64 @@ TEST(TablesDependencyGraph, AddDependencyWhenTableNodeIsRemoved)
-     EXPECT_EQ(dependencies[0].getFullTableName(), "db.mv2");
-     EXPECT_EQ(dependencies[0].uuid, uuid);
- }
-+
-+/// `DROP DATABASE` adds the dependencies of a dictionary on `x` from two graphs which disagree on the UUID of `x`.
-+/// The second one takes the name `x` from the node of the first one, which is removed.
-+TEST(TablesDependencyGraph, AddDependenciesWhenDependencyNodeIsRemoved)
-+{
-+    TablesDependencyGraph graph("test");
-+
-+    UUID x_uuid = UUIDHelpers::generateV4();
-+    UUID stale_x_uuid = UUIDHelpers::generateV4();
-+    UUID y_uuid = UUIDHelpers::generateV4();
-+    graph.addDependencies(StorageID{"db", "x", x_uuid}, std::vector<StorageID>{});
-+    graph.addDependencies(StorageID{"db", "y", y_uuid}, std::vector<StorageID>{StorageID{"db", "x"}, StorageID{"db", "x", stale_x_uuid}});
-+
-+    EXPECT_EQ(graph.getNumberOfTables(), 2u);
-+    auto dependencies = graph.getDependencies(StorageID{"db", "y", y_uuid});
-+    ASSERT_EQ(dependencies.size(), 1u);
-+    EXPECT_EQ(dependencies[0].getFullTableName(), "db.x");
-+    EXPECT_EQ(dependencies[0].uuid, stale_x_uuid);
-+    EXPECT_EQ(graph.getNumberOfDependents(StorageID{"db", "x", stale_x_uuid}), 1u);
-+
-+    auto sorted = graph.getTablesSortedByDependency();
-+    ASSERT_EQ(sorted.size(), 2u);
-+    EXPECT_EQ(sorted[0].getFullTableName(), "db.x");
-+    EXPECT_EQ(sorted[1].getFullTableName(), "db.y");
-+}
-+
-+/// The same as `AddDependencyWhenTableNodeIsRemoved` for `addDependencies`.
-+TEST(TablesDependencyGraph, AddDependenciesWhenTableNodeIsRemoved)
-+{
-+    TablesDependencyGraph graph("test");
-+
-+    UUID uuid = UUIDHelpers::generateV4();
-+    graph.addDependencies(StorageID{"db", "mv", uuid}, std::vector<StorageID>{StorageID{"db", "mv2"}});
-+    graph.addDependencies(StorageID{"db", "mv2"}, std::vector<StorageID>{StorageID{"db", "mv2", uuid}});
-+
-+    EXPECT_EQ(graph.getNumberOfTables(), 1u);
-+    auto dependencies = graph.getDependencies(StorageID{"db", "mv2", uuid});
-+    ASSERT_EQ(dependencies.size(), 1u);
-+    EXPECT_EQ(dependencies[0].getFullTableName(), "db.mv2");
-+    EXPECT_EQ(dependencies[0].uuid, uuid);
-+}
-+
-+/// A node removed by `addOrUpdateNode` invalidates the levels even if the dependencies of the table stay the same.
-+TEST(TablesDependencyGraph, AddDependenciesRecalculatesLevelsAfterNodeRemoval)
-+{
-+    TablesDependencyGraph graph("test");
-+
-+    UUID uuid = UUIDHelpers::generateV4();
-+    graph.addDependencies(StorageID{"db", "t"}, std::vector<StorageID>{StorageID{"db", "d_old", uuid}});
-+    graph.addDependencies(StorageID{"db", "d_new"}, std::vector<StorageID>{});
-+    ASSERT_EQ(graph.getTablesSortedByDependency().size(), 3u);
-+
-+    /// The node with `uuid` takes the name `d_new`, and the node of `d_new` is removed.
-+    graph.addDependencies(StorageID{"db", "t"}, std::vector<StorageID>{StorageID{"db", "d_new"}, StorageID{"db", "d_new", uuid}});
-+
-+    EXPECT_EQ(graph.getNumberOfTables(), 2u);
-+    auto sorted = graph.getTablesSortedByDependency();
-+    ASSERT_EQ(sorted.size(), 2u);
-+    EXPECT_EQ(sorted[0].getFullTableName(), "db.d_new");
-+    EXPECT_EQ(sorted[1].getFullTableName(), "db.t");
-+}
+@@ -86,17 +86,17 @@
+ 3	5	3
+ 4	5	4
+ 5	5	5
+-\N	\N
++\N	0
+ 0	0
+ 1	0
+ 2	0
+ 3	3
+-\N	\N
++\N	0
+ 0	100
+ 1	0
+ 2	0
+ 3	3
+-\N	\N
++\N	(NULL,NULL)
+ 0	(0,0)
+ 1	(1,0)
+ 2	(2,0)
 ```
 
-**File**: `tests/queries/0_stateless/05565_drop_database_stale_dependency_uuid.reference` (added, +1/-0)
+**File**: `tests/queries/0_stateless/04370_distinct_combinator_correlated_subquery_group_by_use_nulls.reference` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ 0	1
+ 1	1
+ 2	1
+-\N	\N
++\N	0
+ 0	0
+ 1	1
+ 2	2
+```
+
+**File**: `tests/queries/0_stateless/04516_correlated_subquery_return_type_group_by_use_nulls.reference` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@
+ 7	(7)
+ 8	(8)
+ 9	(9)
+-\N	\N
++\N	(NULL)
+ 0	0
+ 1	1
+ 2	2
+```
+
+**File**: `tests/queries/0_stateless/05567_correlated_subquery_null_outer_value.reference` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++-- { echo }
++
++-- Scalar subqueries
++SELECT d.c2, (SELECT count() FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++1	1
++\N	1
++SELECT d.c2, (SELECT sum(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT any(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++1	7	[7]	7
++\N	7	[7]	7
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++1	[]
++\N	[7]
++SELECT d.c2, (SELECT n.x FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++1	\N
++\N	7
++-- EXISTS in the projection
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE isNotDistinctFrom(t.a, r.v)) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
++1	1
++2	0
++\N	1
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE r.v IS NULL) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
++1	0
++2	0
++\N	1
++-- [NOT] EXISTS in WHERE
++SELECT d.c2 FROM d_t d WHERE EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
++\N
++SELECT d.c2 FROM d_t d WHERE NOT EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
++1
++-- `NULL = NULL` is not true, so the NULL row has no match here
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1;
++1	1
++2	0
++\N	0
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0;
++1	1
++2	0
++\N	0
++-- Type wrappers and several correlated columns
++SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM values('v LowCardinality(Nullable(String))', ('a'), (NULL)) r ORDER BY r.v NULLS LAST;
++a	[]
++\N	[7]
++SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM (SELECT NULL AS v) r;
++\N	[7]
++SELECT m.a, m.b, (SELECT groupArray(n.x) FROM n_t n WHERE m.a IS NULL AND m.b > 0) FROM m_t m ORDER BY m.a NULLS LAST, m.b;
++1	1	[]
++\N	0	[]
++\N	1	[7]
++-- Join layouts and algorithms
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0;
++1	[]
++\N	[7]
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'partial_merge';
++1	[]
++\N	[7]
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'full_sorting_merge';
++1	[]
++\N	[7]
++-- The substituted equality keeps a plain key; the evaluation over the outer values compares null-safely
++SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
++0
++SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') > 0 FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
++1
+```
+
+**File**: `tests/queries/0_stateless/05567_correlated_subquery_null_outer_value.sql` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++-- An outer row whose correlated column is NULL must get the result of the correlated subquery evaluated for NULL
++-- (https://github.com/ClickHouse/ClickHouse/issues/112576).
++
++DROP TABLE IF EXISTS d_t;
++DROP TABLE IF EXISTS n_t;
++DROP TABLE IF EXISTS m_t;
++
++CREATE TABLE d_t (c2 Nullable(Int32)) ENGINE = Memory;
++CREATE TABLE n_t (x Nullable(Int32)) ENGINE = Memory;
++CREATE TABLE m_t (a Nullable(Int32), b Int32) ENGINE = Memory;
++INSERT INTO d_t VALUES (1), (NULL);
++INSERT INTO n_t VALUES (7);
++INSERT INTO m_t VALUES (NULL, 1), (NULL, 0), (1, 1);
++
++-- { echo }
++
++-- Scalar subqueries
++SELECT d.c2, (SELECT count() FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++SELECT d.c2, (SELECT sum(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT any(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++SELECT d.c2, (SELECT n.x FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++
++-- EXISTS in the projection
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE isNotDistinctFrom(t.a, r.v)) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE r.v IS NULL) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
++
++-- [NOT] EXISTS in WHERE
++SELECT d.c2 FROM d_t d WHERE EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
++SELECT d.c2 FROM d_t d WHERE NOT EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
++
++-- `NULL = NULL` is not true, so the NULL row has no match here
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1;
++SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0;
++
++-- Type wrappers and several correlated columns
++SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM values('v LowCardinality(Nullable(String))', ('a'), (NULL)) r ORDER BY r.v NULLS LAST;
++SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM (SELECT NULL AS v) r;
++SELECT m.a, m.b, (SELECT groupArray(n.x) FROM n_t n WHERE m.a IS NULL AND m.b > 0) FROM m_t m ORDER BY m.a NULLS LAST, m.b;
++
++-- Join layouts and algorithms
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0;
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'partial_merge';
++SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'full_sorting_merge';
++
++-- The substituted equality keeps a plain key; the evaluation over the outer values compares null-safely
++SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
++SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') > 0 FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
++
++-- { echoOff }
++
++DROP TABLE d_t;
++DROP TABLE n_t;
++DROP TABLE m_t;
+```
+
+---
+
+### Incident Patch 3: `6ba1cd98` (2026-11-08)
+**Commit Message**: Merge pull request #130108 from groeneai/iceberg-equality-delete-null-key
+
+Fix Iceberg equality deletes dropping rows whose equality key is NULL
+
+**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/IcebergMetadata.cpp` (modified, +3/-2)
+```diff
+@@ -2152,8 +2152,9 @@ void IcebergMetadata::addDeleteTransformers(
+                 = std::make_unique<FunctionToOverloadResolverAdaptor>(std::make_shared<FunctionTuple>());
+             const ActionsDAG::Node * in_lhs_arg
+                 = left_columns.size() == 1 ? left_columns.front() : &dag.addFunction(func_tuple_builder, std::move(left_columns), {});
+-            /// we got the NOT IN function
+-            auto func_not_in = FunctionFactory::instance().get("notIn", nullptr);
++            /// Iceberg compares equality-delete keys null-safely: a NULL key matches only a NULL delete value.
++            /// The set above keeps NULLs (transform_null_in), and `notNullIn` looks NULL keys up in it.
++            auto func_not_in = FunctionFactory::instance().get("notNullIn", nullptr);
+             const auto & not_in_node = dag.addFunction(func_not_in, {in_lhs_arg, in_rhs_arg}, "notInResult");
+             dag.getOutputs().push_back(&not_in_node);
+             LOG_DEBUG(log, "Use expression {} in equality deletes", dag.dumpDAG());
+```
+
+**File**: `tests/queries/0_stateless/05570_iceberg_equality_delete_null_key.reference` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++\N	toy	Ghost	t
++3	\N	Grizzly	t
++1	marsupial	Koala	t
++4	bear	Kodiak	t
++\N	\N	Phantom	t
++5
++Ghost
++Phantom
+```
+
+**File**: `tests/queries/0_stateless/05570_iceberg_equality_delete_null_key.sh` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++#!/usr/bin/env bash
++# Tags: no-fasttest, no-replicated-database
++# Tag no-replicated-database: IcebergLocal is non-replicated.
++
++# Iceberg equality deletes compare keys null-safely: "A null value in a delete column matches a row
++# if the row's value is null, equivalent to col IS NULL". Rows with a NULL key must survive a delete
++# file without NULLs, and a NULL in a delete file must delete only NULL keys.
++# The fixture is described in data_minio/deletes_db/README.md (`eq_deletes_null_key_table`).
++
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
++
++LAKE_DIR="${CLICKHOUSE_USER_FILES_UNIQUE}/eq_deletes_null_key_table"
++rm -rf "${CLICKHOUSE_USER_FILES_UNIQUE}"
++mkdir -p "${CLICKHOUSE_USER_FILES_UNIQUE}"
++cp -r "${CUR_DIR}/data_minio/deletes_db/eq_deletes_null_key_table" "${LAKE_DIR}"
++
++${CLICKHOUSE_CLIENT} --query "SELECT id, category, name, tag FROM icebergLocal('${LAKE_DIR}/') ORDER BY name"
++${CLICKHOUSE_CLIENT} --query "SELECT count() FROM icebergLocal('${LAKE_DIR}/')"
++${CLICKHOUSE_CLIENT} --query "SELECT name FROM icebergLocal('${LAKE_DIR}/') WHERE id IS NULL ORDER BY name"
++
++rm -rf "${CLICKHOUSE_USER_FILES_UNIQUE}"
+```
+
+**File**: `tests/queries/0_stateless/data_minio/deletes_db/README.md` (modified, +120/-0)
+```diff
+@@ -285,3 +285,123 @@ spark.stop()
+ 
+ The resulting `/out/warehouse/default/eq_deletes_required_table` directory is copied here
+ as is, except for the `.*.crc` files.
++
++## How is `eq_deletes_null_key_table` generated?
++
++The table has four optional columns `id INT, category STRING, name STRING, tag STRING` and one
++Parquet data file:
++
++| id | category | name | tag |
++|---|---|---|---|
++| 1 | marsupial | Koala | t |
++| 2 | toy | Teddy | t |
++| 3 | NULL | Grizzly | t |
++| 4 | NULL | Polar | t |
++| 4 | bear | Kodiak | t |
++| NULL | toy | Ghost | t |
++| NULL | NULL | Phantom | t |
++| 5 | toy | Doomed | NULL |
++
++Three Parquet equality delete files follow, one commit each: on `id` deleting `id = 2` (Teddy), on
++`(id, category)` deleting `(4, NULL)` (Polar only), and on `tag` deleting `tag = NULL` (Doomed). The
++Iceberg Java reader returns Ghost, Grizzly, Koala, Kodiak and Phantom.
++
++Generated with the Iceberg Java API (`iceberg-spark-runtime-4.1_2.13-1.11.0`) through the PySpark JVM
++gateway (Spark SQL cannot write equality deletes):
++
++``` python
++import glob
++import os
++
++from pyspark.sql import SparkSession
++
++WAREHOUSE = "/tmp/iceberg_warehouse"
++TABLE = "eq_deletes_null_key_table"
++
++jar = glob.glob(os.path.expanduser("~/.ivy2.5.2/jars/org.apache.iceberg_iceberg-spark-runtime-4.1_2.13-1.11.0.jar"))[0]
++spark = SparkSession.builder.master("local[1]").config("spark.jars", jar).getOrCreate()
++jvm = spark._jvm
++gateway = spark.sparkContext._gateway
++ice = jvm.org.apache.iceberg
++NestedField = getattr(ice.types, "Types$NestedField")
++IntegerType = getattr(ice.types, "Types$IntegerType")
++StringType = getattr(ice.types, "Types$StringType")
++PARQUET = getattr(ice.FileFormat, "PARQUET")
++
++catalog = ice.hadoop.HadoopCatalog(spark._jsc.hadoopConfiguration(), WAREHOUSE)
++names = gateway.new_array(jvm.String, 2)
++names[0] = "default"
++names[1] = TABLE
++ident = ice.catalog.TableIdentifier.of(names)
++
++fields = jvm.java.util.ArrayList()
++fields.add(NestedField.optional(1, "id", IntegerType.get()))
++fields.add(NestedField.optional(2, "category", StringType.get()))
++fields.add(NestedField.optional(3, "name", StringType.get()))
++fields.add(NestedField.optional(4, "tag", StringType.get()))
++props = jvm.java.util.HashMap()
++props.put("format-version", "2")
++table = catalog.createTable(ident, ice.Schema(fields), ice.PartitionSpec.unpartitioned(), props)
++
++
++def out(name):
++    path = table.locationProvider().newDataLocation(name)
++    return ice.encryption.EncryptedFiles.plainAsEncryptedOutput(table.io().newOutputFile(path))
++
++
++rows = [
++    (1, "marsupial", "Koala", "t"),
++    (2, "toy", "Teddy", "t"),
++    (3, None, "Grizzly", "t"),
++    (4, None, "Polar", "t"),
++    (4, "bear", "Kodiak", "t"),
++    (None, "toy", "Ghost", "t"),
++    (None, None, "Phantom", "t"),
++    (5, "toy", "Doomed", None),
++]
++data_writer = ice.data.GenericAppenderFactory(table.schema(), table.spec()).newDataWriter(out("data-0.parquet"), PARQUET, None)
++for i, c, n, t in rows:
++    record = ice.data.GenericRecord.create(table.schema())
++    record.setField("id", i)
++    record.setField("category", c)
++    record.setField("name", n)
++    record.setField("tag", t)
++    data_writer.write(record)
++data_writer.close()
++table.newAppend().appendFile(data_writer.toDataFile()).commit()
++
++# One RowDelta commit per equality delete file: (equality columns, file name, delete rows).
++deletes = [
++    (["id"], "eq-delete-id.parquet", [{"id": 2}]),
++    (["id", "category"], "eq-delete-id-category.parquet", [{"id": 4, "category": None}]),
++    (["tag"], "eq-delete-tag-null.parquet", [{"tag": None}]),
++]
++for cols, file_name, delete_rows in deletes:
++    table.refresh()
++    col_list = jvm.java.util.ArrayList()
++    for c in cols:
++        col_list.add(c)
++    delete_schema = table.schema().select(col_list)
++    equality_ids = gateway.new_array(jvm.int, len(cols))
++    for k, c in enumerate(cols):
++        equality_ids[k] = table.schema().findField(c).fieldId()
++    factory = ice.data.GenericAppenderFactory(table.schema(), table.spec(), equality_ids, delete_schema, None)
++    writer = factory.newEqDeleteWriter(out(file_name), PARQUET, None)
++    for delete_row in delete_rows:
++        record = ice.data.GenericRecord.create(delete_schema)
++        for k, v in delete_row.items():
++            record.setField(k, v)
++        writer.write(record)
++    writer.close()
++    table.newRowDelta().addDeletes(writer.toDeleteFile()).commit()
++
++# The rows the Iceberg Java reader returns after applying the deletes (the test reference).
++it = ice.data.IcebergGenerics.read(catalog.loadTable(ident)).build().iterator()
++while it.hasNext():
++    r = it.next()
++    print(r.getField("id"), r.getField("category"), r.getField("name"), r.getField("tag"))
++spark.stop()
++```
++
++The resulting `/tmp/iceberg_warehouse/default/eq_deletes_null_key_table` directory is copied here
++as is, except for the `.*.crc` files.
+```
+
+**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v1.metadata.json` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+0
++{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":0,"last-updated-ms":1794127071723,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":-1,"refs":{},"snapshots":[],"statistics":[],"partition-statistics":[],"snapshot-log":[],"metadata-log":[]}
+\ No newline at end of file
 ```
 
-**File**: `tests/queries/0_stateless/05565_drop_database_stale_dependency_uuid.sql` (added, +19/-0)
+**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v2.metadata.json` (added, +1/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+-- The referential dependency graph keeps the UUID of the view `x` after `x` is dropped and created again.
-+
-+DROP DATABASE IF EXISTS {CLICKHOUSE_DATABASE_1:Identifier};
-+CREATE DATABASE {CLICKHOUSE_DATABASE_1:Identifier} ENGINE = Atomic;
-+USE {CLICKHOUSE_DATABASE_1:Identifier};
-+
-+CREATE TABLE src (k UInt64, v String) ENGINE = MergeTree ORDER BY k;
-+CREATE VIEW x AS SELECT k, v FROM src;
-+ALTER TABLE x MODIFY COMMENT 'c';
-+CREATE DICTIONARY y (k UInt64, v String) PRIMARY KEY k SOURCE(CLICKHOUSE(TABLE 'x')) LAYOUT(FLAT()) LIFETIME(0);
-+
-+SET check_table_dependencies = 0; -- The dictionary `y` depends on `x`.
-+DROP TABLE x SYNC;
-+SET check_table_dependencies = 1;
-+CREATE TABLE x (k UInt64, v String) ENGINE = MergeTree ORDER BY k;
-+
-+SET send_logs_level = 'error'; -- The dependency graphs warn about the stale UUID.
-+DROP DATABASE {CLICKHOUSE_DATABASE_1:Identifier};
-+SELECT count() FROM system.databases WHERE name = {CLICKHOUSE_DATABASE_1:String};
+@@ -0,0 +1 @@
++{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":1,"last-updated-ms":1794127072483,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":5223466979151337498,"refs":{"main":{"snapshot-id":5223466979151337498,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"}]}
+\ No newline at end of file
 ```
 
----
-
-### Incident Patch 3: `fc19ce21` (2026-11-07)
-**Commit Message**: Merge pull request #129986 from ClickHouse/revert-122871-dev-sliceHasImplAnyAll-sve
-
-Revert "Search long integer slices in 512-byte chunks on AArch64 in `hasAll` and `hasAny`"
-
-**File**: `src/Functions/GatherUtils/sliceHasImplAnyAll.h` (modified, +0/-39)
+**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v3.metadata.json` (added, +1/-0)
 ```diff
-@@ -79,9 +79,6 @@ inline ALWAYS_INLINE bool hasNull(const UInt8 * null_map, size_t null_map_size)
- 
- /// Searches `value` in blocks of 128 bytes. A block is a few whole-vector comparisons and one test of the combined mask,
- /// so the search exits early without a branch per element. A 32-byte vector is one AVX2 register or two NEON registers.
--///
--/// On AArch64, long slices of 4 and 8-byte elements are searched in chunks of 512 bytes by a plain loop instead, which the
--/// compiler unrolls to 8 or 16 NEON comparisons per iteration.
- template <bool has_null_map, typename T>
- ALWAYS_INLINE bool sliceContains(const NumericArraySlice<T> & slice, const UInt8 * null_map, T value)
- {
-@@ -134,42 +131,6 @@ ALWAYS_INLINE bool sliceContains(const NumericArraySlice<T> & slice, const UInt8
-         return anyLaneSet(found & significant);
-     };
- 
--#if defined(__aarch64__)
--    if constexpr (sizeof(T) >= 4)
--    {
--        /// Larger chunks were not faster and do more work when the value is near the front.
--        static constexpr size_t chunk = 512 / sizeof(T);
--        auto chunk_contains = [&](size_t begin) ALWAYS_INLINE
--        {
--            bool found = false;
--            /// Sanitizer instrumentation of the loads prevents vectorization, and a requested but failed one is an error
--            /// (`-Wpass-failed`).
--#if !defined(SANITIZER)
--#pragma clang loop vectorize(enable) vectorize_width(16) interleave_count(2)
--#endif
--            for (size_t i = begin; i < begin + chunk; ++i)
--                found |= (slice.data[i] == value) & (!has_null_map || !null_map[i]);
--            return found;
--        };
--
--        if (slice.size >= lanes + chunk)
--        {
--            if (vector_contains(0))
--                return true;
--
--            size_t i = lanes;
--            for (; i + chunk <= slice.size; i += chunk)
--            {
--                if (chunk_contains(i))
--                    return true;
--            }
--
--            /// The last chunk overlaps the previous one.
--            return i < slice.size && chunk_contains(slice.size - chunk);
--        }
--    }
--#endif
--
-     if (slice.size < lanes)
-     {
-         bool found = false;
+@@ -0,0 +1 @@
++{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":2,"last-updated-ms":1794127072659,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":4441976820507217000,"refs":{"main":{"snapshot-id":4441976820507217000,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0},{"sequence-number":2,"snapshot-id":4441976820507217000,"parent-snapshot-id":5223466979151337498,"timestamp-ms":1794127072659,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"1","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"455","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"1787","total-data-files":"1","total-delete-files":"1","total-position-deletes":"0","total-equality-deletes":"1","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-4441976820507217000-1-3210d438-3e3c-45ad-87bc-9227e3b42b3e.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498},{"timestamp-ms":1794127072659,"snapshot-id":4441976820507217000}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"},{"timestamp-ms":1794127072483,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v2.metadata.json"}]}
+\ No newline at end of file
 ```
 
-**File**: `tests/queries/0_stateless/05493_has_all_has_any_chunked_search.reference` (removed, +0/-8)
+**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v4.metadata.json` (added, +1/-0)
 ```diff
-@@ -1,8 +0,0 @@
--Int32	Nullable	7600	7026	0	7026	0	0	0
--Int32	not Nullable	3800	3784	0	3784	0	0	0
--UInt32	Nullable	7600	7026	0	7026	0	0	0
--UInt32	not Nullable	3800	3784	0	3784	0	0	0
--Int64	Nullable	7600	7026	0	7026	0	0	0
--Int64	not Nullable	3800	3784	0	3784	0	0	0
--UInt64	Nullable	7600	7026	0	7026	0	0	0
--UInt64	not Nullable	3800	3784	0	3784	0	0	0
-```
-
-**File**: `tests/queries/0_stateless/05493_has_all_has_any_chunked_search.sql` (removed, +0/-73)
-```diff
-@@ -1,73 +0,0 @@
---- `hasAll` and `hasAny` of 4 and 8-byte integer arrays long enough to be searched in chunks of 512 bytes (on AArch64),
---- compared with `has`. One value is placed at every position of arrays whose lengths are around the chunk
---- boundaries, including a last chunk that overlaps the previous one, or is missing, or is at a null.
--
--DROP TABLE IF EXISTS arrays;
--CREATE TABLE arrays (a Array(Nullable(Int64)), v Int64) ENGINE = Memory;
--
--INSERT INTO arrays
--SELECT
--    arrayMap(i -> if(with_nulls AND i % 7 = 3, NULL, toInt64(i * 2 + 1)), range(first_length)) AS a,
--    -- `position = first_length` is a value that is not in the array.
--    if(position < first_length, position * 2 + 1, 0) AS v
--FROM
--(
--    SELECT first_length, position, with_nulls
--    FROM
--    (
--        SELECT arrayJoin([67, 68, 69, 131, 132, 133, 135, 136, 137, 199, 263, 264, 265, 392, 393, 1000]) AS first_length
--    )
--    ARRAY JOIN range(first_length + 1) AS position
--    ARRAY JOIN [0, 1] AS with_nulls
--);
--
--SELECT 'Int32', 'Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Nullable(Int32))') AS x, CAST(v, 'Int32') AS y FROM arrays);
--SELECT 'Int32', 'not Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Int32)') AS x, CAST(v, 'Int32') AS y FROM arrays WHERE NOT has(a, NULL));
--SELECT 'UInt32', 'Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Nullable(UInt32))') AS x, CAST(v, 'UInt32') AS y FROM arrays);
--SELECT 'UInt32', 'not Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(UInt32)') AS x, CAST(v, 'UInt32') AS y FROM arrays WHERE NOT has(a, NULL));
--SELECT 'Int64', 'Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Nullable(Int64))') AS x, CAST(v, 'Int64') AS y FROM arrays);
--SELECT 'Int64', 'not Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Int64)') AS x, CAST(v, 'Int64') AS y FROM arrays WHERE NOT has(a, NULL));
--SELECT 'UInt64', 'Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS all_mismatches,
--    countIf(hasAny(x, [y, NULL]) != (has(x, y) OR has(x, NULL))) AS any_null_mismatches,
--    countIf(hasAll(x, [y, NULL]) != (has(x, y) AND has(x, NULL))) AS all_null_mismatches
--FROM (SELECT CAST(a, 'Array(Nullable(UInt64))') AS x, CAST(v, 'UInt64') AS y FROM arrays);
--SELECT 'UInt64', 'not Nullable', count(),
--    countIf(hasAny(x, [y])) AS any_true, countIf(hasAny(x, [y]) != has(x, y)) AS any_mismatches,
--    countIf(hasAll(x, [1, y])) AS all_true, countIf(hasAll(x, [1, y]) != (has(x, 1) AND has(x, y))) AS
+@@ -0,0 +1 @@
++{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":3,"last-updated-ms":1794127072797,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":7381694820472045609,"refs":{"main":{"snapshot-id":7381694820472045609,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0},{"sequence-number":2,"snapshot-id":4441976820507217000,"parent-snapshot-id":5223466979151337498,"timestamp-ms":1794127072659,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"1","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"455","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"1787","total-data-files":"1","total-delete-files":"1","total-position-deletes":"0","total-equality-deletes":"1","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-4441976820507217000-1-3210d438-3e3c-45ad-87bc-9227e3b42b3e.avro","schema-id":0},{"sequence-number":3,"snapshot-id":7381694820472045609,"parent-snapshot-id":4441976820507217000,"timestamp-ms":1794127072797,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"2","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"684","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"2471","total-data-files":"1","total-delete-files":"2","total-position-deletes":"0","total-equality-deletes":"2","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-7381694820472045609-1-d7235c14-eef5-4fa4-a20c-7ba335a0967d.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498},{"timestamp-ms":1794127072659,"snapshot-id":4441976820507217000},{"timestamp-ms":1794127072797,"snapshot-id":7381694820472045609}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"},{"timestamp-ms":1794127072483,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v2.metadata.json"},{"timestamp-ms":1794127072659,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v3.metadata.json"}]}
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #130030** (2026-11-08): Backport #129205 to 26.10: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll3)
-- **PR #130029** (2026-11-08): Backport #129205 to 26.9: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll3)
-- **PR #130013** (2026-11-08): Backport #117174 to 26.8: Fix lightweight update pruning of empty partitions (@robot-ch-test-poll2)
-- **PR #130009** (2026-11-08): Backport #129205 to 26.8: Check access rights of table functions in DESCRIBE as in SELECT (@robot-ch-test-poll2)
-- **PR #129986** (2026-11-07): Revert "Search long integer slices in 512-byte chunks on AArch64 in `hasAll` and `hasAny`" (@alexey-milovidov)
-- **PR #129985** (closed): Fix the AArch64 debug build of `hasAll` and `hasAny` (@groeneai)
+- **PR #130204** (2026-11-08): Backport #125901 to 26.8: Start executor threads for CPU slots granted after the request (@robot-clickhouse-ci-2)
+- **PR #130190** (2026-11-08): Backport #127478 to 26.9: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
+- **PR #130188** (2026-11-08): Backport #127478 to 26.8: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
+- **PR #130187** (2026-11-08): Backport #127478 to 26.10: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
+- **PR #130181** (2026-11-08): Upgrade check: download previous-release packages from packages.clickhouse.com when GitHub cannot serve them (@groeneai)
+- **PR #130175** (2026-11-08): Fix flaky `test_load_balancing_default` (@alexey-milovidov)
 
 ---
 
@@ -1758,52 +2331,34 @@ Revert "Search long integer slices in 512-byte chunks on AArch64 in `hasAll` and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-expon
+## X. Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-ty
 
 **RULE**:
-When implementing operations in `src/Parsers/ExpressionListParsers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Core/SortDescription.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcdc923b`: Merge pull request #129946 from groeneai/fix-case-interval-keyword-reading-exponential. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1aaec54f`: Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-type-range. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Parsers/ExpressionListParsers.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Core/SortDescription.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    /// Positions of CASE and INTERVAL tokens whose keyword reading failed; only the identifier reading is tried there.
-    std::unordered_set<const char *> failed_keyword_readings;
-
-        bool popped_keyword_layer = false;
-        do
-        {
-            popped_keyword_layer = dynamic_cast<IntervalLayer *>(layers.back().get()) || dynamic_cast<CaseLayer *>(layers.back().get());
-        } while (!layers.empty() && !layers.back()->saved_checkpoint);
-        /// A keyword layer reads nothing below itself, so if it failed unfinished it fails wherever this position is reached.
-        if (popped_keyword_layer)
-            failed_keyword_readings.insert(saved_checkpoint.first->begin);
-
-    /// Skipping a failed keyword reading leaves no checkpoint, as trying it again and restoring would.
-    const bool keyword_reading_failed = failed_keyword_readings.contains(old_pos->begin);
-    if (keyword_reading_failed)
-        layers.back()->saved_checkpoint.reset();
-
-    if (current_checkpoint != Checkpoint::Interval && !keyword_reading_failed
-        && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
-    if (current_checkpoint != Checkpoint::Case && !keyword_reading_failed
-      
+    DataTypePtr fill_column_type;
+    /// The inclusive range of the values a fill column of `fill_column_type` can hold - the range of the storage
+    /// type intersected with the calendar window for `Date32`/`DateTime64` - precomputed once so that the per-row
+    /// representability check is two comparisons. Null bounds mean the type is not checked (see
+    /// `fillRepresentableRangeOfColumnType`).
+    Field fill_representable_min;
+    Field fill_representable_max;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        layers.pop_back();
-
-        while (!layers.empty() && !layers.back()->saved_checkpoint)
-    if (current_checkpoint != Checkpoint::Interval && parseOperator(pos, toStringView(Keyword::INTERVAL), expected))
-    if (current_checkpoint != Checkpoint::Case && parseOperator(pos, toStringView(Keyword::CASE), expected))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcdc923b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1aaec54f` are properly handled with clean fallback behavior.

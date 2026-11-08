@@ -8415,3 +8415,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-08T22:00:46.429Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `47daf1c2` | Multi-dimensional audit evidence | 2026-11-08T22:00:48.639Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `45c50f87` | Multi-dimensional audit evidence | 2026-11-08T22:01:01.830Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `99dbe548` | Multi-dimensional audit evidence | 2026-11-08T22:10:40.318Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `87ecf9e0` | Multi-dimensional audit evidence | 2026-11-08T22:10:46.884Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `c847f42e` | Multi-dimensional audit evidence | 2026-11-08T22:10:53.653Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-08T22:12:53.250Z |

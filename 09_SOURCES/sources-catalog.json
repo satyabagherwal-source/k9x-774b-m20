@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "fda7f39183d73ff4903dc7aced056a1b21602adf2d59213e0e8029cc78851650",
-    "lastHarvestedAt": "2026-11-05T04:50:32.766Z",
+    "contentHash": "599e77dbebe3bdf68edd8b915ee57ca5dc5cb51d2377543972a2c862e9bbb7d4",
+    "lastHarvestedAt": "2026-11-08T22:12:53.250Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "a31ceb62",
+    "sourceVersion": "87ecf9e0",
     "license": "Apache-2.0",
-    "contentHash": "238c1b485f1da73c830ef7bd19c6121e51004bc9051bbb19680b29401665c662",
-    "lastHarvestedAt": "2026-11-08T01:56:32.866Z",
+    "contentHash": "655b5c202b32b3229b2bea26b118c8dda7924027ca1bf3b9ea9f1a73348c4729",
+    "lastHarvestedAt": "2026-11-08T22:10:46.884Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "46ab3dad",
+    "sourceVersion": "c847f42e",
     "license": "Apache-2.0",
-    "contentHash": "8289bea8a253091aa6bf4d8f2cd0db563dcbeffe4c8fbaeb284ec0c8c1300484",
-    "lastHarvestedAt": "2026-11-08T01:03:21.692Z",
+    "contentHash": "0bdebd2459787d3fc6d4272e0252896dd275692372fa8ca49b8b0da997e11a42",
+    "lastHarvestedAt": "2026-11-08T22:10:53.653Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "c0c77a7a",
+    "sourceVersion": "99dbe548",
     "license": "MIT",
-    "contentHash": "8b84c869602aa2c3f54a261b9a4db08b9f9cd68d1cd94bed0ecdd72fd46d45ad",
-    "lastHarvestedAt": "2026-11-07T21:10:20.002Z",
+    "contentHash": "cce2f6637c8d183633d58e70d6434f62f2a523a79e0e09891fa0cbaf5d2e7b41",
+    "lastHarvestedAt": "2026-11-08T22:10:40.318Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
